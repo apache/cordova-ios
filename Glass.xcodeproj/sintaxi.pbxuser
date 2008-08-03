@@ -1,5 +1,13 @@
 // !$*UTF8*$!
 {
+	0714B1ED0E45393600039BAB /* url.txt */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {808, 570}}";
+			sepNavSelRange = "{49, 0}";
+			sepNavVisRange = "{0, 49}";
+			sepNavWindowFrame = "{{176, 28}, {867, 698}}";
+		};
+	};
 	1D6058900D05DD3D006BFB54 /* Glass */ = {
 		activeExec = 0;
 		executables = (
@@ -40,8 +48,15 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 239490430;
-			PBXWorkspaceStateSaveDate = 239490430;
+			PBXPerProjectTemplateStateSaveDate = 239499490;
+			PBXWorkspaceStateSaveDate = 239499490;
+		};
+		perUserProjectItems = {
+			825DFB870E465834000D0A5D = 825DFB870E465834000D0A5D /* PBXBookmark */;
+			825DFB9B0E465AF4000D0A5D = 825DFB9B0E465AF4000D0A5D /* PlistBookmark */;
+			825DFBA40E4678E6000D0A5D /* PBXBookmark */ = 825DFBA40E4678E6000D0A5D /* PBXBookmark */;
+			825DFBAA0E4678F1000D0A5D /* PBXTextBookmark */ = 825DFBAA0E4678F1000D0A5D /* PBXTextBookmark */;
+			825DFBAB0E4678F1000D0A5D /* PlistBookmark */ = 825DFBAB0E4678F1000D0A5D /* PlistBookmark */;
 		};
 		sourceControlManager = 825DFB170E4646F9000D0A5D /* Source Control */;
 		userBuildSettings = {
@@ -83,6 +98,54 @@
 	825DFB180E4646F9000D0A5D /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	825DFB5D0E464E6C000D0A5D /* README.markdown */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 1260}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1741}";
+			sepNavWindowFrame = "{{153, 49}, {867, 698}}";
+		};
+	};
+	825DFB870E465834000D0A5D /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+	};
+	825DFB9B0E465AF4000D0A5D /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/sintaxi/Documents/Dev/Gap/Info.plist;
+		rLen = 0;
+		rLoc = 2147483647;
+	};
+	825DFBA40E4678E6000D0A5D /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 0714B1ED0E45393600039BAB /* url.txt */;
+	};
+	825DFBAA0E4678F1000D0A5D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 0714B1ED0E45393600039BAB /* url.txt */;
+		name = "url.txt: 1";
+		rLen = 49;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 30;
+		vrLoc = 0;
+	};
+	825DFBAB0E4678F1000D0A5D /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/sintaxi/Documents/Dev/Gap/Info.plist;
+		rLen = 0;
+		rLoc = 2147483647;
 	};
 	8D1107310486CEB800E47090 /* Info.plist */ = {
 		uiCtxt = {
