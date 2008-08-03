@@ -40,7 +40,7 @@ with javascript. values are returned as a json object.
 
 ## Contributors
 
-Eric Oesterle   
+Eric Oesterle - Kodak Gallery  
 Colin Toomey - Guru Design  
 Andre Charland - Nitobi  
 Rob Ellis - Nitobi  

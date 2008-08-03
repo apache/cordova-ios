@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0714B1A50E452A2100039BAB /* GlassBgView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0714B1A40E452A2100039BAB /* GlassBgView.m */; };
 		0714B1EE0E45393600039BAB /* url.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0714B1ED0E45393600039BAB /* url.txt */; };
+		079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079B0A090E45734600755F37 /* CoreLocation.framework */; };
 		1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -16,14 +17,14 @@
 		2899E5220DE3E06400AC0155 /* GlassViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* GlassViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* GlassViewController.m */; };
-		825DFA670E456BC9000D0A5D /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 825DFA660E456BC9000D0A5D /* icon.png */; };
-		825DFAA90E462C0D000D0A5D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 825DFAA80E462C0D000D0A5D /* README.markdown */; };
+		825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 825DFB5D0E464E6C000D0A5D /* README.markdown */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0714B1A30E452A2100039BAB /* GlassBgView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassBgView.h; sourceTree = "<group>"; };
 		0714B1A40E452A2100039BAB /* GlassBgView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassBgView.m; sourceTree = "<group>"; };
 		0714B1ED0E45393600039BAB /* url.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = url.txt; sourceTree = "<group>"; };
+		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* GlassAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* GlassAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassAppDelegate.m; sourceTree = "<group>"; };
@@ -35,8 +36,7 @@
 		28D7ACF70DDB3853001CB0EB /* GlassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Glass_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glass_Prefix.pch; sourceTree = "<group>"; };
-		825DFA660E456BC9000D0A5D /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		825DFAA80E462C0D000D0A5D /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		825DFB5D0E464E6C000D0A5D /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -47,6 +47,7 @@
 			files = (
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,8 +76,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				825DFAA80E462C0D000D0A5D /* README.markdown */,
-				825DFA660E456BC9000D0A5D /* icon.png */,
+				825DFB5D0E464E6C000D0A5D /* README.markdown */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -84,6 +84,7 @@
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				0714B1A30E452A2100039BAB /* GlassBgView.h */,
 				0714B1A40E452A2100039BAB /* GlassBgView.m */,
+				079B0A090E45734600755F37 /* CoreLocation.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -162,8 +163,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* GlassViewController.xib in Resources */,
 				0714B1EE0E45393600039BAB /* url.txt in Resources */,
-				825DFA670E456BC9000D0A5D /* icon.png in Resources */,
-				825DFAA90E462C0D000D0A5D /* README.markdown in Resources */,
+				825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +189,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -203,6 +207,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glass_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;

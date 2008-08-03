@@ -1,46 +1,21 @@
 // !$*UTF8*$!
 {
-	0714B1ED0E45393600039BAB /* url.txt */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1007, 746}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 30}";
-			sepNavWindowFrame = "{{15, -1}, {1066, 874}}";
-		};
-	};
-	1D3623250D0F684500981E51 /* GlassAppDelegate.m */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1007, 1106}}";
-			sepNavSelRange = "{448, 0}";
-			sepNavVisRange = "{193, 1500}";
-			sepNavWindowFrame = "{{15, -1}, {1066, 874}}";
-		};
-	};
 	1D6058900D05DD3D006BFB54 /* Glass */ = {
 		activeExec = 0;
 		executables = (
-			825DF9FA0E454A12000D0A5D /* Glass */,
+			825DFB0F0E4646D8000D0A5D /* Glass */,
 		);
-	};
-	28D7ACF70DDB3853001CB0EB /* GlassViewController.m */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1007, 723}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 168}";
-			sepNavWindowFrame = "{{15, -1}, {1066, 874}}";
-		};
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Debug;
-		activeExecutable = 825DF9FA0E454A12000D0A5D /* Glass */;
-		activeSDKPreference = iphonesimulator2.0;
+		activeExecutable = 825DFB0F0E4646D8000D0A5D /* Glass */;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* Glass */;
 		addToTargets = (
 			1D6058900D05DD3D006BFB54 /* Glass */,
 		);
-		codeSenseManager = 825DFA0C0E454A25000D0A5D /* Code sense */;
+		codeSenseManager = 825DFB180E4646F9000D0A5D /* Code sense */;
 		executables = (
-			825DF9FA0E454A12000D0A5D /* Glass */,
+			825DFB0F0E4646D8000D0A5D /* Glass */,
 		);
 		perUserDictionary = {
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
@@ -65,22 +40,14 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 239486254;
-			PBXWorkspaceStateSaveDate = 239486254;
+			PBXPerProjectTemplateStateSaveDate = 239488354;
+			PBXWorkspaceStateSaveDate = 239488354;
 		};
-		sourceControlManager = 825DFA0B0E454A25000D0A5D /* Source Control */;
+		sourceControlManager = 825DFB170E4646F9000D0A5D /* Source Control */;
 		userBuildSettings = {
 		};
 	};
-	29B97316FDCFA39411CA2CEA /* main.m */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1007, 746}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 350}";
-			sepNavWindowFrame = "{{15, -1}, {1066, 874}}";
-		};
-	};
-	825DF9FA0E454A12000D0A5D /* Glass */ = {
+	825DFB0F0E4646D8000D0A5D /* Glass */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
 		);
@@ -106,20 +73,20 @@
 		sourceDirectories = (
 		);
 	};
-	825DFA0B0E454A25000D0A5D /* Source Control */ = {
+	825DFB170E4646F9000D0A5D /* Source Control */ = {
 		isa = PBXSourceControlManager;
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
 		};
 	};
-	825DFA0C0E454A25000D0A5D /* Code sense */ = {
+	825DFB180E4646F9000D0A5D /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
 	8D1107310486CEB800E47090 /* Info.plist */ = {
 		uiCtxt = {
-			sepNavWindowFrame = "{{169, 4}, {1066, 874}}";
+			sepNavWindowFrame = "{{249, 64}, {867, 698}}";
 		};
 	};
 }
