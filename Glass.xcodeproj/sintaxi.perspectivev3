@@ -330,18 +330,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {603, -2}}</string>
+								<string>{{0, 0}, {603, 0}}</string>
 								<key>RubberWindowFrame</key>
 								<string>419 85 810 487 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>-2pt</string>
+							<string>0pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>443pt</string>
+							<string>441pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -357,7 +357,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {603, 416}}</string>
+										<string>{{10, 27}, {603, 414}}</string>
 										<key>RubberWindowFrame</key>
 										<string>419 85 810 487 0 0 1440 878 </string>
 									</dict>
@@ -441,11 +441,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>825DFA010E454A25000D0A5D</string>
+				<string>825DFAF70E464547000D0A5D</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>825DFA020E454A25000D0A5D</string>
+				<string>825DFAF80E464547000D0A5D</string>
 				<string>825DF9FF0E454A25000D0A5D</string>
-				<string>825DFA030E454A25000D0A5D</string>
+				<string>825DFAF90E464547000D0A5D</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -592,14 +592,14 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>825DFA040E454A25000D0A5D</string>
+				<string>825DFAFA0E464547000D0A5D</string>
 				<string>1CCC7628064C1048000F2A68</string>
 				<string>1CCC7629064C1048000F2A68</string>
-				<string>825DFA050E454A25000D0A5D</string>
-				<string>825DFA060E454A25000D0A5D</string>
-				<string>825DFA070E454A25000D0A5D</string>
-				<string>825DFA080E454A25000D0A5D</string>
-				<string>825DFA090E454A25000D0A5D</string>
+				<string>825DFAFB0E464547000D0A5D</string>
+				<string>825DFAFC0E464547000D0A5D</string>
+				<string>825DFAFD0E464547000D0A5D</string>
+				<string>825DFAFE0E464547000D0A5D</string>
+				<string>825DFAFF0E464547000D0A5D</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -629,7 +629,9 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/sintaxi/Documents/Dev/Glass/Glass.xcodeproj</string>
+		<string>825DFB000E464547000D0A5D</string>
+		<string>825DFB010E464547000D0A5D</string>
+		<string>/Users/sintaxi/Documents/Dev/Gap/Glass.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>419 85 810 487 0 0 1440 878 </string>
