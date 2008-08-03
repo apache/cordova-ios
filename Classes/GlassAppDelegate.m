@@ -31,30 +31,21 @@
 	
 	// NSString * htmlPathString = [[NSBundle mainBundle] resourcePath];
 	NSString * urlPathString; //= [[NSBundle mainBundle] resourcePath];
-	
 	NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
 	
 	/*
 	 if (htmlPathString = [thisBundle pathForResource:htmlFileName ofType:@"html"]) {
 		NSURL * anURL = [NSURL fileURLWithPath:htmlPathString];
 		NSURLRequest * aRequest = [NSURLRequest requestWithURL:anURL];
-		
 	}
 	 */
 	
 	if (urlPathString = [thisBundle pathForResource:urlFileName	ofType:@"txt"]){
 		NSString * theURLString = [NSString stringWithContentsOfFile:urlPathString];
-		
-		
 		NSURL * anURL = [NSURL URLWithString:theURLString];
-		
-		
-		
 		NSURLRequest * aRequest = [NSURLRequest requestWithURL:anURL];
-		
 		[webView loadRequest:aRequest];
 	}
-	
 	
 	[window makeKeyAndVisible];
 }
@@ -62,7 +53,6 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	NSString * myURL = [[request URL] absoluteString];
 	NSLog(myURL);
-	
 	return YES;
 }
 

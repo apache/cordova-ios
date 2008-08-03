@@ -6,7 +6,7 @@ Written in Objective-C, GAP is an open source developer tool
 for the iphone that allows calls to the native iPhone SKD 
 with javascript. values are returned as a json object.
 
-[get the GAP source](http://github.com/ "source code via github") or [generate your GAP app](http://github.com/ "generates iphone app")
+[get the GAP source](http://github.com/sintaxi/gap "source code via github") or [generate your GAP app](http://phonegap.com/ "generates iphone app")
 
 ## API
   
@@ -37,8 +37,16 @@ with javascript. values are returned as a json object.
       gap:accelerometer();
       return false;
     }
-    
-### The MIT License  
+
+## Contributors
+
+Eric Oesterle   
+Colin Toomey - Guru Design  
+Andre Charland - Nitobi  
+Rob Ellis - Nitobi  
+Brock Whitten - Nitobi  
+
+### License (MIT)
 
 #### Copyright (c) 2008 Nitobi
 
