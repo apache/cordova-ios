@@ -197,88 +197,7 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>825DFBA80E4678F1000D0A5D</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>url.txt</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>825DFBA90E4678F1000D0A5D</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>url.txt</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>825DFBAA0E4678F1000D0A5D</string>
-						<key>history</key>
-						<array>
-							<string>825DFBA40E4678E6000D0A5D</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {867, 601}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>176 84 867 642 0 0 1440 878 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>825DFB990E465AF4000D0A5D</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>Info.plist</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>825DFB9A0E465AF4000D0A5D</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>Info.plist</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>825DFBAB0E4678F1000D0A5D</string>
-						<key>history</key>
-						<array>
-							<string>825DFB9B0E465AF4000D0A5D</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {867, 601}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>123 124 867 642 0 0 1440 878 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -522,11 +441,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>825DFBA50E4678F1000D0A5D</string>
+				<string>8228A61F0E48BD7100A0D90E</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>825DFBA60E4678F1000D0A5D</string>
+				<string>8228A6200E48BD7100A0D90E</string>
 				<string>825DFB290E464800000D0A5D</string>
-				<string>825DFBA70E4678F1000D0A5D</string>
+				<string>8228A6210E48BD7100A0D90E</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -710,9 +629,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>825DFB990E465AF4000D0A5D</string>
 		<string>/Users/sintaxi/Documents/Dev/Gap/Glass.xcodeproj</string>
-		<string>825DFBA80E4678F1000D0A5D</string>
 	</array>
 	<key>WindowString</key>
 	<string>542 323 810 487 0 0 1440 878 </string>
