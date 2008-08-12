@@ -1,6 +1,7 @@
 
 #import "GlassAppDelegate.h"
 #import "GlassViewController.h"
+#import <AudioToolbox/AudioServices.h>
 
 @implementation GlassAppDelegate
 
@@ -58,6 +59,8 @@
 		NSLog([parts objectAtIndex:1]);
 		
 		if ([(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]){
+			
+			//LOCATION
 			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getloc"]){
 				NSLog(@"location request!");
 				
@@ -67,12 +70,42 @@
 				[jsCallBack release];
 			}
 			
+			//VIBRATION
+			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
+				NSLog(@"vibration request!");
+				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+			}
+			
 			return NO;
 		}
 			
 	}
 
 	return YES;
+}
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+	[lastKnownLocation release];
+	lastKnownLocation = newLocation;
+	[lastKnownLocation retain];
+	printf("Updating Location to : %s",[[lastKnownLocation description] UTF8String]);  
+	
+	double lat = lastKnownLocation.coordinate.latitude;
+	double lng = lastKnownLocation.coordinate.longitude;
+	
+	passPersonalInfo = YES;
+	passGeoData = YES;
+	
+	//This is how you do it with a GET
+	NSString *urlTemp = nil;
+	//NSString *personalInfoTemp = @"?personalInfo=BrockWhitten";
+	//NSString *geoDataTemp = [[NSString alloc] initWithFormat:@"&geoData=%@", @"foo" ];
+	NSString *latTemp = [[NSString alloc] initWithFormat:@"lat=%f", lat ];
+	NSString *lngTemp = [[NSString alloc] initWithFormat:@"&long=%f", lng ];
+	urlTemp = [[NSString alloc] initWithFormat:@"http://clayburn.org/iphone.php?%@%@", latTemp, lngTemp];
+	
+	//[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlTemp]];
+	
 }
 
 
