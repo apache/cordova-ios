@@ -1,10 +1,3 @@
-//
-//  GlassAppDelegate.h
-//  Glass
-//
-//  Created by Eric Oesterle on 8/2/08.
-//  Copyright Eric Oesterle 2008. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>

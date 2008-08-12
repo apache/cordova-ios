@@ -1,10 +1,3 @@
-//
-//  GlassAppDelegate.m
-//  Glass
-//
-//  Created by Eric Oesterle on 8/2/08.
-//  Copyright InPlace 2008. All rights reserved.
-//
 
 #import "GlassAppDelegate.h"
 #import "GlassViewController.h"
@@ -30,9 +23,7 @@
 	
 	// Override point for customization after app launch	
     [window addSubview:viewController.view];
-	webView.delegate = self;
-	// [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://google.com"]]];
-	
+	webView.delegate = self;	
 	
 	NSString * htmlFileName;
 	NSString * urlFileName;
@@ -40,24 +31,13 @@
 	htmlFileName = @"index";
 	urlFileName = @"url";
 	
-	// NSString * htmlPathString = [[NSBundle mainBundle] resourcePath];
-	NSString * urlPathString; //= [[NSBundle mainBundle] resourcePath];
-	
+	NSString * urlPathString;
 	NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
-	
-	/*
-	 if (htmlPathString = [thisBundle pathForResource:htmlFileName ofType:@"html"]) {
-		NSURL * anURL = [NSURL fileURLWithPath:htmlPathString];
-		NSURLRequest * aRequest = [NSURLRequest requestWithURL:anURL];
-		
-	 }
-	 */
 	
 	if (urlPathString = [thisBundle pathForResource:urlFileName	ofType:@"txt"]){
 		NSString * theURLString = [NSString stringWithContentsOfFile:urlPathString];
 		NSURL * anURL = [NSURL URLWithString:theURLString];
 		NSURLRequest * aRequest = [NSURLRequest requestWithURL:anURL];
-		
 		[webView loadRequest:aRequest];
 	}
 	
@@ -69,9 +49,7 @@
 	NSLog(myURL);
 	NSString * jsCallBack = nil;
 	NSArray * parts = [myURL componentsSeparatedByString:@":"];
-	printf("XX");
 	NSLog([self.lastKnownLocation description]);
-	printf("XX");
 	double lat = lastKnownLocation.coordinate.latitude;
 	double lon = lastKnownLocation.coordinate.longitude;
 	
@@ -93,34 +71,10 @@
 		}
 			
 	}
-	
+
 	return YES;
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
-{
-	[lastKnownLocation release];
-	lastKnownLocation = newLocation;
-	[lastKnownLocation retain];
-	printf("Updating Location to : %s",[[lastKnownLocation description] UTF8String]);	
-	
-	double lat = lastKnownLocation.coordinate.latitude;
-	double lng = lastKnownLocation.coordinate.longitude;
-	
-	passPersonalInfo = YES;
-	passGeoData = YES;
-	
-	//This is how you do it with a GET
-	NSString *urlTemp = nil;
-	//NSString *personalInfoTemp = @"?personalInfo=BrockWhitten";
-	//NSString *geoDataTemp = [[NSString alloc] initWithFormat:@"&geoData=%@", @"foo" ];
-	NSString *latTemp = [[NSString alloc] initWithFormat:@"lat=%f", lat ];
-	NSString *lngTemp = [[NSString alloc] initWithFormat:@"&long=%f", lng ];
-	urlTemp = [[NSString alloc] initWithFormat:@"http://clayburn.org/iphone.php?%@%@", latTemp, lngTemp];
-	
-	//[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlTemp]];
-	
-}
 
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
 	NSString * jsCallBack = nil;
