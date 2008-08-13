@@ -296,7 +296,7 @@
 							<real>185</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>587 315 810 487 0 0 1440 878 </string>
+						<string>548 385 810 487 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -335,7 +335,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {603, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>587 315 810 487 0 0 1440 878 </string>
+								<string>548 385 810 487 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -362,7 +362,7 @@
 										<key>Frame</key>
 										<string>{{10, 27}, {603, 414}}</string>
 										<key>RubberWindowFrame</key>
-										<string>587 315 810 487 0 0 1440 878 </string>
+										<string>548 385 810 487 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -444,11 +444,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>828B59F10E520FA80096DE8B</string>
+				<string>828B5A020E5279B30096DE8B</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>828B59F20E520FA80096DE8B</string>
+				<string>828B5A030E5279B30096DE8B</string>
 				<string>825DFB290E464800000D0A5D</string>
-				<string>828B59F30E520FA80096DE8B</string>
+				<string>828B5A040E5279B30096DE8B</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -632,12 +632,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>828B59FA0E520FA80096DE8B</string>
-		<string>828B59FB0E520FA80096DE8B</string>
 		<string>/Users/sintaxi/Documents/Dev/Gap/Glass.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>587 315 810 487 0 0 1440 878 </string>
+	<string>548 385 810 487 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

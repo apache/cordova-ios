@@ -11,13 +11,19 @@
 @synthesize passGeoData;
 
 @synthesize lastKnownLocation;
-
+@synthesize image;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
 	locationManager = [[CLLocationManager alloc] init];
 	locationManager.delegate = self;
 	[locationManager startUpdatingLocation];
+	
+	// Set up the image picker controller and add it to the view
+	imagePickerController = [[UIImagePickerController alloc] init];
+	imagePickerController.delegate = self;
+	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    [window addSubview:imagePickerController.view];
 	
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
@@ -71,10 +77,19 @@
 			}
 			
 			//VIBRATION
-			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
+			else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
 				NSLog(@"vibration request!");
 				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 			}
+			
+			//PHOTO-PICKER
+			else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
+				NSLog(@"photo request!");
+                
+                // webView.hidden = YES;
+                [window bringSubviewToFront:imagePickerController.view];
+				NSLog(@"photo dialog open now!");
+            }
 			
 			return NO;
 		}
@@ -119,12 +134,46 @@
 	NSLog(ret);
 }
 
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
+{
+    NSString * jsCallBack = nil;
+	
+	// Dismiss the image selection, hide the picker and show the image view with the picked image
+	[picker dismissModalViewControllerAnimated:YES];
+	imagePickerController.view.hidden = YES;
+    
+    NSLog([image description]);
+    
+    NSString *jpg;
+    jpg = UIImageJPEGRepresentation(image, 75);
+    // NSLog([jpg description]);
+    
+    jsCallBack = [[NSString alloc] initWithFormat:@"gotPhoto('%s');", [jpg stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]];                
+    // jsCallBack = @"gotPhoto('678')";
+    NSLog(jsCallBack);
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];				
+    [jsCallBack release];
+	
+	// imageView.image = image;
+	webView.hidden = NO;
+	[window bringSubviewToFront:webView];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+	// Dismiss the image selection and close the program
+	[picker dismissModalViewControllerAnimated:YES];
+	image = nil;
+    // exit(0);
+}
+
 
 
 - (void)dealloc {
     [viewController release];
 	[window release];
 	[lastKnownLocation release];
+	[imagePickerController release];
 	[super dealloc];
 }
 

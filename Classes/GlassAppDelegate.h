@@ -14,11 +14,15 @@
 	
 	CLLocationManager *locationManager;  
 	CLLocation		  *lastKnownLocation;
+	
+	UIImage *image;
+    UIImagePickerController *imagePickerController;
 }
 
 @property (nonatomic, retain) CLLocation *lastKnownLocation;
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) GlassViewController *viewController;
+@property (nonatomic, retain) UIImage *image;
 @property BOOL passPersonalInfo;
 @property BOOL passGeoData;
 
