@@ -1,11 +1,43 @@
 // !$*UTF8*$!
 {
+	0714B1A30E452A2100039BAB /* GlassBgView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {933, 638}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 153}";
+			sepNavWindowFrame = "{{61, 42}, {992, 789}}";
+		};
+	};
+	0714B1A40E452A2100039BAB /* GlassBgView.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {933, 638}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 59}";
+			sepNavWindowFrame = "{{84, 21}, {992, 789}}";
+		};
+	};
 	0714B1ED0E45393600039BAB /* url.txt */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {808, 570}}";
-			sepNavSelRange = "{49, 0}";
-			sepNavVisRange = "{0, 49}";
+			sepNavSelRange = "{35, 0}";
+			sepNavVisRange = "{0, 35}";
 			sepNavWindowFrame = "{{176, 28}, {867, 698}}";
+		};
+	};
+	1D3623240D0F684500981E51 /* GlassAppDelegate.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {933, 661}}";
+			sepNavSelRange = "{753, 0}";
+			sepNavVisRange = "{0, 822}";
+			sepNavWindowFrame = "{{43, 63}, {992, 789}}";
+		};
+	};
+	1D3623250D0F684500981E51 /* GlassAppDelegate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {954, 2644}}";
+			sepNavSelRange = "{2869, 0}";
+			sepNavVisRange = "{0, 1332}";
+			sepNavWindowFrame = "{{35, 89}, {992, 789}}";
 		};
 	};
 	1D6058900D05DD3D006BFB54 /* Glass */ = {
@@ -14,9 +46,26 @@
 			825DFB0F0E4646D8000D0A5D /* Glass */,
 		);
 	};
+	28D7ACF60DDB3853001CB0EB /* GlassViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {933, 638}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 184}";
+			sepNavWindowFrame = "{{15, 84}, {992, 789}}";
+		};
+	};
+	28D7ACF70DDB3853001CB0EB /* GlassViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {908, 692}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 168}";
+			sepNavWindowFrame = "{{15, 30}, {967, 843}}";
+		};
+	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeExecutable = 825DFB0F0E4646D8000D0A5D /* Glass */;
+		activeSDKPreference = iphoneos2.0;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* Glass */;
 		addToTargets = (
 			1D6058900D05DD3D006BFB54 /* Glass */,
@@ -48,18 +97,23 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 239499490;
-			PBXWorkspaceStateSaveDate = 239499490;
+			PBXPerProjectTemplateStateSaveDate = 240288726;
+			PBXWorkspaceStateSaveDate = 240288726;
 		};
 		perUserProjectItems = {
-			825DFB870E465834000D0A5D = 825DFB870E465834000D0A5D /* PBXBookmark */;
-			825DFB9B0E465AF4000D0A5D = 825DFB9B0E465AF4000D0A5D /* PlistBookmark */;
-			825DFBA40E4678E6000D0A5D /* PBXBookmark */ = 825DFBA40E4678E6000D0A5D /* PBXBookmark */;
-			825DFBAA0E4678F1000D0A5D /* PBXTextBookmark */ = 825DFBAA0E4678F1000D0A5D /* PBXTextBookmark */;
-			825DFBAB0E4678F1000D0A5D /* PlistBookmark */ = 825DFBAB0E4678F1000D0A5D /* PlistBookmark */;
+			828B5A070E527A350096DE8B = 828B5A070E527A350096DE8B /* PBXBookmark */;
+			828B5A120E52804E0096DE8B = 828B5A120E52804E0096DE8B /* PBXTextBookmark */;
 		};
 		sourceControlManager = 825DFB170E4646F9000D0A5D /* Source Control */;
 		userBuildSettings = {
+		};
+	};
+	29B97316FDCFA39411CA2CEA /* main.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {933, 638}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 231}";
+			sepNavWindowFrame = "{{38, 63}, {992, 789}}";
 		};
 	};
 	825DFB0F0E4646D8000D0A5D /* Glass */ = {
@@ -107,45 +161,19 @@
 			sepNavWindowFrame = "{{153, 49}, {867, 698}}";
 		};
 	};
-	825DFB870E465834000D0A5D /* PBXBookmark */ = {
+	828B5A070E527A350096DE8B /* PBXBookmark */ = {
 		isa = PBXBookmark;
-		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
 	};
-	825DFB9B0E465AF4000D0A5D /* PlistBookmark */ = {
-		isa = PlistBookmark;
-		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
-		fallbackIsa = PBXBookmark;
-		isK = 0;
-		kPath = (
-		);
-		name = /Users/sintaxi/Documents/Dev/Gap/Info.plist;
-		rLen = 0;
-		rLoc = 2147483647;
-	};
-	825DFBA40E4678E6000D0A5D /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 0714B1ED0E45393600039BAB /* url.txt */;
-	};
-	825DFBAA0E4678F1000D0A5D /* PBXTextBookmark */ = {
+	828B5A120E52804E0096DE8B /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 0714B1ED0E45393600039BAB /* url.txt */;
-		name = "url.txt: 1";
-		rLen = 49;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 30;
-		vrLoc = 0;
-	};
-	825DFBAB0E4678F1000D0A5D /* PlistBookmark */ = {
-		isa = PlistBookmark;
-		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
-		fallbackIsa = PBXBookmark;
-		isK = 0;
-		kPath = (
-		);
-		name = /Users/sintaxi/Documents/Dev/Gap/Info.plist;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 87";
 		rLen = 0;
-		rLoc = 2147483647;
+		rLoc = 2869;
+		rType = 0;
+		vrLen = 1465;
+		vrLoc = 0;
 	};
 	8D1107310486CEB800E47090 /* Info.plist */ = {
 		uiCtxt = {
