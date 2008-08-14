@@ -60,11 +60,7 @@
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */,
-<<<<<<< HEAD:Glass.xcodeproj/project.pbxproj
-				47B8041E0E51367B00939591 /* AudioToolbox.framework in Frameworks */,
-=======
 				828B59CE0E520C7F0096DE8B /* AudioToolbox.framework in Frameworks */,
->>>>>>> 467c52ea859950028f1b816ee8d7588c1df87206:Glass.xcodeproj/project.pbxproj
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,11 +129,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD:Glass.xcodeproj/project.pbxproj
-				47B8041D0E51367B00939591 /* AudioToolbox.framework */,
-=======
 				828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */,
->>>>>>> 467c52ea859950028f1b816ee8d7588c1df87206:Glass.xcodeproj/project.pbxproj
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 			);
