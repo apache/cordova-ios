@@ -23,7 +23,7 @@ native iPhone application.  We haven't open sourced that code but
 we're going to soon.
 
 PhoneGap was conceived at iPhoneDevCamp II by Nitobi developer Brock
-Whitten, Rob Ellis, freelance designer Colin Toomley and Eric
+Whitten, Rob Ellis, freelance designer Colin Toomey and Eric
 Oesterle.
 
 [get the GAP source](http://github.com/sintaxi/gap "source code via github") or [generate your GAP app](http://phonegap.com/ "generates iphone app")
