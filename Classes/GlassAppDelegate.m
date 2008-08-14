@@ -22,7 +22,7 @@
 	
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
-	imagePickerController.delegate = self;
+
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     [window addSubview:imagePickerController.view];
 	
@@ -44,6 +44,7 @@
 	
 	NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
 	
+	/*
 	if (urlPathString = [thisBundle pathForResource:htmlFileName	ofType:@"html"]){
 		NSString * test = [NSString stringWithContentsOfFile:urlPathString];
 		//NSString * test;
@@ -52,8 +53,8 @@
 		[webView loadHTMLString:test baseURL:nil];
 	 
 	}
+	*/
 	
-	/*
 	
 	if (urlPathString = [thisBundle pathForResource:urlFileName	ofType:@"txt"]){
 
@@ -63,7 +64,7 @@
 		[webView loadRequest:aRequest];
 	}
 	
-	*/
+	
 	[window makeKeyAndVisible];
 }
 
@@ -184,40 +185,6 @@
 	NSLog(ret);
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
-{
-    NSString * jsCallBack = nil;
-	
-	// Dismiss the image selection, hide the picker and show the image view with the picked image
-	[picker dismissModalViewControllerAnimated:YES];
-	imagePickerController.view.hidden = YES;
-    
-    NSLog([image description]);
-    
-    NSString *jpg;
-    jpg = UIImageJPEGRepresentation(image, 75);
-    // NSLog([jpg description]);
-    
-    jsCallBack = [[NSString alloc] initWithFormat:@"gotPhoto('%s');", [jpg stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]];                
-    // jsCallBack = @"gotPhoto('678')";
-    NSLog(jsCallBack);
-    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];				
-    [jsCallBack release];
-	
-	// imageView.image = image;
-	webView.hidden = NO;
-	[window bringSubviewToFront:webView];
-}
-
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
-{
-	// Dismiss the image selection and close the program
-	[picker dismissModalViewControllerAnimated:YES];
-	image = nil;
-    // exit(0);
-}
-
-
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
@@ -231,7 +198,6 @@
 	
 	//UIImage *testImage = [UIImage imageNamed:@"image1.png"];
 	
-
 	
     NSData * imageData = UIImageJPEGRepresentation(image, 75);
 	
