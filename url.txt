@@ -1,1 +1,1 @@
-http://www.ericoesterle.com/gap/testlocation.html
+http://phonegap.com/demo/index.html
