@@ -80,7 +80,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					364,
+					138,
 					20,
 					48,
 					43,
@@ -97,12 +97,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 240288726;
-			PBXWorkspaceStateSaveDate = 240288726;
-		};
-		perUserProjectItems = {
-			828B5A070E527A350096DE8B = 828B5A070E527A350096DE8B /* PBXBookmark */;
-			828B5A120E52804E0096DE8B = 828B5A120E52804E0096DE8B /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 240343699;
+			PBXWorkspaceStateSaveDate = 240343699;
 		};
 		sourceControlManager = 825DFB170E4646F9000D0A5D /* Source Control */;
 		userBuildSettings = {
@@ -160,20 +156,6 @@
 			sepNavVisRange = "{0, 1741}";
 			sepNavWindowFrame = "{{153, 49}, {867, 698}}";
 		};
-	};
-	828B5A070E527A350096DE8B /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
-	};
-	828B5A120E52804E0096DE8B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
-		name = "GlassAppDelegate.m: 87";
-		rLen = 0;
-		rLoc = 2869;
-		rType = 0;
-		vrLen = 1465;
-		vrLoc = 0;
 	};
 	8D1107310486CEB800E47090 /* Info.plist */ = {
 		uiCtxt = {
