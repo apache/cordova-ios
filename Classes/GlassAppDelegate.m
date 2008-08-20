@@ -18,6 +18,13 @@
 
 @synthesize lastKnownLocation;
 @synthesize image;
+@synthesize imagePickerController;
+
+void alert(NSString *message) {
+    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"PhoneGap" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [openURLAlert show];
+    [openURLAlert release];
+}
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
@@ -92,7 +99,7 @@
 				  [[[UIDevice currentDevice] model] UTF8String],
 				  [[[UIDevice currentDevice] systemVersion] UTF8String]
 				  ];
-	NSLog(jsCallBack);
+	//NSLog(jsCallBack);
 	[webViewLocal stringByEvaluatingJavaScriptFromString:jsCallBack];
 	[jsCallBack release];
 	
@@ -159,7 +166,7 @@
 	[lastKnownLocation release];
 	lastKnownLocation = newLocation;
 	[lastKnownLocation retain];
-	printf("Updating Location to : %s",[[lastKnownLocation description] UTF8String]);  
+	printf("\nUpdating Location to : %s",[[lastKnownLocation description] UTF8String]);  
 	
 	passPersonalInfo = YES;
 	passGeoData = YES;
@@ -174,26 +181,104 @@
 	NSString * jsCallBack = nil;
 	
 	jsCallBack = [[NSString alloc] initWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
-	NSLog(jsCallBack);
+	//NSLog(jsCallBack);
 	
 	NSString * ret = [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	NSLog(ret);
+	//NSLog(ret);
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo
+//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo
+//{
+//	
+//	[picker dismissModalViewControllerAnimated:YES];
+//    imagePickerController.view.hidden = YES;
+//	NSLog(@"Photo Picked");
+//	NSData * imageData = UIImageJPEGRepresentation(image2, 75);
+//	
+////	NSURLRequest * systemPost = [self sendPhotoToCallback:imageData];
+//    
+//	// Dismiss the image selection, hide the picker and show the image view with the picked image
+//	//[picker dismissModalViewControllerAnimated:YES];
+//	//imagePickerController.view.hidden = YES;
+//
+//	webView.hidden = NO;
+//	[window bringSubviewToFront:webView];
+//}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
+    NSLog(@"photo: picked image");
+    // NSString * jsCallBack = nil; 
 	
+	// Dismiss the image selection, hide the picker and show the image view with the picked image
 	[picker dismissModalViewControllerAnimated:YES];
     imagePickerController.view.hidden = YES;
-	NSLog(@"Photo Picked");
-	NSData * imageData = UIImageJPEGRepresentation(image2, 75);
 	
-//	NSURLRequest * systemPost = [self sendPhotoToCallback:imageData];
+  	UIDevice * dev = [UIDevice currentDevice];
+	NSString *uniqueId = dev.uniqueIdentifier;
+    NSData * imageData = UIImageJPEGRepresentation(image, 0.75);	
+	//NSData * imageData = UIImagePNGRepresentation(image);	
+	// NSString *postLength = [NSString stringWithFormat:@"%d", [imageData length]];	
+	NSString *urlString = [@"http://http://phonegap.com/demo/upload.php?" stringByAppendingString:@"uid="];
+	urlString = [urlString stringByAppendingString:uniqueId];
+	// urlString = [urlString stringByAppendingString:@"&lang=en_US.UTF-8"];
+	
+	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
+	[request setURL:[NSURL URLWithString:urlString]];
+	[request setHTTPMethod:@"POST"];
+	// [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+    // [request setValue:@"application/" forHTTPHeaderField:@"Content-Length"];
+	
+	// ---------
+	
     
-	// Dismiss the image selection, hide the picker and show the image view with the picked image
-	//[picker dismissModalViewControllerAnimated:YES];
-	//imagePickerController.view.hidden = YES;
-
+    //Add the header info
+	NSString *stringBoundary = [NSString stringWithString:@"0xKhTmLbOuNdArY"];
+	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",stringBoundary];
+	[request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+	
+	//create the body
+	NSMutableData *postBody = [NSMutableData data];
+	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+	
+    /*
+	 //add key values from the NSDictionary object
+	 NSEnumerator *keys = [postKeys keyEnumerator];
+	 int i;
+	 for (i = 0; i < [postKeys count]; i++) {
+	 NSString *tempKey = [keys nextObject];
+	 [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n",tempKey] dataUsingEncoding:NSUTF8StringEncoding]];
+	 [postBody appendData:[[NSString stringWithFormat:@"%@",[postKeys objectForKey:tempKey]] dataUsingEncoding:NSUTF8StringEncoding]];
+	 [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+	 }
+	 */
+	
+	//add data field and file data
+	[postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"data\"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+	[postBody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+	[postBody appendData:[NSData dataWithData:imageData]];
+	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+	
+	// ---------
+    
+	[request setHTTPBody:postBody];
+	
+	NSURLConnection *conn=[[NSURLConnection alloc] initWithRequest:request delegate:self];
+	if(conn) {
+		NSLog(@"photo: connection sucess");
+		//receivedData = [[NSMutableData data] retain];
+		NSString *output = [NSString stringWithCString:[conn bytes] length:[conn length]];  
+		NSLog(@"Page = %@", output);
+	} else {
+        NSLog(@"photo: upload failed!");
+    }
+	
+    // Remove the picker interface and release the picker object.
+    /*
+	 [[picker parentViewController] dismissModalViewControllerAnimated:YES];
+	 [picker release];
+	 */
+	
 	webView.hidden = NO;
 	[window bringSubviewToFront:webView];
 }

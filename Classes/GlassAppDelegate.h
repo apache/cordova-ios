@@ -1,12 +1,14 @@
 
 #import <UIKit/UIKit.h>
-
 #import <CoreLocation/CoreLocation.h>
+#import <AudioToolbox/AudioServices.h>
 #import <UIKit/UINavigationController.h>
+#import <UIKit/UIDevice.h>
 
 @class GlassViewController;
 
-@interface GlassAppDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate, CLLocationManagerDelegate, UIAccelerometerDelegate> {
+@interface GlassAppDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate, CLLocationManagerDelegate, UIAccelerometerDelegate,
+										UIImagePickerControllerDelegate, UIPickerViewDelegate, UINavigationControllerDelegate> {
 	IBOutlet UIWindow *window;
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
@@ -18,7 +20,8 @@
 	CLLocation		  *lastKnownLocation;
 
 	UIImage *image;
-    UIImagePickerController *imagePickerController;
+	UIImagePickerController *imagePickerController;
+	UIImagePickerController *cameraPickerController;
 	
 	NSURLConnection *callBackConnection;
 }
@@ -27,6 +30,8 @@
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) GlassViewController *viewController;
 @property (nonatomic, retain) UIImage *image;
+@property (nonatomic, retain) UIImagePickerController *imagePickerController;
+@property (nonatomic, retain) UIImagePickerController *cameraPickerController;
 @property BOOL passPersonalInfo;
 @property BOOL passGeoData;
 

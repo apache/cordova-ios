@@ -27,17 +27,17 @@
 	1D3623240D0F684500981E51 /* GlassAppDelegate.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {933, 661}}";
-			sepNavSelRange = "{753, 0}";
-			sepNavVisRange = "{0, 822}";
-			sepNavWindowFrame = "{{43, 63}, {992, 789}}";
+			sepNavSelRange = "{662, 0}";
+			sepNavVisRange = "{0, 1626}";
+			sepNavWindowFrame = "{{194, 89}, {992, 789}}";
 		};
 	};
 	1D3623250D0F684500981E51 /* GlassAppDelegate.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {954, 2644}}";
-			sepNavSelRange = "{2869, 0}";
-			sepNavVisRange = "{0, 1332}";
-			sepNavWindowFrame = "{{35, 89}, {992, 789}}";
+			sepNavIntBoundsRect = "{{0, 0}, {984, 5136}}";
+			sepNavSelRange = "{9698, 0}";
+			sepNavVisRange = "{8212, 1887}";
+			sepNavWindowFrame = "{{37, 89}, {992, 789}}";
 		};
 	};
 	1D6058900D05DD3D006BFB54 /* Glass */ = {
@@ -80,7 +80,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					138,
+					474,
 					20,
 					48,
 					43,
@@ -97,8 +97,18 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 240948471;
-			PBXWorkspaceStateSaveDate = 240948471;
+			PBXPerProjectTemplateStateSaveDate = 240955060;
+			PBXWorkspaceStateSaveDate = 240955060;
+		};
+		perUserProjectItems = {
+			8204F3AE0E5CAEAB00F2DAA1 = 8204F3AE0E5CAEAB00F2DAA1 /* PBXTextBookmark */;
+			8204F3B90E5CAEB700F2DAA1 /* PBXTextBookmark */ = 8204F3B90E5CAEB700F2DAA1 /* PBXTextBookmark */;
+			8204F3C20E5CB34600F2DAA1 /* PBXTextBookmark */ = 8204F3C20E5CB34600F2DAA1 /* PBXTextBookmark */;
+			8204F3D40E5CB4E400F2DAA1 /* PBXBookmark */ = 8204F3D40E5CB4E400F2DAA1 /* PBXBookmark */;
+			8204F3DA0E5CB62800F2DAA1 /* PBXBookmark */ = 8204F3DA0E5CB62800F2DAA1 /* PBXBookmark */;
+			8204F3E00E5CB63D00F2DAA1 /* PBXTextBookmark */ = 8204F3E00E5CB63D00F2DAA1 /* PBXTextBookmark */;
+			8204F3E30E5CB63D00F2DAA1 /* PlistBookmark */ = 8204F3E30E5CB63D00F2DAA1 /* PlistBookmark */;
+			82FE65B40E5CA0F8008BDB24 = 82FE65B40E5CA0F8008BDB24 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 825DFB170E4646F9000D0A5D /* Source Control */;
 		userBuildSettings = {
@@ -111,6 +121,65 @@
 			sepNavVisRange = "{0, 231}";
 			sepNavWindowFrame = "{{38, 63}, {992, 789}}";
 		};
+	};
+	8204F3AE0E5CAEAB00F2DAA1 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 172";
+		rLen = 0;
+		rLoc = 5254;
+		rType = 0;
+		vrLen = 1500;
+		vrLoc = 4884;
+	};
+	8204F3B90E5CAEB700F2DAA1 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 172";
+		rLen = 0;
+		rLoc = 5254;
+		rType = 0;
+		vrLen = 1715;
+		vrLoc = 4884;
+	};
+	8204F3C20E5CB34600F2DAA1 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 269";
+		rLen = 0;
+		rLoc = 9698;
+		rType = 0;
+		vrLen = 1805;
+		vrLoc = 8219;
+	};
+	8204F3D40E5CB4E400F2DAA1 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+	};
+	8204F3DA0E5CB62800F2DAA1 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+	};
+	8204F3E00E5CB63D00F2DAA1 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 271";
+		rLen = 0;
+		rLoc = 9698;
+		rType = 0;
+		vrLen = 1887;
+		vrLoc = 8212;
+	};
+	8204F3E30E5CB63D00F2DAA1 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/sintaxi/Documents/Dev/Gap/Info.plist;
+		rLen = 0;
+		rLoc = 2147483647;
 	};
 	825DFB0F0E4646D8000D0A5D /* Glass */ = {
 		isa = PBXExecutable;
@@ -156,6 +225,16 @@
 			sepNavVisRange = "{0, 1741}";
 			sepNavWindowFrame = "{{153, 49}, {867, 698}}";
 		};
+	};
+	82FE65B40E5CA0F8008BDB24 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 282";
+		rLen = 0;
+		rLoc = 9994;
+		rType = 0;
+		vrLen = 1291;
+		vrLoc = 4015;
 	};
 	8D1107310486CEB800E47090 /* Info.plist */ = {
 		uiCtxt = {
