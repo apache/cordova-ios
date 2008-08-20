@@ -296,7 +296,7 @@
 							<real>185</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>462 114 920 716 0 0 1440 878 </string>
+						<string>417 92 920 716 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -335,7 +335,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {713, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>462 114 920 716 0 0 1440 878 </string>
+								<string>417 92 920 716 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -416,7 +416,7 @@
 										<key>Frame</key>
 										<string>{{10, 27}, {713, 643}}</string>
 										<key>RubberWindowFrame</key>
-										<string>462 114 920 716 0 0 1440 878 </string>
+										<string>417 92 920 716 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXBuildResultsModule</string>
@@ -632,12 +632,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>82FE65710E5C9245008BDB24</string>
+		<string>82FE65800E5C94F6008BDB24</string>
 		<string>82FE65720E5C9245008BDB24</string>
 		<string>/Users/sintaxi/Documents/Dev/Gap/Glass.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>462 114 920 716 0 0 1440 878 </string>
+	<string>417 92 920 716 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
