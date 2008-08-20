@@ -34,9 +34,9 @@
 	};
 	1D3623250D0F684500981E51 /* GlassAppDelegate.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {984, 5136}}";
-			sepNavSelRange = "{9698, 0}";
-			sepNavVisRange = "{8212, 1887}";
+			sepNavIntBoundsRect = "{{0, 0}, {966, 5222}}";
+			sepNavSelRange = "{9674, 0}";
+			sepNavVisRange = "{8212, 1893}";
 			sepNavWindowFrame = "{{37, 89}, {992, 789}}";
 		};
 	};
@@ -97,17 +97,19 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 240955060;
-			PBXWorkspaceStateSaveDate = 240955060;
+			PBXPerProjectTemplateStateSaveDate = 240957608;
+			PBXWorkspaceStateSaveDate = 240957608;
 		};
 		perUserProjectItems = {
 			8204F3AE0E5CAEAB00F2DAA1 = 8204F3AE0E5CAEAB00F2DAA1 /* PBXTextBookmark */;
-			8204F3B90E5CAEB700F2DAA1 /* PBXTextBookmark */ = 8204F3B90E5CAEB700F2DAA1 /* PBXTextBookmark */;
-			8204F3C20E5CB34600F2DAA1 /* PBXTextBookmark */ = 8204F3C20E5CB34600F2DAA1 /* PBXTextBookmark */;
-			8204F3D40E5CB4E400F2DAA1 /* PBXBookmark */ = 8204F3D40E5CB4E400F2DAA1 /* PBXBookmark */;
-			8204F3DA0E5CB62800F2DAA1 /* PBXBookmark */ = 8204F3DA0E5CB62800F2DAA1 /* PBXBookmark */;
-			8204F3E00E5CB63D00F2DAA1 /* PBXTextBookmark */ = 8204F3E00E5CB63D00F2DAA1 /* PBXTextBookmark */;
-			8204F3E30E5CB63D00F2DAA1 /* PlistBookmark */ = 8204F3E30E5CB63D00F2DAA1 /* PlistBookmark */;
+			8204F3B90E5CAEB700F2DAA1 = 8204F3B90E5CAEB700F2DAA1 /* PBXTextBookmark */;
+			8204F3C20E5CB34600F2DAA1 = 8204F3C20E5CB34600F2DAA1 /* PBXTextBookmark */;
+			8204F3D40E5CB4E400F2DAA1 = 8204F3D40E5CB4E400F2DAA1 /* PBXBookmark */;
+			8204F3DA0E5CB62800F2DAA1 = 8204F3DA0E5CB62800F2DAA1 /* PBXBookmark */;
+			8204F3E00E5CB63D00F2DAA1 = 8204F3E00E5CB63D00F2DAA1 /* PBXTextBookmark */;
+			8204F3E30E5CB63D00F2DAA1 = 8204F3E30E5CB63D00F2DAA1 /* PlistBookmark */;
+			8204F4020E5CB8B500F2DAA1 /* PBXBookmark */ = 8204F4020E5CB8B500F2DAA1 /* PBXBookmark */;
+			8204F40E0E5CB8C400F2DAA1 /* PBXTextBookmark */ = 8204F40E0E5CB8C400F2DAA1 /* PBXTextBookmark */;
 			82FE65B40E5CA0F8008BDB24 = 82FE65B40E5CA0F8008BDB24 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 825DFB170E4646F9000D0A5D /* Source Control */;
@@ -147,7 +149,7 @@
 		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
 		name = "GlassAppDelegate.m: 269";
 		rLen = 0;
-		rLoc = 9698;
+		rLoc = 9702;
 		rType = 0;
 		vrLen = 1805;
 		vrLoc = 8219;
@@ -165,7 +167,7 @@
 		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
 		name = "GlassAppDelegate.m: 271";
 		rLen = 0;
-		rLoc = 9698;
+		rLoc = 9702;
 		rType = 0;
 		vrLen = 1887;
 		vrLoc = 8212;
@@ -180,6 +182,20 @@
 		name = /Users/sintaxi/Documents/Dev/Gap/Info.plist;
 		rLen = 0;
 		rLoc = 2147483647;
+	};
+	8204F4020E5CB8B500F2DAA1 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+	};
+	8204F40E0E5CB8C400F2DAA1 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
+		name = "GlassAppDelegate.m: 271";
+		rLen = 0;
+		rLoc = 9674;
+		rType = 0;
+		vrLen = 1893;
+		vrLoc = 8212;
 	};
 	825DFB0F0E4646D8000D0A5D /* Glass */ = {
 		isa = PBXExecutable;
@@ -231,7 +247,7 @@
 		fRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */;
 		name = "GlassAppDelegate.m: 282";
 		rLen = 0;
-		rLoc = 9994;
+		rLoc = 9998;
 		rType = 0;
 		vrLen = 1291;
 		vrLoc = 4015;

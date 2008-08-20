@@ -202,7 +202,7 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>8204F3DE0E5CB63D00F2DAA1</string>
+				<string>8204F40C0E5CB8C400F2DAA1</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>GlassAppDelegate.m</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
@@ -210,16 +210,16 @@
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>8204F3DF0E5CB63D00F2DAA1</string>
+						<string>8204F40D0E5CB8C400F2DAA1</string>
 						<key>PBXProjectModuleLabel</key>
 						<string>GlassAppDelegate.m</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>8204F3E00E5CB63D00F2DAA1</string>
+						<string>8204F40E0E5CB8C400F2DAA1</string>
 						<key>history</key>
 						<array>
-							<string>8204F3DA0E5CB62800F2DAA1</string>
+							<string>8204F4020E5CB8B500F2DAA1</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -236,46 +236,6 @@
 				<false/>
 				<key>RubberWindowFrame</key>
 				<string>37 145 992 733 0 0 1440 878 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>8204F3E10E5CB63D00F2DAA1</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>Info.plist</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>8204F3E20E5CB63D00F2DAA1</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>Info.plist</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>8204F3E30E5CB63D00F2DAA1</string>
-						<key>history</key>
-						<array>
-							<string>8204F3D40E5CB4E400F2DAA1</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {867, 601}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>478 97 867 642 0 0 1440 878 </string>
 			</dict>
 		</dict>
 	</array>
@@ -525,11 +485,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8204F3BF0E5CB34600F2DAA1</string>
+				<string>8204F4040E5CB8C400F2DAA1</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>8204F3C00E5CB34600F2DAA1</string>
+				<string>8204F4050E5CB8C400F2DAA1</string>
 				<string>825DFB290E464800000D0A5D</string>
-				<string>8204F3C10E5CB34600F2DAA1</string>
+				<string>8204F4060E5CB8C400F2DAA1</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -676,14 +636,14 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8204F3B30E5CAEB700F2DAA1</string>
+				<string>8204F4070E5CB8C400F2DAA1</string>
 				<string>1CCC7628064C1048000F2A68</string>
 				<string>1CCC7629064C1048000F2A68</string>
-				<string>8204F3B40E5CAEB700F2DAA1</string>
-				<string>8204F3B50E5CAEB700F2DAA1</string>
-				<string>8204F3B60E5CAEB700F2DAA1</string>
-				<string>8204F3B70E5CAEB700F2DAA1</string>
-				<string>8204F3B80E5CAEB700F2DAA1</string>
+				<string>8204F4080E5CB8C400F2DAA1</string>
+				<string>8204F4090E5CB8C400F2DAA1</string>
+				<string>8204F40A0E5CB8C400F2DAA1</string>
+				<string>8204F40B0E5CB8C400F2DAA1</string>
+				<string>8204F3F60E5CB8B000F2DAA1</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -713,11 +673,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8204F3C30E5CB34600F2DAA1</string>
-		<string>8204F3C40E5CB34600F2DAA1</string>
-		<string>8204F3E10E5CB63D00F2DAA1</string>
 		<string>/Users/sintaxi/Documents/Dev/Gap/Glass.xcodeproj</string>
-		<string>8204F3DE0E5CB63D00F2DAA1</string>
+		<string>8204F40C0E5CB8C400F2DAA1</string>
 	</array>
 	<key>WindowString</key>
 	<string>185 117 920 716 0 0 1440 878 </string>

@@ -267,8 +267,8 @@ void alert(NSString *message) {
 	if(conn) {
 		NSLog(@"photo: connection sucess");
 		//receivedData = [[NSMutableData data] retain];
-		NSString *output = [NSString stringWithCString:[conn bytes] length:[conn length]];  
-		NSLog(@"Page = %@", output);
+		//NSString *output = [NSString stringWithCString:[conn bytes] length:[conn length]];  
+		//NSLog(@"Page = %@", output);
 	} else {
         NSLog(@"photo: upload failed!");
     }
