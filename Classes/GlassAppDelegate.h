@@ -1,6 +1,8 @@
 
 #import <UIKit/UIKit.h>
+
 #import <CoreLocation/CoreLocation.h>
+#import <UIKit/UINavigationController.h>
 
 @class GlassViewController;
 
@@ -12,11 +14,13 @@
 	BOOL passPersonalInfo;
     BOOL passGeoData;
 	
-	CLLocationManager *locationManager;  
+	CLLocationManager *locationManager;
 	CLLocation		  *lastKnownLocation;
-	
+
 	UIImage *image;
     UIImagePickerController *imagePickerController;
+	
+	NSURLConnection *callBackConnection;
 }
 
 @property (nonatomic, retain) CLLocation *lastKnownLocation;
@@ -26,5 +30,9 @@
 @property BOOL passPersonalInfo;
 @property BOOL passGeoData;
 
-@end
+-(NSURLRequest *)createCallBackRequest:(NSDictionary *)postKeys withData:(NSData *)data;
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
+- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
+- (BOOL) sendPhotoToCallback:(NSData *)imageData;
 
+@end
