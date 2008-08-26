@@ -19,6 +19,7 @@
 		28D7ACF80DDB3853001CB0EB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* GlassViewController.m */; };
 		4788BBEA0E54392200185C73 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 4788BBE90E54392200185C73 /* index.html */; };
 		8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8204F3D20E5CB4DC00F2DAA1 /* icon.png */; };
+		8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F4BC0E6397F0002FDA36 /* Vibrate.m */; };
 		825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 825DFB5D0E464E6C000D0A5D /* README.markdown */; };
 		828B59CE0E520C7F0096DE8B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,8 @@
 		32CA4F630368D1EE00C91783 /* Glass_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glass_Prefix.pch; sourceTree = "<group>"; };
 		4788BBE90E54392200185C73 /* index.html */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		8204F3D20E5CB4DC00F2DAA1 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		8254F4BB0E6397F0002FDA36 /* Vibrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vibrate.h; sourceTree = "<group>"; };
+		8254F4BC0E6397F0002FDA36 /* Vibrate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vibrate.m; sourceTree = "<group>"; };
 		825DFB5D0E464E6C000D0A5D /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -68,6 +71,8 @@
 				1D3623250D0F684500981E51 /* GlassAppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* GlassViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* GlassViewController.m */,
+				8254F4BB0E6397F0002FDA36 /* Vibrate.h */,
+				8254F4BC0E6397F0002FDA36 /* Vibrate.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -190,6 +195,7 @@
 				1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* GlassViewController.m in Sources */,
 				0714B1A50E452A2100039BAB /* GlassBgView.m in Sources */,
+				8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

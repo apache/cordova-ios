@@ -1,9 +1,10 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import <AudioToolbox/AudioServices.h>
 #import <UIKit/UINavigationController.h>
 #import <UIKit/UIDevice.h>
+
+#import "Vibrate.h"
 
 @class GlassViewController;
 
@@ -25,6 +26,7 @@
 	
 	NSURLConnection *callBackConnection;
 }
+//@property (nonatomic, retain) Vibrate *vibration;
 
 @property (nonatomic, retain) CLLocation *lastKnownLocation;
 @property (nonatomic, retain) UIWindow *window;

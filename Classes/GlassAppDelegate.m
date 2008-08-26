@@ -131,12 +131,7 @@ void alert(NSString *message) {
 				
 				[jsCallBack release];
 			}
-			else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
-				NSLog(@"Vibrate request!");
-				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-				
-				[jsCallBack release];
-			}
+
             else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
 				NSLog(@"Photo request!");
 				NSLog([parts objectAtIndex:2]);
@@ -148,8 +143,9 @@ void alert(NSString *message) {
 			
 			//VIBRATION
 			else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
-				NSLog(@"vibration request!");
-				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+				Vibrate *vibration = [[Vibrate alloc] init];
+				[vibration vibrate];
+				[vibration release];
 			}
 			
 			return NO;
