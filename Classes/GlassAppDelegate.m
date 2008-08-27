@@ -28,9 +28,13 @@ void alert(NSString *message) {
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
-	locationManager = [[CLLocationManager alloc] init];
-	locationManager.delegate = self;
-	[locationManager startUpdatingLocation];
+//	locationManager = [[CLLocationManager alloc] init];
+//	locationManager.delegate = self;
+//	[locationManager startUpdatingLocation];
+	
+	Location *location = [[Location alloc] init];
+	[location location];
+	[location release];
 	
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];

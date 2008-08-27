@@ -5,6 +5,7 @@
 #import <UIKit/UIDevice.h>
 
 #import "Vibrate.h"
+#import "Location.h"
 
 @class GlassViewController;
 
