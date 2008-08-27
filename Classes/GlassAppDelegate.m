@@ -2,7 +2,7 @@
 #import "GlassAppDelegate.h"
 #import "GlassViewController.h"
 #import <AudioToolbox/AudioServices.h>
-#import <UIKit/UIDevice.h>
+//#import <UIKit/UIDevice.h>
 #import <UIKit/UINavigationController.h>
 #import <UIKit/UIKit.h>
 
@@ -28,13 +28,13 @@ void alert(NSString *message) {
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
-//	locationManager = [[CLLocationManager alloc] init];
-//	locationManager.delegate = self;
-//	[locationManager startUpdatingLocation];
+	locationManager = [[CLLocationManager alloc] init];
+	locationManager.delegate = self;
+	[locationManager startUpdatingLocation];
 	
-	Location *location = [[Location alloc] init];
-	[location location];
-	[location release];
+//	Location *location = [[Location alloc] init];
+//	[location location];
+//	[location release];
 	
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
@@ -92,22 +92,10 @@ void alert(NSString *message) {
 	[window makeKeyAndVisible];
 }
 
+//when web application loads pass it device information
 - (void)webViewDidStartLoad:(UIWebView *)webViewLocal {
-	NSLog(@"Page loaded");
-	NSString *jsCallBack = nil;
-	jsCallBack = [[NSString alloc] initWithFormat:@"\
-				  __gap = true; \
-				  __gap_version='0.1'; \
-				  __gap_device_model='%s'; \
-				  __gap_device_version='%s';",
-				  [[[UIDevice currentDevice] model] UTF8String],
-				  [[[UIDevice currentDevice] systemVersion] UTF8String]
-				  ];
-	//NSLog(jsCallBack);
-	[webViewLocal stringByEvaluatingJavaScriptFromString:jsCallBack];
-	[jsCallBack release];
-	
-} 
+	[webViewLocal stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
+}
 
 - (BOOL)webView:(UIWebView *)webView2 shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	NSString * myURL = [[request URL] absoluteString];

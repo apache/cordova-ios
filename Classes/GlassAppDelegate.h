@@ -2,10 +2,11 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <UIKit/UINavigationController.h>
-#import <UIKit/UIDevice.h>
+//#import <UIKit/UIDevice.h>
 
 #import "Vibrate.h"
 #import "Location.h"
+#import "Device.h"
 
 @class GlassViewController;
 
