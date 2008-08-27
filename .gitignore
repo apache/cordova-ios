@@ -1,4 +1,4 @@
 .DS_Store
 build/*
-*.pbxuser
-*.perspectivev3
+Glass.xcodeproj/*.pbxuser
+Glass.xcodeproj/*.perspectivev3
