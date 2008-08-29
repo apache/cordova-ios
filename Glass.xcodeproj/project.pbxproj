@@ -19,6 +19,7 @@
 		28D7ACF80DDB3853001CB0EB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* GlassViewController.m */; };
 		4788BBEA0E54392200185C73 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 4788BBE90E54392200185C73 /* index.html */; };
 		8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8204F3D20E5CB4DC00F2DAA1 /* icon.png */; };
+		8205CB7D0E68A701006CBEEF /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 8205CB7C0E68A701006CBEEF /* Device.m */; };
 		8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F4BC0E6397F0002FDA36 /* Vibrate.m */; };
 		8254F8810E650500002FDA36 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F8800E650500002FDA36 /* Location.m */; };
 		825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 825DFB5D0E464E6C000D0A5D /* README.markdown */; };
@@ -43,6 +44,8 @@
 		32CA4F630368D1EE00C91783 /* Glass_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glass_Prefix.pch; sourceTree = "<group>"; };
 		4788BBE90E54392200185C73 /* index.html */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		8204F3D20E5CB4DC00F2DAA1 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		8205CB7B0E68A701006CBEEF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		8205CB7C0E68A701006CBEEF /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
 		8254F4BB0E6397F0002FDA36 /* Vibrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vibrate.h; sourceTree = "<group>"; };
 		8254F4BC0E6397F0002FDA36 /* Vibrate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vibrate.m; sourceTree = "<group>"; };
 		8254F87F0E650500002FDA36 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
@@ -72,6 +75,8 @@
 			children = (
 				1D3623240D0F684500981E51 /* GlassAppDelegate.h */,
 				1D3623250D0F684500981E51 /* GlassAppDelegate.m */,
+				8205CB7B0E68A701006CBEEF /* Device.h */,
+				8205CB7C0E68A701006CBEEF /* Device.m */,
 				28D7ACF60DDB3853001CB0EB /* GlassViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* GlassViewController.m */,
 				8254F4BB0E6397F0002FDA36 /* Vibrate.h */,
@@ -202,6 +207,7 @@
 				0714B1A50E452A2100039BAB /* GlassBgView.m in Sources */,
 				8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */,
 				8254F8810E650500002FDA36 /* Location.m in Sources */,
+				8205CB7D0E68A701006CBEEF /* Device.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
