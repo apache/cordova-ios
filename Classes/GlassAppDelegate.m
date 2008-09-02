@@ -39,13 +39,11 @@ void alert(NSString *message) {
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
 	
-	
 	// Im not sure why the next line was giving me a warning... any ideas?
 	// when this is commented out, the cancel button no longer works.
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	[window addSubview:imagePickerController.view];
-
 	
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];

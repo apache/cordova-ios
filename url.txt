@@ -1,1 +1,1 @@
-http://phonegap.com/demo/index.html
+http://phonegap.com/demo2/index.html

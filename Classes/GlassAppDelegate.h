@@ -16,9 +16,6 @@
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
 	
-	BOOL passPersonalInfo;
-    BOOL passGeoData;
-	
 	CLLocationManager *locationManager;
 	CLLocation		  *lastKnownLocation;
 
@@ -36,8 +33,6 @@
 @property (nonatomic, retain) UIImage *image;
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;
 @property (nonatomic, retain) UIImagePickerController *cameraPickerController;
-@property BOOL passPersonalInfo;
-@property BOOL passGeoData;
 
 -(NSURLRequest *)createCallBackRequest:(NSDictionary *)postKeys withData:(NSData *)data;
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
