@@ -13,8 +13,6 @@
 
 @synthesize window;
 @synthesize viewController;
-@synthesize	passPersonalInfo;
-@synthesize passGeoData;
 
 @synthesize lastKnownLocation;
 @synthesize image;
