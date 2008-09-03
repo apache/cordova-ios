@@ -5,8 +5,8 @@
 
 - (NSString *)init{
 	
-	NSString *jsCallBack = nil;
-	UIDevice *myCurrentDevice = [UIDevice currentDevice];
+	jsCallBack = nil;
+	myCurrentDevice = [UIDevice currentDevice];
 	
 	return jsCallBack = [[NSString alloc] initWithFormat:@"\
 				  __gap = true; \
@@ -19,6 +19,12 @@
 				  [[myCurrentDevice uniqueIdentifier] UTF8String]
 				  ];
 	//NSLog(jsCallBack);
+}
+
+- (void)dealloc {
+    [jsCallBack release];
+	[myCurrentDevice release];
+	[super dealloc];
 }
 
 @end

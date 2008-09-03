@@ -25,7 +25,7 @@ void alert(NSString *message) {
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
-	
+
 	locationManager = [[CLLocationManager alloc] init];
 	locationManager.delegate = self;
 	[locationManager startUpdatingLocation];
@@ -151,9 +151,6 @@ void alert(NSString *message) {
 	lastKnownLocation = newLocation;
 	[lastKnownLocation retain];
 	printf("\nUpdating Location to : %s",[[lastKnownLocation description] UTF8String]);  
-	
-	passPersonalInfo = YES;
-	passGeoData = YES;
 	
 	double lat = lastKnownLocation.coordinate.latitude;
 	double lng = lastKnownLocation.coordinate.longitude;

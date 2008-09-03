@@ -12,4 +12,8 @@
 	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 }
 
+- (void)dealloc {
+	[super dealloc];
+}
+
 @end
