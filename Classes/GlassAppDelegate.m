@@ -99,11 +99,11 @@ void alert(NSString *message) {
 	NSString * jsCallBack = nil;
 	NSArray * parts = [myURL componentsSeparatedByString:@":"];
 
-	NSLog([self.lastKnownLocation description]);
 	double lat = lastKnownLocation.coordinate.latitude;
 	double lon = lastKnownLocation.coordinate.longitude;
 	
-	if (2 == [parts count] || 3 == [parts count]){
+	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
+		
 		NSLog([parts objectAtIndex:0]);
 		NSLog([parts objectAtIndex:1]);
 		
@@ -138,6 +138,7 @@ void alert(NSString *message) {
 			
 			return NO;
 		}
+	
 			
 	}
 
@@ -149,8 +150,7 @@ void alert(NSString *message) {
 	 
 	[lastKnownLocation release];
 	lastKnownLocation = newLocation;
-	[lastKnownLocation retain];
-	printf("\nUpdating Location to : %s",[[lastKnownLocation description] UTF8String]);  
+	[lastKnownLocation retain];	
 	
 	double lat = lastKnownLocation.coordinate.latitude;
 	double lng = lastKnownLocation.coordinate.longitude;
@@ -162,29 +162,8 @@ void alert(NSString *message) {
 	NSString * jsCallBack = nil;
 	
 	jsCallBack = [[NSString alloc] initWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
-	//NSLog(jsCallBack);
-	
 	NSString * ret = [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	//NSLog(ret);
 }
-
-//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo
-//{
-//	
-//	[picker dismissModalViewControllerAnimated:YES];
-//    imagePickerController.view.hidden = YES;
-//	NSLog(@"Photo Picked");
-//	NSData * imageData = UIImageJPEGRepresentation(image2, 75);
-//	
-////	NSURLRequest * systemPost = [self sendPhotoToCallback:imageData];
-//    
-//	// Dismiss the image selection, hide the picker and show the image view with the picked image
-//	//[picker dismissModalViewControllerAnimated:YES];
-//	//imagePickerController.view.hidden = YES;
-//
-//	webView.hidden = NO;
-//	[window bringSubviewToFront:webView];
-//}
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
@@ -200,7 +179,7 @@ void alert(NSString *message) {
     NSData * imageData = UIImageJPEGRepresentation(image, 0.75);	
 	//NSData * imageData = UIImagePNGRepresentation(image);	
 	// NSString *postLength = [NSString stringWithFormat:@"%d", [imageData length]];	
-	NSString *urlString = [@"http://http://phonegap.com/demo/upload.php?" stringByAppendingString:@"uid="];
+	NSString *urlString = [@"http://phonegap.com/demo/upload.php?" stringByAppendingString:@"uid="];
 	urlString = [urlString stringByAppendingString:uniqueId];
 	// urlString = [urlString stringByAppendingString:@"&lang=en_US.UTF-8"];
 	
@@ -222,17 +201,6 @@ void alert(NSString *message) {
 	NSMutableData *postBody = [NSMutableData data];
 	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	
-    /*
-	 //add key values from the NSDictionary object
-	 NSEnumerator *keys = [postKeys keyEnumerator];
-	 int i;
-	 for (i = 0; i < [postKeys count]; i++) {
-	 NSString *tempKey = [keys nextObject];
-	 [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n",tempKey] dataUsingEncoding:NSUTF8StringEncoding]];
-	 [postBody appendData:[[NSString stringWithFormat:@"%@",[postKeys objectForKey:tempKey]] dataUsingEncoding:NSUTF8StringEncoding]];
-	 [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	 }
-	 */
 	
 	//add data field and file data
 	[postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"data\"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -247,92 +215,16 @@ void alert(NSString *message) {
 	NSURLConnection *conn=[[NSURLConnection alloc] initWithRequest:request delegate:self];
 	if(conn) {
 		NSLog(@"photo: connection sucess");
-		//receivedData = [[NSMutableData data] retain];
-		//NSString *output = [NSString stringWithCString:[conn bytes] length:[conn length]];  
-		//NSLog(@"Page = %@", output);
-	} else {
+		} else {
         NSLog(@"photo: upload failed!");
     }
 	
-    // Remove the picker interface and release the picker object.
-    /*
-	 [[picker parentViewController] dismissModalViewControllerAnimated:YES];
-	 [picker release];
-	 */
 	
 	webView.hidden = NO;
 	[window bringSubviewToFront:webView];
 }
 
-/*
-- (BOOL)sendPhotoToCallback:(NSData *)imageData {
-	NSLog(@"IN SEND");
-	
-	if (!imageData) return NO;
-	
-	
-	//Create dictionary of post arguments
-	NSArray *keys = [[NSArray alloc] initWithObjects:@"email"];
-	NSArray *objects = [[NSArray alloc] initWithObjects:
-						[NSString stringWithFormat:@"%@",CFPreferencesCopyAppValue(CFSTR("TumblrEmail"), kCFPreferencesCurrentApplication)]];
-	NSDictionary *keysDict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
-	
-	NSURLRequest *callBackPost = [self createCallBackRequest:keysDict withData:imageData];
-	
-	//send request, return YES if successful
-	callBackConnection = [[NSURLConnection alloc] initWithRequest:callBackPost delegate:self];
-	if (!callBackConnection) {
-		NSLog(@"Failed to submit request");
-		return NO;
-	} else {
-		NSLog(@"Request submitted");
-		NSMutableData *receivedData = [[NSMutableData data] retain];
-		return YES;
-	}
-}
 
-
--(NSURLRequest *)createCallBackRequest:(NSDictionary *)postKeys withData:(NSData *)data {
-	NSLog(@"IN Create Request");
-	
-	//create the URL POST Request to tumblr
-	NSURL *callbackURL = [NSURL URLWithString:@"http://phonegap.com/demo/upload.php"];
-	NSMutableURLRequest *callbackPost = [NSMutableURLRequest requestWithURL:callbackURL];
-	[callbackPost setHTTPMethod:@"POST"];
-	
-	//Add the header info
-	NSString *stringBoundary = [NSString stringWithString:@"0xKhTmLbOuNdArY"];
-	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",stringBoundary];
-	[callbackPost addValue:contentType forHTTPHeaderField: @"Content-Type"];
-	
-	//create the body
-	NSMutableData *postBody = [NSMutableData data];
-	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	
-	//add key values from the NSDictionary object
-	NSEnumerator *keys = [postKeys keyEnumerator];
-	int i;
-	for (i = 0; i < [postKeys count]; i++) {
-		NSString *tempKey = [keys nextObject];
-		[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n",tempKey] dataUsingEncoding:NSUTF8StringEncoding]];
-		[postBody appendData:[[NSString stringWithFormat:@"%@",[postKeys objectForKey:tempKey]] dataUsingEncoding:NSUTF8StringEncoding]];
-		[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	}
-	
-	//add data field and file data
-	[postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"data\"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[NSData dataWithData:data]];
-	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	
-	//add the body to the post
-	[callbackPost setHTTPBody:postBody];
-	
-	return callbackPost;
-		
-}
-*/
- 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
 	// Dismiss the image selection and close the program
@@ -344,6 +236,37 @@ void alert(NSString *message) {
 	[window bringSubviewToFront:webView];
 	
 	}
+
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    NSLog(@"photo: upload finished!");
+	
+	#if TARGET_IPHONE_SIMULATOR
+		alert(@"Did finish loading image!");
+	#endif
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *) response {
+	NSLog(@"HERE RESPONSE");
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    // append the new data to the receivedData
+    // receivedData is declared as a method instance elsewhere
+    // [receivedData appendData:data];
+    NSLog(@"photo: progress");
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    NSLog([@"photo: upload failed! " stringByAppendingString:[error description]]);
+    
+#if TARGET_IPHONE_SIMULATOR
+    alert(@"Error while uploading image!");
+#endif    
+}
+
+
 
 - (void)dealloc {
     [viewController release];
