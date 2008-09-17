@@ -1,1 +1,1 @@
-http://phonegap.com/demo2/index.html
+http://clayburn.org/turfwars/index.html

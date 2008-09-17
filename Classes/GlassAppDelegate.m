@@ -30,9 +30,7 @@ void alert(NSString *message) {
 	locationManager.delegate = self;
 	[locationManager startUpdatingLocation];
 	
-//	Location *location = [[Location alloc] init];
-//	[location location];
-//	[location release];
+	webView.delegate = self;	
 	
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
@@ -41,14 +39,16 @@ void alert(NSString *message) {
 	// when this is commented out, the cancel button no longer works.
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-	[window addSubview:imagePickerController.view];
+	imagePickerController.view.hidden = YES;
+	//[window addSubview:imagePickerController.view];
 	
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
 	
 	// Override point for customization after app launch	
     [window addSubview:viewController.view];
-	webView.delegate = self;	
+	
+	
 	
 	NSString * htmlFileName;
 	NSString * urlFileName;
@@ -123,9 +123,10 @@ void alert(NSString *message) {
             else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
 				NSLog(@"Photo request!");
 				NSLog([parts objectAtIndex:2]);
-                
+			
+				imagePickerController.view.hidden = NO;
 				webView.hidden = YES;
-                [window bringSubviewToFront:imagePickerController.view];
+				[window bringSubviewToFront:imagePickerController.view];
 				NSLog(@"photo dialog open now!");
             }
 			
@@ -134,6 +135,9 @@ void alert(NSString *message) {
 				Vibrate *vibration = [[Vibrate alloc] init];
 				[vibration vibrate];
 				[vibration release];
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
+				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
+				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
 			}
 			
 			return NO;
