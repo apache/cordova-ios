@@ -1,32 +1,6 @@
 # GAP
 
-### bridging the gap between the web and the iphone SDK
-
-PhoneGap is a free open source development tool and framework that
-allows web developers to take advantage of the powerful features in
-the iPhone SDK from HTML and JavaScript.  We're trying to make iPhone
-app development easy and open.  For many applications a web
-application is the way to but in Safari you don't get access to the
-native iPhone APIs, and the that's the problem we're trying to solve.
-
-It is written in Objective-C and allows developers to embed their web
-app (HTML, JavaScript, CSS) in Webkit within a native iPhone app.
-We're big advocates of the Open Web and want JavaScript developers to
-be able to get access iPhone features such as a spring board icon,
-background processing, push, geo location, camera, local sqlLite and
-accelerometers without the burden of learning Objective-C and Cocoa.
-
-PhoneGap also has a web app that allows web developers to quickly
-package their web app into a native iPhone app by providing a URL, a
-name and icon graphic the web service with automagically create a
-native iPhone application.  We haven't open sourced that code but
-we're going to soon.
-
-PhoneGap was conceived at iPhoneDevCamp II by Nitobi developer Brock
-Whitten, Rob Ellis, freelance designer Colin Toomey and Eric
-Oesterle.
-
-[get the GAP source](http://github.com/sintaxi/gap "source code via github") or [generate your GAP app](http://phonegap.com/ "generates iphone app")
+### open souce platform for iphone, blackberry
 
 ## Javascript API
   
