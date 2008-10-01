@@ -44,7 +44,7 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Glass_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glass_Prefix.pch; sourceTree = "<group>"; };
 		4788BBE90E54392200185C73 /* index.html */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		8204F3D20E5CB4DC00F2DAA1 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		8204F3D20E5CB4DC00F2DAA1 /* icon.png */ = {isa = PBXFileReference; explicitFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8205CB7B0E68A701006CBEEF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		8205CB7C0E68A701006CBEEF /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
 		824041C00E942F0E002F3376 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
