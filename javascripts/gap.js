@@ -68,7 +68,7 @@ var Device = {
             alert("GAP is not supported!")
         } 
     },
-    
+   
     exec: function(command) {
         if (Device.available) {
             try {
