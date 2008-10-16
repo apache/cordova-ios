@@ -43,18 +43,28 @@ var Device = {
     available: false,
     model: "",
     version: "",
-	uuid: "",
+	  uuid: "",
     isIPhone: null,
     isIPod: null,
-    
+    isAndroid: document.DroidGap.isDroid,    
+
     init: function(model, version) {
         try {
-            Device.available = __gap;
-            Device.model = __gap_device_model;
-            Device.version = __gap_device_version;
-            Device.gapVersion = __gap_version;
-			Device.uuid = __gap_device_uniqueid;
-        } catch(e) {
+            if (isAndroid)
+            {
+                Device.available = true;
+                Device.uuid = document.DroidGap.uuid;
+                Device.gapVersion = document.DroidGap.version;
+            }
+            else
+            {          
+                Device.available = __gap;
+                Device.model = __gap_device_model;
+                Device.version = __gap_device_version;
+                Device.gapVersion = __gap_version;
+			          Device.uuid = __gap_device_uniqueid;
+            }
+        } catch(e) {            
             alert("GAP is not supported!")
         } 
     },
@@ -126,4 +136,3 @@ var Device = {
 function gotLocation(lat, lon) {
     return Device.Location.set(lat, lon)
 }
-
