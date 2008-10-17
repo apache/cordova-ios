@@ -38,23 +38,23 @@ if (!window.console || !DEBUG) {
     }
 }
 
-var Device = {
-
+var Device = {  
     available: false,
     model: "",
     version: "",
 	  uuid: "",
     isIPhone: null,
     isIPod: null,
-    isAndroid: document.DroidGap.isDroid,    
+    isAndroid: null, 
 
     init: function(model, version) {
         try {
-            if (isAndroid)
-            {
+            if (window.DroidGap.exists() )
+            {                
                 Device.available = true;
-                Device.uuid = document.DroidGap.uuid;
-                Device.gapVersion = document.DroidGap.version;
+                Device.isAndroid = true;
+                Device.uuid = window.DroidGap.getUuid();
+                Device.gapVersion = window.DroidGap.getVersion();
             }
             else
             {          
@@ -88,7 +88,18 @@ var Device = {
         callback: null,
         
         init: function() {
-            Device.exec("getloc");
+            if (Device.isAndroid)
+            {
+               /*
+                * TO-DO: Add support for multiple location providers
+                * GPS is only one of many ways to do this
+                */
+               window.DroidGap.getLocation("gps"); 
+            }
+            else
+            {
+                Device.exec("getloc");
+            }
         },
         
         set: function(lat, lon) {
