@@ -139,7 +139,14 @@ var Device = {
     },
 
     vibrate: function() {
-        return Device.exec("vibrate")
+        if (Device.isAndroid)
+        {
+          window.DroidGap.vibrate(10);
+        }
+        else
+        {
+          return Device.exec("vibrate");
+        }
     }
 
 }
