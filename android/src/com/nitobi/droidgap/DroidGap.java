@@ -1,4 +1,4 @@
-package com.android.droidgap;
+package com.nitobi.droidgap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ public class DroidGap extends Activity {
 	private Handler mHandler = new Handler();
 	
     /** Called when the activity is first created. */
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);        
@@ -40,7 +40,7 @@ public class DroidGap extends Activity {
          * we can use HTML with both local and remote applications, but it means that we have to open the local file         
          */
                 
-        appView.loadUrl("http://m.translink.ca/app/");
+        appView.loadUrl("http://www.infil00p.org/gap/demo/");
         
     }
     
@@ -78,7 +78,7 @@ public class DroidGap extends Activity {
      * debugging your javascript.
      */
     final class MyWebChromeClient extends WebChromeClient {
-        @Override
+    	@Override
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             Log.d(LOG_TAG, message);
             result.confirm();

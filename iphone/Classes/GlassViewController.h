@@ -2,6 +2,7 @@
 #import <Foundation/Foundation.h>
 
 @interface GlassViewController : UIViewController {
+
 }
 - (IBAction)loadView;
 - (IBAction)pushBack;
