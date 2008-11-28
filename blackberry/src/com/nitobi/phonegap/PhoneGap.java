@@ -23,25 +23,30 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
     
     //constants ----------------------------------------------------------------
     private static final int GRADE_INTERVAL=5; //seconds - represents the number of updates over which alt is calculated
-    private static final long ID = 0x5d459971bb15ae7aL;//com.rim.samples.device.gpsdemo.GPSDemo.ID
+    private static final long ID = 0x5d459971bb15ae7aL;
     private static final int CAPTURE_INTERVAL=5;  //we record a location every 5 seconds
     private static final int SENDING_INTERVAL=30; // the interval in seconds after which the information is sent to the server
-    private static final String REFERER = "referer";   
-    
+    private static final String REFERER = "referer";
+
     private BrowserContentManager _browserContentManager;
 
     private MainScreen _mainScreen;
-    private LabelField _lf;
+
+    // The URL of the PhoneGap application
+    private String _url = "http://10.0.1.3/phonegap/test.html";
     
+    // All the lat / lng stuff
     private LocationProvider _locationProvider;
     private int _interval = 10;
     private double _lat = 0;
     private double _lng = 0;
+    // This flag gets set once a good location has been found and the lat and lng 
+    // values have been set
     private boolean _locationReady = false;
-    
-    private Hashtable cookies = new Hashtable();
-    
-    private Vector _commands = new Vector();
+    // This flag gets set when a setCookie event is fired and the cookie value 
+    // specifies a lat / lng request. If true during a getHTTPCookie call the 
+    // last valid lat / lng is returned
+    private boolean _getLocation = false;
     
     private HttpConnection  _currentConnection;       
     
@@ -58,9 +63,6 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
      */
      private PhoneGap() {
 
-        // Setup the hashtable of accepted commands from JavaScript cookies
-        _commands.addElement("lat_lng");
-
         _browserContentManager = new BrowserContentManager( 0 );
         RenderingOptions renderingOptions = _browserContentManager.getRenderingSession().getRenderingOptions();
 
@@ -69,15 +71,12 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
         
         _mainScreen = new MainScreen();
-        _lf = new LabelField("Label before the content", Field.FOCUSABLE);
-        _mainScreen.add(_lf);
 
         _mainScreen.add(_browserContentManager);
         
-        _mainScreen.add(new LabelField("Label after the content", Field.FOCUSABLE));                
         pushScreen(_mainScreen);
                 
-        PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread("http://nitobi.com/temp/phone_gap.html", null, null, null, this);
+        PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(_url, null, null, null, this);
         thread.start();  
                 
     }
@@ -198,13 +197,15 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
                  SetHttpCookieEvent cookieEvent = ((SetHttpCookieEvent)event);
                  System.out.println(cookieEvent.getCookie());
                  int command = Integer.parseInt(cookieEvent.getCookie());
-                 cookies.put(cookieEvent.getURL(), cookieEvent.getCookie());
 
                  switch (command)
                  {
                      case 0:
                         // Do location provider stuff here...
                         System.out.println("**** before start location update");
+                        // Set flag so we know to return lat / lng in the next getHTTPCookie call
+                        this._getLocation = true;
+                        // Start the location updater to get a lat / lng
                         this.startLocationUpdate();
                         break;
                      default:
@@ -252,14 +253,22 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
      public String getHTTPCookie(String url) {
          // no cookie support
          // parse out the URL for special strings that are for Blackberry API things
-    	 String cookie = "";
+    	 String cookie = "{";
     	 System.out.println("*** GetHTTPCookie - " + String.valueOf(this._locationReady));
-    	 if (_locationReady) {
-    		 cookie = "geo_" + String.valueOf(this._lat) + "_" + String.valueOf(this._lng);
+    	 // If we have requested a location (getLocation==true) and the location is ready then return it
+    	 if (_getLocation && _locationReady) {
+    		 cookie = "lat:" + String.valueOf(this._lat) + ",lng:" + String.valueOf(this._lng)+",";
     		 _locationReady = false;
              _locationProvider.reset();
              _locationProvider.setLocationListener(null, -1, -1, -1);
     	 }
+    	 // Add new if statements to append any other data to the returned JSON object
+    	 
+    	 if (cookie.endsWith(",")) {
+    		 // Strip off the 
+    		 cookie = cookie.substring(0, cookie.length()-1);
+    	 }
+    	 cookie += "}";
     	 System.out.println("*** GetHTTPCookie - " + cookie);
          return cookie;
      }
