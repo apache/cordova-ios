@@ -125,15 +125,23 @@ var Device = {
 		callback: null,
 		
         getFromPhotoLibrary: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback)
+            return Device.exec("getphoto" + ":" + Device.Image.callback);
         },
         
         getFromCamera: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback)
+            if (Device.isAndroid)
+            {
+              window.DroidGap.takePhoto();
+              return;
+            }
+            else
+            {
+              return Device.exec("getphoto" + ":" + Device.Image.callback);
+            }
         },
         
         getFromSavedPhotosAlbum: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback)
+            return Device.exec("getphoto" + ":" + Device.Image.callback);
         }
 
     },
@@ -141,7 +149,7 @@ var Device = {
     vibrate: function() {
         if (Device.isAndroid)
         {
-          window.DroidGap.vibrate(10);
+          window.DroidGap.vibrate(100);
         }
         else
         {
