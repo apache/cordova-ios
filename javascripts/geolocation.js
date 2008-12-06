@@ -4,14 +4,14 @@
  * in a platform specific manner.
  */
 
-function Position() {
-	this.latitude = 0;
-	this.longitude = 0;
-	this.accuracy = 0;
-	this.altitude = 0;
-	this.altitudeAccuracy = 0;
-	this.heading = 0;
-	this.velocity = 0;
+function Position(lat, lng, acc, alt, altacc, head, vel) {
+	this.latitude = lat;
+	this.longitude = lng;
+	this.accuracy = acc;
+	this.altitude = alt;
+	this.altitudeAccuracy = altacc;
+	this.heading = head;
+	this.velocity = vel;
 	this.timestamp = new Date().getTime();
 }
 
