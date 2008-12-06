@@ -1,7 +1,8 @@
 package com.nitobi.phonegap;
 
 
-import java.util.*;
+import java.util.Vector;
+import java.util.Hashtable;
 import java.io.IOException;
 
 import javax.microedition.location.*;
@@ -16,6 +17,11 @@ import net.rim.device.api.ui.component.*;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.system.*;
 
+import net.rim.device.api.system.Alert;
+import net.rim.blackberry.api.invoke.*;
+
+import org.json.me.*;
+
 /**
  */
 
@@ -23,25 +29,32 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
     
     //constants ----------------------------------------------------------------
     private static final int GRADE_INTERVAL=5; //seconds - represents the number of updates over which alt is calculated
-    private static final long ID = 0x5d459971bb15ae7aL;//com.rim.samples.device.gpsdemo.GPSDemo.ID
+    private static final long ID = 0x5d459971bb15ae7aL;
     private static final int CAPTURE_INTERVAL=5;  //we record a location every 5 seconds
     private static final int SENDING_INTERVAL=30; // the interval in seconds after which the information is sent to the server
-    private static final String REFERER = "referer";   
-    
+    private static final String REFERER = "referer";
+
     private BrowserContentManager _browserContentManager;
 
     private MainScreen _mainScreen;
-    private LabelField _lf;
+
+    // The URL of the PhoneGap application
+    private String _url = "http://10.0.1.3/phonegap/test.html";
     
+    // All the lat / lng stuff
     private LocationProvider _locationProvider;
     private int _interval = 10;
     private double _lat = 0;
     private double _lng = 0;
+    // This flag gets set once a good location has been found and the lat and lng 
+    // values have been set
     private boolean _locationReady = false;
+    // This flag gets set when a setCookie event is fired and the cookie value 
+    // specifies a lat / lng request. If true during a getHTTPCookie call the 
+    // last valid lat / lng is returned
+    private boolean _getLocation = false;
     
     private Hashtable cookies = new Hashtable();
-    
-    private Vector _commands = new Vector();
     
     private HttpConnection  _currentConnection;       
     
@@ -58,26 +71,19 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
      */
      private PhoneGap() {
 
-        // Setup the hashtable of accepted commands from JavaScript cookies
-        _commands.addElement("lat_lng");
-
         _browserContentManager = new BrowserContentManager( 0 );
         RenderingOptions renderingOptions = _browserContentManager.getRenderingSession().getRenderingOptions();
 
-        // turn off images in html
         renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_ENABLED, true);
         renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
         
         _mainScreen = new MainScreen();
-        _lf = new LabelField("Label before the content", Field.FOCUSABLE);
-        _mainScreen.add(_lf);
 
         _mainScreen.add(_browserContentManager);
         
-        _mainScreen.add(new LabelField("Label after the content", Field.FOCUSABLE));                
         pushScreen(_mainScreen);
                 
-        PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread("http://nitobi.com/temp/phone_gap.html", null, null, null, this);
+        PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(_url, null, null, null, this);
         thread.start();  
                 
     }
@@ -196,20 +202,170 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
                  // If the cookie value is one of our special values then we expect 
                  // to receive a call to getHTTPCookie immediate afterwards
                  SetHttpCookieEvent cookieEvent = ((SetHttpCookieEvent)event);
-                 System.out.println(cookieEvent.getCookie());
-                 int command = Integer.parseInt(cookieEvent.getCookie());
-                 cookies.put(cookieEvent.getURL(), cookieEvent.getCookie());
+  
+                 System.out.println("**** got a cookie set "+cookieEvent.getCookie());
 
-                 switch (command)
+                 int index = cookieEvent.getCookie().indexOf("=");
+
+                 if (index <= 0)
+                	 break;
+
+                 String cookieName = cookieEvent.getCookie().substring(0,index);
+                 String cookieValue = cookieEvent.getCookie().substring(index+1, cookieEvent.getCookie().length());
+
+                 if (cookieName.compareTo("bb_command") != 0)
                  {
-                     case 0:
-                        // Do location provider stuff here...
-                        System.out.println("**** before start location update");
-                        this.startLocationUpdate();
-                        break;
-                     default:
+                	 // regular cookie set ... 
+                	 System.out.println("**** cookie was not a phonegap cookie. '" + cookieName + "' : " + cookieValue);
                  }
+                 else 
+                 {
+                	 System.out.println("**** cookie was a phonegap cookie. '" + cookieName + "' : " + cookieValue);
+                	 
+                	 // cookieValue should be a JSON object
+                	 
+                	 int command = -1;
 
+                	 JSONObject args = null;
+                	 
+                	 try {
+	                     JSONObject outer = new JSONObject(cookieValue); // the outer object
+	                     if (outer != null) {
+	                    	 // Get the command string
+	                    	 command = outer.getInt("command");
+	                         // Get the inner object and parse out the data
+	                         args = outer.getJSONObject("args");
+	/*
+	                         if (inner != null) {
+	                             // Parse the name/value pairs
+	                             aString = inner.getString("aString");
+	                             JSONArray ja = inner.getJSONArray("anArray");
+	                             if (ja != null) {
+	                                 anArray = new String[ja.length()];
+	                                 for (int i=0; i<ja.length(); i++) {
+	                                     anArray[i] = (String) ja.get(i);
+	                                 }
+	                             }
+	                             anInteger = inner.getInt("anInteger");
+	                           //aDouble   = inner.getDouble("aDouble");
+	                             aLong     = inner.getLong("aLong");
+	                             aBoolean  = inner.getBoolean("aBoolean");
+	                         }
+	*/
+	                     }
+                	 } catch (Exception ex) {
+                		 // catch any JSON exceptions here
+                	 }
+
+                	 // Call a phone number
+                	 // Send SMS
+                	 // Get contact list
+                	 //  * call contact
+                	 //  * sms contact
+                	 /*
+      try {
+        ContactList addressbook = (ContactList)(PIM.getInstance().openPIMList( PIM.CONTACT_LIST, PIM.READ_WRITE));
+        Contact contact = null;
+
+        // Each PIMItem — new or found — is associated with a particular PIMList.
+        contact = addressbook.createContact();
+        if(addressbook.isSupportedField(Contact.FORMATTED_NAME)) {
+          contact.addString(Contact.FORMATTED_NAME, Contact.ATTR_NONE, “Lynn Hanson”);
+        }
+        if(addressbook.isSupportedField(Contact.TEL)) {
+          contact.addString(Contact.TEL, Contact.ATTR_HOME, “555-HOME-NUMBER”);
+          contact.addString(Contact.TEL, Contact.ATTR_MOBILE, ”555-MOBILE-NUMBER”);
+        }
+        // Here’s a quick search to see if this contact is already present in the addressbook:
+        Enumeration matching = addressbook.items(contact);
+        if(matching.hasMoreElements()) {
+          System.out.println(”found the first contact”);
+        } else {
+          System.out.println(”adding the first contact”);
+          contact.commit();
+        }
+            
+        // Now print the contents of the addressbook:
+        Enumeration items = addressbook.items();
+        while(items.hasMoreElements()) {
+          System.out.println(”\n *** new item ***”);
+          contact = (Contact)(items.nextElement());
+          int[] fields = contact.getFields();
+          for(int i = 0; i < fields.length; i++) {
+            int fieldIndex = fields[i];
+            System.out.println(” field ” + fieldIndex + “: “
+                + addressbook.getFieldLabel(fieldIndex));
+            int dataType = addressbook.getFieldDataType(fieldIndex);
+            System.out.println(” * data type: ” + dataType);
+            if(dataType == PIMItem.STRING) {
+              for(int j = 0; j < contact.countValues(fieldIndex); j++) {
+                int attr = contact.getAttributes(fieldIndex, j);
+                System.out.print(” ” + j + “. (”);
+                System.out.print(addressbook.getAttributeLabel(attr) + “): “);
+                System.out.println(contact.getString(fieldIndex, j));
+              }
+            }
+          }
+        }
+      } catch(Exception e) {
+        e.printStackTrace();
+      }
+                	  */
+                	 // Add contact
+                	 // Notification (vibration / beep)
+                	 // Offline storage
+                	 
+                	 /*
+AddressBookArguments 	Encapsulates arguments to pass to the Address Book application.
+ApplicationArguments 	Base class for application arguments to be used for application invocation.
+CalendarArguments 	Encapsulates arguments to pass to the Calendar application.
+MemoArguments 	Encapsulates arguments to pass to the Memo Pad application.
+Invoke.invokeApplication(Invoke.APP_TYPE_MEMOPAD, new MemoArguments(MemoArguments.ARG_NEW, <instance of net.rim.blackberry.api.pdap.BlackBerryMemo>));
+MessageArguments 	Encapsulates arguments to pass to the Message application.
+SearchArguments 	Encapsulates arguments to pass to the Search application.
+TaskArguments 	Encapsulates arguments to pass to the Task application.
+                	  */
+                	 
+	                 switch (command)
+	                 {
+	                     case 0:
+	                        // Do location provider stuff here...
+	                        System.out.println("**** before start location update");
+	                        // Set flag so we know to return lat / lng in the next getHTTPCookie call
+	                        this._getLocation = true;
+	                        // Start the location updater to get a lat / lng
+	                        this.startLocationUpdate();
+	                        break;
+	                     case 1:
+	                    	 // Show a map
+	                    	 Invoke.invokeApplication(
+	                    			 Invoke.APP_TYPE_MAPS, 
+	                    			 new MapsArguments(MapsArguments.ARG_LOCATION_DOCUMENT, 
+	                    					 getLocationDocument(args))); 
+	                    	 break;
+	                     case 2:
+	                    	 Invoke.invokeApplication(Invoke.APP_TYPE_CAMERA, new CameraArguments());
+	                    	 break;
+	                     case 3:
+	                    	 if (Alert.isVibrateSupported())
+	                    		 Alert.startVibrate(getVibrateDuration(args));
+	                    	 break;
+	                     case 4:
+/*
+, : A comma directs the phone application to pause for 2 seconds before proceeding to process the rest of the contents of the dialing string.
+! : An exclamation mark directs the phone application to wait for user input; the system presents a dialog with three choices:
+- Proceed to dial the rest of the dialing string up to the next comma or exclamation mark
+- Skip directly to the next comma or exlamation mark in the dialing string
+- Cancel the call altogether
+# and * : Generate "pound" and "star" DTMF tones.
+0 - 9 : Generate numeric DTMF tones. 
+ */
+	                    	 Invoke.invokeApplication(Invoke.APP_TYPE_PHONE, new PhoneArguments(PhoneArguments.ARG_CALL, ""));
+	                    	 break;
+	                     default:
+	                 }
+                 }
+                 
                  break;
              }
              case Event.EVENT_HISTORY :           // no history support             
@@ -252,16 +408,25 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
      public String getHTTPCookie(String url) {
          // no cookie support
          // parse out the URL for special strings that are for Blackberry API things
-    	 String cookie = "";
+    	 String cookie = "{";
     	 System.out.println("*** GetHTTPCookie - " + String.valueOf(this._locationReady));
-    	 if (_locationReady) {
-    		 cookie = "geo_" + String.valueOf(this._lat) + "_" + String.valueOf(this._lng);
+    	 // If we have requested a location (getLocation==true) and the location is ready then return it
+    	 if (_getLocation && _locationReady) {
+    		 cookie += "geolocation: {lat:" + String.valueOf(this._lat) + ",lng:" + String.valueOf(this._lng)+"},";
     		 _locationReady = false;
              _locationProvider.reset();
              _locationProvider.setLocationListener(null, -1, -1, -1);
     	 }
+    	 // Add new if statements to append any other data to the returned JSON object
+    	 
+    	 if (cookie.endsWith(",")) {
+    		 // Strip off the 
+    		 cookie = cookie.substring(0, cookie.length()-1);
+    	 }
+    	 cookie += "}";
     	 System.out.println("*** GetHTTPCookie - " + cookie);
-         return cookie;
+    	 // TODO: support all the other cookies here as well
+         return "bb_response=" + cookie;
      }
 
      /**
@@ -384,6 +549,33 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         this._lat = lat;
         this._lng = lng;
         this._locationReady = true;
+    }
+    
+    private String getLocationDocument(JSONObject args)
+    {
+    	String locationDoc = "<location-document>";
+    	try {
+            JSONArray ja = args.getJSONArray("points");
+            if (ja != null) {
+                for (int i=0; i<ja.length(); i++) {
+                    JSONObject o = (JSONObject)ja.get(i);
+            		locationDoc += "<location x=\""+o.getString("lat")+"\" y=\""+o.getString("lng")+"\" label=\""+o.getString("label")+"\" description=\""+o.getString("description")+"\" />";
+                }
+            }
+    	}
+    	catch (Exception e) {}
+    	locationDoc += "</location-document>";
+    	return locationDoc;
+    }
+    
+    private int getVibrateDuration(JSONObject args)
+    {
+    	int duration = 1;
+    	try {
+    		duration = args.getInt("duration");
+    	} catch (Exception e) {
+    	}
+    	return duration;
     }
     
     /**

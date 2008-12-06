@@ -1,9 +1,3 @@
-/*
- * SecondaryResourceFetchThread.java
- *
- * Copyright © 1998-2007 Research In Motion Ltd.
- */
-
 package com.nitobi.phonegap;
 
 import java.util.Vector;
