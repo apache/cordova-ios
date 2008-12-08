@@ -1,12 +1,22 @@
+//#preprocess
+
 package com.nitobi.phonegap;
 
-
+import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.io.IOException;
 
+import javax.microedition.pim.ContactList;
+import javax.microedition.pim.PIM;
+import javax.microedition.pim.PIMItem;
+import javax.microedition.pim.Contact;
 import javax.microedition.location.*;
 import javax.microedition.io.HttpConnection;
+import javax.microedition.io.Connector;
+
+import javax.wireless.messaging.MessageConnection;
+import javax.wireless.messaging.TextMessage;
 
 import net.rim.device.api.browser.field.*;
 import net.rim.device.api.io.http.HttpHeaders;
@@ -137,7 +147,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
                  break;
 
              } case Event.EVENT_BROWSER_CONTENT_CHANGED: {                
-                     
+
                  // browser field title might have changed update title
                  BrowserContentChangedEvent browserContentChangedEvent = (BrowserContentChangedEvent) event; 
              
@@ -235,84 +245,16 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	                    	 command = outer.getInt("command");
 	                         // Get the inner object and parse out the data
 	                         args = outer.getJSONObject("args");
-	/*
-	                         if (inner != null) {
-	                             // Parse the name/value pairs
-	                             aString = inner.getString("aString");
-	                             JSONArray ja = inner.getJSONArray("anArray");
-	                             if (ja != null) {
-	                                 anArray = new String[ja.length()];
-	                                 for (int i=0; i<ja.length(); i++) {
-	                                     anArray[i] = (String) ja.get(i);
-	                                 }
-	                             }
-	                             anInteger = inner.getInt("anInteger");
-	                           //aDouble   = inner.getDouble("aDouble");
-	                             aLong     = inner.getLong("aLong");
-	                             aBoolean  = inner.getBoolean("aBoolean");
-	                         }
-	*/
 	                     }
                 	 } catch (Exception ex) {
                 		 // catch any JSON exceptions here
                 	 }
 
-                	 // Call a phone number
                 	 // Send SMS
                 	 // Get contact list
                 	 //  * call contact
                 	 //  * sms contact
-                	 /*
-      try {
-        ContactList addressbook = (ContactList)(PIM.getInstance().openPIMList( PIM.CONTACT_LIST, PIM.READ_WRITE));
-        Contact contact = null;
-
-        // Each PIMItem — new or found — is associated with a particular PIMList.
-        contact = addressbook.createContact();
-        if(addressbook.isSupportedField(Contact.FORMATTED_NAME)) {
-          contact.addString(Contact.FORMATTED_NAME, Contact.ATTR_NONE, “Lynn Hanson”);
-        }
-        if(addressbook.isSupportedField(Contact.TEL)) {
-          contact.addString(Contact.TEL, Contact.ATTR_HOME, “555-HOME-NUMBER”);
-          contact.addString(Contact.TEL, Contact.ATTR_MOBILE, ”555-MOBILE-NUMBER”);
-        }
-        // Here’s a quick search to see if this contact is already present in the addressbook:
-        Enumeration matching = addressbook.items(contact);
-        if(matching.hasMoreElements()) {
-          System.out.println(”found the first contact”);
-        } else {
-          System.out.println(”adding the first contact”);
-          contact.commit();
-        }
-            
-        // Now print the contents of the addressbook:
-        Enumeration items = addressbook.items();
-        while(items.hasMoreElements()) {
-          System.out.println(”\n *** new item ***”);
-          contact = (Contact)(items.nextElement());
-          int[] fields = contact.getFields();
-          for(int i = 0; i < fields.length; i++) {
-            int fieldIndex = fields[i];
-            System.out.println(” field ” + fieldIndex + “: “
-                + addressbook.getFieldLabel(fieldIndex));
-            int dataType = addressbook.getFieldDataType(fieldIndex);
-            System.out.println(” * data type: ” + dataType);
-            if(dataType == PIMItem.STRING) {
-              for(int j = 0; j < contact.countValues(fieldIndex); j++) {
-                int attr = contact.getAttributes(fieldIndex, j);
-                System.out.print(” ” + j + “. (”);
-                System.out.print(addressbook.getAttributeLabel(attr) + “): “);
-                System.out.println(contact.getString(fieldIndex, j));
-              }
-            }
-          }
-        }
-      } catch(Exception e) {
-        e.printStackTrace();
-      }
-                	  */
                 	 // Add contact
-                	 // Notification (vibration / beep)
                 	 // Offline storage
                 	 
                 	 /*
@@ -325,6 +267,8 @@ MessageArguments 	Encapsulates arguments to pass to the Message application.
 SearchArguments 	Encapsulates arguments to pass to the Search application.
 TaskArguments 	Encapsulates arguments to pass to the Task application.
                 	  */
+                	 System.out.println("**** command: " + String.valueOf(command));
+                     
                 	 
 	                 switch (command)
 	                 {
@@ -335,8 +279,10 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
 	                        this._getLocation = true;
 	                        // Start the location updater to get a lat / lng
 	                        this.startLocationUpdate();
+	                        // TODO: If the GPS location cannot be retrieved then use opencellid to get a location
 	                        break;
 	                     case 1:
+	                    	 System.out.println(getLocationDocument(args));
 	                    	 // Show a map
 	                    	 Invoke.invokeApplication(
 	                    			 Invoke.APP_TYPE_MAPS, 
@@ -360,7 +306,83 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
 # and * : Generate "pound" and "star" DTMF tones.
 0 - 9 : Generate numeric DTMF tones. 
  */
-	                    	 Invoke.invokeApplication(Invoke.APP_TYPE_PHONE, new PhoneArguments(PhoneArguments.ARG_CALL, ""));
+	                    	 try 
+	                    	 {
+	                    		 Invoke.invokeApplication(Invoke.APP_TYPE_PHONE, new PhoneArguments(PhoneArguments.ARG_CALL, getPhoneNumber(args)));
+	                    	 }
+	                    	 catch (Exception ex) {
+	                    		 System.out.println("***** Error making phone call");
+	                        	 ex.printStackTrace();
+	                    	 }
+	                    	 break;
+	                     case 5: // Accelerometer
+	                    	 
+	                    	 break;
+	                     case 6: // Contacts
+	                    	 // implement contacts CRUD
+	                         try {
+	                             ContactList addressbook = (ContactList)(PIM.getInstance().openPIMList( PIM.CONTACT_LIST, PIM.READ_WRITE));
+	                             Contact contact = null;
+/*
+ * 	                             // Each PIMItem — new or found — is associated with a particular PIMList.
+	                             contact = addressbook.createContact();
+	                             if(addressbook.isSupportedField(Contact.FORMATTED_NAME)) {
+	                               contact.addString(Contact.FORMATTED_NAME, Contact.ATTR_NONE, "Lynn Hanson");
+	                             }
+	                             if(addressbook.isSupportedField(Contact.TEL)) {
+	                               contact.addString(Contact.TEL, Contact.ATTR_HOME, "555-HOME-NUMBER");
+	                               contact.addString(Contact.TEL, Contact.ATTR_MOBILE, "555-MOBILE-NUMBER");
+	                             }
+
+	                             // Here’s a quick search to see if this contact is already present in the addressbook:
+	                             Enumeration matching = addressbook.items(contact);
+	                             if(matching.hasMoreElements()) {
+	                               System.out.println("found the first contact");
+	                             } else {
+	                               System.out.println("adding the first contact");
+	                               contact.commit();
+	                             }
+ */
+
+	                             // Now print the contents of the addressbook:
+	                             Enumeration items = addressbook.items();
+	                             while(items.hasMoreElements())
+	                             {
+	                            	 contact = (Contact)(items.nextElement());
+	                            	 int[] fields = contact.getFields();
+	                            	 for(int i = 0; i < fields.length; i++) {
+	                            		 int fieldIndex = fields[i];
+	                            		 System.out.println(" field " + fieldIndex + ": "
+	                            				 + addressbook.getFieldLabel(fieldIndex));
+	                            		 int dataType = addressbook.getFieldDataType(fieldIndex);
+	                            		 System.out.println(" * data type: " + dataType);
+	                            		 if(dataType == PIMItem.STRING) {
+	                            			 for(int j = 0; j < contact.countValues(fieldIndex); j++) {
+	                            				 int attr = contact.getAttributes(fieldIndex, j);
+	                            				 System.out.print(" " + j + ". (");
+	                            				 System.out.print(addressbook.getAttributeLabel(attr) + "): ");
+	                            				 System.out.println(contact.getString(fieldIndex, j));
+	                            			 }
+	                            		 }
+	                            	 }
+	                             }
+	                         } catch(Exception e) {
+	                        	 System.out.println("**** Error getting contacts ");
+	                        	 e.printStackTrace();
+	                         }
+	                    	 break;
+	                     case 7:
+	                    	 SMSArgs smsArgs = getSMSArgs(args);
+	                    	 try {
+		                    	 MessageConnection mc = (MessageConnection)Connector.open("sms://"+smsArgs.number);
+		                    	 TextMessage sms = (TextMessage)mc.newMessage(MessageConnection.TEXT_MESSAGE);
+		                    	 sms.setPayloadText(smsArgs.message);
+		                    	 mc.send(sms);
+		                    	 mc.close();
+	                    	 } catch (Exception ex) {
+	                        	 System.out.println("**** Error sending SMS ");
+	                        	 ex.printStackTrace();
+	                    	 }
 	                    	 break;
 	                     default:
 	                 }
@@ -576,6 +598,38 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
     	} catch (Exception e) {
     	}
     	return duration;
+    }
+    
+    private String getPhoneNumber(JSONObject args)
+    {
+    	String number = "";
+    	try {
+    		number = args.getString("number");
+    	} catch (Exception e) {
+    	}
+    	return number;
+    }
+    
+    private SMSArgs getSMSArgs(JSONObject args)
+    {
+    	String message = "";
+    	String number = "";
+    	try {
+    		message = args.getString("message");
+    		number = args.getString("number");
+    	} catch (Exception e) {
+    	}
+    	return new SMSArgs(number, message);
+    }
+    
+    private class SMSArgs {
+    	public String number;
+    	public String message;
+    	public SMSArgs(String _number, String _message)
+    	{
+    		number = _number;
+    		message = _message;
+    	}
     }
     
     /**
