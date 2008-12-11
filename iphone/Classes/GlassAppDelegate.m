@@ -14,10 +14,10 @@
 @synthesize imagePickerController;
 
 void alert(NSString *message) {
-    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"TransLink" 
-                                                           message:message 
-                                                          delegate:nil 
-                                                 cancelButtonTitle:@"OK" 
+    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" 
+														   message:message 
+														  delegate:nil 
+												 cancelButtonTitle:@"OK" 
                                                  otherButtonTitles:nil];
     [openURLAlert show];
     [openURLAlert release];
@@ -45,7 +45,7 @@ void alert(NSString *message) {
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
 	
 	// Override point for customization after app launch	
-  [window addSubview:viewController.view];
+	[window addSubview:viewController.view];
 
 	NSString * htmlFileName;
 	NSString * urlFileName;
@@ -56,26 +56,24 @@ void alert(NSString *message) {
 	NSString * urlPathString;	
 	NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
 	
-	if (urlPathString = [thisBundle pathForResource:urlFileName	ofType:@"txt"])
-  {
+	if (urlPathString = [thisBundle pathForResource:urlFileName	ofType:@"txt"]) {
 		NSString * theURLString = [NSString stringWithContentsOfFile:urlPathString];
 		appURL = [NSURL URLWithString:theURLString];
-    [appURL retain];
+		[appURL retain];
 		NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
 		[webView loadRequest:aRequest];
 	}	
 
-  imageView = [[UIImageView alloc] 
+	imageView = [[UIImageView alloc] 
                initWithImage:[[UIImage alloc] 
                               initWithContentsOfFile:[[NSBundle mainBundle] 
                                                       pathForResource:@"Default" 
                                                       ofType:@"png"]]];
 	[window addSubview:imageView];
   
-  activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-  [window addSubview:activityView];
-  [activityView startAnimating];
-  
+	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+	[window addSubview:activityView];
+	[activityView startAnimating];
 	[window makeKeyAndVisible];
 }
 
@@ -86,25 +84,25 @@ void alert(NSString *message) {
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView 
 {
-  [window bringSubviewToFront:viewController.view];
+	[window bringSubviewToFront:viewController.view];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-  if ([error code] != NSURLErrorCancelled)
-    alert(error.localizedDescription);
+	if ([error code] != NSURLErrorCancelled)
+		alert(error.localizedDescription);
 }
 
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-  NSURL* url = [request URL];
+	NSURL* url = [request URL];
 	NSString * urlString = [url absoluteString];
   
-  // Check to see if the URL request is for the App URL.
-  // If it is not, then launch using Safari
-  NSString* urlHost = [url host];
-  NSString* appHost = [appURL host];
-  NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
-  if (range.location == NSNotFound)
-    [[UIApplication sharedApplication] openURL:url];
+	// Check to see if the URL request is for the App URL.
+	// If it is not, then launch using Safari
+	NSString* urlHost = [url host];
+	NSString* appHost = [appURL host];
+	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
+	if (range.location == NSNotFound)
+		[[UIApplication sharedApplication] openURL:url];
     
 	NSString * jsCallBack = nil;
 	NSArray * parts = [urlString componentsSeparatedByString:@":"];
@@ -168,7 +166,7 @@ void alert(NSString *message) {
 	NSString * jsCallBack = nil;
 	
 	jsCallBack = [[NSString alloc] initWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
-  [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)theImage editingInfo:(NSDictionary *)editingInfo
@@ -177,11 +175,11 @@ void alert(NSString *message) {
 	
 	// Dismiss the image selection, hide the picker and show the image view with the picked image
 	[picker dismissModalViewControllerAnimated:YES];
-  imagePickerController.view.hidden = YES;
+	imagePickerController.view.hidden = YES;
 	
-  UIDevice * dev = [UIDevice currentDevice];
+	UIDevice * dev = [UIDevice currentDevice];
 	NSString *uniqueId = dev.uniqueIdentifier;
-  NSData * imageData = UIImageJPEGRepresentation(theImage, 0.75);	
+	NSData * imageData = UIImageJPEGRepresentation(theImage, 0.75);	
 	NSString *urlString = [@"http://phonegap.com/demo/upload.php?" stringByAppendingString:@"uid="];
 	urlString = [urlString stringByAppendingString:uniqueId];
 	
@@ -190,7 +188,7 @@ void alert(NSString *message) {
 	[request setHTTPMethod:@"POST"];
 	
 	// ---------
-  //Add the header info
+	//Add the header info
 	NSString *stringBoundary = [NSString stringWithString:@"0xKhTmLbOuNdArY"];
 	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",stringBoundary];
 	[request addValue:contentType forHTTPHeaderField: @"Content-Type"];
@@ -213,7 +211,7 @@ void alert(NSString *message) {
 		NSLog(@"photo: connection sucess");
   } 
   else {
-    NSLog(@"photo: upload failed!");
+	  NSLog(@"photo: upload failed!");
   }
 
 	webView.hidden = NO;
@@ -224,9 +222,9 @@ void alert(NSString *message) {
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
 	// Dismiss the image selection and close the program
-  [picker dismissModalViewControllerAnimated:YES];
+	[picker dismissModalViewControllerAnimated:YES];
 	// Hide the imagePicker and bring the web page back into focus
-  imagePickerController.view.hidden = YES;
+	imagePickerController.view.hidden = YES;
 	NSLog(@"Photo Cancel Request");
 	webView.hidden = NO;
 	[window bringSubviewToFront:webView];
@@ -261,14 +259,14 @@ void alert(NSString *message) {
 }
 
 - (void)dealloc {
-  [appURL release];
-  [activityView release];
-  [imageView release];
-  [viewController release];
+	[appURL release];
+	[activityView release];
+	[imageView release];
+	[viewController release];
 	[window release];
 	[lastKnownLocation release];
 	[imagePickerController release];
-  [appURL release];
+	[appURL release];
 	[super dealloc];
 }
 
