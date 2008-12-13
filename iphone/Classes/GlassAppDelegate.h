@@ -8,6 +8,7 @@
 #import "Device.h"
 
 @class GlassViewController;
+@class SoundEffect;
 
 @interface GlassAppDelegate : NSObject <
     UIApplicationDelegate, 
@@ -19,6 +20,8 @@
     UINavigationControllerDelegate
   >
 {
+
+	
 	IBOutlet UIWindow *window;
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
@@ -31,7 +34,8 @@
 	UIImagePickerController *imagePickerController;
 	
 	NSURLConnection *callBackConnection;
-  
+	SoundEffect *soundEffect;
+	
   NSURL* appURL;
 }
 

@@ -4,6 +4,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 #import "GlassViewController.h"
+#import "SoundEffect.h"
 
 @implementation GlassAppDelegate
 
@@ -24,6 +25,7 @@ void alert(NSString *message) {
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
+
 
 	locationManager = [[CLLocationManager alloc] init];
 	locationManager.delegate = self;
@@ -75,6 +77,11 @@ void alert(NSString *message) {
 	[window addSubview:activityView];
 	[activityView startAnimating];
 	[window makeKeyAndVisible];
+
+	
+	//NSBundle * mainBundle = [NSBundle mainBundle];
+
+
 }
 
 //when web application loads pass it device information
@@ -96,6 +103,9 @@ void alert(NSString *message) {
 	NSURL* url = [request URL];
 	NSString * urlString = [url absoluteString];
   
+	
+	NSBundle * mainBundle = [NSBundle mainBundle];
+	
 	// Check to see if the URL request is for the App URL.
 	// If it is not, then launch using Safari
 	NSString* urlHost = [url host];
@@ -126,8 +136,7 @@ void alert(NSString *message) {
 				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
 				
 				[jsCallBack release];
-			}
-      else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
 				NSLog(@"Photo request!");
 				NSLog([parts objectAtIndex:2]);
 			
@@ -135,16 +144,26 @@ void alert(NSString *message) {
 				webView.hidden = YES;
 				[window bringSubviewToFront:imagePickerController.view];
 				NSLog(@"photo dialog open now!");
-      }
-			//VIBRATION
-			else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
 				Vibrate *vibration = [[Vibrate alloc] init];
 				[vibration vibrate];
 				[vibration release];
-			}
-      else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
 				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
 				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
+			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
+
+				// Split the Sound file 
+				NSString *ef = (NSString *)[parts objectAtIndex:2];
+				NSArray *soundFile = [ef componentsSeparatedByString:@"."];
+				
+				NSString *file = (NSString *)[soundFile objectAtIndex:0];
+				NSString *ext = (NSString *)[soundFile objectAtIndex:1];
+				// Some TODO's here
+				// Test to see if the file/ext is IN the bundle
+				// Cleanup any memory that may not be caught
+				soundEffect = [[SoundEffect alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
+				[soundEffect play];
 			}
 			
 			return NO;
