@@ -151,8 +151,8 @@ void alert(NSString *message) {
 				[vibration release];
 
 				
-				contacts = [[Contacts alloc] init];
-				[contacts getContacts];
+				//contacts = [[Contacts alloc] init];
+				//[contacts getContacts];
 			
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
 				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
