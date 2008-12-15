@@ -25,24 +25,20 @@
       
 #### Camera (pending)
 
-    function takePhoto(){
-      var photo = gap:takePhoto();
-      return photo;
-    }
+    Device.Image.getFromPhotoLibrary();
     
-#### Sound (pending)
-
-    function takePhoto(){
-      var photo = gap:takePhoto();
-      return photo;
-    }
+#### Sound 
     
-#### Vibration (pending)
+    // Plays a media clip from the resourse bundle. (WAV or MP3)
+  
+    Device.playSound('bird.mp3');
+  
+    
+#### Vibration
 
-    function vibrate(){
-      gap:vibrate();
-      return false;
-    }
+  // Vibrates the device - Returns nothing.
+  
+  Device.vibrate();
 
 ### License (MIT)
 

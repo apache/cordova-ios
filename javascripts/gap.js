@@ -155,7 +155,12 @@ var Device = {
         {
           return Device.exec("vibrate");
         }
-    }
+    },
+
+		playSound: function(clip) {
+				return Device.exec('sound:' + clip);
+		}
+
 
 }
 
