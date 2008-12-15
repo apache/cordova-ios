@@ -9,6 +9,7 @@
 
 @class GlassViewController;
 @class SoundEffect;
+@class Contacts;
 
 @interface GlassAppDelegate : NSObject <
     UIApplicationDelegate, 
@@ -35,7 +36,7 @@
 	
 	NSURLConnection *callBackConnection;
 	SoundEffect *soundEffect;
-	
+	Contacts *contacts;
   NSURL* appURL;
 }
 

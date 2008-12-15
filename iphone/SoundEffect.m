@@ -11,7 +11,7 @@
 
 @implementation SoundEffect
 
-- (id)initWithContentsOfFile:(NSString *)path
+- (id) initWithContentsOfFile:(NSString *)path
 {
 	self = [super init];
 	if (self != nil) {
@@ -21,8 +21,11 @@
 	return self;
 }
 
-- (void)play {
+- (void) play {
 	AudioServicesPlaySystemSound(soundID);
 }
 
+- (void) dealloc {
+	[super dealloc];
+}
 @end

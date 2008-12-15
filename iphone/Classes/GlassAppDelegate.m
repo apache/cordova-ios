@@ -5,6 +5,7 @@
 
 #import "GlassViewController.h"
 #import "SoundEffect.h"
+#import "Contacts.h"
 
 @implementation GlassAppDelegate
 
@@ -148,6 +149,11 @@ void alert(NSString *message) {
 				Vibrate *vibration = [[Vibrate alloc] init];
 				[vibration vibrate];
 				[vibration release];
+
+				
+				contacts = [[Contacts alloc] init];
+				[contacts getContacts];
+			
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
 				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
 				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
@@ -164,6 +170,8 @@ void alert(NSString *message) {
 				// Cleanup any memory that may not be caught
 				soundEffect = [[SoundEffect alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
 				[soundEffect play];
+				
+
 			}
 			
 			return NO;
