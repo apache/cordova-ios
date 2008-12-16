@@ -10,7 +10,6 @@
 #import "Contacts.h"
 #import <JSON/JSON.h>
 
-
 @implementation Contacts
 
 - (id)init
@@ -27,7 +26,7 @@
 				
 		
 		NSMutableArray *contacts = nil;
-		contacts = [ [NSMutableArray alloc] init ];
+		contacts = [[NSMutableArray alloc] init ];
 
 		
 		for (int i=0;i < nPeople;i++) { 
