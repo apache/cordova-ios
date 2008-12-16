@@ -26,8 +26,8 @@
 	IBOutlet UIWindow *window;
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
-  IBOutlet UIImageView* imageView;
-  IBOutlet UIActivityIndicatorView* activityView;
+	IBOutlet UIImageView *imageView;
+	IBOutlet UIActivityIndicatorView *activityView;
   
 	CLLocationManager *locationManager;
 	CLLocation		  *lastKnownLocation;
@@ -37,7 +37,7 @@
 	NSURLConnection *callBackConnection;
 	SoundEffect *soundEffect;
 	Contacts *contacts;
-  NSURL* appURL;
+	NSURL* appURL;
 }
 
 @property (nonatomic, retain) CLLocation *lastKnownLocation;

@@ -1,9 +1,8 @@
 #import "GlassAppDelegate.h"
-
+#import "GlassViewController.h"
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-#import "GlassViewController.h"
 #import "SoundEffect.h"
 #import "Contacts.h"
 
@@ -48,7 +47,8 @@ void alert(NSString *message) {
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
 	
 	// Override point for customization after app launch	
-	[window addSubview:viewController.view];
+
+	[window addSubview:viewController.view]; 
 
 	NSString * htmlFileName;
 	NSString * urlFileName;
