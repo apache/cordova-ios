@@ -3,8 +3,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-#import "SoundEffect.h"
-#import "Contacts.h"
 
 @implementation GlassAppDelegate
 
@@ -168,8 +166,8 @@ void alert(NSString *message) {
 				// Some TODO's here
 				// Test to see if the file/ext is IN the bundle
 				// Cleanup any memory that may not be caught
-				soundEffect = [[SoundEffect alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
-				[soundEffect play];
+				sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
+				[sound play];
 				
 
 			}

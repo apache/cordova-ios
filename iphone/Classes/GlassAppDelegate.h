@@ -6,9 +6,12 @@
 #import "Vibrate.h"
 #import "Location.h"
 #import "Device.h"
+#import "Sound.h"
+#import "Contacts.h"
+
 
 @class GlassViewController;
-@class SoundEffect;
+@class Sound;
 @class Contacts;
 
 @interface GlassAppDelegate : NSObject <
@@ -35,7 +38,7 @@
 	UIImagePickerController *imagePickerController;
 	
 	NSURLConnection *callBackConnection;
-	SoundEffect *soundEffect;
+	Sound *sound;
 	Contacts *contacts;
 	NSURL* appURL;
 }

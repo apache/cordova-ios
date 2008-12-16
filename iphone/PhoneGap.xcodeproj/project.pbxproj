@@ -17,7 +17,7 @@
 		2899E5220DE3E06400AC0155 /* GlassViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* GlassViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		4788BBEA0E54392200185C73 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 4788BBE90E54392200185C73 /* index.html */; };
-		4796F8ED0EF37038007430CA /* SoundEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 4796F8EC0EF37038007430CA /* SoundEffect.m */; };
+		4796F8ED0EF37038007430CA /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 4796F8EC0EF37038007430CA /* Sound.m */; };
 		47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* GlassViewController.m */; };
 		47FAB6DE0EF754E4005F55AB /* bird.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 47FAB6DD0EF754E4005F55AB /* bird.mp3 */; };
 		8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8204F3D20E5CB4DC00F2DAA1 /* icon.png */; };
@@ -44,8 +44,8 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* PhoneGap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGap_Prefix.pch; path = Glass_Prefix.pch; sourceTree = "<group>"; };
 		4788BBE90E54392200185C73 /* index.html */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		4796F8EB0EF37038007430CA /* SoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundEffect.h; path = ../SoundEffect.h; sourceTree = "<group>"; };
-		4796F8EC0EF37038007430CA /* SoundEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SoundEffect.m; path = ../SoundEffect.m; sourceTree = "<group>"; };
+		4796F8EB0EF37038007430CA /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = ../Sound.h; sourceTree = "<group>"; };
+		4796F8EC0EF37038007430CA /* Sound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Sound.m; path = ../Sound.m; sourceTree = "<group>"; };
 		47FAB6A70EF751E2005F55AB /* GlassViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassViewController.h; sourceTree = "<group>"; };
 		47FAB6A80EF751E2005F55AB /* GlassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassViewController.m; sourceTree = "<group>"; };
 		47FAB6DD0EF754E4005F55AB /* bird.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bird.mp3; sourceTree = "<group>"; };
@@ -82,8 +82,8 @@
 			children = (
 				1D3623240D0F684500981E51 /* GlassAppDelegate.h */,
 				1D3623250D0F684500981E51 /* GlassAppDelegate.m */,
-				4796F8EB0EF37038007430CA /* SoundEffect.h */,
-				4796F8EC0EF37038007430CA /* SoundEffect.m */,
+				4796F8EB0EF37038007430CA /* Sound.h */,
+				4796F8EC0EF37038007430CA /* Sound.m */,
 				8205CB7B0E68A701006CBEEF /* Device.h */,
 				8205CB7C0E68A701006CBEEF /* Device.m */,
 				8254F4BB0E6397F0002FDA36 /* Vibrate.h */,
@@ -220,7 +220,7 @@
 				8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */,
 				8254F8810E650500002FDA36 /* Location.m in Sources */,
 				8205CB7D0E68A701006CBEEF /* Device.m in Sources */,
-				4796F8ED0EF37038007430CA /* SoundEffect.m in Sources */,
+				4796F8ED0EF37038007430CA /* Sound.m in Sources */,
 				47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
