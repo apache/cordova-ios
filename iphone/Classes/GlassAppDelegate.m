@@ -13,11 +13,7 @@
 @synthesize imagePickerController;
 
 void alert(NSString *message) {
-    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" 
-														   message:message 
-														  delegate:nil 
-												 cancelButtonTitle:@"OK" 
-                                                 otherButtonTitles:nil];
+    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [openURLAlert show];
     [openURLAlert release];
 }
@@ -64,12 +60,9 @@ void alert(NSString *message) {
 		NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
 		[webView loadRequest:aRequest];
 	}	
-
-	imageView = [[UIImageView alloc] 
-               initWithImage:[[UIImage alloc] 
-                              initWithContentsOfFile:[[NSBundle mainBundle] 
-                                                      pathForResource:@"Default" 
-                                                      ofType:@"png"]]];
+	
+	//This keeps the Default.png up
+	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
 	[window addSubview:imageView];
   
 	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -88,9 +81,8 @@ void alert(NSString *message) {
   [theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)theWebView 
-{
-	[window bringSubviewToFront:viewController.view];
+- (void)webViewDidFinishLoad:(UIWebView *)theWebView {
+	imageView.hidden = YES;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
