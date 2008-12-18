@@ -18,7 +18,6 @@
 				  [[myCurrentDevice systemVersion] UTF8String],
 				  [[myCurrentDevice uniqueIdentifier] UTF8String]
 				  ];
-	//NSLog(jsCallBack);
 }
 
 - (void)dealloc {

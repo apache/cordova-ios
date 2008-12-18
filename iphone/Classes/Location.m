@@ -11,12 +11,12 @@
 	return self;
 }
 
-+ (void)startTracking{
+- (void)startTracking{
 	NSLog(@"starting location tracker");
 	[locationManager startUpdatingLocation];
 }
 
-+ (void)stopTracking{
+- (void)stopTracking{
 	NSLog(@"stopping location tracker");
 	[locationManager stopUpdatingLocation];
 }
