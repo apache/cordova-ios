@@ -10,7 +10,6 @@
 #import "Contacts.h"
 #import <JSON/JSON.h>
 
-
 @implementation Contacts
 
 - (id)init
@@ -26,8 +25,8 @@
 		CFIndex nPeople = ABAddressBookGetPersonCount(self.addressBook);
 				
 		
-		NSMutableArray *contacts = nil;
-		contacts = [ [NSMutableArray alloc] init ];
+		NSMutableArray *contacts;
+		contacts = [[NSMutableArray alloc] init ];
 
 		
 		for (int i=0;i < nPeople;i++) { 
@@ -37,7 +36,9 @@
 			CFStringRef lastName = ABRecordCopyValue(ref, kABPersonLastNameProperty);
 			CFStringRef phoneNumber = ABMultiValueCopyValueAtIndex(ABRecordCopyValue(ref,kABPersonPhoneProperty) ,0);
 			NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
-		
+			NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@'}",contactFirstLast];
+			NSLog(@"%@",contactFirstLast2);
+
 			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:contactFirstLast, @"name",phoneNumber, @"phone",nil];
 			[contacts addObject:dict];
 			
@@ -50,7 +51,7 @@
 	SBJSON *json = [SBJSON new];
 	json.humanReadable = YES;
 
-	NSString *jsonStr =[json stringWithObject:contacts error:NULL];
+	NSString *jsonStr = [json stringWithObject:contacts error:NULL];
 	NSLog(@"%@",jsonStr);
 	
 	return contacts;
