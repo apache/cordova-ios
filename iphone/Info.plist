@@ -11,7 +11,7 @@
 	<key>CFBundleIconFile</key>
 	<string>icon.png</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.teepeefinder.phonegapdemo2</string>
+	<string>com.sintaxi.phonegapdemo2</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
