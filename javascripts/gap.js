@@ -158,7 +158,14 @@ var Device = {
     },
 
 		playSound: function(clip) {
-				return Device.exec('sound:' + clip);
+        if (Device.isAndroid)
+        {
+          window.DroidGap.playSound(clip);
+        }
+        else
+        {
+				  return Device.exec('sound:' + clip);
+        }
 		}
 
 
