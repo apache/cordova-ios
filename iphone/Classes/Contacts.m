@@ -8,7 +8,7 @@
 
 #import <AddressBook/AddressBook.h>
 #import "Contacts.h"
-#import <JSON/JSON.h>
+//#import <JSON/JSON.h>
 
 @implementation Contacts
 
@@ -48,11 +48,11 @@
 		}
 	}
 	
-	SBJSON *json = [SBJSON new];
-	json.humanReadable = YES;
+//	SBJSON *json = [SBJSON new];
+//	json.humanReadable = YES;
 
-	NSString *jsonStr = [json stringWithObject:contacts error:NULL];
-	NSLog(@"%@",jsonStr);
+//	NSString *jsonStr = [json stringWithObject:contacts error:NULL];
+//	NSLog(@"%@",jsonStr);
 	
 	return contacts;
 }

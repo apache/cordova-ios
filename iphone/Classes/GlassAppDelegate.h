@@ -7,12 +7,12 @@
 #import "Location.h"
 #import "Device.h"
 #import "Sound.h"
-#import "Contacts.h"
+//#import "Contacts.h"
 
 
 @class GlassViewController;
 @class Sound;
-@class Contacts;
+//@class Contacts;
 
 @interface GlassAppDelegate : NSObject <
     UIApplicationDelegate, 
@@ -39,7 +39,7 @@
 	
 	NSURLConnection *callBackConnection;
 	Sound *sound;
-	Contacts *contacts;
+	//Contacts *contacts;
 	NSURL* appURL;
 }
 

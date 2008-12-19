@@ -311,7 +311,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ADDITIONAL_SDKS = "$HOME/Library/SDKs/JSON/$(PLATFORM_NAME).sdk";
+				ADDITIONAL_SDKS = "";
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer: Brock Whitten";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Brock Whitten";
@@ -319,10 +319,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-ljson",
-				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "3CC55FB0-969F-4E90-8361-E82907DF1889";
 				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "3CC55FB0-969F-4E90-8361-E82907DF1889";
