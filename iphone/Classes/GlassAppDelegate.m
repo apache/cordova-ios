@@ -140,7 +140,6 @@ void alert(NSString *message) {
 				[vibration vibrate];
 				[vibration release];
 
-				
 				//contacts = [[Contacts alloc] init];
 				//[contacts getContacts];
 			
