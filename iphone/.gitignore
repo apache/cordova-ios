@@ -1,3 +1,4 @@
 build/*
 PhoneGap.xcodeproj/*.pbxuser
 PhoneGap.xcodeproj/*.perspectivev3
+*.mode1v3
