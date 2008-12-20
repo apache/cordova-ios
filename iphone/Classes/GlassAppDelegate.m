@@ -160,7 +160,9 @@ void alert(NSString *message) {
 				//[contacts getContacts];
 			
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
+				
 				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
+				
 				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
 			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
 
