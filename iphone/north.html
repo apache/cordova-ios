@@ -278,6 +278,7 @@ body {
 			
 			if ((fingerX > leftX) && (fingerX < rightX)) {
 				if ((fingerY > topY) && (fingerY < bottomY)) {
+					//Device.playSound('bird.mp3');
 					// set the timer and start calling the animation function
 					animTimeout = setInterval("animatePoint(" + i + ")", animDelay);
 				}
@@ -318,6 +319,12 @@ body {
 			if (url[index]) {
 	        	document.location = url[index];
 			}
+			
+			if (sound[index]) {
+				Device.playSound(sound[index]);
+			}
+			
+
 			// reset the view
 			animatePoint.counter = 1;
 			factor = 1;
@@ -383,6 +390,7 @@ body {
 
 
 	window.onload = function initialLoad(){  
+		//Device.init();
 		updateOrientation();  
 		initMap();
 	}  
@@ -399,24 +407,24 @@ body {
 	boxPortraitY[0] = 220;
 	boxLandscapeX[0] = 80;
 	boxLandscapeY[0] = 140;
+	sound[0] = "bird.mp3";
 
 	boxPortraitX[1] = 250;
 	boxPortraitY[1] = 350;
 	boxLandscapeX[1] = 300;
 	boxLandscapeY[1] = 235;
+	sound[1] = "bird.mp3";
 
 	boxPortraitX[2] = 140;
 	boxPortraitY[2] = 120;
 	boxLandscapeX[2] = 220;
 	boxLandscapeY[2] = 80;
-
+	sound[2] = "bird.mp3";
+	
 	</script>
 
 
 	<script>
-		// GAP
-		
-		// Utils
 
 try {
     $ // Test if it is alread used
@@ -576,14 +584,11 @@ var Device = {
     },
 
 		playSound: function(clip) {
-        if (Device.isAndroid)
-        {
-          window.DroidGap.playSound(clip);
-        }
-        else
-        {
-				  return Device.exec('sound:' + clip);
-        }
+			if (Device.isAndroid) {
+				window.DroidGap.playSound(clip);
+			} else {
+				return Device.exec('sound:' + clip);
+			}
 		}
 
 
