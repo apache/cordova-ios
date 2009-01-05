@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0714B1A50E452A2100039BAB /* GlassBgView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0714B1A40E452A2100039BAB /* GlassBgView.m */; };
-		0714B1EE0E45393600039BAB /* url.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0714B1ED0E45393600039BAB /* url.txt */; };
 		079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079B0A090E45734600755F37 /* CoreLocation.framework */; };
 		1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -17,6 +16,8 @@
 		2899E5220DE3E06400AC0155 /* GlassViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* GlassViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		4788BBEA0E54392200185C73 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 4788BBE90E54392200185C73 /* index.html */; };
+		47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* Settings.plist */; };
+		47DC80470EFB0F6100D0B526 /* logo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 47DC80460EFB0F6100D0B526 /* logo.jpg */; };
 		47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* GlassViewController.m */; };
 		47FAB6DE0EF754E4005F55AB /* bird.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 47FAB6DD0EF754E4005F55AB /* bird.mp3 */; };
 		47FAB72A0EF7A663005F55AB /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB7290EF7A663005F55AB /* Sound.m */; };
@@ -34,7 +35,6 @@
 /* Begin PBXFileReference section */
 		0714B1A30E452A2100039BAB /* GlassBgView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassBgView.h; sourceTree = "<group>"; };
 		0714B1A40E452A2100039BAB /* GlassBgView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassBgView.m; sourceTree = "<group>"; };
-		0714B1ED0E45393600039BAB /* url.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = url.txt; sourceTree = "<group>"; };
 		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* GlassAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassAppDelegate.h; sourceTree = "<group>"; };
@@ -46,6 +46,8 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		474A7F820EFAD6580020DD7F /* PhoneGap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGap_Prefix.pch; sourceTree = "<group>"; };
 		4788BBE90E54392200185C73 /* index.html */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		47DC7FB20EFADF9E00D0B526 /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
+		47DC80460EFB0F6100D0B526 /* logo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = logo.jpg; sourceTree = "<group>"; };
 		47FAB6A70EF751E2005F55AB /* GlassViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassViewController.h; sourceTree = "<group>"; };
 		47FAB6A80EF751E2005F55AB /* GlassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassViewController.m; sourceTree = "<group>"; };
 		47FAB6DD0EF754E4005F55AB /* bird.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bird.mp3; sourceTree = "<group>"; };
@@ -142,12 +144,12 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				47DC803E0EFB07BC00D0B526 /* offline */,
+				47DC7FB20EFADF9E00D0B526 /* Settings.plist */,
 				47FAB6DD0EF754E4005F55AB /* bird.mp3 */,
 				2899E5210DE3E06400AC0155 /* GlassViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				0714B1ED0E45393600039BAB /* url.txt */,
-				4788BBE90E54392200185C73 /* index.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -161,6 +163,15 @@
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		47DC803E0EFB07BC00D0B526 /* offline */ = {
+			isa = PBXGroup;
+			children = (
+				4788BBE90E54392200185C73 /* index.html */,
+				47DC80460EFB0F6100D0B526 /* logo.jpg */,
+			);
+			name = offline;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -207,12 +218,13 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* GlassViewController.xib in Resources */,
-				0714B1EE0E45393600039BAB /* url.txt in Resources */,
 				825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */,
 				4788BBEA0E54392200185C73 /* index.html in Resources */,
 				8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */,
 				824041C10E942F0E002F3376 /* Default.png in Resources */,
 				47FAB6DE0EF754E4005F55AB /* bird.mp3 in Resources */,
+				47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */,
+				47DC80470EFB0F6100D0B526 /* logo.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
