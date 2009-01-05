@@ -38,37 +38,27 @@ if (!window.console || !DEBUG) {
     }
 }
 
-var Device = {  
+var Device = {
+
     available: false,
     model: "",
     version: "",
-	  uuid: "",
+	uuid: "",
     isIPhone: null,
     isIPod: null,
-    isAndroid: null, 
-
+    
     init: function(model, version) {
         try {
-            if (window.DroidGap.exists() )
-            {                
-                Device.available = true;
-                Device.isAndroid = true;
-                Device.uuid = window.DroidGap.getUuid();
-                Device.gapVersion = window.DroidGap.getVersion();
-            }
-            else
-            {          
-                Device.available = __gap;
-                Device.model = __gap_device_model;
-                Device.version = __gap_device_version;
-                Device.gapVersion = __gap_version;
-			          Device.uuid = __gap_device_uniqueid;
-            }
-        } catch(e) {            
+            Device.available = __gap;
+            Device.model = __gap_device_model;
+            Device.version = __gap_device_version;
+            Device.gapVersion = __gap_version;
+			Device.uuid = __gap_device_uniqueid;
+        } catch(e) {
             alert("GAP is not supported!")
         } 
     },
-   
+    
     exec: function(command) {
         if (Device.available) {
             try {
@@ -88,18 +78,7 @@ var Device = {
         callback: null,
         
         init: function() {
-            if (Device.isAndroid)
-            {
-               /*
-                * TO-DO: Add support for multiple location providers
-                * GPS is only one of many ways to do this
-                */
-               window.DroidGap.getLocation("gps"); 
-            }
-            else
-            {
-                Device.exec("getloc");
-            }
+            Device.exec("getloc");
         },
         
         set: function(lat, lon) {
@@ -125,49 +104,26 @@ var Device = {
 		callback: null,
 		
         getFromPhotoLibrary: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback);
+            return Device.exec("getphoto" + ":" + Device.Image.callback)
         },
         
         getFromCamera: function() {
-            if (Device.isAndroid)
-            {
-              window.DroidGap.takePhoto();
-              return;
-            }
-            else
-            {
-              return Device.exec("getphoto" + ":" + Device.Image.callback);
-            }
+            return Device.exec("getphoto" + ":" + Device.Image.callback)
         },
         
         getFromSavedPhotosAlbum: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback);
+            return Device.exec("getphoto" + ":" + Device.Image.callback)
         }
 
     },
 
     vibrate: function() {
-        if (Device.isAndroid)
-        {
-          window.DroidGap.vibrate(100);
-        }
-        else
-        {
-          return Device.exec("vibrate");
-        }
+        return Device.exec("vibrate")
     },
 
 		playSound: function(clip) {
-        if (Device.isAndroid)
-        {
-          window.DroidGap.playSound(clip);
-        }
-        else
-        {
-				  return Device.exec('sound:' + clip);
-        }
+			return Device.exec('sound:' + clip);
 		}
-
 
 }
 
