@@ -3,16 +3,23 @@
 <html>
 
 <head>
-	<title>North Coast</title>
+	<title>North</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-
-	<link rel="apple-touch-icon" href="ctc.png"/> 
+	<style type="text/css" rel="stylesheet" >
 	
+/*
 
+	-- -- -- -- -- -- --
+	reset.css
+	Undo browser defaults
 
-	<style>
+	http://meyerweb.com/eric/tools/css/reset/
+	v1.0 | 20080212
+	-- -- -- -- -- -- --
 	
+*/
+
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -67,6 +74,10 @@ table {
 }
 
 
+
+
+
+																		/* -- Base Layout -- */
 body {
 	font: 62.5% Helvetica, sans-serif;
 }
@@ -94,7 +105,7 @@ body {
 
 
 
-/* -- Splash Screen -- */
+																		/* -- Splash Screen -- */
 .splashscreen #app-wrapper {
 	width: 320px;
 	height: 480px;
@@ -111,16 +122,17 @@ body {
 	text-indent: -9000px;
 }
 
-																		
-/* -- Map Screen -- */
+
+																		/* -- Map Screen -- */
+
 /* main background */
 .mapscreen .portrait, .mapscreen .portrait-flipped {
-	background: #ffbc00 url(map-bg-orange-portrait.png) no-repeat 0 0;	
+	background: #fff;	
 	height: 460px;
 }
 .mapscreen .landscape-left, .mapscreen .landscape-right {
 	height: 300px;
-	background: #ffbc00 url(map-bg-orange-landscape.png) no-repeat 0 0;	
+	background: #fff;	
 }
 
 
@@ -141,8 +153,8 @@ body {
 .portrait #canvas-wrapper p, .portrait-flipped #canvas-wrapper p {
 	width: 240px;
 	margin: 0 40px;
-	color: #fff;
-	text-shadow: #b94e00 1px 1px 2px;
+	color: #b8000e;
+	text-shadow: #ccc 1px 1px 2px;
 	font: bold 16px Helvetica, arial, sans-serif;
 	line-height: 1.5;
 	position: absolute;
@@ -154,27 +166,61 @@ body {
 }
 
 
-
-/* -- North -- */
-/* main background */
-.north canvas {
-	b/order: solid 1px #fff;
+																		/* -- West -- */
+.west .portrait, .west .portrait-flipped {
+	background: #bac5d3 url(photo-west-portrait.png) no-repeat 0 0;	
+	height: 460px;
 }
+.west .landscape-left, .west .landscape-right {
+	height: 300px;
+	background: #bac5d3 url(photo-west-landscape.png) no-repeat 0 0;	
+}
+
+																		/* -- Prairies -- */
+.prairies .portrait, .prairies .portrait-flipped {
+	background: #514a49 url(photo-prairies-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.prairies .landscape-left, .prairies .landscape-right {
+	height: 300px;
+	background: #514a49 url(photo-prairies-landscape.png) no-repeat 0 0;	
+}
+
+
+																		/* -- North -- */
 .north .portrait, .north .portrait-flipped {
-	background: #50186f url(photo-north-portrait.png) no-repeat 0 0;	
+	background: #245c3c url(photo-north-portrait.png) no-repeat 0 0;	
 	height: 460px;
 }
 .north .landscape-left, .north .landscape-right {
 	height: 300px;
-	background: #50186f url(photo-north-landscape.png) no-repeat 0 0;	
+	background: #245c3c url(photo-north-landscape.png) no-repeat 0 0;	
 }
 
+																		/* -- Quebec -- */
+.quebec .portrait, .quebec .portrait-flipped {
+	background: #ab723f url(photo-quebec-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.quebec .landscape-left, .quebec .landscape-right {
+	height: 300px;
+	background: #ab723f url(photo-quebec-landscape.png) no-repeat 0 0;	
+}
+
+																		/* -- East -- */
+.east .portrait, .east .portrait-flipped {
+	background: #86584f url(photo-east-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.east .landscape-left, .east .landscape-right {
+	height: 300px;
+	background: #86584f url(photo-east-landscape.png) no-repeat 0 0;	
+}
 
 	</style>
+	<script type="text/javascript">
 	
-	<script>
 	
-
 	// helpful:
 	// http://www.engageinteractive.co.uk/blog/2008/06/19/tutorial-building-a-website-for-the-iphone/
 	// canvas interaction: http://furbo.org/wp-content/uploads/2007/07/canvas_test/canvas_test.html
@@ -199,6 +245,7 @@ body {
 	var boxLandscapeX = new Array();
 	var boxLandscapeY = new Array();
 	var url = new Array();
+	var sounds = new Array();	
 
 	// how big are the bounding boxes of the clickable areas?
 	var targetSize = 48;
@@ -278,7 +325,6 @@ body {
 			
 			if ((fingerX > leftX) && (fingerX < rightX)) {
 				if ((fingerY > topY) && (fingerY < bottomY)) {
-					//Device.playSound('bird.mp3');
 					// set the timer and start calling the animation function
 					animTimeout = setInterval("animatePoint(" + i + ")", animDelay);
 				}
@@ -296,11 +342,11 @@ body {
 			ctx.clearRect(0, 0, canvasWidthPortrait, canvasHeightPortrait);
 		}
 
-		// attach a static counter to the function, increment by 0.1
+		// attach a static counter to the function, increment by 0.2
 	    if (typeof animatePoint.counter == 'undefined' ) {
 	        animatePoint.counter = 1;
 	    }
-        animatePoint.counter = animatePoint.counter + 0.1;
+        animatePoint.counter = animatePoint.counter + 0.2;
 		factor = animatePoint.counter;
 
 		// loop through the regions
@@ -319,12 +365,6 @@ body {
 			if (url[index]) {
 	        	document.location = url[index];
 			}
-			
-			if (sound[index]) {
-				Device.playSound(sound[index]);
-			}
-			
-
 			// reset the view
 			animatePoint.counter = 1;
 			factor = 1;
@@ -390,7 +430,6 @@ body {
 
 
 	window.onload = function initialLoad(){  
-		//Device.init();
 		updateOrientation();  
 		initMap();
 	}  
@@ -398,208 +437,28 @@ body {
 	</script>
 
 
-
+	<link rel="apple-touch-icon" href="ctc.png"/> 
+	
 	<script type="text/javascript">
 
 	// define our various interaction boxes
 	// the offset should be the center of the interaction box, not top left
-	boxPortraitX[0] = 50;
-	boxPortraitY[0] = 220;
-	boxLandscapeX[0] = 80;
-	boxLandscapeY[0] = 140;
-	sound[0] = "bird.mp3";
+	boxPortraitX[0] = 75;
+	boxPortraitY[0] = 380;
+	boxLandscapeX[0] = 110;
+	boxLandscapeY[0] = 240;
 
-	boxPortraitX[1] = 250;
-	boxPortraitY[1] = 350;
-	boxLandscapeX[1] = 300;
-	boxLandscapeY[1] = 235;
-	sound[1] = "bird.mp3";
+	boxPortraitX[1] = 260;
+	boxPortraitY[1] = 420;
+	boxLandscapeX[1] = 290;
+	boxLandscapeY[1] = 260;
 
 	boxPortraitX[2] = 140;
-	boxPortraitY[2] = 120;
+	boxPortraitY[2] = 80;
 	boxLandscapeX[2] = 220;
-	boxLandscapeY[2] = 80;
-	sound[2] = "bird.mp3";
-	
-	</script>
-
-
-	<script>
-
-try {
-    $ // Test if it is alread used
-} catch(e) {
-    $ = function(id){
-        return document.getElementById(id)
-    };
-}
-
-// Acceleration Handling
-
-var accelX = 0;
-var accelY = 0;
-var accelZ = 0;
-
-function gotAcceleration(x,y,z){
-	x = eval(x);
-	y = eval(y);
-	z = eval(z);
-	if ((!isNaN(x)) && (!isNaN(y)) && (!isNaN(z))) {
-		accelX = x;
-		accelY = y;
-		accelZ = z;
-	}
-	return x + " " + y + " " + z;
-}
-
-// A little more abstract
-
-var DEBUG = true;
-if (!window.console || !DEBUG) {
-    console = {
-        log: function(){
-        },
-        error: function(){
-        }
-    }
-}
-
-var Device = {  
-    available: false,
-    model: "",
-    version: "",
-	  uuid: "",
-    isIPhone: null,
-    isIPod: null,
-    isAndroid: null, 
-
-    init: function(model, version) {
-        try {
-            if (window.DroidGap.exists() )
-            {                
-                Device.available = true;
-                Device.isAndroid = true;
-                Device.uuid = window.DroidGap.getUuid();
-                Device.gapVersion = window.DroidGap.getVersion();
-            }
-            else
-            {          
-                Device.available = __gap;
-                Device.model = __gap_device_model;
-                Device.version = __gap_device_version;
-                Device.gapVersion = __gap_version;
-			          Device.uuid = __gap_device_uniqueid;
-            }
-        } catch(e) {            
-            alert("GAP is not supported!")
-        } 
-    },
-   
-    exec: function(command) {
-        if (Device.available) {
-            try {
-                document.location = "gap:" + command;
-            } catch(e) {
-                console.log("Command '" + command + "' has not been executed, because of exception: " + e);
-                alert("Error executing command '" + command + "'.")
-            }
-        }
-    },
-
-    Location: {
-        // available: true,
-        
-        lon: null,
-        lat: null,
-        callback: null,
-        
-        init: function() {
-            if (Device.isAndroid)
-            {
-               /*
-                * TO-DO: Add support for multiple location providers
-                * GPS is only one of many ways to do this
-                */
-               window.DroidGap.getLocation("gps"); 
-            }
-            else
-            {
-                Device.exec("getloc");
-            }
-        },
-        
-        set: function(lat, lon) {
-            Device.Location.lat = lat;
-            Device.Location.lon = lon;
-            if(Device.Location.callback != null) {
-                Device.Location.callback(lat, lon)
-                Device.Location.callback = null;
-            }
-        },
-
-        wait: function(func) {
-            Device.Location.callback = func
-            Device.exec("getloc");
-        }
-        
-    },
-
-    Image: {
-
-        //available: true,
-
-		callback: null,
-		
-        getFromPhotoLibrary: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback);
-        },
-        
-        getFromCamera: function() {
-            if (Device.isAndroid)
-            {
-              window.DroidGap.takePhoto();
-              return;
-            }
-            else
-            {
-              return Device.exec("getphoto" + ":" + Device.Image.callback);
-            }
-        },
-        
-        getFromSavedPhotosAlbum: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback);
-        }
-
-    },
-
-    vibrate: function() {
-        if (Device.isAndroid)
-        {
-          window.DroidGap.vibrate(100);
-        }
-        else
-        {
-          return Device.exec("vibrate");
-        }
-    },
-
-		playSound: function(clip) {
-			if (Device.isAndroid) {
-				window.DroidGap.playSound(clip);
-			} else {
-				return Device.exec('sound:' + clip);
-			}
-		}
-
-
-}
-
-function gotLocation(lat, lon) {
-    return Device.Location.set(lat, lon)
-}
+	boxLandscapeY[2] = 60;
 
 	</script>
-
 
 </head>
 
