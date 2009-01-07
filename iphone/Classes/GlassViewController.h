@@ -16,4 +16,5 @@
 - (IBAction)loadView;
 - (IBAction)pushBack;
 - (IBAction)pushHome;
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation; 
 @end
