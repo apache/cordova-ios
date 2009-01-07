@@ -17,7 +17,6 @@
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* Settings.plist */; };
 		47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* GlassViewController.m */; };
-		47FAB6DE0EF754E4005F55AB /* bird.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 47FAB6DD0EF754E4005F55AB /* bird.mp3 */; };
 		47FAB72A0EF7A663005F55AB /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB7290EF7A663005F55AB /* Sound.m */; };
 		47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB72D0EF7A6C6005F55AB /* Contacts.m */; };
 		47FAB7500EF82576005F55AB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47FAB74F0EF82576005F55AB /* AddressBook.framework */; };
@@ -46,7 +45,6 @@
 		47DC7FB20EFADF9E00D0B526 /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
 		47FAB6A70EF751E2005F55AB /* GlassViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassViewController.h; sourceTree = "<group>"; };
 		47FAB6A80EF751E2005F55AB /* GlassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassViewController.m; sourceTree = "<group>"; };
-		47FAB6DD0EF754E4005F55AB /* bird.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bird.mp3; sourceTree = "<group>"; };
 		47FAB7280EF7A663005F55AB /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
 		47FAB7290EF7A663005F55AB /* Sound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Sound.m; sourceTree = "<group>"; };
 		47FAB72C0EF7A6C6005F55AB /* Contacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contacts.h; sourceTree = "<group>"; };
@@ -142,7 +140,6 @@
 			children = (
 				47DC803E0EFB07BC00D0B526 /* offline */,
 				47DC7FB20EFADF9E00D0B526 /* Settings.plist */,
-				47FAB6DD0EF754E4005F55AB /* bird.mp3 */,
 				2899E5210DE3E06400AC0155 /* GlassViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -215,7 +212,6 @@
 				825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */,
 				8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */,
 				824041C10E942F0E002F3376 /* Default.png in Resources */,
-				47FAB6DE0EF754E4005F55AB /* bird.mp3 in Resources */,
 				47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
