@@ -1,0 +1,487 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+	<title>East Coast</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+	<link rel="apple-touch-icon" href="ctc.png"/> 
+	
+	<style type="text/css" rel="stylesheet" >
+	
+/*
+
+	-- -- -- -- -- -- --
+	reset.css
+	Undo browser defaults
+
+	http://meyerweb.com/eric/tools/css/reset/
+	v1.0 | 20080212
+	-- -- -- -- -- -- --
+	
+*/
+
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+	-webkit-text-size-adjust:none;  
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+
+
+
+																		/* -- Base Layout -- */
+body {
+	font: 62.5% Helvetica, sans-serif;
+}
+
+
+#app-wrapper {
+	overflow: auto;
+}
+
+.portrait, .portrait-flipped {
+	width: 320px;  
+	/* with all default chrome: on firmware 2.2 (consolidated address bar) - 356px */
+	/* without address bar: 416px */
+	/* without any chrome except top menu bar: 460px */
+	height: 460px;
+}
+.landscape-left, .landscape-right {  
+	/* with all default chrome: on firmware 2.2 (consolidated address bar) - 208px */
+	/* without address bar: 268px */
+	/* without any chrome except top menu bar: 300px */
+	width: 480px;  
+	height: 300px;
+}
+
+
+
+
+																		/* -- Splash Screen -- */
+.splashscreen #app-wrapper {
+	width: 320px;
+	height: 480px;
+	background: url(splash.png) no-repeat 0 0;
+}
+.splashscreen a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	text-indent: -9000px;
+	overflow: hidden;
+}
+.splashscreen .copyright {
+	text-indent: -9000px;
+}
+
+
+																		/* -- Map Screen -- */
+
+/* main background */
+.mapscreen .portrait, .mapscreen .portrait-flipped {
+	background: #fff;	
+	height: 460px;
+}
+.mapscreen .landscape-left, .mapscreen .landscape-right {
+	height: 300px;
+	background: #fff;	
+}
+
+
+/* map image */
+.mapscreen .portrait #canvas-wrapper, .mapscreen .portrait-flipped #canvas-wrapper {
+	position: absolute;
+	width: 320px;
+	height: 460px;
+	background: url(map-portrait.png) no-repeat 0 60px;
+	z-index: 100;
+}
+.mapscreen .landscape-left #canvas-wrapper, .mapscreen .landscape-right #canvas-wrapper {
+	width: 480px;
+	height: 300px;
+	background: url(map-landscape.png) no-repeat 30px 0;
+}
+
+.portrait #canvas-wrapper p, .portrait-flipped #canvas-wrapper p {
+	width: 240px;
+	margin: 0 40px;
+	color: #b8000e;
+	text-shadow: #ccc 1px 1px 2px;
+	font: bold 16px Helvetica, arial, sans-serif;
+	line-height: 1.5;
+	position: absolute;
+	top: 340px;
+	z-index: 1;
+}
+.landscape-left #canvas-wrapper p, .landscape-right #canvas-wrapper p {
+	display: none;
+}
+
+
+																		/* -- West -- */
+.west .portrait, .west .portrait-flipped {
+	background: #bac5d3 url(photo-west-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.west .landscape-left, .west .landscape-right {
+	height: 300px;
+	background: #bac5d3 url(photo-west-landscape.png) no-repeat 0 0;	
+}
+
+																		/* -- Prairies -- */
+.prairies .portrait, .prairies .portrait-flipped {
+	background: #514a49 url(photo-prairies-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.prairies .landscape-left, .prairies .landscape-right {
+	height: 300px;
+	background: #514a49 url(photo-prairies-landscape.png) no-repeat 0 0;	
+}
+
+
+																		/* -- North -- */
+.north .portrait, .north .portrait-flipped {
+	background: #245c3c url(photo-north-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.north .landscape-left, .north .landscape-right {
+	height: 300px;
+	background: #245c3c url(photo-north-landscape.png) no-repeat 0 0;	
+}
+
+																		/* -- Quebec -- */
+.quebec .portrait, .quebec .portrait-flipped {
+	background: #ab723f url(photo-quebec-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.quebec .landscape-left, .quebec .landscape-right {
+	height: 300px;
+	background: #ab723f url(photo-quebec-landscape.png) no-repeat 0 0;	
+}
+
+																		/* -- East -- */
+.east .portrait, .east .portrait-flipped {
+	background: #86584f url(photo-east-portrait.png) no-repeat 0 0;	
+	height: 460px;
+}
+.east .landscape-left, .east .landscape-right {
+	height: 300px;
+	background: #86584f url(photo-east-landscape.png) no-repeat 0 0;	
+}
+
+	</style>
+	<script type="text/javascript">
+	
+	
+	// helpful:
+	// http://www.engageinteractive.co.uk/blog/2008/06/19/tutorial-building-a-website-for-the-iphone/
+	// canvas interaction: http://furbo.org/wp-content/uploads/2007/07/canvas_test/canvas_test.html
+
+
+
+	// define globals
+	// delay each frame 40 milliseconds
+	// the iPhone can't animate canvas any quicker and a larger value makes desktop Safari animate too fast
+	var animDelay = 40; 
+	var animTimeout;
+
+	var canvasOrientation;
+	var canvasWidthPortrait = 320;
+	var canvasHeightPortrait = 460;
+	var canvasWidthLandscape = 480;
+	var canvasHeightLandscape = 300;
+
+	// define the interaction box arrays
+	var boxPortraitX = new Array();
+	var boxPortraitY = new Array();
+	var boxLandscapeX = new Array();
+	var boxLandscapeY = new Array();
+	var url = new Array();
+	var sounds = new Array();
+
+	// how big are the bounding boxes of the clickable areas?
+	var targetSize = 48;
+
+
+
+	function updateOrientation() {
+		var ctx = document.getElementById('main-canvas').getContext('2d');
+		switch(window.orientation){  
+			case 0:  
+			canvasOrientation = "portrait";  
+			document.getElementById("main-canvas").setAttribute("width", canvasWidthPortrait);
+			document.getElementById("main-canvas").setAttribute("height", canvasHeightPortrait);
+			break;
+
+			case -90:  
+			canvasOrientation = "landscape-right";  
+			document.getElementById("main-canvas").setAttribute("width", canvasWidthLandscape);
+			document.getElementById("main-canvas").setAttribute("height", canvasHeightLandscape);
+			break;
+
+			case 90:  
+			canvasOrientation = "landscape-left";
+			document.getElementById("main-canvas").setAttribute("width", canvasWidthLandscape);
+			document.getElementById("main-canvas").setAttribute("height", canvasHeightLandscape);
+			break;
+
+			case 180:  
+			canvasOrientation = "portrait-flipped";  
+			document.getElementById("main-canvas").setAttribute("width", canvasWidthPortrait);
+			document.getElementById("main-canvas").setAttribute("height", canvasHeightPortrait);
+			break;
+			
+			default:
+			canvasOrientation = "portrait";  
+			document.getElementById("main-canvas").setAttribute("width", canvasWidthPortrait);
+			document.getElementById("main-canvas").setAttribute("height", canvasHeightPortrait);
+			break;
+		}
+		document.getElementById("app-wrapper").setAttribute("class", canvasOrientation);
+		displayPoints(ctx);
+	}
+
+	function initMap(){
+		// configure the document to capture mouse events
+		document.captureEvents(Event.MOUSEMOVE)
+		// for Desktop Safari:
+		document.onmousedown = captureFinger;
+	}
+
+	function displayPoints(ctx) {
+		// loop through and draw the regions
+		for (var i = 0; i < boxPortraitX.length; i++) {
+			drawPoint(ctx, i, 1)
+		}
+	}
+
+	function captureFinger(e) {
+
+		// update the finger position, while accounting for canvas offset
+		fingerX = e.pageX;
+		fingerY = e.pageY;
+		
+		for (var i = 0; i < boxPortraitX.length; i++) {
+			// using the target size and offset lets calculate the square bounding box of our target		
+			if ((canvasOrientation == "landscape-left") || (canvasOrientation == "landscape-right")) {
+				leftX = boxLandscapeX[i] - (targetSize / 2);
+				rightX = boxLandscapeX[i] + (targetSize / 2);
+				topY = boxLandscapeY[i] - (targetSize / 2);
+				bottomY = boxLandscapeY[i] + (targetSize / 2);
+			} else {
+				leftX = boxPortraitX[i] - (targetSize / 2);
+				rightX = boxPortraitX[i] + (targetSize / 2);
+				topY = boxPortraitY[i] - (targetSize / 2);
+				bottomY = boxPortraitY[i] + (targetSize / 2);
+			}
+			
+			if ((fingerX > leftX) && (fingerX < rightX)) {
+				if ((fingerY > topY) && (fingerY < bottomY)) {
+					// set the timer and start calling the animation function
+					animTimeout = setInterval("animatePoint(" + i + ")", animDelay);
+				}
+			}
+		}
+	}
+
+	function animatePoint(index) {
+		var ctx = document.getElementById('main-canvas').getContext('2d');
+
+		// clear the canvas
+		if ((canvasOrientation == "landscape-left") || (canvasOrientation == "landscape-right")) {
+			ctx.clearRect(0, 0, canvasWidthLandscape, canvasHeightLandscape);
+		} else {
+			ctx.clearRect(0, 0, canvasWidthPortrait, canvasHeightPortrait);
+		}
+
+		// attach a static counter to the function, increment by 0.2
+	    if (typeof animatePoint.counter == 'undefined' ) {
+	        animatePoint.counter = 1;
+	    }
+        animatePoint.counter = animatePoint.counter + 0.2;
+		factor = animatePoint.counter;
+
+		// loop through the regions
+		// draw most as-is, but the selected region should be adjusted for scale/opacity
+		for (var i = 0; i < boxPortraitX.length; i++) {
+			if (i == index) {
+				drawPoint(ctx, i, factor)
+			} else {
+				drawPoint(ctx, i, 1)
+			}
+		}
+		// if we've hit this point, it ain't getting more opaque
+		// time to kill the animation loop and load the new document if it exists
+        if (factor > 2) {
+        	window.clearInterval(animTimeout);
+			if (url[index]) {
+	        	document.location = url[index];
+			}
+
+			if (sounds[index]) {
+				//Device.playSound(sounds[index]);
+			}
+			// reset the view
+			animatePoint.counter = 1;
+			factor = 1;
+			displayPoints(ctx);
+        }
+	}
+
+	function drawPoint(ctx, index, factor) {
+		// start by saving the current canvas state
+		ctx.save();
+
+		// set transparency to decrease as factor increases
+		ctx.globalAlpha = 2 - factor;
+		if (factor > 2) {
+			ctx.globalAlpha = 0;
+		}
+
+		// set the physical center point of this shape, necessary for correct zooming
+		if ((canvasOrientation == "landscape-left") || (canvasOrientation == "landscape-right")) {
+			ctx.translate(boxLandscapeX[index], boxLandscapeY[index]);
+		} else {
+			ctx.translate(boxPortraitX[index], boxPortraitY[index]);
+		}
+		// scale the elements
+		ctx.scale(factor, factor);
+		i = targetSize / 2;		
+
+		ctx.beginPath();
+
+
+		ctx.save();
+		ctx.arc(0, 0, (i * factor - 5), 0, Math.PI * 2, true);
+		ctx.fillStyle = "rgba(157, 13, 12, 0.25)";
+		ctx.fill();
+		ctx.restore();
+
+		ctx.save();
+		ctx.arc(0, 0, (i / 4 * 2.85), 0, Math.PI * 2, true);
+		ctx.fillStyle = "#ffffff";
+		ctx.fill();
+		ctx.restore();
+
+		ctx.save();
+		ctx.arc(0, 0, (i / 4 * 2.5), 0, Math.PI * 2, true);
+		var lingrad = ctx.createLinearGradient(0,0,4,30);
+		lingrad.addColorStop(0, '#ff0100');
+		lingrad.addColorStop(1, '#b20100');
+		ctx.fillStyle = lingrad;
+  		ctx.fill();
+		ctx.restore();
+
+		ctx.scale(1.6, 0.8);
+		ctx.translate(-1,-11);
+		ctx.arc(0, 0, i / 4, 0, Math.PI * 2, true);
+		ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+		ctx.fill();
+
+
+
+		// restore the previous current canvas state
+		ctx.restore();
+	}
+
+
+	window.onload = function initialLoad(){  
+		updateOrientation();  
+		initMap();
+	}  
+
+	</script>
+	
+
+	<script type="text/javascript">
+
+	// define our various interaction boxes
+	// the offset should be the center of the interaction box, not top left
+	boxPortraitX[0] = 70;
+	boxPortraitY[0] = 190;
+	boxLandscapeX[0] = 95;
+	boxLandscapeY[0] = 160;
+	sounds[0] = "";
+
+	boxPortraitX[1] = 260;
+	boxPortraitY[1] = 180;
+	boxLandscapeX[1] = 300;
+	boxLandscapeY[1] = 160;
+	sounds[1] = "";
+
+	boxPortraitX[2] = 160;
+	boxPortraitY[2] = 300;
+	boxLandscapeX[2] = 200;
+	boxLandscapeY[2] = 240;
+	sounds[2] = "";
+
+	</script>
+
+</head>
+
+
+<body id="appCanada" class="east" onorientationchange="updateOrientation();" >
+
+<div id="app-wrapper">
+
+
+	<div id="canvas-wrapper">
+		<canvas id="main-canvas" width="320" height="460" onclick="captureFinger();">
+		
+		</canvas>
+	</div>
+
+</div><!-- /app-wrapper -->
+
+</body>
+</html>
