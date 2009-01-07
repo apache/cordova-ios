@@ -21,27 +21,6 @@
 		47FAB72A0EF7A663005F55AB /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB7290EF7A663005F55AB /* Sound.m */; };
 		47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB72D0EF7A6C6005F55AB /* Contacts.m */; };
 		47FAB7500EF82576005F55AB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47FAB74F0EF82576005F55AB /* AddressBook.framework */; };
-		47FEC7000F12DFB800FAD73A /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC6FF0F12DFB800FAD73A /* index.html */; };
-		47FEC71D0F12E0B800FAD73A /* map-demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC70F0F12E0B800FAD73A /* map-demo.png */; };
-		47FEC71E0F12E0B800FAD73A /* map-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7100F12E0B800FAD73A /* map-landscape.png */; };
-		47FEC71F0F12E0B800FAD73A /* map-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7110F12E0B800FAD73A /* map-portrait.png */; };
-		47FEC7200F12E0B800FAD73A /* photo-east-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7120F12E0B800FAD73A /* photo-east-landscape.png */; };
-		47FEC7210F12E0B800FAD73A /* photo-east-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7130F12E0B800FAD73A /* photo-east-portrait.png */; };
-		47FEC7220F12E0B800FAD73A /* photo-north-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7140F12E0B800FAD73A /* photo-north-landscape.png */; };
-		47FEC7230F12E0B800FAD73A /* photo-north-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7150F12E0B800FAD73A /* photo-north-portrait.png */; };
-		47FEC7240F12E0B800FAD73A /* photo-prairies-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7160F12E0B800FAD73A /* photo-prairies-landscape.png */; };
-		47FEC7250F12E0B800FAD73A /* photo-prairies-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7170F12E0B800FAD73A /* photo-prairies-portrait.png */; };
-		47FEC7260F12E0B800FAD73A /* photo-quebec-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7180F12E0B800FAD73A /* photo-quebec-landscape.png */; };
-		47FEC7270F12E0B800FAD73A /* photo-quebec-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7190F12E0B800FAD73A /* photo-quebec-portrait.png */; };
-		47FEC7280F12E0B800FAD73A /* photo-west-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC71A0F12E0B800FAD73A /* photo-west-landscape.png */; };
-		47FEC7290F12E0B800FAD73A /* photo-west-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC71B0F12E0B800FAD73A /* photo-west-portrait.png */; };
-		47FEC72A0F12E0B800FAD73A /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC71C0F12E0B800FAD73A /* splash.png */; };
-		47FEC7380F12E2D700FAD73A /* map.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC7370F12E2D700FAD73A /* map.html */; };
-		47FEC73B0F12E50900FAD73A /* west.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC73A0F12E50900FAD73A /* west.html */; };
-		47FEC7400F12E57700FAD73A /* east.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC73C0F12E57700FAD73A /* east.html */; };
-		47FEC7410F12E57700FAD73A /* north.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC73D0F12E57700FAD73A /* north.html */; };
-		47FEC7420F12E57700FAD73A /* prairies.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC73E0F12E57700FAD73A /* prairies.html */; };
-		47FEC7430F12E57700FAD73A /* quebec.html in Resources */ = {isa = PBXBuildFile; fileRef = 47FEC73F0F12E57700FAD73A /* quebec.html */; };
 		8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8204F3D20E5CB4DC00F2DAA1 /* icon.png */; };
 		8205CB7D0E68A701006CBEEF /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 8205CB7C0E68A701006CBEEF /* Device.m */; };
 		824041C10E942F0E002F3376 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 824041C00E942F0E002F3376 /* Default.png */; };
@@ -73,27 +52,6 @@
 		47FAB72C0EF7A6C6005F55AB /* Contacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contacts.h; sourceTree = "<group>"; };
 		47FAB72D0EF7A6C6005F55AB /* Contacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contacts.m; sourceTree = "<group>"; };
 		47FAB74F0EF82576005F55AB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
-		47FEC6FF0F12DFB800FAD73A /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		47FEC70F0F12E0B800FAD73A /* map-demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "map-demo.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/map-demo.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7100F12E0B800FAD73A /* map-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "map-landscape.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/map-landscape.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7110F12E0B800FAD73A /* map-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "map-portrait.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/map-portrait.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7120F12E0B800FAD73A /* photo-east-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-east-landscape.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-east-landscape.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7130F12E0B800FAD73A /* photo-east-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-east-portrait.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-east-portrait.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7140F12E0B800FAD73A /* photo-north-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-north-landscape.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-north-landscape.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7150F12E0B800FAD73A /* photo-north-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-north-portrait.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-north-portrait.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7160F12E0B800FAD73A /* photo-prairies-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-prairies-landscape.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-prairies-landscape.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7170F12E0B800FAD73A /* photo-prairies-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-prairies-portrait.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-prairies-portrait.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7180F12E0B800FAD73A /* photo-quebec-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-quebec-landscape.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-quebec-landscape.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7190F12E0B800FAD73A /* photo-quebec-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-quebec-portrait.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-quebec-portrait.png"; sourceTree = SOURCE_ROOT; };
-		47FEC71A0F12E0B800FAD73A /* photo-west-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-west-landscape.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-west-landscape.png"; sourceTree = SOURCE_ROOT; };
-		47FEC71B0F12E0B800FAD73A /* photo-west-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "photo-west-portrait.png"; path = "../../../Desktop/Work/CTC/ui-v0.2/i/photo-west-portrait.png"; sourceTree = SOURCE_ROOT; };
-		47FEC71C0F12E0B800FAD73A /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash.png; path = "../../../Desktop/Work/CTC/ui-v0.2/i/splash.png"; sourceTree = SOURCE_ROOT; };
-		47FEC7370F12E2D700FAD73A /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = map.html; path = "../../../Desktop/Work/CTC/ui-v0.2/map.html"; sourceTree = SOURCE_ROOT; };
-		47FEC73A0F12E50900FAD73A /* west.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = west.html; sourceTree = "<group>"; };
-		47FEC73C0F12E57700FAD73A /* east.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = east.html; sourceTree = "<group>"; };
-		47FEC73D0F12E57700FAD73A /* north.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = north.html; sourceTree = "<group>"; };
-		47FEC73E0F12E57700FAD73A /* prairies.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = prairies.html; sourceTree = "<group>"; };
-		47FEC73F0F12E57700FAD73A /* quebec.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = quebec.html; sourceTree = "<group>"; };
 		8204F3D20E5CB4DC00F2DAA1 /* icon.png */ = {isa = PBXFileReference; explicitFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8205CB7B0E68A701006CBEEF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		8205CB7C0E68A701006CBEEF /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
@@ -206,27 +164,6 @@
 		47DC803E0EFB07BC00D0B526 /* offline */ = {
 			isa = PBXGroup;
 			children = (
-				47FEC73C0F12E57700FAD73A /* east.html */,
-				47FEC73D0F12E57700FAD73A /* north.html */,
-				47FEC73E0F12E57700FAD73A /* prairies.html */,
-				47FEC73F0F12E57700FAD73A /* quebec.html */,
-				47FEC73A0F12E50900FAD73A /* west.html */,
-				47FEC70F0F12E0B800FAD73A /* map-demo.png */,
-				47FEC7100F12E0B800FAD73A /* map-landscape.png */,
-				47FEC7110F12E0B800FAD73A /* map-portrait.png */,
-				47FEC7120F12E0B800FAD73A /* photo-east-landscape.png */,
-				47FEC7130F12E0B800FAD73A /* photo-east-portrait.png */,
-				47FEC7140F12E0B800FAD73A /* photo-north-landscape.png */,
-				47FEC7150F12E0B800FAD73A /* photo-north-portrait.png */,
-				47FEC7160F12E0B800FAD73A /* photo-prairies-landscape.png */,
-				47FEC7170F12E0B800FAD73A /* photo-prairies-portrait.png */,
-				47FEC7180F12E0B800FAD73A /* photo-quebec-landscape.png */,
-				47FEC7190F12E0B800FAD73A /* photo-quebec-portrait.png */,
-				47FEC71A0F12E0B800FAD73A /* photo-west-landscape.png */,
-				47FEC71B0F12E0B800FAD73A /* photo-west-portrait.png */,
-				47FEC71C0F12E0B800FAD73A /* splash.png */,
-				47FEC6FF0F12DFB800FAD73A /* index.html */,
-				47FEC7370F12E2D700FAD73A /* map.html */,
 			);
 			name = offline;
 			sourceTree = "<group>";
@@ -280,27 +217,6 @@
 				824041C10E942F0E002F3376 /* Default.png in Resources */,
 				47FAB6DE0EF754E4005F55AB /* bird.mp3 in Resources */,
 				47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */,
-				47FEC7000F12DFB800FAD73A /* index.html in Resources */,
-				47FEC71D0F12E0B800FAD73A /* map-demo.png in Resources */,
-				47FEC71E0F12E0B800FAD73A /* map-landscape.png in Resources */,
-				47FEC71F0F12E0B800FAD73A /* map-portrait.png in Resources */,
-				47FEC7200F12E0B800FAD73A /* photo-east-landscape.png in Resources */,
-				47FEC7210F12E0B800FAD73A /* photo-east-portrait.png in Resources */,
-				47FEC7220F12E0B800FAD73A /* photo-north-landscape.png in Resources */,
-				47FEC7230F12E0B800FAD73A /* photo-north-portrait.png in Resources */,
-				47FEC7240F12E0B800FAD73A /* photo-prairies-landscape.png in Resources */,
-				47FEC7250F12E0B800FAD73A /* photo-prairies-portrait.png in Resources */,
-				47FEC7260F12E0B800FAD73A /* photo-quebec-landscape.png in Resources */,
-				47FEC7270F12E0B800FAD73A /* photo-quebec-portrait.png in Resources */,
-				47FEC7280F12E0B800FAD73A /* photo-west-landscape.png in Resources */,
-				47FEC7290F12E0B800FAD73A /* photo-west-portrait.png in Resources */,
-				47FEC72A0F12E0B800FAD73A /* splash.png in Resources */,
-				47FEC73B0F12E50900FAD73A /* west.html in Resources */,
-				47FEC7380F12E2D700FAD73A /* map.html in Resources */,
-				47FEC7400F12E57700FAD73A /* east.html in Resources */,
-				47FEC7410F12E57700FAD73A /* north.html in Resources */,
-				47FEC7420F12E57700FAD73A /* prairies.html in Resources */,
-				47FEC7430F12E57700FAD73A /* quebec.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
