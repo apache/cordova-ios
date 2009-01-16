@@ -39,27 +39,48 @@ void alert(NSString *message) {
 	
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
-	
-	// Override point for customization after app launch	
 
 	[window addSubview:viewController.view]; 
+	
+	NSString *errorDesc = nil;
+	
+	NSPropertyListFormat format;
+	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
+	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
+										  propertyListFromData:plistXML
+										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+										  format:&format errorDescription:&errorDesc];
+	
+	
+	NSString *mode;
+	NSString *url;
+	int *detectNumber;
 
-	NSString * htmlFileName;
-	NSString * urlFileName;
-	
-	htmlFileName = @"index";
-	urlFileName = @"url";
-	
-	NSString * urlPathString;	
-	NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
-	
-	if (urlPathString = [thisBundle pathForResource:urlFileName	ofType:@"txt"]) {
-		NSString * theURLString = [NSString stringWithContentsOfFile:urlPathString];
-		appURL = [NSURL URLWithString:theURLString];
-		[appURL retain];
+	mode			= [temp objectForKey:@"Offline"];
+	url				= [temp objectForKey:@"Callback"];
+	detectNumber	= [temp objectForKey:@"DetectPhoneNumber"]; 
+		
+	if ([mode isEqualToString:@"0"]) {
+		// Online Mode
+		appURL = [[NSURL URLWithString:url] retain];
 		NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
 		[webView loadRequest:aRequest];
-	}	
+	} else {		
+		// Offline Mode
+		NSString * urlPathString;
+		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
+		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html"]){
+			[webView  loadRequest:[NSURLRequest
+								   requestWithURL:[NSURL fileURLWithPath:urlPathString]
+								   cachePolicy:NSURLRequestUseProtocolCachePolicy
+								   timeoutInterval:20.0
+								   ]];
+			
+		}   
+	}
+	
+	webView.detectsPhoneNumbers=detectNumber;
 	
 	//This keeps the Default.png up
 	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
@@ -93,7 +114,6 @@ void alert(NSString *message) {
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	NSURL* url = [request URL];
 	NSString * urlString = [url absoluteString];
-  
 	
 	NSBundle * mainBundle = [NSBundle mainBundle];
 	
@@ -113,12 +133,8 @@ void alert(NSString *message) {
 
 	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
 		
-		NSLog([parts objectAtIndex:0]);
-		NSLog([parts objectAtIndex:1]);
-		
 		if ([(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]){
 			
-			//LOCATION
 			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getloc"]){
 				NSLog(@"location request!");
 
@@ -144,7 +160,9 @@ void alert(NSString *message) {
 				//[contacts getContacts];
 			
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
+				
 				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
+				
 				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
 			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
 
@@ -159,8 +177,6 @@ void alert(NSString *message) {
 				// Cleanup any memory that may not be caught
 				sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
 				[sound play];
-				
-
 			}
 			
 			return NO;
