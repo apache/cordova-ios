@@ -113,6 +113,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				AA13D3080F20286200B18061 /* Config */,
 				824041C00E942F0E002F3376 /* Default.png */,
 				8204F3D20E5CB4DC00F2DAA1 /* icon.png */,
 				825DFB5D0E464E6C000D0A5D /* README.markdown */,
@@ -138,11 +139,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				47DC803E0EFB07BC00D0B526 /* offline */,
-				47DC7FB20EFADF9E00D0B526 /* Settings.plist */,
 				2899E5210DE3E06400AC0155 /* GlassViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
-				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -158,11 +156,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		47DC803E0EFB07BC00D0B526 /* offline */ = {
+		AA13D3080F20286200B18061 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				47DC7FB20EFADF9E00D0B526 /* Settings.plist */,
+				8D1107310486CEB800E47090 /* Info.plist */,
 			);
-			name = offline;
+			name = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
