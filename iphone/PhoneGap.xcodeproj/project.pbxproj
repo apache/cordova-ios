@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0714B1A50E452A2100039BAB /* GlassBgView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0714B1A40E452A2100039BAB /* GlassBgView.m */; };
 		0714B1EE0E45393600039BAB /* url.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0714B1ED0E45393600039BAB /* url.txt */; };
 		079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079B0A090E45734600755F37 /* CoreLocation.framework */; };
 		1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */; };
@@ -29,11 +28,10 @@
 		8254F8810E650500002FDA36 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F8800E650500002FDA36 /* Location.m */; };
 		825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 825DFB5D0E464E6C000D0A5D /* README.markdown */; };
 		828B59CE0E520C7F0096DE8B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */; };
+		AA13D2CD0F20245000B18061 /* GlassBgView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA13D2CC0F20245000B18061 /* GlassBgView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0714B1A30E452A2100039BAB /* GlassBgView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassBgView.h; sourceTree = "<group>"; };
-		0714B1A40E452A2100039BAB /* GlassBgView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassBgView.m; sourceTree = "<group>"; };
 		0714B1ED0E45393600039BAB /* url.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = url.txt; sourceTree = "<group>"; };
 		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -65,6 +63,8 @@
 		825DFB5D0E464E6C000D0A5D /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA13D2CB0F20245000B18061 /* GlassBgView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassBgView.h; sourceTree = "<group>"; };
+		AA13D2CC0F20245000B18061 /* GlassBgView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassBgView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +86,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				AA13D2CB0F20245000B18061 /* GlassBgView.h */,
+				AA13D2CC0F20245000B18061 /* GlassBgView.m */,
 				1D3623240D0F684500981E51 /* GlassAppDelegate.h */,
 				1D3623250D0F684500981E51 /* GlassAppDelegate.m */,
 				8205CB7B0E68A701006CBEEF /* Device.h */,
@@ -123,8 +125,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				0714B1A30E452A2100039BAB /* GlassBgView.h */,
-				0714B1A40E452A2100039BAB /* GlassBgView.m */,
 				079B0A090E45734600755F37 /* CoreLocation.framework */,
 			);
 			name = CustomTemplate;
@@ -225,13 +225,13 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */,
-				0714B1A50E452A2100039BAB /* GlassBgView.m in Sources */,
 				8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */,
 				8254F8810E650500002FDA36 /* Location.m in Sources */,
 				8205CB7D0E68A701006CBEEF /* Device.m in Sources */,
 				47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */,
 				47FAB72A0EF7A663005F55AB /* Sound.m in Sources */,
 				47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */,
+				AA13D2CD0F20245000B18061 /* GlassBgView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
