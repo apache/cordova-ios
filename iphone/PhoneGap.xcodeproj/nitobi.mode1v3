@@ -266,16 +266,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
-								<string>29B97317FDCFA39411CA2CEA</string>
+								<string>080E96DDFE201D6D7F000001</string>
 								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
-							<array>
-								<array>
-									<integer>0</integer>
-								</array>
-							</array>
+							<array/>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
 							<string>{{0, 0}, {259, 813}}</string>
 						</dict>
@@ -324,7 +320,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>47F0278A0F1571480051FA7D</string>
+										<string>47C9FF740F201DE600E811FD</string>
 										<key>history</key>
 										<array>
 											<string>47FAB7000EF7A220005F55AB</string>
@@ -335,10 +331,10 @@
 											<string>47FEC7460F12E86A00FAD73A</string>
 											<string>47A2C5FD0F13FAC200050631</string>
 											<string>47A2C5FE0F13FAC200050631</string>
-											<string>47F027530F1569A50051FA7D</string>
-											<string>47F027780F156AC40051FA7D</string>
-											<string>47F027870F1571480051FA7D</string>
-											<string>47F027880F1571480051FA7D</string>
+											<string>47F027900F1586FD0051FA7D</string>
+											<string>47F027910F1586FD0051FA7D</string>
+											<string>47F027920F1586FD0051FA7D</string>
+											<string>47F027970F1586FD0051FA7D</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -358,8 +354,6 @@
 											<string>47FEC74E0F12E86A00FAD73A</string>
 											<string>47FEC74F0F12E86A00FAD73A</string>
 											<string>47FEC7530F12E86A00FAD73A</string>
-											<string>47F0277A0F156AC40051FA7D</string>
-											<string>47F027890F1571480051FA7D</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -417,9 +411,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>47F027680F156A710051FA7D</string>
+				<string>47C9FF750F201DE600E811FD</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>47F027690F156A710051FA7D</string>
+				<string>47C9FF760F201DE600E811FD</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -553,11 +547,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>47F027720F156A710051FA7D</string>
-		<string>47F027730F156A710051FA7D</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>47B803F20E4D32B900939591</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/nitobi/iPhone/phonegap/iphone/PhoneGap.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
