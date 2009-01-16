@@ -70,7 +70,7 @@ void alert(NSString *message) {
 		// Offline Mode
 		NSString * urlPathString;
 		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
-		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html"]){
+		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]){
 			[webView  loadRequest:[NSURLRequest
 								   requestWithURL:[NSURL fileURLWithPath:urlPathString]
 								   cachePolicy:NSURLRequestUseProtocolCachePolicy

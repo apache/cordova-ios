@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Offline</key>
-	<string>0</string>
+	<string>1</string>
 	<key>Callback</key>
 	<string>http://phonegap.com/demo2/</string>
 	<key>DetectPhoneNumber</key>
