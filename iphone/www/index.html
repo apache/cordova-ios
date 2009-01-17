@@ -1,6 +1,11 @@
 <html>
   <head>
     <title>Phone Gap Offline</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="minimum-scale=1.0, width=device-width, maximum-scale=1.1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="YES">
+    <link rel="stylesheet" href="main.css">
+    
     <style type="text/css" media="screen">
       :focus { outline:0 }
       body{
@@ -9,8 +14,15 @@
       text-align:center;
       }
     </style>
+    
+    <script type="text/javascript" charset="utf-8">
+      var preventElasticBehavior = function(e) { 
+          e.preventDefault(); 
+      };
+    </script>
+    
   </head>
-  <body>
+  <body onload="document.addEventListener('touchmove', preventElasticBehavior, false);">
     <h1>PhoneGap Offline</h1>  
     <p>this <strong>index.html</strong> file is located in the <strong>www</strong> directory</p>
   </body>
