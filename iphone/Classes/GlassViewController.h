@@ -11,10 +11,12 @@
 #import <Foundation/Foundation.h>
 
 @interface GlassViewController : UIViewController {
-	
+	IBOutlet UIWebView *webView;	
 }
 - (IBAction)loadView;
 - (IBAction)pushBack;
 - (IBAction)pushHome;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation; 
+- (void)willRotateToInterfaceOrientation: (UIInterfaceOrientation)toInterfaceOrientation duration: (NSTimeInterval)duration;
+
 @end

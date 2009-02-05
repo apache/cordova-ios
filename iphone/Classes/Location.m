@@ -1,33 +1,92 @@
+/*
+ *  Location.m
+ *
+ *  Created by Nitobi on 12/12/08.
+ *  Copyright 2008 Nitobi. All rights reserved.
+ *
+ */
 
 #import "Location.h"
+//#import "GlassAppDelegate.h" 
 
+#define LocStr(key) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
 
 @implementation Location
+@synthesize locationManager;
+@synthesize lastKnownLocation;
 
-- (id)init{
+static Location *sharedCLDelegate = nil;
+
+
+- (id) init {
 	NSLog(@"Gap::Location");
-	locationManager = [[CLLocationManager alloc] init];
-	[locationManager setDelegate:self];
-	return self;
+    self = [super init];
+    if (self != nil) {
+        self.locationManager = [[[CLLocationManager alloc] init] autorelease];
+        self.locationManager.delegate = self; // Tells the location manager to send updates to this object
+    }
+    return self;
 }
 
-- (void)startTracking{
-	NSLog(@"starting location tracker");
-	[locationManager startUpdatingLocation];
+
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{
+	[lastKnownLocation release];
+	lastKnownLocation = newLocation;
+	[lastKnownLocation retain];	
 }
 
-- (void)stopTracking{
-	NSLog(@"stopping location tracker");
-	[locationManager stopUpdatingLocation];
+
+- (NSString *)getPosition 
+{	
+	return [[NSString alloc] initWithFormat:@"gotLocation('%f','%f','%f');", 
+				  lastKnownLocation.coordinate.latitude, 
+				  lastKnownLocation.coordinate.longitude, 
+				  lastKnownLocation.altitude];
 }
 
-- (void)location{
-	NSLog(@"location is");
++ (Location *)sharedInstance {
+    @synchronized(self) {
+        if (sharedCLDelegate == nil) {
+            [[self alloc] init]; // assignment not done here
+        }
+    }
+    return sharedCLDelegate;
 }
 
-- (void)log{
-	NSLog(@"the location is...");
++ (id)allocWithZone:(NSZone *)zone {
+    @synchronized(self) {
+        if (sharedCLDelegate == nil) {
+            sharedCLDelegate = [super allocWithZone:zone];
+            return sharedCLDelegate;  // assignment and return on first allocation
+        }
+    }
+    return nil; // on subsequent allocation attempts return nil
 }
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
+- (id)retain {
+    return self;
+}
+
+- (unsigned)retainCount {
+    return UINT_MAX;  // denotes an object that cannot be released
+}
+
+- (void)release {
+    //do nothing
+}
+
+- (id)autorelease {
+    return self;
+}
+
 
 - (void)dealloc {
     [locationManager release];

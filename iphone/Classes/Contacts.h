@@ -1,14 +1,13 @@
-//
-//  Contacts.h
-//  Glass
-//
-//  Created by Nitobi on 13/12/08.
-//  Copyright 2008 Nitobi. All rights reserved.
-//
+/*
+ *  Contact.h
+ *
+ *  Created by Nitobi on 12/12/08.
+ *  Copyright 2008 Nitobi. All rights reserved.
+ *
+ */
 
 #import <Foundation/Foundation.h>
 #import <AddressBook/ABAddressBook.h>
-
 
 @interface Contacts : NSObject {
 	ABAddressBookRef addressBook;
