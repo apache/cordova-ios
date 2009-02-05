@@ -29,11 +29,18 @@
 	IBOutlet UIWindow *window;
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
+	
 	IBOutlet UIImageView *imageView;
 	IBOutlet UIActivityIndicatorView *activityView;
   
 	CLLocationManager *locationManager;
 	CLLocation		  *lastKnownLocation;
+	
+	UIImagePickerController *picker;	// added by urbian
+	NSString *photoUploadUrl;			// added by urbian
+	NSString *lastUploadedPhoto;		// added by urbian
+	NSURLConnection *conn;				// added by urbian
+	NSMutableData *receivedData;		// added by urbian	
 
 	UIImagePickerController *imagePickerController;
 	

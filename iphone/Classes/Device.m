@@ -1,8 +1,24 @@
-#import "Device.h"
+/*
+ *  Device.m 
+ *  Used to display Device centric details handset.
+ *
+ *  Created by Nitobi on 12/12/08.
+ *  Copyright 2008 Nitobi. All rights reserved.
+ */
 
+#import "Device.h"
 
 @implementation Device
 
+/*
+ * init
+ * returns a JS String with various device settings
+ *  - gap enabled
+ *  - version
+ *  - Device model
+ *  - Device Version
+ *  - Device UUID
+ */
 - (NSString *)init{
 	
 	jsCallBack = nil;
@@ -10,7 +26,7 @@
 	
 	return jsCallBack = [[NSString alloc] initWithFormat:@"\
 				  __gap = true; \
-				  __gap_version='0.1'; \
+				  __gap_version='0.2'; \
 				  __gap_device_model='%s'; \
 				  __gap_device_version='%s';\
 				  __gap_device_uniqueid='%s';",

@@ -1,14 +1,14 @@
-//
-//  Contacts.m
-//  Glass
-//
-//  Created by Nitobi on 13/12/08.
-//  Copyright 2008 Nitobi. All rights reserved.
-//
+/*
+ *  Contact.m
+ *
+ *  Created by Nitobi on 2/3/09
+ *  Copyright 2008 Nitobi. All rights reserved.
+ *
+ */
+
 
 #import <AddressBook/AddressBook.h>
 #import "Contacts.h"
-//#import <JSON/JSON.h>
 
 @implementation Contacts
 
@@ -48,11 +48,6 @@
 		}
 	}
 	
-//	SBJSON *json = [SBJSON new];
-//	json.humanReadable = YES;
-
-//	NSString *jsonStr = [json stringWithObject:contacts error:NULL];
-//	NSLog(@"%@",jsonStr);
 	
 	return contacts;
 }
