@@ -3,6 +3,7 @@
  *
  *  Created by Nitobi on 2/3/09
  *  Copyright 2008 Nitobi. All rights reserved.
+ *  Rob Ellis rob.ellis@nitobi.com
  *
  */
 
@@ -19,37 +20,39 @@
 	return self;
 }
 
-- (NSArray *)getContacts {
-	if (nil == allPeople) {
+- (NSMutableString *)getContacts {
+	NSMutableString *update = [[[NSMutableString alloc] init] autorelease];
+	
+	if (allPeople == nil) {
 		allPeople = (NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook);
 		CFIndex nPeople = ABAddressBookGetPersonCount(self.addressBook);
 				
-		
-		NSMutableArray *contacts;
-		contacts = [[NSMutableArray alloc] init ];
-
+		[update appendString:@"gap_contacts = ["];
 		
 		for (int i=0;i < nPeople;i++) { 
 			ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
 
-			CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
-			CFStringRef lastName = ABRecordCopyValue(ref, kABPersonLastNameProperty);
-			CFStringRef phoneNumber = ABMultiValueCopyValueAtIndex(ABRecordCopyValue(ref,kABPersonPhoneProperty) ,0);
-			NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
-			NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@'}",contactFirstLast];
-			NSLog(@"%@",contactFirstLast2);
-
-			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:contactFirstLast, @"name",phoneNumber, @"phone",nil];
-			[contacts addObject:dict];
-			
-			CFRelease(firstName);
-			CFRelease(lastName);
-			CFRelease(phoneNumber);
+			if (ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil) {
+				CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
+				CFStringRef lastName = ABRecordCopyValue(ref, kABPersonLastNameProperty);			
+				CFStringRef phoneNumber = ABMultiValueCopyValueAtIndex(ABRecordCopyValue(ref,kABPersonPhoneProperty) ,0);
+				
+				NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
+				NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@','phone':'%@'}",contactFirstLast,phoneNumber];
+				[update appendFormat:@"%@", contactFirstLast2];
+				if (i+1 != nPeople) {
+					[update appendFormat:@","];
+				}
+				
+				CFRelease(firstName);
+				CFRelease(lastName);
+				CFRelease(phoneNumber);
+			}
 		}
+
+		[update appendString:@"];"];
 	}
-	
-	
-	return contacts;
+	return update;
 }
 
 - (void) addContact {

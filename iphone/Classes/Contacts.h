@@ -13,7 +13,6 @@
 	ABAddressBookRef addressBook;
 	NSArray *allPeople;
 	CFIndex nPeople;
-	NSMutableArray *contacts;
 }
 
 @property (getter=getAddressBook,assign) ABAddressBookRef addressBook;

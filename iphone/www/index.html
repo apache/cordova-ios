@@ -18,11 +18,20 @@
       var preventElasticBehavior = function(e) { 
           e.preventDefault(); 
       };
+	  
+	  function add() {
+		var el = document.getElementById('num');
+		el.innerHTML = gap_contacts[4].phone;
+	  }	
     </script>
     
   </head>
   <body onload="document.addEventListener('touchmove', preventElasticBehavior, false);">
     <h1>PhoneGap Offline</h1>  
+
     <p>this <strong>index.html</strong> file is located in the <strong>www</strong> directory</p>
+	<button onclick="document.location='gap:getcontacts'">Contacts</button>
+	<button onclick="add();">results ?</button>
+	<div id="num"></div>
   </body>
 </html>
