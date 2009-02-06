@@ -7,7 +7,7 @@
 #import "Location.h"
 #import "Device.h"
 #import "Sound.h"
-//#import "Contacts.h"
+#import "Contacts.h"
 
 
 @class GlassViewController;
@@ -17,23 +17,19 @@
 @interface GlassAppDelegate : NSObject <
     UIApplicationDelegate, 
     UIWebViewDelegate, 
-    CLLocationManagerDelegate, 
     UIAccelerometerDelegate,
     UIImagePickerControllerDelegate, 
     UIPickerViewDelegate, 
     UINavigationControllerDelegate
   >
 {
-
 	
 	IBOutlet UIWindow *window;
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
 	
 	IBOutlet UIImageView *imageView;
-  
-	CLLocationManager *locationManager;
-	CLLocation		  *lastKnownLocation;
+	IBOutlet UIActivityIndicatorView *activityView;
 	
 	UIImagePickerController *picker;	// added by urbian
 	NSString *photoUploadUrl;			// added by urbian
@@ -45,11 +41,10 @@
 	
 	NSURLConnection *callBackConnection;
 	Sound *sound;
-	//Contacts *contacts;
+	Contacts *contacts;
 	NSURL* appURL;
 }
 
-@property (nonatomic, retain) CLLocation *lastKnownLocation;
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) GlassViewController *viewController;
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;

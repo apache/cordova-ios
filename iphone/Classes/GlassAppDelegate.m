@@ -29,9 +29,7 @@ void alert(NSString *message) {
   
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
-	
-	// Im not sure why the next line was giving me a warning... any ideas?
-	// when this is commented out, the cancel button no longer works.
+
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	imagePickerController.view.hidden = YES;
@@ -202,8 +200,14 @@ void alert(NSString *message) {
 				[vibration vibrate];
 				[vibration release];
 
-				//contacts = [[Contacts alloc] init];
-				//[contacts getContacts];
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getcontacts"]) {				
+				
+				Contacts *contacts = [[Contacts alloc] init];
+				jsCallBack = [contacts getContacts];
+				NSLog(@"%@",jsCallBack);
+				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
+
+				[contacts release];
 			
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
 				
@@ -228,7 +232,6 @@ void alert(NSString *message) {
 
 	return YES;
 }
-
 
 
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {

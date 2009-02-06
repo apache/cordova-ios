@@ -15,6 +15,7 @@
 		2899E5220DE3E06400AC0155 /* GlassViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* GlassViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* Settings.plist */; };
+		47F565210F3AC95D001DFBDB /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F565200F3AC95D001DFBDB /* Image.m */; };
 		47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* GlassViewController.m */; };
 		47FAB72A0EF7A663005F55AB /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB7290EF7A663005F55AB /* Sound.m */; };
 		47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB72D0EF7A6C6005F55AB /* Contacts.m */; };
@@ -42,6 +43,8 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main.m; sourceTree = "<group>"; };
 		474A7F820EFAD6580020DD7F /* PhoneGap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGap_Prefix.pch; sourceTree = "<group>"; };
 		47DC7FB20EFADF9E00D0B526 /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
+		47F5651F0F3AC95D001DFBDB /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		47F565200F3AC95D001DFBDB /* Image.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
 		47FAB6A70EF751E2005F55AB /* GlassViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassViewController.h; sourceTree = "<group>"; };
 		47FAB6A80EF751E2005F55AB /* GlassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassViewController.m; sourceTree = "<group>"; };
 		47FAB7280EF7A663005F55AB /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
@@ -101,6 +104,8 @@
 				8254F8800E650500002FDA36 /* Location.m */,
 				47FAB6A70EF751E2005F55AB /* GlassViewController.h */,
 				47FAB6A80EF751E2005F55AB /* GlassViewController.m */,
+				47F5651F0F3AC95D001DFBDB /* Image.h */,
+				47F565200F3AC95D001DFBDB /* Image.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 				47FAB72A0EF7A663005F55AB /* Sound.m in Sources */,
 				47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */,
 				AA13D2CD0F20245000B18061 /* GlassBgView.m in Sources */,
+				47F565210F3AC95D001DFBDB /* Image.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,18 +12,6 @@
 @implementation GlassViewController
 
 
-- (IBAction)loadView {
-	
-}
-
-- (IBAction)pushBack {
-    
-}
-
-- (IBAction)pushHome {
-    
-}
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
 { 
     return YES; 
@@ -49,9 +37,8 @@
 			i = -90;
 			break;
 	}
-	GlassAppDelegate *appDelegate = (GlassAppDelegate*)[[UIApplication sharedApplication] delegate];
-	jsCallBack = [[NSString alloc] initWithFormat:@"setOrientation(%f); window.onorientationchange();", i];
-	NSLog(jsCallBack);
+//	GlassAppDelegate *appDelegate = (GlassAppDelegate*)[[UIApplication sharedApplication] delegate];
+	jsCallBack = [[NSString alloc] initWithFormat:@"setOrientation(%f);", i];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	
 	[jsCallBack release];

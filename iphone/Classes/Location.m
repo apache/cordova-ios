@@ -7,7 +7,6 @@
  */
 
 #import "Location.h"
-//#import "GlassAppDelegate.h" 
 
 #define LocStr(key) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
 

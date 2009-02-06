@@ -12,7 +12,6 @@
 @implementation Vibrate
 
 - (id)init{
-	NSLog(@"Gap::Vibrate");
 	return self;
 }
 
