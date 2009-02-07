@@ -1,50 +1,81 @@
-require 'rubygems'
-require "hpricot"
-
-PHONEGAP_WEB_PATH = "iphone/www"
-
-namespace :iphone do
-  task :default => [:import] do
-  end
-
-  desc 'reverts file back to original form'
-  task :revert do
-    back = open("#{PHONEGAP_WEB_PATH}/index.back.html").read
-    File.open("#{PHONEGAP_WEB_PATH}/index.html", "w") {|f| f.puts back}
-  end
-
-  desc 'backups index.html file'
-  task :backup do
-    puts "creating backup file (if needed)"
-    index = open("#{PHONEGAP_WEB_PATH}/index.html").read
-    File.open("#{PHONEGAP_WEB_PATH}/index.back.html", "w") {|f| f.write index} unless index.include?("RAKED::")
-  end
-
-  desc 'puts external javascript and css content into index page'
-  task :import => :backup do
-    #open backup file
-    doc = Hpricot(open("#{PHONEGAP_WEB_PATH}/index.back.html"))
+LIBPATH = File.expand_path(File.dirname(__FILE__)) + File::SEPARATOR
   
-    #find and import stylesheets
-    (doc/"head/link[@rel='stylesheet']").remove.each do |elem|
-      path = file elem.attributes['href']
-      puts "  importing stylesheet: #{path}"
-      css_content = open("#{PHONEGAP_WEB_PATH}/#{path}").read
-      elem.after("<style type=\"text/css\" media=\"screen\">\n/*RAKED::css file::#{path} */\n" + css_content + "\n</style>\n")
-    end
-  
-    #find and import javascripts
-    doc.search("head/script").remove.each do |elem|
-      path = file elem.attributes['src']
-      puts "  importing javascript: #{path}"
-      js_content = open("#{PHONEGAP_WEB_PATH}/#{path}").read
-      elem.after( "<script type=\"text/javascript\" charset=\"utf-8\">\n//RAKED::javascript file::#{path}\n" + js_content + "\n</script>\n\n")
-    end
-  
-    #write and save as index.html
-    open("#{PHONEGAP_WEB_PATH}/index.html", "w") { |f| f.write doc}
-  end
+#
+# builds and tests
+#
+desc 'writes lib/phonegap.js and lib/phonegap-min.js and runs docs'
+task :default do
+  build
+  doc
 end
 
+task :doc do
+  doc
+end
 
+def doc
+  puts 'writing the full interface source for documentation into tmp/phonegap.js'
+  final = "#{ LIBPATH }tmp#{ File::SEPARATOR }phonegap.js"
+  js = ""
+  interfaces_to_build.each do |lib|
+    js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ lib }.js")
+  end
+  FileUtils.mkdir_p "#{ LIBPATH }tmp"
+  open(final,'w'){|f| f.puts( js )}
+  sh "java -jar util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }jsrun.jar util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }app#{ File::SEPARATOR }run.js -a -t=util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }templates#{ File::SEPARATOR }jsdoc tmp#{ File::SEPARATOR }phonegap.js"
+end
 
+def build
+  puts 'writing the full JS file to lib/phonegap.js'
+  final = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap.js"
+  js = ""
+  platforms_to_build.each do |platform|
+    interfaces_to_build.each do |interface|
+      begin
+        js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ platform }#{ File::SEPARATOR }#{ interface }.js")
+      rescue
+      end
+    end
+  end
+  interfaces_to_build.each do |interface|
+    js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ interface }.js")
+  end
+  FileUtils.mkdir_p "#{ LIBPATH }lib"
+  open(final,'w'){|f| f.puts( js )} 
+  
+  min
+end
+
+# the sub libraries used by xui
+def interfaces_to_build
+  %w(acceleration accelerometer camera contact file geolocation map notification orientation position sms telephony)
+end 
+
+# the sub libraries used by xui
+def platforms_to_build
+  %w(android blackberry iphone)
+end 
+
+# helper for build_sub_libaries
+def import(lib)
+  s = ""
+  r = ""
+  open(lib) { |f| s << "\n#{f.read}\n\n" }
+  s.each_line {|l| r << "    #{l}"}
+  r
+end
+
+# creates lib/xui-min.js (tho not obfuscates)
+def min
+  puts 'minifying js'
+  min_file = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap-min.js"
+  doc_file = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap.js"
+  sh "java -jar #{LIBPATH}#{ File::SEPARATOR }util#{ File::SEPARATOR }yuicompressor-2.4.2.jar --charset UTF-8 -o #{min_file} #{doc_file}"
+end 
+ 
+# opens up the specs
+def spec
+  puts 'running automated test suite'
+  #sh "open -a WebKit file://#{ LIBPATH }/spec/index.html"
+  #sh "open -a '/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone Simulator.app' file://#{ LIBPATH }/spec/index.html"
+end

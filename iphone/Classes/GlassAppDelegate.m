@@ -23,7 +23,11 @@ void alert(NSString *message) {
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 
+	/*
+	 * Fire up the GPS Service right away as it takes a moment for data to come back.
+	 */
 	[[Location sharedInstance].locationManager startUpdatingLocation];
+		
 	
 	webView.delegate = self;
   
@@ -33,7 +37,6 @@ void alert(NSString *message) {
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	imagePickerController.view.hidden = YES;
-	//[window addSubview:imagePickerController.view];
 	
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
@@ -85,6 +88,9 @@ void alert(NSString *message) {
 	imageView = [[UIImageView alloc] initWithImage:tempImage];
 	[window addSubview:imageView];
   
+	/*
+	 * This is the Battery View bar at the top
+	 */
 	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	[window addSubview:activityView];
 	[activityView startAnimating];
@@ -94,15 +100,26 @@ void alert(NSString *message) {
 
 
 /*
- * When web application loads pass it device information
- *
+ *	When web application loads Add stuff to the DOM (HTML 5)
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
-  [UIApplication sharedApplication].networkActivityIndicatorVisible = YES; 
 
-  Device * device = [[Device alloc] init];
-  [theWebView stringByEvaluatingJavaScriptFromString:[device getDeviceInfo]];
-  [device release];
+	/*
+	 * This is the Device.plaftorm information
+	 */	
+	[theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
+
+	/*
+	 * We want to Add Contact to the DOM on init.
+	 */
+	NSString * jsCallBack = nil;
+	Contacts *contacts = [[Contacts alloc] init];
+	jsCallBack = [contacts getContacts];
+	NSLog(@"%@",jsCallBack);
+	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+	
+	[contacts release];
+	
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
@@ -235,9 +252,13 @@ void alert(NSString *message) {
 
 
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
-	NSString * jsCallBack = [NSString stringWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
+	NSString * jsCallBack = nil;
+		
+	jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._getCurrentAcceleration(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];			  
+	NSLog(jsCallBack);
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
+
 
 
 - (void)imagePickerController:(UIImagePickerController *)thePicker didFinishPickingImage:(UIImage *)theImage editingInfo:(NSDictionary *)editingInfo

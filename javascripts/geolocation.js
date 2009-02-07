@@ -1,41 +1,22 @@
 /**
- * This file contains all the Geo classes as defined by W3C
- * Methods liks Geolocation::getCurrentPosition need to be implemented 
- * in a platform specific manner.
+ * This class provides access to device GPS data.
+ * @constructor
  */
-
-function Position(lat, lng, acc, alt, altacc, head, vel) {
-	this.latitude = lat;
-	this.longitude = lng;
-	this.accuracy = acc;
-	this.altitude = alt;
-	this.altitudeAccuracy = altacc;
-	this.heading = head;
-	this.velocity = vel;
-	this.timestamp = new Date().getTime();
-}
-
-function PositionOptions() {
-	this.enableHighAccuracy = true;
-	this.timeout = 10000;
-}
-
-function PositionError() {
-	this.code = null;
-	this.message = "";
-}
-
-PositionError.UNKNOWN_ERROR = 0;
-PositionError.PERMISSION_DENIED = 1;
-PositionError.POSITION_UNAVAILABLE = 2;
-PositionError.TIMEOUT = 3;
-
 function Geolocation() {
+	/**
+	 * The last known GPS position.
+	 */
 	this.lastPosition = null;
 }
 
 /**
- * Asynchronously aquires a new position.
+ * Asynchronously aquires the current position.
+ * @param {Function} successCallback The function to call when the position
+ * data is available
+ * @param {Function} errorCallback The function to call when there is an error 
+ * getting the position data.
+ * @param {PositionOptions} options The options for getting the position data
+ * such as timeout.
  */
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
 	// If the position is available then call success
@@ -43,20 +24,29 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 }
 
 /**
- * First get the current position as usual.
- *
- * Invoke the appropriate callback with a new Position object every time the implementation 
- * determines that the position of the hosting device has changed. 
+ * Asynchronously aquires the position repeatedly at a given interval.
+ * @param {Function} successCallback The function to call each time the position
+ * data is available
+ * @param {Function} errorCallback The function to call when there is an error 
+ * getting the position data.
+ * @param {PositionOptions} options The options for getting the position data
+ * such as timeout and the frequency of the watch.
  */
 Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
+	// Invoke the appropriate callback with a new Position object every time the implementation 
+	// determines that the position of the hosting device has changed. 
 	this.getCurrentPosition(successCallback, errorCallback, options);
 	return setInterval(function() {
 		navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
 	}, 10000);
 }
 
+/**
+ * Clears the specified position watch.
+ * @param {String} watchId The ID of the watch returned from #watchPosition.
+ */
 Geolocation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation;
+if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();

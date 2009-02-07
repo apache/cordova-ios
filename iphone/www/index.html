@@ -1,10 +1,12 @@
 <html>
   <head>
     <title>Phone Gap Offline</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+	
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="minimum-scale=1.0, width=device-width, maximum-scale=1.1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="YES">
-    
+
+	
     <style type="text/css" media="screen">
       :focus { outline:0 }
       body{
@@ -13,25 +15,20 @@
       text-align:center;
       }
     </style>
-    
-    <script type="text/javascript" charset="utf-8">
-      var preventElasticBehavior = function(e) { 
-          e.preventDefault(); 
-      };
-	  
-	  function add() {
-		var el = document.getElementById('num');
-		el.innerHTML = gap_contacts[4].phone;
-	  }	
-    </script>
-    
-  </head>
-  <body onload="document.addEventListener('touchmove', preventElasticBehavior, false);">
-    <h1>PhoneGap Offline</h1>  
 
+    <script type="text/javascript" charset="utf-8"> 
+		var init = function() {
+			el = document.getElementById('t');
+			
+		}
+		
+    </script>
+    <script src="phonegap.js" type="text/javascript" ></script>    
+  </head>
+  <body onload="init();">
+    <h1>PhoneGap Offline</h1>  
     <p>this <strong>index.html</strong> file is located in the <strong>www</strong> directory</p>
-	<button onclick="document.location='gap:getcontacts'">Contacts</button>
-	<button onclick="add();">results ?</button>
-	<div id="num"></div>
+	<div id="t"></div>
+  	
   </body>
 </html>
