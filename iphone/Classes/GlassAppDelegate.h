@@ -8,11 +8,12 @@
 #import "Device.h"
 #import "Sound.h"
 #import "Contacts.h"
-
+//#import "Image.h"
 
 @class GlassViewController;
 @class Sound;
-//@class Contacts;
+@class Contacts;
+//@class Image;
 
 @interface GlassAppDelegate : NSObject <
     UIApplicationDelegate, 
@@ -30,7 +31,7 @@
 	
 	IBOutlet UIImageView *imageView;
 	IBOutlet UIActivityIndicatorView *activityView;
-	
+
 	UIImagePickerController *picker;	// added by urbian
 	NSString *photoUploadUrl;			// added by urbian
 	NSString *lastUploadedPhoto;		// added by urbian
@@ -49,7 +50,7 @@
 @property (nonatomic, retain) GlassViewController *viewController;
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;
 
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
-- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
+//- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
+//- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
 
 @end

@@ -37,8 +37,8 @@
 			i = -90;
 			break;
 	}
-//	GlassAppDelegate *appDelegate = (GlassAppDelegate*)[[UIApplication sharedApplication] delegate];
-	jsCallBack = [[NSString alloc] initWithFormat:@"setOrientation(%f);", i];
+
+	jsCallBack = [[NSString alloc] initWithFormat:@"var _orientation=%f;", i];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	
 	[jsCallBack release];

@@ -14,21 +14,83 @@
       font-family:Helvetica, Arial, sans-serif;
       text-align:center;
       }
+	  
     </style>
-
+	<script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
     <script type="text/javascript" charset="utf-8"> 
-		var init = function() {
-			el = document.getElementById('t');
-			
-		}
+
+	var getLocation = function() {
+		var suc = function(p){
+			alert(p.latitude + " " + p.longitude);
+		};
+		
+		var fail = function(){};
+		navigator.geolocation.getCurrentPosition(suc,fail);
+	}
+	
+	var getAccel = function() {
+		var suc = function(p){
+			alert(a.x + " " + a.y + " " + a.z);
+		};
+		
+		var fail = function(){};
+		navigator.accelerometer.getCurrentAcceleration(suc,fail);
+	}
+
+
+	function roundNumber(num) {
+		var dec = 3;
+		var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+		return result;
+	}
+	
+	var watchAccel = function() {
+		var suc = function(a){
+			document.getElementById('t').innerHTML = roundNumber(a.x) + " " + roundNumber(a.y) + " " + roundNumber(a.z);
+		};
+		
+		var fail = function(){};
+				
+		var opt = {};
+		opt.frequency = 100;
+		timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
+	}
+	
+	var vibrate = function() {
+		navigator.notification.vibrate(0);
+	}
+	var beep = function() {
+		navigator.notification.beep(2);
+	}
+
+	var getContact = function() {
+		var suc = function(){};
+		var fail = function(){};
+	
+		navigator.contactmanager.get(suc, fail);
+
+		alert(navigator.contactmanager.contacts[3].name);
+	}
+	
+	var playSound = function() {
+		var a = new Media('beep.wav');
+		a.play();
+	}
 		
     </script>
-    <script src="phonegap.js" type="text/javascript" ></script>    
+	
   </head>
-  <body onload="init();">
-    <h1>PhoneGap Offline</h1>  
-    <p>this <strong>index.html</strong> file is located in the <strong>www</strong> directory</p>
+  <body >
+	<button onclick="getLocation();">Get Geolocation</button><br />
+	<button onclick="getAccel();">Get Accelerometer</button><br />
+	<button onclick="watchAccel();">Watch Accelerometer</button><br />		
+	<button onclick="vibrate();">Vibrate</button><br />		
+	<button onclick="beep();">Beep</button><br />			
+	<button onclick="getContact();">Contact 3 </button><br />
+	<button onclick="playSound();">PlaySound </button><br />					
 	<div id="t"></div>
+	<div id="c"></div>	
+
   	
   </body>
 </html>

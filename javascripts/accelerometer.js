@@ -21,6 +21,13 @@ function Accelerometer() {
 Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
 	// If the acceleration is available then call success
 	// If the acceleration is not available then call error
+	
+	// Created for iPhone, Iphone passes back _accel obj litteral
+	if (typeof successCallback == "function") {
+		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
+		Accelerometer.lastAcceleration = accel;
+		successCallback(accel);
+	}
 }
 
 /**
@@ -32,12 +39,14 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
  * @param {AccelerationOptions} options The options for getting the accelerometer data
  * such as timeout.
  */
+
 Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options) {
-	this.getCurrentAccelerometer(successCallback, errorCallback, options);
+	this.getCurrentAcceleration(successCallback, errorCallback, options);
 	// TODO: add the interval id to a list so we can clear all watches
+ 	var frequency = (options != undefined)? options.frequency : 10000;
 	return setInterval(function() {
 		navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
-	}, 10000);
+	}, frequency);
 }
 
 /**
@@ -48,4 +57,4 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-if (typeof navigaton.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();

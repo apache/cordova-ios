@@ -4,8 +4,8 @@
  */
 function Contact() {
 	this.name = "";
-	this.phone = [];
-	this.address = [];
+	this.phone = "";
+	this.address = "";
 }
 
 /**
@@ -18,4 +18,15 @@ Contact.prototype.get = function(successCallback, errorCallback, options) {
 	
 }
 
-if (typeof navigaton.contact == "undefined") navigator.contact = new Contact();
+
+function ContactManager() {
+	// Dummy object to hold array of contacts
+	this.contacts = [];
+}
+
+ContactManager.prototype.get = function(successCallback, errorCallback, options) {
+	// Interface
+}
+
+
+if (typeof navigator.contacts == "undefined") navigator.contacts = new ContactManager();

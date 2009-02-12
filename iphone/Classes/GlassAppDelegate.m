@@ -27,13 +27,11 @@ void alert(NSString *message) {
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
 	[[Location sharedInstance].locationManager startUpdatingLocation];
-		
 	
 	webView.delegate = self;
   
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
-
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	imagePickerController.view.hidden = YES;
@@ -45,6 +43,13 @@ void alert(NSString *message) {
 	
 	NSString *errorDesc = nil;
 	
+	
+	/*
+	 * Settings.plist
+	 *
+	 * This block of code navigates to the Settings.plist in the Config Group and reads the XML into an Hash (Dictionary)
+	 *
+	 */
 	NSPropertyListFormat format;
 	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
 	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
@@ -53,47 +58,88 @@ void alert(NSString *message) {
 										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
 										  format:&format errorDescription:&errorDesc];
 		
-	NSString *mode;
-	NSString *url;
-	NSNumber *detectNumber;
+	NSString *offline = [temp objectForKey:@"Offline"];
+	NSString *url = [temp objectForKey:@"Callback"];
+	int *detectNumber = [temp objectForKey:@"DetectPhoneNumber"];
 
-	mode			= [temp objectForKey:@"Offline"];
-	url				= [temp objectForKey:@"Callback"];
-	detectNumber	= [temp objectForKey:@"DetectPhoneNumber"]; 
-		
-	if ([mode isEqualToString:@"0"]) {
-		// Online Mode
+
+
+	
+	/*
+	 * We want to test the offline to see if this app should start in offline mode or online mode.
+	 *
+	 *   0 - Offline
+	 *   1 - Online
+	 *
+	 *		In Offline mode the index.html file is loaded from the www directly and serves as the entry point into the application
+	 *		In Online mode the starting point is a external FQDN, usually your server.
+	 */
+	if ([offline isEqualToString:@"0"]) {
 		appURL = [[NSURL URLWithString:url] retain];
-		NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
-		[webView loadRequest:aRequest];
 	} else {		
-		// Offline Mode
-		appURL = [[NSURL URLWithString:@"file:///"] retain];
-		NSString * urlPathString;
 		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
-		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]){
-			[webView  loadRequest:[NSURLRequest
-								   requestWithURL:[NSURL fileURLWithPath:urlPathString]
-								   cachePolicy:NSURLRequestUseProtocolCachePolicy
-								   timeoutInterval:20.0
-								   ]];
-			
-		}   
+		appURL = [[NSURL fileURLWithPath:[thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]] retain];		
 	}
+
 	
-	webView.detectsPhoneNumbers=[detectNumber boolValue];
+	/*
+	 * webView
+	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
+	 */
+	[webView loadRequest:[NSURLRequest 
+						  requestWithURL:appURL 
+						  cachePolicy:NSURLRequestUseProtocolCachePolicy
+						  timeoutInterval:20.0
+						  ]];
 	
-	//This keeps the Default.png up
-  UIImage * tempImage = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]] autorelease];
-	imageView = [[UIImageView alloc] initWithImage:tempImage];
+	
+	/*
+	 * detectNumber - If we want to Automagicly convery phone numbers to links - Set in Settings.plist
+	 * Value should be BOOL (YES|NO)
+	 *
+	 * For whatever reason this quit working
+	 */
+	webView.detectsPhoneNumbers=detectNumber;
+	
+	
+	/*
+	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
+	 * You can change this image by swapping out the Default.png file within the resource folder.
+	 */
+	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
 	[window addSubview:imageView];
   
+	
 	/*
-	 * This is the Battery View bar at the top
+	 * These are the setting for the top Status/Battery Bar.
+	 *
+	 *	 UIStatusBarStyleBlackOpaque
+	 *	 UIStatusBarStyleBlackTranslucent
+	 *	 UIStatusBarStyleDefault - Default
+	 *
+	 */
+	[application setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:NO];
+	
+	
+	/*
+	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
+	 *
+	 *	 UIActivityIndicatorViewStyleWhiteLarge
+	 *	 UIActivityIndicatorViewStyleWhite
+	 *	 UIActivityIndicatorViewStyleGray
+	 *
 	 */
 	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	[window addSubview:activityView];
 	[activityView startAnimating];
+	
+	
+	/*
+	 * If you don't want your app to have a status bar, just uncomment this.
+	 */
+	//[[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];		
+	
+	
 	[window makeKeyAndVisible];
 
 }
@@ -109,158 +155,174 @@ void alert(NSString *message) {
 	 */	
 	[theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
 
-	/*
-	 * We want to Add Contact to the DOM on init.
-	 */
-	NSString * jsCallBack = nil;
-	Contacts *contacts = [[Contacts alloc] init];
-	jsCallBack = [contacts getContacts];
-	NSLog(@"%@",jsCallBack);
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	
-	[contacts release];
-	
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
+	/*
+	 * Hide the Top Activity THROBER in the Battery Bar
+	 */
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+	activityView.hidden = YES;	
+
 	imageView.hidden = YES;
 	
 	[window bringSubviewToFront:viewController.view];
 	webView = theWebView; 	
 }
 
+
+/*
+ * - Fail Loading With Error
+ * Error - If the webpage failed to load display an error with the reson.
+ *
+ */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	if ([error code] != NSURLErrorCancelled)
 		alert(error.localizedDescription);
 }
 
+
+/*
+ * Start Loading Request
+ * This is where most of the magic happens... We take the request(s) and process the response.
+ * From here we can re direct links and other protocalls to different internal methods.
+ *
+ */
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	
-	NSURL* url = [request URL];
-	NSString * urlString = [url absoluteString];
-	NSBundle * mainBundle = [NSBundle mainBundle];
-	
+	NSURL * url = [request URL];
+
 	// Check to see if the URL request is for the App URL.
 	// If it is not, then launch using Safari
-  NSString* urlHost = [url host];
-  NSString* appHost = [appURL host];
+	// TODO: There was a suggestion to check this against a whitelist of urls, this would be a good place to do that.
+	NSString * urlHost = [url host];
+	NSString * appHost = [appURL host];
+	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
 
-  // if they are identical: we are in the same domain or both are offline
-  if (appHost != urlHost) {
-    if (!appHost || [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch].location == NSNotFound) {
-      [[UIApplication sharedApplication] openURL:url];
-      return NO;
-    }
-  }  
-    
-	NSString * jsCallBack = nil;
+	if ([[url scheme] isEqualToString:@"gap"]) {
 
-	
-	NSArray * parts = [urlString componentsSeparatedByString:@":"];
-
-	
-	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
+		NSString * path  =  [url path];
+		/*
+		 * Get Command and Options From URL
+		 * We are looking for URLS that match gap://<command>[/<options>]
+		 * We have to strip off the leading slah for the options.
+		 */
+		NSString * command = [url host];
 		
-		if ([(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]){
+		NSString * options =  [path substringWithRange:NSMakeRange(1, [path length] - 1)];
+
+		NSString * jsCallBack = nil;
+		
+		if([command isEqualToString:@"getloc"]){
+			jsCallBack = [[Location sharedInstance] getPosition];
+
+			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
+			[jsCallBack release];
 			
-			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getloc"]){
-
-				jsCallBack = [[Location sharedInstance] getPosition];
-
-				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
-				[jsCallBack release];
-				
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
+		} else if([command isEqualToString:@"vibrate"]){
+			/*
+			 * Make the device vibrate, this is now part of the notifier object.
+			 */
+			Vibrate *vibration = [[Vibrate alloc] init];
+			[vibration vibrate];
+			[vibration release];
 			
-				// added/modified by urbian.org - g.mueller @urbian.org
-				
-				NSUInteger imageSource;
-
-				//set upload url
-				photoUploadUrl = [parts objectAtIndex:3];
-				[photoUploadUrl retain];
-				
-				NSLog([@"photo-url: " stringByAppendingString:photoUploadUrl]);
-				
-				//which image source
-				if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromCamera"]){
-					imageSource = UIImagePickerControllerSourceTypeCamera;
-				} else if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromLibrary"]){
-					imageSource = UIImagePickerControllerSourceTypePhotoLibrary;  
-				} else {
-					NSLog(@"photo: no Source type set");
-					return NO;
-				}
-				
-				//check if source is available
-				if([UIImagePickerController isSourceTypeAvailable:imageSource])
-				{
-					picker = [[UIImagePickerController alloc]init];
-					picker.sourceType = imageSource;
-					picker.allowsImageEditing = YES;
-					picker.delegate = self;
-					
-					[viewController presentModalViewController:picker animated:YES];
-					
-				} else {
-					NSLog(@"photo: source not available!");
-					return NO;
-				}
-				
-				webView.hidden = YES;
-				
-				NSLog(@"photo: dialog open now!");
-				
-				NSLog(@"photo dialog open now!");
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
-				Vibrate *vibration = [[Vibrate alloc] init];
-				[vibration vibrate];
-				[vibration release];
-
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getcontacts"]) {				
-				
-				Contacts *contacts = [[Contacts alloc] init];
-				jsCallBack = [contacts getContacts];
-				NSLog(@"%@",jsCallBack);
-				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
-
-				[contacts release];
+		} else if([command isEqualToString:@"openmap"]) {
 			
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
-				
-				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
-				
-				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
-			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
-
-				NSString *ef = (NSString *)[parts objectAtIndex:2];
-				NSArray *soundFile = [ef componentsSeparatedByString:@"."];
-				
-				NSString *file = (NSString *)[soundFile objectAtIndex:0];
-				NSString *ext = (NSString *)[soundFile objectAtIndex:1];
-
-				sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
-				[sound play];
-			}
+			NSString *mapurl = [@"maps:" stringByAppendingString:options];
 			
-			return NO;
+			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
+			
+		} else if([command isEqualToString:@"getphoto"]){
+		
+//			// added/modified by urbian.org - g.mueller @urbian.org
+//			
+//			NSUInteger imageSource;
+//
+//			//set upload url
+//			photoUploadUrl = [parts objectAtIndex:3];
+//			[photoUploadUrl retain];
+//			
+//			NSLog([@"photo-url: " stringByAppendingString:photoUploadUrl]);
+//			
+//			//which image source
+//			if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromCamera"]){
+//				imageSource = UIImagePickerControllerSourceTypeCamera;
+//			} else if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromLibrary"]){
+//				imageSource = UIImagePickerControllerSourceTypePhotoLibrary;  
+//			} else {
+//				NSLog(@"photo: no Source type set");
+//				return NO;
+//			}
+//			
+//			//check if source is available
+//			if([UIImagePickerController isSourceTypeAvailable:imageSource])
+//			{
+//				picker = [[UIImagePickerController alloc]init];
+//				picker.sourceType = imageSource;
+//				picker.allowsImageEditing = YES;
+//				picker.delegate = self;
+//				
+//				[viewController presentModalViewController:picker animated:YES];
+//				
+//			} else {
+//				NSLog(@"photo: source not available!");
+//				return NO;
+//			}
+//			
+//			webView.hidden = YES;
+			
+			NSLog(@"photo dialog open now!");
+		} else if([command isEqualToString:@"getContacts"]) {				
+			
+			contacts = [[Contacts alloc] init];
+			jsCallBack = [contacts getContacts];
+			NSLog(@"%@",jsCallBack);
+			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
+
+			[contacts release];
+		
+		} else if ([command isEqualToString:@"playSound"]) {
+
+			NSBundle * mainBundle = [NSBundle mainBundle];
+			NSArray *soundFile = [options componentsSeparatedByString:@"."];
+			
+			NSString *file = (NSString *)[soundFile objectAtIndex:0];
+			NSString *ext = (NSString *)[soundFile objectAtIndex:1];
+			NSLog(file);
+			sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
+			[sound play];
+		}
+		
+		
+		return NO;
+	} else {
+		
+		/*
+		 * We don't have a PhoneGap request, it could be file or something else
+		 */
+		if (range.location == NSNotFound) {
+			[[UIApplication sharedApplication] openURL:url];
 		}
 	}
-
+	
 	return YES;
 }
+	
 
 
+/*
+ * accelerometer - Sends Accel Data back to the Device.
+ */
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
 	NSString * jsCallBack = nil;
-		
-	jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._getCurrentAcceleration(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];			  
-	NSLog(jsCallBack);
+	jsCallBack = [[NSString alloc] initWithFormat:@"var _accel={x:%f,y:%f,z:%f};", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
 
-
+// TODO Move to Image.m
+/*
 - (void)imagePickerController:(UIImagePickerController *)thePicker didFinishPickingImage:(UIImage *)theImage editingInfo:(NSDictionary *)editingInfo
 {
 	
@@ -315,6 +377,8 @@ void alert(NSString *message) {
 	
 }
 
+
+// TODO Move to Image.m
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)thePicker
 {
 	// Dismiss the image selection and close the program
@@ -333,6 +397,8 @@ void alert(NSString *message) {
 	[window bringSubviewToFront:webView];
 }
 
+
+// TODO Move to Image.m
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	NSLog(@"photo: upload finished!");
@@ -368,6 +434,8 @@ void alert(NSString *message) {
 #endif
 }
 
+
+// TODO Move to Image.m
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *) response {
 	
 	//added by urbian.org
@@ -385,6 +453,8 @@ void alert(NSString *message) {
     NSLog(@"photo: progress");
 }
 
+
+// TODO Move to Image.m
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     NSLog([@"photo: upload failed! " stringByAppendingString:[error description]]);
     
@@ -392,7 +462,7 @@ void alert(NSString *message) {
     alert(@"Error while uploading image!");
 #endif
 }
-
+*/
 - (void)dealloc {
 	[appURL release];
 	[imageView release];

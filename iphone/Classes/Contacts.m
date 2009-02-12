@@ -30,7 +30,7 @@
 		allPeople = (NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook);
 		CFIndex nPeople = ABAddressBookGetPersonCount(self.addressBook);
 				
-		[update appendString:@"var Contacts = function() { return ["];
+		[update appendString:@"var _contacts=["];
 		
 		for (int i=0;i < numberOfPeople;i++) { 
 			ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
@@ -53,7 +53,7 @@
 			}
 		}
 
-		[update appendString:@"]; };"];
+		[update appendString:@"];"];
 	}
 	return update;
 }

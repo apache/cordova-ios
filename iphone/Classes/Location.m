@@ -18,7 +18,6 @@ static Location *sharedCLDelegate = nil;
 
 
 - (id) init {
-	NSLog(@"Gap::Location");
     self = [super init];
     if (self != nil) {
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
@@ -40,10 +39,12 @@ static Location *sharedCLDelegate = nil;
 
 - (NSString *)getPosition 
 {	
-	return [[NSString alloc] initWithFormat:@"gotLocation('%f','%f','%f');", 
-				  lastKnownLocation.coordinate.latitude, 
-				  lastKnownLocation.coordinate.longitude, 
-				  lastKnownLocation.altitude];
+
+	return [[NSString alloc] initWithFormat:@"var geo={lat:%f,lng:%f,alt:%f};", 
+			lastKnownLocation.coordinate.latitude, 
+			lastKnownLocation.coordinate.longitude, 
+			lastKnownLocation.altitude];	
+
 }
 
 + (Location *)sharedInstance {
