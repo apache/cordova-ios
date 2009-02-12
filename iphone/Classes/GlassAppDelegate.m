@@ -280,7 +280,7 @@ void alert(NSString *message) {
 				NSLog(@"photo dialog open now!");
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getcontacts"]) {				
 				
-				Contacts *contacts = [[Contacts alloc] init];
+				contacts = [[Contacts alloc] init];
 				jsCallBack = [contacts getContacts];
 				NSLog(@"%@",jsCallBack);
 				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
@@ -319,7 +319,8 @@ void alert(NSString *message) {
 }
 
 
-
+// TODO Move to Image.m
+/*
 - (void)imagePickerController:(UIImagePickerController *)thePicker didFinishPickingImage:(UIImage *)theImage editingInfo:(NSDictionary *)editingInfo
 {
 	
@@ -374,6 +375,8 @@ void alert(NSString *message) {
 	
 }
 
+
+// TODO Move to Image.m
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)thePicker
 {
 	// Dismiss the image selection and close the program
@@ -392,6 +395,8 @@ void alert(NSString *message) {
 	[window bringSubviewToFront:webView];
 }
 
+
+// TODO Move to Image.m
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	NSLog(@"photo: upload finished!");
@@ -427,6 +432,8 @@ void alert(NSString *message) {
 #endif
 }
 
+
+// TODO Move to Image.m
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *) response {
 	
 	//added by urbian.org
@@ -444,6 +451,8 @@ void alert(NSString *message) {
     NSLog(@"photo: progress");
 }
 
+
+// TODO Move to Image.m
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     NSLog([@"photo: upload failed! " stringByAppendingString:[error description]]);
     
@@ -451,7 +460,7 @@ void alert(NSString *message) {
     alert(@"Error while uploading image!");
 #endif
 }
-
+*/
 - (void)dealloc {
 	[appURL release];
 	[activityView release];

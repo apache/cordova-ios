@@ -23,7 +23,7 @@
 	
 	jsCallBack = nil;
 	myCurrentDevice = [UIDevice currentDevice];
-	
+//	
 //	return jsCallBack = [[NSString alloc] initWithFormat:@"\
 //				  __gap = true; \
 //				  __gap_version='0.2'; \
@@ -35,6 +35,7 @@
 //				  [[myCurrentDevice uniqueIdentifier] UTF8String]
 //				  ];
 	
+
 	return  [[NSString alloc] initWithFormat:@"Device={};Device.platform = '%s';",[[myCurrentDevice model] UTF8String]];
 }
 
