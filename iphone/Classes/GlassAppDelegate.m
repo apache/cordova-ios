@@ -26,13 +26,11 @@ void alert(NSString *message) {
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
 	[[Location sharedInstance].locationManager startUpdatingLocation];
-		
 	
 	webView.delegate = self;
   
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
-
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	imagePickerController.view.hidden = YES;
@@ -44,6 +42,13 @@ void alert(NSString *message) {
 	
 	NSString *errorDesc = nil;
 	
+	
+	/*
+	 * Settings.plist
+	 *
+	 * This block of code navigates to the Settings.plist in the Config Group and reads the XML into an Hash (Dictionary)
+	 *
+	 */
 	NSPropertyListFormat format;
 	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
 	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
@@ -52,45 +57,88 @@ void alert(NSString *message) {
 										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
 										  format:&format errorDescription:&errorDesc];
 		
-	NSString *mode;
-	NSString *url;
-	int *detectNumber;
+	NSString *offline = [temp objectForKey:@"Offline"];
+	NSString *url = [temp objectForKey:@"Callback"];
+	int *detectNumber = [temp objectForKey:@"DetectPhoneNumber"];
 
-	mode			= [temp objectForKey:@"Offline"];
-	url				= [temp objectForKey:@"Callback"];
-	detectNumber	= [temp objectForKey:@"DetectPhoneNumber"]; 
-		
-	if ([mode isEqualToString:@"0"]) {
-		// Online Mode
-		appURL = [[NSURL URLWithString:url] retain];
-		NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
-		[webView loadRequest:aRequest];
-	} else {		
-		// Offline Mode
-		NSString * urlPathString;
-		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
-		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]){
-			[webView  loadRequest:[NSURLRequest
-								   requestWithURL:[NSURL fileURLWithPath:urlPathString]
-								   cachePolicy:NSURLRequestUseProtocolCachePolicy
-								   timeoutInterval:20.0
-								   ]];
-			
-		}   
-	}
+
+
 	
+	/*
+	 * We want to test the offline to see if this app should start in offline mode or online mode.
+	 *
+	 *   0 - Offline
+	 *   1 - Online
+	 *
+	 *		In Offline mode the index.html file is loaded from the www directly and serves as the entry point into the application
+	 *		In Online mode the starting point is a external FQDN, usually your server.
+	 */
+	if ([offline isEqualToString:@"0"]) {
+		appURL = [[NSURL URLWithString:url] retain];
+	} else {		
+		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
+		appURL = [[NSURL fileURLWithPath:[thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]] retain];		
+	}
+
+	
+	/*
+	 * webView
+	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
+	 */
+	[webView loadRequest:[NSURLRequest 
+						  requestWithURL:appURL 
+						  cachePolicy:NSURLRequestUseProtocolCachePolicy
+						  timeoutInterval:20.0
+						  ]];
+	
+	
+	/*
+	 * detectNumber - If we want to Automagicly convery phone numbers to links - Set in Settings.plist
+	 * Value should be BOOL (YES|NO)
+	 *
+	 * For whatever reason this quit working
+	 */
 	webView.detectsPhoneNumbers=detectNumber;
 	
-	//This keeps the Default.png up
+	
+	/*
+	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
+	 * You can change this image by swapping out the Default.png file within the resource folder.
+	 */
 	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
 	[window addSubview:imageView];
   
+	
 	/*
-	 * This is the Battery View bar at the top
+	 * These are the setting for the top Status/Battery Bar.
+	 *
+	 *	 UIStatusBarStyleBlackOpaque
+	 *	 UIStatusBarStyleBlackTranslucent
+	 *	 UIStatusBarStyleDefault - Default
+	 *
+	 */
+	[application setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:NO];
+	
+	
+	/*
+	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
+	 *
+	 *	 UIActivityIndicatorViewStyleWhiteLarge
+	 *	 UIActivityIndicatorViewStyleWhite
+	 *	 UIActivityIndicatorViewStyleGray
+	 *
 	 */
 	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	[window addSubview:activityView];
 	[activityView startAnimating];
+	
+	
+	/*
+	 * If you don't want your app to have a status bar, just uncomment this.
+	 */
+	//[[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];		
+	
+	
 	[window makeKeyAndVisible];
 
 }
@@ -106,50 +154,64 @@ void alert(NSString *message) {
 	 */	
 	[theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
 
-	/*
-	 * We want to Add Contact to the DOM on init.
-	 */
-	NSString * jsCallBack = nil;
-	Contacts *contacts = [[Contacts alloc] init];
-	jsCallBack = [contacts getContacts];
-	NSLog(@"%@",jsCallBack);
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	
-	[contacts release];
-	
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
+	/*
+	 * Hide the Top Activity THROBER in the Battery Bar
+	 */
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+	activityView.hidden = YES;	
+
 	imageView.hidden = YES;
 	
 	[window bringSubviewToFront:viewController.view];
 	webView = theWebView; 	
 }
 
+
+/*
+ * - Fail Loading With Error
+ * Error - If the webpage failed to load display an error with the reson.
+ *
+ */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	if ([error code] != NSURLErrorCancelled)
 		alert(error.localizedDescription);
 }
 
+
+/*
+ * Start Loading Request
+ * This is where most of the magic happens... We take the request(s) and process the response.
+ * From here we can re direct links and other protocalls to different internal methods.
+ *
+ *
+ */
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	
-	NSURL* url = [request URL];
-	NSString * urlString = [url absoluteString];
-	NSBundle * mainBundle = [NSBundle mainBundle];
+	NSURL * url = [request URL];
+
+	NSLog(@"-Request-");
 	
 	// Check to see if the URL request is for the App URL.
 	// If it is not, then launch using Safari
-	NSString* urlHost = [url host];
-	NSString* appHost = [appURL host];
+	// TODO: There was a suggestion to check this against a whitelist of urls, this would be a good place to do that.
+	NSString * urlHost = [url host];
+	NSString * appHost = [appURL host];
 	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
-	if (range.location == NSNotFound)
-		[[UIApplication sharedApplication] openURL:url];
-    
-	NSString * jsCallBack = nil;
-
 	
-	NSArray * parts = [urlString componentsSeparatedByString:@":"];
-
+	if (range.location == NSNotFound) {
+		[[UIApplication sharedApplication] openURL:url];
+    }
+	NSString * jsCallBack = nil;
+	
+	/*
+	 * Parts is an Array - Parts of the URL being requested.
+	 * We are looking for URLS that match gap://<command>[:<options>]
+	 */
+	
+	NSArray * parts = [[url absoluteString] componentsSeparatedByString:@":"];
 	
 	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
 		
@@ -161,6 +223,20 @@ void alert(NSString *message) {
 
 				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
 				[jsCallBack release];
+				
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
+				/*
+				 * Make the device vibrate, this is now part of the notifier object.
+				 */
+				Vibrate *vibration = [[Vibrate alloc] init];
+				[vibration vibrate];
+				[vibration release];
+				
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
+				
+				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
+				
+				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
 				
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
 			
@@ -201,14 +277,7 @@ void alert(NSString *message) {
 				
 				webView.hidden = YES;
 				
-				NSLog(@"photo: dialog open now!");
-				
 				NSLog(@"photo dialog open now!");
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
-				Vibrate *vibration = [[Vibrate alloc] init];
-				[vibration vibrate];
-				[vibration release];
-
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getcontacts"]) {				
 				
 				Contacts *contacts = [[Contacts alloc] init];
@@ -218,13 +287,9 @@ void alert(NSString *message) {
 
 				[contacts release];
 			
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
-				
-				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
-				
-				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
 			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
 
+				NSBundle * mainBundle = [NSBundle mainBundle];
 				NSString *ef = (NSString *)[parts objectAtIndex:2];
 				NSArray *soundFile = [ef componentsSeparatedByString:@"."];
 				
@@ -245,9 +310,11 @@ void alert(NSString *message) {
 
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
 	NSString * jsCallBack = nil;
+	NSString * log = nil;
 		
 	jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._getCurrentAcceleration(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];			  
-	NSLog(jsCallBack);
+	log = [[NSString alloc] initWithFormat:@"(%f)", acceleration.x];			  
+	NSLog(log);
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
