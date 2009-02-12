@@ -18,7 +18,6 @@ static Location *sharedCLDelegate = nil;
 
 
 - (id) init {
-	NSLog(@"Gap::Location");
     self = [super init];
     if (self != nil) {
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];

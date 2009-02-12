@@ -5,7 +5,7 @@
 	<key>Offline</key>
 	<string>0</string>
 	<key>Callback</key>
-	<string>http://www.phonegap.com/demo2/</string>
+	<string>http://localhost/iphone/</string>
 	<key>DetectPhoneNumber</key>
 	<integer>1</integer>
 </dict>

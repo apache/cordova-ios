@@ -273,13 +273,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>29</integer>
+									<integer>16</integer>
 									<integer>11</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {185, 603}}</string>
+							<string>{{0, 0}, {185, 798}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -291,14 +291,14 @@
 					<key>GeometryConfiguration</key>
 					<dict>
 						<key>Frame</key>
-						<string>{{0, 0}, {202, 621}}</string>
+						<string>{{0, 0}, {202, 816}}</string>
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>MainColumn</string>
 							<real>185</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>0 116 1280 662 0 0 1280 778 </string>
+						<string>130 962 1448 857 0 800 1680 1050 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -316,7 +316,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Image.h</string>
+								<string>GlassAppDelegate.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,11 +324,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Image.h</string>
+										<string>GlassAppDelegate.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>47EE5D910F4411F40070EB67</string>
+										<string>47EE5DA90F44A2290070EB67</string>
 										<key>history</key>
 										<array>
 											<string>471A32C40F00766A003F61D6</string>
@@ -342,9 +342,7 @@
 											<string>47F5657C0F3B7755001DFBDB</string>
 											<string>47F0240C0F3CC89C006BFFE3</string>
 											<string>47F024570F3CD718006BFFE3</string>
-											<string>47F024580F3CD718006BFFE3</string>
 											<string>47A2AC4C0F3D5D8F003CDA33</string>
-											<string>47A2AC880F3E29B2003CDA33</string>
 											<string>47C695180F40EE1300EAA829</string>
 											<string>47BDA1F20F43DEE100A37774</string>
 											<string>47EE5CC50F43F2150070EB67</string>
@@ -354,15 +352,17 @@
 											<string>47EE5D2B0F440F250070EB67</string>
 											<string>47EE5D2C0F440F250070EB67</string>
 											<string>47EE5D2D0F440F250070EB67</string>
-											<string>47EE5D610F4410BF0070EB67</string>
 											<string>47EE5D620F4410BF0070EB67</string>
 											<string>47EE5D630F4410BF0070EB67</string>
 											<string>47EE5D740F44118A0070EB67</string>
 											<string>47EE5D750F44118A0070EB67</string>
-											<string>47EE5D850F4411F40070EB67</string>
 											<string>47EE5D860F4411F40070EB67</string>
 											<string>47EE5D870F4411F40070EB67</string>
-											<string>47EE5D880F4411F40070EB67</string>
+											<string>47EE5D9C0F44A0B90070EB67</string>
+											<string>47EE5D9D0F44A0B90070EB67</string>
+											<string>47EE5D9E0F44A0B90070EB67</string>
+											<string>47EE5DA50F44A2290070EB67</string>
+											<string>47EE5DA60F44A2290070EB67</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -485,6 +485,11 @@
 											<string>47EE5D8E0F4411F40070EB67</string>
 											<string>47EE5D8F0F4411F40070EB67</string>
 											<string>47EE5D900F4411F40070EB67</string>
+											<string>47EE5DA00F44A0B90070EB67</string>
+											<string>47EE5DA10F44A0B90070EB67</string>
+											<string>47EE5DA20F44A0B90070EB67</string>
+											<string>47EE5DA70F44A2290070EB67</string>
+											<string>47EE5DA80F44A2290070EB67</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -496,14 +501,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1073, 535}}</string>
+								<string>{{0, 0}, {1241, 730}}</string>
 								<key>RubberWindowFrame</key>
-								<string>0 116 1280 662 0 0 1280 778 </string>
+								<string>130 962 1448 857 0 800 1680 1050 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>535pt</string>
+							<string>730pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -516,9 +521,9 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 540}, {1073, 81}}</string>
+								<string>{{0, 735}, {1241, 81}}</string>
 								<key>RubberWindowFrame</key>
-								<string>0 116 1280 662 0 0 1280 778 </string>
+								<string>130 962 1448 857 0 800 1680 1050 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -527,7 +532,7 @@
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>1073pt</string>
+					<string>1241pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -680,13 +685,13 @@
 	<array>
 		<string>47EE5CDA0F43F2F40070EB67</string>
 		<string>47EE5CDB0F43F2F40070EB67</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>47B803F20E4D32B900939591</string>
 		<string>/Users/nitobi/iPhone/phonegap/iphone/PhoneGap.xcodeproj</string>
-		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
-	<string>0 116 1280 662 0 0 1280 778 </string>
+	<string>130 962 1448 857 0 800 1680 1050 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -776,7 +781,7 @@
 			<key>WindowToolGUID</key>
 			<string>47B803F20E4D32B900939591</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
@@ -1065,7 +1070,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

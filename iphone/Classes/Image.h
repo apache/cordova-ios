@@ -20,8 +20,6 @@
 	NSURLConnection *conn;				// added by urbian
 	NSMutableData *receivedData;		// added by urbian	
 
-
-
 }
 
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;

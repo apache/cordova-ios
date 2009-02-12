@@ -186,7 +186,6 @@ void alert(NSString *message) {
  * This is where most of the magic happens... We take the request(s) and process the response.
  * From here we can re direct links and other protocalls to different internal methods.
  *
- *
  */
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	
@@ -308,13 +307,12 @@ void alert(NSString *message) {
 }
 
 
+/*
+ * accelerometer - Sends Accel Data back to the Device.
+ */
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
 	NSString * jsCallBack = nil;
-	NSString * log = nil;
-		
 	jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._getCurrentAcceleration(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];			  
-	log = [[NSString alloc] initWithFormat:@"(%f)", acceleration.x];			  
-	NSLog(log);
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
