@@ -11,10 +11,12 @@
 #import <Foundation/Foundation.h>
 
 @interface GlassViewController : UIViewController {
-	
+	BOOL autoRotate;
 }
-- (IBAction)loadView;
+- (IBAction)viewDidLoad;
 - (IBAction)pushBack;
 - (IBAction)pushHome;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation; 
+- (void)setAutoRotate:(BOOL) shouldRotate;
+
 @end

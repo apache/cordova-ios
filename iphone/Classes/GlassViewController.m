@@ -11,8 +11,8 @@
 @implementation GlassViewController
 
 
-- (IBAction)loadView {
-	
+- (IBAction)viewDidLoad {
+
 }
 
 - (IBAction)pushBack {
@@ -25,7 +25,12 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
 { 
-    return YES; 
+    return autoRotate; 
 }
 
+
+- (void) setAutoRotate:(BOOL) shouldRotate
+{
+	autoRotate = shouldRotate;
+}
 @end
