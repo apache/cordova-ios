@@ -83,14 +83,14 @@ void alert(NSString *message) {
 	webView.detectsPhoneNumbers=detectNumber;
 	
 	//This keeps the Default.png up
-	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
+  UIImage * tempImage = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]] autorelease];
+	imageView = [[UIImageView alloc] initWithImage:tempImage];
 	[window addSubview:imageView];
   
 	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	[window addSubview:activityView];
 	[activityView startAnimating];
 	[window makeKeyAndVisible];
-
 	
 	//NSBundle * mainBundle = [NSBundle mainBundle];
 
@@ -99,7 +99,9 @@ void alert(NSString *message) {
 
 //when web application loads pass it device information
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
-  [theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
+  Device * device = [[Device alloc] init];
+  [theWebView stringByEvaluatingJavaScriptFromString:[device getDeviceInfo]];
+  [device release];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
@@ -195,9 +197,7 @@ void alert(NSString *message) {
 
 
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
-	NSString * jsCallBack = nil;
-	
-	jsCallBack = [[NSString alloc] initWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
+	NSString * jsCallBack = [NSString stringWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
@@ -248,6 +248,9 @@ void alert(NSString *message) {
 
 	webView.hidden = NO;
 	[window bringSubviewToFront:webView];
+  
+  [request release];
+  [conn release];
 }
 
 
@@ -299,6 +302,7 @@ void alert(NSString *message) {
 	[lastKnownLocation release];
 	[imagePickerController release];
 	[appURL release];
+  [sound release];
 	[super dealloc];
 }
 
