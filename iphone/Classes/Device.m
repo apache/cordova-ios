@@ -24,7 +24,6 @@
 }
 
 - (void)dealloc {
-  [myCurrentDevice release];
 	[super dealloc];
 }
 
