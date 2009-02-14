@@ -14,21 +14,28 @@
       font-family:Helvetica, Arial, sans-serif;
       text-align:center;
       }
+	  
+	  #t {
+		font-size:40px;
+		font-weight:900;
+	  }
     </style>
 
     <script type="text/javascript" charset="utf-8"> 
 		var init = function() {
 			el = document.getElementById('t');
+			document.location = 'gap://comand/options';
 			
 		}
 		
     </script>
-    <script src="phonegap.js" type="text/javascript" ></script>    
+
   </head>
-  <body onload="init();">
-    <h1>PhoneGap Offline</h1>  
-    <p>this <strong>index.html</strong> file is located in the <strong>www</strong> directory</p>
+  <body >
+    Welcome
+		<button onclick="init();">Platform</button>
 	<div id="t"></div>
+	    <a href="page2.html">Page 2</a>
   	
   </body>
 </html>

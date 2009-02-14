@@ -191,120 +191,124 @@ void alert(NSString *message) {
 	
 	NSURL * url = [request URL];
 
-	NSLog(@"-Request-");
-	
 	// Check to see if the URL request is for the App URL.
 	// If it is not, then launch using Safari
 	// TODO: There was a suggestion to check this against a whitelist of urls, this would be a good place to do that.
 	NSString * urlHost = [url host];
 	NSString * appHost = [appURL host];
 	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
-	
-	if (range.location == NSNotFound) {
-		[[UIApplication sharedApplication] openURL:url];
-    }
-	NSString * jsCallBack = nil;
-	
-	/*
-	 * Parts is an Array - Parts of the URL being requested.
-	 * We are looking for URLS that match gap://<command>[:<options>]
-	 */
-	
-	NSArray * parts = [[url absoluteString] componentsSeparatedByString:@":"];
-	
-	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
+
+	if ([[url scheme] isEqualToString:@"gap"]) {
+
+		NSString * path  =  [url path];
+		/*
+		 * Get Command and Options From URL
+		 * We are looking for URLS that match gap://<command>[/<options>]
+		 * We have to strip off the leading slah for the options.
+		 */
+		NSString * command = [url host];
 		
-		if ([(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]){
+		NSString * options =  [path substringWithRange:NSMakeRange(1, [path length] - 1)];
+
+		NSString * jsCallBack = nil;
+		
+		if([command isEqualToString:@"getloc"]){
+
+			jsCallBack = [[Location sharedInstance] getPosition];
+
+			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
+			[jsCallBack release];
 			
-			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getloc"]){
-
-				jsCallBack = [[Location sharedInstance] getPosition];
-
-				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
-				[jsCallBack release];
-				
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
-				/*
-				 * Make the device vibrate, this is now part of the notifier object.
-				 */
-				Vibrate *vibration = [[Vibrate alloc] init];
-				[vibration vibrate];
-				[vibration release];
-				
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
-				
-				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
-				
-				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
-				
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
+		} else if([command isEqualToString:@"vibrate"]){
+			/*
+			 * Make the device vibrate, this is now part of the notifier object.
+			 */
+			Vibrate *vibration = [[Vibrate alloc] init];
+			[vibration vibrate];
+			[vibration release];
 			
-				// added/modified by urbian.org - g.mueller @urbian.org
-				
-				NSUInteger imageSource;
-
-				//set upload url
-				photoUploadUrl = [parts objectAtIndex:3];
-				[photoUploadUrl retain];
-				
-				NSLog([@"photo-url: " stringByAppendingString:photoUploadUrl]);
-				
-				//which image source
-				if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromCamera"]){
-					imageSource = UIImagePickerControllerSourceTypeCamera;
-				} else if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromLibrary"]){
-					imageSource = UIImagePickerControllerSourceTypePhotoLibrary;  
-				} else {
-					NSLog(@"photo: no Source type set");
-					return NO;
-				}
-				
-				//check if source is available
-				if([UIImagePickerController isSourceTypeAvailable:imageSource])
-				{
-					picker = [[UIImagePickerController alloc]init];
-					picker.sourceType = imageSource;
-					picker.allowsImageEditing = YES;
-					picker.delegate = self;
-					
-					[viewController presentModalViewController:picker animated:YES];
-					
-				} else {
-					NSLog(@"photo: source not available!");
-					return NO;
-				}
-				
-				webView.hidden = YES;
-				
-				NSLog(@"photo dialog open now!");
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getcontacts"]) {				
-				
-				contacts = [[Contacts alloc] init];
-				jsCallBack = [contacts getContacts];
-				NSLog(@"%@",jsCallBack);
-				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
-
-				[contacts release];
+		} else if([command isEqualToString:@"openmap"]) {
 			
-			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
-
-				NSBundle * mainBundle = [NSBundle mainBundle];
-				NSString *ef = (NSString *)[parts objectAtIndex:2];
-				NSArray *soundFile = [ef componentsSeparatedByString:@"."];
-				
-				NSString *file = (NSString *)[soundFile objectAtIndex:0];
-				NSString *ext = (NSString *)[soundFile objectAtIndex:1];
-
-				sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
-				[sound play];
-			}
+			NSString *mapurl = [@"maps:" stringByAppendingString:options];
 			
-			return NO;
+			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
+			
+		} else if([command isEqualToString:@"getphoto"]){
+		
+//			// added/modified by urbian.org - g.mueller @urbian.org
+//			
+//			NSUInteger imageSource;
+//
+//			//set upload url
+//			photoUploadUrl = [parts objectAtIndex:3];
+//			[photoUploadUrl retain];
+//			
+//			NSLog([@"photo-url: " stringByAppendingString:photoUploadUrl]);
+//			
+//			//which image source
+//			if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromCamera"]){
+//				imageSource = UIImagePickerControllerSourceTypeCamera;
+//			} else if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromLibrary"]){
+//				imageSource = UIImagePickerControllerSourceTypePhotoLibrary;  
+//			} else {
+//				NSLog(@"photo: no Source type set");
+//				return NO;
+//			}
+//			
+//			//check if source is available
+//			if([UIImagePickerController isSourceTypeAvailable:imageSource])
+//			{
+//				picker = [[UIImagePickerController alloc]init];
+//				picker.sourceType = imageSource;
+//				picker.allowsImageEditing = YES;
+//				picker.delegate = self;
+//				
+//				[viewController presentModalViewController:picker animated:YES];
+//				
+//			} else {
+//				NSLog(@"photo: source not available!");
+//				return NO;
+//			}
+//			
+//			webView.hidden = YES;
+			
+			NSLog(@"photo dialog open now!");
+		} else if([command isEqualToString:@"getcontacts"]) {				
+			
+			contacts = [[Contacts alloc] init];
+			jsCallBack = [contacts getContacts];
+			NSLog(@"%@",jsCallBack);
+			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
+
+			[contacts release];
+		
+		} else if ([command isEqualToString:@"sound"]) {
+
+			NSBundle * mainBundle = [NSBundle mainBundle];
+			NSArray *soundFile = [options componentsSeparatedByString:@"."];
+			
+			NSString *file = (NSString *)[soundFile objectAtIndex:0];
+			NSString *ext = (NSString *)[soundFile objectAtIndex:1];
+
+			sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
+			[sound play];
+		}
+		
+		
+		return NO;
+	} else {
+		
+		/*
+		 * We don't have a PhoneGap request, it could be file or something else
+		 */
+		if (range.location == NSNotFound) {
+			[[UIApplication sharedApplication] openURL:url];
 		}
 	}
-
+	
 	return YES;
 }
+	
 
 
 /*
