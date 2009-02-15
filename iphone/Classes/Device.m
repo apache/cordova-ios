@@ -6,6 +6,7 @@
 - (Device *)init {
   if (self = [super init]) {
     myCurrentDevice = [UIDevice currentDevice];
+    [myCurrentDevice retain];
   }
   return self;
 }
@@ -24,6 +25,7 @@
 }
 
 - (void)dealloc {
+  [myCurrentDevice release];
 	[super dealloc];
 }
 
