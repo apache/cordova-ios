@@ -20,7 +20,6 @@ void alert(NSString *message) {
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 
-
 	locationManager = [[CLLocationManager alloc] init];
 	locationManager.delegate = self;
 	[locationManager startUpdatingLocation];
@@ -55,7 +54,7 @@ void alert(NSString *message) {
 	
 	NSString *mode;
 	NSString *url;
-	int *detectNumber;
+	NSNumber *detectNumber;
 
 	mode			= [temp objectForKey:@"Offline"];
 	url				= [temp objectForKey:@"Callback"];
@@ -68,6 +67,7 @@ void alert(NSString *message) {
 		[webView loadRequest:aRequest];
 	} else {		
 		// Offline Mode
+		appURL = [[NSURL URLWithString:@"file:///"] retain];
 		NSString * urlPathString;
 		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
 		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]){
@@ -80,30 +80,28 @@ void alert(NSString *message) {
 		}   
 	}
 	
-	webView.detectsPhoneNumbers=detectNumber;
+	webView.detectsPhoneNumbers=[detectNumber boolValue];
 	
 	//This keeps the Default.png up
-	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
+  UIImage * tempImage = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]] autorelease];
+	imageView = [[UIImageView alloc] initWithImage:tempImage];
 	[window addSubview:imageView];
   
-	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	[window addSubview:activityView];
-	[activityView startAnimating];
-	[window makeKeyAndVisible];
-
-	
 	//NSBundle * mainBundle = [NSBundle mainBundle];
-
-
 }
 
 //when web application loads pass it device information
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
-  [theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
+  [UIApplication sharedApplication].networkActivityIndicatorVisible = YES; 
+
+  Device * device = [[Device alloc] init];
+  [theWebView stringByEvaluatingJavaScriptFromString:[device getDeviceInfo]];
+  [device release];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
-	imageView.hidden = YES;
+  imageView.hidden = YES;
+  [UIApplication sharedApplication].networkActivityIndicatorVisible = NO; 
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
@@ -119,11 +117,16 @@ void alert(NSString *message) {
 	
 	// Check to see if the URL request is for the App URL.
 	// If it is not, then launch using Safari
-	NSString* urlHost = [url host];
-	NSString* appHost = [appURL host];
-	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
-	if (range.location == NSNotFound)
-		[[UIApplication sharedApplication] openURL:url];
+  NSString* urlHost = [url host];
+  NSString* appHost = [appURL host];
+
+  // if they are identical: we are in the same domain or both are offline
+  if (appHost != urlHost) {
+    if (!appHost || [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch].location == NSNotFound) {
+      [[UIApplication sharedApplication] openURL:url];
+      return NO;
+    }
+  }  
     
 	NSString * jsCallBack = nil;
 	NSArray * parts = [urlString componentsSeparatedByString:@":"];
@@ -195,9 +198,7 @@ void alert(NSString *message) {
 
 
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
-	NSString * jsCallBack = nil;
-	
-	jsCallBack = [[NSString alloc] initWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
+	NSString * jsCallBack = [NSString stringWithFormat:@"gotAcceleration('%f','%f','%f');", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
@@ -248,6 +249,9 @@ void alert(NSString *message) {
 
 	webView.hidden = NO;
 	[window bringSubviewToFront:webView];
+  
+  [request release];
+  [conn release];
 }
 
 
@@ -292,13 +296,13 @@ void alert(NSString *message) {
 
 - (void)dealloc {
 	[appURL release];
-	[activityView release];
 	[imageView release];
 	[viewController release];
 	[window release];
 	[lastKnownLocation release];
 	[imagePickerController release];
 	[appURL release];
+  [sound release];
 	[super dealloc];
 }
 

@@ -12,6 +12,9 @@
 
 @implementation Contacts
 
+@synthesize addressBook;
+@synthesize allPeople;
+
 - (id)init
 {
 	self = [super init];
@@ -20,16 +23,13 @@
 }
 
 - (NSArray *)getContacts {
+  NSMutableArray *contactsArray = [[NSMutableArray alloc] init ];
+
 	if (nil == allPeople) {
 		allPeople = (NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook);
-		CFIndex nPeople = ABAddressBookGetPersonCount(self.addressBook);
-				
+		CFIndex numberOfPeople = ABAddressBookGetPersonCount(self.addressBook);
 		
-		NSMutableArray *contacts;
-		contacts = [[NSMutableArray alloc] init ];
-
-		
-		for (int i=0;i < nPeople;i++) { 
+		for (int i=0;i < numberOfPeople;i++) { 
 			ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
 
 			CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
@@ -40,7 +40,7 @@
 			NSLog(@"%@",contactFirstLast2);
 
 			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:contactFirstLast, @"name",phoneNumber, @"phone",nil];
-			[contacts addObject:dict];
+			[contactsArray addObject:dict];
 			
 			CFRelease(firstName);
 			CFRelease(lastName);
@@ -54,7 +54,7 @@
 //	NSString *jsonStr = [json stringWithObject:contacts error:NULL];
 //	NSLog(@"%@",jsonStr);
 	
-	return contacts;
+	return contactsArray;
 }
 
 - (void) addContact {
