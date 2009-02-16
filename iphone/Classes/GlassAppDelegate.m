@@ -213,7 +213,6 @@ void alert(NSString *message) {
 		NSString * jsCallBack = nil;
 		
 		if([command isEqualToString:@"getloc"]){
-			NSLog(@"GPS Request");
 			jsCallBack = [[Location sharedInstance] getPosition];
 
 			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
@@ -316,7 +315,7 @@ void alert(NSString *message) {
  */
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
 	NSString * jsCallBack = nil;
-	jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._getCurrentAcceleration(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];			  
+	jsCallBack = [[NSString alloc] initWithFormat:@"var _accel={x:%f,y:%f,z:%f};", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 

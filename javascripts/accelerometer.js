@@ -21,6 +21,13 @@ function Accelerometer() {
 Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
 	// If the acceleration is available then call success
 	// If the acceleration is not available then call error
+	
+	// Created for iPhone, Iphone passes back _accel obj litteral
+	if (typeof successCallback == "function") {
+		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
+		Accelerometer.lastAcceleration = accel;
+		successCallback(accel);
+	}
 }
 
 /**

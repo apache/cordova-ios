@@ -40,14 +40,6 @@ static Location *sharedCLDelegate = nil;
 - (NSString *)getPosition 
 {	
 
-	// Old method	
-//	return [[NSString alloc] initWithFormat:@"gotLocation('%f','%f','%f');", 
-//				  lastKnownLocation.coordinate.latitude, 
-//				  lastKnownLocation.coordinate.longitude, 
-//				  lastKnownLocation.altitude];
-//
-
-	// New Method
 	return [[NSString alloc] initWithFormat:@"var geo={lat:%f,lng:%f,alt:%f};", 
 			lastKnownLocation.coordinate.latitude, 
 			lastKnownLocation.coordinate.longitude, 

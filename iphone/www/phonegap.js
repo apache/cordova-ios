@@ -111,15 +111,15 @@
     	/**
     	 * The force applied by the device in the x-axis.
     	 */
-    	this.x = 0;
+    	this.x = x;
     	/**
     	 * The force applied by the device in the y-axis.
     	 */
-    	this.y = 0;
+    	this.y = y;
     	/**
     	 * The force applied by the device in the z-axis.
     	 */
-    	this.z = 0;
+    	this.z = z;
     	/**
     	 * The time that the acceleration was obtained.
     	 */

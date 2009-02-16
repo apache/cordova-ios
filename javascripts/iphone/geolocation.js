@@ -20,5 +20,5 @@ Geolocation.prototype._getCurrentPosition = function() {
 			Geolocation.lastPosition = position;
 			geoSuccessCallback(position);
 		} 
-	}			
+	}
 }
