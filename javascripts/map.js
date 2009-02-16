@@ -13,4 +13,4 @@ Map.prototype.show = function(positions) {
 	
 }
 
-if (typeof navigaton.map == "undefined") navigator.map = new Map();
+if (typeof navigator.map == "undefined") navigator.map = new Map();

@@ -18,4 +18,4 @@ Contact.prototype.get = function(successCallback, errorCallback, options) {
 	
 }
 
-if (typeof navigaton.contact == "undefined") navigator.contact = new Contact();
+if (typeof navigator.contact == "undefined") navigator.contact = new Contact();

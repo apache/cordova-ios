@@ -20,22 +20,31 @@
 		font-weight:900;
 	  }
     </style>
-
+	<script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
     <script type="text/javascript" charset="utf-8"> 
-		var init = function() {
-			el = document.getElementById('t');
-			document.location = 'gap://comand/options';
-			
-		}
+	
+	
+	
+	
+	var init = function() {
+		var g = new Geolocation();
+		var suc = function(p){
+			alert(p.latitude + ' ' + p.longitude);
+		};
+		
+		var fail = function(er){console.log(er.message);};		
+	//	g.getCurrentPosition(suc, fail);
+		var interval = g.watchPosition(suc,fail);
+	}
 		
     </script>
-
+	
   </head>
   <body >
     Welcome
-		<button onclick="init();">Platform</button>
+		<button onclick="init();">Get Geolocation</button>
 	<div id="t"></div>
-	    <a href="page2.html">Page 2</a>
+
   	
   </body>
 </html>

@@ -33,4 +33,4 @@ Notification.prototype.beep = function(count, volume) {
 
 // TODO: of course on Blackberry and Android there notifications in the UI as well
 
-if (typeof navigaton.notification == "undefined") navigator.notification = new Notification();
+if (typeof navigator.notification == "undefined") navigator.notification = new Notification();

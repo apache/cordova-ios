@@ -48,4 +48,4 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-if (typeof navigaton.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();

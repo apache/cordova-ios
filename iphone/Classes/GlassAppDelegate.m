@@ -213,7 +213,7 @@ void alert(NSString *message) {
 		NSString * jsCallBack = nil;
 		
 		if([command isEqualToString:@"getloc"]){
-
+			NSLog(@"GPS Request");
 			jsCallBack = [[Location sharedInstance] getPosition];
 
 			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];

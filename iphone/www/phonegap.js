@@ -75,23 +75,28 @@
     
     
     Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-    	this.successCallback = successCallback;
-    	this.errorCallback = errorCallback;
-    	this.options = options;
-    	if (Device.available) {
-    		try {
-    			document.location = "gap:" + command;
-    		} catch(e) {
-    			alert("Error executing command '" + command + "'.");
-    		}
-    	}
+    	geoSuccessCallback = successCallback;
+    	geoErrorCallback = errorCallback;
+    	geoOptions = options;
+    //	locationTimeout = window.setInterval("navigator.geolocation._getCurrentPosition();", 1000); // Works in Webkit
+    	locationTimeout = window.setInterval("Geolocation.prototype._getCurrentPosition();", 1000); // Works in FireFox
     }
     
-    Geolocation.prototype._getCurrentPosition = function(position, error) {
-    	if (error != null)
-    		this.errorCallback(new PositionError(error));
-    	else
-    		this.successCallback(new Position());
+    Geolocation.prototype._getCurrentPosition = function() {
+    	document.location = "gap://getloc/null";		
+    
+    	if (geo.lng != 0) {
+    		window.clearTimeout(locationTimeout);
+    		if (geo.error != null) {
+    			if (typeof geoErrorCallback == "function") {
+    				geoErrorCallback(new PositionError(geo.error));
+    			} 		
+    		} else if (typeof geoSuccessCallback == "function") {
+    			var position = new Position(geo.lat, geo.lng);
+    			Geolocation.lastPosition = position;
+    			geoSuccessCallback(position);
+    		} 
+    	}			
     }
     
     
@@ -184,7 +189,7 @@
     	clearInterval(watchId);
     }
     
-    if (typeof navigaton.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+    if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
     
     
     /**
@@ -205,7 +210,7 @@
     	
     }
     
-    if (typeof navigaton.camera == "undefined") navigator.camera = new Camera();
+    if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
     
     
     /**
@@ -228,7 +233,7 @@
     	
     }
     
-    if (typeof navigaton.contact == "undefined") navigator.contact = new Contact();
+    if (typeof navigator.contact == "undefined") navigator.contact = new Contact();
     
     
     /**
@@ -287,10 +292,10 @@
      * @param {PositionOptions} options The options for getting the position data
      * such as timeout.
      */
-    Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+    //Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
     	// If the position is available then call success
     	// If the position is not available then call error
-    }
+    //}
     
     /**
      * Asynchronously aquires the position repeatedly at a given interval.
@@ -304,11 +309,17 @@
     Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
     	// Invoke the appropriate callback with a new Position object every time the implementation 
     	// determines that the position of the hosting device has changed. 
+    	
     	this.getCurrentPosition(successCallback, errorCallback, options);
+    	var frequency = (options != undefined)? options.frequency : 10000;
+    	
+    	var that = this;
     	return setInterval(function() {
-    		navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
-    	}, 10000);
+    		that.getCurrentPosition(successCallback, errorCallback, options);
+    		//navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+    	}, frequency);
     }
+    
     
     /**
      * Clears the specified position watch.
@@ -336,7 +347,7 @@
     	
     }
     
-    if (typeof navigaton.map == "undefined") navigator.map = new Map();
+    if (typeof navigator.map == "undefined") navigator.map = new Map();
     
     
     /**
@@ -374,7 +385,7 @@
     
     // TODO: of course on Blackberry and Android there notifications in the UI as well
     
-    if (typeof navigaton.notification == "undefined") navigator.notification = new Notification();
+    if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
     
     
     /**

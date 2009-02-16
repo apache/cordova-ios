@@ -18,10 +18,10 @@ function Geolocation() {
  * @param {PositionOptions} options The options for getting the position data
  * such as timeout.
  */
-Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+//Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
 	// If the position is available then call success
 	// If the position is not available then call error
-}
+//}
 
 /**
  * Asynchronously aquires the position repeatedly at a given interval.
@@ -35,11 +35,17 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
+	
 	this.getCurrentPosition(successCallback, errorCallback, options);
+	var frequency = (options != undefined)? options.frequency : 10000;
+	
+	var that = this;
 	return setInterval(function() {
-		navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
-	}, 10000);
+		that.getCurrentPosition(successCallback, errorCallback, options);
+		//navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+	}, frequency);
 }
+
 
 /**
  * Clears the specified position watch.
