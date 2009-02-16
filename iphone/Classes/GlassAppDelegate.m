@@ -54,7 +54,7 @@ void alert(NSString *message) {
 	
 	NSString *mode;
 	NSString *url;
-	int *detectNumber;
+	NSNumber *detectNumber;
 
 	mode			= [temp objectForKey:@"Offline"];
 	url				= [temp objectForKey:@"Callback"];
@@ -80,7 +80,7 @@ void alert(NSString *message) {
 		}   
 	}
 	
-	webView.detectsPhoneNumbers=detectNumber;
+	webView.detectsPhoneNumbers=[detectNumber boolValue];
 	
 	//This keeps the Default.png up
   UIImage * tempImage = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]] autorelease];
