@@ -52,6 +52,15 @@
 	var vibrate = function() {
 		navigator.notification.vibrate(0);
 	}
+
+	var getContact = function() {
+		var suc = function(){};
+		var fail = function(){};
+	
+		navigator.contactmanager.get(suc, fail);
+
+		alert(navigator.contactmanager.contacts[2].name);
+	}
 		
     </script>
 	
@@ -60,7 +69,8 @@
 	<button onclick="getLocation();">Get Geolocation</button><br />
 	<button onclick="getAccel();">Get Accelerometer</button><br />
 	<button onclick="watchAccel();">Watch Accelerometer</button><br />		
-	<button onclick="vibrate();">Vibrate</button><br />				
+	<button onclick="vibrate();">Vibrate</button><br />		
+	<button onclick="getContact();">Contact 3 </button><br />					
 	<div id="t"></div>
 	<div id="p"></div>	
 

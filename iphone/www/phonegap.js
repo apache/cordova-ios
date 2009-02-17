@@ -127,8 +127,8 @@
      */
     function Contact() {
     	this.name = "";
-    	this.phone = [];
-    	this.address = [];
+    	this.phone = "";
+    	this.address = "";
     }
     
     /**
@@ -141,7 +141,18 @@
     	
     }
     
-    if (typeof navigator.contact == "undefined") navigator.contact = new Contact();
+    
+    function ContactManager() {
+    	// Dummy object to hold array of contacts
+    	this.contacts = [];
+    }
+    
+    ContactManager.prototype.get = function(successCallback, errorCallback, options) {
+    	// Interface
+    }
+    
+    
+    if (typeof navigator.contactmanager == "undefined") navigator.contactmanager = new ContactManager();
     
     
     /**
@@ -548,6 +559,20 @@
     		successCallback(accel);
     	} 	
     }	
+    
+    
+    
+    ContactManager.prototype.get = function(successCallback, errorCallback, options) {
+    	document.location = "gap://getContacts/null";
+    	if (typeof successCallback == "function") {
+    		for (var i = 0;i<_contacts.length;i++) {
+    			var con = new Contact();
+    			con.name = _contacts[i].name;
+    			con.phone = _contacts[i].phone;		
+    			this.contacts.push(con);
+    		}
+    	}
+    }
     
     
     

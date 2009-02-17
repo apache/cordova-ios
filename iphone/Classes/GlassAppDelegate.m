@@ -272,7 +272,7 @@ void alert(NSString *message) {
 //			webView.hidden = YES;
 			
 			NSLog(@"photo dialog open now!");
-		} else if([command isEqualToString:@"getcontacts"]) {				
+		} else if([command isEqualToString:@"getContacts"]) {				
 			
 			contacts = [[Contacts alloc] init];
 			jsCallBack = [contacts getContacts];
