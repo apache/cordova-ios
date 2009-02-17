@@ -18,48 +18,51 @@
     </style>
 	<script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
     <script type="text/javascript" charset="utf-8"> 
-	
-	
-	Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
-		if (typeof successCallback == "function") {
-			var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
-			Accelerometer.lastAcceleration = accel;
-			successCallback(accel);
-		} 
-		
-	}	
-	
-	
-	Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options) {
-		this.getCurrentAccelerometer(successCallback, errorCallback, options);
-		// TODO: add the interval id to a list so we can clear all watches
-		return setInterval(function() {
-			navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
-		}, 10000);
-	}
 
-	
-	
-	var init = function() {
-		var g = new Accelerometer();
+	var getLocation = function() {
 		var suc = function(p){
-			alert(p.x);
+			alert(p.latitude + " " + p.longitude);
 		};
 		
-		var fail = function(er){console.log(er.message);};		
-		g.watchAcceleration(suc, fail);
-	//	var interval = g.watchPosition(suc,fail);
+		var fail = function(){};
+		navigator.geolocation.getCurrentPosition(suc,fail);
+	}
+	
+	var getAccel = function() {
+		var suc = function(p){
+			alert(a.x + " " + a.y + " " + a.z);
+		};
 		
+		var fail = function(){};
+		navigator.accelerometer.getCurrentAcceleration(suc,fail);
+	}
+
+	var watchAccel = function() {
+		var suc = function(a){
+			document.getElementById('t').innerHTML = a.x + " " + a.y + " " + a.z;
+		};
 		
+		var fail = function(){};
+				
+		var opt = {};
+		opt.frequency = 100;
+		timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
+	}
+	
+	var vibrate = function() {
+		navigator.notification.vibrate(0);
 	}
 		
     </script>
 	
   </head>
   <body >
-    Welcome
-		<button onclick="init();">Get Geolocation</button>
+	<button onclick="getLocation();">Get Geolocation</button><br />
+	<button onclick="getAccel();">Get Accelerometer</button><br />
+	<button onclick="watchAccel();">Watch Accelerometer</button><br />		
+	<button onclick="vibrate();">Vibrate</button><br />				
 	<div id="t"></div>
+	<div id="p"></div>	
 
   	
   </body>

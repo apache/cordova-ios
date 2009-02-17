@@ -18,10 +18,10 @@ function Geolocation() {
  * @param {PositionOptions} options The options for getting the position data
  * such as timeout.
  */
-//Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
 	// If the position is available then call success
 	// If the position is not available then call error
-//}
+}
 
 /**
  * Asynchronously aquires the position repeatedly at a given interval.

@@ -39,12 +39,14 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
  * @param {AccelerationOptions} options The options for getting the accelerometer data
  * such as timeout.
  */
+
 Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options) {
-	this.getCurrentAccelerometer(successCallback, errorCallback, options);
+	this.getCurrentAcceleration(successCallback, errorCallback, options);
 	// TODO: add the interval id to a list so we can clear all watches
+ 	var frequency = (options != undefined)? options.frequency : 10000;
 	return setInterval(function() {
 		navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
-	}, 10000);
+	}, frequency);
 }
 
 /**

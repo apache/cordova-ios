@@ -29,6 +29,11 @@ def build
   puts 'writing the full JS file to lib/phonegap.js'
   final = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap.js"
   js = ""
+  
+  interfaces_to_build.each do |interface|
+    js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ interface }.js")
+  end
+  
   platforms_to_build.each do |platform|
     interfaces_to_build.each do |interface|
       begin
@@ -37,9 +42,7 @@ def build
       end
     end
   end
-  interfaces_to_build.each do |interface|
-    js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ interface }.js")
-  end
+
   FileUtils.mkdir_p "#{ LIBPATH }lib"
   open(final,'w'){|f| f.puts( js )} 
   
