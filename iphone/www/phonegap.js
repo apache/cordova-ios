@@ -100,6 +100,43 @@
     if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
     
     
+    
+    /**
+     * This class provides access to the device media, interfaces to both sound and video
+     * @constructor
+     */
+    function Media(src) {
+    	this.src = src;
+    }
+    
+    Media.prototype.play = function() {
+    }
+    
+    Media.prototype.pause = function() {
+    }
+    
+    Media.prototype.stop = function() {
+    }
+    
+    
+    /**
+     * This class contains information about any Media errors.
+     * @constructor
+     */
+    function MediaError() {
+    	this.code = null,
+    	this.message = "";
+    }
+    
+    MediaError.MEDIA_ERR_ABORTED 		= 1;
+    MediaError.MEDIA_ERR_NETWORK 		= 2;
+    MediaError.MEDIA_ERR_DECODE 		= 3;
+    MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
+    
+    
+    //if (typeof navigator.audio == "undefined") navigator.audio = new Media(src);
+    
+    
     /**
      * This class provides access to the device camera.
      * @constructor
@@ -152,7 +189,7 @@
     }
     
     
-    if (typeof navigator.contactmanager == "undefined") navigator.contactmanager = new ContactManager();
+    if (typeof navigator.contacts == "undefined") navigator.contacts = new ContactManager();
     
     
     /**
@@ -562,6 +599,18 @@
     
     
     
+    /**
+     * Media/Audio override.
+     *
+     */
+    
+    Media.prototype.play = function() {
+    	if (this.src != null) {
+    		document.location = "gap://playSound/" + this.src;
+    	}
+    }
+    
+    
     ContactManager.prototype.get = function(successCallback, errorCallback, options) {
     	document.location = "gap://getContacts/null";
     	if (typeof successCallback == "function") {
@@ -604,5 +653,11 @@
     
     Notification.prototype.vibrate = function(mills) {
     	document.location = "gap://vibrate/null";
+    }
+    
+    Notification.prototype.beep = function(count, volume) {
+    	// No Volume yet for the iphone interface
+    	// We can use a canned beep sound and call that
+    	new Media('beep.wav').play();
     }
     

@@ -37,9 +37,16 @@
 		navigator.accelerometer.getCurrentAcceleration(suc,fail);
 	}
 
+
+	function roundNumber(num) {
+		var dec = 3;
+		var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+		return result;
+	}
+	
 	var watchAccel = function() {
 		var suc = function(a){
-			document.getElementById('t').innerHTML = a.x + " " + a.y + " " + a.z;
+			document.getElementById('t').innerHTML = roundNumber(a.x) + " " + roundNumber(a.y) + " " + roundNumber(a.z);
 		};
 		
 		var fail = function(){};
@@ -52,6 +59,9 @@
 	var vibrate = function() {
 		navigator.notification.vibrate(0);
 	}
+	var beep = function() {
+		navigator.notification.beep(2);
+	}
 
 	var getContact = function() {
 		var suc = function(){};
@@ -59,7 +69,12 @@
 	
 		navigator.contactmanager.get(suc, fail);
 
-		alert(navigator.contactmanager.contacts[2].name);
+		alert(navigator.contactmanager.contacts[3].name);
+	}
+	
+	var playSound = function() {
+		var a = new Media('beep.wav');
+		a.play();
 	}
 		
     </script>
@@ -70,9 +85,11 @@
 	<button onclick="getAccel();">Get Accelerometer</button><br />
 	<button onclick="watchAccel();">Watch Accelerometer</button><br />		
 	<button onclick="vibrate();">Vibrate</button><br />		
-	<button onclick="getContact();">Contact 3 </button><br />					
+	<button onclick="beep();">Beep</button><br />			
+	<button onclick="getContact();">Contact 3 </button><br />
+	<button onclick="playSound();">PlaySound </button><br />					
 	<div id="t"></div>
-	<div id="p"></div>	
+	<div id="c"></div>	
 
   	
   </body>

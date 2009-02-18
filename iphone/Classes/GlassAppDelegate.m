@@ -281,14 +281,14 @@ void alert(NSString *message) {
 
 			[contacts release];
 		
-		} else if ([command isEqualToString:@"sound"]) {
+		} else if ([command isEqualToString:@"playSound"]) {
 
 			NSBundle * mainBundle = [NSBundle mainBundle];
 			NSArray *soundFile = [options componentsSeparatedByString:@"."];
 			
 			NSString *file = (NSString *)[soundFile objectAtIndex:0];
 			NSString *ext = (NSString *)[soundFile objectAtIndex:1];
-
+			NSLog(file);
 			sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
 			[sound play];
 		}
