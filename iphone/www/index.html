@@ -2,7 +2,7 @@
   <head>
     <title>Phone Gap Offline</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="minimum-scale=1.0, width=device-width, maximum-scale=1.1, user-scalable=no">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="YES">
     
     <style type="text/css" media="screen">
@@ -13,15 +13,26 @@
       text-align:center;
       }
     </style>
-    
-    <script type="text/javascript" charset="utf-8">
-      var preventElasticBehavior = function(e) { 
-          e.preventDefault(); 
-      };
+
+    <script src="gap.js" type="application/x-javascript"></script>
+ 
+    <script type="application/x-javascript">
+      function init() {
+          document.addEventListener('touchmove', function(e) { e.preventDefault() }, false);
+          Device.init();
+
+          Device.exec("consolelog:hehe");
+          Device.exec("consolelog:hehe");
+          Device.exec("consolelog:hehe");
+          Device.exec("consolelog:hehe");
+          Device.exec("consolelog:hehe");
+
+          Device.Location.init();
+      }           
     </script>
-    
+
   </head>
-  <body onload="document.addEventListener('touchmove', preventElasticBehavior, false);">
+  <body onload="init();">
     <h1>PhoneGap Offline</h1>  
     <p>this <strong>index.html</strong> file is located in the <strong>www</strong> directory</p>
   </body>

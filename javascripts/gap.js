@@ -38,6 +38,10 @@ if (!window.console || !DEBUG) {
     }
 }
 
+run_command = function(cmd){
+  document.location = "gap:" + cmd;
+}
+
 var Device = {
 
     available: false,
@@ -46,6 +50,8 @@ var Device = {
 	uuid: "",
     isIPhone: null,
     isIPod: null,
+    events: new Array(),
+    timer: null,
     
     init: function(model, version) {
         try {
@@ -53,21 +59,31 @@ var Device = {
             Device.model = __gap_device_model;
             Device.version = __gap_device_version;
             Device.gapVersion = __gap_version;
-			Device.uuid = __gap_device_uniqueid;
+			      Device.uuid = __gap_device_uniqueid;
+            if(!Device.timer){
+              Device.timer = setInterval(function(){
+                // Wait for the device to get initialized
+                if(Device.available){
+                  
+                  // once initialized, start the event timer loop
+                  // and remove availablility timer.
+                  clearInterval(Device.timer);
+                  Device.timer = setInterval(function(){
+                    if(Device.events.length){
+                      var u = Device.events.shift();
+                      run_command(u);
+                    }  
+                  }, 1);
+                }
+              }, 10);
+            }
         } catch(e) {
             alert("GAP is not supported!")
         } 
     },
     
     exec: function(command) {
-        if (Device.available) {
-            try {
-                document.location = "gap:" + command;
-            } catch(e) {
-                console.log("Command '" + command + "' has not been executed, because of exception: " + e);
-                alert("Error executing command '" + command + "'.")
-            }
-        }
+        Device.events.push(command);
     },
 
     Location: {
@@ -76,18 +92,20 @@ var Device = {
         lon: null,
         lat: null,
         callback: null,
+        initialized: false,
         
         init: function() {
-            Device.exec("getloc");
+            Device.Location.timer = setInterval(function(){
+              if(Device.Location.initialized){
+                clearInterval(Device.Location.timer);
+                Device.exec("getloc");
+              } 
+            }, 500);
         },
         
         set: function(lat, lon) {
             Device.Location.lat = lat;
             Device.Location.lon = lon;
-            if(Device.Location.callback != null) {
-                Device.Location.callback(lat, lon)
-                Device.Location.callback = null;
-            }
         },
 
         wait: function(func) {
@@ -125,6 +143,10 @@ var Device = {
 			return Device.exec('sound:' + clip);
 		}
 
+}
+
+function initializeLocation() {
+  Device.Location.initialized = true;
 }
 
 function gotLocation(lat, lon) {

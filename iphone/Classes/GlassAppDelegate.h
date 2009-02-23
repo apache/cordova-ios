@@ -49,5 +49,6 @@
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
 - (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
+- (void) initializeLocation;
 
 @end
