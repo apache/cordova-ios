@@ -30,6 +30,7 @@
 	IBOutlet GlassViewController *viewController;
 	IBOutlet UIWebView *webView;
 	IBOutlet UIImageView *imageView;
+        IBOutlet UIActivityIndicatorView* activityView;
   
 	CLLocationManager *locationManager;
 	CLLocation		  *lastKnownLocation;
