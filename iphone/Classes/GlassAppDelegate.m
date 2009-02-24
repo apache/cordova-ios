@@ -3,7 +3,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-
 @implementation GlassAppDelegate
 
 @synthesize window;
@@ -20,74 +19,91 @@ void alert(NSString *message) {
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 
-	locationManager = [[CLLocationManager alloc] init];
-	locationManager.delegate = self;
-	[locationManager startUpdatingLocation];
-	
-	webView.delegate = self;
-  
-	// Set up the image picker controller and add it to the view
-	imagePickerController = [[UIImagePickerController alloc] init];
-	
-	// Im not sure why the next line was giving me a warning... any ideas?
-	// when this is commented out, the cancel button no longer works.
-	imagePickerController.delegate = self;
-	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-	imagePickerController.view.hidden = YES;
-	//[window addSubview:imagePickerController.view];
-	
-	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
-	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
+    webView.delegate = self;
 
-	[window addSubview:viewController.view]; 
-	
-	NSString *errorDesc = nil;
-	
-	NSPropertyListFormat format;
-	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
-	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-										  propertyListFromData:plistXML
-										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-										  format:&format errorDescription:&errorDesc];
-	
-	
-	NSString *mode;
-	NSString *url;
-	NSNumber *detectNumber;
+    // Set up the image picker controller and add it to the view
+    imagePickerController = [[UIImagePickerController alloc] init];
+    
+    // Im not sure why the next line was giving me a warning... any ideas?
+    // when this is commented out, the cancel button no longer works.
+    imagePickerController.delegate = self;
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePickerController.view.hidden = YES;
+    //[window addSubview:imagePickerController.view];
+    
+    [window addSubview:viewController.view]; 
+    
+    NSString *errorDesc = nil;
+    
+    NSPropertyListFormat format;
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
+    NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
+									      propertyListFromData:plistXML
+									      mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+									      format:&format errorDescription:&errorDesc];
+    
+    
+    NSNumber *offline;
+    NSString *url;
+    NSNumber *detectNumber;
+    NSNumber *useLocation;
+    NSNumber *useAccellerometer;
+    NSNumber *autoRotate;
 
-	mode			= [temp objectForKey:@"Offline"];
-	url				= [temp objectForKey:@"Callback"];
-	detectNumber	= [temp objectForKey:@"DetectPhoneNumber"]; 
-		
-	if ([mode isEqualToString:@"0"]) {
-		// Online Mode
-		appURL = [[NSURL URLWithString:url] retain];
-		NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
-		[webView loadRequest:aRequest];
-	} else {		
-		// Offline Mode
-		appURL = [[NSURL URLWithString:@"file:///"] retain];
-		NSString * urlPathString;
-		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
-		if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]){
-			[webView  loadRequest:[NSURLRequest
-								   requestWithURL:[NSURL fileURLWithPath:urlPathString]
-								   cachePolicy:NSURLRequestUseProtocolCachePolicy
-								   timeoutInterval:20.0
-								   ]];
-			
-		}   
-	}
-	
-	webView.detectsPhoneNumbers=[detectNumber boolValue];
-	
-	//This keeps the Default.png up
-  UIImage * tempImage = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]] autorelease];
-	imageView = [[UIImageView alloc] initWithImage:tempImage];
-	[window addSubview:imageView];
-  
-	//NSBundle * mainBundle = [NSBundle mainBundle];
+    offline	          = [temp objectForKey:@"Offline"];
+    url		          = [temp objectForKey:@"Callback"];
+    detectNumber      = [temp objectForKey:@"DetectPhoneNumber"]; 
+    useLocation	      = [temp objectForKey:@"UseLocation"]; 
+    useAccellerometer = [temp objectForKey:@"UseAccellerometer"]; 
+    autoRotate        = [temp objectForKey:@"AutoRotate"];
+
+    if ([useLocation boolValue]) {
+        locationManager = [[CLLocationManager alloc] init];
+        locationManager.delegate = self;
+        [locationManager startUpdatingLocation];
+    }
+
+    if ([useAccellerometer boolValue]) {
+        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
+        [[UIAccelerometer sharedAccelerometer] setDelegate:self];
+    }
+	    
+    if ([offline boolValue] == NO) {
+	    // Online Mode
+	    appURL = [[NSURL URLWithString:url] retain];
+	    NSURLRequest * aRequest = [NSURLRequest requestWithURL:appURL];
+	    [webView loadRequest:aRequest];
+    } else {		
+	    // Offline Mode
+	    NSString * urlPathString;
+	    NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
+	    if (urlPathString = [thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]) {
+		    [webView loadRequest:[NSURLRequest
+		       requestWithURL:[NSURL fileURLWithPath:urlPathString]
+		       cachePolicy:NSURLRequestUseProtocolCachePolicy
+		       timeoutInterval:20.0
+		       ]];
+		    
+	    }   
+    }
+    
+    [viewController setAutoRotate:[autoRotate boolValue]];
+    webView.detectsPhoneNumbers = [detectNumber boolValue];
+    
+    //This keeps the Default.png up
+    imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
+    [window addSubview:imageView];
+
+    activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [window addSubview:activityView];
+    [activityView startAnimating];
+    [window makeKeyAndVisible];
+
+    
+    //NSBundle * mainBundle = [NSBundle mainBundle];
+
+
 }
 
 //when web application loads pass it device information
@@ -131,15 +147,20 @@ void alert(NSString *message) {
 	NSString * jsCallBack = nil;
 	NSArray * parts = [urlString componentsSeparatedByString:@":"];
 
-	double lat = lastKnownLocation.coordinate.latitude;
-	double lon = lastKnownLocation.coordinate.longitude;
-
 	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
 		
 		if ([(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]){
 			
 			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getloc"]){
 				NSLog(@"location request!");
+
+				double lat = 0.0;
+				double lon = 0.0;
+
+				if (lastKnownLocation) {
+				    lat = lastKnownLocation.coordinate.latitude;
+				    lon = lastKnownLocation.coordinate.longitude;
+				}
 
 				jsCallBack = [[NSString alloc] initWithFormat:@"gotLocation('%f','%f');", lat, lon];
 				NSLog(jsCallBack);

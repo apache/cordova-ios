@@ -3,10 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>Offline</key>
-	<string>1</string>
+	<true/>
 	<key>Callback</key>
 	<string>http://phonegap.com/demo2/</string>
 	<key>DetectPhoneNumber</key>
-	<integer>0</integer>
+	<false/>
+	<key>UseLocation</key>
+	<true/>
+	<key>UseAccellerometer</key>
+	<true/>
+	<key>AutoRotate</key>
+	<true/>
 </dict>
 </plist>
