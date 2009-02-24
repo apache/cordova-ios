@@ -109,7 +109,6 @@ void alert(NSString *message) {
 //when web application loads pass it device information
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
   [UIApplication sharedApplication].networkActivityIndicatorVisible = YES; 
-
   Device * device = [[Device alloc] init];
   [theWebView stringByEvaluatingJavaScriptFromString:[device getDeviceInfo]];
   [device release];
@@ -167,6 +166,13 @@ void alert(NSString *message) {
 				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
 				
 				[jsCallBack release];
+			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"consolelog"]){
+				if([parts count] > 2){
+					NSLog([parts objectAtIndex: 2]);
+					// Should probably add de-serialization methods here like Data::Dumper, etc
+				} else {
+					NSLog(@"--console log without message--");
+				}
 			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
 				NSLog(@"Photo request!");
 				NSLog([parts objectAtIndex:2]);
@@ -212,9 +218,16 @@ void alert(NSString *message) {
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-	[lastKnownLocation release];
+	[lastKnownLocation release];	
 	lastKnownLocation = newLocation;
 	[lastKnownLocation retain];	
+	[self initializeLocation];
+}
+
+- (void)initializeLocation
+{
+	NSLog(@"initializeLocation();");
+	[webView stringByEvaluatingJavaScriptFromString:@"initializeLocation()"];
 }
 
 
