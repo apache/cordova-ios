@@ -100,10 +100,7 @@ void alert(NSString *message) {
     [activityView startAnimating];
     [window makeKeyAndVisible];
 
-    
     //NSBundle * mainBundle = [NSBundle mainBundle];
-
-
 }
 
 //when web application loads pass it device information
@@ -126,39 +123,31 @@ void alert(NSString *message) {
 
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	NSURL* url = [request URL];
-	NSString * urlString = [url absoluteString];
-	
 	NSBundle * mainBundle = [NSBundle mainBundle];
 	
 	// Check to see if the URL request is for the App URL.
 	// If it is not, then launch using Safari
-  NSString* urlHost = [url host];
-  NSString* appHost = [appURL host];
+	NSString* urlScheme = [url scheme];
+	NSString* urlHost = [url host];
+	NSString* appHost = [appURL host];
 
-  // if they are identical: we are in the same domain or both are offline
-  if (appHost != urlHost) {
-    if (!appHost || [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch].location == NSNotFound) {
-      [[UIApplication sharedApplication] openURL:url];
-      return NO;
-    }
-  }  
-    
-	NSString * jsCallBack = nil;
-	NSArray * parts = [urlString componentsSeparatedByString:@":"];
+	if ([urlScheme isEqualToString:@"gap"]) {
+		NSString* actionName = [url host];
+		NSString* appPath = [(NSString *)[url path] substringFromIndex:1];
+		NSArray* arguments = [appPath componentsSeparatedByString:@"/"];
+		NSString * jsCallBack = nil;
 
-	if ([parts count] > 1 && [(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]) {
-		
-		if ([(NSString *)[parts objectAtIndex:0] isEqualToString:@"gap"]){
+		if ([actionName length] > 0) {
 			
-			if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getloc"]){
+			if([actionName isEqualToString:@"getloc"]){
 				NSLog(@"location request!");
 
 				double lat = 0.0;
 				double lon = 0.0;
 
 				if (lastKnownLocation) {
-				    lat = lastKnownLocation.coordinate.latitude;
-				    lon = lastKnownLocation.coordinate.longitude;
+					lat = lastKnownLocation.coordinate.latitude;
+					lon = lastKnownLocation.coordinate.longitude;
 				}
 
 				jsCallBack = [[NSString alloc] initWithFormat:@"gotLocation('%f','%f');", lat, lon];
@@ -166,38 +155,37 @@ void alert(NSString *message) {
 				[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
 				
 				[jsCallBack release];
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"consolelog"]){
-				if([parts count] > 2){
-					NSLog([parts objectAtIndex: 2]);
-					// Should probably add de-serialization methods here like Data::Dumper, etc
-				} else {
-					NSLog(@"--console log without message--");
-				}
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"getphoto"]){
+			}
+                        
+                        else if([actionName isEqualToString:@"consolelog"]){
+				NSLog(@"[%@] %@", [arguments objectAtIndex:0], [arguments objectAtIndex:1]);
+			}
+                        
+                        else if([actionName isEqualToString:@"getphoto"]){
 				NSLog(@"Photo request!");
-				NSLog([parts objectAtIndex:2]);
+				NSLog([arguments objectAtIndex:0]);
 			
 				imagePickerController.view.hidden = NO;
 				webView.hidden = YES;
 				[window bringSubviewToFront:imagePickerController.view];
 				NSLog(@"photo dialog open now!");
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"vibrate"]){
+			}
+                        
+                        else if([actionName isEqualToString:@"vibrate"]){
 				Vibrate *vibration = [[Vibrate alloc] init];
 				[vibration vibrate];
 				[vibration release];
-
-				//contacts = [[Contacts alloc] init];
-				//[contacts getContacts];
-			
-			} else if([(NSString *)[parts objectAtIndex:1] isEqualToString:@"openmap"]) {
-				
-				NSString *mapurl = [@"maps:" stringByAppendingString:[parts objectAtIndex:2]];
+			}
+                        
+                        else if([actionName isEqualToString:@"openmap"]) {
+				NSString *mapurl = [@"maps:" stringByAppendingString:[arguments objectAtIndex:0]];
 				
 				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
-			} else if ([(NSString *)[parts objectAtIndex:1] isEqualToString:@"sound"]) {
-
+			}
+                        
+                        else if ([actionName isEqualToString:@"sound"]) {
 				// Split the Sound file 
-				NSString *ef = (NSString *)[parts objectAtIndex:2];
+				NSString *ef = (NSString *)[arguments objectAtIndex:0];
 				NSArray *soundFile = [ef componentsSeparatedByString:@"."];
 				
 				NSString *file = (NSString *)[soundFile objectAtIndex:0];
@@ -208,11 +196,23 @@ void alert(NSString *message) {
 				sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
 				[sound play];
 			}
+                        
+                        // WTF?
+                        else {
+				NSLog(@"WARNING: Unhandled gap command \"%@\"", actionName);
+			}
 			
 			return NO;
 		}
 	}
-
+	
+	if (urlHost && ![appHost isEqualToString:urlHost]) {
+		if (!appHost || [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch].location == NSNotFound) {
+			[[UIApplication sharedApplication] openURL:url];
+			return NO;
+		}
+	}
+	
 	return YES;
 }
 
@@ -339,6 +339,5 @@ void alert(NSString *message) {
   [sound release];
 	[super dealloc];
 }
-
 
 @end

@@ -29,17 +29,20 @@ function gotAcceleration(x,y,z){
 // A little more abstract
 
 var DEBUG = true;
-if (!window.console || !DEBUG) {
+if (!window.console && DEBUG) {
     console = {
-        log: function(){
+        log: function(message) {
+            Device.exec('consolelog', 'LOG', message);
         },
-        error: function(){
+        error: function(message) {
+            Device.exec('consolelog', 'ERROR', message);
         }
     }
-}
-
-run_command = function(cmd){
-  document.location = "gap:" + cmd;
+} else if (!window.console) {
+    console = {
+        log: function() {},
+        error: function(message) {}
+    }
 }
 
 var Device = {
@@ -71,7 +74,7 @@ var Device = {
                   Device.timer = setInterval(function(){
                     if(Device.events.length){
                       var u = Device.events.shift();
-                      run_command(u);
+                      Device.run_command(u);
                     }  
                   }, 1);
                 }
@@ -82,8 +85,16 @@ var Device = {
         } 
     },
     
-    exec: function(command) {
-        Device.events.push(command);
+    exec: function() {
+        Device.events.push(arguments);
+    },
+
+    run_command: function(args){
+        var uri = [];
+        for (var i = 1; i < args.length; i++) {
+            uri.push(encodeURIComponent(args[i]));
+        }
+        document.location = "gap://" + args[0] + "/" + uri.join("/");
     },
 
     Location: {
