@@ -64,18 +64,12 @@
 	}
 
 	var getContact = function() {
-		var suc = function(c){
-			alert("Contact 4: " + c.contacts[3].name);
-		};
+		var suc = function(c){ alert("Contact 4: " + c.contacts[3].name); };
 		var fail = function(){};
-	
 		navigator.ContactManager.get(suc, fail);
-
-		
 	}
 	
 	var playSound = function() {
-		
 		new Media('beep.wav').play();
 	}
 		
