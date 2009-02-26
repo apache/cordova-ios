@@ -64,23 +64,25 @@
 	}
 
 	var getContact = function() {
-		var suc = function(){};
+		var suc = function(c){
+			alert("Contact 4: " + c.contacts[3].name);
+		};
 		var fail = function(){};
 	
-		navigator.contactmanager.get(suc, fail);
+		navigator.ContactManager.get(suc, fail);
 
-		alert(navigator.contactmanager.contacts[3].name);
+		
 	}
 	
 	var playSound = function() {
-		var a = new Media('beep.wav');
-		a.play();
+		
+		new Media('beep.wav').play();
 	}
 		
     </script>
 	
   </head>
-  <body >
+  <body>
 	<button onclick="getLocation();">Get Geolocation</button><br />
 	<button onclick="getAccel();">Get Accelerometer</button><br />
 	<button onclick="watchAccel();">Watch Accelerometer</button><br />		
