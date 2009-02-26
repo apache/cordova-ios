@@ -133,15 +133,15 @@ var Device = {
 		callback: null,
 		
         getFromPhotoLibrary: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback)
+            return Device.exec("getphoto", Device.Image.callback)
         },
         
         getFromCamera: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback)
+            return Device.exec("getphoto", Device.Image.callback)
         },
         
         getFromSavedPhotosAlbum: function() {
-            return Device.exec("getphoto" + ":" + Device.Image.callback)
+            return Device.exec("getphoto", Device.Image.callback)
         }
 
     },
@@ -151,7 +151,7 @@ var Device = {
     },
 
 		playSound: function(clip) {
-			return Device.exec('sound:' + clip);
+			return Device.exec('sound', clip);
 		}
 
 }
