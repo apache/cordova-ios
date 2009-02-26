@@ -36,7 +36,7 @@
 //				  ];
 	
 
-	return  [[NSString alloc] initWithFormat:@"Device={};Device.platform = '%s';",[[myCurrentDevice model] UTF8String]];
+	return  [[NSString alloc] initWithFormat:@"Device={};Device.platform='%s';",[[myCurrentDevice model] UTF8String]];
 }
 
 - (void)dealloc {

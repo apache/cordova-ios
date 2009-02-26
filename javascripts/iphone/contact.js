@@ -7,5 +7,7 @@ ContactManager.prototype.get = function(successCallback, errorCallback, options)
 			con.phone = _contacts[i].phone;		
 			this.contacts.push(con);
 		}
+		successCallback(this);
+		
 	}
 }

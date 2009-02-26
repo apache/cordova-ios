@@ -22,11 +22,11 @@ Contact.prototype.get = function(successCallback, errorCallback, options) {
 function ContactManager() {
 	// Dummy object to hold array of contacts
 	this.contacts = [];
+	this.timestap = new Date().getTime();
 }
 
 ContactManager.prototype.get = function(successCallback, errorCallback, options) {
 	// Interface
 }
 
-
-if (typeof navigator.contacts == "undefined") navigator.contacts = new ContactManager();
+if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
