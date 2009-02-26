@@ -29,7 +29,7 @@ function gotAcceleration(x,y,z){
 // A little more abstract
 
 var DEBUG = true;
-if (!window.console && DEBUG) {
+if (DEBUG) {
     console = {
         log: function(message) {
             Device.exec('consolelog', 'LOG', message);
