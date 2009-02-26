@@ -1,15 +1,15 @@
 //
-//  GlassViewController.m
+//  PhoneGapViewController.m
 //  PhoneGap
 //
 //  Created by Nitobi on 15/12/08.
 //  Copyright 2008 Nitobi. All rights reserved.
 //
 
-#import "GlassViewController.h"
-#import "GlassAppDelegate.h" 
+#import "PhoneGapViewController.h"
+#import "PhoneGapDelegate.h" 
 
-@implementation GlassViewController
+@implementation PhoneGapViewController
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 

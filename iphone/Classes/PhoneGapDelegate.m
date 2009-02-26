@@ -1,8 +1,8 @@
-#import "GlassAppDelegate.h"
-#import "GlassViewController.h"
+#import "PhoneGapDelegate.h"
+#import "PhoneGapViewController.h"
 #import <UIKit/UIKit.h>
 
-@implementation GlassAppDelegate
+@implementation PhoneGapDelegate
 
 @synthesize window;
 @synthesize viewController;

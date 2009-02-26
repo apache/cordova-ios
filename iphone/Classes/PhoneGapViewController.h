@@ -1,5 +1,5 @@
 //
-//  GlassViewController.h
+//  PhoneGapViewController.h
 //  PhoneGap
 //
 //  Created by Nitobi on 15/12/08.
@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
-@interface GlassViewController : UIViewController {
+@interface PhoneGapViewController : UIViewController {
 	IBOutlet UIWebView *webView;	
 }
 

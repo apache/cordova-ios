@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079B0A090E45734600755F37 /* CoreLocation.framework */; };
-		1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GlassAppDelegate.m */; };
+		1D3623260D0F684500981E51 /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* PhoneGapDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -17,7 +17,7 @@
 		47DC5AEE0F4BDEDB00FB54CE /* beep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 47DC5AED0F4BDEDB00FB54CE /* beep.wav */; };
 		47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* Settings.plist */; };
 		47F565210F3AC95D001DFBDB /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F565200F3AC95D001DFBDB /* Image.m */; };
-		47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* GlassViewController.m */; };
+		47FAB6A90EF751E2005F55AB /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */; };
 		47FAB72A0EF7A663005F55AB /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB7290EF7A663005F55AB /* Sound.m */; };
 		47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB72D0EF7A6C6005F55AB /* Contacts.m */; };
 		47FAB7500EF82576005F55AB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47FAB74F0EF82576005F55AB /* AddressBook.framework */; };
@@ -35,8 +35,8 @@
 /* Begin PBXFileReference section */
 		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D3623240D0F684500981E51 /* GlassAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassAppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* GlassAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassAppDelegate.m; sourceTree = "<group>"; };
+		1D3623240D0F684500981E51 /* PhoneGapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapDelegate.h; sourceTree = "<group>"; };
+		1D3623250D0F684500981E51 /* PhoneGapDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneGapDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* PhoneGap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhoneGap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2899E5210DE3E06400AC0155 /* GlassViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GlassViewController.xib; sourceTree = "<group>"; };
@@ -47,8 +47,8 @@
 		47DC7FB20EFADF9E00D0B526 /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
 		47F5651F0F3AC95D001DFBDB /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		47F565200F3AC95D001DFBDB /* Image.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
-		47FAB6A70EF751E2005F55AB /* GlassViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlassViewController.h; sourceTree = "<group>"; };
-		47FAB6A80EF751E2005F55AB /* GlassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlassViewController.m; sourceTree = "<group>"; };
+		47FAB6A70EF751E2005F55AB /* PhoneGapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapViewController.h; sourceTree = "<group>"; };
+		47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneGapViewController.m; sourceTree = "<group>"; };
 		47FAB7280EF7A663005F55AB /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
 		47FAB7290EF7A663005F55AB /* Sound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Sound.m; sourceTree = "<group>"; };
 		47FAB72C0EF7A6C6005F55AB /* Contacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contacts.h; sourceTree = "<group>"; };
@@ -92,8 +92,8 @@
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				AA13D2CB0F20245000B18061 /* GlassBgView.h */,
 				AA13D2CC0F20245000B18061 /* GlassBgView.m */,
-				1D3623240D0F684500981E51 /* GlassAppDelegate.h */,
-				1D3623250D0F684500981E51 /* GlassAppDelegate.m */,
+				1D3623240D0F684500981E51 /* PhoneGapDelegate.h */,
+				1D3623250D0F684500981E51 /* PhoneGapDelegate.m */,
 				8205CB7B0E68A701006CBEEF /* Device.h */,
 				8205CB7C0E68A701006CBEEF /* Device.m */,
 				47FAB72C0EF7A6C6005F55AB /* Contacts.h */,
@@ -104,8 +104,8 @@
 				8254F4BC0E6397F0002FDA36 /* Vibrate.m */,
 				8254F87F0E650500002FDA36 /* Location.h */,
 				8254F8800E650500002FDA36 /* Location.m */,
-				47FAB6A70EF751E2005F55AB /* GlassViewController.h */,
-				47FAB6A80EF751E2005F55AB /* GlassViewController.m */,
+				47FAB6A70EF751E2005F55AB /* PhoneGapViewController.h */,
+				47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */,
 				47F5651F0F3AC95D001DFBDB /* Image.h */,
 				47F565200F3AC95D001DFBDB /* Image.m */,
 			);
@@ -237,11 +237,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				1D3623260D0F684500981E51 /* GlassAppDelegate.m in Sources */,
+				1D3623260D0F684500981E51 /* PhoneGapDelegate.m in Sources */,
 				8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */,
 				8254F8810E650500002FDA36 /* Location.m in Sources */,
 				8205CB7D0E68A701006CBEEF /* Device.m in Sources */,
-				47FAB6A90EF751E2005F55AB /* GlassViewController.m in Sources */,
+				47FAB6A90EF751E2005F55AB /* PhoneGapViewController.m in Sources */,
 				47FAB72A0EF7A663005F55AB /* Sound.m in Sources */,
 				47FAB72E0EF7A6C6005F55AB /* Contacts.m in Sources */,
 				AA13D2CD0F20245000B18061 /* GlassBgView.m in Sources */,
