@@ -21,7 +21,6 @@
  */
 - (NSString *)init{
 	
-	jsCallBack = nil;
 	myCurrentDevice = [UIDevice currentDevice];
 //	
 //	return jsCallBack = [[NSString alloc] initWithFormat:@"\
@@ -40,7 +39,6 @@
 }
 
 - (void)dealloc {
-    [jsCallBack release];
 	[myCurrentDevice release];
 	[super dealloc];
 

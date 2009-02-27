@@ -28,7 +28,7 @@
 	
 	if (allPeople == nil) {
 		allPeople = (NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook);
-		CFIndex nPeople = ABAddressBookGetPersonCount(self.addressBook);
+		CFIndex numberOfPeople = ABAddressBookGetPersonCount(self.addressBook);
 				
 		[update appendString:@"var _contacts=["];
 		
@@ -43,7 +43,7 @@
 				NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
 				NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@','phone':'%@'}",contactFirstLast,phoneNumber];
 				[update appendFormat:@"%@", contactFirstLast2];
-				if (i+1 != nPeople) {
+				if (i+1 != numberOfPeople) {
 					[update appendFormat:@","];
 				}
 				

@@ -10,8 +10,7 @@
 #import <UIKit/UIDevice.h>
 
 @interface Device : NSObject {
+	UIDevice *myCurrentDevice;
 }
-
-- (NSString *)getDeviceInfo;
 
 @end
