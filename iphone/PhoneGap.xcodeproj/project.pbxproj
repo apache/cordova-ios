@@ -25,7 +25,7 @@
 		824041C10E942F0E002F3376 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 824041C00E942F0E002F3376 /* Default.png */; };
 		8254F4BD0E6397F0002FDA36 /* Vibrate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F4BC0E6397F0002FDA36 /* Vibrate.m */; };
 		8254F8810E650500002FDA36 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F8800E650500002FDA36 /* Location.m */; };
-		825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 825DFB5D0E464E6C000D0A5D /* README.markdown */; };
+		825DFB5E0E464E6C000D0A5D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 825DFB5D0E464E6C000D0A5D /* README.md */; };
 		828B59CE0E520C7F0096DE8B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */; };
 		AA13D3420F202D0400B18061 /* www in Resources */ = {isa = PBXBuildFile; fileRef = AA13D33F0F202D0400B18061 /* www */; };
 /* End PBXBuildFile section */
@@ -59,7 +59,7 @@
 		8254F4BC0E6397F0002FDA36 /* Vibrate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vibrate.m; sourceTree = "<group>"; };
 		8254F87F0E650500002FDA36 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		8254F8800E650500002FDA36 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
-		825DFB5D0E464E6C000D0A5D /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		825DFB5D0E464E6C000D0A5D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		828B59CD0E520C7F0096DE8B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA13D33F0F202D0400B18061 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
@@ -120,7 +120,7 @@
 				AA13D3080F20286200B18061 /* Config */,
 				824041C00E942F0E002F3376 /* Default.png */,
 				8204F3D20E5CB4DC00F2DAA1 /* icon.png */,
-				825DFB5D0E464E6C000D0A5D /* README.markdown */,
+				825DFB5D0E464E6C000D0A5D /* README.md */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -211,7 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
-				825DFB5E0E464E6C000D0A5D /* README.markdown in Resources */,
+				825DFB5E0E464E6C000D0A5D /* README.md in Resources */,
 				8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */,
 				824041C10E942F0E002F3376 /* Default.png in Resources */,
 				47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */,
