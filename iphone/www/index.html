@@ -72,6 +72,10 @@
 	var playSound = function() {
 		new Media('beep.wav').play();
 	}
+	
+	var showPlatform = function() {
+		alert(Device.platform + "\n" + Device.version + "\n" + Device.uuid);
+	}
 		
     </script>
 	
@@ -83,7 +87,8 @@
 	<button onclick="vibrate();">Vibrate</button><br />		
 	<button onclick="beep();">Beep</button><br />			
 	<button onclick="getContact();">Contact 3 </button><br />
-	<button onclick="playSound();">PlaySound </button><br />					
+	<button onclick="playSound();">PlaySound </button><br />
+	<button onclick="showPlatform();">Platform</button><br />
 	<div id="t"></div>
 	<div id="c"></div>	
 
