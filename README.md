@@ -56,7 +56,7 @@ XUI
 You may work with any Javascript framework within a PhoneGap 
 application. [XUI](http://xuijs.com) is the "officially preferred" 
 framework of the phonegap core team. XUI is inspired by JQuery, 
-optimized for web browsers and weighs in at 6.2k.
+optimized for web browsers and weighs in at 6.2k (2.4k minified and gziped).
 
 
 Community
