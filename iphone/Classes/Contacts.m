@@ -16,6 +16,16 @@
 @synthesize addressBook;
 @synthesize allPeople;
 
++ (void)get:(NSString*)options forWebView:(UIWebView*)webView
+{
+    Contacts *contacts = [[Contacts alloc] init];
+    NSString * jsCallBack = [contacts getContacts];
+    NSLog(@"%@",jsCallBack);
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    
+    [contacts release];
+}
+
 - (id)init
 {
 	self = [super init];

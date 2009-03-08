@@ -16,6 +16,19 @@
 
 static Location *sharedCLDelegate = nil;
 
++ (void)get:(NSString*)options forWebView:(UIWebView*)webView
+{
+    NSString * jsCallBack = [[Location sharedInstance] getPosition];
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [jsCallBack release];
+}
+
++ (void)start:(NSString*)options forWebView:(UIWebView*)webView
+{
+    [[Location sharedInstance] start];
+}
+
 
 - (id) init {
     self = [super init];
@@ -26,6 +39,11 @@ static Location *sharedCLDelegate = nil;
     return self;
 }
 
+- (void)start
+{
+    [self.locationManager startUpdatingLocation];
+    __started = YES;
+}
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -39,7 +57,11 @@ static Location *sharedCLDelegate = nil;
 
 - (NSString *)getPosition 
 {	
-
+    if (!__started)
+    {
+        [self start];
+    }
+        
 	return [[NSString alloc] initWithFormat:@"var geo={lat:%f,lng:%f,alt:%f};", 
 			lastKnownLocation.coordinate.latitude, 
 			lastKnownLocation.coordinate.longitude, 

@@ -10,9 +10,9 @@
 @synthesize imagePickerController;
 
 void alert(NSString *message) {
-//    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-//    [openURLAlert show];
-//    [openURLAlert release];
+    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [openURLAlert show];
+    [openURLAlert release];
 }
 
 /*
@@ -26,7 +26,15 @@ void alert(NSString *message) {
 	/*
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
-	[[Location sharedInstance].locationManager startUpdatingLocation];
+    
+    NSDictionary* infoDictionry = [[NSBundle mainBundle] infoDictionary];
+    NSString* coreLocationStart = [infoDictionry objectForKey:@"CoreLocationStart"];
+
+    // Only launch at startup, if the info plist requests it.
+    if (coreLocationStart && [coreLocationStart compare:@"launch"] == NSOrderedSame)
+    {
+        [[Location sharedInstance] start];
+    }
 	
 	webView.delegate = self;
   
@@ -210,91 +218,29 @@ void alert(NSString *message) {
 		NSString * command = [url host];
 		
 		NSString * options =  [path substringWithRange:NSMakeRange(1, [path length] - 1)];
+		
+		// Check to see if we are provided a class:method style command.
+        NSArray* components = [command componentsSeparatedByString:@"."];
+        if (components.count == 2)
+        {
+            NSString* className = [components objectAtIndex:0];
+            NSString* methodName = [components objectAtIndex:1];
+            
+            // construct the fill method name to ammend the second argument.
+            NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:forWebView:", methodName];
 
-		NSString * jsCallBack = nil;
-		
-		if([command isEqualToString:@"getloc"]){
-			jsCallBack = [[Location sharedInstance] getPosition];
-
-			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
-			[jsCallBack release];
-			
-		} else if([command isEqualToString:@"vibrate"]){
-			/*
-			 * Make the device vibrate, this is now part of the notifier object.
-			 */
-			Vibrate *vibration = [[Vibrate alloc] init];
-			[vibration vibrate];
-			[vibration release];
-			
-		} else if([command isEqualToString:@"openmap"]) {
-			
-			NSString *mapurl = [@"maps:" stringByAppendingString:options];
-			
-			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapurl]];
-			
-		} else if([command isEqualToString:@"getphoto"]){
-		
-//			// added/modified by urbian.org - g.mueller @urbian.org
-//			
-//			NSUInteger imageSource;
-//
-//			//set upload url
-//			photoUploadUrl = [parts objectAtIndex:3];
-//			[photoUploadUrl retain];
-//			
-//			NSLog([@"photo-url: " stringByAppendingString:photoUploadUrl]);
-//			
-//			//which image source
-//			if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromCamera"]){
-//				imageSource = UIImagePickerControllerSourceTypeCamera;
-//			} else if([(NSString *)[parts objectAtIndex:2] isEqualToString:@"fromLibrary"]){
-//				imageSource = UIImagePickerControllerSourceTypePhotoLibrary;  
-//			} else {
-//				NSLog(@"photo: no Source type set");
-//				return NO;
-//			}
-//			
-//			//check if source is available
-//			if([UIImagePickerController isSourceTypeAvailable:imageSource])
-//			{
-//				picker = [[UIImagePickerController alloc]init];
-//				picker.sourceType = imageSource;
-//				picker.allowsImageEditing = YES;
-//				picker.delegate = self;
-//				
-//				[viewController presentModalViewController:picker animated:YES];
-//				
-//			} else {
-//				NSLog(@"photo: source not available!");
-//				return NO;
-//			}
-//			
-//			webView.hidden = YES;
-			
-			NSLog(@"photo dialog open now!");
-		} else if([command isEqualToString:@"getContacts"]) {				
-			
-			contacts = [[Contacts alloc] init];
-			jsCallBack = [contacts getContacts];
-			NSLog(@"%@",jsCallBack);
-			[theWebView stringByEvaluatingJavaScriptFromString:jsCallBack];
-
-			[contacts release];
-		
-		} else if ([command isEqualToString:@"playSound"]) {
-
-			NSBundle * mainBundle = [NSBundle mainBundle];
-			NSArray *soundFile = [options componentsSeparatedByString:@"."];
-			
-			NSString *file = (NSString *)[soundFile objectAtIndex:0];
-			NSString *ext = (NSString *)[soundFile objectAtIndex:1];
-			NSLog(file);
-			sound = [[Sound alloc] initWithContentsOfFile:[mainBundle pathForResource:file ofType:ext]];
-			[sound play];
-		}
-		
-		
+            if ([NSClassFromString(className) respondsToSelector:NSSelectorFromString(fullMethodName)])
+            {
+                // Call the class method.
+                [NSClassFromString(className) performSelector:NSSelectorFromString(fullMethodName) withObject:options withObject:theWebView];
+            }
+            else
+            {
+                // There's no method to call, so throw an error.
+                [NSException raise:NSInternalInconsistencyException format:@"Class method '%@' not defined against class '%@'.", fullMethodName, className];
+            }
+            [fullMethodName release];
+        }
 		return NO;
 	} else {
 		
@@ -320,157 +266,12 @@ void alert(NSString *message) {
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
-
-// TODO Move to Image.m
-/*
-- (void)imagePickerController:(UIImagePickerController *)thePicker didFinishPickingImage:(UIImage *)theImage editingInfo:(NSDictionary *)editingInfo
-{
-	
-	//modified by urbian.org - g.mueller @urbian.org
-	
-    NSLog(@"photo: picked image");
-	
-	NSData * imageData = UIImageJPEGRepresentation(theImage, 0.75);
-	
-	NSString *urlString = [@"http://" stringByAppendingString:photoUploadUrl]; // upload the photo to this url
-	
-	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
-	[request setURL:[NSURL URLWithString:urlString]];
-	[request setHTTPMethod:@"POST"];
-	
-	// ---------
-	//Add the header info
-	NSString *stringBoundary = [NSString stringWithString:@"0xKhTmLbOuNdArY"];
-	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",stringBoundary];
-	[request addValue:contentType forHTTPHeaderField: @"Content-Type"];
-	
-	//create the body
-	NSMutableData *postBody = [NSMutableData data];
-	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	
-	//add data field and file data
-	[postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"photo_0\"; filename=\"photo\"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-	
-	[postBody appendData:[NSData dataWithData:imageData]];
-	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	
-	// ---------
-	[request setHTTPBody:postBody];
-	
-	//NSURLConnection *
-	conn=[[NSURLConnection alloc] initWithRequest:request delegate:self];
-	
-	if(conn) {    
-		receivedData=[[NSMutableData data] retain];
-		NSString *sourceSt = [[NSString alloc] initWithBytes:[receivedData bytes] length:[receivedData length] encoding:NSUTF8StringEncoding];
-		NSLog([@"photo: connection sucess" stringByAppendingString:sourceSt]);
-		
-	} else {
-		NSLog(@"photo: upload failed!");
-	}
-	
-	[[thePicker parentViewController] dismissModalViewControllerAnimated:YES];
-	
-	webView.hidden = NO;
-	[window bringSubviewToFront:webView];
-	
-}
-
-
-// TODO Move to Image.m
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)thePicker
-{
-	// Dismiss the image selection and close the program
-	[[thePicker parentViewController] dismissModalViewControllerAnimated:YES];
-	
-	//added by urbian - the webapp should know when the user canceled
-	NSString * jsCallBack = nil;
-	
-	jsCallBack = [[NSString alloc] initWithFormat:@"gotPhoto('CANCEL');", lastUploadedPhoto];
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];  
-	[jsCallBack release];
-	
-	// Hide the imagePicker and bring the web page back into focus
-	NSLog(@"Photo Cancel Request");
-	webView.hidden = NO;
-	[window bringSubviewToFront:webView];
-}
-
-
-// TODO Move to Image.m
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-	
-	NSLog(@"photo: upload finished!");
-	
-	//added by urbian.org - g.mueller
-	NSString *aStr = [[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding];
-	
-	//upload.php should return "filename=<filename>"
-	NSLog(aStr);
-	NSArray * parts = [aStr componentsSeparatedByString:@"="];
-	//set filename
-	lastUploadedPhoto = (NSString *)[parts objectAtIndex:1];
-	
-	//now the callback: return lastUploadedPhoto
-	
-	NSString * jsCallBack = nil;
-	
-	if(lastUploadedPhoto == nil) lastUploadedPhoto = @"ERROR";
-	
-	jsCallBack = [[NSString alloc] initWithFormat:@"gotPhoto('%@');", lastUploadedPhoto];
-	
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	
-	NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
-	NSLog(jsCallBack);
-	
-    // release the connection, and the data object
-    [conn release];
-    [receivedData release];
-	
-#if TARGET_IPHONE_SIMULATOR
-    alert(@"Did finish loading image!");
-#endif
-}
-
-
-// TODO Move to Image.m
--(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *) response {
-	
-	//added by urbian.org
-	NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-	NSLog(@"HTTP Status Code: %i", [httpResponse statusCode]);
-	
-	[receivedData setLength:0];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    // append the new data to the receivedData
-    // receivedData is declared as a method instance elsewhere
-    [receivedData appendData:data];
-    NSLog(@"photo: progress");
-}
-
-
-// TODO Move to Image.m
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    NSLog([@"photo: upload failed! " stringByAppendingString:[error description]]);
-    
-#if TARGET_IPHONE_SIMULATOR
-    alert(@"Error while uploading image!");
-#endif
-}
-*/
 - (void)dealloc {
 	[appURL release];
 	[imageView release];
 	[viewController release];
 	[window release];
 	[imagePickerController release];
-	[appURL release];
-  [sound release];
 	[super dealloc];
 }
 

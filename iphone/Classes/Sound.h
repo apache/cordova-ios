@@ -13,6 +13,8 @@
 	SystemSoundID soundID;
 }
 
++ (void) play:(NSString*)options forWebView:(UIWebView*)webView;
+
 - (id) initWithContentsOfFile:(NSString * )path;
 - (void) play;
 
