@@ -10,9 +10,9 @@
 @synthesize imagePickerController;
 
 void alert(NSString *message) {
-    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [openURLAlert show];
-    [openURLAlert release];
+//    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//    [openURLAlert show];
+//    [openURLAlert release];
 }
 
 /*
