@@ -1,5 +1,5 @@
 ContactManager.prototype.get = function(successCallback, errorCallback, options) {
-	document.location = "gap://getContacts/null";
+	document.location = "gap://Contacts.get/null";
 	if (typeof successCallback == "function") {
 		for (var i = 0;i<_contacts.length;i++) {
 			var con = new Contact();
