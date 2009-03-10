@@ -10,7 +10,6 @@
 #import <UIKit/UIDevice.h>
 
 @interface Device : NSObject {
-	NSString *jsCallBack;
 	UIDevice *myCurrentDevice;
 }
 

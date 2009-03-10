@@ -18,6 +18,8 @@
 @property (getter=getAddressBook,assign) ABAddressBookRef addressBook;
 @property (getter=getContacts,assign) NSArray *allPeople;
 
++ (void)get:(NSString*)options forWebView:(UIWebView*)webView;
+
 //- (NSString *)stringValueForRow:(NSInteger)row;
 
 - (id)init;

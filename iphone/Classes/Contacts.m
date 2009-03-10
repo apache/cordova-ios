@@ -13,6 +13,19 @@
 
 @implementation Contacts
 
+@synthesize addressBook;
+@synthesize allPeople;
+
++ (void)get:(NSString*)options forWebView:(UIWebView*)webView
+{
+    Contacts *contacts = [[Contacts alloc] init];
+    NSString * jsCallBack = [contacts getContacts];
+    NSLog(@"%@",jsCallBack);
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    
+    [contacts release];
+}
+
 - (id)init
 {
 	self = [super init];
@@ -25,11 +38,11 @@
 	
 	if (allPeople == nil) {
 		allPeople = (NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook);
-		CFIndex nPeople = ABAddressBookGetPersonCount(self.addressBook);
+		CFIndex numberOfPeople = ABAddressBookGetPersonCount(self.addressBook);
 				
 		[update appendString:@"var _contacts=["];
 		
-		for (int i=0;i < nPeople;i++) { 
+		for (int i=0;i < numberOfPeople;i++) { 
 			ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
 
 			if (ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil) {
@@ -40,7 +53,7 @@
 				NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
 				NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@','phone':'%@'}",contactFirstLast,phoneNumber];
 				[update appendFormat:@"%@", contactFirstLast2];
-				if (i+1 != nPeople) {
+				if (i+1 != numberOfPeople) {
 					[update appendFormat:@","];
 				}
 				

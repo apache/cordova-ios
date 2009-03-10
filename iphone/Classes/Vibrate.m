@@ -11,6 +11,12 @@
 
 @implementation Vibrate
 
++ (void)vibrate:(NSString*)options forWebView:(UIWebView*)webView
+{
+	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+}
+
+/*
 - (id)init{
 	return self;
 }
@@ -22,5 +28,6 @@
 - (void)dealloc {
 	[super dealloc];
 }
+*/
 
 @end

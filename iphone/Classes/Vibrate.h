@@ -12,6 +12,8 @@
 @interface Vibrate : NSObject {	
 }
 
++ (void)vibrate:(NSString*)options forWebView:(UIWebView*)webView;
+
 - (void)vibrate;
 
 @end

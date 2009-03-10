@@ -11,6 +11,24 @@
 
 @implementation Sound
 
++ (void) play:(NSString*)options forWebView:(UIWebView*)webView
+{
+    NSString* fileName = options;
+    NSBundle * mainBundle = [NSBundle mainBundle];
+    NSArray *soundFile = [fileName componentsSeparatedByString:@"."];
+    
+    NSString *file = (NSString *)[soundFile objectAtIndex:0];
+    NSString *ext = (NSString *)[soundFile objectAtIndex:1];
+    NSLog(file);
+    NSString* filePath = [mainBundle pathForResource:file ofType:ext];
+    if (filePath != nil)
+    {
+        Sound* sound = [[Sound alloc] initWithContentsOfFile:filePath];
+        [sound play];
+        [sound release];
+    }
+}
+
 - (id) initWithContentsOfFile:(NSString *)path
 {
 	self = [super init];

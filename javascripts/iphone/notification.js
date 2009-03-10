@@ -1,5 +1,5 @@
 Notification.prototype.vibrate = function(mills) {
-	document.location = "gap://vibrate/null";
+	document.location = "gap://Vibrate.vibrate/null";
 }
 
 Notification.prototype.beep = function(count, volume) {

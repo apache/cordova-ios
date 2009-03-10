@@ -5,6 +5,6 @@
 
 Media.prototype.play = function() {
 	if (this.src != null) {
-		document.location = "gap://playSound/" + this.src;
+		document.location = "gap://Sound.play/" + this.src;
 	}
 }

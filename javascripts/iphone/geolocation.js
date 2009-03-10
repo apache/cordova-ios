@@ -7,7 +7,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 }
 
 Geolocation.prototype._getCurrentPosition = function() {
-	document.location = "gap://getloc/null";		
+	document.location = "gap://Location.get/null";
 
 	if (geo.lng != 0) {
 		window.clearTimeout(locationTimeout);
@@ -21,4 +21,8 @@ Geolocation.prototype._getCurrentPosition = function() {
 			geoSuccessCallback(position);
 		} 
 	}
+}
+
+Geolocation.prototype.start = function() {
+    document.location = "gap://Location.start/null";		
 }

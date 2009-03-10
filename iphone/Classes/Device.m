@@ -13,34 +13,18 @@
 /*
  * init
  * returns a JS String with various device settings
- *  - gap enabled
- *  - version
+ *  - gap (version)
  *  - Device model
- *  - Device Version
- *  - Device UUID
+ *  - Device version
+ *  - Device uuid
  */
 - (NSString *)init{
 	
-	jsCallBack = nil;
 	myCurrentDevice = [UIDevice currentDevice];
-//	
-//	return jsCallBack = [[NSString alloc] initWithFormat:@"\
-//				  __gap = true; \
-//				  __gap_version='0.2'; \
-//				  __gap_device_model='%s'; \
-//				  __gap_device_version='%s';\
-//				  __gap_device_uniqueid='%s';",
-//				  [[myCurrentDevice model] UTF8String],
-//				  [[myCurrentDevice systemVersion] UTF8String],
-//				  [[myCurrentDevice uniqueIdentifier] UTF8String]
-//				  ];
-	
-
-	return  [[NSString alloc] initWithFormat:@"Device={};Device.platform='%s';",[[myCurrentDevice model] UTF8String]];
+	return  [[NSString alloc] initWithFormat:@"Device={};Device.platform='%s';Device.version='%s';Device.uuid='%s';Device.gap=0.7.1",[[myCurrentDevice model] UTF8String], [[myCurrentDevice systemVersion] UTF8String], [[myCurrentDevice uniqueIdentifier] UTF8String] ];
 }
 
 - (void)dealloc {
-    [jsCallBack release];
 	[myCurrentDevice release];
 	[super dealloc];
 }

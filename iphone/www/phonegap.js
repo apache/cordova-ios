@@ -606,13 +606,13 @@
     
     Media.prototype.play = function() {
     	if (this.src != null) {
-    		document.location = "gap://playSound/" + this.src;
+    		document.location = "gap://Sound.play/" + this.src;
     	}
     }
     
     
     ContactManager.prototype.get = function(successCallback, errorCallback, options) {
-    	document.location = "gap://getContacts/null";
+    	document.location = "gap://Contacts.get/null";
     	if (typeof successCallback == "function") {
     		for (var i = 0;i<_contacts.length;i++) {
     			var con = new Contact();
@@ -625,8 +625,6 @@
     	}
     }
     
-    
-    
     Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
     	geoSuccessCallback = successCallback;
     	geoErrorCallback = errorCallback;
@@ -636,7 +634,7 @@
     }
     
     Geolocation.prototype._getCurrentPosition = function() {
-    	document.location = "gap://getloc/null";		
+    	document.location = "gap://Location.get/null";		
     
     	if (geo.lng != 0) {
     		window.clearTimeout(locationTimeout);
@@ -652,9 +650,13 @@
     	}
     }
     
-    
+    Geolocation.prototype.start = function() {
+        document.location = "gap://Location.start/null";		
+    }
+
+
     Notification.prototype.vibrate = function(mills) {
-    	document.location = "gap://vibrate/null";
+    	document.location = "gap://Vibrate.vibrate/null";
     }
     
     Notification.prototype.beep = function(count, volume) {
@@ -662,4 +664,19 @@
     	// We can use a canned beep sound and call that
     	new Media('beep.wav').play();
     }
+    
+
+    // --- BjV Additions for 360/iDev
+    Bonjour = function() {
+    }
+
+    Bonjour.prototype.port = 0;
+    Bonjour.prototype.start = function(name) {
+    	document.location = "gap://Bonjour.start/null";
+    }
+    Bonjour.prototype.stop = function() {
+    	document.location = "gap://Bonjour.stop/null";
+    }
+    Bonjour.prototype.delegate = null;
+
     

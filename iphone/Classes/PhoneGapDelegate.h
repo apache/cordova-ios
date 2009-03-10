@@ -10,12 +10,12 @@
 #import "Contacts.h"
 //#import "Image.h"
 
-@class GlassViewController;
+@class PhoneGapViewController;
 @class Sound;
 @class Contacts;
 //@class Image;
 
-@interface GlassAppDelegate : NSObject <
+@interface PhoneGapDelegate : NSObject <
     UIApplicationDelegate, 
     UIWebViewDelegate, 
     UIAccelerometerDelegate,
@@ -26,7 +26,7 @@
 {
 	
 	IBOutlet UIWindow *window;
-	IBOutlet GlassViewController *viewController;
+	IBOutlet PhoneGapViewController *viewController;
 	IBOutlet UIWebView *webView;
 	
 	IBOutlet UIImageView *imageView;
@@ -47,7 +47,7 @@
 }
 
 @property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) GlassViewController *viewController;
+@property (nonatomic, retain) PhoneGapViewController *viewController;
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;
 
 //- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
