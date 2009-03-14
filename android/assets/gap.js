@@ -4,7 +4,7 @@
  * website: http://phonegap.com
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * “Software”), to deal in the Software without restriction, including
+ * Software), to deal in the Software without restriction, including
  * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+ * THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -284,15 +284,103 @@ var Device = {
         return Device.exec("vibrate")
     },
 
-		playSound: function(clip) {
-    	    xsound = "sound:";
-    	   if (Device.whatPlatform == "Android") {
-    		   xsound = "playSound";
-    		   return Device.exec(xsound + clip);
-    	   }
-    	
-			return Device.exec(xsound + clip);
+	playSound: function(clip) {
+   		xsound = "sound:";
+    	if (Device.whatPlatform == "Android") {
+    		xsound = "playSound";
+    		return Device.exec(xsound + clip);
+   		}
+    		return Device.exec(xsound + clip);
+	},
+	
+	notification: {
+		watchPosition: function(filter) {
+			window.DroidGap.notificationWatchPosition(filter);
+		}, 
+		clearWatch: function(filter) {
+			window.DroidGap.notificationClearWatch(filter);
+		} 
+	},
+	
+	http: {
+		get: function(url, file) {
+			window.DroidGap.httpGet(url, file);
 		}
+	},
+
+	file: {
+       result: "",
+       getFreeDiskSpace: function(){
+           Device.file.result = window.DroidGap.getFreeDiskSpace();
+           return Device.file.result;
+       },
+       testFileExists: function(file){
+           Device.file.result = window.DroidGap.testFileExists(file);
+           return Device.file.result;
+       },
+       testDirectoryExists: function(file){
+           Device.file.result = window.DroidGap.testFileExists(file);
+           return Device.file.result;
+       },
+       deleteFile: function(file){
+           Device.file.result = window.DroidGap.deleteFile(file);
+           return Device.file.result;
+       },
+       deleteDirectory: function(file){
+           Device.file.result = window.DroidGap.deleteDirectory(file);
+           return Device.file.result;
+       },
+       createDirectory: function(file){
+           Device.file.result = window.DroidGap.createDirectory(file);
+           return Device.file.result;
+       }
+     }, 
+
+	
+	audio: {
+		startRecording: function(file) {
+			window.DroidGap.startRecordingAudio(file);
+		},
+		stopRecording: function() {
+			window.DroidGap.stopRecordingAudio();
+		},
+		startPlaying: function(file) {
+			window.DroidGap.startPlayingAudio(file);
+		},
+		stopPlaying: function() {
+			window.DroidGap.stopPlayingAudio();
+		},
+		getCurrentPosition: function() {
+			return window.DroidGap.getCurrentPositionAudio();
+		},
+		getDuration: function(file) {
+			return window.DroidGap.getDurationAudio(file);
+		},
+		setAudioOutputDevice: function(output){
+			window.DroidGap.setAudioOutputDevice(output);
+		},
+		getAudioOutputDevice: function (){
+			return window.DroidGap.getAudioOutputDevice();
+		}
+	},
+	information: {
+       getLine1Number: function(){
+           	return window.DroidGap.getLine1Number();
+       },
+       getVoiceMailNumber: function(){
+          	return window.DroidGap.getVoiceMailNumber();
+       },
+       getNetworkOperatorName: function(){
+       		return window.DroidGap.getNetworkOperatorName();
+       },
+       getSimCountryIso: function(){
+       		return window.DroidGap.getSimCountryIso();
+       },
+       getTimeZoneID: function(){
+        	return window.DroidGap.getTimeZoneID();
+       }
+   } 
+
 
 }
 
@@ -300,4 +388,5 @@ function gotLocation(lat, lon) {
 	alert('gotLocation lat=' + lat + " gotLocation lon=" + lon);
     return Device.Location.set(lat, lon)
 }
+
 

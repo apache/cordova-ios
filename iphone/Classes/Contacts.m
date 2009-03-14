@@ -1,19 +1,30 @@
-//
-//  Contacts.m
-//  Glass
-//
-//  Created by Nitobi on 13/12/08.
-//  Copyright 2008 Nitobi. All rights reserved.
-//
+/*
+ *  Contact.m
+ *
+ *  Created by Nitobi on 2/3/09
+ *  Copyright 2008 Nitobi. All rights reserved.
+ *  Rob Ellis rob.ellis@nitobi.com
+ *
+ */
+
 
 #import <AddressBook/AddressBook.h>
 #import "Contacts.h"
-//#import <JSON/JSON.h>
 
 @implementation Contacts
 
 @synthesize addressBook;
 @synthesize allPeople;
+
++ (void)get:(NSString*)options forWebView:(UIWebView*)webView
+{
+    Contacts *contacts = [[Contacts alloc] init];
+    NSString * jsCallBack = [contacts getContacts];
+    NSLog(@"%@",jsCallBack);
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    
+    [contacts release];
+}
 
 - (id)init
 {
@@ -22,39 +33,39 @@
 	return self;
 }
 
-- (NSArray *)getContacts {
-  NSMutableArray *contactsArray = [[NSMutableArray alloc] init ];
-
-	if (nil == allPeople) {
+- (NSMutableString *)getContacts {
+	NSMutableString *update = [[[NSMutableString alloc] init] autorelease];
+	
+	if (allPeople == nil) {
 		allPeople = (NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook);
 		CFIndex numberOfPeople = ABAddressBookGetPersonCount(self.addressBook);
+				
+		[update appendString:@"var _contacts=["];
 		
 		for (int i=0;i < numberOfPeople;i++) { 
 			ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
 
-			CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
-			CFStringRef lastName = ABRecordCopyValue(ref, kABPersonLastNameProperty);
-			CFStringRef phoneNumber = ABMultiValueCopyValueAtIndex(ABRecordCopyValue(ref,kABPersonPhoneProperty) ,0);
-			NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
-			NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@'}",contactFirstLast];
-			NSLog(@"%@",contactFirstLast2);
-
-			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:contactFirstLast, @"name",phoneNumber, @"phone",nil];
-			[contactsArray addObject:dict];
-			
-			CFRelease(firstName);
-			CFRelease(lastName);
-			CFRelease(phoneNumber);
+			if (ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil) {
+				CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
+				CFStringRef lastName = ABRecordCopyValue(ref, kABPersonLastNameProperty);			
+				CFStringRef phoneNumber = ABMultiValueCopyValueAtIndex(ABRecordCopyValue(ref,kABPersonPhoneProperty) ,0);
+				
+				NSString *contactFirstLast = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
+				NSString *contactFirstLast2 = [NSString stringWithFormat:@"{'name':'%@','phone':'%@'}",contactFirstLast,phoneNumber];
+				[update appendFormat:@"%@", contactFirstLast2];
+				if (i+1 != numberOfPeople) {
+					[update appendFormat:@","];
+				}
+				
+				CFRelease(firstName);
+				CFRelease(lastName);
+				CFRelease(phoneNumber);
+			}
 		}
-	}
-	
-//	SBJSON *json = [SBJSON new];
-//	json.humanReadable = YES;
 
-//	NSString *jsonStr = [json stringWithObject:contacts error:NULL];
-//	NSLog(@"%@",jsonStr);
-	
-	return contactsArray;
+		[update appendString:@"];"];
+	}
+	return update;
 }
 
 - (void) addContact {

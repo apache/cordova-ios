@@ -4,7 +4,7 @@ package com.nitobi.phonegap;
  * website: http://phonegap.com
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * “Software”), to deal in the Software without restriction, including
+ * Software), to deal in the Software without restriction, including
  * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
@@ -13,7 +13,7 @@ package com.nitobi.phonegap;
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+ * THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -22,19 +22,17 @@ package com.nitobi.phonegap;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import java.io.IOException;
+import java.util.TimeZone;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationManager;
-import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.webkit.WebView;
 
 public class PhoneGap{
@@ -51,6 +49,9 @@ public class PhoneGap{
     private GpsListener mGps;
     private NetworkListener mNetwork;
     protected LocationProvider provider;
+    SmsListener mSmsListener;
+    DirectoryManager fileManager;
+    AudioHandler audio; 
     
 	public PhoneGap(Context ctx, Handler handler, WebView appView) {
         this.mCtx = ctx;
@@ -58,6 +59,9 @@ public class PhoneGap{
         this.mAppView = appView;
         mGps = new GpsListener(ctx);
         mNetwork = new NetworkListener(ctx);
+        mSmsListener = new SmsListener(ctx,mAppView);
+        fileManager = new DirectoryManager();
+        audio = new AudioHandler("/sdcard/tmprecording.mp3", ctx);
     }
 	
 	public void updateAccel(){
@@ -155,11 +159,7 @@ public class PhoneGap{
 				mp.prepare();
 				mp.start();
 			}
-			
-            
-            
-			 
-			
+
 			//mp.setDataSource("file:///android_asset/" + filename);
 			//mp.setDataSource("http://ventrix.nsdc.gr/stuff/TERMITES_SKONH.mp3");
 			mp.prepare();
@@ -214,5 +214,184 @@ public class PhoneGap{
 		return version;
 	}	
 	
+	public void notificationWatchPosition(String filter)
+	/**
+	 * Starts the listener for incoming notifications of type filter
+	 * TODO: JavaScript Call backs for success and error handling. More filter types. 
+	 */
+	{
+		if (filter.contains("SMS"))
+		{
+    		IntentFilter mFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+    		mCtx.registerReceiver(mSmsListener,mFilter);
+		}
+	}
 	
+    public void notificationClearWatch(String filter) 
+	/**
+	 * Stops the listener for incoming notifications of type filter
+	 * TODO: JavaScript Call backs for success and error handling 
+	 */
+    {
+    	if (filter.contains("SMS")) 
+    	{
+    		mCtx.unregisterReceiver(mSmsListener);
+    	}	
+    }
+    
+    public void httpGet(String url, String file)
+    /**
+     * grabs a file from specified url and saves it to a name and location
+     * the base directory /sdcard is abstracted so that paths may be the same from one mobile OS to another
+     * TODO: JavaScript call backs and error handling
+     */
+    {
+    	HttpHandler http = new HttpHandler();
+    	http.get(url, file);
+    }
+    
+    
+
+    	
+    public int testSaveLocationExists(){
+        if (fileManager.testSaveLocationExists())
+            return 0;
+        else
+            return 1;
+    }
+    
+    public long getFreeDiskSpace(){
+        long freeDiskSpace=fileManager.getFreeDiskSpace();
+        return freeDiskSpace;
+    }
+
+    public int testFileExists(String file){
+        if (fileManager.testFileExists(file))
+            return 0;
+        else
+            return 1;
+    }
+    
+    public int testDirectoryExists(String file){
+        if (fileManager.testFileExists(file))
+            return 0;
+        else
+            return 1;
+    } 
+
+    /**
+	 * Delete a specific directory. 
+	 * Everyting in side the directory would be gone.
+	 * TODO: JavaScript Call backs for success and error handling 
+	 */
+    public int deleteDirectory (String dir){
+        if (fileManager.deleteDirectory(dir))
+            return 0;
+        else
+            return 1;
+    }
+    
+
+    /**
+	 * Delete a specific file. 
+	 * TODO: JavaScript Call backs for success and error handling 
+	 */
+    public int deleteFile (String file){
+        if (fileManager.deleteFile(file))
+            return 0;
+        else
+            return 1;
+    }
+    
+
+    /**
+	 * Create a new directory. 
+	 * TODO: JavaScript Call backs for success and error handling 
+	 */
+    public int createDirectory(String dir){
+    	if (fileManager.createDirectory(dir))
+            return 0;
+        else
+            return 1;
+    } 
+    
+    
+    /**
+     * AUDIO
+     * TODO: Basic functions done but needs more work on error handling and call backs, remove record hack
+     */
+    
+    public void startRecordingAudio(String file)
+    {
+    	/* for this to work the recording needs to be specified in the constructor,
+    	 * a hack to get around this, I'm moving the recording after it's complete 
+    	 */
+    	audio.startRecording(file);
+    }
+    
+    public void stopRecordingAudio()
+    {
+    	audio.stopRecording();
+    }
+    
+    public void startPlayingAudio(String file)
+    {
+    	audio.startPlaying(file);
+    }
+    
+    public void stopPlayingAudio()
+    {
+    	audio.stopPlaying();
+    }
+    
+    public long getCurrentPositionAudio()
+    {
+    	System.out.println(audio.getCurrentPosition());
+    	return(audio.getCurrentPosition());
+    }
+    
+    public long getDurationAudio(String file)
+    {
+    	System.out.println(audio.getDuration(file));
+    	return(audio.getDuration(file));
+    }  
+    
+    public void setAudioOutputDevice(int output){
+    	audio.setAudioOutputDevice(output);
+    }
+    
+    public int getAudioOutputDevice(){
+    	return audio.getAudioOutputDevice();
+    }
+    
+    public String getLine1Number() {
+        TelephonyManager tm =
+            (TelephonyManager)mCtx.getSystemService(Context.TELEPHONY_SERVICE);
+        return(tm.getLine1Number());
+    }
+    
+    public String getVoiceMailNumber() {
+    	TelephonyManager tm =
+    		(TelephonyManager)mCtx.getSystemService(Context.TELEPHONY_SERVICE);
+        return(tm.getVoiceMailNumber());
+    }
+    
+    public String getNetworkOperatorName(){
+    	TelephonyManager tm =
+    		(TelephonyManager)mCtx.getSystemService(Context.TELEPHONY_SERVICE);
+        return(tm.getNetworkOperatorName());
+    }
+    
+    public String getSimCountryIso(){
+    	TelephonyManager tm =
+    		(TelephonyManager)mCtx.getSystemService(Context.TELEPHONY_SERVICE);
+        return(tm.getSimCountryIso());
+    }
+    
+    public String getTimeZoneID() {
+       TimeZone tz = TimeZone.getDefault();
+        return(tz.getID());
+    } 
+    
 }
+
