@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>Offline</key>
-	<true/>
+	<string>1</string>
 	<key>Callback</key>
 	<string>http://localhost/iphone/</string>
 	<key>DetectPhoneNumber</key>
-	<integer>1</integer>
+	<string>1</string>
 </dict>
 </plist>
