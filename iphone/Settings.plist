@@ -2,11 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Offline</key>
-	<string>1</string>
 	<key>Callback</key>
 	<string>http://localhost/iphone/</string>
+	<key>Offline</key>
+	<true/>
 	<key>DetectPhoneNumber</key>
-	<string>1</string>
+	<true/>
+	<key>TopStatusBar</key>
+	<string>default</string>
+	<key>TopActivityIndicator</key>
+	<string>gray</string>
+	<key>EnableLocation</key>
+	<true/>
+	<key>EnableAcceleration</key>
+	<true/>
+	<key>AutoRotate</key>
+	<false/>
+	<key>StartOrientation</key>
+	<string>landscapeRight</string>
+	<key>RotateOrientation</key>
+	<string>portrait</string>
 </dict>
 </plist>

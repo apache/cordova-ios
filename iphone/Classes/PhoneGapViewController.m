@@ -11,15 +11,25 @@
 
 @implementation PhoneGapViewController
 
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
-{ 
-    return NO; 
+{
+    if (autoRotate == YES) {
+        return YES;
+    } else {
+        if ([rotateOrientation isEqualToString:@"portrait"]) {
+            return (interfaceOrientation == UIInterfaceOrientationPortrait ||
+                    interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
+        } else if ([rotateOrientation isEqualToString:@"landscape"]) {
+            return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
+                    interfaceOrientation == UIInterfaceOrientationLandscapeRight);
+        } else {
+            return NO;
+        }
+    }
 }
 
 
 - (void)willRotateToInterfaceOrientation: (UIInterfaceOrientation)toInterfaceOrientation duration: (NSTimeInterval)duration {
-	NSString * jsCallBack = nil;
 	NSLog(@"IN Rotate");
 	double i = 0;
 	
@@ -38,11 +48,17 @@
 			break;
 	}
 
-	jsCallBack = [[NSString alloc] initWithFormat:@"var _orientation=%f;", i];
+	NSString *jsCallBack = [[NSString alloc] initWithFormat:@"Device.Orientation=%f;", i];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	
 	[jsCallBack release];
-	
+}
+
+- (void) setAutoRotate:(BOOL) shouldRotate {
+    autoRotate = shouldRotate;
+}
+
+- (void) setRotateOrientation:(NSString*) orientation {
+    rotateOrientation = orientation;
 }
 
 @end

@@ -39,7 +39,9 @@
 	NSMutableData *receivedData;		// added by urbian	
 
 	UIImagePickerController *imagePickerController;
-	
+    
+    UIInterfaceOrientation orientationType;
+    
 	NSURLConnection *callBackConnection;
 	Sound *sound;
 	Contacts *contacts;
