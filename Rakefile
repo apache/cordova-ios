@@ -27,25 +27,24 @@ end
 
 def build
   puts 'writing the full JS file to lib/phonegap.js'
-  final = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap.js"
-  js = ""
-  
-  interfaces_to_build.each do |interface|
-    js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ interface }.js")
-  end
-  
   platforms_to_build.each do |platform|
+    final = "#{ LIBPATH }lib#{ File::SEPARATOR }#{ platform }#{ File::SEPARATOR }phonegap.js"
+    js = ""
+    
+    interfaces_to_build.each do |interface|
+      js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ interface }.js")
+    end
+  
     interfaces_to_build.each do |interface|
       begin
         js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ platform }#{ File::SEPARATOR }#{ interface }.js")
       rescue
       end
     end
+    FileUtils.mkdir_p "#{ LIBPATH }lib#{ File::SEPARATOR }#{ platform }"
+    open(final,'w'){|f| f.puts( js )} 
   end
 
-  FileUtils.mkdir_p "#{ LIBPATH }lib"
-  open(final,'w'){|f| f.puts( js )} 
-  
   min
 end
 
@@ -71,9 +70,11 @@ end
 # creates lib/xui-min.js (tho not obfuscates)
 def min
   puts 'minifying js'
-  min_file = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap-min.js"
-  doc_file = "#{ LIBPATH }lib#{ File::SEPARATOR }phonegap.js"
-  sh "java -jar #{LIBPATH}#{ File::SEPARATOR }util#{ File::SEPARATOR }yuicompressor-2.4.2.jar --charset UTF-8 -o #{min_file} #{doc_file}"
+  platforms_to_build.each do |platform|
+    min_file = "#{ LIBPATH }lib#{ File::SEPARATOR }#{ platform }#{ File::SEPARATOR }phonegap-min.js"
+    doc_file = "#{ LIBPATH }lib#{ File::SEPARATOR }#{ platform }#{ File::SEPARATOR }phonegap.js"
+    sh "java -jar #{LIBPATH}#{ File::SEPARATOR }util#{ File::SEPARATOR }yuicompressor-2.4.2.jar --charset UTF-8 -o #{min_file} #{doc_file}"
+  end
 end 
  
 # opens up the specs
