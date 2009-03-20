@@ -55,4 +55,6 @@ Geolocation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+});

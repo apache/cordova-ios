@@ -1,5 +1,128 @@
     
     /**
+     * This represents the PhoneGap API itself, and provides a global namespace for accessing
+     * information about the state of PhoneGap.
+     * @class
+     */
+    PhoneGap = {
+        queue: {
+            ready: true,
+            commands: [],
+            timer: null
+        },
+        _constructors: []
+    };
+    
+    /**
+     * Boolean flag indicating if the PhoneGap API is available and initialized.
+     */
+    PhoneGap.available = DeviceInfo.uuid != undefined;
+    
+    /**
+     * Add an initialization function to a queue that ensures it will run and initialize
+     * application constructors only once PhoneGap has been initialized.
+     * @param {Function} func The function callback you want run once PhoneGap is initialized
+     */
+    PhoneGap.addConstructor = function(func) {
+        var state = document.readyState;
+        if (state != 'loaded' && state != 'complete')
+            PhoneGap._constructors.push(func);
+        else
+            func();
+    };
+    (function() {
+        var timer = setInterval(function() {
+            var state = document.readyState;
+            if (state != 'loaded' && state != 'complete')
+                return;
+            clearInterval(timer);
+            while (PhoneGap._constructors.length > 0) {
+                var constructor = PhoneGap._constructors.shift();
+                try {
+                    constructor();
+                } catch(e) {
+                    if (typeof(debug['log']) == 'function')
+                        debug.log("Failed to run constructor: " + e.message);
+                    else
+                        alert("Failed to run constructor: " + e.message);
+                }
+            }
+        }, 1);
+    })();
+    
+    
+    /**
+     * Execute a PhoneGap command in a queued fashion, to ensure commands do not
+     * execute with any race conditions, and only run when PhoneGap is ready to
+     * recieve them.
+     * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
+     * @param {String[]} [args] Zero or more arguments to pass to the method
+     */
+    PhoneGap.exec = function() {
+        PhoneGap.queue.commands.push(arguments);
+        if (PhoneGap.queue.timer == null)
+            PhoneGap.queue.timer = setInterval(PhoneGap.run_command, 10);
+    };
+    /**
+     * Internal function used to dispatch the request to PhoneGap.  It processes the command
+     * queue and executes the next command on the list.
+     * @private
+     */
+    PhoneGap.run_command = function() {
+        if (!PhoneGap.available)
+            return;
+    
+        PhoneGap.queue.ready = false;
+    
+        var args = PhoneGap.queue.commands.shift();
+        if (PhoneGap.queue.commands.length == 0) {
+            clearInterval(PhoneGap.queue.timer);
+            PhoneGap.queue.timer = null;
+        }
+    
+        var uri = [];
+        for (var i = 1; i < args.length; i++) {
+            uri.push(encodeURIComponent(args[i]));
+        }
+        document.location = "gap://" + args[0] + "/" + uri.join("/");
+    
+    };
+    
+    /**
+     * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
+     * phone, etc.
+     * @constructor
+     */
+    function Device() {
+        this.available = PhoneGap.available;
+        this.model     = null;
+        this.version   = null;
+        this.gap       = null;
+        this.uuid      = null;
+        try {
+            if (window['DroidGap'] != undefined && window.DroidGap.exists()) {
+                this.available = true;
+                this.isAndroid = true;
+                this.uuid = window.DroidGap.getUuid();
+                this.gapVersion = window.DroidGap.getVersion();
+            } else {          
+                this.model     = DeviceInfo.platform;
+                this.version   = DeviceInfo.version;
+                this.gap       = DeviceInfo.gap;
+                this.uuid      = DeviceInfo.uuid;
+            }
+        } catch(e) {
+            this.available = false;
+        }
+    }
+    
+    PhoneGap.addConstructor(function() {
+        navigator.device = window.device = new Device();
+    });
+    
+    
+    
+    /**
      * This class contains acceleration information
      * @constructor
      * @param {Number} x The force applied by the device in the x-axis.
@@ -97,7 +220,20 @@
     	clearInterval(watchId);
     }
     
-    if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+    });
+    
+    
+    
+    Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
+    	if (typeof successCallback == "function") {
+    		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
+    		Accelerometer.lastAcceleration = accel;
+    		successCallback(accel);
+    	} 	
+    }	
+    
     
     
     
@@ -138,6 +274,19 @@
     
     
     /**
+     * Media/Audio override.
+     *
+     */
+    
+    Media.prototype.play = function() {
+    	if (this.src != null) {
+    		PhoneGap.exec("Sound.play", this.src);
+    	}
+    }
+    
+    
+    
+    /**
      * This class provides access to the device camera.
      * @constructor
      */
@@ -155,7 +304,10 @@
     	
     }
     
-    if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
+    });
+    
     
     
     /**
@@ -189,7 +341,145 @@
     	// Interface
     }
     
-    if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+    });
+    
+    
+    
+    ContactManager.prototype.get = function(successCallback, errorCallback, options) {
+    	PhoneGap.exec("Contacts.get");
+    	if (typeof successCallback == "function") {
+    		for (var i = 0;i<_contacts.length;i++) {
+    			var con = new Contact();
+    			con.name = _contacts[i].name;
+    			con.phone = _contacts[i].phone;		
+    			this.contacts.push(con);
+    		}
+    		successCallback(this);
+    		
+    	}
+    }
+    
+    
+    
+    /**
+     * This class provides access to the debugging console.
+     * @constructor
+     */
+    function Console() {
+    }
+    
+    /**
+     * Utility function for rendering and indenting strings, or serializing
+     * objects to a string capable of being printed to the console.
+     * @param {Object|String} message The string or object to convert to an indented string
+     * @private
+     */
+    Console.prototype.processMessage = function(message) {
+        if (typeof(message) != 'object') {
+            return encodeURIComponent(message);
+        } else {
+            /**
+             * @function
+             * @ignore
+             */
+            function indent(str) {
+                return str.replace(/^/mg, "    ");
+            }
+            /**
+             * @function
+             * @ignore
+             */
+            function makeStructured(obj) {
+                var str = "";
+                for (var i in obj) {
+                    try {
+                        if (typeof(obj[i]) == 'object') {
+                            str += i + ":\n" + indent(makeStructured(obj[i])) + "\n";
+                        } else {
+                            str += i + " = " + indent(String(obj[i])).replace(/^    /, "") + "\n";
+                        }
+                    } catch(e) {
+                        str += i + " = EXCEPTION: " + e.message + "\n";
+                    }
+                }
+                return str;
+            }
+            return encodeURIComponent("Object:\n" + makeStructured(message));
+        }
+    };
+    
+    /**
+     * Open a native alert dialog, with a customizable title and button text.
+     * @param {String} message Message to print in the body of the alert
+     * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
+     * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
+     */
+    Console.prototype.alert = function(message, title, buttonLabel) {
+        // Default is to use a browser alert; this will use "index.html" as the title though
+        alert(message);
+    };
+    
+    /**
+     * Print a normal log message to the console
+     * @param {Object|String} message Message or object to print to the console
+     */
+    Console.prototype.log = function(message) {
+    };
+    
+    /**
+     * Print an error message to the console
+     * @param {Object|String} message Message or object to print to the console
+     */
+    Console.prototype.error = function(message) {
+    };
+    
+    /**
+     * Start spinning the activity indicator on the statusbar
+     */
+    Console.prototype.activityStart = function() {
+    };
+    
+    /**
+     * Stop spinning the activity indicator on the statusbar, if it's currently spinning
+     */
+    Console.prototype.activityStop = function() {
+    };
+    
+    PhoneGap.addConstructor(function() {
+        window.debug = new Console();
+    });
+    
+    
+    
+    
+    Console.prototype.log = function(message) {
+        if (PhoneGap.available)
+            PhoneGap.exec('Console.log', 'LOG', this.processMessage(message));
+        else
+            console.log(message);
+    };
+    Console.prototype.error = function(message) {
+        if (PhoneGap.available)
+            PhoneGap.exec('Console.log', 'ERR', this.processMessage(message));
+        else
+            console.error(message);
+    };
+    Console.prototype.alert = function(message, title, buttonLabel) {
+        if (PhoneGap.available)
+            PhoneGap.exec('Console.alert', message, title, buttonLabel);
+        else
+            alert(message);
+    }
+    
+    Console.prototype.activityStart = function() {
+        PhoneGap.exec("Console.activityStart");
+    };
+    Console.prototype.activityStop = function() {
+        PhoneGap.exec("Console.activityStop");
+    };
+    
     
     
     /**
@@ -225,7 +515,10 @@
     	
     }
     
-    if (typeof navigator.file == "undefined") navigator.file = new File();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.file == "undefined") navigator.file = new File();
+    });
+    
     
     
     /**
@@ -285,7 +578,45 @@
     	clearInterval(watchId);
     }
     
-    if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+    });
+    
+    
+    
+    Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+    	geoSuccessCallback = successCallback;
+    	geoErrorCallback = errorCallback;
+    	geoOptions = options;
+    //	locationTimeout = window.setInterval("navigator.geolocation._getCurrentPosition();", 1000); // Works in Webkit
+    	locationTimeout = window.setInterval("Geolocation.prototype._getCurrentPosition();", 1000); // Works in FireFox
+    }
+    
+    Geolocation.prototype._getCurrentPosition = function() {
+    	PhoneGap.exec("Location.get");
+    
+    	if (geo.lng != 0) {
+    		window.clearTimeout(locationTimeout);
+    		if (geo.error != null) {
+    			if (typeof geoErrorCallback == "function") {
+    				geoErrorCallback(new PositionError(geo.error));
+    			} 		
+    		} else if (typeof geoSuccessCallback == "function") {
+    			var position = new Position(geo.lat, geo.lng);
+    			Geolocation.lastPosition = position;
+    			geoSuccessCallback(position);
+    		}
+    	}
+    }
+    
+    Geolocation.prototype.start = function() {
+        PhoneGap.exec("Location.start");
+    }
+    
+    Geolocation.prototype.stop = function() {
+        PhoneGap.exec("Location.stop");
+    }
+    
     
     
     /**
@@ -303,7 +634,10 @@
     	
     }
     
-    if (typeof navigator.map == "undefined") navigator.map = new Map();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.map == "undefined") navigator.map = new Map();
+    });
+    
     
     
     /**
@@ -341,7 +675,22 @@
     
     // TODO: of course on Blackberry and Android there notifications in the UI as well
     
-    if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
+    });
+    
+    
+    
+    Notification.prototype.vibrate = function(mills) {
+    	PhoneGap.exec("Vibrate.vibrate");
+    }
+    
+    Notification.prototype.beep = function(count, volume) {
+    	// No Volume yet for the iphone interface
+    	// We can use a canned beep sound and call that
+    	new Media('beep.wav').play();
+    }
+    
     
     
     /**
@@ -391,7 +740,10 @@
     	clearInterval(watchId);
     }
     
-    if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
+    });
+    
     
     
     /**
@@ -492,7 +844,10 @@
     	
     }
     
-    if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+    });
+    
     
     
     /**
@@ -511,172 +866,8 @@
     	
     }
     
-    if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
+    PhoneGap.addConstructor(function() {
+        if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
+    });
     
-    
-    
-    
-    
-    File.prototype.read = function(fileName, successCallback, errorCallback) {
-    	document.cookie = 'bb_command={command:8,args:{name:"'+fileName+'"}}';
-    	navigator.file.successCallback = successCallback;
-    	navigator.file.errorCallback = errorCallback;
-    	navigator.file.readTimeout = window.setInterval('navigator.file._readReady()', 1000);
-    }
-    
-    File.prototype._readReady = function() {
-    	var cookies = document.cookie.split(';');
-    	for (var i=0; i<cookies.length; i++) {
-    		var cookie = cookies[i].split('=');
-    		if (cookie[0] == 'bb_response') {
-    			var obj = eval('('+cookie[1]+')');
-    
-    			// TODO: This needs to be in ONE cookie reading loop I think so that it can find 
-    			// various different data coming back from the phone at any time (poll piggy-backing)
-    			var file = obj.readfile;
-    			if (file != null)
-    			{
-    				window.clearTimeout(navigator.file.readTimeout);
-    				if (file.length > 0)
-    				{
-    					successCallback(file);
-    				}
-    			}
-    		}
-    	}
-    }
-    
-    File.prototype.write = function(fileName, data) {
-    	document.cookie = 'bb_command={command:9,args:{name:"'+fileName+'",data:"'+data+'"}}';
-    }
-    
-    
-    
-    Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-    	document.cookie = 'bb_command={command:'+phonegap.LOCATION+'}';
-    	// Blackberry 4.5 does not let you use function pointers in setInterval. idiots.
-    	geoSuccessCallback = successCallback;
-    	geoErrorCallback = errorCallback;
-    	geoOptions = options;
-    	locationTimeout = window.setInterval('navigator.geolocation._getCurrentPosition()', 1000);
-    }
-    
-    Geolocation.prototype._getCurrentPosition = function(successCallback, errorCallback, options) {
-    	var cookies = document.cookie.split(';');
-    	for (var i=0; i<cookies.length; i++) {
-    		var cookie = cookies[i].split('=');
-    		if (cookie[0] == 'bb_response') {
-    			var obj = eval('('+cookie[1]+')');
-    			var geo = obj.geolocation;
-    			if (geo != null)
-    			{
-    				window.clearTimeout(locationTimeout);
-    				if (geo.error != null) {
-    					if (typeof geoErrorCallback == "function") {
-    						geoErrorCallback(new PositionError(geo.error));
-    					}
-    				} else if (typeof geoSuccessCallback == "function") {
-    					geoSuccessCallback(new Position(geo.lat, geo.lng));
-    				}
-    				break;
-    			}
-    		}
-    	}
-    }
-    
-    Geolocation.prototype.showMap = function(lat, lng) {
-    	document.cookie = 'bb_command={command:1,args:{points:[{lat:'+lat+',lng:'+lng+',label:\'Nitobi\'}]}}';
-    }
-    
-    
-    Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
-    	if (typeof successCallback == "function") {
-    		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
-    		Accelerometer.lastAcceleration = accel;
-    		successCallback(accel);
-    	} 	
-    }	
-    
-    
-    
-    /**
-     * Media/Audio override.
-     *
-     */
-    
-    Media.prototype.play = function() {
-    	if (this.src != null) {
-    		document.location = "gap://Sound.play/" + this.src;
-    	}
-    }
-    
-    
-    ContactManager.prototype.get = function(successCallback, errorCallback, options) {
-    	document.location = "gap://Contacts.get/null";
-    	if (typeof successCallback == "function") {
-    		for (var i = 0;i<_contacts.length;i++) {
-    			var con = new Contact();
-    			con.name = _contacts[i].name;
-    			con.phone = _contacts[i].phone;		
-    			this.contacts.push(con);
-    		}
-    		successCallback(this);
-    		
-    	}
-    }
-    
-    Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-    	geoSuccessCallback = successCallback;
-    	geoErrorCallback = errorCallback;
-    	geoOptions = options;
-    //	locationTimeout = window.setInterval("navigator.geolocation._getCurrentPosition();", 1000); // Works in Webkit
-    	locationTimeout = window.setInterval("Geolocation.prototype._getCurrentPosition();", 1000); // Works in FireFox
-    }
-    
-    Geolocation.prototype._getCurrentPosition = function() {
-    	document.location = "gap://Location.get/null";		
-    
-    	if (geo.lng != 0) {
-    		window.clearTimeout(locationTimeout);
-    		if (geo.error != null) {
-    			if (typeof geoErrorCallback == "function") {
-    				geoErrorCallback(new PositionError(geo.error));
-    			} 		
-    		} else if (typeof geoSuccessCallback == "function") {
-    			var position = new Position(geo.lat, geo.lng);
-    			Geolocation.lastPosition = position;
-    			geoSuccessCallback(position);
-    		} 
-    	}
-    }
-    
-    Geolocation.prototype.start = function() {
-        document.location = "gap://Location.start/null";		
-    }
-
-
-    Notification.prototype.vibrate = function(mills) {
-    	document.location = "gap://Vibrate.vibrate/null";
-    }
-    
-    Notification.prototype.beep = function(count, volume) {
-    	// No Volume yet for the iphone interface
-    	// We can use a canned beep sound and call that
-    	new Media('beep.wav').play();
-    }
-    
-
-    // --- BjV Additions for 360/iDev
-    Bonjour = function() {
-    }
-
-    Bonjour.prototype.port = 0;
-    Bonjour.prototype.start = function(name) {
-    	document.location = "gap://Bonjour.start/null";
-    }
-    Bonjour.prototype.stop = function() {
-    	document.location = "gap://Bonjour.stop/null";
-    }
-    Bonjour.prototype.delegate = null;
-
     

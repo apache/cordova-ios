@@ -13,4 +13,6 @@ Map.prototype.show = function(positions) {
 	
 }
 
-if (typeof navigator.map == "undefined") navigator.map = new Map();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.map == "undefined") navigator.map = new Map();
+});

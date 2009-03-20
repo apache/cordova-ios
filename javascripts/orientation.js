@@ -45,4 +45,6 @@ Orientation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
+});

@@ -33,14 +33,12 @@ def build
     
     interfaces_to_build.each do |interface|
       js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ interface }.js")
-    end
-  
-    interfaces_to_build.each do |interface|
       begin
         js << import("#{ LIBPATH }javascripts#{ File::SEPARATOR }#{ platform }#{ File::SEPARATOR }#{ interface }.js")
       rescue
       end
     end
+  
     FileUtils.mkdir_p "#{ LIBPATH }lib#{ File::SEPARATOR }#{ platform }"
     open(final,'w'){|f| f.puts( js )} 
   end
@@ -50,7 +48,7 @@ end
 
 # the sub libraries used by xui
 def interfaces_to_build
-  %w(acceleration accelerometer media camera contact file geolocation map notification orientation position sms telephony)
+  %w(device acceleration accelerometer media camera contact console file geolocation map notification orientation position sms telephony)
 end 
 
 # the sub libraries used by xui

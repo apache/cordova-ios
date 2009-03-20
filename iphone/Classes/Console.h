@@ -14,5 +14,7 @@
 
 + (void)log:(NSString*)options forWebView:(UIWebView*)webView;
 + (void)alert:(NSString*)options forWebView:(UIWebView*)webView;
++ (void)activityStart:(NSString*)options forWebView:(UIWebView*)webView;
++ (void)activityStop:(NSString*)options forWebView:(UIWebView*)webView;
 
 @end

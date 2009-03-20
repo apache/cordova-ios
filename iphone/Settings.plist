@@ -17,9 +17,9 @@
 	<key>EnableAcceleration</key>
 	<true/>
 	<key>AutoRotate</key>
-	<false/>
+	<true/>
 	<key>StartOrientation</key>
-	<string>landscapeRight</string>
+	<string>portrait</string>
 	<key>RotateOrientation</key>
 	<string>portrait</string>
 </dict>

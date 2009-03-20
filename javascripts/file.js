@@ -31,4 +31,6 @@ File.prototype.write = function(file) {
 	
 }
 
-if (typeof navigator.file == "undefined") navigator.file = new File();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.file == "undefined") navigator.file = new File();
+});

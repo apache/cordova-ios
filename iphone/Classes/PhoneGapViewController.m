@@ -48,7 +48,7 @@
 			break;
 	}
 
-	NSString *jsCallBack = [[NSString alloc] initWithFormat:@"Device.Orientation=%f;", i];
+	NSString *jsCallBack = [[NSString alloc] initWithFormat:@"Orientation.currentOrientation=%f;", i];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	[jsCallBack release];
 }

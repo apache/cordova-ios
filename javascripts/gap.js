@@ -32,10 +32,10 @@ var DEBUG = true;
 if (DEBUG) {
     console = {
         log: function(message) {
-            Device.exec('consolelog', 'LOG', message);
+            Device.exec('console.log', 'LOG', message);
         },
         error: function(message) {
-            Device.exec('consolelog', 'ERROR', message);
+            Device.exec('console.log', 'ERROR', message);
         }
     }
 } else if (!window.console) {

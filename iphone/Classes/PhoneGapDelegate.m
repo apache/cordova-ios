@@ -6,6 +6,7 @@
 
 @synthesize window;
 @synthesize viewController;
+@synthesize activityView;
 
 @synthesize imagePickerController;
 
@@ -72,17 +73,17 @@ void alert(NSString *message) {
 	/*
 	 * We want to test the offline to see if this app should start in offline mode or online mode.
 	 *
-	 *   0 - Offline
-	 *   1 - Online
+	 *   YES - Offline
+	 *   NO  - Online
 	 *
 	 *		In Offline mode the index.html file is loaded from the www directly and serves as the entry point into the application
 	 *		In Online mode the starting point is a external FQDN, usually your server.
 	 */
 	if ([offline boolValue]) {
-		appURL = [[NSURL URLWithString:url] retain];
-	} else {		
 		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
 		appURL = [[NSURL fileURLWithPath:[thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]] retain];		
+	} else {		
+		appURL = [[NSURL URLWithString:url] retain];
 	}
 
 	/*
@@ -106,6 +107,7 @@ void alert(NSString *message) {
 	 * You can change this image by swapping out the Default.png file within the resource folder.
 	 */
 	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
+    imageView.tag = 1;
 	[window addSubview:imageView];
   
     /*
@@ -176,7 +178,8 @@ void alert(NSString *message) {
     } else if ([topActivityIndicator isEqualToString:@"gray"]) {
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
-    activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
+    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] retain];
+    activityView.tag = 2;
     [window addSubview:activityView];
     [activityView startAnimating];
 
@@ -192,7 +195,6 @@ void alert(NSString *message) {
 	 * This is the Device.platform information
 	 */	
 	[theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
-
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
@@ -215,8 +217,9 @@ void alert(NSString *message) {
  *
  */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
 	if ([error code] != NSURLErrorCancelled)
-		alert(error.localizedDescription);
+		alert([error localizedDescription]);
 }
 
 
@@ -247,6 +250,9 @@ void alert(NSString *message) {
 		 */
 		NSString * command = [url host];
 		NSString * options = [path substringWithRange:NSMakeRange(1, [path length] - 1)];
+
+		// Tell the JS code that we've gotten this command, and we're ready for another
+        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.exec.ready = true;"];
 		
 		// Check to see if we are provided a class:method style command.
         NSArray* components = [command componentsSeparatedByString:@"."];
@@ -266,11 +272,11 @@ void alert(NSString *message) {
             else
             {
                 // There's no method to call, so throw an error.
+                NSLog(@"Class method '%@' not defined in class '%@'", fullMethodName, className);
                 [NSException raise:NSInternalInconsistencyException format:@"Class method '%@' not defined against class '%@'.", fullMethodName, className];
             }
             [fullMethodName release];
         }
-		[theWebView stringByEvaluatingJavaScriptFromString:@"Device.exec_ready = true;"];
 		return NO;
 	} else {
 		/*
@@ -298,6 +304,7 @@ void alert(NSString *message) {
 	[appURL release];
 	[imageView release];
 	[viewController release];
+    [activityView release];
 	[window release];
 	[imagePickerController release];
 	[super dealloc];

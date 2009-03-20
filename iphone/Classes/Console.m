@@ -13,20 +13,20 @@
 + (void)log:(NSString*)options forWebView:(UIWebView*)webView
 {
 	NSArray* arguments = [options componentsSeparatedByString:@"/"];
-	NSLog(@"[%@] %@", [arguments objectAtIndex:0], [arguments objectAtIndex:1]);
+    NSLog(@"[%@] %@", [arguments objectAtIndex:0], [[arguments objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
 }
 
 + (void)alert:(NSString*)options forWebView:(UIWebView*)webView
 {
 	NSArray* arguments = [options componentsSeparatedByString:@"/"];
-	NSString* message  = [arguments objectAtIndex:0];
+	NSString* message  = [[arguments objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSString* title    = @"Alert";
 	NSString* button   = @"OK";
 
 	if ([arguments count] >= 1)
-		title = [arguments objectAtIndex:1];
+		title = [[arguments objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	if ([arguments count] >= 2)
-		button = [arguments objectAtIndex:2];
+		button = [[arguments objectAtIndex:2] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
 	UIAlertView *openURLAlert = [[UIAlertView alloc]
 								 initWithTitle:title
@@ -37,12 +37,12 @@
 
 + (void)activityStart:(NSString*)options forWebView:(UIWebView*)webView
 {
-    //[activityView startAnimating];    
+    [(UIActivityIndicatorView*)[webView.window viewWithTag:2] startAnimating];
 }
 
 + (void)activityStop:(NSString*)options forWebView:(UIWebView*)webView
 {
-    //[activityView stopAnimating];
+    [(UIActivityIndicatorView*)[webView.window viewWithTag:2] stopAnimating];
 }
 
 @end

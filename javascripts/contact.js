@@ -29,4 +29,6 @@ ContactManager.prototype.get = function(successCallback, errorCallback, options)
 	// Interface
 }
 
-if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+});
