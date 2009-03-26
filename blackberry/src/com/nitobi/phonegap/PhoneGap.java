@@ -5,6 +5,8 @@ package com.nitobi.phonegap;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 
 import javax.microedition.pim.ContactList;
@@ -12,8 +14,8 @@ import javax.microedition.pim.PIM;
 import javax.microedition.pim.PIMItem;
 import javax.microedition.pim.Contact;
 import javax.microedition.location.*;
-import javax.microedition.io.HttpConnection;
-import javax.microedition.io.Connector;
+import javax.microedition.io.*;
+import javax.microedition.io.file.*;
 
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
@@ -56,6 +58,10 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
     private int _interval = 10;
     private double _lat = 0;
     private double _lng = 0;
+    
+    // This hashtable holds the file data until the cookie is retrieved
+    private Hashtable _fileContents = new Hashtable();
+
     // This flag gets set once a good location has been found and the lat and lng 
     // values have been set
     private boolean _locationReady = false;
@@ -63,7 +69,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
     // specifies a lat / lng request. If true during a getHTTPCookie call the 
     // last valid lat / lng is returned
     private boolean _getLocation = false;
-    
+
     private Hashtable cookies = new Hashtable();
     
     private HttpConnection  _currentConnection;       
@@ -384,6 +390,41 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
 	                        	 ex.printStackTrace();
 	                    	 }
 	                    	 break;
+	                     case 8:
+	                    	 // read
+	                    	 // Load the data out of persistent store
+	                    	 try {
+	                    		 String filename = args.getString("name");
+	                    		 FileConnection fc = (FileConnection)Connector.open(filename);
+	                    		 if (!fc.exists())
+	                    			 break;
+	                    		 InputStream is = fc.openInputStream();
+	                    		 StringBuffer sb = new StringBuffer();
+	                    		 int chars, i = 0;
+	                    		 while ((chars = is.read()) != -1){
+	                    			 sb.append((char)chars);
+	                    		 }
+	                    		 _fileContents.put(filename, sb.toString());
+	                    	 } catch(Exception ex) {
+	                    		 ex.printStackTrace();
+	                    		 System.out.println("***** error in read");
+	                    	 }
+	                    	 break;
+	                     case 9:
+	                    	 // write
+	                    	 try {
+	                    		 FileArgs fa = getFileArgs(args);
+	                    		 FileConnection fc = (FileConnection)Connector.open(fa.name, Connector.READ_WRITE);
+	                    		 if (!fc.exists())
+	                    			 fc.create();
+	                    		 OutputStream os = fc.openOutputStream();
+	                    		 os.write(fa.data.getBytes());
+	                    		 os.flush();
+	                    		 os.close();
+	                    	 } catch(Exception ex) {
+	                    		 System.out.println("***** error in write: " + ex.getMessage());
+	                    	 }
+	                    	 break;
 	                     default:
 	                 }
                  }
@@ -399,6 +440,7 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
 
          return null;
      }
+
 
      /**
       * @see net.rim.device.api.browser.RenderingApplication#getAvailableHeight(net.rim.device.api.browser.BrowserContent)
@@ -440,7 +482,16 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
              _locationProvider.setLocationListener(null, -1, -1, -1);
     	 }
     	 // Add new if statements to append any other data to the returned JSON object
-    	 
+    	 cookie += "readfile: [";
+    	 Enumeration keys = _fileContents.keys();
+    	 while (keys.hasMoreElements()) {
+    		 String name = (String)keys.nextElement();
+    		 String data = (String)_fileContents.get(name);
+    		 cookie += "{name:'"+name+"',data:'"+data+"'},";
+    	 }
+    	 cookie += "],";
+    	 _fileContents.clear();
+
     	 if (cookie.endsWith(",")) {
     		 // Strip off the 
     		 cookie = cookie.substring(0, cookie.length()-1);
@@ -610,6 +661,18 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
     	return number;
     }
     
+    private FileArgs getFileArgs(JSONObject args)
+    {
+    	String data = "";
+    	String name = "";
+    	try {
+    		name = args.getString("name");
+    		data = args.getString("data");
+    	} catch (Exception e) {
+    	}
+    	return new FileArgs(name, data);
+    }
+    
     private SMSArgs getSMSArgs(JSONObject args)
     {
     	String message = "";
@@ -631,7 +694,16 @@ TaskArguments 	Encapsulates arguments to pass to the Task application.
     		message = _message;
     	}
     }
-    
+
+    private class FileArgs {
+    	public String data;
+    	public String name;
+    	public FileArgs(String _name, String _data)
+    	{
+    		data = _data;
+    		name = _name;
+    	}
+    }
     /**
      * Implementation of the LocationListener interface
      */

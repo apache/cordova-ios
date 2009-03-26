@@ -1,3 +1,0 @@
-# PhoneGap
-
-### iPhone
