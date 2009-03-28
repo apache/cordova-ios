@@ -6,7 +6,6 @@
 
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options)
 {
-  // Java handles this for us so we don't have to
 }
 
 /*
@@ -19,17 +18,32 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 {
   var frequency = (options != undefined)? options.frequency : 10000;
 
+  if (!this.listeners)
+  {
+      this.listeners = []
+  }
+
+  var key = this.listeners.push( {"success" : successCallback, "fail" : failCallback }) - 1;
+
   // TO-DO: Get the names of the method and pass them as strings to the Java.
-  return Geo.start(frequency, succStr, failString);
+  return Geolocation.start(frequency, key);
 }
 
 /*
  * Retrieve and stop this listener from listening to the GPS
  *
  */
+Geolocation.prototype.success(key, lat, lng)
+{
+  this.listeners[key].success(lat,lng);
+}
+
+Geolocation.prototype.fail(key)
+{
+  this.listeners[key].fail();
+}
 
 Geolocation.prototype.clearWatch = function(watchId)
 {
   Geo.stop(watchId);
 }
-
