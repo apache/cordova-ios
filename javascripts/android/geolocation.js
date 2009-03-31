@@ -6,7 +6,26 @@
 
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options)
 {
+  var position = Geo.getCurrentPosition();
+  this.global_success = successCallback;
+  this.fail = errorCallback;
 }
+
+
+// Run the global callback
+Geolocation.prototype.gotCurrentPosition = function(lat, lng)
+{
+  if (lat == 0 || lng == 0)
+  {
+    this.fail();
+  }
+  else
+  {
+    var p = { "lat" : lat, "lng": lng };
+    this.global_success(p);
+  }
+}
+
 
 /*
  * This turns on the GeoLocator class, which has two listeners.
@@ -47,3 +66,5 @@ Geolocation.prototype.clearWatch = function(watchId)
 {
   Geo.stop(watchId);
 }
+
+
