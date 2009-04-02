@@ -39,7 +39,7 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 
   if (!this.listeners)
   {
-      this.listeners = []
+      this.listeners = [];
   }
 
   var key = this.listeners.push( {"success" : successCallback, "fail" : failCallback }) - 1;
