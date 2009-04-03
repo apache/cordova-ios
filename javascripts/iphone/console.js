@@ -12,6 +12,10 @@ Console.prototype.error = function(message) {
         console.error(message);
 };
 Console.prototype.alert = function(message, title, buttonLabel) {
+    if (title == undefined || title == null)
+        title = 'Alert';
+    if (buttonLabel == undefined || buttonLabel == null)
+        buttonLabel = 'OK';
     if (PhoneGap.available)
         PhoneGap.exec('Console.alert', message, title, buttonLabel);
     else
