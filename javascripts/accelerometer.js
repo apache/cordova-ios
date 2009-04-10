@@ -57,4 +57,6 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+});

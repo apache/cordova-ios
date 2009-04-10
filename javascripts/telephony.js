@@ -14,4 +14,6 @@ Telephony.prototype.call = function(number) {
 	
 }
 
-if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
+});

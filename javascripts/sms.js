@@ -18,4 +18,6 @@ Sms.prototype.send = function(number, message, successCallback, errorCallback, o
 	
 }
 
-if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+PhoneGap.addConstructor(function() {
+    if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+});

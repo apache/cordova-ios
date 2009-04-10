@@ -1,5 +1,5 @@
 ContactManager.prototype.get = function(successCallback, errorCallback, options) {
-	document.location = "gap://Contacts.get/null";
+	PhoneGap.exec("Contacts.get");
 	if (typeof successCallback == "function") {
 		for (var i = 0;i<_contacts.length;i++) {
 			var con = new Contact();

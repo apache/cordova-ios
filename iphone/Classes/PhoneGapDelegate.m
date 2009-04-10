@@ -6,6 +6,7 @@
 
 @synthesize window;
 @synthesize viewController;
+@synthesize activityView;
 
 @synthesize imagePickerController;
 
@@ -19,38 +20,7 @@ void alert(NSString *message) {
  * applicationDidFinishLaunching 
  * This is main kick off after the app inits, the views and Settings are setup here.
  */
-
-
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
-
-	/*
-	 * Fire up the GPS Service right away as it takes a moment for data to come back.
-	 */
-    
-    NSDictionary* infoDictionry = [[NSBundle mainBundle] infoDictionary];
-    NSString* coreLocationStart = [infoDictionry objectForKey:@"CoreLocationStart"];
-
-    // Only launch at startup, if the info plist requests it.
-    if (coreLocationStart && [coreLocationStart compare:@"launch"] == NSOrderedSame)
-    {
-        [[Location sharedInstance] start];
-    }
-	
-	webView.delegate = self;
-  
-	// Set up the image picker controller and add it to the view
-	imagePickerController = [[UIImagePickerController alloc] init];
-	imagePickerController.delegate = self;
-	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-	imagePickerController.view.hidden = YES;
-	
-	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
-	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
-
-	[window addSubview:viewController.view]; 
-	
-	NSString *errorDesc = nil;
-	
 	
 	/*
 	 * Settings.plist
@@ -58,38 +28,64 @@ void alert(NSString *message) {
 	 * This block of code navigates to the Settings.plist in the Config Group and reads the XML into an Hash (Dictionary)
 	 *
 	 */
-	NSPropertyListFormat format;
+	NSString *errorDesc = nil;
+    NSPropertyListFormat format;
 	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
 	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
 	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
 										  propertyListFromData:plistXML
 										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
 										  format:&format errorDescription:&errorDesc];
-		
-	NSString *offline = [temp objectForKey:@"Offline"];
-	NSString *url = [temp objectForKey:@"Callback"];
-	int *detectNumber = [temp objectForKey:@"DetectPhoneNumber"];
+    
+    NSNumber *offline              = [temp objectForKey:@"Offline"];
+    NSString *url                  = [temp objectForKey:@"Callback"];
+    NSNumber *detectNumber         = [temp objectForKey:@"DetectPhoneNumber"];
+    NSNumber *useLocation          = [temp objectForKey:@"UseLocation"];
+    NSNumber *useAccelerometer     = [temp objectForKey:@"UseAccelerometer"];
+    NSNumber *autoRotate           = [temp objectForKey:@"AutoRotate"];
+    NSString *startOrientation     = [temp objectForKey:@"StartOrientation"];
+    NSString *rotateOrientation    = [temp objectForKey:@"RotateOrientation"];
+    NSString *topStatusBar         = [temp objectForKey:@"TopStatusBar"];
+    NSString *topActivityIndicator = [temp objectForKey:@"TopActivityIndicator"];
+    
+	/*
+	 * Fire up the GPS Service right away as it takes a moment for data to come back.
+	 */
+    if ([useLocation boolValue]) {
+        [[Location sharedInstance] start];
+    }
 
+	webView.delegate = self;
 
+	// Set up the image picker controller and add it to the view
+	imagePickerController = [[UIImagePickerController alloc] init];
+	imagePickerController.delegate = self;
+	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+	imagePickerController.view.hidden = YES;
 
-	
+	if ([useAccelerometer boolValue]) {
+        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
+        [[UIAccelerometer sharedAccelerometer] setDelegate:self];
+    }
+
+	[window addSubview:viewController.view];
+
 	/*
 	 * We want to test the offline to see if this app should start in offline mode or online mode.
 	 *
-	 *   0 - Offline
-	 *   1 - Online
+	 *   YES - Offline
+	 *   NO  - Online
 	 *
 	 *		In Offline mode the index.html file is loaded from the www directly and serves as the entry point into the application
 	 *		In Online mode the starting point is a external FQDN, usually your server.
 	 */
-	if ([offline isEqualToString:@"0"]) {
-		appURL = [[NSURL URLWithString:url] retain];
-	} else {		
+	if ([offline boolValue]) {
 		NSBundle * thisBundle = [NSBundle bundleForClass:[self class]];
 		appURL = [[NSURL fileURLWithPath:[thisBundle pathForResource:@"index" ofType:@"html" inDirectory:@"www"]] retain];		
+	} else {		
+		appURL = [[NSURL URLWithString:url] retain];
 	}
 
-	
 	/*
 	 * webView
 	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
@@ -99,57 +95,95 @@ void alert(NSString *message) {
 						  cachePolicy:NSURLRequestUseProtocolCachePolicy
 						  timeoutInterval:20.0
 						  ]];
-	
-	
+
 	/*
-	 * detectNumber - If we want to Automagicly convery phone numbers to links - Set in Settings.plist
+	 * detectNumber - If we want to Automagically convery phone numbers to links - Set in Settings.plist
 	 * Value should be BOOL (YES|NO)
-	 *
-	 * For whatever reason this quit working
 	 */
-	webView.detectsPhoneNumbers=detectNumber;
-	
-	
+	webView.detectsPhoneNumbers = [detectNumber boolValue];
+
 	/*
 	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
 	 * You can change this image by swapping out the Default.png file within the resource folder.
 	 */
 	imageView = [[UIImageView alloc] initWithImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]]];
+    imageView.tag = 1;
 	[window addSubview:imageView];
   
-	
-	/*
+    /*
+     * autoRotate - If you want your phone to automatically rotate its display when the phone is rotated
+     * Value should be BOOL (YES|NO)
+     */
+    [viewController setAutoRotate:[autoRotate boolValue]];
+
+    /*
+     * startOrientation - This option dictates what the starting orientation will be of the application 
+     * Value should be one of: portrait, portraitUpsideDown, landscapeLeft, landscapeRight
+     */
+    orientationType = UIInterfaceOrientationPortrait;
+    if ([startOrientation isEqualToString:@"portrait"]) {
+        orientationType = UIInterfaceOrientationPortrait;
+    } else if ([startOrientation isEqualToString:@"portraitUpsideDown"]) {
+        orientationType = UIInterfaceOrientationPortraitUpsideDown;
+    } else if ([startOrientation isEqualToString:@"landscapeLeft"]) {
+        orientationType = UIInterfaceOrientationLandscapeLeft;
+    } else if ([startOrientation isEqualToString:@"landscapeRight"]) {
+        orientationType = UIInterfaceOrientationLandscapeRight;
+    }
+    [[UIApplication sharedApplication] setStatusBarOrientation:orientationType animated:NO];
+
+     /*
+     * rotateOrientation - This option is only enabled when AutoRotate is enabled.  If the phone is still rotated
+     * when AutoRotate is disabled, this will control what orientations will be rotated to.  If you wish your app to
+     * only use landscape or portrait orientations, change the value in Settings.plist to indicate that.
+     * Value should be one of: any, portrait, landscape
+     */
+    [viewController setRotateOrientation:rotateOrientation];
+
+     /*
 	 * These are the setting for the top Status/Battery Bar.
 	 *
-	 *	 UIStatusBarStyleBlackOpaque
-	 *	 UIStatusBarStyleBlackTranslucent
-	 *	 UIStatusBarStyleDefault - Default
+	 *	 opaque      = UIStatusBarStyleBlackOpaque
+	 *	 translucent = UIStatusBarStyleBlackTranslucent
+	 *	 default     = UIStatusBarStyleDefault
 	 *
 	 */
-	[application setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:NO];
-	
-	
+    UIStatusBarStyle topStatusBarStyle = UIStatusBarStyleDefault;
+    if ([topStatusBar isEqualToString:@"blackOpaque"]) {
+        topStatusBarStyle = UIStatusBarStyleBlackOpaque;
+    } else if ([topStatusBar isEqualToString:@"blackTranslucent"]) {
+        topStatusBarStyle = UIStatusBarStyleBlackTranslucent;
+    } else if ([topStatusBar isEqualToString:@"default"]) {
+        topStatusBarStyle = UIStatusBarStyleDefault;
+    }
+    if ([topStatusBar isEqualToString:@"none"]) {
+        [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
+    } else {
+        [[UIApplication sharedApplication] setStatusBarStyle:topStatusBarStyle animated:NO];
+    }
+    
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
 	 *
-	 *	 UIActivityIndicatorViewStyleWhiteLarge
-	 *	 UIActivityIndicatorViewStyleWhite
-	 *	 UIActivityIndicatorViewStyleGray
+	 *	 whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
+	 *	 white      = UIActivityIndicatorViewStyleWhite
+	 *	 gray       = UIActivityIndicatorViewStyleGray
 	 *
 	 */
-	activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	[window addSubview:activityView];
-	[activityView startAnimating];
-	
-	
-	/*
-	 * If you don't want your app to have a status bar, just uncomment this.
-	 */
-	//[[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];		
-	
-	
-	[window makeKeyAndVisible];
+    UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    if ([topActivityIndicator isEqualToString:@"whiteLarge"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    } else if ([topActivityIndicator isEqualToString:@"white"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
+    } else if ([topActivityIndicator isEqualToString:@"gray"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    }
+    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] retain];
+    activityView.tag = 2;
+    [window addSubview:activityView];
+    [activityView startAnimating];
 
+	[window makeKeyAndVisible];
 }
 
 
@@ -157,12 +191,10 @@ void alert(NSString *message) {
  *	When web application loads Add stuff to the DOM (HTML 5)
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
-
 	/*
-	 * This is the Device.plaftorm information
+	 * This is the Device.platform information
 	 */	
 	[theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
-
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
@@ -185,8 +217,9 @@ void alert(NSString *message) {
  *
  */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
 	if ([error code] != NSURLErrorCancelled)
-		alert(error.localizedDescription);
+		alert([error localizedDescription]);
 }
 
 
@@ -213,11 +246,13 @@ void alert(NSString *message) {
 		/*
 		 * Get Command and Options From URL
 		 * We are looking for URLS that match gap://<command>[/<options>]
-		 * We have to strip off the leading slah for the options.
+		 * We have to strip off the leading slash for the options.
 		 */
 		NSString * command = [url host];
-		
-		NSString * options =  [path substringWithRange:NSMakeRange(1, [path length] - 1)];
+		NSString * options = [path substringWithRange:NSMakeRange(1, [path length] - 1)];
+
+		// Tell the JS code that we've gotten this command, and we're ready for another
+        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.exec.ready = true;"];
 		
 		// Check to see if we are provided a class:method style command.
         NSArray* components = [command componentsSeparatedByString:@"."];
@@ -237,13 +272,13 @@ void alert(NSString *message) {
             else
             {
                 // There's no method to call, so throw an error.
+                NSLog(@"Class method '%@' not defined in class '%@'", fullMethodName, className);
                 [NSException raise:NSInternalInconsistencyException format:@"Class method '%@' not defined against class '%@'.", fullMethodName, className];
             }
             [fullMethodName release];
         }
 		return NO;
 	} else {
-		
 		/*
 		 * We don't have a PhoneGap request, it could be file or something else
 		 */
@@ -254,7 +289,6 @@ void alert(NSString *message) {
 	
 	return YES;
 }
-	
 
 
 /*
@@ -270,6 +304,7 @@ void alert(NSString *message) {
 	[appURL release];
 	[imageView release];
 	[viewController release];
+    [activityView release];
 	[window release];
 	[imagePickerController release];
 	[super dealloc];

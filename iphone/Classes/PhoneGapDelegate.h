@@ -8,11 +8,13 @@
 #import "Device.h"
 #import "Sound.h"
 #import "Contacts.h"
+#import "Console.h"
 //#import "Image.h"
 
 @class PhoneGapViewController;
 @class Sound;
 @class Contacts;
+@class Console;
 //@class Image;
 
 @interface PhoneGapDelegate : NSObject <
@@ -39,16 +41,20 @@
 	NSMutableData *receivedData;		// added by urbian	
 
 	UIImagePickerController *imagePickerController;
-	
+    
+    UIInterfaceOrientation orientationType;
+    
 	NSURLConnection *callBackConnection;
 	Sound *sound;
 	Contacts *contacts;
+    Console *console;
 	NSURL* appURL;
 }
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) PhoneGapViewController *viewController;
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;
+@property (nonatomic, retain) UIActivityIndicatorView *activityView;
 
 //- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
 //- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;

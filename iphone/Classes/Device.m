@@ -19,9 +19,13 @@
  *  - Device uuid
  */
 - (NSString *)init{
-	
 	myCurrentDevice = [UIDevice currentDevice];
-	return  [[NSString alloc] initWithFormat:@"Device={};Device.platform='%s';Device.version='%s';Device.uuid='%s';Device.gap='0.7.1'",[[myCurrentDevice model] UTF8String], [[myCurrentDevice systemVersion] UTF8String], [[myCurrentDevice uniqueIdentifier] UTF8String] ];
+	return [[NSString alloc]
+			 initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.7.1'};",
+			 [[myCurrentDevice model] UTF8String],
+			 [[myCurrentDevice systemVersion] UTF8String],
+			 [[myCurrentDevice uniqueIdentifier] UTF8String]
+	];
 }
 
 - (void)dealloc {

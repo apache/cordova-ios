@@ -7,7 +7,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 }
 
 Geolocation.prototype._getCurrentPosition = function() {
-	document.location = "gap://Location.get/null";
+	PhoneGap.exec("Location.get");
 
 	if (geo.lng != 0) {
 		window.clearTimeout(locationTimeout);
@@ -19,10 +19,14 @@ Geolocation.prototype._getCurrentPosition = function() {
 			var position = new Position(geo.lat, geo.lng);
 			Geolocation.lastPosition = position;
 			geoSuccessCallback(position);
-		} 
+		}
 	}
 }
 
 Geolocation.prototype.start = function() {
-    document.location = "gap://Location.start/null";		
+    PhoneGap.exec("Location.start");
+}
+
+Geolocation.prototype.stop = function() {
+    PhoneGap.exec("Location.stop");
 }

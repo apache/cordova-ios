@@ -4,9 +4,9 @@ Bonjour = function() {
 
 Bonjour.prototype.port = 0;
 Bonjour.prototype.start = function(name) {
-	document.location = "gap://Bonjour.start/null";
+	PhoneGap.exec("Bonjour.start");
 }
 Bonjour.prototype.stop = function() {
-	document.location = "gap://Bonjour.stop/null";
+	PhoneGap.exec("Bonjour.stop");
 }
 Bonjour.prototype.delegate = null;
