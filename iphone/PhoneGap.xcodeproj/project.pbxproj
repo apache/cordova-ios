@@ -99,13 +99,15 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				1B1B4E690F938A0500ECD4E6 /* UIControls.h */,
-				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
-				BB8FC5C20F5B3EC4007C7DCE /* Bonjour.m */,
 				1D3623240D0F684500981E51 /* PhoneGapDelegate.h */,
 				1D3623250D0F684500981E51 /* PhoneGapDelegate.m */,
+				47FAB6A70EF751E2005F55AB /* PhoneGapViewController.h */,
+				47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */,
+				1B1B4E690F938A0500ECD4E6 /* UIControls.h */,
+				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
+				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
+				BB8FC5C20F5B3EC4007C7DCE /* Bonjour.m */,
 				8205CB7B0E68A701006CBEEF /* Device.h */,
 				8205CB7C0E68A701006CBEEF /* Device.m */,
 				1B64D8980F6C73C700D12F7F /* DebugConsole.h */,
@@ -120,8 +122,6 @@
 				8254F4BC0E6397F0002FDA36 /* Vibrate.m */,
 				8254F87F0E650500002FDA36 /* Location.h */,
 				8254F8800E650500002FDA36 /* Location.m */,
-				47FAB6A70EF751E2005F55AB /* PhoneGapViewController.h */,
-				47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */,
 				47F5651F0F3AC95D001DFBDB /* Image.h */,
 				47F565200F3AC95D001DFBDB /* Image.m */,
 			);

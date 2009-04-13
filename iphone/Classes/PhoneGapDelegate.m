@@ -308,7 +308,7 @@ void alert(NSString *message) {
 	[viewController release];
     [activityView release];
 	[window release];
-	[imagePickerController release];
+	//[imagePickerController release];
 	[super dealloc];
 }
 
