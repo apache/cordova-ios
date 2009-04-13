@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Console</title>
+		<title>JsDoc Reference - UIControls</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -199,9 +199,9 @@ ul.inheritsList
 	
 	<li><a href="../symbols/Camera.html">Camera</a></li>
 	
-	<li><a href="../symbols/Console.html">Console</a></li>
-	
 	<li><a href="../symbols/Contact.html">Contact</a></li>
+	
+	<li><a href="../symbols/DebugConsole.html">DebugConsole</a></li>
 	
 	<li><a href="../symbols/Device.html">Device</a></li>
 	
@@ -225,6 +225,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/Telephony.html">Telephony</a></li>
 	
+	<li><a href="../symbols/UIControls.html">UIControls</a></li>
+	
 </ul>
 <hr />
 			<!-- end publish.classesIndex -->
@@ -234,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Console
+				Class UIControls
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -250,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Console.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class UIControls.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -263,9 +265,10 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Console.html">Console</a></b>()
+								<b><a href="../symbols/UIControls.html">UIControls</a></b>()
 							</div>
-							<div class="description">This class provides access to the debugging console.</div>
+							<div class="description">This class exposes mobile phone interface controls to JavaScript, such as
+native alerts, tab and tool bars, etc.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -279,7 +282,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Console.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class UIControls.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -292,7 +295,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Console.html#activityStart">activityStart</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#activityStart">activityStart</a></b>()
 								</div>
 								<div class="description">Start spinning the activity indicator on the statusbar</div>
 							</td>
@@ -301,7 +304,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Console.html#activityStop">activityStop</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#activityStop">activityStop</a></b>()
 								</div>
 								<div class="description">Stop spinning the activity indicator on the statusbar, if it's currently spinning</div>
 							</td>
@@ -310,27 +313,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Console.html#alert">alert</a></b>(message, title, buttonLabel)
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#alert">alert</a></b>(message, title, buttonLabel)
 								</div>
 								<div class="description">Open a native alert dialog, with a customizable title and button text.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Console.html#error">error</a></b>(message)
-								</div>
-								<div class="description">Print an error message to the console</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Console.html#log">log</a></b>(message)
-								</div>
-								<div class="description">Print a normal log message to the console</div>
 							</td>
 						</tr>
 					
@@ -351,11 +336,12 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Console</b>()
+						<b>UIControls</b>()
 				</div>
 				
 				<div class="description">
-					This class provides access to the debugging console.
+					This class exposes mobile phone interface controls to JavaScript, such as
+native alerts, tab and tool bars, etc.
 					
 				</div>
 				
@@ -478,78 +464,6 @@ ul.inheritsList
 						
 						
 
-					<hr />
-				
-					<a name="error"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>error</b>(message)
-					
-					</div>
-					<div class="description">
-						Print an error message to the console
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object|String}</span> <b>message</b>
-									
-								</dt>
-								<dd>Message or object to print to the console</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="log"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>log</b>(message)
-					
-					</div>
-					<div class="description">
-						Print a normal log message to the console
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object|String}</span> <b>message</b>
-									
-								</dt>
-								<dd>Message or object to print to the console</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -564,7 +478,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Mar 19 2009 17:53:55 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Mon Apr 13 2009 08:15:10 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

@@ -21,7 +21,7 @@
     UIApplicationDelegate, 
     UIWebViewDelegate, 
     UIAccelerometerDelegate,
-    UIImagePickerControllerDelegate, 
+    //UIImagePickerControllerDelegate, 
     UIPickerViewDelegate, 
     UINavigationControllerDelegate
   >
@@ -40,7 +40,7 @@
 	NSURLConnection *conn;				// added by urbian
 	NSMutableData *receivedData;		// added by urbian	
 
-	UIImagePickerController *imagePickerController;
+	//UIImagePickerController *imagePickerController;
     
     UIInterfaceOrientation orientationType;
     
@@ -53,7 +53,7 @@
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) PhoneGapViewController *viewController;
-@property (nonatomic, retain) UIImagePickerController *imagePickerController;
+//@property (nonatomic, retain) UIImagePickerController *imagePickerController;
 @property (nonatomic, retain) UIActivityIndicatorView *activityView;
 
 //- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;

@@ -8,7 +8,7 @@
 @synthesize viewController;
 @synthesize activityView;
 
-@synthesize imagePickerController;
+//@synthesize imagePickerController;
 
 void alert(NSString *message) {
 //    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -57,11 +57,13 @@ void alert(NSString *message) {
 
 	webView.delegate = self;
 
+    /*
 	// Set up the image picker controller and add it to the view
 	imagePickerController = [[UIImagePickerController alloc] init];
 	imagePickerController.delegate = self;
 	imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	imagePickerController.view.hidden = YES;
+     */
 
 	if ([useAccelerometer boolValue]) {
         [[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];

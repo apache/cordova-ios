@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Sms</title>
+		<title>JsDoc Reference - DebugConsole</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Sms
+				Class DebugConsole
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Sms.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class DebugConsole.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,9 +265,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Sms.html">Sms</a></b>()
+								<b><a href="../symbols/DebugConsole.html">DebugConsole</a></b>()
 							</div>
-							<div class="description">This class provides access to the device SMS functionality.</div>
+							<div class="description">This class provides access to the debugging console.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -281,7 +281,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Sms.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class DebugConsole.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -294,9 +294,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Sms.html#send">send</a></b>(number, message, successCallback, errorCallback, options)
+								<div class="fixedFont"><b><a href="../symbols/DebugConsole.html#error">error</a></b>(message)
 								</div>
-								<div class="description">Sends an SMS message.</div>
+								<div class="description">Print an error message to the console</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/DebugConsole.html#log">log</a></b>(message)
+								</div>
+								<div class="description">Print a normal log message to the console</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/DebugConsole.html#warn">warn</a></b>(message)
+								</div>
+								<div class="description">Print a warning message to the console</div>
 							</td>
 						</tr>
 					
@@ -317,11 +335,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Sms</b>()
+						<b>DebugConsole</b>()
 				</div>
 				
 				<div class="description">
-					This class provides access to the device SMS functionality.
+					This class provides access to the debugging console.
 					
 				</div>
 				
@@ -348,15 +366,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="send"> </a>
+					<a name="error"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>send</b>(number, message, successCallback, errorCallback, options)
+					<b>error</b>(message)
 					
 					</div>
 					<div class="description">
-						Sends an SMS message.
+						Print an error message to the console
 						
 						
 					</div>
@@ -368,34 +386,82 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Integer}</span> <b>number</b>
+									<span class="light fixedFont">{Object|String}</span> <b>message</b>
 									
 								</dt>
-								<dd>The phone number to send the message to.</dd>
+								<dd>Message or object to print to the console</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="log"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>log</b>(message)
+					
+					</div>
+					<div class="description">
+						Print a normal log message to the console
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>message</b>
+									<span class="light fixedFont">{Object|String}</span> <b>message</b>
 									
 								</dt>
-								<dd>The contents of the SMS message to send.</dd>
+								<dd>Message or object to print to the console</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="warn"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>warn</b>(message)
+					
+					</div>
+					<div class="description">
+						Print a warning message to the console
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
+									<span class="light fixedFont">{Object|String}</span> <b>message</b>
 									
 								</dt>
-								<dd>The function to call when the SMS message is sent.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
-									
-								</dt>
-								<dd>The function to call when there is an error sending the SMS message.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/PositionOptions.html">PositionOptions</a>}</span> <b>options</b>
-									
-								</dt>
-								<dd>The options for accessing the GPS location such as timeout and accuracy.</dd>
+								<dd>Message or object to print to the console</dd>
 							
 							</dl>
 						
@@ -420,7 +486,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Mon Apr 13 2009 08:15:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Mon Apr 13 2009 08:15:09 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

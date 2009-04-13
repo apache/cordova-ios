@@ -1,5 +1,5 @@
 //
-//  Console.h
+//  DebugConsole.h
 //  PhoneGap
 //
 //  Created by Michael Nachbaur on 14/03/09.
@@ -9,12 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface Console : NSObject {
+@interface DebugConsole : NSObject {
 }
 
 + (void)log:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)alert:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)activityStart:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)activityStop:(NSString*)options forWebView:(UIWebView*)webView;
 
 @end

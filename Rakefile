@@ -48,7 +48,7 @@ end
 
 # the sub libraries used by xui
 def interfaces_to_build
-  %w(device acceleration accelerometer media camera contact console file geolocation map notification orientation position sms telephony)
+  %w(device acceleration accelerometer media camera contact uicontrols debugconsole file geolocation map notification orientation position sms telephony)
 end 
 
 # the sub libraries used by xui
