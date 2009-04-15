@@ -2,7 +2,7 @@
  * This class provides access to the debugging console.
  * @constructor
  */
-function Console() {
+function DebugConsole() {
 }
 
 /**
@@ -11,7 +11,7 @@ function Console() {
  * @param {Object|String} message The string or object to convert to an indented string
  * @private
  */
-Console.prototype.processMessage = function(message) {
+DebugConsole.prototype.processMessage = function(message) {
     if (typeof(message) != 'object') {
         return encodeURIComponent(message);
     } else {
@@ -46,42 +46,26 @@ Console.prototype.processMessage = function(message) {
 };
 
 /**
- * Open a native alert dialog, with a customizable title and button text.
- * @param {String} message Message to print in the body of the alert
- * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
- * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
- */
-Console.prototype.alert = function(message, title, buttonLabel) {
-    // Default is to use a browser alert; this will use "index.html" as the title though
-    alert(message);
-};
-
-/**
  * Print a normal log message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-Console.prototype.log = function(message) {
+DebugConsole.prototype.log = function(message) {
+};
+
+/**
+ * Print a warning message to the console
+ * @param {Object|String} message Message or object to print to the console
+ */
+DebugConsole.prototype.warn = function(message) {
 };
 
 /**
  * Print an error message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-Console.prototype.error = function(message) {
-};
-
-/**
- * Start spinning the activity indicator on the statusbar
- */
-Console.prototype.activityStart = function() {
-};
-
-/**
- * Stop spinning the activity indicator on the statusbar, if it's currently spinning
- */
-Console.prototype.activityStop = function() {
+DebugConsole.prototype.error = function(message) {
 };
 
 PhoneGap.addConstructor(function() {
-    window.debug = new Console();
+    window.debug = new DebugConsole();
 });
