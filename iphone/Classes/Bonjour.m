@@ -11,11 +11,11 @@
 
 @implementation Bonjour
 
-+ (void)start:(NSString*)options forWebView:(UIWebView*)webView
+- (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 }
 
-+ (void)stop:(NSString*)options forWebView:(UIWebView*)webView
+- (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 }
 

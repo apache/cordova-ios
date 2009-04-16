@@ -8,12 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioServices.h>
+#import "PhoneGapCommand.h"
 
-@interface Vibrate : NSObject {	
+@interface Vibrate : PhoneGapCommand {	
 }
 
-+ (void)vibrate:(NSString*)options forWebView:(UIWebView*)webView;
-
-- (void)vibrate;
+- (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

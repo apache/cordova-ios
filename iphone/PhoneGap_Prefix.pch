@@ -5,4 +5,9 @@
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#ifndef __OPTIMIZE__
+# define NSLog(...) NSLog(@"%@", [NSString stringWithFormat:__VA_ARGS__])
+#else
+# define NSLog(...) /* */
+#endif
 #endif

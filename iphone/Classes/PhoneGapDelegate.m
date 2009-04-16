@@ -7,21 +7,37 @@
 @synthesize window;
 @synthesize viewController;
 @synthesize activityView;
+@synthesize commandObjects;
 
 //@synthesize imagePickerController;
 
-void alert(NSString *message) {
-//    UIAlertView *openURLAlert = [[UIAlertView alloc] initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-//    [openURLAlert show];
-//    [openURLAlert release];
+- (id) init
+{
+    self = [super init];
+    if (self != nil) {
+        commandObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+    }
+    return self;
+}
+
+-(id) getCommandInstance:(NSString*)className
+{
+    id obj = [commandObjects objectForKey:className];
+    if (!obj) {
+        obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
+        NSLog(@"******* Object %@ created from scratch for %@", obj, className);
+        
+        [commandObjects setObject:obj forKey:className];
+    }
+    return obj;
 }
 
 /*
  * applicationDidFinishLaunching 
  * This is main kick off after the app inits, the views and Settings are setup here.
  */
-- (void)applicationDidFinishLaunching:(UIApplication *)application {
-	
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{	
 	/*
 	 * Settings.plist
 	 *
@@ -52,7 +68,7 @@ void alert(NSString *message) {
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
     if ([useLocation boolValue]) {
-        [[Location sharedInstance] start];
+        [[self getCommandInstance:@"Location"] start:nil withDict:nil];
     }
 
 	webView.delegate = self;
@@ -220,8 +236,10 @@ void alert(NSString *message) {
  */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
-	if ([error code] != NSURLErrorCancelled)
+	/*
+    if ([error code] != NSURLErrorCancelled)
 		alert([error localizedDescription]);
+     */
 }
 
 
@@ -247,12 +265,32 @@ void alert(NSString *message) {
 		NSString * path  =  [url path];
 		/*
 		 * Get Command and Options From URL
-		 * We are looking for URLS that match gap://<command>[/<options>]
+		 * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
 		 * We have to strip off the leading slash for the options.
 		 */
 		NSString * command = [url host];
-		NSString * options = [path substringWithRange:NSMakeRange(1, [path length] - 1)];
 
+		// Array of arguments
+        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[[path substringWithRange:NSMakeRange(1, [path length] - 1)]
+                                                                   componentsSeparatedByString:@"/"]];
+        int i, arguments_count = [arguments count];
+        for (i = 0; i < arguments_count; i++) {
+            [arguments replaceObjectAtIndex:i withObject:[(NSString *)[arguments objectAtIndex:i]
+                                                          stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        }
+        //NSLog(@"Arguments: %@", arguments);
+
+        NSMutableDictionary * options = [NSMutableDictionary dictionaryWithCapacity:1];
+        NSArray * options_parts = [NSArray arrayWithArray:[[url query] componentsSeparatedByString:@"&"]];
+        int options_count = [options_parts count];
+        for (i = 0; i < options_count; i++) {
+            NSArray  *option_part = [[options_parts objectAtIndex:i] componentsSeparatedByString:@"="];
+            NSString *name  = [(NSString *)[option_part objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSString *value = [(NSString *)[option_part objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            [options setObject:value forKey:name];
+        }
+        //NSLog(@"Options: %@", options);
+        
 		// Tell the JS code that we've gotten this command, and we're ready for another
         [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.exec.ready = true;"];
 		
@@ -264,12 +302,11 @@ void alert(NSString *message) {
             NSString* methodName = [components objectAtIndex:1];
             
             // construct the fill method name to ammend the second argument.
-            NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:forWebView:", methodName];
-
-            if ([NSClassFromString(className) respondsToSelector:NSSelectorFromString(fullMethodName)])
+            NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", methodName];
+            PhoneGapCommand* obj = [self getCommandInstance:className];
+            if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)])
             {
-                // Call the class method.
-                [NSClassFromString(className) performSelector:NSSelectorFromString(fullMethodName) withObject:options withObject:theWebView];
+                [obj performSelector:NSSelectorFromString(fullMethodName) withObject:arguments withObject:options];
             }
             else
             {
@@ -302,13 +339,19 @@ void alert(NSString *message) {
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
+    NSArray *objects = [commandObjects allValues];
+    int i, count = [objects count];
+    for (i = 0; i < count; i++) {
+        [[objects objectAtIndex:i] release];
+    }
+    [commandObjects release];
 	[appURL release];
 	[imageView release];
 	[viewController release];
     [activityView release];
 	[window release];
-	//[imagePickerController release];
 	[super dealloc];
 }
 

@@ -8,20 +8,18 @@
 
 #import "UIControls.h"
 
-
 @implementation UIControls
 
-+ (void)alert:(NSString*)options forWebView:(UIWebView*)webView
+- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSArray* arguments = [options componentsSeparatedByString:@"/"];
-	NSString* message  = [[arguments objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSString* title    = @"Alert";
-	NSString* button   = @"OK";
-    
-	if ([arguments count] >= 1)
-		title = [[arguments objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	if ([arguments count] >= 2)
-		button = [[arguments objectAtIndex:2] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString* message = [arguments objectAtIndex:0];
+	NSString* title   = [options objectForKey:@"title"];
+	NSString* button  = [options objectForKey:@"buttonLabel"];
+
+    if (!title)
+        title = @"Alert";
+    if (!button)
+        button = @"OK";
     
 	UIAlertView *openURLAlert = [[UIAlertView alloc]
 								 initWithTitle:title
@@ -30,14 +28,21 @@
 	[openURLAlert release];
 }
 
-+ (void)activityStart:(NSString*)options forWebView:(UIWebView*)webView
+- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    [(UIActivityIndicatorView*)[webView.window viewWithTag:2] startAnimating];
+    //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] startAnimating];
 }
 
-+ (void)activityStop:(NSString*)options forWebView:(UIWebView*)webView
+- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    [(UIActivityIndicatorView*)[webView.window viewWithTag:2] stopAnimating];
+    //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] stopAnimating];
 }
+
+/*
++ (void)createTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
+{
+    id* controller = [[UITabBar alloc] initWithFrame:(
+}
+ */
 
 @end

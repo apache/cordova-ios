@@ -8,12 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+/*
+#import <UIKit/UITabBar.h>
+#import <UIKit/UITabBarController.h>
+*/
+#import "PhoneGapCommand.h"
 
-@interface UIControls : NSObject {
+@interface UIControls : PhoneGapCommand {
 }
 
-+ (void)alert:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)activityStart:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)activityStop:(NSString*)options forWebView:(UIWebView*)webView;
+- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

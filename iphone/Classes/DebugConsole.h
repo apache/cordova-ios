@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "PhoneGapCommand.h"
 
-@interface DebugConsole : NSObject {
+@interface DebugConsole : PhoneGapCommand {
 }
 
-+ (void)log:(NSString*)options forWebView:(UIWebView*)webView;
+- (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

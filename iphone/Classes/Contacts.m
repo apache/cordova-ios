@@ -16,21 +16,20 @@
 @synthesize addressBook;
 @synthesize allPeople;
 
-+ (void)get:(NSString*)options forWebView:(UIWebView*)webView
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
-    Contacts *contacts = [[Contacts alloc] init];
-    NSString * jsCallBack = [contacts getContacts];
-    NSLog(@"%@",jsCallBack);
-    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-    
-    [contacts release];
+    self = [super initWithWebView:(UIWebView*)theWebView];
+    if (self) {
+        addressBook = ABAddressBookCreate();
+    }
+	return self;
 }
 
-- (id)init
+- (void)get:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	self = [super init];
-	addressBook = ABAddressBookCreate();
-	return self;
+    NSMutableString* jsCallBack = [self getContacts];
+    NSLog(@"%@", jsCallBack);
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
 - (NSMutableString *)getContacts {
@@ -42,8 +41,8 @@
 				
 		[update appendString:@"var _contacts=["];
 		
-		for (int i=0;i < numberOfPeople;i++) { 
-			ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
+		for (int i = 0; i < numberOfPeople; i++) { 
+			ABRecordRef ref = CFArrayGetValueAtIndex((CFArrayRef)allPeople, i);
 
 			if (ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil) {
 				CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);

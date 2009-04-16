@@ -1,11 +1,11 @@
 
 UIControls.prototype.alert = function(message, title, buttonLabel) {
-    if (title == undefined || title == null)
-        title = 'Alert';
-    if (buttonLabel == undefined || buttonLabel == null)
-        buttonLabel = 'OK';
+    var options = {
+        title: title,
+        buttonLabel: buttonLabel
+    };
     if (PhoneGap.available)
-        PhoneGap.exec('UIControls.alert', message, title, buttonLabel);
+        PhoneGap.exec('UIControls.alert', message, options);
     else
         alert(message);
 }

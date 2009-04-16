@@ -11,7 +11,7 @@
 
 @implementation Map
 
-+ (void)open:(NSString*)options forWebView:(UIWebView*)webView
+- (void)open:(NSArray*)arguments withDict:(NSDictionary*)options
 {
 }
 

@@ -10,10 +10,14 @@
 
 @implementation DebugConsole
 
-+ (void)log:(NSString*)options forWebView:(UIWebView*)webView
+- (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSArray* arguments = [options componentsSeparatedByString:@"/"];
-    NSLog(@"[%@] %@", [arguments objectAtIndex:0], [[arguments objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
+    NSString* message = [arguments objectAtIndex:0];
+    NSString* log_level = @"INFO";
+    if ([options objectForKey:@"logLevel"])
+        log_level = [options objectForKey:@"logLevel"];
+
+    NSLog(@"[%@] %@", log_level, message);
 }
 
 @end

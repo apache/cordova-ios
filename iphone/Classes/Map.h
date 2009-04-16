@@ -7,12 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PhoneGapCommand.h"
 
-
-@interface Map : NSObject {
-
+@interface Map : PhoneGapCommand {
 }
 
-+ (void)open:(NSString*)options forWebView:(UIWebView*)webView;
+- (void)open:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

@@ -50,14 +50,19 @@
 	Contacts *contacts;
     Console *console;
 	NSURL* appURL;
+    
+    NSMutableDictionary *commandObjects;
 }
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) PhoneGapViewController *viewController;
 //@property (nonatomic, retain) UIImagePickerController *imagePickerController;
 @property (nonatomic, retain) UIActivityIndicatorView *activityView;
+@property (nonatomic, retain) NSMutableDictionary *commandObjects;
 
 //- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;
 //- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
+
+-(id) getCommandInstance:(NSString*)className;
 
 @end
