@@ -18,17 +18,17 @@
     
     function getLocation() {
       debug.log("getLocation");
-      uicontrols.activityStart();
+      navigator.notification.activityStart();
       var suc = function(p){
         debug.log(p.latitude + " " + p.longitude);
-        uicontrols.activityStop();
+        navigator.notification.activityStop();
       };
       var fail = function(){};
       navigator.geolocation.getCurrentPosition(suc,fail);
     }
     
     function customAlert(){
-      uicontrols.alert("Custom alert", "Custom title", "Yup!");
+      navigator.notification.alert("Custom alert", "Custom title", "Yup!");
     }
   
     function beep(){

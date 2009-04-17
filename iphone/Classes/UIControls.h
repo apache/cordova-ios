@@ -17,8 +17,4 @@
 @interface UIControls : PhoneGapCommand {
 }
 
-- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-
 @end
