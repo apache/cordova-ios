@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <AudioToolbox/AudioServices.h>
 #import "PhoneGapCommand.h"
 
 @interface Notification : PhoneGapCommand {
@@ -16,5 +17,6 @@
 - (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

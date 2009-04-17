@@ -38,4 +38,9 @@
     //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] stopAnimating];
 }
 
+- (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+}
+
 @end

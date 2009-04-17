@@ -3,7 +3,6 @@
 #import <CoreLocation/CoreLocation.h>
 #import <UIKit/UINavigationController.h>
 
-#import "Vibrate.h"
 #import "Location.h"
 #import "Device.h"
 #import "Sound.h"

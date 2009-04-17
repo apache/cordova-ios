@@ -1,5 +1,5 @@
 Notification.prototype.vibrate = function(mills) {
-	PhoneGap.exec("Vibrate.vibrate");
+	PhoneGap.exec("Notification.vibrate");
 };
 
 Notification.prototype.beep = function(count, volume) {

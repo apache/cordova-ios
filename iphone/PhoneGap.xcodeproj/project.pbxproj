@@ -34,7 +34,6 @@
 		BB8FC69F0F5BB58D007C7DCE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8FC69E0F5BB58D007C7DCE /* CFNetwork.framework */; };
 		BB8FCC5E0F5F00FF007C7DCE /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = BB8FCC5D0F5F00FF007C7DCE /* Map.m */; };
 		BB8FCE250F5F2CF3007C7DCE /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F8800E650500002FDA36 /* Location.m */; };
-		BB8FCE270F5F2D20007C7DCE /* Vibrate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F4BC0E6397F0002FDA36 /* Vibrate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,8 +69,6 @@
 		8205CB7B0E68A701006CBEEF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		8205CB7C0E68A701006CBEEF /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
 		824041C00E942F0E002F3376 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		8254F4BB0E6397F0002FDA36 /* Vibrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vibrate.h; sourceTree = "<group>"; };
-		8254F4BC0E6397F0002FDA36 /* Vibrate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vibrate.m; sourceTree = "<group>"; };
 		8254F87F0E650500002FDA36 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		8254F8800E650500002FDA36 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
 		825DFB5D0E464E6C000D0A5D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
@@ -148,8 +145,6 @@
 				47FAB7290EF7A663005F55AB /* Sound.m */,
 				1B1B4E690F938A0500ECD4E6 /* UIControls.h */,
 				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
-				8254F4BB0E6397F0002FDA36 /* Vibrate.h */,
-				8254F4BC0E6397F0002FDA36 /* Vibrate.m */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -279,7 +274,6 @@
 				BB8FC5C30F5B3EC4007C7DCE /* Bonjour.m in Sources */,
 				BB8FCC5E0F5F00FF007C7DCE /* Map.m in Sources */,
 				BB8FCE250F5F2CF3007C7DCE /* Location.m in Sources */,
-				BB8FCE270F5F2D20007C7DCE /* Vibrate.m in Sources */,
 				1B64D89A0F6C73C700D12F7F /* DebugConsole.m in Sources */,
 				1B1B4E6B0F938A0500ECD4E6 /* UIControls.m in Sources */,
 				1B1B4FBE0F94571B00ECD4E6 /* PhoneGapCommand.m in Sources */,
