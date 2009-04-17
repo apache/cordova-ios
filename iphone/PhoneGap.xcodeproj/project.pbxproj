@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		079B0A0A0E45734600755F37 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079B0A090E45734600755F37 /* CoreLocation.framework */; };
 		1B1B4E6B0F938A0500ECD4E6 /* UIControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */; };
+		1B1B4FBE0F94571B00ECD4E6 /* PhoneGapCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B4FBD0F94571B00ECD4E6 /* PhoneGapCommand.m */; };
+		1B1B53830F98070D00ECD4E6 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B53820F98070D00ECD4E6 /* Notification.m */; };
 		1B64D89A0F6C73C700D12F7F /* DebugConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B64D8990F6C73C700D12F7F /* DebugConsole.m */; };
 		1D3623260D0F684500981E51 /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* PhoneGapDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -32,13 +34,16 @@
 		BB8FC69F0F5BB58D007C7DCE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8FC69E0F5BB58D007C7DCE /* CFNetwork.framework */; };
 		BB8FCC5E0F5F00FF007C7DCE /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = BB8FCC5D0F5F00FF007C7DCE /* Map.m */; };
 		BB8FCE250F5F2CF3007C7DCE /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F8800E650500002FDA36 /* Location.m */; };
-		BB8FCE270F5F2D20007C7DCE /* Vibrate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F4BC0E6397F0002FDA36 /* Vibrate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1B1B4E690F938A0500ECD4E6 /* UIControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIControls.h; sourceTree = "<group>"; };
 		1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIControls.m; sourceTree = "<group>"; };
+		1B1B4FBC0F94571B00ECD4E6 /* PhoneGapCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapCommand.h; sourceTree = "<group>"; };
+		1B1B4FBD0F94571B00ECD4E6 /* PhoneGapCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneGapCommand.m; sourceTree = "<group>"; };
+		1B1B53810F98070D00ECD4E6 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Notification.h; sourceTree = "<group>"; };
+		1B1B53820F98070D00ECD4E6 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Notification.m; sourceTree = "<group>"; };
 		1B64D8980F6C73C700D12F7F /* DebugConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugConsole.h; sourceTree = "<group>"; };
 		1B64D8990F6C73C700D12F7F /* DebugConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugConsole.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -64,8 +69,6 @@
 		8205CB7B0E68A701006CBEEF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		8205CB7C0E68A701006CBEEF /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
 		824041C00E942F0E002F3376 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		8254F4BB0E6397F0002FDA36 /* Vibrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vibrate.h; sourceTree = "<group>"; };
-		8254F4BC0E6397F0002FDA36 /* Vibrate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vibrate.m; sourceTree = "<group>"; };
 		8254F87F0E650500002FDA36 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		8254F8800E650500002FDA36 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
 		825DFB5D0E464E6C000D0A5D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
@@ -104,26 +107,9 @@
 				1D3623250D0F684500981E51 /* PhoneGapDelegate.m */,
 				47FAB6A70EF751E2005F55AB /* PhoneGapViewController.h */,
 				47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */,
-				1B1B4E690F938A0500ECD4E6 /* UIControls.h */,
-				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
-				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
-				BB8FC5C20F5B3EC4007C7DCE /* Bonjour.m */,
-				8205CB7B0E68A701006CBEEF /* Device.h */,
-				8205CB7C0E68A701006CBEEF /* Device.m */,
-				1B64D8980F6C73C700D12F7F /* DebugConsole.h */,
-				1B64D8990F6C73C700D12F7F /* DebugConsole.m */,
-				47FAB72C0EF7A6C6005F55AB /* Contacts.h */,
-				47FAB72D0EF7A6C6005F55AB /* Contacts.m */,
-				BB8FCC5C0F5F00FF007C7DCE /* Map.h */,
-				BB8FCC5D0F5F00FF007C7DCE /* Map.m */,
-				47FAB7280EF7A663005F55AB /* Sound.h */,
-				47FAB7290EF7A663005F55AB /* Sound.m */,
-				8254F4BB0E6397F0002FDA36 /* Vibrate.h */,
-				8254F4BC0E6397F0002FDA36 /* Vibrate.m */,
-				8254F87F0E650500002FDA36 /* Location.h */,
-				8254F8800E650500002FDA36 /* Location.m */,
-				47F5651F0F3AC95D001DFBDB /* Image.h */,
-				47F565200F3AC95D001DFBDB /* Image.m */,
+				1B1B4FBC0F94571B00ECD4E6 /* PhoneGapCommand.h */,
+				1B1B4FBD0F94571B00ECD4E6 /* PhoneGapCommand.m */,
+				1B1B50FB0F95000A00ECD4E6 /* Commands */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -134,6 +120,33 @@
 				1D6058910D05DD3D006BFB54 /* PhoneGap.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1B1B50FB0F95000A00ECD4E6 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
+				BB8FC5C20F5B3EC4007C7DCE /* Bonjour.m */,
+				47FAB72C0EF7A6C6005F55AB /* Contacts.h */,
+				47FAB72D0EF7A6C6005F55AB /* Contacts.m */,
+				1B64D8980F6C73C700D12F7F /* DebugConsole.h */,
+				1B64D8990F6C73C700D12F7F /* DebugConsole.m */,
+				8205CB7B0E68A701006CBEEF /* Device.h */,
+				8205CB7C0E68A701006CBEEF /* Device.m */,
+				47F5651F0F3AC95D001DFBDB /* Image.h */,
+				47F565200F3AC95D001DFBDB /* Image.m */,
+				8254F87F0E650500002FDA36 /* Location.h */,
+				8254F8800E650500002FDA36 /* Location.m */,
+				BB8FCC5C0F5F00FF007C7DCE /* Map.h */,
+				BB8FCC5D0F5F00FF007C7DCE /* Map.m */,
+				1B1B53810F98070D00ECD4E6 /* Notification.h */,
+				1B1B53820F98070D00ECD4E6 /* Notification.m */,
+				47FAB7280EF7A663005F55AB /* Sound.h */,
+				47FAB7290EF7A663005F55AB /* Sound.m */,
+				1B1B4E690F938A0500ECD4E6 /* UIControls.h */,
+				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
+			);
+			name = Commands;
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
@@ -261,9 +274,10 @@
 				BB8FC5C30F5B3EC4007C7DCE /* Bonjour.m in Sources */,
 				BB8FCC5E0F5F00FF007C7DCE /* Map.m in Sources */,
 				BB8FCE250F5F2CF3007C7DCE /* Location.m in Sources */,
-				BB8FCE270F5F2D20007C7DCE /* Vibrate.m in Sources */,
 				1B64D89A0F6C73C700D12F7F /* DebugConsole.m in Sources */,
 				1B1B4E6B0F938A0500ECD4E6 /* UIControls.m in Sources */,
+				1B1B4FBE0F94571B00ECD4E6 /* PhoneGapCommand.m in Sources */,
+				1B1B53830F98070D00ECD4E6 /* Notification.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

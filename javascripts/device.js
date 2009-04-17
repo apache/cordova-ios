@@ -1,3 +1,6 @@
+if (typeof(DeviceInfo) != 'object')
+    DeviceInfo = {};
+
 /**
  * This represents the PhoneGap API itself, and provides a global namespace for accessing
  * information about the state of PhoneGap.
@@ -63,8 +66,10 @@ PhoneGap.exec = function() {
         PhoneGap.queue.timer = setInterval(PhoneGap.run_command, 10);
 };
 /**
- * Internal function used to dispatch the request to PhoneGap.  It processes the command
- * queue and executes the next command on the list.
+ * Internal function used to dispatch the request to PhoneGap.  It processes the
+ * command queue and executes the next command on the list.  If one of the
+ * arguments is a JavaScript object, it will be passed on the QueryString of the
+ * url, which will be turned into a dictionary on the other end.
  * @private
  */
 PhoneGap.run_command = function() {
@@ -80,10 +85,25 @@ PhoneGap.run_command = function() {
     }
 
     var uri = [];
+    var dict = null;
     for (var i = 1; i < args.length; i++) {
-        uri.push(encodeURIComponent(args[i]));
+        if (typeof(args[i]) == 'object')
+            dict = args[i];
+        else
+            uri.push(encodeURIComponent(args[i]));
     }
-    document.location = "gap://" + args[0] + "/" + uri.join("/");
+    var url = "gap://" + args[0] + "/" + uri.join("/");
+    if (dict != null) {
+        var query_args = [];
+        for (var name in dict) {
+            if (typeof(name) != 'string')
+                continue;
+            query_args.push(encodeURIComponent(name) + "=" + encodeURIComponent(dict[name]));
+        }
+        if (query_args.length > 0)
+            url += "?" + query_args.join("&");
+    }
+    document.location = url;
 
 };
 

@@ -8,14 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "PhoneGapCommand.h"
 
-
-@interface Bonjour : NSObject
+@interface Bonjour : PhoneGapCommand
 {
     NSString* __identifier;
 }
 
-+ (void)start:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)stop:(NSString*)options forWebView:(UIWebView*)webView;
+- (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

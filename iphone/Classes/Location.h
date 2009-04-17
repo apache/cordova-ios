@@ -8,32 +8,26 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "PhoneGapCommand.h"
 
-@protocol LocationDelegate <NSObject>
-@required
-@end
-
-@interface Location : NSObject <CLLocationManagerDelegate> {
+@interface Location : PhoneGapCommand <CLLocationManagerDelegate> {
 	CLLocationManager *locationManager;
-	CLLocation		  *lastKnownLocation;
-	id                delegate;
     BOOL              __started;
 }
 
-@property (nonatomic, retain) CLLocation *lastKnownLocation;
 @property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic,assign) id <LocationDelegate> delegate;
 
-+ (void)get:(NSString*)options forWebView:(UIWebView*)webView;
-+ (void)start:(NSString*)options forWebView:(UIWebView*)webView;
+- (void)start:(NSMutableArray*)arguments
+     withDict:(NSMutableDictionary*)options;
 
-- (void)start;
-- (NSString *) getPosition;
+- (void)stop:(NSMutableArray*)arguments
+    withDict:(NSMutableDictionary*)options;
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation;
 
-+ (Location *)sharedInstance;
+- (void)locationManager:(CLLocationManager *)manager
+       didFailWithError:(NSError *)error;
 
 @end

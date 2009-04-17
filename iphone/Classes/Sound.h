@@ -8,14 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioServices.h>
+#import "PhoneGapCommand.h"
 
-@interface Sound : NSObject {
-	SystemSoundID soundID;
+@interface Sound : PhoneGapCommand {
 }
 
-+ (void) play:(NSString*)options forWebView:(UIWebView*)webView;
-
-- (id) initWithContentsOfFile:(NSString * )path;
-- (void) play;
+- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

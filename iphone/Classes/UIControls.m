@@ -8,36 +8,13 @@
 
 #import "UIControls.h"
 
-
 @implementation UIControls
 
-+ (void)alert:(NSString*)options forWebView:(UIWebView*)webView
+/*
++ (void)createTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-	NSArray* arguments = [options componentsSeparatedByString:@"/"];
-	NSString* message  = [[arguments objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSString* title    = @"Alert";
-	NSString* button   = @"OK";
-    
-	if ([arguments count] >= 1)
-		title = [[arguments objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	if ([arguments count] >= 2)
-		button = [[arguments objectAtIndex:2] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-	UIAlertView *openURLAlert = [[UIAlertView alloc]
-								 initWithTitle:title
-								 message:message delegate:nil cancelButtonTitle:button otherButtonTitles:nil];
-	[openURLAlert show];
-	[openURLAlert release];
+    id* controller = [[UITabBar alloc] initWithFrame:(
 }
-
-+ (void)activityStart:(NSString*)options forWebView:(UIWebView*)webView
-{
-    [(UIActivityIndicatorView*)[webView.window viewWithTag:2] startAnimating];
-}
-
-+ (void)activityStop:(NSString*)options forWebView:(UIWebView*)webView
-{
-    [(UIActivityIndicatorView*)[webView.window viewWithTag:2] stopAnimating];
-}
+ */
 
 @end

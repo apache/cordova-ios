@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AddressBook/ABAddressBook.h>
+#import "PhoneGapCommand.h"
 
-@interface Contacts : NSObject {
+@interface Contacts : PhoneGapCommand {
 	ABAddressBookRef addressBook;
 	NSArray *allPeople;
 	CFIndex nPeople;
@@ -18,11 +19,10 @@
 @property (getter=getAddressBook,assign) ABAddressBookRef addressBook;
 @property (getter=getContacts,assign) NSArray *allPeople;
 
-+ (void)get:(NSString*)options forWebView:(UIWebView*)webView;
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView;
 
-//- (NSString *)stringValueForRow:(NSInteger)row;
+- (void)get:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (id)init;
 - (void) displayContact:(ABRecordRef *) person;
 - (void) addContact;
 

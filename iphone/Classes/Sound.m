@@ -8,12 +8,11 @@
 
 #import "Sound.h"
 
-
 @implementation Sound
 
-+ (void) play:(NSString*)options forWebView:(UIWebView*)webView
+- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    NSString* fileName = options;
+    NSString* fileName = [arguments objectAtIndex:0];
     NSBundle * mainBundle = [NSBundle mainBundle];
     NSArray *soundFile = [fileName componentsSeparatedByString:@"."];
     
@@ -21,32 +20,14 @@
     NSString *ext = (NSString *)[soundFile objectAtIndex:1];
     NSLog(file);
     NSString* filePath = [mainBundle pathForResource:file ofType:ext];
+    
     if (filePath != nil)
     {
-        Sound* sound = [[Sound alloc] initWithContentsOfFile:filePath];
-        [sound play];
-        [sound release];
+        SystemSoundID soundID;
+		NSURL *fileURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
+		AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &soundID);
+        AudioServicesPlaySystemSound(soundID);
     }
 }
 
-- (id) initWithContentsOfFile:(NSString *)path
-{
-	self = [super init];
-	if (self != nil) {
-		NSURL *filePath = [NSURL fileURLWithPath:path isDirectory:NO];
-		AudioServicesCreateSystemSoundID((CFURLRef)filePath, &soundID);
-	}
-	return self;
-}
-
-/*
- * play - Plays the sound
- */ 
-- (void) play {
-	AudioServicesPlaySystemSound(soundID);
-}
-
-- (void) dealloc {
-	[super dealloc];
-}
 @end
