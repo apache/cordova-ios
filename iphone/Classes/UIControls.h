@@ -8,13 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-/*
 #import <UIKit/UITabBar.h>
 #import <UIKit/UITabBarController.h>
-*/
+
 #import "PhoneGapCommand.h"
 
-@interface UIControls : PhoneGapCommand {
+@interface UIControls : PhoneGapCommand <UITabBarDelegate> {
+    UITabBar* tabbar;
+    
+    UIToolbar* toolbar;
 }
 
 @end

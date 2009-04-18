@@ -8,6 +8,7 @@
 @synthesize viewController;
 @synthesize activityView;
 @synthesize commandObjects;
+@synthesize settings;
 
 //@synthesize imagePickerController;
 
@@ -24,7 +25,14 @@
 {
     id obj = [commandObjects objectForKey:className];
     if (!obj) {
-        obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
+        // attempt to load the settings for this command class
+        NSDictionary* classSettings;
+        classSettings = [settings objectForKey:className];
+
+        if (classSettings)
+            obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
+        else
+            obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         NSLog(@"******* Object %@ created from scratch for %@", obj, className);
         
         [commandObjects setObject:obj forKey:className];
@@ -49,20 +57,21 @@
 	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
 	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
 	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-										  propertyListFromData:plistXML
-										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-										  format:&format errorDescription:&errorDesc];
+                                  propertyListFromData:plistXML
+                                  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+                                  format:&format errorDescription:&errorDesc];
+    settings = [[NSDictionary alloc] initWithDictionary:temp];
     
-    NSNumber *offline              = [temp objectForKey:@"Offline"];
-    NSString *url                  = [temp objectForKey:@"Callback"];
-    NSNumber *detectNumber         = [temp objectForKey:@"DetectPhoneNumber"];
-    NSNumber *useLocation          = [temp objectForKey:@"UseLocation"];
-    NSNumber *useAccelerometer     = [temp objectForKey:@"UseAccelerometer"];
-    NSNumber *autoRotate           = [temp objectForKey:@"AutoRotate"];
-    NSString *startOrientation     = [temp objectForKey:@"StartOrientation"];
-    NSString *rotateOrientation    = [temp objectForKey:@"RotateOrientation"];
-    NSString *topStatusBar         = [temp objectForKey:@"TopStatusBar"];
-    NSString *topActivityIndicator = [temp objectForKey:@"TopActivityIndicator"];
+    NSNumber *offline              = [settings objectForKey:@"Offline"];
+    NSString *url                  = [settings objectForKey:@"Callback"];
+    NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
+    NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
+    NSNumber *useAccelerometer     = [settings objectForKey:@"UseAccelerometer"];
+    NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
+    NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
+    NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
+    NSString *topStatusBar         = [settings objectForKey:@"TopStatusBar"];
+    NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
     
 	/*
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
@@ -301,9 +310,11 @@
             NSString* className = [components objectAtIndex:0];
             NSString* methodName = [components objectAtIndex:1];
             
+            // Fetch an instance of this class
+            PhoneGapCommand* obj = [self getCommandInstance:className];
+            
             // construct the fill method name to ammend the second argument.
             NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", methodName];
-            PhoneGapCommand* obj = [self getCommandInstance:className];
             if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)])
             {
                 [obj performSelector:NSSelectorFromString(fullMethodName) withObject:arguments withObject:options];

@@ -22,5 +22,15 @@
 	<string>portrait</string>
 	<key>RotateOrientation</key>
 	<string>portrait</string>
+	<key>UIControls</key>
+	<dict>
+		<key>TabbarSettings</key>
+		<dict>
+			<key>height</key>
+			<integer>49</integer>
+			<key>position</key>
+			<string>bottom</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
