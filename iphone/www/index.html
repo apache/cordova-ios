@@ -34,7 +34,17 @@
     function beep(){
       debug.log("beep");
       navigator.notification.beep(2);
-      PhoneGap.exec("UIControls.createTabbar", 'foo', 'bar');
+       try {
+      PhoneGap.exec("UIControls.createTabBar");
+      PhoneGap.exec("UIControls.createTabBarItem", "toprated", "Top Rated", "tabButton:TopRated", 1);
+      PhoneGap.exec("UIControls.createTabBarItem", "recents", "Recents", "tabButton:Recents", 2);
+      PhoneGap.exec("UIControls.createTabBarItem", "history", "History", "tabButton:History", 3);
+      PhoneGap.exec("UIControls.createTabBarItem", "more", "More", "tabButton:More", 4);
+      PhoneGap.exec("UIControls.showTabBar");
+      PhoneGap.exec("UIControls.showTabBarItems", "toprated", "recents", "history", "more");
+       } catch(e) {
+           debug.log(e);
+       }
     }
   
     function vibrate(){

@@ -14,9 +14,20 @@
 #import "PhoneGapCommand.h"
 
 @interface UIControls : PhoneGapCommand <UITabBarDelegate> {
-    UITabBar* tabbar;
-    
-    UIToolbar* toolbar;
+    UITabBar* tabBar;
+    NSMutableDictionary* tabBarItems;
 }
+
+/* Tab Bar methods 
+ */
+- (void)createTabBar:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)showTabBar:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)hideTabBar:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options;
+
+/* Tab Bar Item methods
+ */
+- (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
 
 @end
