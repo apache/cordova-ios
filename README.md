@@ -34,22 +34,39 @@ API
 
 ### Device
 
+Exposes properties of the phone, such as its device ID, model, and OS version number.
+
 ### Location
+
+Gain access to the Latitude / Longitude of the device, and depending on the type of device, the course, speed, and altitude.
     
 ### Accelerometer
+
+Monitor the accelerometer on the device to detect orientation, shaking and other similar actions.
     
 ### Contacts
 
+Query the phone addressbook to read the users contacts.
+
 ### Orientation
+
+Read the device layout orientation, e.g. landscape vs portrait.
 
 ### Camera
 
+Brings up the camera or photo browser on the phone to allow the user to upload a photo.
+
 ### Vibrate
+
+Triggers the vibration alert on the phone, if it is supported.
 
 ### Sound
 
+Play sound files (WAV, MP3, etc).
+
 ### Telephony
 
+Trigger and activate phone calls.
 
 XUI
 -------------------------------------------------------------

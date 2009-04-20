@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Acceleration</title>
+		<title>JsDoc Reference - Accelerometer</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Acceleration
+				Class Accelerometer
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Acceleration.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Accelerometer.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,9 +265,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Acceleration.html">Acceleration</a></b>(x, y, z)
+								<b><a href="../symbols/Accelerometer.html">Accelerometer</a></b>()
 							</div>
-							<div class="description">This class contains acceleration information</div>
+							<div class="description">This class provides access to device accelerometer data.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -278,7 +278,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Acceleration.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Accelerometer.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -292,39 +292,9 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/Acceleration.html#timestamp">timestamp</a></b>
+								<b><a href="../symbols/Accelerometer.html#lastAcceleration">lastAcceleration</a></b>
 								</div>
-								<div class="description">The time that the acceleration was obtained.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Acceleration.html#x">x</a></b>
-								</div>
-								<div class="description">The force applied by the device in the x-axis.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Acceleration.html#y">y</a></b>
-								</div>
-								<div class="description">The force applied by the device in the y-axis.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Acceleration.html#z">z</a></b>
-								</div>
-								<div class="description">The force applied by the device in the z-axis.</div>
+								<div class="description">The last known acceleration.</div>
 							</td>
 						</tr>
 					
@@ -337,6 +307,51 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Accelerometer.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Accelerometer.html#clearWatch">clearWatch</a></b>(watchId)
+								</div>
+								<div class="description">Clears the specified accelerometer watch.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Accelerometer.html#getCurrentAcceleration">getCurrentAcceleration</a></b>(successCallback, errorCallback, options)
+								</div>
+								<div class="description">Asynchronously aquires the current acceleration.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Accelerometer.html#watchAcceleration">watchAcceleration</a></b>(successCallback, errorCallback, options)
+								</div>
+								<div class="description">Asynchronously aquires the acceleration repeatedly at a given interval.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -348,40 +363,17 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Acceleration</b>(x, y, z)
+						<b>Accelerometer</b>()
 				</div>
 				
 				<div class="description">
-					This class contains acceleration information
+					This class provides access to device accelerometer data.
 					
 				</div>
 				
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{Number}</span>  <b>x</b>
-								
-							</dt>
-								<dd>The force applied by the device in the x-axis.</dd>
-						
-							<dt>
-								<span class="light fixedFont">{Number}</span>  <b>y</b>
-								
-							</dt>
-								<dd>The force applied by the device in the y-axis.</dd>
-						
-							<dt>
-								<span class="light fixedFont">{Number}</span>  <b>z</b>
-								
-							</dt>
-								<dd>The force applied by the device in the z-axis.</dd>
-						
-						</dl>
 					
 					
 					
@@ -399,81 +391,15 @@ ul.inheritsList
 					Field Detail
 				</div>
 				
-					<a name="timestamp"> </a>
+					<a name="lastAcceleration"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>timestamp</b>
+					<b>lastAcceleration</b>
 					
 					</div>
 					<div class="description">
-						The time that the acceleration was obtained.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="x"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>x</b>
-					
-					</div>
-					<div class="description">
-						The force applied by the device in the x-axis.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="y"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>y</b>
-					
-					</div>
-					<div class="description">
-						The force applied by the device in the y-axis.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="z"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>z</b>
-					
-					</div>
-					<div class="description">
-						The force applied by the device in the z-axis.
+						The last known acceleration.
 						
 						
 					</div>
@@ -491,6 +417,149 @@ ul.inheritsList
 
 <!-- ============================== method details ========================= -->		
 			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="clearWatch"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clearWatch</b>(watchId)
+					
+					</div>
+					<div class="description">
+						Clears the specified accelerometer watch.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>watchId</b>
+									
+								</dt>
+								<dd>The ID of the watch returned from #watchAcceleration.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getCurrentAcceleration"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getCurrentAcceleration</b>(successCallback, errorCallback, options)
+					
+					</div>
+					<div class="description">
+						Asynchronously aquires the current acceleration.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
+									
+								</dt>
+								<dd>The function to call when the acceleration
+data is available</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
+									
+								</dt>
+								<dd>The function to call when there is an error 
+getting the acceleration data.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/AccelerationOptions.html">AccelerationOptions</a>}</span> <b>options</b>
+									
+								</dt>
+								<dd>The options for getting the accelerometer data
+such as timeout.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="watchAcceleration"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>watchAcceleration</b>(successCallback, errorCallback, options)
+					
+					</div>
+					<div class="description">
+						Asynchronously aquires the acceleration repeatedly at a given interval.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
+									
+								</dt>
+								<dd>The function to call each time the acceleration
+data is available</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
+									
+								</dt>
+								<dd>The function to call when there is an error 
+getting the acceleration data.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/AccelerationOptions.html">AccelerationOptions</a>}</span> <b>options</b>
+									
+								</dt>
+								<dd>The options for getting the accelerometer data
+such as timeout.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -502,7 +571,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Apr 16 2009 18:42:09 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:47:52 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

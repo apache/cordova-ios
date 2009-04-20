@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Position</title>
+		<title>JsDoc Reference - PositionOptions</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Position
+				Class PositionOptions
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Position.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class PositionOptions.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,9 +265,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Position.html">Position</a></b>(lat, lng, acc, alt, altacc, head, vel)
+								<b><a href="../symbols/PositionOptions.html">PositionOptions</a></b>()
 							</div>
-							<div class="description">This class contains position information.</div>
+							<div class="description">This class specifies the options for requesting position data.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -278,7 +278,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Position.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class PositionOptions.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -292,9 +292,9 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#accuracy">accuracy</a></b>
+								<b><a href="../symbols/PositionOptions.html#enableHighAccuracy">enableHighAccuracy</a></b>
 								</div>
-								<div class="description">The accuracy of the position.</div>
+								<div class="description">Specifies the desired position accuracy.</div>
 							</td>
 						</tr>
 					
@@ -302,69 +302,10 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#altitude">altitude</a></b>
+								<b><a href="../symbols/PositionOptions.html#timeout">timeout</a></b>
 								</div>
-								<div class="description">The altitude of the position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#altitudeAccuracy">altitudeAccuracy</a></b>
-								</div>
-								<div class="description">The altitude accuracy of the position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#heading">heading</a></b>
-								</div>
-								<div class="description">The direction the device is moving at the position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#latitude">latitude</a></b>
-								</div>
-								<div class="description">The latitude of the position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#longitude">longitude</a></b>
-								</div>
-								<div class="description">The longitude of the position,</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#timestamp">timestamp</a></b>
-								</div>
-								<div class="description">The time that the position was obtained.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Position.html#velocity">velocity</a></b>
-								</div>
-								<div class="description">The velocity with which the device is moving at the position.</div>
+								<div class="description">The timeout after which if position data cannot be obtained the errorCallback
+is called.</div>
 							</td>
 						</tr>
 					
@@ -388,64 +329,17 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Position</b>(lat, lng, acc, alt, altacc, head, vel)
+						<b>PositionOptions</b>()
 				</div>
 				
 				<div class="description">
-					This class contains position information.
+					This class specifies the options for requesting position data.
 					
 				</div>
 				
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>lat</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>lng</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>acc</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>alt</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>altacc</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>head</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>vel</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -463,15 +357,15 @@ ul.inheritsList
 					Field Detail
 				</div>
 				
-					<a name="accuracy"> </a>
+					<a name="enableHighAccuracy"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>accuracy</b>
+					<b>enableHighAccuracy</b>
 					
 					</div>
 					<div class="description">
-						The accuracy of the position.
+						Specifies the desired position accuracy.
 						
 						
 					</div>
@@ -485,147 +379,16 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="altitude"> </a>
+					<a name="timeout"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>altitude</b>
+					<b>timeout</b>
 					
 					</div>
 					<div class="description">
-						The altitude of the position.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="altitudeAccuracy"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>altitudeAccuracy</b>
-					
-					</div>
-					<div class="description">
-						The altitude accuracy of the position.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="heading"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>heading</b>
-					
-					</div>
-					<div class="description">
-						The direction the device is moving at the position.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="latitude"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>latitude</b>
-					
-					</div>
-					<div class="description">
-						The latitude of the position.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="longitude"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>longitude</b>
-					
-					</div>
-					<div class="description">
-						The longitude of the position,
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="timestamp"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>timestamp</b>
-					
-					</div>
-					<div class="description">
-						The time that the position was obtained.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="velocity"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>velocity</b>
-					
-					</div>
-					<div class="description">
-						The velocity with which the device is moving at the position.
+						The timeout after which if position data cannot be obtained the errorCallback
+is called.
 						
 						
 					</div>
@@ -654,7 +417,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Apr 16 2009 18:42:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:47:52 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

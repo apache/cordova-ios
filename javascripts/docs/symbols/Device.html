@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Orientation</title>
+		<title>JsDoc Reference - Device</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Orientation
+				Class Device
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Orientation.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Device.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,9 +265,10 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Orientation.html">Orientation</a></b>()
+								<b><a href="../symbols/Device.html">Device</a></b>()
 							</div>
-							<div class="description">This class provides access to the device orientation.</div>
+							<div class="description">this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
+phone, etc.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -276,81 +277,8 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Orientation.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Orientation.html#lastOrientation">lastOrientation</a></b>
-								</div>
-								<div class="description">The last known orientation.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 
 <!-- ============================== methods summary ======================== -->
-			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Orientation.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Orientation.html#clearWatch">clearWatch</a></b>(watchId)
-								</div>
-								<div class="description">Clears the specified orientation watch.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Orientation.html#getCurrentOrientation">getCurrentOrientation</a></b>(successCallback, errorCallback)
-								</div>
-								<div class="description">Asynchronously aquires the current orientation.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Orientation.html#watchOrientation">watchOrientation</a></b>(successCallback, errorCallback)
-								</div>
-								<div class="description">Asynchronously aquires the orientation repeatedly at a given interval.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -363,11 +291,12 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Orientation</b>()
+						<b>Device</b>()
 				</div>
 				
 				<div class="description">
-					This class provides access to the device orientation.
+					this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
+phone, etc.
 					
 				</div>
 				
@@ -387,164 +316,8 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name="lastOrientation"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>lastOrientation</b>
-					
-					</div>
-					<div class="description">
-						The last known orientation.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="clearWatch"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>clearWatch</b>(watchId)
-					
-					</div>
-					<div class="description">
-						Clears the specified orientation watch.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>watchId</b>
-									
-								</dt>
-								<dd>The ID of the watch returned from #watchOrientation.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getCurrentOrientation"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getCurrentOrientation</b>(successCallback, errorCallback)
-					
-					</div>
-					<div class="description">
-						Asynchronously aquires the current orientation.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
-									
-								</dt>
-								<dd>The function to call when the orientation
-is known.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
-									
-								</dt>
-								<dd>The function to call when there is an error 
-getting the orientation.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="watchOrientation"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>watchOrientation</b>(successCallback, errorCallback)
-					
-					</div>
-					<div class="description">
-						Asynchronously aquires the orientation repeatedly at a given interval.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
-									
-								</dt>
-								<dd>The function to call each time the orientation
-data is available.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
-									
-								</dt>
-								<dd>The function to call when there is an error 
-getting the orientation data.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -557,7 +330,7 @@ getting the orientation data.</dd>
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Apr 16 2009 18:42:09 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:47:52 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

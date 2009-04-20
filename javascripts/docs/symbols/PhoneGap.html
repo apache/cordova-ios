@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - UIControls</title>
+		<title>JsDoc Reference - PhoneGap</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class UIControls
+				Class PhoneGap
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class UIControls.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class PhoneGap.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,10 +265,10 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/UIControls.html">UIControls</a></b>()
+								<b><a href="../symbols/PhoneGap.html">PhoneGap</a></b>()
 							</div>
-							<div class="description">This class exposes mobile phone interface controls to JavaScript, such as
-native alerts, tab and tool bars, etc.</div>
+							<div class="description">This represents the PhoneGap API itself, and provides a global namespace for accessing
+information about the state of PhoneGap.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -277,8 +277,75 @@ native alerts, tab and tool bars, etc.</div>
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class PhoneGap.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								PhoneGap.<b><a href="../symbols/PhoneGap.html#.available">available</a></b>
+								</div>
+								<div class="description">Boolean flag indicating if the PhoneGap API is available and initialized.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class PhoneGap.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">PhoneGap.<b><a href="../symbols/PhoneGap.html#.addConstructor">addConstructor</a></b>(func)
+								</div>
+								<div class="description">Add an initialization function to a queue that ensures it will run and initialize
+application constructors only once PhoneGap has been initialized.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">PhoneGap.<b><a href="../symbols/PhoneGap.html#.exec">exec</a></b>(command, args)
+								</div>
+								<div class="description">Execute a PhoneGap command in a queued fashion, to ensure commands do not
+execute with any race conditions, and only run when PhoneGap is ready to
+recieve them.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -291,12 +358,12 @@ native alerts, tab and tool bars, etc.</div>
 				</div>
 				
 				<div class="fixedFont">
-						<b>UIControls</b>()
+						<b>PhoneGap</b>()
 				</div>
 				
 				<div class="description">
-					This class exposes mobile phone interface controls to JavaScript, such as
-native alerts, tab and tool bars, etc.
+					This represents the PhoneGap API itself, and provides a global namespace for accessing
+information about the state of PhoneGap.
 					
 				</div>
 				
@@ -316,8 +383,121 @@ native alerts, tab and tool bars, etc.
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name=".available"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">PhoneGap.</span><b>available</b>
+					
+					</div>
+					<div class="description">
+						Boolean flag indicating if the PhoneGap API is available and initialized.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name=".addConstructor"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">PhoneGap.</span><b>addConstructor</b>(func)
+					
+					</div>
+					<div class="description">
+						Add an initialization function to a queue that ensures it will run and initialize
+application constructors only once PhoneGap has been initialized.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>The function callback you want run once PhoneGap is initialized</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".exec"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">PhoneGap.</span><b>exec</b>(command, args)
+					
+					</div>
+					<div class="description">
+						Execute a PhoneGap command in a queued fashion, to ensure commands do not
+execute with any race conditions, and only run when PhoneGap is ready to
+recieve them.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>command</b>
+									
+								</dt>
+								<dd>Command to be run in PhoneGap, e.g. "ClassName.method"</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String[]}</span> <b>args</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Zero or more arguments to pass to the method</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -330,7 +510,7 @@ native alerts, tab and tool bars, etc.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Apr 16 2009 18:42:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:47:52 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

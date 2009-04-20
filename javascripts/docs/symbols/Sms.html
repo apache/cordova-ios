@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Geolocation</title>
+		<title>JsDoc Reference - Sms</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Geolocation
+				Class Sms
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Geolocation.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Sms.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,9 +265,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Geolocation.html">Geolocation</a></b>()
+								<b><a href="../symbols/Sms.html">Sms</a></b>()
 							</div>
-							<div class="description">This class provides access to device GPS data.</div>
+							<div class="description">This class provides access to the device SMS functionality.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -276,40 +276,12 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Geolocation.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Geolocation.html#lastPosition">lastPosition</a></b>
-								</div>
-								<div class="description">The last known GPS position.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Geolocation.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Sms.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -322,45 +294,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Geolocation.html#clearWatch">clearWatch</a></b>(watchId)
+								<div class="fixedFont"><b><a href="../symbols/Sms.html#send">send</a></b>(number, message, successCallback, errorCallback, options)
 								</div>
-								<div class="description">Clears the specified position watch.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Geolocation.html#getCurrentPosition">getCurrentPosition</a></b>(successCallback, errorCallback, options)
-								</div>
-								<div class="description">Asynchronously aquires the current position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Geolocation.html#setError">setError</a></b>(message)
-								</div>
-								<div class="description">Called by the geolocation framework when an error occurs while looking up the current position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Geolocation.html#setLocation">setLocation</a></b>(position)
-								</div>
-								<div class="description">Called by the geolocation framework when the current location is found.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Geolocation.html#watchPosition">watchPosition</a></b>(successCallback, errorCallback, options)
-								</div>
-								<div class="description">Asynchronously aquires the position repeatedly at a given interval.</div>
+								<div class="description">Sends an SMS message.</div>
 							</td>
 						</tr>
 					
@@ -381,11 +317,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Geolocation</b>()
+						<b>Sms</b>()
 				</div>
 				
 				<div class="description">
-					This class provides access to device GPS data.
+					This class provides access to the device SMS functionality.
 					
 				</div>
 				
@@ -405,33 +341,6 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name="lastPosition"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>lastPosition</b>
-					
-					</div>
-					<div class="description">
-						The last known GPS position.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -439,15 +348,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="clearWatch"> </a>
+					<a name="send"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>clearWatch</b>(watchId)
+					<b>send</b>(number, message, successCallback, errorCallback, options)
 					
 					</div>
 					<div class="description">
-						Clears the specified position watch.
+						Sends an SMS message.
 						
 						
 					</div>
@@ -459,184 +368,34 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>watchId</b>
+									<span class="light fixedFont">{Integer}</span> <b>number</b>
 									
 								</dt>
-								<dd>The ID of the watch returned from #watchPosition.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getCurrentPosition"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getCurrentPosition</b>(successCallback, errorCallback, options)
-					
-					</div>
-					<div class="description">
-						Asynchronously aquires the current position.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
-									
-								</dt>
-								<dd>The function to call when the position
-data is available</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
-									
-								</dt>
-								<dd>The function to call when there is an error 
-getting the position data.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/PositionOptions.html">PositionOptions</a>}</span> <b>options</b>
-									
-								</dt>
-								<dd>The options for getting the position data
-such as timeout.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setError"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setError</b>(message)
-					
-					</div>
-					<div class="description">
-						Called by the geolocation framework when an error occurs while looking up the current position.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+								<dd>The phone number to send the message to.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>message</b>
 									
 								</dt>
-								<dd>The text of the error message.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setLocation"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setLocation</b>(position)
-					
-					</div>
-					<div class="description">
-						Called by the geolocation framework when the current location is found.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/PositionOptions.html">PositionOptions</a>}</span> <b>position</b>
-									
-								</dt>
-								<dd>The current position.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="watchPosition"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>watchPosition</b>(successCallback, errorCallback, options)
-					
-					</div>
-					<div class="description">
-						Asynchronously aquires the position repeatedly at a given interval.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+								<dd>The contents of the SMS message to send.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
 									
 								</dt>
-								<dd>The function to call each time the position
-data is available</dd>
+								<dd>The function to call when the SMS message is sent.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
 									
 								</dt>
-								<dd>The function to call when there is an error 
-getting the position data.</dd>
+								<dd>The function to call when there is an error sending the SMS message.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{<a href="../symbols/PositionOptions.html">PositionOptions</a>}</span> <b>options</b>
 									
 								</dt>
-								<dd>The options for getting the position data
-such as timeout and the frequency of the watch.</dd>
+								<dd>The options for accessing the GPS location such as timeout and accuracy.</dd>
 							
 							</dl>
 						
@@ -661,7 +420,7 @@ such as timeout and the frequency of the watch.</dd>
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Apr 16 2009 18:42:09 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:47:53 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

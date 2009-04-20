@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Camera</title>
+		<title>JsDoc Reference - AccelerationOptions</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,7 +236,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Camera
+				Class AccelerationOptions
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Camera.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class AccelerationOptions.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -265,9 +265,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Camera.html">Camera</a></b>()
+								<b><a href="../symbols/AccelerationOptions.html">AccelerationOptions</a></b>()
 							</div>
-							<div class="description">This class provides access to the device camera.</div>
+							<div class="description">This class specifies the options for requesting acceleration data.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -276,17 +276,14 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-
-<!-- ============================== methods summary ======================== -->
-			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Camera.">
-					<caption>Method Summary</caption>
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class AccelerationOptions.">
+					<caption>Field Summary</caption>
 					<thead>
 						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -294,9 +291,11 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Camera.html#getPicture">getPicture</a></b>(successCallback, errorCallback, options)
+								<div class="fixedFont">
+								<b><a href="../symbols/AccelerationOptions.html#timeout">timeout</a></b>
 								</div>
-								<div class="description"></div>
+								<div class="description">The timeout after which if acceleration data cannot be obtained the errorCallback
+is called.</div>
 							</td>
 						</tr>
 					
@@ -305,6 +304,9 @@ ul.inheritsList
 				
 				
 				
+			
+
+<!-- ============================== methods summary ======================== -->
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -317,11 +319,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Camera</b>()
+						<b>AccelerationOptions</b>()
 				</div>
 				
 				<div class="description">
-					This class provides access to the device camera.
+					This class specifies the options for requesting acceleration data.
 					
 				</div>
 				
@@ -341,54 +343,26 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-
-<!-- ============================== method details ========================= -->		
-			
 				<div class="sectionTitle">
-					Method Detail
+					Field Detail
 				</div>
 				
-					<a name="getPicture"> </a>
+					<a name="timeout"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>getPicture</b>(successCallback, errorCallback, options)
+					<b>timeout</b>
 					
 					</div>
 					<div class="description">
-						
+						The timeout after which if acceleration data cannot be obtained the errorCallback
+is called.
 						
 						
 					</div>
 					
 					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>successCallback</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>errorCallback</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>options</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
+
 						
 						
 						
@@ -396,6 +370,9 @@ ul.inheritsList
 
 					
 				
+			
+
+<!-- ============================== method details ========================= -->		
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -408,7 +385,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Apr 16 2009 18:42:09 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:47:52 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
