@@ -24,13 +24,10 @@
  * Create a native tab bar at either the top or the bottom of the display.
  * @brief creates a tab bar
  * @param arguments unused
- * @param options used to indicate options for where and how the tab bar should be placed
- * - \c height integer indicating the height of the tab bar (default: \c 49)
- * - \c position specifies whether the tab bar will be placed at the \c top or \c bottom of the screen (default: \c bottom)
+ * @param options unused
  */
 - (void)createTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-    NSLog(@"createTabBar");
     tabBar = [UITabBar new];
     [tabBar sizeToFit];
     tabBar.delegate = self;
@@ -46,11 +43,12 @@
  * Show the tab bar after its been created.
  * @brief show the tab bar
  * @param arguments unused
- * @param options unused
+ * @param options used to indicate options for where and how the tab bar should be placed
+ * - \c height integer indicating the height of the tab bar (default: \c 49)
+ * - \c position specifies whether the tab bar will be placed at the \c top or \c bottom of the screen (default: \c bottom)
  */
 - (void)showTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-    NSLog(@"showTabBar");
     CGFloat height = 49.0f;
     BOOL atBottom = YES;
     
@@ -65,7 +63,6 @@
      CGRect webViewBounds = webView.bounds;
      CGRect tabBarBounds;
      if (atBottom) {
-         NSLog(@"Positioning tabbar at bottom");
          tabBarBounds = CGRectMake(
              webViewBounds.origin.x,
              webViewBounds.origin.y + webViewBounds.size.height - height,
@@ -79,7 +76,6 @@
             webViewBounds.size.height - height
          );
      } else {
-         NSLog(@"Positioning tabbar at top");
          tabBarBounds = CGRectMake(
              webViewBounds.origin.x,
              webViewBounds.origin.y,
@@ -106,7 +102,6 @@
  */
 - (void)hideTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-    NSLog(@"hideTabBar");
     tabBar.hidden = YES;
 }
 
@@ -139,7 +134,6 @@
  */
 - (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-    NSLog(@"createTabBarItem");
     NSString  *name      = [arguments objectAtIndex:0];
     NSString  *title     = [arguments objectAtIndex:1];
     NSString  *imageName = [arguments objectAtIndex:2];
@@ -147,7 +141,6 @@
 
     UITabBarItem *item;    
     if ([[imageName substringWithRange:NSMakeRange(0, 10)] isEqualTo:@"tabButton:"]) {
-        NSLog(@"Tab button!!");
         UIBarButtonSystemItem systemItem;
         if ([imageName isEqualTo:@"tabButton:More"])       systemItem = UITabBarSystemItemMore;
         if ([imageName isEqualTo:@"tabButton:Favorites"])  systemItem = UITabBarSystemItemFavorites;
@@ -186,7 +179,6 @@
  */
 - (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-    NSLog(@"updateTabBarItem");
     NSString  *name = [arguments objectAtIndex:0];
     UITabBarItem *item = [tabBarItems objectForKey:name];
     if (item)
@@ -204,7 +196,6 @@
  */
 - (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options
 {
-    NSLog(@"showTabBarItems");
     int i, count = [arguments count];
     NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
     for (i = 0; i < count; i++) {
@@ -293,6 +284,12 @@
     }
 }
 */
+
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
+{
+    NSString * jsCallBack = [NSString stringWithFormat:@"uicontrols.tabBarItemSelected(%d);", item.tag];    
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+}
 
 - (void)dealloc
 {

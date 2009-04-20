@@ -268,7 +268,7 @@ ul.inheritsList
 								<b><a href="../symbols/UIControls.html">UIControls</a></b>()
 							</div>
 							<div class="description">This class exposes mobile phone interface controls to JavaScript, such as
-native alerts, tab and tool bars, etc.</div>
+native tab and tool bars, etc.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -279,6 +279,87 @@ native alerts, tab and tool bars, etc.</div>
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class UIControls.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#createTabBar">createTabBar</a></b>()
+								</div>
+								<div class="description">Create a native tab bar that can have tab buttons added to it which can respond to events.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#createTabBarItem">createTabBarItem</a></b>(name, title, image, options)
+								</div>
+								<div class="description">Create a new tab bar item for use on a previously created tab bar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#hideTabBar">hideTabBar</a></b>(animate)
+								</div>
+								<div class="description">Hide a tab bar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#showTabBar">showTabBar</a></b>(options)
+								</div>
+								<div class="description">Show a tab bar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#showTabBarItems">showTabBarItems</a></b>(options)
+								</div>
+								<div class="description">Show previously created items on the tab bar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#tabBarItemSelected">tabBarItemSelected</a></b>(tag)
+								</div>
+								<div class="description">Function called when a tab bar item has been selected.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UIControls.html#updateTabBarItem">updateTabBarItem</a></b>(name, options)
+								</div>
+								<div class="description">Update an existing tab bar item to change its badge value.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -296,7 +377,7 @@ native alerts, tab and tool bars, etc.</div>
 				
 				<div class="description">
 					This class exposes mobile phone interface controls to JavaScript, such as
-native alerts, tab and tool bars, etc.
+native tab and tool bars, etc.
 					
 				</div>
 				
@@ -319,6 +400,313 @@ native alerts, tab and tool bars, etc.
 
 <!-- ============================== method details ========================= -->		
 			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="createTabBar"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>createTabBar</b>()
+					
+					</div>
+					<div class="description">
+						Create a native tab bar that can have tab buttons added to it which can respond to events.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="createTabBarItem"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>createTabBarItem</b>(name, title, image, options)
+					
+					</div>
+					<div class="description">
+						Create a new tab bar item for use on a previously created tab bar.  Use ::showTabBarItems to show the new item on the tab bar.
+
+If the supplied image name is one of the labels listed below, then this method will construct a tab button
+using the standard system buttons.  Note that if you use one of the system images, that the \c title you supply will be ignored.
+
+<b>Tab Buttons</b>
+  - tabButton:More
+  - tabButton:Favorites
+  - tabButton:Featured
+  - tabButton:TopRated
+  - tabButton:Recents
+  - tabButton:Contacts
+  - tabButton:History
+  - tabButton:Bookmarks
+  - tabButton:Search
+  - tabButton:Downloads
+  - tabButton:MostRecent
+  - tabButton:MostViewed
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>internal name to refer to this tab by</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>title</b>
+									<i>Optional</i>
+								</dt>
+								<dd>title text to show on the tab, or null if no text should be shown</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>image</b>
+									<i>Optional</i>
+								</dt>
+								<dd>image filename or internal identifier to show, or null if now image should be shown</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>options</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Options for customizing the individual tab item
+ - \c badge value to display in the optional circular badge on the item; if null or unspecified, the badge will be hidden</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="hideTabBar"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>hideTabBar</b>(animate)
+					
+					</div>
+					<div class="description">
+						Hide a tab bar.  The tab bar has to be created first.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>animate</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showTabBar"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showTabBar</b>(options)
+					
+					</div>
+					<div class="description">
+						Show a tab bar.  The tab bar has to be created first.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>options</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Options indicating how the tab bar should be shown:
+- \c height integer indicating the height of the tab bar (default: \c 49)
+- \c position specifies whether the tab bar will be placed at the \c top or \c bottom of the screen (default: \c bottom)</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showTabBarItems"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showTabBarItems</b>(options)
+					
+					</div>
+					<div class="description">
+						Show previously created items on the tab bar
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>arguments...</b>
+									
+								</dt>
+								<dd>the item names to be shown</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>options</b>
+									<i>Optional</i>
+								</dt>
+								<dd>dictionary of options, notable options including:
+ - \c animate indicates that the items should animate onto the tab bar</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>createTabBarItem</dd>
+							
+								<dd>createTabBar</dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name="tabBarItemSelected"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>tabBarItemSelected</b>(tag)
+					
+					</div>
+					<div class="description">
+						Function called when a tab bar item has been selected.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>tag</b>
+									
+								</dt>
+								<dd>the tag number for the item that has been selected</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="updateTabBarItem"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateTabBarItem</b>(name, options)
+					
+					</div>
+					<div class="description">
+						Update an existing tab bar item to change its badge value.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>internal name used to represent this item when it was created</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>options</b>
+									
+								</dt>
+								<dd>Options for customizing the individual tab item
+ - \c badge value to display in the optional circular badge on the item; if null or unspecified, the badge will be hidden</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -330,7 +718,7 @@ native alerts, tab and tool bars, etc.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 13:58:51 GMT-0700 (PDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Sun Apr 19 2009 17:23:28 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
