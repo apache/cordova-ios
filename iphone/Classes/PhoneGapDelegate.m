@@ -33,7 +33,6 @@
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
         else
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
-        NSLog(@"******* Object %@ created from scratch for %@", obj, className);
         
         [commandObjects setObject:obj forKey:className];
     }

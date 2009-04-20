@@ -400,510 +400,516 @@
 <span class='line'>393</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>394</span> </span><span class="WHIT">    
 <span class='line'>395</span>     </span><span class="COMM">/**
-<span class='line'>396</span>      */</span><span class="WHIT">
-<span class='line'>397</span> </span><span class="WHIT">    </span><span class="NAME">UIControls.prototype.createToolBar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>398</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>396</span>      * Create a toolbar.
+<span class='line'>397</span>      */</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="WHIT">    </span><span class="NAME">UIControls.prototype.createToolBar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>399</span> </span><span class="WHIT">    
-<span class='line'>400</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>401</span> </span><span class="WHIT">        </span><span class="NAME">window.uicontrols</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">UIControls</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>402</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>403</span> </span><span class="WHIT">    
-<span class='line'>404</span>     
-<span class='line'>405</span>     
-<span class='line'>406</span>     </span><span class="COMM">/**
-<span class='line'>407</span>      * This class provides access to the debugging console.
-<span class='line'>408</span>      * @constructor
-<span class='line'>409</span>      */</span><span class="WHIT">
-<span class='line'>410</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">DebugConsole</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>411</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>412</span> </span><span class="WHIT">    
-<span class='line'>413</span>     </span><span class="COMM">/**
-<span class='line'>414</span>      * Utility function for rendering and indenting strings, or serializing
-<span class='line'>415</span>      * objects to a string capable of being printed to the console.
-<span class='line'>416</span>      * @param {Object|String} message The string or object to convert to an indented string
-<span class='line'>417</span>      * @private
-<span class='line'>418</span>      */</span><span class="WHIT">
-<span class='line'>419</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.processMessage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>420</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>421</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">encodeURIComponent</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>422</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>423</span> </span><span class="WHIT">            </span><span class="COMM">/**
-<span class='line'>424</span>              * @function
-<span class='line'>425</span>              * @ignore
-<span class='line'>426</span>              */</span><span class="WHIT">
-<span class='line'>427</span> </span><span class="WHIT">            </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">indent</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>428</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">str.replace</span><span class="PUNC">(</span><span class="REGX">/^/mg</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"    "</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>429</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>430</span> </span><span class="WHIT">            </span><span class="COMM">/**
-<span class='line'>431</span>              * @function
-<span class='line'>432</span>              * @ignore
-<span class='line'>433</span>              */</span><span class="WHIT">
-<span class='line'>434</span> </span><span class="WHIT">            </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">makeStructured</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>435</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>436</span> </span><span class="WHIT">                </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">obj</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>437</span> </span><span class="WHIT">                    </span><span class="KEYW">try</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>438</span> </span><span class="WHIT">                        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>439</span> </span><span class="WHIT">                            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">":\n"</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">indent</span><span class="PUNC">(</span><span class="NAME">makeStructured</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>440</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>441</span> </span><span class="WHIT">                            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">" = "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">indent</span><span class="PUNC">(</span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">replace</span><span class="PUNC">(</span><span class="REGX">/^    /</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>442</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>443</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">catch</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>444</span> </span><span class="WHIT">                        </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">" = EXCEPTION: "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">e.message</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>445</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>446</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>447</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">str</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>448</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>449</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">encodeURIComponent</span><span class="PUNC">(</span><span class="STRN">"Object:\n"</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">makeStructured</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>450</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>451</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>452</span> </span><span class="WHIT">    
-<span class='line'>453</span>     </span><span class="COMM">/**
-<span class='line'>454</span>      * Print a normal log message to the console
-<span class='line'>455</span>      * @param {Object|String} message Message or object to print to the console
-<span class='line'>456</span>      */</span><span class="WHIT">
-<span class='line'>457</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.log</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>458</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>459</span> </span><span class="WHIT">    
-<span class='line'>460</span>     </span><span class="COMM">/**
-<span class='line'>461</span>      * Print a warning message to the console
-<span class='line'>462</span>      * @param {Object|String} message Message or object to print to the console
-<span class='line'>463</span>      */</span><span class="WHIT">
-<span class='line'>464</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.warn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>465</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>466</span> </span><span class="WHIT">    
-<span class='line'>467</span>     </span><span class="COMM">/**
-<span class='line'>468</span>      * Print an error message to the console
-<span class='line'>469</span>      * @param {Object|String} message Message or object to print to the console
-<span class='line'>470</span>      */</span><span class="WHIT">
-<span class='line'>471</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.error</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>472</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>473</span> </span><span class="WHIT">    
-<span class='line'>474</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>475</span> </span><span class="WHIT">        </span><span class="NAME">window.debug</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">DebugConsole</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>476</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>477</span> </span><span class="WHIT">    
-<span class='line'>478</span>     
-<span class='line'>479</span>     
-<span class='line'>480</span>     </span><span class="COMM">/**
-<span class='line'>481</span>      * This class provides generic read and write access to the mobile device file system.
-<span class='line'>482</span>      */</span><span class="WHIT">
-<span class='line'>483</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">File</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>484</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>485</span>     	 * The data of a file.
-<span class='line'>486</span>     	 */</span><span class="WHIT">
-<span class='line'>487</span> </span><span class="WHIT">    	</span><span class="NAME">this.data</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>488</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>489</span>     	 * The name of the file.
-<span class='line'>490</span>     	 */</span><span class="WHIT">
-<span class='line'>491</span> </span><span class="WHIT">    	</span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>492</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>493</span> </span><span class="WHIT">    
-<span class='line'>494</span>     </span><span class="COMM">/**
-<span class='line'>495</span>      * Reads a file from the mobile device. This function is asyncronous.
-<span class='line'>496</span>      * @param {String} fileName The name (including the path) to the file on the mobile device. 
-<span class='line'>497</span>      * The file name will likely be device dependant.
-<span class='line'>498</span>      * @param {Function} successCallback The function to call when the file is successfully read.
-<span class='line'>499</span>      * @param {Function} errorCallback The function to call when there is an error reading the file from the device.
-<span class='line'>500</span>      */</span><span class="WHIT">
-<span class='line'>501</span> </span><span class="WHIT">    </span><span class="NAME">File.prototype.read</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fileName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>502</span> </span><span class="WHIT">    	
-<span class='line'>503</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>504</span> </span><span class="WHIT">    
-<span class='line'>505</span>     </span><span class="COMM">/**
-<span class='line'>506</span>      * Writes a file to the mobile device.
-<span class='line'>507</span>      * @param {File} file The file to write to the device.
-<span class='line'>508</span>      */</span><span class="WHIT">
-<span class='line'>509</span> </span><span class="WHIT">    </span><span class="NAME">File.prototype.write</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">file</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>510</span> </span><span class="WHIT">    	
-<span class='line'>511</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>512</span> </span><span class="WHIT">    
-<span class='line'>513</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>514</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.file</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">File</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>515</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>516</span> </span><span class="WHIT">    
-<span class='line'>517</span>     
-<span class='line'>518</span>     
-<span class='line'>519</span>     </span><span class="COMM">/**
-<span class='line'>520</span>      * This class provides access to device GPS data.
-<span class='line'>521</span>      * @constructor
-<span class='line'>522</span>      */</span><span class="WHIT">
-<span class='line'>523</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Geolocation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>524</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>525</span>          * The last known GPS position.
-<span class='line'>526</span>          */</span><span class="WHIT">
-<span class='line'>527</span> </span><span class="WHIT">        </span><span class="NAME">this.lastPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>528</span> </span><span class="WHIT">        </span><span class="NAME">this.lastError</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>529</span> </span><span class="WHIT">        </span><span class="NAME">this.callbacks</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>530</span> </span><span class="WHIT">            </span><span class="NAME">onLocationChanged</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>531</span> </span><span class="WHIT">            </span><span class="NAME">onError</span><span class="PUNC">:</span><span class="WHIT">           </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>532</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>533</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>534</span> </span><span class="WHIT">    
-<span class='line'>535</span>     </span><span class="COMM">/**
-<span class='line'>536</span>      * Asynchronously aquires the current position.
-<span class='line'>537</span>      * @param {Function} successCallback The function to call when the position
-<span class='line'>538</span>      * data is available
-<span class='line'>539</span>      * @param {Function} errorCallback The function to call when there is an error 
-<span class='line'>540</span>      * getting the position data.
-<span class='line'>541</span>      * @param {PositionOptions} options The options for getting the position data
-<span class='line'>542</span>      * such as timeout.
-<span class='line'>543</span>      */</span><span class="WHIT">
-<span class='line'>544</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.getCurrentPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>545</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">referenceTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>546</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.lastPosition</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>547</span> </span><span class="WHIT">            </span><span class="NAME">referenceTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.lastPosition.timeout</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>548</span> </span><span class="WHIT">        </span><span class="KEYW">else</span><span class="WHIT">
-<span class='line'>549</span> </span><span class="WHIT">            </span><span class="NAME">this.start</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>550</span> </span><span class="WHIT">    
-<span class='line'>551</span>         </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">timeout</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">20000</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>552</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">interval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">500</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>553</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">options.interval</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>554</span> </span><span class="WHIT">            </span><span class="NAME">interval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.interval</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>555</span> </span><span class="WHIT">    
-<span class='line'>556</span>         </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'function'</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>557</span> </span><span class="WHIT">            </span><span class="NAME">successCallback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>558</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'function'</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>559</span> </span><span class="WHIT">            </span><span class="NAME">errorCallback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>560</span> </span><span class="WHIT">    
-<span class='line'>561</span>         </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">dis</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>562</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">delay</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>563</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">timer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">setInterval</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>564</span> </span><span class="WHIT">            </span><span class="NAME">delay</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">interval</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>565</span> </span><span class="WHIT">    
-<span class='line'>566</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">dis.lastPosition</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">dis.lastPosition.timestamp</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">referenceTime</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>567</span> </span><span class="WHIT">                </span><span class="NAME">successCallback</span><span class="PUNC">(</span><span class="NAME">dis.lastPosition</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>568</span> </span><span class="WHIT">                </span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">timer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>569</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">delay</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NAME">timeout</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>570</span> </span><span class="WHIT">                </span><span class="NAME">errorCallback</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>571</span> </span><span class="WHIT">                </span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">timer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>572</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>573</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">interval</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>574</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>575</span> </span><span class="WHIT">    
-<span class='line'>576</span>     </span><span class="COMM">/**
-<span class='line'>577</span>      * Asynchronously aquires the position repeatedly at a given interval.
-<span class='line'>578</span>      * @param {Function} successCallback The function to call each time the position
-<span class='line'>579</span>      * data is available
-<span class='line'>580</span>      * @param {Function} errorCallback The function to call when there is an error 
-<span class='line'>581</span>      * getting the position data.
-<span class='line'>582</span>      * @param {PositionOptions} options The options for getting the position data
-<span class='line'>583</span>      * such as timeout and the frequency of the watch.
-<span class='line'>584</span>      */</span><span class="WHIT">
-<span class='line'>585</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.watchPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>586</span> </span><span class="WHIT">    	</span><span class="COMM">// Invoke the appropriate callback with a new Position object every time the implementation </span><span class="WHIT">
-<span class='line'>587</span> </span><span class="WHIT">    	</span><span class="COMM">// determines that the position of the hosting device has changed. </span><span class="WHIT">
-<span class='line'>588</span> </span><span class="WHIT">    	
-<span class='line'>589</span>     	</span><span class="NAME">this.getCurrentPosition</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>590</span> </span><span class="WHIT">    	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">frequency</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>591</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">options.frequency</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>592</span> </span><span class="WHIT">                </span><span class="NAME">frequency</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.frequency</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>593</span> </span><span class="WHIT">    	
-<span class='line'>594</span>     	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>595</span> </span><span class="WHIT">    	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">setInterval</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>596</span> </span><span class="WHIT">    		</span><span class="NAME">that.getCurrentPosition</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>597</span> </span><span class="WHIT">    	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">frequency</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>598</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>599</span> </span><span class="WHIT">    
-<span class='line'>600</span>     
-<span class='line'>601</span>     </span><span class="COMM">/**
-<span class='line'>602</span>      * Clears the specified position watch.
-<span class='line'>603</span>      * @param {String} watchId The ID of the watch returned from #watchPosition.
-<span class='line'>604</span>      */</span><span class="WHIT">
-<span class='line'>605</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.clearWatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>606</span> </span><span class="WHIT">    	</span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>607</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>608</span> </span><span class="WHIT">    
-<span class='line'>609</span>     </span><span class="COMM">/**
-<span class='line'>610</span>      * Called by the geolocation framework when the current location is found.
-<span class='line'>611</span>      * @param {PositionOptions} position The current position.
-<span class='line'>612</span>      */</span><span class="WHIT">
-<span class='line'>613</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.setLocation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>614</span> </span><span class="WHIT">        </span><span class="NAME">this.lastPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">position</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>615</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onLocationChanged.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>616</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">f</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onLocationChanged.shift</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>617</span> </span><span class="WHIT">            </span><span class="NAME">f</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>618</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>619</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>620</span> </span><span class="WHIT">    
-<span class='line'>621</span>     </span><span class="COMM">/**
-<span class='line'>622</span>      * Called by the geolocation framework when an error occurs while looking up the current position.
-<span class='line'>623</span>      * @param {String} message The text of the error message.
-<span class='line'>624</span>      */</span><span class="WHIT">
-<span class='line'>625</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.setError</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>626</span> </span><span class="WHIT">        </span><span class="NAME">this.lastError</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">message</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>627</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onError.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>628</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">f</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onError.shift</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>629</span> </span><span class="WHIT">            </span><span class="NAME">f</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>630</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>631</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>632</span> </span><span class="WHIT">    
-<span class='line'>633</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>634</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.geolocation</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.geolocation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Geolocation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>635</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>636</span> </span><span class="WHIT">    
-<span class='line'>637</span>     
-<span class='line'>638</span>     
-<span class='line'>639</span>     </span><span class="COMM">/**
-<span class='line'>640</span>      * This class provides access to native mapping applications on the device.
-<span class='line'>641</span>      */</span><span class="WHIT">
-<span class='line'>642</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Map</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>643</span> </span><span class="WHIT">    	
-<span class='line'>644</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>645</span> </span><span class="WHIT">    
-<span class='line'>646</span>     </span><span class="COMM">/**
-<span class='line'>647</span>      * Shows a native map on the device with pins at the given positions.
-<span class='line'>648</span>      * @param {Array} positions
-<span class='line'>649</span>      */</span><span class="WHIT">
-<span class='line'>650</span> </span><span class="WHIT">    </span><span class="NAME">Map.prototype.show</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">positions</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>651</span> </span><span class="WHIT">    	
-<span class='line'>652</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>653</span> </span><span class="WHIT">    
-<span class='line'>654</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>655</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.map</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.map</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Map</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>656</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>657</span> </span><span class="WHIT">    
-<span class='line'>658</span>     
-<span class='line'>659</span>     
-<span class='line'>660</span>     </span><span class="COMM">/**
-<span class='line'>661</span>      * This class provides access to notifications on the device.
-<span class='line'>662</span>      */</span><span class="WHIT">
-<span class='line'>663</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Notification</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>664</span> </span><span class="WHIT">    	
-<span class='line'>665</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>666</span> </span><span class="WHIT">    
-<span class='line'>667</span>     </span><span class="COMM">/**
-<span class='line'>668</span>      * Open a native alert dialog, with a customizable title and button text.
-<span class='line'>669</span>      * @param {String} message Message to print in the body of the alert
-<span class='line'>670</span>      * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
-<span class='line'>671</span>      * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
-<span class='line'>672</span>      */</span><span class="WHIT">
-<span class='line'>673</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.alert</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">title</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">buttonLabel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>674</span> </span><span class="WHIT">        </span><span class="COMM">// Default is to use a browser alert; this will use "index.html" as the title though</span><span class="WHIT">
-<span class='line'>675</span> </span><span class="WHIT">        </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>676</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>677</span> </span><span class="WHIT">    
-<span class='line'>678</span>     </span><span class="COMM">/**
-<span class='line'>679</span>      * Start spinning the activity indicator on the statusbar
-<span class='line'>680</span>      */</span><span class="WHIT">
-<span class='line'>681</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.activityStart</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>400</span>     </span><span class="COMM">/**
+<span class='line'>401</span>      * Function called when a tab bar item has been selected.
+<span class='line'>402</span>      * @param {String} title the title to set within the toolbar
+<span class='line'>403</span>      */</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="WHIT">    </span><span class="NAME">UIControls.prototype.setToolBarTitle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">title</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">    
+<span class='line'>406</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">        </span><span class="NAME">window.uicontrols</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">UIControls</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>409</span> </span><span class="WHIT">    
+<span class='line'>410</span>     
+<span class='line'>411</span>     
+<span class='line'>412</span>     </span><span class="COMM">/**
+<span class='line'>413</span>      * This class provides access to the debugging console.
+<span class='line'>414</span>      * @constructor
+<span class='line'>415</span>      */</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">DebugConsole</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="WHIT">    
+<span class='line'>419</span>     </span><span class="COMM">/**
+<span class='line'>420</span>      * Utility function for rendering and indenting strings, or serializing
+<span class='line'>421</span>      * objects to a string capable of being printed to the console.
+<span class='line'>422</span>      * @param {Object|String} message The string or object to convert to an indented string
+<span class='line'>423</span>      * @private
+<span class='line'>424</span>      */</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.processMessage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">encodeURIComponent</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="WHIT">            </span><span class="COMM">/**
+<span class='line'>430</span>              * @function
+<span class='line'>431</span>              * @ignore
+<span class='line'>432</span>              */</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">            </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">indent</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">str.replace</span><span class="PUNC">(</span><span class="REGX">/^/mg</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"    "</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">            </span><span class="COMM">/**
+<span class='line'>437</span>              * @function
+<span class='line'>438</span>              * @ignore
+<span class='line'>439</span>              */</span><span class="WHIT">
+<span class='line'>440</span> </span><span class="WHIT">            </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">makeStructured</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>441</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>442</span> </span><span class="WHIT">                </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">obj</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>443</span> </span><span class="WHIT">                    </span><span class="KEYW">try</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>444</span> </span><span class="WHIT">                        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="WHIT">                            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">":\n"</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">indent</span><span class="PUNC">(</span><span class="NAME">makeStructured</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>446</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>447</span> </span><span class="WHIT">                            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">" = "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">indent</span><span class="PUNC">(</span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">replace</span><span class="PUNC">(</span><span class="REGX">/^    /</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>448</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>449</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">catch</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>450</span> </span><span class="WHIT">                        </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">" = EXCEPTION: "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">e.message</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>451</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>452</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>453</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">str</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>454</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">encodeURIComponent</span><span class="PUNC">(</span><span class="STRN">"Object:\n"</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">makeStructured</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>456</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>457</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>458</span> </span><span class="WHIT">    
+<span class='line'>459</span>     </span><span class="COMM">/**
+<span class='line'>460</span>      * Print a normal log message to the console
+<span class='line'>461</span>      * @param {Object|String} message Message or object to print to the console
+<span class='line'>462</span>      */</span><span class="WHIT">
+<span class='line'>463</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.log</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>464</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>465</span> </span><span class="WHIT">    
+<span class='line'>466</span>     </span><span class="COMM">/**
+<span class='line'>467</span>      * Print a warning message to the console
+<span class='line'>468</span>      * @param {Object|String} message Message or object to print to the console
+<span class='line'>469</span>      */</span><span class="WHIT">
+<span class='line'>470</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.warn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>471</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>472</span> </span><span class="WHIT">    
+<span class='line'>473</span>     </span><span class="COMM">/**
+<span class='line'>474</span>      * Print an error message to the console
+<span class='line'>475</span>      * @param {Object|String} message Message or object to print to the console
+<span class='line'>476</span>      */</span><span class="WHIT">
+<span class='line'>477</span> </span><span class="WHIT">    </span><span class="NAME">DebugConsole.prototype.error</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>478</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>479</span> </span><span class="WHIT">    
+<span class='line'>480</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>481</span> </span><span class="WHIT">        </span><span class="NAME">window.debug</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">DebugConsole</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>482</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>483</span> </span><span class="WHIT">    
+<span class='line'>484</span>     
+<span class='line'>485</span>     
+<span class='line'>486</span>     </span><span class="COMM">/**
+<span class='line'>487</span>      * This class provides generic read and write access to the mobile device file system.
+<span class='line'>488</span>      */</span><span class="WHIT">
+<span class='line'>489</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">File</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>490</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>491</span>     	 * The data of a file.
+<span class='line'>492</span>     	 */</span><span class="WHIT">
+<span class='line'>493</span> </span><span class="WHIT">    	</span><span class="NAME">this.data</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>494</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>495</span>     	 * The name of the file.
+<span class='line'>496</span>     	 */</span><span class="WHIT">
+<span class='line'>497</span> </span><span class="WHIT">    	</span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>498</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>499</span> </span><span class="WHIT">    
+<span class='line'>500</span>     </span><span class="COMM">/**
+<span class='line'>501</span>      * Reads a file from the mobile device. This function is asyncronous.
+<span class='line'>502</span>      * @param {String} fileName The name (including the path) to the file on the mobile device. 
+<span class='line'>503</span>      * The file name will likely be device dependant.
+<span class='line'>504</span>      * @param {Function} successCallback The function to call when the file is successfully read.
+<span class='line'>505</span>      * @param {Function} errorCallback The function to call when there is an error reading the file from the device.
+<span class='line'>506</span>      */</span><span class="WHIT">
+<span class='line'>507</span> </span><span class="WHIT">    </span><span class="NAME">File.prototype.read</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fileName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>508</span> </span><span class="WHIT">    	
+<span class='line'>509</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>510</span> </span><span class="WHIT">    
+<span class='line'>511</span>     </span><span class="COMM">/**
+<span class='line'>512</span>      * Writes a file to the mobile device.
+<span class='line'>513</span>      * @param {File} file The file to write to the device.
+<span class='line'>514</span>      */</span><span class="WHIT">
+<span class='line'>515</span> </span><span class="WHIT">    </span><span class="NAME">File.prototype.write</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">file</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>516</span> </span><span class="WHIT">    	
+<span class='line'>517</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>518</span> </span><span class="WHIT">    
+<span class='line'>519</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>520</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.file</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">File</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>521</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>522</span> </span><span class="WHIT">    
+<span class='line'>523</span>     
+<span class='line'>524</span>     
+<span class='line'>525</span>     </span><span class="COMM">/**
+<span class='line'>526</span>      * This class provides access to device GPS data.
+<span class='line'>527</span>      * @constructor
+<span class='line'>528</span>      */</span><span class="WHIT">
+<span class='line'>529</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Geolocation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>530</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>531</span>          * The last known GPS position.
+<span class='line'>532</span>          */</span><span class="WHIT">
+<span class='line'>533</span> </span><span class="WHIT">        </span><span class="NAME">this.lastPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>534</span> </span><span class="WHIT">        </span><span class="NAME">this.lastError</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>535</span> </span><span class="WHIT">        </span><span class="NAME">this.callbacks</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>536</span> </span><span class="WHIT">            </span><span class="NAME">onLocationChanged</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>537</span> </span><span class="WHIT">            </span><span class="NAME">onError</span><span class="PUNC">:</span><span class="WHIT">           </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>538</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>539</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>540</span> </span><span class="WHIT">    
+<span class='line'>541</span>     </span><span class="COMM">/**
+<span class='line'>542</span>      * Asynchronously aquires the current position.
+<span class='line'>543</span>      * @param {Function} successCallback The function to call when the position
+<span class='line'>544</span>      * data is available
+<span class='line'>545</span>      * @param {Function} errorCallback The function to call when there is an error 
+<span class='line'>546</span>      * getting the position data.
+<span class='line'>547</span>      * @param {PositionOptions} options The options for getting the position data
+<span class='line'>548</span>      * such as timeout.
+<span class='line'>549</span>      */</span><span class="WHIT">
+<span class='line'>550</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.getCurrentPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>551</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">referenceTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>552</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.lastPosition</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>553</span> </span><span class="WHIT">            </span><span class="NAME">referenceTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.lastPosition.timeout</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>554</span> </span><span class="WHIT">        </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>555</span> </span><span class="WHIT">            </span><span class="NAME">this.start</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>556</span> </span><span class="WHIT">    
+<span class='line'>557</span>         </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">timeout</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">20000</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>558</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">interval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">500</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>559</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">options.interval</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>560</span> </span><span class="WHIT">            </span><span class="NAME">interval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.interval</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>561</span> </span><span class="WHIT">    
+<span class='line'>562</span>         </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'function'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>563</span> </span><span class="WHIT">            </span><span class="NAME">successCallback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>564</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'function'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>565</span> </span><span class="WHIT">            </span><span class="NAME">errorCallback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>566</span> </span><span class="WHIT">    
+<span class='line'>567</span>         </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">dis</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>568</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">delay</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>569</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">timer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">setInterval</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>570</span> </span><span class="WHIT">            </span><span class="NAME">delay</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">interval</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>571</span> </span><span class="WHIT">    
+<span class='line'>572</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">dis.lastPosition</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">dis.lastPosition.timestamp</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">referenceTime</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>573</span> </span><span class="WHIT">                </span><span class="NAME">successCallback</span><span class="PUNC">(</span><span class="NAME">dis.lastPosition</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>574</span> </span><span class="WHIT">                </span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">timer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>575</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">delay</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NAME">timeout</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>576</span> </span><span class="WHIT">                </span><span class="NAME">errorCallback</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>577</span> </span><span class="WHIT">                </span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">timer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>578</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>579</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">interval</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>580</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>581</span> </span><span class="WHIT">    
+<span class='line'>582</span>     </span><span class="COMM">/**
+<span class='line'>583</span>      * Asynchronously aquires the position repeatedly at a given interval.
+<span class='line'>584</span>      * @param {Function} successCallback The function to call each time the position
+<span class='line'>585</span>      * data is available
+<span class='line'>586</span>      * @param {Function} errorCallback The function to call when there is an error 
+<span class='line'>587</span>      * getting the position data.
+<span class='line'>588</span>      * @param {PositionOptions} options The options for getting the position data
+<span class='line'>589</span>      * such as timeout and the frequency of the watch.
+<span class='line'>590</span>      */</span><span class="WHIT">
+<span class='line'>591</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.watchPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>592</span> </span><span class="WHIT">    	</span><span class="COMM">// Invoke the appropriate callback with a new Position object every time the implementation </span><span class="WHIT">
+<span class='line'>593</span> </span><span class="WHIT">    	</span><span class="COMM">// determines that the position of the hosting device has changed. </span><span class="WHIT">
+<span class='line'>594</span> </span><span class="WHIT">    	
+<span class='line'>595</span>     	</span><span class="NAME">this.getCurrentPosition</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>596</span> </span><span class="WHIT">    	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">frequency</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>597</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">options.frequency</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>598</span> </span><span class="WHIT">                </span><span class="NAME">frequency</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.frequency</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>599</span> </span><span class="WHIT">    	
+<span class='line'>600</span>     	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>601</span> </span><span class="WHIT">    	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">setInterval</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>602</span> </span><span class="WHIT">    		</span><span class="NAME">that.getCurrentPosition</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>603</span> </span><span class="WHIT">    	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">frequency</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>604</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>605</span> </span><span class="WHIT">    
+<span class='line'>606</span>     
+<span class='line'>607</span>     </span><span class="COMM">/**
+<span class='line'>608</span>      * Clears the specified position watch.
+<span class='line'>609</span>      * @param {String} watchId The ID of the watch returned from #watchPosition.
+<span class='line'>610</span>      */</span><span class="WHIT">
+<span class='line'>611</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.clearWatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>612</span> </span><span class="WHIT">    	</span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>613</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>614</span> </span><span class="WHIT">    
+<span class='line'>615</span>     </span><span class="COMM">/**
+<span class='line'>616</span>      * Called by the geolocation framework when the current location is found.
+<span class='line'>617</span>      * @param {PositionOptions} position The current position.
+<span class='line'>618</span>      */</span><span class="WHIT">
+<span class='line'>619</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.setLocation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>620</span> </span><span class="WHIT">        </span><span class="NAME">this.lastPosition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">position</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>621</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onLocationChanged.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>622</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">f</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onLocationChanged.shift</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>623</span> </span><span class="WHIT">            </span><span class="NAME">f</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>624</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>625</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>626</span> </span><span class="WHIT">    
+<span class='line'>627</span>     </span><span class="COMM">/**
+<span class='line'>628</span>      * Called by the geolocation framework when an error occurs while looking up the current position.
+<span class='line'>629</span>      * @param {String} message The text of the error message.
+<span class='line'>630</span>      */</span><span class="WHIT">
+<span class='line'>631</span> </span><span class="WHIT">    </span><span class="NAME">Geolocation.prototype.setError</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>632</span> </span><span class="WHIT">        </span><span class="NAME">this.lastError</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">message</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>633</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onError.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>634</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">f</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.callbacks.onError.shift</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>635</span> </span><span class="WHIT">            </span><span class="NAME">f</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>636</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>637</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>638</span> </span><span class="WHIT">    
+<span class='line'>639</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>640</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.geolocation</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.geolocation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Geolocation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>641</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>642</span> </span><span class="WHIT">    
+<span class='line'>643</span>     
+<span class='line'>644</span>     
+<span class='line'>645</span>     </span><span class="COMM">/**
+<span class='line'>646</span>      * This class provides access to native mapping applications on the device.
+<span class='line'>647</span>      */</span><span class="WHIT">
+<span class='line'>648</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Map</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>649</span> </span><span class="WHIT">    	
+<span class='line'>650</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>651</span> </span><span class="WHIT">    
+<span class='line'>652</span>     </span><span class="COMM">/**
+<span class='line'>653</span>      * Shows a native map on the device with pins at the given positions.
+<span class='line'>654</span>      * @param {Array} positions
+<span class='line'>655</span>      */</span><span class="WHIT">
+<span class='line'>656</span> </span><span class="WHIT">    </span><span class="NAME">Map.prototype.show</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">positions</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>657</span> </span><span class="WHIT">    	
+<span class='line'>658</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>659</span> </span><span class="WHIT">    
+<span class='line'>660</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>661</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.map</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.map</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Map</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>662</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>663</span> </span><span class="WHIT">    
+<span class='line'>664</span>     
+<span class='line'>665</span>     
+<span class='line'>666</span>     </span><span class="COMM">/**
+<span class='line'>667</span>      * This class provides access to notifications on the device.
+<span class='line'>668</span>      */</span><span class="WHIT">
+<span class='line'>669</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Notification</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>670</span> </span><span class="WHIT">    	
+<span class='line'>671</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>672</span> </span><span class="WHIT">    
+<span class='line'>673</span>     </span><span class="COMM">/**
+<span class='line'>674</span>      * Open a native alert dialog, with a customizable title and button text.
+<span class='line'>675</span>      * @param {String} message Message to print in the body of the alert
+<span class='line'>676</span>      * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
+<span class='line'>677</span>      * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
+<span class='line'>678</span>      */</span><span class="WHIT">
+<span class='line'>679</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.alert</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">title</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">buttonLabel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>680</span> </span><span class="WHIT">        </span><span class="COMM">// Default is to use a browser alert; this will use "index.html" as the title though</span><span class="WHIT">
+<span class='line'>681</span> </span><span class="WHIT">        </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>682</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>683</span> </span><span class="WHIT">    
 <span class='line'>684</span>     </span><span class="COMM">/**
-<span class='line'>685</span>      * Stop spinning the activity indicator on the statusbar, if it's currently spinning
+<span class='line'>685</span>      * Start spinning the activity indicator on the statusbar
 <span class='line'>686</span>      */</span><span class="WHIT">
-<span class='line'>687</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.activityStop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>687</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.activityStart</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>688</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>689</span> </span><span class="WHIT">    
 <span class='line'>690</span>     </span><span class="COMM">/**
-<span class='line'>691</span>      * Causes the device to blink a status LED.
-<span class='line'>692</span>      * @param {Integer} count The number of blinks.
-<span class='line'>693</span>      * @param {String} colour The colour of the light.
-<span class='line'>694</span>      */</span><span class="WHIT">
-<span class='line'>695</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.blink</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">count</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">colour</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>696</span> </span><span class="WHIT">    	
-<span class='line'>697</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>698</span> </span><span class="WHIT">    
-<span class='line'>699</span>     </span><span class="COMM">/**
-<span class='line'>700</span>      * Causes the device to vibrate.
-<span class='line'>701</span>      * @param {Integer} mills The number of milliseconds to vibrate for.
-<span class='line'>702</span>      */</span><span class="WHIT">
-<span class='line'>703</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.vibrate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">mills</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>704</span> </span><span class="WHIT">    	
-<span class='line'>705</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>706</span> </span><span class="WHIT">    
-<span class='line'>707</span>     </span><span class="COMM">/**
-<span class='line'>708</span>      * Causes the device to beep.
-<span class='line'>709</span>      * @param {Integer} count The number of beeps.
-<span class='line'>710</span>      * @param {Integer} volume The volume of the beep.
-<span class='line'>711</span>      */</span><span class="WHIT">
-<span class='line'>712</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.beep</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">count</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">volume</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>713</span> </span><span class="WHIT">    	
-<span class='line'>714</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>715</span> </span><span class="WHIT">    
-<span class='line'>716</span>     </span><span class="COMM">// TODO: of course on Blackberry and Android there notifications in the UI as well</span><span class="WHIT">
-<span class='line'>717</span> </span><span class="WHIT">    
-<span class='line'>718</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>719</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.notification</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.notification</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Notification</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>720</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>691</span>      * Stop spinning the activity indicator on the statusbar, if it's currently spinning
+<span class='line'>692</span>      */</span><span class="WHIT">
+<span class='line'>693</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.activityStop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>694</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>695</span> </span><span class="WHIT">    
+<span class='line'>696</span>     </span><span class="COMM">/**
+<span class='line'>697</span>      * Causes the device to blink a status LED.
+<span class='line'>698</span>      * @param {Integer} count The number of blinks.
+<span class='line'>699</span>      * @param {String} colour The colour of the light.
+<span class='line'>700</span>      */</span><span class="WHIT">
+<span class='line'>701</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.blink</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">count</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">colour</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>702</span> </span><span class="WHIT">    	
+<span class='line'>703</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>704</span> </span><span class="WHIT">    
+<span class='line'>705</span>     </span><span class="COMM">/**
+<span class='line'>706</span>      * Causes the device to vibrate.
+<span class='line'>707</span>      * @param {Integer} mills The number of milliseconds to vibrate for.
+<span class='line'>708</span>      */</span><span class="WHIT">
+<span class='line'>709</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.vibrate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">mills</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>710</span> </span><span class="WHIT">    	
+<span class='line'>711</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>712</span> </span><span class="WHIT">    
+<span class='line'>713</span>     </span><span class="COMM">/**
+<span class='line'>714</span>      * Causes the device to beep.
+<span class='line'>715</span>      * @param {Integer} count The number of beeps.
+<span class='line'>716</span>      * @param {Integer} volume The volume of the beep.
+<span class='line'>717</span>      */</span><span class="WHIT">
+<span class='line'>718</span> </span><span class="WHIT">    </span><span class="NAME">Notification.prototype.beep</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">count</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">volume</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>719</span> </span><span class="WHIT">    	
+<span class='line'>720</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>721</span> </span><span class="WHIT">    
-<span class='line'>722</span>     
-<span class='line'>723</span>     
-<span class='line'>724</span>     </span><span class="COMM">/**
-<span class='line'>725</span>      * This class provides access to the device orientation.
-<span class='line'>726</span>      * @constructor
-<span class='line'>727</span>      */</span><span class="WHIT">
-<span class='line'>728</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Orientation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>729</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>730</span>     	 * The last known orientation.
-<span class='line'>731</span>     	 */</span><span class="WHIT">
-<span class='line'>732</span> </span><span class="WHIT">    	</span><span class="NAME">this.lastOrientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>733</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>734</span> </span><span class="WHIT">    
-<span class='line'>735</span>     </span><span class="COMM">/**
-<span class='line'>736</span>      * Asynchronously aquires the current orientation.
-<span class='line'>737</span>      * @param {Function} successCallback The function to call when the orientation
-<span class='line'>738</span>      * is known.
-<span class='line'>739</span>      * @param {Function} errorCallback The function to call when there is an error 
-<span class='line'>740</span>      * getting the orientation.
-<span class='line'>741</span>      */</span><span class="WHIT">
-<span class='line'>742</span> </span><span class="WHIT">    </span><span class="NAME">Orientation.prototype.getCurrentOrientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>743</span> </span><span class="WHIT">    	</span><span class="COMM">// If the position is available then call success</span><span class="WHIT">
-<span class='line'>744</span> </span><span class="WHIT">    	</span><span class="COMM">// If the position is not available then call error</span><span class="WHIT">
-<span class='line'>745</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>746</span> </span><span class="WHIT">    
-<span class='line'>747</span>     </span><span class="COMM">/**
-<span class='line'>748</span>      * Asynchronously aquires the orientation repeatedly at a given interval.
-<span class='line'>749</span>      * @param {Function} successCallback The function to call each time the orientation
-<span class='line'>750</span>      * data is available.
-<span class='line'>751</span>      * @param {Function} errorCallback The function to call when there is an error 
-<span class='line'>752</span>      * getting the orientation data.
-<span class='line'>753</span>      */</span><span class="WHIT">
-<span class='line'>754</span> </span><span class="WHIT">    </span><span class="NAME">Orientation.prototype.watchOrientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>755</span> </span><span class="WHIT">    	</span><span class="COMM">// Invoke the appropriate callback with a new Position object every time the implementation </span><span class="WHIT">
-<span class='line'>756</span> </span><span class="WHIT">    	</span><span class="COMM">// determines that the position of the hosting device has changed. </span><span class="WHIT">
-<span class='line'>757</span> </span><span class="WHIT">    	</span><span class="NAME">this.getCurrentPosition</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>758</span> </span><span class="WHIT">    	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">setInterval</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>759</span> </span><span class="WHIT">    		</span><span class="NAME">navigator.orientation.getCurrentOrientation</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>760</span> </span><span class="WHIT">    	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>761</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>762</span> </span><span class="WHIT">    
-<span class='line'>763</span>     </span><span class="COMM">/**
-<span class='line'>764</span>      * Clears the specified orientation watch.
-<span class='line'>765</span>      * @param {String} watchId The ID of the watch returned from #watchOrientation.
-<span class='line'>766</span>      */</span><span class="WHIT">
-<span class='line'>767</span> </span><span class="WHIT">    </span><span class="NAME">Orientation.prototype.clearWatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>768</span> </span><span class="WHIT">    	</span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>769</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>770</span> </span><span class="WHIT">    
-<span class='line'>771</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>772</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.orientation</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.orientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Orientation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>773</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>774</span> </span><span class="WHIT">    
-<span class='line'>775</span>     
-<span class='line'>776</span>     
-<span class='line'>777</span>     </span><span class="COMM">/**
-<span class='line'>778</span>      * This class contains position information.
-<span class='line'>779</span>      * @param {Object} lat
-<span class='line'>780</span>      * @param {Object} lng
-<span class='line'>781</span>      * @param {Object} acc
-<span class='line'>782</span>      * @param {Object} alt
-<span class='line'>783</span>      * @param {Object} altacc
-<span class='line'>784</span>      * @param {Object} head
-<span class='line'>785</span>      * @param {Object} vel
-<span class='line'>786</span>      * @constructor
-<span class='line'>787</span>      */</span><span class="WHIT">
-<span class='line'>788</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Position</span><span class="PUNC">(</span><span class="NAME">lat</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">lng</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">acc</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">alt</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">altacc</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">head</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">vel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>789</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>790</span>     	 * The latitude of the position.
-<span class='line'>791</span>     	 */</span><span class="WHIT">
-<span class='line'>792</span> </span><span class="WHIT">    	</span><span class="NAME">this.latitude</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">lat</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>793</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>794</span>     	 * The longitude of the position,
-<span class='line'>795</span>     	 */</span><span class="WHIT">
-<span class='line'>796</span> </span><span class="WHIT">    	</span><span class="NAME">this.longitude</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">lng</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>797</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>798</span>     	 * The accuracy of the position.
-<span class='line'>799</span>     	 */</span><span class="WHIT">
-<span class='line'>800</span> </span><span class="WHIT">    	</span><span class="NAME">this.accuracy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">acc</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>801</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>802</span>     	 * The altitude of the position.
-<span class='line'>803</span>     	 */</span><span class="WHIT">
-<span class='line'>804</span> </span><span class="WHIT">    	</span><span class="NAME">this.altitude</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">alt</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>805</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>806</span>     	 * The altitude accuracy of the position.
-<span class='line'>807</span>     	 */</span><span class="WHIT">
-<span class='line'>808</span> </span><span class="WHIT">    	</span><span class="NAME">this.altitudeAccuracy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">altacc</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>809</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>810</span>     	 * The direction the device is moving at the position.
-<span class='line'>811</span>     	 */</span><span class="WHIT">
-<span class='line'>812</span> </span><span class="WHIT">    	</span><span class="NAME">this.heading</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">head</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>813</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>814</span>     	 * The velocity with which the device is moving at the position.
-<span class='line'>815</span>     	 */</span><span class="WHIT">
-<span class='line'>816</span> </span><span class="WHIT">    	</span><span class="NAME">this.velocity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">vel</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>817</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>818</span>     	 * The time that the position was obtained.
-<span class='line'>819</span>     	 */</span><span class="WHIT">
-<span class='line'>820</span> </span><span class="WHIT">    	</span><span class="NAME">this.timestamp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>821</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>822</span> </span><span class="WHIT">    
-<span class='line'>823</span>     </span><span class="COMM">/**
-<span class='line'>824</span>      * This class specifies the options for requesting position data.
-<span class='line'>825</span>      * @constructor
-<span class='line'>826</span>      */</span><span class="WHIT">
-<span class='line'>827</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">PositionOptions</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>828</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>829</span>     	 * Specifies the desired position accuracy.
-<span class='line'>830</span>     	 */</span><span class="WHIT">
-<span class='line'>831</span> </span><span class="WHIT">    	</span><span class="NAME">this.enableHighAccuracy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>832</span> </span><span class="WHIT">    	</span><span class="COMM">/**
-<span class='line'>833</span>     	 * The timeout after which if position data cannot be obtained the errorCallback
-<span class='line'>834</span>     	 * is called.
-<span class='line'>835</span>     	 */</span><span class="WHIT">
-<span class='line'>836</span> </span><span class="WHIT">    	</span><span class="NAME">this.timeout</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>837</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>838</span> </span><span class="WHIT">    
-<span class='line'>839</span>     </span><span class="COMM">/**
-<span class='line'>840</span>      * This class contains information about any GSP errors.
-<span class='line'>841</span>      * @constructor
-<span class='line'>842</span>      */</span><span class="WHIT">
-<span class='line'>843</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">PositionError</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>844</span> </span><span class="WHIT">    	</span><span class="NAME">this.code</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>845</span> </span><span class="WHIT">    	</span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>846</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>847</span> </span><span class="WHIT">    
-<span class='line'>848</span>     </span><span class="NAME">PositionError.UNKNOWN_ERROR</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>849</span> </span><span class="WHIT">    </span><span class="NAME">PositionError.PERMISSION_DENIED</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>850</span> </span><span class="WHIT">    </span><span class="NAME">PositionError.POSITION_UNAVAILABLE</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>851</span> </span><span class="WHIT">    </span><span class="NAME">PositionError.TIMEOUT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>852</span> </span><span class="WHIT">    
-<span class='line'>853</span>     
-<span class='line'>854</span>     
-<span class='line'>855</span>     </span><span class="COMM">/**
-<span class='line'>856</span>      * This class provides access to the device SMS functionality.
-<span class='line'>857</span>      * @constructor
-<span class='line'>858</span>      */</span><span class="WHIT">
-<span class='line'>859</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Sms</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>860</span> </span><span class="WHIT">    
-<span class='line'>861</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>862</span> </span><span class="WHIT">    
-<span class='line'>863</span>     </span><span class="COMM">/**
-<span class='line'>864</span>      * Sends an SMS message.
-<span class='line'>865</span>      * @param {Integer} number The phone number to send the message to.
-<span class='line'>866</span>      * @param {String} message The contents of the SMS message to send.
-<span class='line'>867</span>      * @param {Function} successCallback The function to call when the SMS message is sent.
-<span class='line'>868</span>      * @param {Function} errorCallback The function to call when there is an error sending the SMS message.
-<span class='line'>869</span>      * @param {PositionOptions} options The options for accessing the GPS location such as timeout and accuracy.
-<span class='line'>870</span>      */</span><span class="WHIT">
-<span class='line'>871</span> </span><span class="WHIT">    </span><span class="NAME">Sms.prototype.send</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">number</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">message</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>872</span> </span><span class="WHIT">    	
-<span class='line'>873</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>874</span> </span><span class="WHIT">    
-<span class='line'>875</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>876</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.sms</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.sms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Sms</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>877</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>878</span> </span><span class="WHIT">    
-<span class='line'>879</span>     
-<span class='line'>880</span>     
-<span class='line'>881</span>     </span><span class="COMM">/**
-<span class='line'>882</span>      * This class provides access to the telephony features of the device.
-<span class='line'>883</span>      * @constructor
-<span class='line'>884</span>      */</span><span class="WHIT">
-<span class='line'>885</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Telephony</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>886</span> </span><span class="WHIT">    	
-<span class='line'>887</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>888</span> </span><span class="WHIT">    
-<span class='line'>889</span>     </span><span class="COMM">/**
-<span class='line'>890</span>      * Calls the specifed number.
-<span class='line'>891</span>      * @param {Integer} number The number to be called.
-<span class='line'>892</span>      */</span><span class="WHIT">
-<span class='line'>893</span> </span><span class="WHIT">    </span><span class="NAME">Telephony.prototype.call</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">number</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>894</span> </span><span class="WHIT">    	
-<span class='line'>895</span>     </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>896</span> </span><span class="WHIT">    
-<span class='line'>897</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>898</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.telephony</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.telephony</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Telephony</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>899</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>900</span> </span><span class="WHIT">    
-<span class='line'>901</span>     
-<span class='line'>902</span> </span></pre></body></html>
+<span class='line'>722</span>     </span><span class="COMM">// TODO: of course on Blackberry and Android there notifications in the UI as well</span><span class="WHIT">
+<span class='line'>723</span> </span><span class="WHIT">    
+<span class='line'>724</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>725</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.notification</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.notification</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Notification</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>726</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>727</span> </span><span class="WHIT">    
+<span class='line'>728</span>     
+<span class='line'>729</span>     
+<span class='line'>730</span>     </span><span class="COMM">/**
+<span class='line'>731</span>      * This class provides access to the device orientation.
+<span class='line'>732</span>      * @constructor
+<span class='line'>733</span>      */</span><span class="WHIT">
+<span class='line'>734</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Orientation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>735</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>736</span>     	 * The last known orientation.
+<span class='line'>737</span>     	 */</span><span class="WHIT">
+<span class='line'>738</span> </span><span class="WHIT">    	</span><span class="NAME">this.lastOrientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>739</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>740</span> </span><span class="WHIT">    
+<span class='line'>741</span>     </span><span class="COMM">/**
+<span class='line'>742</span>      * Asynchronously aquires the current orientation.
+<span class='line'>743</span>      * @param {Function} successCallback The function to call when the orientation
+<span class='line'>744</span>      * is known.
+<span class='line'>745</span>      * @param {Function} errorCallback The function to call when there is an error 
+<span class='line'>746</span>      * getting the orientation.
+<span class='line'>747</span>      */</span><span class="WHIT">
+<span class='line'>748</span> </span><span class="WHIT">    </span><span class="NAME">Orientation.prototype.getCurrentOrientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>749</span> </span><span class="WHIT">    	</span><span class="COMM">// If the position is available then call success</span><span class="WHIT">
+<span class='line'>750</span> </span><span class="WHIT">    	</span><span class="COMM">// If the position is not available then call error</span><span class="WHIT">
+<span class='line'>751</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>752</span> </span><span class="WHIT">    
+<span class='line'>753</span>     </span><span class="COMM">/**
+<span class='line'>754</span>      * Asynchronously aquires the orientation repeatedly at a given interval.
+<span class='line'>755</span>      * @param {Function} successCallback The function to call each time the orientation
+<span class='line'>756</span>      * data is available.
+<span class='line'>757</span>      * @param {Function} errorCallback The function to call when there is an error 
+<span class='line'>758</span>      * getting the orientation data.
+<span class='line'>759</span>      */</span><span class="WHIT">
+<span class='line'>760</span> </span><span class="WHIT">    </span><span class="NAME">Orientation.prototype.watchOrientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>761</span> </span><span class="WHIT">    	</span><span class="COMM">// Invoke the appropriate callback with a new Position object every time the implementation </span><span class="WHIT">
+<span class='line'>762</span> </span><span class="WHIT">    	</span><span class="COMM">// determines that the position of the hosting device has changed. </span><span class="WHIT">
+<span class='line'>763</span> </span><span class="WHIT">    	</span><span class="NAME">this.getCurrentPosition</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>764</span> </span><span class="WHIT">    	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">setInterval</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>765</span> </span><span class="WHIT">    		</span><span class="NAME">navigator.orientation.getCurrentOrientation</span><span class="PUNC">(</span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>766</span> </span><span class="WHIT">    	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>767</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>768</span> </span><span class="WHIT">    
+<span class='line'>769</span>     </span><span class="COMM">/**
+<span class='line'>770</span>      * Clears the specified orientation watch.
+<span class='line'>771</span>      * @param {String} watchId The ID of the watch returned from #watchOrientation.
+<span class='line'>772</span>      */</span><span class="WHIT">
+<span class='line'>773</span> </span><span class="WHIT">    </span><span class="NAME">Orientation.prototype.clearWatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>774</span> </span><span class="WHIT">    	</span><span class="NAME">clearInterval</span><span class="PUNC">(</span><span class="NAME">watchId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>775</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>776</span> </span><span class="WHIT">    
+<span class='line'>777</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>778</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.orientation</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.orientation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Orientation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>779</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>780</span> </span><span class="WHIT">    
+<span class='line'>781</span>     
+<span class='line'>782</span>     
+<span class='line'>783</span>     </span><span class="COMM">/**
+<span class='line'>784</span>      * This class contains position information.
+<span class='line'>785</span>      * @param {Object} lat
+<span class='line'>786</span>      * @param {Object} lng
+<span class='line'>787</span>      * @param {Object} acc
+<span class='line'>788</span>      * @param {Object} alt
+<span class='line'>789</span>      * @param {Object} altacc
+<span class='line'>790</span>      * @param {Object} head
+<span class='line'>791</span>      * @param {Object} vel
+<span class='line'>792</span>      * @constructor
+<span class='line'>793</span>      */</span><span class="WHIT">
+<span class='line'>794</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Position</span><span class="PUNC">(</span><span class="NAME">lat</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">lng</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">acc</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">alt</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">altacc</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">head</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">vel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>795</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>796</span>     	 * The latitude of the position.
+<span class='line'>797</span>     	 */</span><span class="WHIT">
+<span class='line'>798</span> </span><span class="WHIT">    	</span><span class="NAME">this.latitude</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">lat</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>799</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>800</span>     	 * The longitude of the position,
+<span class='line'>801</span>     	 */</span><span class="WHIT">
+<span class='line'>802</span> </span><span class="WHIT">    	</span><span class="NAME">this.longitude</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">lng</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>803</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>804</span>     	 * The accuracy of the position.
+<span class='line'>805</span>     	 */</span><span class="WHIT">
+<span class='line'>806</span> </span><span class="WHIT">    	</span><span class="NAME">this.accuracy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">acc</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>807</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>808</span>     	 * The altitude of the position.
+<span class='line'>809</span>     	 */</span><span class="WHIT">
+<span class='line'>810</span> </span><span class="WHIT">    	</span><span class="NAME">this.altitude</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">alt</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>811</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>812</span>     	 * The altitude accuracy of the position.
+<span class='line'>813</span>     	 */</span><span class="WHIT">
+<span class='line'>814</span> </span><span class="WHIT">    	</span><span class="NAME">this.altitudeAccuracy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">altacc</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>815</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>816</span>     	 * The direction the device is moving at the position.
+<span class='line'>817</span>     	 */</span><span class="WHIT">
+<span class='line'>818</span> </span><span class="WHIT">    	</span><span class="NAME">this.heading</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">head</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>819</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>820</span>     	 * The velocity with which the device is moving at the position.
+<span class='line'>821</span>     	 */</span><span class="WHIT">
+<span class='line'>822</span> </span><span class="WHIT">    	</span><span class="NAME">this.velocity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">vel</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>823</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>824</span>     	 * The time that the position was obtained.
+<span class='line'>825</span>     	 */</span><span class="WHIT">
+<span class='line'>826</span> </span><span class="WHIT">    	</span><span class="NAME">this.timestamp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>827</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>828</span> </span><span class="WHIT">    
+<span class='line'>829</span>     </span><span class="COMM">/**
+<span class='line'>830</span>      * This class specifies the options for requesting position data.
+<span class='line'>831</span>      * @constructor
+<span class='line'>832</span>      */</span><span class="WHIT">
+<span class='line'>833</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">PositionOptions</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>834</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>835</span>     	 * Specifies the desired position accuracy.
+<span class='line'>836</span>     	 */</span><span class="WHIT">
+<span class='line'>837</span> </span><span class="WHIT">    	</span><span class="NAME">this.enableHighAccuracy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>838</span> </span><span class="WHIT">    	</span><span class="COMM">/**
+<span class='line'>839</span>     	 * The timeout after which if position data cannot be obtained the errorCallback
+<span class='line'>840</span>     	 * is called.
+<span class='line'>841</span>     	 */</span><span class="WHIT">
+<span class='line'>842</span> </span><span class="WHIT">    	</span><span class="NAME">this.timeout</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>843</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>844</span> </span><span class="WHIT">    
+<span class='line'>845</span>     </span><span class="COMM">/**
+<span class='line'>846</span>      * This class contains information about any GSP errors.
+<span class='line'>847</span>      * @constructor
+<span class='line'>848</span>      */</span><span class="WHIT">
+<span class='line'>849</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">PositionError</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>850</span> </span><span class="WHIT">    	</span><span class="NAME">this.code</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>851</span> </span><span class="WHIT">    	</span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>852</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>853</span> </span><span class="WHIT">    
+<span class='line'>854</span>     </span><span class="NAME">PositionError.UNKNOWN_ERROR</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>855</span> </span><span class="WHIT">    </span><span class="NAME">PositionError.PERMISSION_DENIED</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>856</span> </span><span class="WHIT">    </span><span class="NAME">PositionError.POSITION_UNAVAILABLE</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>857</span> </span><span class="WHIT">    </span><span class="NAME">PositionError.TIMEOUT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>858</span> </span><span class="WHIT">    
+<span class='line'>859</span>     
+<span class='line'>860</span>     
+<span class='line'>861</span>     </span><span class="COMM">/**
+<span class='line'>862</span>      * This class provides access to the device SMS functionality.
+<span class='line'>863</span>      * @constructor
+<span class='line'>864</span>      */</span><span class="WHIT">
+<span class='line'>865</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Sms</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>866</span> </span><span class="WHIT">    
+<span class='line'>867</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>868</span> </span><span class="WHIT">    
+<span class='line'>869</span>     </span><span class="COMM">/**
+<span class='line'>870</span>      * Sends an SMS message.
+<span class='line'>871</span>      * @param {Integer} number The phone number to send the message to.
+<span class='line'>872</span>      * @param {String} message The contents of the SMS message to send.
+<span class='line'>873</span>      * @param {Function} successCallback The function to call when the SMS message is sent.
+<span class='line'>874</span>      * @param {Function} errorCallback The function to call when there is an error sending the SMS message.
+<span class='line'>875</span>      * @param {PositionOptions} options The options for accessing the GPS location such as timeout and accuracy.
+<span class='line'>876</span>      */</span><span class="WHIT">
+<span class='line'>877</span> </span><span class="WHIT">    </span><span class="NAME">Sms.prototype.send</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">number</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">message</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">successCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorCallback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>878</span> </span><span class="WHIT">    	
+<span class='line'>879</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>880</span> </span><span class="WHIT">    
+<span class='line'>881</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>882</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.sms</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.sms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Sms</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>883</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>884</span> </span><span class="WHIT">    
+<span class='line'>885</span>     
+<span class='line'>886</span>     
+<span class='line'>887</span>     </span><span class="COMM">/**
+<span class='line'>888</span>      * This class provides access to the telephony features of the device.
+<span class='line'>889</span>      * @constructor
+<span class='line'>890</span>      */</span><span class="WHIT">
+<span class='line'>891</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Telephony</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>892</span> </span><span class="WHIT">    	
+<span class='line'>893</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>894</span> </span><span class="WHIT">    
+<span class='line'>895</span>     </span><span class="COMM">/**
+<span class='line'>896</span>      * Calls the specifed number.
+<span class='line'>897</span>      * @param {Integer} number The number to be called.
+<span class='line'>898</span>      */</span><span class="WHIT">
+<span class='line'>899</span> </span><span class="WHIT">    </span><span class="NAME">Telephony.prototype.call</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">number</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>900</span> </span><span class="WHIT">    	
+<span class='line'>901</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>902</span> </span><span class="WHIT">    
+<span class='line'>903</span>     </span><span class="NAME">PhoneGap.addConstructor</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>904</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">navigator.telephony</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"undefined"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">navigator.telephony</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Telephony</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>905</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>906</span> </span><span class="WHIT">    
+<span class='line'>907</span>     
+<span class='line'>908</span> </span></pre></body></html>

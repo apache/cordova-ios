@@ -81,9 +81,15 @@ UIControls.prototype.tabBarItemSelected = function(tag) {
 };
 
 /**
+ * Create a toolbar.
  */
-UIControls.prototype.createToolBar = function() {
-};
+UIControls.prototype.createToolBar = function() {};
+
+/**
+ * Function called when a tab bar item has been selected.
+ * @param {String} title the title to set within the toolbar
+ */
+UIControls.prototype.setToolBarTitle = function(title) {};
 
 PhoneGap.addConstructor(function() {
     window.uicontrols = new UIControls();

@@ -28,3 +28,11 @@ UIControls.prototype.showTabBarItems = function() {
     }
     PhoneGap.exec.apply(this, parameters);
 };
+
+UIControls.prototype.createToolBar = function() {
+    PhoneGap.exec("UIControls.createToolBar");
+};
+
+UIControls.prototype.setToolBarTitle = function(title) {
+    PhoneGap.exec("UIControls.setToolBarTitle", title);
+};

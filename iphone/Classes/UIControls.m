@@ -16,6 +16,7 @@
     self = [super initWithWebView:theWebView];
     if (self) {
         tabBarItems = [[NSMutableDictionary alloc] initWithCapacity:5];
+        
     }
     return self;
 }
@@ -49,6 +50,9 @@
  */
 - (void)showTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
+    if (!tabBar)
+        [self createTabBar:nil options:nil];
+
     CGFloat height = 49.0f;
     BOOL atBottom = YES;
     
@@ -101,6 +105,8 @@
  */
 - (void)hideTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
+    if (!tabBar)
+        [self createTabBar:nil options:nil];
     tabBar.hidden = YES;
 }
 
@@ -133,6 +139,9 @@
  */
 - (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
+    if (!tabBar)
+        [self createTabBar:nil options:nil];
+
     NSString  *name      = [arguments objectAtIndex:0];
     NSString  *title     = [arguments objectAtIndex:1];
     NSString  *imageName = [arguments objectAtIndex:2];
@@ -178,6 +187,9 @@
  */
 - (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
+    if (!tabBar)
+        [self createTabBar:nil options:nil];
+
     NSString  *name = [arguments objectAtIndex:0];
     UITabBarItem *item = [tabBarItems objectForKey:name];
     if (item)
@@ -195,6 +207,9 @@
  */
 - (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options
 {
+    if (!tabBar)
+        [self createTabBar:nil options:nil];
+
     int i, count = [arguments count];
     NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
     for (i = 0; i < count; i++) {
@@ -289,6 +304,100 @@
     NSString * jsCallBack = [NSString stringWithFormat:@"uicontrols.tabBarItemSelected(%d);", item.tag];    
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
+
+/*********************************************************************************/
+- (void)createToolBar:(NSArray*)arguments withDict:(NSDictionary*)options
+{
+    CGFloat height   = 39.0f;
+    BOOL atTop       = YES;
+    UIBarStyle style = UIBarStyleDefault;
+
+    NSDictionary* toolBarSettings = [settings objectForKey:@"ToolBarSettings"];
+    if (toolBarSettings) {
+        if ([toolBarSettings objectForKey:@"height"])
+            height = [[toolBarSettings objectForKey:@"height"] floatValue];
+        if ([toolBarSettings objectForKey:@"position"])
+            atTop  = [[toolBarSettings objectForKey:@"position"] isEqualTo:@"top"];
+        
+        NSString *styleStr = [toolBarSettings objectForKey:@"style"];
+        if ([styleStr isEqualTo:@"Default"])
+            style = UIBarStyleDefault;
+        else if ([styleStr isEqualTo:@"BlackOpaque"])
+            style = UIBarStyleBlackOpaque;
+        else if ([styleStr isEqualTo:@"BlackTranslucent"])
+            style = UIBarStyleBlackTranslucent;
+    }
+
+    CGRect webViewBounds = webView.bounds;
+    CGRect toolBarBounds = CGRectMake(
+                              webViewBounds.origin.x,
+                              webViewBounds.origin.y,
+                              webViewBounds.size.width,
+                              height
+                              );
+    webViewBounds = CGRectMake(
+                               webViewBounds.origin.x,
+                               webViewBounds.origin.y + height,
+                               webViewBounds.size.width,
+                               webViewBounds.size.height - height
+                               );
+    toolBar = [[UIToolbar alloc] initWithFrame:toolBarBounds];
+    [toolBar sizeToFit];
+    toolBar.hidden                 = NO;
+    toolBar.multipleTouchEnabled   = NO;
+    toolBar.autoresizesSubviews    = YES;
+    toolBar.userInteractionEnabled = YES;
+    toolBar.barStyle               = style;
+
+    [toolBar setFrame:toolBarBounds];
+    [webView setFrame:webViewBounds];
+
+    [self.webView.superview addSubview:toolBar];
+}
+
+/*
+- (void)createToolBarButton:(NSArray*)arguments withDict:(NSDictionary*)options
+{
+}
+ */
+/*
+- (void)createToolBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
+{
+    if (!toolBar)
+        [self createToolBar:nil options:nil];
+    
+    NSString  *name  = [arguments objectAtIndex:0];
+    NSString  *title = [arguments objectAtIndex:1];
+    NSString  *style = [arguments objectAtIndex:2];
+    UIBarButtonItemStyle styleRef = UIBarButtonItemStylePlain;
+    if ([style isEqualTo:@"plain"])
+        styleRef = UIBarButtonItemStylePlain;
+    else if ([style isEqualTo:@"border"])
+        styleRef = UIBarButtonItemStyleBordered;
+    else if ([style isEqualTo:
+        
+
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:title style:styleRef target:self action:@selector(clickedToolBarTitle)];
+    [toolBarItems setObject:item forKey:name];
+}
+*/
+ 
+- (void)setToolBarTitle:(NSArray*)arguments withDict:(NSDictionary*)options
+{
+    if (!toolBar)
+        [self createToolBar:nil withDict:nil];
+
+    NSString *title = [arguments objectAtIndex:0];
+    if (!toolBarTitle) {
+        toolBarTitle = [[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:self action:@selector(toolBarTitleClicked)];
+    } else {
+        toolBarTitle.title = title;
+    }
+
+    NSArray *items = [[NSArray alloc] initWithObjects:toolBarTitle];
+    [toolBar setItems:items];
+}
+
 
 - (void)dealloc
 {
