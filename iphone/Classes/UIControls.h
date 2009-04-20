@@ -34,9 +34,13 @@
 /* Tool Bar methods
  */
 - (void)createToolBar:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)setToolBarTitle:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)toolBarTitleClicked;
+
+/*
 - (void)createToolBarButton:(NSArray*)arguments withDict:(NSDictionary*)options;
 - (void)createToolBarTitle:(NSArray*)arguments withDict:(NSDictionary*)options;
-
+*/
 
 //- (void)setToolBarTitle:(NSArray*)arguments withDict:(NSDictionary*)options;
 //- (void)setToolBarButtons:(NSArray*)arguments withDict:(NSDictionary*)options;

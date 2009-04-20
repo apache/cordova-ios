@@ -394,10 +394,16 @@
         toolBarTitle.title = title;
     }
 
-    NSArray *items = [[NSArray alloc] initWithObjects:toolBarTitle];
+    UIBarButtonItem *space1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *space2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    NSArray *items = [[NSArray alloc] initWithObjects:space1, toolBarTitle, space2, nil];
     [toolBar setItems:items];
 }
 
+- (void)toolBarTitleClicked
+{
+    NSLog(@"Toolbar clicked");
+}
 
 - (void)dealloc
 {
