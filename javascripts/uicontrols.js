@@ -80,6 +80,11 @@ UIControls.prototype.tabBarItemSelected = function(tag) {
         this.tabBarCallbacks[tag]();
 };
 
+/**
+ */
+UIControls.prototype.createToolBar = function() {
+};
+
 PhoneGap.addConstructor(function() {
     window.uicontrols = new UIControls();
 });

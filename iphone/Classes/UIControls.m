@@ -58,8 +58,7 @@
         atBottom = [[tabSettings objectForKey:@"position"] isEqualTo:@"bottom"];
     }
     tabBar.hidden = NO;
-    
-    
+
      CGRect webViewBounds = webView.bounds;
      CGRect tabBarBounds;
      if (atBottom) {
