@@ -175,7 +175,14 @@
         topStatusBarStyle = UIStatusBarStyleDefault;
     }
     if ([topStatusBar isEqualToString:@"none"]) {
+        int toolbarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
         [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
+        CGRect webViewBounds = webView.bounds;
+        [webView setFrame:CGRectMake(webViewBounds.origin.x,
+                                     webViewBounds.origin.y - toolbarHeight,
+                                     webViewBounds.size.width,
+                                     webViewBounds.size.height + toolbarHeight
+                                     )];
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:topStatusBarStyle animated:NO];
     }
