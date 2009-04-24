@@ -12,13 +12,14 @@
 		1B1B4FBE0F94571B00ECD4E6 /* PhoneGapCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B4FBD0F94571B00ECD4E6 /* PhoneGapCommand.m */; };
 		1B1B53830F98070D00ECD4E6 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B53820F98070D00ECD4E6 /* Notification.m */; };
 		1B64D89A0F6C73C700D12F7F /* DebugConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B64D8990F6C73C700D12F7F /* DebugConsole.m */; };
+		1BB1F7D20F9E1BE2002A28DA /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1BB1F7D10F9E1BE2002A28DA /* Settings.plist */; };
 		1D3623260D0F684500981E51 /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* PhoneGapDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		47DC5AEE0F4BDEDB00FB54CE /* beep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 47DC5AED0F4BDEDB00FB54CE /* beep.wav */; };
-		47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* Settings.plist */; };
+		47DC7FB30EFADF9E00D0B526 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* PhoneGap.plist */; };
 		47F565210F3AC95D001DFBDB /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F565200F3AC95D001DFBDB /* Image.m */; };
 		47FAB6A90EF751E2005F55AB /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB6A80EF751E2005F55AB /* PhoneGapViewController.m */; };
 		47FAB72A0EF7A663005F55AB /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FAB7290EF7A663005F55AB /* Sound.m */; };
@@ -46,6 +47,7 @@
 		1B1B53820F98070D00ECD4E6 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Notification.m; sourceTree = "<group>"; };
 		1B64D8980F6C73C700D12F7F /* DebugConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugConsole.h; sourceTree = "<group>"; };
 		1B64D8990F6C73C700D12F7F /* DebugConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugConsole.m; sourceTree = "<group>"; };
+		1BB1F7D10F9E1BE2002A28DA /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* PhoneGapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* PhoneGapDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneGapDelegate.m; sourceTree = "<group>"; };
@@ -55,7 +57,7 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main.m; sourceTree = "<group>"; };
 		474A7F820EFAD6580020DD7F /* PhoneGap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGap_Prefix.pch; sourceTree = "<group>"; };
 		47DC5AED0F4BDEDB00FB54CE /* beep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beep.wav; sourceTree = "<group>"; };
-		47DC7FB20EFADF9E00D0B526 /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
+		47DC7FB20EFADF9E00D0B526 /* PhoneGap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
 		47F5651F0F3AC95D001DFBDB /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		47F565200F3AC95D001DFBDB /* Image.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
 		47FAB6A70EF751E2005F55AB /* PhoneGapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapViewController.h; sourceTree = "<group>"; };
@@ -199,7 +201,8 @@
 		AA13D3080F20286200B18061 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				47DC7FB20EFADF9E00D0B526 /* Settings.plist */,
+				1BB1F7D10F9E1BE2002A28DA /* Settings.plist */,
+				47DC7FB20EFADF9E00D0B526 /* PhoneGap.plist */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Config;
@@ -251,9 +254,10 @@
 				825DFB5E0E464E6C000D0A5D /* README.md in Resources */,
 				8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */,
 				824041C10E942F0E002F3376 /* Default.png in Resources */,
-				47DC7FB30EFADF9E00D0B526 /* Settings.plist in Resources */,
+				47DC7FB30EFADF9E00D0B526 /* PhoneGap.plist in Resources */,
 				AA13D3420F202D0400B18061 /* www in Resources */,
 				47DC5AEE0F4BDEDB00FB54CE /* beep.wav in Resources */,
+				1BB1F7D20F9E1BE2002A28DA /* Settings.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,6 +291,7 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ADDITIONAL_SDKS = "$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -298,6 +303,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PhoneGap_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-ljson",
+				);
 				PRODUCT_NAME = PhoneGap;
 			};
 			name = Debug;
@@ -305,6 +314,7 @@
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ADDITIONAL_SDKS = "$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -340,6 +350,7 @@
 		B74E58190EC6C9AC00215614 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ADDITIONAL_SDKS = "$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -351,6 +362,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glass_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-ljson",
+				);
 				PRODUCT_NAME = Glass;
 				PROVISIONING_PROFILE = "B02DE0E6-FD92-4854-9B69-3C191831ABA5";
 			};
@@ -376,12 +391,17 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ADDITIONAL_SDKS = "$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk";
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer: Brant Vasilieff";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brant Vasilieff";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-ljson",
+				);
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "880150E2-809D-4BBE-B91E-244F2A6F59A0";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "880150E2-809D-4BBE-B91E-244F2A6F59A0";

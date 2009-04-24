@@ -22,7 +22,7 @@ def doc
   end
   FileUtils.mkdir_p "#{ LIBPATH }tmp"
   open(final,'w'){|f| f.puts( js )}
-  sh "java -jar util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }jsrun.jar util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }app#{ File::SEPARATOR }run.js -a -t=util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }templates#{ File::SEPARATOR }jsdoc tmp#{ File::SEPARATOR }phonegap.js"
+  sh "java -jar util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }jsrun.jar util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }app#{ File::SEPARATOR }run.js -a -d=javascripts/docs -t=util#{ File::SEPARATOR }jsdoc-toolkit#{ File::SEPARATOR }templates#{ File::SEPARATOR }jsdoc tmp#{ File::SEPARATOR }phonegap.js"
 end
 
 def build

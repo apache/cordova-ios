@@ -29,7 +29,7 @@
   }
 
   /* Definition List */
-  #stage.theme > dl{
+  #Page1 > dl{
   	padding-top:10px;
   	clear:both;
   	margin:0;
@@ -38,13 +38,13 @@
   	overflow:auto;
   }
 
-  #stage.theme > dl > dt{
+  #Page1 > dl > dt{
   	font-weight:bold;
   	float:left;
   	margin-left:5px;
   }
 
-  #stage.theme > dl > dd{
+  #Page1 > dl > dd{
   	width:45px;
   	float:left;
   	color:#a87;
@@ -52,11 +52,11 @@
   }
 
   /* Content Styling */
-  #stage.theme > h1, #stage.theme > h2, #stage.theme > p{
+  h1, h2, p{
     margin:1em 0 .5em 13px;
   }
 
-  #stage.theme > h1{
+  h1{
     color:#eee;
     font-size:1.6em;
     text-align:center;
@@ -65,7 +65,7 @@
     padding:0;
   }
 
-  #stage.theme > h2{
+  h2{
   	clear:both;
     margin:0;
     padding:3px;
