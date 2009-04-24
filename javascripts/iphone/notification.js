@@ -9,10 +9,10 @@ Notification.prototype.beep = function(count, volume) {
 };
 
 Notification.prototype.alert = function(message, title, buttonLabel) {
-    var options = {
-        title: title,
-        buttonLabel: buttonLabel
-    };
+    var options = {};
+    if (title) options.title = title;
+    if (buttonLabel) options.buttonLabel = buttonLabel;
+
     if (PhoneGap.available)
         PhoneGap.exec('Notification.alert', message, options);
     else

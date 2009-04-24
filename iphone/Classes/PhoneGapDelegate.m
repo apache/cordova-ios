@@ -8,6 +8,7 @@
 @synthesize viewController;
 @synthesize activityView;
 @synthesize commandObjects;
+@synthesize settings;
 
 //@synthesize imagePickerController;
 
@@ -24,8 +25,14 @@
 {
     id obj = [commandObjects objectForKey:className];
     if (!obj) {
-        obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
-        NSLog(@"******* Object %@ created from scratch for %@", obj, className);
+        // attempt to load the settings for this command class
+        NSDictionary* classSettings;
+        classSettings = [settings objectForKey:className];
+
+        if (classSettings)
+            obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
+        else
+            obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         
         [commandObjects setObject:obj forKey:className];
     }
@@ -39,30 +46,31 @@
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
 	/*
-	 * Settings.plist
+	 * PhoneGap.plist
 	 *
-	 * This block of code navigates to the Settings.plist in the Config Group and reads the XML into an Hash (Dictionary)
+	 * This block of code navigates to the PhoneGap.plist in the Config Group and reads the XML into an Hash (Dictionary)
 	 *
 	 */
 	NSString *errorDesc = nil;
     NSPropertyListFormat format;
-	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"PhoneGap" ofType:@"plist"];
 	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
 	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-										  propertyListFromData:plistXML
-										  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-										  format:&format errorDescription:&errorDesc];
+                                  propertyListFromData:plistXML
+                                  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+                                  format:&format errorDescription:&errorDesc];
+    settings = [[NSDictionary alloc] initWithDictionary:temp];
     
-    NSNumber *offline              = [temp objectForKey:@"Offline"];
-    NSString *url                  = [temp objectForKey:@"Callback"];
-    NSNumber *detectNumber         = [temp objectForKey:@"DetectPhoneNumber"];
-    NSNumber *useLocation          = [temp objectForKey:@"UseLocation"];
-    NSNumber *useAccelerometer     = [temp objectForKey:@"UseAccelerometer"];
-    NSNumber *autoRotate           = [temp objectForKey:@"AutoRotate"];
-    NSString *startOrientation     = [temp objectForKey:@"StartOrientation"];
-    NSString *rotateOrientation    = [temp objectForKey:@"RotateOrientation"];
-    NSString *topStatusBar         = [temp objectForKey:@"TopStatusBar"];
-    NSString *topActivityIndicator = [temp objectForKey:@"TopActivityIndicator"];
+    NSNumber *offline              = [settings objectForKey:@"Offline"];
+    NSString *url                  = [settings objectForKey:@"Callback"];
+    NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
+    NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
+    NSNumber *useAccelerometer     = [settings objectForKey:@"UseAccelerometer"];
+    NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
+    NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
+    NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
+    NSString *topStatusBar         = [settings objectForKey:@"TopStatusBar"];
+    NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
     
 	/*
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
@@ -115,7 +123,7 @@
 						  ]];
 
 	/*
-	 * detectNumber - If we want to Automagically convery phone numbers to links - Set in Settings.plist
+	 * detectNumber - If we want to Automagically convery phone numbers to links - Set in PhoneGap.plist
 	 * Value should be BOOL (YES|NO)
 	 */
 	webView.detectsPhoneNumbers = [detectNumber boolValue];
@@ -153,7 +161,7 @@
      /*
      * rotateOrientation - This option is only enabled when AutoRotate is enabled.  If the phone is still rotated
      * when AutoRotate is disabled, this will control what orientations will be rotated to.  If you wish your app to
-     * only use landscape or portrait orientations, change the value in Settings.plist to indicate that.
+     * only use landscape or portrait orientations, change the value in PhoneGap.plist to indicate that.
      * Value should be one of: any, portrait, landscape
      */
     [viewController setRotateOrientation:rotateOrientation];
@@ -219,7 +227,29 @@
 	/*
 	 * This is the Device.platform information
 	 */	
-	[theWebView stringByEvaluatingJavaScriptFromString:[[Device alloc] init]];
+    NSString *deviceStr = [[Device alloc] init];
+    
+    /* Settings.plist
+	 * Read the optional Settings.plist file and push these user-defined settings down into the web application.
+	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
+     * such as specifying Full / Lite version, or localization (English vs German, for instance).
+	 */
+    NSString *errorDesc = nil;
+    NSPropertyListFormat format;
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
+    NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
+                                          propertyListFromData:plistXML
+                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+                                          format:&format errorDescription:&errorDesc];
+    if ([temp respondsToSelector:@selector(JSONFragment)]) {
+        NSString *initString = [[NSString alloc] initWithFormat:@"%@\nwindow.Settings = %@;", deviceStr, [temp JSONFragment]];
+        NSLog(@"%@", initString);
+        [theWebView stringByEvaluatingJavaScriptFromString:initString];
+        [initString release];
+    } else {
+        [theWebView stringByEvaluatingJavaScriptFromString:deviceStr];
+    }
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
@@ -308,9 +338,11 @@
             NSString* className = [components objectAtIndex:0];
             NSString* methodName = [components objectAtIndex:1];
             
+            // Fetch an instance of this class
+            PhoneGapCommand* obj = [self getCommandInstance:className];
+            
             // construct the fill method name to ammend the second argument.
             NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", methodName];
-            PhoneGapCommand* obj = [self getCommandInstance:className];
             if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)])
             {
                 [obj performSelector:NSSelectorFromString(fullMethodName) withObject:arguments withObject:options];
