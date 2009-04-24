@@ -209,7 +209,7 @@
 {
     if (!tabBar)
         [self createTabBar:nil options:nil];
-
+    
     int i, count = [arguments count];
     NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
     for (i = 0; i < count; i++) {
@@ -223,6 +223,26 @@
     if ([options objectForKey:@"animate"])
         animateItems = [(NSString*)[options objectForKey:@"animate"] boolValue];
     [tabBar setItems:items animated:animateItems];
+}
+
+/**
+ * Manually select an individual tab bar item, or nil for deselecting a currently selected tab bar item.
+ * @brief manually select a tab bar item
+ * @param arguments the name of the tab bar item to select
+ * @see createTabBarItem
+ * @see showTabBarItems
+ */
+- (void)selectTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
+{
+    if (!tabBar)
+        [self createTabBar:nil options:nil];
+
+    NSString *itemName = [arguments objectAtIndex:0];
+    UITabBarItem *item = [tabBarItems objectForKey:itemName];
+    if (item)
+        tabBar.selectedItem = item;
+    else
+        tabBar.selectedItem = nil;
 }
 
 /*

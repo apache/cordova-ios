@@ -97,13 +97,24 @@
            }
        });
 
-       var more = 0;
+       var more = false;
        uicontrols.createTabBarItem("more", "More", "tabButton:More", {
            onSelect: function() {
-               navigator.notification.alert("More selected");
-               uicontrols.updateTabBarItem("more", { badge: ++more });
+               if (more) {
+                   uicontrols.showTabBarItems("search", "downloads", "more");
+               } else {
+                   uicontrols.showTabBarItems("toprated", "recents", "history", "more");
+               }
+               uicontrols.selectTabBarItem(null);
+               more = !more;
            }
        });
+
+       try {
+       uicontrols.createTabBarItem("search", "Search", "tabButton:Search");
+       uicontrols.createTabBarItem("downloads", "Downloads", "tabButton:Downloads");
+       } catch(e) { debug.log(e) }
+
        uicontrols.showTabBar();
        uicontrols.showTabBarItems("toprated", "recents", "history", "more");
 

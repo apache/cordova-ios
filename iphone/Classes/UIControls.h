@@ -30,6 +30,7 @@
 - (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options;
 - (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
 - (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)selectTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
 
 /* Tool Bar methods
  */

@@ -12,7 +12,7 @@ UIControls.prototype.hideTabBar = function(animate) {
 
 UIControls.prototype.createTabBarItem = function(name, label, image, options) {
     var tag = this.tabBarTag++;
-    if (typeof(options['onSelect']) == 'function')
+    if (options && 'onSelect' in options && typeof(options['onSelect']) == 'function')
         this.tabBarCallbacks[tag] = options.onSelect;
     PhoneGap.exec("UIControls.createTabBarItem", name, label, image, tag, options);
 };
@@ -27,6 +27,10 @@ UIControls.prototype.showTabBarItems = function() {
         parameters.push(arguments[i]);
     }
     PhoneGap.exec.apply(this, parameters);
+};
+
+UIControls.prototype.selectTabBarItem = function(tab) {
+    PhoneGap.exec("UIControls.selectTabBarItem", tab);
 };
 
 UIControls.prototype.createToolBar = function() {
