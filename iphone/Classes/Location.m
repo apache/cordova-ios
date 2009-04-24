@@ -74,13 +74,19 @@
            fromLocation:(CLLocation *)oldLocation
 {
     int epoch = [newLocation.timestamp timeIntervalSince1970];
+    float course = -1.0f;
+    float speed  = -1.0f;
+#ifdef __IPHONE_2_2
+    course = newLocation.course;
+    speed  = newLocation.speed;
+#endif
     NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({timestamp: %d, latitude: %f, longitude: %f, altitude: %f, course: %f, speed: %f, accuracy: {horizontal: %f, vertical: %f}});",
                              epoch,
                              newLocation.coordinate.latitude,
                              newLocation.coordinate.longitude,
                              newLocation.altitude,
-                             newLocation.course,
-                             newLocation.speed,
+                             course,
+                             speed,
                              newLocation.horizontalAccuracy,
                              newLocation.verticalAccuracy
     ];
