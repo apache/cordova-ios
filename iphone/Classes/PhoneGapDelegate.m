@@ -158,35 +158,6 @@
      * Value should be one of: any, portrait, landscape
      */
     [viewController setRotateOrientation:rotateOrientation];
-
-     /*
-	 * These are the setting for the top Status/Battery Bar.
-	 *
-	 *	 opaque      = UIStatusBarStyleBlackOpaque
-	 *	 translucent = UIStatusBarStyleBlackTranslucent
-	 *	 default     = UIStatusBarStyleDefault
-	 *
-	 */
-    UIStatusBarStyle topStatusBarStyle = UIStatusBarStyleDefault;
-    if ([topStatusBar isEqualToString:@"blackOpaque"]) {
-        topStatusBarStyle = UIStatusBarStyleBlackOpaque;
-    } else if ([topStatusBar isEqualToString:@"blackTranslucent"]) {
-        topStatusBarStyle = UIStatusBarStyleBlackTranslucent;
-    } else if ([topStatusBar isEqualToString:@"default"]) {
-        topStatusBarStyle = UIStatusBarStyleDefault;
-    }
-    if ([topStatusBar isEqualToString:@"none"]) {
-        int toolbarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
-        [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
-        CGRect webViewBounds = webView.bounds;
-        [webView setFrame:CGRectMake(webViewBounds.origin.x,
-                                     webViewBounds.origin.y - toolbarHeight,
-                                     webViewBounds.size.width,
-                                     webViewBounds.size.height + toolbarHeight
-                                     )];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:topStatusBarStyle animated:NO];
-    }
     
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
