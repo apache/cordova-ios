@@ -332,18 +332,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Brant Vasilieff";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brant Vasilieff";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Distribution: Handi Mobility";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Nachbaur";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Nachbaur";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Michael Nachbaur";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				CURRENT_PROJECT_VERSION = 1.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "880150E2-809D-4BBE-B91E-244F2A6F59A0";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "880150E2-809D-4BBE-B91E-244F2A6F59A0";
-				SDKROOT = iphoneos2.0;
+				PROVISIONING_PROFILE = "32D94753-1E53-4ACE-95E5-4C9C078CC057";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Distribution;
 		};
@@ -375,16 +377,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Brock Whitten";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brock Whitten";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Nachbaur";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Nachbaur";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Michael Nachbaur";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "3CC55FB0-969F-4E90-8361-E82907DF1889";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3CC55FB0-969F-4E90-8361-E82907DF1889";
-				SDKROOT = iphoneos2.1;
+				PROVISIONING_PROFILE = "32D94753-1E53-4ACE-95E5-4C9C078CC057";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
 		};
@@ -393,8 +398,10 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Brant Vasilieff";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brant Vasilieff";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Nachbaur";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Nachbaur";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Michael Nachbaur";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -403,9 +410,10 @@
 					"-ljson",
 				);
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "880150E2-809D-4BBE-B91E-244F2A6F59A0";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "880150E2-809D-4BBE-B91E-244F2A6F59A0";
-				SDKROOT = iphoneos2.0;
+				PROVISIONING_PROFILE = "32D94753-1E53-4ACE-95E5-4C9C078CC057";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};

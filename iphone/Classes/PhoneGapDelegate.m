@@ -58,11 +58,10 @@
     NSString *url                  = [settings objectForKey:@"Callback"];
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-    NSNumber *useAccelerometer     = [settings objectForKey:@"UseAccelerometer"];
+    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
     NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
     NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
     NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
-    NSString *topStatusBar         = [settings objectForKey:@"TopStatusBar"];
     NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
     
 	/*
@@ -268,7 +267,7 @@
 	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
 
 	if ([[url scheme] isEqualToString:@"gap"]) {
-
+        //NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
 		NSString * path  =  [url path];
 		/*
 		 * Get Command and Options From URL
@@ -346,6 +345,7 @@
 	NSString * jsCallBack = nil;
 	jsCallBack = [[NSString alloc] initWithFormat:@"var _accel={x:%f,y:%f,z:%f};", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [jsCallBack release];
 }
 
 - (void)dealloc
