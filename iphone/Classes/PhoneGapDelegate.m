@@ -51,14 +51,7 @@
 	 * This block of code navigates to the PhoneGap.plist in the Config Group and reads the XML into an Hash (Dictionary)
 	 *
 	 */
-	NSString *errorDesc = nil;
-    NSPropertyListFormat format;
-	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"PhoneGap" ofType:@"plist"];
-	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-                                  propertyListFromData:plistXML
-                                  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-                                  format:&format errorDescription:&errorDesc];
+    NSDictionary *temp = [self getBundlePlist:@"PhoneGap"];
     settings = [[NSDictionary alloc] initWithDictionary:temp];
     
     NSNumber *offline              = [settings objectForKey:@"Offline"];
@@ -165,35 +158,6 @@
      * Value should be one of: any, portrait, landscape
      */
     [viewController setRotateOrientation:rotateOrientation];
-
-     /*
-	 * These are the setting for the top Status/Battery Bar.
-	 *
-	 *	 opaque      = UIStatusBarStyleBlackOpaque
-	 *	 translucent = UIStatusBarStyleBlackTranslucent
-	 *	 default     = UIStatusBarStyleDefault
-	 *
-	 */
-    UIStatusBarStyle topStatusBarStyle = UIStatusBarStyleDefault;
-    if ([topStatusBar isEqualToString:@"blackOpaque"]) {
-        topStatusBarStyle = UIStatusBarStyleBlackOpaque;
-    } else if ([topStatusBar isEqualToString:@"blackTranslucent"]) {
-        topStatusBarStyle = UIStatusBarStyleBlackTranslucent;
-    } else if ([topStatusBar isEqualToString:@"default"]) {
-        topStatusBarStyle = UIStatusBarStyleDefault;
-    }
-    if ([topStatusBar isEqualToString:@"none"]) {
-        int toolbarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
-        [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
-        CGRect webViewBounds = webView.bounds;
-        [webView setFrame:CGRectMake(webViewBounds.origin.x,
-                                     webViewBounds.origin.y - toolbarHeight,
-                                     webViewBounds.size.width,
-                                     webViewBounds.size.height + toolbarHeight
-                                     )];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:topStatusBarStyle animated:NO];
-    }
     
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
@@ -234,14 +198,7 @@
 	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
 	 */
-    NSString *errorDesc = nil;
-    NSPropertyListFormat format;
-    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
-    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-    NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-                                          propertyListFromData:plistXML
-                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-                                          format:&format errorDescription:&errorDesc];
+    NSDictionary *temp = [self getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONFragment)]) {
         NSString *initString = [[NSString alloc] initWithFormat:@"%@\nwindow.Settings = %@;", deviceStr, [temp JSONFragment]];
         NSLog(@"%@", initString);
@@ -250,6 +207,19 @@
     } else {
         [theWebView stringByEvaluatingJavaScriptFromString:deviceStr];
     }
+}
+
+- (NSDictionary*)getBundlePlist:(NSString *)plistName
+{
+    NSString *errorDesc = nil;
+    NSPropertyListFormat format;
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
+    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
+    NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
+                                          propertyListFromData:plistXML
+                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+                                          format:&format errorDescription:&errorDesc];
+    return temp;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
