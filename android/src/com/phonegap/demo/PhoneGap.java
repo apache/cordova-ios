@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
@@ -26,14 +26,13 @@ import java.util.TimeZone;
 
 import android.content.Context;
 import android.content.IntentFilter;
-import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationProvider;
-import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 import android.webkit.WebView;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 
 public class PhoneGap{
 	
@@ -42,150 +41,57 @@ public class PhoneGap{
 	 * UUID, version and availability	
 	 */
 	public boolean droid = true;
-	private String version = "0.1";	
-    private Context mCtx;    
-    private Handler mHandler;
-    private WebView mAppView;    
-    private GpsListener mGps;
-    private NetworkListener mNetwork;
-    protected LocationProvider provider;
+	public static String version = "0.2";
+	public static String platform = "Android";
+	public static String uuid;
+	private Context mCtx;
+    private WebView mAppView;
     SmsListener mSmsListener;
     DirectoryManager fileManager;
     AudioHandler audio; 
     
-	public PhoneGap(Context ctx, Handler handler, WebView appView) {
+	public PhoneGap(Context ctx, WebView appView) {
         this.mCtx = ctx;
-        this.mHandler = handler;
         this.mAppView = appView;
-        mGps = new GpsListener(ctx);
-        mNetwork = new NetworkListener(ctx);
+
         mSmsListener = new SmsListener(ctx,mAppView);
         fileManager = new DirectoryManager();
         audio = new AudioHandler("/sdcard/tmprecording.mp3", ctx);
+        uuid = getUuid();
     }
 	
-	public void updateAccel(){
-		mHandler.post(new Runnable() {
-			public void run() {
-				int accelX = SensorManager.DATA_X;
-				int accelY = SensorManager.DATA_Y;
-				int accelZ = SensorManager.DATA_Z;
-        		mAppView.loadUrl("javascript:gotAcceleration(" + accelX + ", " + accelY + "," + accelZ + ")");
-			}			
-		});
-				
-	}
-	
-	public void takePhoto(){
-		// TO-DO: Figure out what this should do
-	}
-	
-	public void playSound(){
-		// TO-DO: Figure out what this should do
+	public void beep(long pattern)
+	{
+		RingtoneManager beeper = new RingtoneManager(mCtx);
+		Uri ringtone = beeper.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		Ringtone notification = beeper.getRingtone(mCtx, ringtone);
+		notification.play();
 	}
 	
 	public void vibrate(long pattern){
-        // Start the vibration
+        // Start the vibration, 0 defaults to half a second.
+		if (pattern == 0)
+			pattern = 500;
         Vibrator vibrator = (Vibrator) mCtx.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(pattern);
 	}
 	
-
-	
-	public void getLocation( ){
-		mHandler.post(new Runnable() {
-            public void run() {
-    			GeoTuple geoloc = new GeoTuple();
-    			Location loc = mGps.hasLocation() ?  mGps.getLocation() : mNetwork.getLocation();
-    			if (loc != null)
-        		{
-        			geoloc.lat = loc.getLatitude();
-        			geoloc.lng = loc.getLongitude();
-        			geoloc.ele = loc.getAltitude();
-        		}
-        		else
-        		{
-        			geoloc.lat = 0;
-        			geoloc.lng = 0;
-        			geoloc.ele = 0;
-        		}
-        		mAppView.loadUrl("javascript:gotLocation(" + geoloc.lat + ", " + geoloc.lng + ")");
-            }
-        });
-	}
-	
-	public void playSound(final String filename)
+	public String getPlatform()
 	{
-		MediaPlayer mp = new MediaPlayer();
-		
-		try {
-			// MediaServer does not allow reading of urls out of app data folder
-			// thus we grab raw file and submit via file descriptor
-			// instead
-			// InputStream is = mCtx.getAssets().open(filename);
-			// work around cannot play audio streams
-			// to get around security restriction on MediaPlayer
-			// until Android sdk 1.1
-			// thus these changes and the playSound js
-			// needs moved to Dev.x so that we can if statement out
-			// via the sdk number
-			
-			if(getSDKVersion() == "1")
-			{
-				// The hack way audio stored in R.raw.filename
-				// and we if statement check our way through
-				// to match the window.DroidGap.playSound(filename.mp3)
-				////call on the html side
-				
-				int oursound;
-				
-				if (filename == "bird.mp3") {
-					 mp.create(mCtx, R.raw.bird);
-
-				}
-				if (filename == "on.mp3") {
-					mp.create(mCtx, R.raw.on);
-				}
-				if (filename == "off.mp3"){
-					mp.create(mCtx, R.raw.off);
-				}
-			}
-			if(getSDKVersion() == "1.1")
-			{
-				//TODO: do right way here when Google fixes it
-				// as we have a security exception preventing 
-				// playing audio file form file:///android_asset/ location
-				mp.setDataSource("file:///android_asset/" + filename);
-				mp.prepare();
-				mp.start();
-			}
-
-			//mp.setDataSource("file:///android_asset/" + filename);
-			//mp.setDataSource("http://ventrix.nsdc.gr/stuff/TERMITES_SKONH.mp3");
-			mp.prepare();
-			mp.start();
-		} catch (IllegalArgumentException e) {
-			//TO-DO: Load a Javascript Exception thrower
-		} catch (IllegalStateException e) {
-			//TO-DO: Load a Javascript Exception thrower
-		} catch (IOException e) {
-			//TO-DO: Load a Javascript Exception thrower
-		}
-		
+		return this.platform;
 	}
 	
-	public String outputText(){
-		String test = "<p>Test</p>";
-		return test;
-	}
-	
-
 	public String getUuid()
 	{
 
 		TelephonyManager operator = (TelephonyManager) mCtx.getSystemService(Context.TELEPHONY_SERVICE);
 		String uuid = operator.getDeviceId();
 		return uuid;
+	}
+	
+	public void init()
+	{
+		mAppView.loadUrl("javascript:Device.setData('Android','" + version + "','" + this.getUuid() + "')");
 	}
 	
 	public String getModel()
@@ -213,6 +119,9 @@ public class PhoneGap{
 	{
 		return version;
 	}	
+	
+	// Old SMS code, figure out what to do with this!
+	// BTW: This is awesome!
 	
 	public void notificationWatchPosition(String filter)
 	/**

@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
@@ -22,16 +22,11 @@ package com.nitobi.phonegap;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import android.content.Context;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Vibrator;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.webkit.WebView;
 
 public class GpsListener implements LocationListener {
 	
@@ -39,17 +34,20 @@ public class GpsListener implements LocationListener {
 	private Location cLoc;
 	private LocationManager mLocMan;
 	private static final String LOG_TAG = "PhoneGap";
+	private GeoListener owner;
 	
-	public GpsListener(Context ctx)
+	public GpsListener(Context ctx, int interval, GeoListener m)
 	{
+		owner = m;
 		mCtx = ctx;
 		mLocMan = (LocationManager) mCtx.getSystemService(Context.LOCATION_SERVICE);
-		mLocMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 0, this);
+		mLocMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 0, this);
 		cLoc = mLocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	}
 	
 	public Location getLocation()
 	{
+		cLoc = mLocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		return cLoc;
 	}
 	
@@ -84,11 +82,16 @@ public class GpsListener implements LocationListener {
 
 	public void onLocationChanged(Location location) {
 		Log.d(LOG_TAG, "The location has been updated!");
-		cLoc = location;
+		owner.success(location);
 	}
 
 	public boolean hasLocation() {
 		return (cLoc != null);
+	}
+
+	public void stop()
+	{
+		mLocMan.removeUpdates(this);
 	}
 	
 }

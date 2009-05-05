@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
@@ -21,53 +21,49 @@ package com.nitobi.phonegap;
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.hardware.Camera;
-import android.hardware.Camera.ShutterCallback;
-import android.net.Uri;
-import android.provider.MediaStore.Images.Media;
+import android.hardware.SensorManager;
+import android.hardware.SensorListener;
+import android.webkit.WebView;
 
-public class CameraListener implements ShutterCallback{
+public class Orientation implements SensorListener{
 
-	private Camera mCam;
-	private CameraHandler camHand;
-	private SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmssSS");  
+	private WebView mAppView;
+    private SensorManager sensorManager;
 	private Context mCtx;
-	private Uri target = Media.EXTERNAL_CONTENT_URI;
-	
-	CameraListener(Context ctx){
-		mCam = Camera.open();
+    
+	Orientation(WebView kit, Context ctx) {
+		mAppView = kit;
 		mCtx = ctx;
+        sensorManager = (SensorManager) mCtx.getSystemService(Context.SENSOR_SERVICE);
+        this.resumeAccel();
 	}
 	
-	public void snap()
-	{
-		String filename = timeStampFormat.format(new Date());
-		ContentValues values = new ContentValues();
-		values.put(Media.TITLE, filename);
-		values.put(Media.DESCRIPTION, "PhoneGap");
-		Uri uri = mCtx.getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
-		try
-		{
-			OutputStream output = (OutputStream) mCtx.getContentResolver().openOutputStream(uri);
-			camHand = new CameraHandler(output);
-			mCam.takePicture(this, null, camHand);
-		}
-		catch (Exception ex)
-		{
-			/*TODO:  Do some logging here */
-		}
+	public void onSensorChanged(int sensor, final float[] values) {
+		if (sensor != SensorManager.SENSOR_ACCELEROMETER || values.length < 3)
+			return;
+        float x = values[0];
+        float y = values[1];
+        float z = values[2];
+        mAppView.loadUrl("javascript:gotAcceleration(" + x + ", " + y + "," + z + ")");
 	}
-	
-	public void onShutter() {
-		/* This is logged */
+
+	public void onAccuracyChanged(int arg0, int arg1) {
+		// This is a stub method.
 		
 	}
 
+	public void pauseAccel()
+	{
+        sensorManager.unregisterListener(this);	
+	}
+	
+	public void resumeAccel()
+	{
+		sensorManager.registerListener(this, 
+				   SensorManager.SENSOR_ACCELEROMETER,
+				   SensorManager.SENSOR_DELAY_GAME);
+	}
+	
 }

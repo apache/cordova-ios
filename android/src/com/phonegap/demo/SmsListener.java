@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
@@ -21,38 +21,53 @@ package com.nitobi.phonegap;
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.Camera.PictureCallback;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.hardware.Camera.ShutterCallback;
+import android.net.Uri;
+import android.provider.MediaStore.Images.Media;
 
-public class CameraHandler implements PictureCallback{
-	
-	
-	private OutputStream oStream;
-	BitmapFactory photoLab;
+public class CameraListener implements ShutterCallback{
 
-	CameraHandler(OutputStream output)
-	{
-		oStream = output;
+	private Camera mCam;
+	private CameraHandler camHand;
+	private SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmssSS");  
+	private Context mCtx;
+	private Uri target = Media.EXTERNAL_CONTENT_URI;
+	
+	CameraListener(Context ctx){
+		mCam = Camera.open();
+		mCtx = ctx;
 	}
 	
-	public void onPictureTaken(byte[] graphic, Camera arg1) {	
-		try {
-			oStream.write(graphic);
-			oStream.flush();
-			oStream.close();
+	public void snap()
+	{
+		String filename = timeStampFormat.format(new Date());
+		ContentValues values = new ContentValues();
+		values.put(Media.TITLE, filename);
+		values.put(Media.DESCRIPTION, "PhoneGap");
+		Uri uri = mCtx.getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
+		try
+		{
+			OutputStream output = (OutputStream) mCtx.getContentResolver().openOutputStream(uri);
+			camHand = new CameraHandler(output);
+			mCam.takePicture(this, null, camHand);
 		}
 		catch (Exception ex)
 		{
-			//TO-DO: Put some logging here saying that this epic failed
+			/*TODO:  Do some logging here */
 		}
-		
-		// Do some other things, like post it to a service!
 	}
 	
-	
+	public void onShutter() {
+		/* This is logged */
+		
+	}
+
 }

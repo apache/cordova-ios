@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
@@ -21,10 +21,9 @@ package com.nitobi.phonegap;
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class GeoTuple {
-	
-	public double lat;
-	public double lng;
-	public double ele;
-	
+
+public class AccelTuple {
+	public long accelX;
+	public long accelY;
+	public long accelZ;
 }

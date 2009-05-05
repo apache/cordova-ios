@@ -1,10 +1,10 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * “Software”), to deal in the Software without restriction, including
+ * Software), to deal in the Software without restriction, including
  * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
@@ -13,7 +13,7 @@ package com.nitobi.phonegap;
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -22,10 +22,13 @@ package com.nitobi.phonegap;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import java.lang.reflect.Field;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,8 +40,7 @@ public class DroidGap extends Activity {
 	
 	private static final String LOG_TAG = "DroidGap";
 	private WebView appView;
-	
-	private Handler mHandler = new Handler();
+	private String uri;
 	
     /** Called when the activity is first created. */
 	@Override
@@ -53,16 +55,28 @@ public class DroidGap extends Activity {
         
         /* This changes the setWebChromeClient to log alerts to LogCat!  Important for Javascript Debugging */
         
-        appView.setWebChromeClient(new MyWebChromeClient());
+        appView.setWebChromeClient(new GapClient(this));
         appView.getSettings().setJavaScriptEnabled(true);
         appView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);        
         
         /* Bind the appView object to the gap class methods */
         bindBrowser(appView);
         
-       
-                
-        appView.loadUrl("file:///android_asset/index.html");
+        /* Load a URI from the strings.xml file */
+        Class<R.string> c = R.string.class;
+        Field f;
+        
+        int i = 0;
+        
+        try {
+          f = c.getField("url");
+          i = f.getInt(f);
+          this.uri = this.getResources().getString(i);
+        } catch (Exception e)
+        {
+          this.uri = "http://www.phonegap.com";
+        }
+        appView.loadUrl(this.uri);
         
     }
 	
@@ -74,18 +88,36 @@ public class DroidGap extends Activity {
     
     private void bindBrowser(WebView appView)
     {
-    	PhoneGap gap = new PhoneGap(this, mHandler, appView);
-    	appView.addJavascriptInterface(gap, "DroidGap");
+    	// The PhoneGap class handles the Notification and Android Specific crap
+    	PhoneGap gap = new PhoneGap(this, appView);
+    	GeoBroker geo = new GeoBroker(appView, this);
+    	AccelListener accel = new AccelListener(this, appView);
+    	// This creates the new javascript interfaces for PhoneGap
+    	appView.addJavascriptInterface(gap, "Device");
+    	appView.addJavascriptInterface(geo, "Geo");
+    	appView.addJavascriptInterface(accel, "Accel");
     }
-    
+        
     /**
      * Provides a hook for calling "alert" from javascript. Useful for
      * debugging your javascript.
      */
-    final class MyWebChromeClient extends WebChromeClient {
+    final class GapClient extends WebChromeClient {
+    	
+    	Context mCtx;
+    	GapClient(Context ctx)
+    	{
+    		mCtx = ctx;
+    	}
+    	
     	@Override
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             Log.d(LOG_TAG, message);
+            // This shows the dialog box.  This can be commented out for dev
+            AlertDialog.Builder alertBldr = new AlertDialog.Builder(mCtx);
+            alertBldr.setMessage(message);
+            alertBldr.setTitle("Alert");
+            alertBldr.show();
             result.confirm();
             return true;
         }

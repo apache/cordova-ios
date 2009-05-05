@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 /* License (MIT)
  * Copyright (c) 2008 Nitobi
  * website: http://phonegap.com
@@ -21,49 +21,38 @@ package com.nitobi.phonegap;
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 
-import android.content.Context;
-import android.hardware.SensorManager;
-import android.hardware.SensorListener;
-import android.webkit.WebView;
+import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
-public class Orientation implements SensorListener{
+public class CameraHandler implements PictureCallback{
+	
+	
+	private OutputStream oStream;
+	BitmapFactory photoLab;
 
-	private WebView mAppView;
-    private SensorManager sensorManager;
-	private Context mCtx;
-    
-	Orientation(WebView kit, Context ctx) {
-		mAppView = kit;
-		mCtx = ctx;
-        sensorManager = (SensorManager) mCtx.getSystemService(Context.SENSOR_SERVICE);
-        this.resumeAccel();
+	CameraHandler(OutputStream output)
+	{
+		oStream = output;
 	}
 	
-	public void onSensorChanged(int sensor, final float[] values) {
-		if (sensor != SensorManager.SENSOR_ACCELEROMETER || values.length < 3)
-			return;
-        float x = values[0];
-        float y = values[1];
-        float z = values[2];
-        mAppView.loadUrl("javascript:gotAcceleration(" + x + ", " + y + "," + z + ")");
-	}
-
-	public void onAccuracyChanged(int arg0, int arg1) {
-		// This is a stub method.
+	public void onPictureTaken(byte[] graphic, Camera arg1) {	
+		try {
+			oStream.write(graphic);
+			oStream.flush();
+			oStream.close();
+		}
+		catch (Exception ex)
+		{
+			//TO-DO: Put some logging here saying that this epic failed
+		}
 		
-	}
-
-	public void pauseAccel()
-	{
-        sensorManager.unregisterListener(this);	
+		// Do some other things, like post it to a service!
 	}
 	
-	public void resumeAccel()
-	{
-		sensorManager.registerListener(this, 
-				   SensorManager.SENSOR_ACCELEROMETER,
-				   SensorManager.SENSOR_DELAY_GAME);
-	}
 	
 }

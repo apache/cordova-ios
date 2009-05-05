@@ -1,4 +1,4 @@
-package com.nitobi.phonegap;
+package com.phonegap.demo;
 
 import java.io.EOFException;
 import java.io.FileOutputStream;
