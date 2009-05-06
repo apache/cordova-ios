@@ -268,17 +268,24 @@
 
 	if ([[url scheme] isEqualToString:@"gap"]) {
         //NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
-		NSString * path  =  [url path];
 		/*
 		 * Get Command and Options From URL
 		 * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
 		 * We have to strip off the leading slash for the options.
+         *
+         * Note: We have to go through the following contortions because NSURL "helpfully" unescapes
+         *       certain characters, such as "/" from their hex encoding for us.  This normally wouldn't
+         *       be a problem, unless your argument has a "/" in it, such as a file path.
 		 */
 		NSString * command = [url host];
 
-		// Array of arguments
-        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[[path substringWithRange:NSMakeRange(1, [path length] - 1)]
-                                                                   componentsSeparatedByString:@"/"]];
+        NSString * fullUrl = [url description];
+        int prefixLength  = [command length] + 7; // "gap://" plus the leading "/"
+        int pathLength = [fullUrl length] - prefixLength;
+        NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
+        
+        // Array of arguments
+        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[path componentsSeparatedByString:@"/"]];
         int i, arguments_count = [arguments count];
         for (i = 0; i < arguments_count; i++) {
             [arguments replaceObjectAtIndex:i withObject:[(NSString *)[arguments objectAtIndex:i]

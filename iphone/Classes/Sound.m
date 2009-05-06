@@ -12,14 +12,10 @@
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    NSString* fileName = [arguments objectAtIndex:0];
     NSBundle * mainBundle = [NSBundle mainBundle];
-    NSArray *soundFile = [fileName componentsSeparatedByString:@"."];
-    
-    NSString *file = (NSString *)[soundFile objectAtIndex:0];
-    NSString *ext = (NSString *)[soundFile objectAtIndex:1];
-    NSLog(file);
-    NSString* filePath = [mainBundle pathForResource:file ofType:ext];
+    NSString* fileName    = [arguments objectAtIndex:0];
+    NSString* bundleRoot  = [mainBundle bundlePath];
+    NSString *filePath    = [[NSString alloc] initWithFormat:@"%@/%@", bundleRoot, fileName];
     
     if (filePath != nil)
     {
