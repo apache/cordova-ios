@@ -218,13 +218,14 @@
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+				D28B9B700FB212EF00420033 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = PhoneGap;
-			productName = Glass;
+			productName = PhoneGap;
 			productReference = 1D6058910D05DD3D006BFB54 /* PhoneGap.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -262,6 +263,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D28B9B700FB212EF00420033 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh -c ./build-phonegap.sh";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
@@ -322,9 +339,9 @@
 					"\"$(SRCROOT)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Glass_Prefix.pch;
+				GCC_PREFIX_HEADER = PhoneGap_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = Glass;
+				PRODUCT_NAME = PhoneGap;
 			};
 			name = Release;
 		};
@@ -362,14 +379,13 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Glass_Prefix.pch;
+				GCC_PREFIX_HEADER = PhoneGap_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-ljson",
 				);
-				PRODUCT_NAME = Glass;
-				PROVISIONING_PROFILE = "B02DE0E6-FD92-4854-9B69-3C191831ABA5";
+				PRODUCT_NAME = PhoneGap;
 			};
 			name = Distribution;
 		};
@@ -377,18 +393,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Nachbaur";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Nachbaur";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Michael Nachbaur";
+				CODE_SIGN_IDENTITY = "Don't Code Sign";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "Don't Code Sign";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "32D94753-1E53-4ACE-95E5-4C9C078CC057";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
-				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
