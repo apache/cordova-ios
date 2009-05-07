@@ -70,7 +70,7 @@ lib/$platform/phonegap-min.js: lib/$platform/phonegap.js
 	\$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o \$@ lib/$platform/phonegap.js
 
 EOF
-	platform_srcs="javascripts/phonegap.js javascripts/*.js javascripts/$platform/*.js"
+	platform_srcs="javascripts/phonegap.js.base javascripts/*.js javascripts/$platform/*.js"
 	echo lib/$platform/phonegap.js: $platform_srcs >> Makefile
 	echo "	\$(MKPATH) lib/$platform" >> Makefile
 	for file in $( echo $platform_srcs ); do
