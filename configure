@@ -4,6 +4,18 @@ PLATFORMS="iphone blackberry android"
 echo "Building PhoneGap Makefile"
 [ -f Makefile ] && cp Makefile Makefile.old
 
+DOXYGEN=/usr/bin/true
+if [ -d /Applications/Doxygen.app ]; then
+    DOXYGEN=/Applications/Doxygen.app/Contents/Resources/doxygen
+else
+    for file in $(locate doxygen | grep -E '/doxygen$'); do
+	if [ -x $file ]; then
+	    DOXYGEN=$file
+	    break
+	fi
+    done
+fi
+
 cat > Makefile <<EOF
 SHELL = /bin/sh
 CHMOD = chmod
@@ -21,6 +33,7 @@ CAT = cat
 ECHO = echo
 ECHO_N = echo -n
 JAVA = java
+DOXYGEN = $DOXYGEN
 
 all :: $PLATFORMS docs
 
@@ -28,6 +41,7 @@ clean :: clean_docs clean_libs
 
 clean_docs:
 	-\$(RM_RF) docs/javascript
+	-\$(RM_RF) docs/iphone
 
 clean_libs:
 	-\$(RM_RF) lib
@@ -35,9 +49,13 @@ clean_libs:
 iphone/www/phonegap.js: lib/iphone/phonegap-min.js
 	\$(CP) lib/iphone/phonegap-min.js \$@
 
+docs :: javascript_docs iphone_docs
+
+iphone_docs: iphone/doxygen.cfg
+	\$(DOXYGEN) iphone/doxygen.cfg
 EOF
 
-echo docs :: javascripts/*.js >> Makefile
+echo javascript_docs :: javascripts/*.js >> Makefile
 echo "	\$(JAVA) -jar util/jsdoc-toolkit/jsrun.jar util/jsdoc-toolkit/app/run.js -a -d=docs/javascript -t=util/jsdoc-toolkit/templates/jsdoc " javascripts/*.js >> Makefile
 
 for platform in $PLATFORMS; do
