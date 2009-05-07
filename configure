@@ -4,16 +4,20 @@ PLATFORMS="iphone blackberry android"
 echo "Building PhoneGap Makefile"
 [ -f Makefile ] && cp Makefile Makefile.old
 
-DOXYGEN=/usr/bin/true
+DOXYGEN=
 if [ -d /Applications/Doxygen.app ]; then
     DOXYGEN=/Applications/Doxygen.app/Contents/Resources/doxygen
 else
     for file in $(locate doxygen | grep -E '/doxygen$'); do
-	if [ -x $file ]; then
+        if [ -x $file ] && [ -f $file ]; then
 	    DOXYGEN=$file
 	    break
 	fi
     done
+    if [ "x$DOXYGEN" = "x" ]; then
+        echo "No Doxygen found; fetch it from http://www.doxygen.org/ and install it in /Applications"
+        DOXYGEN=/usr/bin/true
+    fi
 fi
 
 cat > Makefile <<EOF
