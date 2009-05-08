@@ -281,7 +281,10 @@
 
         NSString * fullUrl = [url description];
         int prefixLength  = [command length] + 7; // "gap://" plus the leading "/"
+        int qsLength = [[url query] length];
         int pathLength = [fullUrl length] - prefixLength;
+        if (qsLength > 0)
+            pathLength = pathLength - qsLength - 1;
         NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
         
         // Array of arguments
