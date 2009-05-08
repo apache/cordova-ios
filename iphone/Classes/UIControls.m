@@ -168,10 +168,7 @@
     
     if (item == nil) {
         NSLog(@"Creating with custom image and title");
-        UIImage *image = nil;
-        if ([imageName length] > 0)
-            image = [[UIImage alloc] initWithContentsOfFile:imageName];
-        item = [[UITabBarItem alloc] initWithTitle:title image:image tag:tag];
+        item = [[UITabBarItem alloc] initWithTitle:title image:[UIImage imageNamed:imageName] tag:tag];
     }
 
     if ([options objectForKey:@"badge"])
