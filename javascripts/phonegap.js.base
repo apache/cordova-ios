@@ -1,3 +1,6 @@
+if (typeof(DeviceInfo) != 'object')
+    DeviceInfo = {};
+
 /**
  * This represents the PhoneGap API itself, and provides a global namespace for accessing
  * information about the state of PhoneGap.
@@ -41,7 +44,7 @@ PhoneGap.addConstructor = function(func) {
                 constructor();
             } catch(e) {
                 if (typeof(debug['log']) == 'function')
-                    debug.log("Failed to run constructor: " + e.message);
+                    debug.log("Failed to run constructor: " + debug.processMessage(e));
                 else
                     alert("Failed to run constructor: " + e.message);
             }

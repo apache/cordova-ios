@@ -1,6 +1,3 @@
-if (typeof(DeviceInfo) != 'object')
-    DeviceInfo = {};
-
 /**
  * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
  * phone, etc.
