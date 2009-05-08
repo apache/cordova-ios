@@ -147,9 +147,9 @@
     NSString  *imageName = [arguments objectAtIndex:2];
     int tag              = [[arguments objectAtIndex:3] intValue];
 
-    UITabBarItem *item;    
-    if ([[imageName substringWithRange:NSMakeRange(0, 10)] isEqualToString:@"tabButton:"]) {
-        UIBarButtonSystemItem systemItem;
+    UITabBarItem *item = nil;    
+    if ([imageName length] > 0) {
+        UIBarButtonSystemItem systemItem = -1;
         if ([imageName isEqualToString:@"tabButton:More"])       systemItem = UITabBarSystemItemMore;
         if ([imageName isEqualToString:@"tabButton:Favorites"])  systemItem = UITabBarSystemItemFavorites;
         if ([imageName isEqualToString:@"tabButton:Featured"])   systemItem = UITabBarSystemItemFeatured;
@@ -162,12 +162,15 @@
         if ([imageName isEqualToString:@"tabButton:Downloads"])  systemItem = UITabBarSystemItemDownloads;
         if ([imageName isEqualToString:@"tabButton:MostRecent"]) systemItem = UITabBarSystemItemMostRecent;
         if ([imageName isEqualToString:@"tabButton:MostViewed"]) systemItem = UITabBarSystemItemMostViewed;
-        item = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:tag];
+        if (systemItem != -1)
+            item = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:tag];
     }
     
-    if (!item) {
+    if (item == nil) {
         NSLog(@"Creating with custom image and title");
-        UIImage *image = [[UIImage alloc] initWithContentsOfFile:imageName];
+        UIImage *image = nil;
+        if ([imageName length] > 0)
+            image = [[UIImage alloc] initWithContentsOfFile:imageName];
         item = [[UITabBarItem alloc] initWithTitle:title image:image tag:tag];
     }
 

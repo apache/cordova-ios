@@ -82,7 +82,7 @@
        });
 
        var recents = 0;
-       uicontrols.createTabBarItem("recents", "Recents", "tabButton:Recents", {
+       uicontrols.createTabBarItem("recents", "Recents", null, {
            onSelect: function() {
                navigator.notification.alert("Recents selected");
                uicontrols.updateTabBarItem("recents", { badge: ++recents });
@@ -90,7 +90,7 @@
        });
 
        var history = 0;
-       uicontrols.createTabBarItem("history", "History", "tabButton:History", {
+       uicontrols.createTabBarItem("history", "History", "icon.png", {
            onSelect: function() {
                navigator.notification.alert("History selected");
                uicontrols.updateTabBarItem("history", { badge: ++history });
