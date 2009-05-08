@@ -13,7 +13,7 @@ function DebugConsole() {
  */
 DebugConsole.prototype.processMessage = function(message) {
     if (typeof(message) != 'object') {
-        return encodeURIComponent(message);
+        return message;
     } else {
         /**
          * @function
@@ -41,7 +41,7 @@ DebugConsole.prototype.processMessage = function(message) {
             }
             return str;
         }
-        return encodeURIComponent("Object:\n" + makeStructured(message));
+        return "Object:\n" + makeStructured(message);
     }
 };
 
