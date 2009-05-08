@@ -16,7 +16,7 @@ else
     done
     if [ "x$DOXYGEN" = "x" ]; then
         echo "No Doxygen found; fetch it from http://www.doxygen.org/ and install it in /Applications"
-        DOXYGEN=/usr/bin/true
+        DOXYGEN=
     fi
 fi
 
@@ -58,6 +58,10 @@ iphone/www/phonegap.js: lib/iphone/phonegap-min.js
 
 docs :: javascript_docs iphone_docs
 
+EOF
+
+if [ "x$DOXYGEN" != "x" ]; then
+    cat >> Makefile <<EOF
 iphone_docs: iphone/doxygen.cfg
 	\$(DOXYGEN) iphone/doxygen.cfg
 	-\$(RM_RF) \$(IPHONE_DOCSET_TMPDIR)
@@ -72,6 +76,9 @@ iphone_docs: iphone/doxygen.cfg
 	\$(OPEN) ~/Library/Developer/Shared/Documentation/DocSets/org.phonegap.PhoneGap.docset
 
 EOF
+else
+    echo iphone_docs: >> Makefile
+fi
 
 echo javascript_docs :: javascripts/*.js >> Makefile
 echo "	\$(JAVA) -jar util/jsdoc-toolkit/jsrun.jar util/jsdoc-toolkit/app/run.js -a -d=docs/javascript -t=util/jsdoc-toolkit/templates/jsdoc " javascripts/*.js >> Makefile
