@@ -6,7 +6,7 @@
  * @private
  */
 PhoneGap.run_command = function() {
-    if (!PhoneGap.available)
+    if (!PhoneGap.available || !PhoneGap.queue.ready)
         return;
 
     PhoneGap.queue.ready = false;

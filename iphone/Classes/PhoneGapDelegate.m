@@ -308,7 +308,7 @@
         //NSLog(@"Options: %@", options);
         
 		// Tell the JS code that we've gotten this command, and we're ready for another
-        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.exec.ready = true;"];
+        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
 		
 		// Check to see if we are provided a class:method style command.
         NSArray* components = [command componentsSeparatedByString:@"."];
