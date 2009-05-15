@@ -12,22 +12,33 @@
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    NSString* fileName = [arguments objectAtIndex:0];
     NSBundle * mainBundle = [NSBundle mainBundle];
-    NSArray *soundFile = [fileName componentsSeparatedByString:@"."];
+    NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[(NSString*)[arguments objectAtIndex:0] componentsSeparatedByString:@"/"]];
+    NSString       *filename       = [directoryParts lastObject];
+    [directoryParts removeLastObject];
     
-    NSString *file = (NSString *)[soundFile objectAtIndex:0];
-    NSString *ext = (NSString *)[soundFile objectAtIndex:1];
-    NSLog(file);
-    NSString* filePath = [mainBundle pathForResource:file ofType:ext];
+    NSMutableArray *filenameParts  = [NSMutableArray arrayWithArray:[filename componentsSeparatedByString:@"."]];
+    NSString *directoryStr = [directoryParts componentsJoinedByString:@"/"];
     
-    if (filePath != nil)
-    {
-        SystemSoundID soundID;
-		NSURL *fileURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
-		AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &soundID);
-        AudioServicesPlaySystemSound(soundID);
+    NSString *filePath = [mainBundle pathForResource:(NSString*)[filenameParts objectAtIndex:0]
+                                              ofType:(NSString*)[filenameParts objectAtIndex:1]
+                                         inDirectory:directoryStr];
+    if (filePath == nil) {
+        NSLog(@"Can't find filename %@ in the app bundle", [arguments objectAtIndex:0]);
+        return;
     }
+    SystemSoundID soundID;
+    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+    
+    // TODO Create a system facilitating handling callback responses in JavaScript easily, and no
+    // longer in an ad-hoc fashion.  Getting error results of whether or not the sound played, or
+    // other errors occurring in the system is important.
+    OSStatus error;
+    error = AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &soundID);
+    if (error != 0)
+        NSLog(@"Sound error %d", error);
+    
+    AudioServicesPlaySystemSound(soundID);
 }
 
 @end

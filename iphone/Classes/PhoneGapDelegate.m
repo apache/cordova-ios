@@ -58,11 +58,10 @@
     NSString *url                  = [settings objectForKey:@"Callback"];
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-    NSNumber *useAccelerometer     = [settings objectForKey:@"UseAccelerometer"];
+    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
     NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
     NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
     NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
-    NSString *topStatusBar         = [settings objectForKey:@"TopStatusBar"];
     NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
     
 	/*
@@ -268,18 +267,28 @@
 	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
 
 	if ([[url scheme] isEqualToString:@"gap"]) {
-
-		NSString * path  =  [url path];
+        //NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
 		/*
 		 * Get Command and Options From URL
 		 * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
 		 * We have to strip off the leading slash for the options.
+         *
+         * Note: We have to go through the following contortions because NSURL "helpfully" unescapes
+         *       certain characters, such as "/" from their hex encoding for us.  This normally wouldn't
+         *       be a problem, unless your argument has a "/" in it, such as a file path.
 		 */
 		NSString * command = [url host];
 
-		// Array of arguments
-        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[[path substringWithRange:NSMakeRange(1, [path length] - 1)]
-                                                                   componentsSeparatedByString:@"/"]];
+        NSString * fullUrl = [url description];
+        int prefixLength  = [command length] + 7; // "gap://" plus the leading "/"
+        int qsLength = [[url query] length];
+        int pathLength = [fullUrl length] - prefixLength;
+        if (qsLength > 0)
+            pathLength = pathLength - qsLength - 1;
+        NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
+        
+        // Array of arguments
+        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[path componentsSeparatedByString:@"/"]];
         int i, arguments_count = [arguments count];
         for (i = 0; i < arguments_count; i++) {
             [arguments replaceObjectAtIndex:i withObject:[(NSString *)[arguments objectAtIndex:i]
@@ -299,7 +308,7 @@
         //NSLog(@"Options: %@", options);
         
 		// Tell the JS code that we've gotten this command, and we're ready for another
-        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.exec.ready = true;"];
+        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
 		
 		// Check to see if we are provided a class:method style command.
         NSArray* components = [command componentsSeparatedByString:@"."];
@@ -346,6 +355,7 @@
 	NSString * jsCallBack = nil;
 	jsCallBack = [[NSString alloc] initWithFormat:@"var _accel={x:%f,y:%f,z:%f};", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [jsCallBack release];
 }
 
 - (void)dealloc
