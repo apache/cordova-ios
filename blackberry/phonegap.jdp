@@ -1,0 +1,56 @@
+## RIM Java Development Environment
+# RIM Project file
+#
+# This file is generated and managed by BlackBerry developer tools.
+# It SHOULD NOT BE modified manually.
+#
+AddOn=0
+AlwaysBuild=0
+[AlxImports
+]
+AutoRestart=0
+[ClassProtection
+]
+[CustomBuildFiles
+]
+[CustomBuildRules
+]
+[DefFiles
+]
+[DependsOn
+]
+ExcludeFromBuildAll=0
+[Files
+src\com\nitobi\phonegap\api\Command.java
+src\com\nitobi\phonegap\api\impl\GeoLocationCommand.java
+src\com\nitobi\phonegap\api\impl\InitializationCommand.java
+src\com\nitobi\phonegap\api\impl\TelephonyCommand.java
+src\com\nitobi\phonegap\api\impl\VibrationCommand.java
+src\com\nitobi\phonegap\model\Position.java
+src\com\nitobi\phonegap\PhoneGap.java
+src\com\nitobi\phonegap\SecondaryResourceFetchThread.java
+src\com\nitobi\phonegap\Utilities.java
+]
+HaveAlxImports=0
+HaveDefs=0
+HaveImports=0
+[Icons
+]
+[ImplicitRules
+]
+[Imports
+]
+Listing=0
+Options=-quiet
+OutputFileName=phonegap
+[PackageProtection
+]
+RibbonPosition=0
+[RolloverIcons
+]
+RunOnStartup=0
+StartupTier=7
+SystemModule=0
+Title=PhoneGap
+Type=0
+UserData=|src

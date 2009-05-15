@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>phone_gap</name>
+	<name>phonegap</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -11,7 +11,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>net.rim.eide.RIMIncrementalProjectBuilder</name>
+			<name>net.rim.eide.PreprocessBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>net.rim.eide.JavaIncrementalProjectBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -19,5 +24,6 @@
 	<natures>
 		<nature>net.rim.eide.rimnature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>net.rim.eide.PreprocessingNature</nature>
 	</natures>
 </projectDescription>
