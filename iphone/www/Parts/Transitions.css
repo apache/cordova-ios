@@ -1,0 +1,310 @@
+/* ========================================================================
+    Flip 
+   ======================================================================== */
+
+.dashcode-transition-flip-container {
+    -webkit-perspective: 800; /* subviews should have the same perspective during flip */
+    -webkit-animation-name: "dashcode-transition-flip-container";
+}
+/* This works great for ease-in-out but not for other timing. */
+@-webkit-keyframes dashcode-transition-flip-container {
+    from {
+        -webkit-perspective: 1200;
+    }
+    50% {
+        -webkit-perspective: 600;
+    }
+    to {
+        -webkit-perspective: 1200;
+    }
+}
+
+.dashcode-transition-flip-container-pushback
+{
+    -webkit-animation-name: dashcode-transition-flip-container-pushback;
+}
+/* This works great for ease-in-out but not for other timing. */
+@-webkit-keyframes dashcode-transition-flip-container-pushback {
+    from {
+        -webkit-transform: translateZ(0px);
+    }
+    50% {
+        -webkit-transform: translateZ(-160px);
+    }
+    to {
+        -webkit-transform: translateZ(0px);
+    }
+}
+
+.dashcode-transition-flip-left-old-view {
+    -webkit-animation-name: "dashcode-transition-flip-left-old-view";
+    -webkit-backface-visibility: hidden;
+}
+@-webkit-keyframes dashcode-transition-flip-left-old-view {
+    from {
+        -webkit-transform: rotateY(0deg);
+    }
+    to {
+        -webkit-transform: rotateY(-180deg);
+    }
+}
+
+.dashcode-transition-flip-left-new-view {
+    -webkit-animation-name: "dashcode-transition-flip-left-new-view";
+    -webkit-backface-visibility: hidden;
+}
+@-webkit-keyframes dashcode-transition-flip-left-new-view {
+    from {
+        -webkit-transform: rotateY(180deg);
+    }
+    to {
+        -webkit-transform:  rotateY(0deg);
+    }
+}
+
+.dashcode-transition-flip-right-old-view {
+    -webkit-animation-name: "dashcode-transition-flip-right-old-view";
+    -webkit-backface-visibility: hidden;
+}
+
+@-webkit-keyframes dashcode-transition-flip-right-old-view {
+    from {
+        -webkit-transform: rotateY(0deg);
+    }
+    to {
+        -webkit-transform: rotateY(180deg);
+    }
+}
+
+.dashcode-transition-flip-right-new-view {
+    -webkit-animation-name: "dashcode-transition-flip-right-new-view";
+    -webkit-backface-visibility: hidden;
+}
+@-webkit-keyframes dashcode-transition-flip-right-new-view {
+    from {
+        -webkit-transform: rotateY(-180deg);
+    }
+    to {
+        -webkit-transform: rotateY(0deg);
+    }
+}
+
+
+/* ========================================================================
+    Swap 
+   ======================================================================== */
+
+.dashcode-transition-swap-left-old-view {
+    -webkit-animation-name: "dashcode-transition-swap-left-old-view";
+}
+@-webkit-keyframes dashcode-transition-swap-left-old-view {
+    0% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, 0px) rotateY(0deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    50% {
+        -webkit-transform:  perspective(800) translate3d(180px, 0px, -400px) rotateY(-20deg);
+        -webkit-animation-timing-function: ease-in;
+    }
+    100% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, -800px) rotateY(-70deg);
+    }
+}
+
+.dashcode-transition-swap-left-new-view {
+    -webkit-animation-name: "dashcode-transition-swap-left-new-view";
+}
+@-webkit-keyframes dashcode-transition-swap-left-new-view {
+    0% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, -800px) rotateY(70deg);
+        -webkit-animation-timing-function: ease-out;
+    }
+    50% {
+        -webkit-transform: perspective(800) translate3d(-180px, 0px, -400px) rotateY(20deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    100% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, 0px) rotateY(0deg);
+    }
+}
+
+.dashcode-transition-swap-right-old-view {
+    -webkit-animation-name: "dashcode-transition-swap-right-old-view";
+}
+@-webkit-keyframes dashcode-transition-swap-right-old-view {
+    0% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, 0px) rotateY(0deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    50% {
+        -webkit-transform: perspective(800) translate3d(-180px, 0px, -400px) rotateY(20deg);
+        -webkit-animation-timing-function: ease-in;
+    }
+    100% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, -800px) rotateY(70deg);
+    }
+}
+
+.dashcode-transition-swap-right-new-view {
+    -webkit-animation-name: "dashcode-transition-swap-right-new-view";
+}
+
+@-webkit-keyframes dashcode-transition-swap-right-new-view {
+    0% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, -800px) rotateY(-70deg);
+        -webkit-animation-timing-function: ease-out;
+    }
+    50% {
+        -webkit-transform: perspective(800) translate3d(180px, 0px, -400px) rotateY(-20deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    100% {
+        -webkit-transform: perspective(800) translate3d(0px, 0px, 0px) rotateY(0deg);
+    }
+}
+
+/* ========================================================================
+    Revolve 
+   ======================================================================== */
+
+.dashcode-transition-revolve-left-old-view {
+    -webkit-animation-name: "dashcode-transition-revolve-left-old-view";
+    -webkit-transform-origin: 0% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-left-old-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(0deg);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(-90deg);
+        opacity: 0;
+    }
+}
+
+.dashcode-transition-revolve-left-new-view {
+    -webkit-animation-name: "dashcode-transition-revolve-left-new-view";
+    -webkit-transform-origin: 0% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-left-new-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(90deg);
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(0deg);
+    }
+}
+
+.dashcode-transition-revolve-left-reverse-old-view {
+    -webkit-animation-name: "dashcode-transition-revolve-left-reverse-old-view";
+    -webkit-transform-origin: 0% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-left-reverse-old-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(0deg);
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(90deg);
+    }
+}
+
+.dashcode-transition-revolve-left-reverse-new-view {
+    -webkit-animation-name: "dashcode-transition-revolve-left-reverse-new-view";
+    -webkit-transform-origin: 0% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-left-reverse-new-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(-90deg);
+        opacity: 0;
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+.dashcode-transition-revolve-right-old-view {
+    -webkit-animation-name: "dashcode-transition-revolve-right-old-view";
+    -webkit-transform-origin: 100% 50%;
+}
+
+@-webkit-keyframes dashcode-transition-revolve-right-old-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(0deg);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(90deg);
+        opacity: 0;
+    }
+}
+
+.dashcode-transition-revolve-right-new-view {
+    -webkit-animation-name: "dashcode-transition-revolve-right-new-view";
+    -webkit-transform-origin: 100% 50%;
+}
+
+@-webkit-keyframes dashcode-transition-revolve-right-new-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(-90deg);
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(0deg);
+    }
+}
+
+.dashcode-transition-revolve-right-old-view {
+    -webkit-animation-name: "dashcode-transition-revolve-right-old-view";
+    -webkit-transform-origin: 100% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-right-old-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(0deg);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(90deg);
+        opacity: 0;
+    }
+}
+
+.dashcode-transition-revolve-right-new-view {
+    -webkit-animation-name: "dashcode-transition-revolve-right-new-view";
+    -webkit-transform-origin: 100% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-right-new-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(-90deg);
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(0deg);
+    }
+}
+
+.dashcode-transition-revolve-right-reverse-old-view {
+    -webkit-animation-name: "dashcode-transition-revolve-right-reverse-old-view";
+    -webkit-transform-origin: 100% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-right-reverse-old-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(0deg);
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(-90deg);
+    }
+}
+
+.dashcode-transition-revolve-right-reverse-new-view {
+    -webkit-animation-name: "dashcode-transition-revolve-right-reverse-new-view";
+    -webkit-transform-origin: 100% 50%;
+}
+@-webkit-keyframes dashcode-transition-revolve-right-reverse-new-view {
+    from {
+        -webkit-transform: perspective(800) rotateY(90deg);
+        opacity: 0;
+    }
+    to {
+        -webkit-transform: perspective(800) rotateY(0deg);
+        opacity: 1;
+    }
+}

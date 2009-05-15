@@ -393,18 +393,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "Don't Code Sign";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Brock Whitten";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brock Whitten";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Brock Whitten";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "";
+				PROVISIONING_PROFILE = "3CC55FB0-969F-4E90-8361-E82907DF1889";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3CC55FB0-969F-4E90-8361-E82907DF1889";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "3CC55FB0-969F-4E90-8361-E82907DF1889";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
