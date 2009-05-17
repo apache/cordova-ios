@@ -34,13 +34,10 @@ public class AsynchronousResourceFetcher implements Runnable {
 	private Callback callback;
 	private ConnectionManager connectionManager;
 
-	public AsynchronousResourceFetcher(ConnectionManager connectionManager) {
-		this.connectionManager = connectionManager;
-	}
-
-	public AsynchronousResourceFetcher(String url, Callback callback) {
+	public AsynchronousResourceFetcher(String url, Callback callback, ConnectionManager connectionManager) {
 		this.url = url;
 		this.callback = callback;
+		this.connectionManager = connectionManager;
 	}
 
 	public void run() {

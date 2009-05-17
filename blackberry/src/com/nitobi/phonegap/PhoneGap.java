@@ -25,6 +25,7 @@ package com.nitobi.phonegap;
 import java.util.Vector;
 
 import javax.microedition.io.HttpConnection;
+import javax.microedition.io.InputConnection;
 
 import net.rim.device.api.browser.field.BrowserContent;
 import net.rim.device.api.browser.field.BrowserContentManager;
@@ -33,7 +34,10 @@ import net.rim.device.api.browser.field.RedirectEvent;
 import net.rim.device.api.browser.field.RenderingApplication;
 import net.rim.device.api.browser.field.RenderingOptions;
 import net.rim.device.api.browser.field.RequestedResource;
+import net.rim.device.api.browser.field.UrlRequestedEvent;
+import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Display;
+import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
@@ -55,10 +59,11 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public static final String PHONEGAP_PROTOCOL = "gap://";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/index.html";
 
+	private Screen mainScreen;
 	private Vector pendingResponses = new Vector();
+	private QueueResourceFetcher queueResourceFetcher;
 	private CommandManager commandManager = new CommandManager();
 	private ConnectionManager connectionManager = new ConnectionManager();
-	private QueueResourceFetcher queueResourceFetcher;
 	private BrowserContentManager _browserContentManager = new BrowserContentManager(0);
 
 	/**
@@ -89,19 +94,23 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 		RenderingOptions renderingOptions = _browserContentManager.getRenderingSession().getRenderingOptions();
 		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_ENABLED, true);
 		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
-		Screen mainScreen = new MainScreen();
+		mainScreen = new MainScreen();
 		mainScreen.add(_browserContentManager);
         pushScreen(mainScreen);
-        invokeAndWait(new AsynchronousResourceFetcher(url, new Callback() {
-			public void execute(final Object input) {
-				_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
-			}
-        }));
-        queueResourceFetcher = new QueueResourceFetcher(this, connectionManager); 
+        queueResourceFetcher = new QueueResourceFetcher(this, connectionManager);
+        loadUrl(url);
         invokeLater(queueResourceFetcher);
 	}
 
-	public Object eventOccurred(Event event) {
+	private void loadUrl(String url) {
+		invokeAndWait(new AsynchronousResourceFetcher(url, new Callback() {
+			public void execute(final Object input) {
+				_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
+			}
+        }, connectionManager));
+	}
+
+	public Object eventOccurred(final Event event) {
 		if (event instanceof RedirectEvent) {
 			RedirectEvent command = (RedirectEvent) event;
 			String url = command.getLocation();
@@ -109,6 +118,16 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 				String response = commandManager.processInstruction(url);
 				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
 			}
+		}
+		if (event instanceof UrlRequestedEvent) {
+			final String url = ((UrlRequestedEvent) event).getURL();
+			//if (connectionManager.isInternal(url)) {
+				new Thread(new AsynchronousResourceFetcher(url, new Callback() {
+					public void execute(final Object input) {
+						_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
+					}
+		        }, connectionManager)).start();
+			//}
 		}
 		return null;
 	}

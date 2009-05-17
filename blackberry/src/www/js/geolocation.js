@@ -24,14 +24,14 @@ Geolocation.prototype.start = function() {
 /**
  * Stops the GPS of the device
  */
-Geolocation.prototype.start = function() {
+Geolocation.prototype.stop = function() {
     Device.exec("location", ["stop"], true);
 }
 
 /**
  * Maps current location
  */
-Geolocation.prototype.start = function() {
+Geolocation.prototype.map = function() {
     Device.exec("location", ["map"], true);
 }
 
