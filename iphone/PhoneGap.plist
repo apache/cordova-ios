@@ -8,8 +8,6 @@
 	<true/>
 	<key>DetectPhoneNumber</key>
 	<true/>
-	<key>TopStatusBar</key>
-	<string>default</string>
 	<key>TopActivityIndicator</key>
 	<string>gray</string>
 	<key>EnableLocation</key>

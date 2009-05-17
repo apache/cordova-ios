@@ -51,25 +51,17 @@
 	 * This block of code navigates to the PhoneGap.plist in the Config Group and reads the XML into an Hash (Dictionary)
 	 *
 	 */
-	NSString *errorDesc = nil;
-    NSPropertyListFormat format;
-	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"PhoneGap" ofType:@"plist"];
-	NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-	NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-                                  propertyListFromData:plistXML
-                                  mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-                                  format:&format errorDescription:&errorDesc];
+    NSDictionary *temp = [self getBundlePlist:@"PhoneGap"];
     settings = [[NSDictionary alloc] initWithDictionary:temp];
     
     NSNumber *offline              = [settings objectForKey:@"Offline"];
     NSString *url                  = [settings objectForKey:@"Callback"];
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-    NSNumber *useAccelerometer     = [settings objectForKey:@"UseAccelerometer"];
+    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
     NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
     NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
     NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
-    NSString *topStatusBar         = [settings objectForKey:@"TopStatusBar"];
     NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
     
 	/*
@@ -165,35 +157,6 @@
      * Value should be one of: any, portrait, landscape
      */
     [viewController setRotateOrientation:rotateOrientation];
-
-     /*
-	 * These are the setting for the top Status/Battery Bar.
-	 *
-	 *	 opaque      = UIStatusBarStyleBlackOpaque
-	 *	 translucent = UIStatusBarStyleBlackTranslucent
-	 *	 default     = UIStatusBarStyleDefault
-	 *
-	 */
-    UIStatusBarStyle topStatusBarStyle = UIStatusBarStyleDefault;
-    if ([topStatusBar isEqualToString:@"blackOpaque"]) {
-        topStatusBarStyle = UIStatusBarStyleBlackOpaque;
-    } else if ([topStatusBar isEqualToString:@"blackTranslucent"]) {
-        topStatusBarStyle = UIStatusBarStyleBlackTranslucent;
-    } else if ([topStatusBar isEqualToString:@"default"]) {
-        topStatusBarStyle = UIStatusBarStyleDefault;
-    }
-    if ([topStatusBar isEqualToString:@"none"]) {
-        int toolbarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
-        [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
-        CGRect webViewBounds = webView.bounds;
-        [webView setFrame:CGRectMake(webViewBounds.origin.x,
-                                     webViewBounds.origin.y - toolbarHeight,
-                                     webViewBounds.size.width,
-                                     webViewBounds.size.height + toolbarHeight
-                                     )];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:topStatusBarStyle animated:NO];
-    }
     
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
@@ -234,14 +197,7 @@
 	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
 	 */
-    NSString *errorDesc = nil;
-    NSPropertyListFormat format;
-    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
-    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-    NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
-                                          propertyListFromData:plistXML
-                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
-                                          format:&format errorDescription:&errorDesc];
+    NSDictionary *temp = [self getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONFragment)]) {
         NSString *initString = [[NSString alloc] initWithFormat:@"%@\nwindow.Settings = %@;", deviceStr, [temp JSONFragment]];
         NSLog(@"%@", initString);
@@ -250,6 +206,19 @@
     } else {
         [theWebView stringByEvaluatingJavaScriptFromString:deviceStr];
     }
+}
+
+- (NSDictionary*)getBundlePlist:(NSString *)plistName
+{
+    NSString *errorDesc = nil;
+    NSPropertyListFormat format;
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
+    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
+    NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
+                                          propertyListFromData:plistXML
+                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+                                          format:&format errorDescription:&errorDesc];
+    return temp;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
@@ -298,18 +267,28 @@
 	NSRange range = [urlHost rangeOfString:appHost options:NSCaseInsensitiveSearch];
 
 	if ([[url scheme] isEqualToString:@"gap"]) {
-
-		NSString * path  =  [url path];
+        //NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
 		/*
 		 * Get Command and Options From URL
 		 * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
 		 * We have to strip off the leading slash for the options.
+         *
+         * Note: We have to go through the following contortions because NSURL "helpfully" unescapes
+         *       certain characters, such as "/" from their hex encoding for us.  This normally wouldn't
+         *       be a problem, unless your argument has a "/" in it, such as a file path.
 		 */
 		NSString * command = [url host];
 
-		// Array of arguments
-        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[[path substringWithRange:NSMakeRange(1, [path length] - 1)]
-                                                                   componentsSeparatedByString:@"/"]];
+        NSString * fullUrl = [url description];
+        int prefixLength  = [command length] + 7; // "gap://" plus the leading "/"
+        int qsLength = [[url query] length];
+        int pathLength = [fullUrl length] - prefixLength;
+        if (qsLength > 0)
+            pathLength = pathLength - qsLength - 1;
+        NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
+        
+        // Array of arguments
+        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[path componentsSeparatedByString:@"/"]];
         int i, arguments_count = [arguments count];
         for (i = 0; i < arguments_count; i++) {
             [arguments replaceObjectAtIndex:i withObject:[(NSString *)[arguments objectAtIndex:i]
@@ -329,7 +308,7 @@
         //NSLog(@"Options: %@", options);
         
 		// Tell the JS code that we've gotten this command, and we're ready for another
-        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.exec.ready = true;"];
+        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
 		
 		// Check to see if we are provided a class:method style command.
         NSArray* components = [command componentsSeparatedByString:@"."];
@@ -376,6 +355,7 @@
 	NSString * jsCallBack = nil;
 	jsCallBack = [[NSString alloc] initWithFormat:@"var _accel={x:%f,y:%f,z:%f};", acceleration.x, acceleration.y, acceleration.z];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [jsCallBack release];
 }
 
 - (void)dealloc
