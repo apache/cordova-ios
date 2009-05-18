@@ -4,7 +4,6 @@
  */
 function Telephony() {
 	this.number = null;
-	this.callInProgress = false;
 }
 
 /**
@@ -12,14 +11,8 @@ function Telephony() {
  * @param {Integer} number The number to be called.
  */
 Telephony.prototype.call = function(number) {
-	if (!this.callInProgress) {
-		this.number = number;
-		this.callInProgress = true;
-		Device.exec("call", [this.number]);
-	}
+	this.number = number;
+	Device.exec("call", [this.number]);
 }
 
-addOnLoad(function() {
-	if (typeof navigator.telephony == "undefined")
-		navigator.telephony = new Telephony();
-});
+if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();

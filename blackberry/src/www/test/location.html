@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<script type="text/javascript" src="data:///www/js/device.js"></script>
+		<script type="text/javascript" src="data:///www/js/position.js"></script>
+		<script type="text/javascript" src="data:///www/js/geolocation.js"></script>
+		<script type="text/javascript">
+			function start() {
+				navigator.geolocation.start();
+			}
+			function stop() {
+				navigator.geolocation.stop();
+			}
+			function check() {
+				navigator.geolocation.getCurrentPosition();
+				if (navigator.geolocation.lastPosition == null) alert("No position retrieved yet");
+				else alert("Position: " + navigator.geolocation.lastPosition.latitude + " " + navigator.geolocation.lastPosition.longitude);
+			}
+			function map() {
+				navigator.geolocation.map();
+			}
+		</script>
+	</head>
+	<body>
+		<p><a href="javascript:start();">Start location module</a></p>
+		<p><a href="javascript:stop();">Stop location module</a></p>
+		<p><a href="javascript:check();">Get current position</a></p>
+		<p><a href="javascript:map();">Map current position</a></p>
+		<hr>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<a href="data:///www/test/index.html">Back</a>
+	</body>
+</html>

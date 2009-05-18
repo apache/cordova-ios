@@ -37,6 +37,7 @@ src\www\js\device.js
 src\www\js\geolocation.js
 src\www\js\position.js
 src\www\js\telephony.js
+src\www\test\device.html
 src\www\test\images\0.png
 src\www\test\images\1.png
 src\www\test\images\2.png
@@ -45,6 +46,9 @@ src\www\test\images\4.png
 src\www\test\images\5.png
 src\www\test\index.html
 src\www\test\io.html
+src\www\test\location.html
+src\www\test\telephony.html
+src\www\test\vibration.html
 ]
 HaveAlxImports=0
 HaveDefs=0

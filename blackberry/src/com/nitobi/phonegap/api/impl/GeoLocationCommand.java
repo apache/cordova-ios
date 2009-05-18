@@ -89,7 +89,7 @@ public class GeoLocationCommand implements Command {
 								break;
 			case STOP_COMMAND:  clearPosition();
 								locationProvider.setLocationListener(null, 0, 0, 0);
-								return ";navigator.geolocation.started = false;";
+								return ";navigator.geolocation.started = false;navigator.geolocation.lastPosition = null;";
 			case START_COMMAND: locationProvider.setLocationListener(new LocationListenerImpl(this), CAPTURE_INTERVAL, 1, 1);
 								return ";navigator.geolocation.started = true;";
 			case CHECK_COMMAND: if (position != null) return ";navigator.geolocation.lastPosition = " + position.toJavascript() + ";";
@@ -100,6 +100,7 @@ public class GeoLocationCommand implements Command {
 	private int getCommand(String instruction) {
 		String command = instruction.substring(instruction.lastIndexOf('/') + 1);
 		if ("map".equals(command)) return MAP_COMMAND;
+		if ("stop".equals(command)) return STOP_COMMAND;
 		if ("start".equals(command)) return START_COMMAND;
 		if ("check".equals(command)) return CHECK_COMMAND;
 		return -1;

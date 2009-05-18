@@ -18,6 +18,10 @@ function Geolocation() {
  * Starts the GPS of the device
  */
 Geolocation.prototype.start = function() {
+	if (this.started) {
+		alert("GPS already started");
+		return;
+	}
     Device.exec("location", ["start"], true);
 }
 
@@ -25,6 +29,11 @@ Geolocation.prototype.start = function() {
  * Stops the GPS of the device
  */
 Geolocation.prototype.stop = function() {
+	if (!this.started) {
+		alert("GPS not started");
+		return;
+	}
+	if (this.locationTimeout) window.clearTimeout(this.locationTimeout);
     Device.exec("location", ["stop"], true);
 }
 
@@ -32,6 +41,10 @@ Geolocation.prototype.stop = function() {
  * Maps current location
  */
 Geolocation.prototype.map = function() {
+	if (this.lastPosition == null) {
+		alert("No position to map yet");
+		return;
+	}
     Device.exec("location", ["map"], true);
 }
 
@@ -48,7 +61,10 @@ Geolocation.prototype.map = function() {
  * such as timeout.
  */
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-	if (!this.started) alert("GPS not started");
+	if (!this.started) {
+		alert("GPS not started");
+		return;
+	}
 	this.onSuccess = successCallback;
 	this.locationTimeout = window.setInterval("navigator.geolocation._getCurrentPosition();", 1000);
 }
@@ -63,7 +79,4 @@ Geolocation.prototype._getCurrentPosition = function() {
 	}
 }
 
-addOnLoad(function() {
-	if (typeof navigator.geolocation == "undefined")
-		navigator.geolocation = new Geolocation();
-});
+if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
