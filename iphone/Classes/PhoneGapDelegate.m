@@ -176,7 +176,7 @@
 /**
  Returns the contents of the named plist bundle, loaded as a dictionary object
  */
-- (NSDictionary*)getBundlePlist:(NSString *)plistName
++ (NSDictionary*)getBundlePlist:(NSString *)plistName
 {
     NSString *errorDesc = nil;
     NSPropertyListFormat format;

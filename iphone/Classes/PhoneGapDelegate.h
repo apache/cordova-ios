@@ -47,6 +47,6 @@
 @property (nonatomic, retain) NSDictionary *settings;
 
 -(id) getCommandInstance:(NSString*)className;
-- (NSDictionary*)getBundlePlist:(NSString *)plistName;
++ (NSDictionary*)getBundlePlist:(NSString *)plistName;
 
 @end
