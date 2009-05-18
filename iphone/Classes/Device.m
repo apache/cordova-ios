@@ -13,20 +13,23 @@
 /**
  * returns a dictionary with various device settings
  *  - gap (version)
- *  - Device model
+ *  - Device platform
  *  - Device version
+ *  - Device name (e.g. user-defined name of the phone)
  *  - Device uuid
  */
 - (NSDictionary*) getDeviceProperties
 {
 	UIDevice *device = [UIDevice currentDevice];
-    NSMutableDictionary *devProps = [[NSMutableDictionary dictionaryWithCapacity:4] autorelease];
+    NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
     [devProps setObject:[device model] forKey:@"platform"];
-    [devProps setObject:[device systemVersion] forKey:@"systemVersion"];
+    [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
-    [devProps setObject:[device systemName] forKey:@"systemName"];
-    [devProps setObject:[device name] forKey:@"deviceName"];
-    return [[NSDictionary dictionaryWithDictionary:devProps] autorelease];
+    [devProps setObject:[device name] forKey:@"name"];
+    [devProps setObject:@"0.8.0" forKey:@"gap"];
+
+    NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
+    return devReturn;
 }
 
 @end

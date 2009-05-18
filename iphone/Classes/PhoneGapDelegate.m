@@ -157,7 +157,7 @@
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
 	NSDictionary *deviceProperties = [[self getCommandInstance:@"Device"] getDeviceProperties];
-    NSMutableString *result = [[[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]] autorelease];
+    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
     
     /* Settings.plist
 	 * Read the optional Settings.plist file and push these user-defined settings down into the web application.
