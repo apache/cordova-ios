@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<script type="text/javascript" src="data:///www/js/device.js"></script>
+		<script type="text/javascript" src="data:///www/js/camera.js"></script>
+		<script type="text/javascript">
+			function camera() {
+				navigator.camera.launch();
+			}
+			function picture() {
+				navigator.camera.getPicture();
+				alert("Path is: " + navigator.camera.picture);
+			}
+		</script>
+	</head>
+	<body>
+		<p>Set a Camera Image in the emulator first</p>
+		<hr>
+		<p><a href="javascript:camera();">Use the Camera</a></p>
+		<p><a href="javascript:picture();">Get the picture</a></p>
+		<hr>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<a href="data:///www/test/index.html">Back</a>
+	</body>
+</html>
