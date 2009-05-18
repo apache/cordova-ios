@@ -24,6 +24,7 @@ ExcludeFromBuildAll=0
 src\com\nitobi\phonegap\api\Command.java
 src\com\nitobi\phonegap\api\CommandManager.java
 src\com\nitobi\phonegap\api\impl\CameraCommand.java
+src\com\nitobi\phonegap\api\impl\ContactsCommand.java
 src\com\nitobi\phonegap\api\impl\GeoLocationCommand.java
 src\com\nitobi\phonegap\api\impl\InitializationCommand.java
 src\com\nitobi\phonegap\api\impl\TelephonyCommand.java
@@ -35,11 +36,13 @@ src\com\nitobi\phonegap\io\QueueResourceFetcher.java
 src\com\nitobi\phonegap\model\Position.java
 src\com\nitobi\phonegap\PhoneGap.java
 src\www\js\camera.js
+src\www\js\contacts.js
 src\www\js\device.js
 src\www\js\geolocation.js
 src\www\js\position.js
 src\www\js\telephony.js
 src\www\test\camera.html
+src\www\test\contacts.html
 src\www\test\device.html
 src\www\test\images\0.png
 src\www\test\images\1.png

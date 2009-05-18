@@ -7,7 +7,8 @@ function Camera() {
 }
 
 Camera.prototype.launch = function () {
-	Device.exec("camera", ["obtain"], true);
+	if (Device.hasCamera) Device.exec("camera", ["obtain"], true);
+	else alert("Camera not supported");
 }
 
 /**
@@ -17,7 +18,8 @@ Camera.prototype.launch = function () {
  * @param {Object} options
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
-	Device.exec("camera", ["picture"], true);
+	if (Device.hasCamera) Device.exec("camera", ["picture"], true);
+	else alert("Camera not supported");
 }
 
 if (typeof navigator.camera == "undefined") navigator.camera = new Camera();

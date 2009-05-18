@@ -35,7 +35,7 @@ import net.rim.device.api.ui.UiApplication;
 import com.nitobi.phonegap.api.Command;
 
 /**
- * Switchs current application to the camera.
+ * Switchs current application to the camera to take a photo.
  *
  * @author Jose Noheda
  *

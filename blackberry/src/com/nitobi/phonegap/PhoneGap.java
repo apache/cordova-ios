@@ -25,7 +25,6 @@ package com.nitobi.phonegap;
 import java.util.Vector;
 
 import javax.microedition.io.HttpConnection;
-import javax.microedition.io.InputConnection;
 
 import net.rim.device.api.browser.field.BrowserContent;
 import net.rim.device.api.browser.field.BrowserContentManager;
@@ -35,9 +34,7 @@ import net.rim.device.api.browser.field.RenderingApplication;
 import net.rim.device.api.browser.field.RenderingOptions;
 import net.rim.device.api.browser.field.RequestedResource;
 import net.rim.device.api.browser.field.UrlRequestedEvent;
-import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Display;
-import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
@@ -121,13 +118,11 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 		}
 		if (event instanceof UrlRequestedEvent) {
 			final String url = ((UrlRequestedEvent) event).getURL();
-			//if (connectionManager.isInternal(url)) {
-				new Thread(new AsynchronousResourceFetcher(url, new Callback() {
-					public void execute(final Object input) {
-						_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
-					}
-		        }, connectionManager)).start();
-			//}
+			new Thread(new AsynchronousResourceFetcher(url, new Callback() {
+				public void execute(final Object input) {
+					_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
+				}
+	        }, connectionManager)).start();
 		}
 		return null;
 	}

@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<script type="text/javascript" src="data:///www/js/device.js"></script>
+		<script type="text/javascript" src="data:///www/js/contacts.js"></script>
+		<script type="text/javascript">
+			function findContactByName(name) {
+				var options = {
+					operation: "search",
+					field: "name",
+					value: name
+				};
+				navigator.ContactManager.get(null, null, options);
+				if (navigator.ContactManager.contacts.length > 0) alert('Found:\nemail: ' + navigator.ContactManager.contacts[0].email + '\nphone: ' + navigator.ContactManager.contacts[0].phone);
+				else alert("No Joe found in contacts");
+			}
+		</script>
+	</head>
+	<body>
+		<p>Add a contact with name Joe first</p>
+		<hr/>
+		<p><a href="javascript:findContactByName('Joe');">Find Joe in contacts</a></p>
+		<hr>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<a href="data:///www/test/index.html">Back</a>
+	</body>
+</html>
