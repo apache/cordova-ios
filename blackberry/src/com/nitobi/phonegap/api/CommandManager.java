@@ -22,6 +22,7 @@
  */
 package com.nitobi.phonegap.api;
 
+import com.nitobi.phonegap.api.impl.CameraCommand;
 import com.nitobi.phonegap.api.impl.GeoLocationCommand;
 import com.nitobi.phonegap.api.impl.InitializationCommand;
 import com.nitobi.phonegap.api.impl.TelephonyCommand;
@@ -36,13 +37,14 @@ import com.nitobi.phonegap.api.impl.VibrationCommand;
 public final class CommandManager {
 
 	// List of installed Commands
-	private Command[] commands = new Command[4]; 
+	private Command[] commands = new Command[5]; 
 
 	public CommandManager() {
-		commands[0] = new VibrationCommand();
-		commands[1] = new TelephonyCommand();
-		commands[2] = new GeoLocationCommand();
-		commands[3] = new InitializationCommand();
+		commands[0] = new CameraCommand();
+		commands[1] = new VibrationCommand();
+		commands[2] = new TelephonyCommand();
+		commands[3] = new GeoLocationCommand();
+		commands[4] = new InitializationCommand();
 	}
 
 	/**
