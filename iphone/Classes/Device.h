@@ -11,7 +11,8 @@
 #import "PhoneGapCommand.h"
 
 @interface Device : PhoneGapCommand {
-	UIDevice *myCurrentDevice;
 }
+
+- (NSDictionary*) getDeviceProperties;
 
 @end

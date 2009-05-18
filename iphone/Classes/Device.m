@@ -10,27 +10,23 @@
 
 @implementation Device
 
-/*
- * init
- * returns a JS String with various device settings
+/**
+ * returns a dictionary with various device settings
  *  - gap (version)
  *  - Device model
  *  - Device version
  *  - Device uuid
  */
-- (NSString *)init{
-	myCurrentDevice = [UIDevice currentDevice];
-	return [[NSString alloc]
-			 initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.8.0'};",
-			 [[myCurrentDevice model] UTF8String],
-			 [[myCurrentDevice systemVersion] UTF8String],
-			 [[myCurrentDevice uniqueIdentifier] UTF8String]
-	];
-}
-
-- (void)dealloc {
-	[myCurrentDevice release];
-	[super dealloc];
+- (NSDictionary*) getDeviceProperties
+{
+	UIDevice *device = [UIDevice currentDevice];
+    NSMutableDictionary *devProps = [[NSMutableDictionary dictionaryWithCapacity:4] autorelease];
+    [devProps setObject:[device model] forKey:@"platform"];
+    [devProps setObject:[device systemVersion] forKey:@"systemVersion"];
+    [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
+    [devProps setObject:[device systemName] forKey:@"systemName"];
+    [devProps setObject:[device name] forKey:@"deviceName"];
+    return [[NSDictionary dictionaryWithDictionary:devProps] autorelease];
 }
 
 @end
