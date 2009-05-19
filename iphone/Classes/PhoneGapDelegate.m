@@ -51,7 +51,7 @@
 	 * This block of code navigates to the PhoneGap.plist in the Config Group and reads the XML into an Hash (Dictionary)
 	 *
 	 */
-    NSDictionary *temp = [self getBundlePlist:@"PhoneGap"];
+    NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"PhoneGap"];
     settings = [[NSDictionary alloc] initWithDictionary:temp];
     
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
@@ -164,7 +164,7 @@
 	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
 	 */
-    NSDictionary *temp = [self getBundlePlist:@"Settings"];
+    NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONFragment)]) {
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
     }
@@ -236,7 +236,7 @@
      * We have to strip off the leading slash for the options.
      */
      if ([[url scheme] isEqualToString:@"gap"]) {
-        NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
+        //NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
         /*
          * Note: We have to go through the following contortions because NSURL "helpfully" unescapes
          *       certain characters, such as "/" from their hex encoding for us.  This normally wouldn't
