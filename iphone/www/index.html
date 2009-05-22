@@ -130,6 +130,7 @@
       document.addEventListener("touchmove", preventBehavior, false);
       setupToolbars();
       deviceInfo();
+      document.addEventListener('orientationChanged', function(e) { debug.log("Orientation changed to " + e.orientation); }, false);
     });
     
     </script>

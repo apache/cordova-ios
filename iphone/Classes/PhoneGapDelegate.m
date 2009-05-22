@@ -307,7 +307,7 @@
      */
     else if ([url isFileURL])
     {
-        NSLog(@"File URL %@", [url description]);
+        //NSLog(@"File URL %@", [url description]);
         return YES;
     }
     
@@ -316,7 +316,7 @@
      */
     else
     {
-        NSLog(@"Unknown URL %@", [url description]);
+        //NSLog(@"Unknown URL %@", [url description]);
         [[UIApplication sharedApplication] openURL:url];
         return NO;
 	}
