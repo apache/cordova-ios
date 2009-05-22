@@ -65,5 +65,6 @@
 //- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
 
 -(id) getCommandInstance:(NSString*)className;
+- (NSDictionary*)getBundlePlist:(NSString *)plistName;
 
 @end

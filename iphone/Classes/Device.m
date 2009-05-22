@@ -21,7 +21,7 @@
 - (NSString *)init{
 	myCurrentDevice = [UIDevice currentDevice];
 	return [[NSString alloc]
-			 initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.7.1'};",
+			 initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.8.0'};",
 			 [[myCurrentDevice model] UTF8String],
 			 [[myCurrentDevice systemVersion] UTF8String],
 			 [[myCurrentDevice uniqueIdentifier] UTF8String]

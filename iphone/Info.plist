@@ -5,13 +5,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>PhoneGap</string>
+	<string>OpenWeb</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.png</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.sintaxi.phonegap</string>
+	<string>com.sintaxi.openwebvancouver</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -23,8 +23,12 @@
 	<key>CFBundleVersion</key>
 	<string>1.0.1</string>
 	<key>LSRequiresIPhoneOS</key>
-	<true/>
+	<false/>
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 </dict>
 </plist>
