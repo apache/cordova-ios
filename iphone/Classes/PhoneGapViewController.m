@@ -28,9 +28,11 @@
     }
 }
 
-
+/**
+ Called by UIKit when the device starts to rotate to a new orientation.  This fires the \c setOrientation
+ method on the Orientation object in JavaScript.  Look at the JavaScript documentation for more information.
+ */
 - (void)willRotateToInterfaceOrientation: (UIInterfaceOrientation)toInterfaceOrientation duration: (NSTimeInterval)duration {
-	NSLog(@"IN Rotate");
 	double i = 0;
 	
 	switch (toInterfaceOrientation){
@@ -47,10 +49,7 @@
 			i = -90;
 			break;
 	}
-
-	NSString *jsCallBack = [[NSString alloc] initWithFormat:@"Orientation.currentOrientation=%f;", i];
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-	[jsCallBack release];
+	[webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"navigator.orientation.setOrientation(%f);", i]];
 }
 
 - (void) setAutoRotate:(BOOL) shouldRotate {

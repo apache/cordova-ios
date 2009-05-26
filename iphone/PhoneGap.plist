@@ -2,14 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Callback</key>
-	<string>http://localhost/iphone/</string>
-	<key>Offline</key>
-	<true/>
 	<key>DetectPhoneNumber</key>
 	<true/>
-	<key>TopStatusBar</key>
-	<string>default</string>
 	<key>TopActivityIndicator</key>
 	<string>gray</string>
 	<key>EnableLocation</key>

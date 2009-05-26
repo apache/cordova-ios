@@ -51,7 +51,7 @@
 - (void)showTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
     if (!tabBar)
-        [self createTabBar:nil options:nil];
+        [self createTabBar:nil withDict:nil];
 
     CGFloat height = 49.0f;
     BOOL atBottom = YES;
@@ -59,7 +59,7 @@
     NSDictionary* tabSettings = [settings objectForKey:@"TabBarSettings"];
     if (tabSettings) {
         height   = [[tabSettings objectForKey:@"height"] floatValue];
-        atBottom = [[tabSettings objectForKey:@"position"] isEqualTo:@"bottom"];
+        atBottom = [[tabSettings objectForKey:@"position"] isEqualToString:@"bottom"];
     }
     tabBar.hidden = NO;
 
@@ -106,7 +106,7 @@
 - (void)hideTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
 {
     if (!tabBar)
-        [self createTabBar:nil options:nil];
+        [self createTabBar:nil withDict:nil];
     tabBar.hidden = YES;
 }
 
@@ -140,35 +140,35 @@
 - (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
     if (!tabBar)
-        [self createTabBar:nil options:nil];
+        [self createTabBar:nil withDict:nil];
 
     NSString  *name      = [arguments objectAtIndex:0];
     NSString  *title     = [arguments objectAtIndex:1];
     NSString  *imageName = [arguments objectAtIndex:2];
     int tag              = [[arguments objectAtIndex:3] intValue];
 
-    UITabBarItem *item;    
-    if ([[imageName substringWithRange:NSMakeRange(0, 10)] isEqualTo:@"tabButton:"]) {
-        UIBarButtonSystemItem systemItem;
-        if ([imageName isEqualTo:@"tabButton:More"])       systemItem = UITabBarSystemItemMore;
-        if ([imageName isEqualTo:@"tabButton:Favorites"])  systemItem = UITabBarSystemItemFavorites;
-        if ([imageName isEqualTo:@"tabButton:Featured"])   systemItem = UITabBarSystemItemFeatured;
-        if ([imageName isEqualTo:@"tabButton:TopRated"])   systemItem = UITabBarSystemItemTopRated;
-        if ([imageName isEqualTo:@"tabButton:Recents"])    systemItem = UITabBarSystemItemRecents;
-        if ([imageName isEqualTo:@"tabButton:Contacts"])   systemItem = UITabBarSystemItemContacts;
-        if ([imageName isEqualTo:@"tabButton:History"])    systemItem = UITabBarSystemItemHistory;
-        if ([imageName isEqualTo:@"tabButton:Bookmarks"])  systemItem = UITabBarSystemItemBookmarks;
-        if ([imageName isEqualTo:@"tabButton:Search"])     systemItem = UITabBarSystemItemSearch;
-        if ([imageName isEqualTo:@"tabButton:Downloads"])  systemItem = UITabBarSystemItemDownloads;
-        if ([imageName isEqualTo:@"tabButton:MostRecent"]) systemItem = UITabBarSystemItemMostRecent;
-        if ([imageName isEqualTo:@"tabButton:MostViewed"]) systemItem = UITabBarSystemItemMostViewed;
-        item = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:tag];
+    UITabBarItem *item = nil;    
+    if ([imageName length] > 0) {
+        UIBarButtonSystemItem systemItem = -1;
+        if ([imageName isEqualToString:@"tabButton:More"])       systemItem = UITabBarSystemItemMore;
+        if ([imageName isEqualToString:@"tabButton:Favorites"])  systemItem = UITabBarSystemItemFavorites;
+        if ([imageName isEqualToString:@"tabButton:Featured"])   systemItem = UITabBarSystemItemFeatured;
+        if ([imageName isEqualToString:@"tabButton:TopRated"])   systemItem = UITabBarSystemItemTopRated;
+        if ([imageName isEqualToString:@"tabButton:Recents"])    systemItem = UITabBarSystemItemRecents;
+        if ([imageName isEqualToString:@"tabButton:Contacts"])   systemItem = UITabBarSystemItemContacts;
+        if ([imageName isEqualToString:@"tabButton:History"])    systemItem = UITabBarSystemItemHistory;
+        if ([imageName isEqualToString:@"tabButton:Bookmarks"])  systemItem = UITabBarSystemItemBookmarks;
+        if ([imageName isEqualToString:@"tabButton:Search"])     systemItem = UITabBarSystemItemSearch;
+        if ([imageName isEqualToString:@"tabButton:Downloads"])  systemItem = UITabBarSystemItemDownloads;
+        if ([imageName isEqualToString:@"tabButton:MostRecent"]) systemItem = UITabBarSystemItemMostRecent;
+        if ([imageName isEqualToString:@"tabButton:MostViewed"]) systemItem = UITabBarSystemItemMostViewed;
+        if (systemItem != -1)
+            item = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:tag];
     }
     
-    if (!item) {
+    if (item == nil) {
         NSLog(@"Creating with custom image and title");
-        UIImage *image = [[UIImage alloc] initWithContentsOfFile:imageName];
-        item = [[UITabBarItem alloc] initWithTitle:title image:image tag:tag];
+        item = [[UITabBarItem alloc] initWithTitle:title image:[UIImage imageNamed:imageName] tag:tag];
     }
 
     if ([options objectForKey:@"badge"])
@@ -188,7 +188,7 @@
 - (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
     if (!tabBar)
-        [self createTabBar:nil options:nil];
+        [self createTabBar:nil withDict:nil];
 
     NSString  *name = [arguments objectAtIndex:0];
     UITabBarItem *item = [tabBarItems objectForKey:name];
@@ -208,7 +208,7 @@
 - (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options
 {
     if (!tabBar)
-        [self createTabBar:nil options:nil];
+        [self createTabBar:nil withDict:nil];
     
     int i, count = [arguments count];
     NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
@@ -235,7 +235,7 @@
 - (void)selectTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
 {
     if (!tabBar)
-        [self createTabBar:nil options:nil];
+        [self createTabBar:nil withDict:nil];
 
     NSString *itemName = [arguments objectAtIndex:0];
     UITabBarItem *item = [tabBarItems objectForKey:itemName];
@@ -337,14 +337,14 @@
         if ([toolBarSettings objectForKey:@"height"])
             height = [[toolBarSettings objectForKey:@"height"] floatValue];
         if ([toolBarSettings objectForKey:@"position"])
-            atTop  = [[toolBarSettings objectForKey:@"position"] isEqualTo:@"top"];
+            atTop  = [[toolBarSettings objectForKey:@"position"] isEqualToString:@"top"];
         
         NSString *styleStr = [toolBarSettings objectForKey:@"style"];
-        if ([styleStr isEqualTo:@"Default"])
+        if ([styleStr isEqualToString:@"Default"])
             style = UIBarStyleDefault;
-        else if ([styleStr isEqualTo:@"BlackOpaque"])
+        else if ([styleStr isEqualToString:@"BlackOpaque"])
             style = UIBarStyleBlackOpaque;
-        else if ([styleStr isEqualTo:@"BlackTranslucent"])
+        else if ([styleStr isEqualToString:@"BlackTranslucent"])
             style = UIBarStyleBlackTranslucent;
     }
 

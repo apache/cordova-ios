@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<script type="text/javascript" src="data:///www/js/device.js"></script>
+		<script type="text/javascript">
+			function showDeviceInfo() {
+				alert("ID: " + Device.uuid + "\nModel: " + Device.model + "\nVersion: " + Device.version + "\nPlatform: " + Device.platform + "\nMemory: " + Device.flash + "\nBattery: " + Device.battery + "\nisSimulator: " + Device.isSimulator + "\nhasCamera: " + Device.hasCamera);
+			}
+		</script>
+	</head>
+	<body>
+		<p><a href="javascript:showDeviceInfo();">Device information</a></p>
+		<hr>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<a href="data:///www/test/index.html">Back</a>
+	</body>
+</html>
