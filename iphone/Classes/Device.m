@@ -10,32 +10,26 @@
 
 @implementation Device
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)theSettings andViewController:(UIViewController*)theViewController
+/**
+ * returns a dictionary with various device settings
+ *  - gap (version)
+ *  - Device platform
+ *  - Device version
+ *  - Device name (e.g. user-defined name of the phone)
+ *  - Device uuid
+ */
+- (NSDictionary*) getDeviceProperties
 {
-    self = (Device*)[super initWithWebView:(UIWebView*)theWebView settings:theSettings andViewController:theViewController];
-    if (self) {
-		myCurrentDevice = [UIDevice currentDevice];
-    }
-	return self;
-}
+	UIDevice *device = [UIDevice currentDevice];
+    NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
+    [devProps setObject:[device model] forKey:@"platform"];
+    [devProps setObject:[device systemVersion] forKey:@"version"];
+    [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
+    [devProps setObject:[device name] forKey:@"name"];
+    [devProps setObject:@"0.8.0" forKey:@"gap"];
 
-- (void) info:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-{
-	NSString* info = [[NSString alloc]
-			initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.8.0'};",
-			[[myCurrentDevice model] UTF8String],
-			[[myCurrentDevice systemVersion] UTF8String],
-			[[myCurrentDevice uniqueIdentifier] UTF8String]
-			];
-	
-	NSLog(@"%@", info);
-    [webView stringByEvaluatingJavaScriptFromString:info];
-	[info release];
-}
-
-- (void)dealloc {
-	[myCurrentDevice release];
-	[super dealloc];
+    NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
+    return devReturn;
 }
 
 @end

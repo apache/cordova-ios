@@ -8,16 +8,16 @@
  *
  */
 
-
 #import <AddressBook/AddressBook.h>
 #import <AddressBookUI/ABNewPersonViewController.h>
 #import "Contacts.h"
+#import "PhoneGapDelegate.h"
 
 @implementation Contacts
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)theSettings andViewController:(UIViewController*)theViewController
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (Contacts*)[super initWithWebView:(UIWebView*)theWebView settings:theSettings andViewController:theViewController];
+    self = (Contacts*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {
         addressBook = ABAddressBookCreate();
 		allPeople = nil;
@@ -105,7 +105,9 @@
 	npController.newPersonViewDelegate = self;
 
 	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:npController] autorelease];
-	[[super viewController] presentModalViewController:navController animated: YES];
+	PhoneGapDelegate* delg = (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
+	UIViewController* viewController = (UIViewController*)[delg viewController];
+	[viewController presentModalViewController:navController animated: YES];
 	
 	CFRelease(persona);
 }

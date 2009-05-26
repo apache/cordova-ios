@@ -11,11 +11,8 @@
 #import "PhoneGapCommand.h"
 
 @interface Device : PhoneGapCommand {
-	UIDevice *myCurrentDevice;
 }
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)theSettings andViewController:(UIViewController*)theViewController;
-
-- (void) info:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (NSDictionary*) getDeviceProperties;
 
 @end

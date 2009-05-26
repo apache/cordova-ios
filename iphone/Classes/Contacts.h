@@ -16,7 +16,6 @@
 	NSArray* allPeople;
 }
 
-
 - (void) getAllContacts:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) newContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

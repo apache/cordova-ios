@@ -1,52 +1,129 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<head>
-    <title>OpenWebVancouver</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.6">
-    <meta name="apple-mobile-web-app-capable" content="YES">
-    <link rel="apple-touch-icon" href="Images/WebClipIcon.png">
-    <link rel="stylesheet" href="main.css">
-    <link rel="stylesheet" type="text/css" href="Parts/Transitions.css">
-    <script type="text/javascript" src="pg.js" charset="utf-8"></script>
-    <script type="text/javascript" src="xui.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/setup.js" charset="utf-8"></script>
-    <script type="text/javascript" src="main.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/utilities.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/Transitions.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/StackLayout.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/PushButton.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/ButtonHandler.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/Header.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/Browser.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/Text.js" charset="utf-8"></script>
-    <script type="text/javascript" src="Parts/List.js" charset="utf-8"></script>
-</head>
-<body onload="load();">
-	<a href="gap://Contacts.getAllContacts/foo/bar">Foo</a>
-    <div id="stackLayout"><div id="speakers">
-            <div id="browser">
-                <div id="header">
-                    <div class="dashcode-header-backbutton button_template" id="button"></div>
-                </div>
-                <div id="stackLayout1"><div id="view1">
-                        <ul id="list">
-                            <li id="listRowTemplate" class="listRowTemplate_template">
-                                <div id="label" class="label_template"></div>
-                                <div id="arrow" class="arrow_template">
-                                </div>
-                            </li>
-                        </ul>
-                        <div id="button3"></div>
-                    </div><div id="view2">
-                        <div id="box"></div>
-                    </div></div>
-            </div>
-        </div><div id="schedule">
-            <div id="box1">
-                <div id="button1"></div>
-                <div id="button2"></div>
-            </div>
-        </div><div id="messages"></div></div>
-</body>
+  <head>
+    <meta name="viewport" content="width=320; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>PhoneGap</title>
+    <link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    function deviceInfo(){
+      debug.log("deviceInfo");
+      document.getElementById("platform").innerHTML   = device.platform;
+      document.getElementById("version").innerHTML    = device.version;
+      document.getElementById("devicename").innerHTML = device.name;
+      document.getElementById("uuid").innerHTML       = device.uuid;
+    }
+    
+    function getLocation() {
+      debug.log("getLocation");
+      navigator.notification.activityStart();
+      var suc = function(p){
+        debug.log(p.latitude + " " + p.longitude);
+        navigator.notification.alert(p.latitude + " " + p.longitude, "Your GeoLocation", "Thanks");
+        navigator.notification.activityStop();
+      };
+      var fail = function(){};
+      navigator.geolocation.getCurrentPosition(suc,fail);
+    }
+    
+    function customAlert(){
+      navigator.notification.alert("Custom alert", "Custom title", "Yup!");
+    }
+  
+    function beep(){
+      debug.log("beep");
+      navigator.notification.beep(2);
+    }
+  
+    function vibrate(){
+      debug.log("vibrate");
+      navigator.notification.vibrate(0);
+    }
+  
+    function getContact(){
+      debug.log("getContact");
+      var suc = function(c){
+        debug.log(c);
+        alert("Contact 1: " + c.contacts[0].firstName);
+      };
+      var fail = function(){};
+      navigator.ContactManager.getAllContacts(suc, fail);
+    }
+    
+    function watchAccel() {
+      debug.log("watchAccel");
+      var suc = function(a){
+        document.getElementById('x').innerHTML = roundNumber(a.x);
+        document.getElementById('y').innerHTML = roundNumber(a.y);
+        document.getElementById('z').innerHTML = roundNumber(a.z);
+      };
+      var fail = function(){};
+      var opt = {};
+      opt.frequency = 100;
+      timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
+    }
+      
+    function roundNumber(num) {
+      var dec = 3;
+      var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+      return result;
+    }
+
+    function preventBehavior(e) { 
+      e.preventDefault(); 
+    };
+
+    PhoneGap.addConstructor(function(){
+      document.addEventListener("touchmove", preventBehavior, false);
+      deviceInfo();
+      document.addEventListener('orientationChanged', function(e) { debug.log("Orientation changed to " + e.orientation); }, false);
+    });
+    
+    </script>
+  </head>
+  <body id="stage" class="theme">
+      <div id="Page1">
+        <h2>this file is located at iphone/www/index.html</h2>
+		<a href="javascript:getContact()">FOooo</a>
+        <div id="info" class="Panel">
+          <table>
+            <tr>
+              <td>
+                <h4>Platform: <span id="platform">&nbsp;</span></h4>
+              </td>
+              <td>
+                <h4>Version: <span id="version">&nbsp;</span></h4>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <h4>Device Name: <span id="devicename">&nbsp;</span></h4>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <h4>UUID:   <span id="uuid">&nbsp;</span></h4>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <dl id="accel-data">
+          <dt>X:</dt><dd id="x">&nbsp;</dd>
+          <dt>Y:</dt><dd id="y">&nbsp;</dd>
+          <dt>Z:</dt><dd id="z">&nbsp;</dd>
+        </dl>
+        <a href="#" class="btn large" onclick="watchAccel();">Watch Accelerometer</a>
+        <a href="#" class="btn large" onclick="getLocation();">Get Location</a>
+        <a href="tel:411" class="btn">Call 411</a>
+        <a href="#" class="btn" onclick="customAlert();">Custom Alert</a>
+        <a href="#" class="btn" onclick="beep();">Beep</a>
+        <a href="#" class="btn" onclick="vibrate();">Vibrate</a>
+      </div>
+      <div id="Page2" style="display: none">
+        <a href="#" class="btn large" onclick="getContact();">Get Fourth Contact</a>
+      </div>
+  </body>
 </html>
