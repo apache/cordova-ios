@@ -22,6 +22,7 @@
       navigator.notification.activityStart();
       var suc = function(p){
         debug.log(p.latitude + " " + p.longitude);
+        navigator.notification.alert(p.latitude + " " + p.longitude, "Your GeoLocation", "Thanks");
         navigator.notification.activityStop();
       };
       var fail = function(){};
