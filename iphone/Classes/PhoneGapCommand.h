@@ -11,14 +11,13 @@
 
 @interface PhoneGapCommand : NSObject {
     UIWebView*    webView;
+	UIViewController* viewController;
     NSDictionary* settings;
 }
 @property (nonatomic, retain) UIWebView *webView;
 @property (nonatomic, retain) NSDictionary *settings;
+@property (nonatomic, retain) UIViewController *viewController;
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView;
--(void) setWebView:(UIWebView*) theWebView;
--(void) setSettings:(NSDictionary*) classSettings;
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings andViewController:(UIViewController*)theViewController;
 
 @end

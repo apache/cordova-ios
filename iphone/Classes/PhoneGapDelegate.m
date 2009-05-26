@@ -29,11 +29,7 @@
         NSDictionary* classSettings;
         classSettings = [settings objectForKey:className];
 
-        if (classSettings)
-            obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
-        else
-            obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
-        
+		obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings andViewController:viewController];
         [commandObjects setObject:obj forKey:className];
     }
     return obj;

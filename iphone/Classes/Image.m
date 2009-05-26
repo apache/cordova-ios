@@ -15,6 +15,7 @@
 @implementation Image
 
 @synthesize window;
+@synthesize picker;
 
 // TODO Move to Image.m
 - (void)imagePickerController:(UIImagePickerController *)thePicker didFinishPickingImage:(UIImage *)theImage editingInfo:(NSDictionary *)editingInfo

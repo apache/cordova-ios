@@ -9,33 +9,20 @@
 #import "PhoneGapCommand.h"
 
 @implementation PhoneGapCommand
+
 @synthesize webView;
 @synthesize settings;
+@synthesize viewController;
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
-{
-    self = [self initWithWebView:theWebView];
-    if (self)
-        [self setSettings:classSettings];
-    return self;
-}
-
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings andViewController:(UIViewController*)theViewController
 {
     self = [super init];
-    if (self)
-        [self setWebView:theWebView];
+    if (self) {
+		[self setWebView:theWebView];
+        [self setSettings:classSettings];
+		[self setViewController:theViewController];
+	}
     return self;
-}
-
--(void) setWebView:(UIWebView*) theWebView
-{
-    webView = theWebView;
-}
-
--(void) setSettings:(NSDictionary*) classSettings
-{
-    settings = classSettings;
 }
 
 - (void)dealloc

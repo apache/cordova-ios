@@ -11,9 +11,10 @@
 @implementation UIControls
 @synthesize webView;
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)theSettings andViewController:(UIViewController*)theViewController
+
 {
-    self = [super initWithWebView:theWebView];
+    self = (UIControls*)[super initWithWebView:theWebView settings:theSettings andViewController:theViewController];
     if (self) {
         tabBarItems = [[NSMutableDictionary alloc] initWithCapacity:5];
         
