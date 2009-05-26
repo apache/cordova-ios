@@ -186,7 +186,8 @@
 	/*
 	 * This is the Device.platform information
 	 */	
-    NSString *deviceStr = [[Device alloc] init];
+	id device = [self getCommandInstance:@"Device"];
+    [device info:nil withDict:nil];
     
     /* Settings.plist
 	 * Read the optional Settings.plist file and push these user-defined settings down into the web application.
@@ -195,12 +196,10 @@
 	 */
     NSDictionary *temp = [self getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONFragment)]) {
-        NSString *initString = [[NSString alloc] initWithFormat:@"%@\nwindow.Settings = %@;", deviceStr, [temp JSONFragment]];
+        NSString *initString = [[NSString alloc] initWithFormat:@"window.Settings = %@;", [temp JSONFragment]];
         NSLog(@"%@", initString);
         [theWebView stringByEvaluatingJavaScriptFromString:initString];
         [initString release];
-    } else {
-        [theWebView stringByEvaluatingJavaScriptFromString:deviceStr];
     }
 }
 

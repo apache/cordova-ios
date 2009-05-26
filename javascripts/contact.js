@@ -3,29 +3,24 @@
  * @constructor
  */
 function Contact() {
-	this.name = "";
-	this.phone = "";
+	this.firstName = "";
+	this.lastName = "";
+	this.phoneNumber = "";
 	this.address = "";
 }
 
-/**
- * 
- * @param {Object} successCallback
- * @param {Object} errorCallback
- * @param {Object} options
- */
-Contact.prototype.get = function(successCallback, errorCallback, options) {
-	
+Contact.prototype.displayName = function()
+{
+	return this.firstName + " " + this.lastName;
 }
-
 
 function ContactManager() {
 	// Dummy object to hold array of contacts
 	this.contacts = [];
-	this.timestap = new Date().getTime();
+	this.timestamp = new Date().getTime();
 }
 
-ContactManager.prototype.get = function(successCallback, errorCallback, options) {
+ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
 	// Interface
 }
 

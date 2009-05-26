@@ -10,22 +10,27 @@
 
 @implementation Device
 
-/*
- * init
- * returns a JS String with various device settings
- *  - gap (version)
- *  - Device model
- *  - Device version
- *  - Device uuid
- */
-- (NSString *)init{
-	myCurrentDevice = [UIDevice currentDevice];
-	return [[NSString alloc]
-			 initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.8.0'};",
-			 [[myCurrentDevice model] UTF8String],
-			 [[myCurrentDevice systemVersion] UTF8String],
-			 [[myCurrentDevice uniqueIdentifier] UTF8String]
-	];
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)theSettings andViewController:(UIViewController*)theViewController
+{
+    self = (Device*)[super initWithWebView:(UIWebView*)theWebView settings:theSettings andViewController:theViewController];
+    if (self) {
+		myCurrentDevice = [UIDevice currentDevice];
+    }
+	return self;
+}
+
+- (void) info:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+{
+	NSString* info = [[NSString alloc]
+			initWithFormat:@"DeviceInfo={platform:'%s',version:'%s',uuid:'%s',gap:'0.8.0'};",
+			[[myCurrentDevice model] UTF8String],
+			[[myCurrentDevice systemVersion] UTF8String],
+			[[myCurrentDevice uniqueIdentifier] UTF8String]
+			];
+	
+	NSLog(@"%@", info);
+    [webView stringByEvaluatingJavaScriptFromString:info];
+	[info release];
 }
 
 - (void)dealloc {

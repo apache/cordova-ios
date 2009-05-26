@@ -38,27 +38,46 @@
 	
 	for (int i = 0; i < numberOfPeople; i++) 
 	{ 
-		ABRecordRef ref = CFArrayGetValueAtIndex((CFArrayRef)allPeople, i);
+		ABRecordRef rec = CFArrayGetValueAtIndex((CFArrayRef)allPeople, i);
 		
-		if (ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil) 
+		if (ABRecordCopyValue(rec, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(rec, kABPersonLastNameProperty) != nil) 
 		{
-			CFStringRef firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
-			CFStringRef lastName = ABRecordCopyValue(ref, kABPersonLastNameProperty);			
-			CFStringRef phoneNumber = ABMultiValueCopyValueAtIndex(ABRecordCopyValue(ref,kABPersonPhoneProperty) ,0);
+			CFStringRef firstName = ABRecordCopyValue(rec, kABPersonFirstNameProperty);
+			CFStringRef lastName = ABRecordCopyValue(rec, kABPersonLastNameProperty);		
+			NSMutableString* phoneArray =  [[NSMutableString alloc] initWithString:@"{"];
+
+			CFStringRef phoneNumber, phoneNumberLabel;
+			ABMutableMultiValueRef multi = ABRecordCopyValue(rec, kABPersonPhoneProperty);
+			CFIndex phoneNumberCount = ABMultiValueGetCount(multi);
 			
-			NSString *contactFirstLast = [[NSString alloc] initWithFormat:@"%@ %@",firstName, lastName];
-			NSString *contactFirstLast2 = [[NSString alloc] initWithFormat:@"{'name':'%@','phone':'%@'}",contactFirstLast,phoneNumber];
-			[jsCallBack appendFormat:@"%@", contactFirstLast2];
+			for (CFIndex i = 0; i < phoneNumberCount; i++) {
+				phoneNumberLabel = ABMultiValueCopyLabelAtIndex(multi, i);
+				phoneNumber      = ABMultiValueCopyValueAtIndex(multi, i);
+				
+				NSString* pair = [[NSString alloc] initWithFormat:@"'%@':'%@'", (NSString*)phoneNumberLabel,(NSString*) phoneNumber];
+				[phoneArray appendFormat:@"%@", pair];
+				[pair release];
+
+				if (i+1 != phoneNumberCount) {
+					[phoneArray appendFormat:@","];
+				}
+				
+				CFRelease(phoneNumberLabel);
+				CFRelease(phoneNumber);
+			}
+			[phoneArray appendString:@"}"];
+			
+			NSString* contactStr = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", firstName, lastName, phoneArray, @""];
+			[jsCallBack appendFormat:@"%@", contactStr];
 			
 			if (i+1 != numberOfPeople) {
 				[jsCallBack appendFormat:@","];
 			}
 			
-			[contactFirstLast release];
-			[contactFirstLast2 release];
+			[contactStr release];
 			CFRelease(firstName);
 			CFRelease(lastName);
-			CFRelease(phoneNumber);
+			CFRelease(phoneArray);
 		}
 	}
 	
@@ -79,11 +98,14 @@
 	ABRecordSetValue(persona, kABPersonFirstNameProperty, firstName , nil);
 	ABRecordSetValue(persona, kABPersonLastNameProperty, lastName, nil);
 
-	ABNewPersonViewController* npController = [[ABNewPersonViewController alloc] init];
+	ABNewPersonViewController* npController = [[[ABNewPersonViewController alloc] init] autorelease];
+	
 	npController.displayedPerson = persona;
 	npController.addressBook = addressBook;
 	npController.newPersonViewDelegate = self;
-	[[super viewController] presentModalViewController:npController animated: YES];
+
+	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:npController] autorelease];
+	[[super viewController] presentModalViewController:navController animated: YES];
 	
 	CFRelease(persona);
 }
@@ -113,3 +135,4 @@
 }
 
 @end
+

@@ -39,7 +39,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		079B0A090E45734600755F37 /* CoreLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1B1B4E690F938A0500ECD4E6 /* UIControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIControls.h; sourceTree = "<group>"; };
 		1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIControls.m; sourceTree = "<group>"; };
 		1B1B4FBC0F94571B00ECD4E6 /* PhoneGapCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapCommand.h; sourceTree = "<group>"; };
@@ -167,7 +167,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				079B0A090E45734600755F37 /* CoreLocation.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -192,6 +191,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				079B0A090E45734600755F37 /* CoreLocation.framework */,
 				3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */,
 				BB8FC69E0F5BB58D007C7DCE /* CFNetwork.framework */,
 				47FAB74F0EF82576005F55AB /* AddressBook.framework */,
@@ -353,9 +353,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Nachbaur";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Nachbaur";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Michael Nachbaur";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				CURRENT_PROJECT_VERSION = 1.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -363,9 +363,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "32D94753-1E53-4ACE-95E5-4C9C078CC057";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
-				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "0EB57E52-0917-4D2F-A182-717E36CE72C8";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Distribution;
@@ -397,18 +397,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Brock Whitten";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brock Whitten";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer: Brock Whitten";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.1]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "3CC55FB0-969F-4E90-8361-E82907DF1889";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3CC55FB0-969F-4E90-8361-E82907DF1889";
-				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "3CC55FB0-969F-4E90-8361-E82907DF1889";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos2.1]" = "";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
