@@ -7,6 +7,7 @@
 //
 
 #import "Notification.h"
+#import "Categories.h"
 
 @implementation Notification
 
@@ -31,7 +32,7 @@
 - (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
     //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] startAnimating];
-    NSLog(@"Starting");
+    NSLog(@"Activity starting");
     UIApplication* app = [UIApplication sharedApplication];
     app.networkActivityIndicatorVisible = YES;
 }
@@ -40,7 +41,7 @@
 {
     //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] stopAnimating];
 
-    NSLog(@"Stopping ");
+    NSLog(@"Activitiy stopping ");
     UIApplication* app = [UIApplication sharedApplication];
     app.networkActivityIndicatorVisible = NO;
 }
@@ -48,6 +49,34 @@
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+}
+
+- (void)loadingStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	if (loadingView == nil) 
+	{
+		NSLog(@"Loading start");
+		loadingView = [LoadingView loadingViewInView:[super appViewController].view];
+
+		NSString* durationKey = @"durationInSeconds";
+		if ([options valueForKey:durationKey])
+		{
+			// 1 hour max? :)
+			NSTimeInterval durationValue = [options integerValueForKey:durationKey defaultValue:1 withRange:NSMakeRange(1,3600)];
+			[self performSelector:@selector(loadingStop:withDict:) withObject:nil afterDelay:durationValue];
+		}
+	}
+}
+
+- (void)loadingStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	if (loadingView != nil) 
+	{
+		NSLog(@"Loading stop");
+
+		[loadingView removeView]; // the superview will release (see removeView doc), so no worries for below
+		loadingView = nil;
+	}
 }
 
 @end

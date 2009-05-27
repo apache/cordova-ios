@@ -55,6 +55,19 @@
 		}
     }
 
+    function showLoadingScreen(durationInSeconds){
+		if (!durationInSeconds) {
+			durationInSeconds = prompt("Enter the load duration in seconds", 3);
+		}
+
+		if (durationInSeconds) {
+			options = { 'durationInSeconds': durationInSeconds };
+			navigator.notification.loadingStart(options);
+		} else {
+			return;
+		}
+	}
+		
     function getContacts(pageSize, pageNumber){
       debug.log("getContacts");
       var fail = function(){};
@@ -160,6 +173,8 @@
 	  <a href="javascript:getContacts()">Get All Contacts (WARNING MAY CRASH PHONE?)</a>
 	  <br />
 	  <a href="javascript:contactsCount()">Contacts Count</a>
+	  <br />
+	  <a href="javascript:showLoadingScreen()">Load start</a>
 	  <br />
       <div id="Page1">
         <h2>this file is located at iphone/www/index.html</h2>

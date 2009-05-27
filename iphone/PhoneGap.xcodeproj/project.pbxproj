@@ -19,6 +19,9 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		30CD0F0F0FCBED3F00AA6748 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */; };
+		30EC9AEC0FCDF4DD00A52C71 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */; };
+		30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */; };
+		30EC9B220FCDFCC500A52C71 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EC9B210FCDFCC500A52C71 /* QuartzCore.framework */; };
 		30F95CB00FCC8DBF0069E3FF /* Categories.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F95CAF0FCC8DBF0069E3FF /* Categories.m */; };
 		47DC5AEE0F4BDEDB00FB54CE /* beep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 47DC5AED0F4BDEDB00FB54CE /* beep.wav */; };
 		47DC7FB30EFADF9E00D0B526 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* PhoneGap.plist */; };
@@ -58,6 +61,10 @@
 		28AD733E0D9D9553002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main.m; sourceTree = "<group>"; };
 		3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		30EC9AEA0FCDF4DD00A52C71 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
+		30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
+		30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		30EC9B210FCDFCC500A52C71 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		30F95CAE0FCC8DBF0069E3FF /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Categories.h; sourceTree = "<group>"; };
 		30F95CAF0FCC8DBF0069E3FF /* Categories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Categories.m; sourceTree = "<group>"; };
 		474A7F820EFAD6580020DD7F /* PhoneGap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGap_Prefix.pch; sourceTree = "<group>"; };
@@ -101,6 +108,8 @@
 				828B59CE0E520C7F0096DE8B /* AudioToolbox.framework in Frameworks */,
 				47FAB7500EF82576005F55AB /* AddressBook.framework in Frameworks */,
 				BB8FC69F0F5BB58D007C7DCE /* CFNetwork.framework in Frameworks */,
+				30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */,
+				30EC9B220FCDFCC500A52C71 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +128,8 @@
 				1B1B4FBD0F94571B00ECD4E6 /* PhoneGapCommand.m */,
 				30F95CAE0FCC8DBF0069E3FF /* Categories.h */,
 				30F95CAF0FCC8DBF0069E3FF /* Categories.m */,
+				30EC9AEA0FCDF4DD00A52C71 /* LoadingView.h */,
+				30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */,
 				1B1B50FB0F95000A00ECD4E6 /* Commands */,
 			);
 			path = Classes;
@@ -196,6 +207,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				30EC9B210FCDFCC500A52C71 /* QuartzCore.framework */,
+				30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */,
 				079B0A090E45734600755F37 /* CoreLocation.framework */,
 				3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */,
 				BB8FC69E0F5BB58D007C7DCE /* CFNetwork.framework */,
@@ -309,6 +322,7 @@
 				1B1B4FBE0F94571B00ECD4E6 /* PhoneGapCommand.m in Sources */,
 				1B1B53830F98070D00ECD4E6 /* Notification.m in Sources */,
 				30F95CB00FCC8DBF0069E3FF /* Categories.m in Sources */,
+				30EC9AEC0FCDF4DD00A52C71 /* LoadingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

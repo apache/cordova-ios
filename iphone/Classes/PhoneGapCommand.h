@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@class PhoneGapDelegate;
+
 @interface PhoneGapCommand : NSObject {
     UIWebView*    webView;
     NSDictionary* settings;
@@ -18,5 +20,8 @@
 
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView;
+
+-(PhoneGapDelegate*) appDelegate;
+-(UIViewController*) appViewController;
 
 @end

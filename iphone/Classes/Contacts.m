@@ -160,10 +160,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		npController.newPersonViewDelegate = self;
 
 		UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:npController] autorelease];
-		PhoneGapDelegate* delg = (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
-		
-		UIViewController* viewController = (UIViewController*)[delg viewController];
-		[viewController presentModalViewController:navController animated: YES];
+		[[super appViewController] presentModalViewController:navController animated: YES];
 	} 
 	else {
 		ABAddressBookAddRecord(addressBook, persona, nil);
