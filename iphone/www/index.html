@@ -43,15 +43,73 @@
       navigator.notification.vibrate(0);
     }
   
-    function getContact(){
-      debug.log("getContact");
-      var suc = function(c){
-        debug.log(c);
-        alert("Contact 1: " + c.contacts[0].firstName);
-      };
-      var fail = function(){};
-      navigator.ContactManager.getAllContacts(suc, fail);
+    function getContactsPrompt(){
+      debug.log("getContactsPrompt");
+	  
+		var pageSize = prompt("Page size", 10);
+		if (pageSize) {
+			var pageNumber = prompt("Page number", 1);
+			if (pageNumber) {
+				getContacts(parseInt(pageSize), parseInt(pageNumber));
+			}
+		}
     }
+
+    function getContacts(pageSize, pageNumber){
+      debug.log("getContacts");
+      var fail = function(){};
+	  var options = null;
+	  
+	  if (pageSize && pageNumber)
+		options = { 'pageSize': pageSize, 'pageNumber': pageNumber };
+	  
+      navigator.ContactManager.allContacts(getContacts_Return, fail, options);
+    }
+	
+	function getContacts_Return(contactsArray)
+	{
+		var names = "";
+		
+		for (var i = 0; i < contactsArray.length; i++) {
+			var con = new Contact();
+			con.firstName = contactsArray[i].firstName;
+			con.lastName = contactsArray[i].lastName;
+			con.phoneNumber = contactsArray[i].phoneNumber;
+			con.address = contactsArray[i].address;	
+			names += con.displayName();
+			
+			if (i+1 != contactsArray.length)
+				names += ",";
+		}
+		
+		alert(names);
+	}
+	
+	function contactsCount(){
+      debug.log("contactCount");
+      navigator.ContactManager.contactsCount(showContactsCount);
+    }
+	
+	function showContactsCount(count){
+		alert("Number of contacts: " + count);
+	}
+
+	function addContact(gui){
+		var sample_contact = { 'firstName': 'John', 'lastName' : 'Smith' };
+	
+		if (gui) {
+			navigator.ContactManager.newContact(sample_contact, null, { 'gui': true });
+		} else {
+			var firstName = prompt("Enter a first name", sample_contact.firstName);
+			if (firstName) {
+				var lastName = prompt("Enter a last name", sample_contact.lastName);
+				if (lastName) {
+					sample_contact = { 'firstName': firstName, 'lastName' : lastName };
+					navigator.ContactManager.newContact(sample_contact);
+				}
+			}
+		}
+	}
     
     function watchAccel() {
       debug.log("watchAccel");
@@ -85,6 +143,24 @@
     </script>
   </head>
   <body id="stage" class="theme">
+	  <a href="javascript:addContact(true)">New Contact (GUI)</a>
+	  <br />
+	  <a href="javascript:addContact(false)">New Contact (API)</a>
+	  <br />
+	  <a href="javascript:getContacts(1,1)">Get 1st Contact</a>
+	  <br />
+	  <a href="javascript:getContacts(5,1)">Get 1st Page of Contacts, with Page size of 5</a>
+	  <br />
+	  <a href="javascript:getContacts(5,2)">Get 2nd Page of Contacts, with Page size of 5</a>
+	  <br />
+	  <a href="javascript:getContacts(20,1)">Get All Contacts (MAXING TO 20)</a>
+	  <br />
+	  <a href="javascript:getContactsPrompt()">Get All Contacts (PROMPT)</a>
+	  <br />
+	  <a href="javascript:getContacts()">Get All Contacts (WARNING MAY CRASH PHONE?)</a>
+	  <br />
+	  <a href="javascript:contactsCount()">Contacts Count</a>
+	  <br />
       <div id="Page1">
         <h2>this file is located at iphone/www/index.html</h2>
         <div id="info" class="Panel">

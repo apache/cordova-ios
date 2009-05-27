@@ -16,12 +16,13 @@
 	NSArray* allPeople;
 }
 
-- (void) getAllContacts:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) allContacts:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) newContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void) newPersonViewController:(ABNewPersonViewController *)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person;
 
+- (void) addressBookDirty;
 - (void) dealloc;
 
 @end

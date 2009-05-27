@@ -2,7 +2,8 @@
  * This class provides access to the device contacts.
  * @constructor
  */
-function Contact() {
+
+function Contact(jsonObject) {
 	this.firstName = "";
 	this.lastName = "";
 	this.phoneNumber = "";
@@ -11,6 +12,7 @@ function Contact() {
 
 Contact.prototype.displayName = function()
 {
+    // TODO: can be tuned according to prefs
 	return this.firstName + " " + this.lastName;
 }
 
@@ -20,7 +22,7 @@ function ContactManager() {
 	this.timestamp = new Date().getTime();
 }
 
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+ContactManager.prototype.allContacts = function(successCallback, errorCallback, options) {
 	// Interface
 }
 
