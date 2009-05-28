@@ -70,9 +70,22 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	NSMutableString* jsArray = [[NSMutableString alloc] init];
 	[jsArray appendString:@"["];
 	
-	CFIndex numberOfPeople = ABAddressBookGetPersonCount(addressBook);
+	NSString* filter = [options valueForKey:@"nameFilter"];
+	CFArrayRef records = NULL;
+	CFIndex numberOfPeople = 0;
+
+	if (filter) {
+		records =  ABAddressBookCopyPeopleWithName(addressBook, (CFStringRef)filter);
+		numberOfPeople = CFArrayGetCount(records);
+	} else {
+		if (allPeople == nil) { // lazy loading
+			allPeople = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addressBook);
+		}
+		records = (CFArrayRef)allPeople;
+		numberOfPeople = ABAddressBookGetPersonCount(addressBook);
+	}
+	
 	CFIndex pageSize = [options integerValueForKey:@"pageSize" defaultValue:numberOfPeople withRange:NSMakeRange(1, numberOfPeople)];
-	CFStringRef filter = (CFStringRef)[options valueForKey:@"nameFilter"];
 	
 	NSUInteger maxPages = ceil((double)numberOfPeople / (double)pageSize);
 	CFIndex pageNumber = [options integerValueForKey:@"pageNumber" defaultValue:1 withRange:NSMakeRange(1, maxPages)];
@@ -80,29 +93,23 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	CFIndex skipAmount = (pageNumber - 1) * pageSize;
 	CFIndex maxIndex = (skipAmount + pageSize);
 	
-	if (allPeople == nil) {
-		allPeople = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addressBook);
-	}
-	
-	CFArrayRef records = (CFArrayRef)allPeople;
-	if (filter) {
-		records =  ABAddressBookCopyPeopleWithName (addressBook, filter);
-	}
-	
+	NSString* firstName = nil, *lastName = nil, *contactJson = nil;
+	NSString* phoneNumberLabel = nil, *phoneNumber = nil, *numberPair = nil;
+	NSMutableString* phoneArray = nil;;
+	ABMutableMultiValueRef multi;
+
 	for (int i = skipAmount; i < maxIndex; i++) 
 	{ 
 		ABRecordRef rec = CFArrayGetValueAtIndex(records, i);
 		
 		if (ABRecordCopyValue(rec, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(rec, kABPersonLastNameProperty) != nil) 
 		{
-			NSString* firstName = (NSString*)ABRecordCopyValue(rec, kABPersonFirstNameProperty);
-			NSString* lastName = (NSString*)ABRecordCopyValue(rec, kABPersonLastNameProperty);		
-			NSMutableString* phoneArray =  [[NSMutableString alloc] initWithString:@"{"];
+			firstName = (NSString*)ABRecordCopyValue(rec, kABPersonFirstNameProperty);
+			lastName = (NSString*)ABRecordCopyValue(rec, kABPersonLastNameProperty);		
+			phoneArray =  [[NSMutableString alloc] initWithString:@"{"];
 
-			ABMutableMultiValueRef multi = ABRecordCopyValue(rec, kABPersonPhoneProperty);
+			multi = ABRecordCopyValue(rec, kABPersonPhoneProperty);
 			CFIndex phoneNumberCount = ABMultiValueGetCount(multi);
-			
-			NSString* phoneNumberLabel = nil, *phoneNumber = nil, *numberPair = nil;
 			
 			for (CFIndex j = 0; j < phoneNumberCount; j++) {
 				phoneNumberLabel = (NSString*)ABMultiValueCopyLabelAtIndex(multi, j); // note that this will be a general label, for you to localize yourself
@@ -118,10 +125,11 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 				[numberPair release];
 				[phoneNumberLabel release];
 				[phoneNumber release];
+				CFRelease(multi);
 			}
 			[phoneArray appendString:@"}"];
 			
-			NSString* contactJson = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", firstName, lastName, phoneArray, @""];
+			contactJson = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", firstName, lastName, phoneArray, @""];
 			[jsArray appendString:contactJson];
 			
 			if (i+1 != maxIndex) {
@@ -139,6 +147,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", jsCallback, jsArray];
     NSLog(@"%@", jsString);
     [webView stringByEvaluatingJavaScriptFromString:jsString];
+	
+	if (filter) {
+		CFRelease(records);
+	}
 	
 	[jsArray release];
 	[jsString release];
@@ -182,6 +194,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		[self addressBookDirty];
 	}
 	[newPersonViewController dismissModalViewControllerAnimated:YES]; 
+}
+
+- (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
 }
 
 - (void) addressBookDirty
