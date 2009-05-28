@@ -50,7 +50,8 @@
 		if (pageSize) {
 			var pageNumber = prompt("Page number", 1);
 			if (pageNumber) {
-				getContacts(parseInt(pageSize), parseInt(pageNumber));
+				var nameFilter = prompt("Name filter", null);
+				getContacts(parseInt(pageSize), parseInt(pageNumber), nameFilter);
 			}
 		}
     }
@@ -68,13 +69,17 @@
 		}
 	}
 		
-    function getContacts(pageSize, pageNumber){
+    function getContacts(pageSize, pageNumber, nameFilter){
       debug.log("getContacts");
       var fail = function(){};
-	  var options = null;
 	  
-	  if (pageSize && pageNumber)
-		options = { 'pageSize': pageSize, 'pageNumber': pageNumber };
+	  var options = {};
+	  if (pageSize)
+		options.pageSize = pageSize;
+	  if (pageNumber)
+		options.pageNumber = pageNumber;
+	  if (nameFilter)
+		options.nameFilter = nameFilter;
 	  
       navigator.ContactManager.allContacts(getContacts_Return, fail, options);
     }

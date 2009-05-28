@@ -20,7 +20,7 @@
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void* context)
 {
 	// note that this function is only called when another AddressBook instance modifies 
-	// the address book, not the current one
+	// the address book, not the current one. For example, through a MobileMe sync
 	Contacts* contacts = (Contacts*)context;
 	[contacts addressBookDirty];
 }
@@ -39,20 +39,20 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 - (void) contactsCount:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
-	NSString* jcallback = nil;
+	NSString* jCallback = nil;
 	
 	if (argc > 0) {
-		jcallback = [arguments objectAtIndex:0];
+		jCallback = [arguments objectAtIndex:0];
 	} else {
 		NSLog(@"Contacts.contactsCount: Missing 1st parameter.");
 		return;
 	}
 	
 	CFIndex numberOfPeople = ABAddressBookGetPersonCount(addressBook);
-	NSString* str = [[NSString alloc] initWithFormat:@"%@(%d);", jcallback, numberOfPeople];
+	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%d);", jCallback, numberOfPeople];
 	
-    [webView stringByEvaluatingJavaScriptFromString:str];
-	[str release];
+    [webView stringByEvaluatingJavaScriptFromString:jsString];
+	[jsString release];
 }
 
 - (void) allContacts:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -72,6 +72,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	
 	CFIndex numberOfPeople = ABAddressBookGetPersonCount(addressBook);
 	CFIndex pageSize = [options integerValueForKey:@"pageSize" defaultValue:numberOfPeople withRange:NSMakeRange(1, numberOfPeople)];
+	CFStringRef filter = (CFStringRef)[options valueForKey:@"nameFilter"];
 	
 	NSUInteger maxPages = ceil((double)numberOfPeople / (double)pageSize);
 	CFIndex pageNumber = [options integerValueForKey:@"pageNumber" defaultValue:1 withRange:NSMakeRange(1, maxPages)];
@@ -83,56 +84,60 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		allPeople = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addressBook);
 	}
 	
+	CFArrayRef records = (CFArrayRef)allPeople;
+	if (filter) {
+		records =  ABAddressBookCopyPeopleWithName (addressBook, filter);
+	}
+	
 	for (int i = skipAmount; i < maxIndex; i++) 
 	{ 
-		ABRecordRef rec = CFArrayGetValueAtIndex((CFArrayRef)allPeople, i);
+		ABRecordRef rec = CFArrayGetValueAtIndex(records, i);
 		
 		if (ABRecordCopyValue(rec, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(rec, kABPersonLastNameProperty) != nil) 
 		{
-			CFStringRef firstName = ABRecordCopyValue(rec, kABPersonFirstNameProperty);
-			CFStringRef lastName = ABRecordCopyValue(rec, kABPersonLastNameProperty);		
+			NSString* firstName = (NSString*)ABRecordCopyValue(rec, kABPersonFirstNameProperty);
+			NSString* lastName = (NSString*)ABRecordCopyValue(rec, kABPersonLastNameProperty);		
 			NSMutableString* phoneArray =  [[NSMutableString alloc] initWithString:@"{"];
 
-			CFStringRef phoneNumber, phoneNumberLabel;
 			ABMutableMultiValueRef multi = ABRecordCopyValue(rec, kABPersonPhoneProperty);
 			CFIndex phoneNumberCount = ABMultiValueGetCount(multi);
 			
+			NSString* phoneNumberLabel = nil, *phoneNumber = nil, *numberPair = nil;
+			
 			for (CFIndex j = 0; j < phoneNumberCount; j++) {
-				phoneNumberLabel = ABMultiValueCopyLabelAtIndex(multi, j); // note that this will be a general label, for you to localize yourself
-				phoneNumber      = ABMultiValueCopyValueAtIndex(multi, j);
+				phoneNumberLabel = (NSString*)ABMultiValueCopyLabelAtIndex(multi, j); // note that this will be a general label, for you to localize yourself
+				phoneNumber      = (NSString*)ABMultiValueCopyValueAtIndex(multi, j);
 				
-				NSString* pair = [[NSString alloc] initWithFormat:@"'%@':'%@'", (NSString*)phoneNumberLabel,(NSString*) phoneNumber];
-				[phoneArray appendFormat:@"%@", pair];
-				[pair release];
+				numberPair = [[NSString alloc] initWithFormat:@"'%@':'%@'", (NSString*)phoneNumberLabel,(NSString*) phoneNumber];
+				[phoneArray appendString:numberPair];
 
 				if (j+1 != phoneNumberCount) {
-					[phoneArray appendFormat:@","];
+					[phoneArray appendString:@","];
 				}
 				
-				CFRelease(phoneNumberLabel);
-				CFRelease(phoneNumber);
+				[numberPair release];
+				[phoneNumberLabel release];
+				[phoneNumber release];
 			}
 			[phoneArray appendString:@"}"];
 			
-			NSString* contactStr = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", firstName, lastName, phoneArray, @""];
-			[jsArray appendFormat:@"%@", contactStr];
+			NSString* contactJson = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", firstName, lastName, phoneArray, @""];
+			[jsArray appendString:contactJson];
 			
 			if (i+1 != maxIndex) {
-				[jsArray appendFormat:@","];
+				[jsArray appendString:@","];
 			}
 			
-			[contactStr release];
-			CFRelease(firstName);
-			CFRelease(lastName);
-			CFRelease(phoneArray);
+			[contactJson release];
+			[firstName release];
+			[lastName release];
+			[phoneArray release];
 		}
 	}
-	
 	[jsArray appendString:@"]"];
 	
 	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", jsCallback, jsArray];
     NSLog(@"%@", jsString);
-
     [webView stringByEvaluatingJavaScriptFromString:jsString];
 	
 	[jsArray release];
@@ -173,16 +178,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 - (void) newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
 {
-	if (person != NULL)
-	{
+	if (person != NULL) {
 		[self addressBookDirty];
 	}
 	[newPersonViewController dismissModalViewControllerAnimated:YES]; 
-}
-
-- (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-	NSLog(@"TODO: display contact");
 }
 
 - (void) addressBookDirty
