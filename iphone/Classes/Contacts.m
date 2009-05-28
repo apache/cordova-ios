@@ -8,10 +8,8 @@
  *
  */
 
-#import <AddressBook/AddressBook.h>
-#import <AddressBookUI/ABNewPersonViewController.h>
-#import <UIKit/UIApplication.h>
 #import "Contacts.h"
+#import <UIKit/UIKit.h>
 #import "PhoneGapDelegate.h"
 #include "Categories.h"
 #include "Notification.h"
@@ -21,7 +19,7 @@
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void* context)
 {
 	// note that this function is only called when another AddressBook instance modifies 
-	// the address book, not the current one. For example, through a MobileMe sync
+	// the address book, not the current one. For example, through an OTA MobileMe sync
 	Contacts* contacts = (Contacts*)context;
 	[contacts addressBookDirty];
 }
@@ -130,7 +128,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 			CFRelease(multi);
 			[phoneArray appendString:@"}"];
 			
-			contactJson = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", 
+			contactJson = [[NSString alloc] initWithFormat:@"{'recordID': %d,'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", 
+						   ABRecordGetRecordID(rec),
 						   firstName == nil? @"" : firstName, 
 						   lastName == nil? @"" : lastName, 
 						   phoneArray, @""];
@@ -169,15 +168,15 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	if (argc > 0) firstName = [arguments objectAtIndex:0];
 	if (argc > 1) lastName = [arguments objectAtIndex:1];
 	
-	ABRecordRef persona = ABPersonCreate();
-	ABRecordSetValue(persona, kABPersonFirstNameProperty, firstName , nil);
-	ABRecordSetValue(persona, kABPersonLastNameProperty, lastName, nil);
+	ABRecordRef rec = ABPersonCreate();
+	ABRecordSetValue(rec, kABPersonFirstNameProperty, firstName , nil);
+	ABRecordSetValue(rec, kABPersonLastNameProperty, lastName, nil);
 	//TODO: add more items to set here, from arguments
 	
 	if ([options existsValue:@"true" forKey:@"gui"]) {
 		ABNewPersonViewController* npController = [[[ABNewPersonViewController alloc] init] autorelease];
 		
-		npController.displayedPerson = persona;
+		npController.displayedPerson = rec;
 		npController.addressBook = addressBook;
 		npController.newPersonViewDelegate = self;
 
@@ -185,12 +184,12 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		[[super appViewController] presentModalViewController:navController animated: YES];
 	} 
 	else {
-		ABAddressBookAddRecord(addressBook, persona, nil);
+		ABAddressBookAddRecord(addressBook, rec, nil);
 		ABAddressBookSave(addressBook, nil);
 		[self addressBookDirty];
 	}
 	
-	CFRelease(persona);
+	CFRelease(rec);
 }
 
 - (void) newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
@@ -203,6 +202,45 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 - (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+	NSUInteger argc = [arguments count];
+	ABRecordID recordID = kABRecordInvalidID;
+	
+	if (argc > 0) {
+		recordID = [[arguments objectAtIndex:0] intValue];
+	} else {
+		NSLog(@"Contacts.displayContact: Missing 1st parameter.");
+		return;
+	}
+	
+	bool allowsEditing = [options existsValue:@"true" forKey:@"allowsEditing"];
+	
+	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
+	ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
+	personController.displayedPerson = rec;
+	personController.personViewDelegate = self;
+	personController.allowsEditing = allowsEditing;
+	
+	UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]
+									  initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+									  target: self
+									  action: @selector(dimissModalView:)];
+	
+	personController.navigationItem.leftBarButtonItem = cancelButton;
+	[cancelButton release];												
+
+	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
+	[[super appViewController] presentModalViewController:navController animated: YES];
+}
+
+- (void) dimissModalView:(id)sender 
+{
+	[[super appViewController].modalViewController dismissModalViewControllerAnimated:YES]; 
+}
+								   
+- (BOOL) personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
+					 property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
+{
+	return YES;
 }
 
 - (void) addressBookDirty
@@ -215,7 +253,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 {
 	ABAddressBookUnregisterExternalChangeCallback(addressBook, addressBookChanged, self);
 
-	if (addressBook == nil) {
+	if (addressBook != nil) {
 		CFRelease(addressBook);
 	}
 	

@@ -104,10 +104,25 @@
 		
 		navigator.notification.loadingStop();
 		navigator.notification.alert(names, "Contacts Returned", "Dismiss");
-
-		//alert(names);
 	}
 	
+	var __editDisplayFirstContact = false;
+	function displayFirstContact(allowsEditing)
+	{
+	  var options = { pageSize : 1, pageNumber: 1 };
+	  __editDisplayFirstContact = allowsEditing;
+	  navigator.ContactManager.allContacts(displayFirstContact_Return, null, options);
+	}
+	
+	function displayFirstContact_Return(contactsArray)
+	{
+		var options = { allowsEditing: __editDisplayFirstContact };
+		
+		for (var i = 0; i < contactsArray.length; i++) {
+			navigator.ContactManager.displayContact(contactsArray[i].recordID, options);
+		}
+	}
+
 	function contactsCount(){
       debug.log("contactCount");
       navigator.ContactManager.contactsCount(showContactsCount);
@@ -170,7 +185,11 @@
 	  <br />
 	  <a href="javascript:addContact(false)">New Contact (API)</a>
 	  <br />
-	  <a href="javascript:getContacts(1,1)">Get 1st Contact</a>
+	  <a href="javascript:getContacts(1,1)">Get 1st Contact (query)</a>
+	  <br />
+	  <a href="javascript:displayFirstContact(false)">DISPLAY 1st Contact (by recordID)</a>
+	  <br />
+	  <a href="javascript:displayFirstContact(true)">DISPLAY AND EDIT 1st Contact (by recordID)</a>
 	  <br />
 	  <a href="javascript:getContacts(5,1)">Get 1st Page of Contacts, with Page size of 5</a>
 	  <br />
@@ -180,7 +199,7 @@
 	  <br />
 	  <a href="javascript:getContactsPrompt()">Get All Contacts (PROMPT)</a>
 	  <br />
-	  <a href="javascript:getContacts()">Get ALL Contacts (may crash)</a>
+	  <a href="javascript:getContacts()">Get ALL Contacts (WARNING: may be huge)</a>
 	  <br />
 	  <a href="javascript:contactsCount()">Contacts Count</a>
 	  <br />

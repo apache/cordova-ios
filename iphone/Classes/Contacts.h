@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AddressBook/ABAddressBook.h>
-#import <AddressBookUI/ABNewPersonViewController.h>
+#import <AddressBookUI/AddressBookUI.h>
 #import "PhoneGapCommand.h"
 
-@interface Contacts : PhoneGapCommand <ABNewPersonViewControllerDelegate> {
+@interface Contacts : PhoneGapCommand <ABNewPersonViewControllerDelegate, ABPersonViewControllerDelegate> {
 	ABAddressBookRef addressBook;
 	NSArray* allPeople;
 }
@@ -21,6 +21,8 @@
 - (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void) newPersonViewController:(ABNewPersonViewController *)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person;
+- (BOOL) personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
+					 property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue;
 
 - (void) addressBookDirty;
 - (void) dealloc;

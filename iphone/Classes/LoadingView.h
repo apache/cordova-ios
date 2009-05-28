@@ -16,6 +16,8 @@
 
 @interface LoadingView : UIView
 {
+	NSTimeInterval minDuration;
+	NSDate* timestamp;
 }
 
 @property NSTimeInterval minDuration;
