@@ -70,6 +70,9 @@ CGPathRef NewPathWithRoundRect(CGRect rect, CGFloat cornerRadius)
 
 @implementation LoadingView
 
+@synthesize minDuration;
+@synthesize timestamp;
+
 //
 // loadingViewInView:
 //
@@ -146,6 +149,8 @@ CGPathRef NewPathWithRoundRect(CGRect rect, CGFloat cornerRadius)
 	[animation setType:kCATransitionFade];
 	[[aSuperview layer] addAnimation:animation forKey:@"layerAnimation"];
 	
+	
+	loadingView.timestamp = [[NSDate date] retain];
 	return loadingView;
 }
 

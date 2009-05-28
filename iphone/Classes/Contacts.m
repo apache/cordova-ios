@@ -14,6 +14,7 @@
 #import "Contacts.h"
 #import "PhoneGapDelegate.h"
 #include "Categories.h"
+#include "Notification.h"
 
 @implementation Contacts
 
@@ -66,7 +67,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		NSLog(@"Contacts.allContacts: Missing 1st parameter.");
 		return;
 	}
-	
+		
 	NSMutableString* jsArray = [[NSMutableString alloc] init];
 	[jsArray appendString:@"["];
 	
@@ -93,29 +94,29 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	CFIndex skipAmount = (pageNumber - 1) * pageSize;
 	CFIndex maxIndex = (skipAmount + pageSize);
 	
-	NSString* firstName = nil, *lastName = nil, *contactJson = nil;
-	NSString* phoneNumberLabel = nil, *phoneNumber = nil, *numberPair = nil;
-	NSMutableString* phoneArray = nil;;
+	NSString *firstName = nil, *lastName = nil, *contactJson = nil;
+	NSString *phoneNumberLabel = nil, *phoneNumber = nil, *numberPair = nil;
+	NSMutableString *phoneArray = nil;;
 	ABMutableMultiValueRef multi;
+	CFIndex phoneNumberCount, i, j;
 
-	for (int i = skipAmount; i < maxIndex; i++) 
+	for (i = skipAmount; i < maxIndex; i++) 
 	{ 
 		ABRecordRef rec = CFArrayGetValueAtIndex(records, i);
+		firstName = (NSString*)ABRecordCopyValue(rec, kABPersonFirstNameProperty);
+		lastName = (NSString*)ABRecordCopyValue(rec, kABPersonLastNameProperty);		
 		
-		if (ABRecordCopyValue(rec, kABPersonFirstNameProperty) != nil && ABRecordCopyValue(rec, kABPersonLastNameProperty) != nil) 
+		if (firstName != nil || lastName != nil) 
 		{
-			firstName = (NSString*)ABRecordCopyValue(rec, kABPersonFirstNameProperty);
-			lastName = (NSString*)ABRecordCopyValue(rec, kABPersonLastNameProperty);		
 			phoneArray =  [[NSMutableString alloc] initWithString:@"{"];
-
 			multi = ABRecordCopyValue(rec, kABPersonPhoneProperty);
-			CFIndex phoneNumberCount = ABMultiValueGetCount(multi);
+			phoneNumberCount = ABMultiValueGetCount(multi);
 			
-			for (CFIndex j = 0; j < phoneNumberCount; j++) {
+			for (j = 0; j < phoneNumberCount; j++) {
 				phoneNumberLabel = (NSString*)ABMultiValueCopyLabelAtIndex(multi, j); // note that this will be a general label, for you to localize yourself
 				phoneNumber      = (NSString*)ABMultiValueCopyValueAtIndex(multi, j);
 				
-				numberPair = [[NSString alloc] initWithFormat:@"'%@':'%@'", (NSString*)phoneNumberLabel,(NSString*) phoneNumber];
+				numberPair = [[NSString alloc] initWithFormat:@"'%@':'%@'", phoneNumberLabel, phoneNumber];
 				[phoneArray appendString:numberPair];
 
 				if (j+1 != phoneNumberCount) {
@@ -125,11 +126,14 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 				[numberPair release];
 				[phoneNumberLabel release];
 				[phoneNumber release];
-				CFRelease(multi);
 			}
+			CFRelease(multi);
 			[phoneArray appendString:@"}"];
 			
-			contactJson = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", firstName, lastName, phoneArray, @""];
+			contactJson = [[NSString alloc] initWithFormat:@"{'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", 
+						   firstName == nil? @"" : firstName, 
+						   lastName == nil? @"" : lastName, 
+						   phoneArray, @""];
 			[jsArray appendString:contactJson];
 			
 			if (i+1 != maxIndex) {
@@ -146,6 +150,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	
 	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", jsCallback, jsArray];
     NSLog(@"%@", jsString);
+	
     [webView stringByEvaluatingJavaScriptFromString:jsString];
 	
 	if (filter) {

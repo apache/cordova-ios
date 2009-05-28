@@ -62,7 +62,7 @@
 		}
 
 		if (durationInSeconds) {
-			options = { 'durationInSeconds': durationInSeconds };
+			options = { 'duration': durationInSeconds };
 			navigator.notification.loadingStart(options);
 		} else {
 			return;
@@ -81,6 +81,8 @@
 	  if (nameFilter)
 		options.nameFilter = nameFilter;
 	  
+	  var durationOptions = { minDuration : 2 };
+	  navigator.notification.loadingStart(durationOptions);
       navigator.ContactManager.allContacts(getContacts_Return, fail, options);
     }
 	
@@ -100,7 +102,10 @@
 				names += ",";
 		}
 		
-		alert(names);
+		navigator.notification.loadingStop();
+		navigator.notification.alert(names, "Contacts Returned", "Dismiss");
+
+		//alert(names);
 	}
 	
 	function contactsCount(){
@@ -175,7 +180,7 @@
 	  <br />
 	  <a href="javascript:getContactsPrompt()">Get All Contacts (PROMPT)</a>
 	  <br />
-	  <a href="javascript:getContacts()">Get All Contacts (WARNING MAY CRASH PHONE?)</a>
+	  <a href="javascript:getContacts()">Get ALL Contacts (may crash)</a>
 	  <br />
 	  <a href="javascript:contactsCount()">Contacts Count</a>
 	  <br />

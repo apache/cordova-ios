@@ -43,7 +43,7 @@
 
 -(UIViewController*) appViewController
 {
-	return (UIViewController*)[[self appDelegate] viewController];
+	return (UIViewController*)[self appDelegate].viewController;
 }
 
 @end

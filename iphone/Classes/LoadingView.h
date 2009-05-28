@@ -16,8 +16,10 @@
 
 @interface LoadingView : UIView
 {
-
 }
+
+@property NSTimeInterval minDuration;
+@property (assign) NSDate* timestamp;
 
 + (id)loadingViewInView:(UIView *)aSuperview;
 - (void)removeView;
