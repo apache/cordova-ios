@@ -191,9 +191,17 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		[[super appViewController] presentModalViewController:navController animated: YES];
 	} 
 	else {
-		ABAddressBookAddRecord(addressBook, rec, nil);
-		ABAddressBookSave(addressBook, nil);
-		[self addressBookDirty];
+		CFErrorRef errorRef;
+		bool addOk, saveOk;
+		
+		addOk = ABAddressBookAddRecord(addressBook, rec, &errorRef);
+		if (addOk) {
+			saveOk = ABAddressBookSave(addressBook, &errorRef);
+		}
+		if (saveOk) {
+			[self addressBookDirty];
+		}
+		//TODO: add error / success callbacks?
 	}
 	
 	CFRelease(rec);
@@ -222,21 +230,23 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	bool allowsEditing = [options existsValue:@"true" forKey:@"allowsEditing"];
 	
 	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
-	ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
-	personController.displayedPerson = rec;
-	personController.personViewDelegate = self;
-	personController.allowsEditing = allowsEditing;
-	
-	UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]
-									  initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-									  target: self
-									  action: @selector(dimissModalView:)];
-	
-	personController.navigationItem.leftBarButtonItem = cancelButton;
-	[cancelButton release];												
+	if (rec) {
+		ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
+		personController.displayedPerson = rec;
+		personController.personViewDelegate = self;
+		personController.allowsEditing = allowsEditing;
+		
+		UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]
+										  initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+										  target: self
+										  action: @selector(dimissModalView:)];
+		
+		personController.navigationItem.leftBarButtonItem = cancelButton;
+		[cancelButton release];												
 
-	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
-	[[super appViewController] presentModalViewController:navController animated: YES];
+		UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
+		[[super appViewController] presentModalViewController:navController animated: YES];
+	}
 }
 
 - (void) dimissModalView:(id)sender 
@@ -255,7 +265,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 {
 	ContactsPicker* pickerController = [[[ContactsPicker alloc] init] autorelease];
 	pickerController.peoplePickerDelegate = self;
-	pickerController.allowsEditing = 	(BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
+	pickerController.allowsEditing = (BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
 	
 	[[super appViewController] presentModalViewController:pickerController animated: YES];
 }
@@ -281,6 +291,28 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 - (void) peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
 {
 	[peoplePicker dismissModalViewControllerAnimated:YES]; 
+}
+
+- (void) removeContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	NSUInteger argc = [arguments count];
+	ABRecordID recordID = kABRecordInvalidID;
+	
+	if (argc > 0) {
+		recordID = [[arguments objectAtIndex:0] intValue];
+	} else {
+		NSLog(@"Contacts.removeContact: Missing 1st parameter.");
+		return;
+	}
+	
+	CFErrorRef errorRef;
+	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
+	if (rec) {
+		bool removeOk = ABAddressBookRemoveRecord(addressBook, rec, &errorRef);
+		if (removeOk) {
+			//TODO: success/error callbacks here?
+		}
+	}
 }
 
 - (void) addressBookDirty
