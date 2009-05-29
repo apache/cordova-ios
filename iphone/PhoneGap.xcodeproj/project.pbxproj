@@ -22,6 +22,9 @@
 		30EC9AEC0FCDF4DD00A52C71 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */; };
 		30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */; };
 		30EC9B220FCDFCC500A52C71 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EC9B210FCDFCC500A52C71 /* QuartzCore.framework */; };
+		30EF07C20FCFBED8009B3930 /* OCCFObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EF07C10FCFBED8009B3930 /* OCCFObject.m */; };
+		30EF07CB0FCFC111009B3930 /* OCABRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EF07CA0FCFC111009B3930 /* OCABRecord.m */; };
+		30EF08140FCFC8E0009B3930 /* OCABMutableMultiValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EF08130FCFC8E0009B3930 /* OCABMutableMultiValue.m */; };
 		30F95CB00FCC8DBF0069E3FF /* Categories.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F95CAF0FCC8DBF0069E3FF /* Categories.m */; };
 		47DC5AEE0F4BDEDB00FB54CE /* beep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 47DC5AED0F4BDEDB00FB54CE /* beep.wav */; };
 		47DC7FB30EFADF9E00D0B526 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47DC7FB20EFADF9E00D0B526 /* PhoneGap.plist */; };
@@ -65,6 +68,12 @@
 		30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		30EC9B210FCDFCC500A52C71 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		30EF07C00FCFBED8009B3930 /* OCCFObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCCFObject.h; sourceTree = "<group>"; };
+		30EF07C10FCFBED8009B3930 /* OCCFObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCCFObject.m; sourceTree = "<group>"; };
+		30EF07C90FCFC111009B3930 /* OCABRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCABRecord.h; sourceTree = "<group>"; };
+		30EF07CA0FCFC111009B3930 /* OCABRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCABRecord.m; sourceTree = "<group>"; };
+		30EF08120FCFC8E0009B3930 /* OCABMutableMultiValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCABMutableMultiValue.h; sourceTree = "<group>"; };
+		30EF08130FCFC8E0009B3930 /* OCABMutableMultiValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCABMutableMultiValue.m; sourceTree = "<group>"; };
 		30F95CAE0FCC8DBF0069E3FF /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Categories.h; sourceTree = "<group>"; };
 		30F95CAF0FCC8DBF0069E3FF /* Categories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Categories.m; sourceTree = "<group>"; };
 		474A7F820EFAD6580020DD7F /* PhoneGap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGap_Prefix.pch; sourceTree = "<group>"; };
@@ -130,6 +139,7 @@
 				30F95CAF0FCC8DBF0069E3FF /* Categories.m */,
 				30EC9AEA0FCDF4DD00A52C71 /* LoadingView.h */,
 				30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */,
+				30EF088D0FCFDA4B009B3930 /* Proxies */,
 				1B1B50FB0F95000A00ECD4E6 /* Commands */,
 			);
 			path = Classes;
@@ -218,6 +228,19 @@
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		30EF088D0FCFDA4B009B3930 /* Proxies */ = {
+			isa = PBXGroup;
+			children = (
+				30EF07C00FCFBED8009B3930 /* OCCFObject.h */,
+				30EF07C10FCFBED8009B3930 /* OCCFObject.m */,
+				30EF07C90FCFC111009B3930 /* OCABRecord.h */,
+				30EF07CA0FCFC111009B3930 /* OCABRecord.m */,
+				30EF08120FCFC8E0009B3930 /* OCABMutableMultiValue.h */,
+				30EF08130FCFC8E0009B3930 /* OCABMutableMultiValue.m */,
+			);
+			name = Proxies;
 			sourceTree = "<group>";
 		};
 		AA13D3080F20286200B18061 /* Config */ = {
@@ -323,6 +346,9 @@
 				1B1B53830F98070D00ECD4E6 /* Notification.m in Sources */,
 				30F95CB00FCC8DBF0069E3FF /* Categories.m in Sources */,
 				30EC9AEC0FCDF4DD00A52C71 /* LoadingView.m in Sources */,
+				30EF07C20FCFBED8009B3930 /* OCCFObject.m in Sources */,
+				30EF07CB0FCFC111009B3930 /* OCABRecord.m in Sources */,
+				30EF08140FCFC8E0009B3930 /* OCABMutableMultiValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,8 +400,8 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				CURRENT_PROJECT_VERSION = 1.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -383,6 +409,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Distribution;

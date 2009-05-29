@@ -11,8 +11,11 @@
 #import "Contacts.h"
 #import <UIKit/UIKit.h>
 #import "PhoneGapDelegate.h"
-#include "Categories.h"
-#include "Notification.h"
+#import "Categories.h"
+#import "Notification.h"
+#import "OCCFObject.h"
+#import "OCABRecord.h"
+#import "OCABMutableMultiValue.h"
 
 @implementation ContactsPicker
 
@@ -98,60 +101,20 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	
 	CFIndex skipAmount = (pageNumber - 1) * pageSize;
 	CFIndex maxIndex = (skipAmount + pageSize);
-	
-	NSString *firstName = nil, *lastName = nil, *contactJson = nil;
-	NSString *phoneNumberLabel = nil, *phoneNumber = nil, *numberPair = nil;
-	NSMutableString *phoneArray = nil;;
-	ABMutableMultiValueRef multi;
-	CFIndex phoneNumberCount, i, j;
+	CFIndex i;
 
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
 	for (i = skipAmount; i < maxIndex; i++) 
 	{ 
-		ABRecordRef rec = CFArrayGetValueAtIndex(records, i);
-		firstName = (NSString*)ABRecordCopyValue(rec, kABPersonFirstNameProperty);
-		lastName = (NSString*)ABRecordCopyValue(rec, kABPersonLastNameProperty);		
+		OCABRecord* rec = [[OCABRecord alloc] initWithCFTypeRef:CFArrayGetValueAtIndex(records, i)];
+		[jsArray appendString:[rec JSONValue]];
+		[rec release];
 		
-		if (firstName != nil || lastName != nil) 
-		{
-			phoneArray =  [[NSMutableString alloc] initWithString:@"{"];
-			multi = ABRecordCopyValue(rec, kABPersonPhoneProperty);
-			phoneNumberCount = ABMultiValueGetCount(multi);
-			
-			for (j = 0; j < phoneNumberCount; j++) {
-				phoneNumberLabel = (NSString*)ABMultiValueCopyLabelAtIndex(multi, j); // note that this will be a general label, for you to localize yourself
-				phoneNumber      = (NSString*)ABMultiValueCopyValueAtIndex(multi, j);
-				
-				numberPair = [[NSString alloc] initWithFormat:@"'%@':'%@'", phoneNumberLabel, phoneNumber];
-				[phoneArray appendString:numberPair];
-
-				if (j+1 != phoneNumberCount) {
-					[phoneArray appendString:@","];
-				}
-				
-				[numberPair release];
-				[phoneNumberLabel release];
-				[phoneNumber release];
-			}
-			CFRelease(multi);
-			[phoneArray appendString:@"}"];
-			
-			contactJson = [[NSString alloc] initWithFormat:@"{'recordID': %d,'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", 
-						   ABRecordGetRecordID(rec),
-						   firstName == nil? @"" : firstName, 
-						   lastName == nil? @"" : lastName, 
-						   phoneArray, @""];
-			[jsArray appendString:contactJson];
-			
-			if (i+1 != maxIndex) {
-				[jsArray appendString:@","];
-			}
-			
-			[contactJson release];
-			[firstName release];
-			[lastName release];
-			[phoneArray release];
+		if (i+1 != maxIndex) {
+			[jsArray appendString:@","];
 		}
 	}
+	[pool release];
 	[jsArray appendString:@"]"];
 	
 	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", jsCallback, jsArray];
@@ -193,7 +156,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	else {
 		CFErrorRef errorRef;
 		bool addOk, saveOk;
-		
+
 		addOk = ABAddressBookAddRecord(addressBook, rec, &errorRef);
 		if (addOk) {
 			saveOk = ABAddressBookSave(addressBook, &errorRef);
