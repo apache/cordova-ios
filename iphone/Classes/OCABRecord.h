@@ -13,7 +13,10 @@
 	CFErrorRef error;
 }
 
+@property CFErrorRef error;
+
 - (ABRecordRef) ABRecordRef;
++ (OCABRecord*) CreateFromRecordID:(ABRecordID)recordID andAddressBook:(ABAddressBookRef)addressBook;
 
 - (NSString*) firstName;
 - (NSString*) lastName;
@@ -22,7 +25,7 @@
 - (BOOL) setFirstName:(NSString*)firstName;
 - (BOOL) setLastName:(NSString*)firstName;
 
-- (BOOL) remove:(ABAddressBookRef)addressBook;
+- (BOOL) removeFrom:(ABAddressBookRef)addressBook;
 
 - (NSString*) JSONValue;
 

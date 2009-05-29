@@ -13,6 +13,13 @@
 
 @implementation OCABRecord
 
+@synthesize error;
+
++ (OCABRecord*) CreateFromRecordID:(ABRecordID)recordID andAddressBook:(ABAddressBookRef)addressBook
+{
+	return [[OCABRecord alloc] initWithCopiedCFTypeRef:ABAddressBookGetPersonWithRecordID(addressBook, recordID)];
+}
+
 - (ABRecordRef) ABRecordRef
 {
 	return (ABRecordRef)__baseRef;
@@ -48,7 +55,7 @@
 	return ABRecordSetValue ([self ABRecordRef], kABPersonLastNameProperty, lastName, &error);	
 }
 
-- (BOOL) remove:(ABAddressBookRef)addressBook
+- (BOOL) removeFrom:(ABAddressBookRef)addressBook
 {
 	return ABAddressBookRemoveRecord(addressBook, [self ABRecordRef], &error);
 }
@@ -59,7 +66,7 @@
 	NSString* lastName = [self lastName];
 	NSString* emptyString = @"";
 	
-	return [[[NSString alloc] initWithFormat:@"{'recordID': %d,'firstName':'%@','lastName' : '%@', 'phoneNumber':%@, 'address':'%@'}", 
+	return [[[NSString alloc] initWithFormat:@"{ recordID: %d, firstName:'%@', lastName: '%@', phoneNumber:%@, address:'%@'}", 
 					   [self recordID],
 						firstName == nil? emptyString : firstName, 
 						lastName == nil? emptyString : lastName, 

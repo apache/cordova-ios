@@ -138,15 +138,16 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	if (argc > 0) firstName = [arguments objectAtIndex:0];
 	if (argc > 1) lastName = [arguments objectAtIndex:1];
 	
-	ABRecordRef rec = ABPersonCreate();
-	ABRecordSetValue(rec, kABPersonFirstNameProperty, firstName , nil);
-	ABRecordSetValue(rec, kABPersonLastNameProperty, lastName, nil);
+	OCABRecord* rec = [[OCABRecord alloc] initWithCFTypeRef:ABPersonCreate()];
+	[rec setFirstName: firstName];
+	[rec setLastName: lastName];
+	
 	//TODO: add more items to set here, from arguments
 	
 	if ([options existsValue:@"true" forKey:@"gui"]) {
 		ABNewPersonViewController* npController = [[[ABNewPersonViewController alloc] init] autorelease];
 		
-		npController.displayedPerson = rec;
+		npController.displayedPerson = [rec ABRecordRef];
 		npController.addressBook = addressBook;
 		npController.newPersonViewDelegate = self;
 
@@ -167,7 +168,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		//TODO: add error / success callbacks?
 	}
 	
-	CFRelease(rec);
+	[rec release];
 }
 
 - (void) newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
@@ -182,7 +183,9 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 {
 	NSUInteger argc = [arguments count];
 	ABRecordID recordID = kABRecordInvalidID;
+	NSString* errorCallback = nil;
 	
+	//TODO: need better argument handling system
 	if (argc > 0) {
 		recordID = [[arguments objectAtIndex:0] intValue];
 	} else {
@@ -190,12 +193,16 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		return;
 	}
 	
+	if (argc > 1) {
+		errorCallback = [arguments objectAtIndex:1];
+	}
+	
 	bool allowsEditing = [options existsValue:@"true" forKey:@"allowsEditing"];
 	
-	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
+	OCABRecord* rec = [OCABRecord CreateFromRecordID:recordID andAddressBook:addressBook];
 	if (rec) {
 		ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
-		personController.displayedPerson = rec;
+		personController.displayedPerson = [rec ABRecordRef];
 		personController.personViewDelegate = self;
 		personController.allowsEditing = allowsEditing;
 		
@@ -209,6 +216,19 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 		UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
 		[[super appViewController] presentModalViewController:navController animated: YES];
+		
+		[rec release];
+	} 
+	else 
+	{
+		if (errorCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@('Contacts.displayContact: Record id %d not found.');", 
+								  errorCallback, recordID];
+			NSLog(@"%@", jsString);
+			
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			[jsString release];
+		}
 	}
 }
 
@@ -268,13 +288,13 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		return;
 	}
 	
-	CFErrorRef errorRef;
-	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
+	OCABRecord* rec = [OCABRecord CreateFromRecordID:recordID andAddressBook:addressBook];
 	if (rec) {
-		bool removeOk = ABAddressBookRemoveRecord(addressBook, rec, &errorRef);
+		bool removeOk = [rec removeFrom:addressBook];
 		if (removeOk) {
 			//TODO: success/error callbacks here?
 		}
+		[rec release];
 	}
 }
 
@@ -288,7 +308,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 {
 	ABAddressBookUnregisterExternalChangeCallback(addressBook, addressBookChanged, self);
 
-	if (addressBook != nil) {
+	if (addressBook) {
 		CFRelease(addressBook);
 	}
 	

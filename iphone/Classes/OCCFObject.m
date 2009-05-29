@@ -14,7 +14,8 @@
 {
 	id result;
 	result = [self initWithCFTypeRef:ref];
-	CFRelease(ref);
+	if (ref)
+		CFRelease(ref);
 	
 	return result;
 }

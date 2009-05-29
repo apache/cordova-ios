@@ -119,7 +119,7 @@
 		var options = { allowsEditing: __editDisplayFirstContact };
 		
 		for (var i = 0; i < contactsArray.length; i++) {
-			navigator.ContactManager.displayContact(contactsArray[i].recordID, options);
+			navigator.ContactManager.displayContact(contactsArray[i].recordID, null, options);
 		}
 	}
 

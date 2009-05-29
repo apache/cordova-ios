@@ -1,8 +1,12 @@
-// Gets the function name of a Function object, else uses "alert"
+// Gets the function name of a Function object, else uses "alert" if anonymous
 function GetFunctionName(fn)
 {
-  var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
-  return m ? m[1] : "alert";
+  if (fn) {
+      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
+      return m ? m[1] : "alert";
+  } else {
+    return null;
+  }
 }
 
 ContactManager.prototype.allContacts = function(successCallback, errorCallback, options) {
@@ -20,8 +24,13 @@ ContactManager.prototype.chooseContact = function(options) {
     PhoneGap.exec("Contacts.chooseContact", options);
 }
 
-ContactManager.prototype.displayContact = function(contactID, options) {
-    PhoneGap.exec("Contacts.displayContact", contactID, options);
+ContactManager.prototype.displayContact = function(contactID, errorCallback, options) {
+    PhoneGap.exec("Contacts.displayContact", contactID, GetFunctionName(errorCallback), options);
+}
+
+ContactManager.prototype.removeContact = function(contactID, successCallback, errorCallback, options) {
+    PhoneGap.exec("Contacts.displayContact", contactID, GetFunctionName(successCallback), 
+        GetFunctionName(errorCallback), options);
 }
 
 ContactManager.prototype.contactsCount = function(successCallback, errorCallback) {
