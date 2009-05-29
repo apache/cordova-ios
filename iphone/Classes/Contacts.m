@@ -241,7 +241,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 - (void) dimissModalView:(id)sender 
 {
-	[[super appViewController].modalViewController dismissModalViewControllerAnimated:YES]; 
+	UIViewController* controller = ([super appViewController]);
+	[controller.modalViewController dismissModalViewControllerAnimated:YES]; 
 }
 								   
 - (BOOL) personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
