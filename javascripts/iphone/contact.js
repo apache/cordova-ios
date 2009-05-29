@@ -16,6 +16,10 @@ ContactManager.prototype.newContact = function(contact, successCallback, options
         options);
 }
 
+ContactManager.prototype.chooseContact = function(options) {
+    PhoneGap.exec("Contacts.chooseContact", options);
+}
+
 ContactManager.prototype.displayContact = function(contactID, options) {
     PhoneGap.exec("Contacts.displayContact", contactID, options);
 }

@@ -14,6 +14,13 @@
 #include "Categories.h"
 #include "Notification.h"
 
+@implementation ContactsPicker
+
+@synthesize allowsEditing;
+
+@end
+
+
 @implementation Contacts
 
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void* context)
@@ -241,6 +248,38 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 					 property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
 {
 	return YES;
+}
+
+- (void) chooseContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	ContactsPicker* pickerController = [[[ContactsPicker alloc] init] autorelease];
+	pickerController.peoplePickerDelegate = self;
+	pickerController.allowsEditing = 	(BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
+	
+	[[super appViewController] presentModalViewController:pickerController animated: YES];
+}
+
+- (BOOL) peoplePickerNavigationController:(ABPeoplePickerNavigationController*)peoplePicker 
+	     shouldContinueAfterSelectingPerson:(ABRecordRef)person
+{
+	ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
+	personController.displayedPerson = person;
+	personController.personViewDelegate = self;
+	personController.allowsEditing = ((ContactsPicker*)peoplePicker).allowsEditing;
+	
+	[peoplePicker pushViewController:personController animated:YES];
+	return NO;
+}
+
+- (BOOL) peoplePickerNavigationController:(ABPeoplePickerNavigationController*)peoplePicker 
+	     shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
+{
+	return YES;
+}
+
+- (void) peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
+{
+	[peoplePicker dismissModalViewControllerAnimated:YES]; 
 }
 
 - (void) addressBookDirty
