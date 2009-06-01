@@ -11,7 +11,6 @@
 }
 
 - initWithCFTypeRef:(CFTypeRef)ref;
-- initWithCopiedCFTypeRef:(CFTypeRef)ref;
 - (CFTypeRef) CFTypeRef;
 - (BOOL) isEqual:other;
 

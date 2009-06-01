@@ -10,15 +10,6 @@
 
 @implementation OCCFObject
 
-- initWithCopiedCFTypeRef:(CFTypeRef)ref;
-{
-	id result;
-	result = [self initWithCFTypeRef:ref];
-	if (ref)
-		CFRelease(ref);
-	
-	return result;
-}
 
 - initWithCFTypeRef:(CFTypeRef)ref;
 {

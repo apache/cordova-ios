@@ -42,7 +42,11 @@
 
 - (OCABMutableMultiValue*) phoneNumbers
 {
-	return [[[OCABMutableMultiValue alloc] initWithCopiedCFTypeRef:ABRecordCopyValue([self ABRecordRef], kABPersonPhoneProperty)] autorelease];
+	ABRecordRef rec = ABRecordCopyValue([self ABRecordRef], kABPersonPhoneProperty);
+	id val =  [[[OCABMutableMultiValue alloc] initWithCFTypeRef:rec] autorelease];
+	CFRelease(rec);
+	
+	return val;
 }
 
 - (BOOL) setFirstName:(NSString*)firstName

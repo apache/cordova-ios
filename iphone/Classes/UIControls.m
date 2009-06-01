@@ -174,6 +174,7 @@
         item.badgeValue = [options objectForKey:@"badge"];
     
     [tabBarItems setObject:item forKey:name];
+	[item release];
 }
 
 /**
@@ -222,6 +223,7 @@
     if ([options objectForKey:@"animate"])
         animateItems = [(NSString*)[options objectForKey:@"animate"] boolValue];
     [tabBar setItems:items animated:animateItems];
+	[items release];
 }
 
 /**
@@ -416,7 +418,11 @@
     UIBarButtonItem *space1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *space2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     NSArray *items = [[NSArray alloc] initWithObjects:space1, toolBarTitle, space2, nil];
+	[space1 release];
+	[space2 release];
+	
     [toolBar setItems:items];
+	[items release];
 }
 
 - (void)toolBarTitleClicked

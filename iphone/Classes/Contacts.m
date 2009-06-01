@@ -156,7 +156,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	} 
 	else {
 		CFErrorRef errorRef;
-		bool addOk, saveOk;
+		bool addOk = false, saveOk = false;
 
 		addOk = ABAddressBookAddRecord(addressBook, rec, &errorRef);
 		if (addOk) {
