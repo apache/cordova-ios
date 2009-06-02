@@ -9,7 +9,9 @@
 #import "UIControls.h"
 
 @implementation UIControls
-//@synthesize webView;
+#ifndef __IPHONE_3_0
+@synthesize webView;
+#endif
 
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
