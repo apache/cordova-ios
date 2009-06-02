@@ -17,7 +17,8 @@
 
 + (OCABRecord*) CreateFromRecordID:(ABRecordID)recordID andAddressBook:(ABAddressBookRef)addressBook
 {
-	return [[OCABRecord alloc] initWithCopiedCFTypeRef:ABAddressBookGetPersonWithRecordID(addressBook, recordID)];
+	ABRecordRef ref = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
+	return [[OCABRecord alloc] initWithCFTypeRef:ref];
 }
 
 - (ABRecordRef) ABRecordRef
