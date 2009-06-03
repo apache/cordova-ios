@@ -46,7 +46,7 @@
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
 	for (CFIndex i = 0; i < count; i++)
 	{
-		pair = [[[NSString alloc] initWithFormat:@"%@:'%@'", [self localizedLabelAt:i], [self valueAt:i]] autorelease];
+		pair = [[[NSString alloc] initWithFormat:@"'%@':'%@'", [self localizedLabelAt:i], [self valueAt:i]] autorelease];
 		[json appendString:pair];
 		
 		if (i+1 != count) {
