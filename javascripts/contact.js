@@ -22,7 +22,7 @@ function ContactManager() {
 	this.timestamp = new Date().getTime();
 }
 
-ContactManager.prototype.allContacts = function(successCallback, errorCallback, options) {
+ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
 	// Interface
 }
 

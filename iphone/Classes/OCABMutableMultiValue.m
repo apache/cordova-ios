@@ -37,6 +37,11 @@
 	return [(id)ABMultiValueCopyValueAtIndex([self ABMutableMultiValueRef], index) autorelease];
 }
 
+- (BOOL) addValue:(CFTypeRef)value withLabel:(CFStringRef)label
+{
+	return ABMultiValueAddValueAndLabel([self ABMutableMultiValueRef], value, label, NULL);
+}
+
 - (NSString*) JSONValue
 {
 	NSMutableString* json =  [[[NSMutableString alloc] initWithString:@"{"] autorelease];

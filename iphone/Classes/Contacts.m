@@ -20,6 +20,7 @@
 @implementation ContactsPicker
 
 @synthesize allowsEditing;
+@synthesize jsCallback;
 
 @end
 
@@ -48,17 +49,17 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 - (void) contactsCount:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
-	NSString* jCallback = nil;
+	NSString* jsCallback = nil;
 	
 	if (argc > 0) {
-		jCallback = [arguments objectAtIndex:0];
+		jsCallback = [arguments objectAtIndex:0];
 	} else {
 		NSLog(@"Contacts.contactsCount: Missing 1st parameter.");
 		return;
 	}
 	
 	CFIndex numberOfPeople = ABAddressBookGetPersonCount(addressBook);
-	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%d);", jCallback, numberOfPeople];
+	NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%d);", jsCallback, numberOfPeople];
 	
     [webView stringByEvaluatingJavaScriptFromString:jsString];
 	[jsString release];
@@ -133,14 +134,19 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 - (void) newContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 {	
 	NSUInteger argc = [arguments count];
-	NSString* firstName = nil, *lastName = nil;
+	NSString* firstName = nil, *lastName = nil, *phoneNumber = nil;
 	
 	if (argc > 0) firstName = [arguments objectAtIndex:0];
 	if (argc > 1) lastName = [arguments objectAtIndex:1];
+	if (argc > 2) phoneNumber = [arguments objectAtIndex:2];
 	
 	OCABRecord* rec = [[OCABRecord alloc] initWithCFTypeRef:ABPersonCreate()];
 	[rec setFirstName: firstName];
 	[rec setLastName: lastName];
+	
+	if (phoneNumber) {
+		[rec setPhoneNumber:phoneNumber withLabel:(NSString*)kABPersonPhoneMainLabel];
+	}
 	
 	//TODO: add more items to set here, from arguments
 	
@@ -158,14 +164,23 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		CFErrorRef errorRef;
 		bool addOk = false, saveOk = false;
 
-		addOk = ABAddressBookAddRecord(addressBook, rec, &errorRef);
+		addOk = ABAddressBookAddRecord(addressBook, [rec ABRecordRef], &errorRef);
 		if (addOk) {
 			saveOk = ABAddressBookSave(addressBook, &errorRef);
 		}
 		if (saveOk) {
 			[self addressBookDirty];
 		}
-		//TODO: add error / success callbacks?
+		
+		NSString* jsCallback = [options valueForKey:@"successCallback"];
+		NSString* firstParam = (addOk && saveOk)? [rec JSONValue] : @"";
+		
+		if (jsCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", jsCallback, firstParam];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			
+			[jsString release];
+		}
 	}
 	
 	[rec release];
@@ -246,8 +261,20 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 - (void) chooseContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+	NSUInteger argc = [arguments count];
+	NSString* jsCallback = nil;
+	
+	//TODO: need better argument handling system
+	if (argc > 0) {
+		jsCallback = [arguments objectAtIndex:0];
+	} else {
+		NSLog(@"Contacts.chooseContact: Missing 1st parameter.");
+		return;
+	}
+	
 	ContactsPicker* pickerController = [[[ContactsPicker alloc] init] autorelease];
 	pickerController.peoplePickerDelegate = self;
+	pickerController.jsCallback = jsCallback;
 	pickerController.allowsEditing = (BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
 	
 	[[super appViewController] presentModalViewController:pickerController animated: YES];
@@ -257,11 +284,23 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	     shouldContinueAfterSelectingPerson:(ABRecordRef)person
 {
 	ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
+	ContactsPicker* picker = (ContactsPicker*)peoplePicker;
+	
 	personController.displayedPerson = person;
 	personController.personViewDelegate = self;
-	personController.allowsEditing = ((ContactsPicker*)peoplePicker).allowsEditing;
+	personController.allowsEditing = picker.allowsEditing;
 	
-	[peoplePicker pushViewController:personController animated:YES];
+	if (picker.allowsEditing) {
+		[peoplePicker pushViewController:personController animated:YES];
+	} else {
+		OCABRecord* rec = [[OCABRecord alloc] initWithCFTypeRef:person];
+		NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", picker.jsCallback, [rec JSONValue]];
+		[webView stringByEvaluatingJavaScriptFromString:jsString];
+		
+		[jsString release];
+		[rec release];
+		[picker dismissModalViewControllerAnimated:YES];
+	}
 	return NO;
 }
 
@@ -280,6 +319,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 {
 	NSUInteger argc = [arguments count];
 	ABRecordID recordID = kABRecordInvalidID;
+	NSString* jsCallback = nil;
 	
 	if (argc > 0) {
 		recordID = [[arguments objectAtIndex:0] intValue];
@@ -288,13 +328,30 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		return;
 	}
 	
+	if (argc > 1)
+		jsCallback = [arguments objectAtIndex:1];
+	
 	OCABRecord* rec = [OCABRecord CreateFromRecordID:recordID andAddressBook:addressBook];
+	NSString* firstParam = @"";
+	bool removeOk = false, saveOk = false;
+	CFErrorRef errorRef;
+	
 	if (rec) {
-		bool removeOk = [rec removeFrom:addressBook];
+		removeOk = [rec removeFrom:addressBook];
 		if (removeOk) {
-			//TODO: success/error callbacks here?
+			saveOk = ABAddressBookSave(addressBook, &errorRef);
+		}
+		if (saveOk) {
+			[self addressBookDirty];
+			firstParam = [rec JSONValue];
 		}
 		[rec release];
+	}
+	
+	if (jsCallback) {
+		NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", jsCallback, firstParam];
+		[webView stringByEvaluatingJavaScriptFromString:jsString];
+		[jsString release];
 	}
 }
 

@@ -84,7 +84,7 @@
 	  
 	  var durationOptions = { minDuration : 2 };
 	  navigator.notification.loadingStart(durationOptions);
-      navigator.ContactManager.allContacts(getContacts_Return, fail, options);
+      navigator.ContactManager.getAllContacts(getContacts_Return, fail, options);
     }
 	
 	function getContacts_Return(contactsArray)
@@ -112,7 +112,7 @@
 	{
 	  var options = { pageSize : 1, pageNumber: 1 };
 	  __editDisplayFirstContact = allowsEditing;
-	  navigator.ContactManager.allContacts(displayFirstContact_Return, null, options);
+	  navigator.ContactManager.getAllContacts(displayFirstContact_Return, null, options);
 	}
 	
 	function displayFirstContact_Return(contactsArray)
@@ -134,7 +134,7 @@
 	}
 
 	function addContact(gui){
-		var sample_contact = { 'firstName': 'John', 'lastName' : 'Smith' };
+		var sample_contact = { 'firstName': 'John', 'lastName' : 'Smith', 'phoneNumber': '555-5555' };
 	
 		if (gui) {
 			navigator.ContactManager.newContact(sample_contact, null, { 'gui': true });
@@ -143,13 +143,49 @@
 			if (firstName) {
 				var lastName = prompt("Enter a last name", sample_contact.lastName);
 				if (lastName) {
-					sample_contact = { 'firstName': firstName, 'lastName' : lastName };
-					navigator.ContactManager.newContact(sample_contact);
+					var phoneNumber = prompt("Enter a phone number", sample_contact.phoneNumber);
+					if (phoneNumber) {
+						sample_contact = { 'firstName': firstName, 'lastName' : lastName, 'phoneNumber' : phoneNumber };
+						navigator.ContactManager.newContact(sample_contact, chooseContact_Return);
+					}
 				}
 			}
 		}
 	}
+	
+	function chooseContact(allowsEditing)
+	{
+		var options = { allowsEditing: allowsEditing };
+		navigator.ContactManager.chooseContact(chooseContact_Return, options);
+	}
+	
+	function chooseContact_Return(contact)
+	{
+		if (contact) {
+			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Returned", "Dismiss");
+		}
+	}
     
+	function removeContact()
+	{
+		navigator.ContactManager.chooseContact(removeContact_Return, null);
+	}
+	
+	function removeContact_Return(contact)
+	{
+		if (contact) {
+			navigator.ContactManager.removeContact(contact.recordID, removeContact_Success, null);
+		}
+	}
+
+	function removeContact_Success(contact)
+	{
+		if (contact) {
+			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Removed", "Dismiss");
+		}
+	}
+	
+
     function watchAccel() {
       debug.log("watchAccel");
       var suc = function(a){
@@ -204,7 +240,11 @@
 	  <br />
 	  <a href="javascript:contactsCount()">Contacts Count</a>
 	  <br />
-	  <a href="javascript:navigator.ContactManager.chooseContact({ 'allowsEditing' : 'true'})">Choose Contact</a>
+	  <a href="javascript:chooseContact(true)">Choose Contact to Edit</a>
+	  <br />
+	  <a href="javascript:chooseContact()">Choose Contact</a>
+	  <br />
+	  <a href="javascript:removeContact()">Choose Contact to Remove</a>
 	  <br />
 	  <a href="javascript:showLoadingScreen()">Load start</a>
 	  <br />

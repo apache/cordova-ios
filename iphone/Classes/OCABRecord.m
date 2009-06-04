@@ -36,6 +36,18 @@
 	return [(id)ABRecordCopyValue([self ABRecordRef], kABPersonLastNameProperty) autorelease];		
 }
 
+- (NSString*) compositeName
+{
+	return [(id)ABRecordCopyCompositeName([self ABRecordRef]) autorelease];		
+}
+
+- (BOOL) setPhoneNumber:(NSString*)phoneNumber withLabel:(NSString*)label
+{
+	OCABMutableMultiValue* phoneNumbers = [self phoneNumbers];
+	[phoneNumbers addValue:phoneNumber withLabel:(CFStringRef)label];
+	return ABRecordSetValue([self ABRecordRef], kABPersonPhoneProperty, [phoneNumbers ABMutableMultiValueRef], &error);
+}
+
 - (ABRecordID) recordID
 {
 	return ABRecordGetRecordID([self ABRecordRef]);
@@ -43,10 +55,13 @@
 
 - (OCABMutableMultiValue*) phoneNumbers
 {
-	ABRecordRef rec = ABRecordCopyValue([self ABRecordRef], kABPersonPhoneProperty);
+	CFTypeRef rec = ABRecordCopyValue([self ABRecordRef], kABPersonPhoneProperty);
+	if (!rec) {
+		rec = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+	}
+
 	id val =  [[[OCABMutableMultiValue alloc] initWithCFTypeRef:rec] autorelease];
 	CFRelease(rec);
-	
 	return val;
 }
 

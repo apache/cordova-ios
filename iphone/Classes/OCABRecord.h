@@ -20,10 +20,13 @@
 
 - (NSString*) firstName;
 - (NSString*) lastName;
+- (NSString*) compositeName;
+- (BOOL) setPhoneNumber:(NSString*)phoneNumber withLabel:(NSString*)label;
+
 - (OCABMutableMultiValue*) phoneNumbers;
 
 - (BOOL) setFirstName:(NSString*)firstName;
-- (BOOL) setLastName:(NSString*)firstName;
+- (BOOL) setLastName:(NSString*)lastName;
 
 - (BOOL) removeFrom:(ABAddressBookRef)addressBook;
 

@@ -18,6 +18,7 @@
 - (NSString*) labelAt:(CFIndex)index;
 - (NSString*) localizedLabelAt:(CFIndex)index;
 - (NSString*) valueAt:(CFIndex)index;
+- (BOOL) addValue:(CFTypeRef)value withLabel:(CFStringRef)label;
 
 - (NSString*) JSONValue;
 

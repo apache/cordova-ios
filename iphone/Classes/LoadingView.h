@@ -21,7 +21,7 @@
 }
 
 @property NSTimeInterval minDuration;
-@property (assign) NSDate* timestamp;
+@property (retain) NSDate* timestamp;
 
 + (id)loadingViewInView:(UIView *)aSuperview;
 - (void)removeView;

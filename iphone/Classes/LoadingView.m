@@ -150,7 +150,7 @@ CGPathRef NewPathWithRoundRect(CGRect rect, CGFloat cornerRadius)
 	[[aSuperview layer] addAnimation:animation forKey:@"layerAnimation"];
 	
 	
-	loadingView.timestamp = [[NSDate date] retain];
+	loadingView.timestamp = [NSDate date];
 	return loadingView;
 }
 
@@ -210,6 +210,8 @@ CGPathRef NewPathWithRoundRect(CGRect rect, CGFloat cornerRadius)
 //
 - (void)dealloc
 {
+	if (timestamp)
+		[timestamp release];
     [super dealloc];
 }
 
