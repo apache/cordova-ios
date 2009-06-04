@@ -3,7 +3,7 @@
 //  PhoneGap
 //
 //  Created by shazron on 29/05/09.
-//  Copyright 2009 Atimi Software Inc.. All rights reserved.
+//  Copyright 2009 Nitobi Software Inc.. All rights reserved.
 //
 
 #import <AddressBook/AddressBook.h>
