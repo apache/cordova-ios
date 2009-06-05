@@ -25,3 +25,10 @@ Notification.prototype.activityStart = function() {
 Notification.prototype.activityStop = function() {
     PhoneGap.exec("Notification.activityStop");
 };
+
+Notification.prototype.loadingStart = function(options) {
+    PhoneGap.exec("Notification.loadingStart", options);
+};
+Notification.prototype.loadingStop = function() {
+    PhoneGap.exec("Notification.loadingStop");
+};

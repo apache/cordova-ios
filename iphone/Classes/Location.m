@@ -14,7 +14,7 @@
 
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
-    self = [super initWithWebView:(UIWebView*)theWebView];
+    self = (Location*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
@@ -80,16 +80,17 @@
     course = newLocation.course;
     speed  = newLocation.speed;
 #endif
-    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({timestamp: %d, latitude: %f, longitude: %f, altitude: %f, course: %f, speed: %f, accuracy: {horizontal: %f, vertical: %f}});",
-                             epoch,
-                             newLocation.coordinate.latitude,
-                             newLocation.coordinate.longitude,
-                             newLocation.altitude,
-                             course,
-                             speed,
-                             newLocation.horizontalAccuracy,
-                             newLocation.verticalAccuracy
-    ];
+	NSString* coords =  [NSString stringWithFormat:@"coords: { latitude: %f, longitude: %f, altitude: %f, heading: %f, speed: %f, accuracy: {horizontal: %f, vertical: %f}, altitudeAccuracy: null }",
+							newLocation.coordinate.latitude,
+							newLocation.coordinate.longitude,
+							newLocation.altitude,
+							course,
+							speed,
+							newLocation.horizontalAccuracy,
+							newLocation.verticalAccuracy
+						 ];
+	
+    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({ timestamp: %d, %@ });", epoch, coords];
     NSLog(@"%@", jsCallBack);
     
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];

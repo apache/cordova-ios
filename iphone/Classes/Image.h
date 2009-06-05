@@ -21,7 +21,7 @@
 
 }
 
-@property (nonatomic, retain) UIImagePickerController *imagePickerController;
+@property (nonatomic, retain) UIImagePickerController *picker;
 @property (nonatomic, retain) UIWindow *window;
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image2 editingInfo:(NSDictionary *)editingInfo;

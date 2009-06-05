@@ -9,14 +9,15 @@
 #import "UIControls.h"
 
 @implementation UIControls
+#ifndef __IPHONE_3_0
 @synthesize webView;
+#endif
 
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
-    self = [super initWithWebView:theWebView];
+    self = (UIControls*)[super initWithWebView:theWebView];
     if (self) {
         tabBarItems = [[NSMutableDictionary alloc] initWithCapacity:5];
-        
     }
     return self;
 }
@@ -175,6 +176,7 @@
         item.badgeValue = [options objectForKey:@"badge"];
     
     [tabBarItems setObject:item forKey:name];
+	[item release];
 }
 
 /**
@@ -223,6 +225,7 @@
     if ([options objectForKey:@"animate"])
         animateItems = [(NSString*)[options objectForKey:@"animate"] boolValue];
     [tabBar setItems:items animated:animateItems];
+	[items release];
 }
 
 /**
@@ -417,7 +420,11 @@
     UIBarButtonItem *space1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *space2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     NSArray *items = [[NSArray alloc] initWithObjects:space1, toolBarTitle, space2, nil];
+	[space1 release];
+	[space2 release];
+	
     [toolBar setItems:items];
+	[items release];
 }
 
 - (void)toolBarTitleClicked

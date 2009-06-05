@@ -21,11 +21,12 @@
       debug.log("getLocation");
       navigator.notification.activityStart();
       var suc = function(p){
-        debug.log(p.latitude + " " + p.longitude);
-        navigator.notification.alert(p.latitude + " " + p.longitude, "Your GeoLocation", "Thanks");
+        debug.log(p.coords.latitude + " " + p.coords.longitude);
+        navigator.notification.alert(p.coords.latitude + " " + p.coords.longitude, "Your GeoLocation", "Thanks");
         navigator.notification.activityStop();
       };
-      var fail = function(){};
+      var fail = function(error){
+	  };
       navigator.geolocation.getCurrentPosition(suc,fail);
     }
     
@@ -43,16 +44,148 @@
       navigator.notification.vibrate(0);
     }
   
-    function getContact(){
-      debug.log("getContact");
-      var suc = function(c){
-        debug.log(c);
-        alert("Contact 4: " + c.contacts[3].name);
-      };
-      var fail = function(){};
-      navigator.ContactManager.get(suc, fail);
+    function getContactsPrompt(){
+      debug.log("getContactsPrompt");
+	  
+		var pageSize = prompt("Page size", 10);
+		if (pageSize) {
+			var pageNumber = prompt("Page number", 1);
+			if (pageNumber) {
+				var nameFilter = prompt("Name filter", null);
+				getContacts(parseInt(pageSize), parseInt(pageNumber), nameFilter);
+			}
+		}
     }
+
+    function showLoadingScreen(durationInSeconds){
+		if (!durationInSeconds) {
+			durationInSeconds = prompt("Enter the load duration in seconds", 3);
+		}
+
+		if (durationInSeconds) {
+			options = { 'duration': durationInSeconds };
+			navigator.notification.loadingStart(options);
+		} else {
+			return;
+		}
+	}
+		
+    function getContacts(pageSize, pageNumber, nameFilter){
+      debug.log("getContacts");
+      var fail = function(){};
+	  
+	  var options = {};
+	  if (pageSize)
+		options.pageSize = pageSize;
+	  if (pageNumber)
+		options.pageNumber = pageNumber;
+	  if (nameFilter)
+		options.nameFilter = nameFilter;
+	  
+	  var durationOptions = { minDuration : 2 };
+	  navigator.notification.loadingStart(durationOptions);
+      navigator.ContactManager.getAllContacts(getContacts_Return, fail, options);
+    }
+	
+	function getContacts_Return(contactsArray)
+	{
+		var names = "";
+		
+		for (var i = 0; i < contactsArray.length; i++) {
+			var con = new Contact();
+			con.firstName = contactsArray[i].firstName;
+			con.lastName = contactsArray[i].lastName;
+			con.phoneNumber = contactsArray[i].phoneNumber;
+			con.address = contactsArray[i].address;	
+			names += con.displayName();
+			
+			if (i+1 != contactsArray.length)
+				names += ",";
+		}
+		
+		navigator.notification.loadingStop();
+		navigator.notification.alert(names, "Contacts Returned", "Dismiss");
+	}
+	
+	var __editDisplayFirstContact = false;
+	function displayFirstContact(allowsEditing)
+	{
+	  var options = { pageSize : 1, pageNumber: 1 };
+	  __editDisplayFirstContact = allowsEditing;
+	  navigator.ContactManager.getAllContacts(displayFirstContact_Return, null, options);
+	}
+	
+	function displayFirstContact_Return(contactsArray)
+	{
+		var options = { allowsEditing: __editDisplayFirstContact };
+		
+		for (var i = 0; i < contactsArray.length; i++) {
+			navigator.ContactManager.displayContact(contactsArray[i].recordID, null, options);
+		}
+	}
+
+	function contactsCount(){
+      debug.log("contactCount");
+      navigator.ContactManager.contactsCount(showContactsCount);
+    }
+	
+	function showContactsCount(count){
+		alert("Number of contacts: " + count);
+	}
+
+	function addContact(gui){
+		var sample_contact = { 'firstName': 'John', 'lastName' : 'Smith', 'phoneNumber': '555-5555' };
+	
+		if (gui) {
+			navigator.ContactManager.newContact(sample_contact, null, { 'gui': true });
+		} else {
+			var firstName = prompt("Enter a first name", sample_contact.firstName);
+			if (firstName) {
+				var lastName = prompt("Enter a last name", sample_contact.lastName);
+				if (lastName) {
+					var phoneNumber = prompt("Enter a phone number", sample_contact.phoneNumber);
+					if (phoneNumber) {
+						sample_contact = { 'firstName': firstName, 'lastName' : lastName, 'phoneNumber' : phoneNumber };
+						navigator.ContactManager.newContact(sample_contact, chooseContact_Return);
+					}
+				}
+			}
+		}
+	}
+	
+	function chooseContact(allowsEditing)
+	{
+		var options = { allowsEditing: allowsEditing };
+		navigator.ContactManager.chooseContact(chooseContact_Return, options);
+	}
+	
+	function chooseContact_Return(contact)
+	{
+		if (contact) {
+			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Returned", "Dismiss");
+		}
+	}
     
+	function removeContact()
+	{
+		navigator.ContactManager.chooseContact(removeContact_Return, null);
+	}
+	
+	function removeContact_Return(contact)
+	{
+		if (contact) {
+			navigator.ContactManager.removeContact(contact.recordID, removeContact_Success, null);
+		}
+	}
+
+	function removeContact_Success(contact)
+	{
+		if (contact) {
+			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Removed", "Dismiss");
+		}
+	}
+	
+
     function watchAccel() {
       debug.log("watchAccel");
       var suc = function(a){
@@ -85,6 +218,38 @@
     </script>
   </head>
   <body id="stage" class="theme">
+  <!--
+	  <a href="javascript:addContact(true)">New Contact (GUI)</a>
+	  <br />
+	  <a href="javascript:addContact(false)">New Contact (API)</a>
+	  <br />
+	  <a href="javascript:getContacts(1,1)">Get 1st Contact (query)</a>
+	  <br />
+	  <a href="javascript:displayFirstContact(false)">DISPLAY 1st Contact (by recordID)</a>
+	  <br />
+	  <a href="javascript:displayFirstContact(true)">DISPLAY AND EDIT 1st Contact (by recordID)</a>
+	  <br />
+	  <a href="javascript:getContacts(5,1)">Get 1st Page of Contacts, with Page size of 5</a>
+	  <br />
+	  <a href="javascript:getContacts(5,2)">Get 2nd Page of Contacts, with Page size of 5</a>
+	  <br />
+	  <a href="javascript:getContacts(20,1)">Get All Contacts (MAXING TO 20)</a>
+	  <br />
+	  <a href="javascript:getContactsPrompt()">Get All Contacts (PROMPT)</a>
+	  <br />
+	  <a href="javascript:getContacts()">Get ALL Contacts (WARNING: may be huge)</a>
+	  <br />
+	  <a href="javascript:contactsCount()">Contacts Count</a>
+	  <br />
+	  <a href="javascript:chooseContact(true)">Choose Contact to Edit</a>
+	  <br />
+	  <a href="javascript:chooseContact()">Choose Contact</a>
+	  <br />
+	  <a href="javascript:removeContact()">Choose Contact to Remove</a>
+	  <br />
+	  <a href="javascript:showLoadingScreen()">Load start</a>
+	  <br />
+-->
       <div id="Page1">
         <h2>this file is located at iphone/www/index.html</h2>
         <div id="info" class="Panel">

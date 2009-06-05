@@ -12,6 +12,6 @@
 @interface Map : PhoneGapCommand {
 }
 
-- (void)open:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)open:(NSArray*)arguments withDict:(NSDictionary*)options;
 
 @end

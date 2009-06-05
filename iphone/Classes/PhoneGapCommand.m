@@ -7,6 +7,7 @@
 //
 
 #import "PhoneGapCommand.h"
+#import "PhoneGapDelegate.h"
 
 @implementation PhoneGapCommand
 @synthesize webView;
@@ -28,21 +29,21 @@
     return self;
 }
 
--(void) setWebView:(UIWebView*) theWebView
-{
-    webView = theWebView;
-}
-
--(void) setSettings:(NSDictionary*) classSettings
-{
-    settings = classSettings;
-}
-
 - (void)dealloc
 {
     if (self.settings)
         [self.settings release];
     [super dealloc];
+}
+
+-(PhoneGapDelegate*) appDelegate
+{
+	return (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
+}
+
+-(UIViewController*) appViewController
+{
+	return (UIViewController*)[self appDelegate].viewController;
 }
 
 @end
