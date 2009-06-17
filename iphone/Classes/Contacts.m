@@ -140,7 +140,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	if (argc > 1) lastName = [arguments objectAtIndex:1];
 	if (argc > 2) phoneNumber = [arguments objectAtIndex:2];
 	
-	OCABRecord* rec = [[OCABRecord alloc] initWithCFTypeRef:ABPersonCreate()];
+	ABRecordRef ref = ABPersonCreate();
+	OCABRecord* rec = [[OCABRecord alloc] initWithCFTypeRef:ref];
+	CFRelease(ref);
+	
 	[rec setFirstName: firstName];
 	[rec setLastName: lastName];
 	
@@ -214,7 +217,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	
 	bool allowsEditing = [options existsValue:@"true" forKey:@"allowsEditing"];
 	
-	OCABRecord* rec = [OCABRecord CreateFromRecordID:recordID andAddressBook:addressBook];
+	OCABRecord* rec = [OCABRecord newFromRecordID:recordID andAddressBook:addressBook];
 	if (rec) {
 		ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
 		personController.displayedPerson = [rec ABRecordRef];
@@ -331,7 +334,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	if (argc > 1)
 		jsCallback = [arguments objectAtIndex:1];
 	
-	OCABRecord* rec = [OCABRecord CreateFromRecordID:recordID andAddressBook:addressBook];
+	OCABRecord* rec = [OCABRecord newFromRecordID:recordID andAddressBook:addressBook];
 	NSString* firstParam = @"";
 	bool removeOk = false, saveOk = false;
 	CFErrorRef errorRef;
