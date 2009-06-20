@@ -34,8 +34,25 @@
     NSString *filePath = [mainBundle pathForResource:(NSString*)[filenameParts objectAtIndex:0]
                                               ofType:(NSString*)[filenameParts objectAtIndex:1]
                                          inDirectory:directoryStr];
-    if (filePath == nil) {
-        NSLog(@"Can't find filename %@ in the app bundle", [arguments objectAtIndex:0]);
+	if (filePath == nil) {
+		NSLog(@"Can't find filename %@ in the app bundle", [arguments objectAtIndex:0]);
+#ifdef __IPHONE_3_0
+		if ([[arguments objectAtIndex:0] hasPrefix:@"http"]){
+	
+			if (player != nil)
+				[player stop];
+					
+			NSURL *sampleUrl = [NSURL URLWithString:[arguments objectAtIndex:0]];
+			NSData *sampleAudio = [NSData dataWithContentsOfURL:sampleUrl];
+			NSError *err;
+			player = [[ AVAudioPlayer alloc ] initWithData:sampleAudio error:&err];
+			if (err)
+				NSLog(@"Failed to initialize AVAudioPlayer: %@\n", err);
+			player.delegate = self;
+			[ player prepareToPlay ];
+			[ player play ];
+		}
+#endif
         return;
     }
     SystemSoundID soundID;

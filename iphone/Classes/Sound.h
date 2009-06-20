@@ -22,6 +22,7 @@
 {
 	NSString *successCallback;
 	NSString *errorCallback;
+
 #ifdef __IPHONE_3_0
 	AVAudioPlayer *player;
 #endif
