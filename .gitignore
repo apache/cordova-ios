@@ -1,5 +1,6 @@
 .DS_Store
 .*.sw?
+*.cso
 tmp/
 *.xcodeproj/* !*.xcodeproj/project.pbxproj
 lib/iphone/phonegap-min.js
