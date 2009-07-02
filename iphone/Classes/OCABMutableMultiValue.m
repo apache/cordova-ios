@@ -44,23 +44,23 @@
 
 - (NSString*) JSONValue
 {
-	NSMutableString* json =  [[[NSMutableString alloc] initWithString:@"{"] autorelease];
+	NSMutableString* json =  [[[NSMutableString alloc] initWithString:@"[{"] autorelease];
 	NSString* pair = nil;
 	CFIndex count = [self count];
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
 	for (CFIndex i = 0; i < count; i++)
 	{
-		pair = [[[NSString alloc] initWithFormat:@"'%@':'%@'", [self localizedLabelAt:i], [self valueAt:i]] autorelease];
-		[json appendString:pair];
+		 pair = [[[NSString alloc] initWithFormat:@"label:'%@', value:'%@'", [self localizedLabelAt:i], [self valueAt:i]] autorelease];
+        [json appendString:pair];
 		
 		if (i+1 != count) {
-			[json appendString:@","];
+			[json appendString:@"},{"];
 		}
 	}
 	[pool release];
 
-	[json appendString:@"}"];
+	[json appendString:@"}]"];
 	return json;
 }
 

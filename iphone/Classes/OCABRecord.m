@@ -41,6 +41,8 @@
 	return [(id)ABRecordCopyCompositeName([self ABRecordRef]) autorelease];		
 }
 
+
+
 - (BOOL) setPhoneNumber:(NSString*)phoneNumber withLabel:(NSString*)label
 {
 	OCABMutableMultiValue* phoneNumbers = [self phoneNumbers];
@@ -64,6 +66,17 @@
 	CFRelease(rec);
 	return val;
 }
+- (OCABMutableMultiValue*) emails
+{
+  CFTypeRef rec = ABRecordCopyValue([self ABRecordRef], kABPersonEmailProperty);
+  if (!rec) {
+    rec = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+  }
+ 
+  id val = [[[OCABMutableMultiValue alloc] initWithCFTypeRef:rec] autorelease];
+  CFRelease(rec);
+  return val;
+}
 
 - (BOOL) setFirstName:(NSString*)firstName
 {
@@ -85,15 +98,26 @@
 	NSString* firstName = [self firstName];
 	NSString* lastName = [self lastName];
 	NSString* emptyString = @"";
+      NSString* name = @"";
+    if (firstName != nil && lastName != nil )
+      {
+        name = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
+      }
+      else if ((firstName != nil && lastName == nil ) || (firstName = nil
+                                && lastName != nil )) // logical xor would be nice..
+      {
+        name = [NSString stringWithFormat:@"%@",firstName !=nil ? firstName: lastName];
+      }
 	
-	return [[[NSString alloc] initWithFormat:@"{ recordID: %d, firstName:'%@', lastName: '%@', phoneNumber:%@, address:'%@'}", 
-					   [self recordID],
-						firstName == nil? emptyString : firstName, 
-						lastName == nil? emptyString : lastName, 
-						[[self phoneNumbers] JSONValue], 
-					   @""
-					  ] autorelease];
+	return [[[NSString alloc] initWithFormat:@"{ recordID: %d, name:'%@', firstName:'%@', lastName: '%@', phoneNumbers:%@, emails: %@, address:'%@'}",
+           [self recordID],
+                        name,
+            firstName == nil? emptyString : firstName,
+            lastName == nil? emptyString : lastName,
+            [[self phoneNumbers] JSONValue],
+                        [[self emails] JSONValue],
+           @""
+           ] autorelease];
 }
-
 
 @end
