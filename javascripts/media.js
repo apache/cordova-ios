@@ -7,6 +7,9 @@ function Media(src) {
 	this.src = src;
 }
 
+Media.prototype.record = function() {
+}
+
 Media.prototype.play = function() {
 }
 
