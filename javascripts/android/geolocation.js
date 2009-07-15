@@ -15,18 +15,30 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 // Run the global callback
 Geolocation.prototype.gotCurrentPosition = function(lat, lng)
 {
-  if (lat == 0 || lng == 0)
+  if (lat == "undefined" || lng == "undefined")
   {
     this.fail();
   }
   else
   {
-    var p = { "lat" : lat, "lng": lng };
+    loc = this.buildLocation(lat, lng);
     this.global_success(p);
   }
 }
 
+/*
+ * The more of the spec we implement, the bigger this method gets
+ */
 
+Geolocation.prototype.buildLocation = function(lat, lng)
+{
+	var loc = {};
+	p = {};
+	p.latitude = lat;
+	p.longitude = lng;
+	loc.coords = p;
+	return loc;
+}
 /*
  * This turns on the GeoLocator class, which has two listeners.
  * The listeners have their own timeouts, and run independently of this process
@@ -54,7 +66,8 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
  */
 Geolocation.prototype.success(key, lat, lng)
 {
-  this.listeners[key].success(lat,lng);
+  var loc = this.buildLocation(lat,lng);
+  this.listeners[key].success(loc);
 }
 
 Geolocation.prototype.fail(key)
