@@ -18,6 +18,8 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
+		303554C1100E56B7002C5EC0 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 303554C0100E56B7002C5EC0 /* Camera.m */; };
+		30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 30355581100E7477002C5EC0 /* NSData+Base64.m */; };
 		30CD0F0F0FCBED3F00AA6748 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */; };
 		30EC9AEC0FCDF4DD00A52C71 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */; };
 		30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */; };
@@ -64,6 +66,10 @@
 		28AD733E0D9D9553002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main.m; sourceTree = "<group>"; };
 		3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		303554BF100E56B7002C5EC0 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		303554C0100E56B7002C5EC0 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Camera.m; sourceTree = "<group>"; };
+		30355580100E7477002C5EC0 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		30355581100E7477002C5EC0 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		30EC9AEA0FCDF4DD00A52C71 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
 		30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -156,6 +162,8 @@
 		1B1B50FB0F95000A00ECD4E6 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30355580100E7477002C5EC0 /* NSData+Base64.h */,
+				30355581100E7477002C5EC0 /* NSData+Base64.m */,
 				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
 				BB8FC5C20F5B3EC4007C7DCE /* Bonjour.m */,
 				47FAB72C0EF7A6C6005F55AB /* Contacts.h */,
@@ -176,6 +184,8 @@
 				47FAB7290EF7A663005F55AB /* Sound.m */,
 				1B1B4E690F938A0500ECD4E6 /* UIControls.h */,
 				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
+				303554BF100E56B7002C5EC0 /* Camera.h */,
+				303554C0100E56B7002C5EC0 /* Camera.m */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -349,6 +359,8 @@
 				30EF07C20FCFBED8009B3930 /* OCCFObject.m in Sources */,
 				30EF07CB0FCFC111009B3930 /* OCABRecord.m in Sources */,
 				30EF08140FCFC8E0009B3930 /* OCABMutableMultiValue.m in Sources */,
+				303554C1100E56B7002C5EC0 /* Camera.m in Sources */,
+				30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,14 +455,16 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Shazron Abdullah (8BQ96WH9QJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shazron Abdullah (8BQ96WH9QJ)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "B107B6E2-C703-44B6-809D-6B2787B8DF35";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B107B6E2-C703-44B6-809D-6B2787B8DF35";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
