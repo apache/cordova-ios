@@ -43,8 +43,7 @@ public class DroidGap extends Activity {
 	private String uri;
 	private PhoneGap gap;
 	private GeoBroker geo;
-	private AccelListener accel;
-	
+	private AccelListener accel;	
 	
     /** Called when the activity is first created. */
 	@Override
@@ -93,11 +92,12 @@ public class DroidGap extends Activity {
     private void bindBrowser(WebView appView)
     {
     	// The PhoneGap class handles the Notification and Android Specific crap
-    	gap = new PhoneGap(this, appView);
-    	geo = new GeoBroker(appView, this);
-    	accel = new AccelListener(this, appView);
+    	this.gap = new PhoneGap(this, appView);
+    	this.geo = new GeoBroker(appView, this);
+    	this.accel = new AccelListener(this, appView);    	
     	// This creates the new javascript interfaces for PhoneGap
-    	appView.addJavascriptInterface(gap, "Device");
+    	// Ewww - It's called DroidGap again. :(
+    	appView.addJavascriptInterface(gap, "DroidGap");    	
     	appView.addJavascriptInterface(geo, "Geo");
     	appView.addJavascriptInterface(accel, "Accel");
     }
