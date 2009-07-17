@@ -1,6 +1,6 @@
 Notification.prototype.vibrate = function(mills)
 {
-  Device.vibrate(mills);
+  DroidGap.vibrate(mills);
 }
 
 /*
@@ -11,5 +11,5 @@ Notification.prototype.vibrate = function(mills)
 
 Notification.prototype.beep = function(count, volume)
 {
-  Device.notify();
+  DroidGap.beep(count);
 }

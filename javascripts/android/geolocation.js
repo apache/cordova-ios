@@ -6,14 +6,14 @@
 
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options)
 {
-  var position = Geo.getCurrentPosition();
+  var position = Geo.getCurrentLocation();
   this.global_success = successCallback;
   this.fail = errorCallback;
 }
 
 
 // Run the global callback
-Geolocation.prototype.gotCurrentPosition = function(lat, lng)
+Geolocation.prototype.gotCurrentPosition = function(lat, lng, alt, altacc, head, vel, stamp)
 {
   if (lat == "undefined" || lng == "undefined")
   {
@@ -21,24 +21,12 @@ Geolocation.prototype.gotCurrentPosition = function(lat, lng)
   }
   else
   {
-    loc = this.buildLocation(lat, lng);
-    this.global_success(p);
+    coords = new Coordinates(lat, lng, alt, altacc, head, vel);
+    loc = new Position(coords, stamp);
+    this.global_success(loc);
   }
 }
 
-/*
- * The more of the spec we implement, the bigger this method gets
- */
-
-Geolocation.prototype.buildLocation = function(lat, lng)
-{
-	var loc = {};
-	p = {};
-	p.latitude = lat;
-	p.longitude = lng;
-	loc.coords = p;
-	return loc;
-}
 /*
  * This turns on the GeoLocator class, which has two listeners.
  * The listeners have their own timeouts, and run independently of this process
@@ -64,13 +52,14 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
  * Retrieve and stop this listener from listening to the GPS
  *
  */
-Geolocation.prototype.success(key, lat, lng)
+Geolocation.prototype.success = function(key, lat, lng, alt, altacc, head, vel, stamp)
 {
-  var loc = this.buildLocation(lat,lng);
+  var coords = new Coordinates(lat, lng, alt, altacc, head, vel);
+  var loc = new Position(coords, stamp);
   this.listeners[key].success(loc);
 }
 
-Geolocation.prototype.fail(key)
+Geolocation.prototype.fail = function(key)
 {
   this.listeners[key].fail();
 }
