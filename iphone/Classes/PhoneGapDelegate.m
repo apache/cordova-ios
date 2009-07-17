@@ -67,7 +67,7 @@
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
     if ([useLocation boolValue]) {
-        [[self getCommandInstance:@"Location"] start:nil withDict:nil];
+        [[self getCommandInstance:@"Location"] startLocation:nil withDict:nil];
     }
 
 	webView.delegate = self;
