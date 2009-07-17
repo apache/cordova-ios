@@ -5,3 +5,5 @@ tmp/
 *.xcodeproj/* !*.xcodeproj/project.pbxproj
 lib/iphone/phonegap-min.js
 lib/iphone/phonegap.js
+android/bin
+android/gen
