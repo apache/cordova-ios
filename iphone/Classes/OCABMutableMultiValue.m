@@ -9,6 +9,7 @@
 #import <AddressBook/AddressBook.h>
 #import "OCCFObject.h"
 #import "OCABMutableMultiValue.h"
+#import <JSON/JSON.h>
 
 @implementation OCABMutableMultiValue
 
@@ -51,7 +52,7 @@
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
 	for (CFIndex i = 0; i < count; i++)
 	{
-		 pair = [[[NSString alloc] initWithFormat:@"label:'%@', value:'%@'", [self localizedLabelAt:i], [self valueAt:i]] autorelease];
+		 pair = [[[NSString alloc] initWithFormat:@"label:'%@', value:'%@'", [[self localizedLabelAt:i] stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"], [[self valueAt:i] stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]] autorelease];
         [json appendString:pair];
 		
 		if (i+1 != count) {

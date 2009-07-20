@@ -95,8 +95,8 @@
 
 - (NSString*) JSONValue
 {
-	NSString* firstName = [self firstName];
-	NSString* lastName = [self lastName];
+	NSString* firstName = [[self firstName] stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
+	NSString* lastName = [[self lastName] stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
 	NSString* emptyString = @"";
       NSString* name = @"";
     if (firstName != nil && lastName != nil )

@@ -383,7 +383,7 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -420,7 +420,7 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
