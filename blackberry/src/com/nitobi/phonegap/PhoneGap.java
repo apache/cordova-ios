@@ -54,7 +54,7 @@ import com.nitobi.phonegap.io.QueueResourceFetcher;
 public class PhoneGap extends UiApplication implements RenderingApplication {
 
 	public static final String PHONEGAP_PROTOCOL = "gap://";
-	private static final String DEFAULT_INITIAL_URL = "data:///www/index.html";
+	private static final String DEFAULT_INITIAL_URL = "file:///www/test/vibration.html";
 
 	private Screen mainScreen;
 	private Vector pendingResponses = new Vector();
@@ -72,7 +72,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	}
 
 	/**
-	 * By default, the main page is set to data:///www/index.html
+	 * By default, the main page is set to data:///www/test/index.html
 	 */
 	public PhoneGap() {
 		init(DEFAULT_INITIAL_URL);
@@ -91,6 +91,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 		RenderingOptions renderingOptions = _browserContentManager.getRenderingSession().getRenderingOptions();
 		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_ENABLED, true);
 		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
+		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
 		mainScreen = new MainScreen();
 		mainScreen.add(_browserContentManager);
         pushScreen(mainScreen);
@@ -102,6 +103,8 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	private void loadUrl(String url) {
 		invokeAndWait(new AsynchronousResourceFetcher(url, new Callback() {
 			public void execute(final Object input) {
+				// setContent here causes Blackberry to freeze - leads to two calls: handleNewContent and finishLoading.
+				// finishLoading then calls Object.wait(), which is likely the cause for the freeze? Help!
 				_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
 			}
         }, connectionManager));
