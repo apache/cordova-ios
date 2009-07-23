@@ -20,17 +20,10 @@
 
 - (BOOL) hasHeadingSupport;
 
-
 - (void)startLocation:(NSMutableArray*)arguments
      withDict:(NSMutableDictionary*)options;
 
-- (void)startHeading:(NSMutableArray*)arguments
-     withDict:(NSMutableDictionary*)options;
-
 - (void)stopLocation:(NSMutableArray*)arguments
-    withDict:(NSMutableDictionary*)options;
-
-- (void)stopHeading:(NSMutableArray*)arguments
     withDict:(NSMutableDictionary*)options;
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -38,11 +31,21 @@
            fromLocation:(CLLocation *)oldLocation;
 
 - (void)locationManager:(CLLocationManager *)manager
-    didUpdateHeading:(CLHeading *)heading;
+       didFailWithError:(NSError *)error;
+
+#ifdef __IPHONE_3_0
+
+- (void)startHeading:(NSMutableArray*)arguments
+			withDict:(NSMutableDictionary*)options;
+
+- (void)stopHeading:(NSMutableArray*)arguments
+		   withDict:(NSMutableDictionary*)options;
+
+- (void)locationManager:(CLLocationManager *)manager
+	   didUpdateHeading:(CLHeading *)heading;
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager;
 
-- (void)locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error;
+#endif
 
 @end
