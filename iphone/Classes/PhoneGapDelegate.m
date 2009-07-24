@@ -1,6 +1,7 @@
 #import "PhoneGapDelegate.h"
 #import "PhoneGapViewController.h"
 #import <UIKit/UIKit.h>
+#import "Movie.h"
 
 @implementation PhoneGapDelegate
 
@@ -178,6 +179,18 @@
     NSLog(@"Device initialization: %@", result);
     [theWebView stringByEvaluatingJavaScriptFromString:result];
 	[result release];
+    
+  if(![[[UIDevice currentDevice] model] isEqualToString:@"iPhone Simulator"]) {
+        NSLog(@"going to play movie");
+        Movie *mov = [[[Movie alloc] init ] retain ];
+        NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
+        [args addObject:@"default.mov"];
+        NSMutableDictionary* opts = [[[NSMutableDictionary alloc] init] autorelease];
+        [opts setObject:@"1" forKey:@"repeat"];
+        [ mov play:args withDict:opts];
+    }
+
+
     
      // Determine the URL used to invoke this application.
     // Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
