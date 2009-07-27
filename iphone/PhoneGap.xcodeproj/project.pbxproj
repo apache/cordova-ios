@@ -455,7 +455,7 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_C_LANGUAGE_STANDARD = c99;
