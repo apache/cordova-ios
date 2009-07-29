@@ -20,6 +20,9 @@
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		303554C1100E56B7002C5EC0 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 303554C0100E56B7002C5EC0 /* Camera.m */; };
 		30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 30355581100E7477002C5EC0 /* NSData+Base64.m */; };
+		30C531981020E3B20017260B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C531971020E3B20017260B /* Reachability.m */; };
+		30C5319B1020E3CF0017260B /* Network.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C5319A1020E3CF0017260B /* Network.m */; };
+		30C531A01020E4310017260B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30C5319F1020E4310017260B /* SystemConfiguration.framework */; };
 		30CD0F0F0FCBED3F00AA6748 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */; };
 		30EC9AEC0FCDF4DD00A52C71 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */; };
 		30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */; };
@@ -70,6 +73,11 @@
 		303554C0100E56B7002C5EC0 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Camera.m; sourceTree = "<group>"; };
 		30355580100E7477002C5EC0 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		30355581100E7477002C5EC0 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		30C531961020E3B20017260B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		30C531971020E3B20017260B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		30C531991020E3CF0017260B /* Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Network.h; sourceTree = "<group>"; };
+		30C5319A1020E3CF0017260B /* Network.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Network.m; sourceTree = "<group>"; };
+		30C5319F1020E4310017260B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		30EC9AEA0FCDF4DD00A52C71 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
 		30EC9AEB0FCDF4DD00A52C71 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -125,6 +133,7 @@
 				BB8FC69F0F5BB58D007C7DCE /* CFNetwork.framework in Frameworks */,
 				30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */,
 				30EC9B220FCDFCC500A52C71 /* QuartzCore.framework in Frameworks */,
+				30C531A01020E4310017260B /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +171,8 @@
 		1B1B50FB0F95000A00ECD4E6 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30C531961020E3B20017260B /* Reachability.h */,
+				30C531971020E3B20017260B /* Reachability.m */,
 				30355580100E7477002C5EC0 /* NSData+Base64.h */,
 				30355581100E7477002C5EC0 /* NSData+Base64.m */,
 				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
@@ -186,6 +197,8 @@
 				1B1B4E6A0F938A0500ECD4E6 /* UIControls.m */,
 				303554BF100E56B7002C5EC0 /* Camera.h */,
 				303554C0100E56B7002C5EC0 /* Camera.m */,
+				30C531991020E3CF0017260B /* Network.h */,
+				30C5319A1020E3CF0017260B /* Network.m */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -227,6 +240,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				30C5319F1020E4310017260B /* SystemConfiguration.framework */,
 				30EC9B210FCDFCC500A52C71 /* QuartzCore.framework */,
 				30EC9B100FCDFC9900A52C71 /* CoreGraphics.framework */,
 				079B0A090E45734600755F37 /* CoreLocation.framework */,
@@ -361,6 +375,8 @@
 				30EF08140FCFC8E0009B3930 /* OCABMutableMultiValue.m in Sources */,
 				303554C1100E56B7002C5EC0 /* Camera.m in Sources */,
 				30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */,
+				30C531981020E3B20017260B /* Reachability.m in Sources */,
+				30C5319B1020E3CF0017260B /* Network.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
