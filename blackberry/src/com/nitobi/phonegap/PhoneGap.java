@@ -54,7 +54,7 @@ import com.nitobi.phonegap.io.QueueResourceFetcher;
 public class PhoneGap extends UiApplication implements RenderingApplication {
 
 	public static final String PHONEGAP_PROTOCOL = "gap://";
-	private static final String DEFAULT_INITIAL_URL = "file:///www/test/vibration.html";
+	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
 
 	private Screen mainScreen;
 	private Vector pendingResponses = new Vector();
@@ -91,7 +91,8 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 		RenderingOptions renderingOptions = _browserContentManager.getRenderingSession().getRenderingOptions();
 		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_ENABLED, true);
 		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
-		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
+		// The following line is commented out for now, until we figure out how to use this rendering mode properly.
+		//renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
 		mainScreen = new MainScreen();
 		mainScreen.add(_browserContentManager);
         pushScreen(mainScreen);

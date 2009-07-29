@@ -44,7 +44,7 @@ import net.rim.device.api.system.Application;
  */
 public final class ConnectionManager {
 
-	public static final String DATA = "file";
+	public static final String DATA = "data";
 	public static final String DATA_PROTOCOL = DATA + ":///";
 	private static final byte[] DATA_URL = (ConnectionManager.DATA + ":text/html;base64,").getBytes();
 
