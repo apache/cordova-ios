@@ -13,7 +13,27 @@ function Camera() {
  * @param {Object} options
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
-	// Load the Overlay, and do a callback depending on what happens	
+
+  this.winCallback = successCallback;
+  this.failCallback = errorCallback;
+  if (options.quality)
+  {
+    GapCam.takePicture(options.quality);
+  }
+  else 
+  {
+    GapCam.takePicture(80);
+  }
+}
+
+Camera.prototype.win = function(picture)
+{
+  this.winCallback(picture);
+}
+
+Camera.prototype.fail = function(err)
+{
+  this.failCallback(err);
 }
 
 PhoneGap.addConstructor(function() {
