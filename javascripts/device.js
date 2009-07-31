@@ -11,7 +11,7 @@ function Device() {
     this.gap      = null;
     this.uuid     = null;
     try {
-        if (window.DroidGap.exists()) {
+        if (window.DroidGap) {
             this.available = true;
             this.isAndroid = true;
             this.uuid = window.DroidGap.getUuid();
