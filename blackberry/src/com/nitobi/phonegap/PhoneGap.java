@@ -22,28 +22,33 @@
  */
 package com.nitobi.phonegap;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.io.HttpConnection;
 
 import net.rim.device.api.browser.field.BrowserContent;
-import net.rim.device.api.browser.field.BrowserContentManager;
+import net.rim.device.api.browser.field.BrowserContentChangedEvent;
 import net.rim.device.api.browser.field.Event;
 import net.rim.device.api.browser.field.RedirectEvent;
 import net.rim.device.api.browser.field.RenderingApplication;
+import net.rim.device.api.browser.field.RenderingException;
 import net.rim.device.api.browser.field.RenderingOptions;
+import net.rim.device.api.browser.field.RenderingSession;
 import net.rim.device.api.browser.field.RequestedResource;
 import net.rim.device.api.browser.field.UrlRequestedEvent;
+import net.rim.device.api.io.http.HttpHeaders;
+import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Display;
-import net.rim.device.api.ui.Screen;
+import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.Status;
 import net.rim.device.api.ui.container.MainScreen;
 
 import com.nitobi.phonegap.api.CommandManager;
-import com.nitobi.phonegap.io.AsynchronousResourceFetcher;
-import com.nitobi.phonegap.io.Callback;
 import com.nitobi.phonegap.io.ConnectionManager;
-import com.nitobi.phonegap.io.QueueResourceFetcher;
+import com.nitobi.phonegap.io.PrimaryResourceFetchThread;
+import com.nitobi.phonegap.io.SecondaryResourceFetchThread;
 
 /**
  * Bridges HTML/JS/CSS to a native Blackberry application.
@@ -55,13 +60,12 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 
 	public static final String PHONEGAP_PROTOCOL = "gap://";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
-
-	private Screen mainScreen;
+	private static final String REFERER = "referer";   
 	private Vector pendingResponses = new Vector();
-	private QueueResourceFetcher queueResourceFetcher;
 	private CommandManager commandManager = new CommandManager();
-	private ConnectionManager connectionManager = new ConnectionManager();
-	private BrowserContentManager _browserContentManager = new BrowserContentManager(0);
+	private RenderingSession _renderingSession;   
+    private HttpConnection  _currentConnection;
+    private MainScreen _mainScreen;
 
 	/**
 	 * Launches the application. Accepts up to one parameter, an URL to the index page. 
@@ -88,48 +92,117 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	}
 
 	private void init(final String url) {
-		RenderingOptions renderingOptions = _browserContentManager.getRenderingSession().getRenderingOptions();
-		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_ENABLED, true);
-		renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
-		// The following line is commented out for now, until we figure out how to use this rendering mode properly.
-		//renderingOptions.setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
-		mainScreen = new MainScreen();
-		mainScreen.add(_browserContentManager);
-        pushScreen(mainScreen);
-        queueResourceFetcher = new QueueResourceFetcher(this, connectionManager);
-        loadUrl(url);
-        invokeLater(queueResourceFetcher);
+		_mainScreen = new MainScreen();        
+        pushScreen(_mainScreen);
+        _renderingSession = RenderingSession.getNewInstance();
+        
+        // Enable JavaScript.
+        _renderingSession.getRenderingOptions().setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_ENABLED, true);
+        _renderingSession.getRenderingOptions().setProperty(RenderingOptions.CORE_OPTIONS_GUID, RenderingOptions.JAVASCRIPT_LOCATION_ENABLED, true);
+        // Enable nice-looking BB browser field.
+        _renderingSession.getRenderingOptions().setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
+        PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(url, null, null, null, this);
+        thread.start();            
 	}
+	public Object eventOccurred(final Event event) 
+    {
+        int eventId = event.getUID();
+        switch (eventId) 
+        {
+            case Event.EVENT_URL_REQUESTED : 
+            {
+                UrlRequestedEvent urlRequestedEvent = (UrlRequestedEvent) event;
+                String url = urlRequestedEvent.getURL();
+                if (url.startsWith(PHONEGAP_PROTOCOL)) {
+    				String response = commandManager.processInstruction(url);
+    				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
+    				// Need to do something more here... what do we do once we get a response from the Device?
+    			} else {
+    				PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(url,
+                                                                                         urlRequestedEvent.getHeaders(), 
+                                                                                         urlRequestedEvent.getPostData(),
+                                                                                         event, this);
+                	thread.start();
+    			}
+                break;
+            } 
+            case Event.EVENT_BROWSER_CONTENT_CHANGED: 
+            {                
+                // Browser field title might have changed update title.
+                BrowserContentChangedEvent browserContentChangedEvent = (BrowserContentChangedEvent) event; 
+                if (browserContentChangedEvent.getSource() instanceof BrowserContent) 
+                { 
+                    BrowserContent browserField = (BrowserContent) browserContentChangedEvent.getSource(); 
+                    String newTitle = browserField.getTitle();
+                    if (newTitle != null) 
+                    {
+                        synchronized (getAppEventLock()) 
+                        { 
+                            _mainScreen.setTitle(newTitle);
+                        }                                               
+                    }                                       
+                }                   
+                break;                
+            } 
+            case Event.EVENT_REDIRECT : 
+            {
+                RedirectEvent e = (RedirectEvent) event;
+                String url = e.getLocation();
+                String referrer = e.getSourceURL();
+                switch (e.getType()) 
+                {  
+                    case RedirectEvent.TYPE_SINGLE_FRAME_REDIRECT :
+                        // Show redirect message.
+                        Application.getApplication().invokeAndWait(new Runnable() 
+                        {
+                            public void run() 
+                            {
+                                Status.show("You are being redirected to a different page...");
+                            }
+                        });
+                        break;
+                    
+                    case RedirectEvent.TYPE_JAVASCRIPT :
+                        break;
+                    
+                    case RedirectEvent.TYPE_META :
+                        // MSIE and Mozilla don't send a Referer for META Refresh.
+                        referrer = null;     
+                        break;
+                    
+                    case RedirectEvent.TYPE_300_REDIRECT :
+                        // MSIE, Mozilla, and Opera all send the original
+                        // request's Referer as the Referer for the new
+                        // request.
+                        Object eventSource = e.getSource();
+                        if (eventSource instanceof HttpConnection) 
+                        {
+                            referrer = ((HttpConnection)eventSource).getRequestProperty(REFERER);
+                        }
+                        
+                        break;
+                    }
+                    HttpHeaders requestHeaders = new HttpHeaders();
+                    requestHeaders.setProperty(REFERER, referrer);
+                    PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(e.getLocation(), requestHeaders,null, event, this);
+                    thread.start();
+                    break;
+            } 
+            case Event.EVENT_CLOSE :
+                // TODO: close the application
+                break;
+            
+            case Event.EVENT_SET_HEADER :        // No cache support.
+            case Event.EVENT_SET_HTTP_COOKIE :   // No cookie support.
+            case Event.EVENT_HISTORY :           // No history support.
+            case Event.EVENT_EXECUTING_SCRIPT :  // No progress bar is supported.
+            case Event.EVENT_FULL_WINDOW :       // No full window support.
+            case Event.EVENT_STOP :              // No stop loading support.
+            default :
+        }
 
-	private void loadUrl(String url) {
-		invokeAndWait(new AsynchronousResourceFetcher(url, new Callback() {
-			public void execute(final Object input) {
-				// setContent here causes Blackberry to freeze - leads to two calls: handleNewContent and finishLoading.
-				// finishLoading then calls Object.wait(), which is likely the cause for the freeze? Help!
-				_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
-			}
-        }, connectionManager));
-	}
-
-	public Object eventOccurred(final Event event) {
-		if (event instanceof RedirectEvent) {
-			RedirectEvent command = (RedirectEvent) event;
-			String url = command.getLocation();
-			if (url.startsWith(PHONEGAP_PROTOCOL)) {
-				String response = commandManager.processInstruction(url);
-				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
-			}
-		}
-		if (event instanceof UrlRequestedEvent) {
-			final String url = ((UrlRequestedEvent) event).getURL();
-			new Thread(new AsynchronousResourceFetcher(url, new Callback() {
-				public void execute(final Object input) {
-					_browserContentManager.setContent((HttpConnection) input, PhoneGap.this, null);
-				}
-	        }, connectionManager)).start();
-		}
-		return null;
-	}
+        return null;
+    }
 
 	public String getHTTPCookie(String url) {
 		StringBuffer responseCode = new StringBuffer();
@@ -156,16 +229,53 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public HttpConnection getResource(RequestedResource resource, BrowserContent referrer) {
 		if ((resource != null) && (resource.getUrl() != null) && !resource.isCacheOnly()) {
 			String url = resource.getUrl().trim();
-			if ((referrer == null) || (connectionManager.isInternal(url)))
-				return connectionManager.getUnmanagedConnection(url);
+			if ((referrer == null) || (ConnectionManager.isInternal(url)))
+				return ConnectionManager.getUnmanagedConnection(url, resource.getRequestHeaders(), null);
 			else
-				queueResourceFetcher.enqueue(resource, referrer);
+				SecondaryResourceFetchThread.enqueue(resource, referrer);
 		}
 		return null;
 	}
-
-	public void invokeRunnable(Runnable runnable) {
-		invokeLater(runnable);
-	}
-
+    public void processConnection(HttpConnection connection, Event e) 
+    {
+        // Cancel previous request.
+        if (_currentConnection != null) 
+        {
+            try 
+            {
+                _currentConnection.close();
+            } 
+            catch (IOException e1) 
+            {
+            }
+        }
+        _currentConnection = connection;
+        BrowserContent browserContent = null;
+        try 
+        {
+            browserContent = _renderingSession.getBrowserContent(connection, this, e);
+            if (browserContent != null) 
+            {
+                Field field = browserContent.getDisplayableContent();
+                
+                if (field != null) 
+                {
+                    synchronized (Application.getEventLock()) 
+                    {
+                        _mainScreen.deleteAll();
+                        _mainScreen.add(field);
+                    }
+                }
+                
+                browserContent.finishLoading();
+            }
+        } 
+        catch (RenderingException re) 
+        {
+        } 
+    }
+    public void invokeRunnable(Runnable runnable) 
+    {       
+        (new Thread(runnable)).start();
+    } 
 }
