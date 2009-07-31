@@ -26,7 +26,7 @@ Geolocation.prototype.gotCurrentPosition = function(lat, lng, alt, altacc, head,
     this.global_success(loc);
   }
 }
- 
+
 /*
 * This turns on the GeoLocator class, which has two listeners.
 * The listeners have their own timeouts, and run independently of this process
@@ -49,16 +49,16 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 }
  
 /*
-* Retrieve and stop this listener from listening to the GPS
-*
-*/
+ * Retrieve and stop this listener from listening to the GPS
+ *
+ */
 Geolocation.prototype.success = function(key, lat, lng, alt, altacc, head, vel, stamp)
 {
   var coords = new Coordinates(lat, lng, alt, altacc, head, vel);
   var loc = new Position(coords, stamp);
   this.listeners[key].success(loc);
 }
- 
+
 Geolocation.prototype.fail = function(key)
 {
   this.listeners[key].fail();

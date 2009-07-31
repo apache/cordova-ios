@@ -13,13 +13,12 @@ function Device() {
     try {
         if (window.DroidGap) {
             this.available = true;
-            this.isAndroid = true;
             this.uuid = window.DroidGap.getUuid();
             this.version = window.DroidGap.getOSVersion();
             this.gapVersion = window.DroidGap.getVersion();
             this.platform = window.DroidGap.getPlatform();
             this.name = window.DroidGap.getProductName();  
-      } else {          
+        } else {          
             this.platform = DeviceInfo.platform;
             this.version  = DeviceInfo.version;
             this.name     = DeviceInfo.name;
