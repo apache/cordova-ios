@@ -43,6 +43,8 @@
 		BB8FC69F0F5BB58D007C7DCE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8FC69E0F5BB58D007C7DCE /* CFNetwork.framework */; };
 		BB8FCC5E0F5F00FF007C7DCE /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = BB8FCC5D0F5F00FF007C7DCE /* Map.m */; };
 		BB8FCE250F5F2CF3007C7DCE /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8254F8800E650500002FDA36 /* Location.m */; };
+		E94AEB79101A70B60091C5ED /* Movie.m in Sources */ = {isa = PBXBuildFile; fileRef = E94AEB78101A70B60091C5ED /* Movie.m */; };
+		E94AEBB1101A71BA0091C5ED /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E94AEBB0101A71BA0091C5ED /* MediaPlayer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +105,9 @@
 		BB8FC69E0F5BB58D007C7DCE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		BB8FCC5C0F5F00FF007C7DCE /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		BB8FCC5D0F5F00FF007C7DCE /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
+		E94AEB77101A70B60091C5ED /* Movie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movie.h; sourceTree = "<group>"; };
+		E94AEB78101A70B60091C5ED /* Movie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Movie.m; sourceTree = "<group>"; };
+		E94AEBB0101A71BA0091C5ED /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +124,7 @@
 				BB8FC69F0F5BB58D007C7DCE /* CFNetwork.framework in Frameworks */,
 				30EC9B110FCDFC9900A52C71 /* CoreGraphics.framework in Frameworks */,
 				30EC9B220FCDFCC500A52C71 /* QuartzCore.framework in Frameworks */,
+				E94AEBB1101A71BA0091C5ED /* MediaPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,6 +163,8 @@
 			isa = PBXGroup;
 			children = (
 				BB8FC5C10F5B3EC4007C7DCE /* Bonjour.h */,
+				E94AEB77101A70B60091C5ED /* Movie.h */,
+				E94AEB78101A70B60091C5ED /* Movie.m */,
 				BB8FC5C20F5B3EC4007C7DCE /* Bonjour.m */,
 				47FAB72C0EF7A6C6005F55AB /* Contacts.h */,
 				47FAB72D0EF7A6C6005F55AB /* Contacts.m */,
@@ -193,6 +201,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				E94AEBB0101A71BA0091C5ED /* MediaPlayer.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -349,6 +358,7 @@
 				30EF07C20FCFBED8009B3930 /* OCCFObject.m in Sources */,
 				30EF07CB0FCFC111009B3930 /* OCABRecord.m in Sources */,
 				30EF08140FCFC8E0009B3930 /* OCABMutableMultiValue.m in Sources */,
+				E94AEB79101A70B60091C5ED /* Movie.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +370,8 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "\"$(SRCROOT)/Frameworks/JSON/$(PLATFORM_NAME).sdk\"";
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Don't Code Sign";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -375,6 +387,8 @@
 					"-ljson",
 				);
 				PRODUCT_NAME = PhoneGap;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 			};
 			name = Debug;
 		};
