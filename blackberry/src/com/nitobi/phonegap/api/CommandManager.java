@@ -24,10 +24,10 @@ package com.nitobi.phonegap.api;
 
 import com.nitobi.phonegap.api.impl.CameraCommand;
 import com.nitobi.phonegap.api.impl.ContactsCommand;
+import com.nitobi.phonegap.api.impl.DeviceCommand;
 import com.nitobi.phonegap.api.impl.GeoLocationCommand;
-import com.nitobi.phonegap.api.impl.InitializationCommand;
+import com.nitobi.phonegap.api.impl.NotificationCommand;
 import com.nitobi.phonegap.api.impl.TelephonyCommand;
-import com.nitobi.phonegap.api.impl.VibrationCommand;
 
 /**
  * Given a execution request detects matching {@link Command} and executes it.
@@ -43,10 +43,10 @@ public final class CommandManager {
 	public CommandManager() {
 		commands[0] = new CameraCommand();
 		commands[1] = new ContactsCommand();
-		commands[2] = new VibrationCommand();
+		commands[2] = new NotificationCommand();
 		commands[3] = new TelephonyCommand();
 		commands[4] = new GeoLocationCommand();
-		commands[5] = new InitializationCommand();		
+		commands[5] = new DeviceCommand();		
 	}
 
 	/**
