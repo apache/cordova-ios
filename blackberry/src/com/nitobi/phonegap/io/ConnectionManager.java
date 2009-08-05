@@ -27,6 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Vector;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
@@ -34,7 +36,10 @@ import javax.microedition.io.HttpConnection;
 import javax.microedition.io.InputConnection;
 
 import net.rim.device.api.io.Base64OutputStream;
+import net.rim.device.api.io.http.HttpHeaders;
+import net.rim.device.api.io.http.HttpProtocolConstants;
 import net.rim.device.api.system.Application;
+import net.rim.device.api.util.StringUtilities;
 
 /**
  * Manages all HTTP connections.
@@ -45,18 +50,79 @@ import net.rim.device.api.system.Application;
 public final class ConnectionManager {
 
 	public static final String DATA = "data";
-	public static final String DATA_PROTOCOL = DATA + "://";
-	private static final byte[] DATA_URL = (ConnectionManager.DATA + ":text/html;base64,").getBytes();
+	public static final String DATA_PROTOCOL = DATA + ":///";
+	private static final byte[] DATA_URL_HTML = (ConnectionManager.DATA + ":text/html;charset=utf-8;base64,").getBytes();
+	private static final byte[] DATA_URL_JS = (ConnectionManager.DATA + ":text/javascript;charset=utf-8;base64,").getBytes();
+	private static final byte[] DATA_URL_IMG_JPG = (ConnectionManager.DATA + ":image/jpeg;charset=utf-8;base64,").getBytes();
+	private static final byte[] DATA_URL_PLAIN = (ConnectionManager.DATA + ":text/plain;charset=utf-8;base64,").getBytes();
 
 	/**
 	 * Creates a connection and returns it. Calling this method without care may saturate BB capacity.
 	 *
 	 * @param url a http:// or data:// URL
 	 */
-	public HttpConnection getUnmanagedConnection(String url) {
-		if ((url != null) && (url.trim().length() > 0))
-			return isInternal(url) ? getDataProtocolConnection(url) : getExternalConnection(url);
-		return null;
+	public static HttpConnection getUnmanagedConnection(String url,	HttpHeaders requestHeaders, byte[] postData) {
+		HttpConnection conn = null;
+		OutputStream out = null;
+		if ((url != null) && (url.trim().length() > 0)) {
+			conn = isInternal(url) ? getDataProtocolConnection(url) : getExternalConnection(url);
+		} else {
+			return conn;
+		}
+		try {
+			if (requestHeaders != null) {
+				// From
+				// http://www.w3.org/Protocols/rfc2616/rfc2616-sec15.html#sec15.1.3
+				//
+				// Clients SHOULD NOT include a Referer header field in a
+				// (non-secure) HTTP
+				// request if the referring page was transferred with a secure
+				// protocol.
+				String referer = requestHeaders.getPropertyValue("referer");
+				boolean sendReferrer = true;
+
+				if (referer != null	&& StringUtilities.startsWithIgnoreCase(referer,"https:") && !StringUtilities.startsWithIgnoreCase(url, "https:")) {
+					sendReferrer = false;
+				}
+
+				int size = requestHeaders.size();
+				for (int i = 0; i < size;) {
+					String header = requestHeaders.getPropertyKey(i);
+
+					// Remove referer header if needed.
+					if (!sendReferrer && header.equals("referer")) {
+						requestHeaders.removeProperty(i);
+						--size;
+						continue;
+					}
+
+					String value = requestHeaders.getPropertyValue(i++);
+					if (value != null) {
+						conn.setRequestProperty(header, value);
+					}
+				}
+			}
+
+			if (postData == null) {
+				conn.setRequestMethod(HttpConnection.GET);
+			} else {
+				conn.setRequestMethod(HttpConnection.POST);
+				conn.setRequestProperty(HttpProtocolConstants.HEADER_CONTENT_LENGTH, String.valueOf(postData.length));
+
+				out = conn.openOutputStream();
+				out.write(postData);
+			}
+
+		} catch (IOException e1) {
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e2) {
+				}
+			}
+		}
+		return conn;
 	}
 
 	/**
@@ -66,7 +132,7 @@ public final class ConnectionManager {
 	 * @param url a http:// or data:// URL 
 	 */
 	public InputConnection getPreLoadedConnection(String url) {
-		InputConnection connection = getUnmanagedConnection(url);
+		InputConnection connection = getUnmanagedConnection(url, null, null);
 		if ((connection != null) && (!isInternal(url))) {
 			try {
 				final byte[] data = read(connection.openInputStream());
@@ -97,7 +163,7 @@ public final class ConnectionManager {
 	/**
 	 * Detects data:// URLs
 	 */
-	public boolean isInternal(String url) {
+	public static boolean isInternal(String url) {
 		return (url != null) && url.startsWith(ConnectionManager.DATA_PROTOCOL);
 	}
 
@@ -117,24 +183,37 @@ public final class ConnectionManager {
 
 	private static HttpConnection getExternalConnection(String url) {
 		try {
-			return (HttpConnection) Connector.open(url);
+			HttpConnection con = (HttpConnection)Connector.open(url);
+			return con;
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
 	private static HttpConnection getDataProtocolConnection(String url) {
-		String dataUrl = url.startsWith(ConnectionManager.DATA_PROTOCOL) ? url.substring(7) : url; 
+		String dataUrl = url.startsWith(ConnectionManager.DATA_PROTOCOL) ? url.substring(ConnectionManager.DATA_PROTOCOL.length() - 1) : url; 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
-			output.write(ConnectionManager.DATA_URL);
+			if (dataUrl.endsWith(".html") || dataUrl.endsWith(".htm")) {
+				output.write(ConnectionManager.DATA_URL_HTML);
+			} else if (dataUrl.endsWith(".js")) {
+				output.write(ConnectionManager.DATA_URL_JS);
+			} else if (dataUrl.endsWith(".jpg") || dataUrl.endsWith(".jpeg")) {
+				output.write(ConnectionManager.DATA_URL_IMG_JPG);
+			} else {
+				output.write(ConnectionManager.DATA_URL_PLAIN);
+			}
 			Base64OutputStream boutput = new Base64OutputStream(output);
-			boutput.write(read(Application.class.getResourceAsStream(dataUrl)));
+			InputStream theResource = Application.class.getResourceAsStream(dataUrl);
+			byte[] resourceBytes = read(theResource);
+			boutput.write(resourceBytes);
 			boutput.flush();
 			boutput.close();
 			output.flush();
 			output.close();
-			return (HttpConnection) Connector.open(output.toString());
+			Connection outputCon = Connector.open(output.toString());
+			HttpConnection outputHttp = (HttpConnection) outputCon;
+			return outputHttp; 
 		} catch (IOException ex) {
 			return null;
 		}
@@ -153,5 +232,4 @@ public final class ConnectionManager {
 		}
 		return bytes.toByteArray();
     }
-
 }
