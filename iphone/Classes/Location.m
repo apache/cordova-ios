@@ -22,17 +22,32 @@
     return self;
 }
 
-- (void)start:(NSMutableArray*)arguments
+- (BOOL) hasHeadingSupport
+{
+	 // check whether headingAvailable property is avail (for 2.x devices)
+	if ([self.locationManager respondsToSelector:@selector(headingAvailable)] == NO)
+        return NO;
+
+	#ifdef __IPHONE_3_0
+	// now 3.x device, check whether it has heading support (eg Compass)
+	if ([self.locationManager headingAvailable] == NO) 
+		return NO;
+	#endif
+	
+	return YES;
+}
+
+- (void)startLocation:(NSMutableArray*)arguments
      withDict:(NSMutableDictionary*)options
 {
-    if (__started == YES)
+    if (__locationStarted == YES)
         return;
     if ([self.locationManager locationServicesEnabled] != YES)
         return;
     
     // Tell the location manager to start notifying us of location updates
     [self.locationManager startUpdatingLocation];
-    __started = YES;
+    __locationStarted = YES;
 
     if ([options objectForKey:@"distanceFilter"]) {
         CLLocationDistance distanceFilter = [(NSString *)[options objectForKey:@"distanceFilter"] doubleValue];
@@ -57,16 +72,16 @@
     }
 }
 
-- (void)stop:(NSMutableArray*)arguments
+- (void)stopLocation:(NSMutableArray*)arguments
     withDict:(NSMutableDictionary*)options
 {
-    if (__started == NO)
+    if (__locationStarted == NO)
         return;
     if ([self.locationManager locationServicesEnabled] != YES)
         return;
     
     [self.locationManager stopUpdatingLocation];
-    __started = NO;
+    __locationStarted = NO;
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -96,12 +111,71 @@
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
+- (void)startHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+#ifdef __IPHONE_3_0
+    if (__headingStarted == YES)
+        return;
+    if ([self hasHeadingSupport] == NO) 
+        return;
+	
+    // Tell the location manager to start notifying us of heading updates
+    [self.locationManager startUpdatingHeading];
+    __headingStarted = YES;
+#endif	
+}	
+
+- (void)stopHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+#ifdef __IPHONE_3_0
+    if (__headingStarted == NO)
+        return;
+    if ([self hasHeadingSupport] == NO) 
+		return;
+    
+    [self.locationManager stopUpdatingHeading];
+    __headingStarted = NO;
+#endif
+}	
+
+#ifdef __IPHONE_3_0
+
+- (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
+{
+	return YES;
+}
+
+- (void)locationManager:(CLLocationManager *)manager
+	   didUpdateHeading:(CLHeading *)heading
+{
+	int epoch = [heading.timestamp timeIntervalSince1970];
+	
+    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.compass.setHeading({ timestamp: %d, magneticHeading: %f, trueHeading: %f, headingAccuracy: %f });", 
+							 epoch, heading.magneticHeading, heading.trueHeading, heading.headingAccuracy];
+   // NSLog(@"%@", jsCallBack);
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+}
+
+#endif
+
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%s\");",
-                             [error localizedDescription]
-                            ];
+	NSString* jsCallBack = @"";
+	
+	#ifdef __IPHONE_3_0
+	if ([error code] == kCLErrorHeadingFailure) {
+		jsCallBack = [NSString stringWithFormat:@"navigator.compass.setError(\"%s\");",
+					  [error localizedDescription]
+					  ];
+	} else 
+	#endif
+	{
+		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%s\");",
+								 [error localizedDescription]
+								];
+	}
     NSLog(@"%@", jsCallBack);
     
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];

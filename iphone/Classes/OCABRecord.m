@@ -15,7 +15,7 @@
 
 @synthesize error;
 
-+ (OCABRecord*) CreateFromRecordID:(ABRecordID)recordID andAddressBook:(ABAddressBookRef)addressBook
++ (OCABRecord*) newFromRecordID:(ABRecordID)recordID andAddressBook:(ABAddressBookRef)addressBook
 {
 	ABRecordRef ref = ABAddressBookGetPersonWithRecordID(addressBook, recordID);
 	return [[OCABRecord alloc] initWithCFTypeRef:ref];

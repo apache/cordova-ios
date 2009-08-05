@@ -45,7 +45,7 @@ import net.rim.device.api.system.Application;
 public final class ConnectionManager {
 
 	public static final String DATA = "data";
-	public static final String DATA_PROTOCOL = DATA + "://";
+	public static final String DATA_PROTOCOL = DATA + ":///";
 	private static final byte[] DATA_URL = (ConnectionManager.DATA + ":text/html;base64,").getBytes();
 
 	/**
@@ -124,7 +124,7 @@ public final class ConnectionManager {
 	}
 
 	private static HttpConnection getDataProtocolConnection(String url) {
-		String dataUrl = url.startsWith(ConnectionManager.DATA_PROTOCOL) ? url.substring(7) : url; 
+		String dataUrl = url.startsWith(ConnectionManager.DATA_PROTOCOL) ? url.substring(ConnectionManager.DATA_PROTOCOL.length()-1) : url; 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
 			output.write(ConnectionManager.DATA_URL);
