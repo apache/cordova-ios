@@ -46,7 +46,7 @@ public class GeoLocationCommand implements Command {
 	private static final int START_COMMAND = 2;
 	private static final int CHECK_COMMAND = 3;
 	private static final int CAPTURE_INTERVAL = 5;
-	private static final String CODE = "gap://location";
+	private static final String CODE = "PhoneGap=location";
 
 	private Position position;
 	private boolean availableGPS = true;

@@ -1,9 +1,10 @@
 <html>
 	<head>
+		<meta http-equiv="HandheldFriendly" content="true" />
 		<script type="text/javascript" src="data:///www/js/device.js"></script>
 		<script type="text/javascript">
 			function showDeviceInfo() {
-				alert("ID: " + Device.uuid + "\nModel: " + Device.model + "\nVersion: " + Device.version + "\nPlatform: " + Device.platform + "\nMemory: " + Device.flash + "\nBattery: " + Device.battery + "\nisSimulator: " + Device.isSimulator + "\nhasCamera: " + Device.hasCamera);
+				alert("ID: " + device.uuid + "\nModel: " + device.name + "\nVersion: " + device.version + "\nPlatform: " + device.platform + "\nMemory: " + device.flash + "\nBattery: " + device.battery + "\nisSimulator: " + device.isSimulator + "\nhasCamera: " + device.hasCamera);
 			}
 		</script>
 	</head>
