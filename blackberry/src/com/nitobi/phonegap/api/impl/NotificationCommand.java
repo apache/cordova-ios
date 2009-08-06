@@ -37,81 +37,34 @@ public class NotificationCommand implements Command {
 	private static final int VIBRATE_COMMAND = 0;
 	private static final int BEEP_COMMAND = 1;
 	private static final int DURATION = 5;
-	private static final String CODE = "PhoneGap="; 
+	private static final String CODE = "PhoneGap=notification"; 
 
-	// The TUNE (bar 1 and 2 of Islamey by Balakirev)
-	 private static final short BFlat = 466;   //466.16
-	 private static final short AFlat = 415;     //415.30
-	 private static final short A = 440; //440.00
-	 private static final short GFlat = 370;     //369.99
-	 private static final short DFlat = 554;     //554.37
-	 private static final short C = 523; //523.25
-	 private static final short F = 349; //349.32
-	 
-	 private static final short TEMPO = 125;
-	 
-	 // Duration of a 16th note, arbitrary, in ms.
-	 private static final short d16 = 1 * TEMPO;
-	 
-	 // Duration of an eighth note, arbitrary, in ms.
-	 private static final short d8 = d16 << 1;
-	 
-	 // 10 ms pause.
-	 private static final short dpause = 10;
-	 
-	 // Zero frequency pause.
-	 private static final short pause = 0;
-	 
-	 private static final short[] TUNE = new short[]
-	 {
-	     BFlat, d16, pause, dpause,
-	     BFlat, d16, pause, dpause,
-	     BFlat, d16, pause, dpause,
-	     BFlat, d16, pause, dpause,
-	     A, d16, pause, dpause,
-	     BFlat, d16, pause, dpause,
-	     GFlat, d16, pause, dpause,
-	     GFlat, d16, pause, dpause,
-	     A, d16, pause, dpause,
-	     BFlat, d16, pause, dpause,
-	     DFlat, d16, pause, dpause,
-	     C, d16, pause, dpause, //bar 1
-	     AFlat, d16, pause, dpause,
-	     AFlat, d16, pause, dpause,
-	     AFlat, d16, pause, dpause,
-	     AFlat, d16, pause, dpause,
-	     F, d16, pause, dpause,
-	     GFlat, d16, pause, dpause,
-	     AFlat, d16, pause, dpause,
-	     BFlat, d16, pause, dpause,
-	     AFlat, d16, pause, dpause,
-	     F, d8 + d16 //bar 2
-	 };
+	private static final short A = 440; //440.00
+	private static final short NOTE_DURATION = 500;
+	private static final short PAUSE_DURATION = 50;
+	private static final int TUNE_LENGTH = 4;
+	private static final short[] TUNE = new short[]
+	{		
+	    A, NOTE_DURATION, 0, PAUSE_DURATION
+	};
 	
-	/**
-	 * Able to run the <i>vibrate</i> command. Ex: PhoneGap=vibrate/10
-	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
 	}
 
-	/**
-	 * Checks if the phone has the require vibration module and
-	 * activates it (by default, for 5 seconds).
-	 */
 	public String execute(String instruction) {
 		switch (getCommand(instruction)) {
 			case VIBRATE_COMMAND:
 				if (Alert.isVibrateSupported()) Alert.startVibrate(getVibrateDuration(instruction));
 				break;
 			case BEEP_COMMAND:
-				if (Alert.isAudioSupported()) Alert.startAudio(TUNE, 99);
+				if (Alert.isAudioSupported()) Alert.startAudio(getTune(instruction), 99);
 				break;
 		}
 		return null;
 	}
 	private int getCommand(String instruction) {
-		String command = instruction.substring(instruction.indexOf('/') + 1);
+		String command = instruction.substring(CODE.length()+1);
 		if (command.startsWith("beep")) return BEEP_COMMAND;
 		if (command.startsWith("vibrate")) return VIBRATE_COMMAND;
 		return -1;
@@ -128,5 +81,22 @@ public class NotificationCommand implements Command {
 			return DURATION;
 		}
 	}
-
+	private short[] getTune(String instruction) {
+		String beepParam = instruction.substring(CODE.length()+1);
+		int param = 1;
+		try {
+			param = Integer.parseInt(beepParam.substring(beepParam.indexOf('/')+1));
+		} catch(Exception e) {
+			param = 1;
+		}
+		short[] theTune = new short[TUNE_LENGTH * param];
+		if (param == 1)
+			return TUNE;
+		else {
+			for (int i = 0; i < param; i++) {
+				System.arraycopy(TUNE, 0, theTune, i*TUNE_LENGTH, TUNE_LENGTH);
+			}
+		}
+		return theTune;
+	}
 }

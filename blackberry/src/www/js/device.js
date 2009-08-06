@@ -7,7 +7,6 @@ window.device = {
 		this.exec("initialize");
 		this.poll(function() {
 			device.available = typeof device.name == "string";
-			alert('is device available? : ' + device.available);
 		});
     },
     exec: function(command, params, sync) {
