@@ -1,6 +1,7 @@
 #import "PhoneGapDelegate.h"
 #import "PhoneGapViewController.h"
 #import <UIKit/UIKit.h>
+#import "Movie.h"
 
 @implementation PhoneGapDelegate
 
@@ -9,6 +10,7 @@
 @synthesize activityView;
 @synthesize commandObjects;
 @synthesize settings;
+@synthesize invokedURL;
 
 - (id) init
 {
@@ -67,7 +69,7 @@
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
     if ([useLocation boolValue]) {
-        [[self getCommandInstance:@"Location"] start:nil withDict:nil];
+        [[self getCommandInstance:@"Location"] startLocation:nil withDict:nil];
     }
 
 	webView.delegate = self;
@@ -177,6 +179,115 @@
     NSLog(@"Device initialization: %@", result);
     [theWebView stringByEvaluatingJavaScriptFromString:result];
 	[result release];
+    
+  if(![[[UIDevice currentDevice] model] isEqualToString:@"iPhone Simulator"]) {
+        NSLog(@"going to play movie");
+        Movie *mov = [[[Movie alloc] init ] retain ];
+        NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
+        [args addObject:@"default.mov"];
+        NSMutableDictionary* opts = [[[NSMutableDictionary alloc] init] autorelease];
+        [opts setObject:@"1" forKey:@"repeat"];
+        [ mov play:args withDict:opts];
+    }
+
+
+    
+     // Determine the URL used to invoke this application.
+    // Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
+     NSURL *url = invokedURL;
+ // if(!url){
+ // NSLog(@"No InvokeURL so returning from webViewDidStartLoad");
+ // return;
+ // }
+         
+// Uncomment to have a javascript alert show you the URL used to invoke this instance.
+// NSString * jsCallBack = nil;
+// jsCallBack = [[NSString alloc] initWithFormat:@"alert('processing url in webViewDidStartLoad %@');", [url absoluteURL]];
+// NSLog(jsCallBack);
+// [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    
+ 
+  NSString * urlHost = [url host];
+  NSLog(@"host = ", urlHost);
+  
+// The info.plist contains this structure:
+//<key>CFBundleURLTypes</key>
+// <array>
+// <dict>
+// <key>CFBundleURLSchemes</key>
+// <array>
+// <string>yourscheme</string>
+// </array>
+// <key>CFBundleURLName</key>
+// <string>YourbundleURLName</string>
+// </dict>
+// </array>
+ 
+    NSArray *URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+    if(URLTypes == nil ) { return;}
+    NSDictionary *dict = [URLTypes objectAtIndex:0];
+    if(dict == nil ) {return;}
+    NSArray *URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
+    if( URLSchemes == nil ) {return;}
+    NSString *URLScheme = [URLSchemes objectAtIndex:0];
+    if( URLScheme == nil ) {return;}
+    NSLog( @"Found URLScheme == ", URLScheme);
+  if ([[url scheme] isEqualToString:URLScheme]) {
+        NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
+    /*
+* Get Command and Options From URL
+* We are looking for URLS that match yourscheme://<Class>.<command>/[<arguments>][?<dictionary>]
+* We have to strip off the leading slash for the options.
+*
+* Note: We have to go through the following contortions because NSURL "helpfully" unescapes
+* certain characters, such as "/" from their hex encoding for us. This normally wouldn't
+* be a problem, unless your argument has a "/" in it, such as a file path.
+*/
+    NSString * command = [url host];
+            
+        NSString * fullUrl = [url description];
+        int prefixLength = [command length] + 3 + [URLScheme length ] ; // "yourscheme://" plus the leading "://"
+        int qsLength = [[url query] length];
+        int pathLength = [fullUrl length] - prefixLength;
+    if (qsLength > 0)
+            pathLength = pathLength - qsLength - 1;
+    NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
+     
+        // Array of arguments
+        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[path componentsSeparatedByString:@"/"]];
+     int i, arguments_count = [arguments count];
+        for (i = 0; i < arguments_count; i++) {
+            [arguments replaceObjectAtIndex:i withObject:[(NSString *)[arguments objectAtIndex:i]
+                                                          stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        }
+    
+    NSLog(@"Arguments: %@", arguments);
+     [webView stringByEvaluatingJavaScriptFromString:[[NSString alloc] initWithFormat:@"alert('arguments=%@');", arguments]];
+ 
+        NSMutableDictionary * options = [NSMutableDictionary dictionaryWithCapacity:1];
+        NSArray * options_parts = [NSArray arrayWithArray:[[url query] componentsSeparatedByString:@"&"]];
+        int options_count = [options_parts count];
+        
+     NSString *optionsString = @"var Invoke_params={";
+    for (i = 0; i < options_count; i++) {
+      NSArray *option_part = [[options_parts objectAtIndex:i] componentsSeparatedByString:@"="];
+            NSString *name = [(NSString *)[option_part objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSString *value = [(NSString *)[option_part objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+      optionsString = [optionsString stringByAppendingFormat:@"%@:'%@'", name, value];
+      if(i != options_count -1 ) optionsString = [optionsString stringByAppendingString:@","];
+      
+            [options setObject:value forKey:name];
+        }
+    optionsString = [optionsString stringByAppendingString:@"}"];
+ 
+    NSString * jsCallBack = nil;
+    jsCallBack = [[NSString alloc] initWithFormat:@"%@;", optionsString];
+    NSLog(@"js callback = %@", jsCallBack);
+       // [webView stringByEvaluatingJavaScriptFromString:[[NSString alloc] initWithFormat:@"alert('callback=%@');", jsCallBack]];
+ 
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [jsCallBack release];
+    }
 }
 
 /**
@@ -329,7 +440,14 @@
 	
 	return YES;
 }
-
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+  NSLog(@"In handleOpenURL");
+   if (!url) { return NO; }
+  NSLog(@"URL = ", [url absoluteURL]);
+  invokedURL = [url retain];
+  return YES;
+}
 
 /**
  * Sends Accel Data back to the Device.

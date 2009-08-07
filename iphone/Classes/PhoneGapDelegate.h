@@ -38,6 +38,7 @@
     UIInterfaceOrientation orientationType;
     NSDictionary *settings;
     NSMutableDictionary *commandObjects;
+    NSURL *invokedURL;
 }
 
 @property (nonatomic, retain) UIWindow *window;
@@ -45,6 +46,7 @@
 @property (nonatomic, retain) UIActivityIndicatorView *activityView;
 @property (nonatomic, retain) NSMutableDictionary *commandObjects;
 @property (nonatomic, retain) NSDictionary *settings;
+@property (nonatomic, retain) NSURL *invokedURL;
 
 -(id) getCommandInstance:(NSString*)className;
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;

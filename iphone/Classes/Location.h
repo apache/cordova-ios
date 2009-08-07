@@ -12,15 +12,18 @@
 
 @interface Location : PhoneGapCommand <CLLocationManagerDelegate> {
 	CLLocationManager *locationManager;
-    BOOL              __started;
+    BOOL              __locationStarted;
+    BOOL              __headingStarted;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 
-- (void)start:(NSMutableArray*)arguments
+- (BOOL) hasHeadingSupport;
+
+- (void)startLocation:(NSMutableArray*)arguments
      withDict:(NSMutableDictionary*)options;
 
-- (void)stop:(NSMutableArray*)arguments
+- (void)stopLocation:(NSMutableArray*)arguments
     withDict:(NSMutableDictionary*)options;
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -29,5 +32,20 @@
 
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error;
+
+#ifdef __IPHONE_3_0
+
+- (void)startHeading:(NSMutableArray*)arguments
+			withDict:(NSMutableDictionary*)options;
+
+- (void)stopHeading:(NSMutableArray*)arguments
+		   withDict:(NSMutableDictionary*)options;
+
+- (void)locationManager:(CLLocationManager *)manager
+	   didUpdateHeading:(CLHeading *)heading;
+
+- (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager;
+
+#endif
 
 @end
