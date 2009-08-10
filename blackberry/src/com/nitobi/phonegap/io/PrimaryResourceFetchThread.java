@@ -9,7 +9,6 @@ import com.nitobi.phonegap.PhoneGap;
 
 public class PrimaryResourceFetchThread extends Thread 
 {
-    
     private PhoneGap _application;
     private Event _event;
     private byte[] _postData;
@@ -28,7 +27,12 @@ public class PrimaryResourceFetchThread extends Thread
 
     public void run() 
     {
-        HttpConnection connection = ConnectionManager.getUnmanagedConnection(_url, _requestHeaders, _postData);
+    	HttpConnection connection = null;
+    	if (_url.startsWith(PhoneGap.PHONEGAP_PROTOCOL)) {
+    		connection = _application._currentConnection;
+    	} else {
+    		connection = ConnectionManager.getUnmanagedConnection(_url, _requestHeaders, _postData);
+    	}
         _application.processConnection(connection, _event);        
     }
 }

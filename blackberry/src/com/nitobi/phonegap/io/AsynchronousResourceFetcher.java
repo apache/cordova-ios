@@ -20,64 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.nitobi.phonegap.model;
+package com.nitobi.phonegap.io;
 
 /**
- * Stores geo location variables.
+ * Fetches a resource and executes a callback.
  *
  * @author Jose Noheda
  *
  */
-public class Position {
+public class AsynchronousResourceFetcher implements Runnable {
 
-	private double _lat = 0;
-    private double _lng = 0;
-    private float heading = 0;
-	private float altitude = 0;
-	private float velocity = 0;
+	private String url;
+	private Callback callback;
 
-    public double getLatitude() {
-		return _lat;
+	public AsynchronousResourceFetcher(String url, Callback callback) {
+		this.url = url;
+		this.callback = callback;
 	}
 
-	public void setLatitude(double _lat) {
-		this._lat = _lat;
-	}
-
-	public double getLongitude() {
-		return _lng;
-	}
-
-	public void setLongitude(double _lng) {
-		this._lng = _lng;
-	}
-
-	public float getHeading() {
-		return heading;
-	}
-
-	public void setHeading(float heading) {
-		this.heading = heading;
-	}
-
-	public float getAltitude() {
-		return altitude;
-	}
-
-	public void setAltitude(float altitude) {
-		this.altitude = altitude;
-	}
-
-	public float getVelocity() {
-		return velocity;
-	}
-
-	public void setVelocity(float velocity) {
-		this.velocity = velocity;
-	}
-
-	public String toJavascript() {
-		return "new Position(new Coordinates(" + _lat + "," + _lng + "," + altitude + ",1," + heading + "," + velocity + "))";
+	public void run() {
+		callback.execute(ConnectionManager.getUnmanagedConnection(url, null, null));
 	}
 
 }

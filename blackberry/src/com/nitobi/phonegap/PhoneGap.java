@@ -36,6 +36,7 @@ import net.rim.device.api.browser.field.RenderingException;
 import net.rim.device.api.browser.field.RenderingOptions;
 import net.rim.device.api.browser.field.RenderingSession;
 import net.rim.device.api.browser.field.RequestedResource;
+import net.rim.device.api.browser.field.SetHttpCookieEvent;
 import net.rim.device.api.browser.field.UrlRequestedEvent;
 import net.rim.device.api.io.http.HttpHeaders;
 import net.rim.device.api.system.Application;
@@ -58,13 +59,13 @@ import com.nitobi.phonegap.io.SecondaryResourceFetchThread;
  */
 public class PhoneGap extends UiApplication implements RenderingApplication {
 
-	public static final String PHONEGAP_PROTOCOL = "gap://";
+	public static final String PHONEGAP_PROTOCOL = "PhoneGap=";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
 	private static final String REFERER = "referer";   
 	private Vector pendingResponses = new Vector();
 	private CommandManager commandManager = new CommandManager();
 	private RenderingSession _renderingSession;   
-    private HttpConnection  _currentConnection;
+    public HttpConnection  _currentConnection;
     private MainScreen _mainScreen;
 
 	/**
@@ -109,21 +110,59 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         int eventId = event.getUID();
         switch (eventId) 
         {
+        case Event.EVENT_REDIRECT : 
+        {
+            RedirectEvent e = (RedirectEvent) event;
+            String url = e.getLocation();
+            String referrer = e.getSourceURL();
+            switch (e.getType()) 
+            {  
+                case RedirectEvent.TYPE_SINGLE_FRAME_REDIRECT :
+                    // Show redirect message.
+                    Application.getApplication().invokeAndWait(new Runnable() 
+                    {
+                        public void run() 
+                        {
+                            Status.show("You are being redirected to a different page...");
+                        }
+                    });
+                    break;
+                
+                case RedirectEvent.TYPE_JAVASCRIPT :
+                	String test = "test";
+                    break;
+                
+                case RedirectEvent.TYPE_META :
+                    // MSIE and Mozilla don't send a Referer for META Refresh.
+                    referrer = null;     
+                    break;
+                
+                case RedirectEvent.TYPE_300_REDIRECT :
+                    // MSIE, Mozilla, and Opera all send the original
+                    // request's Referer as the Referer for the new
+                    // request.
+                    Object eventSource = e.getSource();
+                    if (eventSource instanceof HttpConnection) 
+                    {
+                        referrer = ((HttpConnection)eventSource).getRequestProperty(REFERER);
+                    }
+                    
+                    break;
+                }
+                HttpHeaders requestHeaders = new HttpHeaders();
+                requestHeaders.setProperty(REFERER, referrer);
+                PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(e.getLocation(), requestHeaders,null, event, this);
+                thread.start();
+                break;
+        } 
             case Event.EVENT_URL_REQUESTED : 
             {
                 UrlRequestedEvent urlRequestedEvent = (UrlRequestedEvent) event;
                 String url = urlRequestedEvent.getURL();
-                if (url.startsWith(PHONEGAP_PROTOCOL)) {
-    				String response = commandManager.processInstruction(url);
-    				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
-    				// Need to do something more here... what do we do once we get a response from the Device?
-    			} else {
-    				PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(url,
-                                                                                         urlRequestedEvent.getHeaders(), 
-                                                                                         urlRequestedEvent.getPostData(),
-                                                                                         event, this);
-                	thread.start();
-    			}
+                HttpHeaders header = urlRequestedEvent.getHeaders();
+                PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(
+					url, header, urlRequestedEvent.getPostData(), event, this);
+                thread.start();
                 break;
             } 
             case Event.EVENT_BROWSER_CONTENT_CHANGED: 
@@ -144,56 +183,18 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
                 }                   
                 break;                
             } 
-            case Event.EVENT_REDIRECT : 
-            {
-                RedirectEvent e = (RedirectEvent) event;
-                String url = e.getLocation();
-                String referrer = e.getSourceURL();
-                switch (e.getType()) 
-                {  
-                    case RedirectEvent.TYPE_SINGLE_FRAME_REDIRECT :
-                        // Show redirect message.
-                        Application.getApplication().invokeAndWait(new Runnable() 
-                        {
-                            public void run() 
-                            {
-                                Status.show("You are being redirected to a different page...");
-                            }
-                        });
-                        break;
-                    
-                    case RedirectEvent.TYPE_JAVASCRIPT :
-                        break;
-                    
-                    case RedirectEvent.TYPE_META :
-                        // MSIE and Mozilla don't send a Referer for META Refresh.
-                        referrer = null;     
-                        break;
-                    
-                    case RedirectEvent.TYPE_300_REDIRECT :
-                        // MSIE, Mozilla, and Opera all send the original
-                        // request's Referer as the Referer for the new
-                        // request.
-                        Object eventSource = e.getSource();
-                        if (eventSource instanceof HttpConnection) 
-                        {
-                            referrer = ((HttpConnection)eventSource).getRequestProperty(REFERER);
-                        }
-                        
-                        break;
-                    }
-                    HttpHeaders requestHeaders = new HttpHeaders();
-                    requestHeaders.setProperty(REFERER, referrer);
-                    PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(e.getLocation(), requestHeaders,null, event, this);
-                    thread.start();
-                    break;
-            } 
             case Event.EVENT_CLOSE :
                 // TODO: close the application
                 break;
             
             case Event.EVENT_SET_HEADER :        // No cache support.
-            case Event.EVENT_SET_HTTP_COOKIE :   // No cookie support.
+            case Event.EVENT_SET_HTTP_COOKIE :
+                String cookie = ((SetHttpCookieEvent) event).getCookie();
+                if (cookie.startsWith(PHONEGAP_PROTOCOL)) {
+    				String response = commandManager.processInstruction(cookie);
+    				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
+                }
+                break;
             case Event.EVENT_HISTORY :           // No history support.
             case Event.EVENT_EXECUTING_SCRIPT :  // No progress bar is supported.
             case Event.EVENT_FULL_WINDOW :       // No full window support.
@@ -203,7 +204,9 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 
         return null;
     }
-
+	/**
+	 * Catch the 'get' cookie event, aggregate PhoneGap API responses that haven't been flushed and return.
+	 */
 	public String getHTTPCookie(String url) {
 		StringBuffer responseCode = new StringBuffer();
 		synchronized (pendingResponses) {
@@ -236,6 +239,11 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 		}
 		return null;
 	}
+	/**
+	 * Processes a new HttpConnection object to instantiate a new browser Field (aka WebView) object, and then resets the screen to the newly-created Field.
+	 * @param connection
+	 * @param e
+	 */
     public void processConnection(HttpConnection connection, Event e) 
     {
         // Cancel previous request.
@@ -257,7 +265,6 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
             if (browserContent != null) 
             {
                 Field field = browserContent.getDisplayableContent();
-                
                 if (field != null) 
                 {
                     synchronized (Application.getEventLock()) 

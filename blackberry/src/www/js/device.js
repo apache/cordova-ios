@@ -1,4 +1,4 @@
-window.Device = {
+window.device = {
     isIPhone: false,
     isIPod: false,
     isBlackBerry: true,
@@ -6,28 +6,26 @@ window.Device = {
     init: function() {
 		this.exec("initialize");
 		this.poll(function() {
-			Device.available = typeof Device.model == "string";
+			device.available = typeof device.name == "string";
 		});
     },
     exec: function(command, params, sync) {
-        if (Device.available || command == "initialize") {
+        if (device.available || command == "initialize") {
             try {
-                var url = "gap://" + command;
-                if (params) url += "/" + params.join("/");
-                document.location = url;
+                var cookieCommand = "PhoneGap=" + command;
+                if (params) cookieCommand += "/" + params.join("/");
+                document.cookie = cookieCommand;
                 if (sync) this.poll();
             } catch(e) {
                 console.log("Command '" + command + "' has not been executed, because of exception: " + e);
                 alert("Error executing command '" + command + "'.")
             }
+        } else {
+        	alert("Device not available YET - still loading.");
         }
     },
     poll: function(callback) {
     	eval(document.cookie + (callback ? ";callback();" : ""));
-    },
-    vibrate: function(secs) {
-        return Device.exec("vibrate", [secs]);
     }
 };
-
-window.Device.init();
+window.device.init();

@@ -70,49 +70,15 @@ public final class ConnectionManager {
 			return conn;
 		}
 		try {
-			if (requestHeaders != null) {
-				// From
-				// http://www.w3.org/Protocols/rfc2616/rfc2616-sec15.html#sec15.1.3
-				//
-				// Clients SHOULD NOT include a Referer header field in a
-				// (non-secure) HTTP
-				// request if the referring page was transferred with a secure
-				// protocol.
-				String referer = requestHeaders.getPropertyValue("referer");
-				boolean sendReferrer = true;
-
-				if (referer != null	&& StringUtilities.startsWithIgnoreCase(referer,"https:") && !StringUtilities.startsWithIgnoreCase(url, "https:")) {
-					sendReferrer = false;
-				}
-
-				int size = requestHeaders.size();
-				for (int i = 0; i < size;) {
-					String header = requestHeaders.getPropertyKey(i);
-
-					// Remove referer header if needed.
-					if (!sendReferrer && header.equals("referer")) {
-						requestHeaders.removeProperty(i);
-						--size;
-						continue;
-					}
-
-					String value = requestHeaders.getPropertyValue(i++);
-					if (value != null) {
-						conn.setRequestProperty(header, value);
-					}
-				}
-			}
-
+			//conn = setConnectionRequestHeaders(url, requestHeaders, conn);
 			if (postData == null) {
 				conn.setRequestMethod(HttpConnection.GET);
 			} else {
 				conn.setRequestMethod(HttpConnection.POST);
 				conn.setRequestProperty(HttpProtocolConstants.HEADER_CONTENT_LENGTH, String.valueOf(postData.length));
-
 				out = conn.openOutputStream();
 				out.write(postData);
 			}
-
 		} catch (IOException e1) {
 		} finally {
 			if (out != null) {
@@ -124,7 +90,47 @@ public final class ConnectionManager {
 		}
 		return conn;
 	}
+	public static HttpConnection setConnectionRequestHeaders(String url, HttpHeaders requestHeaders, HttpConnection conn) {
+		HttpConnection returnConn = conn;
+		if (requestHeaders != null) {
+			// From
+			// http://www.w3.org/Protocols/rfc2616/rfc2616-sec15.html#sec15.1.3
+			//
+			// Clients SHOULD NOT include a Referer header field in a
+			// (non-secure) HTTP
+			// request if the referring page was transferred with a secure
+			// protocol.
+			String referer = requestHeaders.getPropertyValue("referer");
+			boolean sendReferrer = true;
 
+			if (referer != null	&& StringUtilities.startsWithIgnoreCase(referer,"https:") && !StringUtilities.startsWithIgnoreCase(url, "https:")) {
+				sendReferrer = false;
+			}
+
+			int size = requestHeaders.size();
+			for (int i = 0; i < size;) {
+				String header = requestHeaders.getPropertyKey(i);
+
+				// Remove referer header if needed.
+				if (!sendReferrer && header.equals("referer")) {
+					requestHeaders.removeProperty(i);
+					--size;
+					continue;
+				}
+
+				String value = requestHeaders.getPropertyValue(i++);
+				if (value != null) {
+					try {
+						returnConn.setRequestProperty(header, value);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return returnConn;
+	}
 	/**
 	 * Loads an external URL and provides a connection that holds the array of bytes. Internal
 	 * URLs (data://) simply pass through.
