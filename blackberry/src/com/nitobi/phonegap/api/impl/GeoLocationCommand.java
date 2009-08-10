@@ -77,7 +77,7 @@ public class GeoLocationCommand implements Command {
 
 	/**
 	 * Executes the following sub-commands:
-	 *   START: Initiliazes the internal GPS module
+	 *   START: Initializes the internal GPS module
 	 *   STOP:  Stops GPS module (saving battery life)
 	 *   CHECK: Reads latest position available
 	 *   MAP:   Invokes the internal MAP application
@@ -145,7 +145,18 @@ public class GeoLocationCommand implements Command {
             } else command.clearPosition();
         }
 
-        public void providerStateChanged(LocationProvider provider, int newState) {}
+        public void providerStateChanged(LocationProvider provider, int newState) {
+        	switch (newState) {
+        	case LocationProvider.AVAILABLE:
+        		break;
+        	case LocationProvider.OUT_OF_SERVICE:
+        		// TODO: Should call fail() here.
+        		break;
+        	case LocationProvider.TEMPORARILY_UNAVAILABLE:
+        		break;
+        	}
+        	
+        }
     }
 
 }

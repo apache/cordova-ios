@@ -9,7 +9,12 @@
  * @param {Object} vel
  * @constructor
  */
-function Position(lat, lng, acc, alt, altacc, head, vel) {
+function Position(coords) {
+	this.coords = coords;
+    this.timestamp = new Date().getTime();
+}
+ 
+function Coordinates(lat, lng, alt, acc, head, vel) {
 	/**
 	 * The latitude of the position.
 	 */
@@ -27,23 +32,15 @@ function Position(lat, lng, acc, alt, altacc, head, vel) {
 	 */
 	this.altitude = alt;
 	/**
-	 * The altitude accuracy of the position.
-	 */
-	this.altitudeAccuracy = altacc;
-	/**
 	 * The direction the device is moving at the position.
 	 */
 	this.heading = head;
 	/**
 	 * The velocity with which the device is moving at the position.
 	 */
-	this.velocity = vel;
-	/**
-	 * The time that the position was obtained.
-	 */
-	this.timestamp = new Date().getTime();
+	this.speed = vel;
 }
-
+ 
 /**
  * This class specifies the options for requesting position data.
  * @constructor
@@ -59,7 +56,7 @@ function PositionOptions() {
 	 */
 	this.timeout = 10000;
 }
-
+ 
 /**
  * This class contains information about any GSP errors.
  * @constructor
@@ -68,7 +65,7 @@ function PositionError() {
 	this.code = null;
 	this.message = "";
 }
-
+ 
 PositionError.UNKNOWN_ERROR = 0;
 PositionError.PERMISSION_DENIED = 1;
 PositionError.POSITION_UNAVAILABLE = 2;
