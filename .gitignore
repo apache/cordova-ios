@@ -1,9 +1,3 @@
-.DS_Store
-.*.sw?
-*.cso
-tmp/
-*.xcodeproj/* !*.xcodeproj/project.pbxproj
-lib/iphone/phonegap-min.js
-lib/iphone/phonegap.js
-android/bin
-android/gen
+android/default.properties
+android/bin/*
+android/gen/*
