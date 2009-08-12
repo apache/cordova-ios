@@ -36,7 +36,9 @@ public class DeviceCommand implements Command {
 	private static final String CODE = "PhoneGap=initialize";
 
 	/**
-	 * Able to run the <i>initialize</i> command (usually onLoad).
+	 * Determines whether the specified instruction is accepted by the command. 
+	 * @param instruction The string instruction passed from JavaScript via cookie.
+	 * @return true if the Command accepts the instruction, false otherwise.
 	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);

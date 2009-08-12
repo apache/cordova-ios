@@ -47,7 +47,11 @@ public class NotificationCommand implements Command {
 	{		
 	    A, NOTE_DURATION, 0, PAUSE_DURATION
 	};
-	
+	/**
+	 * Determines whether the specified instruction is accepted by the command. 
+	 * @param instruction The string instruction passed from JavaScript via cookie.
+	 * @return true if the Command accepts the instruction, false otherwise.
+	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
 	}

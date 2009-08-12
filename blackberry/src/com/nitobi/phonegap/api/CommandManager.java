@@ -26,6 +26,7 @@ import com.nitobi.phonegap.api.impl.CameraCommand;
 import com.nitobi.phonegap.api.impl.ContactsCommand;
 import com.nitobi.phonegap.api.impl.DeviceCommand;
 import com.nitobi.phonegap.api.impl.GeoLocationCommand;
+import com.nitobi.phonegap.api.impl.MediaCommand;
 import com.nitobi.phonegap.api.impl.NotificationCommand;
 import com.nitobi.phonegap.api.impl.TelephonyCommand;
 
@@ -38,7 +39,7 @@ import com.nitobi.phonegap.api.impl.TelephonyCommand;
 public final class CommandManager {
 
 	// List of installed Commands
-	private Command[] commands = new Command[6]; 
+	private Command[] commands = new Command[7]; 
 
 	public CommandManager() {
 		commands[0] = new CameraCommand();
@@ -46,7 +47,8 @@ public final class CommandManager {
 		commands[2] = new NotificationCommand();
 		commands[3] = new TelephonyCommand();
 		commands[4] = new GeoLocationCommand();
-		commands[5] = new DeviceCommand();		
+		commands[5] = new DeviceCommand();	
+		commands[6] = new MediaCommand();
 	}
 
 	/**

@@ -59,10 +59,10 @@ public class GeoLocationCommand implements Command {
 			availableGPS = false;
 		}
 	}
-
 	/**
-	 * Able to run the <i>location</i> command (all options).
-	 * Ex: gap://location/start
+	 * Determines whether the specified instruction is accepted by the command. 
+	 * @param instruction The string instruction passed from JavaScript via cookie.
+	 * @return true if the Command accepts the instruction, false otherwise.
 	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
@@ -96,7 +96,11 @@ public class GeoLocationCommand implements Command {
 		}
 		return null;
 	}
-
+	/**
+	 * Parses the specified instruction and the parameters and determines what type of functional call is being made.
+	 * @param instruction The string instruction passed from JavaScript via cookie.
+	 * @return Integer representing action type.
+	 */
 	private int getCommand(String instruction) {
 		String command = instruction.substring(instruction.lastIndexOf('/') + 1);
 		if ("map".equals(command)) return MAP_COMMAND;
