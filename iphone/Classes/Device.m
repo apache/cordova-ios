@@ -18,7 +18,7 @@
  *  - Device name (e.g. user-defined name of the phone)
  *  - Device uuid
  */
-- (NSDictionary*) getDeviceProperties
+- (NSDictionary*) deviceProperties
 {
 	UIDevice *device = [UIDevice currentDevice];
     NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
