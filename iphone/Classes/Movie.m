@@ -81,7 +81,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self 
 											 selector:@selector(myMovieFinishedCallback:) 
 												 name:MPMoviePlayerPlaybackDidFinishNotification 
-											   object:[theMovie retain]]; 
+											   object:theMovie]; 
 	
     // Movie playback is asynchronous, so this method returns immediately. 
 	[theMovie play]; 
