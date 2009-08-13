@@ -15,10 +15,9 @@
 
 @synthesize theMovie,stopReceived,repeat;
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+- (PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
-
-    self = [super initWithWebView:(UIWebView*)theWebView];
+    self = (Movie*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {
         stopReceived = false;
         repeat = false;
@@ -70,19 +69,19 @@
 
 //	AudioSessionSetActive (true); 
     
-    theMovie = [[[MPMoviePlayerController alloc] initWithContentURL: [NSURL fileURLWithPath: filePath]] retain]; 
+    theMovie = [[MPMoviePlayerController alloc] initWithContentURL: [NSURL fileURLWithPath: filePath]]; 
     NSLog(@"theMovie description = %@", [(NSObject *)theMovie description]);
    
-    [theMovie setOrientation:UIDeviceOrientationPortrait animated:NO];
+    //[theMovie setOrientation:UIDeviceOrientationPortrait animated:NO]; // TODO: remove? no such selector
 
 	theMovie.scalingMode = MPMovieScalingModeAspectFill; 
 	theMovie.movieControlMode = MPMovieControlModeDefault;	
+
     // Register for the playback finished notification. 
-	
     [[NSNotificationCenter defaultCenter] addObserver:self 
 											 selector:@selector(myMovieFinishedCallback:) 
 												 name:MPMoviePlayerPlaybackDidFinishNotification 
-											   object:theMovie]; 
+											   object:[theMovie retain]]; 
 	
     // Movie playback is asynchronous, so this method returns immediately. 
 	[theMovie play]; 
@@ -92,15 +91,15 @@
     
     NSLog(@"Stop the movie!");
     stopReceived = true;
-     NSLog(@"theMovie description = %@", [(NSObject *)theMovie description]);
+    NSLog(@"theMovie description = %@", [(NSObject *)theMovie description]);
     
     [theMovie stop];   
     
     NSLog(@"Finished stopping the movie.");
-
-
 }
+
 #pragma mark AudioSession listeners
+
 void interruptionListener (
    void     *inClientData,
    UInt32   inInterruptionState
@@ -110,33 +109,38 @@ void interruptionListener (
     NSLog(@"Movie: interruptionListener");
 
 }
+
 void propListener(	void *                  inClientData,
 					AudioSessionPropertyID	inID,
 					UInt32                  inDataSize,
 					const void *            inData)
 {
     NSLog(@"Movie: audio prop Listener");
-    }
+}
 
 
--(void)myMovieFinishedCallback:(NSNotification*)aNotification 
+- (void) myMovieFinishedCallback:(NSNotification*)aNotification 
 {
     NSLog(@"myMovieFinishedCallback");
     MPMoviePlayerController* myMovie = [aNotification object]; 
-    NSLog(@"myMovie description = %@, theMovie description = %@, stopRecieved = %d", [(NSObject *)myMovie description], theMovie, stopReceived);
+    NSLog(@"myMovie description = %@, theMovie description = %@, stopReceived = %d", [(NSObject *)myMovie description], theMovie, stopReceived);
+	
     if(stopReceived) {
-        [theMovie stop];   
+       [theMovie stop];   
        [[NSNotificationCenter defaultCenter] removeObserver:self 
-                                                        name:MPMoviePlayerPlaybackDidFinishNotification 
-                                                  object:myMovie]; 
-
-      [ myMovie release];
-    } if(repeat) {
+                                             name:MPMoviePlayerPlaybackDidFinishNotification 
+                                             object:myMovie]; 
+    } 
+	
+	if(repeat) {
       [myMovie play]; 
-      }
-        
+    }
 }
-+(MPMoviePlayerController	*)theMovie { return theMovie;}
-+(BOOL) stopReceived { return stopReceived;}
-+(BOOL) repeat { return repeat;}
+
+- (void) dealloc
+{
+	[theMovie release];
+	[super dealloc];
+}
+
 @end

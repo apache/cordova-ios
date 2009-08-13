@@ -18,6 +18,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
+		301469B91034A0EB008103DA /* InvokedUrlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 301469B81034A0EB008103DA /* InvokedUrlCommand.m */; };
 		303554C1100E56B7002C5EC0 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 303554C0100E56B7002C5EC0 /* Camera.m */; };
 		30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 30355581100E7477002C5EC0 /* NSData+Base64.m */; };
 		30C531981020E3B20017260B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C531971020E3B20017260B /* Reachability.m */; };
@@ -70,6 +71,8 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28AD733E0D9D9553002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main.m; sourceTree = "<group>"; };
+		301469B71034A0EB008103DA /* InvokedUrlCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InvokedUrlCommand.h; sourceTree = "<group>"; };
+		301469B81034A0EB008103DA /* InvokedUrlCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvokedUrlCommand.m; sourceTree = "<group>"; };
 		3023AB3D0FCB6FC40012AC33 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		303554BF100E56B7002C5EC0 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 		303554C0100E56B7002C5EC0 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Camera.m; sourceTree = "<group>"; };
@@ -149,6 +152,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				301469B71034A0EB008103DA /* InvokedUrlCommand.h */,
+				301469B81034A0EB008103DA /* InvokedUrlCommand.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				1D3623240D0F684500981E51 /* PhoneGapDelegate.h */,
 				1D3623250D0F684500981E51 /* PhoneGapDelegate.m */,
@@ -387,6 +392,7 @@
 				30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */,
 				30C531981020E3B20017260B /* Reachability.m in Sources */,
 				30C5319B1020E3CF0017260B /* Network.m in Sources */,
+				301469B91034A0EB008103DA /* InvokedUrlCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,6 +11,7 @@
 #import "UIControls.h"
 //#import "Image.h"
 
+@class InvokedUrlCommand;
 @class PhoneGapViewController;
 @class Sound;
 @class Contacts;
@@ -48,7 +49,11 @@
 @property (nonatomic, retain) NSDictionary *settings;
 @property (nonatomic, retain) NSURL *invokedURL;
 
--(id) getCommandInstance:(NSString*)className;
+- (id) getCommandInstance:(NSString*)className;
+- (void) javascriptAlert:(NSString*)text;
+- (BOOL) execute:(InvokedUrlCommand*)command;
+- (NSString*) appURLScheme;
+
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 
 @end
