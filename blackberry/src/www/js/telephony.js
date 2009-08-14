@@ -12,7 +12,7 @@ function Telephony() {
  */
 Telephony.prototype.call = function(number) {
 	this.number = number;
-	Device.exec("call", [this.number]);
+	device.exec("call", [this.number]);
 }
 
 if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();

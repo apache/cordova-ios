@@ -35,11 +35,8 @@ import com.nitobi.phonegap.api.Command;
  */
 public class TelephonyCommand implements Command {
 
-	private static final String CODE = "gap://call"; 
+	private static final String CODE = "PhoneGap=call"; 
 
-	/**
-	 * Able to run the <i>call</i> command. Ex: gap://call/555666777
-	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
 	}
