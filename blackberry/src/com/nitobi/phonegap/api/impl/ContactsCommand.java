@@ -23,6 +23,7 @@
 package com.nitobi.phonegap.api.impl;
 
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.microedition.pim.Contact;
 import javax.microedition.pim.PIM;
@@ -30,22 +31,23 @@ import javax.microedition.pim.PIM;
 import net.rim.blackberry.api.pdap.BlackBerryContact;
 import net.rim.blackberry.api.pdap.BlackBerryContactList;
 
+import com.nitobi.phonegap.PhoneGap;
 import com.nitobi.phonegap.api.Command;
 
 /**
  * Finds data in agenda. 
  *
  * @author Jose Noheda
+ * @author Fil Maj
  *
  */
 public class ContactsCommand implements Command {
 
 	private static final int SEARCH_COMMAND = 0;
-	private static final String CODE = "gap://contacts"; 
+	private static final int GET_ALL_COMMAND = 1;
+	private static final String CODE = "PhoneGap=contacts"; 
+	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.ContactManager";
 
-	/**
-	 * Able to run the <i>call</i> command. Ex: gap://contacts/search/name/Joe
-	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
 	}
@@ -54,39 +56,120 @@ public class ContactsCommand implements Command {
 	 * Invokes internal phone application.
 	 */
 	public String execute(String instruction) {
+		Hashtable options = ContactsCommand.parseParameters(instruction);
 		switch (getCommand(instruction)) {
 			case SEARCH_COMMAND:
-				return "navigator.ContactManager.contacts = navigator.ContactManager.contacts.concat(" + getAgendaByName("Joe") + ");";
+				return getAgenda(options);
+			case GET_ALL_COMMAND:
+				return getAgenda(options);
 		}
 		return null;
 	}
-
+	/**
+	 * 
+	 * @param instruction
+	 * @return
+	 */
+	private static Hashtable parseParameters(String instruction) {
+		String[] params = PhoneGap.splitString(instruction, '/', false);
+		int numParams = params.length;
+		Hashtable hash = new Hashtable();
+		for (int i = 0; i < numParams; i++) {
+			String curParam = params[i];
+			if (curParam.indexOf(':') == -1) continue;
+			String[] key_value = PhoneGap.splitString(curParam, ':', false);
+			if (key_value.length < 2) continue;
+			String key = key_value[0];
+			String value = key_value[1];
+			hash.put(key, value);
+		}
+		return hash;
+	}
 	private int getCommand(String instruction) {
-		String command = instruction.substring(instruction.substring(7).indexOf('/') + 1);
-		if (command.indexOf("search") > 0) return SEARCH_COMMAND;
+		String command = instruction.substring(instruction.indexOf('/') + 1);
+		if (command.startsWith("search")) return SEARCH_COMMAND;
+		if (command.startsWith("getall")) return GET_ALL_COMMAND;
 		return -1;
 	}
-
-	private String getAgendaByName(String name) {
+	/**
+	 * Returns a contact list, either all contacts or contacts matching the optional search parameter.
+	 * @param options A hash of options to pass into retrieving contacts. These can include name filters and paging parameters.
+	 * @return JSON string representing the contacts that are retrieved.
+	 */
+	private String getAgenda(Hashtable options) {
+		String callbackHook = "";
 		try {
 			BlackBerryContactList agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY);
+			StringBuffer contacts = new StringBuffer("[");
 			if (agenda != null) {
-				StringBuffer contacts = new StringBuffer("[");
-				Enumeration matches = agenda.itemsByName(name);
-				while (matches.hasMoreElements()) {
-					BlackBerryContact contact = (BlackBerryContact) matches.nextElement();
-					contacts.append("{email:'");
-					contacts.append(contact.getString(Contact.EMAIL, 0));
-					contacts.append("', phone:'");
-					contacts.append(contact.getString(Contact.TEL, 0));
-					contacts.append("'},");
+				Enumeration matches;
+				String name = options.get("nameFilter")!=null?options.get("nameFilter").toString():"";
+				if (name != "") {
+					matches = agenda.itemsByName(name);
+					callbackHook = "search_";
+				} else {
+					matches = agenda.items();
+					callbackHook = "global_";
 				}
-				return contacts.deleteCharAt(contacts.length() - 1).append("]").toString();
+				int pageSize = 0, pageNumber = 0;
+				if (options.contains("pageSize")) pageSize = Integer.parseInt(options.get("pageSize").toString());
+				if (options.contains("pageNumber")) pageNumber = Integer.parseInt(options.get("pageNumber").toString());
+				if (pageSize > 0) {
+					for (int i = 0; i < pageSize*pageNumber && matches.hasMoreElements(); i++) {
+						matches.nextElement();
+					}
+					for (int j = 0; j < pageSize && matches.hasMoreElements(); j++) {
+						BlackBerryContact contact = (BlackBerryContact)matches.nextElement();
+						ContactsCommand.addContactToBuffer(contacts, contact);
+						contacts.append(',');
+					}
+				} else {
+					while (matches.hasMoreElements()) {
+						BlackBerryContact contact = (BlackBerryContact)matches.nextElement();
+						ContactsCommand.addContactToBuffer(contacts, contact);
+						contacts.append(',');
+					}
+				}
+				if (contacts.length() > 1) contacts = contacts.deleteCharAt(contacts.length() - 1);
+				contacts.append("];");
+				// Return an assignment to the contact manager contacts array with the contacts JSON generated above.
+				// Also call the right onSuccess if it exists.
+				return ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.toString() + "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess() };"; 
+			} else {
+				// TODO: If cannot get reference to Agenda, should the error or success callback be called?
+				return contacts.append("];").toString();
 			}
 		} catch (Exception ex) {
 			System.out.println("Exception getting contact list: " + ex.getMessage());
+			return "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError() };"; 
 		}
-		return null;
 	}
-
+	private static void addContactToBuffer(StringBuffer buff, BlackBerryContact contact) {
+		buff.append("{email:'");
+		buff.append(contact.getString(Contact.EMAIL, 0));
+		buff.append("', phone:'");
+		buff.append(contact.getString(Contact.TEL, 0));
+		buff.append("', name:'");
+		String displayName = "";
+		// See if there is a meaningful name set for the contact.
+	    if (contact.countValues(Contact.NAME) > 0) {
+	        final String[] name = contact.getStringArray(Contact.NAME, 0);
+	        final String firstName = name[Contact.NAME_GIVEN];
+	        final String lastName = name[Contact.NAME_FAMILY];
+	        if (firstName != null && lastName != null) {
+	            displayName = firstName + " " + lastName;
+	        } else if (firstName != null) {
+	            displayName = firstName;
+	        } else if (lastName != null) {
+	            displayName = lastName;
+	        }
+	        if (displayName != "") {
+	            final String namePrefix = name[Contact.NAME_PREFIX];
+	            if (namePrefix != null) {
+	                displayName = namePrefix + " " + displayName;
+	            }
+	        }
+	    }
+	    buff.append(displayName + "'}");
+	}
 }
