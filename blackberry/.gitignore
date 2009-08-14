@@ -1,5 +1,4 @@
 .tmp
 .settings
 bin/*
-phonegap.*
 .project.old
