@@ -1,6 +1,8 @@
 #import "PhoneGapDelegate.h"
 #import "PhoneGapViewController.h"
 #import <UIKit/UIKit.h>
+#import "Movie.h"
+#import "InvokedUrlCommand.h"
 
 @implementation PhoneGapDelegate
 
@@ -9,6 +11,7 @@
 @synthesize activityView;
 @synthesize commandObjects;
 @synthesize settings;
+@synthesize invokedURL;
 
 - (id) init
 {
@@ -155,13 +158,12 @@
 	[window makeKeyAndVisible];
 }
 
-
 /**
  When web application loads Add stuff to the DOM, mainly the user-defined settings from the Settings.plist file, and
  the device's data such as device ID, platform version, etc.
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView {
-	NSDictionary *deviceProperties = [[self getCommandInstance:@"Device"] getDeviceProperties];
+	NSDictionary *deviceProperties = [[self getCommandInstance:@"Device"] deviceProperties];
     NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
     
     /* Settings.plist
@@ -177,6 +179,72 @@
     NSLog(@"Device initialization: %@", result);
     [theWebView stringByEvaluatingJavaScriptFromString:result];
 	[result release];
+    
+	// Play any default movie
+	if(![[[UIDevice currentDevice] model] isEqualToString:@"iPhone Simulator"]) {
+		NSLog(@"Going to play default movie");
+		Movie* mov = (Movie*)[self getCommandInstance:@"Movie"];
+		NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
+		[args addObject:@"default.mov"];
+		NSMutableDictionary* opts = [[[NSMutableDictionary alloc] init] autorelease];
+		[opts setObject:@"1" forKey:@"repeat"];
+		[mov play:args withDict:opts];
+	}
+
+    // Determine the URL used to invoke this application.
+    // Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
+	
+ 	if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
+		InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
+    
+		NSLog(@"Arguments: %@", iuc.arguments);
+		NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
+	 
+		[webView stringByEvaluatingJavaScriptFromString:optionsString];
+		
+		[optionsString release];
+    }
+}
+
+- (NSString*) appURLScheme
+{
+	// The info.plist contains this structure:
+	//<key>CFBundleURLTypes</key>
+	// <array>
+	//		<dict>
+	//			<key>CFBundleURLSchemes</key>
+	//			<array>
+	//				<string>yourscheme</string>
+	//			</array>
+	//			<key>CFBundleURLName</key>
+	//			<string>YourbundleURLName</string>
+	//		</dict>
+	// </array>
+
+	NSString* URLScheme = nil;
+	
+    NSArray *URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+    if(URLTypes != nil ) {
+		NSDictionary* dict = [URLTypes objectAtIndex:0];
+		if(dict != nil ) {
+			NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
+			if( URLSchemes != nil ) {    
+				URLScheme = [URLSchemes objectAtIndex:0];
+			}
+		}
+	}
+	
+	return URLScheme;
+}
+
+- (void) javascriptAlert:(NSString*)text
+{
+	NSString* jsString = nil;
+	jsString = [[NSString alloc] initWithFormat:@"alert('%@');", text];
+	[webView stringByEvaluatingJavaScriptFromString:jsString];
+
+	NSLog(jsString);
+	[jsString release];
 }
 
 /**
@@ -242,70 +310,16 @@
      * We have to strip off the leading slash for the options.
      */
      if ([[url scheme] isEqualToString:@"gap"]) {
-        //NSLog(@"%@", [url description]); // Uncomment to watch gap: commands being issued
-        /*
-         * Note: We have to go through the following contortions because NSURL "helpfully" unescapes
-         *       certain characters, such as "/" from their hex encoding for us.  This normally wouldn't
-         *       be a problem, unless your argument has a "/" in it, such as a file path.
-		 */
-		NSString * command = [url host];
-
-        NSString * fullUrl = [url description];
-        int prefixLength  = [command length] + 7; // "gap://" plus the leading "/"
-        int qsLength = [[url query] length];
-        int pathLength = [fullUrl length] - prefixLength;
-        if (qsLength > 0)
-            pathLength = pathLength - qsLength - 1;
-        NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
-        
-        // Array of arguments
-        NSMutableArray * arguments = [NSMutableArray arrayWithArray:[path componentsSeparatedByString:@"/"]];
-        int i, arguments_count = [arguments count];
-        for (i = 0; i < arguments_count; i++) {
-            [arguments replaceObjectAtIndex:i withObject:[(NSString *)[arguments objectAtIndex:i]
-                                                          stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-        }
-        //NSLog(@"Arguments: %@", arguments);
-
-        NSMutableDictionary * options = [NSMutableDictionary dictionaryWithCapacity:1];
-        NSArray * options_parts = [NSArray arrayWithArray:[[url query] componentsSeparatedByString:@"&"]];
-        int options_count = [options_parts count];
-        for (i = 0; i < options_count; i++) {
-            NSArray  *option_part = [[options_parts objectAtIndex:i] componentsSeparatedByString:@"="];
-            NSString *name  = [(NSString *)[option_part objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSString *value = [(NSString *)[option_part objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            [options setObject:value forKey:name];
-        }
-        //NSLog(@"Options: %@", options);
+		 
+		InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:url] autorelease];
         
 		// Tell the JS code that we've gotten this command, and we're ready for another
         [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
 		
 		// Check to see if we are provided a class:method style command.
-        NSArray* components = [command componentsSeparatedByString:@"."];
-        if (components.count == 2)
-        {
-            NSString* className = [components objectAtIndex:0];
-            NSString* methodName = [components objectAtIndex:1];
-            
-            // Fetch an instance of this class
-            PhoneGapCommand* obj = [self getCommandInstance:className];
-            
-            // construct the fill method name to ammend the second argument.
-            NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", methodName];
-            if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)])
-            {
-                [obj performSelector:NSSelectorFromString(fullMethodName) withObject:arguments withObject:options];
-            }
-            else
-            {
-                // There's no method to call, so throw an error.
-                NSLog(@"Class method '%@' not defined in class '%@'", fullMethodName, className);
-                [NSException raise:NSInternalInconsistencyException format:@"Class method '%@' not defined against class '%@'.", fullMethodName, className];
-            }
-            [fullMethodName release];
-        }
-		return NO;
+		[self execute:iuc];
+
+		 return NO;
 	}
     
     /*
@@ -330,6 +344,41 @@
 	return YES;
 }
 
+- (BOOL) execute:(InvokedUrlCommand*)command
+{
+	if (command.className == nil || command.methodName == nil) {
+		return NO;
+	}
+	
+	// Fetch an instance of this class
+	PhoneGapCommand* obj = [self getCommandInstance:command.className];
+	
+	// construct the fill method name to ammend the second argument.
+	NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName];
+	if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)]) {
+		[obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
+	}
+	else {
+		// There's no method to call, so throw an error.
+		NSLog(@"Class method '%@' not defined in class '%@'", fullMethodName, command.className);
+		[NSException raise:NSInternalInconsistencyException format:@"Class method '%@' not defined against class '%@'.", fullMethodName, command.className];
+	}
+	[fullMethodName release];
+	
+	return YES;
+}
+
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+	NSLog(@"In handleOpenURL");
+	if (!url) { return NO; }
+	
+	NSLog(@"URL = %@", [url absoluteURL]);
+	invokedURL = url;
+	
+	return YES;
+}
 
 /**
  * Sends Accel Data back to the Device.
@@ -348,6 +397,8 @@
 	[viewController release];
     [activityView release];
 	[window release];
+	[invokedURL release];
+	
 	[super dealloc];
 }
 

@@ -6,14 +6,16 @@
 function Contact(jsonObject) {
 	this.firstName = "";
 	this.lastName = "";
-	this.phoneNumber = "";
+    this.name = "";
+    this.phones = {};
+    this.emails = {};
 	this.address = "";
 }
 
 Contact.prototype.displayName = function()
 {
     // TODO: can be tuned according to prefs
-	return this.firstName + " " + this.lastName;
+	return this.name;
 }
 
 function ContactManager() {
