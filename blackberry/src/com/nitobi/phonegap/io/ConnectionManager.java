@@ -51,10 +51,12 @@ public final class ConnectionManager {
 
 	public static final String DATA = "data";
 	public static final String DATA_PROTOCOL = DATA + ":///";
-	private static final byte[] DATA_URL_HTML = (ConnectionManager.DATA + ":text/html;charset=utf-8;base64,").getBytes();
-	private static final byte[] DATA_URL_JS = (ConnectionManager.DATA + ":text/javascript;charset=utf-8;base64,").getBytes();
-	private static final byte[] DATA_URL_IMG_JPG = (ConnectionManager.DATA + ":image/jpeg;charset=utf-8;base64,").getBytes();
-	private static final byte[] DATA_URL_PLAIN = (ConnectionManager.DATA + ":text/plain;charset=utf-8;base64,").getBytes();
+	private static final String URI_SUFFIX = ";charset=utf-8;base64,";
+	private static final byte[] DATA_URL_HTML = (ConnectionManager.DATA + ":text/html" + URI_SUFFIX).getBytes();
+	private static final byte[] DATA_URL_JS = (ConnectionManager.DATA + ":text/javascript" + URI_SUFFIX).getBytes();
+	private static final byte[] DATA_URL_IMG_JPG = (ConnectionManager.DATA + ":image/jpeg" + URI_SUFFIX).getBytes();
+	private static final byte[] DATA_URL_CSS = (ConnectionManager.DATA + ":text/css" + URI_SUFFIX).getBytes();
+	private static final byte[] DATA_URL_PLAIN = (ConnectionManager.DATA + ":text/plain" + URI_SUFFIX).getBytes();
 
 	/**
 	 * Creates a connection and returns it. Calling this method without care may saturate BB capacity.
@@ -206,6 +208,8 @@ public final class ConnectionManager {
 				output.write(ConnectionManager.DATA_URL_JS);
 			} else if (dataUrl.endsWith(".jpg") || dataUrl.endsWith(".jpeg")) {
 				output.write(ConnectionManager.DATA_URL_IMG_JPG);
+			} else if (dataUrl.endsWith(".css")) {
+				output.write(ConnectionManager.DATA_URL_CSS);
 			} else {
 				output.write(ConnectionManager.DATA_URL_PLAIN);
 			}
