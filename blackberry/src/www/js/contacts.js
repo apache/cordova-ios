@@ -46,5 +46,11 @@ ContactManager.prototype.getAllContacts = function(successCallback, errorCallbac
 	params = this.formParams(options,params);
 	device.exec("contacts", params, true);
 }
+ContactManager.prototype.chooseContact = function(successCallback, options) {
+	this.choose_onSuccess = successCallback;
+	var params = ["choose"];
+	params = this.formParams(options,params);
+	device.exec("contacts", params, true);
+}
 
 if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();

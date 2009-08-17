@@ -29,6 +29,14 @@
 				};
 				navigator.ContactManager.getAllContacts(win,fail,options);
 			}
+			function chooseContact() {
+				var options = {};
+				var win = function() {
+					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].name + '\nemail: ' + navigator.ContactManager.contacts[0].email + '\nphone: ' + navigator.ContactManager.contacts[0].phone);
+					else alert("No contacts found.");
+				};
+				navigator.ContactManager.chooseContact(win, options);
+			}
 		</script>
 	</head>
 	<body>
@@ -36,7 +44,8 @@
 		<hr>
 		<p><a href="javascript:getAllContacts(null,null);">Get first contact in address book</a></p>
 		<hr>
-		<br/>
+		<p><a href="javascript:chooseContact();">Use Contact Chooser to select a Contact</a></p>
+		<hr>
 		<br/>
 		<br/>
 		<br/>

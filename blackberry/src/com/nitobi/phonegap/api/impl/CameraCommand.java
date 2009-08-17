@@ -35,7 +35,7 @@ import net.rim.device.api.ui.UiApplication;
 import com.nitobi.phonegap.api.Command;
 
 /**
- * Switchs current application to the camera to take a photo.
+ * Switches current application to the camera to take a photo.
  *
  * @author Jose Noheda
  *
@@ -44,7 +44,8 @@ public class CameraCommand implements Command {
 
 	private static final int INVOKE_COMMAND = 0;
 	private static final int PICTURE_COMMAND = 1;
-	private static final String CODE = "gap://camera"; 
+	private static final String CODE = "PhoneGap=camera"; 
+	//private static final String 
 
 	private long lastUSN = 0;
 	private String photoPath;
@@ -70,10 +71,6 @@ public class CameraCommand implements Command {
 			}
 		};
 	}
-
-	/**
-	 * Able to run the <i>camera</i> command. Ex: gap://camera/obtain
-	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
 	}
@@ -85,7 +82,7 @@ public class CameraCommand implements Command {
 		switch (getCommand(instruction)) {
 			case PICTURE_COMMAND:
 				UiApplication.getUiApplication().removeFileSystemJournalListener(listener);
-				return "navigator.camera.picture = '" + photoPath + "'";
+				return ";navigator.camera.picture = '" + photoPath + "';";
 			case INVOKE_COMMAND:
 				photoPath = null;
 				UiApplication.getUiApplication().addFileSystemJournalListener(listener);
