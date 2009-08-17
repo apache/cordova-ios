@@ -45,6 +45,7 @@ public class ContactsCommand implements Command {
 
 	private static final int SEARCH_COMMAND = 0;
 	private static final int GET_ALL_COMMAND = 1;
+	private static final int CHOOSE_COMMAND = 2;
 	private static final String CODE = "PhoneGap=contacts"; 
 	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.ContactManager";
 
@@ -62,13 +63,41 @@ public class ContactsCommand implements Command {
 				return getAgenda(options);
 			case GET_ALL_COMMAND:
 				return getAgenda(options);
+			case CHOOSE_COMMAND:
+				return chooseContact();
 		}
 		return null;
 	}
 	/**
-	 * 
-	 * @param instruction
-	 * @return
+	 * Invokes the default BlackBerry contact chooser to allow the user to choose a contact.
+	 * @return JSON representation of the chosen contact, which will then be sent back to JavaScript.
+	 */
+	private String chooseContact() {
+		try {
+			BlackBerryContactList agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY);
+			BlackBerryContact blackberryContact;
+			StringBuffer contacts = new StringBuffer("[");
+			if (agenda != null) {
+				blackberryContact = (BlackBerryContact) agenda.choose();
+				agenda.close();
+				ContactsCommand.addContactToBuffer(contacts, blackberryContact);
+				contacts.append("];");
+				return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.toString() + "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess();" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess = null; };";
+			} else {
+				// TODO: If cannot get reference to Agenda, should the error or success callback be called?
+				return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.append("];").toString() + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess = null;";
+			}
+		} catch (Exception e) {
+			System.out.println("Exception getting contact list: " + e.getMessage());
+			// TODO: No error callbacks associated with contact chooser - what to do?
+		}
+		return null;
+	}
+
+	/**
+	 * Parses the options object and returns a hash of params.
+	 * @param instruction The cookie/string representation of the instruction.
+	 * @return Hashtable 
 	 */
 	private static Hashtable parseParameters(String instruction) {
 		String[] params = PhoneGap.splitString(instruction, '/', false);
@@ -89,6 +118,7 @@ public class ContactsCommand implements Command {
 		String command = instruction.substring(instruction.indexOf('/') + 1);
 		if (command.startsWith("search")) return SEARCH_COMMAND;
 		if (command.startsWith("getall")) return GET_ALL_COMMAND;
+		if (command.startsWith("choose")) return CHOOSE_COMMAND;
 		return -1;
 	}
 	/**
@@ -134,14 +164,14 @@ public class ContactsCommand implements Command {
 				contacts.append("];");
 				// Return an assignment to the contact manager contacts array with the contacts JSON generated above.
 				// Also call the right onSuccess if it exists.
-				return ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.toString() + "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess() };"; 
+				return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.toString() + "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess();" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess = null;" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError = null; };"; 
 			} else {
 				// TODO: If cannot get reference to Agenda, should the error or success callback be called?
-				return contacts.append("];").toString();
+				return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.append("];").toString() + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess = null;" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError = null;";
 			}
 		} catch (Exception ex) {
 			System.out.println("Exception getting contact list: " + ex.getMessage());
-			return "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError() };"; 
+			return ";if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError();" +  ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onSuccess = null;" +  ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + "." + callbackHook + "onError = null; };"; 
 		}
 	}
 	private static void addContactToBuffer(StringBuffer buff, BlackBerryContact contact) {
