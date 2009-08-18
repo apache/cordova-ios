@@ -8,10 +8,27 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioServices.h>
+
+#ifdef __IPHONE_3_0
+#import <AVFoundation/AVFoundation.h>
+#endif
+
 #import "PhoneGapCommand.h"
 
-@interface Sound : PhoneGapCommand {
+@interface Sound : PhoneGapCommand
+#ifdef __IPHONE_3_0
+    <AVAudioPlayerDelegate>
+#endif
+{
+	NSString *successCallback;
+	NSString *errorCallback;
+#ifdef __IPHONE_3_0
+	AVAudioPlayer *player;
+#endif
 }
+
+@property (retain) NSString* successCallback;
+@property (retain) NSString* errorCallback;
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 

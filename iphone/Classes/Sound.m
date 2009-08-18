@@ -10,8 +10,15 @@
 
 @implementation Sound
 
+@synthesize successCallback, errorCallback;
+
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+	NSUInteger argc = [arguments count];
+	
+	if (argc > 1) self.successCallback = [arguments objectAtIndex:1];
+	if (argc > 2) self.errorCallback = [arguments objectAtIndex:2];
+	
     NSBundle * mainBundle = [NSBundle mainBundle];
     NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[(NSString*)[arguments objectAtIndex:0] componentsSeparatedByString:@"/"]];
     NSString       *filename       = [directoryParts lastObject];
@@ -39,6 +46,27 @@
         NSLog(@"Sound error %d", error);
     
     AudioServicesPlaySystemSound(soundID);
+}
+
+/*
+ * event listener when file has stopped playing 
+ */
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+	NSLog(@"finished playing audio sample");
+	
+	if (flag){
+		if (self.successCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", self.successCallback, @""];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			[jsString release];
+		}
+	} else {
+		if (self.errorCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", self.errorCallback, @""];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			[jsString release];
+		}		
+	}
 }
 
 @end

@@ -3,8 +3,10 @@
  * This class provides access to the device media, interfaces to both sound and video
  * @constructor
  */
-function Media(src) {
+function Media(src, successCallback, errorCallback) {
 	this.src = src;
+	this.successCallback = successCallback;
+	this.errorCallback = errorCallback;												
 }
 
 Media.prototype.record = function() {
