@@ -14,11 +14,15 @@
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+	if([[arguments objectAtIndex:0] isEqualToString:@""]){
+		NSLog(@"Cannot play empty URI");
+		return;
+	}
 	NSUInteger argc = [arguments count];
 	
 	if (argc > 1) self.successCallback = [arguments objectAtIndex:1];
 	if (argc > 2) self.errorCallback = [arguments objectAtIndex:2];
-	
+
     NSBundle * mainBundle = [NSBundle mainBundle];
     NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[(NSString*)[arguments objectAtIndex:0] componentsSeparatedByString:@"/"]];
     NSString       *filename       = [directoryParts lastObject];
