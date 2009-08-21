@@ -6,11 +6,11 @@ namespace PhoneGap {
 
     class CommandManager {
 
-        private Command[] commands = new Command[1];
+        private Command[] commands = new Command[2];
 
         public CommandManager() {
             commands[0] = new InitializationCommand();
-            //commands[1] = new MediaCommand();
+            commands[1] = new MediaCommand();
         }
 
         public String processInstruction(String instruction) {

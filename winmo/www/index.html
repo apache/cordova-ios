@@ -9,8 +9,11 @@
 		    document.getElementById('resultText').innerText = newText;
 		}
 		function playApplause() {
-		    media.playSound('data:///www/media/applause.wav');
+		    media.playSound('www/media/applause.wav');
 		    showLabel('CLAP CLAP CLAP!');
+		}
+		function playBirds() {
+		    media.playSound('www/media/bird.mp3');
 		}
 		</script>
 	</head>
@@ -18,7 +21,8 @@
 	    <p>This is an HTML page.</p><br />
 	    <a href="javascript:showLabel(device.name);">Show me the device model/name</a><br />
 	    <a href='javascript:showLabel(device.uuid);'>Show me the device UUID</a><br />
-	    <!--<a href="javascript:playApplause();">Play expected audience response ;)</a><br />-->
+	    <a href="javascript:playApplause();">Play applause</a><br />
+	    <a href="javascript:playBirds();">Play birds</a><br />
 	    <br />
 	    <div id="resultLabel" style="width:100%;height:20px;background-color:#dddddd;padding:2px;margin:5px;border:solid 1px black;"><p id="resultText" style="margin:0 auto;"></p></div>
 	    <br />
