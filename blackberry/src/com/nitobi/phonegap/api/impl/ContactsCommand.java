@@ -27,7 +27,7 @@ import java.util.Hashtable;
 
 import javax.microedition.pim.Contact;
 import javax.microedition.pim.PIM;
-
+import javax.microedition.pim.PIMException;
 import net.rim.blackberry.api.pdap.BlackBerryContact;
 import net.rim.blackberry.api.pdap.BlackBerryContactList;
 
@@ -46,6 +46,8 @@ public class ContactsCommand implements Command {
 	private static final int SEARCH_COMMAND = 0;
 	private static final int GET_ALL_COMMAND = 1;
 	private static final int CHOOSE_COMMAND = 2;
+	private static final int REMOVE_COMMAND = 3;
+	private static final int NEW_COMMAND = 4;
 	private static final String CODE = "PhoneGap=contacts"; 
 	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.ContactManager";
 
@@ -65,6 +67,99 @@ public class ContactsCommand implements Command {
 				return getAgenda(options);
 			case CHOOSE_COMMAND:
 				return chooseContact();
+			case REMOVE_COMMAND:
+				return removeContact(options);
+			case NEW_COMMAND:
+				return newContact(options);
+		}
+		return null;
+	}
+	/**
+	 * Parses the options object and returns a hash of params.
+	 * @param instruction The cookie/string representation of the instruction.
+	 * @return Hashtable Hash of key:value pairs containing the parameter names & values.
+	 */
+	private static Hashtable parseParameters(String instruction) {
+		String[] params = PhoneGap.splitString(instruction, '/', false);
+		int numParams = params.length;
+		Hashtable hash = new Hashtable();
+		for (int i = 0; i < numParams; i++) {
+			String curParam = params[i];
+			if (curParam.indexOf(':') == -1) continue;
+			String[] key_value = PhoneGap.splitString(curParam, ':', false);
+			if (key_value.length < 2) continue;
+			String key = key_value[0];
+			String value = key_value[1];
+			hash.put(key, value);
+		}
+		return hash;
+	}
+	private int getCommand(String instruction) {
+		String command = instruction.substring(instruction.indexOf('/') + 1);
+		if (command.startsWith("search")) return SEARCH_COMMAND;
+		if (command.startsWith("getall")) return GET_ALL_COMMAND;
+		if (command.startsWith("choose")) return CHOOSE_COMMAND;
+		if (command.startsWith("remove")) return REMOVE_COMMAND;
+		if (command.startsWith("new")) return NEW_COMMAND;
+		return -1;
+	}
+	/**
+	 * Creates a new contact based on the hash of parameters passed in via options.
+	 * @param options Parsed parameters for use with creating a new contact.
+	 * @return String, which will be executed back in browser. Just callback invokes.
+	 */
+	private String newContact(Hashtable options) {
+		try {
+			BlackBerryContactList agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_WRITE);
+			BlackBerryContact contact = (BlackBerryContact) agenda.createContact();
+			// Add name(s).
+			String[] nameField = new String[2];
+			nameField[Contact.NAME_FAMILY] = options.get("lastName").toString();
+			nameField[Contact.NAME_GIVEN] = options.get("firstName").toString();
+			if (agenda.isSupportedField(Contact.NAME)) contact.addStringArray(Contact.NAME, Contact.ATTR_NONE, nameField);
+			// TODO: Need to finalize JSON representation of address - it's multi-field in BlackBerry :s.
+			
+			// TODO: Figure out how attributes and fields work for contact in BlackBerry. RUN TESTS! Code below may change.   
+			String numbers = options.get("phoneNumber").toString();
+			if (agenda.isSupportedField(Contact.TEL)) contact.addString(Contact.TEL, Contact.ATTR_MOBILE, numbers.substring(numbers.lastIndexOf('=')+1));
+			String emails = options.get("email").toString();
+			if (agenda.isSupportedField(Contact.EMAIL)) contact.addString(Contact.EMAIL, Contact.ATTR_MOBILE, emails.substring(emails.lastIndexOf('=')+1));
+			contact.commit();
+			return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".new_onSuccess) { " + CONTACT_MANAGER_JS_NAMESPACE + ".new_onSuccess(); };";
+		} catch (PIMException e) {
+			e.printStackTrace();
+			return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".new_onError) { " + CONTACT_MANAGER_JS_NAMESPACE + ".new_onError(); };";
+		}
+	}
+
+	/**
+	 * Removes the specified contact from the contact list.
+	 * @param options A hash of options (parameters) passed by the PhoneGap app. Needs to contain a 'contactID' property for the removal to go through properly.
+	 * @return JavaScript that will be evaluated by the PhoneGap app - only callbacks.
+	 */
+	private String removeContact(Hashtable options) {
+		if (options.contains("contactID")) {
+			try {
+				BlackBerryContactList agenda = (BlackBerryContactList) PIM
+						.getInstance().openPIMList(PIM.CONTACT_LIST,
+								PIM.READ_WRITE);
+				Contact matchContact = agenda.createContact();
+				int contactID = Integer.parseInt(options.get("contactID").toString());
+				if (agenda.isSupportedField(Contact.UID)) matchContact.addInt(Contact.UID, Contact.ATTR_HOME | Contact.ATTR_PREFERRED, contactID);
+				Enumeration matches = agenda.items(matchContact);
+				if (matches.hasMoreElements()) {
+					// Matched to a contact.
+				} else {
+					// No matches found - call error callback.
+					
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				// Trigger error callback if exception occurs.
+				return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".remove_onError) { " + CONTACT_MANAGER_JS_NAMESPACE + ".remove_onError(); };";
+			}
+		} else {
+			return ";alert('[PhoneGap Error] Contact ID not specified during contact removal operation.');";
 		}
 		return null;
 	}
@@ -93,38 +188,10 @@ public class ContactsCommand implements Command {
 		}
 		return null;
 	}
-
-	/**
-	 * Parses the options object and returns a hash of params.
-	 * @param instruction The cookie/string representation of the instruction.
-	 * @return Hashtable 
-	 */
-	private static Hashtable parseParameters(String instruction) {
-		String[] params = PhoneGap.splitString(instruction, '/', false);
-		int numParams = params.length;
-		Hashtable hash = new Hashtable();
-		for (int i = 0; i < numParams; i++) {
-			String curParam = params[i];
-			if (curParam.indexOf(':') == -1) continue;
-			String[] key_value = PhoneGap.splitString(curParam, ':', false);
-			if (key_value.length < 2) continue;
-			String key = key_value[0];
-			String value = key_value[1];
-			hash.put(key, value);
-		}
-		return hash;
-	}
-	private int getCommand(String instruction) {
-		String command = instruction.substring(instruction.indexOf('/') + 1);
-		if (command.startsWith("search")) return SEARCH_COMMAND;
-		if (command.startsWith("getall")) return GET_ALL_COMMAND;
-		if (command.startsWith("choose")) return CHOOSE_COMMAND;
-		return -1;
-	}
 	/**
 	 * Returns a contact list, either all contacts or contacts matching the optional search parameter.
 	 * @param options A hash of options to pass into retrieving contacts. These can include name filters and paging parameters.
-	 * @return JSON string representing the contacts that are retrieved.
+	 * @return JSON string representing the contacts that are retrieved, plus necessary JavaScript callbacks.
 	 */
 	private String getAgenda(Hashtable options) {
 		String callbackHook = "";
@@ -175,31 +242,41 @@ public class ContactsCommand implements Command {
 		}
 	}
 	private static void addContactToBuffer(StringBuffer buff, BlackBerryContact contact) {
-		buff.append("{email:'");
+		// TODO: Eventually extend this to return proper labels/values for differing phone/email types.
+		buff.append("{email:[{'label':'mobile','value':'");
 		buff.append(contact.getString(Contact.EMAIL, 0));
-		buff.append("', phone:'");
+		buff.append("'}], phoneNumber:[{'label':'mobile','value':'");
 		buff.append(contact.getString(Contact.TEL, 0));
-		buff.append("', name:'");
-		String displayName = "";
+		buff.append("'}], firstName:'");
 		// See if there is a meaningful name set for the contact.
 	    if (contact.countValues(Contact.NAME) > 0) {
 	        final String[] name = contact.getStringArray(Contact.NAME, 0);
 	        final String firstName = name[Contact.NAME_GIVEN];
 	        final String lastName = name[Contact.NAME_FAMILY];
-	        if (firstName != null && lastName != null) {
-	            displayName = firstName + " " + lastName;
-	        } else if (firstName != null) {
-	            displayName = firstName;
-	        } else if (lastName != null) {
-	            displayName = lastName;
-	        }
-	        if (displayName != "") {
-	            final String namePrefix = name[Contact.NAME_PREFIX];
-	            if (namePrefix != null) {
-	                displayName = namePrefix + " " + displayName;
-	            }
-	        }
+	        if (firstName != null) buff.append(firstName + "',lastName:'");
+	        else buff.append("',lastName:'");
+	        if (lastName != null) buff.append(lastName + "',");
+	        else buff.append("',");
+	    } else {
+	    	buff.append("',lastName:''");
 	    }
-	    buff.append(displayName + "'}");
+	    buff.append(",address:'");
+	    // Build up a meaningful address field.
+	    if (contact.countValues(Contact.ADDR) > 0) {
+	    	String address = "";
+	    	final String[] addr = contact.getStringArray(Contact.ADDR, 0);
+	    	final String street = addr[Contact.ADDR_STREET];
+	    	final String city = addr[Contact.ADDR_LOCALITY];
+	    	final String state = addr[Contact.ADDR_REGION];
+	    	final String country = addr[Contact.ADDR_COUNTRY];
+	    	final String postalCode = addr[Contact.ADDR_POSTALCODE];
+	    	if (street!=null) address = street.replace('\'',' ');
+	    	if (city!=null) if (address.length() > 0) address += ", " + city.replace('\'',' '); else address = city.replace('\'',' ');
+	    	if (state!=null) if (address.length() > 0) address += ", " + state.replace('\'',' '); else address = state.replace('\'',' ');
+	    	if (country!=null) if (address.length() > 0) address += ", " + country.replace('\'',' '); else address = country.replace('\'',' ');
+	    	if (postalCode!=null) if (address.length() > 0) address += ", " + postalCode.replace('\'',' '); else address = postalCode.replace('\'',' ');
+	    	buff.append(address);
+	    }
+		buff.append("'}");
 	}
 }
