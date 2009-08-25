@@ -55,7 +55,7 @@ import com.nitobi.phonegap.io.SecondaryResourceFetchThread;
  * Bridges HTML/JS/CSS to a native Blackberry application.
  * @author Jose Noheda
  * @author Fil Maj
- *
+ * @author Dave Johnson
  */
 public class PhoneGap extends UiApplication implements RenderingApplication {
 
