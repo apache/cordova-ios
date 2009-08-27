@@ -9,6 +9,7 @@
 			function picture() {
 				navigator.camera.getPicture();
 				alert("Path is: " + navigator.camera.picture);
+				document.getElementById('testImg').src = navigator.camera.picture;
 			}
 		</script>
 	</head>
@@ -18,7 +19,8 @@
 		<p><a href="javascript:camera();">Use the Camera</a></p>
 		<p><a href="javascript:picture();">Get the picture</a></p>
 		<hr>
-		<br/>
+		<p>Placeholder for image:</p>
+		<img src="" id="testImg" />
 		<br/>
 		<br/>
 		<br/>

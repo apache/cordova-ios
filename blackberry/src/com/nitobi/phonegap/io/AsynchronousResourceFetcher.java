@@ -32,16 +32,14 @@ public class AsynchronousResourceFetcher implements Runnable {
 
 	private String url;
 	private Callback callback;
-	private ConnectionManager connectionManager;
 
-	public AsynchronousResourceFetcher(String url, Callback callback, ConnectionManager connectionManager) {
+	public AsynchronousResourceFetcher(String url, Callback callback) {
 		this.url = url;
 		this.callback = callback;
-		this.connectionManager = connectionManager;
 	}
 
 	public void run() {
-		callback.execute(connectionManager.getUnmanagedConnection(url));
+		callback.execute(ConnectionManager.getUnmanagedConnection(url, null, null));
 	}
 
 }
