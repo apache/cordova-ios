@@ -40,7 +40,7 @@
     if (qsLength > 0)
 		pathLength = pathLength - qsLength - 1; // 1 is the "?" char
 	// remove leading forward slash length
-	else if ([fullUrl hasSuffix:@"/"])
+	else if ([fullUrl hasSuffix:@"/"] && pathLength > 0)
 		pathLength -= 1; // 1 is the "/" char 
 	
     NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
