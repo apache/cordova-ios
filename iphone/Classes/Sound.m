@@ -69,6 +69,7 @@
     AudioServicesPlaySystemSound(soundID);
 }
 
+#ifdef __IPHONE_3_0
 /*
  * event listener when file has stopped playing 
  */
@@ -89,5 +90,6 @@
 		}		
 	}
 }
+#endif
 
 @end
