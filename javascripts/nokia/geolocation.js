@@ -3,8 +3,17 @@
  * Nonetheless, they are included, and we can use whatever data we manage to get.
  */
 
+<<<<<<< HEAD:javascripts/nokia/geolocation.js
 // This allows us to override the constructor keeping all the original prototype methods.
 /*
+=======
+// TODO: running this on load of the js file is horrendous. The below solution of overriding the
+// constructor is better, but it fails on the device!
+var locationService = InitializeLocationServiceObject();
+
+
+// This allows us to override the constructor keeping all the original prototype methods.
+>>>>>>> initial commit of nokia javascript files:javascripts/nokia/geolocation.js
 var geoPlaceholder = Geolocation.prototype;
 Geolocation = function() {
 
@@ -14,6 +23,7 @@ Geolocation = function() {
         onLocationChanged: [],
         onError:           []
     };
+<<<<<<< HEAD:javascripts/nokia/geolocation.js
 	
 	this.serviceObj = InitializeLocationServiceObject();
 };
@@ -25,6 +35,15 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 	if (!this.serviceObj)
 		this.serviceObj = InitializeLocationServiceObject();
 	
+=======
+	this.serviceObj = locationService;	//InitializeLocationServiceObject();
+};
+Geolocation.prototype = geoPlaceholder;
+
+
+Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+	
+>>>>>>> initial commit of nokia javascript files:javascripts/nokia/geolocation.js
 	//construct the criteria for our location request
 	var updateOptions = new Object();
     // Specify that location information need not be guaranteed. This helps in
