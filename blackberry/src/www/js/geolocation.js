@@ -22,7 +22,7 @@ Geolocation.prototype.start = function() {
 		alert("GPS already started");
 		return;
 	}
-    device.exec("location", ["start"], true);
+    device.exec("location", ["start"]);
 }
 
 /**
@@ -34,7 +34,7 @@ Geolocation.prototype.stop = function() {
 		return;
 	}
 	if (this.locationTimeout) window.clearTimeout(this.locationTimeout);
-    device.exec("location", ["stop"], true);
+    device.exec("location", ["stop"]);
 }
 
 /**
@@ -45,7 +45,7 @@ Geolocation.prototype.map = function() {
 		alert("No position to map yet");
 		return;
 	}
-    device.exec("location", ["map"], true);
+    device.exec("location", ["map"]);
 }
 
 /**
@@ -70,7 +70,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 
 Geolocation.prototype._getCurrentPosition = function() {
 	this.lastPosition = null;
-	device.exec("location", ["check"], true);
+	device.exec("location", ["check"]);
 	if (this.lastPosition != null) {
 		window.clearTimeout(this.locationTimeout);
 		if (this.onSuccess) this.onSuccess(this.lastPosition);

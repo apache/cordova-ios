@@ -9,7 +9,6 @@ function Contact() {
 	this.address = "";
 	this.email = {};
 }
-
 function ContactManager() {
 	this.contacts = [];
 	this.timestamp = new Date().getTime();
@@ -29,7 +28,32 @@ ContactManager.prototype.formParams = function(options, startArray) {
 	if (options.nameFilter) params.push("nameFilter:" + options.nameFilter);
 	if (options.contactID) params.push("contactID:" + options.contactID);
 	return params;	
-}
+};
+ContactManager.prototype.chooseContact = function(successCallback, options) {
+	this.choose_onSuccess = successCallback;
+	var params = ["choose"];
+	params = this.formParams(options,params);
+	device.exec("contacts", params, true);
+};
+ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
+	if (options.nameFilter && options.nameFilter.length > 0) {
+		var params = ["search"];
+		params = this.formParams(options,params);
+		this.search_onSuccess = successCallback;
+		this.search_onError = errorCallback;
+		device.exec("contacts", params);
+	} else {
+		ContactManager.getAllContacts(successCallback,errorCallback,options);
+		return;
+	}
+};
+ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+	this.global_onSuccess = successCallback;
+	this.global_onError = errorCallback;
+	var params = ["getall"];
+	params = this.formParams(options,params);
+	device.exec("contacts", params);
+};
 ContactManager.prototype.newContact = function(contact, successCallback, errorCallback, options) {
 	if (!contact) {
 		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
@@ -48,49 +72,17 @@ ContactManager.prototype.newContact = function(contact, successCallback, errorCa
 			phones += contact.phoneNumber[i].label + '=';
 			phones += contact.phoneNumber[i].value + '|';
 		}
-		options.push("phoneNumber:" + phones.substring(0,phones.length-1);
+		options.push("phoneNumber:" + phones.substring(0,phones.length-1));
 		var emails = '';
-		for (var i = 0; i < contact.email.length; i++) {
-			emails += contact.email[i].label + '=';
-			emails += contact.email[i].value + '|';
+		for (var j = 0; j < contact.email.length; j++) {
+			emails += contact.email[j].label + '=';
+			emails += contact.email[j].value + '|';
 		}
-		options.push("email:" + emails.substring(0,emails.length-1);
+		options.push("email:" + emails.substring(0,emails.length-1));
 		this.new_onSuccess = successCallback;
 		this.new_onError = errorCallback;
-		device.exec("new", options, true);
+		device.exec("new", options);
 	}
-}
-ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
-	if (options.nameFilter && options.nameFilter.length > 0) {
-		var params = ["search"];
-		params = this.formParams(options,params);
-		this.search_onSuccess = successCallback;
-		this.search_onError = errorCallback;
-		device.exec("contacts", params, true);
-	} else {
-		ContactManager.getAllContacts(successCallback,errorCallback,options);
-		return;
-	}
-}
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	this.global_onSuccess = successCallback;
-	this.global_onError = errorCallback;
-	var params = ["getall"];
-	params = this.formParams(options,params);
-	device.exec("contacts", params, true);
-}
-ContactManager.prototype.chooseContact = function(successCallback, options) {
-	this.choose_onSuccess = successCallback;
-	var params = ["choose"];
-	params = this.formParams(options,params);
-	device.exec("contacts", params, true);
-}
-ContactManager.prototype.removeContact = function(successCallback, errorCallback, options) {
-	this.remove_onSuccess = successCallback;
-	this.remove_onError = errorCallback;
-	var params = ["remove"];
-	params = this.formParams(options,params);
-	device.exec("contacts", params, true);
-}
+};
 
-if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+if (typeof navigator.ContactManager == "undefined")	navigator.ContactManager = new ContactManager();
