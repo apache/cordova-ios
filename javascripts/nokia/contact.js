@@ -2,9 +2,11 @@
  * @author ryan
  */
 
-var contactsService = device.getServiceObject("Service.Contact", "IDataSource");
+var contactsService;
 
 ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+	contactsService = device.getServiceObject("Service.Contact", "IDataSource");
+	
 	var criteria = new Object();
 	criteria.Type = "Contact";
 	
