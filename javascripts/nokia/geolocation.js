@@ -3,12 +3,8 @@
  * Nonetheless, they are included, and we can use whatever data we manage to get.
  */
 
-// TODO: running this on load of the js file is horrendous. The below solution of overriding the
-// constructor is better, but it fails on the device!
-var locationService = InitializeLocationServiceObject();
-
-
 // This allows us to override the constructor keeping all the original prototype methods.
+/*
 var geoPlaceholder = Geolocation.prototype;
 Geolocation = function() {
 
@@ -18,12 +14,16 @@ Geolocation = function() {
         onLocationChanged: [],
         onError:           []
     };
-	this.serviceObj = locationService;	//InitializeLocationServiceObject();
+	
+	this.serviceObj = InitializeLocationServiceObject();
 };
 Geolocation.prototype = geoPlaceholder;
-
+*/
 
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+	
+	if (!this.serviceObj)
+		this.serviceObj = InitializeLocationServiceObject();
 	
 	//construct the criteria for our location request
 	var updateOptions = new Object();
