@@ -62,8 +62,8 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public static final String PHONEGAP_PROTOCOL = "PhoneGap=";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
 	private static final String REFERER = "referer";   
-	private Vector pendingResponses = new Vector();
-	private CommandManager commandManager = new CommandManager();
+	public Vector pendingResponses = new Vector();
+	private CommandManager commandManager;
 	private RenderingSession _renderingSession;   
     public HttpConnection  _currentConnection;
     private MainScreen _mainScreen;
@@ -80,6 +80,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	 * By default, the main page is set to data:///www/test/index.html
 	 */
 	public PhoneGap() {
+		commandManager = new CommandManager(this);
 		init(DEFAULT_INITIAL_URL);
 	}
 
@@ -93,7 +94,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	}
 
 	private void init(final String url) {
-		_mainScreen = new MainScreen();        
+		_mainScreen = new MainScreen(); 
         pushScreen(_mainScreen);
         _renderingSession = RenderingSession.getNewInstance();
         
@@ -192,7 +193,11 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
                 String cookie = ((SetHttpCookieEvent) event).getCookie();
                 if (cookie.startsWith(PHONEGAP_PROTOCOL)) {
     				String response = commandManager.processInstruction(cookie);
-    				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
+    				if ((response != null) && (response.trim().length() > 0)) {
+    					synchronized(pendingResponses) {
+    						pendingResponses.addElement(response);
+    					}
+    				}
                 }
                 break;
             case Event.EVENT_HISTORY :           // No history support.

@@ -22,6 +22,7 @@
  */
 package com.nitobi.phonegap.api;
 
+import com.nitobi.phonegap.PhoneGap;
 import com.nitobi.phonegap.api.impl.CameraCommand;
 import com.nitobi.phonegap.api.impl.ContactsCommand;
 import com.nitobi.phonegap.api.impl.DeviceCommand;
@@ -41,8 +42,8 @@ public final class CommandManager {
 	// List of installed Commands
 	private Command[] commands = new Command[7]; 
 
-	public CommandManager() {
-		commands[0] = new CameraCommand();
+	public CommandManager(PhoneGap phoneGap) {
+		commands[0] = new CameraCommand(phoneGap);
 		commands[1] = new ContactsCommand();
 		commands[2] = new NotificationCommand();
 		commands[3] = new TelephonyCommand();
