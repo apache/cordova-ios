@@ -27,6 +27,7 @@
 		3014D27B104CA4D400CF4156 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3014D275104CA4D400CF4156 /* SBJsonWriter.m */; };
 		303554C1100E56B7002C5EC0 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 303554C0100E56B7002C5EC0 /* Camera.m */; };
 		30355582100E7477002C5EC0 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 30355581100E7477002C5EC0 /* NSData+Base64.m */; };
+		306D5142105872CB0038C069 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 306D5141105872CB0038C069 /* VERSION */; };
 		30C531981020E3B20017260B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C531971020E3B20017260B /* Reachability.m */; };
 		30C5319B1020E3CF0017260B /* Network.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C5319A1020E3CF0017260B /* Network.m */; };
 		30C531A01020E4310017260B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30C5319F1020E4310017260B /* SystemConfiguration.framework */; };
@@ -98,6 +99,7 @@
 		303554C0100E56B7002C5EC0 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Camera.m; sourceTree = "<group>"; };
 		30355580100E7477002C5EC0 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		30355581100E7477002C5EC0 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		306D5141105872CB0038C069 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		30C531961020E3B20017260B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		30C531971020E3B20017260B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		30C531991020E3CF0017260B /* Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Network.h; sourceTree = "<group>"; };
@@ -331,6 +333,7 @@
 				1BB1F7D10F9E1BE2002A28DA /* Settings.plist */,
 				47DC7FB20EFADF9E00D0B526 /* PhoneGap.plist */,
 				8D1107310486CEB800E47090 /* Info.plist */,
+				306D5141105872CB0038C069 /* VERSION */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				306D5142105872CB0038C069 /* VERSION in Resources */,
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				825DFB5E0E464E6C000D0A5D /* README.md in Resources */,
 				8204F3D30E5CB4DC00F2DAA1 /* icon.png in Resources */,
