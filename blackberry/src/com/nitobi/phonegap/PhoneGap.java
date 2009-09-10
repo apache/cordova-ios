@@ -64,7 +64,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public static final String PHONEGAP_PROTOCOL = "PhoneGap=";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
 	private static final String REFERER = "referer";   
-	private Vector pendingResponses = new Vector();
+	public Vector pendingResponses = new Vector();
 	private CommandManager commandManager;
 	private RenderingSession _renderingSession;   
     public HttpConnection  _currentConnection;
@@ -96,7 +96,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	}
 
 	private void init(final String url) {
-		commandManager = new CommandManager();
+		commandManager = new CommandManager(this);
 		_mainScreen = new MainScreen();        
         pushScreen(_mainScreen);
         _renderingSession = RenderingSession.getNewInstance();
