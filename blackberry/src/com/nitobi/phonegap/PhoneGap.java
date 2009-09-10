@@ -23,6 +23,8 @@
 package com.nitobi.phonegap;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.microedition.io.HttpConnection;
@@ -62,11 +64,12 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public static final String PHONEGAP_PROTOCOL = "PhoneGap=";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
 	private static final String REFERER = "referer";   
-	public Vector pendingResponses = new Vector();
+	private Vector pendingResponses = new Vector();
 	private CommandManager commandManager;
 	private RenderingSession _renderingSession;   
     public HttpConnection  _currentConnection;
     private MainScreen _mainScreen;
+    private Timer refreshTimer;
 
 	/**
 	 * Launches the application. Accepts up to one parameter, an URL to the index page. 
@@ -80,7 +83,6 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	 * By default, the main page is set to data:///www/test/index.html
 	 */
 	public PhoneGap() {
-		commandManager = new CommandManager(this);
 		init(DEFAULT_INITIAL_URL);
 	}
 
@@ -94,7 +96,8 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	}
 
 	private void init(final String url) {
-		_mainScreen = new MainScreen(); 
+		commandManager = new CommandManager();
+		_mainScreen = new MainScreen();        
         pushScreen(_mainScreen);
         _renderingSession = RenderingSession.getNewInstance();
         
@@ -104,7 +107,9 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         // Enable nice-looking BB browser field.
         _renderingSession.getRenderingOptions().setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
         PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(url, null, null, null, this);
-        thread.start();            
+        thread.start();
+        refreshTimer = new Timer();
+        refreshTimer.scheduleAtFixedRate(new TimerRefresh(), 1000, 1000);
 	}
 	public Object eventOccurred(final Event event) 
     {
@@ -193,11 +198,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
                 String cookie = ((SetHttpCookieEvent) event).getCookie();
                 if (cookie.startsWith(PHONEGAP_PROTOCOL)) {
     				String response = commandManager.processInstruction(cookie);
-    				if ((response != null) && (response.trim().length() > 0)) {
-    					synchronized(pendingResponses) {
-    						pendingResponses.addElement(response);
-    					}
-    				}
+    				if ((response != null) && (response.trim().length() > 0)) pendingResponses.addElement(response);
                 }
                 break;
             case Event.EVENT_HISTORY :           // No history support.
@@ -267,6 +268,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         try 
         {
             browserContent = _renderingSession.getBrowserContent(connection, this, e);
+            
             if (browserContent != null) 
             {
                 Field field = browserContent.getDisplayableContent();
@@ -330,5 +332,23 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         String[] result = new String[v.size()];
         v.copyInto(result);
         return result;
+    }
+    private class TimerRefresh extends TimerTask
+    {
+    	public void run()   
+    	{
+    		UiApplication.getUiApplication().invokeLater(new Runnable() 
+    		{
+    			public void run() 
+    			{
+    				int numFields = _mainScreen.getFieldCount();
+    				for (int i = 0; i < numFields; i++) {
+    					Field field = _mainScreen.getField(i);
+    					field.getManager().invalidate();
+    				}
+    				_mainScreen.doPaint();
+    			}
+    		});
+    	}
     }
 }
