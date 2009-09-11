@@ -1,8 +1,8 @@
 File.prototype.read = function(fileName, successCallback, errorCallback) {
-  var data = navigator.FileUtil.read(fileName);
+  var data = FileUtil.read(fileName);
   if( data.substr("FAIL"))
   {
-    errorCallback(); 
+    errorCallback(data); 
   }
   else
   {

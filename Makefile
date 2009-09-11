@@ -141,3 +141,5 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/android/notification.js >> $@
 	$(CAT) javascripts/android/accelerometer.js >> $@
 	$(CAT) javascripts/android/camera.js >> $@
+	$(CAT) javascripts/android/media.js >> $@
+	$(CAT) javascripts/android/file.js >> $@
