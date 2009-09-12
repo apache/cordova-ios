@@ -109,7 +109,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(url, null, null, null, this);
         thread.start();
         refreshTimer = new Timer();
-        refreshTimer.scheduleAtFixedRate(new TimerRefresh(), 1000, 1000);
+        refreshTimer.scheduleAtFixedRate(new TimerRefresh(), 500, 500);
 	}
 	public Object eventOccurred(final Event event) 
     {
@@ -238,7 +238,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public HttpConnection getResource(RequestedResource resource, BrowserContent referrer) {
 		if ((resource != null) && (resource.getUrl() != null) && !resource.isCacheOnly()) {
 			String url = resource.getUrl().trim();
-			if ((referrer == null) || (ConnectionManager.isInternal(url)))
+			if ((referrer == null) || (ConnectionManager.isInternal(url, resource)))
 				return ConnectionManager.getUnmanagedConnection(url, resource.getRequestHeaders(), null);
 			else
 				SecondaryResourceFetchThread.enqueue(resource, referrer);
