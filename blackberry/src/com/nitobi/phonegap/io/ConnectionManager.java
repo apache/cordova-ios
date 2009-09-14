@@ -28,14 +28,14 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.io.InputConnection;
+
+import com.twmacinta.util.MD5;
 
 import net.rim.device.api.browser.field.RequestedResource;
 import net.rim.device.api.io.Base64OutputStream;
@@ -190,15 +190,17 @@ public final class ConnectionManager {
 	}
 
 	/**
-	 * Detects data:// URLs
-	 * @param resource 
+	 * Determines whether a URL/RequestedResource parameter combination is requesting an internal (to device) or external (web) resource.
+	 * @param url The URL of the resource.
+	 * @param resource The RIM resource that is being requested.
 	 */
 	public static boolean isInternal(String url, RequestedResource resource) {
 		if (resource != null) {
-			if (resource.getRequestHeaders() != null) {
-				String referrer = resource.getRequestHeaders().getPropertyValue(REFERRER_KEY);
-				Hashtable hash = resource.getRequestHeaders().toHashtable();
+			HttpHeaders header = resource.getRequestHeaders();
+			if (header != null) {
+				String referrer = header.getPropertyValue(REFERRER_KEY);
 				if (referrer != null && referrer.length() > 0) {
+					// TODO: Weakness here that external URLs must be specified with the full protocol at the start of the URL.
 					if (referrer.startsWith("data:text") && !url.startsWith("http")) {
 						return true;
 					}
@@ -206,10 +208,6 @@ public final class ConnectionManager {
 			}
 		}
 		return (url != null) && url.startsWith(ConnectionManager.DATA_PROTOCOL);
-	}
-
-	public HttpConnection asHttpConnection(String url) {
-		return null;
 	}
 
 	private static void close(Connection connection) {
@@ -230,10 +228,15 @@ public final class ConnectionManager {
 			return null;
 		}
 	}
-
+	/**
+	 * Returns an HttpConnection to a resource local to the device.
+	 * @param url The URL of the local reference.
+	 * @param referrer An ID / referrer tag identifying the resource that requested the specified URL.
+	 * @return HttpConnection object instantiated to the local resource.
+	 */
 	private static HttpConnection getDataProtocolConnection(String url, String referrer) {
 		String dataUrl = url.startsWith(ConnectionManager.DATA_PROTOCOL) ? url.substring(ConnectionManager.DATA_PROTOCOL.length() - 1) : url;
-		// Clean up the URL from BB's weird bullshit.
+		// Clean up the URL from BB's weird bullshit - they change the URL for (I think) locally requested resources that are referenced with relative URLs.
 		if (dataUrl.startsWith("data://text/")) {
 			dataUrl = dataUrl.substring(12);
 		}
@@ -242,8 +245,9 @@ public final class ConnectionManager {
 		String directory = dataUrl.substring(0,slashPos+1);
 		// Check whether the referrer has already been processed (ignore if URL uses an absolute path reference).
 		if (referrer != null && !dataUrl.startsWith("/")) {
-			if (dirHash.containsKey(referrer)) {
-				String referrerDirectory = ((String) dirHash.get(referrer));
+			String MD5key = ConnectionManager.MD5hash(referrer);
+			if (dirHash.containsKey(MD5key)) {
+				String referrerDirectory = ((String) dirHash.get(MD5key));
 				dataUrl = referrerDirectory + dataUrl;
 				directory = referrerDirectory + directory;
 			}
@@ -251,6 +255,7 @@ public final class ConnectionManager {
 		// Read internal resource and encode as Base64, then return as HttpConnection object.
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
+			// Identify file type and include proper MIME type in data URI.
 			if (dataUrl.endsWith(".html") || dataUrl.endsWith(".htm")) {
 				output.write(ConnectionManager.DATA_URL_HTML);
 			} else if (dataUrl.endsWith(".js")) {
@@ -264,6 +269,7 @@ public final class ConnectionManager {
 			} else {
 				output.write(ConnectionManager.DATA_URL_PLAIN);
 			}
+			// Create stream to resource and cast as HttpConnection.
 			Base64OutputStream boutput = new Base64OutputStream(output);
 			InputStream theResource = Application.class.getResourceAsStream(dataUrl);
 			byte[] resourceBytes = read(theResource);
@@ -274,10 +280,12 @@ public final class ConnectionManager {
 			output.close();
 			String outString = output.toString();
 			Connection outputCon = Connector.open(outString);
-			if (!dirHash.containsKey(outString)) {
-				dirHash.put(outString, directory);
-			}
 			HttpConnection outputHttp = (HttpConnection) outputCon;
+			// Add the Base64 encoded resource to the directory reference hash, after MD5 hashing the key.
+			String outMD5 = ConnectionManager.MD5hash(outString);
+			if (!dirHash.containsKey(outMD5)) {
+				dirHash.put(outMD5, directory);
+			}
 			return outputHttp; 
 		} catch (IOException ex) {
 			return null;
@@ -297,4 +305,13 @@ public final class ConnectionManager {
 		}
 		return bytes.toByteArray();
     }
+	public static String MD5hash(String input) {
+		byte plain[] = input.getBytes();
+		// create MD5 object
+		MD5 md5 = new MD5(plain);
+		//get the resulting hashed byte
+		byte[] result = md5.doFinal();
+		//convert the hashed byte into hexadecimal character for display
+		return MD5.toHex(result);
+	}
 }
