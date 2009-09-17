@@ -2,10 +2,10 @@
  * @author ryan
  */
 
-var contactsService;
+//var contactsService;
 
 ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	contactsService = device.getServiceObject("Service.Contact", "IDataSource");
+	this.contactsService = device.getServiceObject("Service.Contact", "IDataSource");
 	
 	var criteria = new Object();
 	criteria.Type = "Contact";
@@ -16,7 +16,7 @@ ContactManager.prototype.getAllContacts = function(successCallback, errorCallbac
 	
 	try {
 		//WRT: result.ReturnValue is an iterator of contacts
-		contactsService.IDataSource.GetList(criteria, function(transId, eventCode, result){obj.success_callback(result.ReturnValue);});
+		this.contactsService.IDataSource.GetList(criteria, function(transId, eventCode, result){obj.success_callback(result.ReturnValue);});
 	} catch (e) {
 		errorCallback(e);
 	}
@@ -31,7 +31,7 @@ ContactManager.prototype.success_callback = function(contacts_iterator) {
 			var gapContact = new Contact();
 			gapContact.firstName = ContactManager.GetValue(contact, "FirstName");
 			gapContact.lastName = ContactManager.GetValue(contact, "LastName");
-			gapContact.name = gapContact.firstName + gapContact.lastName;
+			gapContact.name = gapContact.firstName + " " + gapContact.lastName;
 			gapContact.emails = ContactManager.getEmailsList(contact);
 			gapContact.phones = ContactManager.getPhonesList(contact);
 			gapContact.address = ContactManager.getAddress(contact);
@@ -40,9 +40,8 @@ ContactManager.prototype.success_callback = function(contacts_iterator) {
 			alert(e.name + ": " + e.message);
 		}
 	}
-	alert('yo: ' + gapContacts.length + " contacts found");
 	this.contacts = gapContacts;
-	
+	this.global_success();
 }
 
 ContactManager.getEmailsList = function(contact) {
