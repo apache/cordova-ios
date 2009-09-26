@@ -8,7 +8,7 @@
 					nameFilter: name
 				};
 				var win = function() {
-					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].name + '\nemail: ' + navigator.ContactManager.contacts[0].email + '\nphone: ' + navigator.ContactManager.contacts[0].phone);
+					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].firstName + ' ' + navigator.ContactManager.contacts[0].lastName + '\nemail: ' + navigator.ContactManager.contacts[0].email[0].value);
 					else alert("Contact '" + name + "' not found.");
 				};
 				var fail = function() {
@@ -21,7 +21,7 @@
 				if (pageSize) options.pageSize = pageSize;
 				if (pageNumber) options.pageNumber = pageNumber;
 				var win = function() {
-					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].name + '\nemail: ' + navigator.ContactManager.contacts[0].email + '\nphone: ' + navigator.ContactManager.contacts[0].phone);
+					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].firstName + ' ' + navigator.ContactManager.contacts[0].lastName + '\nemail: ' + navigator.ContactManager.contacts[0].email[0].value);
 					else alert("No contacts found.");
 				};
 				var fail = function() {
@@ -32,7 +32,7 @@
 			function chooseContact() {
 				var options = {};
 				var win = function() {
-					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].name + '\nemail: ' + navigator.ContactManager.contacts[0].email + '\nphone: ' + navigator.ContactManager.contacts[0].phone);
+					if (navigator.ContactManager.contacts.length > 0) alert('Found:\nname: ' + navigator.ContactManager.contacts[0].firstName + ' ' + navigator.ContactManager.contacts[0].lastName + '\nemail: ' + navigator.ContactManager.contacts[0].email[0].value);
 					else alert("No contacts found.");
 				};
 				navigator.ContactManager.chooseContact(win, options);

@@ -243,24 +243,46 @@ public class ContactsCommand implements Command {
 	}
 	private static void addContactToBuffer(StringBuffer buff, BlackBerryContact contact) {
 		// TODO: Eventually extend this to return proper labels/values for differing phone/email types.
-		buff.append("{email:[{'label':'mobile','value':'");
-		buff.append(contact.getString(Contact.EMAIL, 0));
-		buff.append("'}], phoneNumber:[{'label':'mobile','value':'");
-		buff.append(contact.getString(Contact.TEL, 0));
-		buff.append("'}], firstName:'");
+		buff.append("{");
+		if (contact.countValues(Contact.EMAIL) > 0) {
+			buff.append("email:[{'label':'mobile','value':'");
+			buff.append(contact.getString(Contact.EMAIL, 0));
+			buff.append("'}]");
+		}
+		final int numValues = contact.countValues(Contact.TEL);
+		if (numValues > 0) {
+			boolean sentinel = false;
+			String phoneMobile = "";
+			for (int index = 0; index  < numValues; index++)
+			{
+			    final int curAttributes = contact.getAttributes(Contact.TEL, index);
+			    // TODO: For now, we are only looking for the mobile contact number.
+			    if ((curAttributes & Contact.ATTR_MOBILE) == Contact.ATTR_MOBILE)
+			    {
+			         phoneMobile = contact.getString(Contact.TEL, index);
+			         sentinel = true;
+			         break;
+			    }
+			}
+			if (sentinel) {
+				if (buff.length() > 1) buff.append(",");
+				buff.append("phoneNumber:[{'label':'mobile','value':'");
+				buff.append(phoneMobile);
+				buff.append("'}]");
+			}
+		}
 		// See if there is a meaningful name set for the contact.
 	    if (contact.countValues(Contact.NAME) > 0) {
+	    	if (buff.length() > 1) buff.append(",");
+	    	buff.append("firstName:'");
 	        final String[] name = contact.getStringArray(Contact.NAME, 0);
 	        final String firstName = name[Contact.NAME_GIVEN];
 	        final String lastName = name[Contact.NAME_FAMILY];
-	        if (firstName != null) buff.append(firstName + "',lastName:'");
-	        else buff.append("',lastName:'");
-	        if (lastName != null) buff.append(lastName + "',");
-	        else buff.append("',");
-	    } else {
-	    	buff.append("',lastName:''");
+	        buff.append((firstName != null ? firstName : "") + "',lastName:'");
+	        buff.append((lastName != null ? lastName : "") + "'");
 	    }
-	    buff.append(",address:'");
+	    if (buff.length() > 1) buff.append(",");
+	    buff.append("address:'");
 	    // Build up a meaningful address field.
 	    if (contact.countValues(Contact.ADDR) > 0) {
 	    	String address = "";

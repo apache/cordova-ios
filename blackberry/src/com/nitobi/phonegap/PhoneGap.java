@@ -23,6 +23,8 @@
 package com.nitobi.phonegap;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.microedition.io.HttpConnection;
@@ -62,11 +64,12 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public static final String PHONEGAP_PROTOCOL = "PhoneGap=";
 	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
 	private static final String REFERER = "referer";   
-	private Vector pendingResponses = new Vector();
-	private CommandManager commandManager = new CommandManager();
+	public Vector pendingResponses = new Vector();
+	private CommandManager commandManager;
 	private RenderingSession _renderingSession;   
     public HttpConnection  _currentConnection;
     private MainScreen _mainScreen;
+    private Timer refreshTimer;
 
 	/**
 	 * Launches the application. Accepts up to one parameter, an URL to the index page. 
@@ -93,6 +96,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	}
 
 	private void init(final String url) {
+		commandManager = new CommandManager(this);
 		_mainScreen = new MainScreen();        
         pushScreen(_mainScreen);
         _renderingSession = RenderingSession.getNewInstance();
@@ -103,7 +107,9 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         // Enable nice-looking BB browser field.
         _renderingSession.getRenderingOptions().setProperty(RenderingOptions.CORE_OPTIONS_GUID, 17000, true);
         PrimaryResourceFetchThread thread = new PrimaryResourceFetchThread(url, null, null, null, this);
-        thread.start();            
+        thread.start();
+        refreshTimer = new Timer();
+        refreshTimer.scheduleAtFixedRate(new TimerRefresh(), 500, 500);
 	}
 	public Object eventOccurred(final Event event) 
     {
@@ -232,7 +238,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
 	public HttpConnection getResource(RequestedResource resource, BrowserContent referrer) {
 		if ((resource != null) && (resource.getUrl() != null) && !resource.isCacheOnly()) {
 			String url = resource.getUrl().trim();
-			if ((referrer == null) || (ConnectionManager.isInternal(url)))
+			if ((referrer == null) || (ConnectionManager.isInternal(url, resource)))
 				return ConnectionManager.getUnmanagedConnection(url, resource.getRequestHeaders(), null);
 			else
 				SecondaryResourceFetchThread.enqueue(resource, referrer);
@@ -262,6 +268,7 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         try 
         {
             browserContent = _renderingSession.getBrowserContent(connection, this, e);
+            
             if (browserContent != null) 
             {
                 Field field = browserContent.getDisplayableContent();
@@ -325,5 +332,23 @@ public class PhoneGap extends UiApplication implements RenderingApplication {
         String[] result = new String[v.size()];
         v.copyInto(result);
         return result;
+    }
+    private class TimerRefresh extends TimerTask
+    {
+    	public void run()   
+    	{
+    		UiApplication.getUiApplication().invokeLater(new Runnable() 
+    		{
+    			public void run() 
+    			{
+    				int numFields = _mainScreen.getFieldCount();
+    				for (int i = 0; i < numFields; i++) {
+    					Field field = _mainScreen.getField(i);
+    					field.getManager().invalidate();
+    				}
+    				_mainScreen.doPaint();
+    			}
+    		});
+    	}
     }
 }
