@@ -10,8 +10,19 @@
 
 @implementation Sound
 
+@synthesize successCallback, errorCallback;
+
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+	if([[arguments objectAtIndex:0] isEqualToString:@""]){
+		NSLog(@"Cannot play empty URI");
+		return;
+	}
+	NSUInteger argc = [arguments count];
+	
+	if (argc > 1) self.successCallback = [arguments objectAtIndex:1];
+	if (argc > 2) self.errorCallback = [arguments objectAtIndex:2];
+
     NSBundle * mainBundle = [NSBundle mainBundle];
     NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[(NSString*)[arguments objectAtIndex:0] componentsSeparatedByString:@"/"]];
     NSString       *filename       = [directoryParts lastObject];
@@ -23,8 +34,25 @@
     NSString *filePath = [mainBundle pathForResource:(NSString*)[filenameParts objectAtIndex:0]
                                               ofType:(NSString*)[filenameParts objectAtIndex:1]
                                          inDirectory:directoryStr];
-    if (filePath == nil) {
-        NSLog(@"Can't find filename %@ in the app bundle", [arguments objectAtIndex:0]);
+	if (filePath == nil) {
+		NSLog(@"Can't find filename %@ in the app bundle", [arguments objectAtIndex:0]);
+#ifdef __IPHONE_3_0
+		if ([[arguments objectAtIndex:0] hasPrefix:@"http"]){
+	
+			if (player != nil)
+				[player stop];
+					
+			NSURL *sampleUrl = [NSURL URLWithString:[arguments objectAtIndex:0]];
+			NSData *sampleAudio = [NSData dataWithContentsOfURL:sampleUrl];
+			NSError *err;
+			player = [[ AVAudioPlayer alloc ] initWithData:sampleAudio error:&err];
+			if (err)
+				NSLog(@"Failed to initialize AVAudioPlayer: %@\n", err);
+			player.delegate = self;
+			[ player prepareToPlay ];
+			[ player play ];
+		}
+#endif
         return;
     }
     SystemSoundID soundID;
@@ -40,5 +68,28 @@
     
     AudioServicesPlaySystemSound(soundID);
 }
+
+#ifdef __IPHONE_3_0
+/*
+ * event listener when file has stopped playing 
+ */
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+	NSLog(@"finished playing audio sample");
+	
+	if (flag){
+		if (self.successCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", self.successCallback, @""];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			[jsString release];
+		}
+	} else {
+		if (self.errorCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", self.errorCallback, @""];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			[jsString release];
+		}		
+	}
+}
+#endif
 
 @end

@@ -77,7 +77,7 @@ public class Position {
 	}
 
 	public String toJavascript() {
-		return "new Position(" + _lat + "," + _lng + ",1," + altitude + ",1" + heading + "," + velocity + ")";
+		return "new Position(new Coordinates(" + _lat + "," + _lng + "," + altitude + ",1," + heading + "," + velocity + "))";
 	}
 
 }

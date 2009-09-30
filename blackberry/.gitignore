@@ -1,0 +1,4 @@
+.tmp
+.settings
+bin/*
+.project.old

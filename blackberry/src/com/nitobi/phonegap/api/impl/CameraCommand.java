@@ -22,8 +22,16 @@
  */
 package com.nitobi.phonegap.api.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
+
 import net.rim.blackberry.api.invoke.CameraArguments;
 import net.rim.blackberry.api.invoke.Invoke;
+import net.rim.device.api.io.Base64OutputStream;
 import net.rim.device.api.io.file.FileSystemJournal;
 import net.rim.device.api.io.file.FileSystemJournalEntry;
 import net.rim.device.api.io.file.FileSystemJournalListener;
@@ -32,35 +40,62 @@ import net.rim.device.api.system.ControlledAccessException;
 import net.rim.device.api.system.EventInjector;
 import net.rim.device.api.ui.UiApplication;
 
+import com.nitobi.phonegap.PhoneGap;
 import com.nitobi.phonegap.api.Command;
 
 /**
- * Switchs current application to the camera to take a photo.
+ * Switches current application to the camera to take a photo.
  *
  * @author Jose Noheda
  *
  */
 public class CameraCommand implements Command {
 
-	private static final int INVOKE_COMMAND = 0;
-	private static final int PICTURE_COMMAND = 1;
-	private static final String CODE = "gap://camera"; 
+	private static final int PICTURE_COMMAND = 0;
+	private static final String CODE = "PhoneGap=camera"; 
+	private static final String CAMERA_ERROR_CALLBACK = ";if (navigator.camera.onError) { navigator.camera.onError(); }";
 
 	private long lastUSN = 0;
 	private String photoPath;
+	private String returnVal;
 	private FileSystemJournalListener listener;
+	private PhoneGap berryGap;
 
-	public CameraCommand() {
+	public CameraCommand(PhoneGap phoneGap) {
+		berryGap = phoneGap;
 		listener = new FileSystemJournalListener() {
 			public void fileJournalChanged() {
 				long USN = FileSystemJournal.getNextUSN();
 				for (long i = USN - 1; i >= lastUSN; --i) {
 					FileSystemJournalEntry entry = FileSystemJournal.getEntry(i);
 					if (entry != null) {
-						if (entry.getEvent() == FileSystemJournalEntry.FILE_ADDED || entry.getEvent() == FileSystemJournalEntry.FILE_CHANGED || entry.getEvent() == FileSystemJournalEntry.FILE_RENAMED) {
+						if (entry.getEvent() == FileSystemJournalEntry.FILE_CHANGED) {
 							if (entry.getPath().indexOf(".jpg") != -1) {
 								lastUSN = USN;
 								photoPath = entry.getPath();
+								
+								InputStream theImage;
+								byte[] imageBytes;
+								Base64OutputStream base64OutputStream = null;
+								try {
+									FileConnection fconn = (FileConnection)Connector.open("file://" + photoPath);
+									imageBytes = new byte[(int) fconn.fileSize()];
+									theImage = fconn.openInputStream();
+									theImage.read(imageBytes);
+									ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream( imageBytes.length );
+							    	base64OutputStream = new Base64OutputStream( byteArrayOutputStream );
+							    	base64OutputStream.write(imageBytes);
+							    	base64OutputStream.flush();
+							    	base64OutputStream.close();
+							    	byteArrayOutputStream.flush();
+							    	byteArrayOutputStream.close();
+							    	//int sizeofbase64 = byteArrayOutputStream.toString().length();
+							    	returnVal = ";if (navigator.camera.onSuccess) { navigator.camera.onSuccess('"+byteArrayOutputStream.toString()+"'); }";
+								} catch (IOException e) {
+									e.printStackTrace();
+									returnVal = CAMERA_ERROR_CALLBACK;
+								}
+								berryGap.pendingResponses.addElement(returnVal);
 						        closeCamera();
 							}
 				        }
@@ -70,10 +105,6 @@ public class CameraCommand implements Command {
 			}
 		};
 	}
-
-	/**
-	 * Able to run the <i>camera</i> command. Ex: gap://camera/obtain
-	 */
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
 	}
@@ -84,25 +115,24 @@ public class CameraCommand implements Command {
 	public String execute(String instruction) {
 		switch (getCommand(instruction)) {
 			case PICTURE_COMMAND:
-				UiApplication.getUiApplication().removeFileSystemJournalListener(listener);
-				return "navigator.camera.picture = '" + photoPath + "'";
-			case INVOKE_COMMAND:
 				photoPath = null;
+				returnVal = null;
 				UiApplication.getUiApplication().addFileSystemJournalListener(listener);
 				Invoke.invokeApplication(Invoke.APP_TYPE_CAMERA, new CameraArguments());
+				return "";
 		}
 		return null;
 	}
 
 	private int getCommand(String instruction) {
 		String command = instruction.substring(instruction.lastIndexOf('/') + 1);
-		if ("obtain".equals(command)) return INVOKE_COMMAND;
 		if ("picture".equals(command)) return PICTURE_COMMAND;
 		return -1;
 	}
 
 	public void closeCamera() {
 		try {
+			UiApplication.getUiApplication().removeFileSystemJournalListener(listener);
 			EventInjector.KeyEvent inject = new EventInjector.KeyEvent(EventInjector.KeyEvent.KEY_DOWN, Characters.ESCAPE, 0);
 			inject.post();
 			inject.post();

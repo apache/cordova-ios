@@ -22,7 +22,7 @@ Geolocation.prototype.start = function() {
 		alert("GPS already started");
 		return;
 	}
-    Device.exec("location", ["start"], true);
+    device.exec("location", ["start"]);
 }
 
 /**
@@ -34,7 +34,7 @@ Geolocation.prototype.stop = function() {
 		return;
 	}
 	if (this.locationTimeout) window.clearTimeout(this.locationTimeout);
-    Device.exec("location", ["stop"], true);
+    device.exec("location", ["stop"]);
 }
 
 /**
@@ -45,11 +45,11 @@ Geolocation.prototype.map = function() {
 		alert("No position to map yet");
 		return;
 	}
-    Device.exec("location", ["map"], true);
+    device.exec("location", ["map"]);
 }
 
 /**
- * Asynchronously adquires the current position.
+ * Asynchronously acquires the current position.
  *
  * @param {Function} successCallback The function to call when the position
  * data is available
@@ -62,8 +62,7 @@ Geolocation.prototype.map = function() {
  */
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
 	if (!this.started) {
-		alert("GPS not started");
-		return;
+		this.start();
 	}
 	this.onSuccess = successCallback;
 	this.locationTimeout = window.setInterval("navigator.geolocation._getCurrentPosition();", 1000);
@@ -71,10 +70,10 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 
 Geolocation.prototype._getCurrentPosition = function() {
 	this.lastPosition = null;
-	Device.exec("location", ["check"], true);
+	device.exec("location", ["check"]);
 	if (this.lastPosition != null) {
 		window.clearTimeout(this.locationTimeout);
-		if (this.onSuccess) this.onSuccess();
+		if (this.onSuccess) this.onSuccess(this.lastPosition);
 		this.onSuccess = null;
 	}
 }

@@ -13,6 +13,6 @@
 @interface Device : PhoneGapCommand {
 }
 
-- (NSDictionary*) getDeviceProperties;
+- (NSDictionary*) deviceProperties;
 
 @end

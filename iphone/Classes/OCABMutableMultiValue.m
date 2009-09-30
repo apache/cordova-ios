@@ -9,7 +9,7 @@
 #import <AddressBook/AddressBook.h>
 #import "OCCFObject.h"
 #import "OCABMutableMultiValue.h"
-#import <JSON/JSON.h>
+#import "JSON.h"
 
 @implementation OCABMutableMultiValue
 
