@@ -19,7 +19,11 @@ Notification.prototype.vibrate = function(mills)
 //TODO: this is not beeping
 Notification.prototype.beep = function(count, volume)
 {
-	 this.sysinfo.beep(220,2000);
+	if (!Notification.getSysinfoObject())
+		Notification.embedSysinfoObject();
+	
+	this.sysinfo = Notification.getSysinfoObject();	
+	this.sysinfo.beep(220,2000);
 }
 
 Notification.embedSysinfoObject = function() {
