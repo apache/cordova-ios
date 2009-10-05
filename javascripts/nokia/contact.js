@@ -10,6 +10,11 @@ ContactManager.prototype.getAllContacts = function(successCallback, errorCallbac
 	var criteria = new Object();
 	criteria.Type = "Contact";
 	
+    if (typeof(successCallback) != 'function')
+        successCallback = function() {};
+    if (typeof(errorCallback) != 'function')
+        errorCallback = function() {};
+	
 	//need a closure here to bind this method to this instance of the contactmanager object
 	this.global_success = successCallback;
 	var obj = this;
@@ -63,7 +68,7 @@ ContactManager.getPhonesList = function(contact) {
 	try {
 		list = {
 			"Home": ContactManager.GetValue(contact, "LandPhoneHome"),
-			"Mobile": ContactManager.GetValue(contact, "MobilePhoneHome"),
+			"Mobile": ContactManager.GetValue(contact, "MobilePhoneGen"),
 			"Fax": ContactManager.GetValue(contact, "FaxNumberHome"),
 			"Work": ContactManager.GetValue(contact, "LandPhoneWork"),
 			"WorkMobile": ContactManager.GetValue(contact, "MobilePhoneWork")

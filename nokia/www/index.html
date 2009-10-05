@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title> Sample Widget</title>
+		<!-- embed type="application/x-systeminfo-widget" hidden="yes"></embed -->	
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script language="javascript" type="text/javascript" src="js/phonegap.js"></script>
+		<script language="javascript" type="text/javascript" src="js/controller.js"></script>
+		<link rel="stylesheet" href="assets/master.css" type="text/css" media="screen" title="no title" charset="utf-8">		
+    	<META NAME="Generator" CONTENT="Nokia WRT plug-in for Aptana Studio 2.0.0" />
+	</head>
+	<body onload="javascript:init();">
+		<div class="header">phonegap nokia</div>
+		Geolocation
+		<div class="list">
+			<div class="list-item">latitude: <span id="latitude">finding satellites</span></div>
+			<div class="list-item">longitude: <span id="longitude">finding satellites</span></div>
+			<div class="list-item">altitude: <span id="altitude">finding satellites</span></div>
+			<div class="list-item">heading: <span id="heading">finding satellites</span></div>
+			<div class="list-item">speed: <span id="speed">finding satellites</span></div>
+		</div>
+		Accelerometer
+		<div class="list">
+			<div class="list-item">X-Accel: <span id="accel_x"></span></div>
+			<div class="list-item">Y-Accel: <span id="accel_y"></span></div>
+			<div class="list-item">Z-Accel: <span id="accel_z"></span></div>
+		</div>
+		Contacts
+		<div id="contacts" class="contacts"></div>
+		<div class="list-item"><a href="javascript:vibrate();">Notification (vibrate)</a></div>
+		<a href="javascript:widget.openURL('http://www.nitobi.com');"><img src="assets/nitobi-avatar.png" class="nitobi-logo" /></a>
+	</body>
+</html>
