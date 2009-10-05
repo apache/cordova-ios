@@ -170,3 +170,6 @@ lib/nokia/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js 
 	$(CAT) javascripts/nokia/geolocation.js >> $@
 	$(CAT) javascripts/nokia/notification.js >> $@
 	$(CAT) javascripts/nokia/contact.js >> $@
+	$(CAT) javascripts/nokia/device.js >> $@
+	$(CAT) javascripts/nokia/accelerometer.js >> $@
+	$(CAT) javascripts/nokia/camera.js >> $@
