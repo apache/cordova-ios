@@ -39,8 +39,9 @@ import com.nitobi.phonegap.api.impl.TelephonyCommand;
  *
  */
 public final class CommandManager {
-
-	// List of installed Commands
+	private static final String EXCEPTION_PREFIX = "[PhoneGap] *ERROR* Exception executing command [";
+	private static final String EXCEPTION_SUFFIX = "]: ";
+	
 	private Command[] commands = new Command[8]; 
 
 	public CommandManager(PhoneGap phoneGap) {
@@ -69,7 +70,7 @@ public final class CommandManager {
 				try {
 					return command.execute(instruction);
 				} catch(Exception e) {
-					System.out.println("Exception executing command [" + instruction + "]: " + e.getMessage());
+					System.out.println(EXCEPTION_PREFIX + instruction + EXCEPTION_SUFFIX + e.getMessage());
 				}
 		}
 		return null;
