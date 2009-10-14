@@ -1,33 +1,32 @@
-window.Device = {
+window.device = {
     isIPhone: false,
     isIPod: false,
     isBlackBerry: true,
-
+	poller:false,
     init: function() {
 		this.exec("initialize");
 		this.poll(function() {
-			Device.available = typeof Device.model == "string";
+			device.available = typeof device.name == "string";
 		});
+		this.poller = setInterval('window.device.poll();',1000);
     },
-    exec: function(command, params, sync) {
-        if (Device.available || command == "initialize") {
+    exec: function(command, params) {
+        if (device.available || command == "initialize") {
             try {
-                var url = "gap://" + command;
-                if (params) url += "/" + params.join("/");
-                document.location = url;
-                if (sync) this.poll();
+                var cookieCommand = "PhoneGap=" + command;
+                if (params) cookieCommand += "/" + params.join("/");
+                document.cookie = cookieCommand;
             } catch(e) {
                 console.log("Command '" + command + "' has not been executed, because of exception: " + e);
-                alert("Error executing command '" + command + "'.")
+                alert("[PhoneGap Error] Error executing command '" + command + "'.")
             }
+        } else {
+        	alert("Device not available YET - still loading.");
         }
     },
     poll: function(callback) {
-    	eval(document.cookie + (callback ? ";callback();" : ""));
-    },
-    vibrate: function(secs) {
-        return Device.exec("vibrate", [secs]);
+    	var result = document.cookie;
+    	eval(result + (callback ? ";callback();" : ""));
     }
 };
-
-window.Device.init();
+window.device.init();
