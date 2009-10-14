@@ -1,7 +1,5 @@
 package com.nitobi.phonegap.io;
 
-import javax.microedition.io.HttpConnection;
-
 import net.rim.device.api.browser.field.Event;
 import net.rim.device.api.io.http.HttpHeaders;
 
@@ -27,12 +25,6 @@ public class PrimaryResourceFetchThread extends Thread
 
     public void run() 
     {
-    	HttpConnection connection = null;
-    	if (_url.startsWith(PhoneGap.PHONEGAP_PROTOCOL)) {
-    		connection = _application._currentConnection;
-    	} else {
-    		connection = ConnectionManager.getUnmanagedConnection(_url, _requestHeaders, _postData);
-    	}
-        _application.processConnection(connection, _event);        
+        _application.processConnection(ConnectionManager.getUnmanagedConnection(_url, _requestHeaders, _postData), _event);        
     }
 }
