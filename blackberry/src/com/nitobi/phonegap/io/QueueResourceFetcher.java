@@ -22,6 +22,7 @@
  */
 package com.nitobi.phonegap.io;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.io.InputConnection;
@@ -81,7 +82,12 @@ public final class QueueResourceFetcher implements Runnable {
 				resource.setInputConnection(connection);
 				browser.resourceReady(resource);
 			}
+			try {
+				connection.close();
+			} catch (IOException e) {}
+			connection = null;
 		}
+		resource = null;
 	}
 
 }
