@@ -2,30 +2,33 @@ window.device = {
     isIPhone: false,
     isIPod: false,
     isBlackBerry: true,
-
-    init: function() {
-		this.exec("initialize");
-		this.poll(function() {
-			device.available = typeof device.name == "string";
-		});
+	poller:false,
+	available:false,
+	poll: function(callback) {
+    	var result = document.cookie;
+    	eval(result + (callback ? ";callback();" : ""));
+    	clearTimeout(this.poller);
+    	this.poller = setTimeout('window.device.poll();',500);
     },
-    exec: function(command, params, sync) {
-        if (device.available || command == "initialize") {
+    exec: function(command, params) {
+        if (window.device.available || command == "initialize") {
             try {
                 var cookieCommand = "PhoneGap=" + command;
                 if (params) cookieCommand += "/" + params.join("/");
                 document.cookie = cookieCommand;
-                if (sync) this.poll();
             } catch(e) {
-                console.log("Command '" + command + "' has not been executed, because of exception: " + e);
-                alert("Error executing command '" + command + "'.")
+                alert("[PhoneGap Error] Error executing command '" + command + "'.");
             }
         } else {
         	alert("Device not available YET - still loading.");
         }
     },
-    poll: function(callback) {
-    	eval(document.cookie + (callback ? ";callback();" : ""));
+    init: function() {
+		this.exec("initialize");
+		this.poll(function() {
+			window.device.available = typeof device.name == "string";
+		});
+		this.poller = setTimeout('window.device.poll();',500);
     }
 };
 window.device.init();
