@@ -36,6 +36,9 @@ import com.nitobi.phonegap.api.Command;
  */
 public class MediaCommand implements Command {
 	private static final String CODE = "PhoneGap=media";
+	private static final String ERROR_NOT_SUPPORTED = ";alert('[PhoneGap Error] Media type not supported.');";
+	private static final String ERROR_IO_EX = ";alert('[PhoneGap Error] Media file I/O exception.');";
+	private static final String ERROR_MEDIA_EX = ";alert('[PhoneGap Error] Could not play and/or determine media file type.');";
 	private Player musicPlayer;
 	private Hashtable extToMime = new Hashtable();
 	
@@ -64,24 +67,30 @@ public class MediaCommand implements Command {
 	
 	public String execute(String instruction) {
 		String mediaURI = instruction.substring(instruction.indexOf('/')+1);
+		InputStream in = null;
+		String audioMime = null;
 		try
         {
-            InputStream in = getClass().getResourceAsStream("/" + mediaURI);            
-            String audioMime = this.mapExtensionToMime(mediaURI.substring(mediaURI.lastIndexOf('.')+1));
-            if (audioMime == null) return ";alert('[PhoneGap Error] Media type not supported.');";
+            in = getClass().getResourceAsStream("/" + mediaURI);            
+            audioMime = this.mapExtensionToMime(mediaURI.substring(mediaURI.lastIndexOf('.')+1));
+            if (audioMime == null) return ERROR_NOT_SUPPORTED;
             // Create a media player with our inputstream
             musicPlayer = javax.microedition.media.Manager.createPlayer(in, audioMime);
             musicPlayer.realize();
             musicPlayer.prefetch();
             musicPlayer.setLoopCount(1);
             musicPlayer.start();
-            return "";
         }
         catch (IOException e) {
-        	return ";alert('[PhoneGap Error] Media file I/O exception.');";
+        	return ERROR_IO_EX;
 		} catch (javax.microedition.media.MediaException e) {
-			return ";alert('[PhoneGap Error] Could not play and/or determine media file type.');";
+			return ERROR_MEDIA_EX;
+		} finally {
+			mediaURI = null;
+			in = null;
+			audioMime = null;
 		}
+		return "";
 	}
 	/**
 	 * Maps media file extensions to mime type, for use with the sound player.
