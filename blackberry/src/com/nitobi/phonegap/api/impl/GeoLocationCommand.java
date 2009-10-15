@@ -48,11 +48,11 @@ public class GeoLocationCommand implements Command {
 	private static final int CAPTURE_INTERVAL = 5;
 	private static final String CODE = "PhoneGap=location";
 	private static final String GEO_NS = "navigator.geolocation.";
-	private static final String GEO_STOP = GEO_NS + "started = false;" + GEO_NS + "lastPosition = null;"
-	private static final String GEO_START = GEO_NS + "started = true;"
-	private static final String GEO_CHECL = GEO_NS + "lastPosition = ";
-	private static final string GEO_ERROR = GEO_NS + "setError(";
-	private static final string FUNC_SUF = ");";
+	private static final String GEO_STOP = GEO_NS + "started = false;" + GEO_NS + "lastPosition = null;";
+	private static final String GEO_START = GEO_NS + "started = true;";
+	private static final String GEO_CHECK = GEO_NS + "lastPosition = ";
+	private static final String GEO_ERROR = GEO_NS + "setError(";
+	private static final String FUNC_SUF = ");";
 	
 	private static final String ERROR_UNAVAILABLE = "'GPS unavailable on this device.'";
 	
