@@ -50,6 +50,8 @@ public class ContactsCommand implements Command {
 	private static final int NEW_COMMAND = 4;
 	private static final String CODE = "PhoneGap=contacts"; 
 	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.ContactManager";
+	
+	private static final String ERROR_NO_CONTACTID = ";alert('[PhoneGap Error] Contact ID not specified during contact removal operation.');";
 
 	public boolean accept(String instruction) {
 		return instruction != null && instruction.startsWith(CODE);
@@ -91,7 +93,12 @@ public class ContactsCommand implements Command {
 			String key = key_value[0];
 			String value = key_value[1];
 			hash.put(key, value);
+			curParam = null;
+			key_value = null;
+			key = null;
+			value = null;
 		}
+		params = null;
 		return hash;
 	}
 	private int getCommand(String instruction) {
@@ -109,25 +116,40 @@ public class ContactsCommand implements Command {
 	 * @return String, which will be executed back in browser. Just callback invokes.
 	 */
 	private String newContact(Hashtable options) {
+		boolean winfail = false;
+		BlackBerryContactList agenda = null;
+		BlackBerryContact contact = null;
+		String[] nameField = new String[2];
+		String numbers = null;
+		String emails = null;
 		try {
-			BlackBerryContactList agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_WRITE);
-			BlackBerryContact contact = (BlackBerryContact) agenda.createContact();
+			agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_WRITE);
+			contact = (BlackBerryContact) agenda.createContact();
 			// Add name(s).
-			String[] nameField = new String[2];
 			nameField[Contact.NAME_FAMILY] = options.get("lastName").toString();
 			nameField[Contact.NAME_GIVEN] = options.get("firstName").toString();
 			if (agenda.isSupportedField(Contact.NAME)) contact.addStringArray(Contact.NAME, Contact.ATTR_NONE, nameField);
 			// TODO: Need to finalize JSON representation of address - it's multi-field in BlackBerry :s.
 			
 			// TODO: Figure out how attributes and fields work for contact in BlackBerry. RUN TESTS! Code below may change.   
-			String numbers = options.get("phoneNumber").toString();
+			numbers = options.get("phoneNumber").toString();
 			if (agenda.isSupportedField(Contact.TEL)) contact.addString(Contact.TEL, Contact.ATTR_MOBILE, numbers.substring(numbers.lastIndexOf('=')+1));
-			String emails = options.get("email").toString();
+			emails = options.get("email").toString();
 			if (agenda.isSupportedField(Contact.EMAIL)) contact.addString(Contact.EMAIL, Contact.ATTR_MOBILE, emails.substring(emails.lastIndexOf('=')+1));
 			contact.commit();
-			return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".new_onSuccess) { " + CONTACT_MANAGER_JS_NAMESPACE + ".new_onSuccess(); };";
+			winfail = true;
 		} catch (PIMException e) {
-			e.printStackTrace();
+			winfail = false;
+		} finally {
+			agenda = null;
+			contact = null;
+			nameField = null;
+			numbers = null;
+			emails = null;
+		}
+		if (winfail) {
+			return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".new_onSuccess) { " + CONTACT_MANAGER_JS_NAMESPACE + ".new_onSuccess(); };";
+		} else {
 			return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".new_onError) { " + CONTACT_MANAGER_JS_NAMESPACE + ".new_onError(); };";
 		}
 	}
@@ -147,6 +169,7 @@ public class ContactsCommand implements Command {
 				int contactID = Integer.parseInt(options.get("contactID").toString());
 				if (agenda.isSupportedField(Contact.UID)) matchContact.addInt(Contact.UID, Contact.ATTR_HOME | Contact.ATTR_PREFERRED, contactID);
 				Enumeration matches = agenda.items(matchContact);
+				// TODO: Finish this implementation.
 				if (matches.hasMoreElements()) {
 					// Matched to a contact.
 				} else {
@@ -159,7 +182,7 @@ public class ContactsCommand implements Command {
 				return ";if (" + CONTACT_MANAGER_JS_NAMESPACE + ".remove_onError) { " + CONTACT_MANAGER_JS_NAMESPACE + ".remove_onError(); };";
 			}
 		} else {
-			return ";alert('[PhoneGap Error] Contact ID not specified during contact removal operation.');";
+			return ERROR_NO_CONTACTID;
 		}
 		return null;
 	}
@@ -168,25 +191,34 @@ public class ContactsCommand implements Command {
 	 * @return JSON representation of the chosen contact, which will then be sent back to JavaScript.
 	 */
 	private String chooseContact() {
+		boolean winfail = false;
+		StringBuffer contacts = new StringBuffer("[");
+		BlackBerryContact blackberryContact = null;
+		BlackBerryContactList agenda = null;
 		try {
-			BlackBerryContactList agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY);
-			BlackBerryContact blackberryContact;
-			StringBuffer contacts = new StringBuffer("[");
+			agenda = (BlackBerryContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY);
 			if (agenda != null) {
 				blackberryContact = (BlackBerryContact) agenda.choose();
 				agenda.close();
 				ContactsCommand.addContactToBuffer(contacts, blackberryContact);
 				contacts.append("];");
-				return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.toString() + "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess();" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess = null; };";
+				winfail = true;
 			} else {
 				// TODO: If cannot get reference to Agenda, should the error or success callback be called?
-				return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.append("];").toString() + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess = null;";
+				winfail = false;
 			}
 		} catch (Exception e) {
-			System.out.println("Exception getting contact list: " + e.getMessage());
 			// TODO: No error callbacks associated with contact chooser - what to do?
+			winfail = false;
+		} finally {
+			blackberryContact = null;
+			agenda = null;
 		}
-		return null;
+		if (winfail) {
+			return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.toString() + "if (" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess) { " + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess();" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess = null; };";
+		} else {
+			return ";" + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".contacts=" + contacts.append("];").toString() + ContactsCommand.CONTACT_MANAGER_JS_NAMESPACE + ".choose_onSuccess = null;";
+		}
 	}
 	/**
 	 * Returns a contact list, either all contacts or contacts matching the optional search parameter.
@@ -219,12 +251,14 @@ public class ContactsCommand implements Command {
 						BlackBerryContact contact = (BlackBerryContact)matches.nextElement();
 						ContactsCommand.addContactToBuffer(contacts, contact);
 						contacts.append(',');
+						contact = null;
 					}
 				} else {
 					while (matches.hasMoreElements()) {
 						BlackBerryContact contact = (BlackBerryContact)matches.nextElement();
 						ContactsCommand.addContactToBuffer(contacts, contact);
 						contacts.append(',');
+						contact = null;
 					}
 				}
 				if (contacts.length() > 1) contacts = contacts.deleteCharAt(contacts.length() - 1);
