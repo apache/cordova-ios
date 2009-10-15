@@ -31,5 +31,5 @@ function Device() {
 }
 
 PhoneGap.addConstructor(function() {
-    navigator.device = window.device = new Device();
+    navigator.Device = window.Device = new Device();
 });
