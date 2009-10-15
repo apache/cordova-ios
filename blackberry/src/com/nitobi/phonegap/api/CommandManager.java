@@ -52,7 +52,7 @@ public final class CommandManager {
 		commands[4] = new GeoLocationCommand();
 		commands[5] = new DeviceCommand();	
 		commands[6] = new MediaCommand();
-		commands[7] = new NetworkCommand();
+		commands[7] = new NetworkCommand(phoneGap);
 	}
 
 	/**
@@ -75,5 +75,7 @@ public final class CommandManager {
 		}
 		return null;
 	}
-
+	public void stopXHR() {
+		((NetworkCommand)commands[7]).stopXHR();
+	}
 }
