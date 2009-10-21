@@ -23,7 +23,8 @@ function Network() {
      */
 	this.lastReachability = null;
 	this.isReachable_success = null;
-};
+	this.XHR_success = null;
+}
  
 /**
  * 
@@ -33,8 +34,16 @@ function Network() {
  */
 Network.prototype.isReachable = function(hostName, successCallback, options) {
 	this.isReachable_success = successCallback;
-	window.device.exec("network",["reach",hostName]);
-}
+	window.device.exec("network",["reach"]);
+};
+Network.prototype.XHR = function(URL, POSTdata, successCallback) {
+	var req = URL;
+	if (POSTdata != null) {
+		req += "|" + POSTdata;
+	}
+	this.XHR_success = successCallback;
+	window.device.exec("network",["xhr",req]);
+};
  
 /**
  * Called by the geolocation framework when the reachability status has changed.
@@ -44,4 +53,4 @@ Network.prototype.updateReachability = function(reachability) {
     this.lastReachability = reachability;
 };
  
-if (typeof navigator.network == "undefined") navigator.network = new Network();
+navigator.network = new Network();
