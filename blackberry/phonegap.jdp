@@ -28,17 +28,19 @@ src\com\nitobi\phonegap\api\impl\ContactsCommand.java
 src\com\nitobi\phonegap\api\impl\DeviceCommand.java
 src\com\nitobi\phonegap\api\impl\GeoLocationCommand.java
 src\com\nitobi\phonegap\api\impl\MediaCommand.java
+src\com\nitobi\phonegap\api\impl\NetworkCommand.java
 src\com\nitobi\phonegap\api\impl\NotificationCommand.java
 src\com\nitobi\phonegap\api\impl\TelephonyCommand.java
 src\com\nitobi\phonegap\io\AsynchronousResourceFetcher.java
 src\com\nitobi\phonegap\io\Callback.java
 src\com\nitobi\phonegap\io\ConnectionManager.java
-src\com\nitobi\phonegap\io\HttpConnection.java
 src\com\nitobi\phonegap\io\PrimaryResourceFetchThread.java
 src\com\nitobi\phonegap\io\QueueResourceFetcher.java
 src\com\nitobi\phonegap\io\SecondaryResourceFetchThread.java
 src\com\nitobi\phonegap\model\Position.java
 src\com\nitobi\phonegap\PhoneGap.java
+src\com\twmacinta\util\MD5.java
+src\com\twmacinta\util\MD5State.java
 src\www\css\test.css
 src\www\js\camera.js
 src\www\js\contacts.js
@@ -88,3 +90,5 @@ StartupTier=7
 SystemModule=0
 Type=0
 UserData=|src
+Vendor=Nitobi
+Version=3.0.0

@@ -5,7 +5,7 @@ Geolocation.prototype.start = function() {
 	if (this.started) {
 		return;
 	} else {
-		device.exec("location", ["start"]);
+		PhoneGap.exec("location", ["start"]);
 	}
     
 }
@@ -17,7 +17,7 @@ Geolocation.prototype.stop = function() {
 	if (!this.started) {
 		return;
 	} else {
-		device.exec("location", ["stop"]);
+		PhoneGap.exec("location", ["stop"]);
 	}
 }
 
@@ -29,6 +29,6 @@ Geolocation.prototype.map = function() {
 		alert("[PhoneGap] No position to map yet.");
 		return;
 	} else {
-		device.exec("location", ["map"]);
+		PhoneGap.exec("location", ["map"]);
 	}
 }
