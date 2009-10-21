@@ -85,7 +85,8 @@ public class NetworkCommand implements Command {
 			case XHR_COMMAND:
 				String reqURL = instruction.substring(CODE.length()+5);
 				String POSTdata = null;
-				if (int pipeIndex = (reqURL.indexOf("|")) > -1) {
+				int pipeIndex = reqURL.indexOf("|");
+				if (pipeIndex > -1) {
 					POSTdata = reqURL.substring(pipeIndex+1);
 					reqURL = reqURL.substring(0,pipeIndex);
 				}
