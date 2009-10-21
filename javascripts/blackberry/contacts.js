@@ -11,7 +11,7 @@ ContactManager.prototype.chooseContact = function(successCallback, options) {
 	this.choose_onSuccess = successCallback;
 	var params = ["choose"];
 	params = this.formParams(options,params);
-	device.exec("contacts", params);
+	PhoneGap.exec("contacts", params);
 };
 ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
 	if (options.nameFilter && options.nameFilter.length > 0) {
@@ -19,7 +19,7 @@ ContactManager.prototype.displayContact = function(successCallback, errorCallbac
 		params = this.formParams(options,params);
 		this.search_onSuccess = successCallback;
 		this.search_onError = errorCallback;
-		device.exec("contacts", params);
+		PhoneGap.exec("contacts", params);
 	} else {
 		ContactManager.getAllContacts(successCallback,errorCallback,options);
 		return;
@@ -30,7 +30,7 @@ ContactManager.prototype.getAllContacts = function(successCallback, errorCallbac
 	this.global_onError = errorCallback;
 	var params = ["getall"];
 	params = this.formParams(options,params);
-	device.exec("contacts", params);
+	PhoneGap.exec("contacts", params);
 };
 ContactManager.prototype.newContact = function(contact, successCallback, errorCallback, options) {
 	if (!contact) {
@@ -61,6 +61,6 @@ ContactManager.prototype.newContact = function(contact, successCallback, errorCa
 		this.new_onError = errorCallback;
 		var params = ["new"];
 		params = this.formParams(options,params);
-		device.exec("contacts", params);
+		PhoneGap.exec("contacts", params);
 	}
-};s
+};

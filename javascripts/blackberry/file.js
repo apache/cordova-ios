@@ -1,8 +1,9 @@
 File.prototype.read = function(fileName, successCallback, errorCallback) {
-	document.cookie = 'bb_command={command:8,args:{name:"'+fileName+'"}}';
+	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
+	/*document.cookie = 'bb_command={command:8,args:{name:"'+fileName+'"}}';
 	navigator.file.successCallback = successCallback;
 	navigator.file.errorCallback = errorCallback;
-	navigator.file.readTimeout = window.setInterval('navigator.file._readReady()', 1000);
+	navigator.file.readTimeout = window.setInterval('navigator.file._readReady()', 1000);*/
 }
 
 File.prototype._readReady = function() {
@@ -28,5 +29,6 @@ File.prototype._readReady = function() {
 }
 
 File.prototype.write = function(fileName, data) {
-	document.cookie = 'bb_command={command:9,args:{name:"'+fileName+'",data:"'+data+'"}}';
+	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
+//	document.cookie = 'bb_command={command:9,args:{name:"'+fileName+'",data:"'+data+'"}}';
 }
