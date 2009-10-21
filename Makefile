@@ -85,7 +85,7 @@ blackberry: lib/blackberry/phonegap-min.js
 lib/blackberry/phonegap-min.js: lib/blackberry/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/blackberry/phonegap.js
 
-lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js
+lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js
 	$(RM_RF) lib/blackberry
 	$(MKPATH) lib/blackberry
 	$(RM_F) $@
@@ -112,6 +112,7 @@ lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleratio
 	$(CAT) javascripts/blackberry/device.js >> $@
 	$(CAT) javascripts/blackberry/file.js >> $@
 	$(CAT) javascripts/blackberry/geolocation.js >> $@
+	$(CAT) javascripts/blackberry/compass.js >> $@
 android: lib/android/phonegap-min.js
 
 lib/android/phonegap-min.js: lib/android/phonegap.js

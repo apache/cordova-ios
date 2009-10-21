@@ -30,6 +30,7 @@ src\com\nitobi\phonegap\api\impl\GeoLocationCommand.java
 src\com\nitobi\phonegap\api\impl\MediaCommand.java
 src\com\nitobi\phonegap\api\impl\NetworkCommand.java
 src\com\nitobi\phonegap\api\impl\NotificationCommand.java
+src\com\nitobi\phonegap\api\impl\OrientationCommand.java
 src\com\nitobi\phonegap\api\impl\TelephonyCommand.java
 src\com\nitobi\phonegap\io\AsynchronousResourceFetcher.java
 src\com\nitobi\phonegap\io\Callback.java
