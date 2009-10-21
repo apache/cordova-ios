@@ -22,7 +22,6 @@
  */
 package com.nitobi.phonegap.api.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
