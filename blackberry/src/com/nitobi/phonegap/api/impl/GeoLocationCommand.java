@@ -55,6 +55,7 @@ public class GeoLocationCommand implements Command {
 	private static final String FUNC_SUF = ");";
 	
 	private static final String ERROR_UNAVAILABLE = "'GPS unavailable on this device.'";
+	private static final String ERROR_OUTOFSERVICE = "'GPS is out of service on this device.'";
 	
 	private Position position;
 	private boolean availableGPS = true;
@@ -165,12 +166,11 @@ public class GeoLocationCommand implements Command {
         	case LocationProvider.AVAILABLE:
         		break;
         	case LocationProvider.OUT_OF_SERVICE:
-        		// TODO: Should call fail() here.
+        		command.setError(ERROR_OUTOFSERVICE);
         		break;
         	case LocationProvider.TEMPORARILY_UNAVAILABLE:
         		break;
         	}
-        	
         }
     }
 
