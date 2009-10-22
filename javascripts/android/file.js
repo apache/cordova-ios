@@ -1,5 +1,5 @@
 File.prototype.read = function(fileName, successCallback, errorCallback) {
-  var data = FileUtil.read(fileName);
+  FileUtil.read(fileName);
   if( data.substr("FAIL"))
   {
     errorCallback(data); 
