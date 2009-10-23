@@ -85,7 +85,7 @@ blackberry: lib/blackberry/phonegap-min.js
 lib/blackberry/phonegap-min.js: lib/blackberry/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/blackberry/phonegap.js
 
-lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js
+lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/media.js javascripts/network.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js javascripts/blackberry/media.js javascripts/blackberry/network.js javascripts/blackberry/notification.js javascripts/blackberry/sms.js
 	$(RM_RF) lib/blackberry
 	$(MKPATH) lib/blackberry
 	$(RM_F) $@
@@ -101,18 +101,23 @@ lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleratio
 	$(CAT) javascripts/compass.js >> $@
 	$(CAT) javascripts/map.js >> $@
 	$(CAT) javascripts/media.js >> $@
+	$(CAT) javascripts/network.js >> $@
 	$(CAT) javascripts/notification.js >> $@
 	$(CAT) javascripts/orientation.js >> $@
 	$(CAT) javascripts/position.js >> $@
 	$(CAT) javascripts/sms.js >> $@
 	$(CAT) javascripts/telephony.js >> $@
-	$(CAT) javascripts/uicontrols.js >> $@
 	$(CAT) javascripts/blackberry/phonegap.js >> $@
 	$(CAT) javascripts/blackberry/contacts.js >> $@
 	$(CAT) javascripts/blackberry/device.js >> $@
 	$(CAT) javascripts/blackberry/file.js >> $@
 	$(CAT) javascripts/blackberry/geolocation.js >> $@
 	$(CAT) javascripts/blackberry/compass.js >> $@
+	$(CAT) javascripts/blackberry/media.js >> $@
+	$(CAT) javascripts/blackberry/network.js >> $@
+	$(CAT) javascripts/blackberry/notification.js >> $@
+	$(CAT) javascripts/blackberry/sms.js >> $@
+	$(CAT) javascripts/blackberry/telephony.js >> $@
 android: lib/android/phonegap-min.js
 
 lib/android/phonegap-min.js: lib/android/phonegap.js
