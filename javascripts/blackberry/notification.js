@@ -1,8 +1,6 @@
-navigator.notification = {
-    vibrate: function(secs) {
-    	window.device.exec("notification/vibrate",[secs]);
-    },
-    beep: function(times) {
-    	window.device.exec("notification/beep",[times]);
-    }
+Notification.prototype.vibrate = function(mills) {
+	PhoneGap.exec("notification/vibrate",[mills*1000]);
+};
+Notification.prototype.beep = function(count, volume) {
+	PhoneGap.exec("notification/beep",[count]);
 };
