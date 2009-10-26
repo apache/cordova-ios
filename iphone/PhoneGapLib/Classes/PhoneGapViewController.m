@@ -11,6 +11,14 @@
 
 @implementation PhoneGapViewController
 
+- (id) init
+{
+    self = [super init];
+	
+	return self;
+}
+
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
 {
     if (autoRotate == YES) {

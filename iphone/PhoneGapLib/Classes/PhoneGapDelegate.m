@@ -75,6 +75,17 @@
  */
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
+	
+	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
+	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
+	viewController = [ [ PhoneGapViewController alloc ] init ];
+	
+	webView = [ [ UIWebView alloc ] initWithFrame:screenBounds ];
+	
+	[ viewController.view addSubview: webView ];
+	
+	
+	
 	/*
 	 * PhoneGap.plist
 	 *
