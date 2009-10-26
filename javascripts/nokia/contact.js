@@ -1,8 +1,28 @@
 /**
- * @author ryan
+ * This class provides access to the device contacts.
+ * @constructor
  */
 
-//var contactsService;
+function Contact(jsonObject) {
+	this.firstName = "";
+	this.lastName = "";
+    this.name = "";
+    this.phones = {};
+    this.emails = {};
+	this.address = "";
+}
+
+Contact.prototype.displayName = function()
+{
+    // TODO: can be tuned according to prefs
+	return this.name;
+}
+
+function ContactManager() {
+	// Dummy object to hold array of contacts
+	this.contacts = [];
+	this.timestamp = new Date().getTime();
+}
 
 ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
 	this.contactsService = device.getServiceObject("Service.Contact", "IDataSource");
