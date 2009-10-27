@@ -1,5 +1,5 @@
 ## Steps to create a NEW PhoneGap app:
-- This is subject to change as we are currently looking at ways of making this dead simple ( via templates )
+	This is subject to change as we are currently looking at ways of making this dead simple ( via 	templates )
 
 1. In Xcode, create a new Window Based iPhone App
 2. Select project and add a reference to PhoneGapLib project (or drag and drop it in)
