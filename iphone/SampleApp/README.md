@@ -1,7 +1,7 @@
 ## Steps to create a NEW PhoneGap app:
 	This is subject to change as we are currently looking at ways of making this dead simple ( via 	templates )
 
-1. In Xcode, create a new _Window Based_ iPhone App
+1. In Xcode, create a new __Window Based__ iPhone App
 2. Select project and add a reference to __PhoneGapLib__ project (or drag and drop it in)
 3. Add a Reference to all headers in __PhoneGapLib__ project
 4. Delete the XIB interface builder file
