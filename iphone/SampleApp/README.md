@@ -11,7 +11,7 @@
 	- @interface MyAppDelegate : PhoneGapDelegate { }
 7. Select your target, and add a dependency for __PhoneGapLib__
 8. Add __libPhoneGapLib.a__ to the Link Binary With Library build step
-9. Add the __www__ folder to *Copy Bundle Resources* build step ( add a folder reference )
+9. Add the __www__ folder to __Copy Bundle Resources__ build step ( add a folder reference )
 10. Place __phonegap.js__ in your __www__ folder ( this will be improved upon shortly )
 11. Add references to the following frameworks to your project :
 	* AddressBook.framework
