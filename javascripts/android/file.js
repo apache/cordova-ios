@@ -1,13 +1,18 @@
+
 File.prototype.read = function(fileName, successCallback, errorCallback) {
+  this.failCallback = errorCallback; 
+  this.winCallback = successCallback;
+
   FileUtil.read(fileName);
-  if( data.substr("FAIL"))
-  {
-    errorCallback(data); 
-  }
+}
+
+File.prototype.hasRead = function(data)
+{
+  if(data.substr("FAIL"))
+    this.failCallback(data);
   else
-  {
-    successCallback(data);
-  }
+    this.winCallback(data);
+  end
 }
 
 /**
@@ -15,13 +20,7 @@ File.prototype.read = function(fileName, successCallback, errorCallback) {
  * @param {File} file The file to write to the device.
  */
 File.prototype.write = function(file, str, successCallback, failCallback) {
-	var call = FileUtil.write(str);
-  if(call == 0)
-  {
-    successCallback();
-  }
-  else
-  {
-    failCallback(call);
-  }
+  this.winCallback = successCallback;
+  this.failCallback = failCallback;
+  var call = FileUtil.write(file, str);
 }
