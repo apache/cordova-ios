@@ -149,27 +149,22 @@ lib/nokia/phonegap-min.js: lib/nokia/phonegap.js
 lib/nokia/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/nokia/geolocation.js javascripts/nokia/notification.js javascripts/nokia/contact.js
 	$(MKPATH) lib/nokia
 	$(RM_F) $@
-	$(CAT) javascripts/phonegap.js.base >> $@
-	$(CAT) javascripts/acceleration.js >> $@
-	$(CAT) javascripts/accelerometer.js >> $@
-	$(CAT) javascripts/camera.js >> $@
-	$(CAT) javascripts/contact.js >> $@
-	$(CAT) javascripts/debugconsole.js >> $@
-	$(CAT) javascripts/device.js >> $@
-	$(CAT) javascripts/file.js >> $@
-	$(CAT) javascripts/geolocation.js >> $@
-	$(CAT) javascripts/compass.js >> $@
-	$(CAT) javascripts/map.js >> $@
-	$(CAT) javascripts/media.js >> $@
-	$(CAT) javascripts/notification.js >> $@
-	$(CAT) javascripts/orientation.js >> $@
-	$(CAT) javascripts/position.js >> $@
-	$(CAT) javascripts/sms.js >> $@
-	$(CAT) javascripts/telephony.js >> $@
-	$(CAT) javascripts/uicontrols.js >> $@
-	$(CAT) javascripts/nokia/geolocation.js >> $@
-	$(CAT) javascripts/nokia/notification.js >> $@
-	$(CAT) javascripts/nokia/contact.js >> $@
-	$(CAT) javascripts/nokia/device.js >> $@
+	$(CAT) javascripts/nokia/phonegap.js.base >> $@
+	$(CAT) javascripts/nokia/acceleration.js >> $@
 	$(CAT) javascripts/nokia/accelerometer.js >> $@
 	$(CAT) javascripts/nokia/camera.js >> $@
+	$(CAT) javascripts/nokia/camera/com.nokia.device.utility.js >> $@
+	$(CAT) javascripts/nokia/camera/com.nokia.device.framework.js >> $@
+	$(CAT) javascripts/nokia/camera/s60_camera.js >> $@
+	$(CAT) javascripts/nokia/camera/com.nokia.device.camera.js >> $@
+	$(CAT) javascripts/nokia/contact.js >> $@
+	$(CAT) javascripts/nokia/device.js >> $@
+	$(CAT) javascripts/nokia/geolocation.js >> $@
+	$(CAT) javascripts/nokia/notification.js >> $@
+	$(CAT) javascripts/nokia/orientation.js >> $@
+	$(CAT) javascripts/nokia/position.js >> $@
+	$(CAT) javascripts/nokia/sms.js >> $@
+	$(CAT) javascripts/nokia/storage.js >> $@
+
+	$(CAT) javascripts/uicontrols.js >> $@
+	$(CAT) javascripts/debugconsole.js >> $@
