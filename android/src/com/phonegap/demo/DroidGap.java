@@ -46,6 +46,7 @@ public class DroidGap extends Activity {
 	private GeoBroker geo;
 	private AccelListener accel;
 	private CameraLauncher launcher;
+	private FileUtils fs;
 	
     /** Called when the activity is first created. */
 	@Override
@@ -93,16 +94,18 @@ public class DroidGap extends Activity {
     
     private void bindBrowser(WebView appView)
     {
-
     	gap = new PhoneGap(this, appView);
     	geo = new GeoBroker(appView, this);
     	accel = new AccelListener(this, appView);
     	launcher = new CameraLauncher(appView, this);
+    	fs = new FileUtils(appView);
+    	
     	// This creates the new javascript interfaces for PhoneGap
     	appView.addJavascriptInterface(gap, "DroidGap");
     	appView.addJavascriptInterface(geo, "Geo");
     	appView.addJavascriptInterface(accel, "Accel");
     	appView.addJavascriptInterface(launcher, "GapCam");
+    	appView.addJavascriptInterface(fs, "FileUtil");
     }
         
     /**
