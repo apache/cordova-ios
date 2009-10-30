@@ -12,4 +12,4 @@ PhoneGap.run_command = function() {
 	
 	var command = "PhoneGap=" + args.join("/");
 	document.cookie = command;
-}
+};

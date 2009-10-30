@@ -46,8 +46,6 @@ import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.system.KeyListener;
 import net.rim.device.api.ui.Field;
-import net.rim.device.api.ui.Manager;
-import net.rim.device.api.ui.MenuItem;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.Status;
 import net.rim.device.api.ui.container.MainScreen;
@@ -66,7 +64,7 @@ import com.nitobi.phonegap.io.SecondaryResourceFetchThread;
 public class PhoneGap extends UiApplication implements RenderingApplication {
 
 	public static final String PHONEGAP_PROTOCOL = "PhoneGap=";
-	private static final String DEFAULT_INITIAL_URL = "data:///www/test/index.html";
+	private static final String DEFAULT_INITIAL_URL = "data:///www/index.html";
 	private static final String REFERER = "referer";  
 	private static final String REDIRECT_MSG = "You are being redirected to a different page...";
 	public Vector pendingResponses = new Vector();
