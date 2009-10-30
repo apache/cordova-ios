@@ -50,7 +50,7 @@ public class GeoLocationCommand implements Command {
 	private static final String GEO_NS = "navigator.geolocation.";
 	private static final String GEO_STOP = GEO_NS + "started = false;" + GEO_NS + "lastPosition = null;";
 	private static final String GEO_START = GEO_NS + "started = true;";
-	private static final String GEO_CHECK = GEO_NS + "lastPosition = ";
+	private static final String GEO_CHECK = GEO_NS + "setLocation(";
 	private static final String GEO_ERROR = GEO_NS + "setError(";
 	private static final String FUNC_SUF = ");";
 	
@@ -102,7 +102,7 @@ public class GeoLocationCommand implements Command {
 								return GEO_STOP;
 			case START_COMMAND: locationProvider.setLocationListener(new LocationListenerImpl(this), CAPTURE_INTERVAL, 1, 1);
 								return GEO_START;
-			case CHECK_COMMAND: if (position != null) return GEO_CHECK + position.toJavascript() + ";";
+			case CHECK_COMMAND: if (position != null) return GEO_CHECK + position.toJavascript() + FUNC_SUF;
 		}
 		return null;
 	}

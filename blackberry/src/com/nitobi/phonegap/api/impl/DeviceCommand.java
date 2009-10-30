@@ -35,16 +35,16 @@ public class DeviceCommand implements Command {
 
 	private static final String CODE = "PhoneGap=initialize";
 	private static final String EMULATOR = "Emulator";
-	private static final String DEVICE_NAME = ";device.name = '";
-	private static final String DEVICE_FLASH = "';device.flash = ";
-	private static final String DEVICE_PLATFORM = ";device.platform = '";
-	private static final String DEVICE_VENDOR = "';device.vendor = '";
-	private static final String DEVICE_BATTERY = "';device.battery = ";
-	private static final String DEVICE_VERSION = ";device.version = '";
-	private static final String DEVICE_SIMULATOR = "';device.isSimulator = ";
-	private static final String DEVICE_CAMERA = ";device.hasCamera = ";
-	private static final String DEVICE_UUID = ";device.uuid = ";
-	private static final String SEMI_COLON = ";device.uuid = ";
+	private static final String DEVICE_NAME = ";Device.name = '";
+	private static final String DEVICE_FLASH = "';Device.flash = ";
+	private static final String DEVICE_PLATFORM = ";Device.platform = '";
+	private static final String DEVICE_VENDOR = "';Device.vendor = '";
+	private static final String DEVICE_BATTERY = "';Device.battery = ";
+	private static final String DEVICE_VERSION = ";Device.version = '";
+	private static final String DEVICE_SIMULATOR = "';Device.isSimulator = ";
+	private static final String DEVICE_CAMERA = ";Device.hasCamera = ";
+	private static final String DEVICE_UUID = ";Device.uuid = ";
+	private static final String SEMI_COLON = ";";
 
 	/**
 	 * Determines whether the specified instruction is accepted by the command. 
