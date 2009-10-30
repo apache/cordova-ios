@@ -59,7 +59,7 @@
 	if(conn) {    
 		receivedData=[[NSMutableData data] retain];
 		NSString *sourceSt = [[NSString alloc] initWithBytes:[receivedData bytes] length:[receivedData length] encoding:NSUTF8StringEncoding];
-		NSLog([@"photo: connection sucess" stringByAppendingString:sourceSt]);
+		NSLog(@"%@", [@"photo: connection sucess" stringByAppendingString:sourceSt]);
 		[sourceSt release];
 		
 	} else {
@@ -104,7 +104,7 @@
 	NSString *aStr = [[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding];
 	
 	//upload.php should return "filename=<filename>"
-	NSLog(aStr);
+	NSLog(@"%@", aStr);
 	NSArray * parts = [aStr componentsSeparatedByString:@"="];
 	//set filename
 	lastUploadedPhoto = (NSString *)[parts objectAtIndex:1];
@@ -120,7 +120,7 @@
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	
 	NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
-	NSLog(jsCallBack);
+	NSLog(@"%@", jsCallBack);
 	
     // release the connection, and the data object
     [conn release];
@@ -153,7 +153,7 @@
  * Failed with Error
  */
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    NSLog([@"photo: upload failed! " stringByAppendingString:[error description]]);
+    NSLog(@"%@", [@"photo: upload failed! " stringByAppendingString:[error description]]);
     
 }
 

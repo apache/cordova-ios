@@ -458,8 +458,8 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos3.0;
-				USER_HEADER_SEARCH_PATHS = "jesse/documents/PhoneGapLib/Classes//**";
-				VALID_ARCHS = "i386 armv6 armv7";
+				USER_HEADER_SEARCH_PATHS = "";
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Debug;
 		};
@@ -475,8 +475,8 @@
 					"-ObjC",
 				);
 				PREBINDING = NO;
-				SDKROOT = iphoneos3.1;
-				VALID_ARCHS = "i386 armv6 armv7";
+				SDKROOT = iphoneos3.0;
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Release;
 		};
