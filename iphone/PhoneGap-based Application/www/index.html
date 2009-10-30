@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta name="viewport" content="width=320; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>PhoneGap</title>
+    <link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    function deviceInfo(){
+      debug.log("deviceInfo");
+      document.getElementById("platform").innerHTML   = device.platform;
+      document.getElementById("version").innerHTML    = device.version;
+      document.getElementById("devicename").innerHTML = device.name;
+      document.getElementById("uuid").innerHTML       = device.uuid;
+    }
+    
+    function getLocation() {
+      debug.log("getLocation");
+      navigator.notification.activityStart();
+      var suc = function(p){
+        debug.log(p.coords.latitude + " " + p.coords.longitude);
+        navigator.notification.alert(p.coords.latitude + " " + p.coords.longitude, "Your GeoLocation", "Thanks");
+        navigator.notification.activityStop();
+      };
+      var fail = function(error){
+	  };
+      navigator.geolocation.getCurrentPosition(suc,fail);
+    }
+    
+    function customAlert(){
+      navigator.notification.alert("Custom alert", "Custom title", "Yup!");
+    }
+  
+    function beep(){
+      debug.log("beep");
+      navigator.notification.beep(2);
+    }
+  
+    function vibrate(){
+      debug.log("vibrate");
+      navigator.notification.vibrate(0);
+    }
+  
+    function getContactsPrompt(){
+      debug.log("getContactsPrompt");
+	  
+		var pageSize = prompt("Page size", 10);
+		if (pageSize) {
+			var pageNumber = prompt("Page number", 1);
+			if (pageNumber) {
+				var nameFilter = prompt("Name filter", null);
+				getContacts(parseInt(pageSize), parseInt(pageNumber), nameFilter);
+			}
+		}
+    }
+
+    function showLoadingScreen(durationInSeconds){
+		if (!durationInSeconds) {
+			durationInSeconds = prompt("Enter the load duration in seconds", 3);
+		}
+
+		if (durationInSeconds) {
+			options = { 'duration': durationInSeconds };
+			navigator.notification.loadingStart(options);
+		} else {
+			return;
+		}
+	}
+		
+    function getContacts(pageSize, pageNumber, nameFilter){
+      debug.log("getContacts");
+      var fail = function(){};
+	  
+	  var options = {};
+	  if (pageSize)
+		options.pageSize = pageSize;
+	  if (pageNumber)
+		options.pageNumber = pageNumber;
+	  if (nameFilter)
+		options.nameFilter = nameFilter;
+	  
+	  var durationOptions = { minDuration : 2 };
+	  navigator.notification.loadingStart(durationOptions);
+      navigator.ContactManager.getAllContacts(getContacts_Return, fail, options);
+    }
+	
+	function getContacts_Return(contactsArray)
+	{
+		var names = "";
+		
+		for (var i = 0; i < contactsArray.length; i++) {
+			var con = new Contact();
+			con.firstName = contactsArray[i].firstName;
+			con.lastName = contactsArray[i].lastName;
+			con.phoneNumber = contactsArray[i].phoneNumber;
+			con.address = contactsArray[i].address;	
+			names += con.displayName();
+			
+			if (i+1 != contactsArray.length)
+				names += ",";
+		}
+		
+		navigator.notification.loadingStop();
+		navigator.notification.alert(names, "Contacts Returned", "Dismiss");
+	}
+	
+	var __editDisplayFirstContact = false;
+	function displayFirstContact(allowsEditing)
+	{
+	  var options = { pageSize : 1, pageNumber: 1 };
+	  __editDisplayFirstContact = allowsEditing;
+	  navigator.ContactManager.getAllContacts(displayFirstContact_Return, null, options);
+	}
+	
+	function displayFirstContact_Return(contactsArray)
+	{
+		var options = { allowsEditing: __editDisplayFirstContact };
+		
+		for (var i = 0; i < contactsArray.length; i++) {
+			navigator.ContactManager.displayContact(contactsArray[i].recordID, null, options);
+		}
+	}
+
+	function contactsCount(){
+      debug.log("contactCount");
+      navigator.ContactManager.contactsCount(showContactsCount);
+    }
+	
+	function showContactsCount(count){
+		alert("Number of contacts: " + count);
+	}
+
+	function addContact(gui){
+		var sample_contact = { 'firstName': 'John', 'lastName' : 'Smith', 'phoneNumber': '555-5555' };
+	
+		if (gui) {
+			navigator.ContactManager.newContact(sample_contact, null, { 'gui': true });
+		} else {
+			var firstName = prompt("Enter a first name", sample_contact.firstName);
+			if (firstName) {
+				var lastName = prompt("Enter a last name", sample_contact.lastName);
+				if (lastName) {
+					var phoneNumber = prompt("Enter a phone number", sample_contact.phoneNumber);
+					if (phoneNumber) {
+						sample_contact = { 'firstName': firstName, 'lastName' : lastName, 'phoneNumber' : phoneNumber };
+						navigator.ContactManager.newContact(sample_contact, chooseContact_Return);
+					}
+				}
+			}
+		}
+	}
+	
+	function chooseContact(allowsEditing)
+	{
+		var options = { allowsEditing: allowsEditing };
+		navigator.ContactManager.chooseContact(chooseContact_Return, options);
+	}
+	
+	function chooseContact_Return(contact)
+	{
+		if (contact) {
+			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Returned", "Dismiss");
+		}
+	}
+    
+	function removeContact()
+	{
+		navigator.ContactManager.chooseContact(removeContact_Return, null);
+	}
+	
+	function removeContact_Return(contact)
+	{
+		if (contact) {
+			navigator.ContactManager.removeContact(contact.recordID, removeContact_Success, null);
+		}
+	}
+
+	function removeContact_Success(contact)
+	{
+		if (contact) {
+			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Removed", "Dismiss");
+		}
+	}
+	
+
+    function watchAccel() {
+      debug.log("watchAccel");
+      var suc = function(a){
+        document.getElementById('x').innerHTML = roundNumber(a.x);
+        document.getElementById('y').innerHTML = roundNumber(a.y);
+        document.getElementById('z').innerHTML = roundNumber(a.z);
+      };
+      var fail = function(){};
+      var opt = {};
+      opt.frequency = 100;
+      timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
+    }
+      
+    function roundNumber(num) {
+      var dec = 3;
+      var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+      return result;
+    }
+
+    function preventBehavior(e) { 
+      e.preventDefault(); 
+    };
+
+    PhoneGap.addConstructor(function(){
+      document.addEventListener("touchmove", preventBehavior, false);
+      deviceInfo();
+      document.addEventListener('orientationChanged', function(e) { debug.log("Orientation changed to " + e.orientation); }, false);
+    });
+    
+    </script>
+  </head>
+  <body id="stage" class="theme">
+  <!--
+	  <a href="javascript:addContact(true)">New Contact (GUI)</a>
+	  <br />
+	  <a href="javascript:addContact(false)">New Contact (API)</a>
+	  <br />
+	  <a href="javascript:getContacts(1,1)">Get 1st Contact (query)</a>
+	  <br />
+	  <a href="javascript:displayFirstContact(false)">DISPLAY 1st Contact (by recordID)</a>
+	  <br />
+	  <a href="javascript:displayFirstContact(true)">DISPLAY AND EDIT 1st Contact (by recordID)</a>
+	  <br />
+	  <a href="javascript:getContacts(5,1)">Get 1st Page of Contacts, with Page size of 5</a>
+	  <br />
+	  <a href="javascript:getContacts(5,2)">Get 2nd Page of Contacts, with Page size of 5</a>
+	  <br />
+	  <a href="javascript:getContacts(20,1)">Get All Contacts (MAXING TO 20)</a>
+	  <br />
+	  <a href="javascript:getContactsPrompt()">Get All Contacts (PROMPT)</a>
+	  <br />
+	  <a href="javascript:getContacts()">Get ALL Contacts (WARNING: may be huge)</a>
+	  <br />
+	  <a href="javascript:contactsCount()">Contacts Count</a>
+	  <br />
+	  <a href="javascript:chooseContact(true)">Choose Contact to Edit</a>
+	  <br />
+	  <a href="javascript:chooseContact()">Choose Contact</a>
+	  <br />
+	  <a href="javascript:removeContact()">Choose Contact to Remove</a>
+	  <br />
+	  <a href="javascript:showLoadingScreen()">Load start</a>
+	  <br />
+-->
+      <div id="Page1">
+        <h2>this file is located at iphone/www/index.html</h2>
+        <div id="info" class="Panel">
+          <table>
+            <tr>
+              <td>
+                <h4>Platform: <span id="platform">&nbsp;</span></h4>
+              </td>
+              <td>
+                <h4>Version: <span id="version">&nbsp;</span></h4>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <h4>Device Name: <span id="devicename">&nbsp;</span></h4>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <h4>UUID:   <span id="uuid">&nbsp;</span></h4>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <dl id="accel-data">
+          <dt>X:</dt><dd id="x">&nbsp;</dd>
+          <dt>Y:</dt><dd id="y">&nbsp;</dd>
+          <dt>Z:</dt><dd id="z">&nbsp;</dd>
+        </dl>
+        <a href="#" class="btn large" onclick="watchAccel();">Watch Accelerometer</a>
+        <a href="#" class="btn large" onclick="getLocation();">Get Location</a>
+        <a href="tel:411" class="btn">Call 411</a>
+        <a href="#" class="btn" onclick="customAlert();">Custom Alert</a>
+        <a href="#" class="btn" onclick="beep();">Beep</a>
+        <a href="#" class="btn" onclick="vibrate();">Vibrate</a>
+      </div>
+      <div id="Page2" style="display: none">
+        <a href="#" class="btn large" onclick="getContact();">Get Fourth Contact</a>
+      </div>
+  </body>
+</html>
