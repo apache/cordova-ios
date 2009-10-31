@@ -70,6 +70,8 @@
 		8887FDA01090FBE7009987E8 /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD611090FBE7009987E8 /* Sound.m */; };
 		8887FDA11090FBE7009987E8 /* UIControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD621090FBE7009987E8 /* UIControls.h */; };
 		8887FDA21090FBE7009987E8 /* UIControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD631090FBE7009987E8 /* UIControls.m */; };
+		88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* Accelerometer.h */; };
+		88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* Accelerometer.m */; };
 		AA747D9F0F9514B9006C5449 /* PhoneGapLib_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */; };
 /* End PBXBuildFile section */
 
@@ -137,6 +139,8 @@
 		8887FD611090FBE7009987E8 /* Sound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Sound.m; path = Classes/Sound.m; sourceTree = "<group>"; };
 		8887FD621090FBE7009987E8 /* UIControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIControls.h; path = Classes/UIControls.h; sourceTree = "<group>"; };
 		8887FD631090FBE7009987E8 /* UIControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIControls.m; path = Classes/UIControls.m; sourceTree = "<group>"; };
+		88BA573B109BB46F00FB5E78 /* Accelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Accelerometer.h; path = Classes/Accelerometer.h; sourceTree = "<group>"; };
+		88BA573C109BB46F00FB5E78 /* Accelerometer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Accelerometer.m; path = Classes/Accelerometer.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		D2AAC07E0554694100DB518D /* libPhoneGapLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPhoneGapLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -189,6 +193,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				88BA573B109BB46F00FB5E78 /* Accelerometer.h */,
+				88BA573C109BB46F00FB5E78 /* Accelerometer.m */,
 				8887FD241090FBE7009987E8 /* Bonjour.h */,
 				8887FD251090FBE7009987E8 /* Bonjour.m */,
 				8887FD261090FBE7009987E8 /* Camera.h */,
@@ -329,6 +335,7 @@
 				8887FD9D1090FBE7009987E8 /* Reachability.h in Headers */,
 				8887FD9F1090FBE7009987E8 /* Sound.h in Headers */,
 				8887FDA11090FBE7009987E8 /* UIControls.h in Headers */,
+				88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +413,7 @@
 				8887FD9E1090FBE7009987E8 /* Reachability.m in Sources */,
 				8887FDA01090FBE7009987E8 /* Sound.m in Sources */,
 				8887FDA21090FBE7009987E8 /* UIControls.m in Sources */,
+				88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

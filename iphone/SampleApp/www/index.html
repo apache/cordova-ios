@@ -185,18 +185,38 @@
 		}
 	}
 	
+	var isWatchingAccel = false;
+	var accelTimer = -1;
+	
+	function watchAccel() 
+	{
+		if(isWatchingAccel)
+		{	
+			navigator.accelerometer.clearWatch(accelTimer);
+			document.getElementById('x').innerHTML = "-";
+			document.getElementById('y').innerHTML = "-";
+			document.getElementById('z').innerHTML = "-";
+		}
+		else
+		{
+			startAccel()
+		}
+		isWatchingAccel = !isWatchingAccel;
+	}
 
-    function watchAccel() {
+    function startAccel() 
+	{
       debug.log("watchAccel");
-      var suc = function(a){
+      var suc = function(a)
+	  {
         document.getElementById('x').innerHTML = roundNumber(a.x);
         document.getElementById('y').innerHTML = roundNumber(a.y);
         document.getElementById('z').innerHTML = roundNumber(a.z);
       };
       var fail = function(){};
       var opt = {};
-      opt.frequency = 100;
-      timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
+      opt.frequency = 100;// msec
+      accelTimer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
     }
       
     function roundNumber(num) {
