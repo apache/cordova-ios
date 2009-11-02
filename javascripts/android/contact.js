@@ -6,47 +6,78 @@
 var contactWin = function() {}
 var contactFail = function() {}
 
-function Contact() {
-  this.firstName = "";
-  this.lastName = "";
-  this.name = "";
-  this.phoneRecords = [];
+var Contact = function {
+  this.givenNames = [];
+  this.familyName = "";
+  this.phones = [];
+  this.category = ""  
+  this.companyName = ""
+  this.isCompany = false;
   this.email = [];
-  this.address = ""
+  this.addresses = [];
+  this.uri = [];
+  this.prefix = "";
+  this.jobTitle = "";
+  this.birthday = "";
+  this.phoneticName = "";
 }
 
-var contactCursor;
-
-function PhoneInfo() {
-  this.npa = "";
-  this.primary = false;
-  this.rel = ""; 
+var Address = function() {
+  this.street = "";
+  this.postalCode = "";
+  this.city = "";
+  this.region = "";
+  this.countryCode = "";
+  this.country = "";
+  this.building = "";
+  this.floor = "";
+  this.accessCode = "";
 }
 
-function Email() {
-  this.addr = "";
-  this.primary = false;
-  this.rel = "";
+var PhoneNumber = function() {
+  this.number = "";
+  this.type = ""; 
 }
 
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options)
+var Email = function() {
+  this.address = "";
+  this.type = "";
+}
+
+var ImHandle = function
 {
-  contactWin = successCallback;
-  contactFail = errorCallback;
-  contactMgr.startSendingContacts();
+  this.address = "";
+  this.type = "";
+  this.network = "";
 }
 
-ContactManager.prototype.contactAdd = function(contact)
+var Uri = function() {
+  this.addr = "";
+  this.rel = ""
+}
+
+
+var AddressBook = function() {
+  this.name = "";
+}
+
+//TODO: Implement writing contacts to address book
+AddressBook.prototype.addContact = function(newContact, win, fail)
+{
+    
+}
+
+AddressBook.prototype.removeContact = function(target, win, fail)
 {
   
 }
 
-ContactManager.prototype.globalFail = function(error)
+AddressBook.prototype.findContacts = function(filter,win, fail)
 {
-  contactFail(error);
+  ContactHook.findContact(filter);
 }
 
-ContactManager.prototype.globalWin = function()
+AddressBook.prototype.foundContact = function(data)
 {
-  contactWin();
+  
 }
