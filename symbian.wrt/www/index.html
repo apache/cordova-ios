@@ -2,16 +2,15 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title> Sample Widget</title>
-		<!-- embed type="application/x-systeminfo-widget" hidden="yes"></embed -->	
+		<title>PhoneGap Symbian.WRT</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script language="javascript" type="text/javascript" src="js/phonegap.js"></script>
 		<script language="javascript" type="text/javascript" src="js/controller.js"></script>
 		<link rel="stylesheet" href="assets/master.css" type="text/css" media="screen" title="no title" charset="utf-8">		
     	<META NAME="Generator" CONTENT="Nokia WRT plug-in for Aptana Studio 2.0.0" />
 	</head>
-	<body onload="javascript:init();">
-		<div class="header">phonegap nokia</div>
+	<body onload="javascript:init();" orientationChanged="updateOrientation(e);">
+		<div class="header">phonegap symbian.wrt</div>
 		Geolocation
 		<div class="list">
 			<div class="list-item">latitude: <span id="latitude">finding satellites</span></div>
@@ -30,5 +29,17 @@
 		<div id="contacts" class="contacts"></div>
 		<div class="list-item"><a href="javascript:vibrate();">Notification (vibrate)</a></div>
 		<a href="javascript:widget.openURL('http://www.nitobi.com');"><img src="assets/nitobi-avatar.png" class="nitobi-logo" /></a>
+		SMS
+		<div class="list-item"><input id="sms_number" type="text" /> <a href="javascript:sendSMS()">Send SMS</a><span id="sms_status"></span></div>
+		Camera
+		<div class="list-item">
+			<a href="javascript:takePicture();">Take picture</a>
+			<div id="preview"></div>
+		</div>
+		Orientation
+		<div class="list-item"><label>Current orientation: </label><label id="orientation"> - </label></div>
+		Storage
+		<div class="list-item"><input id="storage_string" type="text" /> <a href="javascript:testStorage('store');">Store this</a><a href="javascript:testStorage('clear');">Clear this</a></div>
+		<div class="list-item"><label id="storage_output"></label></div>
 	</body>
 </html>

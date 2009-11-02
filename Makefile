@@ -19,7 +19,7 @@ JAVA = java
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 
-all :: iphone blackberry android nokia docs
+all :: iphone blackberry android symbian.wrt docs
 
 clean :: clean_docs clean_libs
 
@@ -141,30 +141,27 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/android/accelerometer.js >> $@
 	$(CAT) javascripts/android/camera.js >> $@
 	
-nokia: lib/nokia/phonegap-min.js
+symbian.wrt: lib/symbian.wrt/phonegap-min.js
 
-lib/nokia/phonegap-min.js: lib/nokia/phonegap.js
-	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/nokia/phonegap.js
+lib/symbian.wrt/phonegap-min.js: lib/symbian.wrt/phonegap.js
+	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/symbian.wrt/phonegap.js
 
-lib/nokia/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/nokia/geolocation.js javascripts/nokia/notification.js javascripts/nokia/contact.js
-	$(MKPATH) lib/nokia
+lib/symbian.wrt/phonegap.js: javascripts/symbian.wrt/phonegap.js.base javascripts/symbian.wrt/acceleration.js javascripts/symbian.wrt/accelerometer.js javascripts/symbian.wrt/camera.js javascripts/symbian.wrt/camera/com.nokia.device.utility.js javascripts/symbian.wrt/camera/com.nokia.device.framework.js javascripts/symbian.wrt/camera/s60_camera.js javascripts/symbian.wrt/camera/com.nokia.device.camera.js javascripts/symbian.wrt/contact.js javascripts/symbian.wrt/device.js javascripts/symbian.wrt/geolocation.js javascripts/symbian.wrt/notification.js javascripts/symbian.wrt/orientation.js javascripts/symbian.wrt/position.js javascripts/symbian.wrt/sms.js javascripts/symbian.wrt/storage.js
+	$(MKPATH) lib/symbian.wrt
 	$(RM_F) $@
-	$(CAT) javascripts/nokia/phonegap.js.base >> $@
-	$(CAT) javascripts/nokia/acceleration.js >> $@
-	$(CAT) javascripts/nokia/accelerometer.js >> $@
-	$(CAT) javascripts/nokia/camera.js >> $@
-	$(CAT) javascripts/nokia/camera/com.nokia.device.utility.js >> $@
-	$(CAT) javascripts/nokia/camera/com.nokia.device.framework.js >> $@
-	$(CAT) javascripts/nokia/camera/s60_camera.js >> $@
-	$(CAT) javascripts/nokia/camera/com.nokia.device.camera.js >> $@
-	$(CAT) javascripts/nokia/contact.js >> $@
-	$(CAT) javascripts/nokia/device.js >> $@
-	$(CAT) javascripts/nokia/geolocation.js >> $@
-	$(CAT) javascripts/nokia/notification.js >> $@
-	$(CAT) javascripts/nokia/orientation.js >> $@
-	$(CAT) javascripts/nokia/position.js >> $@
-	$(CAT) javascripts/nokia/sms.js >> $@
-	$(CAT) javascripts/nokia/storage.js >> $@
-
-	$(CAT) javascripts/uicontrols.js >> $@
-	$(CAT) javascripts/debugconsole.js >> $@
+	$(CAT) javascripts/symbian.wrt/phonegap.js.base >> $@
+	$(CAT) javascripts/symbian.wrt/acceleration.js >> $@
+	$(CAT) javascripts/symbian.wrt/accelerometer.js >> $@
+	$(CAT) javascripts/symbian.wrt/camera.js >> $@
+	$(CAT) javascripts/symbian.wrt/camera/com.nokia.device.utility.js >> $@
+	$(CAT) javascripts/symbian.wrt/camera/com.nokia.device.framework.js >> $@
+	$(CAT) javascripts/symbian.wrt/camera/s60_camera.js >> $@
+	$(CAT) javascripts/symbian.wrt/camera/com.nokia.device.camera.js >> $@
+	$(CAT) javascripts/symbian.wrt/contact.js >> $@
+	$(CAT) javascripts/symbian.wrt/device.js >> $@
+	$(CAT) javascripts/symbian.wrt/geolocation.js >> $@
+	$(CAT) javascripts/symbian.wrt/notification.js >> $@
+	$(CAT) javascripts/symbian.wrt/orientation.js >> $@
+	$(CAT) javascripts/symbian.wrt/position.js >> $@
+	$(CAT) javascripts/symbian.wrt/sms.js >> $@
+	$(CAT) javascripts/symbian.wrt/storage.js >> $@
