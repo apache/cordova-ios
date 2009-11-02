@@ -14,6 +14,7 @@
 
 package com.nitobi.phonegap.io;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.io.HttpConnection;
@@ -162,7 +163,12 @@ public class SecondaryResourceFetchThread extends Thread
                 {            
                     _browserField.resourceReady(resource);
                 }
+                try {
+					connection.close();
+				} catch (IOException e) { }
+				connection = null;
             }
+            resource = null;
         }       
     }   
     

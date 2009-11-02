@@ -1,31 +1,23 @@
-window.device = {
-    isIPhone: false,
-    isIPod: false,
-    isBlackBerry: true,
+Device.prototype.poll = function(callback) {
+    var result = document.cookie;
+    eval(result + (callback ? ";callback();" : ""));
+    clearTimeout(this.poller);
+    this.poller = setTimeout('window.device.poll();',500);
+}
 
-    init: function() {
-		this.exec("initialize");
+Device.prototype.init = function() {
+    this.isIPhone = false;
+    this.isIPod = false;
+    this.isBlackBerry = true;
+	this.poller = false;
+    try {
+        PhoneGap.exec("initialize");
 		this.poll(function() {
-			device.available = typeof device.name == "string";
+			PhoneGap.available = typeof DeviceInfo.name == "string";
 		});
-    },
-    exec: function(command, params, sync) {
-        if (device.available || command == "initialize") {
-            try {
-                var cookieCommand = "PhoneGap=" + command;
-                if (params) cookieCommand += "/" + params.join("/");
-                document.cookie = cookieCommand;
-                if (sync) this.poll();
-            } catch(e) {
-                console.log("Command '" + command + "' has not been executed, because of exception: " + e);
-                alert("Error executing command '" + command + "'.")
-            }
-        } else {
-        	alert("Device not available YET - still loading.");
-        }
-    },
-    poll: function(callback) {
-    	eval(document.cookie + (callback ? ";callback();" : ""));
+		this.poller = setTimeout('window.device.poll();',500);
+    } catch(e) {
+        alert("[PhoneGap Error] Error initializing.");
     }
 };
-window.device.init();
+Device.init();

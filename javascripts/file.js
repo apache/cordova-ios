@@ -15,7 +15,7 @@ function File() {
 /**
  * Reads a file from the mobile device. This function is asyncronous.
  * @param {String} fileName The name (including the path) to the file on the mobile device. 
- * The file name will likely be device dependant.
+ * The file name will likely be device dependent.
  * @param {Function} successCallback The function to call when the file is successfully read.
  * @param {Function} errorCallback The function to call when there is an error reading the file from the device.
  */
