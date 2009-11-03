@@ -151,6 +151,7 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/android/addressbook.js >> $@
 	$(CAT) javascripts/android/media.js >> $@
 	$(CAT) javascripts/android/file.js >> $@
+	$(CAT) javascripts/android/network.js >> $@
 	
 nokia: lib/nokia/phonegap-min.js
 
