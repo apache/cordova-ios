@@ -61,7 +61,6 @@ var AddressBook = function() {
   this.name = "";
 }
 
-//TODO: Implement writing contacts to address book
 AddressBook.prototype.addContact = function(newContact, win, fail)
 {
     
@@ -74,10 +73,8 @@ AddressBook.prototype.removeContact = function(target, win, fail)
 
 AddressBook.prototype.findContacts = function(filter,win, fail)
 {
-  ContactHook.findContact(filter);
 }
 
-AddressBook.prototype.foundContact = function(data)
-{
-  
-}
+PhoneGap.addConstructor(function() {
+  if (typeof navigator.AddressBook == "undefined") navigator.AddressBook = new AddressBook();) 
+});
