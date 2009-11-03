@@ -31,4 +31,4 @@ Geolocation.prototype.map = function() {
 	} else {
 		PhoneGap.exec("location", ["map"]);
 	}
-}
+};
