@@ -4,12 +4,10 @@
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-
 INCLUDEPATH += /usr/include/telepathy-1.0/
 INCLUDEPATH += /usr/lib/glib-2.0/include/
 INCLUDEPATH += /usr/include/dbus-1.0/
 INCLUDEPATH += /usr/include/glib-2.0/
-
 INCLUDEPATH += .
 
 # Input
@@ -17,14 +15,16 @@ SOURCES += main.cpp \
     deviceinfo.cpp \
     webview.cpp \
     debug.cpp \
-    accelerometer.cpp
+    accelerometer.cpp \
+    notification.cpp
 QT += webkit
-#CONFIG += qdbus
 
+# CONFIG += qdbus
 HEADERS += commandmanager.h \
     deviceinfo.h \
     webview.h \
     utils.h \
     debug.h \
-    accelerometer.h
+    accelerometer.h \
+    notification.h
 OTHER_FILES += index.html
