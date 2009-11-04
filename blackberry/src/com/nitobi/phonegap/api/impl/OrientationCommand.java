@@ -23,50 +23,17 @@
 package com.nitobi.phonegap.api.impl;
 
 import com.nitobi.phonegap.api.Command;
-import net.rim.device.api.system.DeviceInfo;
 
-/**
- * Configures the Device API.
- *
- * @author Jose Noheda [jose.noheda@gmail.com]
- *
- */
-public class InitializationCommand implements Command {
+public class OrientationCommand implements Command {
 
-	private static final String CODE = "gap://initialize";
-
-	/**
-	 * Able to run the <i>initialize</i> command (usually onLoad).
-	 */
 	public boolean accept(String instruction) {
-		return instruction != null && instruction.startsWith(CODE);
+		// TODO Auto-generated method stub
+		return false;
 	}
 
-	/**
-	 * Fills the JS variable Device with:
-	 *   Model
-	 *   Flash memory available
-	 *   Platform
-	 *   Vendor
-	 *   Battery
-	 *   Software version
-	 *   Camera support
-	 *   ID
-	 *   Simulator
-	 * 
-	 */
 	public String execute(String instruction) {
-		StringBuffer deviceInfo = new StringBuffer(";Device.model = '");
-		deviceInfo.append(DeviceInfo.getDeviceName()).append("';Device.flash = ");
-		deviceInfo.append(DeviceInfo.getTotalFlashSize()).append(";Device.platform = '");
-		deviceInfo.append(DeviceInfo.getPlatformVersion()).append("';Device.vendor = '");
-		deviceInfo.append(DeviceInfo.getManufacturerName()).append("';Device.battery = ");
-		deviceInfo.append(DeviceInfo.getBatteryLevel()).append(";Device.version = '");
-		deviceInfo.append(DeviceInfo.getSoftwareVersion()).append("';Device.isSimulator = ");
-		deviceInfo.append(DeviceInfo.isSimulator()).append(";Device.hasCamera = ");
-		deviceInfo.append(DeviceInfo.hasCamera()).append(";Device.uuid = ");
-		deviceInfo.append(DeviceInfo.getDeviceId()).append(";");
-		return deviceInfo.toString();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

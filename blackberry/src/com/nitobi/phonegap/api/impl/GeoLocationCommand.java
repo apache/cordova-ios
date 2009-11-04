@@ -47,7 +47,16 @@ public class GeoLocationCommand implements Command {
 	private static final int CHECK_COMMAND = 3;
 	private static final int CAPTURE_INTERVAL = 5;
 	private static final String CODE = "PhoneGap=location";
-
+	private static final String GEO_NS = "navigator.geolocation.";
+	private static final String GEO_STOP = GEO_NS + "started = false;" + GEO_NS + "lastPosition = null;";
+	private static final String GEO_START = GEO_NS + "started = true;";
+	private static final String GEO_CHECK = GEO_NS + "setLocation(";
+	private static final String GEO_ERROR = GEO_NS + "setError(";
+	private static final String FUNC_SUF = ");";
+	
+	private static final String ERROR_UNAVAILABLE = "'GPS unavailable on this device.'";
+	private static final String ERROR_OUTOFSERVICE = "'GPS is out of service on this device.'";
+	
 	private Position position;
 	private boolean availableGPS = true;
 	private LocationProvider locationProvider;
@@ -57,6 +66,7 @@ public class GeoLocationCommand implements Command {
 			locationProvider = LocationProvider.getInstance(null);
 		} catch (LocationException e) {
 			availableGPS = false;
+			locationProvider = null;
 		}
 	}
 	/**
@@ -83,16 +93,16 @@ public class GeoLocationCommand implements Command {
 	 *   MAP:   Invokes the internal MAP application
 	 */
 	public String execute(String instruction) {
-		if (!availableGPS) return ";alert('GPS not available');";
+		if (!availableGPS) return setError(ERROR_UNAVAILABLE);
 		switch (getCommand(instruction)) {
 			case MAP_COMMAND:	if (position != null) Invoke.invokeApplication(Invoke.APP_TYPE_MAPS, new MapsArguments(MapsArguments.ARG_LOCATION_DOCUMENT, getLocationDocument()));
 								break;
 			case STOP_COMMAND:  clearPosition();
 								locationProvider.setLocationListener(null, 0, 0, 0);
-								return ";navigator.geolocation.started = false;navigator.geolocation.lastPosition = null;";
+								return GEO_STOP;
 			case START_COMMAND: locationProvider.setLocationListener(new LocationListenerImpl(this), CAPTURE_INTERVAL, 1, 1);
-								return ";navigator.geolocation.started = true;";
-			case CHECK_COMMAND: if (position != null) return ";navigator.geolocation.lastPosition = " + position.toJavascript() + ";";
+								return GEO_START;
+			case CHECK_COMMAND: if (position != null) return GEO_CHECK + position.toJavascript() + FUNC_SUF;
 		}
 		return null;
 	}
@@ -118,7 +128,9 @@ public class GeoLocationCommand implements Command {
 		position.setHeading(heading);
 		position.setAltitude(altitude);
 	}
-
+	private String setError(String error) {
+		return GEO_ERROR + error + FUNC_SUF;
+	}
 	private String getLocationDocument() {
     	StringBuffer location = new StringBuffer("<location-document><location x=\"");
     	location.append(position.getLatitude()).append("\" y=\"");
@@ -154,12 +166,11 @@ public class GeoLocationCommand implements Command {
         	case LocationProvider.AVAILABLE:
         		break;
         	case LocationProvider.OUT_OF_SERVICE:
-        		// TODO: Should call fail() here.
+        		command.setError(ERROR_OUTOFSERVICE);
         		break;
         	case LocationProvider.TEMPORARILY_UNAVAILABLE:
         		break;
         	}
-        	
         }
     }
 
