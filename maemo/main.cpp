@@ -2,7 +2,6 @@
 
 #include <QApplication>
 #include <QWidget>
-#include <QWebView>
 #include <QWebPage>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
@@ -11,50 +10,11 @@
 #include <QTextStream>
 #include <QWebFrame>
 
-#include "basecommand.h"
-
-
-PGBaseCommand::PGBaseCommand(QObject* parent) : QObject(parent)
-{
-}
-
-void PGBaseCommand::execute()
-{
-    std::cout << "Executing hello" << std::endl;
-
-    QMessageBox msgBox;
-    msgBox.setText("Hello world!");
-    msgBox.exec();
-}
-
-
+#include "deviceinfo.h"
 #include "commandmanager.h"
+#include "webview.h"
 
-void PGNetworkAccessManager::initJavascript( )
-{
-    std::cout << "initJavaScript" << std::endl;
-    this->iWebView->page()->mainFrame()->addToJavaScriptWindowObject(QString::fromAscii("Hello"), iCommand );
-
-}
-
-
-void PGNetworkAccessManager::initCommandMap()
-{
-    // Create and bind the commands to javascript
-    iCommand = new PGBaseCommand(this->iWebView);
-    connect(this->iWebView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(initJavascript() ));
-}
-
-PGNetworkAccessManager::PGNetworkAccessManager(QWebView *webview)
-{
-    this->iWebView = webview;
-    initCommandMap();
-}
-
-PGNetworkAccessManager::~PGNetworkAccessManager()
-{
-    delete iCommand;
-}
+using namespace PhoneGap;
 
 /** Custom QWebPage which prints the javascript errors to console */
 class PGWebPage : public QWebPage
@@ -67,18 +27,23 @@ class PGWebPage : public QWebPage
     }
 };
 
+PGNetworkAccessManager::PGNetworkAccessManager(QWebView *webview)
+{
+    this->iWebView = webview;
+}
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     QWidget window;       
 
-    window.resize(250, 150);
+    window.resize(800, 480);
     window.setWindowTitle("Simple example");
     window.show();
 
     // Construct the web view components
-    QWebView *view = new QWebView(&window);
+    WebView *view = new WebView(&window);
 
     // Set our custom page with better error reporting
     // Has to be dynamically allocated because the QWebView deletes this.
@@ -91,13 +56,16 @@ int main(int argc, char *argv[])
     PGNetworkAccessManager mymanager(view);
     page->setNetworkAccessManager(&mymanager);
 
-    QFile file("index.html");
+    // Initialize PhoneGap APIs
+    view->initPhoneGapAPI();
+
+    QFile file("www/index.html");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
          return 0;
 
     QTextStream in(&file);
 
-    view->setHtml( in.readAll(), QUrl("file:///index.html") );
+    view->setHtml( in.readAll(), QUrl("file:///www/index.html") );
     view->show();
 
     return app.exec();

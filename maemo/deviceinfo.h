@@ -13,6 +13,7 @@ namespace PhoneGap {
         Q_PROPERTY(QString version READ version )
         Q_PROPERTY(QString uuid READ uuid )
         Q_PROPERTY(QString model READ model )
+        Q_PROPERTY(QString name READ model )
 
         public:
             DeviceInfo();

@@ -15,8 +15,8 @@ def CommandMakePhonegapJS(env, source, target):
         d = d = fs.read();
         while len(d) != 0:
             ft.write( d )
-            d = fs.read();
-            
+            d = fs.read();            
+        
         fs.close()        
         
         ft.write( os.linesep )
@@ -24,20 +24,21 @@ def CommandMakePhonegapJS(env, source, target):
     ft.close()
  
 jssources = [
-    "phonegap.base",
-    "phonegap",
+    "phonegap.js",
+    "device.js",
 ]
 
 javascripts = []
 JSROOTPATH= "../javascripts"
-for js in jssources:
-    baselib = join( JSROOTPATH, "%s.js" % js )
+for js in ["phonegap.js.base"]:
+    continue
+    baselib = join( JSROOTPATH, js )
     if exists( baselib ): 
         javascripts.append( baselib )    
-    
-    iphonelib = join( JSROOTPATH, "maemo/%s.js" % js )
+        
+for js in jssources:    
+    iphonelib = join( JSROOTPATH, "maemo/%s" % js )
     if exists( iphonelib ): 
-        #print iphonelib
         javascripts.append( iphonelib )
     
 Command( PHONEGAP_LIB, javascripts, CommandMakePhonegapJS )

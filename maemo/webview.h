@@ -7,6 +7,7 @@
 
 #include "utils.h"
 #include "deviceinfo.h"
+#include "debug.h"
 
 namespace PhoneGap {
 
@@ -25,6 +26,7 @@ public slots:
 
 private:
      DeviceInfo *iDeviceInfo;
+     Debug *iDebug;
 };
 
 }

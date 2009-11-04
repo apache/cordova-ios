@@ -14,5 +14,4 @@ class PGBaseCommand : public QObject
 
 };
 
-
 #endif
