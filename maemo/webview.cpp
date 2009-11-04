@@ -4,6 +4,7 @@
 #include "webview.h"
 #include "debug.h"
 
+
 using namespace PhoneGap;
 
 WebView::WebView(QWidget* aWidget) : QWebView(aWidget)
@@ -24,9 +25,11 @@ void WebView::initJavascript( )
     iDebug= new Debug();
     frame->addToJavaScriptWindowObject(s("debug"), iDebug );
 
-
     iAccelerometer= new Accelerometer(this);
     frame->addToJavaScriptWindowObject(s("_NativeAccelerometer"), iAccelerometer);
+
+    iNotification = new Notification( );
+    frame->addToJavaScriptWindowObject(s("_NativeNotification"), iNotification);
 }
 
 
@@ -42,5 +45,6 @@ WebView::~WebView()
     delete iDeviceInfo;
     delete iDebug;
     delete iAccelerometer;
+    delete iNotification;
 }
 

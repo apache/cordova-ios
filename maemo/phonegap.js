@@ -89,5 +89,66 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
-navigator.accelerometer = new Accelerometer();
+if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
+
+/**
+ * This class provides access to notifications on the device.
+ */
+function Notification() {
+	
+}
+
+/**
+ * Open a native alert dialog, with a customizable title and button text.
+ * @param {String} message Message to print in the body of the alert
+ * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
+ * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
+ */
+Notification.prototype.alert = function(message, title, buttonLabel) {
+    _NativeNotification.alert(message, title, buttonLabel);
+};
+
+/**
+ * Start spinning the activity indicator on the statusbar
+ */
+Notification.prototype.activityStart = function() {
+	
+};
+
+/**
+ * Stop spinning the activity indicator on the statusbar, if it's currently spinning
+ */
+Notification.prototype.activityStop = function() {
+};
+
+/**
+ * Causes the device to blink a status LED.
+ * @param {Integer} count The number of blinks.
+ * @param {String} colour The colour of the light.
+ */
+Notification.prototype.blink = function(count, colour) {
+	
+};
+
+/**
+ * Causes the device to vibrate.
+ * @param {Integer} mills The number of milliseconds to vibrate for.
+ */
+Notification.prototype.vibrate = function(mills) {
+	
+};
+
+/**
+ * Causes the device to beep.
+ * @param {Integer} count The number of beeps.
+ * @param {Integer} volume The volume of the beep.
+ */
+Notification.prototype.beep = function(count, volume) {
+	
+};
+
+
+if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
+
+
 

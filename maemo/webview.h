@@ -9,6 +9,7 @@
 #include "deviceinfo.h"
 #include "debug.h"
 #include "accelerometer.h"
+#include "notification.h"
 
 namespace PhoneGap {
 
@@ -29,6 +30,7 @@ private:
      DeviceInfo *iDeviceInfo;
      Debug *iDebug;
      Accelerometer *iAccelerometer;
+     Notification *iNotification;
 };
 
 }
