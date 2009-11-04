@@ -5,7 +5,9 @@
 #include <QWebView>
 
 // See Maemo API at: http://wiki.maemo.org/Accelerometers
+
 #include <dbus/dbus-glib.h>
+
 
 class Accelerometer : public QObject
 {
