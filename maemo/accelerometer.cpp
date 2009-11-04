@@ -15,14 +15,16 @@ DBusGProxyCall *dbus_call = NULL;
 
 Accelerometer::Accelerometer(QWebView *aWebView) : iWebView(aWebView)
 {
+#ifdef Q_WS_HILDON
     dbus_proxy = dbus_g_proxy_new_for_name_owner (
                                                 dbus_g_bus_get (DBUS_BUS_SYSTEM, NULL),
                                                 "com.nokia.mce",
                                                 "/com/nokia/mce/request",
                                                 "com.nokia.mce.request", NULL);
+#endif
     gWebView = iWebView;
 }
-
+#ifdef Q_WS_HILDON
 static void AccelerometerCallback(DBusGProxy *proxy, DBusGProxyCall *call, void *data)
 {
   gchar *s1, *s2, *s3;
@@ -46,9 +48,10 @@ static void AccelerometerCallback(DBusGProxy *proxy, DBusGProxyCall *call, void 
   {
     qDebug ("Couldn't end the call!\n");
   }
+
   dbus_call = NULL;
 }
-
+#endif
 
 void Accelerometer::get(){
 
@@ -58,12 +61,14 @@ void Accelerometer::get(){
     }
 
     if( !dbus_call ){
+#ifdef Q_WS_HILDON
         dbus_call = dbus_g_proxy_begin_call (
                                          dbus_proxy,
                                          "get_device_orientation",
                                          AccelerometerCallback,
                                          NULL, NULL,
                                          G_TYPE_INVALID);
+#endif
     }
 }
 
