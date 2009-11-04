@@ -279,7 +279,7 @@
 	jsString = [[NSString alloc] initWithFormat:@"alert('%@');", text];
 	[webView stringByEvaluatingJavaScriptFromString:jsString];
 
-	NSLog(jsString);
+	NSLog(@"%@", jsString);
 	[jsString release];
 }
 
