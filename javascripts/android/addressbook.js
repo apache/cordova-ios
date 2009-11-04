@@ -3,9 +3,6 @@
  * @constructor
  */
 
-var contactWin = function() {}
-var contactFail = function() {}
-
 var Contact = function {
   this.givenNames = [];
   this.familyName = "";
@@ -73,8 +70,31 @@ AddressBook.prototype.removeContact = function(target, win, fail)
 
 AddressBook.prototype.findContacts = function(filter,win, fail)
 {
+  this.win = win;
+  this.fail = fail;
+  ContactHook.search(filter);
 }
 
-PhoneGap.addConstructor(function() {
-  if (typeof navigator.AddressBook == "undefined") navigator.AddressBook = new AddressBook();) 
-});
+AddressBook.prototype.droidFoundContact = function(name, npa, email)
+{
+  names = name.split(' ');
+  personContact = new Contact();
+  personContact.givenNames.push(name[0]);
+  // This is technically wrong, but we can't distinguish right now
+  if(names.length > 1)
+  {
+    personContact.familyName = name[name.length -1];
+  }
+
+  telNumber = new PhoneNumber();
+  telNumber.number = npa;
+  personContact.phones.push(telNumber);
+
+  email_addr = new Email();
+  email_addr.address = email;
+  
+  personContact.email.push(email_addr);
+
+  if (win)
+    this.win(personContact);
+}
