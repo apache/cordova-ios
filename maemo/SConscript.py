@@ -46,6 +46,15 @@ for js in jssources:
 Command( PHONEGAP_LIB, javascripts, CommandMakePhonegapJS )
 
 # Compress javascripts
-compress = "java -jar ../util/yuicompressor-2.4.2.jar --charset UTF-8 -o $TARGET $SOURCE"
-Command( PHONEGAP_COMPRESSED, PHONEGAP_LIB, compress )
+#compress = "java -jar ../util/yuicompressor-2.4.2.jar --charset UTF-8 -o $TARGET $SOURCE"
+
+from pylib import jsmin
+
+def CommandCompressJS(env, source, target):
+    jsm = jsmin.JavascriptMinify()
+    for s in source:
+        for t in target:
+            jsm.minify(open(s.path), open(t.path,'w'))
+	
+Command( PHONEGAP_COMPRESSED, PHONEGAP_LIB, CommandCompressJS )
 

@@ -2,7 +2,7 @@ Build instructions for Maemo PhoneGap
 =====================================
 
 Assuming you have already installed Maemo SDK:
-http://maemo.org/development/
+* http://maemo.org/development/
 
 Assuming Qt libraries for Maemo Scratchbox are installed.
 * http://wiki.maemo.org/Qt4Hildon
@@ -17,14 +17,16 @@ make
 Start:
 run-standalone.sh ./phonegap
 
-The phonegap javascript libraries are packaged with an SCons script and 
-the obfuscator requires Java. No need to run for demo unless changed,
-So make sure they are installed if you change PhoneGap's javascripts.
-You can run the packager outside Scratchbox at:
-/scratchbox/users/<you>/home/<you>/phonegap_maemo
+== Updating PhoneGap JS ===
+
+The phonegap javascript libraries are packaged with an SCons script.
+Install scons outside Scratchbox:
+
+sudo apt-get install scons
 
 Run: 
-scons && cp app.js www
+scons 
+cp app.js www
 
 
 === Known-issues(YYYY-MM-DD) ===
