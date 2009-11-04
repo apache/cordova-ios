@@ -99,7 +99,7 @@
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
 #endif
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
+//    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
     NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
     NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
     NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
