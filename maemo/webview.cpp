@@ -23,6 +23,10 @@ void WebView::initJavascript( )
 
     iDebug= new Debug();
     frame->addToJavaScriptWindowObject(s("debug"), iDebug );
+
+
+    iAccelerometer= new Accelerometer(this);
+    frame->addToJavaScriptWindowObject(s("_NativeAccelerometer"), iAccelerometer);
 }
 
 
@@ -37,5 +41,6 @@ WebView::~WebView()
 {
     delete iDeviceInfo;
     delete iDebug;
+    delete iAccelerometer;
 }
 
