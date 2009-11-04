@@ -7,7 +7,14 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    deviceinfo.cpp \
+    webview.cpp \
+    debug.cpp
 QT += webkit
-HEADERS += basecommand.h \
-    commandmanager.h
+HEADERS += commandmanager.h \
+    deviceinfo.h \
+    webview.h \
+    utils.h \
+    debug.h
+OTHER_FILES += index.html
