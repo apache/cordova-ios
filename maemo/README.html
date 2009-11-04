@@ -1,0 +1,215 @@
+
+
+
+
+
+
+This README contains instructions how to get PhoneGap running on Maemo environment.
+
+Restructured text (reST) format is used for rich-text formatting in this file.
+
+<div class="contents topic" id="contents">
+<h3>Contents</h3>
+
+<ul>
+  <li><a href="#introduction" id="id2">Introduction</a></li>
+  <li><a href="#html-documentation" id="id3">HTML documentation</a></li>
+  <li><a href="#author" id="id4">Author</a><ul>
+  <li><a href="#list-of-contributors" id="id5">List of contributors</a></li>
+</ul>
+</li>
+  <li><a href="#prerequisitements" id="id6">Prerequisitements</a></li>
+  <li><a href="#build-instructions" id="id7">Build instructions</a></li>
+  <li><a href="#run-instructions" id="id8">Run instructions</a></li>
+  <li><a href="#updating-phonegap-javascript-application" id="id9">Updating PhoneGap Javascript application</a></li>
+  <li><a href="#architecture" id="id10">Architecture</a></li>
+  <li><a href="#resources" id="id11">Resources</a></li>
+  <li><a href="#html-generation" id="id12">HTML generation</a></li>
+  <li><a href="#known-issues" id="id13">Known-issues</a><ul>
+  <li><a href="#id1" id="id14">2009-11-04</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h4>Introduction</h4>
+
+PhoneGap is a application development framework which enabled you to build cross-platform mobile applications using Javascript.
+
+Maemo port is a project to bring Maemo (Nokia N900) platform support for PhoneGap.
+
+This insructions cover building and running PhoneGap on Maemo (Fremantle) emulator only. The actual build and deployment for the target device is left as an excercise for the reader.
+
+Maemo uses emulation and build environment called scrachbox. Pay careful attentation whether you should execute commands under your normal Linux user or inside scratchbox environment.
+
+<h4>HTML documentation</h4>
+
+HTML version of this document is available at Twinapex blog.
+
+<h4>Author</h4>
+
+PhoneGap Maemo port was initiated by <cite>Twinapex &lt;http://www.twinapex.com&gt;</cite> as proof-of-concept and for client demostrations.
+
+The work (PhoneGap for Maemo) is licensed under MIT license. See LICENSE.txt for more information.
+
+For community support use PhoneGap Google Group. For inquiries regarding development team and technology, contact <cite>Twinapex team &lt;mailto:info&#64;twinapex.com&gt;</cite>.
+
+<h5>List of contributors</h5>
+
+<ul>
+  <li>Jussi Toivola (jtoivola)</li>
+  <li>Mikko Ohtamaa (miohtama)</li>
+</ul>
+<h4>Prerequisitements</h4>
+
+You need one of the following operating systems:
+
+<ul>
+  <li>Linux (Debian/Ubuntu flavour preferred)</li>
+</ul>
+Installation instructions how to come to the light side can be <a href="http://www.ubuntu.com/">found here</a>.
+
+Setup scratchbox environment with
+
+<ul>
+  <li><a href="http://maemo.org/development/">Maemo 5</a></li>
+  <li><a href="http://wiki.maemo.org/Qt4Hildon#Fremantle">QT libs installed</a></li>
+</ul>
+Also install following extra packages under scratchbox environment:
+
+<pre>
+fakeroot apt-get install libqt4-phonon libqt4-opengl libqt4-opengl-dev libqt4-sql-sqlite
+</pre>
+
+Install git:
+
+<pre>
+sudo apt-get install git-core
+</pre>
+
+Checkout phonegap, Maemo branch:
+
+<pre>
+cd /scratchbox/users/&lt;you&gt;/home/&lt;you&gt;/phonegap/maemo
+
+git clone git://github.com/jtoivola/phonegap.git
+</pre>
+
+<h4>Build instructions</h4>
+
+Assuming you have checked out the project to your Scratchbox home dir:
+
+<pre>
+/scratchbox/users/&lt;you&gt;/home/&lt;you&gt;/phonegap/maemo
+</pre>
+
+Scratchbox shell can be started:
+
+<pre>
+/scratchbox/login
+</pre>
+
+To build your <em>phonegap</em> application binary, run the following commands under scratchbox:
+
+<pre>
+qmake
+make
+</pre>
+
+<h4>Run instructions</h4>
+
+Setup Xephyr X server for the emulator before running. For installation instructions and details consult Maemo documentation.
+
+Under non-scratchbox shell:
+
+<pre>
+Xephyr :2 -host-cursor -screen 800x480x16 -dpi 96 -ac -kb
+</pre>
+
+Set up X display under scratchbox shell:
+
+<pre>
+export DISPLAY=:2
+</pre>
+
+Start PhoneGap under scratchbox using Maemo emulator bootstrap script:
+
+<pre>
+run-standalone.sh ./phonegap
+</pre>
+
+You can stop application by sending CTRL+C keystroke to scratchbox shell.
+
+<h4>Updating PhoneGap Javascript application</h4>
+
+The project uses advanced software construction tool <a href="http://www.scons.org/">Scons</a> to manage PhoneGap application packaging. Scons is Python based framework to create complex build recipes.
+
+Application packaging has the following features
+
+<ul>
+  <li>Compressing Javascript files</li>
+  <li>Merging Javascript files</li>
+</ul>
+Please verify your Javascripts are syntatically correct before merging them. Use tool like <a href="http://www.jslint.com/">jslint</a>.
+
+The phonegap javascript libraries are packaged with an SCons script. Install scons outside Scratchbox:
+
+<pre>
+sudo apt-get install scons
+</pre>
+
+Enter phonegap application directory in non-scratchbox shell (example user moo)
+
+<pre>
+cd /scratchbox/users/moo/home/moo/phonegap/maemo
+</pre>
+
+Run:
+
+<pre>
+scons
+</pre>
+
+This will create compressed app.js which contains all the application Javascript code packaged in one file.
+
+Now deploy application to the run-time target path:
+
+<pre>
+cp app.js www
+</pre>
+
+<h4>Architecture</h4>
+
+QWebView (WebKit) Qt widget is used as the primary web rendering interface. Note that this differs from Maemo Nokia Browser which is Gecko based. Other PhoneGap platfoms use WebKit also, so this should ensure maximum compatibility.
+
+Maemo Qt libraries are rich in functionality, including QWebView, so direct Javascript-to-C++ API calls and other goodies are possible.
+
+index.html is bootstrapped by main.cpp in QWebView.
+
+<h4>Resources</h4>
+
+<ul>
+  <li>GitHub homepage: <a href="http://github.com/jtoivola/phonegap">http://github.com/jtoivola/phonegap</a></li>
+  <li><a href="http://www.twinapex.com">Company homepage</a></li>
+  <li><a href="http://blog.twinapex.fi">Twinapex blog</a> - please follow to get the latest news regarding this project</li>
+</ul>
+<h4>HTML generation</h4>
+
+This documentcan be converted to HTML using <a href="http://unmaintainable.wordpress.com/2008/03/22/using-rst-with-wordpress/">rst2wp by Matthias Friedrich</a>.
+
+These instructions can be run under non-scratchbox:
+
+<pre>
+wget http://users.musicbrainz.org/~matt/scripts/rst2wp
+sudo apt-get install python-docutils
+python rst2wp README.txt
+</pre>
+
+<h4>Known-issues</h4>
+
+<h5>2009-11-04</h5>
+
+<ul>
+  <li>Lots of features missing.</li>
+  <li>Initial Accelerometer code is there but it gives warnings.</li>
+</ul>
+
