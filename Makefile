@@ -120,8 +120,8 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/phonegap.js.base >> $@
 	$(CAT) javascripts/acceleration.js >> $@
 	$(CAT) javascripts/accelerometer.js >> $@
+	$(CAT) javascripts/addressbook.js >> $@
 	$(CAT) javascripts/camera.js >> $@
-	$(CAT) javascripts/contact.js >> $@
 	$(CAT) javascripts/debugconsole.js >> $@
 	$(CAT) javascripts/device.js >> $@
 	$(CAT) javascripts/file.js >> $@
@@ -139,3 +139,4 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/android/notification.js >> $@
 	$(CAT) javascripts/android/accelerometer.js >> $@
 	$(CAT) javascripts/android/camera.js >> $@
+	$(CAT) javascripts/android/addressbook.js >> $@

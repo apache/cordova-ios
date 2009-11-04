@@ -3,12 +3,12 @@
  * @constructor
  */
 
-var Contact = function {
+var Contact = function() {
   this.givenNames = [];
   this.familyName = "";
   this.phones = [];
-  this.category = ""  
-  this.companyName = ""
+  this.category = "";
+  this.companyName = "";
   this.isCompany = false;
   this.email = [];
   this.addresses = [];
@@ -41,7 +41,7 @@ var Email = function() {
   this.type = "";
 }
 
-var ImHandle = function
+var ImHandle = function()
 {
   this.address = "";
   this.type = "";
@@ -52,7 +52,6 @@ var Uri = function() {
   this.addr = "";
   this.rel = ""
 }
-
 
 var AddressBook = function() {
   this.name = "";
@@ -72,14 +71,26 @@ AddressBook.prototype.findContacts = function(filter,win, fail)
 {
   this.win = win;
   this.fail = fail;
-  ContactHook.search(filter);
+  var name = "";
+  var phone = "";
+  var email = "";
+
+  if (filter.givenName)
+    name = filter.givenName;
+  if (filter.familyName)
+    name += filter.familyName;
+  if (filter.phone)
+    var phone = filter.phone;
+  if (filter.email)
+    var email = filter.email;
+  ContactHook.search(name, phone, email);
 }
 
 AddressBook.prototype.droidFoundContact = function(name, npa, email)
 {
   names = name.split(' ');
   personContact = new Contact();
-  personContact.givenNames.push(name[0]);
+  personContact.givenNames.push(names[0]);
   // This is technically wrong, but we can't distinguish right now
   if(names.length > 1)
   {
@@ -95,6 +106,6 @@ AddressBook.prototype.droidFoundContact = function(name, npa, email)
   
   personContact.email.push(email_addr);
 
-  if (win)
+  if (this.win)
     this.win(personContact);
 }

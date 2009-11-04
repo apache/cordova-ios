@@ -3,15 +3,12 @@
  * @constructor
  */
 
-var contactWin = function() {}
-var contactFail = function() {}
-
-var Contact = function {
+var Contact = function() {
   this.givenNames = [];
   this.familyName = "";
   this.phones = [];
-  this.category = ""  
-  this.companyName = ""
+  this.category = "";
+  this.companyName = "";
   this.isCompany = false;
   this.email = [];
   this.addresses = [];
@@ -44,7 +41,7 @@ var Email = function() {
   this.type = "";
 }
 
-var ImHandle = function
+var ImHandle = function()
 {
   this.address = "";
   this.type = "";
@@ -53,7 +50,7 @@ var ImHandle = function
 
 var Uri = function() {
   this.addr = "";
-  this.rel = ""
+  this.rel = "";
 }
 
 
@@ -76,5 +73,5 @@ AddressBook.prototype.findContacts = function(filter,win, fail)
 }
 
 PhoneGap.addConstructor(function() {
-  if (typeof navigator.AddressBook == "undefined") navigator.AddressBook = new AddressBook();) 
-});
+  if (typeof navigator.AddressBook == "undefined")
+    navigator.AddressBook = new AddressBook(); });
