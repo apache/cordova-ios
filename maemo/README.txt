@@ -23,7 +23,7 @@ your normal Linux user or inside scratchbox environment.
 HTML documentation
 ------------------
 
-HTML version of this document is available at Twinapex blog.
+HTML version of this document is available at `Twinapex blog <http://blog.twinapex.fi/phonegap-on-maemo/>`_.
 
 Author
 ------
@@ -164,19 +164,20 @@ Resources
 
 * `Company homepage <http://www.twinapex.com>`_
 
-* `Twinapex blog <http://blog.twinapex.fi>`_ - please follow to get the latest news regarding this project
+* `Twinapex company blog <http://blog.twinapex.fi>`_ - please follow to get the latest news regarding this project
 
 HTML generation
 ---------------
 
 This documentcan be converted to HTML using `rst2wp by Matthias Friedrich <http://unmaintainable.wordpress.com/2008/03/22/using-rst-with-wordpress/>`_.
 
-These instructions can be run under non-scratchbox::
+To convert this file to content HTML, these instructions can be run under non-scratchbox::
 
     wget http://users.musicbrainz.org/~matt/scripts/rst2wp
     sudo apt-get install python-docutils
-    python rst2wp README.txt > README.html
+    python rst2wp README.txt > README.html ; gedit README.html &
     
+You can copy-paste the resulting HTML code to your favorite HTML WYSIWYG editor.
 
 Known-issues
 ------------
