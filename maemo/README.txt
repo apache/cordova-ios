@@ -20,6 +20,11 @@ Maemo uses emulation and build environment called scrachbox.
 Pay careful attentation whether you should execute commands under
 your normal Linux user or inside scratchbox environment.
 
+HTML documentation
+------------------
+
+HTML version of this document is available at Twinapex blog.
+
 Author
 ------
 
@@ -94,7 +99,7 @@ Under non-scratchbox shell::
 
 	Xephyr :2 -host-cursor -screen 800x480x16 -dpi 96 -ac -kb
 
-Set-up X display under scratchbox shell::
+Set up X display under scratchbox shell::
 
 	export DISPLAY=:2
 
@@ -160,6 +165,18 @@ Resources
 * `Company homepage <http://www.twinapex.com>`_
 
 * `Twinapex blog <http://blog.twinapex.fi>`_ - please follow to get the latest news regarding this project
+
+HTML generation
+---------------
+
+This documentcan be converted to HTML using `rst2wp by Matthias Friedrich <http://unmaintainable.wordpress.com/2008/03/22/using-rst-with-wordpress/>`_.
+
+These instructions can be run under non-scratchbox::
+
+    wget http://users.musicbrainz.org/~matt/scripts/rst2wp
+    sudo apt-get install python-docutils
+    python rst2wp README.txt > README.html
+    
 
 Known-issues
 ------------
