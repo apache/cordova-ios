@@ -43,7 +43,7 @@ Maemo uses emulation and build environment called scrachbox. Pay careful attenta
 
 <h4>HTML documentation</h4>
 
-HTML version of this document is available at Twinapex blog.
+HTML version of this document is available at <a href="http://blog.twinapex.fi/phonegap-on-maemo/">Twinapex blog</a>.
 
 <h4>Author</h4>
 
@@ -190,19 +190,21 @@ index.html is bootstrapped by main.cpp in QWebView.
 <ul>
   <li>GitHub homepage: <a href="http://github.com/jtoivola/phonegap">http://github.com/jtoivola/phonegap</a></li>
   <li><a href="http://www.twinapex.com">Company homepage</a></li>
-  <li><a href="http://blog.twinapex.fi">Twinapex blog</a> - please follow to get the latest news regarding this project</li>
+  <li><a href="http://blog.twinapex.fi">Twinapex company blog</a> - please follow to get the latest news regarding this project</li>
 </ul>
 <h4>HTML generation</h4>
 
 This documentcan be converted to HTML using <a href="http://unmaintainable.wordpress.com/2008/03/22/using-rst-with-wordpress/">rst2wp by Matthias Friedrich</a>.
 
-These instructions can be run under non-scratchbox:
+To convert this file to content HTML, these instructions can be run under non-scratchbox:
 
 <pre>
 wget http://users.musicbrainz.org/~matt/scripts/rst2wp
 sudo apt-get install python-docutils
-python rst2wp README.txt
+python rst2wp README.txt &gt; README.html ; gedit README.html &amp;
 </pre>
+
+You can copy-paste the resulting HTML code to your favorite HTML WYSIWYG editor.
 
 <h4>Known-issues</h4>
 
