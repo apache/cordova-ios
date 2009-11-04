@@ -26,6 +26,7 @@ def CommandMakePhonegapJS(env, source, target):
 jssources = [
     "phonegap.js",
     "device.js",
+    "accelerometer.js"
 ]
 
 javascripts = []
