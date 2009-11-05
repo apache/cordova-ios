@@ -22,5 +22,11 @@ File.prototype.hasRead = function(data)
 File.prototype.write = function(file, str, successCallback, failCallback) {
   this.winCallback = successCallback;
   this.failCallback = failCallback;
-  var call = FileUtil.write(file, str);
+  var call = FileUtil.write(file, str, false);
+}
+
+File.prototype.append = function(file, str, successCallback, failCallback){
+  this.winCallback = successCallback;
+  this.failCallback = failCallback;
+  var call = FileUtil.write(file, str, true);
 }
