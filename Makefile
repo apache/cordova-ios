@@ -137,6 +137,7 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/geolocation.js >> $@
 	$(CAT) javascripts/map.js >> $@
 	$(CAT) javascripts/media.js >> $@
+	$(CAT) javascripts/network.js >> $@
 	$(CAT) javascripts/notification.js >> $@
 	$(CAT) javascripts/orientation.js >> $@
 	$(CAT) javascripts/position.js >> $@
