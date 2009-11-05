@@ -1,5 +1,14 @@
-Network.prototype.isReachable = function(uri, win, fail)
+Network.prototype.isReachable = function(uri, win, options)
 {
+  var status = new NetworkStatus();
   if(NetworkManager.isReachable(uri))
-    win();
+  {
+    if (NetworkManager.isWifiActive)
+      status.code = 2;
+    else
+      status.code = 1;
+  }
+  else
+      status.code = 0;
+  win(status);
 }
