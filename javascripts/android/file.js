@@ -62,7 +62,7 @@ File.prototype.deleteFile = function(dir, successCallback, failCallback)
   good ? successCallback() : failCallback();
 }
 
-File.prototype.getFreeDiskSpace(successCallback, failCallback)
+File.prototype.getFreeDiskSpace = function(successCallback, failCallback)
 {
   var diskSpace =  FileUtils.getFreeDiskSpace();
   if(diskSpace > 0)
