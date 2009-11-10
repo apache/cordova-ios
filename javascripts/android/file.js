@@ -3,7 +3,7 @@ File.prototype.read = function(fileName, successCallback, errorCallback) {
   this.failCallback = errorCallback; 
   this.winCallback = successCallback;
 
-  FileUtil.read(fileName);
+  return FileUtil.read(fileName);
 }
 
 File.prototype.hasRead = function(data)
