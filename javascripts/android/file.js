@@ -3,7 +3,7 @@ File.prototype.read = function(fileName, successCallback, errorCallback) {
   this.failCallback = errorCallback; 
   this.winCallback = successCallback;
 
-  FileUtil.read(fileName);
+  return FileUtil.read(fileName);
 }
 
 File.prototype.hasRead = function(data)
@@ -12,15 +12,62 @@ File.prototype.hasRead = function(data)
     this.failCallback(data);
   else
     this.winCallback(data);
-  end
 }
 
 /**
  * Writes a file to the mobile device.
  * @param {File} file The file to write to the device.
  */
-File.prototype.write = function(file, str, successCallback, failCallback) {
+File.prototype.write = function(file, str, mode, successCallback, failCallback) {
   this.winCallback = successCallback;
   this.failCallback = failCallback;
-  var call = FileUtil.write(file, str);
+  var call = FileUtil.write(file, str, mode);
+}
+
+File.prototype.testFileExists = function(file, successCallback, failCallback)
+{
+  var exists = FileUtil.testFileExists(file);
+  if(exists)
+    successCallback();
+  else
+    failCallback();
+  return exists;
+}
+
+File.prototype.testDirectoryExists = function(file, successCallback, failCallback)
+{
+  var exists = FileUtil.testDirectoryExists(file);
+  if(exists)
+    successCallback();
+  else
+    failCallback();
+  return exists;
+}
+
+File.prototype.createDirectory = function(dir, successCallback, failCallback)
+{
+  var good = FileUtils.createDirectory(dir);
+  good ? successCallback() : failCallback();
+}
+
+File.prototype.deleteDirectory = function(dir, successCallback, failCallback)
+{
+  var good = FileUtils.deleteDirectory(dir);
+  good ? successCallback() : failCallback();
+}
+
+File.prototype.deleteFile = function(dir, successCallback, failCallback)
+{
+  var good = FileUtils.deleteFile(dir);
+  good ? successCallback() : failCallback();
+}
+
+File.prototype.getFreeDiskSpace = function(successCallback, failCallback)
+{
+  var diskSpace =  FileUtils.getFreeDiskSpace();
+  if(diskSpace > 0)
+    successCallback();
+  else
+    failCallback();
+  return diskSpace;
 }
