@@ -71,6 +71,8 @@ AddressBook.prototype.findContacts = function(filter,win, fail)
 {
   this.win = win;
   this.fail = fail;
+  // Zero out the result set for the query
+  this.resultSet = [];
   var name = "";
   var phone = "";
   var email = "";
@@ -106,6 +108,14 @@ AddressBook.prototype.droidFoundContact = function(name, npa, email)
   
   personContact.email.push(email_addr);
 
-  if (this.win)
-    this.win(personContact);
+  this.resultSet.push(personContact);
+
+}
+
+AddressBook.prototype.droidDoneContacts = function()
+{
+  if(resultSet.length > 0)
+    this.win(resultSet);
+  else
+    this.fail();
 }
