@@ -342,6 +342,8 @@
         if ([toolBarSettings objectForKey:@"position"])
             atTop  = [[toolBarSettings objectForKey:@"position"] isEqualToString:@"top"];
         
+#pragma unused(atTop)
+		
         NSString *styleStr = [toolBarSettings objectForKey:@"style"];
         if ([styleStr isEqualToString:@"Default"])
             style = UIBarStyleDefault;

@@ -22,6 +22,24 @@
     return self; 
 }
 
++ (NSString*) wwwFolderName
+{
+	return @"www";
+}
+
++ (NSString*) pathForResource:(NSString*)resourcepath
+{
+    NSBundle * mainBundle = [NSBundle mainBundle];
+    NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
+    NSString       *filename       = [directoryParts lastObject];
+    [directoryParts removeLastObject];
+	
+    NSString *directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
+    return [mainBundle pathForResource:filename
+					   ofType:@""
+                       inDirectory:directoryStr];
+}
+
 /**
  Returns an instance of a PhoneGapCommand object, based on its name.  If one exists already, it is returned.
  */
@@ -88,7 +106,7 @@
 	 * webView
 	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
 	 */
-    NSURL *appURL        = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"www"]];
+    NSURL *appURL        = [NSURL fileURLWithPath:[PhoneGapDelegate pathForResource:@"index.html"]];
     NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
 	[webView loadRequest:appReq];
 

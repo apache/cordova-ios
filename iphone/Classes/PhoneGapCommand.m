@@ -46,4 +46,14 @@
 	return (UIViewController*)[self appDelegate].viewController;
 }
 
+- (void) writeJavascript:(NSString*)javascript
+{
+	[webView stringByEvaluatingJavaScriptFromString:javascript];
+}
+
+- (void) clearCaches
+{
+	// override
+}
+
 @end
