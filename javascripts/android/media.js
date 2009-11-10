@@ -11,3 +11,13 @@ Media.prototype.play = function() {
 Media.prototype.stop = function() {
   DroidGap.stopPlayingAudio();
 }
+
+Media.prototype.startRecord = function() {
+  DroidGap.startRecordingAudio(this.src);
+}
+
+Media.prototype.stopRecordingAudio = function() {
+  DroidGap.stopRecordingAudio();
+}
+
+
