@@ -1,0 +1,45 @@
+body {
+	width: 				340px;
+	height: 			620px;
+	font-family: 		Helvetica;
+	margin:				0px;
+	padding:			0px 10px;
+	font-size:			16pt;
+}
+
+.header {
+	width:				100%;
+	text-align:			center;
+	margin:				20px 0px;
+	font-size:			27pt;
+}
+
+.list {
+	width:				100%;
+	border:				1px solid black;
+}
+
+.list-item {
+	padding:			8px 2px;
+}
+
+.list-item-small {
+	font-size:			12pt;
+	padding-top:		3px;
+	float:				right;
+}
+
+.contacts {
+	width:				100%;
+	height:				245px;
+	overflow:			auto;
+	border:				1px solid black;
+}
+
+.nitobi-logo {
+	position:			absolute;
+	bottom:				10px;
+	right:				10px;
+	height:				35px;
+	width:				35px;
+}

@@ -15,12 +15,19 @@ ContactManager.prototype.getAllContacts = function(successCallback, errorCallbac
     if (typeof(errorCallback) != 'function')
         errorCallback = function() {};
 	
+var contactsService = device.getServiceObject("Service.Contact", "IDataSource");
+
+ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+	var criteria = new Object();
+	criteria.Type = "Contact";
+	
 	//need a closure here to bind this method to this instance of the contactmanager object
 	this.global_success = successCallback;
 	var obj = this;
 	
 	try {
 		//WRT: result.ReturnValue is an iterator of contacts
+		contactsService.IDataSource.GetList(criteria, function(transId, eventCode, result){obj.success_callback(result.ReturnValue);});
 		this.contactsService.IDataSource.GetList(criteria, function(transId, eventCode, result){obj.success_callback(result.ReturnValue);});
 	} catch (e) {
 		errorCallback(e);
@@ -45,6 +52,7 @@ ContactManager.prototype.success_callback = function(contacts_iterator) {
 			alert(e.name + ": " + e.message);
 		}
 	}
+	
 	this.contacts = gapContacts;
 	this.global_success();
 }

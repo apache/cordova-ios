@@ -123,21 +123,21 @@ android: lib/android/phonegap-min.js
 lib/android/phonegap-min.js: lib/android/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/android/phonegap.js
 
-lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/android/device.js javascripts/android/geolocation.js javascripts/android/notification.js javascripts/android/camera.js
+lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/addressbook.js javascripts/camera.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/android/device.js javascripts/android/geolocation.js javascripts/android/notification.js javascripts/android/camera.js
 	$(MKPATH) lib/android
 	$(RM_F) $@
 	$(CAT) javascripts/phonegap.js.base >> $@
 	$(CAT) javascripts/acceleration.js >> $@
 	$(CAT) javascripts/accelerometer.js >> $@
+	$(CAT) javascripts/addressbook.js >> $@
 	$(CAT) javascripts/camera.js >> $@
-	$(CAT) javascripts/contact.js >> $@
 	$(CAT) javascripts/debugconsole.js >> $@
 	$(CAT) javascripts/device.js >> $@
 	$(CAT) javascripts/file.js >> $@
 	$(CAT) javascripts/geolocation.js >> $@
-	$(CAT) javascripts/compass.js >> $@
 	$(CAT) javascripts/map.js >> $@
 	$(CAT) javascripts/media.js >> $@
+	$(CAT) javascripts/network.js >> $@
 	$(CAT) javascripts/notification.js >> $@
 	$(CAT) javascripts/orientation.js >> $@
 	$(CAT) javascripts/position.js >> $@
@@ -149,8 +149,10 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/android/notification.js >> $@
 	$(CAT) javascripts/android/accelerometer.js >> $@
 	$(CAT) javascripts/android/camera.js >> $@
+	$(CAT) javascripts/android/addressbook.js >> $@
 	$(CAT) javascripts/android/media.js >> $@
 	$(CAT) javascripts/android/file.js >> $@
+	$(CAT) javascripts/android/network.js >> $@
 	
 nokia: lib/nokia/phonegap-min.js
 

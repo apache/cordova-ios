@@ -2,7 +2,6 @@
  * The device used for test rarely seemed to return a value for speed, and was flaky with heading.
  * Nonetheless, they are included, and we can use whatever data we manage to get.
  */
-
 // This allows us to override the constructor keeping all the original prototype methods.
 /*
 var geoPlaceholder = Geolocation.prototype;
@@ -24,6 +23,13 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 	
 	if (!this.serviceObj)
 		this.serviceObj = InitializeLocationServiceObject();
+	
+	this.serviceObj = locationService;	//InitializeLocationServiceObject();
+};
+Geolocation.prototype = geoPlaceholder;
+
+
+Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
 	
 	//construct the criteria for our location request
 	var updateOptions = new Object();
