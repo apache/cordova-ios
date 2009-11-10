@@ -14,9 +14,9 @@ function Media(src, successCallback, errorCallback) {
 }
  
 
-Media.prototype.play = function() {
+Media.prototype.play = function(options) {
 	if (this.src != null) {
-		PhoneGap.exec("Sound.play", this.src);
+		PhoneGap.exec("Sound.play", this.src, options);
 	}
 }
 

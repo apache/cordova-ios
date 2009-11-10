@@ -97,8 +97,16 @@
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
+	NSInteger numberOfLoops = 0;
+	if (loopOption != nil) {
+		numberOfLoops = [loopOption intValue] - 1;
+	}
+	
 	if (audioFile != nil) {
 		NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
+
+		audioFile.player.numberOfLoops = numberOfLoops;
 		[audioFile.player play];
 	}
 }
