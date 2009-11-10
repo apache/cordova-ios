@@ -56,6 +56,7 @@ var Uri = function() {
 
 var AddressBook = function() {
   this.name = "";
+  this.resultSet = [];
 }
 
 AddressBook.prototype.addContact = function(newContact, win, fail)
