@@ -4,6 +4,10 @@
  */
  
 function Media(src, successCallback, errorCallback) {
+	
+	if (!src) {
+		src = "document://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
+	}
 	this.src = src;
 	this.successCallback = successCallback;
 	this.errorCallback = errorCallback;	
@@ -29,5 +33,23 @@ Media.prototype.pause = function() {
 Media.prototype.stop = function() {
 	if (this.src != null) {
 		PhoneGap.exec("Sound.stop", this.src);
+	}
+}
+
+Media.prototype.stop = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stop", this.src);
+	}
+}
+
+Media.prototype.startAudioRecord = function(options) {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.startAudioRecord", this.src, options);
+	}
+}
+
+Media.prototype.stopAudioRecord = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stopAudioRecord", this.src);
 	}
 }
