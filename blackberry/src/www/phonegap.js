@@ -871,6 +871,23 @@ Telephony.prototype.call = function(number) {
 
 if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
 
+/**
+ * This class provides access to device utilities.
+ * @constructor
+ */
+function Utility() {
+	
+};
+
+/**
+ * Closes the application.
+ */
+Utility.prototype.exit = function() {
+	
+}
+
+if (typeof navigator.utility == "undefined") navigator.utility = new Utility();
+
 ContactManager.prototype.formParams = function(options, startArray) {
 	var params = [];
 	if (startArray) params = startArray;
@@ -1072,8 +1089,17 @@ Notification.prototype.vibrate = function(mills) {
 };
 Notification.prototype.beep = function(count, volume) {
 	PhoneGap.exec("notification/beep",[count]);
-};// TODO: Have to implement SMS!
+};
+Sms.prototype.send = function(number, message, successCallback, errorCallback, options) {
+	var params = [number];
+	params.push(message);
+	PhoneGap.exec("send", params);
+};
 Telephony.prototype.call = function(number) {
 	this.number = number;
 	PhoneGap.exec("call", [this.number]);
+};
+Utility.prototype.exit = function() {
+	var params = [];
+	PhoneGap.exec("exit", params);
 };
