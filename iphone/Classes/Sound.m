@@ -7,89 +7,273 @@
  */
 
 #import "Sound.h"
+#import "PhonegapDelegate.h"
 
 @implementation Sound
 
-@synthesize successCallback, errorCallback;
+- (NSURL*) urlForResource:(NSString*)resourcePath
+{
+	NSURL* resourceURL = nil;
+	
+	// attempt to find file path
+    NSString* filePath = [PhoneGapDelegate pathForResource:resourcePath];
+	
+	if (filePath == nil) {
+		// if it is a http url, use it
+		if ([resourcePath hasPrefix:@"http://"]){
+			NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
+			resourceURL = [NSURL URLWithString:resourcePath];
+		} else if ([resourcePath hasPrefix:@"document://"]) {
+			NSLog(@"Will use resource '%@' from the documents folder.", resourcePath);
+			resourceURL = [NSURL URLWithString:resourcePath];
+			
+			NSString* recordingPath = [NSString stringWithFormat:@"%@/%@", [PhoneGapDelegate applicationDocumentsDirectory], [resourceURL host]];
+			resourceURL = [NSURL fileURLWithPath:recordingPath];
+		} else {
+			NSLog(@"Unknown resource '%@'", resourcePath);
+		}
+    }
+	else {
+		NSLog(@"Found resource '%@' in the web folder.", resourcePath);
+		// it's a file url, use it
+		resourceURL = [NSURL fileURLWithPath:filePath];
+	}
+	
+	return resourceURL;
+}
+
+- (AudioFile*) audioFileForResource:(NSString*) resourcePath
+{
+	NSURL* resourceURL = [self urlForResource:resourcePath];
+	if([resourcePath isEqualToString:@""]){
+		NSLog(@"Cannot play empty URI");
+		return nil;
+	}
+	
+	if (resourceURL == nil) {
+		NSLog(@"Cannot use audio file from resource '%@'", resourcePath);
+		return nil;
+	}
+	
+	if (soundCache == nil) {
+		soundCache = [[NSMutableDictionary alloc] initWithCapacity:4];
+	}
+	
+	AudioFile* audioFile = [soundCache objectForKey:resourcePath];
+	if (audioFile == nil) {
+		NSError *error;
+		
+		audioFile = [[AudioFile alloc] init];
+		audioFile.resourcePath = resourcePath;
+		audioFile.resourceURL = resourceURL;
+		
+		if ([resourceURL isFileURL]) {
+			audioFile.player = [[ AVAudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&error];
+		} else {
+			NSData* data = [NSData dataWithContentsOfURL:resourceURL];
+			audioFile.player = [[ AVAudioPlayer alloc ] initWithData:data error:&error];
+		}
+		
+		if (error != nil) {
+			NSLog(@"Failed to initialize AVAudioPlayer: %@\n", error);
+			audioFile.player = nil;
+		}
+	}
+	
+	return audioFile;
+}
+
+- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	if (audioFile == nil) {
+		return;
+	}
+	
+	NSUInteger argc = [arguments count];
+	
+	if (argc > 1) audioFile.successCallback = [arguments objectAtIndex:1];
+	if (argc > 2) audioFile.errorCallback = [arguments objectAtIndex:2];
+	
+	[soundCache setObject:audioFile forKey:audioFile.resourcePath];
+	if (audioFile.player != nil) {
+		NSLog(@"Prepared audio sample '%@' for playback.", audioFile.resourcePath);
+
+		audioFile.player.delegate = self;
+		[audioFile.player prepareToPlay];
+	}
+	[audioFile release];
+}
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	if([[arguments objectAtIndex:0] isEqualToString:@""]){
-		NSLog(@"Cannot play empty URI");
+	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
+	NSInteger numberOfLoops = 0;
+	if (loopOption != nil) {
+		numberOfLoops = [loopOption intValue] - 1;
+	}
+	
+	if (audioFile != nil) {
+		if (audioFile.player != nil) {
+			NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
+			audioFile.player.numberOfLoops = numberOfLoops;
+			[audioFile.player play];
+		} else {
+			NSError* error;
+			// try loading it one more time, in case the file was recorded previously
+			audioFile.player = [[ AVAudioPlayer alloc ] initWithContentsOfURL:audioFile.resourceURL error:&error];
+			if (error != nil) {
+				NSLog(@"Failed to initialize AVAudioPlayer: %@\n", error);
+				audioFile.player = nil;
+			} else {
+				NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
+				audioFile.player.numberOfLoops = numberOfLoops;
+				[audioFile.player play];
+			}
+		}
+	}
+}
+
+- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	
+	if (audioFile != nil) {
+		if (audioFile.player != nil) {
+			NSLog(@"Stopped playing audio sample '%@'", audioFile.resourcePath);
+			[audioFile.player stop];
+			audioFile.player.currentTime = 0;
+		}
+	}
+}
+
+- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	
+	if (audioFile != nil) {
+		if (audioFile.player != nil) {
+			NSLog(@"Paused playing audio sample '%@'", audioFile.resourcePath);
+			[audioFile.player pause];
+		}
+	}
+}
+
+#ifdef __IPHONE_3_0
+
+- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	if (audioFile == nil) {
 		return;
 	}
-	NSUInteger argc = [arguments count];
 	
-	if (argc > 1) self.successCallback = [arguments objectAtIndex:1];
-	if (argc > 2) self.errorCallback = [arguments objectAtIndex:2];
+	NSError* error = nil;
 
-    NSBundle * mainBundle = [NSBundle mainBundle];
-    NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[(NSString*)[arguments objectAtIndex:0] componentsSeparatedByString:@"/"]];
-    NSString       *filename       = [directoryParts lastObject];
-    [directoryParts removeLastObject];
-    
-    NSMutableArray *filenameParts  = [NSMutableArray arrayWithArray:[filename componentsSeparatedByString:@"."]];
-    NSString *directoryStr = [directoryParts componentsJoinedByString:@"/"];
-    
-    NSString *filePath = [mainBundle pathForResource:(NSString*)[filenameParts objectAtIndex:0]
-                                              ofType:(NSString*)[filenameParts objectAtIndex:1]
-                                         inDirectory:directoryStr];
-	if (filePath == nil) {
-		NSLog(@"Can't find filename %@ in the app bundle", [arguments objectAtIndex:0]);
-#ifdef __IPHONE_3_0
-		if ([[arguments objectAtIndex:0] hasPrefix:@"http"]){
+	if (audioFile.recorder != nil) {
+		[audioFile.recorder stop];
+		audioFile.recorder = nil;
+	}
+		
+	audioFile.recorder = [[AVAudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error];
 	
-			if (player != nil)
-				[player stop];
-					
-			NSURL *sampleUrl = [NSURL URLWithString:[arguments objectAtIndex:0]];
-			NSData *sampleAudio = [NSData dataWithContentsOfURL:sampleUrl];
-			NSError *err;
-			player = [[ AVAudioPlayer alloc ] initWithData:sampleAudio error:&err];
-			if (err)
-				NSLog(@"Failed to initialize AVAudioPlayer: %@\n", err);
-			player.delegate = self;
-			[ player prepareToPlay ];
-			[ player play ];
-		}
-#endif
-        return;
-    }
-    SystemSoundID soundID;
-    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
-    
-    // TODO Create a system facilitating handling callback responses in JavaScript easily, and no
-    // longer in an ad-hoc fashion.  Getting error results of whether or not the sound played, or
-    // other errors occurring in the system is important.
-    OSStatus error;
-    error = AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &soundID);
-    if (error != 0)
-        NSLog(@"Sound error %d", error);
-    
-    AudioServicesPlaySystemSound(soundID);
-}
-
-#ifdef __IPHONE_3_0
-/*
- * event listener when file has stopped playing 
- */
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
-	NSLog(@"finished playing audio sample");
-	
-	if (flag){
-		if (self.successCallback) {
-			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", self.successCallback, @""];
-			[webView stringByEvaluatingJavaScriptFromString:jsString];
-			[jsString release];
-		}
+	if (error != nil) {
+		NSLog(@"Failed to initialize AVAudioRecorder: %@\n", error);
+		audioFile.recorder = nil;
 	} else {
-		if (self.errorCallback) {
-			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", self.errorCallback, @""];
-			[webView stringByEvaluatingJavaScriptFromString:jsString];
-			[jsString release];
-		}		
+		audioFile.recorder.delegate = self;
+		[audioFile.recorder record];
+		NSLog(@"Started recording audio sample '%@'", audioFile.resourcePath);
 	}
 }
+
+- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	if (audioFile == nil) {
+		return;
+	}
+	
+	if (audioFile.recorder != nil) {
+		NSLog(@"Stopped recording audio sample '%@'", audioFile.resourcePath);
+		[audioFile.recorder stop];
+	}
+}
+
+- (void)audioRecorderDidFinishRecording:(AVAudioRecorder*)recorder successfully:(BOOL)flag
+{
+	AudioFile* audioFile = [self audioFileForResource:[recorder.url path]];
+	NSLog(@"Finished recording audio sample '%@'", [recorder.url path]);
+	
+	if (audioFile != nil) {
+		
+		if (flag){
+			if (audioFile.successCallback) {
+				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.successCallback, @""];
+				[super writeJavascript:jsString];
+			}
+		} else {
+			if (audioFile.errorCallback) {
+				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.errorCallback, @""];
+				[super writeJavascript:jsString];
+			}		
+		}
+	}
+}
+
 #endif
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer*)player successfully:(BOOL)flag 
+{
+	AudioFile* audioFile = [self audioFileForResource:[player.url path]];
+	NSLog(@"Finished playing audio sample '%@'", [player.url path]);
+
+	if (audioFile != nil) {
+
+		if (flag){
+			if (audioFile.successCallback) {
+				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.successCallback, @""];
+				[super writeJavascript:jsString];
+			}
+		} else {
+			if (audioFile.errorCallback) {
+				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.errorCallback, @""];
+				[super writeJavascript:jsString];
+			}		
+		}
+	}
+}
+
+- (void) clearCaches
+{
+	[soundCache removeAllObjects];
+	[soundCache release];
+	soundCache = nil;
+	
+	[super clearCaches];
+}
+
+@end
+
+@implementation AudioFile
+
+@synthesize resourcePath;
+@synthesize resourceURL;
+@synthesize successCallback;
+@synthesize errorCallback;
+@synthesize player;
+#ifdef __IPHONE_3_0
+@synthesize recorder;
+#endif
+
+- (void) dealloc
+{
+	self.player = nil;
+	self.successCallback = nil;
+	self.errorCallback = nil;
+	
+	[super dealloc];
+}
 
 @end

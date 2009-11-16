@@ -55,5 +55,8 @@
 - (NSString*) appURLScheme;
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
++ (NSString*) wwwFolderName;
++ (NSString*) pathForResource:(NSString*)resourcepath;
++ (NSString*) applicationDocumentsDirectory;
 
 @end

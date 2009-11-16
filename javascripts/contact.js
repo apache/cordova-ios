@@ -4,12 +4,12 @@
  */
 
 function Contact(jsonObject) {
-	this.firstName = "";
-	this.lastName = "";
+	  this.firstName = "";
+	  this.lastName = "";
     this.name = "";
     this.phones = {};
     this.emails = {};
-	this.address = "";
+  	this.address = "";
 }
 
 Contact.prototype.displayName = function()

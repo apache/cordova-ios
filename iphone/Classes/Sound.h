@@ -8,29 +8,53 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioServices.h>
-
-#ifdef __IPHONE_3_0
 #import <AVFoundation/AVFoundation.h>
-#endif
 
 #import "PhoneGapCommand.h"
 
-@interface Sound : PhoneGapCommand
-#ifdef __IPHONE_3_0
-    <AVAudioPlayerDelegate>
-#endif
+@interface AudioFile : NSObject
 {
-	NSString *successCallback;
-	NSString *errorCallback;
-
+	NSString* successCallback;
+	NSString* errorCallback;
+	NSString* resourcePath;
+	NSURL* resourceURL;
+	AVAudioPlayer* player;
 #ifdef __IPHONE_3_0
-	AVAudioPlayer *player;
+	AVAudioRecorder* recorder;
 #endif
 }
 
-@property (retain) NSString* successCallback;
-@property (retain) NSString* errorCallback;
+@property (nonatomic, copy) NSString* resourcePath;
+@property (nonatomic, copy) NSURL* resourceURL;
+@property (nonatomic, copy) NSString* successCallback;
+@property (nonatomic, copy) NSString* errorCallback;
+@property (nonatomic, retain) AVAudioPlayer* player;
+
+#ifdef __IPHONE_3_0
+@property (nonatomic, retain) AVAudioRecorder* recorder;
+#endif
+
+@end
+
+@interface Sound : PhoneGapCommand 
+<AVAudioPlayerDelegate
+#ifdef __IPHONE_3_0
+, AVAudioRecorderDelegate
+#endif
+>
+{
+	NSMutableDictionary* soundCache;
+}
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (NSURL*) urlForResource:(NSString*)resourcePath;
+- (AudioFile*) audioFileForResource:(NSString*) resourcePath;
+
+#ifdef __IPHONE_3_0
+- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+#endif
 
 @end

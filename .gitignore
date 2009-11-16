@@ -1,11 +1,7 @@
-.gitignore
 .DS_Store
 .*.sw?
 *.cso
-tmp/
-*.xcodeproj/* !*.xcodeproj/project.pbxproj
-lib/iphone/phonegap-min.js
-lib/iphone/phonegap.js
-lib/android/phonegap.js
-lib/android/phonegap-min.js
-android/assets/www/phonegap.js
+tmp
+lib
+docs
+

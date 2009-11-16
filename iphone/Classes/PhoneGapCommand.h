@@ -24,4 +24,7 @@
 -(PhoneGapDelegate*) appDelegate;
 -(UIViewController*) appViewController;
 
+- (void) writeJavascript:(NSString*)javascript;
+- (void) clearCaches;
+
 @end

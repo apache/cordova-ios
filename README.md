@@ -2,15 +2,15 @@
 PhoneGap
 =============================================================
 PhoneGap is a development tool that allows web developers to 
-take advantage of the core features in the iPhone and Android 
-SDK using JavaScript.
+take advantage of the core features in the iPhone, Android,
+BlackBerry, and Symbian WRT (Nokia) SDK using JavaScript.
 
 
 Get Started
 -------------------------------------------------------------
 Download the source.
 
-    git clone git://github.com/sintaxi/phonegap.git
+    git clone git://github.com/phonegap/phonegap.git
     
 PhoneGap project is separated into a native project for each 
 device, javascript files and a rakefile.
@@ -21,6 +21,8 @@ device, javascript files and a rakefile.
       |- android/
       |- blackberry/
       |- iphone/
+      |- symbian.wrt/
+      |- winmo/
       `- javascripts/
       
 Each project has a respective README.md file. view that file 
@@ -80,8 +82,9 @@ Community
 -------------------------------------------------------------
   * Website - [phonegap.com](http://phonegap.com)
   * Google Group - [groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
-  * Wiki - [phonegap.pbwiki.com/](http://phonegap.pbwiki.com/)
+  * Wiki - [phonegap.pbworks.com/](http://phonegap.pbworks.com/)
   * Twitter - [twitter.com/phonegap](http://twitter.com/phonegap)
+  * Issue Tracker [phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/)
   
   
 The MIT License

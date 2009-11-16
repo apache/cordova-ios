@@ -4,10 +4,20 @@
  * @constructor
  */
 
-Media.prototype.playAudio = function(filename) {
-  PhoneGap.startPlayingiAudio(filename);  
+Media.prototype.play = function() {
+  DroidGap.startPlayingAudio(this.src);  
 }
 
-Media.prototype.stopAudio = function() {
-  PhoneGap.stopPlayingAudio();
+Media.prototype.stop = function() {
+  DroidGap.stopPlayingAudio();
 }
+
+Media.prototype.startRecord = function() {
+  DroidGap.startRecordingAudio(this.src);
+}
+
+Media.prototype.stopRecordingAudio = function() {
+  DroidGap.stopRecordingAudio();
+}
+
+
