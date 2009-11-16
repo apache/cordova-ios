@@ -64,6 +64,8 @@ public class GeoLocationCommand implements Command {
 	public GeoLocationCommand() {
 		try {
 			locationProvider = LocationProvider.getInstance(null);
+			// Passing null as the parameter is equal to passing a Criteria that has all fields set to the default values, 
+			// i.e. the least restrictive set of criteria.
 		} catch (LocationException e) {
 			availableGPS = false;
 			locationProvider = null;
@@ -120,17 +122,22 @@ public class GeoLocationCommand implements Command {
 		return -1;
 	}
 
-	private void updateLocation(double lat, double lng, float speed, float heading, float altitude) {
+	private void updateLocation(double lat, double lng, float altitude, float accuracy, float alt_accuracy, float heading, float speed, long time) {
 		position = new Position();
 		position.setLatitude(lat);
 		position.setLongitude(lng);
-		position.setVelocity(speed);
-		position.setHeading(heading);
 		position.setAltitude(altitude);
+		position.setAccuracy(accuracy);
+		position.setAltitudeAccuracy(alt_accuracy);
+		position.setHeading(heading);
+		position.setVelocity(speed);
+		position.setTimestamp(time);
 	}
+
 	private String setError(String error) {
 		return GEO_ERROR + error + FUNC_SUF;
 	}
+
 	private String getLocationDocument() {
     	StringBuffer location = new StringBuffer("<location-document><location x=\"");
     	location.append(position.getLatitude()).append("\" y=\"");
@@ -152,12 +159,15 @@ public class GeoLocationCommand implements Command {
 
 		public void locationUpdated(LocationProvider provider, Location location) {
             if (location.isValid()) {
-                float heading = location.getCourse();
-                double longitude = location.getQualifiedCoordinates().getLongitude();
                 double latitude = location.getQualifiedCoordinates().getLatitude();
+                double longitude = location.getQualifiedCoordinates().getLongitude();
                 float altitude = location.getQualifiedCoordinates().getAltitude();
+                float accuracy = location.getQualifiedCoordinates().getHorizontalAccuracy();
+                float alt_accuracy = location.getQualifiedCoordinates().getVerticalAccuracy();
+                float heading = location.getCourse();
                 float speed = location.getSpeed();
-                command.updateLocation(latitude, longitude, speed, heading, altitude);
+				long timestamp = location.getTimestamp();
+                command.updateLocation(latitude, longitude, altitude, accuracy, alt_accuracy, heading, speed, timestamp);
             } else command.clearPosition();
         }
 

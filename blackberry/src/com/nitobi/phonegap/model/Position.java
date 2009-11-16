@@ -32,9 +32,12 @@ public class Position {
 
 	private double _lat = 0;
     private double _lng = 0;
-    private float heading = 0;
 	private float altitude = 0;
+	private float accuracy = 0;
+	private float alt_accuracy = 0;
+    private float heading = 0;
 	private float velocity = 0;
+	private long timestamp = 0;
 
     public double getLatitude() {
 		return _lat;
@@ -52,20 +55,36 @@ public class Position {
 		this._lng = _lng;
 	}
 
-	public float getHeading() {
-		return heading;
-	}
-
-	public void setHeading(float heading) {
-		this.heading = heading;
-	}
-
 	public float getAltitude() {
 		return altitude;
 	}
 
 	public void setAltitude(float altitude) {
 		this.altitude = altitude;
+	}
+
+	public float getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(float accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	public float getAltitudeAccuracy() {
+		return alt_accuracy;
+	}
+
+	public void setAltitudeAccuracy(float alt_accuracy) {
+		this.alt_accuracy = alt_accuracy;
+	}
+
+	public float getHeading() {
+		return heading;
+	}
+
+	public void setHeading(float heading) {
+		this.heading = heading;
 	}
 
 	public float getVelocity() {
@@ -76,8 +95,16 @@ public class Position {
 		this.velocity = velocity;
 	}
 
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+
 	public String toJavascript() {
-		return "new Position(new Coordinates(" + _lat + "," + _lng + "," + altitude + ",1," + heading + "," + velocity + "))";
+		return "new Position(new Coordinates(" + _lat + "," + _lng + "," + altitude + "," + accuracy + "," + alt_accuracy + "," + heading + "," + velocity + ")," + ( timestamp / 1000 ) + ")";
 	}
 
 }
