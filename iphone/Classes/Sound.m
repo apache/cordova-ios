@@ -63,7 +63,7 @@
 	if (audioFile == nil) {
 		NSError *error;
 		
-		audioFile = [[AudioFile alloc] init];
+		audioFile = [[[AudioFile alloc] init] autorelease];
 		audioFile.resourcePath = resourcePath;
 		audioFile.resourceURL = resourceURL;
 		
@@ -102,7 +102,6 @@
 		audioFile.player.delegate = self;
 		[audioFile.player prepareToPlay];
 	}
-	[audioFile release];
 }
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
