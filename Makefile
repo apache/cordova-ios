@@ -85,7 +85,7 @@ blackberry: lib/blackberry/phonegap-min.js
 lib/blackberry/phonegap-min.js: lib/blackberry/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/blackberry/phonegap.js
 
-lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/media.js javascripts/network.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js javascripts/blackberry/media.js javascripts/blackberry/network.js javascripts/blackberry/notification.js javascripts/blackberry/sms.js
+lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/media.js javascripts/network.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js javascripts/blackberry/media.js javascripts/blackberry/network.js javascripts/blackberry/notification.js javascripts/blackberry/sms.js javascripts/blackberry/utility.js
 	$(RM_RF) lib/blackberry
 	$(MKPATH) lib/blackberry
 	$(RM_F) $@
@@ -118,6 +118,7 @@ lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleratio
 	$(CAT) javascripts/blackberry/notification.js >> $@
 	$(CAT) javascripts/blackberry/sms.js >> $@
 	$(CAT) javascripts/blackberry/telephony.js >> $@
+	$(CAT) javascripts/blackberry/utility.js >> $@
 android: lib/android/phonegap-min.js
 
 lib/android/phonegap-min.js: lib/android/phonegap.js

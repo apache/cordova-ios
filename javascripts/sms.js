@@ -3,7 +3,8 @@
  * @constructor
  */
 function Sms() {
-
+	this.success = null;
+	this.error = null;
 }
 
 /**
