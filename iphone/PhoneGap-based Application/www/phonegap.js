@@ -199,12 +199,12 @@ PhoneGap.addConstructor(function() {
  */
 
 function Contact(jsonObject) {
-	this.firstName = "";
-	this.lastName = "";
+	  this.firstName = "";
+	  this.lastName = "";
     this.name = "";
     this.phones = {};
     this.emails = {};
-	this.address = "";
+  	this.address = "";
 }
 
 Contact.prototype.displayName = function()
@@ -349,7 +349,7 @@ function File() {
 /**
  * Reads a file from the mobile device. This function is asyncronous.
  * @param {String} fileName The name (including the path) to the file on the mobile device. 
- * The file name will likely be device dependant.
+ * The file name will likely be device dependent.
  * @param {Function} successCallback The function to call when the file is successfully read.
  * @param {Function} errorCallback The function to call when there is an error reading the file from the device.
  */
@@ -599,7 +599,6 @@ Map.prototype.show = function(positions) {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.map == "undefined") navigator.map = new Map();
 });
-
 /**
  * This class provides access to the device media, interfaces to both sound and video
  * @constructor
@@ -1155,10 +1154,55 @@ Compass.prototype.stop = function() {
  * Media/Audio override.
  *
  */
-
-Media.prototype.play = function() {
+ 
+function Media(src, successCallback, errorCallback) {
+	
+	if (!src) {
+		src = "document://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
+	}
+	this.src = src;
+	this.successCallback = successCallback;
+	this.errorCallback = errorCallback;	
+    
 	if (this.src != null) {
-		PhoneGap.exec("Sound.play", this.src, this.successCallback, this.errorCallback);
+		PhoneGap.exec("Sound.prepare", this.src, this.successCallback, this.errorCallback);
+	}
+}
+ 
+
+Media.prototype.play = function(options) {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.play", this.src, options);
+	}
+}
+
+Media.prototype.pause = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.pause", this.src);
+	}
+}
+
+Media.prototype.stop = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stop", this.src);
+	}
+}
+
+Media.prototype.stop = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stop", this.src);
+	}
+}
+
+Media.prototype.startAudioRecord = function(options) {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.startAudioRecord", this.src, options);
+	}
+}
+
+Media.prototype.stopAudioRecord = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stopAudioRecord", this.src);
 	}
 }
 Notification.prototype.vibrate = function(mills) {

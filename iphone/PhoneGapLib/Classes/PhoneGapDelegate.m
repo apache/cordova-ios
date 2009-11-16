@@ -84,8 +84,6 @@
 	
 	[ viewController.view addSubview: webView ];
 	
-	
-	
 	/*
 	 * PhoneGap.plist
 	 *
@@ -99,7 +97,7 @@
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
 #endif
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-//    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
+    NSNumber *useAccelerometer     = [settings objectForKey:@"EnableAcceleration"];
     NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
     NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
     NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
@@ -113,6 +111,11 @@
     }
 
 	webView.delegate = self;
+
+	if ([useAccelerometer boolValue]) {
+        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/40.0];
+        [[UIAccelerometer sharedAccelerometer] setDelegate:self];
+    }
 
 	[window addSubview:viewController.view];
 
@@ -414,6 +417,16 @@
 	invokedURL = url;
 	
 	return YES;
+}
+
+/**
+ * Sends Accel Data back to the Device.
+ */
+- (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
+	NSString * jsCallBack = nil;
+	jsCallBack = [[NSString alloc] initWithFormat:@"var _accel={x:%f,y:%f,z:%f};", acceleration.x, acceleration.y, acceleration.z];
+	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [jsCallBack release];
 }
 
 - (void)dealloc
