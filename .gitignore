@@ -4,8 +4,4 @@
 tmp
 lib
 docs
-*.xcodeproj/* !*.xcodeproj/project.pbxproj
-android/default.properties
-android/bin/*
-android/gen/*
-android/assets/www/phonegap.js
+
