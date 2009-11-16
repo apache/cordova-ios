@@ -32,4 +32,7 @@ function Device() {
 
 PhoneGap.addConstructor(function() {
     navigator.device = window.device = new Device();
+    var event = document.createEvent("Events");
+    event.initEvent('deviceReady', false, false);
+    document.dispatchEvent(event);
 });

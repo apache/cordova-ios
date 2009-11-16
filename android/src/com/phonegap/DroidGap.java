@@ -37,6 +37,7 @@ import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebSettings.LayoutAlgorithm;
 
 public class DroidGap extends Activity {
 	
@@ -65,9 +66,11 @@ public class DroidGap extends Activity {
         /* This changes the setWebChromeClient to log alerts to LogCat!  Important for Javascript Debugging */
         
         appView.setWebChromeClient(new GapClient(this));
+        appView.setInitialScale(100);
         WebSettings settings = appView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 
         
         /* Bind the appView object to the gap class methods */
