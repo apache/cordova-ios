@@ -198,8 +198,11 @@ public class NetworkCommand implements Command {
                         httpConn = (HttpConnection)s;  
                         httpConn.setRequestMethod((postData != null)?HttpConnection.POST:HttpConnection.GET);
 						// === SET HTTP REQUEST HEADERS HERE ===
-						// Set the user agent string. Could try to parse out device models/numbers, but do I really want to?
-                        httpConn.setRequestProperty("user-agent", "BlackBerry9530/4.7 Profile/MIDP-2.0 Configuration/CLDC-1.1");
+						// Set the user agent string. Could try to parse out device models/numbers, but do I really want to? Yes, I do, according to this KB article:
+						// http://www.blackberry.com/knowledgecenterpublic/livelink.exe/fetch/2000/348583/800451/800563/How_To_-_Use_reliable_push_without_making_a_BlackBerry_Browser_request.html?nodeid=1222784&vernum=0
+                        httpConn.setRequestProperty("user-agent", "BlackBerry" + DeviceInfo.getDeviceName() + "/" + DeviceInfo.getSoftwareVersion());
+						// Also need to set profile header according to above article.
+						httpConn.setRequestProperty("profile", "http://www.blackberry.net/go/mobile/profiles/uaprof/" + DeviceInfo.getDeviceName() + "/" + DeviceInfo.getSoftwareVersion() + ".rdf");
                         httpConn.setRequestProperty("Content-Type","text/plain,text/html,application/rss+xml,application/x-www-form-urlencoded");
 						// Here's an example of setting the Accept header to a particular subset of MIME types. By the HTTP spec, if none is specified the assumed value is 'all' types are accepted.
                         //httpConn.setRequestProperty("Accept","text/plain,text/html,application/rss+xml,text/javascript,text/xml");
@@ -238,13 +241,24 @@ public class NetworkCommand implements Command {
                             input = null;
                         } 
                         if (_stop) continue;
-                        updateContent(";if (navigator.network.XHR_success) { navigator.network.XHR_success(" + (!content.equals("")?content:"null") + "); };");
+                        updateContent(";if (navigator.network.XHR_success) { navigator.network.XHR_success(" + (!content.equals("")?content:"{error:true,message:'Bad server response.',httpcode:" + status + "}") + "); };");
                         s.close();                    
                     } 
                     catch (IOException e) 
                     {            
                     	if (_stop) continue;
-                    	updateContent(";if (navigator.network.XHR_success) { navigator.network.XHR_success(" + (!content.equals("")?content:"null") + "); };");
+                    	String resp = e.getMessage().toLowerCase();
+                    	if (content.equals("")) {
+                    		if (resp.indexOf("tunnel") > -1 || resp.indexOf("Tunnel") > -1 || resp.indexOf("apn") > -1 || resp.indexOf("APN") > -1) {
+                    			resp = "{error:true,message:'There was a communication error. Are your APN settings configured (BlackBerry menu -> Options -> Advanced Options -> TCP/IP). Contact your service provider for details on how to set up your APN settings.'}";
+                    		} else {
+                    			resp = "{error:true,message:'IOException during HTTP request: " + e.getMessage().replace('\'', ' ') + "',httpcode:null}";
+                    		}
+                    	} else {
+                    		resp = content;
+                    	}
+                    	updateContent(";if (navigator.network.XHR_success) { navigator.network.XHR_success(" + resp + "); };");
+                    	resp = null;
                     } finally {
                     	content = null;
                     	s = null;
