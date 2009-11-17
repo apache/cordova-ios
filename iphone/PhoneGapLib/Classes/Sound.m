@@ -123,6 +123,7 @@
 				audioFile.player.currentTime = 0;
 			}
 			[audioFile.player play];
+			
 		} else {
 			NSError* error;
 			// try loading it one more time, in case the file was recorded previously
