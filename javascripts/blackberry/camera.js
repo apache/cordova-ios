@@ -1,4 +1,13 @@
 /**
+ * This class provides access to the device camera.
+ * @constructor
+ */
+function Camera() {
+	this.onSuccess = null;
+	this.onError = null;
+}
+
+/**
  * 
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -13,3 +22,5 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
 		PhoneGap.exec("camera", ["picture"]);
 	} else errorCallback("[PhoneGap] Camera not supported on this device.");
 }
+
+if (typeof navigator.camera == "undefined") navigator.camera = new Camera();

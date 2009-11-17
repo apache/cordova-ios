@@ -1,10 +1,26 @@
+/**
+ * This class provides generic read and write access to the mobile device file system.
+ */
+function File() {
+	/**
+	 * The data of a file.
+	 */
+	this.data = "";
+	/**
+	 * The name of the file.
+	 */
+	this.name = "";
+}
+
+if (typeof navigator.file == "undefined") navigator.file = new File();
+
 File.prototype.read = function(fileName, successCallback, errorCallback) {
 	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
 	/*document.cookie = 'bb_command={command:8,args:{name:"'+fileName+'"}}';
 	navigator.file.successCallback = successCallback;
 	navigator.file.errorCallback = errorCallback;
 	navigator.file.readTimeout = window.setInterval('navigator.file._readReady()', 1000);*/
-}
+};
 
 File.prototype._readReady = function() {
 	var cookies = document.cookie.split(';');
@@ -26,9 +42,9 @@ File.prototype._readReady = function() {
 			}
 		}
 	}
-}
+};
 
 File.prototype.write = function(fileName, data) {
 	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
 //	document.cookie = 'bb_command={command:9,args:{name:"'+fileName+'",data:"'+data+'"}}';
-}
+};
