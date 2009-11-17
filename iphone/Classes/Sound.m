@@ -117,7 +117,13 @@
 		if (audioFile.player != nil) {
 			NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
 			audioFile.player.numberOfLoops = numberOfLoops;
+			
+			if(audioFile.player.isPlaying){
+				[audioFile.player stop];
+				audioFile.player.currentTime = 0;
+			}
 			[audioFile.player play];
+			
 		} else {
 			NSError* error;
 			// try loading it one more time, in case the file was recorded previously
