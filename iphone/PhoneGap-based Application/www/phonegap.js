@@ -65,14 +65,51 @@ PhoneGap.exec = function() {
     if (PhoneGap.queue.timer == null)
         PhoneGap.queue.timer = setInterval(PhoneGap.run_command, 10);
 };
+
 /**
- * Internal function used to dispatch the request to PhoneGap.  This needs to be implemented per-platform to
- * ensure that methods are called on the phone in a way appropriate for that device.
+ * Internal function used to dispatch the request to PhoneGap.  It processes the
+ * command queue and executes the next command on the list.  If one of the
+ * arguments is a JavaScript object, it will be passed on the QueryString of the
+ * url, which will be turned into a dictionary on the other end.
  * @private
  */
 PhoneGap.run_command = function() {
-};
+    if (!PhoneGap.available || !PhoneGap.queue.ready)
+        return;
 
+    PhoneGap.queue.ready = false;
+
+    var args = PhoneGap.queue.commands.shift();
+    if (PhoneGap.queue.commands.length == 0) {
+        clearInterval(PhoneGap.queue.timer);
+        PhoneGap.queue.timer = null;
+    }
+
+    var uri = [];
+    var dict = null;
+    for (var i = 1; i < args.length; i++) {
+        var arg = args[i];
+        if (arg == undefined || arg == null)
+            arg = '';
+        if (typeof(arg) == 'object')
+            dict = arg;
+        else
+            uri.push(encodeURIComponent(arg));
+    }
+    var url = "gap://" + args[0] + "/" + uri.join("/");
+    if (dict != null) {
+        var query_args = [];
+        for (var name in dict) {
+            if (typeof(name) != 'string')
+                continue;
+            query_args.push(encodeURIComponent(name) + "=" + encodeURIComponent(dict[name]));
+        }
+        if (query_args.length > 0)
+            url += "?" + query_args.join("&");
+    }
+    document.location = url;
+
+};
 /**
  * This class contains acceleration information
  * @constructor
@@ -172,6 +209,17 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
 });
+// Gets the function name of a Function object, else uses "alert" if anonymous
+function GetFunctionName(fn)
+{
+  if (fn) {
+      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
+      return m ? m[1] : "alert";
+  } else {
+    return null;
+  }
+}
+
 /**
  * This class provides access to the device camera.
  * @constructor
@@ -187,24 +235,35 @@ function Camera() {
  * @param {Object} options
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
-	
+	PhoneGap.exec("Camera.getPicture", GetFunctionName(successCallback), GetFunctionName(errorCallback), options);
 }
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
 });
+// Gets the function name of a Function object, else uses "alert" if anonymous
+function GetFunctionName(fn)
+{
+  if (fn) {
+      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
+      return m ? m[1] : "alert";
+  } else {
+    return null;
+  }
+}
+
 /**
  * This class provides access to the device contacts.
  * @constructor
  */
 
 function Contact(jsonObject) {
-	  this.firstName = "";
-	  this.lastName = "";
+	this.firstName = "";
+	this.lastName = "";
     this.name = "";
     this.phones = {};
     this.emails = {};
-  	this.address = "";
+	this.address = "";
 }
 
 Contact.prototype.displayName = function()
@@ -220,7 +279,33 @@ function ContactManager() {
 }
 
 ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	// Interface
+	PhoneGap.exec("Contacts.allContacts", GetFunctionName(successCallback), options);
+}
+
+// THE FUNCTIONS BELOW ARE iPHONE ONLY FOR NOW
+
+ContactManager.prototype.newContact = function(contact, successCallback, options) {
+    if (!options) options = {};
+    options.successCallback = GetFunctionName(successCallback);
+    
+    PhoneGap.exec("Contacts.newContact", contact.firstName, contact.lastName, contact.phoneNumber,
+        options);
+}
+
+ContactManager.prototype.chooseContact = function(successCallback, options) {
+    PhoneGap.exec("Contacts.chooseContact", GetFunctionName(successCallback), options);
+}
+
+ContactManager.prototype.displayContact = function(contactID, errorCallback, options) {
+    PhoneGap.exec("Contacts.displayContact", contactID, GetFunctionName(errorCallback), options);
+}
+
+ContactManager.prototype.removeContact = function(contactID, successCallback, options) {
+    PhoneGap.exec("Contacts.removeContact", contactID, GetFunctionName(successCallback), options);
+}
+
+ContactManager.prototype.contactsCount = function(successCallback, errorCallback) {
+	PhoneGap.exec("Contacts.contactsCount", GetFunctionName(successCallback));
 }
 
 PhoneGap.addConstructor(function() {
@@ -278,6 +363,13 @@ DebugConsole.prototype.processMessage = function(message) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.log = function(message) {
+    if (PhoneGap.available)
+        PhoneGap.exec('DebugConsole.log',
+            this.processMessage(message),
+            { logLevel: 'INFO' }
+        );
+    else
+        console.log(message);
 };
 
 /**
@@ -285,6 +377,13 @@ DebugConsole.prototype.log = function(message) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.warn = function(message) {
+    if (PhoneGap.available)
+        PhoneGap.exec('DebugConsole.log',
+            this.processMessage(message),
+            { logLevel: 'WARN' }
+        );
+    else
+        console.error(message);
 };
 
 /**
@@ -292,6 +391,13 @@ DebugConsole.prototype.warn = function(message) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.error = function(message) {
+    if (PhoneGap.available)
+        PhoneGap.exec('DebugConsole.log',
+            this.processMessage(message),
+            { logLevel: 'ERROR' }
+        );
+    else
+        console.error(message);
 };
 
 PhoneGap.addConstructor(function() {
@@ -349,7 +455,7 @@ function File() {
 /**
  * Reads a file from the mobile device. This function is asyncronous.
  * @param {String} fileName The name (including the path) to the file on the mobile device. 
- * The file name will likely be device dependent.
+ * The file name will likely be device dependant.
  * @param {Function} successCallback The function to call when the file is successfully read.
  * @param {Function} errorCallback The function to call when there is an error reading the file from the device.
  */
@@ -482,6 +588,14 @@ Geolocation.prototype.setError = function(message) {
     }
 };
 
+Geolocation.prototype.start = function(args) {
+    PhoneGap.exec("Location.startLocation", args);
+};
+
+Geolocation.prototype.stop = function() {
+    PhoneGap.exec("Location.stopLocation");
+};
+
 PhoneGap.addConstructor(function() {
     if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
 });
@@ -578,6 +692,14 @@ Compass.prototype.setError = function(message) {
     }
 };
 
+Compass.prototype.start = function(args) {
+    PhoneGap.exec("Location.startHeading", args);
+};
+
+Compass.prototype.stop = function() {
+    PhoneGap.exec("Location.stopHeading");
+};
+
 PhoneGap.addConstructor(function() {
     if (typeof navigator.compass == "undefined") navigator.compass = new Compass();
 });
@@ -599,28 +721,55 @@ Map.prototype.show = function(positions) {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.map == "undefined") navigator.map = new Map();
 });
+
 /**
- * This class provides access to the device media, interfaces to both sound and video
- * @constructor
+ * Media/Audio override.
+ *
  */
+ 
 function Media(src, successCallback, errorCallback) {
+	
+	if (!src) {
+		src = "document://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
+	}
 	this.src = src;
 	this.successCallback = successCallback;
-	this.errorCallback = errorCallback;												
+	this.errorCallback = errorCallback;	
+    
+	if (this.src != null) {
+		PhoneGap.exec("Sound.prepare", this.src, this.successCallback, this.errorCallback);
+	}
 }
-
-Media.prototype.record = function() {
-}
-
-Media.prototype.play = function() {
+ 
+Media.prototype.play = function(options) {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.play", this.src, options);
+	}
 }
 
 Media.prototype.pause = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.pause", this.src);
+	}
 }
 
 Media.prototype.stop = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stop", this.src);
+	}
 }
 
+Media.prototype.startAudioRecord = function(options) {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.startAudioRecord", this.src, options);
+	}
+}
+
+Media.prototype.stopAudioRecord = function() {
+	if (this.src != null) {
+		PhoneGap.exec("Sound.stopAudioRecord", this.src);
+	}
+}
 
 /**
  * This class contains information about any Media errors.
@@ -646,29 +795,6 @@ function Notification() {
 }
 
 /**
- * Open a native alert dialog, with a customizable title and button text.
- * @param {String} message Message to print in the body of the alert
- * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
- * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
- */
-Notification.prototype.alert = function(message, title, buttonLabel) {
-    // Default is to use a browser alert; this will use "index.html" as the title though
-    alert(message);
-};
-
-/**
- * Start spinning the activity indicator on the statusbar
- */
-Notification.prototype.activityStart = function() {
-};
-
-/**
- * Stop spinning the activity indicator on the statusbar, if it's currently spinning
- */
-Notification.prototype.activityStop = function() {
-};
-
-/**
  * Causes the device to blink a status LED.
  * @param {Integer} count The number of blinks.
  * @param {String} colour The colour of the light.
@@ -677,24 +803,46 @@ Notification.prototype.blink = function(count, colour) {
 	
 };
 
-/**
- * Causes the device to vibrate.
- * @param {Integer} mills The number of milliseconds to vibrate for.
- */
 Notification.prototype.vibrate = function(mills) {
-	
+	PhoneGap.exec("Notification.vibrate");
+};
+
+Notification.prototype.beep = function(count, volume) {
+	// No Volume yet for the iphone interface
+	// We can use a canned beep sound and call that
+	new Media('beep.wav').play();
 };
 
 /**
- * Causes the device to beep.
- * @param {Integer} count The number of beeps.
- * @param {Integer} volume The volume of the beep.
+ * Open a native alert dialog, with a customizable title and button text.
+ * @param {String} message Message to print in the body of the alert
+ * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
+ * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
  */
-Notification.prototype.beep = function(count, volume) {
-	
+Notification.prototype.alert = function(message, title, buttonLabel) {
+    var options = {};
+    if (title) options.title = title;
+    if (buttonLabel) options.buttonLabel = buttonLabel;
+
+    if (PhoneGap.available)
+        PhoneGap.exec('Notification.alert', message, options);
+    else
+        alert(message);
 };
 
-// TODO: of course on Blackberry and Android there notifications in the UI as well
+Notification.prototype.activityStart = function() {
+    PhoneGap.exec("Notification.activityStart");
+};
+Notification.prototype.activityStop = function() {
+    PhoneGap.exec("Notification.activityStop");
+};
+
+Notification.prototype.loadingStart = function(options) {
+    PhoneGap.exec("Notification.loadingStart", options);
+};
+Notification.prototype.loadingStop = function() {
+    PhoneGap.exec("Notification.loadingStop");
+};
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
@@ -894,7 +1042,9 @@ function UIControls() {
 /**
  * Create a native tab bar that can have tab buttons added to it which can respond to events.
  */
-UIControls.prototype.createTabBar = function() {};
+UIControls.prototype.createTabBar = function() {
+    PhoneGap.exec("UIControls.createTabBar");
+};
 
 /**
  * Show a tab bar.  The tab bar has to be created first.
@@ -902,12 +1052,19 @@ UIControls.prototype.createTabBar = function() {};
  * - \c height integer indicating the height of the tab bar (default: \c 49)
  * - \c position specifies whether the tab bar will be placed at the \c top or \c bottom of the screen (default: \c bottom)
  */
-UIControls.prototype.showTabBar = function(options) {};
+UIControls.prototype.showTabBar = function(options) {
+    if (!options) options = {};
+    PhoneGap.exec("UIControls.showTabBar", options);
+};
 
 /**
  * Hide a tab bar.  The tab bar has to be created first.
  */
-UIControls.prototype.hideTabBar = function(animate) {};
+UIControls.prototype.hideTabBar = function(animate) {
+    if (animate == undefined || animate == null)
+        animate = true;
+    PhoneGap.exec("UIControls.hideTabBar", { animate: animate });
+};
 
 /**
  * Create a new tab bar item for use on a previously created tab bar.  Use ::showTabBarItems to show the new item on the tab bar.
@@ -934,7 +1091,14 @@ UIControls.prototype.hideTabBar = function(animate) {};
  * @param {Object} [options] Options for customizing the individual tab item
  *  - \c badge value to display in the optional circular badge on the item; if null or unspecified, the badge will be hidden
  */
-UIControls.prototype.createTabBarItem = function(name, label, image, options) {};
+UIControls.prototype.createTabBarItem = function(name, label, image, options) {
+    var tag = this.tabBarTag++;
+    if (options && 'onSelect' in options && typeof(options['onSelect']) == 'function') {
+        this.tabBarCallbacks[tag] = options.onSelect;
+        delete options.onSelect;
+    }
+    PhoneGap.exec("UIControls.createTabBarItem", name, label, image, tag, options);
+};
 
 /**
  * Update an existing tab bar item to change its badge value.
@@ -942,7 +1106,10 @@ UIControls.prototype.createTabBarItem = function(name, label, image, options) {}
  * @param {Object} options Options for customizing the individual tab item
  *  - \c badge value to display in the optional circular badge on the item; if null or unspecified, the badge will be hidden
  */
-UIControls.prototype.updateTabBarItem = function(name, options) {};
+UIControls.prototype.updateTabBarItem = function(name, options) {
+    if (!options) options = {};
+    PhoneGap.exec("UIControls.updateTabBarItem", name, options);
+};
 
 /**
  * Show previously created items on the tab bar
@@ -952,7 +1119,13 @@ UIControls.prototype.updateTabBarItem = function(name, options) {};
  * @see createTabBarItem
  * @see createTabBar
  */
-UIControls.prototype.showTabBarItems = function(tabs, options) {};
+UIControls.prototype.showTabBarItems = function() {
+    var parameters = [ "UIControls.showTabBarItems" ];
+    for (var i = 0; i < arguments.length; i++) {
+        parameters.push(arguments[i]);
+    }
+    PhoneGap.exec.apply(this, parameters);
+};
 
 /**
  * Manually select an individual tab bar item, or nil for deselecting a currently selected tab bar item.
@@ -960,7 +1133,9 @@ UIControls.prototype.showTabBarItems = function(tabs, options) {};
  * @see createTabBarItem
  * @see showTabBarItems
  */
-UIControls.prototype.selectTabBarItem = function(tab) {};
+UIControls.prototype.selectTabBarItem = function(tab) {
+    PhoneGap.exec("UIControls.selectTabBarItem", tab);
+};
 
 /**
  * Function called when a tab bar item has been selected.
@@ -974,17 +1149,32 @@ UIControls.prototype.tabBarItemSelected = function(tag) {
 /**
  * Create a toolbar.
  */
-UIControls.prototype.createToolBar = function() {};
+UIControls.prototype.createToolBar = function() {
+    PhoneGap.exec("UIControls.createToolBar");
+};
 
 /**
  * Function called when a tab bar item has been selected.
  * @param {String} title the title to set within the toolbar
  */
-UIControls.prototype.setToolBarTitle = function(title) {};
+UIControls.prototype.setToolBarTitle = function(title) {
+    PhoneGap.exec("UIControls.setToolBarTitle", title);
+};
 
 PhoneGap.addConstructor(function() {
     window.uicontrols = new UIControls();
 });
+// Gets the function name of a Function object, else uses "alert" if anonymous
+function GetFunctionName(fn)
+{
+  if (fn) {
+      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
+      return m ? m[1] : "alert";
+  } else {
+    return null;
+  }
+}
+
 /**
  * This class contains information about any NetworkStatus.
  * @constructor
@@ -1015,9 +1205,10 @@ function Network() {
  * 
  * @param {Function} successCallback
  * @param {Function} errorCallback
- * @param {Object} options  (isIpAddress:boolean)
+ * @param {Object} options (isIpAddress:boolean)
  */
 Network.prototype.isReachable = function(hostName, successCallback, options) {
+	PhoneGap.exec("Network.isReachable", hostName, GetFunctionName(successCallback), options);
 }
 
 /**
@@ -1031,323 +1222,3 @@ Network.prototype.updateReachability = function(reachability) {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.network == "undefined") navigator.network = new Network();
 });
-Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
-	if (typeof successCallback == "function") {
-		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
-		Accelerometer.lastAcceleration = accel;
-		successCallback(accel);
-	} 	
-}	
-// --- BjV Additions for 360/iDev
-Bonjour = function() {
-}
-
-Bonjour.prototype.port = 0;
-Bonjour.prototype.start = function(name) {
-	PhoneGap.exec("Bonjour.start");
-}
-Bonjour.prototype.stop = function() {
-	PhoneGap.exec("Bonjour.stop");
-}
-Bonjour.prototype.delegate = null;
-// Gets the function name of a Function object, else uses "alert" if anonymous
-function GetFunctionName(fn)
-{
-  if (fn) {
-      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
-      return m ? m[1] : "alert";
-  } else {
-    return null;
-  }
-}
-
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	PhoneGap.exec("Contacts.allContacts", GetFunctionName(successCallback), options);
-}
-
-// THE FUNCTIONS BELOW ARE iPHONE ONLY FOR NOW
-
-ContactManager.prototype.newContact = function(contact, successCallback, options) {
-    if (!options) options = {};
-    options.successCallback = GetFunctionName(successCallback);
-    
-    PhoneGap.exec("Contacts.newContact", contact.firstName, contact.lastName, contact.phoneNumber,
-        options);
-}
-
-ContactManager.prototype.chooseContact = function(successCallback, options) {
-    PhoneGap.exec("Contacts.chooseContact", GetFunctionName(successCallback), options);
-}
-
-ContactManager.prototype.displayContact = function(contactID, errorCallback, options) {
-    PhoneGap.exec("Contacts.displayContact", contactID, GetFunctionName(errorCallback), options);
-}
-
-ContactManager.prototype.removeContact = function(contactID, successCallback, options) {
-    PhoneGap.exec("Contacts.removeContact", contactID, GetFunctionName(successCallback), options);
-}
-
-ContactManager.prototype.contactsCount = function(successCallback, errorCallback) {
-	PhoneGap.exec("Contacts.contactsCount", GetFunctionName(successCallback));
-}
-// Gets the function name of a Function object, else uses "alert" if anonymous
-function GetFunctionName(fn)
-{
-  if (fn) {
-      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
-      return m ? m[1] : "alert";
-  } else {
-    return null;
-  }
-}
-/**
- * 
- * @param {Function} successCallback
- * @param {Function} errorCallback
- * @param {Object} options
- */
-Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
-	PhoneGap.exec("Camera.getPicture", GetFunctionName(successCallback), GetFunctionName(errorCallback), options);
-}
-DebugConsole.prototype.log = function(message) {
-    if (PhoneGap.available)
-        PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message),
-            { logLevel: 'INFO' }
-        );
-    else
-        console.log(message);
-};
-DebugConsole.prototype.warn = function(message) {
-    if (PhoneGap.available)
-        PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message),
-            { logLevel: 'WARN' }
-        );
-    else
-        console.error(message);
-};
-DebugConsole.prototype.error = function(message) {
-    if (PhoneGap.available)
-        PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message),
-            { logLevel: 'ERROR' }
-        );
-    else
-        console.error(message);
-};
-Geolocation.prototype.start = function(args) {
-    PhoneGap.exec("Location.startLocation", args);
-};
-
-Geolocation.prototype.stop = function() {
-    PhoneGap.exec("Location.stopLocation");
-};Compass.prototype.start = function(args) {
-    PhoneGap.exec("Location.startHeading", args);
-};
-
-Compass.prototype.stop = function() {
-    PhoneGap.exec("Location.stopHeading");
-};
-
-/**
- * Media/Audio override.
- *
- */
- 
-function Media(src, successCallback, errorCallback) {
-	
-	if (!src) {
-		src = "document://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
-	}
-	this.src = src;
-	this.successCallback = successCallback;
-	this.errorCallback = errorCallback;	
-    
-	if (this.src != null) {
-		PhoneGap.exec("Sound.prepare", this.src, this.successCallback, this.errorCallback);
-	}
-}
- 
-
-Media.prototype.play = function(options) {
-	if (this.src != null) {
-		PhoneGap.exec("Sound.play", this.src, options);
-	}
-}
-
-Media.prototype.pause = function() {
-	if (this.src != null) {
-		PhoneGap.exec("Sound.pause", this.src);
-	}
-}
-
-Media.prototype.stop = function() {
-	if (this.src != null) {
-		PhoneGap.exec("Sound.stop", this.src);
-	}
-}
-
-Media.prototype.stop = function() {
-	if (this.src != null) {
-		PhoneGap.exec("Sound.stop", this.src);
-	}
-}
-
-Media.prototype.startAudioRecord = function(options) {
-	if (this.src != null) {
-		PhoneGap.exec("Sound.startAudioRecord", this.src, options);
-	}
-}
-
-Media.prototype.stopAudioRecord = function() {
-	if (this.src != null) {
-		PhoneGap.exec("Sound.stopAudioRecord", this.src);
-	}
-}
-Notification.prototype.vibrate = function(mills) {
-	PhoneGap.exec("Notification.vibrate");
-};
-
-Notification.prototype.beep = function(count, volume) {
-	// No Volume yet for the iphone interface
-	// We can use a canned beep sound and call that
-	new Media('beep.wav').play();
-};
-
-Notification.prototype.alert = function(message, title, buttonLabel) {
-    var options = {};
-    if (title) options.title = title;
-    if (buttonLabel) options.buttonLabel = buttonLabel;
-
-    if (PhoneGap.available)
-        PhoneGap.exec('Notification.alert', message, options);
-    else
-        alert(message);
-};
-
-Notification.prototype.activityStart = function() {
-    PhoneGap.exec("Notification.activityStart");
-};
-Notification.prototype.activityStop = function() {
-    PhoneGap.exec("Notification.activityStop");
-};
-
-Notification.prototype.loadingStart = function(options) {
-    PhoneGap.exec("Notification.loadingStart", options);
-};
-Notification.prototype.loadingStop = function() {
-    PhoneGap.exec("Notification.loadingStop");
-};
-/**
- * Internal function used to dispatch the request to PhoneGap.  It processes the
- * command queue and executes the next command on the list.  If one of the
- * arguments is a JavaScript object, it will be passed on the QueryString of the
- * url, which will be turned into a dictionary on the other end.
- * @private
- */
-PhoneGap.run_command = function() {
-    if (!PhoneGap.available || !PhoneGap.queue.ready)
-        return;
-
-    PhoneGap.queue.ready = false;
-
-    var args = PhoneGap.queue.commands.shift();
-    if (PhoneGap.queue.commands.length == 0) {
-        clearInterval(PhoneGap.queue.timer);
-        PhoneGap.queue.timer = null;
-    }
-
-    var uri = [];
-    var dict = null;
-    for (var i = 1; i < args.length; i++) {
-        var arg = args[i];
-        if (arg == undefined || arg == null)
-            arg = '';
-        if (typeof(arg) == 'object')
-            dict = arg;
-        else
-            uri.push(encodeURIComponent(arg));
-    }
-    var url = "gap://" + args[0] + "/" + uri.join("/");
-    if (dict != null) {
-        var query_args = [];
-        for (var name in dict) {
-            if (typeof(name) != 'string')
-                continue;
-            query_args.push(encodeURIComponent(name) + "=" + encodeURIComponent(dict[name]));
-        }
-        if (query_args.length > 0)
-            url += "?" + query_args.join("&");
-    }
-    document.location = url;
-
-};
-UIControls.prototype.createTabBar = function() {
-    PhoneGap.exec("UIControls.createTabBar");
-};
-
-UIControls.prototype.showTabBar = function(options) {
-    if (!options) options = {};
-    PhoneGap.exec("UIControls.showTabBar", options);
-};
-
-UIControls.prototype.hideTabBar = function(animate) {
-    if (animate == undefined || animate == null)
-        animate = true;
-    PhoneGap.exec("UIControls.hideTabBar", { animate: animate });
-};
-
-UIControls.prototype.createTabBarItem = function(name, label, image, options) {
-    var tag = this.tabBarTag++;
-    if (options && 'onSelect' in options && typeof(options['onSelect']) == 'function') {
-        this.tabBarCallbacks[tag] = options.onSelect;
-        delete options.onSelect;
-    }
-    PhoneGap.exec("UIControls.createTabBarItem", name, label, image, tag, options);
-};
-
-UIControls.prototype.updateTabBarItem = function(name, options) {
-    if (!options) options = {};
-    PhoneGap.exec("UIControls.updateTabBarItem", name, options);
-};
-
-UIControls.prototype.showTabBarItems = function() {
-    var parameters = [ "UIControls.showTabBarItems" ];
-    for (var i = 0; i < arguments.length; i++) {
-        parameters.push(arguments[i]);
-    }
-    PhoneGap.exec.apply(this, parameters);
-};
-
-UIControls.prototype.selectTabBarItem = function(tab) {
-    PhoneGap.exec("UIControls.selectTabBarItem", tab);
-};
-
-UIControls.prototype.createToolBar = function() {
-    PhoneGap.exec("UIControls.createToolBar");
-};
-
-UIControls.prototype.setToolBarTitle = function(title) {
-    PhoneGap.exec("UIControls.setToolBarTitle", title);
-};
-// Gets the function name of a Function object, else uses "alert" if anonymous
-function GetFunctionName(fn)
-{
-  if (fn) {
-      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
-      return m ? m[1] : "alert";
-  } else {
-    return null;
-  }
-}
-
-/**
- * 
- * @param {Function} successCallback
- * @param {Function} errorCallback
- * @param {Object} options (isIpAddress:boolean)
- */
-Network.prototype.isReachable = function(hostName, successCallback, options) {
-	PhoneGap.exec("Network.isReachable", hostName, GetFunctionName(successCallback), options);
-}

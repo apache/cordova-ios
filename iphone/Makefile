@@ -52,5 +52,6 @@ lib/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javasc
 	$(CAT) javascripts/telephony.js >> $@
 	$(CAT) javascripts/uicontrols.js >> $@
 	$(CAT) javascripts/network.js >> $@
+	$(CP) $@ PhoneGap-based\ Application/www/phonegap.js
 	
 iphone: lib/phonegap.js
