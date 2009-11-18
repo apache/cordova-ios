@@ -1,29 +1,55 @@
-function Device(){
-	try { //TODO: try to get this info
+PhoneGap.ExtendWrtDeviceObj = function(){
+	
+	if (!window.device)
+		window.device = {};
+	navigator.device = window.device;
+
+	try {
 	
 		if (window.menu)
 	    	window.menu.hideSoftkeys();
 		
-		this.available = PhoneGap.available;
-		this.platform = null;
-		this.version = null;
-		this.name = null;
-		this.gap = null;
+		device.available = PhoneGap.available;
+		device.platform = null;
+		device.version = null;
+		device.name = null;
+		device.uuid = null;
 		
-		//TODO: device is the WRT device object. Device is the phonegap device object (case-sensitive). prolly not good.
 		var so = device.getServiceObject("Service.SysInfo", "ISysInfo");
-		var criteria = { "Entity": "Device", "Key": "IMEI" };
-		var result = so.ISysInfo.GetInfo(criteria);
-		if (result.ErrorCode == 0) {
-			this.uuid = result.ReturnValue.StringData;
-		}
-		else {
-			this.uuid = null;
-		}
+		var pf = PhoneGap.GetWrtPlatformVersion(so);
+		device.platform = pf.platform;
+		device.version = pf.version;
+		device.uuid = PhoneGap.GetWrtDeviceProperty(so, "IMEI");
+		device.name = PhoneGap.GetWrtDeviceProperty(so, "PhoneModel");
 	} 
 	catch (e) {
-		this.available = false;
+		device.available = false;
 	}
 }
 
-navigator.Device = window.Device = new Device();
+PhoneGap.GetWrtDeviceProperty = function(serviceObj, key) {
+	var criteria = { "Entity": "Device", "Key": key };
+	var result = serviceObj.ISysInfo.GetInfo(criteria);
+	if (result.ErrorCode == 0) {
+		return result.ReturnValue.StringData;
+	}
+	else {
+		return null;
+	}
+}
+
+PhoneGap.GetWrtPlatformVersion = function(serviceObj) {
+	var criteria = { "Entity": "Device", "Key": "PlatformVersion" };
+	var result = serviceObj.ISysInfo.GetInfo(criteria);
+	if (result.ErrorCode == 0) {
+		var version = {};
+		version.platform = result.ReturnValue.MajorVersion;
+		version.version = result.ReturnValue.MinorVersion;
+		return version;
+	}
+	else {
+		return null;
+	}
+}
+
+PhoneGap.ExtendWrtDeviceObj();

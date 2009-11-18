@@ -69,7 +69,7 @@ ContactManager.prototype.success_callback = function(contacts_iterator) {
 		}
 	}
 	this.contacts = gapContacts;
-	this.global_success();
+	this.global_success(gapContacts);
 }
 
 ContactManager.getEmailsList = function(contact) {
@@ -90,9 +90,9 @@ ContactManager.getPhonesList = function(contact) {
 	var list;
 	try {
 		list = {
-			"Home": ContactManager.GetValue(contact, "LandPhoneHome"),
+			"Home": ContactManager.GetValue(contact, "LandPhoneGen"),
 			"Mobile": ContactManager.GetValue(contact, "MobilePhoneGen"),
-			"Fax": ContactManager.GetValue(contact, "FaxNumberHome"),
+			"Fax": ContactManager.GetValue(contact, "FaxNumberGen"),
 			"Work": ContactManager.GetValue(contact, "LandPhoneWork"),
 			"WorkMobile": ContactManager.GetValue(contact, "MobilePhoneWork")
 		};

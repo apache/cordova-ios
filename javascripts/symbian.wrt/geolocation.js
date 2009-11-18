@@ -14,78 +14,48 @@ function Geolocation() {
     };
 };
 
-
+/**
+ * Asynchronously aquires the current position.
+ * @param {Function} successCallback The function to call when the position
+ * data is available
+ * @param {Function} errorCallback The function to call when there is an error 
+ * getting the position data.
+ * @param {PositionOptions} options The options for getting the position data
+ * such as timeout.
+ */
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+    var referenceTime = 0;
+    if (this.lastPosition)
+        referenceTime = this.lastPosition.timeout;
+    else
+        this.start(options);
 
-    try {
-		if (!this.serviceObj) 
-			this.serviceObj = this.getServiceObj();
-		
-		//construct the criteria for our location request
-		var updateOptions = new Object();
-		// Specify that location information need not be guaranteed. This helps in
-		// that the widget doesn't need to wait for that information possibly indefinitely.
-		updateOptions.PartialUpdates = true;
-		
-		if (typeof(options) == 'object' && options.timeout) 
-			//options.timeout in in ms, updateOptions.UpdateTimeout in microsecs
-			updateOptions.UpdateTimeOut = options.timeout * 1000;
-		
-		// Initialize the criteria for the GetLocation call
-		var trackCriteria = new Object();
-		// could use "BasicLocationInformation" or "GenericLocationInfo"
-		trackCriteria.LocationInformationClass = "GenericLocationInfo";
-		trackCriteria.Updateoptions = updateOptions;
-		
-		if (typeof(successCallback) != 'function') 
-			successCallback = function(){
-			};
-		if (typeof(errorCallback) != 'function') 
-			errorCallback = function(){
-			};
-		
-		var result;
-		
-		//WRT
-		result = this.serviceObj.ILocation.GetLocation(trackCriteria);
-		
-		if (result.ReturnValue == undefined) {
-			errorCallback();
-			return;
-		}
-		
-		var retVal = result.ReturnValue;
-		
-		// heading options: retVal.TrueCourse, retVal.MagneticHeading, retVal.Heading, retVal.MagneticCourse
-		// but retVal.Heading was the only field being returned with data on the test device (Nokia 5800)
-		// WRT does not provide accuracy
-		var coords = new Coordinates(retVal.Latitude, retVal.Longitude, retVal.Altitude, null, retVal.Heading, retVal.HorizontalSpeed);
-		var positionObj = new Position(coords, new Date().getTime());
-		
-		this.lastPosition = positionObj;
-	} 
-	catch (ex) {
-		errorCallback({
-			name: "GeoError",
-			message: ex.name + ": " + ex.message
-		});
-		return;
-	}
+    var timeout = 20000;
+    var interval = 500;
+    if (typeof(options) == 'object' && options.interval)
+        interval = options.interval;
 
-	successCallback(positionObj);
-}
+    if (typeof(successCallback) != 'function')
+        successCallback = function() {};
+    if (typeof(errorCallback) != 'function')
+        errorCallback = function() {};
 
-//gets the Location Service Object from WRT
-Geolocation.prototype.getServiceObj = function() {
-	var so;
-	
-    try {
-        so = device.getServiceObject("Service.Location", "ILocation");
-    } catch (ex) {
-		throw { name:"DeviceError", message: "Could not initialize geolocation service object (" + ex.name + ": " + ex.message + ")"};
-    }		
-	return so;
-}
+    var dis = this;
+    var delay = 0;
+    var timer = setInterval(function() {
+        delay += interval;
+		
+		//if we have a new position, call success and cancel the timer
+        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+            successCallback(dis.lastPosition);
+            clearInterval(timer);
+        } else if (delay >= timeout) { //else if timeout has occured then call error and cancel the timer
+            errorCallback();
+            clearInterval(timer);
+        }
+		//else the interval gets called again
+    }, interval);
+};
 
 /**
  * Asynchronously aquires the position repeatedly at a given interval.
@@ -120,16 +90,49 @@ Geolocation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 };
 
-/**
- * Called by the geolocation framework when the current location is found.
- * @param {PositionOptions} position The current position.
- */
-Geolocation.prototype.setLocation = function(position) {
-    this.lastPosition = position;
-    for (var i = 0; i < this.callbacks.onLocationChanged.length; i++) {
-        var f = this.callbacks.onLocationChanged.shift();
-        f(position);
-    }
-};
+Geolocation.prototype.start = function(options) {
+	var so = device.getServiceObject("Service.Location", "ILocation");
+	
+	//construct the criteria for our location request
+	var updateOptions = new Object();
+	// Specify that location information need not be guaranteed. This helps in
+	// that the widget doesn't need to wait for that information possibly indefinitely.
+	updateOptions.PartialUpdates = true;
+	
+	//default 15 seconds
+	if (typeof(options) == 'object' && options.timeout) 
+		//options.timeout in in ms, updateOptions.UpdateTimeout in microsecs
+		updateOptions.UpdateTimeOut = options.timeout * 1000;
+
+	//default 1 second
+	if (typeof(options) == 'object' && options.interval) 
+		//options.timeout in in ms, updateOptions.UpdateTimeout in microsecs
+		updateOptions.UpdateInterval = options.interval * 1000;
+	
+	// Initialize the criteria for the GetLocation call
+	var trackCriteria = new Object();
+	// could use "BasicLocationInformation" or "GenericLocationInfo"
+	trackCriteria.LocationInformationClass = "GenericLocationInfo";
+	trackCriteria.Updateoptions = updateOptions;
+	
+	var dis = this;
+	so.ILocation.Trace(trackCriteria, function(transId, eventCode, result) {
+		var retVal = result.ReturnValue;
+
+		if (result.ErrorCode != 0 || isNaN(retVal.Latitude))
+			return;
+
+		// heading options: retVal.TrueCourse, retVal.MagneticHeading, retVal.Heading, retVal.MagneticCourse
+		// but retVal.Heading was the only field being returned with data on the test device (Nokia 5800)
+		// WRT does not provide accuracy
+		var coords = new Coordinates(retVal.Latitude, retVal.Longitude, retVal.Altitude, null, retVal.Heading, retVal.HorizontalSpeed);
+		var positionObj = new Position(coords, new Date().getTime());
+
+		dis.lastPosition = positionObj;
+	});
+	
+}
+
 
 if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+

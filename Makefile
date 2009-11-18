@@ -159,7 +159,7 @@ symbian.wrt: lib/symbian.wrt/phonegap-min.js
 lib/symbian.wrt/phonegap-min.js: lib/symbian.wrt/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/symbian.wrt/phonegap.js
 
-lib/symbian.wrt/phonegap.js: javascripts/symbian.wrt/phonegap.js.base javascripts/symbian.wrt/acceleration.js javascripts/symbian.wrt/accelerometer.js javascripts/symbian.wrt/camera.js javascripts/symbian.wrt/camera/com.nokia.device.utility.js javascripts/symbian.wrt/camera/com.nokia.device.framework.js javascripts/symbian.wrt/camera/s60_camera.js javascripts/symbian.wrt/camera/com.nokia.device.camera.js javascripts/symbian.wrt/contact.js javascripts/symbian.wrt/device.js javascripts/symbian.wrt/geolocation.js javascripts/symbian.wrt/notification.js javascripts/symbian.wrt/orientation.js javascripts/symbian.wrt/position.js javascripts/symbian.wrt/sms.js javascripts/symbian.wrt/storage.js
+lib/symbian.wrt/phonegap.js: javascripts/symbian.wrt/phonegap.js.base javascripts/symbian.wrt/acceleration.js javascripts/symbian.wrt/accelerometer.js javascripts/symbian.wrt/camera.js javascripts/symbian.wrt/camera/com.nokia.device.utility.js javascripts/symbian.wrt/camera/com.nokia.device.framework.js javascripts/symbian.wrt/camera/s60_camera.js javascripts/symbian.wrt/camera/com.nokia.device.camera.js javascripts/symbian.wrt/contact.js javascripts/symbian.wrt/device.js javascripts/symbian.wrt/geolocation.js javascripts/symbian.wrt/media.js javascripts/symbian.wrt/notification.js javascripts/symbian.wrt/orientation.js javascripts/symbian.wrt/position.js javascripts/symbian.wrt/sms.js javascripts/symbian.wrt/storage.js
 	$(MKPATH) lib/symbian.wrt
 	$(RM_F) $@
 	$(CAT) javascripts/symbian.wrt/phonegap.js.base >> $@
@@ -173,6 +173,7 @@ lib/symbian.wrt/phonegap.js: javascripts/symbian.wrt/phonegap.js.base javascript
 	$(CAT) javascripts/symbian.wrt/contact.js >> $@
 	$(CAT) javascripts/symbian.wrt/device.js >> $@
 	$(CAT) javascripts/symbian.wrt/geolocation.js >> $@
+	$(CAT) javascripts/symbian.wrt/media.js >> $@
 	$(CAT) javascripts/symbian.wrt/notification.js >> $@
 	$(CAT) javascripts/symbian.wrt/orientation.js >> $@
 	$(CAT) javascripts/symbian.wrt/position.js >> $@

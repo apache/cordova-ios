@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>DisplayName</key>
-	<string>phonegap</string>
+	<string>phonegap.wrt</string>
 	<key>Identifier</key>
 	<string>com.phonegap.basic.widget</string>
 	<key>Version</key>
