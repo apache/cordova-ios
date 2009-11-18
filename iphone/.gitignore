@@ -1,4 +1,5 @@
-build/*
+build
+*.xcodeproj/* !*.xcodeproj/project.pbxproj
 *.pbxuser
 *.perspectivev3
 *.mode1v3

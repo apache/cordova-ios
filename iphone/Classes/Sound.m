@@ -63,7 +63,7 @@
 	if (audioFile == nil) {
 		NSError *error;
 		
-		audioFile = [[AudioFile alloc] init];
+		audioFile = [[[AudioFile alloc] init] autorelease];
 		audioFile.resourcePath = resourcePath;
 		audioFile.resourceURL = resourceURL;
 		
@@ -102,7 +102,6 @@
 		audioFile.player.delegate = self;
 		[audioFile.player prepareToPlay];
 	}
-	[audioFile release];
 }
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -118,7 +117,13 @@
 		if (audioFile.player != nil) {
 			NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
 			audioFile.player.numberOfLoops = numberOfLoops;
+			
+			if(audioFile.player.isPlaying){
+				[audioFile.player stop];
+				audioFile.player.currentTime = 0;
+			}
 			[audioFile.player play];
+			
 		} else {
 			NSError* error;
 			// try loading it one more time, in case the file was recorded previously
