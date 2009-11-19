@@ -18,8 +18,9 @@ ECHO_N = echo -n
 JAVA = java
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
+PACKAGEMAKER = /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
 
-all :: iphone
+all :: installer
 
 clean :: clean_libs
 
@@ -54,4 +55,9 @@ lib/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javasc
 	$(CAT) javascripts/network.js >> $@
 	$(CP) $@ PhoneGap-based\ Application/www/phonegap.js
 	
-iphone: lib/phonegap.js
+javascript: lib/phonegap.js
+
+installer: javascript
+	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
+ 
+	
