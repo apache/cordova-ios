@@ -1,0 +1,515 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8887FD641090FBE7009987E8 /* Bonjour.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD241090FBE7009987E8 /* Bonjour.h */; };
+		8887FD651090FBE7009987E8 /* Bonjour.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD251090FBE7009987E8 /* Bonjour.m */; };
+		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
+		8887FD671090FBE7009987E8 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* Camera.m */; };
+		8887FD681090FBE7009987E8 /* Categories.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD281090FBE7009987E8 /* Categories.h */; };
+		8887FD691090FBE7009987E8 /* Categories.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD291090FBE7009987E8 /* Categories.m */; };
+		8887FD6A1090FBE7009987E8 /* Contacts.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD2A1090FBE7009987E8 /* Contacts.h */; };
+		8887FD6B1090FBE7009987E8 /* Contacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD2B1090FBE7009987E8 /* Contacts.m */; };
+		8887FD6C1090FBE7009987E8 /* DebugConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD2C1090FBE7009987E8 /* DebugConsole.h */; };
+		8887FD6D1090FBE7009987E8 /* DebugConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD2D1090FBE7009987E8 /* DebugConsole.m */; };
+		8887FD6E1090FBE7009987E8 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD2E1090FBE7009987E8 /* Device.h */; };
+		8887FD6F1090FBE7009987E8 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD2F1090FBE7009987E8 /* Device.m */; };
+		8887FD701090FBE7009987E8 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD301090FBE7009987E8 /* File.h */; };
+		8887FD711090FBE7009987E8 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD311090FBE7009987E8 /* File.m */; };
+		8887FD721090FBE7009987E8 /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD321090FBE7009987E8 /* Image.h */; };
+		8887FD731090FBE7009987E8 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD331090FBE7009987E8 /* Image.m */; };
+		8887FD741090FBE7009987E8 /* InvokedUrlCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD341090FBE7009987E8 /* InvokedUrlCommand.h */; };
+		8887FD751090FBE7009987E8 /* InvokedUrlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD351090FBE7009987E8 /* InvokedUrlCommand.m */; };
+		8887FD761090FBE7009987E8 /* JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD371090FBE7009987E8 /* JSON.h */; };
+		8887FD771090FBE7009987E8 /* NSObject+SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD381090FBE7009987E8 /* NSObject+SBJSON.h */; };
+		8887FD781090FBE7009987E8 /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD391090FBE7009987E8 /* NSObject+SBJSON.m */; };
+		8887FD791090FBE7009987E8 /* NSString+SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD3A1090FBE7009987E8 /* NSString+SBJSON.h */; };
+		8887FD7A1090FBE7009987E8 /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD3B1090FBE7009987E8 /* NSString+SBJSON.m */; };
+		8887FD7B1090FBE7009987E8 /* SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD3C1090FBE7009987E8 /* SBJSON.h */; };
+		8887FD7C1090FBE7009987E8 /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD3D1090FBE7009987E8 /* SBJSON.m */; };
+		8887FD7D1090FBE7009987E8 /* SBJsonBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD3E1090FBE7009987E8 /* SBJsonBase.h */; };
+		8887FD7E1090FBE7009987E8 /* SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD3F1090FBE7009987E8 /* SBJsonBase.m */; };
+		8887FD7F1090FBE7009987E8 /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD401090FBE7009987E8 /* SBJsonParser.h */; };
+		8887FD801090FBE7009987E8 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD411090FBE7009987E8 /* SBJsonParser.m */; };
+		8887FD811090FBE7009987E8 /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD421090FBE7009987E8 /* SBJsonWriter.h */; };
+		8887FD821090FBE7009987E8 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD431090FBE7009987E8 /* SBJsonWriter.m */; };
+		8887FD831090FBE7009987E8 /* LoadingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD441090FBE7009987E8 /* LoadingView.h */; };
+		8887FD841090FBE7009987E8 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD451090FBE7009987E8 /* LoadingView.m */; };
+		8887FD851090FBE7009987E8 /* Location.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD461090FBE7009987E8 /* Location.h */; };
+		8887FD861090FBE7009987E8 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD471090FBE7009987E8 /* Location.m */; };
+		8887FD871090FBE7009987E8 /* Map.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD481090FBE7009987E8 /* Map.h */; };
+		8887FD881090FBE7009987E8 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD491090FBE7009987E8 /* Map.m */; };
+		8887FD891090FBE7009987E8 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4A1090FBE7009987E8 /* Movie.h */; };
+		8887FD8A1090FBE7009987E8 /* Movie.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4B1090FBE7009987E8 /* Movie.m */; };
+		8887FD8B1090FBE7009987E8 /* Network.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4C1090FBE7009987E8 /* Network.h */; };
+		8887FD8C1090FBE7009987E8 /* Network.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4D1090FBE7009987E8 /* Network.m */; };
+		8887FD8D1090FBE7009987E8 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4E1090FBE7009987E8 /* Notification.h */; };
+		8887FD8E1090FBE7009987E8 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4F1090FBE7009987E8 /* Notification.m */; };
+		8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD501090FBE7009987E8 /* NSData+Base64.h */; };
+		8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD511090FBE7009987E8 /* NSData+Base64.m */; };
+		8887FD911090FBE7009987E8 /* OCABMutableMultiValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD521090FBE7009987E8 /* OCABMutableMultiValue.h */; };
+		8887FD921090FBE7009987E8 /* OCABMutableMultiValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD531090FBE7009987E8 /* OCABMutableMultiValue.m */; };
+		8887FD931090FBE7009987E8 /* OCABRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD541090FBE7009987E8 /* OCABRecord.h */; };
+		8887FD941090FBE7009987E8 /* OCABRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD551090FBE7009987E8 /* OCABRecord.m */; };
+		8887FD951090FBE7009987E8 /* OCCFObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD561090FBE7009987E8 /* OCCFObject.h */; };
+		8887FD961090FBE7009987E8 /* OCCFObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD571090FBE7009987E8 /* OCCFObject.m */; };
+		8887FD971090FBE7009987E8 /* PhoneGapCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD581090FBE7009987E8 /* PhoneGapCommand.h */; };
+		8887FD981090FBE7009987E8 /* PhoneGapCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD591090FBE7009987E8 /* PhoneGapCommand.m */; };
+		8887FD991090FBE7009987E8 /* PhoneGapDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5A1090FBE7009987E8 /* PhoneGapDelegate.h */; };
+		8887FD9A1090FBE7009987E8 /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5B1090FBE7009987E8 /* PhoneGapDelegate.m */; };
+		8887FD9B1090FBE7009987E8 /* PhoneGapViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5C1090FBE7009987E8 /* PhoneGapViewController.h */; };
+		8887FD9C1090FBE7009987E8 /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5D1090FBE7009987E8 /* PhoneGapViewController.m */; };
+		8887FD9D1090FBE7009987E8 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5E1090FBE7009987E8 /* Reachability.h */; };
+		8887FD9E1090FBE7009987E8 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5F1090FBE7009987E8 /* Reachability.m */; };
+		8887FD9F1090FBE7009987E8 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD601090FBE7009987E8 /* Sound.h */; };
+		8887FDA01090FBE7009987E8 /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD611090FBE7009987E8 /* Sound.m */; };
+		8887FDA11090FBE7009987E8 /* UIControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD621090FBE7009987E8 /* UIControls.h */; };
+		8887FDA21090FBE7009987E8 /* UIControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD631090FBE7009987E8 /* UIControls.m */; };
+		88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* Accelerometer.h */; };
+		88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* Accelerometer.m */; };
+		AA747D9F0F9514B9006C5449 /* PhoneGapLib_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8887FD241090FBE7009987E8 /* Bonjour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bonjour.h; path = Classes/Bonjour.h; sourceTree = "<group>"; };
+		8887FD251090FBE7009987E8 /* Bonjour.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Bonjour.m; path = Classes/Bonjour.m; sourceTree = "<group>"; };
+		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
+		8887FD271090FBE7009987E8 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Camera.m; path = Classes/Camera.m; sourceTree = "<group>"; };
+		8887FD281090FBE7009987E8 /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Categories.h; path = Classes/Categories.h; sourceTree = "<group>"; };
+		8887FD291090FBE7009987E8 /* Categories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Categories.m; path = Classes/Categories.m; sourceTree = "<group>"; };
+		8887FD2A1090FBE7009987E8 /* Contacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contacts.h; path = Classes/Contacts.h; sourceTree = "<group>"; };
+		8887FD2B1090FBE7009987E8 /* Contacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contacts.m; path = Classes/Contacts.m; sourceTree = "<group>"; };
+		8887FD2C1090FBE7009987E8 /* DebugConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugConsole.h; path = Classes/DebugConsole.h; sourceTree = "<group>"; };
+		8887FD2D1090FBE7009987E8 /* DebugConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DebugConsole.m; path = Classes/DebugConsole.m; sourceTree = "<group>"; };
+		8887FD2E1090FBE7009987E8 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Device.h; path = Classes/Device.h; sourceTree = "<group>"; };
+		8887FD2F1090FBE7009987E8 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Device.m; path = Classes/Device.m; sourceTree = "<group>"; };
+		8887FD301090FBE7009987E8 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Classes/File.h; sourceTree = "<group>"; };
+		8887FD311090FBE7009987E8 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Classes/File.m; sourceTree = "<group>"; };
+		8887FD321090FBE7009987E8 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Image.h; path = Classes/Image.h; sourceTree = "<group>"; };
+		8887FD331090FBE7009987E8 /* Image.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Image.m; path = Classes/Image.m; sourceTree = "<group>"; };
+		8887FD341090FBE7009987E8 /* InvokedUrlCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InvokedUrlCommand.h; path = Classes/InvokedUrlCommand.h; sourceTree = "<group>"; };
+		8887FD351090FBE7009987E8 /* InvokedUrlCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InvokedUrlCommand.m; path = Classes/InvokedUrlCommand.m; sourceTree = "<group>"; };
+		8887FD371090FBE7009987E8 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
+		8887FD381090FBE7009987E8 /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
+		8887FD391090FBE7009987E8 /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
+		8887FD3A1090FBE7009987E8 /* NSString+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
+		8887FD3B1090FBE7009987E8 /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
+		8887FD3C1090FBE7009987E8 /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
+		8887FD3D1090FBE7009987E8 /* SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
+		8887FD3E1090FBE7009987E8 /* SBJsonBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonBase.h; sourceTree = "<group>"; };
+		8887FD3F1090FBE7009987E8 /* SBJsonBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonBase.m; sourceTree = "<group>"; };
+		8887FD401090FBE7009987E8 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
+		8887FD411090FBE7009987E8 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
+		8887FD421090FBE7009987E8 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
+		8887FD431090FBE7009987E8 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		8887FD441090FBE7009987E8 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingView.h; path = Classes/LoadingView.h; sourceTree = "<group>"; };
+		8887FD451090FBE7009987E8 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoadingView.m; path = Classes/LoadingView.m; sourceTree = "<group>"; };
+		8887FD461090FBE7009987E8 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Location.h; path = Classes/Location.h; sourceTree = "<group>"; };
+		8887FD471090FBE7009987E8 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Location.m; path = Classes/Location.m; sourceTree = "<group>"; };
+		8887FD481090FBE7009987E8 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Map.h; path = Classes/Map.h; sourceTree = "<group>"; };
+		8887FD491090FBE7009987E8 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Map.m; path = Classes/Map.m; sourceTree = "<group>"; };
+		8887FD4A1090FBE7009987E8 /* Movie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Movie.h; path = Classes/Movie.h; sourceTree = "<group>"; };
+		8887FD4B1090FBE7009987E8 /* Movie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Movie.m; path = Classes/Movie.m; sourceTree = "<group>"; };
+		8887FD4C1090FBE7009987E8 /* Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Network.h; path = Classes/Network.h; sourceTree = "<group>"; };
+		8887FD4D1090FBE7009987E8 /* Network.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Network.m; path = Classes/Network.m; sourceTree = "<group>"; };
+		8887FD4E1090FBE7009987E8 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Notification.h; path = Classes/Notification.h; sourceTree = "<group>"; };
+		8887FD4F1090FBE7009987E8 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Notification.m; path = Classes/Notification.m; sourceTree = "<group>"; };
+		8887FD501090FBE7009987E8 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "Classes/NSData+Base64.h"; sourceTree = "<group>"; };
+		8887FD511090FBE7009987E8 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "Classes/NSData+Base64.m"; sourceTree = "<group>"; };
+		8887FD521090FBE7009987E8 /* OCABMutableMultiValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCABMutableMultiValue.h; path = Classes/OCABMutableMultiValue.h; sourceTree = "<group>"; };
+		8887FD531090FBE7009987E8 /* OCABMutableMultiValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCABMutableMultiValue.m; path = Classes/OCABMutableMultiValue.m; sourceTree = "<group>"; };
+		8887FD541090FBE7009987E8 /* OCABRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCABRecord.h; path = Classes/OCABRecord.h; sourceTree = "<group>"; };
+		8887FD551090FBE7009987E8 /* OCABRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCABRecord.m; path = Classes/OCABRecord.m; sourceTree = "<group>"; };
+		8887FD561090FBE7009987E8 /* OCCFObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCCFObject.h; path = Classes/OCCFObject.h; sourceTree = "<group>"; };
+		8887FD571090FBE7009987E8 /* OCCFObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCCFObject.m; path = Classes/OCCFObject.m; sourceTree = "<group>"; };
+		8887FD581090FBE7009987E8 /* PhoneGapCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapCommand.h; path = Classes/PhoneGapCommand.h; sourceTree = "<group>"; };
+		8887FD591090FBE7009987E8 /* PhoneGapCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapCommand.m; path = Classes/PhoneGapCommand.m; sourceTree = "<group>"; };
+		8887FD5A1090FBE7009987E8 /* PhoneGapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapDelegate.h; path = Classes/PhoneGapDelegate.h; sourceTree = "<group>"; };
+		8887FD5B1090FBE7009987E8 /* PhoneGapDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapDelegate.m; path = Classes/PhoneGapDelegate.m; sourceTree = "<group>"; };
+		8887FD5C1090FBE7009987E8 /* PhoneGapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapViewController.h; path = Classes/PhoneGapViewController.h; sourceTree = "<group>"; };
+		8887FD5D1090FBE7009987E8 /* PhoneGapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapViewController.m; path = Classes/PhoneGapViewController.m; sourceTree = "<group>"; };
+		8887FD5E1090FBE7009987E8 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = Classes/Reachability.h; sourceTree = "<group>"; };
+		8887FD5F1090FBE7009987E8 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = Classes/Reachability.m; sourceTree = "<group>"; };
+		8887FD601090FBE7009987E8 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = Classes/Sound.h; sourceTree = "<group>"; };
+		8887FD611090FBE7009987E8 /* Sound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Sound.m; path = Classes/Sound.m; sourceTree = "<group>"; };
+		8887FD621090FBE7009987E8 /* UIControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIControls.h; path = Classes/UIControls.h; sourceTree = "<group>"; };
+		8887FD631090FBE7009987E8 /* UIControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIControls.m; path = Classes/UIControls.m; sourceTree = "<group>"; };
+		88BA573B109BB46F00FB5E78 /* Accelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Accelerometer.h; path = Classes/Accelerometer.h; sourceTree = "<group>"; };
+		88BA573C109BB46F00FB5E78 /* Accelerometer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Accelerometer.m; path = Classes/Accelerometer.m; sourceTree = "<group>"; };
+		AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		D2AAC07E0554694100DB518D /* libPhoneGapLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPhoneGapLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC07C0554694100DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC07E0554694100DB518D /* libPhoneGapLib.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* PhoneGapLib */ = {
+			isa = PBXGroup;
+			children = (
+				8887FD101090FB43009987E8 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = PhoneGapLib;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		888700D710922F56009987E8 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				88BA573B109BB46F00FB5E78 /* Accelerometer.h */,
+				88BA573C109BB46F00FB5E78 /* Accelerometer.m */,
+				8887FD241090FBE7009987E8 /* Bonjour.h */,
+				8887FD251090FBE7009987E8 /* Bonjour.m */,
+				8887FD261090FBE7009987E8 /* Camera.h */,
+				8887FD271090FBE7009987E8 /* Camera.m */,
+				8887FD281090FBE7009987E8 /* Categories.h */,
+				8887FD291090FBE7009987E8 /* Categories.m */,
+				8887FD2A1090FBE7009987E8 /* Contacts.h */,
+				8887FD2B1090FBE7009987E8 /* Contacts.m */,
+				8887FD2C1090FBE7009987E8 /* DebugConsole.h */,
+				8887FD2D1090FBE7009987E8 /* DebugConsole.m */,
+				8887FD2E1090FBE7009987E8 /* Device.h */,
+				8887FD2F1090FBE7009987E8 /* Device.m */,
+				8887FD301090FBE7009987E8 /* File.h */,
+				8887FD311090FBE7009987E8 /* File.m */,
+				8887FD321090FBE7009987E8 /* Image.h */,
+				8887FD331090FBE7009987E8 /* Image.m */,
+				8887FD341090FBE7009987E8 /* InvokedUrlCommand.h */,
+				8887FD351090FBE7009987E8 /* InvokedUrlCommand.m */,
+				8887FD441090FBE7009987E8 /* LoadingView.h */,
+				8887FD451090FBE7009987E8 /* LoadingView.m */,
+				8887FD461090FBE7009987E8 /* Location.h */,
+				8887FD471090FBE7009987E8 /* Location.m */,
+				8887FD481090FBE7009987E8 /* Map.h */,
+				8887FD491090FBE7009987E8 /* Map.m */,
+				8887FD4A1090FBE7009987E8 /* Movie.h */,
+				8887FD4B1090FBE7009987E8 /* Movie.m */,
+				8887FD4C1090FBE7009987E8 /* Network.h */,
+				8887FD4D1090FBE7009987E8 /* Network.m */,
+				8887FD4E1090FBE7009987E8 /* Notification.h */,
+				8887FD4F1090FBE7009987E8 /* Notification.m */,
+				8887FD581090FBE7009987E8 /* PhoneGapCommand.h */,
+				8887FD591090FBE7009987E8 /* PhoneGapCommand.m */,
+				8887FD5E1090FBE7009987E8 /* Reachability.h */,
+				8887FD5F1090FBE7009987E8 /* Reachability.m */,
+				8887FD601090FBE7009987E8 /* Sound.h */,
+				8887FD611090FBE7009987E8 /* Sound.m */,
+			);
+			name = Commands;
+			sourceTree = "<group>";
+		};
+		888700D810922FD3009987E8 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				8887FD621090FBE7009987E8 /* UIControls.h */,
+				8887FD631090FBE7009987E8 /* UIControls.m */,
+			);
+			name = Plugins;
+			sourceTree = "<group>";
+		};
+		888700D910923009009987E8 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				8887FD501090FBE7009987E8 /* NSData+Base64.h */,
+				8887FD511090FBE7009987E8 /* NSData+Base64.m */,
+				8887FD521090FBE7009987E8 /* OCABMutableMultiValue.h */,
+				8887FD531090FBE7009987E8 /* OCABMutableMultiValue.m */,
+				8887FD541090FBE7009987E8 /* OCABRecord.h */,
+				8887FD551090FBE7009987E8 /* OCABRecord.m */,
+				8887FD561090FBE7009987E8 /* OCCFObject.h */,
+				8887FD571090FBE7009987E8 /* OCCFObject.m */,
+			);
+			name = Util;
+			sourceTree = "<group>";
+		};
+		8887FD101090FB43009987E8 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				888700D710922F56009987E8 /* Commands */,
+				8887FD361090FBE7009987E8 /* JSON */,
+				888700D910923009009987E8 /* Util */,
+				888700D810922FD3009987E8 /* Plugins */,
+				8887FD5A1090FBE7009987E8 /* PhoneGapDelegate.h */,
+				8887FD5B1090FBE7009987E8 /* PhoneGapDelegate.m */,
+				8887FD5C1090FBE7009987E8 /* PhoneGapViewController.h */,
+				8887FD5D1090FBE7009987E8 /* PhoneGapViewController.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		8887FD361090FBE7009987E8 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				8887FD371090FBE7009987E8 /* JSON.h */,
+				8887FD381090FBE7009987E8 /* NSObject+SBJSON.h */,
+				8887FD391090FBE7009987E8 /* NSObject+SBJSON.m */,
+				8887FD3A1090FBE7009987E8 /* NSString+SBJSON.h */,
+				8887FD3B1090FBE7009987E8 /* NSString+SBJSON.m */,
+				8887FD3C1090FBE7009987E8 /* SBJSON.h */,
+				8887FD3D1090FBE7009987E8 /* SBJSON.m */,
+				8887FD3E1090FBE7009987E8 /* SBJsonBase.h */,
+				8887FD3F1090FBE7009987E8 /* SBJsonBase.m */,
+				8887FD401090FBE7009987E8 /* SBJsonParser.h */,
+				8887FD411090FBE7009987E8 /* SBJsonParser.m */,
+				8887FD421090FBE7009987E8 /* SBJsonWriter.h */,
+				8887FD431090FBE7009987E8 /* SBJsonWriter.m */,
+			);
+			name = JSON;
+			path = Classes/JSON;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC07A0554694100DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA747D9F0F9514B9006C5449 /* PhoneGapLib_Prefix.pch in Headers */,
+				8887FD641090FBE7009987E8 /* Bonjour.h in Headers */,
+				8887FD661090FBE7009987E8 /* Camera.h in Headers */,
+				8887FD681090FBE7009987E8 /* Categories.h in Headers */,
+				8887FD6A1090FBE7009987E8 /* Contacts.h in Headers */,
+				8887FD6C1090FBE7009987E8 /* DebugConsole.h in Headers */,
+				8887FD6E1090FBE7009987E8 /* Device.h in Headers */,
+				8887FD701090FBE7009987E8 /* File.h in Headers */,
+				8887FD721090FBE7009987E8 /* Image.h in Headers */,
+				8887FD741090FBE7009987E8 /* InvokedUrlCommand.h in Headers */,
+				8887FD761090FBE7009987E8 /* JSON.h in Headers */,
+				8887FD771090FBE7009987E8 /* NSObject+SBJSON.h in Headers */,
+				8887FD791090FBE7009987E8 /* NSString+SBJSON.h in Headers */,
+				8887FD7B1090FBE7009987E8 /* SBJSON.h in Headers */,
+				8887FD7D1090FBE7009987E8 /* SBJsonBase.h in Headers */,
+				8887FD7F1090FBE7009987E8 /* SBJsonParser.h in Headers */,
+				8887FD811090FBE7009987E8 /* SBJsonWriter.h in Headers */,
+				8887FD831090FBE7009987E8 /* LoadingView.h in Headers */,
+				8887FD851090FBE7009987E8 /* Location.h in Headers */,
+				8887FD871090FBE7009987E8 /* Map.h in Headers */,
+				8887FD891090FBE7009987E8 /* Movie.h in Headers */,
+				8887FD8B1090FBE7009987E8 /* Network.h in Headers */,
+				8887FD8D1090FBE7009987E8 /* Notification.h in Headers */,
+				8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */,
+				8887FD911090FBE7009987E8 /* OCABMutableMultiValue.h in Headers */,
+				8887FD931090FBE7009987E8 /* OCABRecord.h in Headers */,
+				8887FD951090FBE7009987E8 /* OCCFObject.h in Headers */,
+				8887FD971090FBE7009987E8 /* PhoneGapCommand.h in Headers */,
+				8887FD991090FBE7009987E8 /* PhoneGapDelegate.h in Headers */,
+				8887FD9B1090FBE7009987E8 /* PhoneGapViewController.h in Headers */,
+				8887FD9D1090FBE7009987E8 /* Reachability.h in Headers */,
+				8887FD9F1090FBE7009987E8 /* Sound.h in Headers */,
+				8887FDA11090FBE7009987E8 /* UIControls.h in Headers */,
+				88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC07D0554694100DB518D /* PhoneGapLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "PhoneGapLib" */;
+			buildPhases = (
+				D2AAC07A0554694100DB518D /* Headers */,
+				D2AAC07B0554694100DB518D /* Sources */,
+				D2AAC07C0554694100DB518D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhoneGapLib;
+			productName = PhoneGapLib;
+			productReference = D2AAC07E0554694100DB518D /* libPhoneGapLib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "PhoneGapLib" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* PhoneGapLib */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC07D0554694100DB518D /* PhoneGapLib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC07B0554694100DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8887FD651090FBE7009987E8 /* Bonjour.m in Sources */,
+				8887FD671090FBE7009987E8 /* Camera.m in Sources */,
+				8887FD691090FBE7009987E8 /* Categories.m in Sources */,
+				8887FD6B1090FBE7009987E8 /* Contacts.m in Sources */,
+				8887FD6D1090FBE7009987E8 /* DebugConsole.m in Sources */,
+				8887FD6F1090FBE7009987E8 /* Device.m in Sources */,
+				8887FD711090FBE7009987E8 /* File.m in Sources */,
+				8887FD731090FBE7009987E8 /* Image.m in Sources */,
+				8887FD751090FBE7009987E8 /* InvokedUrlCommand.m in Sources */,
+				8887FD781090FBE7009987E8 /* NSObject+SBJSON.m in Sources */,
+				8887FD7A1090FBE7009987E8 /* NSString+SBJSON.m in Sources */,
+				8887FD7C1090FBE7009987E8 /* SBJSON.m in Sources */,
+				8887FD7E1090FBE7009987E8 /* SBJsonBase.m in Sources */,
+				8887FD801090FBE7009987E8 /* SBJsonParser.m in Sources */,
+				8887FD821090FBE7009987E8 /* SBJsonWriter.m in Sources */,
+				8887FD841090FBE7009987E8 /* LoadingView.m in Sources */,
+				8887FD861090FBE7009987E8 /* Location.m in Sources */,
+				8887FD881090FBE7009987E8 /* Map.m in Sources */,
+				8887FD8A1090FBE7009987E8 /* Movie.m in Sources */,
+				8887FD8C1090FBE7009987E8 /* Network.m in Sources */,
+				8887FD8E1090FBE7009987E8 /* Notification.m in Sources */,
+				8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */,
+				8887FD921090FBE7009987E8 /* OCABMutableMultiValue.m in Sources */,
+				8887FD941090FBE7009987E8 /* OCABRecord.m in Sources */,
+				8887FD961090FBE7009987E8 /* OCCFObject.m in Sources */,
+				8887FD981090FBE7009987E8 /* PhoneGapCommand.m in Sources */,
+				8887FD9A1090FBE7009987E8 /* PhoneGapDelegate.m in Sources */,
+				8887FD9C1090FBE7009987E8 /* PhoneGapViewController.m in Sources */,
+				8887FD9E1090FBE7009987E8 /* Reachability.m in Sources */,
+				8887FDA01090FBE7009987E8 /* Sound.m in Sources */,
+				8887FDA21090FBE7009987E8 /* UIControls.m in Sources */,
+				88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB921F08733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/PhoneGapLib.dst;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = PhoneGapLib;
+			};
+			name = Debug;
+		};
+		1DEB922008733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				DSTROOT = /tmp/PhoneGapLib.dst;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = PhoneGapLib;
+			};
+			name = Release;
+		};
+		1DEB922308733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PREBINDING = NO;
+				SDKROOT = iphoneos3.0;
+				USER_HEADER_SEARCH_PATHS = "";
+				VALID_ARCHS = "armv6 armv7";
+			};
+			name = Debug;
+		};
+		1DEB922408733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PREBINDING = NO;
+				SDKROOT = iphoneos3.0;
+				VALID_ARCHS = "armv6 armv7";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "PhoneGapLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB921F08733DC00010E9CD /* Debug */,
+				1DEB922008733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "PhoneGapLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB922308733DC00010E9CD /* Debug */,
+				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

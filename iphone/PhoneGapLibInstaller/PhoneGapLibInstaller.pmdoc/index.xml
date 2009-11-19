@@ -1,0 +1,45 @@
+<pkmkdoc spec="1.12"><properties><title>PhoneGapLib</title><build>/Users/shazron/Desktop/PhoneGapLib.pkg</build><organization>com.phonegap.phonegaplibinstaller</organization><userSees ui="both"/><min-target os="3"/><domain user="true"/></properties><distribution><versions min-spec="1.000000"/><scripts></scripts></distribution><contents><choice title="PhoneGap-based Application" id="choice2" starts_selected="true" starts_enabled="true" starts_hidden="false"><pkgref id="com.phonegap.phonegaplibinstaller.PhoneGap-basedApplication.pkg"/></choice><choice title="PhoneGapLib" id="choice4" starts_selected="true" starts_enabled="true" starts_hidden="false"><pkgref id="com.phonegap.phonegaplibinstaller.phonegaplib.pkg"/></choice></contents><resources bg-scale="none" bg-align="topleft"><locale lang="en"><resource mime-type="text/rtf" kind="embedded" type="readme"><![CDATA[{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf110
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs26 \cf0 This installer will only install items under your home folder (signified by ~)\
+\
+Items that will be installed:\
+(1) Xcode global var in ~/Library/Preferences/com.apple.Xcode.plist (which will be listed under Xcode Preferences -> Source Trees)\
+(2) PhoneGapLib Xcode static library project under ~/Documents/PhoneGapLib\
+(3) Xcode project template in ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap\
+\
+To uninstall:\
+(1) Remove the PHONEGAPLIB value in Xcode Preferences -> Source Trees\
+(2) Delete the ~/Documents/PhoneGapLib folder\
+(3) Delete the ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap folder}]]></resource><resource mime-type="text/rtf" kind="embedded" type="welcome"><![CDATA[{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf110
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs26 \cf0 PREVIEW VERSION 20091103\
+\
+PhoneGapLib is a static library that enables users to include PhoneGap in their iPhone application projects easily, and also create new PhoneGap based iPhone application projects through a Xcode project template.\
+\
+20091103\
+- fixed permissions and initial run problems\
+\
+20091030\
+- initial release}]]></resource><resource mime-type="text/rtf" kind="embedded" type="conclusion"><![CDATA[{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf110
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs26 \cf0 Thanks for installing PhoneGapLib!\
+\
+To get started creating PhoneGap projects, launch Xcode, then under the File menu, select "New Project...".\
+\
+Navigate to the "User Templates" section, select PhoneGap, then in the right pane, select "PhoneGap-based Application"\
+\
+Select the "Choose..." button, name your project and choose the location where you want the new project to be.\
+\
+That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.\
+\
+http://www.phonegap.com\
+http://github.com/phonegap}]]></resource></locale></resources><requirements><requirement id="file" operator="eq" value="true"><file>/Developer/Applications/Xcode.app</file><message-title>Xcode not installed</message-title><message>Please install Xcode Developer Tools (it's on your OS DVD)</message></requirement><requirement id="file" operator="eq" value="true"><file>/Developer/Platforms/iPhoneOS.platform</file><message-title>iPhone SDK not found</message-title><message>Please download and install the iPhone SDK from http://developer.apple.com</message></requirement></requirements><flags/><item type="file">01phonegap.xml</item><item type="file">02phonegaplib.xml</item><mod>properties.title</mod><mod>properties.userDomain</mod><mod>properties.anywhereDomain</mod><mod>preinstallActions.actions</mod></pkmkdoc>
