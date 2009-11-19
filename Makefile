@@ -85,29 +85,14 @@ blackberry: lib/blackberry/phonegap-min.js
 lib/blackberry/phonegap-min.js: lib/blackberry/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/blackberry/phonegap.js
 
-lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/compass.js javascripts/media.js javascripts/network.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/blackberry/phonegap.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js javascripts/blackberry/media.js javascripts/blackberry/network.js javascripts/blackberry/notification.js javascripts/blackberry/sms.js
+lib/blackberry/phonegap.js: javascripts/blackberry/phonegap.js javascripts/blackberry/acceleration.js javascripts/blackberry/accelerometer.js javascripts/blackberry/camera.js javascripts/blackberry/contacts.js javascripts/blackberry/device.js javascripts/blackberry/file.js javascripts/blackberry/geolocation.js javascripts/blackberry/compass.js javascripts/blackberry/media.js javascripts/blackberry/network.js javascripts/blackberry/notification.js javascripts/blackberry/orientation.js javascripts/blackberry/position.js javascripts/blackberry/sms.js javascripts/blackberry/telephony.js javascripts/blackberry/utility.js
 	$(RM_RF) lib/blackberry
 	$(MKPATH) lib/blackberry
 	$(RM_F) $@
-	$(CAT) javascripts/phonegap.js.base >> $@
-	$(CAT) javascripts/acceleration.js >> $@
-	$(CAT) javascripts/accelerometer.js >> $@
-	$(CAT) javascripts/camera.js >> $@
-	$(CAT) javascripts/contact.js >> $@
-	$(CAT) javascripts/debugconsole.js >> $@
-	$(CAT) javascripts/device.js >> $@
-	$(CAT) javascripts/file.js >> $@
-	$(CAT) javascripts/geolocation.js >> $@
-	$(CAT) javascripts/compass.js >> $@
-	$(CAT) javascripts/map.js >> $@
-	$(CAT) javascripts/media.js >> $@
-	$(CAT) javascripts/network.js >> $@
-	$(CAT) javascripts/notification.js >> $@
-	$(CAT) javascripts/orientation.js >> $@
-	$(CAT) javascripts/position.js >> $@
-	$(CAT) javascripts/sms.js >> $@
-	$(CAT) javascripts/telephony.js >> $@
 	$(CAT) javascripts/blackberry/phonegap.js >> $@
+	$(CAT) javascripts/blackberry/acceleration.js >> $@
+	$(CAT) javascripts/blackberry/accelerometer.js >> $@
+	$(CAT) javascripts/blackberry/camera.js >> $@
 	$(CAT) javascripts/blackberry/contacts.js >> $@
 	$(CAT) javascripts/blackberry/device.js >> $@
 	$(CAT) javascripts/blackberry/file.js >> $@
@@ -116,21 +101,24 @@ lib/blackberry/phonegap.js: javascripts/phonegap.js.base javascripts/acceleratio
 	$(CAT) javascripts/blackberry/media.js >> $@
 	$(CAT) javascripts/blackberry/network.js >> $@
 	$(CAT) javascripts/blackberry/notification.js >> $@
+	$(CAT) javascripts/blackberry/orientation.js >> $@
+	$(CAT) javascripts/blackberry/position.js >> $@
 	$(CAT) javascripts/blackberry/sms.js >> $@
 	$(CAT) javascripts/blackberry/telephony.js >> $@
+	$(CAT) javascripts/blackberry/utility.js >> $@
 android: lib/android/phonegap-min.js
 
 lib/android/phonegap-min.js: lib/android/phonegap.js
 	$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/android/phonegap.js
 
-lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/addressbook.js javascripts/camera.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/android/device.js javascripts/android/geolocation.js javascripts/android/notification.js javascripts/android/camera.js
+lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/contact.js javascripts/debugconsole.js javascripts/device.js javascripts/file.js javascripts/geolocation.js javascripts/map.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/telephony.js javascripts/uicontrols.js javascripts/android/device.js javascripts/android/geolocation.js javascripts/android/notification.js javascripts/android/camera.js
 	$(MKPATH) lib/android
 	$(RM_F) $@
 	$(CAT) javascripts/phonegap.js.base >> $@
 	$(CAT) javascripts/acceleration.js >> $@
 	$(CAT) javascripts/accelerometer.js >> $@
-	$(CAT) javascripts/addressbook.js >> $@
 	$(CAT) javascripts/camera.js >> $@
+	$(CAT) javascripts/contact.js >> $@
 	$(CAT) javascripts/debugconsole.js >> $@
 	$(CAT) javascripts/device.js >> $@
 	$(CAT) javascripts/file.js >> $@
@@ -149,7 +137,7 @@ lib/android/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.j
 	$(CAT) javascripts/android/notification.js >> $@
 	$(CAT) javascripts/android/accelerometer.js >> $@
 	$(CAT) javascripts/android/camera.js >> $@
-	$(CAT) javascripts/android/addressbook.js >> $@
+	$(CAT) javascripts/android/contact.js >> $@
 	$(CAT) javascripts/android/media.js >> $@
 	$(CAT) javascripts/android/file.js >> $@
 	$(CAT) javascripts/android/network.js >> $@
