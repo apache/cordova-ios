@@ -25,6 +25,15 @@ Create a PhoneGap project
 3. Select the "Choose..." button, name your project and choose the location where you want the new project to be.
 4. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
+Uninstalling PhoneGapLib and the Xcode Template
+-------------------------------------------------------------
+1. Launch "Terminal.app"
+2. Navigate to the folder where Makefile is (this folder)
+3. Type in "make uninstall" then press Enter
+
+NOTE: It will ask you to confirm whether you want to delete the installed PhoneGapLib directory (just in case you made changes there). It will not ask for confirmation in deleting the installed Xcode template.
+
+
 Installer Notes
 -------------------------------------------------------------
 This installer will only install items under your home folder (signified by ~)
