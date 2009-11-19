@@ -4,6 +4,7 @@ CP = cp
 MV = mv
 NOOP = $(SHELL) -c true
 RM_F = rm -f
+RM_IR = rm -ir
 RM_RF = rm -rf
 TEST_F = test -f
 TOUCH = touch
@@ -59,5 +60,8 @@ javascript: lib/phonegap.js
 
 installer: javascript
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
- 
+
+uninstall:
+	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap
+	$(RM_IR) ~/Documents/PhoneGapLib
 	
