@@ -55,10 +55,10 @@ lib/phonegap.js: $(PG_JS_CORE)/phonegap.js.base $(PG_JS_CORE)/acceleration.js $(
 	$(CAT) $(PG_JS_CORE)/telephony.js >> $@
 	$(CAT) $(PG_JS_CORE)/uicontrols.js >> $@
 	$(CAT) $(PG_JS_CORE)/network.js >> $@
-	$(CP) $@ PhoneGap-based\ Application/www/phonegap.js
+	$(CP) $@ PhoneGapLib/javascripts/phonegap.js
 	
-phonegap-js-core: lib/phonegap.js
-
+phonegap-js-core: clean_libs lib/phonegap.js
+	
 installer: phonegap-js-core
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
 
