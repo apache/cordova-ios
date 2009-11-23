@@ -190,9 +190,13 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
  */
 
 Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options) {
-	this.getCurrentAcceleration(successCallback, errorCallback, options);
 	// TODO: add the interval id to a list so we can clear all watches
- 	var frequency = (options != undefined)? options.frequency : 10000;
+ 	var frequency = (options != undefined && options.frequency != undefined) ? options.frequency : 10000;
+	var updatedOptions = {
+		desiredFrequency:frequency 
+	}
+	PhoneGap.exec("Accelerometer.start",options);
+
 	return setInterval(function() {
 		navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
 	}, frequency);
@@ -203,6 +207,7 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
  * @param {String} watchId The ID of the watch returned from #watchAcceleration.
  */
 Accelerometer.prototype.clearWatch = function(watchId) {
+	PhoneGap.exec("Accelerometer.stop");
 	clearInterval(watchId);
 }
 
