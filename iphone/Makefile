@@ -1,10 +1,10 @@
-SHELL = /bin/sh
+SHELL = /bin/bash
 CHMOD = chmod
 CP = cp
 MV = mv
 NOOP = $(SHELL) -c true
 RM_F = rm -f
-RM_IR = rm -ir
+RM_IR = rm -iR
 RM_RF = rm -rf
 TEST_F = test -f
 TOUCH = touch
@@ -60,9 +60,15 @@ lib/phonegap.js: $(PG_JS_CORE)/phonegap.js.base $(PG_JS_CORE)/acceleration.js $(
 phonegap-js-core: clean_libs lib/phonegap.js
 	
 installer: phonegap-js-core
+	$(RM_RF) PhoneGapLib/build/
+	$(RM_RF) PhoneGap-based\ Application/build/
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
 
 uninstall:
 	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap
-	$(RM_IR) ~/Documents/PhoneGapLib
-	
+	@read -p "Delete all files in ~/Documents/PhoneGapLib/ ?: " ; \
+	if [ "$$REPLY" == "y" ]; then \
+	$(RM_RF) ~/Documents/PhoneGapLib/ ; \
+	else \
+	echo "" ; \
+	fi	
