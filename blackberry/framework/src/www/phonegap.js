@@ -1,3 +1,4 @@
+
 if (typeof(DeviceInfo) != 'object')
     DeviceInfo = {};
 
@@ -11,13 +12,14 @@ PhoneGap = {
         ready: true,
         commands: [],
         timer: null
-    }
+    },
+    _constructors: []
 };
 
 /**
  * Boolean flag indicating if the PhoneGap API is available and initialized.
  */
-PhoneGap.available = Device.uuid != undefined;
+PhoneGap.available = DeviceInfo.uuid != undefined;
 
 /**
  * Execute a PhoneGap command in a queued fashion, to ensure commands do not
@@ -27,7 +29,7 @@ PhoneGap.available = Device.uuid != undefined;
  * @param {String[]} [args] Zero or more arguments to pass to the method
  */
 PhoneGap.exec = function() {
-	var args = '';
+    var args = '';
 	if (arguments.length == 1) {
 		args = arguments[0];
 	} else {
@@ -48,11 +50,6 @@ PhoneGap.exec = function() {
 	//alert(command);
 	document.cookie = command;
 };
-/**
- * Internal function used to dispatch the request to PhoneGap.  This needs to be implemented per-platform to
- * ensure that methods are called on the phone in a way appropriate for that device.
- * @private
- */
 /**
  * This class contains acceleration information
  * @constructor
@@ -77,7 +74,7 @@ function Acceleration(x, y, z) {
 	 * The time that the acceleration was obtained.
 	 */
 	this.timestamp = new Date().getTime();
-};
+}
 
 /**
  * This class specifies the options for requesting acceleration data.
@@ -89,7 +86,8 @@ function AccelerationOptions() {
 	 * is called.
 	 */
 	this.timeout = 10000;
-};
+}
+
 /**
  * This class provides access to device accelerometer data.
  * @constructor
@@ -99,7 +97,7 @@ function Accelerometer() {
 	 * The last known acceleration.
 	 */
 	this.lastAcceleration = null;
-};
+}
 
 /**
  * Asynchronously aquires the current acceleration.
@@ -111,15 +109,7 @@ function Accelerometer() {
  * such as timeout.
  */
 Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
-	// If the acceleration is available then call success
-	// If the acceleration is not available then call error
-	
-	// Created for iPhone, Iphone passes back _accel obj litteral
-	if (typeof successCallback == "function") {
-		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
-		Accelerometer.lastAcceleration = accel;
-		successCallback(accel);
-	}
+	alert('Accelerometer not supported in PhoneGap BlackBerry - yet.');
 };
 
 /**
@@ -139,7 +129,7 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 	return setInterval(function() {
 		navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
 	}, frequency);
-};
+}
 
 /**
  * Clears the specified accelerometer watch.
@@ -147,7 +137,7 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
  */
 Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
-};
+}
 
 if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
 /**
@@ -155,8 +145,9 @@ if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new
  * @constructor
  */
 function Camera() {
-	
-};
+	this.onSuccess = null;
+	this.onError = null;
+}
 
 /**
  * 
@@ -165,7 +156,13 @@ function Camera() {
  * @param {Object} options
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
-	
+	if (device.hasCamera) {
+		if (successCallback) this.onSuccess = successCallback;
+		else this.onSuccess = null;
+		if (errorCallback) this.onError = errorCallback;
+		else this.onError = null;
+		PhoneGap.exec("camera", ["picture"]);
+	} else errorCallback("[PhoneGap] Camera not supported on this device.");
 }
 
 if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
@@ -180,95 +177,89 @@ function Contact(jsonObject) {
     this.name = "";
     this.phones = {};
     this.emails = {};
-	this.address = "";
-};
+  	this.address = "";
+}
 
 Contact.prototype.displayName = function()
 {
     // TODO: can be tuned according to prefs
 	return this.name;
-};
+}
 
 function ContactManager() {
 	// Dummy object to hold array of contacts
 	this.contacts = [];
 	this.timestamp = new Date().getTime();
-};
-
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	// Interface
-};
+}
 
 if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
-/**
- * This class provides access to the debugging console.
- * @constructor
- */
-function DebugConsole() {
-};
 
-/**
- * Utility function for rendering and indenting strings, or serializing
- * objects to a string capable of being printed to the console.
- * @param {Object|String} message The string or object to convert to an indented string
- * @private
- */
-DebugConsole.prototype.processMessage = function(message) {
-    if (typeof(message) != 'object') {
-        return message;
-    } else {
-        /**
-         * @function
-         * @ignore
-         */
-        function indent(str) {
-            return str.replace(/^/mg, "    ");
-        }
-        /**
-         * @function
-         * @ignore
-         */
-        function makeStructured(obj) {
-            var str = "";
-            for (var i in obj) {
-                try {
-                    if (typeof(obj[i]) == 'object') {
-                        str += i + ":\n" + indent(makeStructured(obj[i])) + "\n";
-                    } else {
-                        str += i + " = " + indent(String(obj[i])).replace(/^    /, "") + "\n";
-                    }
-                } catch(e) {
-                    str += i + " = EXCEPTION: " + e.message + "\n";
-                }
-            }
-            return str;
-        }
-        return "Object:\n" + makeStructured(message);
-    }
+ContactManager.prototype.formParams = function(options, startArray) {
+	var params = [];
+	if (startArray) params = startArray;
+	if (options.pageSize && options.pageSize > 0) params.push("pageSize:" + options.pageSize);
+	if (options.pageNumber) params.push("pageNumber:" + options.pageNumber);
+	if (options.nameFilter) params.push("nameFilter:" + options.nameFilter);
+	if (options.contactID) params.push("contactID:" + options.contactID);
+	return params;	
 };
-
-/**
- * Print a normal log message to the console
- * @param {Object|String} message Message or object to print to the console
- */
-DebugConsole.prototype.log = function(message) {
+ContactManager.prototype.chooseContact = function(successCallback, options) {
+	this.choose_onSuccess = successCallback;
+	var params = ["choose"];
+	params = this.formParams(options,params);
+	PhoneGap.exec("contacts", params);
 };
-
-/**
- * Print a warning message to the console
- * @param {Object|String} message Message or object to print to the console
- */
-DebugConsole.prototype.warn = function(message) {
+ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
+	if (options.nameFilter && options.nameFilter.length > 0) {
+		var params = ["search"];
+		params = this.formParams(options,params);
+		this.search_onSuccess = successCallback;
+		this.search_onError = errorCallback;
+		PhoneGap.exec("contacts", params);
+	} else {
+		ContactManager.getAllContacts(successCallback,errorCallback,options);
+		return;
+	}
 };
-
-/**
- * Print an error message to the console
- * @param {Object|String} message Message or object to print to the console
- */
-DebugConsole.prototype.error = function(message) {
+ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+	this.global_onSuccess = successCallback;
+	this.global_onError = errorCallback;
+	var params = ["getall"];
+	params = this.formParams(options,params);
+	PhoneGap.exec("contacts", params);
 };
-window.debug = new DebugConsole();
-/**
+ContactManager.prototype.newContact = function(contact, successCallback, errorCallback, options) {
+	if (!contact) {
+		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
+		return;
+	} else {
+		if (!contact.firstName || !contact.lastName || !contact.phoneNumber || !contact.address || !contact.email) {
+			alert("[PhoneGap Error] newContact function parameter 'contact' does not have proper contact members (firstName, lastName, phoneNumber, address and email).");
+			return;
+		}
+		options.push("firstName:" + contact.firstName);
+		options.push("lastName:" + contact.lastName);
+		options.push("address:" + contact.address);
+		// Create a phone number parameter that we can parse on the BlackBerry end.
+		var phones = '';
+		for (var i = 0; i < contact.phoneNumber.length; i++) {
+			phones += contact.phoneNumber[i].label + '=';
+			phones += contact.phoneNumber[i].value + '|';
+		}
+		options.push("phoneNumber:" + phones.substr(0,phones.length-1));
+		var emails = '';
+		for (var j = 0; j < contact.email.length; j++) {
+			emails += contact.email[j].label + '=';
+			emails += contact.email[j].value + '|';
+		}
+		options.push("email:" + emails.substr(0,emails.length-1));
+		this.new_onSuccess = successCallback;
+		this.new_onError = errorCallback;
+		var params = ["new"];
+		params = this.formParams(options,params);
+		PhoneGap.exec("contacts", params);
+	}
+};/**
  * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
  * phone, etc.
  * @constructor
@@ -299,7 +290,37 @@ function Device() {
         this.available = false;
     }
 }
-/**
+
+navigator.device = window.device = new Device();
+
+Device.prototype.poll = function(callback) {
+    var result = document.cookie;
+    eval(result + (callback ? ";callback();" : ""));
+    clearTimeout(this.poller);
+    this.poller = setTimeout('window.device.poll();',500);
+}
+
+Device.prototype.init = function() {
+    this.isIPhone = false;
+    this.isIPod = false;
+    this.isBlackBerry = true;
+	this.poller = false;
+    try {
+        PhoneGap.exec("initialize");
+		this.poll(function() {
+			PhoneGap.available = typeof DeviceInfo.name == "string";
+			/* TODO: dispatch the event if at all possible on blackberry
+			var event = document.createEvent("Events");
+			event.initEvent('deviceReady', false, false);
+			document.dispatchEvent(event);
+			*/
+		});
+		this.poller = setTimeout('window.device.poll();',500);
+    } catch(e) {
+        alert("[PhoneGap Error] Error initializing.");
+    }
+};
+window.device.init();/**
  * This class provides generic read and write access to the mobile device file system.
  */
 function File() {
@@ -311,28 +332,44 @@ function File() {
 	 * The name of the file.
 	 */
 	this.name = "";
-};
-
-/**
- * Reads a file from the mobile device. This function is asyncronous.
- * @param {String} fileName The name (including the path) to the file on the mobile device. 
- * The file name will likely be device dependent.
- * @param {Function} successCallback The function to call when the file is successfully read.
- * @param {Function} errorCallback The function to call when there is an error reading the file from the device.
- */
-File.prototype.read = function(fileName, successCallback, errorCallback) {
-	
-}
-
-/**
- * Writes a file to the mobile device.
- * @param {File} file The file to write to the device.
- */
-File.prototype.write = function(file) {
-	
 }
 
 if (typeof navigator.file == "undefined") navigator.file = new File();
+
+File.prototype.read = function(fileName, successCallback, errorCallback) {
+	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
+	/*document.cookie = 'bb_command={command:8,args:{name:"'+fileName+'"}}';
+	navigator.file.successCallback = successCallback;
+	navigator.file.errorCallback = errorCallback;
+	navigator.file.readTimeout = window.setInterval('navigator.file._readReady()', 1000);*/
+};
+
+File.prototype._readReady = function() {
+	var cookies = document.cookie.split(';');
+	for (var i=0; i<cookies.length; i++) {
+		var cookie = cookies[i].split('=');
+		if (cookie[0] == 'bb_response') {
+			var obj = eval('('+cookie[1]+')');
+
+			// TODO: This needs to be in ONE cookie reading loop I think so that it can find 
+			// various different data coming back from the phone at any time (poll piggy-backing)
+			var file = obj.readfile;
+			if (file != null)
+			{
+				window.clearTimeout(navigator.file.readTimeout);
+				if (file.length > 0)
+				{
+					successCallback(file);
+				}
+			}
+		}
+	}
+};
+
+File.prototype.write = function(fileName, data) {
+	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
+//	document.cookie = 'bb_command={command:9,args:{name:"'+fileName+'",data:"'+data+'"}}';
+};
 /**
  * This class provides access to device GPS data.
  * @constructor
@@ -341,6 +378,7 @@ function Geolocation() {
     /**
      * The last known GPS position.
      */
+	this.started = false;
     this.lastPosition = null;
     this.lastError = null;
     this.callbacks = {
@@ -361,7 +399,7 @@ function Geolocation() {
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
     var referenceTime = 0;
     if (this.lastPosition)
-        referenceTime = this.lastPosition.timestamp;
+        referenceTime = this.lastPosition.timeout;
     else
         this.start(options);
 
@@ -379,17 +417,17 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var delay = 0;
     var timer = setInterval(function() {
         delay += interval;
-        if (dis.lastPosition && typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+
+        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
             successCallback(dis.lastPosition);
             clearInterval(timer);
         } else if (delay >= timeout) {
             errorCallback();
             clearInterval(timer);
-        } else {
-        	PhoneGap.exec("location",["check"]);
         }
     }, interval);
 };
+
 /**
  * Asynchronously aquires the position repeatedly at a given interval.
  * @param {Function} successCallback The function to call each time the position
@@ -413,6 +451,7 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 		that.getCurrentPosition(successCallback, errorCallback, options);
 	}, frequency);
 };
+
 
 /**
  * Clears the specified position watch.
@@ -447,6 +486,40 @@ Geolocation.prototype.setError = function(message) {
 };
 
 if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+
+/**
+ * Starts the GPS of the device
+ */
+Geolocation.prototype.start = function() {
+	if (this.started) {
+		return;
+	} else {
+		PhoneGap.exec("location", ["start"]);
+	}
+};
+
+/**
+ * Stops the GPS of the device
+ */
+Geolocation.prototype.stop = function() {
+	if (!this.started) {
+		return;
+	} else {
+		PhoneGap.exec("location", ["stop"]);
+	}
+}
+
+/**
+ * Maps current location
+ */
+Geolocation.prototype.map = function() {
+	if (this.lastPosition == null) {
+		alert("[PhoneGap] No position to map yet.");
+		return;
+	} else {
+		PhoneGap.exec("location", ["map"]);
+	}
+};
 /**
  * This class provides access to device Compass data.
  * @constructor
@@ -541,23 +614,14 @@ Compass.prototype.setError = function(message) {
 };
 
 if (typeof navigator.compass == "undefined") navigator.compass = new Compass();
-/**
- * This class provides access to native mapping applications on the device.
- */
-function Map() {
-	
+
+Compass.prototype.start = function(args) {
+    alert('Compass support not implemented - yet.');
 };
 
-/**
- * Shows a native map on the device with pins at the given positions.
- * @param {Array} positions
- */
-Map.prototype.show = function(positions) {
-	
-}
-
-if (typeof navigator.map == "undefined") navigator.map = new Map();
-
+Compass.prototype.stop = function() {
+    alert('Compass support not implemented - yet.');
+};
 /**
  * This class provides access to the device media, interfaces to both sound and video
  * @constructor
@@ -566,20 +630,7 @@ function Media(src, successCallback, errorCallback) {
 	this.src = src;
 	this.successCallback = successCallback;
 	this.errorCallback = errorCallback;												
-};
-
-Media.prototype.record = function() {
 }
-
-Media.prototype.play = function() {
-}
-
-Media.prototype.pause = function() {
-}
-
-Media.prototype.stop = function() {
-}
-
 
 /**
  * This class contains information about any Media errors.
@@ -594,6 +645,25 @@ MediaError.MEDIA_ERR_ABORTED 		= 1;
 MediaError.MEDIA_ERR_NETWORK 		= 2;
 MediaError.MEDIA_ERR_DECODE 		= 3;
 MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
+
+
+//if (typeof navigator.audio == "undefined") navigator.audio = new Media(src);
+
+Media.prototype.record = function() {
+	alert('Media recording not implemented - yet.');
+};
+
+Media.prototype.play = function() {
+	PhoneGap.exec("media",[this.src]);
+};
+
+Media.prototype.pause = function() {
+	alert('Media pausing not implemented - yet.');
+};
+
+Media.prototype.stop = function() {
+	alert('Media stopping not implemented - yet.');
+};
 /**
  * This class contains information about any NetworkStatus.
  * @constructor
@@ -601,7 +671,7 @@ MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
 function NetworkStatus() {
 	this.code = null;
 	this.message = "";
-};
+}
 
 NetworkStatus.NOT_REACHABLE = 0;
 NetworkStatus.REACHABLE_VIA_CARRIER_DATA_NETWORK = 1;
@@ -621,15 +691,6 @@ function Network() {
 };
 
 /**
- * 
- * @param {Function} successCallback
- * @param {Function} errorCallback
- * @param {Object} options  (isIpAddress:boolean)
- */
-Network.prototype.isReachable = function(hostName, successCallback, options) {
-}
-
-/**
  * Called by the geolocation framework when the reachability status has changed.
  * @param {Reachibility} reachability The current reachability status.
  */
@@ -638,12 +699,26 @@ Network.prototype.updateReachability = function(reachability) {
 };
 
 if (typeof navigator.network == "undefined") navigator.network = new Network();
+
+Network.prototype.isReachable = function(hostName, successCallback, options) {
+	this.isReachable_success = successCallback;
+	PhoneGap.exec("network",["reach"]);
+};
+// Temporary implementation of XHR. Soon-to-be modeled as the w3c implementation.
+Network.prototype.XHR = function(URL, POSTdata, successCallback) {
+	var req = URL;
+	if (POSTdata != null) {
+		req += "|" + POSTdata;
+	}
+	this.XHR_success = successCallback;
+	PhoneGap.exec("network",["xhr",req]);
+};
 /**
  * This class provides access to notifications on the device.
  */
 function Notification() {
 	
-};
+}
 
 /**
  * Open a native alert dialog, with a customizable title and button text.
@@ -657,44 +732,22 @@ Notification.prototype.alert = function(message, title, buttonLabel) {
 };
 
 /**
- * Start spinning the activity indicator on the statusbar
- */
-Notification.prototype.activityStart = function() {
-};
-
-/**
- * Stop spinning the activity indicator on the statusbar, if it's currently spinning
- */
-Notification.prototype.activityStop = function() {
-};
-
-/**
  * Causes the device to blink a status LED.
  * @param {Integer} count The number of blinks.
  * @param {String} colour The colour of the light.
  */
 Notification.prototype.blink = function(count, colour) {
-	
-};
-
-/**
- * Causes the device to vibrate.
- * @param {Integer} mills The number of milliseconds to vibrate for.
- */
-Notification.prototype.vibrate = function(mills) {
-	
-};
-
-/**
- * Causes the device to beep.
- * @param {Integer} count The number of beeps.
- * @param {Integer} volume The volume of the beep.
- */
-Notification.prototype.beep = function(count, volume) {
-	
+	alert('Blink not implemented - yet.');
 };
 
 if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
+
+Notification.prototype.vibrate = function(mills) {
+	PhoneGap.exec("notification/vibrate",[mills*1000]);
+};
+Notification.prototype.beep = function(count, volume) {
+	PhoneGap.exec("notification/beep",[count]);
+};
 /**
  * This class provides access to the device orientation.
  * @constructor
@@ -704,7 +757,7 @@ function Orientation() {
 	 * The current orientation, or null if the orientation hasn't changed yet.
 	 */
 	this.currentOrientation = null;
-};
+}
 
 /**
  * Set the current orientation of the phone.  This is called from the device automatically.
@@ -716,11 +769,14 @@ function Orientation() {
  * @param {Number} orientation The orientation to be set
  */
 Orientation.prototype.setOrientation = function(orientation) {
+	alert('Orientation not implemented - yet.');
+	/*
     Orientation.currentOrientation = orientation;
     var e = document.createEvent('Events');
     e.initEvent('orientationChanged', 'false', 'false');
     e.orientation = orientation;
     document.dispatchEvent(e);
+	*/
 };
 
 /**
@@ -731,6 +787,7 @@ Orientation.prototype.setOrientation = function(orientation) {
  * getting the orientation.
  */
 Orientation.prototype.getCurrentOrientation = function(successCallback, errorCallback) {
+	alert('Orientation not implemented - yet.');
 	// If the position is available then call success
 	// If the position is not available then call error
 };
@@ -760,21 +817,11 @@ Orientation.prototype.clearWatch = function(watchId) {
 };
 
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
-/**
- * This class contains position information.
- * @param {Object} lat
- * @param {Object} lng
- * @param {Object} acc
- * @param {Object} alt
- * @param {Object} altacc
- * @param {Object} head
- * @param {Object} vel
- * @constructor
- */
+
 function Position(coords, timestamp) {
 	this.coords = coords;
     this.timestamp = new Date().getTime();
-};
+}
 
 function Coordinates(lat, lng, alt, acc, head, vel) {
 	/**
@@ -801,7 +848,7 @@ function Coordinates(lat, lng, alt, acc, head, vel) {
 	 * The velocity with which the device is moving at the position.
 	 */
 	this.speed = vel;
-};
+}
 
 /**
  * This class specifies the options for requesting position data.
@@ -817,7 +864,7 @@ function PositionOptions() {
 	 * is called.
 	 */
 	this.timeout = 10000;
-};
+}
 
 /**
  * This class contains information about any GSP errors.
@@ -826,7 +873,7 @@ function PositionOptions() {
 function PositionError() {
 	this.code = null;
 	this.message = "";
-};
+}
 
 PositionError.UNKNOWN_ERROR = 0;
 PositionError.PERMISSION_DENIED = 1;
@@ -837,8 +884,9 @@ PositionError.TIMEOUT = 3;
  * @constructor
  */
 function Sms() {
-
-};
+	this.success = null;
+	this.error = null;
+}
 
 /**
  * Sends an SMS message.
@@ -849,8 +897,12 @@ function Sms() {
  * @param {PositionOptions} options The options for accessing the GPS location such as timeout and accuracy.
  */
 Sms.prototype.send = function(number, message, successCallback, errorCallback, options) {
-	
-}
+	var params = [number];
+	params.push(message);
+	this.success = successCallback;
+	this.error = errorCallback;
+	PhoneGap.exec("send", params);
+};
 
 if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
 /**
@@ -859,221 +911,28 @@ if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
  */
 function Telephony() {
 	
-};
+}
 
 /**
  * Calls the specifed number.
  * @param {Integer} number The number to be called.
  */
 Telephony.prototype.call = function(number) {
-	
+	this.number = number;
+	PhoneGap.exec("call", [this.number]);
 }
 
 if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
+function Utility() {
+	
+};
 
-ContactManager.prototype.formParams = function(options, startArray) {
+/**
+ * Closes the application.
+ */
+Utility.prototype.exit = function() {
 	var params = [];
-	if (startArray) params = startArray;
-	if (options.pageSize && options.pageSize > 0) params.push("pageSize:" + options.pageSize);
-	if (options.pageNumber) params.push("pageNumber:" + options.pageNumber);
-	if (options.nameFilter) params.push("nameFilter:" + options.nameFilter);
-	if (options.contactID) params.push("contactID:" + options.contactID);
-	return params;	
-};
-ContactManager.prototype.chooseContact = function(successCallback, options) {
-	this.choose_onSuccess = successCallback;
-	var params = ["choose"];
-	params = this.formParams(options,params);
-	PhoneGap.exec("contacts", params);
-};
-ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
-	if (options.nameFilter && options.nameFilter.length > 0) {
-		var params = ["search"];
-		params = this.formParams(options,params);
-		this.search_onSuccess = successCallback;
-		this.search_onError = errorCallback;
-		PhoneGap.exec("contacts", params);
-	} else {
-		ContactManager.getAllContacts(successCallback,errorCallback,options);
-		return;
-	}
-};
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	this.global_onSuccess = successCallback;
-	this.global_onError = errorCallback;
-	var params = ["getall"];
-	params = this.formParams(options,params);
-	PhoneGap.exec("contacts", params);
-};
+	PhoneGap.exec("exit", params);
+}
 
-ContactManager.prototype.newContact = function(contact, successCallback, errorCallback, options) {
-	if (!contact) {
-		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
-		return;
-	} else {
-		if (!contact.firstName || !contact.lastName || !contact.phoneNumber || !contact.address || !contact.email) {
-			alert("[PhoneGap Error] newContact function parameter 'contact' does not have proper contact members (firstName, lastName, phoneNumber, address and email).");
-			return;
-		}
-		options.push("firstName:" + contact.firstName);
-		options.push("lastName:" + contact.lastName);
-		options.push("address:" + contact.address);
-		// Create a phone number parameter that we can parse on the BlackBerry end.
-		var phones = '';
-		for (var i = 0; i < contact.phoneNumber.length; i++) {
-			phones += contact.phoneNumber[i].label + '=';
-			phones += contact.phoneNumber[i].value + '|';
-		}
-		options.push("phoneNumber:" + phones.substr(0,phones.length-1));
-		var emails = '';
-		for (var j = 0; j < contact.email.length; j++) {
-			emails += contact.email[j].label + '=';
-			emails += contact.email[j].value + '|';
-		}
-		options.push("email:" + emails.substr(0,emails.length-1));
-		this.new_onSuccess = successCallback;
-		this.new_onError = errorCallback;
-		var params = ["new"];
-		params = this.formParams(options,params);
-		PhoneGap.exec("contacts", params);
-	}
-};
-
-Device.prototype.poll = function(callback) {
-    var result = document.cookie;
-    eval(result + (callback ? ";callback();" : ""));
-    clearTimeout(this.poller);
-    this.poller = setTimeout('Device.poll();',500);
-};
-
-Device.prototype.init = function() {
-    this.isIPhone = false;
-    this.isIPod = false;
-    this.isBlackBerry = true;
-	this.poller = false;
-    try {
-        PhoneGap.exec("initialize");
-		this.poll(function() {
-			var done = typeof(Device.name) == "string";
-			PhoneGap.available = done;
-		});
-    } catch(e) {
-        alert("[PhoneGap Error] Error initializing, " + e.message);
-    }
-};
-
-window.Device = new Device();
-window.Device.init();
-
-File.prototype.read = function(fileName, successCallback, errorCallback) {
-	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
-	/*document.cookie = 'bb_command={command:8,args:{name:"'+fileName+'"}}';
-	navigator.file.successCallback = successCallback;
-	navigator.file.errorCallback = errorCallback;
-	navigator.file.readTimeout = window.setInterval('navigator.file._readReady()', 1000);*/
-};
-
-File.prototype._readReady = function() {
-	var cookies = document.cookie.split(';');
-	for (var i=0; i<cookies.length; i++) {
-		var cookie = cookies[i].split('=');
-		if (cookie[0] == 'bb_response') {
-			var obj = eval('('+cookie[1]+')');
-
-			// TODO: This needs to be in ONE cookie reading loop I think so that it can find 
-			// various different data coming back from the phone at any time (poll piggy-backing)
-			var file = obj.readfile;
-			if (file != null)
-			{
-				window.clearTimeout(navigator.file.readTimeout);
-				if (file.length > 0)
-				{
-					successCallback(file);
-				}
-			}
-		}
-	}
-};
-
-File.prototype.write = function(fileName, data) {
-	alert('File I/O not implemented in PhoneGap BlackBerry - yet.');
-//	document.cookie = 'bb_command={command:9,args:{name:"'+fileName+'",data:"'+data+'"}}';
-};
-/**
- * Starts the GPS of the device
- */
-Geolocation.prototype.start = function() {
-	if (this.started) {
-		return;
-	} else {
-		PhoneGap.exec("location", ["start"]);
-	}
-};
-
-/**
- * Stops the GPS of the device
- */
-Geolocation.prototype.stop = function() {
-	if (!this.started) {
-		return;
-	} else {
-		PhoneGap.exec("location", ["stop"]);
-	}
-};
-
-/**
- * Maps current location
- */
-Geolocation.prototype.map = function() {
-	if (this.lastPosition == null) {
-		alert("[PhoneGap] No position to map yet.");
-		return;
-	} else {
-		PhoneGap.exec("location", ["map"]);
-	}
-};
-Compass.prototype.start = function(args) {
-    alert('Compass support not implemented - yet.');
-};
-
-Compass.prototype.stop = function() {
-    alert('Compass support not implemented - yet.');
-};
-Media.prototype.record = function() {
-	alert('Media recording not implemented - yet.');
-};
-
-Media.prototype.play = function() {
-	PhoneGap.exec("media",[this.src]);
-};
-
-Media.prototype.pause = function() {
-	alert('Media pausing not implemented - yet.');
-};
-
-Media.prototype.stop = function() {
-	alert('Media stopping not implemented - yet.');
-};
-Network.prototype.isReachable = function(hostName, successCallback, options) {
-	this.isReachable_success = successCallback;
-	PhoneGap.exec("network",["reach"]);
-};
-// Temporary implementation of XHR. Soon-to-be modeled as the w3c implementation.
-Network.prototype.XHR = function(URL, POSTdata, successCallback) {
-	var req = URL;
-	if (POSTdata != null) {
-		req += "|" + POSTdata;
-	}
-	this.XHR_success = successCallback;
-	PhoneGap.exec("network",["xhr",req]);
-};
-Notification.prototype.vibrate = function(mills) {
-	PhoneGap.exec("notification/vibrate",[mills*1000]);
-};
-Notification.prototype.beep = function(count, volume) {
-	PhoneGap.exec("notification/beep",[count]);
-};// TODO: Have to implement SMS!
-Telephony.prototype.call = function(number) {
-	this.number = number;
-	PhoneGap.exec("call", [this.number]);
-};
+if (typeof navigator.utility == "undefined") navigator.utility = new Utility();

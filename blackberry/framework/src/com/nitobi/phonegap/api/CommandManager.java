@@ -31,6 +31,8 @@ import com.nitobi.phonegap.api.impl.MediaCommand;
 import com.nitobi.phonegap.api.impl.NetworkCommand;
 import com.nitobi.phonegap.api.impl.NotificationCommand;
 import com.nitobi.phonegap.api.impl.TelephonyCommand;
+import com.nitobi.phonegap.api.impl.SMSCommand;
+import com.nitobi.phonegap.api.impl.ExitCommand;
 
 /**
  * Given a execution request detects matching {@link Command} and executes it.
@@ -42,7 +44,7 @@ public final class CommandManager {
 	private static final String EXCEPTION_PREFIX = "[PhoneGap] *ERROR* Exception executing command [";
 	private static final String EXCEPTION_SUFFIX = "]: ";
 	
-	private Command[] commands = new Command[8]; 
+	private Command[] commands = new Command[10]; 
 
 	public CommandManager(PhoneGap phoneGap) {
 		commands[0] = new CameraCommand(phoneGap);
@@ -53,6 +55,8 @@ public final class CommandManager {
 		commands[5] = new DeviceCommand();	
 		commands[6] = new MediaCommand();
 		commands[7] = new NetworkCommand(phoneGap);
+		commands[8] = new SMSCommand();
+		commands[9] = new ExitCommand();
 	}
 
 	/**
