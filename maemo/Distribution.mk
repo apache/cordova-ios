@@ -16,12 +16,14 @@ COMPILED_BINARY=phonegap
 VERSION=1.0.0
 
 VERSION = 1.0.0
-ARCH = armel
-SECTION = user/development
+ARCH = i386
+# Set to armel to build on the target
+#ARCH = armel
+SECTION = user/other
 PRIORITY = optional
 MAINTAINER = Mikko Ohtamaa <mikko.ohtamaa@twinapex.com>
 # todo: For python2.4 it also needs python2.4-elementtree and python2.4-sqlite
-DEPENDS = 
+DEPENDS = libqt4-phonon,libqt4-sql-sqlite 
 
 # Which file contains .deb description
 DESCRIPTION=${BINARY}.txt
@@ -33,7 +35,7 @@ PACKAGE_DIR = /scratchbox/users/moo/home/moo/phonegap/maemo/distribution
 DISTRIBUTION_GZ=${BINARY}-${VERSION}.tar.gz
 FULLNAME=Mikko Ohtamaa
 EMAIL=mikko.ohtamaa@twinapex.com
-MAINTAINER=${FULLANAME} <${EMAIL}>
+MAINTAINER=${FULLNAME} <${EMAIL}>
 
 # Where to build .deb package
 SOURCE_DIR = ${DISTRIBUTION_FOLDER}
@@ -70,16 +72,9 @@ dist: ${PACKAGE_DIR}/data
 clean:
 	rm -rf ${PACKAGE_DIR}
 
+# Upload package to the test server from where you can dpkg -i it in the device
+upload:
+	
 
 include deb_hand.mak  
-
-
-
-
-
-
-
-
-
-
 
