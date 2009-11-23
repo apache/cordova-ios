@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0.0	Version of this file, NOT of the app. Keep it at 1.0.0
+Encoding=UTF-8
+Name=PhoneGap demo
+Comment=Demostrate using PhoneGap on maemo
+Exec=/usr/bin/phonegapdemo
+Icon=phonegapdemo
+X-Icon-path=/usr/share/icons
+X-Window-Icon=phonegapdemo
+Type=Application
+X-Osso-Service=com.nokia.phonegapdemo
+X-Osso-Type=application/x-executable
+
