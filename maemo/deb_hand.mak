@@ -62,7 +62,8 @@ endif
 	cat ${DESCRIPTION} | gawk '{print " "$$0;}' >> $@/control
 ifneq (${ICON_SOURCE},)
 	echo "Maemo-Icon-26:" >> $@/control
-	base64 ${ICON_SOURCE} | gawk '{print " "$$0;}' >> $@/control
+	uuencode -m ${ICON_SOURCE} ${ICON_SOURCE} | sed 1d | sed '$d' | gawk '{print " "$$0;}' >> $@/control
+	echo >> $@/control
 endif
 #       Make md5sums.
 	cd ${PACKAGE_DIR}/data && find . -type f -exec md5sum {} \; \
@@ -84,9 +85,9 @@ ${PACKAGE_DIR}/build: ${PACKAGE_DIR}/debian-binary ${PACKAGE_DIR}/control \
 # Note: Order of files within ar archive is important!
 ${PACKAGE_DIR}/${PACKAGE}_${VERSION}_${ARCH}.deb: ${PACKAGE_DIR}/build
 	ar -rc $@tmp $</debian-binary $</control.tar.gz $</data.tar.gz
-	sed -e 's|^\([^/]\+\)/ \(.*\)|\1  \2|g' $@tmp > $@fail
-	rm -f $@tmp
-	mv $@fail $@
+	#sed -e 's|^\([^/]\+\)/ \(.*\)|\1  \2|g' $@tmp > $@fail
+	#rm -f $@tmp
+	mv $@tmp $@
 
 .PHONY: data
 data: ${PACKAGE_DIR}/data
