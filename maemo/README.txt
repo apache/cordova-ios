@@ -157,6 +157,96 @@ direct Javascript-to-C++ API calls and other goodies are possible.
 
 index.html is bootstrapped by main.cpp in QWebView.
 
+Building ARM binaries and package on QEmu
+-----------------------------------------
+
+Additional resources
+
+* help http://wiki.forum.nokia.com/index.php/Maemo_5_SDK_installation_for_beginners#Nokia_binaries_for_ARM_.28ARMEL.29
+
+* http://wiki.maemo.org/Packaging_a_Qt_application
+
+* http://tldp.org/HOWTO/Debian-Binary-Package-Building-HOWTO/x60.html
+
+Brief instructions
+
+* Download and install Nokia Maemo 5 SDK (**not** Maemo SDK+)
+
+* Enable Nokia binaries and add Nokia binary blob deb line from `here <http://tablets-dev.nokia.com/eula/index.php>`_:
+
+* Enter Scratchbox (ARMEL)::
+
+	/scratchbox/login
+	sb-conf se FREMANTLE_ARMEL
+
+* **DO NOT RUN sb-menu setup target - this will screw your scratchbox installation**
+
+* After you see FREMANTLE_ARMEL prompt install the build dependencies::
+
+    fakeroot apt-get install libqt4-phonon libqt4-opengl libqt4-opengl-dev libqt4-sql-sqlite gawk sharutils
+
+* Compile binary::
+
+	qmake
+	make
+
+* Run Debian packager::
+
+	make -f Distribution.mk
+
+* Check package contents::
+
+	dpkg-deb -c distribution/phonegapdemo_1.0.0_i386.deb 
+
+
+
+Testing package
+---------------
+
+You can test your package installation right away.
+
+* Install package inside ARMEL scratchbox::
+
+   dpkg -i distribution/phonegap_1.0.0.deb
+
+Testing package in the emulator
+
+* Switch scratchbox to FREMANTLE_X86
+
+* Clean up between architectures::
+
+   make clean 
+
+* Build again::
+ 
+   make
+
+* Change ARCH in Distribution.mk
+
+* Create DEB again::
+
+   make -f Distribution.make
+
+* Start Xephyr on host::
+
+   Xephyr :2 -host-cursor -screen 800x480x16 -dpi 96 -ac -kb
+
+* Run Maemo simulation environment
+
+   export DISPLAY=:2
+   af-sb-init.sh start
+
+Building your own application
+================================
+
+* Create a copy of Distribution.mk
+
+* Edit headers as you see nessary for your application
+
+* Create copy of phonegapdemo.desktop
+
+* Edit main.cpp - change BINARY_NAME
+
 Resources
 ---------
 

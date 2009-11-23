@@ -14,6 +14,8 @@
 #include "commandmanager.h"
 #include "webview.h"
 
+#define BINARY_NAME "phonegapdemo"
+
 using namespace PhoneGap;
 
 /** Custom QWebPage which prints the javascript errors to console */
@@ -59,13 +61,26 @@ int main(int argc, char *argv[])
     // Initialize PhoneGap APIs
     view->initPhoneGapAPI();
 
-    QFile file("www/index.html");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-         return 0;
 
-    QTextStream in(&file);
+    
+	// It's 2:00 AM and I am getting tired with this...
+    QFile *file = new QFile("www/index.html");
+    QUrl *url = new QUrl("file:///www/index.html");
 
-    view->setHtml( in.readAll(), QUrl("file:///www/index.html") );
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+         std::cout << "No local index.html - trying global" << std::endl;
+
+	 file = new QFile("/usr/share/" BINARY_NAME "/www/index.html");
+	 if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+		std::cout << "No bootstrap JS - giving up" << std::endl;
+		return 1;
+	 }
+	 url = new QUrl("file:////usr/share/" BINARY_NAME "/www/index.html");
+    }
+
+    QTextStream in(file);
+
+    view->setHtml( in.readAll(),  *url);
     view->show();
 
     return app.exec();
