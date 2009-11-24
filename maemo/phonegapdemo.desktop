@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0.0
+Encoding=UTF-8
+Name=PhoneGap demo
+Comment=Demostrate using PhoneGap on Maemo
+Exec=/usr/bin/phonegapdemo
+Icon=phonegapdemo
+Type=Application
+X-Icon-path=/usr/share/icons
+X-Window-Icon=phonegapdemo
+Type=Application
+X-HildonDesk-ShowInToolbar=true
+X-Osso-Type=application/x-executable
+

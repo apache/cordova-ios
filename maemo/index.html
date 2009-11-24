@@ -1,0 +1,39 @@
+
+<html>
+ <head>
+  <script type="text/javascript" charset="utf-8" src="app.js"></script>
+ </head>
+<body>
+<a href="javascript:testNotify">Notify</a>
+<a href="javascript:showVersion();">DeviceInfo</a>
+<a href="javascript:testPhoneGap();">PhoneGap</a>
+<script>
+
+function showVersion()
+{
+    var ver = "";
+    for( a in DeviceInfo )
+    {
+        var val = DeviceInfo[a];
+        if( typeof val == "string" )
+        {
+            ver += a + ":" + val + "\n";
+        }
+    }
+    alert( ver );
+}
+
+function testPhoneGap()
+{
+    var data = "";
+    for( a in PhoneGap )
+    {
+        var val = PhoneGap[a];
+        data += a + ":\n" + val + "\n";
+    }
+    alert( data );
+}
+
+</script>
+</body>
+</html>
