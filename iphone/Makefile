@@ -28,15 +28,25 @@ PhoneGapLib/javascripts/phonegap-min.js: phonegap-js-core
 	
 phonegap-js-core:
 	$(MAKE) -C PhoneGapLib
-	
-installer: phonegap-js-core
+
+clean:
 	$(RM_RF) PhoneGapLib/build/
+	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.mode1v3
+	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.perspectivev3
+	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.pbxuser
+	$(RM_F) PhoneGapLib/javascripts/phonegap.js
 	$(RM_RF) PhoneGap-based\ Application/build/
+	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
+	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
+	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
+	$(RM_F) PhoneGap-based\ Application/www/phonegap.js
+	
+installer: clean
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
 
 uninstall:
 	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap
-	@read -p "Delete all files in ~/Documents/PhoneGapLib/ ?: " ; \
+	@read -p "Delete all files in ~/Documents/PhoneGapLib/?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
 	$(RM_RF) ~/Documents/PhoneGapLib/ ; \
 	else \
