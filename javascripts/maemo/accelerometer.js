@@ -1,23 +1,3 @@
-function Acceleration(x, y, z)
-{
-  this.x = x;
-  this.y = y;
-  this.z = z;
-}
-
-// Need to define these for android
-_accel = {}
-_accel.x = 0;
-_accel.y = 0;
-_accel.z = 0;
-
-function gotAccel(x, y, z)
-{
-	_accel.x = x;
-	_accel.y = y;
-	_accel.z = z;
-}
-
 /**
  * This class provides access to device accelerometer data.
  * @constructor
@@ -38,15 +18,24 @@ function Accelerometer() {
  * @param {AccelerationOptions} options The options for getting the accelerometer data
  * such as timeout.
  */
+__PG_ACCELEROMETER_CALLBACK_USER = null;
+__PG_ACCELEROMETER_CALLBACK = function(x,y,z)
+{
+	console.log( "CALLBACK")
+	var accel =  { x:x, y:y, z:z };
+	__PG_ACCELEROMETER_CALLBACK_USER(accel);
+	Accelerometer.lastAcceleration = accel;
+	
+}
+
 Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
 	// If the acceleration is available then call success
 	// If the acceleration is not available then call error
-
-	// Created for iPhone, Iphone passes back _accel obj litteral
+	console.log( "getCurrent");
+	
 	if (typeof successCallback == "function") {
-		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
-		Accelerometer.lastAcceleration = accel;
-		successCallback(accel);
+		_NativeAccelerometer.get();
+		__PG_ACCELEROMETER_CALLBACK_USER = successCallback;
 	}
 }
 
@@ -61,10 +50,9 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
  */
 
 Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options) {
+	this.getCurrentAcceleration(successCallback, errorCallback, options);
 	// TODO: add the interval id to a list so we can clear all watches
  	var frequency = (options != undefined)? options.frequency : 10000;
-	
-	Accel.start(frequency);
 	return setInterval(function() {
 		navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
 	}, frequency);
@@ -75,10 +63,7 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
  * @param {String} watchId The ID of the watch returned from #watchAcceleration.
  */
 Accelerometer.prototype.clearWatch = function(watchId) {
-	Accel.stop();
 	clearInterval(watchId);
 }
 
-PhoneGap.addConstructor(function() {
-    if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
-});
+if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
