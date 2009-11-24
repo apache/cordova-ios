@@ -72,4 +72,3 @@ PhoneGap.exec = function() {
  */
 PhoneGap.run_command = function() {
 };
-
