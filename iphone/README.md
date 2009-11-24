@@ -50,4 +50,9 @@ To uninstall:
 2. Delete the ~/Documents/PhoneGapLib folder
 3. Delete the ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap folder
 
+FAQ
+---
+Q. PhoneGapLib.xcodeproj is red in my PhoneGap-based application and I get build errors?
+A. The Xcode variable for PhoneGapLib is not set. Xcode must be closed when the installer is running. Either run the installer again, or add a PHONEGAPLIB variable in Xcode Preferences --> Source Trees, with the location of PhoneGapLib. The installer would have installed it in ~/Documents/PhoneGapLib.
+
 
