@@ -19,10 +19,7 @@ JAVA = java
 
 all :: blackberry
 
-blackberry: lib/phonegap-min.js
-
-lib/phonegap-min.js: lib/phonegap.js
-	$(JAVA) -jar ../util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ lib/phonegap.js
+blackberry: lib/phonegap.js
 
 lib/phonegap.js: js/phonegap.js js/acceleration.js js/accelerometer.js js/camera.js js/contacts.js js/device.js js/file.js js/geolocation.js js/compass.js js/media.js js/network.js js/notification.js js/orientation.js js/position.js js/sms.js js/telephony.js js/utility.js
 	$(RM_RF) lib
