@@ -1,3 +1,0 @@
-# GAP
-
-### Blackberry
