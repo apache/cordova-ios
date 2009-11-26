@@ -1,35 +1,58 @@
 var timeout = null;
 var displayState = 0;
 var accel_watch_id;
-
-function start() {
-	try {
-		var options = new Object();
-		options.frequency = 8000;
-		timeout = setInterval("animate()", 500);
-		
-		navigator.geolocation.watchPosition(updateLocation, function() {}, options);
-		navigator.ContactManager.getAllContacts(displayContacts, function() { alert('getallcontacts fail'); }, new Object());
-		
-		options.frequency = 1000;
-		accel_watch_id = navigator.accelerometer.watchAcceleration(updateAcceleration, function (ex) { navigator.accelerometer.clearWatch(accel_watch_id); alert("accel fail (" + ex.name + ": " + ex.message + ")"); }, options);
-		
-		options.frequency = 1000;
-		navigator.orientation.watchOrientation(updateOrientation, null, options);
-
-		var store = navigator.storage.getItem("store_test");
-
-		if (store) {
-			document.getElementById("storage_output").innerHTML = "You stored this: " + store;
-		}
-	
-	} catch (ex) {
-		alert(ex.name + " " + ex.message);
-	}
-}
+var CURRENT_VIEW = "CONTACTS";
+var current_menu = null;
 
 function init() {
-	start();
+	current_menu = document.getElementById("mnu-cont");
+}
+
+var changeView = function (e) {
+	if (current_menu)
+		current_menu.className = "menu-item";
+	current_menu = e.target;
+	e.target.className = "menu-item selected";
+	var id = e.target.innerHTML;
+	document.getElementById(CURRENT_VIEW).style.display = "none";
+	document.getElementById(id).style.display = "block";
+	CURRENT_VIEW = id;
+}
+
+function getLocation() {
+	var options = new Object();
+	options.frequency = 8000;
+	timeout = setInterval("animate()", 500);
+	navigator.geolocation.getCurrentPosition(updateLocation, function(){
+	}, options);
+}
+
+function watchAccel() {
+	var options = new Object();
+	options.frequency = 1000;
+	accel_watch_id = navigator.accelerometer.watchAcceleration(updateAcceleration, function(ex){
+		navigator.accelerometer.clearWatch(accel_watch_id);
+		alert("accel fail (" + ex.name + ": " + ex.message + ")");
+	}, options);
+}
+
+function watchOrientation() {
+	var options = new Object();
+	options.frequency = 1000;
+	navigator.orientation.watchOrientation(updateOrientation, null, options);
+}
+
+function getContacts() {
+	navigator.ContactManager.getAllContacts(displayContacts, function(){
+		alert('getallcontacts fail');
+	}, new Object());
+}
+
+function checkStorage() {
+	var store = navigator.storage.getItem("store_test");
+	if (store) {
+		document.getElementById("storage_output").innerHTML = "You stored this: " + store;
+	}
 }
 
 function updateLocation(position) {
@@ -63,7 +86,6 @@ function displayContacts() {
 function vibrate() {
 	try {
 		navigator.notification.vibrate(2000);
-		navigator.notification.beep(2000, 100);
 	} catch (ex) {
 		alert(ex.name + ": " + ex.message);
 	}
@@ -125,8 +147,8 @@ function cameraFailure(error) {
 	alert("camera fail: " + error.name + " - " + error.message);
 }
 
-function updateOrientation(e) {
-	document.getElementById("orientation").innerHTML = e.orientation;
+function updateOrientation(orientation) {
+	document.getElementById("orientation").innerHTML = orientation;
 }
 
 function testStorage(mode) {

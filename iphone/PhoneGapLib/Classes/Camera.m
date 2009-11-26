@@ -25,20 +25,27 @@
 		return;
 	}
 	
-	bool hasCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+	NSString* sourceTypeString = [options valueForKey:@"sourceType"];
+	UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeCamera; // default
+	if (sourceTypeString != nil) {
+		sourceType = (UIImagePickerControllerSourceType)[sourceTypeString intValue];
+	}
+	
+	bool hasCamera = [UIImagePickerController isSourceTypeAvailable:sourceType];
 	if (!hasCamera) {
-		NSLog(@"Camera.getPicture: Camera not available.");
+		NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
 		return;
 	}
 	
 	if (pickerController == nil) {
 		pickerController = [[CameraPicker alloc] init];
-		pickerController.delegate = self;
-		pickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-		pickerController.successCallback = successCallback;
-		pickerController.errorCallback = errorCallback;
-		pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
 	}
+	
+	pickerController.delegate = self;
+	pickerController.sourceType = sourceType;
+	pickerController.successCallback = successCallback;
+	pickerController.errorCallback = errorCallback;
+	pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
 	
 	[[super appViewController] presentModalViewController:pickerController animated:YES];
 }
