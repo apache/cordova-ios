@@ -26,23 +26,23 @@ clean_libs:
 	
 symbian.wrt: lib/phonegap.js
 
-lib/phonegap.js: javascripts/phonegap.js.base javascripts/acceleration.js javascripts/accelerometer.js javascripts/camera.js javascripts/camera/com.nokia.device.utility.js javascripts/camera/com.nokia.device.framework.js javascripts/camera/s60_camera.js javascripts/camera/com.nokia.device.camera.js javascripts/contact.js javascripts/device.js javascripts/geolocation.js javascripts/media.js javascripts/notification.js javascripts/orientation.js javascripts/position.js javascripts/sms.js javascripts/storage.js
+lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/camera.js js/camera/com.nokia.device.utility.js js/camera/com.nokia.device.framework.js js/camera/s60_camera.js js/camera/com.nokia.device.camera.js js/contact.js js/device.js js/geolocation.js js/media.js js/notification.js js/orientation.js js/position.js js/sms.js js/storage.js
 	$(MKPATH) lib
 	$(RM_F) $@
-	$(CAT) javascripts/phonegap.js.base >> $@
-	$(CAT) javascripts/acceleration.js >> $@
-	$(CAT) javascripts/accelerometer.js >> $@
-	$(CAT) javascripts/camera.js >> $@
-	$(CAT) javascripts/camera/com.nokia.device.utility.js >> $@
-	$(CAT) javascripts/camera/com.nokia.device.framework.js >> $@
-	$(CAT) javascripts/camera/s60_camera.js >> $@
-	$(CAT) javascripts/camera/com.nokia.device.camera.js >> $@
-	$(CAT) javascripts/contact.js >> $@
-	$(CAT) javascripts/device.js >> $@
-	$(CAT) javascripts/geolocation.js >> $@
-	$(CAT) javascripts/media.js >> $@
-	$(CAT) javascripts/notification.js >> $@
-	$(CAT) javascripts/orientation.js >> $@
-	$(CAT) javascripts/position.js >> $@
-	$(CAT) javascripts/sms.js >> $@
-	$(CAT) javascripts/storage.js >> $@
+	$(CAT) js/phonegap.js.base >> $@
+	$(CAT) js/acceleration.js >> $@
+	$(CAT) js/accelerometer.js >> $@
+	$(CAT) js/camera.js >> $@
+	$(CAT) js/camera/com.nokia.device.utility.js >> $@
+	$(CAT) js/camera/com.nokia.device.framework.js >> $@
+	$(CAT) js/camera/s60_camera.js >> $@
+	$(CAT) js/camera/com.nokia.device.camera.js >> $@
+	$(CAT) js/contact.js >> $@
+	$(CAT) js/device.js >> $@
+	$(CAT) js/geolocation.js >> $@
+	$(CAT) js/media.js >> $@
+	$(CAT) js/notification.js >> $@
+	$(CAT) js/orientation.js >> $@
+	$(CAT) js/position.js >> $@
+	$(CAT) js/sms.js >> $@
+	$(CAT) js/storage.js >> $@
