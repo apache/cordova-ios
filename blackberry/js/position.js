@@ -1,5 +1,5 @@
 
-function Position(coords, timestamp) {
+function Position(coords) {
 	this.coords = coords;
     this.timestamp = new Date().getTime();
 }
