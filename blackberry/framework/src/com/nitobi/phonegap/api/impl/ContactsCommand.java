@@ -49,7 +49,7 @@ public class ContactsCommand implements Command {
 	private static final int REMOVE_COMMAND = 3;
 	private static final int NEW_COMMAND = 4;
 	private static final String CODE = "PhoneGap=contacts"; 
-	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.ContactManager";
+	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.AddressBook";
 	
 	private static final String ERROR_NO_CONTACTID = ";alert('[PhoneGap Error] Contact ID not specified during contact removal operation.');";
 

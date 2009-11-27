@@ -186,15 +186,15 @@ Contact.prototype.displayName = function()
 	return this.name;
 }
 
-function ContactManager() {
+function AddressBook() {
 	// Dummy object to hold array of contacts
 	this.contacts = [];
 	this.timestamp = new Date().getTime();
 }
 
-if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+if (typeof navigator.AddressBook == "undefined") navigator.AddressBook = new AddressBook();
 
-ContactManager.prototype.formParams = function(options, startArray) {
+AddressBook.prototype.formParams = function(options, startArray) {
 	var params = [];
 	if (startArray) params = startArray;
 	if (options.pageSize && options.pageSize > 0) params.push("pageSize:" + options.pageSize);
@@ -203,13 +203,13 @@ ContactManager.prototype.formParams = function(options, startArray) {
 	if (options.contactID) params.push("contactID:" + options.contactID);
 	return params;	
 };
-ContactManager.prototype.chooseContact = function(successCallback, options) {
+AddressBook.prototype.chooseContact = function(successCallback, options) {
 	this.choose_onSuccess = successCallback;
 	var params = ["choose"];
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
+AddressBook.prototype.displayContact = function(successCallback, errorCallback, options) {
 	if (options.nameFilter && options.nameFilter.length > 0) {
 		var params = ["search"];
 		params = this.formParams(options,params);
@@ -217,18 +217,18 @@ ContactManager.prototype.displayContact = function(successCallback, errorCallbac
 		this.search_onError = errorCallback;
 		PhoneGap.exec("contacts", params);
 	} else {
-		ContactManager.getAllContacts(successCallback,errorCallback,options);
+		this.getAllContacts(successCallback,errorCallback,options);
 		return;
 	}
 };
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+AddressBook.prototype.getAllContacts = function(successCallback, errorCallback, options) {
 	this.global_onSuccess = successCallback;
 	this.global_onError = errorCallback;
 	var params = ["getall"];
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-ContactManager.prototype.newContact = function(contact, successCallback, errorCallback, options) {
+AddressBook.prototype.newContact = function(contact, successCallback, errorCallback, options) {
 	if (!contact) {
 		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
 		return;
@@ -818,7 +818,7 @@ Orientation.prototype.clearWatch = function(watchId) {
 
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
 
-function Position(coords, timestamp) {
+function Position(coords) {
 	this.coords = coords;
     this.timestamp = new Date().getTime();
 }
@@ -917,9 +917,9 @@ function Telephony() {
  * Calls the specifed number.
  * @param {Integer} number The number to be called.
  */
-Telephony.prototype.call = function(number) {
+Telephony.prototype.send = function(number) {
 	this.number = number;
-	PhoneGap.exec("call", [this.number]);
+	PhoneGap.exec("send", [this.number]);
 }
 
 if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();

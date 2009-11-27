@@ -41,7 +41,7 @@ AddressBook.prototype.chooseContact = function(successCallback, options) {
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-AddressBook.prototype.displayContact = function(successCallback, errorCallback, options) {
+AddressBook.prototype.findContacts = function(successCallback, errorCallback, options) {
 	if (options.nameFilter && options.nameFilter.length > 0) {
 		var params = ["search"];
 		params = this.formParams(options,params);
@@ -60,7 +60,7 @@ AddressBook.prototype.getAllContacts = function(successCallback, errorCallback, 
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-AddressBook.prototype.newContact = function(contact, successCallback, errorCallback, options) {
+AddressBook.prototype.addContact = function(contact, successCallback, errorCallback, options) {
 	if (!contact) {
 		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
 		return;
