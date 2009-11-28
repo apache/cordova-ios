@@ -209,7 +209,7 @@ AddressBook.prototype.chooseContact = function(successCallback, options) {
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-AddressBook.prototype.displayContact = function(successCallback, errorCallback, options) {
+AddressBook.prototype.findContacts = function(successCallback, errorCallback, options) {
 	if (options.nameFilter && options.nameFilter.length > 0) {
 		var params = ["search"];
 		params = this.formParams(options,params);
@@ -228,7 +228,7 @@ AddressBook.prototype.getAllContacts = function(successCallback, errorCallback, 
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-AddressBook.prototype.newContact = function(contact, successCallback, errorCallback, options) {
+AddressBook.prototype.addContact = function(contact, successCallback, errorCallback, options) {
 	if (!contact) {
 		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
 		return;
@@ -417,8 +417,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var delay = 0;
     var timer = setInterval(function() {
         delay += interval;
-
-        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+        if (dis.lastPosition != null && dis.lastPosition.timestamp > referenceTime) {
             successCallback(dis.lastPosition);
             clearInterval(timer);
         } else if (delay >= timeout) {
