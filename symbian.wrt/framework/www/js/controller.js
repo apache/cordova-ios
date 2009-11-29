@@ -21,38 +21,10 @@ var changeView = function (e) {
 
 function getLocation() {
 	var options = new Object();
-	options.frequency = 8000;
+	options.frequency = 5000;
 	timeout = setInterval("animate()", 500);
-	navigator.geolocation.getCurrentPosition(updateLocation, function(){
+	navigator.geolocation.watchPosition(updateLocation, function(){
 	}, options);
-}
-
-function watchAccel() {
-	var options = new Object();
-	options.frequency = 1000;
-	accel_watch_id = navigator.accelerometer.watchAcceleration(updateAcceleration, function(ex){
-		navigator.accelerometer.clearWatch(accel_watch_id);
-		alert("accel fail (" + ex.name + ": " + ex.message + ")");
-	}, options);
-}
-
-function watchOrientation() {
-	var options = new Object();
-	options.frequency = 1000;
-	navigator.orientation.watchOrientation(updateOrientation, null, options);
-}
-
-function getContacts() {
-	navigator.ContactManager.getAllContacts(displayContacts, function(){
-		alert('getallcontacts fail');
-	}, new Object());
-}
-
-function checkStorage() {
-	var store = navigator.storage.getItem("store_test");
-	if (store) {
-		document.getElementById("storage_output").innerHTML = "You stored this: " + store;
-	}
 }
 
 function updateLocation(position) {
@@ -64,6 +36,19 @@ function updateLocation(position) {
 	document.getElementById('altitude').innerHTML = pt.altitude;
 	document.getElementById('heading').innerHTML = pt.heading;
 	document.getElementById('speed').innerHTML = pt.speed;
+	var dt = new Date();
+	dt.setTime(position.timestamp);
+	document.getElementById('timestamp').innerHTML = dt.getHours() + ":" + 
+		dt.getMinutes() + ":" + dt.getSeconds();
+}
+
+function watchAccel() {
+	var options = new Object();
+	options.frequency = 1000;
+	accel_watch_id = navigator.accelerometer.watchAcceleration(updateAcceleration, function(ex){
+		navigator.accelerometer.clearWatch(accel_watch_id);
+		alert("accel fail (" + ex.name + ": " + ex.message + ")");
+	}, options);
 }
 
 function updateAcceleration(accel) {
@@ -72,15 +57,36 @@ function updateAcceleration(accel) {
 	document.getElementById('accel_z').innerHTML = accel.z;
 }
 
-function displayContacts() {
-	var contacts = navigator.ContactManager.contacts;
+function watchOrientation() {
+	var options = new Object();
+	options.frequency = 1000;
+	navigator.orientation.watchOrientation(updateOrientation, null, options);
+}
+
+function getContacts() {
+	var filter = document.getElementById("contact-filter").value;
+	navigator.contacts.find({ name: filter }, displayContacts, function(){
+		alert('getallcontacts fail');
+	}, { limit:200, page:1 });
+}
+
+function displayContacts(contacts) {
 	var output = "";
 	for (var i=0; i<contacts.length; i++) {
-		output += 	"<div class='list-item'>" + contacts[i].firstName + " " + contacts[i].lastName +
-					"<span class='list-item-small'> Phone: " + contacts[i].phones["Mobile"] +
+		var phone = getNonEmptyNumber(contacts[i]);
+		output += 	"<div class='list-item'>" + contacts[i].givenName + " " + contacts[i].familyName +
+					"<span class='list-item-small'> Phone(" + phone.type + "): " + phone.number +
 					"</div>";
 	}
 	document.getElementById('contacts').innerHTML = output;
+}
+
+function getNonEmptyNumber(contact) {
+	for (var i=0; i<contact.phones.length; i++) {
+		if (contact.phones[i].number != undefined && contact.phones[i].number != "")
+			return contact.phones[i];
+	}
+	return contact.phones[0];
 }
 
 function vibrate() {
@@ -149,6 +155,13 @@ function cameraFailure(error) {
 
 function updateOrientation(orientation) {
 	document.getElementById("orientation").innerHTML = orientation;
+}
+
+function checkStorage() {
+	var store = navigator.storage.getItem("store_test");
+	if (store) {
+		document.getElementById("storage_output").innerHTML = "You stored this: " + store;
+	}
 }
 
 function testStorage(mode) {
