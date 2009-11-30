@@ -195,23 +195,9 @@
  When web application loads Add stuff to the DOM, mainly the user-defined settings from the Settings.plist file, and
  the device's data such as device ID, platform version, etc.
  */
-- (void)webViewDidStartLoad:(UIWebView *)theWebView {
-	NSDictionary *deviceProperties = [[self getCommandInstance:@"Device"] deviceProperties];
-    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
-    
-    /* Settings.plist
-	 * Read the optional Settings.plist file and push these user-defined settings down into the web application.
-	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
-     * such as specifying Full / Lite version, or localization (English vs German, for instance).
-	 */
-    NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"Settings"];
-    if ([temp respondsToSelector:@selector(JSONFragment)]) {
-        [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
-    }
+- (void)webViewDidStartLoad:(UIWebView *)theWebView 
+{
 
-    NSLog(@"Device initialization: %@", result);
-    [theWebView stringByEvaluatingJavaScriptFromString:result];
-	[result release];
     
 	// Play any default movie
 	if(![[[UIDevice currentDevice] model] isEqualToString:@"iPhone Simulator"]) {
@@ -303,6 +289,25 @@
 	/*
 	 * Hide the Top Activity THROBER in the Battery Bar
 	 */
+	
+	NSDictionary *deviceProperties = [[self getCommandInstance:@"Device"] deviceProperties];
+    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
+    
+    /* Settings.plist
+	 * Read the optional Settings.plist file and push these user-defined settings down into the web application.
+	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
+     * such as specifying Full / Lite version, or localization (English vs German, for instance).
+	 */
+	
+    NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"Settings"];
+    if ([temp respondsToSelector:@selector(JSONFragment)]) {
+        [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
+    }
+	
+    NSLog(@"Device initialization: %@", result);
+    [theWebView stringByEvaluatingJavaScriptFromString:result];
+	[result release];
+	
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 	activityView.hidden = YES;	
 
