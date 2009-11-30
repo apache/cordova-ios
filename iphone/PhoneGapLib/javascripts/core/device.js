@@ -3,31 +3,27 @@
  * phone, etc.
  * @constructor
  */
-function Device() {
-    this.available = PhoneGap.available;
+function Device() 
+{
     this.platform = null;
     this.version  = null;
     this.name     = null;
     this.gap      = null;
     this.uuid     = null;
-    try {
-        if (window.DroidGap) {
-            this.available = true;
-            this.uuid = window.DroidGap.getUuid();
-            this.version = window.DroidGap.getOSVersion();
-            this.gapVersion = window.DroidGap.getVersion();
-            this.platform = window.DroidGap.getPlatform();
-            this.name = window.DroidGap.getProductName();  
-        } else {          
-            this.platform = DeviceInfo.platform;
-            this.version  = DeviceInfo.version;
-            this.name     = DeviceInfo.name;
-            this.gap      = DeviceInfo.gap;
-            this.uuid     = DeviceInfo.uuid;
-        }
-    } catch(e) {
-        this.available = false;
+    try 
+	{      
+		this.platform = DeviceInfo.platform;
+		this.version  = DeviceInfo.version;
+		this.name     = DeviceInfo.name;
+		this.gap      = DeviceInfo.gap;
+		this.uuid     = DeviceInfo.uuid;
+
+    } 
+	catch(e) 
+	{
+        // TODO: 
     }
+	this.available = PhoneGap.available = this.uuid != null;
 }
 
 PhoneGap.addConstructor(function() {

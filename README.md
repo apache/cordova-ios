@@ -3,27 +3,25 @@ PhoneGap
 =============================================================
 PhoneGap is a development tool that allows web developers to 
 take advantage of the core features in the iPhone, Android,
-BlackBerry, and Symbian WRT (Nokia) SDK using JavaScript.
+BlackBerry, and Symbian with a unified JavaScript API.
 
 
 Get Started
 -------------------------------------------------------------
-Download the source.
+Get the source.
 
     git clone git://github.com/phonegap/phonegap.git
     
 PhoneGap project is separated into a native project for each 
-device, javascript files and a rakefile.
+device.
 
     phonegap
       |- README.md
-      |- Rakefile
       |- android/
       |- blackberry/
       |- iphone/
       |- symbian.wrt/
-      |- winmo/
-      `- javascripts/
+      `- winmo/ (not production ready)
       
 Each project has a respective README.md file. view that file 
 for detailed information on how to work with that device. PhoneGap 
@@ -36,15 +34,18 @@ API
 
 ### Device
 
-Exposes properties of the phone, such as its device ID, model, and OS version number.
+Exposes properties of the phone, such as its device ID, model, 
+and OS version number.
 
 ### Location
 
-Gain access to the Latitude / Longitude of the device, and depending on the type of device, the course, speed, and altitude.
+Gain access to the Latitude / Longitude of the device, and 
+depending on the type of device, the course, speed, and altitude.
     
 ### Accelerometer
 
-Monitor the accelerometer on the device to detect orientation, shaking and other similar actions.
+Monitor the accelerometer on the device to detect orientation, 
+shaking and other similar actions.
     
 ### Contacts
 
@@ -56,7 +57,8 @@ Read the device layout orientation, e.g. landscape vs portrait.
 
 ### Camera
 
-Brings up the camera or photo browser on the phone to allow the user to upload a photo.
+Brings up the camera or photo browser on the phone to allow the 
+user to upload a photo.
 
 ### Vibrate
 
@@ -70,12 +72,13 @@ Play sound files (WAV, MP3, etc).
 
 Trigger and activate phone calls.
 
+
 XUI
 -------------------------------------------------------------
 You may work with any Javascript framework within a PhoneGap 
 application. [XUI](http://xuijs.com) is the "officially preferred" 
 framework of the phonegap core team. XUI is inspired by JQuery, 
-optimized for web browsers and weighs in at 6.2k (2.4k minified and gziped).
+optimized for web browsers and weighs in at 2.4k (minified and gziped).
 
 
 Community
@@ -86,10 +89,16 @@ Community
   * Twitter - [twitter.com/phonegap](http://twitter.com/phonegap)
   * Issue Tracker [phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/)
   
-  
+
+Contribute
+-------------------------------------------------------------
+Fork, commit, push, and send us a pull request at phonegap/phonegap.
+
+
 The MIT License
 -------------------------------------------------------------
-Copyright (c) 2008, Rob Ellis, Brock Whitten, Brian Leroux, Joe Bowser, Dave Johnson, Nitobi
+Copyright (c) 2008
+Rob Ellis, Brock Whitten, Brian Leroux, Joe Bowser, Dave Johnson, Nitobi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -108,7 +117,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
--------------------------------------------------------------
-
-*phonegap is a [nitobi](http://nitobi.com) sponsored project*
