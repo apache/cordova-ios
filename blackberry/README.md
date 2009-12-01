@@ -32,7 +32,8 @@ Create a PhoneGap project with Eclipse
 
 Building PhoneGap BlackBerry Projects with Apache Ant
 -------------------------------------------------------------
-You'll need all the prerequisites listed by BB Ant Tools (http://bb-ant-tools.sourceforge.net/).
+You'll need all the prerequisites listed by BB Ant Tools (http://bb-ant-tools.sourceforge.net/). If you want access to building using Ant from Eclipse,
+check out http://www.slashdev.ca/2007/05/30/blackberry-development-with-ant-eclipse/ for instructions on how to do it.
 
 1. Once you have cloned the PhoneGap repository, put your HTML, CSS and JavaScript application files in the phonegap/blackberry/framework/src/www folder.
 2. Edit the build.xml file in phonegap/blackberry/framework and set the paths at the top of the file, in the <property> elements, to match

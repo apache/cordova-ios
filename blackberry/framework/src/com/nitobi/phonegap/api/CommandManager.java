@@ -51,7 +51,7 @@ public final class CommandManager {
 		commands[1] = new ContactsCommand();
 		commands[2] = new NotificationCommand();
 		commands[3] = new TelephonyCommand();
-		commands[4] = new GeoLocationCommand();
+		commands[4] = new GeoLocationCommand(phoneGap);
 		commands[5] = new DeviceCommand();	
 		commands[6] = new MediaCommand();
 		commands[7] = new NetworkCommand(phoneGap);
