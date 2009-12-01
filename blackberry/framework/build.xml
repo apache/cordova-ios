@@ -13,6 +13,8 @@
 	<property name="cod.name" value="AntPGTest" />
 	<!-- password for the Signature Tool -->
 	<property name="password" value="myPassword" />
+	<!-- name of the application, as it appears in the BlackBerry menu -->
+	<property name="application.name" value="PhoneGap BlackBerry Test" />
  
  	<target name="build">
 		<delete dir="www" />
@@ -28,7 +30,7 @@
 	      		<fileset dir="src" />
 	      		<fileset dir="www" />
 			</src>
-			<jdp title="PhoneGap BlackBerry" />
+			<jdp title="${application.name}" />
 		</rapc>
 		<mkdir dir="src/www" />
 		<copy todir="src/www">
