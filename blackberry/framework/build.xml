@@ -55,8 +55,9 @@
  
 	<target name="load-simulator" depends="sign">
 		<copy todir="${simulator.home}">
-			<fileset dir="${build.dir}" includes="*.cod,*.cso,*.debug,*.jad,*.jar" />
+			<fileset dir="${build.dir}" includes="*.cod,*.cso,*.debug,*.jad,*.jar,*.csl,*.rapc" />
 		</copy>
+		<exec executable="${simulator.home}/defaultSimulator.bat" dir="${simulator.home}" spawn="true"></exec>
 	</target>
 	<target name="load-device" depends="sign">
 		<exec executable="${jde.home}/bin/JavaLoader.exe" dir="." failonerror="true">

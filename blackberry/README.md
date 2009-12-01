@@ -36,11 +36,12 @@ You'll need all the prerequisites listed by BB Ant Tools (http://bb-ant-tools.so
 
 1. Once you have cloned the PhoneGap repository, put your HTML, CSS and JavaScript application files in the phonegap/blackberry/framework/src/www folder.
 2. Edit the build.xml file in phonegap/blackberry/framework and set the paths at the top of the file, in the <property> elements, to match
-   your environment setup.
+   your environment setup. Also be sure to set your signature key password in the password <property>.
 3. Open up a command-line and, assuming you have Ant on your system PATH, cd over to phonegap/blackberry/framework directory.
-4. Run 'ant' from the command-line. It'll default to the 'build' task, which will build your binaries. You can also explicitly specify other tasks to run:
+4. Run 'ant' from the command-line. It'll default to the 'build' task, which will build your binaries into the 'build' directory. You can also
+   explicitly specify other tasks to run:
    a) 'ant sign': 			Runs the 'build' task first, and then runs the signature tool on the compiled binary. Make sure to specify the 'password'
 							property at the top of the build.xml file, otherwise the signature tool will fail!
    b) 'ant load-simulator': Runs the 'sign' task first, then copies the signed binaries over to the simulator directory you specified at the top of the
-							build.xml. When you run the simulator, you should see your application under the BB Menu -> Downloads.
+							build.xml and finally runs the simulator. You should see your application under the BB Menu -> Downloads.
    c) 'ant load-device':	Runs the 'sign' task first, then executes the javaloader tool to load the signed binaries onto an attached (via USB) device.
