@@ -4,18 +4,16 @@
  */
 
 function Contact(jsonObject) {
-	this.firstName = "";
-	this.lastName = "";
-    this.name = "";
-    this.phones = {};
-    this.emails = {};
-  	this.address = "";
+    this.name = {
+		formatted:''
+	};
+    this.phones = [];
+    this.emails = [];
+  	this.id = "";
 }
 
-Contact.prototype.displayName = function()
-{
-    // TODO: can be tuned according to prefs
-	return this.name;
+Contact.prototype.displayName = function() {
+	return this.name.formatted;
 }
 
 function Contacts() {
