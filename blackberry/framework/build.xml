@@ -12,7 +12,7 @@
 	<!-- name of the binaries to generate (i.e. <blah>.cod, <blah>.jar, etc.) -->
 	<property name="cod.name" value="AntPGTest" />
 	<!-- password for the Signature Tool -->
-	<property name="password" value="some_random_password" />
+	<property name="password" value="myPassword" />
  
  	<target name="build">
 		<delete dir="www" />
@@ -36,7 +36,7 @@
 		</copy>
 		<delete dir="www" />
  		<copy todir="${build.dir}">
- 			<fileset dir="" includes="*.cod,*.cso,*.debug,*.jad,*.jar" />
+ 			<fileset dir="" includes="*.cod,*.cso,*.debug,*.jad,*.jar,*.csl,*.rapc" />
  		</copy>
  		<delete file="${cod.name}.cod" />
  		<delete file="${cod.name}.cso" />
