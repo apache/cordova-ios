@@ -28,12 +28,13 @@ copy_js:
 	cp lib/phonegap.js framework/www/phonegap.js
 	
 install:
+	cp framework/www/index.html framework/www/app/views/First/First-scene.html
 	palm-package framework/www/
 	palm-install com.nitobi.phonegap_1.0.0_all.ipk
 	
 js: lib/phonegap.js
 
-lib/phonegap.js: js/acceleration.js js/accelerometer.js js/device.js js/geolocation.js js/network.js js/notification.js js/position.js
+lib/phonegap.js: js/acceleration.js js/accelerometer.js js/device.js js/geolocation.js js/network.js js/notification.js js/orientation.js js/position.js
 	$(MKPATH) lib
 	$(RM_F) $@
 	$(CAT) js/acceleration.js >> $@
@@ -42,4 +43,5 @@ lib/phonegap.js: js/acceleration.js js/accelerometer.js js/device.js js/geolocat
 	$(CAT) js/geolocation.js >> $@
 	$(CAT) js/network.js >> $@
 	$(CAT) js/notification.js >> $@
+	$(CAT) js/orientation.js >> $@
 	$(CAT) js/position.js >> $@

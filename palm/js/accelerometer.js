@@ -88,7 +88,6 @@ Accelerometer.prototype.start = function() {
 	Mojo.Event.listen(document, "acceleration", function(event) {
 		var accel = new Acceleration(event.accelX, event.accelY, event.accelZ);
 		that.lastAcceleration = accel;
-		Mojo.Log.error(that.lastAcceleration.timestamp);
 	});
 }
 

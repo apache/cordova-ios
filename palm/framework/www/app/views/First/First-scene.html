@@ -1,12 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>PhoneGap index</title>
+	<script src="/usr/palm/frameworks/mojo/mojo.js" type="text/javascript" x-mojo-version="1" />
+	<script src="phonegap.js" type="text/javascript" />
 
-<!-- div name="GetButton" id="GetButton" x-mojo-element="Button"></div>
-<div id="geo-output"></div>
-<div id="network-output"></div>
-
-<h2>This text verifies your application is running.</h2>
-<p>
-To create a fully functional Palm application create a scene and remove this text from index.html.  
-See the documentation on Palm Applications for more information on creating applications and scenes.
-</p -->
-
-<div x-mojo-element="WebView" id="WebId" class="WebId" name="WebId"></div>
+	<!-- application stylesheet should come in after the one loaded by the framework -->
+	<link href="stylesheets/phonegap.css" media="screen" rel="stylesheet" type="text/css" />
+	<script type="text/javascript">
+		function go() {
+			navigator.geolocation.watchPosition(displayPosition, function() {}, { interval: 5000 });
+			navigator.network.isReachable(null, function(result) {
+				$('network-output').innerHTML = "<p>" + (result? "Network is reachable" : "Network unreachable") + "</p>";
+			});
+			$('device-info').innerHTML = "<p>Device uuid: " + navigator.device.uuid + "</p>";
+			navigator.accelerometer.watchAcceleration(displayAcceleration);
+			navigator.orientation.watchOrientation(function(orient) {
+				$("orientation").innerHTML = "<p>Orientation: " + orient + "</p>"; 
+			}, null, { interval: 500 });
+		}
+		function displayPosition() {
+			var pos = navigator.geolocation.lastPosition.coords;
+			$('geo-output').innerHTML = "<p>Geo Info:<br/>" + 
+						"latitude: " + pos.latitude + "<br/>" + 
+						"longitude: " + pos.longitude + "<br/>" + 
+						"altitude: " + pos.altitude + "<br/>" + 
+						"speed: " + pos.speed + "<br/>" + 
+						"heading: " + pos.heading + "<br/>" + 
+						"accuracy: " + pos.accuracy + "</p>";
+			try{
+			//navigator.notification.vibrate();
+			navigator.notification.beep();
+			} catch (ex) {Mojo.Log.error(ex.name + ": " + ex.message);}
+		}
+		
+		function displayAcceleration() {
+			var accel = navigator.accelerometer.lastAcceleration;
+			$('accel').innerHTML = "<p>Accel Info:<br/>" + 
+						"X-ACCEL: " + accel.x + "<br/>" + 
+						"Y-ACCEL: " + accel.y + "<br/>" + 
+						"Z-ACCEL: " + accel.z + "<br/>" + 
+						"TIMESTAMP: " + accel.timestamp + "</p>";
+		}
+	</script>
+</head>
+<body>
+	<p><a href="#" onclick="go()">GO index</a></p>
+	<div id="accel"></div>
+	<div id="device-info"></div>
+	<div id="network-output"></div>
+	<div id="geo-output"></div>
+	<div id="orientation"></div>
+</body>
+</html>
