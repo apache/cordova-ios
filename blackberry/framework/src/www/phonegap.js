@@ -172,93 +172,61 @@ if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
  */
 
 function Contact(jsonObject) {
-	this.firstName = "";
-	this.lastName = "";
-    this.name = "";
-    this.phones = {};
-    this.emails = {};
-  	this.address = "";
+    this.name = {
+		formatted:''
+	};
+    this.phones = [];
+    this.emails = [];
+  	this.id = "";
 }
 
-Contact.prototype.displayName = function()
-{
-    // TODO: can be tuned according to prefs
-	return this.name;
+Contact.prototype.displayName = function() {
+	return this.name.formatted;
 }
 
-function ContactManager() {
+function Contacts() {
 	// Dummy object to hold array of contacts
 	this.contacts = [];
 	this.timestamp = new Date().getTime();
 }
 
-if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+if (typeof navigator.contacts == "undefined") navigator.contacts = new Contacts();
 
-ContactManager.prototype.formParams = function(options, startArray) {
+Contacts.prototype.formParams = function(options, startArray) {
 	var params = [];
 	if (startArray) params = startArray;
-	if (options.pageSize && options.pageSize > 0) params.push("pageSize:" + options.pageSize);
-	if (options.pageNumber) params.push("pageNumber:" + options.pageNumber);
-	if (options.nameFilter) params.push("nameFilter:" + options.nameFilter);
-	if (options.contactID) params.push("contactID:" + options.contactID);
+	if (options.limit && options.limit > 0) params.push("pageSize:" + options.limit);
+	if (options.page) params.push("pageNumber:" + options.page);
 	return params;	
 };
-ContactManager.prototype.chooseContact = function(successCallback, options) {
+Contacts.prototype.chooseContact = function(successCallback, options) {
 	this.choose_onSuccess = successCallback;
 	var params = ["choose"];
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
 };
-ContactManager.prototype.displayContact = function(successCallback, errorCallback, options) {
-	if (options.nameFilter && options.nameFilter.length > 0) {
+Contacts.prototype.find = function(filter, successCallback, errorCallback, options) {
+	if (typeof(filter) != 'object') {
+		alert('[PhoneGap Error] filter parameter passed into navigator.contacts.find must be of type object.');
+		return;
+	}
+	if (filter.name && filter.name.length > 0) {
 		var params = ["search"];
+		params.push('nameFilter:' + filter.name);
 		params = this.formParams(options,params);
 		this.search_onSuccess = successCallback;
 		this.search_onError = errorCallback;
 		PhoneGap.exec("contacts", params);
 	} else {
-		ContactManager.getAllContacts(successCallback,errorCallback,options);
-		return;
+		this.getAllContacts(successCallback,errorCallback,options);
 	}
 };
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+Contacts.prototype.getAllContacts = function(successCallback, errorCallback, options) {
 	this.global_onSuccess = successCallback;
 	this.global_onError = errorCallback;
 	var params = ["getall"];
 	params = this.formParams(options,params);
 	PhoneGap.exec("contacts", params);
-};
-ContactManager.prototype.newContact = function(contact, successCallback, errorCallback, options) {
-	if (!contact) {
-		alert("[PhoneGap Error] newContact function not provided with a contact parameter.");
-		return;
-	} else {
-		if (!contact.firstName || !contact.lastName || !contact.phoneNumber || !contact.address || !contact.email) {
-			alert("[PhoneGap Error] newContact function parameter 'contact' does not have proper contact members (firstName, lastName, phoneNumber, address and email).");
-			return;
-		}
-		options.push("firstName:" + contact.firstName);
-		options.push("lastName:" + contact.lastName);
-		options.push("address:" + contact.address);
-		// Create a phone number parameter that we can parse on the BlackBerry end.
-		var phones = '';
-		for (var i = 0; i < contact.phoneNumber.length; i++) {
-			phones += contact.phoneNumber[i].label + '=';
-			phones += contact.phoneNumber[i].value + '|';
-		}
-		options.push("phoneNumber:" + phones.substr(0,phones.length-1));
-		var emails = '';
-		for (var j = 0; j < contact.email.length; j++) {
-			emails += contact.email[j].label + '=';
-			emails += contact.email[j].value + '|';
-		}
-		options.push("email:" + emails.substr(0,emails.length-1));
-		this.new_onSuccess = successCallback;
-		this.new_onError = errorCallback;
-		var params = ["new"];
-		params = this.formParams(options,params);
-		PhoneGap.exec("contacts", params);
-	}
 };/**
  * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
  * phone, etc.
@@ -417,8 +385,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var delay = 0;
     var timer = setInterval(function() {
         delay += interval;
-
-        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+        if (dis.lastPosition != null && dis.lastPosition.timestamp > referenceTime) {
             successCallback(dis.lastPosition);
             clearInterval(timer);
         } else if (delay >= timeout) {
@@ -818,7 +785,7 @@ Orientation.prototype.clearWatch = function(watchId) {
 
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
 
-function Position(coords, timestamp) {
+function Position(coords) {
 	this.coords = coords;
     this.timestamp = new Date().getTime();
 }
@@ -917,9 +884,9 @@ function Telephony() {
  * Calls the specifed number.
  * @param {Integer} number The number to be called.
  */
-Telephony.prototype.call = function(number) {
+Telephony.prototype.send = function(number) {
 	this.number = number;
-	PhoneGap.exec("call", [this.number]);
+	PhoneGap.exec("send", [this.number]);
 }
 
 if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();

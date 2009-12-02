@@ -49,7 +49,7 @@ public class ContactsCommand implements Command {
 	private static final int REMOVE_COMMAND = 3;
 	private static final int NEW_COMMAND = 4;
 	private static final String CODE = "PhoneGap=contacts"; 
-	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.ContactManager";
+	private static final String CONTACT_MANAGER_JS_NAMESPACE = "navigator.contacts";
 	
 	private static final String ERROR_NO_CONTACTID = ";alert('[PhoneGap Error] Contact ID not specified during contact removal operation.');";
 
@@ -279,7 +279,7 @@ public class ContactsCommand implements Command {
 		// TODO: Eventually extend this to return proper labels/values for differing phone/email types.
 		buff.append("{");
 		if (contact.countValues(Contact.EMAIL) > 0) {
-			buff.append("email:[{'label':'mobile','value':'");
+			buff.append("emails:[{'types':['mobile'],'address':'");
 			buff.append(contact.getString(Contact.EMAIL, 0));
 			buff.append("'}]");
 		}
@@ -300,7 +300,7 @@ public class ContactsCommand implements Command {
 			}
 			if (sentinel) {
 				if (buff.length() > 1) buff.append(",");
-				buff.append("phoneNumber:[{'label':'mobile','value':'");
+				buff.append("phoneNumber:[{'types':['mobile'],'number':'");
 				buff.append(phoneMobile);
 				buff.append("'}]");
 			}
@@ -308,30 +308,16 @@ public class ContactsCommand implements Command {
 		// See if there is a meaningful name set for the contact.
 	    if (contact.countValues(Contact.NAME) > 0) {
 	    	if (buff.length() > 1) buff.append(",");
-	    	buff.append("firstName:'");
+			buff.append("name:{");
+	    	buff.append("givenName:'");
 	        final String[] name = contact.getStringArray(Contact.NAME, 0);
 	        final String firstName = name[Contact.NAME_GIVEN];
 	        final String lastName = name[Contact.NAME_FAMILY];
-	        buff.append((firstName != null ? firstName : "") + "',lastName:'");
+	        buff.append((firstName != null ? firstName : "") + "',familyName:'");
 	        buff.append((lastName != null ? lastName : "") + "'");
-	    }
-	    if (buff.length() > 1) buff.append(",");
-	    buff.append("address:'");
-	    // Build up a meaningful address field.
-	    if (contact.countValues(Contact.ADDR) > 0) {
-	    	String address = "";
-	    	final String[] addr = contact.getStringArray(Contact.ADDR, 0);
-	    	final String street = addr[Contact.ADDR_STREET];
-	    	final String city = addr[Contact.ADDR_LOCALITY];
-	    	final String state = addr[Contact.ADDR_REGION];
-	    	final String country = addr[Contact.ADDR_COUNTRY];
-	    	final String postalCode = addr[Contact.ADDR_POSTALCODE];
-	    	if (street!=null) address = street.replace('\'',' ');
-	    	if (city!=null) if (address.length() > 0) address += ", " + city.replace('\'',' '); else address = city.replace('\'',' ');
-	    	if (state!=null) if (address.length() > 0) address += ", " + state.replace('\'',' '); else address = state.replace('\'',' ');
-	    	if (country!=null) if (address.length() > 0) address += ", " + country.replace('\'',' '); else address = country.replace('\'',' ');
-	    	if (postalCode!=null) if (address.length() > 0) address += ", " + postalCode.replace('\'',' '); else address = postalCode.replace('\'',' ');
-	    	buff.append(address);
+			String formatted = (firstName != null ? firstName : "");
+			formatted += (lastName != null? " " + lastName : "");
+			buff.append(",'formatted':'" + formatted + "'}");
 	    }
 		buff.append("'}");
 	}
