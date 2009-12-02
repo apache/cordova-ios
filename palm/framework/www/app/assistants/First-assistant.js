@@ -1,3 +1,4 @@
+
 function FirstAssistant() {
 	/* this is the creator function for your scene assistant object. It will be passed all the 
 	   additional parameters (after the scene name) that were passed to pushScene. The reference
@@ -13,7 +14,6 @@ FirstAssistant.prototype.setup = function() {
 	/* setup widgets here */
 	
 	/* add event handlers to listen to events from widgets */
-	
 }
 
 FirstAssistant.prototype.activate = function(event) {
