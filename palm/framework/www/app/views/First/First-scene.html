@@ -20,6 +20,11 @@
 			navigator.orientation.watchOrientation(function(orient) {
 				$("orientation").innerHTML = "<p>Orientation: " + orient + "</p>"; 
 			}, null, { interval: 500 });
+			Mojo.Log.error("yo");
+			navigator.file.read("file:///usr/palm/region.json", 
+				function (data) { Mojo.Log.error(data); }, 
+				function (ex) { Mojo.Log.error(ex.name + ": " + ex.message); 
+			} );
 		}
 		function displayPosition() {
 			var pos = navigator.geolocation.lastPosition.coords;
@@ -30,10 +35,8 @@
 						"speed: " + pos.speed + "<br/>" + 
 						"heading: " + pos.heading + "<br/>" + 
 						"accuracy: " + pos.accuracy + "</p>";
-			try{
 			//navigator.notification.vibrate();
 			navigator.notification.beep();
-			} catch (ex) {Mojo.Log.error(ex.name + ": " + ex.message);}
 		}
 		
 		function displayAcceleration() {

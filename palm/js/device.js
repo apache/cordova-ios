@@ -1,15 +1,15 @@
 function Device() {
-    this.platform = null;
+    this.platform = "palm";
     this.version  = null;
     this.name     = null;
     this.uuid     = null;
 
-	this.setUUID();
+	if (typeof Mojo != 'undefined')
+		this.setUUID();
 }
 
 Device.prototype.setUUID = function() {
 	//this is the only system property webos provides (may change?)
-	try {
 	var that = this;
 	this.service = new Mojo.Service.Request('palm://com.palm.preferences/systemProperties', {
 	    method:"Get",
@@ -17,10 +17,7 @@ Device.prototype.setUUID = function() {
 	    onSuccess: function(result) {
 			that.uuid = result["com.palm.properties.nduid"];
 		}
-    });
-	} catch (ex) {
-		Mojo.Log.error(ex.name + ": " + ex.message);
-	}	
+    });	
 }
 
 if (typeof navigator.device == 'undefined') navigator.device = new Device();

@@ -1,0 +1,11 @@
+/*
+ * TODO: there has gotta be a better way to do this.
+ * We need Mojo to be loaded before phonegap so that we can override the Position class (and possibly others?)
+ * So if mojo is not defined, include it, and then re-run phonegap.js.
+ * Hacky I know, since we include phonegap twice, but the load time of phonegap.js, being a local file, is negligible.
+ */
+
+if (typeof Mojo == 'undefined') {
+	document.write('<script src="/usr/palm/frameworks/mojo/mojo.js" type="text/javascript" x-mojo-version="1" />');
+	document.write('<script src="phonegap.js" type="text/javascript" />');
+}

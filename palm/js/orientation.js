@@ -49,10 +49,8 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 };
 
 Orientation.prototype.start = function (successCallback) {
-	Mojo.Log.error("starting");
 	var that = this;
 	Mojo.Event.listen(document, "orientationchange", function(event) {
-		Mojo.Log.error(event.position);
 		var orient = null;
 		switch (event.position) {
 			case 0: orient = "faceUp"; break;
