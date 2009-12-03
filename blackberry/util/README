@@ -1,0 +1,619 @@
+********************************************************************************
+*                         BlackBerry Ant Tools 1.2.4                           *
+********************************************************************************
+
+Prerequisites:
+--------------
+
+- RIM JDE (tested with 4.1 and up)
+- Java 1.5 or higher
+- Apache Ant 1.7.x or higher
+
+
+
+Using:
+------
+
+- Copy the bb-ant-tools.jar into the your Ant lib directory, in $HOME/.ant/lib,
+  or add bb-ant-tools.jar to the classpath in your build script.
+- Add the <typedef> to your build script, eg:
+  <typedef resource="bb-ant-defs.xml" />
+    or
+  <typedef resource="bb-ant-defs.xml" classpathref="bb-ant-tools.classpath" />
+- Enjoy (see examples below)
+
+
+
+Reference:
+----------
+
+The <rapc> and <sigtool> tasks will first try to get the "jde.home" property
+from the project.  If this property is not set, then the "jdehome" attribute
+must be explicitly set for these tasks.
+
+<rapc>
+
+Runs the rapc compiler. The rapc task runs the compiler in much the same way
+as the RIM JDE.  The JDE project/workspace files are however not used for
+building cod files.  The nested <jdp> element is used to specify all cod file
+properties.
+
+The rapc task behaves similar to the javac task in that it will check the
+modified time of the source files and compare it to the modified time of the
+cod file. It will compile if one or more of the source files is newer than
+the existing cod file.
+
+ Parameters
+============
+
+  jdehome
+  ----------------------------------------------------------------------------
+  Sets the JDE home directory.  This attribute is required when the "jde.home"
+  property is not defined at the project level.
+  
+  jdkhome
+  ----------------------------------------------------------------------------
+  Sets an alternative JVM home directory.  Use this to override the version
+  of the JVM used to execute the rapc compiler.  When this attribute is not
+  defined, the systems default JVM is used.
+  
+  srcdir
+  ----------------------------------------------------------------------------
+  Directory containing source files.  This attribute is required when the
+  nested <src> property is not used.  An error is occurs if both the nested
+  <src> property and the "srcdir" attribute is specified.
+  
+  destdir
+  ----------------------------------------------------------------------------
+  Output directory of .cod file.  When not defined, the base directory of the
+  Ant build file is used.
+  
+  exepath
+  ----------------------------------------------------------------------------
+  Explicitly define the directory containing the preverify command used by
+  the rapc compiler.  When not defined, the systems default PATH is used.
+  
+  output
+  ----------------------------------------------------------------------------
+  Name of output file, eg: <output>.cod, <output>.cso, etc.  This attribute
+  is required.
+  
+  import
+  ----------------------------------------------------------------------------
+  Path of .jar files to import.  Path strings consist of relative or absolute
+  path names delimited by a ';' (Windows) or ':' (Unix) character.  The rapc
+  task will always add the net_rim_api.jar file by default.  This attribute
+  is optional.
+  
+  importref
+  ----------------------------------------------------------------------------
+  Path of .jar files to import given as a reference to a path defined
+  elsewhere.  The rapc task will always add the net_rim_api.jar file by
+  default.  This attribute is optional.
+
+  defines
+  ----------------------------------------------------------------------------
+  ':' or ';' delimited list of preprocessor tags.  This attribute is optional.
+  See the note below regarding preprocessor usage.
+
+  quiet
+  ----------------------------------------------------------------------------
+  Tells the rapc compiler to be less chatty.  Optional, defaults to true.
+  
+  verbose
+  ----------------------------------------------------------------------------
+  Turn on verbose output of the rapc compiler.  Optional, defaults to false.
+  
+  nodebug
+  ----------------------------------------------------------------------------
+  Turn off generation of .debug files.  Optional, defaults to false.
+  
+  nowarn
+  ----------------------------------------------------------------------------
+  Disable warning messages.  Optional, defaults to false.
+  
+  warnerror
+  ----------------------------------------------------------------------------
+  Treat all warnings as errors.  Optional, defaults to false.
+  
+  noconvert
+  ----------------------------------------------------------------------------
+  Do not convert all images to PNG.  Optional, defaults to false.
+
+  nopreverify
+  ----------------------------------------------------------------------------
+  Do not call the preverify executable.  Optional, defaults to false.
+  
+  generatesourcelist
+  ----------------------------------------------------------------------------
+  Generate list of source files in text file.  Set this to true when java
+  returns "CreateProcess error=87" on Windows.  Optional, defaults to false.
+  
+  sourcelistfile
+  ----------------------------------------------------------------------------
+  Set the name of the source list file.  Use this to override the name of
+  the file created when "generatesourcelist" is set to true.  The default
+  file name is "sources.txt".
+
+ Parameters specified as nested elements
+=========================================
+  
+  <define>
+  ----------------------------------------------------------------------------
+  Zero or more preprocessor tag definitions nested as elements.
+    
+    tag
+    ------------------------------------------------------------------------
+    Name of preprocessor tag eg: THE_DEFINED_TAG.  Required.
+    
+    if
+    ------------------------------------------------------------------------
+    Define tag only when the named property is set.  Optional.
+    
+    unless
+    ------------------------------------------------------------------------
+    Define tag only when the named property is NOT set.  Optional.
+  
+  <src>
+  ----------------------------------------------------------------------------
+  Path like structure of files to compile.  The <src> element can contain
+  <fileset>, <filelist>, or any other path like element.  A path defined
+  elsewhere can be referenced by setting the "refid" attribute of <src>.
+  If the "srcdir" attribute was not defined, the <src> element must contain
+  one or more resources to compile.
+  
+  <import>
+  ----------------------------------------------------------------------------
+  Path like structure of jar files to import.  The rapc task will always add
+  the net_rim_api.jar file by default.  This parameter is optional.
+  
+  <jdp>
+  ----------------------------------------------------------------------------
+  Collection of project attributes.
+  
+    type
+    ------------------------------------------------------------------------
+    Type of cod file to create.  Valid values are "library", "cldc",
+    "midlet".  When "midlet" is specified, the midletclass property is
+    required.  The default is "cldc".
+    
+    title
+    ------------------------------------------------------------------------
+    Module title.  The title appears below the icon and in the applications
+    list on the device.
+    
+    vendor
+    ------------------------------------------------------------------------
+    Company name.  The vendor string appears in the applications properties
+    on the device.
+    
+    version
+    ------------------------------------------------------------------------
+    Module version number.  Version number strings must contain only numbers
+    and dots.  If not set, the default is 0.0.
+    
+    description
+    ------------------------------------------------------------------------
+    Module description.  The description string appears in the application
+    properties on the device.
+    
+    arguments
+    ------------------------------------------------------------------------
+    Space delimited list of arguments passed to the main method.
+    
+    midletclass
+    ------------------------------------------------------------------------
+    Fully qualified class name of the class extending
+    javax.microedition.midlet.MIDlet.
+    
+    systemmodule
+    ------------------------------------------------------------------------
+    Set to true for a system module.  System modules run in the background
+    and do not have an icon on the home screen.
+    
+    runonstartup
+    ------------------------------------------------------------------------
+    Set to true if application should start when device starts.
+    
+    startuptier
+    ------------------------------------------------------------------------
+    Startup priority relative to other applications.  The default value is
+    7, lower value = higher priority.
+    
+    ribbonposition
+    ------------------------------------------------------------------------
+    Position of icon in ribbon.  The default is 0, higher values move the
+    icon closer to the top of the ribbon.
+    
+    nameresourcebundle
+    ------------------------------------------------------------------------
+    Name of resource bundle that contains the module title,
+    eg: ca.slashdev.MyAppResources
+    
+    nameresourceid
+    ------------------------------------------------------------------------
+    The id of the resource that contains the module title, eg: 1234.
+    
+    icon
+    ------------------------------------------------------------------------
+    Ribbon icon.  Path must be relative to destdir, eg: ../img/ribbon1.png
+    
+    file
+    ------------------------------------------------------------------------
+    Properties file containing the project attributes.  Property names
+    must match the names defined above.
+    
+    <entry> - nested element of <jdp>
+    ------------------------------------------------------------------------
+    Defines zero or more alternate entry points, CLDC applications only.
+    The <entry> element is a nested element of <jdp> and supports a subset
+    of project attributes.
+    
+      title
+      --------------------------------------------------------------------
+      For non-system modules, defines the title for the ribbon icon.
+      
+      arguments
+      --------------------------------------------------------------------
+      Space delimited list arguments passed to the main method.
+      
+      systemmodule
+      --------------------------------------------------------------------
+      Set to true for a system module.  System modules run in the
+      background and do not have an icon on the home screen.
+      
+      runonstartup
+      --------------------------------------------------------------------
+      Set to true if application should start when device starts.
+      
+      startuptier
+      --------------------------------------------------------------------
+      Startup priority relative to other applications.  The default value
+      is 7, lower value = higher priority.
+      
+      ribbonposition
+      --------------------------------------------------------------------
+      Position of icon in ribbon.  The default is 0, higher values move
+      the icon closer to the top of the ribbon.
+    
+      nameresourcebundle
+      --------------------------------------------------------------------
+      Name of resource bundle that contains the module title,
+      eg: ca.slashdev.MyAppResources
+      
+      nameresourceid
+      --------------------------------------------------------------------
+      The id of the resource that contains the module title, eg: 1234.
+    
+      icon
+      --------------------------------------------------------------------
+      Ribbon icon.  Path must be relative to destdir,
+      eg: ../img/ribbon1.png
+      
+      file
+      --------------------------------------------------------------------
+      Properties file containing the project attributes.  Property names
+      must match the names defined above.
+      
+      if
+      --------------------------------------------------------------------
+      Include entry point when the named property is set.  Optional.
+      
+      unless
+      --------------------------------------------------------------------
+      Include entry point when the named property is NOT set.  Optional.
+
+ Preprocessor
+==============
+
+Apparently since version 4.0, rapc compiler has had support for a simple set
+of preprocessor macros.  To use the preprocessor you must:
+
+ * have version 4.x or higher of JDE
+ * enable processing on a per file basis by placing //#preprocess in the very
+   first line of each .java file
+ * use //#ifdef <TAG>, //#ifndef <TAG> to begin a block of text that will be
+   conditionally compiled if the TAG is defined or undefined respectively
+ * use //#else after //#ifdef <TAG> or //#ifndef <TAG>
+ * close conditional blocks with //#endif
+
+Preprocessor defines can be specified as a colon or semi-colon delimited list
+as an attribute of the <rapc> tag OR zero or more nested <define> elements.
+See reference documentation for <rapc> task above.
+
+ Examples
+==========
+
+<!-- bare minimum usage -->
+<rapc output="ca_slashdev_MyKickAssApp" srcdir="${src.dir}"
+      jdehome="${jde.home}" />
+
+
+<!-- uses jde.home property from project, specifies app title, vendor, etc -->
+<property name="jde.home" location="c:/jde4.1" />
+...
+<rapc output="ca_slashdev_MyKickAssApp" srcdir="${src.dir}">
+   <jdp title="Kick Ass App" vendor="Slashdev" version="1.0" type="cldc" />
+</rapc>
+
+
+<!-- use fileset to select source files, import dependancy lib -->
+<property name="jde.home" location="c:/jde4.1" />
+...
+<rapc output="ca_slashdev_MyKickAssApp">
+   <jdp title="Kick Ass App" vendor="Slashdev" version="1.0" type="cldc" />
+   <src>
+      <fileset dir="${src.dir}">
+         <include name="**/*.java" />
+         <includs name="**/*.rrc" />
+      </fileset>
+   </src>
+   <import location="../libKickAss/ca_slashdev_libKickAss.jar" />
+</rapc>
+
+
+<!-- use the preprocessor -->
+<rapc output="ca_slashdev_MyKickAssApp" srcdir="${src.dir}" defines="TAG1;TAG2">
+   <define tag="TAG3"/>
+   <define tag="TAG4"/>
+</rapc>
+
+
+
+<sigtool>
+
+Sigtool task will launch the signature tool on a given cod file or set of
+cod files.  When the cod file is successfully signed, a file is created
+along side the cod file to mark it as signed.
+
+ Parameters
+============
+
+  jdehome
+  ----------------------------------------------------------------------------
+  Sets the JDE home directory.  This attribute is required when the "jde.home"
+  property is not defined at the project level.
+  
+  codfile
+  ----------------------------------------------------------------------------
+  Single cod file to sign.
+  
+  forceclose
+  ----------------------------------------------------------------------------
+  Close signature tool even if signature failed.  Default is false.
+  
+  close
+  ----------------------------------------------------------------------------
+  Close after signature request if no errors have occured.  Default is true.
+  
+  request
+  ----------------------------------------------------------------------------
+  Request signature when application launches.  Default is true.
+  
+  password
+  ----------------------------------------------------------------------------
+  Removes the interactive password prompt.  This implicitly sets "close" and
+  "request" to true.
+
+ Parameters specified as nested elements
+=========================================
+
+Sigtool task supports selecting cod files using nested resource collections
+such as <fileset> and <filelist>.
+
+ Examples
+==========
+
+<!-- sign single cod file -->
+<sigtool jdehome="${jde.home}" codfile="build/ca_slashdev_MyKickAssApp.cod" />
+
+<!-- jde.home property from project, fileset selects multiple cod files -->
+<property name="jde.home" location="c:/jde4.1" />
+...
+<sigtool password="1234">
+    <fileset dir="build" includes="*.cod" />
+</sigtool>
+
+
+
+<alx>
+
+Alx task creates a directory structure of cod files and an .alx file.  The
+purpose of the task is to generate a directory that can be easily zipped
+for creating an installation package.  Therefore cod files are always
+copied to the destination directory.
+
+The task fully supports generating expressions that limit which files will
+be selected by the application loader (Loader.exe) based on OS version.
+
+ Parameters
+============
+
+  destdir
+  ----------------------------------------------------------------------------
+  Destination director for .cod files and .alx file.  If the directory does
+  not exist, it will be created.  This attribute is required.
+  
+  filename
+  ----------------------------------------------------------------------------
+  Name of .alx file to generate.  This attribute is required.
+
+ Parameters specified as nested elements
+=========================================
+
+  <application>
+  ----------------------------------------------------------------------------
+  Nested elements of <alx>.  The "id" attribute is required.  The remaining
+  attributes are for information purposes only in the application loader
+  program (Loader.exe).
+    
+    id
+    ------------------------------------------------------------------------
+    Unique id of the application, eg: com.mycompany.myapp.  This attribute
+    is required.
+    
+    name        - application name.
+    description - application description
+    version     - version number, eg: 1.0
+    vendor      - vendor string, eg: My Company
+    copyright   - copyright information
+    
+    file
+    ------------------------------------------------------------------------
+    Optionally specify a properties file of application attributes, must
+    match names defined above.  *NOTE*: 'title' is recognized as an alias
+    for 'name' so properties files created for <jdp> type can be used here.
+
+    greaterthan
+    ------------------------------------------------------------------------
+    Only install application on versions of the BlackBerry software greater
+    than the given version.
+    
+    greaterthanequal
+    ------------------------------------------------------------------------
+    Only install application on versions of the BlackBerry software greater
+    than or equal to the given version.
+    
+    lessthan
+    ------------------------------------------------------------------------
+    Only install application on versions of the BlackBerry software less than
+    the given version.
+    
+    lessthanequal
+    ------------------------------------------------------------------------
+    Only install application on versions of the BlackBerry software less than
+    or equal to the given version.
+
+    <codset>
+    ------------------------------------------------------------------------
+    One or more nested elements of <application> element.
+    
+    Cod files must be listed using nested resource collections such as
+    <fileset> and <filelist>.
+    
+    Cod file sets can be used to target specific versions of the BlackBerry
+    software by setting either or both of the greaterthan and lessthan
+    properties.  Both properties have the alternate inclusive version
+    greaterthanequal and lessthanequal.
+    
+      dir
+      --------------------------------------------------------------------
+      Directory for cod files in destination directory.
+      
+      greaterthan
+      --------------------------------------------------------------------
+      Only install cod files on versions of the BlackBerry software
+      greater than the given version.
+      
+      greaterthanequal
+      --------------------------------------------------------------------
+      Only install cod files on versions of the BlackBerry software
+      greater than or equal to the given version.
+      
+      lessthan
+      --------------------------------------------------------------------
+      Only install cod files on version of the BlackBerry software
+      less than the given version.
+      
+      lessthanequal
+      --------------------------------------------------------------------
+      Only install cod files on version of the BlackBerry software
+      less than or equal to the given version.
+
+ Examples
+==========
+
+<!-- simple example, create zip file -->
+<alx destdir="release" filename="myapp.alx">
+   <application id="ca.slashdev.myapp" name="My App">
+      <codset>
+         <fileset dir="build" includes="*.cod" />
+      </codset>
+   </application>
+</alx>
+<zip destfile="release.zip" basedir="release" />
+
+<!-- cod files for specific versions of OS -->
+<alx destdir="release" filename="myapp.alx">
+   <application id="ca.slashdev.myapp" name="My App">
+      <codset>
+         <fileset dir="build" includes="*.cod" />
+      </codset>
+      <!-- 4.1 up to but not including 4.2 -->
+      <codset greaterthanequal="4.1" lessthan="4.2">
+         <fileset dir="build41" includes="*.cod" />
+      </codset>
+      <!-- 4.2.0 only -->
+      <codset greaterthanequal="4.2.0" lessthan="4.2.1">
+         <fileset dir="build42" includes="*.cod" />
+      </codset>
+      <!-- 4.2.1 and above -->
+      <codset greaterthanequal="4.2.1">
+         <fileset dir="build421" includes="*.cod" />
+      </codset>
+   </application>
+</alx>
+<zip destfile="release.zip" basedir="release" />
+
+
+
+<jadtool>
+
+Simple task that takes an input .jad file and rewrites it with one or more
+new cod files.  The .jad file is updated with accurate .cod file sizes and
+SHA1 checksums.
+
+The cod files are copied to the directory where the .jad file is created.
+If the cod file contains siblings, the cod file is automatically extracted.
+
+ Parameters
+============
+
+  input
+  ----------------------------------------------------------------------------
+  Input .jad file.  This attribute is required.
+  
+  destdir
+  ----------------------------------------------------------------------------
+  Destination directory for cod files and new jad file.  This attribute is
+  required.
+  
+ Parameters specified as nested elements
+=========================================
+
+Jadtool task supports selecting cod files using nested resource collections
+such as <fileset> and <filelist>.  At least one cod file must be selected.
+
+  <override>
+  ----------------------------------------------------------------------------
+  Nested element of <jadtool>.  Provides the ability to add and/or update
+  fields in the destination .jad file.
+
+    key
+    ------------------------------------------------------------------------
+    Name of .jad property to add/change
+    
+    value
+    ------------------------------------------------------------------------
+    New value for .jad property
+
+ Examples
+==========
+
+<!-- not much too this task -->
+<jadtool input="ca_slashdev_myapp.jad" destdir="ota">
+   <fileset dir="build" includes="*.cod" />
+</jadtool>
+
+<!-- override the name of the application -->
+<jadtool input="ca_slashdev_myapp.jad" destdir="ota">
+   <fileset dir="build" includes="*.cod" />
+   <override key="MIDlet-Name" value="My Application Title"/>
+</jadtool>
+
+
+
+Licensing:
+----------
+This product is distributed under the GPL. Please read through the file
+COPYING for more information about our license.

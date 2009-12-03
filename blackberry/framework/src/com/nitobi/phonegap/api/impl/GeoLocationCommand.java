@@ -30,6 +30,7 @@ import javax.microedition.location.LocationProvider;
 import net.rim.blackberry.api.invoke.Invoke;
 import net.rim.blackberry.api.invoke.MapsArguments;
 
+import com.nitobi.phonegap.PhoneGap;
 import com.nitobi.phonegap.api.Command;
 import com.nitobi.phonegap.model.Position;
 
@@ -44,24 +45,26 @@ public class GeoLocationCommand implements Command {
 	private static final int MAP_COMMAND = 0;
 	private static final int STOP_COMMAND = 1;
 	private static final int START_COMMAND = 2;
-	private static final int CHECK_COMMAND = 3;
 	private static final int CAPTURE_INTERVAL = 5;
 	private static final String CODE = "PhoneGap=location";
 	private static final String GEO_NS = "navigator.geolocation.";
 	private static final String GEO_STOP = GEO_NS + "started = false;" + GEO_NS + "lastPosition = null;";
 	private static final String GEO_START = GEO_NS + "started = true;";
-	private static final String GEO_CHECK = GEO_NS + "setLocation(";
-	private static final String GEO_ERROR = GEO_NS + "setError(";
+	private static final String GEO_SET_LOCATION = GEO_NS + "setLocation(";
+	private static final String GEO_SET_ERROR = GEO_NS + "setError(";
 	private static final String FUNC_SUF = ");";
 	
 	private static final String ERROR_UNAVAILABLE = "'GPS unavailable on this device.'";
 	private static final String ERROR_OUTOFSERVICE = "'GPS is out of service on this device.'";
+
+	private PhoneGap berryGap;
 	
 	private Position position;
 	private boolean availableGPS = true;
 	private LocationProvider locationProvider;
 
-	public GeoLocationCommand() {
+	public GeoLocationCommand(PhoneGap phoneGap) {
+		this.berryGap = phoneGap;
 		try {
 			locationProvider = LocationProvider.getInstance(null);
 			// Passing null as the parameter is equal to passing a Criteria that has all fields set to the default values, 
@@ -104,7 +107,6 @@ public class GeoLocationCommand implements Command {
 								return GEO_STOP;
 			case START_COMMAND: locationProvider.setLocationListener(new LocationListenerImpl(this), CAPTURE_INTERVAL, 1, 1);
 								return GEO_START;
-			case CHECK_COMMAND: if (position != null) return GEO_CHECK + position.toJavascript() + FUNC_SUF;
 		}
 		return null;
 	}
@@ -118,7 +120,6 @@ public class GeoLocationCommand implements Command {
 		if ("map".equals(command)) return MAP_COMMAND;
 		if ("stop".equals(command)) return STOP_COMMAND;
 		if ("start".equals(command)) return START_COMMAND;
-		if ("check".equals(command)) return CHECK_COMMAND;
 		return -1;
 	}
 
@@ -132,10 +133,11 @@ public class GeoLocationCommand implements Command {
 		position.setHeading(heading);
 		position.setVelocity(speed);
 		position.setTimestamp(time);
+		berryGap.pendingResponses.addElement(GEO_SET_LOCATION + position.toJavascript() + FUNC_SUF);
 	}
 
 	private String setError(String error) {
-		return GEO_ERROR + error + FUNC_SUF;
+		return GEO_SET_ERROR + error + FUNC_SUF;
 	}
 
 	private String getLocationDocument() {
