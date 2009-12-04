@@ -34,9 +34,10 @@ install:
 	
 js: lib/phonegap.js
 
-lib/phonegap.js: js/acceleration.js js/accelerometer.js js/device.js js/file.js js/geolocation.js js/network.js js/notification.js js/orientation.js js/phonegap.js.base js/position.js
+lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/device.js js/file.js js/geolocation.js js/network.js js/notification.js js/orientation.js js/position.js
 	$(MKPATH) lib
 	$(RM_F) $@
+	$(CAT) js/phonegap.js.base >> $@
 	$(CAT) js/acceleration.js >> $@
 	$(CAT) js/accelerometer.js >> $@
 	$(CAT) js/device.js >> $@
@@ -45,5 +46,4 @@ lib/phonegap.js: js/acceleration.js js/accelerometer.js js/device.js js/file.js 
 	$(CAT) js/network.js >> $@
 	$(CAT) js/notification.js >> $@
 	$(CAT) js/orientation.js >> $@
-	$(CAT) js/phonegap.js.base >> $@
 	$(CAT) js/position.js >> $@

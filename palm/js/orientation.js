@@ -53,12 +53,12 @@ Orientation.prototype.start = function (successCallback) {
 	Mojo.Event.listen(document, "orientationchange", function(event) {
 		var orient = null;
 		switch (event.position) {
-			case 0: orient = "faceUp"; break;
-			case 1: orient = "faceDown"; break;
-			case 2: orient = "portrait"; break;
-			case 3: orient = "portraitReverse"; break;
-			case 4: orient = "landscapeRightUp"; break;
-			case 5: orient = "landscapeLeftUp"; break;
+			case 0: orient = DisplayOrientations.FACE_UP; break;
+			case 1: orient = DisplayOrientations.FACE_DOWN; break;
+			case 2: orient = DisplayOrientations.PORTRAIT; break;
+			case 3: orient = DisplayOrientations.REVERSE_PORTRAIT; break;
+			case 4: orient = DisplayOrientations.LANDSCAPE_RIGHT_UP; break;
+			case 5: orient = DisplayOrientations.LANDSCAPE_LEFT_UP; break;
 			//orientationchange event seems to get thrown sometimes with a null event position
 			default: return;
 		}
@@ -94,6 +94,24 @@ Orientation.prototype.watchOrientation = function(successCallback, errorCallback
  */
 Orientation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
+};
+
+/**
+ * This class contains information about any GSP errors.
+ * @constructor
+ */
+function Orientation() {
+	this.code = null;
+	this.message = "";
+}
+
+DisplayOrientations = {
+	PORTRAIT = 0;
+	REVERSE_PORTRAIT = 1;
+	LANDSCAPE_LEFT_UP = 2;
+	LANDSCAPE_RIGHT_UP = 3;
+	FACE_UP = 4;
+	FACE_DOWN = 5;
 };
 
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
