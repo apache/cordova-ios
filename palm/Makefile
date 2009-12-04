@@ -17,29 +17,34 @@ ECHO = echo
 ECHO_N = echo -n
 JAVA = java
 
-all :: js copy_js install
+all :: js copy_js package deploy
+
+custom :: js copy_js package deploy
 
 clean :: clean_libs
 
 clean_libs:
 	-$(RM_RF) lib
 	
+package:
+	cp framework/www/index.html framework/www/app/views/First/First-scene.html
+	palm-package framework/www/
+
+deploy:
+	palm-install com.nitobi.phonegap_1.0.0_all.ipk
+	
 copy_js:
 	cp lib/phonegap.js framework/www/phonegap.js
 	
-install:
-	cp framework/www/index.html framework/www/app/views/First/First-scene.html
-	palm-package framework/www/
-	palm-install com.nitobi.phonegap_1.0.0_all.ipk
-	
 js: lib/phonegap.js
 
-lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/device.js js/file.js js/geolocation.js js/network.js js/notification.js js/orientation.js js/position.js
+lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/debugconsole.js js/device.js js/file.js js/geolocation.js js/network.js js/notification.js js/orientation.js js/position.js
 	$(MKPATH) lib
 	$(RM_F) $@
 	$(CAT) js/phonegap.js.base >> $@
 	$(CAT) js/acceleration.js >> $@
 	$(CAT) js/accelerometer.js >> $@
+	$(CAT) js/debugconsole.js >> $@
 	$(CAT) js/device.js >> $@
 	$(CAT) js/file.js >> $@
 	$(CAT) js/geolocation.js >> $@
