@@ -1,11 +1,34 @@
-/*
- * TODO: there has gotta be a better way to do this.
- * We need Mojo to be loaded before phonegap so that we can override the Position class (and possibly others?)
- * So if mojo is not defined, include it, and then re-run phonegap.js.
- * Hacky I know, since we include phonegap twice, but the load time of phonegap.js, being a local file, is negligible.
- */
+/* PhoneGap */
 
+/*
+ * TODO:
+ * We need Mojo to be loaded before phonegap so that we can override the Position class (and possibly others?)
+ * But we don't want the user to have to change index.html to include mojo.js (currently they must).
+ * With the attempt below, mojo.js won't be run until after phonegap.js, so it doesn't work. But I'll leave
+ * it just for future reference as to what we need to do.
+ */
+/*
 if (typeof Mojo == 'undefined') {
-	document.write('<script src="/usr/palm/frameworks/mojo/mojo.js" type="text/javascript" x-mojo-version="1" />');
-	document.write('<script src="phonegap.js" type="text/javascript" />');
+
+	var head = document.getElementsByTagName("head")[0];
+	var script = document.createElement("script");
+	script.setAttribute("src", "/usr/palm/frameworks/mojo/mojo.js");
+	script.setAttribute("type", "text/javascript");
+	script.setAttribute("x-mojo-version", "1");
+	head.insertBefore(script, head.firstChild);
 }
+*/
+
+if (typeof(DeviceInfo) != 'object')
+    DeviceInfo = {};
+
+/**
+ * This represents the PhoneGap API itself, and provides a global namespace for accessing
+ * information about the state of PhoneGap.
+ * @class
+ */
+PhoneGap = {
+    ready: true,
+	available: true,
+	sceneController: null
+};

@@ -48,6 +48,9 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 		errorCallback();
 };
 
+/*
+ * Starts the native orientationchange event listener.
+ */
 Orientation.prototype.start = function (successCallback) {
 	var that = this;
 	Mojo.Event.listen(document, "orientationchange", function(event) {
@@ -96,7 +99,7 @@ Orientation.prototype.clearWatch = function(watchId) {
 };
 
 /**
- * This class contains information about any GSP errors.
+ * This class encapsulates the possible orientation values.
  * @constructor
  */
 function DisplayOrientation() {

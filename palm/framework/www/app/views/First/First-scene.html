@@ -4,6 +4,7 @@
 	<head>
 		<title>PhoneGap Symbian.WRT</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script language="javascript" type="text/javascript" src="/usr/palm/frameworks/mojo/mojo.js" x-mojo-version="1"></script>
 		<script language="javascript" type="text/javascript" src="phonegap.js"></script>
 		<script language="javascript" type="text/javascript" src="controller.js"></script>
 		<link rel="stylesheet" href="assets/master.css" type="text/css" media="screen" title="no title" charset="utf-8">		
@@ -11,17 +12,23 @@
 	</head>
 	<body onload="javascript:init();">
 		<div class="header">phonegap symbian.wrt</div>
-		<div class="menu">
-			<div class="menu-item" onclick="changeView(event);">LOCATION</div>
-			<div class="menu-item" onclick="changeView(event);">ACCEL</div>
-			<div id="mnu-cont" class="menu-item selected" onclick="changeView(event);">CONTACTS</div>
-			<div class="menu-item" onclick="changeView(event);">ORIENT</div>
-			<div class="menu-item" onclick="changeView(event);">SOUND</div>
-			<div class="menu-item" onclick="changeView(event);">SMS</div>
-			<div class="menu-item" onclick="changeView(event);">CAMERA</div>
-			<div class="menu-item" onclick="changeView(event);">STORAGE</div>
-			<div class="menu-item" onclick="changeView(event);">NOTIFY</div>
-		</div>
+		<table class="menu">
+			<tr>
+			<td class="menu-item" onclick="changeView(event);">LOCATION</td>
+			<td class="menu-item" onclick="changeView(event);">ACCEL</td>
+			<td id="mnu-cont" class="menu-item selected" onclick="changeView(event);">CONTACTS</td>
+			</tr>
+			<tr>
+			<td class="menu-item" onclick="changeView(event);">ORIENT</td>
+			<td class="menu-item" onclick="changeView(event);">SOUND</td>
+			<td class="menu-item" onclick="changeView(event);">SMS</td>
+			</tr>
+			<tr>
+			<td class="menu-item" onclick="changeView(event);">CAMERA</td>
+			<td class="menu-item" onclick="changeView(event);">STORAGE</td>
+			<td class="menu-item" onclick="changeView(event);">NOTIFY</td>
+			</tr>
+		</table>
 		<div id="LOCATION" class="view" style="display:none;">
 		<a href="javascript:getLocation();">get location</a>
 		<div class="list">
@@ -52,7 +59,8 @@
 		</div>
 		<div id="NOTIFY" class="view" style="display:none;">
 		Notification
-		<div class="list-item"><a href="javascript:vibrate();">vibrate</a></div>
+		<div class="list-item"><p><a href="javascript:notify('vib');">vibrate</a></p></div>
+		<div class="list-item"><p><a href="javascript:notify('alert');">alert</a></p></div>
 		</div>
 		<div id="SOUND" class="view" style="display:none;">
 		Sound
@@ -88,3 +96,4 @@
 		<a href="javascript:widget.openURL('http://www.nitobi.com');"><img src="assets/nitobi-avatar.png" class="nitobi-logo" /></a>
 	</body>
 </html>
+ 

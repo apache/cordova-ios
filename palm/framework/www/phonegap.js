@@ -1,14 +1,37 @@
-/*
- * TODO: there has gotta be a better way to do this.
- * We need Mojo to be loaded before phonegap so that we can override the Position class (and possibly others?)
- * So if mojo is not defined, include it, and then re-run phonegap.js.
- * Hacky I know, since we include phonegap twice, but the load time of phonegap.js, being a local file, is negligible.
- */
+/* PhoneGap */
 
+/*
+ * TODO:
+ * We need Mojo to be loaded before phonegap so that we can override the Position class (and possibly others?)
+ * But we don't want the user to have to change index.html to include mojo.js (currently they must).
+ * With the attempt below, mojo.js won't be run until after phonegap.js, so it doesn't work. But I'll leave
+ * it just for future reference as to what we need to do.
+ */
+/*
 if (typeof Mojo == 'undefined') {
-	document.write('<script src="/usr/palm/frameworks/mojo/mojo.js" type="text/javascript" x-mojo-version="1" />');
-	document.write('<script src="phonegap.js" type="text/javascript" />');
-}/**
+
+	var head = document.getElementsByTagName("head")[0];
+	var script = document.createElement("script");
+	script.setAttribute("src", "/usr/palm/frameworks/mojo/mojo.js");
+	script.setAttribute("type", "text/javascript");
+	script.setAttribute("x-mojo-version", "1");
+	head.insertBefore(script, head.firstChild);
+}
+*/
+
+if (typeof(DeviceInfo) != 'object')
+    DeviceInfo = {};
+
+/**
+ * This represents the PhoneGap API itself, and provides a global namespace for accessing
+ * information about the state of PhoneGap.
+ * @class
+ */
+PhoneGap = {
+    ready: true,
+	available: true,
+	sceneController: null
+};/**
  * This class contains acceleration information
  * @constructor
  * @param {Number} x The force applied by the device in the x-axis.
@@ -130,6 +153,10 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
+/**
+ * Starts the native acceleration listener.
+ */
+
 Accelerometer.prototype.start = function() {
 	var that = this;
 	Mojo.Event.listen(document, "acceleration", function(event) {
@@ -138,7 +165,61 @@ Accelerometer.prototype.start = function() {
 	});
 }
 
-if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();function Device() {
+if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();/**
+ * This class provides access to the debugging console.
+ * @constructor
+ */
+function DebugConsole() {
+}
+
+/**
+ * Print a normal log message to the console
+ * @param {Object|String} message Message or object to print to the console
+ */
+DebugConsole.prototype.log = function(message) {
+	if (typeof message == 'object')
+		message = Object.toJSON(message);
+	this.error(message);
+	//this isn't working on the device
+	/*
+    if (typeof Mojo != 'undefined')
+		Mojo.Log.info(message);
+	*/
+};
+
+/**
+ * Print a warning message to the console
+ * @param {Object|String} message Message or object to print to the console
+ */
+DebugConsole.prototype.warn = function(message) {
+	if (typeof message == 'object')
+		message = Object.toJSON(message);
+	this.error(message);
+	//this isn't working on the device
+	/*
+    if (typeof Mojo != 'undefined')
+		Mojo.Log.warn(message);
+	*/
+};
+
+/**
+ * Print an error message to the console
+ * @param {Object|String} message Message or object to print to the console
+ */
+DebugConsole.prototype.error = function(message) {
+	if (typeof message == 'object')
+		message = Object.toJSON(message);
+    if (typeof Mojo != 'undefined')
+		Mojo.Log.error(message);
+};
+
+if (typeof window.debug == "undefined") window.debug = new DebugConsole();
+/**
+ * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
+ * phone, etc.
+ * @constructor
+ */
+function Device() {
     this.platform = "palm";
     this.version  = null;
     this.name     = null;
@@ -366,7 +447,10 @@ NetworkStatus.NOT_REACHABLE = 0;
 NetworkStatus.REACHABLE_VIA_CARRIER_DATA_NETWORK = 1;
 NetworkStatus.REACHABLE_VIA_WIFI_NETWORK = 2;
 
-if (typeof navigator.network == "undefined") navigator.network = new Network();function Notification() {
+if (typeof navigator.network == "undefined") navigator.network = new Network();/**
+ * This class provides access to notifications on the device.
+ */
+function Notification() {
 }
 
 Notification.prototype.vibrate = function () {
@@ -396,6 +480,27 @@ Notification.prototype.beep = function () {
     	onFailure: function (response) { Mojo.Log.error("failure: " + Object.toJSON(response)); }
 	}, true);
 }
+
+/**
+ * Open a native alert dialog, with a customizable title and button text.
+ * @param {String} message Message to print in the body of the alert
+ * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
+ * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
+ */
+Notification.prototype.alert = function(message, title, buttonLabel) {
+	try {
+		//var controller = Mojo.Controller.getAppController().getActiveStageController().
+		//debug.log(Object.toJSON(Mojo.Controller.getAppController()));
+	PhoneGap.sceneController.showAlertDialog({
+	    onChoose: function() {},
+	    title: $L(title),
+	    message: $L(message),
+	    choices:[
+	         {label:$L(buttonLabel), value:"true", type:'affirmative'}   
+	    ]
+	    });
+	} catch (ex) { debug.log(ex.name + ": " + ex.message); }
+};
 
 if (typeof navigator.notification == 'undefined') navigator.notification = new Notification();/**
  * This class provides access to the device orientation.
@@ -447,19 +552,21 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 		errorCallback();
 };
 
+/*
+ * Starts the native orientationchange event listener.
+ */
 Orientation.prototype.start = function (successCallback) {
 	var that = this;
 	Mojo.Event.listen(document, "orientationchange", function(event) {
 		var orient = null;
 		switch (event.position) {
-			case 0: orient = "faceUp"; break;
-			case 1: orient = "faceDown"; break;
-			case 2: orient = "portrait"; break;
-			case 3: orient = "portraitReverse"; break;
-			case 4: orient = "landscapeRightUp"; break;
-			case 5: orient = "landscapeLeftUp"; break;
-			//orientationchange event seems to get thrown sometimes with a null event position
-			default: return;
+			case 0: orient = DisplayOrientation.FACE_UP; break;
+			case 1: orient = DisplayOrientation.FACE_DOWN; break;
+			case 2: orient = DisplayOrientation.PORTRAIT; break;
+			case 3: orient = DisplayOrientation.REVERSE_PORTRAIT; break;
+			case 4: orient = DisplayOrientation.LANDSCAPE_RIGHT_UP; break;
+			case 5: orient = DisplayOrientation.LANDSCAPE_LEFT_UP; break;
+			default: return; 	//orientationchange event seems to get thrown sometimes with a null event position
 		}
 		that.setOrientation(orient);
 		successCallback(orient);
@@ -495,8 +602,23 @@ Orientation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 };
 
-if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
+/**
+ * This class encapsulates the possible orientation values.
+ * @constructor
+ */
+function DisplayOrientation() {
+	this.code = null;
+	this.message = "";
+}
 
+DisplayOrientation.PORTRAIT = 0;
+DisplayOrientation.REVERSE_PORTRAIT = 1;
+DisplayOrientation.LANDSCAPE_LEFT_UP = 2;
+DisplayOrientation.LANDSCAPE_RIGHT_UP = 3;
+DisplayOrientation.FACE_UP = 4;
+DisplayOrientation.FACE_DOWN = 5;
+
+if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
 function Position(coords) {
 	this.coords = coords;
     this.timestamp = new Date().getTime();

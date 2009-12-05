@@ -83,6 +83,10 @@ Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
 
+/**
+ * Starts the native acceleration listener.
+ */
+
 Accelerometer.prototype.start = function() {
 	var that = this;
 	Mojo.Event.listen(document, "acceleration", function(event) {

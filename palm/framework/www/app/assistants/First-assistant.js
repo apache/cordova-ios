@@ -14,6 +14,9 @@ FirstAssistant.prototype.setup = function() {
 	/* setup widgets here */
 	
 	/* add event handlers to listen to events from widgets */
+	
+	//make the scene controller available to phonegap
+	PhoneGap.sceneController = this.controller;
 }
 
 FirstAssistant.prototype.activate = function(event) {

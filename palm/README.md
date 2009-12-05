@@ -26,6 +26,12 @@ Navigate to phonegap_root/palm/framework/www/; this is where your application wi
 
 Just open framework/www/ in your favourite editor, build your web app, and run the appropriate make command indicated above. Edit appinfo.json to set your app id, version, etc.
 
+Also, your index.html must include palm's mojo library, upon which phonegap.js depends. So, above your inclusion of phonegap.js, you should also have:
+
+<script language="javascript" type="text/javascript" src="/usr/palm/frameworks/mojo/mojo.js" x-mojo-version="1"></script>
+
+The path is where mojo.js is located on the device.
+
 To enable a javascript debug console, open a new terminal window and type: phonegap-log app_id
 Where the app id is your app id as set in appinfo.json.
 This will tail your log file; it will default to the device if detected, otherwise it will read logs from the emulator.
