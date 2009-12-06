@@ -25,4 +25,4 @@ Device.prototype.setUUID = function() {
     });	
 }
 
-if (typeof navigator.device == 'undefined') navigator.device = new Device();
+if (typeof window.device == 'undefined') window.device = navigator.device = new Device();
