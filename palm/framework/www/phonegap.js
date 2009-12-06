@@ -241,7 +241,7 @@ Device.prototype.setUUID = function() {
     });	
 }
 
-if (typeof navigator.device == 'undefined') navigator.device = new Device();/**
+if (typeof window.device == 'undefined') window.device = navigator.device = new Device();/**
  * This class provides generic read and write access to the mobile device file system.
  */
 function File() {
@@ -680,3 +680,58 @@ PositionError.UNKNOWN_ERROR = 0;
 PositionError.PERMISSION_DENIED = 1;
 PositionError.POSITION_UNAVAILABLE = 2;
 PositionError.TIMEOUT = 3;
+/**
+ * This class provides access to the device SMS functionality.
+ * @constructor
+ */
+function Sms() {
+
+}
+
+/**
+ * Sends an SMS message.
+ * @param {Integer} number The phone number to send the message to.
+ * @param {String} message The contents of the SMS message to send.
+ * @param {Function} successCallback The function to call when the SMS message is sent.
+ * @param {Function} errorCallback The function to call when there is an error sending the SMS message.
+ * @param {PositionOptions} options The options for accessing the GPS location such as timeout and accuracy.
+ */
+Sms.prototype.send = function(number, message, successCallback, errorCallback, options) {
+	this.service = new Mojo.Service.Request('palm://com.palm.applicationManager', {
+	     method:'launch',
+	     parameters:{
+	         id:"com.palm.app.messaging",
+	         params: {
+				composeAddress: number,
+				messageText: message
+	         },
+		 onSuccess: function() {debug.log("success")},
+		 onFailure: function() {debug.log("failure")}
+	     }
+	});
+}
+
+if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+/**
+ * This class provides access to the telephony features of the device.
+ * @constructor
+ */
+function Telephony() {
+	this.number = "";
+}
+
+/**
+ * Calls the specifed number.
+ * @param {Integer} number The number to be called.
+ */
+Telephony.prototype.send = function(number) {
+	this.number = number;
+	this.service = new Mojo.Service.Request('palm://com.palm.applicationManager', {
+	    method:'open',
+	    parameters: {
+	       target: "tel://" + number
+	    }
+	});
+}
+
+if (typeof navigator.telephony == "undefined") navigator.telephony = new Telephony();
