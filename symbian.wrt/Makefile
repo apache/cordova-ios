@@ -17,7 +17,7 @@ ECHO = echo
 ECHO_N = echo -n
 JAVA = java
 
-all :: js
+all :: js package
 
 clean :: clean_libs
 

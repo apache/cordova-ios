@@ -4,88 +4,9 @@
 	<head>
 		<title>PhoneGap Symbian.WRT</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<script language="javascript" type="text/javascript" src="js/phonegap.js"></script>
-		<script language="javascript" type="text/javascript" src="js/controller.js"></script>
-		<link rel="stylesheet" href="assets/master.css" type="text/css" media="screen" title="no title" charset="utf-8">		
-    	<META NAME="Generator" CONTENT="Nokia WRT plug-in for Aptana Studio 2.0.0" />
+		<script language="javascript" type="text/javascript" src="phonegap.js"></script>
 	</head>
-	<body onload="javascript:init();">
-		<div class="header">phonegap symbian.wrt</div>
-		<div class="menu">
-			<div class="menu-item" onclick="changeView(event);">LOCATION</div>
-			<div class="menu-item" onclick="changeView(event);">ACCEL</div>
-			<div id="mnu-cont" class="menu-item selected" onclick="changeView(event);">CONTACTS</div>
-			<div class="menu-item" onclick="changeView(event);">ORIENT</div>
-			<div class="menu-item" onclick="changeView(event);">SOUND</div>
-			<div class="menu-item" onclick="changeView(event);">SMS</div>
-			<div class="menu-item" onclick="changeView(event);">CAMERA</div>
-			<div class="menu-item" onclick="changeView(event);">STORAGE</div>
-			<div class="menu-item" onclick="changeView(event);">NOTIFY</div>
-		</div>
-		<div id="LOCATION" class="view" style="display:none;">
-		<a href="javascript:getLocation();">get location</a>
-		<div class="list">
-			<div class="list-item">latitude: <span id="latitude">-</span></div>
-			<div class="list-item">longitude: <span id="longitude">-</span></div>
-			<div class="list-item">altitude: <span id="altitude">-</span></div>
-			<div class="list-item">heading: <span id="heading">-</span></div>
-			<div class="list-item">speed: <span id="speed">-</span></div>
-            <div class="list-item">timestamp: <span id="timestamp">-</span></div>
-		</div>
-		</div>
-		<div id="ACCEL" class="view" style="display:none;">
-		<a href="javascript:watchAccel()">watch acceleration</a>
-		<div class="list">
-			<div class="list-item">X-Accel: <span id="accel_x"></span></div>
-			<div class="list-item">Y-Accel: <span id="accel_y"></span></div>
-			<div class="list-item">Z-Accel: <span id="accel_z"></span></div>
-		</div>
-		</div>
-		<div id="ORIENT" class="view" style="display:none;">
-		<a href="javascript:watchOrientation();">watch orientation</a>
-		<div class="list-item"><label>Current orientation: </label><label id="orientation"> - </label></div>
-		</div>
-		<div id="CONTACTS" class="view" style="display:block;">
-		filter:<input id="contact-filter" name="contact-filter"/>
-		<a href="javascript:getContacts();">get contacts</a><br/>
-		<div id="contacts" class="contacts"></div>
-		</div>
-		<div id="NOTIFY" class="view" style="display:none;">
-		Notification
-		<div class="list-item"><a href="javascript:vibrate();">vibrate</a></div>
-		</div>
-		<div id="SOUND" class="view" style="display:none;">
-		Sound
-		<div class="list-item">
-			<a href="javascript:navigator.media.play('beep.mp3');">Play Sound 1</a><br/>
-			<a href="javascript:navigator.media.play('beep2.mp3');">Play Sound 2</a>
-		</div>
-		</div>
-		<div id="SMS" class="view" style="display:none;">
-			<div class="list-item">
-				number: <input id="sms_number" type="text" /><br/>
-				message:<br/>
-				<textarea rows=3 />
-				<a href="javascript:sendSMS()">Send SMS</a><br/>
-				<span id="sms_status"></span>
-			</div>
-		</div>
-		<div id="CAMERA" class="view" style="display:none;">
-		Camera
-		<div class="list-item">
-			<a href="javascript:takePicture();">Take picture</a>
-			<div id="preview"></div>
-		</div>
-		</div>
-		<div id="STORAGE" class="view" style="display:none;">
-			<a href="javascript:checkStorage()">check storage</a><br/>
-			<div class="list-item"><input id="storage_string" type="text" /><br/>
-				<a href="javascript:testStorage('store');">Store this</a><br/>
-				<a href="javascript:testStorage('clear');">Clear this</a>
-			</div>
-			<div class="list-item"><label id="storage_output"></label></div>
-		</div>
-		<a href="javascript:widget.openURL('http://www.nitobi.com');"><img src="assets/nitobi-avatar.png" class="nitobi-logo" /></a>
-	</body>
+<body>
+	Build your phonegap app here!
+</body>
 </html>
- 
