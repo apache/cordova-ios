@@ -26,7 +26,8 @@ clean_libs:
 	
 package:
 	cd framework/www/ && zip -ll app.zip * -x wrt_preview_frame.html wrt_preview_main.html preview/ *.wgz
-	mv framework/www/app.zip app.zip
+	cd ../..
+	mv framework/www/app.zip app.wgz
 	
 js: lib/phonegap.js
 
