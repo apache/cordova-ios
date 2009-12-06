@@ -14,7 +14,7 @@ Open a terminal, and navigate to the root PhoneGap Palm folder (where this readm
 
    |- make js - builds phonegap.js from source javascript files to libs/phonegap.js
    |- make copy_js - copies libs/phonegap.js to framework/www/phonegap.js - modify this path if you want phonegap.js in another location
-   |- make package - builds the webOS app (located in framework/www/) into an webOS .ipk installer package in the phonegap_root/palm/ folder_
+   |- make package - builds the webOS app (located in framework/www/) into an webOS .ipk installer package in the phonegap_root/palm/ folder
    |- make deploy - installs the .ipk package to a device if detected, otherwise the emulator if its running 
 
 If a connected Palm device is detected, the application will be installed to the device. If not, and the emulator is running, the application will be installed to the emulator. To run the emulator, search for Palm Emulator.app in the finder, and run it. 
