@@ -20,7 +20,9 @@ Set up your dev environment
 6. Compress the www folder into a zip file, and change the .zip extension to .wgz *
 7. Transfer this file to your S60 5th Edition device, and open it. The device should recognize and install the application
 
-* Currently files compressed using Mac OSX's built-in zip utility will not be able to be installed. Use Windows, or the Aptana Studio WRT Plugin.
+Make targets:
+  - make js (compile the javascript source into lib/phonegap.js)
+  - make package (package the contents of framework/www/ into a .wgz package file, installable to the device)
  
 As you can see, you don't need to have any particular tools installed in your development environment to build WRT applications, as there is no building or compiling involved. However there are tools you can use to make development easier. The combination of Aptana Studio and Nokia's WRT Plug-in for Aptana worked nicely for developing and testing WRT applications. It includes an emulator (only for PC) and a browser-based javascript emulator, and can deploy applications directly to your device if bluetooth is enabled.
  
