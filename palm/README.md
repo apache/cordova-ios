@@ -1,6 +1,6 @@
 PhoneGap Palm
 =====================================================
-PhoneGap Palm is a skeleton Palm webOS application, along with javascript wrapper libraries, which allow a developer to build an application for a Palm webOS phone using web technologies.
+PhoneGap Palm is a skeleton Palm webOS application, along with javascript wrapper libraries, which allow a developer to build an application for a Palm webOS device using web technologies. This same code can be built for iPhone, BlackBerry, Symbian, and more to come ...
 
 
 Pre-requisites
