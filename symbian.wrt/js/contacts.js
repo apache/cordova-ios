@@ -8,8 +8,10 @@ function Contacts() {
 }
 
 function Contact() {
+	this.id = null;
 	this.givenName = "";
 	this.familyName = "";
+	this.name = { formatted: "" };
     this.phones = [];
     this.emails = [];
 }
