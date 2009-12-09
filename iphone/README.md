@@ -56,4 +56,7 @@ Q. PhoneGapLib.xcodeproj is red in my PhoneGap-based application and I get build
 
 A. The Xcode variable for PhoneGapLib is not set. Xcode must be closed when the installer is running. Either run the installer again, or add a PHONEGAPLIB variable in Xcode Preferences --> Source Trees, with the location of PhoneGapLib. The installer would have installed it in ~/Documents/PhoneGapLib.
 
+Q. What is this warning I get when I am packaging the installer? "Warning: "Require Admin Authorization" is recommended but not enabled. Installation may fail."
+
+A. You can safely ignore this warning, it will not affect installation. The installer only installs for the current user, thus it does not need Admin privileges.
 
