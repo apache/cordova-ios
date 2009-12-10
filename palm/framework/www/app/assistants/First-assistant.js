@@ -17,6 +17,11 @@ FirstAssistant.prototype.setup = function() {
 	
 	//make the scene controller available to phonegap
 	PhoneGap.sceneController = this.controller;
+	
+	// Once this is run, we know that Mojo has been loaded, so we can fire the deviceready event
+	var evt = document.createEvent("Events");
+	evt.initEvent("deviceready", true, true);
+	document.dispatchEvent(evt);
 }
 
 FirstAssistant.prototype.activate = function(event) {
