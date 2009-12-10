@@ -16,6 +16,11 @@ if (typeof Mojo == 'undefined') {
 	script.setAttribute("type", "text/javascript");
 	script.setAttribute("x-mojo-version", "1");
 	head.insertBefore(script, head.firstChild);
+	
+	script = document.createElement("script");
+	script.setAttribute("src", "phonegap.js");
+	script.setAttribute("type", "text/javascript");
+	head.insertBefore(script, head.firstChild);
 }
 */
 
