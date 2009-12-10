@@ -22,28 +22,33 @@ package com.phonegap;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.lang.reflect.Field;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebSettings.LayoutAlgorithm;
+import android.widget.LinearLayout;
+import android.os.Build.*;
 
 public class DroidGap extends Activity {
-	
+		
 	private static final String LOG_TAG = "DroidGap";
-	private WebView appView;
-	private String uri;
+	protected WebView appView;
+	private LinearLayout root;	
+	
 	private PhoneGap gap;
 	private GeoBroker geo;
 	private AccelListener accel;
@@ -52,6 +57,9 @@ public class DroidGap extends Activity {
 	private FileUtils fs;
 	private NetworkManager netMan;
 	private CompassListener mCompass;
+	private Storage	cupcakeStorage;
+	
+	
 	
     /** Called when the activity is first created. */
 	@Override
@@ -60,39 +68,52 @@ public class DroidGap extends Activity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE); 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN); 
-        setContentView(R.layout.main);        
+        // This builds the view.  We could probably get away with NOT having a LinearLayout, but I like having a bucket!
+        
+        LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 
+        		ViewGroup.LayoutParams.FILL_PARENT, 0.0F);
          
-        appView = (WebView) findViewById(R.id.appView);
+        LinearLayout.LayoutParams webviewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+        		ViewGroup.LayoutParams.FILL_PARENT, 1.0F);
         
-        /* This changes the setWebChromeClient to log alerts to LogCat!  Important for Javascript Debugging */
+        root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setBackgroundColor(Color.BLACK);
+        root.setLayoutParams(containerParams);
+                
+        appView = new WebView(this);
+        appView.setLayoutParams(webviewParams);
         
-        appView.setWebChromeClient(new GapClient(this));
+        WebViewReflect.checkCompatibility();
+        
+        /* This changes the setWebChromeClient to log alerts to LogCat!  Important for Javascript Debugging */       
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ECLAIR)
+        	appView.setWebChromeClient(new EclairClient(this));        	
+        else
+        {        
+        	appView.setWebChromeClient(new GapClient(this));
+        	cupcakeStorage = new Storage(appView);
+        }
+        
         appView.setInitialScale(100);
+        appView.setVerticalScrollBarEnabled(false);
+        
         WebSettings settings = appView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
+        
 
+    	Package pack = this.getClass().getPackage();
+    	String appPackage = pack.getName();
+    	
+        WebViewReflect.setStorage(settings, true, "/data/data/" + appPackage + "/app_database/");
         
         /* Bind the appView object to the gap class methods */
         bindBrowser(appView);
         
-        /* Load a URI from the strings.xml file */
-        Class<R.string> c = R.string.class;
-        Field f;
-        
-        int i = 0;
-        
-        try {
-          f = c.getField("url");
-          i = f.getInt(f);
-          this.uri = this.getResources().getString(i);
-        } catch (Exception e)
-        {
-          this.uri = "http://www.phonegap.com";
-        }
-        appView.loadUrl(this.uri);
-        
+        root.addView(appView);                   
+        setContentView(root);                        
     }
 	
 	@Override
@@ -110,7 +131,7 @@ public class DroidGap extends Activity {
     	mContacts = new ContactManager(this, appView);
     	fs = new FileUtils(appView);
     	netMan = new NetworkManager(this, appView);
-    	mCompass = new CompassListener(this, appView);
+    	mCompass = new CompassListener(this, appView);    	    	
     	
     	// This creates the new javascript interfaces for PhoneGap
     	appView.addJavascriptInterface(gap, "DroidGap");
@@ -121,39 +142,79 @@ public class DroidGap extends Activity {
     	appView.addJavascriptInterface(fs, "FileUtil");
     	appView.addJavascriptInterface(netMan, "NetworkManager");
     	appView.addJavascriptInterface(mCompass, "CompassHook");
-    }
-        
-    /**
-     * Provides a hook for calling "alert" from javascript. Useful for
-     * debugging your javascript.
-     */
-    final class GapClient extends WebChromeClient {
-    	
-    	Context mCtx;
-    	GapClient(Context ctx)
+    	if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.DONUT)
     	{
-    		mCtx = ctx;
+    		cupcakeStorage = new Storage(appView);
+    		appView.addJavascriptInterface(cupcakeStorage, "droidStorage");
     	}
-    	
-    	@Override
-        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-            Log.d(LOG_TAG, message);
-            // This shows the dialog box.  This can be commented out for dev
-            AlertDialog.Builder alertBldr = new AlertDialog.Builder(mCtx);
-            alertBldr.setMessage(message);
-            alertBldr.setTitle("Alert");
-            alertBldr.show();
-            result.confirm();
-            return true;
-        }
-    	
     }
-    
+           
+ 
+	public void loadUrl(String url)
+	{
+		appView.loadUrl(url);
+	}
+
+  /**
+    * Provides a hook for calling "alert" from javascript. Useful for
+    * debugging your javascript.
+  */
+	public class GapClient extends WebChromeClient {				
+		
+		Context mCtx;
+		public GapClient(Context ctx)
+		{
+			mCtx = ctx;
+		}
+		
+		@Override
+	    public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+	        Log.d(LOG_TAG, message);
+	        // This shows the dialog box.  This can be commented out for dev
+	        AlertDialog.Builder alertBldr = new AlertDialog.Builder(mCtx);
+	        alertBldr.setMessage(message);
+	        alertBldr.setTitle("Alert");
+	        alertBldr.show();
+	        result.confirm();
+	        return true;
+	    }
+		
+	  
+
+	}
+	
+	public final class EclairClient extends GapClient
+	{		
+		private long MAX_QUOTA = 2000000;
+		
+		public EclairClient(Context ctx) {
+			super(ctx);
+			// TODO Auto-generated constructor stub
+		}
+		
+		public void onExceededDatabaseQuota(String url, String databaseIdentifier, long currentQuota, long estimatedSize,
+		    	     long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater)
+		{
+		    	
+			if( estimatedSize < MAX_QUOTA)
+		    	{	
+		    		long newQuota = estimatedSize;
+		    		quotaUpdater.updateQuota(newQuota);
+		    	}
+		    else
+		    	{
+		    		// Set the quota to whatever it is and force an error
+		    		// TODO: get docs on how to handle this properly
+		    		quotaUpdater.updateQuota(currentQuota);
+		    	}
+		}		
+	}
+	
     	    	
     // This is required to start the camera activity!  It has to come from the previous activity
     public void startCamera(int quality)
     {
-    	Intent i = new Intent(this, CameraPreview.class);
+    Intent i = new Intent(this, CameraPreview.class);
     	i.setAction("android.intent.action.PICK");
     	i.putExtra("quality", quality);
     	startActivityForResult(i, 0);
@@ -174,5 +235,10 @@ public class DroidGap extends Activity {
     		launcher.failPicture("Did not complete!");
     	}
     }
-    
+
+    public WebView getView()
+    {
+      return this.appView;
+    }
+      
 }

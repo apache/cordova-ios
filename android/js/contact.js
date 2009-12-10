@@ -1,52 +1,70 @@
-/**
- * This class provides access to the device contacts.
- * @constructor
- */
-
-function Contact(jsonObject) {
-	  this.firstName = "";
-	  this.lastName = "";
-    this.name = "";
-    this.phones = {};
-    this.emails = {};
-  	this.address = "";
+var Contact = function(){
+  this.name = null;
+  this.emails = [];
+  this.phones = [];
 }
 
-Contact.prototype.displayName = function()
+var ContactName = function()
 {
-    // TODO: can be tuned according to prefs
-	return this.name;
+  this.formatted = "";
+  this.familyName = "";
+  this.givenName = "";
+  this.additionalNames = [];
+  this.prefixes = [];
+  this.suffixes = [];
 }
 
-function ContactManager() {
-	// Dummy object to hold array of contacts
-	this.contacts = [];
-	this.timestamp = new Date().getTime();
+
+var ContactEmail = function()
+{
+  this.types = [];
+  this.address = "";
 }
 
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-	// Interface
+var ContactPhoneNumber = function()
+{
+  this.types = [];
+  this.number = "";
+}
+
+
+var Contacts = function()
+{
+  this.records = [];  
+}
+
+Contacts.prototype.find = function(obj, win, fail)
+{
+  if(obj.name != null)
+  {
+   ContactHook.search(name, "", ""); 
+  }
+  this.win = win;
+  this.fail = fail;
+}
+
+Contacts.prototype.droidFoundContact = function(name, npa, email)
+{
+  var contact = new Contact();
+  contact.name = new ContactName();
+  contact.name.formatted = name;
+  contact.name.givenName = name;
+  var mail = new ContactEmail();
+  mail.types.push("home");
+  mail.address = email;
+  contact.emails.push(mail);
+  phone = new ContactPhoneNumber();
+  phone.types.push("home");
+  phone.number = npa;
+  contact.phones.push(phone);
+  this.records.push(contact);
+}
+
+Contacts.prototype.droidDone = function()
+{
+  this.win(this.records);
 }
 
 PhoneGap.addConstructor(function() {
-    if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+  if(typeof navigator.Contacts == "undefined") navigator.Contacts = new Contacts();
 });
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
-  this.win = successCallback;
-  this.fail = errorCallback;
-	ContactHook.getContactsAndSendBack();
-}
-
-ContactManager.prototype.droidAddContact = function(name, phone, email)
-{
-  var contact = new Contact();
-  contact.name = name;
-  contact.phones.primary = phone;
-  contact.emails.primary = email;
-  this.contacts.push(contact);
-}
-
-ContactManager.prototype.droidDone = function()
-{
-  this.win(this.contacts);
-}
