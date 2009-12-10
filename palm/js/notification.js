@@ -3,29 +3,36 @@
  */
 function Notification() {
 }
-
-Notification.prototype.vibrate = function () {
-
-	//can't seem to control the duration or intensity
-	//Mojo.Controller.getAppController().playSoundNotification("vibrate");
+/*
+ * This function vibrates the device
+ * @param {number} duration The duration in ms to vibrate for.
+ * @param {number} intensity The intensity of the vibration
+ */
+Notification.prototype.vibrate = function (duration, intensity) {
+	//the intensity for palm is inverted; 0=high intensity, 100=low intensity
+	//this is opposite from our api, so we invert
+	if (isNaN(intensity) || intensity > 100 || intensity <= 0)
+		intensity = 0;
+	else
+		intensity = 100 - intensity;
 	
-	//TODO: currently giving error "palm//com.palm.vibrate is not running"
+	//if the app id does not have the namespace "com.palm.", an error will be thrown here
 	this.vibhandle = new Mojo.Service.Request("palm://com.palm.vibrate", { 
 		method: 'vibrate', 
 		parameters: { 
-			'period': 0,
-			'duration': 75
+			'period': intensity,
+			'duration': duration
 		},
-    	onSuccess: function (response) { },
-    	onFailure: function (response) { Mojo.Log.error("failure: " + Object.toJSON(response)); }
-	}, true);
+	}, false);
 }
 
 Notification.prototype.beep = function () {
 	this.beephandle = new Mojo.Service.Request('palm://com.palm.audio/systemsounds', {
 	    method: "playFeedback",
 	    parameters: {
-			name: "alert_buzz"
+			//the system sounds available are all ridiculous.
+			//http://developer.palm.com/index.php?option=com_content&view=article&id=1618
+			name: "error_01"
 		},
     	onSuccess: function (response) { },
     	onFailure: function (response) { Mojo.Log.error("failure: " + Object.toJSON(response)); }
