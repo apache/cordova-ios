@@ -12,14 +12,13 @@
 	<!-- name of the binaries to generate (i.e. <blah>.cod, <blah>.jar, etc.) -->
 	<property name="cod.name" value="AntPGTest" />
 	<!-- password for the Signature Tool -->
-	<property name="password" value="myPassword" />
+	<property name="password" value="your_password" />
 	<!-- name of the application, as it appears in the BlackBerry menu -->
 	<property name="application.name" value="PhoneGap BlackBerry Test" />
  
- 	<target name="build">
+ 	<target name="build" depends="clean">
 		<delete dir="www" />
 		<mkdir dir="www" />
-		<delete dir="${build.dir}" />
 		<mkdir dir="${build.dir}" />
 		<copy todir="www">
 			<fileset dir="src/www" />
