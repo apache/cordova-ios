@@ -16,7 +16,7 @@ Notification.prototype.vibrate = function (duration, intensity) {
 	else
 		intensity = 100 - intensity;
 	
-	//if the app id does not have the namespace "com.palm.", an error will be thrown here
+	// if the app id does not have the namespace "com.palm.", an error will be thrown here
 	this.vibhandle = new Mojo.Service.Request("palm://com.palm.vibrate", { 
 		method: 'vibrate', 
 		parameters: { 
@@ -30,8 +30,8 @@ Notification.prototype.beep = function () {
 	this.beephandle = new Mojo.Service.Request('palm://com.palm.audio/systemsounds', {
 	    method: "playFeedback",
 	    parameters: {
-			//the system sounds available are all ridiculous.
-			//http://developer.palm.com/index.php?option=com_content&view=article&id=1618
+			// There isn't really a generic 'beep' in the system sounds.
+			// http://developer.palm.com/index.php?option=com_content&view=article&id=1618
 			name: "error_01"
 		},
     	onSuccess: function (response) { },
