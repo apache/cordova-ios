@@ -26,7 +26,7 @@ function Geolocation() {
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
     var referenceTime = 0;
     if (this.lastPosition)
-        referenceTime = this.lastPosition.timeout;
+        referenceTime = this.lastPosition.timestamp;
     else
         this.start(options);
 
@@ -72,7 +72,7 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 	
 	this.getCurrentPosition(successCallback, errorCallback, options);
 	var frequency = 10000;
-        if (typeof(options) == 'object' && options.frequency)
+        if (typeof options == 'object' && options.frequency)
             frequency = options.frequency;
 	
 	var that = this;
