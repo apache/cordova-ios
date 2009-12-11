@@ -935,40 +935,62 @@ function __device_camera_takePicture(format){
  * @constructor
  */
 
-function Contact(jsonObject) {
-	this.firstName = "";
-	this.lastName = "";
-    this.name = "";
-    this.phones = {};
-    this.emails = {};
-	this.address = "";
+function Contacts() {
+	
+}
+
+function Contact() {
+	this.id = null;
+	this.givenName = "";
+	this.familyName = "";
+	this.name = { formatted: "" };
+    this.phones = [];
+    this.emails = [];
 }
 
 Contact.prototype.displayName = function()
 {
     // TODO: can be tuned according to prefs
-	return this.name;
+	return this.givenName + " " + this.familyName;
 }
 
-function ContactManager() {
-	// Dummy object to hold array of contacts
-	this.contacts = [];
-	this.timestamp = new Date().getTime();
+function ContactsFilter(name) {
+	if (name)
+		this.name = name;
+	else
+		this.name = "";
 }
 
-ContactManager.prototype.getAllContacts = function(successCallback, errorCallback, options) {
+/*
+ * @param {ContactsFilter} filter Object with filter properties. filter.name only for now.
+ * @param {function} successCallback Callback function on success
+ * @param {function} errorCallback Callback function on failure
+ * @param {object} options Object with properties .page and .limit for paging
+ */
+
+Contacts.prototype.find = function(filter, successCallback, errorCallback, options) {
 	try {
+		
 		this.contactsService = device.getServiceObject("Service.Contact", "IDataSource");
+		this.options = options;
 		
 		var criteria = new Object();
 		criteria.Type = "Contact";
+		if (filter && filter.name)
+			criteria.Filter = { SearchVal: filter.name };
 		
 		if (typeof(successCallback) != 'function') 
 			successCallback = function(){};
 		if (typeof(errorCallback) != 'function') 
 			errorCallback = function(){};
+		if (typeof options == 'object'){
+			if (isNaN(this.options.limit))
+				this.options.limit = 200;
+			if (isNaN(this.options.page))
+				this.options.page = 1;
+		}
 		
-		//need a closure here to bind this method to this instance of the contactmanager object
+		//need a closure here to bind this method to this instance of the Contacts object
 		this.global_success = successCallback;
 		var obj = this;
 		
@@ -982,20 +1004,26 @@ ContactManager.prototype.getAllContacts = function(successCallback, errorCallbac
 	}
 }
 
-ContactManager.prototype.success_callback = function(contacts_iterator) {
+Contacts.prototype.success_callback = function(contacts_iterator) {
 	var gapContacts = new Array();
 	contacts_iterator.reset();
     var contact;
-	while ((contact = contacts_iterator.getNext()) != undefined) {
+	var i = 0;
+	var end = this.options.page * this.options.limit;
+	var start = end - this.options.limit;
+	while ((contact = contacts_iterator.getNext()) != undefined && i < end) {
 		try {
-			var gapContact = new Contact();
-			gapContact.firstName = ContactManager.GetValue(contact, "FirstName");
-			gapContact.lastName = ContactManager.GetValue(contact, "LastName");
-			gapContact.name = gapContact.firstName + " " + gapContact.lastName;
-			gapContact.emails = ContactManager.getEmailsList(contact);
-			gapContact.phones = ContactManager.getPhonesList(contact);
-			gapContact.address = ContactManager.getAddress(contact);
-			gapContacts.push(gapContact);
+			if (i >= start) {
+				var gapContact = new Contact();
+				gapContact.givenName = Contacts.GetValue(contact, "FirstName");
+				gapContact.familyName = Contacts.GetValue(contact, "LastName");
+				gapContact.name = gapContact.firstName + " " + gapContact.lastName;
+				gapContact.emails = Contacts.getEmailsList(contact);
+				gapContact.phones = Contacts.getPhonesList(contact);
+				gapContact.address = Contacts.getAddress(contact);
+				gapContacts.push(gapContact);
+			}
+			i++;
 		} catch (e) {
 			alert("ContactsError (" + e.name + ": " + e.message + ")");
 		}
@@ -1004,49 +1032,45 @@ ContactManager.prototype.success_callback = function(contacts_iterator) {
 	this.global_success(gapContacts);
 }
 
-ContactManager.getEmailsList = function(contact) {
-	var list;
+Contacts.getEmailsList = function(contact) {
+	var emails = new Array();
 	try {
-		list = {
-			"Home": ContactManager.GetValue(contact, "EmailHome"),
-			"Work": ContactManager.GetValue(contact, "EmailWork"),
-			"General": ContactManager.GetValue(contact, "EmailGen")
-		};
+			emails[0] = { type:"General", address: Contacts.GetValue(contact, "EmailGen") };
+			emails[1] = { type:"Work", address: Contacts.GetValue(contact, "EmailWork") };		
+			emails[2] = { type:"Home", address: Contacts.GetValue(contact, "EmailHome") };
 	} catch (e) {
-		list = {};
+		emails = [];
 	}
-	return list;
+	return emails;
 }
 
-ContactManager.getPhonesList = function(contact) {
-	var list;
+Contacts.getPhonesList = function(contact) {
+	var phones = new Array();
 	try {
-		list = {
-			"Home": ContactManager.GetValue(contact, "LandPhoneGen"),
-			"Mobile": ContactManager.GetValue(contact, "MobilePhoneGen"),
-			"Fax": ContactManager.GetValue(contact, "FaxNumberGen"),
-			"Work": ContactManager.GetValue(contact, "LandPhoneWork"),
-			"WorkMobile": ContactManager.GetValue(contact, "MobilePhoneWork")
-		};
+			phones[0] = { type:"Mobile", number: Contacts.GetValue(contact, "MobilePhoneGen") };
+			phones[1] = { type:"Home", number: Contacts.GetValue(contact, "LandPhoneGen") };
+			phones[2] = { type:"Fax", number: Contacts.GetValue(contact, "FaxNumberGen") };
+			phones[3] = { type:"Work", number: Contacts.GetValue(contact, "LandPhoneWork") };
+			phones[4] = { type:"WorkMobile", number: Contacts.GetValue(contact, "MobilePhoneWork") };
 	} catch (e) {
-		list = {};
+		phones = [];
 	}
-	return list;
+	return phones;
 }
 
-ContactManager.getAddress = function(contact) {
-	var list = "";
+Contacts.getAddress = function(contact) {
+	var address = "";
 	try {
-		list = ContactManager.GetValue(contact, "AddrLabelHome") + ", " + ContactManager.GetValue(contact, "AddrStreetHome") + ", " +
-				ContactManager.GetValue(contact, "AddrLocalHome") + ", " + ContactManager.GetValue(contact, "AddrRegionHome") + ", " + 
-				ContactManager.GetValue(contact, "AddrPostCodeHome") + ", " + ContactManager.GetValue(contact, "AddrCountryHome");
+		address = Contacts.GetValue(contact, "AddrLabelHome") + ", " + Contacts.GetValue(contact, "AddrStreetHome") + ", " +
+				Contacts.GetValue(contact, "AddrLocalHome") + ", " + Contacts.GetValue(contact, "AddrRegionHome") + ", " + 
+				Contacts.GetValue(contact, "AddrPostCodeHome") + ", " + Contacts.GetValue(contact, "AddrCountryHome");
 	} catch (e) {
-		list = "";
+		address = "";
 	}
-	return list;
+	return address;
 }
 
-ContactManager.GetValue = function(contactObj, key) {
+Contacts.GetValue = function(contactObj, key) {
 	try {
 		return contactObj[key]["Value"];
 	} catch (e) {
@@ -1054,7 +1078,7 @@ ContactManager.GetValue = function(contactObj, key) {
 	}
 }
 
-if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+if (typeof navigator.contacts == "undefined") navigator.contacts = new Contacts();
 PhoneGap.ExtendWrtDeviceObj = function(){
 	
 	if (!window.device)
@@ -1137,7 +1161,7 @@ function Geolocation() {
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
     var referenceTime = 0;
     if (this.lastPosition)
-        referenceTime = this.lastPosition.timeout;
+        referenceTime = this.lastPosition.timestamp;
     else
         this.start(options);
 
@@ -1183,7 +1207,7 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 	
 	this.getCurrentPosition(successCallback, errorCallback, options);
 	var frequency = 10000;
-        if (typeof(options) == 'object' && options.frequency)
+        if (typeof options == 'object' && options.frequency)
             frequency = options.frequency;
 	
 	var that = this;

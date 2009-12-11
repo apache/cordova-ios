@@ -5,7 +5,7 @@
 	<key>DisplayName</key>
 	<string>phonegap.wrt</string>
 	<key>Identifier</key>
-	<string>com.phonegap.basic.widget</string>
+	<string>com.nitobi.phonegap.demo</string>
 	<key>Version</key>
 	<string>1.0</string>
 	<key>AllowNetworkAccess</key>
