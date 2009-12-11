@@ -189,8 +189,18 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
 	
 	try {
 		//TODO: This callback is not being called
-		//waiting on a forum discussion for assistance
-		Mojo.Event.listen(PhoneGap.sceneController.stageController.document, Mojo.Event.activate, function () { Mojo.Log.error("callback successful"); });
+		//currently calling handlePicture from First-assistant.js activate method
+		var that = this;
+		this.callback = function (event) { 
+			if (event !== undefined) {
+				debug.log(Object.toJSON(event));
+				Mojo.Event.stopListening(PhoneGap.sceneController.sceneElement, Mojo.Event.activate, that.callback);
+				
+				// TODO: not receiving the proper event object as per forum article
+				//successCallback(event.filename);
+			}
+		}
+		Mojo.Event.listen(PhoneGap.sceneController.sceneElement, Mojo.Event.activate, this.callback);
 		
 		PhoneGap.sceneController.stageController.pushScene(
 			{ 
@@ -198,13 +208,57 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
 				name: 'capture' 
 			}, { 
 				sublaunch : true
-				//filename: filestring 
+				//filename: "/media/internal/pg_" + (new Date()).getTime() + ".jpg"
 			}
 		);
 	} catch (ex) { debug.log(ex.name + ": " + ex.message); }
 }
 
 if (typeof navigator.camera == 'undefined') navigator.camera = new Camera();/**
+ * This class provides access to the device contacts.
+ * @constructor
+ */
+
+function Contacts() {
+	
+}
+
+function Contact() {
+	this.givenName = "";
+	this.familyName = "";
+    this.phones = [];
+    this.emails = [];
+}
+
+Contact.prototype.displayName = function()
+{
+    // TODO: can be tuned according to prefs
+	return this.givenName + " " + this.familyName;
+}
+
+function ContactsFilter(name) {
+	if (name)
+		this.name = name;
+	else
+		this.name = "";
+}
+
+/*
+ * @param {ContactsFilter} filter Object with filter properties. filter.name only for now.
+ * @param {function} successCallback Callback function on success
+ * @param {function} errorCallback Callback function on failure
+ * @param {object} options Object with properties .page and .limit for paging
+ */
+
+Contacts.prototype.find = function(filter, successCallback, errorCallback, options) {
+	errorCallback({ name: "ContactsError", message: "PhoneGap Palm contacts not implemented" });
+}
+
+Contacts.prototype.success_callback = function(contacts_iterator) {
+}
+
+if (typeof navigator.contacts == "undefined") navigator.contacts = new Contacts();
+/**
  * This class provides access to the debugging console.
  * @constructor
  */
@@ -457,6 +511,51 @@ Geolocation.prototype.stop = function() {
 
 
 if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();/**
+ * This class provides access to native mapping applications on the device.
+ */
+function Map() {
+	
+}
+
+/**
+ * Shows a native map on the device with pins at the given positions.
+ * @param {Array} positions
+ */
+Map.prototype.show = function(positions) {
+
+	var jsonPos = {};
+	var pos = null;
+	if (typeof positions == 'object') {
+		// If positions is an array, then get the first only, since google's query
+		// can't take more than one marker (believe it or not).
+		// Otherwise we assume its a single position object.
+		if (positions.length) {
+			pos = positions[0];
+		} else {
+			pos = positions;
+		}
+	} 
+	else if (navigator.geolocation.lastPosition) {
+		pos = navigator.geolocation.lastPosition;
+	} else {
+		// If we don't have a position, lets use nitobi!
+		pos = { coords: { latitude: 49.28305, longitude: -123.10689 } };
+	}
+
+	this.service = new Mojo.Service.Request('palm://com.palm.applicationManager', {
+		method: 'open',
+		parameters: {
+		id: 'com.palm.app.maps',
+		params: {
+			query: "@" + pos.coords.latitude + "," + pos.coords.longitude
+			}
+		}
+	});
+
+}
+
+if (typeof navigator.map == "undefined") navigator.map = new Map();
+/**
  * This class provides access to the device media, interfaces to both sound and video
  * @constructor
  */
@@ -590,7 +689,7 @@ Notification.prototype.vibrate = function (duration, intensity) {
 	else
 		intensity = 100 - intensity;
 	
-	//if the app id does not have the namespace "com.palm.", an error will be thrown here
+	// if the app id does not have the namespace "com.palm.", an error will be thrown here
 	this.vibhandle = new Mojo.Service.Request("palm://com.palm.vibrate", { 
 		method: 'vibrate', 
 		parameters: { 
@@ -604,8 +703,8 @@ Notification.prototype.beep = function () {
 	this.beephandle = new Mojo.Service.Request('palm://com.palm.audio/systemsounds', {
 	    method: "playFeedback",
 	    parameters: {
-			//the system sounds available are all ridiculous.
-			//http://developer.palm.com/index.php?option=com_content&view=article&id=1618
+			// There isn't really a generic 'beep' in the system sounds.
+			// http://developer.palm.com/index.php?option=com_content&view=article&id=1618
 			name: "error_01"
 		},
     	onSuccess: function (response) { },

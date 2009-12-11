@@ -40,6 +40,7 @@ In your javascript, use debug.log in your javascript.
 Notes
 -----------------------------------------------------
  - ensure you keep the "com.palm." prefix for your app id in appinfo.json. this namespace is required, otherwise certain palm devices services (such as vibrate) won't work.
+ - currently the map.show function can only accept one position, as Palm uses google maps as its native maps application, and it only can take one marker as a parameter
 
 
 Helpful Links
