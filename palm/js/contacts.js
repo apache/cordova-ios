@@ -8,10 +8,14 @@ function Contacts() {
 }
 
 function Contact() {
-	this.givenName = "";
-	this.familyName = "";
     this.phones = [];
     this.emails = [];
+	this.name = {
+		givenName: "",
+		familyName: "",
+		formatted: ""
+	};
+	this.id = "";
 }
 
 Contact.prototype.displayName = function()
