@@ -1,0 +1,9 @@
+{
+	"id": "com.palm.phonegap",
+	"version": "1.0.0",
+	"vendor": "Nitobi",
+	"type": "web",
+	"main": "index.html",
+	"title": "PhoneGap",
+	"icon": "icon.png"
+}

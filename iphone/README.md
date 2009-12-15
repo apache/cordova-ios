@@ -50,6 +50,20 @@ To uninstall:
 2. Delete the ~/Documents/PhoneGapLib folder
 3. Delete the ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap folder
 
+PhoneGapLib Tests
+-------------------------------------------------------------
+There is a Xcode project that will test PhoneGapLib according to the mobile spec. There is some setup needed before the project can be run. You will also need git installed and in your path.
+
+Set up the test project:
+
+1. Launch "Terminal.app"
+2. Type in "chmod 755 update_test.sh"
+3. Type in "./update_test.sh"
+
+This will get the mobile-spec submodule and install it under the PhoneGapLibTests folder. You can then build and run the PhoneGapLibTest project to see the results.
+
+You should run step (3) again before running any tests, to get the updated mobile-spec.
+
 FAQ
 ---
 Q. PhoneGapLib.xcodeproj is red in my PhoneGap-based application and I get build errors?

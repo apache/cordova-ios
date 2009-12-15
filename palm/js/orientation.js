@@ -7,6 +7,7 @@ function Orientation() {
 	 * The current orientation, or null if the orientation hasn't changed yet.
 	 */
 	this.currentOrientation = null;
+	this.started = false;
 }
 
 /**
@@ -17,16 +18,13 @@ function Orientation() {
  * the device's current orientation, in addition to the \c Orientation.currentOrientation class property.
  *
  * @param {Number} orientation The orientation to be set
- 
+ */
 Orientation.prototype.setOrientation = function(orientation) {
-	alert('Orientation not implemented - yet.');
-	/*
     Orientation.currentOrientation = orientation;
     var e = document.createEvent('Events');
     e.initEvent('orientationChanged', 'false', 'false');
     e.orientation = orientation;
     document.dispatchEvent(e);
-
 };
 
 /**
@@ -35,12 +33,42 @@ Orientation.prototype.setOrientation = function(orientation) {
  * is known.
  * @param {Function} errorCallback The function to call when there is an error 
  * getting the orientation.
- 
+ */
 Orientation.prototype.getCurrentOrientation = function(successCallback, errorCallback) {
-	alert('Orientation not implemented - yet.');
-	// If the position is available then call success
-	// If the position is not available then call error
+	if (typeof successCallback != 'function')
+		successCallback = function () {};
+	if (typeof errorCallback != 'function')
+		errorCallback = function () {};
+	
+	if (!this.started)
+		this.start(successCallback);
+	else if (this.currentOrientation)
+		successCallback(this.currentOrientation);
+	else
+		errorCallback();
 };
+
+/*
+ * Starts the native orientationchange event listener.
+ */
+Orientation.prototype.start = function (successCallback) {
+	var that = this;
+	Mojo.Event.listen(document, "orientationchange", function(event) {
+		var orient = null;
+		switch (event.position) {
+			case 0: orient = DisplayOrientation.FACE_UP; break;
+			case 1: orient = DisplayOrientation.FACE_DOWN; break;
+			case 2: orient = DisplayOrientation.PORTRAIT; break;
+			case 3: orient = DisplayOrientation.REVERSE_PORTRAIT; break;
+			case 4: orient = DisplayOrientation.LANDSCAPE_RIGHT_UP; break;
+			case 5: orient = DisplayOrientation.LANDSCAPE_LEFT_UP; break;
+			default: return; 	//orientationchange event seems to get thrown sometimes with a null event position
+		}
+		that.setOrientation(orient);
+		successCallback(orient);
+	});
+	this.started = true;
+}
 
 /**
  * Asynchronously aquires the orientation repeatedly at a given interval.
@@ -48,22 +76,42 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
  * data is available.
  * @param {Function} errorCallback The function to call when there is an error 
  * getting the orientation data.
- 
-Orientation.prototype.watchOrientation = function(successCallback, errorCallback) {
+ */
+Orientation.prototype.watchOrientation = function(successCallback, errorCallback, options) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
-	this.getCurrentPosition(successCallback, errorCallback);
+	this.getCurrentOrientation(successCallback, errorCallback);
+	var interval = 1000;
+	if (options && !isNaN(options.interval))
+		interval = options.interval;
+	var that = this;
 	return setInterval(function() {
-		navigator.orientation.getCurrentOrientation(successCallback, errorCallback);
-	}, 10000);
+		that.getCurrentOrientation(successCallback, errorCallback);
+	}, interval);
 };
 
 /**
  * Clears the specified orientation watch.
  * @param {String} watchId The ID of the watch returned from #watchOrientation.
- 
+ */
 Orientation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 };
-*/
+
+/**
+ * This class encapsulates the possible orientation values.
+ * @constructor
+ */
+function DisplayOrientation() {
+	this.code = null;
+	this.message = "";
+}
+
+DisplayOrientation.PORTRAIT = 0;
+DisplayOrientation.REVERSE_PORTRAIT = 1;
+DisplayOrientation.LANDSCAPE_LEFT_UP = 2;
+DisplayOrientation.LANDSCAPE_RIGHT_UP = 3;
+DisplayOrientation.FACE_UP = 4;
+DisplayOrientation.FACE_DOWN = 5;
+
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
