@@ -53,6 +53,10 @@ The simulator requires Firefox and Firebug.
  
 Your application should run inside Firefox, with the phonegap API functioning and returning test data for geolocation, contacts, acceleration, etc.
 
+Notes
+------------------------------------------------------
+ - Accelerometer and orientation are currently crashing. Appears to be a memory leak in the registerForNotification call, as discussed here: http://discussion.forum.nokia.com/forum/showthread.php?t=182151&highlight=memory+leak. There's not much to do about this until nokia fixes this, unless we find a workaround.
+
 Helpful Links
 -----------------------------------------------------
   - PhoneGap API Docs: 			docs.phonegap.com

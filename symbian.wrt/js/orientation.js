@@ -85,6 +85,8 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 		//create a closure to persist this instance of orientation object into the RegisterForNofication callback
 		var obj = this;
 		
+		// TODO: this call crashes WRT, but there is no other way to read the orientation sensor
+		// http://discussion.forum.nokia.com/forum/showthread.php?t=182151&highlight=memory+leak
 		this.serviceObj.ISensor.RegisterForNotification(criteria, function(transId, eventCode, result){
 			var criteria = {
 				TransactionID: transId
