@@ -25,6 +25,7 @@ clean_libs:
 	-$(RM_RF) lib
 	
 package:
+	cp lib/phonegap.js framework/www/phonegap.js
 	cd framework/ && zip -r app.zip www/* -x www/wrt_preview_frame.html www/wrt_preview_main.html www/preview/ www/*.wgz
 	mv framework/app.zip app.wgz
 	
