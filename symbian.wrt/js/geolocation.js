@@ -44,9 +44,8 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var delay = 0;
     var timer = setInterval(function() {
         delay += interval;
-		
 		//if we have a new position, call success and cancel the timer
-        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+        if (dis.lastPosition && dis.lastPosition.timestamp > referenceTime) {
             successCallback(dis.lastPosition);
             clearInterval(timer);
         } else if (delay >= timeout) { //else if timeout has occured then call error and cancel the timer
@@ -69,12 +68,10 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
-	
 	this.getCurrentPosition(successCallback, errorCallback, options);
 	var frequency = 10000;
         if (typeof options == 'object' && options.frequency)
             frequency = options.frequency;
-	
 	var that = this;
 	return setInterval(function() {
 		that.getCurrentPosition(successCallback, errorCallback, options);
@@ -121,12 +118,12 @@ Geolocation.prototype.start = function(options) {
 
 		if (result.ErrorCode != 0 || isNaN(retVal.Latitude))
 			return;
-
+		
 		// heading options: retVal.TrueCourse, retVal.MagneticHeading, retVal.Heading, retVal.MagneticCourse
 		// but retVal.Heading was the only field being returned with data on the test device (Nokia 5800)
 		// WRT does not provide accuracy
-		var coords = new Coordinates(retVal.Latitude, retVal.Longitude, retVal.Altitude, null, retVal.Heading, retVal.HorizontalSpeed);
-		var positionObj = new Position(coords, new Date().getTime());
+		var newCoords = new Coordinates(retVal.Latitude, retVal.Longitude, retVal.Altitude, null, retVal.Heading, retVal.HorizontalSpeed);
+		var positionObj = { coords: newCoords, timestamp: (new Date()).getTime() };
 
 		dis.lastPosition = positionObj;
 	});
