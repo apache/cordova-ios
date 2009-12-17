@@ -31,7 +31,7 @@ package:
 	
 js: lib/phonegap.js
 
-lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/camera.js js/camera/com.nokia.device.utility.js js/camera/com.nokia.device.framework.js js/camera/s60_camera.js js/camera/com.nokia.device.camera.js js/contacts.js js/device.js js/geolocation.js js/media.js js/notification.js js/orientation.js js/position.js js/sms.js js/storage.js
+lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/camera.js js/camera/com.nokia.device.utility.js js/camera/com.nokia.device.framework.js js/camera/s60_camera.js js/camera/com.nokia.device.camera.js js/contacts.js js/debugconsole.js js/device.js js/geolocation.js js/media.js js/notification.js js/orientation.js js/position.js js/sms.js js/storage.js js/telephony.js
 	$(MKPATH) lib
 	$(RM_F) $@
 	$(CAT) js/phonegap.js.base >> $@
@@ -43,6 +43,7 @@ lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/c
 	$(CAT) js/camera/s60_camera.js >> $@
 	$(CAT) js/camera/com.nokia.device.camera.js >> $@
 	$(CAT) js/contacts.js >> $@
+	$(CAT) js/debugconsole.js >> $@
 	$(CAT) js/device.js >> $@
 	$(CAT) js/geolocation.js >> $@
 	$(CAT) js/media.js >> $@
@@ -51,3 +52,4 @@ lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/c
 	$(CAT) js/position.js >> $@
 	$(CAT) js/sms.js >> $@
 	$(CAT) js/storage.js >> $@
+	$(CAT) js/telephony.js >> $@
