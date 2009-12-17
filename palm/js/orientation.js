@@ -20,11 +20,13 @@ function Orientation() {
  * @param {Number} orientation The orientation to be set
  */
 Orientation.prototype.setOrientation = function(orientation) {
-    this.currentOrientation = orientation;
-    var e = document.createEvent('Events');
-    e.initEvent('orientationChanged', 'false', 'false');
-    e.orientation = orientation;
-    document.dispatchEvent(e);
+	if (!isNaN(orientation) && this.currentOrientation != orientation) {
+	    this.currentOrientation = orientation;
+	    var e = document.createEvent('Events');
+	    e.initEvent('orientationChanged', 'false', 'false');
+	    e.orientation = orientation;
+	    document.dispatchEvent(e);
+	}
 };
 
 /**
@@ -42,7 +44,7 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 	
 	if (!this.started)
 		this.start(successCallback);
-	else if (this.currentOrientation)
+	else if (!isNaN(this.currentOrientation))
 		successCallback(this.currentOrientation);
 	else
 		errorCallback();
@@ -53,7 +55,6 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
  */
 Orientation.prototype.start = function (successCallback) {
 	var that = this;
-	
 	// This subscribes the callback once for the successCallback function
 	that.callback = function (e) {
 		Mojo.Event.stopListening(document, "orientationChanged", that.callback);
