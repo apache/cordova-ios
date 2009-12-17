@@ -56,6 +56,7 @@ Your application should run inside Firefox, with the phonegap API functioning an
 Notes
 ------------------------------------------------------
  - Accelerometer and orientation are currently crashing. Appears to be a memory leak in the registerForNotification call, as discussed here: http://discussion.forum.nokia.com/forum/showthread.php?t=182151&highlight=memory+leak. There's not much to do about this until nokia fixes this, unless we find a workaround.
+ - If your symbian phone has contacts synced via PC Suite or Ovi Sync, and you attempt to query the contacts api, your app will crash. This is discussed here: http://discussion.forum.nokia.com/forum/showthread.php?t=170839&highlight=contacts+api+crashing. Hopefully nokia will fix it soon.
 
 Helpful Links
 -----------------------------------------------------
