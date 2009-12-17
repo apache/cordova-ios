@@ -38,12 +38,13 @@ copy_js:
 	
 js: lib/phonegap.js
 
-lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/camera.js js/contacts.js js/debugconsole.js js/device.js js/file.js js/geolocation.js js/map.js js/media.js js/network.js js/notification.js js/orientation.js js/position.js js/sms.js js/telephony.js
+lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/audio.js js/camera.js js/contacts.js js/debugconsole.js js/device.js js/file.js js/geolocation.js js/map.js js/network.js js/notification.js js/orientation.js js/position.js js/sms.js js/telephony.js
 	$(MKPATH) lib
 	$(RM_F) $@
 	$(CAT) js/phonegap.js.base >> $@
 	$(CAT) js/acceleration.js >> $@
 	$(CAT) js/accelerometer.js >> $@
+	$(CAT) js/audio.js >> $@
 	$(CAT) js/camera.js >> $@
 	$(CAT) js/contacts.js >> $@
 	$(CAT) js/debugconsole.js >> $@
@@ -51,7 +52,6 @@ lib/phonegap.js: js/phonegap.js.base js/acceleration.js js/accelerometer.js js/c
 	$(CAT) js/file.js >> $@
 	$(CAT) js/geolocation.js >> $@
 	$(CAT) js/map.js >> $@
-	$(CAT) js/media.js >> $@
 	$(CAT) js/network.js >> $@
 	$(CAT) js/notification.js >> $@
 	$(CAT) js/orientation.js >> $@
