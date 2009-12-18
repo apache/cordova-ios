@@ -10,7 +10,9 @@ function DebugConsole() {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.log = function(message) {
-	alert(message);
+	
+	//This ends up in C:\jslog_widget.log on the device
+	console.log(message);
 };
 
 /**

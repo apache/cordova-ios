@@ -92,8 +92,19 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 				TransactionID: transId
 			};
 			try {
-				var orientation = result.ReturnValue.DeviceOrientation;
+				//var orientation = result.ReturnValue.DeviceOrientation;
 				obj.serviceObj.ISensor.Cancel(criteria);
+				
+				var orientation = null;
+				switch (result.ReturnValue.DeviceOrientation) {
+					case "DisplayUpwards": orientation = DisplayOrientation.FACE_UP; break;
+					case "DisplayDownwards": orientation = DisplayOrientation.FACE_DOWN; break;
+					case "DisplayUp": orientation = DisplayOrientation.PORTRAIT; break;
+					case "DisplayDown": orientation = DisplayOrientation.REVERSE_PORTRAIT; break;
+					case "DisplayRightUp": orientation = DisplayOrientation.LANDSCAPE_RIGHT_UP; break;
+					case "DisplayLeftUp": orientation = DisplayOrientation.LANDSCAPE_LEFT_UP; break;
+					
+				}
 				
 				obj.setOrientation(orientation);
 				
@@ -150,5 +161,22 @@ Orientation.prototype.getServiceObj = function() {
     }		
 	return so;
 }
+
+
+/**
+ * This class encapsulates the possible orientation values.
+ * @constructor
+ */
+function DisplayOrientation() {
+	this.code = null;
+	this.message = "";
+}
+
+DisplayOrientation.PORTRAIT = 0;
+DisplayOrientation.REVERSE_PORTRAIT = 1;
+DisplayOrientation.LANDSCAPE_LEFT_UP = 2;
+DisplayOrientation.LANDSCAPE_RIGHT_UP = 3;
+DisplayOrientation.FACE_UP = 4;
+DisplayOrientation.FACE_DOWN = 5;
 
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();

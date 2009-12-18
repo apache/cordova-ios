@@ -86,9 +86,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 			}
 			
 		});
-		alert(4);
 	} catch (ex) {
-		alert(5);
 		errorCallback(ex);
 	}
 
