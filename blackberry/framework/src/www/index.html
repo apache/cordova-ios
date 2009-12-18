@@ -9,10 +9,10 @@
     <script type="text/javascript" src="phonegap.js"></script>
     <script type="text/javascript">
     	function deviceInfo(){
-      		document.getElementById("platform").innerHTML   = Device.platform;
-      		document.getElementById("version").innerHTML    = Device.version;
-      		document.getElementById("devicename").innerHTML = Device.name;
-      		document.getElementById("uuid").innerHTML       = Device.uuid;
+      		document.getElementById("platform").innerHTML   = device.platform;
+      		document.getElementById("version").innerHTML    = device.version;
+      		document.getElementById("devicename").innerHTML = device.name;
+      		document.getElementById("uuid").innerHTML       = device.uuid;
     	}
     	function getLocation() {
       		var suc = function(p){

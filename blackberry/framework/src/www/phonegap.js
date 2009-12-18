@@ -107,7 +107,7 @@ function Accelerometer() {
  * getting the acceleration data.
  * @param {AccelerationOptions} options The options for getting the accelerometer data
  * such as timeout.
- */
+ 
 Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
 	alert('Accelerometer not supported in PhoneGap BlackBerry - yet.');
 };
@@ -120,7 +120,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
  * getting the acceleration data.
  * @param {AccelerationOptions} options The options for getting the accelerometer data
  * such as timeout.
- */
+ 
 
 Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options) {
 	this.getCurrentAcceleration(successCallback, errorCallback, options);
@@ -134,11 +134,11 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 /**
  * Clears the specified accelerometer watch.
  * @param {String} watchId The ID of the watch returned from #watchAcceleration.
- */
+ 
 Accelerometer.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 }
-
+*/
 if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
 /**
  * This class provides access to the device camera.
@@ -734,7 +734,7 @@ function Orientation() {
  * the device's current orientation, in addition to the \c Orientation.currentOrientation class property.
  *
  * @param {Number} orientation The orientation to be set
- */
+ 
 Orientation.prototype.setOrientation = function(orientation) {
 	alert('Orientation not implemented - yet.');
 	/*
@@ -743,7 +743,7 @@ Orientation.prototype.setOrientation = function(orientation) {
     e.initEvent('orientationChanged', 'false', 'false');
     e.orientation = orientation;
     document.dispatchEvent(e);
-	*/
+
 };
 
 /**
@@ -752,7 +752,7 @@ Orientation.prototype.setOrientation = function(orientation) {
  * is known.
  * @param {Function} errorCallback The function to call when there is an error 
  * getting the orientation.
- */
+ 
 Orientation.prototype.getCurrentOrientation = function(successCallback, errorCallback) {
 	alert('Orientation not implemented - yet.');
 	// If the position is available then call success
@@ -765,7 +765,7 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
  * data is available.
  * @param {Function} errorCallback The function to call when there is an error 
  * getting the orientation data.
- */
+ 
 Orientation.prototype.watchOrientation = function(successCallback, errorCallback) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
@@ -778,11 +778,11 @@ Orientation.prototype.watchOrientation = function(successCallback, errorCallback
 /**
  * Clears the specified orientation watch.
  * @param {String} watchId The ID of the watch returned from #watchOrientation.
- */
+ 
 Orientation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 };
-
+*/
 if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
 
 function Position(coords) {

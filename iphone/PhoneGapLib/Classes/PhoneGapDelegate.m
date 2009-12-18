@@ -49,6 +49,23 @@
 }
 
 /**
+Returns the current version of phoneGap as read from the VERSION file
+This only touches the filesystem once and stores the result in the class variable gapVersion
+*/
+static NSString *gapVersion;
++ (NSString*) phoneGapVersion
+{
+	if (gapVersion == nil) {
+		NSBundle *mainBundle = [NSBundle mainBundle];
+		NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
+		// read from the filesystem and save in the variable
+		gapVersion = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
+	}
+	return gapVersion;
+}
+
+
+/**
  Returns an instance of a PhoneGapCommand object, based on its name.  If one exists already, it is returned.
  */
 -(id) getCommandInstance:(NSString*)className
