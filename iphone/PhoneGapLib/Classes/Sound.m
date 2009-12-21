@@ -9,8 +9,37 @@
 #import "Sound.h"
 #import "PhonegapDelegate.h"
 
+#define DOCUMENTS_SCHEME_PREFIX		@"documents://"
+#define HTTP_SCHEME_PREFIX			@"http://"
+
 @implementation Sound
 
+// Maps a url to the original resource path
+- (NSString*) resourceForUrl:(NSURL*)url
+{
+    NSBundle* mainBundle = [NSBundle mainBundle];
+	NSString* urlString = [url description];
+	NSString* retVal = @"";
+	
+	NSString* wwwPath = [mainBundle pathForResource:[PhoneGapDelegate wwwFolderName] ofType:@"" inDirectory:@""];
+	NSString* wwwUrl = [[NSURL fileURLWithPath:wwwPath] description];
+	NSString* documentsUrl = [[NSURL fileURLWithPath:[PhoneGapDelegate applicationDocumentsDirectory]] description];
+	
+	if ([urlString hasPrefix:wwwUrl]) {
+		retVal = [urlString substringFromIndex:[wwwUrl length]];
+	} else if ([urlString hasPrefix:HTTP_SCHEME_PREFIX]) {
+		retVal = urlString;
+	} else if ([urlString hasPrefix:documentsUrl]) {
+		retVal = [NSString stringWithFormat:@"%@%@", DOCUMENTS_SCHEME_PREFIX, [urlString substringFromIndex:[documentsUrl length]]];
+	} else {
+		NSLog(@"Cannot map url '%@' to a resource path.", urlString);
+	}
+
+	return retVal;
+}
+
+// Maps a url for a resource path
+// "Naked" resource paths are assumed to be from the www folder as its base
 - (NSURL*) urlForResource:(NSString*)resourcePath
 {
 	NSURL* resourceURL = nil;
@@ -20,10 +49,10 @@
 	
 	if (filePath == nil) {
 		// if it is a http url, use it
-		if ([resourcePath hasPrefix:@"http://"]){
+		if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX]){
 			NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
 			resourceURL = [NSURL URLWithString:resourcePath];
-		} else if ([resourcePath hasPrefix:@"document://"]) {
+		} else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
 			NSLog(@"Will use resource '%@' from the documents folder.", resourcePath);
 			resourceURL = [NSURL URLWithString:resourcePath];
 			
@@ -42,6 +71,7 @@
 	return resourceURL;
 }
 
+// Creates or gets the cached audio file resource object
 - (AudioFile*) audioFileForResource:(NSString*) resourcePath
 {
 	NSURL* resourceURL = [self urlForResource:resourcePath];
@@ -208,19 +238,20 @@
 
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder*)recorder successfully:(BOOL)flag
 {
+	NSString* resourcePath = [self resourceForUrl:recorder.url];
 	AudioFile* audioFile = [self audioFileForResource:[recorder.url path]];
-	NSLog(@"Finished recording audio sample '%@'", [recorder.url path]);
+	NSLog(@"Finished recording audio sample '%@'", resourcePath);
 	
 	if (audioFile != nil) {
 		
 		if (flag){
 			if (audioFile.successCallback) {
-				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.successCallback, @""];
+				NSString* jsString = [NSString stringWithFormat:@"(%@)(\"%@\");", audioFile.successCallback, resourcePath];
 				[super writeJavascript:jsString];
 			}
 		} else {
 			if (audioFile.errorCallback) {
-				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.errorCallback, @""];
+				NSString* jsString = [NSString stringWithFormat:@"(%@)(\"%@\");", audioFile.errorCallback, resourcePath];
 				[super writeJavascript:jsString];
 			}		
 		}
@@ -231,19 +262,20 @@
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer*)player successfully:(BOOL)flag 
 {
-	AudioFile* audioFile = [self audioFileForResource:[player.url path]];
-	NSLog(@"Finished playing audio sample '%@'", [player.url path]);
-
+	NSString* resourcePath = [self resourceForUrl:player.url];
+	AudioFile* audioFile = [self audioFileForResource:resourcePath];
+	NSLog(@"Finished playing audio sample '%@'", resourcePath);
+	
 	if (audioFile != nil) {
 
 		if (flag){
 			if (audioFile.successCallback) {
-				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.successCallback, @""];
+				NSString* jsString = [NSString stringWithFormat:@"(%@)(\"%@\");", audioFile.successCallback, resourcePath];
 				[super writeJavascript:jsString];
 			}
 		} else {
 			if (audioFile.errorCallback) {
-				NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\");", audioFile.errorCallback, @""];
+				NSString* jsString = [NSString stringWithFormat:@"(%@)(\"%@\");", audioFile.errorCallback, resourcePath];
 				[super writeJavascript:jsString];
 			}		
 		}
