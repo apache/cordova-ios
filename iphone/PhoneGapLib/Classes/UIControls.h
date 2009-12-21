@@ -20,6 +20,7 @@
     UIToolbar* toolBar;
     UIBarButtonItem* toolBarTitle;
     NSMutableDictionary* toolBarItems;
+	CGRect	originalWebViewBounds;
 }
 
 /* Tab Bar methods 

@@ -64,7 +64,8 @@
     }
     tabBar.hidden = NO;
 
-     CGRect webViewBounds = webView.bounds;
+     CGRect webViewBounds = originalWebViewBounds = webView.bounds;
+	
      CGRect tabBarBounds;
      if (atBottom) {
          tabBarBounds = CGRectMake(
@@ -109,6 +110,7 @@
     if (!tabBar)
         [self createTabBar:nil withDict:nil];
     tabBar.hidden = YES;
+	[webView setFrame:originalWebViewBounds];
 }
 
 /**
