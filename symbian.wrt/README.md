@@ -53,6 +53,12 @@ The simulator requires Firefox and Firebug.
  
 Your application should run inside Firefox, with the phonegap API functioning and returning test data for geolocation, contacts, acceleration, etc.
 
+Notes
+------------------------------------------------------
+ - The memory available to WRT apps is very limited. Loading large javascript files into memory, playing sound files, and excessive monitoring of sensors can fairly easily crash your application. Minify js files, and use sensor monitoring (accel, gps, etc) conservatively.
+ - If your symbian phone has contacts synced via PC Suite or Ovi Sync, and you attempt to query the contacts api, your app will crash. This is discussed here: http://discussion.forum.nokia.com/forum/showthread.php?t=170839&highlight=contacts+api+crashing. Hopefully nokia will fix it soon.
+ - Javascript animation in WRT is not great. I've tried dojo, scriptaculous, & emile, to no avail. You can leave it in ... your app will reach the animation end state ... but the animation itself won't be pretty.
+
 Helpful Links
 -----------------------------------------------------
   - PhoneGap API Docs: 			docs.phonegap.com

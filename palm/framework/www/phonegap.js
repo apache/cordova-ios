@@ -172,6 +172,96 @@ Accelerometer.prototype.start = function() {
 }
 
 if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();/**
+ * This class provides access to the device audio
+ * @constructor
+ */
+
+PhoneGap.overrideAudio = function() {
+	
+	PhoneGap.MojoAudio = Audio;
+	
+	Audio = function(src) {
+		this.src = src;							
+	}
+
+	Audio.prototype.play = function() {
+		//this.src = src;
+		// The 'end' event listener doesn't seem to work, so we have to call stop before playing
+		// otherwise, we'll never be able to play again
+		if (this.paused && !this.stopped) {
+			this.paused = false;
+			this.playing = true;	
+			this.audioPlayer.play();
+		} else {
+			if (this.audioPlayer)
+				this.stop();
+			if (!this.playing) {
+				this.paused = false;
+				this.playing = true;	
+				this.stopped = false;
+				this.audioPlayer = new PhoneGap.MojoAudio();
+				var file = Mojo.appPath + this.src;
+				if (this.audioPlayer.palm) {
+					this.audioPlayer.mojo.audioClass = "media";
+				}
+				this.audioPlayer.src = file;
+		
+				//event doesn't work, see above
+				this.audioPlayer.addEventListener('end', this.endHandler, false);
+				this.audioPlayer.play();
+			}
+		}
+	};
+
+	Audio.prototype.pause = function() {
+		if (this.stopped)
+			return;
+		this.paused = true;	
+		if (this.playing) {
+			this.playing = false;
+			this.stopped = false;
+			this.audioPlayer.pause();
+		} else {
+			this.playing = false;	
+			this.paused = false;
+			this.stopped = true;
+		}
+	};
+
+	Audio.prototype.stop = function() {
+		this.audioPlayer.pause();	
+		this.audioPlayer.src = null;
+		this.playing = false;	
+		this.paused = false;
+		this.stopped = true;
+	};
+
+	// End event handler not working (see comment in Audio.prototype.play)
+	Audio.prototype.endHandler = function () {
+		this.audioPlayer.removeEventListener('end', endHandler, false);
+		this.audioPlayer.pause();	
+		this.audioPlayer.src = null;
+		this.paused = false;
+		this.stopped = true;
+	}
+
+	/**
+	 * This class contains information about any Media errors.
+	 * @constructor
+	 */
+	MediaError = function() {
+		this.code = null,
+		this.message = "";
+	}
+
+	MediaError.MEDIA_ERR_ABORTED 		= 1;
+	MediaError.MEDIA_ERR_NETWORK 		= 2;
+	MediaError.MEDIA_ERR_DECODE 		= 3;
+	MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
+
+}
+
+document.addEventListener("deviceready", PhoneGap.overrideAudio, false);/**
  * This class provides access to the device camera.
  * @constructor
  */
@@ -187,31 +277,29 @@ function Camera() {
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
 	
-	try {
-		//TODO: This callback is not being called
-		//currently calling handlePicture from First-assistant.js activate method
-		var that = this;
-		this.callback = function (event) { 
-			if (event !== undefined) {
-				debug.log(Object.toJSON(event));
-				Mojo.Event.stopListening(PhoneGap.sceneController.sceneElement, Mojo.Event.activate, that.callback);
-				
-				// TODO: not receiving the proper event object as per forum article
-				//successCallback(event.filename);
-			}
+	//TODO: This callback is not being called
+	//currently calling handlePicture from First-assistant.js activate method
+	var that = this;
+	this.callback = function (event) { 
+		if (event !== undefined) {
+			debug.log(Object.toJSON(event));
+			Mojo.Event.stopListening(PhoneGap.sceneController.sceneElement, Mojo.Event.activate, that.callback);
+			
+			// TODO: not receiving the proper event object as per forum article
+			//successCallback(event.filename);
 		}
-		Mojo.Event.listen(PhoneGap.sceneController.sceneElement, Mojo.Event.activate, this.callback);
-		
-		PhoneGap.sceneController.stageController.pushScene(
-			{ 
-				appId :'com.palm.app.camera', 
-				name: 'capture' 
-			}, { 
-				sublaunch : true
-				//filename: "/media/internal/pg_" + (new Date()).getTime() + ".jpg"
-			}
-		);
-	} catch (ex) { debug.log(ex.name + ": " + ex.message); }
+	}
+	Mojo.Event.listen(PhoneGap.sceneController.sceneElement, Mojo.Event.activate, this.callback);
+	
+	PhoneGap.sceneController.stageController.pushScene(
+		{ 
+			appId :'com.palm.app.camera', 
+			name: 'capture' 
+		}, { 
+			sublaunch : true
+			//filename: "/media/internal/pg_" + (new Date()).getTime() + ".jpg"
+		}
+	);
 }
 
 if (typeof navigator.camera == 'undefined') navigator.camera = new Camera();/**
@@ -224,10 +312,14 @@ function Contacts() {
 }
 
 function Contact() {
-	this.givenName = "";
-	this.familyName = "";
     this.phones = [];
     this.emails = [];
+	this.name = {
+		givenName: "",
+		familyName: "",
+		formatted: ""
+	};
+	this.id = "";
 }
 
 Contact.prototype.displayName = function()
@@ -555,92 +647,6 @@ Map.prototype.show = function(positions) {
 }
 
 if (typeof navigator.map == "undefined") navigator.map = new Map();
-/**
- * This class provides access to the device media, interfaces to both sound and video
- * @constructor
- */
-
-
-// There is already a Media class in media.js 
-Media = function() {
-	//this.src = src;							
-}
-
-Media.prototype.play = function(src) {
-	this.src = src;
-	// The 'end' event listener doesn't seem to work, so we have to call stop before playing
-	// otherwise, we'll never be able to play again
-	if (this.paused && !this.stopped) {
-		this.paused = false;
-		this.playing = true;	
-		this.audioPlayer.play();
-	} else {
-		if (this.audioPlayer)
-			this.stop();
-		if (!this.playing) {
-			this.paused = false;
-			this.playing = true;	
-			this.stopped = false;
-			this.audioPlayer = new Audio();
-			var file = Mojo.appPath + this.src;
-			if (this.audioPlayer.palm) {
-				this.audioPlayer.mojo.audioClass = "media";
-			}
-			this.audioPlayer.src = file;
-		
-			//event doesn't work, see above
-			this.audioPlayer.addEventListener('end', this.endHandler, false);
-			this.audioPlayer.play();
-		}
-	}
-};
-
-Media.prototype.pause = function() {
-	if (this.stopped)
-		return;
-	this.paused = true;	
-	if (this.playing) {
-		this.playing = false;
-		this.stopped = false;
-		this.audioPlayer.pause();
-	} else {
-		this.playing = false;	
-		this.paused = false;
-		this.stopped = true;
-	}
-};
-
-Media.prototype.stop = function() {
-	this.audioPlayer.pause();	
-	this.audioPlayer.src = null;
-	this.playing = false;	
-	this.paused = false;
-	this.stopped = true;
-};
-
-Media.prototype.endHandler = function () {
-	this.audioPlayer.removeEventListener('end', endHandler, false);
-	this.audioPlayer.pause();	
-	this.audioPlayer.src = null;
-	this.paused = false;
-	this.stopped = true;
-}
-
-/**
- * This class contains information about any Media errors.
- * @constructor
- */
-MediaError = function() {
-	this.code = null,
-	this.message = "";
-}
-
-MediaError.MEDIA_ERR_ABORTED 		= 1;
-MediaError.MEDIA_ERR_NETWORK 		= 2;
-MediaError.MEDIA_ERR_DECODE 		= 3;
-MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
-
-if (typeof navigator.media == 'undefined') navigator.media = new Media();
 function Network() {
     /**
      * The last known Network status.
@@ -755,11 +761,13 @@ function Orientation() {
  * @param {Number} orientation The orientation to be set
  */
 Orientation.prototype.setOrientation = function(orientation) {
-    Orientation.currentOrientation = orientation;
-    var e = document.createEvent('Events');
-    e.initEvent('orientationChanged', 'false', 'false');
-    e.orientation = orientation;
-    document.dispatchEvent(e);
+	if (!isNaN(orientation) && this.currentOrientation != orientation) {
+	    this.currentOrientation = orientation;
+	    var e = document.createEvent('Events');
+	    e.initEvent('orientationChanged', 'false', 'false');
+	    e.orientation = orientation;
+	    document.dispatchEvent(e);
+	}
 };
 
 /**
@@ -777,7 +785,7 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 	
 	if (!this.started)
 		this.start(successCallback);
-	else if (this.currentOrientation)
+	else if (!isNaN(this.currentOrientation))
 		successCallback(this.currentOrientation);
 	else
 		errorCallback();
@@ -788,6 +796,14 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
  */
 Orientation.prototype.start = function (successCallback) {
 	var that = this;
+	// This subscribes the callback once for the successCallback function
+	that.callback = function (e) {
+		Mojo.Event.stopListening(document, "orientationChanged", that.callback);
+		successCallback(e.orientation);
+	}
+	Mojo.Event.listen(document, "orientationChanged", that.callback);
+	
+	// This subscribes setOrientation to be constantly updating the currentOrientation property
 	Mojo.Event.listen(document, "orientationchange", function(event) {
 		var orient = null;
 		switch (event.position) {
@@ -800,7 +816,6 @@ Orientation.prototype.start = function (successCallback) {
 			default: return; 	//orientationchange event seems to get thrown sometimes with a null event position
 		}
 		that.setOrientation(orient);
-		successCallback(orient);
 	});
 	this.started = true;
 }

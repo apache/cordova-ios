@@ -24,7 +24,6 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 	// If the acceleration is not available then call error
 	
 	try {
-	
 		if (!this.serviceObj) 
 			this.serviceObj = this.getServiceObj();
 		
@@ -39,7 +38,6 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 			SearchCriterion: "AccelerometerAxis"
 		};
 		var returnvalue = this.serviceObj.ISensor.FindSensorChannel(SensorParams);
-		
 		var error = returnvalue["ErrorCode"];
 		var errmsg = returnvalue["ErrorMessage"];
 		if (!(error == 0 || error == 1012)) {
@@ -64,13 +62,13 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 		
 		this.success_callback = successCallback;
 		this.error_callback = errorCallback;
-		
 		//create a closure to persist this instance of Accelerometer into the RegisterForNofication callback
 		var obj = this;
 		
+		// TODO: this call crashes WRT, but there is no other way to read the accel sensor
+		// http://discussion.forum.nokia.com/forum/showthread.php?t=182151&highlight=memory+leak
 		this.serviceObj.ISensor.RegisterForNotification(criteria, function(transId, eventCode, result){
 			try {
-				
 				var criteria = {
 					TransactionID: transId
 				};
@@ -88,7 +86,6 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 			}
 			
 		});
-		
 	} catch (ex) {
 		errorCallback(ex);
 	}

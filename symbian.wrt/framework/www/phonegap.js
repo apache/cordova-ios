@@ -103,7 +103,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 	// If the acceleration is not available then call error
 	
 	try {
-	
+		alert(1);
 		if (!this.serviceObj) 
 			this.serviceObj = this.getServiceObj();
 		
@@ -118,7 +118,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 			SearchCriterion: "AccelerometerAxis"
 		};
 		var returnvalue = this.serviceObj.ISensor.FindSensorChannel(SensorParams);
-		
+		alert(2);
 		var error = returnvalue["ErrorCode"];
 		var errmsg = returnvalue["ErrorMessage"];
 		if (!(error == 0 || error == 1012)) {
@@ -143,13 +143,14 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 		
 		this.success_callback = successCallback;
 		this.error_callback = errorCallback;
-		
 		//create a closure to persist this instance of Accelerometer into the RegisterForNofication callback
 		var obj = this;
 		
+		// TODO: this call crashes WRT, but there is no other way to read the accel sensor
+		// http://discussion.forum.nokia.com/forum/showthread.php?t=182151&highlight=memory+leak
 		this.serviceObj.ISensor.RegisterForNotification(criteria, function(transId, eventCode, result){
 			try {
-				
+				alert(10);
 				var criteria = {
 					TransactionID: transId
 				};
@@ -167,8 +168,9 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 			}
 			
 		});
-		
+		alert(4);
 	} catch (ex) {
+		alert(5);
 		errorCallback(ex);
 	}
 
@@ -941,9 +943,11 @@ function Contacts() {
 
 function Contact() {
 	this.id = null;
-	this.givenName = "";
-	this.familyName = "";
-	this.name = { formatted: "" };
+	this.name = { 
+		formatted: "",
+		givenName: "",
+		familyName: ""
+	};
     this.phones = [];
     this.emails = [];
 }
@@ -952,13 +956,6 @@ Contact.prototype.displayName = function()
 {
     // TODO: can be tuned according to prefs
 	return this.givenName + " " + this.familyName;
-}
-
-function ContactsFilter(name) {
-	if (name)
-		this.name = name;
-	else
-		this.name = "";
 }
 
 /*
@@ -1015,12 +1012,13 @@ Contacts.prototype.success_callback = function(contacts_iterator) {
 		try {
 			if (i >= start) {
 				var gapContact = new Contact();
-				gapContact.givenName = Contacts.GetValue(contact, "FirstName");
-				gapContact.familyName = Contacts.GetValue(contact, "LastName");
-				gapContact.name = gapContact.firstName + " " + gapContact.lastName;
+				gapContact.name.givenName = Contacts.GetValue(contact, "FirstName");
+				gapContact.name.familyName = Contacts.GetValue(contact, "LastName");
+				gapContact.name.formatted = gapContact.firstName + " " + gapContact.lastName;
 				gapContact.emails = Contacts.getEmailsList(contact);
 				gapContact.phones = Contacts.getPhonesList(contact);
 				gapContact.address = Contacts.getAddress(contact);
+				gapContact.id = Contacts.GetValue(contact, "id");
 				gapContacts.push(gapContact);
 			}
 			i++;
@@ -1179,9 +1177,8 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var delay = 0;
     var timer = setInterval(function() {
         delay += interval;
-		
 		//if we have a new position, call success and cancel the timer
-        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+        if (dis.lastPosition && dis.lastPosition.timestamp > referenceTime) {
             successCallback(dis.lastPosition);
             clearInterval(timer);
         } else if (delay >= timeout) { //else if timeout has occured then call error and cancel the timer
@@ -1204,12 +1201,10 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
-	
 	this.getCurrentPosition(successCallback, errorCallback, options);
 	var frequency = 10000;
         if (typeof options == 'object' && options.frequency)
             frequency = options.frequency;
-	
 	var that = this;
 	return setInterval(function() {
 		that.getCurrentPosition(successCallback, errorCallback, options);
@@ -1256,12 +1251,12 @@ Geolocation.prototype.start = function(options) {
 
 		if (result.ErrorCode != 0 || isNaN(retVal.Latitude))
 			return;
-
+		
 		// heading options: retVal.TrueCourse, retVal.MagneticHeading, retVal.Heading, retVal.MagneticCourse
 		// but retVal.Heading was the only field being returned with data on the test device (Nokia 5800)
 		// WRT does not provide accuracy
-		var coords = new Coordinates(retVal.Latitude, retVal.Longitude, retVal.Altitude, null, retVal.Heading, retVal.HorizontalSpeed);
-		var positionObj = new Position(coords, new Date().getTime());
+		var newCoords = new Coordinates(retVal.Latitude, retVal.Longitude, retVal.Altitude, null, retVal.Heading, retVal.HorizontalSpeed);
+		var positionObj = { coords: newCoords, timestamp: (new Date()).getTime() };
 
 		dis.lastPosition = positionObj;
 	});
@@ -1468,6 +1463,7 @@ Orientation.prototype.getCurrentOrientation = function(successCallback, errorCal
 		var obj = this;
 		
 		this.serviceObj.ISensor.RegisterForNotification(criteria, function(transId, eventCode, result){
+			alert(1);
 			var criteria = {
 				TransactionID: transId
 			};

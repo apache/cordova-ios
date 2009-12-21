@@ -9,9 +9,11 @@ function Contacts() {
 
 function Contact() {
 	this.id = null;
-	this.givenName = "";
-	this.familyName = "";
-	this.name = { formatted: "" };
+	this.name = { 
+		formatted: "",
+		givenName: "",
+		familyName: ""
+	};
     this.phones = [];
     this.emails = [];
 }
@@ -20,13 +22,6 @@ Contact.prototype.displayName = function()
 {
     // TODO: can be tuned according to prefs
 	return this.givenName + " " + this.familyName;
-}
-
-function ContactsFilter(name) {
-	if (name)
-		this.name = name;
-	else
-		this.name = "";
 }
 
 /*
@@ -83,12 +78,13 @@ Contacts.prototype.success_callback = function(contacts_iterator) {
 		try {
 			if (i >= start) {
 				var gapContact = new Contact();
-				gapContact.givenName = Contacts.GetValue(contact, "FirstName");
-				gapContact.familyName = Contacts.GetValue(contact, "LastName");
-				gapContact.name = gapContact.firstName + " " + gapContact.lastName;
+				gapContact.name.givenName = Contacts.GetValue(contact, "FirstName");
+				gapContact.name.familyName = Contacts.GetValue(contact, "LastName");
+				gapContact.name.formatted = gapContact.name.givenName + " " + gapContact.name.familyName;
 				gapContact.emails = Contacts.getEmailsList(contact);
 				gapContact.phones = Contacts.getPhonesList(contact);
 				gapContact.address = Contacts.getAddress(contact);
+				gapContact.id = Contacts.GetValue(contact, "id");
 				gapContacts.push(gapContact);
 			}
 			i++;

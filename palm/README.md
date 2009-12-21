@@ -39,8 +39,8 @@ In your javascript, use debug.log in your javascript.
 
 Notes
 -----------------------------------------------------
- - ensure you keep the "com.palm." prefix for your app id in appinfo.json. this namespace is required, otherwise certain palm devices services (such as vibrate) won't work.
- - currently the map.show function can only accept one position, as Palm uses google maps as its native maps application, and it only can take one marker as a parameter
+ - In order to use the vibration API on palm, your application needs to have a "com.palm.*" namespace, as vibration on webOS is a private API. The caveat of doing this is that you are essentially indicating that your app should pretend to be a "Palm app" (rather than a Nitobi app, for example) ... and as a result your app will be denied from the Palm app catalog.
+ - Currently the map.show function can only accept one position, as Palm uses google maps as its native maps application, and it only can take one marker as a parameter.
 
 
 Helpful Links

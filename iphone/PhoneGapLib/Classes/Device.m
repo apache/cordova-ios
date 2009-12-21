@@ -7,6 +7,7 @@
  */
 
 #import "Device.h"
+#import "PhonegapDelegate.h"
 
 @implementation Device
 
@@ -26,7 +27,7 @@
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
-    [devProps setObject:@"0.8.0" forKey:@"gap"];
+    [devProps setObject:[PhoneGapDelegate phoneGapVersion] forKey:@"gap"];
 
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;

@@ -2,17 +2,17 @@
  * This class provides access to the device media, interfaces to both sound and video
  * @constructor
  */
-function Media(src, successCallback, errorCallback) {
+function Audio(src, successCallback, errorCallback) {
 	this.src = src;
 	this.successCallback = successCallback;
 	this.errorCallback = errorCallback;												
 }
 
-Media.prototype.record = function() {
+Audio.prototype.record = function() {
 }
 
-Media.prototype.play = function(src) {
-
+Audio.prototype.play = function() {
+try {
 	if (document.getElementById('gapsound'))
 		document.body.removeChild(document.getElementById('gapsound'));
 	var obj;
@@ -23,14 +23,14 @@ Media.prototype.play = function(src) {
 	obj.setAttribute("width", "0");
 	obj.setAttribute("hidden", "true");
 	obj.setAttribute("autostart", "true");
-	obj.setAttribute("src", src);
+	obj.setAttribute("src", this.src);
 	document.body.appendChild(obj);
+} catch (ex) { debug.log(ex.name + ": " + ex.message) }
 }
 
-Media.prototype.pause = function() {
+Audio.prototype.pause = function() {
 }
 
-Media.prototype.stop = function() {
+Audio.prototype.stop = function() {
+	document.body.removeChild(document.getElementById('gapsound'));
 }
-
-if (typeof navigator.media == "undefined") navigator.media = new Media();
