@@ -139,8 +139,9 @@ Geolocation.prototype.stop = function() {
 /**
  * Maps current location
  */
-Geolocation.prototype.map = function() {
-	if (this.lastPosition == null) {
+if (typeof navigator.map == "undefined") navigator.map = {};
+navigator.map.show = function() {
+	if (navigator.geolocation.lastPosition == null) {
 		alert("[PhoneGap] No position to map yet.");
 		return;
 	} else {
