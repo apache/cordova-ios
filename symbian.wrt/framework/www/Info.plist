@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Nokia//DTD PLIST 1.0//EN" "http://www.nokia.com/DTDs/plist-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DisplayName</key>
+	<string>phonegap.wrt</string>
+	<key>Identifier</key>
+	<string>com.nitobi.phonegap.demo</string>
+	<key>Version</key>
+	<string>1.0</string>
+	<key>AllowNetworkAccess</key>
+	<true/>
+	<key>MainHTML</key>
+	<string>index.html</string>
+	<key>MiniViewEnabled</key>
+	<false/>
+</dict>
+</plist>

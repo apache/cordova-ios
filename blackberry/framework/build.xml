@@ -1,0 +1,70 @@
+<project name="PhoneGap BlackBerry Ant Build" default="build">
+	<taskdef resource="bb-ant-defs.xml" />
+	<!-- PROPERTY DEFINITION - FILL THESE OUT! -->
+	<!-- rapc and sigtool require the jde.home property to be set -->
+	<property name="jde.home" location="C:\eclipse\plugins\net.rim.eide.componentpack4.6.1_4.6.1.27\components\" />
+	<!-- directory of simulator to copy files to -->
+	<property name="simulator.home" location="C:\eclipse\plugins\net.rim.eide.componentpack4.6.1_4.6.1.27\components\simulator\" />
+	<!-- directory of BlackBerry application source code. Should include two directories: a 'com' and a 'www'. -->
+	<property name="src.dir" location="src" />
+	<!-- directory where you want the final binaries to be copied to. -->
+	<property name="build.dir" location="build" />
+	<!-- name of the binaries to generate (i.e. <blah>.cod, <blah>.jar, etc.) -->
+	<property name="cod.name" value="AntPGTest" />
+	<!-- password for the Signature Tool -->
+	<property name="password" value="your_password" />
+	<!-- name of the application, as it appears in the BlackBerry menu -->
+	<property name="application.name" value="PhoneGap BlackBerry Test" />
+ 
+ 	<target name="build" depends="clean">
+		<delete dir="www" />
+		<mkdir dir="www" />
+		<mkdir dir="${build.dir}" />
+		<copy todir="www">
+			<fileset dir="src/www" />
+		</copy>
+		<delete dir="src/www" />
+		<rapc output="${cod.name}">
+			<src>
+	      		<fileset dir="src" />
+	      		<fileset dir="www" />
+			</src>
+			<jdp title="${application.name}" />
+		</rapc>
+		<mkdir dir="src/www" />
+		<copy todir="src/www">
+			<fileset dir="www" />
+		</copy>
+		<delete dir="www" />
+ 		<copy todir="${build.dir}">
+ 			<fileset dir="" includes="*.cod,*.cso,*.debug,*.jad,*.jar,*.csl,*.rapc" />
+ 		</copy>
+ 		<delete file="${cod.name}.cod" />
+ 		<delete file="${cod.name}.cso" />
+ 		<delete file="${cod.name}.debug" />
+ 		<delete file="${cod.name}.jad" />
+ 		<delete file="${cod.name}.jar" />
+	</target>
+ 
+	<target name="sign" depends="build">
+		<sigtool codfile="${build.dir}/${cod.name}.cod" password="${password}" />
+	</target>
+ 
+	<target name="clean">
+		<delete dir="${build.dir}" />
+   	</target>
+ 
+	<target name="load-simulator" depends="sign">
+		<copy todir="${simulator.home}">
+			<fileset dir="${build.dir}" includes="*.cod,*.cso,*.debug,*.jad,*.jar,*.csl,*.rapc" />
+		</copy>
+		<exec executable="${simulator.home}/defaultSimulator.bat" dir="${simulator.home}" spawn="true"></exec>
+	</target>
+	<target name="load-device" depends="sign">
+		<exec executable="${jde.home}/bin/JavaLoader.exe" dir="." failonerror="true">
+			<arg value="-u" />
+			<arg value="load" />
+			<arg value="${build.dir}/${cod.name}.cod" />
+		</exec>
+	</target>
+</project>

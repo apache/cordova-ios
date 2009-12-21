@@ -1,0 +1,8 @@
+[
+    {"source": "app/assistants/stage-assistant.js"},
+	{"source": "/usr/palm/frameworks/media/media.js"},
+    {
+        "scenes": "First",
+        "source": "app/assistants/First-assistant.js"
+    }
+]

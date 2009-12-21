@@ -1,0 +1,6 @@
+.DS_Store
+.*.sw?
+*.cso
+tmp
+lib
+docs

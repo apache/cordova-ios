@@ -1,0 +1,5 @@
+#!/bin/sh
+defaults write /Library/Preferences/com.phonegap.phonegaplib InstallLocation "$2"
+defaults write ~/Library/Preferences/com.apple.Xcode PBXApplicationwideBuildSettings -dict-add PHONEGAPLIB "$2"
+defaults write ~/Library/Preferences/com.apple.Xcode PBXSourceTreeDisplayNames -dict-add PHONEGAPLIB ""
+
