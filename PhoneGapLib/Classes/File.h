@@ -1,18 +1,41 @@
 //
 //  File.h
-//  PhoneGap
+//  TestImageSave
 //
-//  Created by Nitobi on 19/12/08.
-//  Copyright 2008 Nitobi. All rights reserved.
+//  Created by Jesse MacFadyen on 09-11-10.
+//  Copyright 2009 Nitobi. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import "PhoneGapCommand.h"
 
-
-@interface File : NSObject {
+@interface File : PhoneGapCommand {
 	
+	NSString *appDocsPath;		
+	NSString *appTempPath;	
+	
+	BOOL userHasAllowed;
+
 }
 
+- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) testFileExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) testDirectoryExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) createDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) deleteDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) deleteFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) getFileBasePaths:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
+- (BOOL) fileExists:(NSString*)fileName;
+- (BOOL) directoryExists:(NSString*)dirName;
+- (int) writeToFile:(NSString*)fileName withData:(NSString*)data append:(BOOL)shouldAppend;
+
+
+
+@property (nonatomic, copy)NSString *appDocsPath;
+@property (nonatomic, copy)NSString *appTempPath;
+@property BOOL userHasAllowed;
 
 @end
