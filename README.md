@@ -74,3 +74,7 @@ Q. What is this warning I get when I am packaging the installer? "Warning: "Requ
 
 A. You can safely ignore this warning, it will not affect installation. The installer only installs for the current user, thus it does not need Admin privileges.
 
+BUGS?
+-----
+File them at http://phonegap.lighthouseapp.com/projects/20116-iphone
+
