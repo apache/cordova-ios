@@ -76,5 +76,5 @@ A. You can safely ignore this warning, it will not affect installation. The inst
 
 BUGS?
 -----
-File them at http://phonegap.lighthouseapp.com/projects/20116-iphone
+File them at [http://phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/projects/20116-iphone)
 
