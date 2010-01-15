@@ -66,5 +66,5 @@ ContactManager.prototype.contactsCount = function(successCallback, errorCallback
 }
 
 PhoneGap.addConstructor(function() {
-    if (typeof navigator.ContactManager == "undefined") navigator.ContactManager = new ContactManager();
+    if (typeof navigator.contacts == "undefined") navigator.contacts = new ContactManager();
 });
