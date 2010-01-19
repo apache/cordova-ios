@@ -120,6 +120,30 @@ Geolocation.prototype.stop = function() {
     PhoneGap.exec("Location.stopLocation");
 };
 
-PhoneGap.addConstructor(function() {
-    if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+ // replace origObj's functions ( listed in funkList ) with the same method name on proxyObj
+function __proxyObj(origObj,proxyObj,funkList)
+{
+    var replaceFunk = function(org,proxy,fName)
+    { 
+        org[fName] = function()
+        { 
+           proxy[fName].apply(proxy,arguments); 
+        }; 
+    };
+
+    for(var v in funkList) { replaceFunk(origObj,proxyObj,funkList[v]);}
+}
+
+
+PhoneGap.addConstructor(function() 
+{
+    if (typeof navigator._geo == "undefined") 
+    {
+        navigator._geo = new Geolocation();
+        __proxyObj(navigator.geolocation, navigator._geo,
+                 ["setLocation","getCurrentPosition","watchPosition",
+                  "clearWatch","setError","start","stop"]);
+
+    }
+
 });
