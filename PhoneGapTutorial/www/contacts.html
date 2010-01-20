@@ -27,7 +27,7 @@
 
 	function onGetTenBtn()
 	{
-		navigator.ContactManager.getAllContacts(onGetAllContacts,null,{pageSize:10});
+		navigator.contacts.getAllContacts(onGetAllContacts,null,{pageSize:10});
 	}
 	
 	function onGetAllContacts(res)
@@ -45,7 +45,7 @@
 
 	function onPickBtn()
 	{
-		navigator.ContactManager.chooseContact(onPickContactCallback);
+		navigator.contacts.chooseContact(onPickContactCallback);
 	}
 	
 	function onPickContactCallback(contactObj)
@@ -87,7 +87,7 @@
 	
 	function onContactClick(id)
 	{
-		navigator.ContactManager.displayContact(id);
+		navigator.contacts.displayContact(id);
 	}
 	
 	function onGotContactCount(num)
@@ -109,8 +109,7 @@
 	
 	function onDeviceReady()
 	{
-		//alert("onDeviceReady");
-		navigator.ContactManager.contactsCount(onGotContactCount,onGotContactCountError);
+		navigator.contacts.contactsCount(onGotContactCount,onGotContactCountError);
 	}
     
     </script>
