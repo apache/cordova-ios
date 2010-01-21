@@ -59,7 +59,7 @@ static NSString *gapVersion;
 		NSBundle *mainBundle = [NSBundle mainBundle];
 		NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
 		// read from the filesystem and save in the variable
-		gapVersion = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
+		gapVersion = [ [ NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL ] retain ];
 	}
 	return gapVersion;
 }
