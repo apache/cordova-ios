@@ -54,11 +54,8 @@ function GetFunctionName(fn)
 
 	function onGetTenBtn()
 	{
-		var funk = function()
-		{
-			onGetAllContacts.apply(this,arguments);
-		}
-		navigator.ContactManager.getAllContacts(funk,null,{pageSize:10});
+
+		navigator.contacts.getAllContacts(onGetAllContacts,null,{pageSize:10});
 	}
 	
 	function onGetAllContacts(res)
@@ -76,7 +73,7 @@ function GetFunctionName(fn)
 
 	function onPickBtn()
 	{
-		navigator.ContactManager.chooseContact(onPickContactCallback);
+		navigator.contacts.chooseContact(onPickContactCallback);
 	}
 	
 	function onPickContactCallback(contactObj)
@@ -118,7 +115,7 @@ function GetFunctionName(fn)
 	
 	function onContactClick(id)
 	{
-		navigator.ContactManager.displayContact(id);
+		navigator.contacts.displayContact(id);
 	}
 	
 	function onGotContactCount(num)
@@ -140,8 +137,7 @@ function GetFunctionName(fn)
 	
 	function onDeviceReady()
 	{
-		//alert("onDeviceReady");
-		navigator.ContactManager.contactsCount(onGotContactCount,onGotContactCountError);
+		navigator.contacts.contactsCount(onGotContactCount,onGotContactCountError);
 	}
     
     </script>
