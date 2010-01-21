@@ -17,7 +17,7 @@
   border: 1px solid rgba(128,128,128,0.5);
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  margin:8px;
+  margin:20px;
   width:64px;
   padding:4px;
 
@@ -38,24 +38,26 @@
 
 	function onPlayStopBtn()
 	{
+		if(currentState != PS_PLAYING)
+		{
+			mediaFile.play({numberOfLoops:0});
+			currentState = PS_PLAYING;
+			document.getElementById("playText").innerHTML = "Stop";
+		}
+		else
+		{
+			mediaFile.stop();
+			currentState = PS_STOPPED;
+			document.getElementById("playText").innerHTML = "Play";
+		}
+			
 		
-	}
-	
-	function onRecordBtn()
-	{
-		
-	}
-	
-	function updateButtonStates()
-	{
-	
 	}
     
 	
 	function onMediaCreatedSuccess(obj)
 	{
 		alert("successfully created media");
-		//updateButtonStates();
 	}
 	
 	function onMediaCreatedError(err)
@@ -73,7 +75,7 @@
 	
 	function onDeviceReady()
 	{
-		mediaFile = new Media("documents://MyTestFile",onMediaCreatedSuccess,onMediaCreatedError);
+		mediaFile = new Media('percBass.wav',onMediaCreatedSuccess,onMediaCreatedError);
 		updateButtonStates();
 	}
     
@@ -88,19 +90,22 @@
 		<span class="pageTitle">Media</span>	
 	</div>
 	
+	<h2>percBass.wav</h2>
    <a href="#" onclick="onPlayStopBtn();">
 	<div class="mediaBtn">
-	<h2>Play</h2>
+	<h2 id="playText">Play</h2>
   </div>
   </a>
   
   
   
+  <!--
   <a href="#" onclick="onRecordBtn();">
 	<div class="mediaBtn">
 	<h2>Record</h2>
   </div>
   
   </a>
+  -->
   </body>
 </html>

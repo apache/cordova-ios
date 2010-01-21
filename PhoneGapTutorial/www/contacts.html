@@ -25,9 +25,40 @@
 	
 	var defaultContactTemplate = "<div class='item' onclick='onContactClick(CONTACTID);'><div>First Name : <strong>FNAME</strong></div><div>Last Name : <strong>LNAME</strong></div><div>Email : EMAIL</div><div>Tel : TELNO</div></div>";
 
+var _anomFunkMap = {};
+var _anomFunkMapNextId = 0; 
+
+function anomToNameFunk(fun)
+{
+	var funkId = "f" + _anomFunkMapNextId++;
+	var funk = function()
+	{
+		fun.apply(this,arguments);
+		_anomFunkMap[funkId] = null;
+	};
+	_anomFunkMap[funkId] = funk;
+	
+	return "_anomFunkMap." + funkId;
+}
+
+function GetFunctionName(fn)
+{
+  if (fn) 
+  {
+      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
+      return m ? m[1] : anomToNameFunk(fn);
+  } else {
+    return null;
+  }
+}
+
 	function onGetTenBtn()
 	{
-		navigator.ContactManager.getAllContacts(onGetAllContacts,null,{pageSize:10});
+		var funk = function()
+		{
+			onGetAllContacts.apply(this,arguments);
+		}
+		navigator.ContactManager.getAllContacts(funk,null,{pageSize:10});
 	}
 	
 	function onGetAllContacts(res)
