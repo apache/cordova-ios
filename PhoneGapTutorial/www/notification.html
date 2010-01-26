@@ -44,6 +44,11 @@
 	{
 		navigator.notification.vibrate(100); // note, iPhone ignores the ms param
 	}
+	
+	function onBeepBtn()
+	{
+		navigator.notification.beep();
+	}
 
 	function onWinLoad()
 	{
@@ -87,6 +92,12 @@
   <a href="#" onclick="onLoadingBtn();">
 	<div class="item">
 	<h2>Show Loading ( 2 Seconds )</h2>
+  </div>
+  </a>
+  
+  <a href="#" onclick="onBeepBtn();">
+	<div class="item">
+	<h2>Beep</h2>
   </div>
   </a>
   

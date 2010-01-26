@@ -52,6 +52,7 @@ img {
 
 	var url = "http://search.twitter.com/search.json?callback=getTweets";
     
+	var intervalID;
 	
 
     function preventBehavior(e) { e.preventDefault(); };
@@ -64,35 +65,60 @@ img {
 	
 	function onDeviceReady()
 	{
-		navigator._geo = new Geolocation();		
-		proxyObj(navigator.geolocation,navigator._geo,["setLocation","getCurrentPosition","watchPosition","clearWatch","setError","start","stop"]);
 		
-		navigator.geolocation.getCurrentPosition(function(position) {  
-		callback(position.coords.latitude, position.coords.longitude);  
-	});
+		var funk = function(position)
+		{
+			callback(position.coords.latitude, position.coords.longitude); 
+		};
+		
+		var fail = function(error)
+		{
+			alert("error :: "  + error);
+		}
+
+		intervalID = navigator.geolocation.watchPosition(funk,fail);
+		
+		
 	
 		window.addEventListener("unload",onWindowUnload,false);
 	}
+	
+	function onBackBtn()
+	{
+		navigator.geolocation.clearWatch(intervalID);
+	}
+	
+
+
 	
 	function onWindowUnload()
 	{
 		
 	}
 	
-	// replace origObj's functions ( listed in funkList ) with the same method name on proxyObj
-	// performs correct scope resolution
-	function proxyObj(origObj,proxyObj,funkList)
+	function getCurrentLocation()
 	{
-		var replaceFunk = function(org,proxy,fName){ org[fName] = function(){ 
-		proxy[fName].apply(proxy,arguments); }; };
-		for(var v in funkList) { replaceFunk(origObj,proxyObj,funkList[v]);}
+		document.getElementById("location2").innerHTML = "Getting current location ...";
+		var funk = function(position)
+		{
+			document.getElementById("location2").innerHTML = "Lat: "+position.coords.latitude+ " Lon: " +position.coords.longitude;
+		};
+		
+		var fail = function(error)
+		{
+			alert("error :: "  + error);
+		}
+		navigator.geolocation.getCurrentPosition(funk,fail);
 	}
+	
+
 	
 	function callback(lat, lon) 
 	{ 
 		//navigator.geolocation.stop();
-		
+		//alert("Callback :: " + lat + "," + lon);
 		print(lat,lon);
+		
 	var geocode = "&geocode=" + lat + "%2C" + lon + "%2C1mi"; 
 	var fullUrl = url + geocode; 
 	var head = document.getElementsByTagName('head'); 
@@ -117,8 +143,9 @@ function getTweets(json) {
 	} 
 }
 
-function print(lat,lon){
-	document.getElementById("location").innerHTML = "Lat: "+lat+ " Lon: " +lon;
+function print(lat,lon)
+{
+	document.getElementById("location1").innerHTML = "Lat: "+lat+ " Lon: " +lon;// + " TS: " + (new Date().getTime());
 }
 
     
@@ -127,17 +154,19 @@ function print(lat,lon){
   
   <body id="stage" class="theme" onload="onWinLoad()">
   	<div class="topBar">
-		<a href="index.html">
+		<a href="index.html" onclick="onBackBtn()">
 			<span class="back_button">Back</span>
 		</a>
 		<span class="pageTitle">GeoLocation</span>	
 	</div>
 		<div id="container"> 
 		
-		<div class="item" style="text-align:center;" id="location">Getting your current location ...</div>
+		<div class="item" style="text-align:center;" id="location1">Getting your current location ...</div>
 		
-		<p>Find who are tweeting within 1 mile radius of where you are!</p> 
-		
+		<p>Find who are tweeting within 1 mile radius of where you are!</p>
+
+
+
 		<div id="tweetList"> 
  
 		</div> 
