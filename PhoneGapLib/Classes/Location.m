@@ -40,10 +40,13 @@
 - (void)startLocation:(NSMutableArray*)arguments
      withDict:(NSMutableDictionary*)options
 {
-    if (__locationStarted == YES)
-        return;
     if ([self.locationManager locationServicesEnabled] != YES)
+	{
+		NSString * jsErrorCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%@\");", @"Location Services Not Enabled"];
+		NSLog(@"%@", jsErrorCallBack);
+		[webView stringByEvaluatingJavaScriptFromString:jsErrorCallBack];
         return;
+	}
     
     // Tell the location manager to start notifying us of location updates
     [self.locationManager startUpdatingLocation];
@@ -162,23 +165,31 @@
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
+
+	
 	NSString* jsCallBack = @"";
 	
 	#ifdef __IPHONE_3_0
 	if ([error code] == kCLErrorHeadingFailure) {
-		jsCallBack = [NSString stringWithFormat:@"navigator.compass.setError(\"%s\");",
+		jsCallBack = [NSString stringWithFormat:@"navigator.compass.setError(\"%@\");",
 					  [error localizedDescription]
 					  ];
 	} else 
 	#endif
 	{
-		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%s\");",
+		NSString* pErrorDesc = [error localizedFailureReason];
+		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%@\");",
 								 [error localizedDescription]
 								];
 	}
     NSLog(@"%@", jsCallBack);
+	
+
     
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+	[self.locationManager stopUpdatingLocation];
+    __locationStarted = NO;
+	
 }
 
 - (void)dealloc {
