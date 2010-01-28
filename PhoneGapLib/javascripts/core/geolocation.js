@@ -8,10 +8,6 @@ function Geolocation() {
      */
     this.lastPosition = null;
     this.lastError = null;
-    this.callbacks = {
-        onLocationChanged: [],
-        onError:           []
-    };
 };
 
 /**
@@ -23,15 +19,26 @@ function Geolocation() {
  * @param {PositionOptions} options The options for getting the position data
  * such as timeout.
  */
-Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) 
+{
     var referenceTime = 0;
-    if (this.lastPosition)
-        referenceTime = this.lastPosition.timeout;
-    else
-        this.start(options);
+	
+	if(this.lastError != null)
+	{
+		if(typeof(errorCallback) == 'function')
+		{
+			errorCallback.call(null,this.lastError);
+			
+		}
+		this.stop();
+		return;
+	}
 
-    var timeout = 20000;
+	this.start(options);
+
+    var timeout = 20000; // defaults
     var interval = 500;
+	
     if (typeof(options) == 'object' && options.interval)
         interval = options.interval;
 
@@ -45,13 +52,22 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var timer = setInterval(function() {
         delay += interval;
 
-        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) {
+        if (typeof(dis.lastPosition) == 'object' && dis.lastPosition.timestamp > referenceTime) 
+		{
+			clearInterval(timer);
             successCallback(dis.lastPosition);
-            clearInterval(timer);
-        } else if (delay >= timeout) {
-            errorCallback();
-            clearInterval(timer);
+            
+        } 
+		else if (delay > timeout) 
+		{
+			clearInterval(timer);
+            errorCallback("Error Timeout");
         }
+		else if(dis.lastError != null)
+		{
+			clearInterval(timer);
+			errorCallback(dis.lastError);
+		}
     }, interval);
 };
 
@@ -74,9 +90,11 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
             frequency = options.frequency;
 	
 	var that = this;
-	return setInterval(function() {
+	return setInterval(function() 
+	{
 		that.getCurrentPosition(successCallback, errorCallback, options);
 	}, frequency);
+
 };
 
 
@@ -92,12 +110,11 @@ Geolocation.prototype.clearWatch = function(watchId) {
  * Called by the geolocation framework when the current location is found.
  * @param {PositionOptions} position The current position.
  */
-Geolocation.prototype.setLocation = function(position) {
+Geolocation.prototype.setLocation = function(position) 
+{
+	this.lastError = null;
     this.lastPosition = position;
-    for (var i = 0; i < this.callbacks.onLocationChanged.length; i++) {
-        var f = this.callbacks.onLocationChanged.shift();
-        f(position);
-    }
+
 };
 
 /**
@@ -105,11 +122,8 @@ Geolocation.prototype.setLocation = function(position) {
  * @param {String} message The text of the error message.
  */
 Geolocation.prototype.setError = function(message) {
+	alert("Error set :: " + message);
     this.lastError = message;
-    for (var i = 0; i < this.callbacks.onError.length; i++) {
-        var f = this.callbacks.onError.shift();
-        f(message);
-    }
 };
 
 Geolocation.prototype.start = function(args) {
@@ -127,7 +141,7 @@ function __proxyObj(origObj,proxyObj,funkList)
     { 
         org[fName] = function()
         { 
-           proxy[fName].apply(proxy,arguments); 
+           return proxy[fName].apply(proxy,arguments); 
         }; 
     };
 
