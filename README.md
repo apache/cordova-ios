@@ -73,6 +73,10 @@ Q. What is this warning I get when I am packaging the installer? "Warning: "Requ
 
 A. You can safely ignore this warning, it will not affect installation. The installer only installs for the current user, thus it does not need Admin privileges.
 
+Q. I get this "Invalid architecture" error. How do I fix it?
+
+A. The Active SDK for the project is set to "Use Base SDK", change it to one of the iPhone targets in the drop-down. Unfortunately this is a user-specific project setting and cannot be set in the Xcode template. 
+
 BUGS?
 -----
 File them at [http://phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/projects/20116-iphone)
