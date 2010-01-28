@@ -4,8 +4,7 @@ PhoneGapLib is a static library that enables users to include PhoneGap in their 
 
 Pre-requisites
 -------------------------------------------------------------
-Make sure you have installed the Xcode Developer tools, included
-in your OS Install DVD.
+Make sure you have installed the latest iPhone SDK. Download at http://developer.apple.com/iphone
 
 Build and install the Installer Package
 -------------------------------------------------------------
