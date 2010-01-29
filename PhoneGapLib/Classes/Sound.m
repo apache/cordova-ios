@@ -313,10 +313,4 @@
 	[super dealloc];
 }
 
-- (BOOL) isRecording
-{
-	return ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]);
-}
-
-
 @end
