@@ -29,6 +29,7 @@
 @property (nonatomic, copy) NSString* successCallback;
 @property (nonatomic, copy) NSString* errorCallback;
 @property (nonatomic, retain) AVAudioPlayer* player;
+@property (nonatomic, readonly) BOOL isRecording;
 
 #ifdef __IPHONE_3_0
 @property (nonatomic, retain) AVAudioRecorder* recorder;
