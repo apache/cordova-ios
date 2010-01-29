@@ -7,7 +7,7 @@
 function Media(src, successCallback, errorCallback) {
 	
 	if (!src) {
-		src = "document://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
+		src = "documents://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
 	}
 	this.src = src;
 	this.successCallback = successCallback;
