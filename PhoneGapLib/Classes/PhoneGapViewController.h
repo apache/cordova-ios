@@ -20,5 +20,6 @@
 - (void)willRotateToInterfaceOrientation: (UIInterfaceOrientation)toInterfaceOrientation duration: (NSTimeInterval)duration;
 - (void)setAutoRotate:(BOOL) shouldRotate;
 - (void)setRotateOrientation:(NSString*) orientation;
+- (void)setWebView:(UIWebView*) theWebView;
 
 @end
