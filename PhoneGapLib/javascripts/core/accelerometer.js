@@ -7,7 +7,7 @@ function Accelerometer()
 	/**
 	 * The last known acceleration.
 	 */
-	this.lastAcceleration = new Accelerometer(0,0,0);
+	this.lastAcceleration = new Acceleration(0,0,0);
 }
 
 /**
