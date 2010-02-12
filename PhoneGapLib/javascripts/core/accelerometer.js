@@ -2,11 +2,12 @@
  * This class provides access to device accelerometer data.
  * @constructor
  */
-function Accelerometer() {
+function Accelerometer() 
+{
 	/**
 	 * The last known acceleration.
 	 */
-	this.lastAcceleration = null;
+	this.lastAcceleration = new Accelerometer(0,0,0);
 }
 
 /**
@@ -24,10 +25,14 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 	
 	// Created for iPhone, Iphone passes back _accel obj litteral
 	if (typeof successCallback == "function") {
-		var accel = new Acceleration(_accel.x,_accel.y,_accel.z);
-		Accelerometer.lastAcceleration = accel;
-		successCallback(accel);
+		successCallback(this.lastAcceleration);
 	}
+}
+
+// private callback called from Obj-C by name
+Accelerometer.prototype._onAccelUpdate = function(x,y,z)
+{
+   this.lastAcceleration = new Acceleration(x,y,z);
 }
 
 /**
