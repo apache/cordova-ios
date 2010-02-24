@@ -68,4 +68,8 @@
     rotateOrientation = orientation;
 }
 
+- (void) setWebView:(UIWebView*) theWebView {
+    webView = theWebView;
+}
+
 @end
