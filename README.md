@@ -77,6 +77,11 @@ Q. I get this "Invalid architecture" error. How do I fix it?
 
 A. The Active SDK for the project is set to "Use Base SDK", change it to one of the iPhone targets in the drop-down. Unfortunately this is a user-specific project setting and cannot be set in the Xcode template. 
 
+Q. I get this "_kUTTypeImage" link error. How do I fix it?
+
+A. This relates to framework added for the new UIImagePickerController delegate. Add "MobileCoreServices.framework" to your project. This only relates to pre-existing projects that have updated their PhoneGapLib. New projects should not see this error.
+
+
 BUGS?
 -----
 File them at [http://phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/projects/20116-iphone)
