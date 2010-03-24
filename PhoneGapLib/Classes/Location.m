@@ -178,6 +178,7 @@
 	#endif
 	{
 		NSString* pErrorDesc = [error localizedFailureReason];
+#pragma unused(pErrorDesc)
 		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%@\");",
 								 [error localizedDescription]
 								];
