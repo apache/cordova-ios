@@ -9,10 +9,13 @@
 #import "Camera.h"
 #import "NSData+Base64.h"
 #import "Categories.h"
+#import <MobileCoreServices/UTCoreTypes.h>
 
 @implementation Camera
 
-- (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+@synthesize pickerController;
+
+- (CameraPicker*) createCameraPicker:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
 	NSString* successCallback = nil, *errorCallback = nil;
@@ -22,7 +25,7 @@
 	
 	if (argc < 1) {
 		NSLog(@"Camera.getPicture: Missing 1st parameter.");
-		return;
+		return nil;
 	}
 	
 	NSString* sourceTypeString = [options valueForKey:@"sourceType"];
@@ -34,20 +37,56 @@
 	bool hasCamera = [UIImagePickerController isSourceTypeAvailable:sourceType];
 	if (!hasCamera) {
 		NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
+		return nil;
+	}
+	
+	self.pickerController = [[CameraPicker alloc] init];
+	
+	self.pickerController.delegate = self;
+	self.pickerController.sourceType = sourceType;
+	self.pickerController.successCallback = successCallback;
+	self.pickerController.errorCallback = errorCallback;
+	self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
+	self.pickerController.postUrl = nil;
+	
+	return self.pickerController;
+}
+
+- (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	CameraPicker* picker = [self createCameraPicker:arguments withDict:options];
+	if (picker == nil) {
 		return;
 	}
 	
-	if (pickerController == nil) {
-		pickerController = [[CameraPicker alloc] init];
+	[[super appViewController] presentModalViewController:picker animated:YES];
+}
+
+- (void) postPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	CameraPicker* picker = [self createCameraPicker:arguments withDict:options];
+	if (picker == nil) {
+		return;
 	}
 	
-	pickerController.delegate = self;
-	pickerController.sourceType = sourceType;
-	pickerController.successCallback = successCallback;
-	pickerController.errorCallback = errorCallback;
-	pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
+	NSString* postUrlString = [options valueForKey:@"postUrl"];
+	if (postUrlString != nil) {
+		picker.postUrl = postUrlString;
+	} else {
+		NSLog(@"Camera.postPicture: postUrl not specified.");
+		return;
+	}
 	
-	[[super appViewController] presentModalViewController:pickerController animated:YES];
+	[[super appViewController] presentModalViewController:picker animated:YES];
+}
+
+- (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
+{
+	NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
+	if ([mediaType isEqualToString:(NSString*)kUTTypeImage]){
+		UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+		[self imagePickerController:picker didFinishPickingImage:image editingInfo:info];
+	}
 }
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo
@@ -58,10 +97,21 @@
 
 	[picker dismissModalViewControllerAnimated:YES];
 	
-	if (cameraPicker.successCallback) {
-		NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
-		[webView stringByEvaluatingJavaScriptFromString:jsString];
-		[jsString release];
+	if (cameraPicker.postUrl != nil) {
+		//TODO: need loading view here
+		BOOL postOk = [self postImage:image withFilename:@"file.png" andQuality:quality toUrl:[NSURL URLWithString:cameraPicker.postUrl]];
+		if (cameraPicker.successCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(%@);", cameraPicker.successCallback, postOk? @"true" : @"false"];
+			[self writeJavascript:jsString];
+			[jsString release];
+		}
+		
+	} else {
+		if (cameraPicker.successCallback) {
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
+			[self writeJavascript:jsString];
+			[jsString release];
+		}
 	}
 }
 
@@ -70,17 +120,22 @@
 	[picker dismissModalViewControllerAnimated:YES];
 }
 
-- (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url 
+- (BOOL) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url 
 {
-	NSString *boundary = @"----BOUNDARY_IS_I";
+	return [self postImage:anImage withFilename:filename andQuality:100.0 toUrl:url];
+}
 
-	NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
+- (BOOL) postImage:(UIImage*)anImage withFilename:(NSString*)filename andQuality:(CGFloat)quality toUrl:(NSURL*)url 
+{
+	NSString* boundary = @"----BOUNDARY_IS_I";
+
+	NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:url];
 	[req setHTTPMethod:@"POST"];
 	
-	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+	NSString* contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
 	[req setValue:contentType forHTTPHeaderField:@"Content-type"];
 	
-	NSData *imageData = UIImagePNGRepresentation(anImage);
+	NSData* imageData = UIImageJPEGRepresentation(anImage, quality);
 	
 	// adding the body
 	NSMutableData *postBody = [NSMutableData data];
@@ -88,7 +143,7 @@
 	// first parameter an image
 	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+	[postBody appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:imageData];
 	
 //	// second parameter information
@@ -99,12 +154,14 @@
 	
 	[req setHTTPBody:postBody];
 	
-	NSURLResponse* response;
-	NSError* error;
+	NSURLResponse* response = nil;
+	NSError* error = nil;
 	[NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
 
-//  NSData* result = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
-//	NSString * resultStr =  [[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding] autorelease];
+	//NSData* result = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
+	//NSString* resultStr =  [[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding] autorelease];
+	
+	return (error == nil);
 }
 
 - (void) dealloc
@@ -121,19 +178,16 @@
 
 @implementation CameraPicker
 
-@synthesize quality;
+@synthesize quality, postUrl;
 @synthesize successCallback;
 @synthesize errorCallback;
 
 - (void) dealloc
 {
-	if (successCallback) {
-		[successCallback release];
-	}
-	if (errorCallback) {
-		[errorCallback release];
-	}
-	
+	self.successCallback = nil;
+	self.errorCallback = nil;
+	self.postUrl = nil;
+
 	[super dealloc];
 }
 

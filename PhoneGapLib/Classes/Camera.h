@@ -14,11 +14,13 @@
 	NSString* successCallback;
 	NSString* errorCallback;
 	NSInteger quality;
+	NSString* postUrl;
 }
 
-@property NSInteger quality;
-@property (retain) NSString* successCallback;
-@property (retain) NSString* errorCallback;
+@property (nonatomic, assign) NSInteger quality;
+@property (nonatomic, copy) NSString* successCallback;
+@property (nonatomic, copy) NSString* errorCallback;
+@property (nonatomic, copy) NSString* postUrl;
 
 - (void) dealloc;
 
@@ -28,6 +30,8 @@
 {
 	CameraPicker* pickerController;
 }
+
+@property (nonatomic, retain) CameraPicker* pickerController;
 
 /*
  * getPicture
@@ -40,7 +44,8 @@
  *	quality: integer between 1 and 100
  */
 - (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
+- (BOOL) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
+- (BOOL) postImage:(UIImage*)anImage withFilename:(NSString*)filename andQuality:(CGFloat)quality toUrl:(NSURL*)url;
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
