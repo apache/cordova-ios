@@ -92,15 +92,8 @@ static NSString *gapVersion;
  */
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
-	/* 
-	 * The applicationFrame size (viewport) is correct   because it accounts for the status bar.
-	 * The applicationFrame origin          is incorrect because it is offset by the toolbar (non-existant).
-	 * The mainScreen       origin          is correct   because it is not offset and is directly under the status bar.
-	 */
-	CGRect screenBounds      = [ [ UIScreen mainScreen ] bounds ];
-	CGRect applicationBounds = [ [ UIScreen mainScreen ] applicationFrame ];
-	screenBounds.size = applicationBounds.size;
-
+	
+	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
 	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
 	viewController = [ [ PhoneGapViewController alloc ] init ];
 	
