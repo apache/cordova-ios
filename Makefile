@@ -39,6 +39,9 @@ clean:
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
+	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___-iPad.xcodeproj/*.mode1v3
+	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___-iPad.xcodeproj/*.perspectivev3
+	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___-iPad.xcodeproj/*.pbxuser
 	$(RM_F) PhoneGap-based\ Application/www/phonegap.js
 	
 installer: clean
