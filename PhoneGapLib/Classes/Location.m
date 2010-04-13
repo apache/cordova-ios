@@ -42,7 +42,9 @@
 {
     if ([self.locationManager locationServicesEnabled] != YES)
 	{
-		NSString * jsErrorCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%@\");", @"Location Services Not Enabled"];
+		NSString* jsErrorCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError({ 'code': %d, 'message': '%@' });", 
+									 1, // 1 is PERMISSION_DENIED
+									 @"Location Services Not Enabled"];
 		NSLog(@"%@", jsErrorCallBack);
 		[webView stringByEvaluatingJavaScriptFromString:jsErrorCallBack];
         return;

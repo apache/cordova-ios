@@ -1,3 +1,13 @@
+function PositionError()
+{
+	this.code = 0;
+	this.message = "";
+}
+
+PositionError.PERMISSION_DENIED = 1;
+PositionError.POSITION_UNAVAILABLE = 2;
+PositionError.TIMEOUT = 3;
+
 /**
  * This class provides access to device GPS data.
  * @constructor
@@ -121,9 +131,8 @@ Geolocation.prototype.setLocation = function(position)
  * Called by the geolocation framework when an error occurs while looking up the current position.
  * @param {String} message The text of the error message.
  */
-Geolocation.prototype.setError = function(message) {
-	alert("Error set :: " + message);
-    this.lastError = message;
+Geolocation.prototype.setError = function(error) {
+    this.lastError = error;
 };
 
 Geolocation.prototype.start = function(args) {
