@@ -7,12 +7,16 @@
 		<string>icon.png</string>
 		<string>icon-72.png</string>
 	</array>
-	<key>UISupportedInterfaceOrientations</key>
+	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>

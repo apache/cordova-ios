@@ -2,6 +2,11 @@ VERSION 20100406
 
 PhoneGapLib is a static library that enables users to include PhoneGap in their iPhone application projects easily, and also create new PhoneGap based iPhone application projects through a Xcode project template.
 
+20100416
+- Removed keys from PhoneGap.plist (AutoRotate, StartOrientation, RotateOrientation).
+- To support orientation in your app: edit/add the UISupportedInterfaceOrientations (iPhone) or UISupportedInterfaceOrientations~ipad (iPad) key into your app's [appname]-Info.plist, with an array of strings that show what orientation your app supports. The supported values are: UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeRight. 
+- The first value in the array is the orientation that your app starts in. If you have more than one value in the array, it will autorotate (to the other supported orientations).
+
 20100406
 - added iPad universal xcodeproj file (3.2 OS required)
 

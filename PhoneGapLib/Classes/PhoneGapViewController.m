@@ -11,9 +11,13 @@
 
 @implementation PhoneGapViewController
 
+@synthesize supportedOrientations, webView;
+
 - (id) init
 {
-    self = [super init];
+    if (self = [super init]) {
+		// do other init here
+	}
 	
 	return self;
 }
@@ -21,19 +25,16 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
 {
-    if (autoRotate == YES) {
-        return YES;
-    } else {
-        if ([rotateOrientation isEqualToString:@"portrait"]) {
-            return (interfaceOrientation == UIInterfaceOrientationPortrait ||
-                    interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
-        } else if ([rotateOrientation isEqualToString:@"landscape"]) {
-            return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-                    interfaceOrientation == UIInterfaceOrientationLandscapeRight);
-        } else {
-            return NO;
-        }
+	BOOL autoRotate = [self.supportedOrientations count] > 1; // autorotate if only more than 1 orientation supported
+	if (autoRotate)
+	{
+		if ([self.supportedOrientations containsObject:
+			 [NSNumber numberWithInt:interfaceOrientation]]) {
+			return YES;
+		}
     }
+	
+	return NO;
 }
 
 /**
@@ -58,14 +59,6 @@
 			break;
 	}
 	[webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"navigator.orientation.setOrientation(%f);", i]];
-}
-
-- (void) setAutoRotate:(BOOL) shouldRotate {
-    autoRotate = shouldRotate;
-}
-
-- (void) setRotateOrientation:(NSString*) orientation {
-    rotateOrientation = orientation;
 }
 
 - (void) setWebView:(UIWebView*) theWebView {

@@ -87,40 +87,73 @@ static NSString *gapVersion;
     return obj;
 }
 
+- (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
+{
+	NSMutableArray* result = [[[NSMutableArray alloc] init] autorelease];
+	
+	if (orientations != nil) 
+	{
+		NSEnumerator* enumerator = [orientations objectEnumerator];
+		NSString* orientationString;
+		
+		while (orientationString = [enumerator nextObject]) 
+		{
+			if ([orientationString isEqualToString:@"UIInterfaceOrientationPortrait"]) {
+				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
+			} else if ([orientationString isEqualToString:@"UIInterfaceOrientationPortraitUpsideDown"]) {
+				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortraitUpsideDown]];
+			} else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeLeft"]) {
+				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeLeft]];
+			} else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeRight"]) {
+				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight]];
+			}
+		}
+	}
+	
+	// default
+	if ([result count] == 0) {
+		[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
+	}
+	
+	return result;
+}
+
 /**
  * This is main kick off after the app inits, the views and Settings are setup here.
  */
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
+	// read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
+	NSArray* supportedOrientations = [self parseInterfaceOrientations:
+											   [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
+    // read from PhoneGap.plist in the app bundle
+	NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"PhoneGap"];
+    settings = [[NSDictionary alloc] initWithDictionary:temp];
 	
-	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
-	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
 	viewController = [ [ PhoneGapViewController alloc ] init ];
 	
-	webView = [ [ UIWebView alloc ] initWithFrame:screenBounds ];
-  [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
-	
-	[ viewController setWebView:webView ];
-	[ viewController.view addSubview:webView ];
-	
-	/*
-	 * PhoneGap.plist
-	 *
-	 * This block of code navigates to the PhoneGap.plist in the Config Group and reads the XML into an Hash (Dictionary)
-	 *
-	 */
-    NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"PhoneGap"];
-    settings = [[NSDictionary alloc] initWithDictionary:temp];
-
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 30000
     NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
 #endif
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-    NSNumber *autoRotate           = [settings objectForKey:@"AutoRotate"];
-    NSString *startOrientation     = [settings objectForKey:@"StartOrientation"];
-    NSString *rotateOrientation    = [settings objectForKey:@"RotateOrientation"];
     NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
 	
+	
+	// The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
+	[[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
+	
+	// Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
+    viewController.supportedOrientations = supportedOrientations;
+	
+	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
+	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
+	
+	webView = [ [ UIWebView alloc ] initWithFrame:screenBounds ];
+    [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
+	
+	viewController.webView = webView;
+	[viewController.view addSubview:webView];
+		
 	/*
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
@@ -155,37 +188,7 @@ static NSString *gapVersion;
     imageView.tag = 1;
 	[window addSubview:imageView];
 	[imageView release];
-	
-    /*
-     * autoRotate - If you want your phone to automatically rotate its display when the phone is rotated
-     * Value should be BOOL (YES|NO)
-     */
-    [viewController setAutoRotate:[autoRotate boolValue]];
 
-    /*
-     * startOrientation - This option dictates what the starting orientation will be of the application 
-     * Value should be one of: portrait, portraitUpsideDown, landscapeLeft, landscapeRight
-     */
-    orientationType = UIInterfaceOrientationPortrait;
-    if ([startOrientation isEqualToString:@"portrait"]) {
-        orientationType = UIInterfaceOrientationPortrait;
-    } else if ([startOrientation isEqualToString:@"portraitUpsideDown"]) {
-        orientationType = UIInterfaceOrientationPortraitUpsideDown;
-    } else if ([startOrientation isEqualToString:@"landscapeLeft"]) {
-        orientationType = UIInterfaceOrientationLandscapeLeft;
-    } else if ([startOrientation isEqualToString:@"landscapeRight"]) {
-        orientationType = UIInterfaceOrientationLandscapeRight;
-    }
-    [[UIApplication sharedApplication] setStatusBarOrientation:orientationType animated:NO];
-
-    /*
-     * rotateOrientation - This option is only enabled when AutoRotate is enabled.  If the phone is still rotated
-     * when AutoRotate is disabled, this will control what orientations will be rotated to.  If you wish your app to
-     * only use landscape or portrait orientations, change the value in PhoneGap.plist to indicate that.
-     * Value should be one of: any, portrait, landscape
-     */
-    [viewController setRotateOrientation:rotateOrientation];
-    
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
 	 *
@@ -216,18 +219,14 @@ static NSString *gapVersion;
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView 
 {
-
-    
 	// Play any default movie
-	if(![[[UIDevice currentDevice] model] isEqualToString:@"iPhone Simulator"]) {
-		NSLog(@"Going to play default movie");
-		Movie* mov = (Movie*)[self getCommandInstance:@"Movie"];
-		NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
-		[args addObject:@"default.mov"];
-		NSMutableDictionary* opts = [[[NSMutableDictionary alloc] init] autorelease];
-		[opts setObject:@"1" forKey:@"repeat"];
-		[mov play:args withDict:opts];
-	}
+	NSLog(@"Going to play default movie");
+	Movie* mov = (Movie*)[self getCommandInstance:@"Movie"];
+	NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
+	[args addObject:@"default.mov"];
+	NSMutableDictionary* opts = [[[NSMutableDictionary alloc] init] autorelease];
+	[opts setObject:@"1" forKey:@"repeat"];
+	[mov play:args withDict:opts];
 
     // Determine the URL used to invoke this application.
     // Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html

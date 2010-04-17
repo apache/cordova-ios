@@ -12,14 +12,13 @@
 
 @interface PhoneGapViewController : UIViewController {
     IBOutlet UIWebView *webView;
-    BOOL     autoRotate;
-    NSString *rotateOrientation;
+	NSArray* supportedOrientations;
 }
+
+@property (nonatomic, retain) 	NSArray* supportedOrientations;
+@property (nonatomic, retain)	UIWebView* webView;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation; 
 - (void)willRotateToInterfaceOrientation: (UIInterfaceOrientation)toInterfaceOrientation duration: (NSTimeInterval)duration;
-- (void)setAutoRotate:(BOOL) shouldRotate;
-- (void)setRotateOrientation:(NSString*) orientation;
-- (void)setWebView:(UIWebView*) theWebView;
 
 @end
