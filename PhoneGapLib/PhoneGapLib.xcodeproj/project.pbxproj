@@ -17,8 +17,6 @@
 		8887FD6B1090FBE7009987E8 /* Contacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD2B1090FBE7009987E8 /* Contacts.m */; };
 		8887FD6C1090FBE7009987E8 /* DebugConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD2C1090FBE7009987E8 /* DebugConsole.h */; };
 		8887FD6D1090FBE7009987E8 /* DebugConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD2D1090FBE7009987E8 /* DebugConsole.m */; };
-		8887FD6E1090FBE7009987E8 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD2E1090FBE7009987E8 /* Device.h */; };
-		8887FD6F1090FBE7009987E8 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD2F1090FBE7009987E8 /* Device.m */; };
 		8887FD701090FBE7009987E8 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD301090FBE7009987E8 /* File.h */; };
 		8887FD711090FBE7009987E8 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD311090FBE7009987E8 /* File.m */; };
 		8887FD721090FBE7009987E8 /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD321090FBE7009987E8 /* Image.h */; };
@@ -86,8 +84,6 @@
 		8887FD2B1090FBE7009987E8 /* Contacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contacts.m; path = Classes/Contacts.m; sourceTree = "<group>"; };
 		8887FD2C1090FBE7009987E8 /* DebugConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugConsole.h; path = Classes/DebugConsole.h; sourceTree = "<group>"; };
 		8887FD2D1090FBE7009987E8 /* DebugConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DebugConsole.m; path = Classes/DebugConsole.m; sourceTree = "<group>"; };
-		8887FD2E1090FBE7009987E8 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Device.h; path = Classes/Device.h; sourceTree = "<group>"; };
-		8887FD2F1090FBE7009987E8 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Device.m; path = Classes/Device.m; sourceTree = "<group>"; };
 		8887FD301090FBE7009987E8 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Classes/File.h; sourceTree = "<group>"; };
 		8887FD311090FBE7009987E8 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Classes/File.m; sourceTree = "<group>"; };
 		8887FD321090FBE7009987E8 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Image.h; path = Classes/Image.h; sourceTree = "<group>"; };
@@ -205,8 +201,6 @@
 				8887FD2B1090FBE7009987E8 /* Contacts.m */,
 				8887FD2C1090FBE7009987E8 /* DebugConsole.h */,
 				8887FD2D1090FBE7009987E8 /* DebugConsole.m */,
-				8887FD2E1090FBE7009987E8 /* Device.h */,
-				8887FD2F1090FBE7009987E8 /* Device.m */,
 				8887FD301090FBE7009987E8 /* File.h */,
 				8887FD311090FBE7009987E8 /* File.m */,
 				8887FD321090FBE7009987E8 /* Image.h */,
@@ -308,7 +302,6 @@
 				8887FD681090FBE7009987E8 /* Categories.h in Headers */,
 				8887FD6A1090FBE7009987E8 /* Contacts.h in Headers */,
 				8887FD6C1090FBE7009987E8 /* DebugConsole.h in Headers */,
-				8887FD6E1090FBE7009987E8 /* Device.h in Headers */,
 				8887FD701090FBE7009987E8 /* File.h in Headers */,
 				8887FD721090FBE7009987E8 /* Image.h in Headers */,
 				8887FD741090FBE7009987E8 /* InvokedUrlCommand.h in Headers */,
@@ -406,7 +399,6 @@
 				8887FD691090FBE7009987E8 /* Categories.m in Sources */,
 				8887FD6B1090FBE7009987E8 /* Contacts.m in Sources */,
 				8887FD6D1090FBE7009987E8 /* DebugConsole.m in Sources */,
-				8887FD6F1090FBE7009987E8 /* Device.m in Sources */,
 				8887FD711090FBE7009987E8 /* File.m in Sources */,
 				8887FD731090FBE7009987E8 /* Image.m in Sources */,
 				8887FD751090FBE7009987E8 /* InvokedUrlCommand.m in Sources */,
