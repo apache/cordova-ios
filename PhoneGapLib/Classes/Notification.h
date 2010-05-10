@@ -12,11 +12,12 @@
 #import "PhoneGapCommand.h"
 #import "LoadingView.h"
 
-@interface Notification : PhoneGapCommand {
+@interface Notification : PhoneGapCommand <UIAlertViewDelegate>{
 	LoadingView* loadingView;
 }
 
 - (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
 - (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
