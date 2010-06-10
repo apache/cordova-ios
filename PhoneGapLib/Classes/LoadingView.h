@@ -11,6 +11,8 @@
 //  this copyright and permission notice. Attribution in compiled projects is
 //  appreciated but not required.
 //
+//  Additions and tweaks by Shazron Abdullah, Nitobi Software.
+//
 
 #import <UIKit/UIKit.h>
 
@@ -18,12 +20,30 @@
 {
 	NSTimeInterval minDuration;
 	NSDate* timestamp;
+	CGFloat backgroundOpacity;
+	CGFloat strokeOpacity;
+	UIColor* strokeColor;
+	BOOL fullScreen;
+	UILabel* textLabel;
+	BOOL bounceAnimation;
 }
 
-@property NSTimeInterval minDuration;
-@property (retain) NSDate* timestamp;
+@property (nonatomic, assign) CGFloat backgroundOpacity;
+@property (nonatomic, assign) CGFloat strokeOpacity;
+@property (nonatomic, retain) UIColor* strokeColor;
+@property (nonatomic, assign) NSTimeInterval minDuration;
+@property (nonatomic, retain) NSDate* timestamp;
+@property (nonatomic, assign) BOOL fullScreen;
+@property (nonatomic, retain) UILabel* textLabel;
+@property (nonatomic, assign) BOOL bounceAnimation;
 
 + (id)loadingViewInView:(UIView *)aSuperview;
++ (id)loadingViewInView:(UIView *)aSuperview strokeOpacity:(CGFloat)strokeOpacity backgroundOpacity:(CGFloat)backgroundOpacity 
+			strokeColor:(UIColor*)strokeColor fullScreen:(BOOL)fullScreen labelText:(NSString*)labelText bounceAnimation:(BOOL)bounceAnimation;
++ (CGFloat) defaultStrokeOpacity;
++ (CGFloat) defaultBackgroundOpacity;
++ (UIColor*) defaultStrokeColor;
++ (NSString*) defaultLabelText;
 - (void)removeView;
 
 @end
