@@ -19,18 +19,32 @@
 	NSString* message = [arguments objectAtIndex:0];
 	NSString* title   = [options objectForKey:@"title"];
 	NSString* button  = [options objectForKey:@"buttonLabel"];
-    
-    if (!title)
+	
+	if (!title)
         title = @"Alert";
-    if (!button)
+	if (!button)
         button = @"OK";
-    
-	UIAlertView *openURLAlert = [[UIAlertView alloc]
-								 initWithTitle:title
-								 message:message delegate:nil cancelButtonTitle:button otherButtonTitles:nil];
-	[openURLAlert show];
-	[openURLAlert release];
+	
+	UIAlertView *alertView = [[UIAlertView alloc]
+							  initWithTitle:title
+							  message:message 
+							  delegate:self 
+							  cancelButtonTitle:nil 
+							  otherButtonTitles:nil];
+	
+	NSArray* labels = [ button componentsSeparatedByString:@","];
+	
+	int count = [ labels count ];
+	
+	for(int n = 0; n < count; n++)
+	{
+		[ alertView addButtonWithTitle:[labels objectAtIndex:n]];
+	}
+	
+	[alertView show];
+	[alertView release];
 }
+
 
 - (void)prompt:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -45,10 +59,24 @@
     
 	UIAlertView *openURLAlert = [[UIAlertView alloc]
 								 initWithTitle:title
-								 message:message delegate:nil cancelButtonTitle:button otherButtonTitles:nil];
+								 message:message delegate:self cancelButtonTitle:button otherButtonTitles:nil];
 	[openURLAlert show];
 	[openURLAlert release];
 }
+
+/**
+ Callback invoked when an alert dialog's buttons are clicked.   
+ Passes the index + label back to JS
+ */
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *buttonLabel = [alertView buttonTitleAtIndex:buttonIndex];
+
+	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", buttonIndex, buttonLabel];    
+    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+}
+ 
 
 - (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {

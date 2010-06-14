@@ -37,6 +37,8 @@
 		NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
 		return;
 	}
+
+        bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
 	
 	if (pickerController == nil) {
 		pickerController = [[CameraPicker alloc] init];
@@ -44,6 +46,7 @@
 	
 	pickerController.delegate = self;
 	pickerController.sourceType = sourceType;
+	pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
 	pickerController.successCallback = successCallback;
 	pickerController.errorCallback = errorCallback;
 	pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];

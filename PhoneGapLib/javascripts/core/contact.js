@@ -1,13 +1,4 @@
-// Gets the function name of a Function object, else uses "alert" if anonymous
-function GetFunctionName(fn)
-{
-  if (fn) {
-      var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
-      return m ? m[1] : "alert";
-  } else {
-    return null;
-  }
-}
+
 
 /**
  * This class provides access to the device contacts.
