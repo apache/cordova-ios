@@ -81,6 +81,9 @@ Q. I get this "_kUTTypeImage" link error. How do I fix it?
 
 A. This relates to framework added for the new UIImagePickerController delegate. Add "MobileCoreServices.framework" to your project. This only relates to pre-existing projects that have updated their PhoneGapLib. New projects should not see this error.
 
+Q. I have Framework errors in red when creating a PhoneGap project in Xcode 3.2.3 for iOS 4.0? How do I fix it?
+
+A. Change your Base SDK. Go to the Project Menu --> Edit Project Settings --> General Tab --> Base SDK for all Configurations. Change it to iPhone Simulator 4.0
 
 BUGS?
 -----
