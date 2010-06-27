@@ -121,7 +121,8 @@ static NSString *gapVersion;
 /**
  * This is main kick off after the app inits, the views and Settings are setup here.
  */
-- (void)applicationDidFinishLaunching:(UIApplication *)application
+// - (void)applicationDidFinishLaunching:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {	
 	// read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
 	NSArray* supportedOrientations = [self parseInterfaceOrientations:
@@ -153,6 +154,30 @@ static NSString *gapVersion;
 	
 	viewController.webView = webView;
 	[viewController.view addSubview:webView];
+	
+	// This has been moved from the webViewDidStartLoad because invokedURL never had been set
+	// from handleOpenURL - so I've changed this method from using didFinishLaunching to
+	// didFinishLaunchingWithOptions to capture the original url that launched the app
+	NSArray *keyArray = [launchOptions allKeys];
+	if ([launchOptions objectForKey:[keyArray objectAtIndex:0]]!=nil) {
+		NSURL *url = [launchOptions objectForKey:[keyArray objectAtIndex:0]];
+		invokedURL = url;
+		NSLog(@"URL = %@", [invokedURL absoluteURL]);
+		// Determine the URL used to invoke this application.
+		// Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
+		if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
+			InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
+
+			NSLog(@"Arguments: %@", iuc.arguments);
+
+			NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
+
+			[webView stringByEvaluatingJavaScriptFromString:optionsString];
+
+			[optionsString release];
+		}
+	}
+	
 		
 	/*
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
@@ -230,17 +255,18 @@ static NSString *gapVersion;
 
     // Determine the URL used to invoke this application.
     // Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
-	
- 	if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
-		InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
-    
-		NSLog(@"Arguments: %@", iuc.arguments);
-		NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
-	 
-		[webView stringByEvaluatingJavaScriptFromString:optionsString];
-		
-		[optionsString release];
-    }
+
+	// This fires before the handleOpenURL fires, so the invokedURL is empty
+  // if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
+  //    InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
+  //     
+  //    NSLog(@"Arguments: %@", iuc.arguments);
+  //    NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
+  //   
+  //    [webView stringByEvaluatingJavaScriptFromString:optionsString];
+  //    
+  //    [optionsString release];
+  //     }
 }
 
 - (NSDictionary*) deviceProperties
