@@ -4,7 +4,7 @@
  *
  */
  
-function Media(src, successCallback, errorCallback) {
+function Media(src, successCallback, errorCallback, downloadCompleteCallback) {
 	
 	if (!src) {
 		src = "documents://" + String((new Date()).getTime()).replace(/\D/gi,''); // random
@@ -12,9 +12,10 @@ function Media(src, successCallback, errorCallback) {
 	this.src = src;
 	this.successCallback = successCallback;
 	this.errorCallback = errorCallback;	
+	this.downloadCompleteCallback = downloadCompleteCallback;
     
 	if (this.src != null) {
-		PhoneGap.exec("Sound.prepare", this.src, this.successCallback, this.errorCallback);
+		PhoneGap.exec("Sound.prepare", this.src, this.successCallback, this.errorCallback, this.downloadCompleteCallback);
 	}
 }
  

@@ -41,7 +41,7 @@ function anomToNameFunk(fun)
 	var funkId = "f" + _anomFunkMapNextId++;
 	var funk = function()
 	{
-		_anomFunkMap[funkId].apply(this,arguments);
+		fun.apply(this,arguments);
 		_anomFunkMap[funkId] = null;
 		delete _anomFunkMap[funkId];	
 	}
