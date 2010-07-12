@@ -121,17 +121,23 @@
 	}
 	
 	NSUInteger argc = [arguments count];
-	
 	if (argc > 1) audioFile.successCallback = [arguments objectAtIndex:1];
 	if (argc > 2) audioFile.errorCallback = [arguments objectAtIndex:2];
+	if (argc > 3) audioFile.downloadCompleteCallback = [arguments objectAtIndex:3];
 	
 	[soundCache setObject:audioFile forKey:audioFile.resourcePath];
 	if (audioFile.player != nil) {
 		NSLog(@"Prepared audio sample '%@' for playback.", audioFile.resourcePath);
+		if (audioFile.downloadCompleteCallback) {
+			NSLog(@"dl complete cb: %@", audioFile.downloadCompleteCallback);
+			NSString* jsString = [NSString stringWithFormat:@"(%@)();", audioFile.downloadCompleteCallback];
+			[super writeJavascript:jsString];
+		}
 
 		audioFile.player.delegate = self;
 		[audioFile.player prepareToPlay];
 	}
+	audFile = audioFile;
 }
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -263,7 +269,7 @@
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer*)player successfully:(BOOL)flag 
 {
 	NSString* resourcePath = [self resourceForUrl:player.url];
-	AudioFile* audioFile = [self audioFileForResource:resourcePath];
+	AudioFile* audioFile = audFile;
 	NSLog(@"Finished playing audio sample '%@'", resourcePath);
 	
 	if (audioFile != nil) {
@@ -279,7 +285,10 @@
 				[super writeJavascript:jsString];
 			}		
 		}
+	} else {
+		NSLog(@"audio file nil");
 	}
+
 }
 
 - (void) clearCaches
@@ -299,6 +308,7 @@
 @synthesize resourceURL;
 @synthesize successCallback;
 @synthesize errorCallback;
+@synthesize downloadCompleteCallback;
 @synthesize player;
 #ifdef __IPHONE_3_0
 @synthesize recorder;
@@ -309,6 +319,7 @@
 	self.player = nil;
 	self.successCallback = nil;
 	self.errorCallback = nil;
+	self.downloadCompleteCallback = nil;
 	
 	[super dealloc];
 }

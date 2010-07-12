@@ -16,6 +16,7 @@
 {
 	NSString* successCallback;
 	NSString* errorCallback;
+	NSString* downloadCompleteCallback;
 	NSString* resourcePath;
 	NSURL* resourceURL;
 	AVAudioPlayer* player;
@@ -28,6 +29,7 @@
 @property (nonatomic, copy) NSURL* resourceURL;
 @property (nonatomic, copy) NSString* successCallback;
 @property (nonatomic, copy) NSString* errorCallback;
+@property (nonatomic, copy) NSString* downloadCompleteCallback;
 @property (nonatomic, retain) AVAudioPlayer* player;
 
 #ifdef __IPHONE_3_0
@@ -44,6 +46,7 @@
 >
 {
 	NSMutableDictionary* soundCache;
+	AudioFile* audFile;
 }
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
