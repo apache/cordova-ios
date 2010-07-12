@@ -75,7 +75,9 @@
     //[theMovie setOrientation:UIDeviceOrientationPortrait animated:NO]; // TODO: remove? no such selector
 
 	theMovie.scalingMode = MPMovieScalingModeAspectFill; 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_3_2
 	theMovie.movieControlMode = MPMovieControlModeDefault;	
+#endif
 
     // Register for the playback finished notification. 
     [[NSNotificationCenter defaultCenter] addObserver:self 

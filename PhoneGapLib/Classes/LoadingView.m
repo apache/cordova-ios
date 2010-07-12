@@ -102,6 +102,7 @@ CGPathRef NewPathWithRect(CGRect rect)
 
 @implementation LoadingView
 
+@synthesize boxLength;
 @synthesize strokeOpacity;
 @synthesize backgroundOpacity;
 @synthesize strokeColor;
@@ -119,6 +120,11 @@ CGPathRef NewPathWithRect(CGRect rect)
 + (CGFloat) defaultBackgroundOpacity
 {
 	return 0.9;
+}
+
++ (CGFloat) defaultBoxLength
+{
+	return 150.0;
 }
 
 + (UIColor*) defaultStrokeColor
@@ -145,7 +151,7 @@ CGPathRef NewPathWithRect(CGRect rect)
 //
 + (id)loadingViewInView:(UIView *)aSuperview strokeOpacity:(CGFloat)strokeOpacity backgroundOpacity:(CGFloat)backgroundOpacity 
 			strokeColor:(UIColor*)strokeColor fullScreen:(BOOL)fullScreen labelText:(NSString*)labelText 
-		bounceAnimation:(BOOL)bounceAnimation
+		bounceAnimation:(BOOL)bounceAnimation boxLength:(CGFloat)boxLength
 {
 	LoadingView *loadingView =
 	[[[LoadingView alloc] initWithFrame:[aSuperview bounds]] autorelease];
@@ -154,6 +160,7 @@ CGPathRef NewPathWithRect(CGRect rect)
 		return nil;
 	}
 	
+	loadingView.boxLength = boxLength;
 	loadingView.strokeOpacity = strokeOpacity;
 	loadingView.backgroundOpacity = backgroundOpacity;
 	loadingView.strokeColor = strokeColor;
@@ -238,9 +245,14 @@ CGPathRef NewPathWithRect(CGRect rect)
 
 + (id)loadingViewInView:(UIView *)aSuperview
 {
-	return [self loadingViewInView:aSuperview strokeOpacity:0.65 backgroundOpacity:0.85 
-					   strokeColor:[self defaultStrokeColor] fullScreen:NO labelText:[self defaultLabelText] bounceAnimation:NO];
+	return [self loadingViewInView:aSuperview 
+					 strokeOpacity:[LoadingView defaultStrokeOpacity] 
+				 backgroundOpacity:[LoadingView defaultBackgroundOpacity] 
+					   strokeColor:[LoadingView defaultStrokeColor] fullScreen:NO 
+						 labelText:[LoadingView defaultLabelText] bounceAnimation:NO 
+				  boxLength:[LoadingView defaultBoxLength]];
 }
+
 //
 // removeView
 //
@@ -289,11 +301,6 @@ CGPathRef NewPathWithRect(CGRect rect)
 	[super performSelector:@selector(removeFromSuperview) withObject:nil afterDelay:0.2];
 }
 
-//
-// drawRect:
-//
-// Draw the view.
-//
 - (void)drawRect:(CGRect)rect
 {
 	if (fullScreen) {
@@ -312,22 +319,14 @@ CGPathRef NewPathWithRect(CGRect rect)
 		CGPathRelease(roundRectPath);
 		
 	} else {
-		//rect.size.height -= 1;
-		//rect.size.width -= 1;
 		
 		const CGFloat RECT_PADDING = 8.0;
 		rect = CGRectInset(rect, RECT_PADDING, RECT_PADDING);
 		
 		const CGFloat ROUND_RECT_CORNER_RADIUS = 5.0;
 		
-		CGFloat side = 150;
-//		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-//		{
-//			side = 170;
-//		}
-		
-		rect.size.width = side;
-		rect.size.height = side;
+		rect.size.width = self.boxLength;
+		rect.size.height = self.boxLength;
 		rect.origin.x = (0.5 * self.frame.size.width) - (rect.size.width / 2);
 		rect.origin.y = (0.5 * self.frame.size.height) - (rect.size.height / 2);
 		

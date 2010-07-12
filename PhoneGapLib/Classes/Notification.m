@@ -107,6 +107,7 @@
 	}
 	
 	CGFloat strokeOpacity, backgroundOpacity;
+	CGFloat boxLength = [LoadingView defaultBoxLength];
 	BOOL fullScreen = YES;
 	BOOL bounceAnimation = NO;
 	NSString* colorCSSString;
@@ -119,6 +120,9 @@
 	if (fullScreenValue != nil)
 	{
 		fullScreen = [fullScreenValue boolValue];
+		if (!fullScreen) { // here we take into account rectSquareLength, if any
+			boxLength = fmax(boxLength, [[options objectForKey:@"boxLength"] floatValue]);
+		}
 	}
 
 	id bounceAnimationValue = [options objectForKey:@"bounceAnimation"];
@@ -156,8 +160,10 @@
 		}
 	} 
 	
-	self.loadingView = [LoadingView loadingViewInView:[super appViewController].view strokeOpacity:strokeOpacity backgroundOpacity:backgroundOpacity 
-										  strokeColor:strokeColor fullScreen:fullScreen labelText:labelText bounceAnimation:bounceAnimation];
+	self.loadingView = [LoadingView loadingViewInView:[super appViewController].view strokeOpacity:strokeOpacity 
+									backgroundOpacity:backgroundOpacity 
+										  strokeColor:strokeColor fullScreen:fullScreen labelText:labelText 
+									  bounceAnimation:bounceAnimation boxLength:boxLength];
 	
 	NSRange minMaxDuration = NSMakeRange(2, 3600);// 1 hour max? :)
 	NSString* durationKey = @"duration";

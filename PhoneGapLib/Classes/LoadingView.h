@@ -20,6 +20,7 @@
 {
 	NSTimeInterval minDuration;
 	NSDate* timestamp;
+	CGFloat boxLength;
 	CGFloat backgroundOpacity;
 	CGFloat strokeOpacity;
 	UIColor* strokeColor;
@@ -28,6 +29,7 @@
 	BOOL bounceAnimation;
 }
 
+@property (nonatomic, assign) CGFloat boxLength;
 @property (nonatomic, assign) CGFloat backgroundOpacity;
 @property (nonatomic, assign) CGFloat strokeOpacity;
 @property (nonatomic, retain) UIColor* strokeColor;
@@ -39,11 +41,16 @@
 
 + (id)loadingViewInView:(UIView *)aSuperview;
 + (id)loadingViewInView:(UIView *)aSuperview strokeOpacity:(CGFloat)strokeOpacity backgroundOpacity:(CGFloat)backgroundOpacity 
-			strokeColor:(UIColor*)strokeColor fullScreen:(BOOL)fullScreen labelText:(NSString*)labelText bounceAnimation:(BOOL)bounceAnimation;
+			strokeColor:(UIColor*)strokeColor fullScreen:(BOOL)fullScreen labelText:(NSString*)labelText 
+		bounceAnimation:(BOOL)bounceAnimation 
+	   boxLength:(CGFloat)length;
+
 + (CGFloat) defaultStrokeOpacity;
 + (CGFloat) defaultBackgroundOpacity;
 + (UIColor*) defaultStrokeColor;
 + (NSString*) defaultLabelText;
++ (CGFloat) defaultBoxLength;
+
 - (void)removeView;
 
 @end
