@@ -42,19 +42,29 @@
 {
     if ([self.locationManager locationServicesEnabled] != YES)
 	{
-		NSString* jsErrorCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError({ 'code': %d, 'message': '%@' });", 
+		BOOL forcePrompt = NO;
+		// if forcePrompt is true iPhone will still show the "Location Services not active." Settings | Cancel prompt.
+		if ([options objectForKey:@"forcePrompt"]) 
+		{
+			forcePrompt = [[options objectForKey:@"forcePrompt"] boolValue];
+		}
+		if(!forcePrompt)
+		{
+			NSString* jsErrorCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError({ 'code': %d, 'message': '%@' });", 
 									 1, // 1 is PERMISSION_DENIED
 									 @"Location Services Not Enabled"];
-		NSLog(@"%@", jsErrorCallBack);
-		[webView stringByEvaluatingJavaScriptFromString:jsErrorCallBack];
-        return;
+			NSLog(@"%@", jsErrorCallBack);
+			[webView stringByEvaluatingJavaScriptFromString:jsErrorCallBack];
+			return;
+		}
 	}
     
     // Tell the location manager to start notifying us of location updates
     [self.locationManager startUpdatingLocation];
     __locationStarted = YES;
 
-    if ([options objectForKey:@"distanceFilter"]) {
+    if ([options objectForKey:@"distanceFilter"]) 
+	{
         CLLocationDistance distanceFilter = [(NSString *)[options objectForKey:@"distanceFilter"] doubleValue];
         self.locationManager.distanceFilter = distanceFilter;
     }
@@ -181,14 +191,12 @@
 	{
 		NSString* pErrorDesc = [error localizedFailureReason];
 #pragma unused(pErrorDesc)
-		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError(\"%@\");",
-								 [error localizedDescription]
-								];
+		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError({ 'code': %d, 'message': '%@' });", 
+									 1, // 1 is PERMISSION_DENIED
+									 [error localizedDescription]];
 	}
     NSLog(@"%@", jsCallBack);
 	
-
-    
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	[self.locationManager stopUpdatingLocation];
     __locationStarted = NO;
