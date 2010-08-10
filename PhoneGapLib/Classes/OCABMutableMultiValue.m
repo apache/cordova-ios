@@ -49,10 +49,18 @@
 	NSString* pair = nil;
 	CFIndex count = [self count];
 	
+	if (count == 0) {
+		return @"[]";
+	}
+	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
 	for (CFIndex i = 0; i < count; i++)
 	{
-		 pair = [[[NSString alloc] initWithFormat:@"label:'%@', value:'%@'", [[self localizedLabelAt:i] stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"], [[self valueAt:i] stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]] autorelease];
+		NSString* pairLabel = [[self localizedLabelAt:i] stringByReplacingOccurrencesOfString:@"\"" withString:@"\'"];
+		NSString* pairValueObj = [self valueAt:i];
+		NSString* pairValue = [[pairValueObj JSONFragment] stringByReplacingOccurrencesOfString:@"\"" withString:@"\'"];
+		
+		pair = [[[NSString alloc] initWithFormat:@"label:'%@', value: %@", pairLabel, pairValue] autorelease];
         [json appendString:pair];
 		
 		if (i+1 != count) {

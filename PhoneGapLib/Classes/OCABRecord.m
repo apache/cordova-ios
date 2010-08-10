@@ -66,6 +66,7 @@
 	CFRelease(rec);
 	return val;
 }
+
 - (OCABMutableMultiValue*) emails
 {
   CFTypeRef rec = ABRecordCopyValue([self ABRecordRef], kABPersonEmailProperty);
@@ -76,6 +77,18 @@
   id val = [[[OCABMutableMultiValue alloc] initWithCFTypeRef:rec] autorelease];
   CFRelease(rec);
   return val;
+}
+
+- (OCABMutableMultiValue*) addresses
+{
+	CFTypeRef rec = ABRecordCopyValue([self ABRecordRef], kABPersonAddressProperty);
+	if (!rec) {
+		rec = ABMultiValueCreateMutable(kABMultiDictionaryPropertyType);
+	}
+	
+	id val = [[[OCABMutableMultiValue alloc] initWithCFTypeRef:rec] autorelease];
+	CFRelease(rec);
+	return val;
 }
 
 - (BOOL) setFirstName:(NSString*)firstName
@@ -109,14 +122,14 @@
         name = [NSString stringWithFormat:@"%@",firstName !=nil ? firstName: lastName];
       }
 	
-	return [[[NSString alloc] initWithFormat:@"{ recordID: %d, name:'%@', firstName:'%@', lastName: '%@', phoneNumbers:%@, emails: %@, address:'%@'}",
+	return [[[NSString alloc] initWithFormat:@"{ recordID: %d, name:'%@', firstName:'%@', lastName: '%@', phoneNumbers:%@, emails: %@, address:%@}",
            [self recordID],
-                        name,
+			name,
             firstName == nil? emptyString : firstName,
             lastName == nil? emptyString : lastName,
             [[self phoneNumbers] JSONValue],
-                        [[self emails] JSONValue],
-           @""
+			[[self emails] JSONValue],
+            [[self addresses] JSONValue]
            ] autorelease];
 }
 

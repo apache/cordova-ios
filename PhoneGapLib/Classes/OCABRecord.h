@@ -24,6 +24,8 @@
 - (BOOL) setPhoneNumber:(NSString*)phoneNumber withLabel:(NSString*)label;
 
 - (OCABMutableMultiValue*) phoneNumbers;
+- (OCABMutableMultiValue*) emails;
+- (OCABMutableMultiValue*) addresses;
 
 - (BOOL) setFirstName:(NSString*)firstName;
 - (BOOL) setLastName:(NSString*)lastName;
