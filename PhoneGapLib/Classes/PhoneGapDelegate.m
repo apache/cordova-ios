@@ -35,6 +35,11 @@
 	return @"www";
 }
 
++ (NSString*) startPage
+{
+	return @"index.html";
+}
+
 + (NSString*) pathForResource:(NSString*)resourcepath
 {
     NSBundle * mainBundle = [NSBundle mainBundle];
@@ -194,7 +199,7 @@ static NSString *gapVersion;
 	 * webView
 	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
 	 */
-    NSURL *appURL        = [NSURL fileURLWithPath:[PhoneGapDelegate pathForResource:@"index.html"]];
+    NSURL *appURL        = [NSURL fileURLWithPath:[PhoneGapDelegate pathForResource:[PhoneGapDelegate startPage]]];
     NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
 	[webView loadRequest:appReq];
 
