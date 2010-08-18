@@ -133,7 +133,7 @@ static NSString *gapVersion;
 	NSArray* supportedOrientations = [self parseInterfaceOrientations:
 											   [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
     // read from PhoneGap.plist in the app bundle
-	NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"PhoneGap"];
+	NSDictionary *temp = [[self class] getBundlePlist:@"PhoneGap"];
     settings = [[NSDictionary alloc] initWithDictionary:temp];
 	
 	viewController = [ [ PhoneGapViewController alloc ] init ];
@@ -199,7 +199,7 @@ static NSString *gapVersion;
 	 * webView
 	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
 	 */
-    NSURL *appURL        = [NSURL fileURLWithPath:[PhoneGapDelegate pathForResource:[PhoneGapDelegate startPage]]];
+    NSURL *appURL        = [NSURL fileURLWithPath:[[self class] pathForResource:[[self class] startPage]]];
     NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
 	[webView loadRequest:appReq];
 
@@ -241,6 +241,8 @@ static NSString *gapVersion;
     [activityView startAnimating];
 
 	[window makeKeyAndVisible];
+	
+	return YES;
 }
 
 /**
@@ -282,7 +284,7 @@ static NSString *gapVersion;
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
-    [devProps setObject:[PhoneGapDelegate phoneGapVersion ] forKey:@"gap"];
+    [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
 	
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;
@@ -362,7 +364,7 @@ static NSString *gapVersion;
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
 	 */
 	
-    NSDictionary *temp = [PhoneGapDelegate getBundlePlist:@"Settings"];
+    NSDictionary *temp = [[self class] getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONFragment)]) {
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
     }
