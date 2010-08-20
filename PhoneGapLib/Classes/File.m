@@ -11,7 +11,7 @@
 
 @implementation File
 
-@synthesize appDocsPath,appTempPath, userHasAllowed;
+@synthesize appDocsPath, appLibraryPath, appTempPath, userHasAllowed;
 
 
 
@@ -23,9 +23,12 @@
 		// get the documents directory path
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		self.appDocsPath = [paths objectAtIndex:0];
-		self.appTempPath =  NSTemporaryDirectory();
-		NSLog(@"Docs Path:%@",appDocsPath);
 		
+		paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+		self.appLibraryPath = [paths objectAtIndex:0];
+		
+		self.appTempPath =  NSTemporaryDirectory();
+		NSLog(@"Docs Path:%@ Library Path:%@", appDocsPath, appLibraryPath);
 	}
 	
 	return self;
@@ -34,7 +37,7 @@
 - (void) getFileBasePaths:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	
-	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr._setPaths('%@','%@');",appDocsPath,appTempPath];
+	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr._setPaths('%@','%@', '%@');",appDocsPath, appTempPath, appLibraryPath];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 

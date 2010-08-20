@@ -11,7 +11,8 @@
 
 @interface File : PhoneGapCommand {
 	
-	NSString *appDocsPath;		
+	NSString *appDocsPath;	
+	NSString *appLibraryPath;	
 	NSString *appTempPath;	
 	
 	BOOL userHasAllowed;
@@ -35,6 +36,7 @@
 
 
 @property (nonatomic, copy)NSString *appDocsPath;
+@property (nonatomic, copy)NSString *appLibraryPath;
 @property (nonatomic, copy)NSString *appTempPath;
 @property BOOL userHasAllowed;
 

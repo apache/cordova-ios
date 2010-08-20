@@ -14,6 +14,7 @@ function FileMgr()
 	this.fileReaders = {};
 
 	this.docsFolderPath = "../../Documents";
+	this.libFolderPath = "../../Library";
 	this.tempFolderPath = "../../tmp";
 	this.freeDiskSpace = -1;
 	this.getFileBasePaths();
@@ -21,10 +22,11 @@ function FileMgr()
 }
 
 // private, called from Native Code
-FileMgr.prototype._setPaths = function(docs,temp)
+FileMgr.prototype._setPaths = function(docs,temp,lib)
 {
 	this.docsFolderPath = docs;
 	this.tempFolderPath = temp;
+    this.libFolderPath = lib;
 }
 
 // private, called from Native Code
