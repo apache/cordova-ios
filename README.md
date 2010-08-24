@@ -90,3 +90,7 @@ BUGS?
 -----
 File them at [http://phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/projects/20116-iphone)
 
+MORE INFO
+----------
+- [http://docs.phonegap.com](http://docs.phonegap.com)
+- [http://wiki.phonegap.com](http://wiki.phonegap.com)
