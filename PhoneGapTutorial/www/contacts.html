@@ -92,7 +92,7 @@ function GetFunctionName(fn)
 		contactTemplate = contactTemplate.replace(/LNAME/g,contact.lastName);
 		contactTemplate = contactTemplate.replace(/CONTACTID/g,contact.recordID);
 		
-		if(contact.emails[0].value != null)
+		if(contact.emails.length > 0)
 		{
 			contactTemplate = contactTemplate.replace(/EMAIL/g,contact.emails[0].value);
 		}
@@ -101,7 +101,7 @@ function GetFunctionName(fn)
 			contactTemplate = contactTemplate.replace(/EMAIL/g,"");
 		}
 		
-		if(contact.phoneNumbers[0].value != null)
+		if(contact.phoneNumbers.length > 0)
 		{
 			contactTemplate = contactTemplate.replace(/TELNO/g,contact.phoneNumbers[0].value);
 		}

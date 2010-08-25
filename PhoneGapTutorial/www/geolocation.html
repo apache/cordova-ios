@@ -71,13 +71,9 @@ img {
 			callback(position.coords.latitude, position.coords.longitude); 
 		};
 		
-		var fail = function(positionError)
+		var fail = function(error)
 		{
-			if (positionError.code == PositionError.PERMISSION_DENIED) {
-				alert("Permission Denied :: "  + positionError.message);
-			} else {
-				alert("Error Code " + positionError.code + " :: "  + positionError.message);
-			}
+			alert("error :: "  + error);
 		}
 
 		intervalID = navigator.geolocation.watchPosition(funk,fail);
@@ -108,13 +104,9 @@ img {
 			document.getElementById("location2").innerHTML = "Lat: "+position.coords.latitude+ " Lon: " +position.coords.longitude;
 		};
 		
-		var fail = function(positionError)
+		var fail = function(error)
 		{
-			if (positionError.code == PositionError.PERMISSION_DENIED) {
-				alert("Permission Denied :: "  + positionError.message);
-			} else {
-				alert("Error Code " + positionError.code + " :: "  + positionError.message);
-			}
+			alert("error :: "  + error);
 		}
 		navigator.geolocation.getCurrentPosition(funk,fail);
 	}
