@@ -224,17 +224,18 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 		personController.personViewDelegate = self;
 		personController.allowsEditing = allowsEditing;
 		
-		UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]
-										  initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+		UIBarButtonItem* doneButton = [[UIBarButtonItem alloc]
+										  initWithBarButtonSystemItem:UIBarButtonSystemItemDone
 										  target: self
-										  action: @selector(dimissModalView:)];
+										  action: @selector(dismissModalView:)];
 		
-		personController.navigationItem.leftBarButtonItem = cancelButton;
-		[cancelButton release];												
-
 		UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
 		[[super appViewController] presentModalViewController:navController animated: YES];
+
+		// this needs to be AFTER presentModal, if not it does not show up (iOS 4 regression: workaround)
+		personController.navigationItem.rightBarButtonItem = doneButton;
 		
+		[doneButton release];												
 		[rec release];
 	} 
 	else 
@@ -250,7 +251,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 	}
 }
 
-- (void) dimissModalView:(id)sender 
+- (void) dismissModalView:(id)sender 
 {
 	UIViewController* controller = ([super appViewController]);
 	[controller.modalViewController dismissModalViewControllerAnimated:YES]; 
