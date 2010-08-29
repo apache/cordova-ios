@@ -3,6 +3,18 @@
  * @constructor
  */
 function DebugConsole() {
+    this.logLevel = DebugConsole.INFO_LEVEL;
+}
+
+// from most verbose, to least verbose
+DebugConsole.ALL_LEVEL    = 1; // same as first level
+DebugConsole.INFO_LEVEL   = 1;
+DebugConsole.WARN_LEVEL   = 2;
+DebugConsole.ERROR_LEVEL  = 4;
+DebugConsole.NONE_LEVEL   = 8;
+													
+DebugConsole.prototype.setLevel = function(level) {
+    this.logLevel = level;
 }
 
 /**
@@ -50,7 +62,7 @@ DebugConsole.prototype.processMessage = function(message) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.log = function(message) {
-    if (PhoneGap.available)
+    if (PhoneGap.available && this.logLevel <= DebugConsole.INFO_LEVEL)
         PhoneGap.exec('DebugConsole.log',
             this.processMessage(message),
             { logLevel: 'INFO' }
@@ -64,7 +76,7 @@ DebugConsole.prototype.log = function(message) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.warn = function(message) {
-    if (PhoneGap.available)
+    if (PhoneGap.available && this.logLevel <= DebugConsole.WARN_LEVEL)
         PhoneGap.exec('DebugConsole.log',
             this.processMessage(message),
             { logLevel: 'WARN' }
@@ -78,7 +90,7 @@ DebugConsole.prototype.warn = function(message) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.error = function(message) {
-    if (PhoneGap.available)
+    if (PhoneGap.available && this.logLevel <= DebugConsole.ERROR_LEVEL)
         PhoneGap.exec('DebugConsole.log',
             this.processMessage(message),
             { logLevel: 'ERROR' }
