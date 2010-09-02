@@ -82,9 +82,18 @@ A. The Active SDK for the project is set to "Use Base SDK", change it to one of 
 
 A. This relates to framework added for the new UIImagePickerController delegate. Add "MobileCoreServices.framework" to your project. This only relates to pre-existing projects that have updated their PhoneGapLib. New projects should not see this error.
 
-**Q. I have Framework errors in red when creating a PhoneGap project in Xcode 3.2.3 for iOS 4.0? How do I fix it?**
+**Q. I have Framework errors in red when creating a PhoneGap project in Xcode 3.2.3 for iOS 4.x? How do I fix it?**
 
-A. Change your Base SDK. Go to the Project Menu --> Edit Project Settings --> General Tab --> Base SDK for all Configurations. Change it to iPhone Simulator 4.0
+A. Change your Base SDK. Go to the Project Menu --> Edit Project Settings --> General Tab --> Base SDK for all Configurations. Change it to iOS Device 4.x
+
+**Q. I still have some "Invalid Architecture" errors. Yes, I've looked at the items above. How do I fix this?**
+
+A. The Base SDK for your project and PhoneGapLib must be exactly the same. Launch PhoneGapLib.xcodeproj (double-click on it in your project), and set its Base SDK to the same one in your project.
+
+**Q. I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?**
+
+A. In your project, there should be a PhoneGapBuildSettings.xcconfig file. Modify the PHONEGAPLIB variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
+
 
 BUGS?
 -----
