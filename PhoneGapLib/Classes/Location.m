@@ -110,7 +110,7 @@
     course = newLocation.course;
     speed  = newLocation.speed;
 #endif
-	NSString* coords =  [NSString stringWithFormat:@"coords: { latitude: %f, longitude: %f, altitude: %f, heading: %f, speed: %f, accuracy: {horizontal: %f, vertical: %f}, altitudeAccuracy: null }",
+	NSString* coords =  [NSString stringWithFormat:@"coords: { latitude: %f, longitude: %f, altitude: %f, heading: %f, speed: %f, accuracy: %f, altitudeAccuracy: %f }",
 							newLocation.coordinate.latitude,
 							newLocation.coordinate.longitude,
 							newLocation.altitude,
