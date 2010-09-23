@@ -48,13 +48,9 @@
 	if (callback)
 		jsCallback = callback;
 	
-	NSString* status = [[NSString alloc] initWithFormat:@"%@({ hostName: '%@', ipAddress: '%@', remoteHostStatus: %d, internetConnectionStatus: %d, localWiFiConnectionStatus: %d  });", 
+	NSString* status = [[NSString alloc] initWithFormat:@"%@(%d);", 
 						jsCallback,
-						[[Reachability sharedReachability] hostName],
-						[[Reachability sharedReachability] address],
-					   [[Reachability sharedReachability] remoteHostStatus],
-					   [[Reachability sharedReachability] internetConnectionStatus],
-					   [[Reachability sharedReachability] localWiFiConnectionStatus]];
+					   [[Reachability sharedReachability] internetConnectionStatus]];
 	
 	
     [webView stringByEvaluatingJavaScriptFromString:status];
