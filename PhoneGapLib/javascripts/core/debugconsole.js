@@ -2,8 +2,9 @@
  * This class provides access to the debugging console.
  * @constructor
  */
-function DebugConsole() {
+function DebugConsole(isDeprecated) {
     this.logLevel = DebugConsole.INFO_LEVEL;
+    this.isDeprecated = isDeprecated ? true : false;
 }
 
 // from most verbose, to least verbose
@@ -25,7 +26,7 @@ DebugConsole.prototype.setLevel = function(level) {
  */
 DebugConsole.prototype.processMessage = function(message) {
     if (typeof(message) != 'object') {
-        return message;
+        return (this.isDeprecated ? "WARNING: debug object is deprecated, please use console object \n" + message : message);
     } else {
         /**
          * @function
@@ -53,7 +54,8 @@ DebugConsole.prototype.processMessage = function(message) {
             }
             return str;
         }
-        return "Object:\n" + makeStructured(message);
+        
+        return ((this.isDeprecated ? "WARNING: debug object is deprecated, please use console object\n" :  "") + "Object:\n" + makeStructured(message));
     }
 };
 
@@ -100,5 +102,6 @@ DebugConsole.prototype.error = function(message) {
 };
 
 PhoneGap.addConstructor(function() {
-    window.debug = new DebugConsole();
+    window.console = new DebugConsole();
+    window.debug = new DebugConsole(true);
 });
