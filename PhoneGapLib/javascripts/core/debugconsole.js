@@ -100,5 +100,5 @@ DebugConsole.prototype.error = function(message) {
 };
 
 PhoneGap.addConstructor(function() {
-    window.debug = new DebugConsole();
+    window.console = new DebugConsole();
 });
