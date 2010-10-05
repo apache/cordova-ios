@@ -56,27 +56,34 @@
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
 {
+	CameraPicker* cameraPicker = (CameraPicker*)picker;
+	CGFloat quality = (double)cameraPicker.quality / 100.0; 
+	
+	[picker dismissModalViewControllerAnimated:YES];
+	
+	
 	NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
 	if ([mediaType isEqualToString:(NSString*)kUTTypeImage])
 	{
-		UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-		[self imagePickerController:picker didFinishPickingImage:image editingInfo:info];
+		if (cameraPicker.successCallback) {
+			UIImage* image = nil;
+			if (cameraPicker.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
+				image = [info objectForKey:UIImagePickerControllerEditedImage];
+			}else {
+				image = [info objectForKey:UIImagePickerControllerOriginalImage];
+			}
+			NSData* data = UIImageJPEGRepresentation(image, quality);
+			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+			[jsString release];
+		}
 	}
 }
-
+// older api calls newer didFinishPickingMediaWithInfo
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo
 {
-	CameraPicker* cameraPicker = (CameraPicker*)picker;
-	CGFloat quality = (double)cameraPicker.quality / 100.0; 
-	NSData* data = UIImageJPEGRepresentation(image, quality);
-
-	[picker dismissModalViewControllerAnimated:YES];
-	
-	if (cameraPicker.successCallback) {
-		NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
-		[webView stringByEvaluatingJavaScriptFromString:jsString];
-		[jsString release];
-	}
+	NSDictionary* imageInfo = [NSDictionary dictionaryWithObject:image forKey:UIImagePickerControllerOriginalImage];
+	[self imagePickerController:picker didFinishPickingMediaWithInfo: imageInfo];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
