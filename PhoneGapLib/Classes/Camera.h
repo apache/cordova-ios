@@ -9,18 +9,28 @@
 #import <Foundation/Foundation.h>
 #import "PhoneGapCommand.h"
 
+enum DestinationType {
+	DestinationTypeDataUrl = 0,
+	DestinationTypeFileUri
+};
+typedef NSUInteger DestinationType;
+
+
 @interface CameraPicker : UIImagePickerController
 {
 	NSString* successCallback;
 	NSString* errorCallback;
 	NSInteger quality;
 	NSString* postUrl;
+	enum DestinationType returnType;
 }
+
 
 @property (assign) NSInteger quality;
 @property (copy)   NSString* successCallback;
 @property (copy)   NSString* errorCallback;
 @property (copy)   NSString* postUrl;
+@property (nonatomic) DestinationType returnType;
 
 - (void) dealloc;
 
@@ -44,6 +54,7 @@
 - (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
 
+- (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
 

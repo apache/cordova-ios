@@ -68,6 +68,10 @@ static NSString *gapVersion;
 	}
 	return gapVersion;
 }
++ (NSString*) tmpFolderName
+{
+	return @"tmp";
+}
 
 
 /**
@@ -190,6 +194,22 @@ static NSString *gapVersion;
     if ([useLocation boolValue]) {
         [[self getCommandInstance:@"Location"] startLocation:nil withDict:nil];
     }
+	
+	/*
+	 * Create tmp directory. Files written here will be deleted when app terminates
+	 */
+	NSFileManager *fileMgr = [[NSFileManager alloc] init];
+	NSString *docsDir = [[self class] applicationDocumentsDirectory];
+	NSString* tmpDirectory = [docsDir stringByAppendingPathComponent: [[self class] tmpFolderName]];
+	
+	if ([fileMgr createDirectoryAtPath:tmpDirectory withIntermediateDirectories: NO attributes: nil error: nil] == NO)
+	{
+		// might have failed because it already exists
+		if ( [fileMgr fileExistsAtPath:tmpDirectory] == NO ){
+			NSLog(@"Unable to create tmp directory");  // not much we can do it this fails
+		}
+	}
+	[fileMgr release];
 
 	webView.delegate = self;
 
@@ -471,6 +491,17 @@ static NSString *gapVersion;
 	return YES;
 }
 
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+	NSLog(@"applicationWillTerminate");
+	// empty the tmp directory
+	NSFileManager* fileMgr = [[NSFileManager alloc] init];
+	NSString* tmpPath = [[[self class] applicationDocumentsDirectory] stringByAppendingPathComponent: [[self class] tmpFolderName]];
+	NSError* err = nil;	
+	if (![fileMgr removeItemAtPath: tmpPath error: &err]){
+		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
+	}
+}
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {

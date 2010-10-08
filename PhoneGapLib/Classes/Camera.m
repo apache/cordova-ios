@@ -9,6 +9,7 @@
 #import "Camera.h"
 #import "NSData+Base64.h"
 #import "Categories.h"
+#import "PhonegapDelegate.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
 @implementation Camera
@@ -31,14 +32,15 @@
 	if (sourceTypeString != nil) {
 		sourceType = (UIImagePickerControllerSourceType)[sourceTypeString intValue];
 	}
-	
+
 	bool hasCamera = [UIImagePickerController isSourceTypeAvailable:sourceType];
 	if (!hasCamera) {
 		NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
 		return;
 	}
 
-        bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
+    bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
+	
 	
 	if (pickerController == nil) {
 		pickerController = [[CameraPicker alloc] init];
@@ -50,6 +52,7 @@
 	pickerController.successCallback = successCallback;
 	pickerController.errorCallback = errorCallback;
 	pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
+	pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
 	
 	[[super appViewController] presentModalViewController:pickerController animated:YES];
 }
@@ -66,16 +69,45 @@
 	if ([mediaType isEqualToString:(NSString*)kUTTypeImage])
 	{
 		if (cameraPicker.successCallback) {
-			UIImage* image = nil;
-			if (cameraPicker.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
-				image = [info objectForKey:UIImagePickerControllerEditedImage];
-			}else {
-				image = [info objectForKey:UIImagePickerControllerOriginalImage];
-			}
-			NSData* data = UIImageJPEGRepresentation(image, quality);
-			NSString* jsString = [[NSString alloc] initWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
+			
+			NSString* jsString = NULL;
+							// get the image
+				UIImage* image = nil;
+				if (cameraPicker.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
+					image = [info objectForKey:UIImagePickerControllerEditedImage];
+				}else {
+					image = [info objectForKey:UIImagePickerControllerOriginalImage];
+				}
+				NSData* data = UIImageJPEGRepresentation(image, quality);
+				if (cameraPicker.returnType == DestinationTypeFileUri){
+					
+					// write to temp directory and reutrn URI
+					// get the temp directory path
+					NSString* docsPath = [[PhoneGapDelegate applicationDocumentsDirectory] stringByAppendingPathComponent: [PhoneGapDelegate tmpFolderName]];
+					NSError* err = nil;
+					NSFileManager* fileMgr = [[NSFileManager alloc] init]; //recommended by apple (vs [NSFileManager defaultManager]) to be theadsafe
+					
+					if ( [fileMgr fileExistsAtPath:docsPath] == NO ){ // check in case tmp dir got deleted
+						[fileMgr createDirectoryAtPath:docsPath withIntermediateDirectories: NO attributes: nil error: nil];
+					}
+					// generate unique file name
+					NSString* filePath;
+					int i=1;
+					do {
+						filePath = [NSString stringWithFormat:@"%@/photo_%03d.jpg", docsPath, i++];
+					} while([fileMgr fileExistsAtPath: filePath]);
+					// save file
+					if (![data writeToFile: filePath options: NSAtomicWrite error: &err]){
+						jsString = [NSString stringWithFormat:@"%@(\"%@\");", cameraPicker.errorCallback, [err localizedDescription]];
+					}else{	
+						jsString = [NSString stringWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [NSURL fileURLWithPath: filePath]];
+					}
+					[fileMgr release];
+				
+				}else{
+					jsString = [NSString stringWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
+				}
 			[webView stringByEvaluatingJavaScriptFromString:jsString];
-			[jsString release];
 		}
 	}
 }
@@ -128,12 +160,12 @@
 //	NSString * resultStr =  [[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding] autorelease];
 }
 
+
 - (void) dealloc
 {
 	if (pickerController) {
 		[pickerController release];
 	}
-	
 	[super dealloc];
 }
 
@@ -143,6 +175,7 @@
 @implementation CameraPicker
 
 @synthesize quality, postUrl;
+@synthesize returnType;
 @synthesize successCallback;
 @synthesize errorCallback;
 
