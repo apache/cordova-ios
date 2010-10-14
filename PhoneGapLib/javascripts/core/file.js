@@ -1,6 +1,5 @@
 
 
-
 PhoneGap.addConstructor(function() { if (typeof navigator.fileMgr == "undefined") navigator.fileMgr = new FileMgr();});
 
 
@@ -113,15 +112,17 @@ FileMgr.prototype.getFileBasePaths = function()
 	PhoneGap.exec("File.getFileBasePaths");
 }
 
-FileMgr.prototype.testFileExists = function(fileName, successCallback, errorCallback)
+FileMgr.prototype.testFileExists = function(fileName, win, fail)
 {
+	this.successCallback = function(b){win(b);};
+	this.errorCallback = function(b){fail(b);};
 	PhoneGap.exec("File.testFileExists",fileName);
 }
 
-FileMgr.prototype.testDirectoryExists = function(dirName, successCallback, errorCallback)
+FileMgr.prototype.testDirectoryExists = function(dirName, win, fail)
 {
-	this.successCallback = successCallback;
-	this.errorCallback = errorCallback;
+	this.successCallback = function(b){win(b);};
+	this.errorCallback = function(b){fail(b);};
 	PhoneGap.exec("File.testDirectoryExists",dirName);
 }
 
