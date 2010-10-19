@@ -1,6 +1,9 @@
-VERSION 20100902
+VERSION 20101019
 
 PhoneGapLib is a static library that enables users to include PhoneGap in their iPhone application projects easily, and also create new PhoneGap based iPhone application projects through a Xcode project template.
+
+20101019
+- Updated the Base SDK to iOS 4.1 (the minimum to submit to the App Store) for the project files
 
 20100902
 - Updated the Base SDK to iOS 4.0 (the minimum to submit to the App Store) for the project files
