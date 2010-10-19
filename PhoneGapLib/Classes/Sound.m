@@ -1,10 +1,10 @@
 /*
- *  Sound.m
- *
- *  Created by Nitobi on 12/12/08.
- *  Copyright 2008 Nitobi. All rights reserved.
- *
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2005-2010, Nitobi Software Inc.
  */
+
 
 #import "Sound.h"
 #import "PhonegapDelegate.h"

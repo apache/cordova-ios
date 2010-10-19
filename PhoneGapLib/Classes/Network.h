@@ -1,10 +1,9 @@
-//
-//  Network.h
-//  PhoneGap
-//
-//  Created by Shazron Abdullah on 29/07/09.
-//  Copyright 2009 Nitobi Inc. All rights reserved.
-//
+/*
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2005-2010, Nitobi Software Inc.
+ */
 
 #import <Foundation/Foundation.h>
 #import "PhoneGapCommand.h"

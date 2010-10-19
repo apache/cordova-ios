@@ -1,10 +1,10 @@
-//
-//  File.h
-//  TestImageSave
-//
-//  Created by Jesse MacFadyen on 09-11-10.
-//  Copyright 2009 Nitobi. All rights reserved.
-//
+/*
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2005-2010, Nitobi Software Inc.
+ */
+
 
 #import <Foundation/Foundation.h>
 #import "PhoneGapCommand.h"

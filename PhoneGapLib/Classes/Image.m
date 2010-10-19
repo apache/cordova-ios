@@ -1,14 +1,10 @@
 /*
- *  Image.m
- *  PhoneGap
- *
- *  Created by Nitobi on 04/02/09. 
- *  Copyright 2009 Nitobi. All rights reserved.
- *  Rob Ellis * Brian LeRoux * Brock Whitten
- *
- *  Special thanks to urbian.org - g.mueller @urbian.org
- *
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2005-2010, Nitobi Software Inc.
  */
+
 
 #import "Image.h"
 
