@@ -333,7 +333,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "";
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos4.1;
 				USER_HEADER_SEARCH_PATHS = "$(PHONEGAPLIB)/Classes";
 			};
 			name = Debug;
@@ -352,7 +352,7 @@
 					"-Obj-C",
 				);
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos4.1;
 				USER_HEADER_SEARCH_PATHS = "$(PHONEGAPLIB)/Classes";
 			};
 			name = Release;
