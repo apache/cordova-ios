@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
 		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
-		8887FD641090FBE7009987E8 /* Bonjour.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD241090FBE7009987E8 /* Bonjour.h */; };
-		8887FD651090FBE7009987E8 /* Bonjour.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD251090FBE7009987E8 /* Bonjour.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
 		8887FD671090FBE7009987E8 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* Camera.m */; };
 		8887FD681090FBE7009987E8 /* Categories.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD281090FBE7009987E8 /* Categories.h */; };
@@ -42,8 +40,6 @@
 		8887FD841090FBE7009987E8 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD451090FBE7009987E8 /* LoadingView.m */; };
 		8887FD851090FBE7009987E8 /* Location.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD461090FBE7009987E8 /* Location.h */; };
 		8887FD861090FBE7009987E8 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD471090FBE7009987E8 /* Location.m */; };
-		8887FD871090FBE7009987E8 /* Map.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD481090FBE7009987E8 /* Map.h */; };
-		8887FD881090FBE7009987E8 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD491090FBE7009987E8 /* Map.m */; };
 		8887FD891090FBE7009987E8 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4A1090FBE7009987E8 /* Movie.h */; };
 		8887FD8A1090FBE7009987E8 /* Movie.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4B1090FBE7009987E8 /* Movie.m */; };
 		8887FD8B1090FBE7009987E8 /* Network.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4C1090FBE7009987E8 /* Network.h */; };
@@ -78,8 +74,6 @@
 /* Begin PBXFileReference section */
 		30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor-Expanded.h"; path = "Classes/UIColor-Expanded.h"; sourceTree = "<group>"; };
 		30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor-Expanded.m"; path = "Classes/UIColor-Expanded.m"; sourceTree = "<group>"; };
-		8887FD241090FBE7009987E8 /* Bonjour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bonjour.h; path = Classes/Bonjour.h; sourceTree = "<group>"; };
-		8887FD251090FBE7009987E8 /* Bonjour.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Bonjour.m; path = Classes/Bonjour.m; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
 		8887FD271090FBE7009987E8 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Camera.m; path = Classes/Camera.m; sourceTree = "<group>"; };
 		8887FD281090FBE7009987E8 /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Categories.h; path = Classes/Categories.h; sourceTree = "<group>"; };
@@ -111,8 +105,6 @@
 		8887FD451090FBE7009987E8 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoadingView.m; path = Classes/LoadingView.m; sourceTree = "<group>"; };
 		8887FD461090FBE7009987E8 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Location.h; path = Classes/Location.h; sourceTree = "<group>"; };
 		8887FD471090FBE7009987E8 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Location.m; path = Classes/Location.m; sourceTree = "<group>"; };
-		8887FD481090FBE7009987E8 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Map.h; path = Classes/Map.h; sourceTree = "<group>"; };
-		8887FD491090FBE7009987E8 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Map.m; path = Classes/Map.m; sourceTree = "<group>"; };
 		8887FD4A1090FBE7009987E8 /* Movie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Movie.h; path = Classes/Movie.h; sourceTree = "<group>"; };
 		8887FD4B1090FBE7009987E8 /* Movie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Movie.m; path = Classes/Movie.m; sourceTree = "<group>"; };
 		8887FD4C1090FBE7009987E8 /* Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Network.h; path = Classes/Network.h; sourceTree = "<group>"; };
@@ -197,8 +189,6 @@
 				30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */,
 				88BA573B109BB46F00FB5E78 /* Accelerometer.h */,
 				88BA573C109BB46F00FB5E78 /* Accelerometer.m */,
-				8887FD241090FBE7009987E8 /* Bonjour.h */,
-				8887FD251090FBE7009987E8 /* Bonjour.m */,
 				8887FD261090FBE7009987E8 /* Camera.h */,
 				8887FD271090FBE7009987E8 /* Camera.m */,
 				8887FD281090FBE7009987E8 /* Categories.h */,
@@ -217,8 +207,6 @@
 				8887FD451090FBE7009987E8 /* LoadingView.m */,
 				8887FD461090FBE7009987E8 /* Location.h */,
 				8887FD471090FBE7009987E8 /* Location.m */,
-				8887FD481090FBE7009987E8 /* Map.h */,
-				8887FD491090FBE7009987E8 /* Map.m */,
 				8887FD4A1090FBE7009987E8 /* Movie.h */,
 				8887FD4B1090FBE7009987E8 /* Movie.m */,
 				8887FD4C1090FBE7009987E8 /* Network.h */,
@@ -303,7 +291,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA747D9F0F9514B9006C5449 /* PhoneGapLib_Prefix.pch in Headers */,
-				8887FD641090FBE7009987E8 /* Bonjour.h in Headers */,
 				8887FD661090FBE7009987E8 /* Camera.h in Headers */,
 				8887FD681090FBE7009987E8 /* Categories.h in Headers */,
 				8887FD6A1090FBE7009987E8 /* Contacts.h in Headers */,
@@ -320,7 +307,6 @@
 				8887FD811090FBE7009987E8 /* SBJsonWriter.h in Headers */,
 				8887FD831090FBE7009987E8 /* LoadingView.h in Headers */,
 				8887FD851090FBE7009987E8 /* Location.h in Headers */,
-				8887FD871090FBE7009987E8 /* Map.h in Headers */,
 				8887FD891090FBE7009987E8 /* Movie.h in Headers */,
 				8887FD8B1090FBE7009987E8 /* Network.h in Headers */,
 				8887FD8D1090FBE7009987E8 /* Notification.h in Headers */,
@@ -408,7 +394,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8887FD651090FBE7009987E8 /* Bonjour.m in Sources */,
 				8887FD671090FBE7009987E8 /* Camera.m in Sources */,
 				8887FD691090FBE7009987E8 /* Categories.m in Sources */,
 				8887FD6B1090FBE7009987E8 /* Contacts.m in Sources */,
@@ -424,7 +409,6 @@
 				8887FD821090FBE7009987E8 /* SBJsonWriter.m in Sources */,
 				8887FD841090FBE7009987E8 /* LoadingView.m in Sources */,
 				8887FD861090FBE7009987E8 /* Location.m in Sources */,
-				8887FD881090FBE7009987E8 /* Map.m in Sources */,
 				8887FD8A1090FBE7009987E8 /* Movie.m in Sources */,
 				8887FD8C1090FBE7009987E8 /* Network.m in Sources */,
 				8887FD8E1090FBE7009987E8 /* Notification.m in Sources */,
