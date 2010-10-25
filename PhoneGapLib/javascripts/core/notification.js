@@ -3,8 +3,8 @@
  */
 function Notification() 
 {
-
-}
+	this.resultsCallback = null;
+};
 
 /**
  * Causes the device to blink a status LED.
@@ -27,66 +27,49 @@ Notification.prototype.beep = function(count, volume) {
 
 /**
  * Open a native alert dialog, with a customizable title and button text.
- * @param {String} message Message to print in the body of the alert
- * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
- * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
- * @param {String} [cancelLabel="Cancel"] Label ( if callback is provided )
- * @param {Function} [ callback = null ] allows use as a confirm dialog.
+ *
+ * @param {String} message              Message to print in the body of the alert
+ * @param {Function} resultCallback     The callback that is called when user clicks on a button. 
+ * @param {String} title                Title of the alert dialog (default: Alert)
+ * @param {String} buttonLabel          Label for close button
  */
-Notification.prototype.alert = function(message, title, buttonLabel) 
+Notification.prototype.alert = function(message, resultCallback, title, buttonLabel) 
 {
-	// ? Do we need to add this check in every PhoneGap call ? seems a little over the top
-	// If phonegap is NOT available, seems we have bigger problems then how to show an alert ...
-	// just sayin' -jm
-    if (!PhoneGap.available)
-	{
-		return alert(message); // use the JS alert, no return val
-	}
-	else
-	{
-		var options = {};
-	
-		if (title) 
-			options.title = title;
-		if (buttonLabel) 
-			options.buttonLabel = buttonLabel;
-
-		PhoneGap.exec('Notification.alert', message, options);
-		this._alertDelegate = {};
-		return this._alertDelegate;
-	}
+	var options = {};
+	options.title = (title || "Alert");
+	options.buttonLabel = (buttonLabel || "OK");
+	this.resultsCallback = resultCallback;
+	PhoneGap.exec('Notification.alert', message, options);
+	return;
 };
 
 
 /**
- * Open a native alert dialog, with a customizable title and button text.
- * @param {String} message Message to print in the body of the alert
- * @param {String} [title="Alert"] Title of the alert dialog (default: Alert)
- * @param {String} [buttonLabel="OK"] Label of the close button (default: OK)
- * @param {String} [cancelLabel="Cancel"] Label ( if callback is provided )
- * Returns a alertDelegate, to catch the return value add your own onAlertDismissed method
- * onAlertDismissed(index,label) // receives the index + the label of the button the user chose
+ * Open a native confirm dialog, with a customizable title and button text.
+ * The result that the user selects is returned to the result callback.
+ *
+ * @param {String} message              Message to print in the body of the alert
+ * @param {Function} resultCallback     The callback that is called when user clicks on a button.
+ * @param {String} title                Title of the alert dialog (default: Confirm)
+ * @param {String} buttonLabels         Comma separated list of the labels of the buttons (default: 'OK,Cancel')
  */
-Notification.prototype.confirm = function(message, title, buttonLabels) 
+Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) 
 {
-	// ? Do we need to add this check in every PhoneGap call ? seems a little over the top
-	// If phonegap is NOT available, seems we have bigger problems then how to show an alert ...
-	// just sayin' -jm
-    if (!PhoneGap.available)
-	{
-		return confirm(message); // use the JS confirm, return val is result
-	}
-	else
-	{
-		var labels = buttonLabels ? buttonLabels : "OK,Cancel";
-		return this.alert(message, title, labels);
-	}
+
+	var confirmTitle = title ? title : "Confirm";
+	var labels = buttonLabels ? buttonLabels : "OK,Cancel";
+	return this.alert(message, resultCallback, confirmTitle, labels);
 };
 
-Notification.prototype._alertCallback = function(index,label)
+Notification.prototype._alertCallback = function(index)
 {
-	this._alertDelegate.onAlertDismissed(index,label);
-}
+	try {
+        this.resultsCallback(index);
+    }
+    catch (e) {
+        console.log("Error in user's result callback: " + e);
+    }
+};
 
 
 
