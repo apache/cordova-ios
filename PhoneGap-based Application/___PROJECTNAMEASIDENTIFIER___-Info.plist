@@ -5,6 +5,7 @@
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>icon.png</string>
+		<string>icon@2x.png</string>
 		<string>icon-72.png</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
