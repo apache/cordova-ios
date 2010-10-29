@@ -10,20 +10,5 @@
 	<true/>
 	<key>EnableAcceleration</key>
 	<true/>
-	<key>UIControls</key>
-	<dict>
-		<key>TabBarSettings</key>
-		<dict>
-			<key>height</key>
-			<integer>49</integer>
-			<key>position</key>
-			<string>bottom</string>
-		</dict>
-		<key>ToolBarSettings</key>
-		<dict>
-			<key>style</key>
-			<string>Default</string>
-		</dict>
-	</dict>
 </dict>
 </plist>
