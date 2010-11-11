@@ -24,18 +24,13 @@
 
 - (NSUInteger) integerValueForKey:(NSString*)key  defaultValue:(NSUInteger)defaultValue withRange:(NSRange)range
 {
-	NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-	[numberFormatter setRoundingMode:NSNumberFormatterRoundCeiling];
-	
+
 	NSUInteger value = defaultValue;
 	
-	id val = [self valueForKey:key];
+	NSNumber* val = [self valueForKey:key];  //value is an NSNumber
 	if (val != nil) {
-		NSNumber* number = [numberFormatter numberFromString:(NSString*)val];
-		value = [number unsignedIntValue];
+		value = [val unsignedIntValue];
 	}
-	
-	[numberFormatter release];
 	
 	// min, max checks
 	value = MAX(range.location, value);

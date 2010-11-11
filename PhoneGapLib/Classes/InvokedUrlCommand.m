@@ -6,6 +6,7 @@
  */
 
 #import "InvokedUrlCommand.h"
+#import "JSON.h"
 
 @implementation InvokedUrlCommand
 
@@ -54,18 +55,9 @@
 	iuc.arguments = arguments;
     
 	// Dictionary of options
-	NSMutableDictionary* options = [NSMutableDictionary dictionaryWithCapacity:1];
-	NSArray * options_parts = [NSArray arrayWithArray:[[url query] componentsSeparatedByString:@"&"]];
-	int options_count = [options_parts count];
-	
-    for (i = 0; i < options_count; i++) {
-		NSArray *option_part = [[options_parts objectAtIndex:i] componentsSeparatedByString:@"="];
-		NSString *name = [(NSString *)[option_part objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-		NSString *value = [(NSString *)[option_part objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-		[options setObject:value forKey:name];
-	}
-	iuc.options = options;
-	
+	NSString* objectString = [[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSLog(@"query string = %@",objectString);
+	iuc.options = (NSMutableDictionary*)[objectString JSONValue];
 	NSArray* components = [iuc.command componentsSeparatedByString:@"."];
 	if (components.count == 2) {
 		iuc.className = [components objectAtIndex:0];

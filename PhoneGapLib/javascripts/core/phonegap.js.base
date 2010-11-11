@@ -82,6 +82,7 @@ PhoneGap.addConstructor = function(func) {
  * recieve them.
  * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
  * @param {String[]} [args] Zero or more arguments to pass to the method
+ * object paramters are passed as an array object [object1, object2] each object will be passed as JSON strings
  */
 PhoneGap.exec = function() {
     PhoneGap.queue.commands.push(arguments);
@@ -91,9 +92,9 @@ PhoneGap.exec = function() {
 
 /**
  * Internal function used to dispatch the request to PhoneGap.  It processes the
- * command queue and executes the next command on the list.  If one of the
- * arguments is a JavaScript object, it will be passed on the QueryString of the
- * url, which will be turned into a dictionary on the other end.
+ * command queue and executes the next command on the list.  Simple parameters are passed
+ * as arguments on the url.  JavaScript objects converted into a JSON string and passed as a
+ * query string argument of the url.  
  * @private
  */
 PhoneGap.run_command = function() {
@@ -121,14 +122,7 @@ PhoneGap.run_command = function() {
     }
     var url = "gap://" + args[0] + "/" + uri.join("/");
     if (dict != null) {
-        var query_args = [];
-        for (var name in dict) {
-            if (typeof(name) != 'string')
-                continue;
-            query_args.push(encodeURIComponent(name) + "=" + encodeURIComponent(dict[name]));
-        }
-        if (query_args.length > 0)
-            url += "?" + query_args.join("&");
+        url += "?" + encodeURIComponent(JSON.stringify(dict));
     }
     document.location = url;
 
