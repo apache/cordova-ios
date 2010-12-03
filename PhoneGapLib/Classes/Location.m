@@ -24,23 +24,36 @@
 
 - (BOOL) hasHeadingSupport
 {
-	 // check whether headingAvailable property is avail (for 2.x devices)
-	if ([self.locationManager respondsToSelector:@selector(headingAvailable)] == NO)
-        return NO;
-
-	#ifdef __IPHONE_3_0
-	// now 3.x device, check whether it has heading support (eg Compass)
-	if ([self.locationManager headingAvailable] == NO) 
-		return NO;
-	#endif
+	BOOL headingInstancePropertyAvailable = [self.locationManager respondsToSelector:@selector(headingAvailable)]; // iOS 3.x
+	BOOL headingClassPropertyAvailable = [[self.locationManager class] respondsToSelector:@selector(headingAvailable)]; // iOS 4.x
 	
-	return YES;
+	if (headingInstancePropertyAvailable) { // iOS 3.x
+		return [(id)self.locationManager headingAvailable];
+	} else if (headingClassPropertyAvailable) { // iOS 4.x
+		return [[self.locationManager class] headingAvailable];
+	} else { // iOS 2.x
+		return NO;
+	}
+}
+
+- (BOOL) isLocationServicesEnabled
+{
+	BOOL locationServicesEnabledInstancePropertyAvailable = [self.locationManager respondsToSelector:@selector(locationServicesEnabled)]; // iOS 3.x
+	BOOL locationServicesEnabledClassPropertyAvailable = [[self.locationManager class] respondsToSelector:@selector(locationServicesEnabled)]; // iOS 4.x
+	
+	if (locationServicesEnabledInstancePropertyAvailable) { // iOS 2.x, iOS 3.x
+		return [(id)self.locationManager locationServicesEnabled];
+	} else if (locationServicesEnabledClassPropertyAvailable) { // iOS 4.x
+		return [[self.locationManager class] locationServicesEnabled];
+	} else {
+		return NO;
+	}
 }
 
 - (void)startLocation:(NSMutableArray*)arguments
      withDict:(NSMutableDictionary*)options
 {
-    if ([self.locationManager locationServicesEnabled] != YES)
+    if ([self isLocationServicesEnabled] != YES)
 	{
 		BOOL forcePrompt = NO;
 		// if forcePrompt is true iPhone will still show the "Location Services not active." Settings | Cancel prompt.
@@ -92,7 +105,7 @@
 {
     if (__locationStarted == NO)
         return;
-    if ([self.locationManager locationServicesEnabled] != YES)
+    if ([self isLocationServicesEnabled] != YES)
         return;
     
     [self.locationManager stopUpdatingLocation];
