@@ -28,11 +28,13 @@
 - (void) deleteFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) getFileBasePaths:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
 
 - (BOOL) fileExists:(NSString*)fileName;
 - (BOOL) directoryExists:(NSString*)dirName;
 - (int) writeToFile:(NSString*)fileName withData:(NSString*)data append:(BOOL)shouldAppend;
-
+- (unsigned long long) truncateFile:(NSString*)filePath atPosition:(unsigned long long)pos;
 
 
 @property (nonatomic, copy)NSString *appDocsPath;
