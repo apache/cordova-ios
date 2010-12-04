@@ -4,7 +4,7 @@
  * @param {Object} lng
  * @param {Object} acc
  * @param {Object} alt
- * @param {Object} altacc
+ * @param {Object} altAcc
  * @param {Object} head
  * @param {Object} vel
  * @constructor
@@ -42,7 +42,7 @@ function Coordinates(lat, lng, alt, acc, head, vel, altAcc) {
 	/**
 	 * The altitude accuracy of the position.
 	 */
-	this.altitudeAccuracy = (altacc != 'undefined') ? altacc : null; 
+	this.altitudeAccuracy = (altAcc != 'undefined') ? altAcc : null; 
 }
 
 /**
