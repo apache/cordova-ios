@@ -5,3 +5,5 @@ tmp
 lib
 docs
 PhoneGapLibInstaller.pkg
+
+/PhoneGapLib/javascripts/phonegap-uncompressed.js
