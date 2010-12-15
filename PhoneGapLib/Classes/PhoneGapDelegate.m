@@ -468,7 +468,7 @@ static NSString *gapVersion;
      */
     else
     {
-        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", [url description]);
+        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
         [[UIApplication sharedApplication] openURL:url];
         return NO;
 	}
