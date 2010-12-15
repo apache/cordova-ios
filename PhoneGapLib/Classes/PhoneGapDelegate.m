@@ -213,7 +213,8 @@ static NSString *gapVersion;
 	if ([fileMgr createDirectoryAtPath:tmpDirectory withIntermediateDirectories: NO attributes: nil error: nil] == NO)
 	{
 		// might have failed because it already exists
-		if ( [fileMgr fileExistsAtPath:tmpDirectory] == NO ){
+		if ( [fileMgr fileExistsAtPath:tmpDirectory] == NO )
+		{
 			NSLog(@"Unable to create tmp directory");  // not much we can do it this fails
 		}
 	}
@@ -227,7 +228,14 @@ static NSString *gapVersion;
 	 * webView
 	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
 	 */
-    NSURL *appURL        = [NSURL fileURLWithPath:[[self class] pathForResource:[[self class] startPage]]];
+	
+	NSString* startPage = [[self class] startPage];
+	NSURL *appURL = [NSURL URLWithString:startPage];
+	if(![appURL scheme])
+	{
+		appURL = [NSURL fileURLWithPath:[[self class] pathForResource:startPage]];
+	}
+	
     NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
 	[webView loadRequest:appReq];
 
