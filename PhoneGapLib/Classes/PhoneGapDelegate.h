@@ -62,11 +62,13 @@
 - (NSDictionary*) deviceProperties;
 - (void)applicationWillTerminate:(UIApplication *)application;
 
+
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;
 + (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) tmpFolderName;
++ (NSString*) startPage;
 
 @end

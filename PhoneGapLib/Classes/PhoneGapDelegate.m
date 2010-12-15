@@ -453,20 +453,22 @@ static NSString *gapVersion;
 	}
     
     /*
-     * If a URL is being loaded that's a local file URL, just load it internally
+     * If a URL is being loaded that's a file/http/https URL, just load it internally
      */
-    else if ([url isFileURL])
+    else if ([url isFileURL] || 
+			 [[url scheme] isEqualToString:@"http"] || 
+			 [[url scheme] isEqualToString:@"https"])
     {
-        //NSLog(@"File URL %@", [url description]);
         return YES;
     }
     
     /*
-     * We don't have a PhoneGap or local file request, load it in the main Safari browser.
+     * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
+	 * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555
      */
     else
     {
-        //NSLog(@"Unknown URL %@", [url description]);
+        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", [url description]);
         [[UIApplication sharedApplication] openURL:url];
         return NO;
 	}
