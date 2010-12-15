@@ -33,6 +33,8 @@
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error;
 
+- (BOOL) isLocationServicesEnabled;
+
 #ifdef __IPHONE_3_0
 
 - (void)startHeading:(NSMutableArray*)arguments
