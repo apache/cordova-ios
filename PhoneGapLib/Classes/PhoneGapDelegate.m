@@ -515,6 +515,8 @@ static NSString *gapVersion;
 	if (![fileMgr removeItemAtPath: tmpPath error: &err]){
 		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
 	}
+	// clean up any Contact objects
+	[[Contact class] releaseDefaults];
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C04CC12BC247D004F9E10 /* Contact.h */; };
+		1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C04CD12BC247D004F9E10 /* Contact.m */; };
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
 		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
@@ -70,6 +72,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F3C04CC12BC247D004F9E10 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contact.h; path = Classes/Contact.h; sourceTree = "<group>"; };
+		1F3C04CD12BC247D004F9E10 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contact.m; path = Classes/Contact.m; sourceTree = "<group>"; };
 		30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor-Expanded.h"; path = "Classes/UIColor-Expanded.h"; sourceTree = "<group>"; };
 		30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor-Expanded.m"; path = "Classes/UIColor-Expanded.m"; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
@@ -189,6 +193,8 @@
 				8887FD271090FBE7009987E8 /* Camera.m */,
 				8887FD281090FBE7009987E8 /* Categories.h */,
 				8887FD291090FBE7009987E8 /* Categories.m */,
+				1F3C04CC12BC247D004F9E10 /* Contact.h */,
+				1F3C04CD12BC247D004F9E10 /* Contact.m */,
 				8887FD2A1090FBE7009987E8 /* Contacts.h */,
 				8887FD2B1090FBE7009987E8 /* Contacts.m */,
 				8887FD2C1090FBE7009987E8 /* DebugConsole.h */,
@@ -315,6 +321,7 @@
 				8887FD9F1090FBE7009987E8 /* Sound.h in Headers */,
 				88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */,
 				30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */,
+				1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +423,7 @@
 				8887FDA01090FBE7009987E8 /* Sound.m in Sources */,
 				88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */,
 				30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */,
+				1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
