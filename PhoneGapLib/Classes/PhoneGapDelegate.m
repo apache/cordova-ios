@@ -163,10 +163,15 @@ static NSString *gapVersion;
 	// Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
     viewController.supportedOrientations = supportedOrientations;
 	
+	
 	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
 	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
-	
-	webView = [ [ UIWebView alloc ] initWithFrame:screenBounds ];
+
+
+	window.autoresizesSubviews = YES;
+	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
+	webViewBounds.origin = screenBounds.origin;
+	webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
     [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
 	
 	viewController.webView = webView;
