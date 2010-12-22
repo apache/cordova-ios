@@ -25,6 +25,36 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
 {
+	// First ask the webview via JS if it wants to support the new orientation -jm
+	int i = 0;
+	
+	switch (interfaceOrientation){
+
+		case UIInterfaceOrientationPortraitUpsideDown:
+			i = 180;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			i = -90;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			i = 90;
+			break;
+		default:
+		case UIInterfaceOrientationPortrait:
+			// noop
+			break;
+	}
+	
+	NSString* jsCall = [ NSString stringWithFormat:@"shouldRotateToOrientation(%d);",i];
+	NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
+	
+	if([res length] > 0)
+	{
+		return [res boolValue];
+	}
+	
+	// if js did not handle the new orientation ( no return value ) we will look it up in the plist -jm
+	
 	BOOL autoRotate = [self.supportedOrientations count] > 1; // autorotate if only more than 1 orientation supported
 	if (autoRotate)
 	{
@@ -34,6 +64,8 @@
 		}
     }
 	
+	// default return value is NO! -jm
+	
 	return NO;
 }
 
@@ -41,10 +73,11 @@
  Called by UIKit when the device starts to rotate to a new orientation.  This fires the \c setOrientation
  method on the Orientation object in JavaScript.  Look at the JavaScript documentation for more information.
  */
-- (void)willRotateToInterfaceOrientation: (UIInterfaceOrientation)toInterfaceOrientation duration: (NSTimeInterval)duration {
-	double i = 0;
+- (void)didRotateFromInterfaceOrientation: (UIInterfaceOrientation)fromInterfaceOrientation
+{
+	int i = 0;
 	
-	switch (toInterfaceOrientation){
+	switch (self.interfaceOrientation){
 		case UIInterfaceOrientationPortrait:
 			i = 0;
 			break;
@@ -52,13 +85,16 @@
 			i = 180;
 			break;
 		case UIInterfaceOrientationLandscapeLeft:
-			i = 90;
-			break;
-		case UIInterfaceOrientationLandscapeRight:
 			i = -90;
 			break;
+		case UIInterfaceOrientationLandscapeRight:
+			i = 90;
+			break;
 	}
-	[webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"navigator.orientation.setOrientation(%f);", i]];
+	
+	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){return %d;});window.onorientationchange();",i];
+	[webView stringByEvaluatingJavaScriptFromString:jsCallback];
+	 
 }
 
 - (void) setWebView:(UIWebView*) theWebView {
