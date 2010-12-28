@@ -8,6 +8,7 @@
 
 
 #import <Contact.h>
+#import <PhoneGapDelegate.h>
 
 #define DATE_OR_NULL(dateObj) ( (aDate != nil) ? (id)([aDate descriptionWithLocale: [NSLocale currentLocale]]) : (id)([NSNull null]) )
 #define IS_VALID_VALUE(value) ((value != nil) && (![value isKindOfClass: [NSNull class]]))
@@ -123,9 +124,9 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	
 	// these are values that have no AddressBook Equivalent OR have not been implemented yet
 	if (com_phonegap_contacts_W3CtoNull == nil){
-		com_phonegap_contacts_W3CtoNull = [NSSet setWithObjects: kW3ContactDisplayName, kW3ContactGender, kW3ContactPreferredUsername, 
-				kW3ContactStartDate, kW3ContactEndDate, kW3ContactLocation, KW3ContactDescription,
-				kW3ContactPhotos, kW3ContactTags, kW3ContactRelationships, kW3ContactUrls, kW3ContactAccounts,
+		com_phonegap_contacts_W3CtoNull = [NSSet setWithObjects: kW3ContactDisplayName, kW3ContactGender, kW3ContactPreferredUsername,
+				kW3ContactFormattedName, kW3ContactStartDate, kW3ContactEndDate, kW3ContactLocation, KW3ContactDescription,
+				kW3ContactTags, kW3ContactRelationships, kW3ContactUrls, kW3ContactAccounts,
 				kW3ContactUtcOffset, kW3ContactConnected, nil];
 	[com_phonegap_contacts_W3CtoNull retain];
 	}
@@ -146,6 +147,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 													 [NSArray arrayWithObjects:kW3ContactOrganizationName, kW3ContactTitle, kW3ContactDepartment,kW3ContactStartDate, kW3ContactEndDate, KW3ContactDescription,kW3ContactLocation, nil],kW3ContactOrganizations,
 													 [NSArray arrayWithObjects:kW3ContactFieldType, kW3ContactFieldValue, kW3ContactFieldPrimary,nil], kW3ContactPhoneNumbers,
 													 [NSArray arrayWithObjects:kW3ContactFieldType, kW3ContactFieldValue, kW3ContactFieldPrimary,nil], kW3ContactEmails,
+													 [NSArray arrayWithObjects:kW3ContactFieldType, kW3ContactFieldValue, kW3ContactFieldPrimary,nil], kW3ContactPhotos,
 													 [NSArray arrayWithObjects: kW3ContactImValue, kW3ContactImType, nil], kW3ContactIms,
 													 nil];
 		[com_phonegap_contacts_objectAndProperties retain];
@@ -168,6 +170,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 			[NSNull null],kW3ContactBirthday,
 			[NSNull null], kW3ContactAnniversary,
 			[NSNull null],kW3ContactNote,
+			[NSNull null],kW3ContactPhotos,
 			nil];
 		[com_phonegap_contacts_defaultFields retain];
 
@@ -320,8 +323,38 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	
 	// iOS doesn't have preferredName- ignore
 	
-	// TODO photos
-	 // can only set image data, will need to retrieve from url and convert
+	// photo
+	array = [aContact valueForKey: kW3ContactPhotos];
+	if ([array isKindOfClass:[NSArray class]]){
+		if (bUpdate && [array count] == 0){
+			// remove photo
+			bSuccess = ABPersonRemoveImageData(person, &error);
+		} else if ([array count] > 0){
+			NSDictionary* dict = [array objectAtIndex:0]; // currently only support one photo
+			if ([dict isKindOfClass:[NSDictionary class]]){
+				id value = [dict objectForKey:kW3ContactFieldValue];
+				if ([value isKindOfClass:[NSString class]]){
+					if (bUpdate && [value length] == 0){
+						// remove the current image
+						bSuccess = ABPersonRemoveImageData(person, &error);
+					} else {
+						// use this image
+						NSURL* photoUrl = [NSURL URLWithString:value];
+						// caller is responsible for checking for a connection, if no connection this will fail
+						NSError* err = nil;
+						NSData* data = [NSData dataWithContentsOfURL:photoUrl options: NSDataReadingUncached error:&err];
+						if(data && [data length] > 0){
+							bSuccess = ABPersonSetImageData(person, (CFDataRef)data, &error);
+						}
+						if (!data || !bSuccess){
+							NSLog(@"error setting contact image: %@", (err != nil ? [err localizedDescription] : @""));
+						}
+
+					}
+				}
+			}
+		}
+	}
 	 
 	// TODO tags / cagetgories
 
@@ -865,13 +898,10 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		[nc setObject:  (value != nil) ? value : [NSNull null] forKey:kW3ContactNote];
 	}
 	
-	// TODO photos
-	/*if (ABPersonHasImageData(self.record){
-		// can only get image data, will need to save to Documents/tmp and return URL
-		
-	}else { */
-	//	[nc setObject:[NSNull null] forKey:kW3ContactPhotos];
-	//}
+	if ([self.returnFields valueForKey:kW3ContactPhotos]){
+		value = [self extractPhotos];
+		[nc setObject:  (value != nil) ? value : [NSNull null] forKey:kW3ContactPhotos];
+	}
 	// TODO tags
 	//[nc setObject:[NSNull null] forKey:kW3ContactTags];
 	// TODO relationships
@@ -1131,7 +1161,49 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		[(NSMutableArray*)array addObject:newDict];
 	}
 	return array;
-}		
+}
+
+// W3C Contacts expects an array of photos.  Can return photos in more than one format, currently 
+// just returning the default format
+// Save the photo data into tmp directory and return FileURI - temp directory is deleted upon application exit
+-(NSObject*) extractPhotos
+{
+	NSMutableArray* photos = nil;
+	if (ABPersonHasImageData(self.record)){
+		CFDataRef photoData = ABPersonCopyImageData(self.record);
+		NSData* data = (NSData*)photoData;
+		// write to temp directory and store URI in photos array
+		// get the temp directory path
+		NSString* docsPath = [[PhoneGapDelegate applicationDocumentsDirectory] stringByAppendingPathComponent: [PhoneGapDelegate tmpFolderName]];
+		NSError* err = nil;
+		NSFileManager* fileMgr = [[NSFileManager alloc] init]; //recommended by apple (vs [NSFileManager defaultManager]) to be theadsafe
+		
+		if ( [fileMgr fileExistsAtPath:docsPath] == NO ){ // check in case tmp dir got deleted
+			[fileMgr createDirectoryAtPath:docsPath withIntermediateDirectories: NO attributes: nil error: nil];
+		}
+		// generate unique file name
+		NSString* filePath;
+		int i=1;
+		do {
+			filePath = [NSString stringWithFormat:@"%@/photo_%03d.jpg", docsPath, i++];
+		} while([fileMgr fileExistsAtPath: filePath]);
+		// save file
+		if ([data writeToFile: filePath options: NSAtomicWrite error: &err]){
+			photos = [NSMutableArray arrayWithCapacity:1];
+			NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity:2];
+			[newDict setObject:filePath forKey:kW3ContactFieldValue];
+			[newDict setObject:@"false" forKey:kW3ContactFieldPrimary];
+			[photos addObject:newDict];
+		}
+		[fileMgr release];
+		
+		CFRelease(photoData);
+	}
+	return photos;
+}
+
+
+
 /**
  *	given an array of W3C Contact field names, create a dictionary of field names to extract
  *	if field name represents an object, return all properties for that object:  "name" - returns all properties in ContactName
@@ -1178,7 +1250,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 						[d setObject: keys forKey:name];
 					}
 				}else {
-					NSLog(@"Contacts.find -- request for invalid property ignored: @%.@%", name, property);
+					NSLog(@"Contacts.find -- request for invalid property ignored: %@.%@", name, property);
 				}
 			} else { // is an individual property, verify is real property name by using it as key in W3CtoAB
 				id valid = [[Contact defaultW3CtoAB] objectForKey:name];

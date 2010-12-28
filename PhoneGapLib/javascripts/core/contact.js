@@ -207,12 +207,12 @@ Contact.prototype.save = function(successCB, errorCB) {
 * @param suffix
 */
 var ContactName = function(formatted, familyName, givenName, middle, prefix, suffix) {
-    this.formatted = formatted || null;
-    this.familyName = familyName || null;
-    this.givenName = givenName || null;
-    this.middleName = middle || null;
-    this.honorificPrefix = prefix || null;
-    this.honorificSuffix = suffix || null;
+    this.formatted = formatted != "undefined" ? formatted : null;
+    this.familyName = familyName != "undefined" ? familyName : null;
+    this.givenName = givenName != "undefined" ? givenName : null;
+    this.middleName = middle != "undefined" ? middle : null;
+    this.honorificPrefix = prefix != "undefined" ? prefix : null;
+    this.honorificSuffix = suffix != "undefined" ? suffix : null;
 };
 
 /**
@@ -223,10 +223,10 @@ var ContactName = function(formatted, familyName, givenName, middle, prefix, suf
 * @param id
 */
 var ContactField = function(type, value, primary, id) {
-    this.type = type || null;
-    this.value = value || null;
-    this.primary = primary || null;
-    this.id = id || null;
+    this.type = type != "undefined" ? type : null;
+    this.value = value != "undefined" ? value : null;
+    this.primary = primary != "undefined" ? primary : null;
+    this.id = id != "undefined" ? id : null;
 };
 
 /**
@@ -239,13 +239,13 @@ var ContactField = function(type, value, primary, id) {
 * @param country
 */
 var ContactAddress = function(formatted, streetAddress, locality, region, postalCode, country, id) {
-    this.formatted = formatted || null;
-    this.streetAddress = streetAddress || null;
-    this.locality = locality || null;
-    this.region = region || null;
-    this.postalCode = postalCode || null;
-    this.country = country || null;
-    this.id = id || null;
+    this.formatted = formatted != "undefined" ? formatted : null;
+    this.streetAddress = streetAddress != "undefined" ? streetAddress : null;
+    this.locality = locality != "undefined" ? locality : null;
+    this.region = region != "undefined" ? region : null;
+    this.postalCode = postalCode != "undefined" ? postalCode : null;
+    this.country = country != "undefined" ? country : null;
+    this.id = id != "undefined" ? id : null;
 };
 
 /**
@@ -259,13 +259,13 @@ var ContactAddress = function(formatted, streetAddress, locality, region, postal
 * @param desc
 */
 var ContactOrganization = function(name, dept, title, startDate, endDate, location, desc) {
-    this.name = name || null;
-    this.department = dept || null;
-    this.title = title || null;
-    this.startDate = startDate || null;
-    this.endDate = endDate || null;
-    this.location = location || null;
-    this.description = desc || null;
+    this.name = name != "undefined" ? name : null;
+    this.department = dept != "undefined" ? dept : null;
+    this.title = title != "undefined" ? title : null;
+    this.startDate = startDate != "undefined" ? startDate : null;
+    this.endDate = endDate != "undefined" ? endDate : null;
+    this.location = location != "undefined" ? location : null;
+    this.description = desc != "undefined" ? desc : null;
 };
 
 /**
@@ -275,9 +275,9 @@ var ContactOrganization = function(name, dept, title, startDate, endDate, locati
 * @param userid
 */
 var ContactAccount = function(domain, username, userid) {
-    this.domain = domain || null;
-    this.username = username || null;
-    this.userid = userid || null;
+    this.domain = domain != "undefined" ? domain : null;
+    this.username = username != "undefined" ? username : null;
+    this.userid = userid != "undefined" ? userid : null;
 }
 
 /**

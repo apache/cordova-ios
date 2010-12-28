@@ -65,6 +65,7 @@ typedef NSUInteger ContactError;
 -(NSObject*) extractAddresses;
 -(NSObject*) extractIms;
 -(NSObject*) extractOrganizations;
+-(NSObject*) extractPhotos;
 
 -(NSMutableDictionary*) translateW3Dict: (NSDictionary*) dict forProperty: (ABPropertyID) prop;	
 -(bool) setMultiValueStrings: (NSArray*)fieldArray forProperty: (ABPropertyID) prop inRecord: (ABRecordRef)person asUpdate: (BOOL)bUpdate;
