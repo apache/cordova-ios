@@ -299,6 +299,22 @@ var Contacts = function() {
 Contacts.prototype.find = function(fields, successCB, errorCB, options) {
 	this.resultsCallback = successCB;
 	var theOptions = options || null;
+	if (theOptions != null){
+		// convert updatedSince to ms
+		var value = theOptions.updatedSince
+		if (value != ''){
+			if (!value instanceof Date){
+				try {
+					value = new Date(value);
+				} catch(exception){
+					value = null;
+				}
+			}
+			if (value instanceof Date){
+				theOptions.updatedSince = value.valueOf();
+			}
+		}
+	}
 
     PhoneGap.exec("Contacts.search", GetFunctionName(successCB), GetFunctionName(errorCB), {"fields":fields, "findOptions":theOptions});
 };
@@ -394,8 +410,8 @@ Contacts.prototype.create = function(properties) {
  */
 var ContactFindOptions = function(filter, multiple, limit, updatedSince) {
     this.filter = filter || '';
-    this.multiple = multiple || false;
-    this.limit = limit || 1;
+    this.multiple = multiple || true;
+    this.limit = limit || null;
     this.updatedSince = updatedSince || '';
 };
 

@@ -299,7 +299,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	id ms = [aContact valueForKey:kW3ContactBirthday];
 	NSDate* aDate = nil;
 	if (ms && [ms isKindOfClass:[NSNumber class]]){
-		float msValue = [ms floatValue];
+		double msValue = [ms doubleValue];
 		msValue = msValue/1000;
 		aDate = [NSDate dateWithTimeIntervalSince1970: msValue];
 	}

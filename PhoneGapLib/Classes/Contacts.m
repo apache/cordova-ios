@@ -309,8 +309,42 @@
 	
 
 	addrBook = ABAddressBookCreate();
-	
-	NSString* filter = [findOptions isKindOfClass:[NSNull class]] ? nil : (NSString*)[findOptions objectForKey:@"filter"];
+	// get the findOptions values
+	BOOL multiple = YES; // default is true
+	int limit = 1; // default if multiple is FALSE, will be set below if multiple is TRUE
+	double msUpdatedSince = 0;
+	BOOL bCheckDate = NO;
+	NSString* filter = nil;
+	BOOL bIncludeRecord = YES;
+	if (![findOptions isKindOfClass:[NSNull class]]){
+		id value = nil;
+		filter = (NSString*)[findOptions objectForKey:@"filter"];
+		value = [findOptions objectForKey:@"multiple"];
+		if ([value isKindOfClass:[NSNumber class]]){
+			// multiple is a boolean that will come through as an NSNumber
+			multiple = [(NSNumber*)value boolValue];
+			//NSLog(@"multiple is: %d", multiple);
+		}
+		if (multiple == YES){
+			// we only care about limit if multiple is true
+			value = [findOptions objectForKey:@"limit"];
+			if ([value isKindOfClass:[NSNumber class]]){
+				limit = [(NSNumber*)value intValue];
+				//NSLog(@"limit is: %d", limit);
+			} else {
+				// no limit specified, set it to -1 to get all
+				limit = -1;
+			}
+		}
+		// see if there is an updated date
+		id ms = [findOptions valueForKey:@"updatedSince"];
+		if (ms && [ms isKindOfClass:[NSNumber class]]){
+			msUpdatedSince = [ms doubleValue];
+			bCheckDate = YES;
+		}
+		
+	}
+		
 	if (!filter || [filter isEqualToString:@""]){ 
 		// get all records - use fields to determine what properties to return
 		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
@@ -329,19 +363,28 @@
 	NSMutableArray* returnContacts = [NSMutableArray arrayWithCapacity:1];
 	if (foundRecords){
 		NSMutableDictionary* returnFields = [[Contact class] calcReturnFields: fields];
-	
 
 		// convert to JS Contacts format and return in callback
-		
-		
 		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
-		NSEnumerator *enumerator = [foundRecords objectEnumerator];  // look into using NSFastEnumerator
+		int count = (limit > 0 ? MIN(limit,[foundRecords count]) : [foundRecords count]);
 		ABRecordRef aRecord;
-		while (aRecord = (ABRecordRef)[enumerator nextObject]) {
+		for(int i = 0; i<count; i++){
+			aRecord = [foundRecords objectAtIndex:i];
 			Contact* newContact = [[[Contact alloc  ]initFromABRecord:aRecord] autorelease];
-			NSMutableDictionary* aContact = [newContact toDictionary: returnFields];
-			NSString* contactStr = [aContact JSONRepresentation];
-			[returnContacts addObject:contactStr];			
+			if (bCheckDate) {
+				NSNumber* modDate = [newContact getDateAsNumber:kABPersonModificationDateProperty];
+				if (modDate){
+					double modDateMs = [modDate doubleValue];
+					if(round(modDateMs) < round(msUpdatedSince)){
+						bIncludeRecord = NO;
+					}
+				}
+			}
+			if(bIncludeRecord){
+				NSMutableDictionary* aContact = [newContact toDictionary: returnFields];
+				NSString* contactStr = [aContact JSONRepresentation];
+				[returnContacts addObject:contactStr];
+			}
 		}
 		[pool release];
 		jsString = [NSString stringWithFormat: @"%@([%@]);", @"navigator.service.contacts._findCallback", [returnContacts componentsJoinedByString:@","]];
