@@ -276,30 +276,33 @@
 {
 	NSUInteger argc = [arguments count];
 	NSString* jsCallback = nil;
-	NSString* jsErrCallback;
-	NSString* jsString;
+	NSString* jsErrCallback = nil;
+	NSString* jsString = nil;
 	bool bError = FALSE;
 	ContactError errCode = UNKNOWN_ERROR;
 	//args:
-	// 0 = success callback function
+	// 0 = success callback function 
 	// 1 = error callback function
 	
 	//TODO: need better argument handling system
 	if (argc > 0) {
 		jsCallback = [arguments objectAtIndex:0];
 	} else {
+		// could catch this in JS before making call
 		bError = TRUE;
 		NSLog(@"Contacts.chooseContact: Missing success callback parameter.");
 		errCode = INVALID_ARGUMENT_ERROR;
-		jsString = [NSString stringWithFormat:@"%@(%@);", jsErrCallback, errCode];
-		[webView stringByEvaluatingJavaScriptFromString:jsString];
-		return;
 	}
 	if (argc >1) {
 		jsErrCallback = [arguments objectAtIndex:1];
 	}
-	
-	
+	if (bError){
+		if (jsErrCallback){
+			jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, errCode];
+			[webView stringByEvaluatingJavaScriptFromString:jsString];
+		}
+		return;
+	}
 	
 	NSArray* fields = [options valueForKey:@"fields"];
 	NSDictionary* findOptions = [options valueForKey:@"findOptions"];
@@ -350,18 +353,26 @@
 		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
 	}else {
 		// currently we can search for names only
-		//NSString* fieldsStr = [fields isKindOfClass:[NSNull class]] ? nil :[fields componentsJoinedByString:@" "];
-		//if (fieldsStr && ([fieldsStr rangeOfString:kW3ContactName].location != NSNotFound)){
-			// search by name
-			foundRecords =  (NSArray*)ABAddressBookCopyPeopleWithName(addrBook, (CFStringRef)filter);
-			
-		//} //else {
-			// use a predicate
-			//[foundRecords filteredArrayUsingPredicate:xxx]
-			
+		foundRecords =  (NSArray*)ABAddressBookCopyPeopleWithName(addrBook, (CFStringRef)filter);
+		/*
+		NSArray* allRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
+		NSString* state = @"MA";
+		@try {
+			NSPredicate* predicate = [NSPredicate predicateWithFormat:@"%@ contains[cd] %@", kABPersonAddressState, state];
+			NSLog(@"predicate description: %@", [predicate description]);
+			foundRecords = [allRecords filteredArrayUsingPredicate:predicate];
+		}
+		@catch (NSException * e) {
+			NSLog(@"exception searching addressbook: %@", [e reason]);
+		}
+		@finally {
+			CFRelease(allRecords);
+		}
+	*/
 	}
 	NSMutableArray* returnContacts = [NSMutableArray arrayWithCapacity:1];
-	if (foundRecords){
+	if (foundRecords && [foundRecords count] > 0){
+		
 		NSMutableDictionary* returnFields = [[Contact class] calcReturnFields: fields];
 
 		// convert to JS Contacts format and return in callback
@@ -377,7 +388,10 @@
 					double modDateMs = [modDate doubleValue];
 					if(round(modDateMs) < round(msUpdatedSince)){
 						bIncludeRecord = NO;
+					} else {
+						bIncludeRecord = YES;
 					}
+
 				}
 			}
 			if(bIncludeRecord){
@@ -387,18 +401,25 @@
 			}
 		}
 		[pool release];
+		
+		CFRelease(foundRecords); 
+	}
+	
+	if ([returnContacts count] == 0 && jsErrCallback){
+		// return error
+		jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, NOT_FOUND_ERROR];
+	}else {
+		// return found contacts or empty string
 		jsString = [NSString stringWithFormat: @"%@([%@]);", @"navigator.service.contacts._findCallback", [returnContacts componentsJoinedByString:@","]];
-
 	}
 
-	if (foundRecords){
-		CFRelease(foundRecords);  
-	}
 	if(addrBook){
 		CFRelease(addrBook);
 	}
-		
-	[webView stringByEvaluatingJavaScriptFromString:jsString];
+	if(jsString){	
+		[webView stringByEvaluatingJavaScriptFromString:jsString];
+	}
+	return;
 	
 	
 }
@@ -407,7 +428,7 @@
 	NSUInteger argc = [arguments count];
 	NSString* jsCallback = nil;
 	NSString* jsErrCallback;
-	NSString* jsString;
+	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	BOOL bUpdate = NO;
 	ContactError errCode = UNKNOWN_ERROR;
@@ -434,19 +455,21 @@
 		
 		ABAddressBookRef addrBook = ABAddressBookCreate();	
 		NSNumber* cId = [contactDict valueForKey:kW3ContactId];
-		Contact* aContact; 
+		Contact* aContact = nil; 
 		ABRecordRef rec;
 		if (cId && ![cId isKindOfClass:[NSNull class]]){
 			rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
-			aContact = [[Contact alloc] initFromABRecord: rec ];
-			
-			bUpdate = YES;
-		} else {
+			if (rec){
+				aContact = [[Contact alloc] initFromABRecord: rec ];
+				bUpdate = YES;
+			}
+		}
+		if (!aContact){
 			aContact = [[Contact alloc] init]; 
 			rec = ABPersonCreate();
 			[aContact setRecord: rec];
 		}
-
+		
 		bSuccess = [aContact setFromContactDict: contactDict asUpdate: bUpdate];
 		if (bSuccess){
 			if (!bUpdate){
@@ -463,7 +486,7 @@
 				// give original dictionary back?  If generate dictionary from saved contact, have no returnFields specified
 				// so would give back all fields (which W3C spec. indicates is not desired)
 				// for now (while testing) give back saved, full contact
-				NSMutableDictionary* newContact = [aContact toDictionary: nil];
+				NSMutableDictionary* newContact = [aContact toDictionary: [Contact defaultFields]];
 				NSString* contactStr = [newContact JSONRepresentation];
 				jsString = [NSString stringWithFormat: @"%@(%@);", @"navigator.service.contacts._contactCallback", contactStr];
 			}
@@ -473,19 +496,20 @@
 			errCode = IO_ERROR; 
 		}
 		[aContact release];	
-	} // end of if !bIsError
+	} // end of if !bIsError for argument check
 	if (bIsError && jsErrCallback){
-		jsString = [NSString stringWithFormat:@"%@(%@);", jsErrCallback, errCode];
+		jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, errCode];
 	}
-	[webView stringByEvaluatingJavaScriptFromString:jsString];
-
+	if(jsString){
+		[webView stringByEvaluatingJavaScriptFromString:jsString];
+	}
 }	
 - (void) remove: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
 	NSString* jsCallback = nil;
 	NSString* jsErrCallback = nil;
-	NSString* jsString;
+	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	ContactError errCode = UNKNOWN_ERROR;
 	CFErrorRef error;
@@ -507,55 +531,56 @@
 		jsErrCallback = [arguments objectAtIndex:1];
 	}
 	
-		if (!bIsError){
-			NSMutableDictionary* contactDict = [options valueForKey:@"contact"];
-			addrBook = ABAddressBookCreate();	
-			NSNumber* cId = [contactDict valueForKey:kW3ContactId];
-			if (cId && ![cId isKindOfClass:[NSNull class]] && [cId intValue] != kABRecordInvalidID){
-				rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
-				if (rec){
-					bSuccess = ABAddressBookRemoveRecord(addrBook, rec, &error);
-					if (!bSuccess){
-						bIsError = TRUE;
-						errCode = IO_ERROR; 
-					} else {
-						rec = nil; // it was removed, don't release it
-						bSuccess = ABAddressBookSave(addrBook, &error);
-						if(!bSuccess){
-							bIsError = TRUE;
-							errCode = IO_ERROR;
-						}else {
-							// set id to null
-							[contactDict setObject:[NSNull null] forKey:kW3ContactId];
-							NSString* contactStr = [contactDict JSONRepresentation];
-							jsString = [NSString stringWithFormat: @"%@(%@);", @"navigator.service.contacts._contactCallback", contactStr];
-						}
-					}						
-				} else {
-					// no record found return error
+	if (!bIsError){
+		NSMutableDictionary* contactDict = [options valueForKey:@"contact"];
+		addrBook = ABAddressBookCreate();	
+		NSNumber* cId = [contactDict valueForKey:kW3ContactId];
+		if (cId && ![cId isKindOfClass:[NSNull class]] && [cId intValue] != kABRecordInvalidID){
+			rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
+			if (rec){
+				bSuccess = ABAddressBookRemoveRecord(addrBook, rec, &error);
+				if (!bSuccess){
 					bIsError = TRUE;
-					errCode = NOT_FOUND_ERROR;
-				}
-
+					errCode = IO_ERROR; 
+				} else {
+					rec = nil; // it was removed, don't release it
+					bSuccess = ABAddressBookSave(addrBook, &error);
+					if(!bSuccess){
+						bIsError = TRUE;
+						errCode = IO_ERROR;
+					}else {
+						// set id to null
+						[contactDict setObject:[NSNull null] forKey:kW3ContactId];
+						NSString* contactStr = [contactDict JSONRepresentation];
+						jsString = [NSString stringWithFormat: @"%@(%@);", @"navigator.service.contacts._contactCallback", contactStr];
+					}
+				}						
 			} else {
-				// invalid contact id provided
+				// no record found return error
 				bIsError = TRUE;
-				errCode = INVALID_ARGUMENT_ERROR;
+				errCode = NOT_FOUND_ERROR;
 			}
+
+		} else {
+			// invalid contact id provided
+			bIsError = TRUE;
+			errCode = INVALID_ARGUMENT_ERROR;
 		}
+	}
+	if (rec){
+		CFRelease(rec);
+	}
+	if (addrBook){
+		CFRelease(addrBook);
+	}
+	if (bIsError && jsErrCallback){
+		jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, errCode];
+	}
+	if (jsString){
+		[webView stringByEvaluatingJavaScriptFromString:jsString];
+	}	
 		
-		if (bIsError && jsErrCallback){
-			jsString = [NSString stringWithFormat:@"%@(%@);", jsErrCallback, errCode];
-		}
-		if (jsString){
-			[webView stringByEvaluatingJavaScriptFromString:jsString];
-		}	
-		if (rec){
-			CFRelease(rec);
-		}
-		if (addrBook){
-			CFRelease(addrBook);
-		}
+	return;
 		
 }
 

@@ -104,7 +104,7 @@ Contact.prototype.convertDatesIn = function()
 /**
 * Removes contact from device storage.
 * @param successCB success callback
-* @param errorCB error callback
+* @param errorCB error callback (optional)
 */
 Contact.prototype.remove = function(successCB, errorCB) {
     if (this.id == null) {
@@ -113,7 +113,8 @@ Contact.prototype.remove = function(successCB, errorCB) {
         errorCB(errorObj);
     }
 	navigator.service.contacts.resultsCallback = successCB;
-    PhoneGap.exec("Contacts.remove", GetFunctionName(successCB), GetFunctionName(errorCB), { "contact": this});
+	var errCallback = (errorCB == undefined || errorCB == null) ? null : GetFunctionName(errorCB);
+    PhoneGap.exec("Contacts.remove", GetFunctionName(successCB), errCallback, { "contact": this});
 };
 /**
 * iOS ONLY
@@ -292,7 +293,7 @@ var Contacts = function() {
 * Returns an array of Contacts matching the search criteria.
 * @param fields that should be searched
 * @param successCB success callback
-* @param errorCB error callback
+* @param errorCB error callback (optional)
 * @param {ContactFindOptions} options that can be applied to contact searching
 * @return array of Contacts matching search criteria
 */
@@ -315,8 +316,10 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
 			}
 		}
 	}
-
-    PhoneGap.exec("Contacts.search", GetFunctionName(successCB), GetFunctionName(errorCB), {"fields":fields, "findOptions":theOptions});
+	var errCallback = (errorCB == undefined || errorCB == null) ? null : GetFunctionName(errorCB);
+	
+	PhoneGap.exec("Contacts.search", GetFunctionName(successCB), errCallback, {"fields":fields, "findOptions":theOptions});
+	
 };
 /**
 * need to turn the array of JSON strings representing contact objects into actual objects

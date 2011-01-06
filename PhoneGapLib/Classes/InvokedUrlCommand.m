@@ -53,10 +53,9 @@
 													  stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	}
 	iuc.arguments = arguments;
-    
+
 	// Dictionary of options
 	NSString* objectString = [[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSLog(@"query string = %@",objectString);
 	iuc.options = (NSMutableDictionary*)[objectString JSONValue];
 	NSArray* components = [iuc.command componentsSeparatedByString:@"."];
 	if (components.count == 2) {

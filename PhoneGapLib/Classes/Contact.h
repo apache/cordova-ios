@@ -43,6 +43,7 @@ typedef NSUInteger ContactError;
 +(NSDictionary*) defaultW3CtoAB;
 +(NSSet*) defaultW3CtoNull;
 +(NSDictionary*) defaultObjectAndProperties;
++(NSDictionary*) defaultFields;
 +(void) releaseDefaults;
 
 

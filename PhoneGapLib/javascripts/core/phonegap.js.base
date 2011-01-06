@@ -114,7 +114,7 @@ PhoneGap.run_command = function() {
     for (var i = 1; i < args.length; i++) {
         var arg = args[i];
         if (arg == undefined || arg == null)
-            arg = '';
+            continue;
         if (typeof(arg) == 'object')
             dict = arg;
         else
