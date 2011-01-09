@@ -108,6 +108,8 @@ static NSString *gapVersion;
 {
 	NSMutableArray* result = [[[NSMutableArray alloc] init] autorelease];
 	
+	
+	
 	if (orientations != nil) 
 	{
 		NSEnumerator* enumerator = [orientations objectEnumerator];
