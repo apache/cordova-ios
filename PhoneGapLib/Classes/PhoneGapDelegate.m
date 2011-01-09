@@ -172,7 +172,7 @@ static NSString *gapVersion;
 	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
 	webViewBounds.origin = screenBounds.origin;
 	webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
-    [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
+    webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	
 	viewController.webView = webView;
 	[viewController.view addSubview:webView];
