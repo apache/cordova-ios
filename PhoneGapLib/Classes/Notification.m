@@ -73,7 +73,7 @@
 {
     NSString *buttonLabel = [alertView buttonTitleAtIndex:buttonIndex];
 
-	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", buttonIndex, buttonLabel];    
+	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", ++buttonIndex, buttonLabel];    
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
  
