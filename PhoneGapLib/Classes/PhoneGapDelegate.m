@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import "Movie.h"
 #import "InvokedUrlCommand.h"
+#import "Contact.h"
 
 @implementation PhoneGapDelegate
 
@@ -515,6 +516,7 @@ static NSString *gapVersion;
 	if (![fileMgr removeItemAtPath: tmpPath error: &err]){
 		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
 	}
+	[fileMgr release];
 	// clean up any Contact objects
 	[[Contact class] releaseDefaults];
 }

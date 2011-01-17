@@ -22,17 +22,21 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 @implementation Contact : NSObject
 
 @synthesize record;
-@synthesize contactId;
 @synthesize returnFields;
    
+- (id) init
+{
+	if ((self = [super init]) != nil)
+		self.record = ABPersonCreate();
+	return self;
+}
 - (id) initFromABRecord:(ABRecordRef)aRecord
 {
 	if ((self = [super init]) != nil) 
 		self.record = CFRetain(aRecord);
-	return self;
-	
-	
+	return self;	
 }
+
 
 /* Rather than creating getters and setters for each AddressBook (AB) Property, generic methods are used to deal with
  * simple properties,  MultiValue properties( phone numbers and emails) and MultiValueDictionary properties (Ims and addresses).
@@ -219,11 +223,11 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 {
 	
 	if (![aContact isKindOfClass:[NSDictionary class]]){
-		return nil; // can't do anything if no dictionary!
+		return FALSE; // can't do anything if no dictionary!
 	}
 	
 	ABRecordRef person = self.record;
-	bool bSuccess= FALSE;
+	bool bSuccess= TRUE;
 	CFErrorRef error;
 	
 	// set name info
@@ -235,7 +239,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		NSArray* propArray = [[Contact defaultObjectAndProperties] objectForKey: kW3ContactName];
 		for(id i in propArray){
 			if (![(NSString*)i isEqualToString:kW3ContactFormattedName]){  //kW3ContactFormattedName is generated from ABRecordCopyCompositeName() and can't be set
-				bSuccess = [self setValue:[dict valueForKey:i] forProperty: (ABPropertyID)[(NSNumber*)[[Contact defaultW3CtoAB] objectForKey: i]intValue] 
+				[self setValue:[dict valueForKey:i] forProperty: (ABPropertyID)[(NSNumber*)[[Contact defaultW3CtoAB] objectForKey: i]intValue] 
 					inRecord: person asUpdate: bUpdate];
 			}
 		}
@@ -244,11 +248,11 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	id nn = [aContact valueForKey:kW3ContactNickname];
 	if (![nn isKindOfClass:[NSNull class]]){
 		bName = true;
-		bSuccess = [self setValue: nn forProperty: kABPersonNicknameProperty inRecord: person asUpdate: bUpdate];
+		[self setValue: nn forProperty: kABPersonNicknameProperty inRecord: person asUpdate: bUpdate];
 	}
 	if (!bName){
 		// if no name or nickname - try and use displayName as W3Contact must have displayName or ContactName
-		bSuccess = [self setValue:[aContact valueForKey:kW3ContactDisplayName] forProperty: kABPersonNicknameProperty 
+		[self setValue:[aContact valueForKey:kW3ContactDisplayName] forProperty: kABPersonNicknameProperty 
 						 inRecord: person asUpdate: bUpdate];
 	}
 	
@@ -256,13 +260,13 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	//NSLog(@"setting phoneNumbers");
 	NSArray* array = [aContact valueForKey:kW3ContactPhoneNumbers];
 	if ([array isKindOfClass:[NSArray class]]){
-		bSuccess = [self setMultiValueStrings: array forProperty: kABPersonPhoneProperty inRecord: person asUpdate: bUpdate];
+		[self setMultiValueStrings: array forProperty: kABPersonPhoneProperty inRecord: person asUpdate: bUpdate];
 	}
 	// set Emails
 	//NSLog(@"setting emails");
 	array = [aContact valueForKey:kW3ContactEmails];
 	if ([array isKindOfClass:[NSArray class]]){
-		bSuccess = [self setMultiValueStrings: array forProperty: kABPersonEmailProperty inRecord: person asUpdate: bUpdate];
+		[self setMultiValueStrings: array forProperty: kABPersonEmailProperty inRecord: person asUpdate: bUpdate];
 	}
 	// set multivalue dictionary properties
 	// set addresses:  streetAddress, locality, region, postalCode, country
@@ -272,13 +276,13 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	error = nil;
 	array = [aContact valueForKey:kW3ContactAddresses];
 	if ([array isKindOfClass:[NSArray class]]){
-		bSuccess = [self setMultiValueDictionary: array forProperty: kABPersonAddressProperty inRecord: person asUpdate: bUpdate];
+		[self setMultiValueDictionary: array forProperty: kABPersonAddressProperty inRecord: person asUpdate: bUpdate];
 	}
 	//ims
 	//NSLog(@"setting ims");
 	array = [aContact valueForKey:kW3ContactIms];
 	if ([array isKindOfClass:[NSArray class]]){
-		bSuccess = [self setMultiValueDictionary: array forProperty: kABPersonInstantMessageProperty inRecord: person asUpdate: bUpdate];
+		[self setMultiValueDictionary: array forProperty: kABPersonInstantMessageProperty inRecord: person asUpdate: bUpdate];
 	}
 	
 	// organizations
@@ -289,9 +293,9 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	if ([array isKindOfClass:[NSArray class]]){
 		NSDictionary* dict = [array objectAtIndex:0];
 		if ([dict isKindOfClass:[NSDictionary class]]){
-			bSuccess = [self setValue: [dict valueForKey:@"name"] forProperty: kABPersonOrganizationProperty inRecord: person asUpdate: bUpdate];
-			bSuccess = [self setValue: [dict valueForKey:kW3ContactTitle] forProperty:  kABPersonJobTitleProperty inRecord: person asUpdate: bUpdate];
-			bSuccess = [self setValue: [dict valueForKey:kW3ContactDepartment] forProperty: kABPersonDepartmentProperty inRecord: person asUpdate: bUpdate];
+			[self setValue: [dict valueForKey:@"name"] forProperty: kABPersonOrganizationProperty inRecord: person asUpdate: bUpdate];
+			[self setValue: [dict valueForKey:kW3ContactTitle] forProperty:  kABPersonJobTitleProperty inRecord: person asUpdate: bUpdate];
+			[self setValue: [dict valueForKey:kW3ContactDepartment] forProperty: kABPersonDepartmentProperty inRecord: person asUpdate: bUpdate];
 		}
 	}
 	// add dates
@@ -304,7 +308,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		aDate = [NSDate dateWithTimeIntervalSince1970: msValue];
 	}
 	if (aDate != nil || [ms isKindOfClass:[NSString class]]) {
-		bSuccess = [self setValue: aDate != nil ? aDate : ms forProperty: kABPersonBirthdayProperty inRecord: person asUpdate: bUpdate];
+		[self setValue: aDate != nil ? aDate : ms forProperty: kABPersonBirthdayProperty inRecord: person asUpdate: bUpdate];
 	}
 	// don't update creation date
 	// modifiction date will get updated when save
@@ -318,7 +322,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	
 	// iOS doesn't have gender - ignore
 	// note
-	bSuccess = [self setValue: [aContact valueForKey:kW3ContactNote] forProperty: kABPersonNoteProperty inRecord: person asUpdate: bUpdate];
+	[self setValue: [aContact valueForKey:kW3ContactNote] forProperty: kABPersonNoteProperty inRecord: person asUpdate: bUpdate];
 	
 	
 	// iOS doesn't have preferredName- ignore
@@ -367,10 +371,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	// TODO UTCOffset
 	
 	// connected - removed from W3C Contact api Dec 9, 2010 spec - don't waste time on it yet
-	
 	return bSuccess;
-	
-	
 }
 /* Set item into an AddressBook Record for the specified property.
  * aValue - the value to set into the address book (code checks for null or [NSNull null]
@@ -403,7 +404,9 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	CFErrorRef err;
 	bool bSuccess = ABRecordRemoveValue(aRecord, aProperty, &err);
 	if(!bSuccess){
-		NSLog(@"Unable to remove property %@: %@", aProperty, CFErrorCopyDescription(err));
+		CFStringRef errDescription = CFErrorCopyDescription(err);
+		NSLog(@"Unable to remove property %@: %@", aProperty, errDescription );
+		CFRelease(errDescription);
 	}
 	return bSuccess;
 }
@@ -421,13 +424,13 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	return bSuccess;
 }
 	
--(ABMultiValueRef) createStringMultiValueFromArray: array 
+-(ABMultiValueRef) allocStringMultiValueFromArray: array 
 {
 	ABMutableMultiValueRef multi = ABMultiValueCreateMutable(kABMultiStringPropertyType);
 	for (NSDictionary *dict in array){
 		[self addToMultiValue: multi fromDictionary: dict];
 	}
-	return multi;
+	return multi;  //caller is responsible for releasing multi
 }
 -(bool) setValue: (CFTypeRef) value  forProperty: (ABPropertyID)prop inRecord: (ABRecordRef)person
 {
@@ -460,7 +463,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	ABMutableMultiValueRef multi = nil;
 
 	if (!bUpdate){
-		multi = [self createStringMultiValueFromArray: fieldArray];
+		multi = [self allocStringMultiValueFromArray: fieldArray];
 		bSuccess = [self setValue: multi forProperty:prop inRecord: person];
 	} else if (bUpdate && [fieldArray count] == 0){
 		// remove entire property
@@ -488,15 +491,15 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 							NSString* valueAB = [(NSString*)ABMultiValueCopyValueAtIndex(multi, i) autorelease];
 							NSString* labelAB = [(NSString*)ABMultiValueCopyLabelAtIndex(multi, i) autorelease];
 							if (valueAB == nil || ![val isEqualToString: valueAB]){
-								bSuccess = ABMultiValueReplaceValueAtIndex(multi, val, i);
+								ABMultiValueReplaceValueAtIndex(multi, val, i);
 							}
 							if (labelAB == nil || ![label isEqualToString:labelAB]){
-								bSuccess = ABMultiValueReplaceLabelAtIndex(multi, (CFStringRef)label, i);
+								ABMultiValueReplaceLabelAtIndex(multi, (CFStringRef)label, i);
 							}
 						}
 					} else {
 						// is a new value - insert
-						bSuccess = [self addToMultiValue: multi fromDictionary: dict];
+						[self addToMultiValue: multi fromDictionary: dict];
 					}
 					
 				} // end of if value
@@ -504,7 +507,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 			} //end of for
 		
 		} else { // adding all new value(s) 
-			multi = [self createStringMultiValueFromArray: fieldArray];
+			multi = [self allocStringMultiValueFromArray: fieldArray];
 		}
 		// set the (updated) copy as the new value
 		bSuccess = [self setValue: multi forProperty:prop inRecord: person];
@@ -516,26 +519,9 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	
 	return bSuccess;
 }	
-/* set multivalue dictionary properties into an AddressBook Record
- * NSArray* array - array of dictionaries containing the W3C properties to set into the record
- * ABPropertyID prop - the AddressBook property id
- * ABRecordRef person - the record to set the values into
- * BOOL bUpdate - YES if this is an update to an existing record
- *	When updating:
- *	  emtpy array indicates to remove entire property
- *	  value/label == "" indicates to remove
- *    value/label == [NSNull null] do not modify (keep existing record value) 
- * RETURN
- *   bool false indicates fatal error
- *
- *  iOS addresses and im are a MultiValue Properties with label, value=dictionary of  info, and id
- *  set addresses:  streetAddress, locality, region, postalCode, country
- *  set ims:  value = username, type = servicetype
- *  there are some special cases in here for ims - needs cleanup / simplification
- *  
-*/
+
 // used for ims and addresses
--(ABMultiValueRef) createDictMultiValueFromArray: array forProperty: (ABPropertyID) prop
+-(ABMultiValueRef) allocDictMultiValueFromArray: array forProperty: (ABPropertyID) prop
 {
 	ABMutableMultiValueRef multi = ABMultiValueCreateMutable(kABMultiDictionaryPropertyType);
 	NSMutableDictionary* newDict;
@@ -550,7 +536,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 			[self addToMultiValue: multi fromDictionary: addDict];
 		}
 	}
-	return multi;
+	return multi; // caller is responsible for releasing
 }
 // used for ims and addresses to convert W3 dictionary of values to AB Dictionary
 -(NSMutableDictionary*) translateW3Dict: (NSDictionary*) dict forProperty: (ABPropertyID) prop
@@ -579,12 +565,30 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	}
 	return newDict;
 }
+/* set multivalue dictionary properties into an AddressBook Record
+ * NSArray* array - array of dictionaries containing the W3C properties to set into the record
+ * ABPropertyID prop - the property id for the multivalue dictionary (addresses and ims)
+ * ABRecordRef person - the record to set the values into
+ * BOOL bUpdate - YES if this is an update to an existing record
+ *	When updating:
+ *	  emtpy array indicates to remove entire property
+ *	  value/label == "" indicates to remove
+ *    value/label == [NSNull null] do not modify (keep existing record value) 
+ * RETURN
+ *   bool false indicates fatal error
+ *
+ *  iOS addresses and im are a MultiValue Properties with label, value=dictionary of  info, and id
+ *  set addresses:  streetAddress, locality, region, postalCode, country
+ *  set ims:  value = username, type = servicetype
+ *  there are some special cases in here for ims - needs cleanup / simplification
+ *  
+ */
 -(bool) setMultiValueDictionary: (NSArray*)array forProperty: (ABPropertyID) prop inRecord: (ABRecordRef)person asUpdate: (BOOL)bUpdate
 {
 	bool bSuccess = FALSE;
 	ABMutableMultiValueRef multi = nil;
 	if (!bUpdate){
-		multi = [self createDictMultiValueFromArray: array forProperty: prop];
+		multi = [self allocDictMultiValueFromArray: array forProperty: prop];
 		bSuccess = [self setValue: multi forProperty:prop inRecord: person];
 	}
 	else if (bUpdate && [array count] == 0){
@@ -624,9 +628,9 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 						} // else if value == "" it will not be added into updated dict and thus removed
 						if ([dict count] > 0){
 							// something was added into new dict,
-							bSuccess = ABMultiValueReplaceValueAtIndex(multi, dict, idx);
+							ABMultiValueReplaceValueAtIndex(multi, dict, idx);
 						} else { // nothing added into new dict so remove this property entry
-							bSuccess = ABMultiValueRemoveValueAndLabelAtIndex(multi, idx);
+							ABMultiValueRemoveValueAndLabelAtIndex(multi, idx);
 						}
 					}
 					CFRelease(existingDictionary);
@@ -1072,8 +1076,8 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	} else {
 		addresses = [NSNull null];
 	}
-
-	CFRelease(multi);
+	if (multi)
+		CFRelease(multi);
 	
 	
 	return addresses;
@@ -1125,7 +1129,8 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		imArray = [NSNull null];
 	}
 
-	CFRelease(multi);
+	if (multi)
+		CFRelease(multi);
 	return imArray;
 }
 /* Create array of Dictionaris to match JavaScript ContactOrganization object
@@ -1274,7 +1279,8 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	if (self.record){
 		CFRelease(self.record);
 	}
-	//[Contact releaseDefaults];
+
+
 	[super dealloc];
 }	
 @end

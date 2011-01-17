@@ -27,18 +27,12 @@ typedef NSUInteger ContactError;
 @interface Contact : NSObject {
 	
 	ABRecordRef record;			// the ABRecord associated with this contact
-	NSNumber* contactId;		//unique identifier
 	NSDictionary* returnFields;	// dictionary of fields to return when performing search
 } 
 
-
 @property (nonatomic, assign) ABRecordRef record;
-@property (nonatomic, retain) NSNumber* contactId;
-@property (nonatomic, retain) NSDictionary* returnFields;
+@property (nonatomic, assign) NSDictionary* returnFields;
 
-//+(id) contact;	
-//+(id) newFromABRecord:(ABRecordRef)aRecord;
-//+(id) newFromABRecordId:(ABRecordID)aRecordId;
 +(NSDictionary*) defaultABtoW3C;
 +(NSDictionary*) defaultW3CtoAB;
 +(NSSet*) defaultW3CtoNull;
@@ -48,12 +42,10 @@ typedef NSUInteger ContactError;
 
 
 +(NSMutableDictionary*) calcReturnFields: (NSArray*)fields;
-
+-(id)init;
 -(id)initFromABRecord: (ABRecordRef) aRecord;
 -(bool) setFromContactDict:(NSMutableDictionary*) aContact asUpdate: (BOOL)bUpdate;
 
-
-//+(NSString*)convertABKeyToLabel:(CFStringRef)ABKey;
 +(BOOL) needsConversion: (NSString*)W3Label;
 +(CFStringRef) convertContactTypeToPropertyLabel:(NSString*)label;
 +(NSString*) convertPropertyLabelToContactType: (NSString*)label;
@@ -71,6 +63,8 @@ typedef NSUInteger ContactError;
 -(NSMutableDictionary*) translateW3Dict: (NSDictionary*) dict forProperty: (ABPropertyID) prop;	
 -(bool) setMultiValueStrings: (NSArray*)fieldArray forProperty: (ABPropertyID) prop inRecord: (ABRecordRef)person asUpdate: (BOOL)bUpdate;
 -(bool) setMultiValueDictionary: (NSArray*)array forProperty: (ABPropertyID) prop inRecord: (ABRecordRef)person asUpdate: (BOOL)bUpdate;
+-(ABMultiValueRef) allocStringMultiValueFromArray: array;
+-(ABMultiValueRef) allocDictMultiValueFromArray: array forProperty: (ABPropertyID) prop;
 - (void) dealloc;	
 
 

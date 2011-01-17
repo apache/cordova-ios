@@ -107,14 +107,21 @@ Contact.prototype.convertDatesIn = function()
 * @param errorCB error callback (optional)
 */
 Contact.prototype.remove = function(successCB, errorCB) {
+	var bErrCallback = (errorCB == undefined || errorCB == null) ? false : true;
+	navigator.service.contacts.errorCallback = null;
+	if (bErrCallback == true){
+		navigator.service.contacts.errorCallback = errorCB;
+	}
     if (this.id == null) {
-        var errorObj = new ContactError();
-        errorObj.code = ContactError.NOT_FOUND_ERROR;
-        errorCB(errorObj);
+    	if(bErrCallback == true) {
+       		var errorObj = new ContactError();
+        	errorObj.code = ContactError.NOT_FOUND_ERROR;
+        	errorCB(errorObj);
+    	}
+    } else {
+		navigator.service.contacts.resultsCallback = successCB;
+    	PhoneGap.exec("Contacts.remove", GetFunctionName(successCB), { "contact": this});
     }
-	navigator.service.contacts.resultsCallback = successCB;
-	var errCallback = (errorCB == undefined || errorCB == null) ? null : GetFunctionName(errorCB);
-    PhoneGap.exec("Contacts.remove", GetFunctionName(successCB), errCallback, { "contact": this});
 };
 /**
 * iOS ONLY
@@ -123,12 +130,20 @@ Contact.prototype.remove = function(successCB, errorCB) {
 * @param errorCB error callback
 */
 Contact.prototype.display = function(successCB, errorCB, options) { 
-    if (this.id == null) {
-        var errorObj = new ContactError();
-        errorObj.code = ContactError.NOT_FOUND_ERROR;
-        errorCB(errorObj);
+	var errCallback = (errorCB == undefined || errorCB == null) ? null : GetFunctionName(errorCB);
+	navigator.service.contacts.errorCallback = null;
+	if (errCallback != null){
+		navigator.service.contacts.errorCallback = errorCB;
+	}
+    if (this.id == null){
+    	if(errCallback != null) {
+        	var errorObj = new ContactError();
+        	errorObj.code = ContactError.NOT_FOUND_ERROR;
+        	errorCB(errorObj);
+    	}
+    } else {
+    	PhoneGap.exec("Contacts.displayContact", this.id, GetFunctionName(successCB), errCallback, options);
     }
-    PhoneGap.exec("Contacts.displayContact", this.id, GetFunctionName(successCB), GetFunctionName(errorCB), options);
 };
 
 /**
@@ -186,16 +201,20 @@ Contact.prototype.clone = function() {
 /**
 * Persists contact to device storage.
 * @param successCB success callback
-* @param errorCB error callback
+* @param errorCB error callback - optional
 */
 Contact.prototype.save = function(successCB, errorCB) {
+	var bErrCallback = (errorCB == undefined || errorCB == null) ? false : true;
+	navigator.service.contacts.errorCallback = null;
+	if (bErrCallback == true){
+		navigator.service.contacts.errorCallback = errorCB;
+	}
+
 	navigator.service.contacts.resultsCallback = successCB;
 	// don't modify the original contact
-
 	var cloned = PhoneGap.clone(this);
-
 	cloned.convertDatesOut(); 
-	PhoneGap.exec("Contacts.save", GetFunctionName(successCB), GetFunctionName(errorCB), {"contact": cloned});
+	PhoneGap.exec("Contacts.save", GetFunctionName(successCB),  {"contact": cloned});
 };
 
 /**
@@ -288,6 +307,7 @@ var Contacts = function() {
     this.inProgress = false;
     this.records = new Array();
     this.resultsCallback = null;
+    this.errorCallback = null;
 };
 /**
 * Returns an array of Contacts matching the search criteria.
@@ -299,6 +319,11 @@ var Contacts = function() {
 */
 Contacts.prototype.find = function(fields, successCB, errorCB, options) {
 	this.resultsCallback = successCB;
+	this.errorCallback = null;
+	var bErrCallback = (errorCB == undefined || errorCB == null) ? false : true;
+	if (bErrCallback){
+		this.errorCallback = errorCB;
+	}
 	var theOptions = options || null;
 	if (theOptions != null){
 		// convert updatedSince to ms
@@ -316,9 +341,8 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
 			}
 		}
 	}
-	var errCallback = (errorCB == undefined || errorCB == null) ? null : GetFunctionName(errorCB);
-	
-	PhoneGap.exec("Contacts.search", GetFunctionName(successCB), errCallback, {"fields":fields, "findOptions":theOptions});
+
+	PhoneGap.exec("Contacts.search", GetFunctionName(successCB), {"fields":fields, "findOptions":theOptions});
 	
 };
 /**
@@ -376,6 +400,25 @@ Contacts.prototype._contactCallback = function(contactStr)
     catch (e) {
         console.log("Error in user's result callback: " + e);
     }
+};
+/** 
+* Need to return an error object rather than just a single error code
+* @param error code
+* Call optional error callback if found.
+* Called from objective c find, remove, and save methods on error.
+*/
+Contacts.prototype._errCallback = function(errorCode)
+{
+	if (this.errorCallback){
+		try {
+			var errorObj = new ContactError();
+        	errorObj.code = errorCode;
+        	this.errorCallback(errorObj);
+		}
+		catch(e) {
+			console.log("Error in user's error callback: " + e);
+		}
+	}
 };
 // iPhone only api to create a new contact via the GUI
 Contacts.prototype.newContactUI = function(successCallback) { 

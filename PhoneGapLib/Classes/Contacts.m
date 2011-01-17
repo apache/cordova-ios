@@ -108,7 +108,7 @@
 	NSUInteger argc = [arguments count];
 	ABRecordID recordID = kABRecordInvalidID;
 	NSString* errorCallback = nil;
-	NSString* successCallback = nil;
+	//NSString* successCallback = nil;
 	//TODO: need better argument handling system
 	if (argc > 0) {
 		recordID = [[arguments objectAtIndex:0] intValue];
@@ -117,9 +117,9 @@
 		return;
 	}
 	
-	if (argc > 1) {
+	/*if (argc > 1) {
 		successCallback = [arguments objectAtIndex:1];
-	}
+	}*/
 	if(argc > 2){
 		errorCallback = [arguments objectAtIndex:1];
 	}
@@ -275,32 +275,15 @@
 - (void) search:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
-	NSString* jsCallback = nil;
-	NSString* jsErrCallback = nil;
 	NSString* jsString = nil;
-	bool bError = FALSE;
-	ContactError errCode = UNKNOWN_ERROR;
 	//args:
 	// 0 = success callback function 
-	// 1 = error callback function
 	
-	//TODO: need better argument handling system
-	if (argc > 0) {
-		jsCallback = [arguments objectAtIndex:0];
-	} else {
-		// could catch this in JS before making call
-		bError = TRUE;
+	if (argc == 0) {
+		// no success callback - could catch this in JS before making call
 		NSLog(@"Contacts.chooseContact: Missing success callback parameter.");
-		errCode = INVALID_ARGUMENT_ERROR;
-	}
-	if (argc >1) {
-		jsErrCallback = [arguments objectAtIndex:1];
-	}
-	if (bError){
-		if (jsErrCallback){
-			jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, errCode];
-			[webView stringByEvaluatingJavaScriptFromString:jsString];
-		}
+		jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", INVALID_ARGUMENT_ERROR];
+		[webView stringByEvaluatingJavaScriptFromString:jsString];
 		return;
 	}
 	
@@ -402,12 +385,12 @@
 		}
 		[pool release];
 		
-		CFRelease(foundRecords); 
+		
 	}
 	
-	if ([returnContacts count] == 0 && jsErrCallback){
+	if ([returnContacts count] == 0){
 		// return error
-		jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, NOT_FOUND_ERROR];
+		jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", NOT_FOUND_ERROR];
 	}else {
 		// return found contacts or empty string
 		jsString = [NSString stringWithFormat: @"%@([%@]);", @"navigator.service.contacts._findCallback", [returnContacts componentsJoinedByString:@","]];
@@ -415,6 +398,9 @@
 
 	if(addrBook){
 		CFRelease(addrBook);
+	}
+	if (foundRecords){
+		CFRelease(foundRecords); 
 	}
 	if(jsString){	
 		[webView stringByEvaluatingJavaScriptFromString:jsString];
@@ -426,8 +412,6 @@
 - (void) save:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
-	NSString* jsCallback = nil;
-	NSString* jsErrCallback;
 	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	BOOL bUpdate = NO;
@@ -435,18 +419,13 @@
 	CFErrorRef error;
 	//args:
 	// 0 = success callback function
-	// 1 = error callback function
 	
 	//TODO: need better argument handling system
-	if (argc > 0) {
-		jsCallback = [arguments objectAtIndex:0];
-	} else {
-		bIsError = TRUE;
-		errCode = INVALID_ARGUMENT_ERROR;
+	if (argc == 0) {
+		// no success callback - could check for this in JS
+		bIsError = YES;
 		NSLog(@"Contact.save: Missing success callback parameter.");
-	}
-	if (argc >1) {
-		jsErrCallback = [arguments objectAtIndex:1];
+		errCode = INVALID_ARGUMENT_ERROR;
 	}
 	
 	if (!bIsError){
@@ -456,7 +435,7 @@
 		ABAddressBookRef addrBook = ABAddressBookCreate();	
 		NSNumber* cId = [contactDict valueForKey:kW3ContactId];
 		Contact* aContact = nil; 
-		ABRecordRef rec;
+		ABRecordRef rec = nil;
 		if (cId && ![cId isKindOfClass:[NSNull class]]){
 			rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
 			if (rec){
@@ -465,9 +444,7 @@
 			}
 		}
 		if (!aContact){
-			aContact = [[Contact alloc] init]; 
-			rec = ABPersonCreate();
-			[aContact setRecord: rec];
+			aContact = [[Contact alloc] init]; 			
 		}
 		
 		bSuccess = [aContact setFromContactDict: contactDict asUpdate: bUpdate];
@@ -490,15 +467,16 @@
 				NSString* contactStr = [newContact JSONRepresentation];
 				jsString = [NSString stringWithFormat: @"%@(%@);", @"navigator.service.contacts._contactCallback", contactStr];
 			}
-			CFRelease(addrBook);
 		} else {
 			bIsError = TRUE;
 			errCode = IO_ERROR; 
 		}
 		[aContact release];	
+		CFRelease(addrBook);
 	} // end of if !bIsError for argument check
-	if (bIsError && jsErrCallback){
-		jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, errCode];
+	
+	if (bIsError){
+		jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", errCode];
 	}
 	if(jsString){
 		[webView stringByEvaluatingJavaScriptFromString:jsString];
@@ -507,8 +485,6 @@
 - (void) remove: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
-	NSString* jsCallback = nil;
-	NSString* jsErrCallback = nil;
 	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	ContactError errCode = UNKNOWN_ERROR;
@@ -517,18 +493,13 @@
 	ABRecordRef rec = nil;
 	//args:
 	// 0 = success callback function
-	// 1 = error callback function
 	
 	//TODO: need better argument handling system
-	if (argc > 0) {
-		jsCallback = [arguments objectAtIndex:0];
-	} else {
+	if (argc == 0) {
+		// no success callback - could check for this in javascript
 		bIsError = TRUE;
 		errCode = INVALID_ARGUMENT_ERROR;
 		NSLog(@"Contact.save: Missing success callback parameter.");
-	}
-	if (argc >1) {
-		jsErrCallback = [arguments objectAtIndex:1];
 	}
 	
 	if (!bIsError){
@@ -543,7 +514,6 @@
 					bIsError = TRUE;
 					errCode = IO_ERROR; 
 				} else {
-					rec = nil; // it was removed, don't release it
 					bSuccess = ABAddressBookSave(addrBook, &error);
 					if(!bSuccess){
 						bIsError = TRUE;
@@ -567,14 +537,12 @@
 			errCode = INVALID_ARGUMENT_ERROR;
 		}
 	}
-	if (rec){
-		CFRelease(rec);
-	}
+
 	if (addrBook){
 		CFRelease(addrBook);
 	}
-	if (bIsError && jsErrCallback){
-		jsString = [NSString stringWithFormat:@"%@(%d);", jsErrCallback, errCode];
+	if (bIsError){
+		jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", errCode];
 	}
 	if (jsString){
 		[webView stringByEvaluatingJavaScriptFromString:jsString];
@@ -582,11 +550,6 @@
 		
 	return;
 		
-}
-
-- (void) addressBookDirty
-{
-	
 }
 
 - (void)dealloc

@@ -13,8 +13,8 @@
 
 #import "Location.h"
 #import "Sound.h"
-#import "Contacts.h"
-#import "Contact.h"
+
+
 #import "DebugConsole.h"
 //#import "Image.h"
 
