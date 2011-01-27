@@ -6,9 +6,15 @@
  */
 
 
-@interface NSMutableDictionary(NSDictionary_Extension)
+@interface NSDictionary(com_phonegap_NSDictionary_Extension)
 
 - (bool) existsValue:(NSString*)expectedValue forKey:(NSString*)key;
 - (NSUInteger) integerValueForKey:(NSString*)key defaultValue:(NSUInteger)defaultValue withRange:(NSRange)range;
-
+- (BOOL) typeValueForKey:(NSString *)key isArray:(BOOL*)bArray isNull:(BOOL*)bNull isNumber:(BOOL*) bNumber isString:(BOOL*)bString;
+- (BOOL) valueForKeyIsArray:(NSString *)key;
+- (BOOL) valueForKeyIsNull:(NSString *)key;
+- (BOOL) valueForKeyIsString:(NSString *)key;
+- (BOOL) valueForKeyIsNumber:(NSString *)key;
 @end
+
+

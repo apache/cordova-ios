@@ -297,7 +297,7 @@
 	addrBook = ABAddressBookCreate();
 	// get the findOptions values
 	BOOL multiple = YES; // default is true
-	int limit = 1; // default if multiple is FALSE, will be set below if multiple is TRUE
+	//int limit = 1; // default if multiple is FALSE, will be set below if multiple is TRUE
 	double msUpdatedSince = 0;
 	BOOL bCheckDate = NO;
 	NSString* filter = nil;
@@ -311,7 +311,8 @@
 			multiple = [(NSNumber*)value boolValue];
 			//NSLog(@"multiple is: %d", multiple);
 		}
-		if (multiple == YES){
+		/* limit removed from Dec 2010 W3C contacts spec
+		 if (multiple == YES){
 			// we only care about limit if multiple is true
 			value = [findOptions objectForKey:@"limit"];
 			if ([value isKindOfClass:[NSNumber class]]){
@@ -321,7 +322,7 @@
 				// no limit specified, set it to -1 to get all
 				limit = -1;
 			}
-		}
+		}*/
 		// see if there is an updated date
 		id ms = [findOptions valueForKey:@"updatedSince"];
 		if (ms && [ms isKindOfClass:[NSNumber class]]){
@@ -330,41 +331,51 @@
 		}
 		
 	}
-		
+
+	NSDictionary* returnFields = [[Contact class] calcReturnFields: fields];
+	
+	NSMutableArray* matches = nil;
 	if (!filter || [filter isEqualToString:@""]){ 
 		// get all records - use fields to determine what properties to return
 		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
-	}else {
-		// currently we can search for names only
-		foundRecords =  (NSArray*)ABAddressBookCopyPeopleWithName(addrBook, (CFStringRef)filter);
-		/*
-		NSArray* allRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
-		NSString* state = @"MA";
-		@try {
-			NSPredicate* predicate = [NSPredicate predicateWithFormat:@"%@ contains[cd] %@", kABPersonAddressState, state];
-			NSLog(@"predicate description: %@", [predicate description]);
-			foundRecords = [allRecords filteredArrayUsingPredicate:predicate];
+		if (foundRecords && [foundRecords count] > 0){
+			// create Contacts and put into matches array
+			int xferCount = [foundRecords count];
+			matches = [NSMutableArray arrayWithCapacity:xferCount];
+			for(int k = 0; k<xferCount; k++){
+				Contact* xferContact = [[[Contact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]] autorelease];
+				[matches addObject:xferContact];
+				xferContact = nil;
+				
+			}
 		}
-		@catch (NSException * e) {
-			NSLog(@"exception searching addressbook: %@", [e reason]);
+	} else {
+		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
+		matches = [NSMutableArray arrayWithCapacity:1];
+		BOOL bFound = NO;
+		int testCount = [foundRecords count];
+		for(int j=0; j<testCount; j++){
+			Contact* testContact = [[[Contact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]] autorelease];
+			if (testContact){
+				bFound = [testContact foundValue:filter inFields:returnFields];
+				if(bFound){
+					[matches addObject:testContact];
+				}
+				testContact = nil;
+			}
 		}
-		@finally {
-			CFRelease(allRecords);
-		}
-	*/
 	}
+
 	NSMutableArray* returnContacts = [NSMutableArray arrayWithCapacity:1];
-	if (foundRecords && [foundRecords count] > 0){
-		
-		NSMutableDictionary* returnFields = [[Contact class] calcReturnFields: fields];
+	
+	if (matches != nil && [matches count] > 0){
 
 		// convert to JS Contacts format and return in callback
 		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
-		int count = (limit > 0 ? MIN(limit,[foundRecords count]) : [foundRecords count]);
-		ABRecordRef aRecord;
+		//int count = (limit > 0 ? MIN(limit,[matches count]) : [matches count]);
+		int count = multiple == YES ? [matches count] : 1;
 		for(int i = 0; i<count; i++){
-			aRecord = [foundRecords objectAtIndex:i];
-			Contact* newContact = [[[Contact alloc  ]initFromABRecord:aRecord] autorelease];
+			Contact* newContact = [matches objectAtIndex:i];
 			if (bCheckDate) {
 				NSNumber* modDate = [newContact getDateAsNumber:kABPersonModificationDateProperty];
 				if (modDate){
@@ -378,7 +389,7 @@
 				}
 			}
 			if(bIncludeRecord){
-				NSMutableDictionary* aContact = [newContact toDictionary: returnFields];
+				NSDictionary* aContact = [newContact toDictionary: returnFields];
 				NSString* contactStr = [aContact JSONRepresentation];
 				[returnContacts addObject:contactStr];
 			}
@@ -400,7 +411,7 @@
 		CFRelease(addrBook);
 	}
 	if (foundRecords){
-		CFRelease(foundRecords); 
+		[foundRecords release];
 	}
 	if(jsString){	
 		[webView stringByEvaluatingJavaScriptFromString:jsString];
@@ -463,7 +474,7 @@
 				// give original dictionary back?  If generate dictionary from saved contact, have no returnFields specified
 				// so would give back all fields (which W3C spec. indicates is not desired)
 				// for now (while testing) give back saved, full contact
-				NSMutableDictionary* newContact = [aContact toDictionary: [Contact defaultFields]];
+				NSDictionary* newContact = [aContact toDictionary: [Contact defaultFields]];
 				NSString* contactStr = [newContact JSONRepresentation];
 				jsString = [NSString stringWithFormat: @"%@(%@);", @"navigator.service.contacts._contactCallback", contactStr];
 			}
