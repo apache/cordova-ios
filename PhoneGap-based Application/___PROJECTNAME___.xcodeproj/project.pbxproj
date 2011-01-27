@@ -329,7 +329,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# get the PhoneGapLib version\nexport pgver=`head -1 ${PHONEGAPLIB}/VERSION`\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\necho cp ${PHONEGAPLIB}/javascripts/phonegap*.js ${PROJECT_DIR}/www\ncp ${PHONEGAPLIB}/javascripts/phonegap-*.js ${PROJECT_DIR}/www\n\n# replace [src=\"phonegap.js\"] in all files in www (strict match)\nfind ${PROJECT_DIR}/www | xargs grep 'src=\\\"phonegap.js\\\"' -sl | xargs -L1 sed -i \"\" \"s/src=\\\"phonegap.js\\\"/src=\\\"phonegap-${pgver}.js\\\"/g\"";
+			shellScript = "# get the PhoneGapLib version\nexport pgver=`head -1 ${PHONEGAPLIB}/VERSION`\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\necho cp ${PHONEGAPLIB}/javascripts/phonegap-*.js ${PROJECT_DIR}/www\ncp ${PHONEGAPLIB}/javascripts/phonegap-*.js ${PROJECT_DIR}/www\n\n# replace [src=\"phonegap.js\"] in all files in www (strict match)\nfind ${PROJECT_DIR}/www | xargs grep 'src=\\\"phonegap.js\\\"' -sl | xargs -L1 sed -i \"\" \"s/src=\\\"phonegap.js\\\"/src=\\\"phonegap-${pgver}.min.js\\\"/g\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
