@@ -1,6 +1,11 @@
-VERSION 20101102
+VERSION 20110126
 
 PhoneGapLib is a static library that enables users to include PhoneGap in their iPhone application projects easily, and also create new PhoneGap based iPhone application projects through a Xcode project template.
+
+20110126
+- phonegap.js is minified using the YUI compressor, and also renamed to phonegap-{ver}.js where {ver} is the version number of PhoneGapLib from the VERSION file
+- the PhoneGap template is changed as well, at build time it will replace any references to 'src="phonegap.js"' (strict match) to the new versioned js file (and copy the new phonegap-{ver}.js file). This replacement will look in all files in the 'www' folder.
+- note that with the new PhoneGapLib phonegap-{ver}.js renaming, existing PhoneGap templates must copy the new "Copy PhoneGap Javascript" post-build script from the new template (in Xcode, under Targets/[ProjectName])
 
 20101102
 - Updated the Base SDK to "Latest iOS" (iOS 4.2 is the minimum to submit to the App Store) for the project files. This setting requires the latest Xcode 3.2.5 (included with the iOS 4.2 SDK)
