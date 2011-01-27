@@ -185,19 +185,22 @@ static NSString *gapVersion;
 	if ([launchOptions objectForKey:[keyArray objectAtIndex:0]]!=nil) {
 		NSURL *url = [launchOptions objectForKey:[keyArray objectAtIndex:0]];
 		invokedURL = url;
-		NSLog(@"URL = %@", [invokedURL absoluteURL]);
-		// Determine the URL used to invoke this application.
-		// Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
-		if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
-			InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
+		if (invokedURL != nil && [invokedURL isKindOfClass:[NSURL class]]) 
+		{
+			NSLog(@"URL = %@", [invokedURL absoluteURL]);
+			// Determine the URL used to invoke this application.
+			// Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
+			if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
+				InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
 
-			NSLog(@"Arguments: %@", iuc.arguments);
+				NSLog(@"Arguments: %@", iuc.arguments);
 
-			NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
+				NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
 
-			[webView stringByEvaluatingJavaScriptFromString:optionsString];
+				[webView stringByEvaluatingJavaScriptFromString:optionsString];
 
-			[optionsString release];
+				[optionsString release];
+			}
 		}
 	}
 	
