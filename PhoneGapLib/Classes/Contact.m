@@ -1249,6 +1249,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 			photos = [NSMutableArray arrayWithCapacity:1];
 			NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity:2];
 			[newDict setObject:filePath forKey:kW3ContactFieldValue];
+			[newDict setObject:@"url" forKey:kW3ContactFieldType];
 			[newDict setObject:@"false" forKey:kW3ContactFieldPrimary];
 			[photos addObject:newDict];
 		}
