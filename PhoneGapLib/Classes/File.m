@@ -28,7 +28,7 @@
 		self.appLibraryPath = [paths objectAtIndex:0];
 		
 		self.appTempPath =  NSTemporaryDirectory();
-		NSLog(@"Docs Path:%@ Library Path:%@", appDocsPath, appLibraryPath);
+
 	}
 	
 	return self;
@@ -62,17 +62,14 @@
 	NSData* readData = [ file readDataToEndOfFile];
 	
 	[file closeFile];
+	 
+	NSString* pNStrBuff = [[NSString alloc] initWithBytes: [readData bytes] length: [readData length] encoding: NSUTF8StringEncoding];
 	
-	CFStringRef pStrBuff = CFStringCreateWithBytes(nil, [readData bytes], [readData length], kCFStringEncodingUTF8, false);
-	
-	NSString* pNStrBuff = (NSString*)pStrBuff; 
-	
-	
-	jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr.reader_onloadend(\"%@\",\"%@\");",argPath,[ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
+	jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr.reader_onloadend(\"%@\",\"%@\");",argPath, [ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-
+	
 	// write back the result
-	jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr.reader_onload(\"%@\",\"%@\");",argPath,[ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
+	jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr.reader_onload(\"%@\",\"%@\");",argPath, [ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	
 	[ pNStrBuff release ];
@@ -142,7 +139,7 @@
 	bytesWritten = [ self writeToFile:argPath withData:argData append:bAppend]; 
 
 	NSString * jsCallBack;
-	if(bytesWritten == [argData length])
+	if(bytesWritten >0 ) //== [argData length]) can't compare against original data length due to encoding that happens in writeTofile:
 	{
 		jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr.writer_oncomplete(\"%@\",%d);",argPath,(pos + bytesWritten ) ] ;
 	}
@@ -150,7 +147,6 @@
 	{
 		jsCallBack = [ NSString stringWithFormat:@"navigator.fileMgr.writer_onerror(\"%@\",%d);",argPath,( pos + bytesWritten ) ];
 	}
-	
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
@@ -213,6 +209,7 @@
 	
 	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.fileMgr.successCallback(%s);",( bSuccess ? "1" : "0" )];
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+
 }
 
 - (void) deleteFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -271,12 +268,12 @@
 - (int) writeToFile:(NSString*)fileName withData:(NSString*)data append:(BOOL)shouldAppend
 {	
 	NSString *filePath = [ [ self appDocsPath ] stringByAppendingPathComponent:fileName];
-	NSData* encData = [ data dataUsingEncoding:kCFStringEncodingUTF8];
+	NSData* encData = [ data dataUsingEncoding:NSUTF8StringEncoding];
 	
 	NSOutputStream* fileStream = [NSOutputStream outputStreamToFileAtPath:filePath append:shouldAppend ];
-	NSUInteger len = [ data length ];
+	NSUInteger len = [ encData length ];
 	[ fileStream open ];
-	
+
 	int bytesWritten = [ fileStream write:[encData bytes] maxLength:len];
 
 	[ fileStream close ];
