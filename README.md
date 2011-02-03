@@ -90,6 +90,10 @@ A. Change your Base SDK. Go to the Project Menu --> Edit Project Settings --> Ge
 
 A. The Base SDK for your project and PhoneGapLib must be exactly the same. Launch PhoneGapLib.xcodeproj (double-click on it in your project), and set its Base SDK to the same one in your project.
 
+**Q. I've tried almost everything and Xcode fails to compile PhoneGapDelegate.m in PhoneGapLib.**
+
+A. Check whether there is a space in the path to PhoneGapLib, particularly if there's a space in your home folder name. Unfortunately at this time you either have to either change your home folder name (since PhoneGapLib is installed under it, in your Documents folder) or relocate PhoneGapLib to a location that has no space in the path (and make sure you update the PHONEGAPLIB Xcode variable in Xcode Preferences --> Source Trees)
+
 **Q. I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?**
 
 A. In your project, there should be a PhoneGapBuildSettings.xcconfig file. Modify the PHONEGAPLIB variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
