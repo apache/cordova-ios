@@ -52,11 +52,18 @@ function anomToNameFunk(fun)
 
 function GetFunctionName(fn)
 {
-  if (fn) 
-  {
+  if (typeof fn === "function") {
+    var name= fn.name;	
+	if (!name) {
       var m = fn.toString().match(/^\s*function\s+([^\s\(]+)/);
-      return m ? m[1] : anomToNameFunk(fn);
-  } else {
-    return null;
+      name= m && m[1];	
+	}
+	if (name && (window[name] === fn)) {
+		return name;
+	} else {
+		return anomToNameFunk(fn);
+	} 
+  }else {
+  	return null;
   }
 }
