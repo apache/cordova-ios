@@ -24,7 +24,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 
 +(void) initialize
 {
-	com_phonegap_CommandStatusMsgs = [NSArray arrayWithObjects: @"No result",
+	com_phonegap_CommandStatusMsgs = [[NSArray alloc] initWithObjects: @"No result",
 									  @"OK",
 									  @"Class not found",
 									  @"Illegal access",
@@ -36,6 +36,14 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 									  @"Error",
 									  nil];
 }
++(void) releaseStatus
+{
+	if (com_phonegap_CommandStatusMsgs != nil){
+		[com_phonegap_CommandStatusMsgs release];
+		com_phonegap_CommandStatusMsgs = nil;
+	}
+}
+		
 -(PluginResult*) init
 {
 	return [self initWithStatus: PGCommandStatus_NO_RESULT message: nil cast: nil];
@@ -54,7 +62,6 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: [com_phonegap_CommandStatusMsgs objectAtIndex: statusOrdinal] cast: nil] autorelease];
-
 }
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsString: (NSString*) theMessage
 {
@@ -81,6 +88,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage cast:theCast] autorelease];
 }
+
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsInt: (int) theMessage cast: (NSString*) theCast
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithInt: theMessage] cast:theCast] autorelease];
@@ -102,7 +110,8 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 	if ([self.message isKindOfClass: [NSNumber class]]) {
 		// return as number
 		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %d,\"keepCallback\":%d}", 
-						[self.status intValue], [self.message intValue], [self.keepCallback boolValue]];
+							[self.status intValue], [self.message intValue], [self.keepCallback boolValue]];
+		
 	} else if ([self.message isKindOfClass:[NSArray class]]){
 		// return as array of strings
 		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": [%@],\"keepCallback\":%d}", 
@@ -118,7 +127,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 					[self.status intValue], self.message, [self.keepCallback boolValue]];
 	}
 
-	NSLog(@"PluginResult:toJSONString - %@", resultString);
+	//NSLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;
 }
 -(NSString*) toSuccessCallbackString: (NSString*) callbackId
@@ -131,7 +140,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 	else {
 		successCB = [NSString stringWithFormat:@"PhoneGap.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];			
 	}
-	NSLog(@"PluginResult toSuccessCallbackString: %@", successCB);
+	//NSLog(@"PluginResult toSuccessCallbackString: %@", successCB);
 	return successCB;
 }
 -(NSString*) toErrorCallbackString: (NSString*) callbackId
@@ -144,7 +153,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 	else {
 		errorCB = [NSString stringWithFormat:@"PhoneGap.callbackError('%@',%@);", callbackId, [self toJSONString]];
 	}
-	NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
+	//NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
 	return errorCB;
 }	
 										 
