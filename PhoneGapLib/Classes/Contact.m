@@ -1277,9 +1277,15 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	if (fieldsArray != nil && [fieldsArray isKindOfClass:[NSArray class]]){
 		for (id i in fieldsArray){
 			NSMutableArray* keys = nil;
-			
+			NSString* fieldStr = nil;
+			if ([i isKindOfClass: [NSNumber class]]) {
+				fieldStr = [i stringValue];
+			} else {
+				fieldStr = i;
+			}
+
 			// see if this is specific property request in object - object.property
-			NSArray* parts = [(NSString*)i componentsSeparatedByString:@"."]; // returns original string if no separator found
+			NSArray* parts = [fieldStr componentsSeparatedByString:@"."]; // returns original string if no separator found
 			NSString* name = [parts objectAtIndex:0];
 			NSString* property = nil;
 			if ([parts count] > 1){

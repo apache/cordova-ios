@@ -10,13 +10,15 @@
 #import "Categories.h"
 #import "UIColor-Expanded.h"
 
+
 @implementation Notification
 
 @synthesize loadingView;
 
 - (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* message = [arguments objectAtIndex:0];
+	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* message = [arguments objectAtIndex:1];
 	NSString* title   = [options objectForKey:@"title"];
 	NSString* button  = [options objectForKey:@"buttonLabel"];
 	
@@ -25,13 +27,14 @@
 	if (!button)
         button = @"OK";
 	
-	UIAlertView *alertView = [[UIAlertView alloc]
+	PGAlertView *alertView = [[PGAlertView alloc]
 							  initWithTitle:title
 							  message:message 
 							  delegate:self 
 							  cancelButtonTitle:nil 
 							  otherButtonTitles:nil];
 	
+	[alertView setCallbackId:callbackId];
 	NSArray* labels = [ button componentsSeparatedByString:@","];
 	
 	int count = [ labels count ];
@@ -48,7 +51,8 @@
 
 - (void)prompt:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* message = [arguments objectAtIndex:0];
+	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* message = [arguments objectAtIndex:1];
 	NSString* title   = [options objectForKey:@"title"];
 	NSString* button  = [options objectForKey:@"buttonLabel"];
     
@@ -57,9 +61,10 @@
     if (!button)
         button = @"OK";
     
-	UIAlertView *openURLAlert = [[UIAlertView alloc]
+	PGAlertView *openURLAlert = [[PGAlertView alloc]
 								 initWithTitle:title
 								 message:message delegate:self cancelButtonTitle:button otherButtonTitles:nil];
+	[openURLAlert setCallbackId: callbackId];
 	[openURLAlert show];
 	[openURLAlert release];
 }
@@ -71,10 +76,13 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSString *buttonLabel = [alertView buttonTitleAtIndex:buttonIndex];
-
-	NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", ++buttonIndex, buttonLabel];    
-    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    //NSString *buttonLabel = [alertView buttonTitleAtIndex:buttonIndex];
+	
+	PGAlertView* pgAlertView = (PGAlertView*) alertView;
+	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: ++buttonIndex]; 
+	[self writeJavascript:[result toSuccessCallbackString: [pgAlertView callbackId]]];
+	//NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", ++buttonIndex, buttonLabel];    
+    //[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
  
 
@@ -193,4 +201,18 @@
 	}
 }
 
+@end
+
+@implementation PGAlertView
+@synthesize callbackId;
+
+- (void) dealloc
+{
+	if (callbackId) {
+		[callbackId release];
+	}
+	
+	
+	[super dealloc];
+}
 @end

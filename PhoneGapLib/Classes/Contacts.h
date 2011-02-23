@@ -95,21 +95,21 @@
 @interface ContactsPicker : ABPeoplePickerNavigationController
 {
 	BOOL allowsEditing;
-	NSString* jsCallback;
+	NSString* callbackId;
 	ABRecordID selectedId;
 }
 
 @property BOOL allowsEditing;
-@property (retain) NSString* jsCallback;
+@property (retain) NSString* callbackId;
 @property ABRecordID selectedId;
 
 @end
 
 @interface NewContactsController : ABNewPersonViewController
 {
-	NSString* jsCallback;
+	NSString* callbackId;
 }
-@property (retain) NSString* jsCallback;
+@property (retain) NSString* callbackId;
 @end
 
 @interface DisplayContactsController : ABPersonViewController

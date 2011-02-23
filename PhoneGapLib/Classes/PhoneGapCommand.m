@@ -9,6 +9,7 @@
 #import "PhoneGapCommand.h"
 #import "PhoneGapDelegate.h"
 
+
 @implementation PhoneGapCommand
 @synthesize webView;
 @synthesize settings;
