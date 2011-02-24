@@ -114,7 +114,7 @@ PhoneGap.run_command = function() {
     for (var i = 1; i < args.length; i++) {
         var arg = args[i];
         if (arg == undefined || arg == null)
-            arg = '';
+            continue;
         if (typeof(arg) == 'object')
             dict = arg;
         else
@@ -126,4 +126,43 @@ PhoneGap.run_command = function() {
     }
     document.location = url;
 
+};
+/**
+ * Does a deep clone of the object.
+ *
+ * @param obj
+ * @return
+ */
+PhoneGap.clone = function(obj) {
+	if(!obj) { 
+		return obj;
+	}
+
+	if(obj instanceof Array){
+		var retVal = new Array();
+		for(var i = 0; i < obj.length; ++i){
+			retVal.push(PhoneGap.clone(obj[i]));
+		}
+		return retVal;
+	}
+
+	if (obj instanceof Function) {
+		return obj;
+	}
+
+	if(!(obj instanceof Object)){
+		return obj;
+	}
+	
+	if (obj instanceof Date) {
+		return obj;
+	}
+
+	retVal = new Object();
+	for(i in obj){
+		if(!(i in retVal) || retVal[i] != obj[i]) {
+			retVal[i] = PhoneGap.clone(obj[i]);
+		}
+	}
+	return retVal;
 };

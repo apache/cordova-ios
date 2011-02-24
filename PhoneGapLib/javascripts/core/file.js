@@ -3,21 +3,22 @@
 PhoneGap.addConstructor(function() { if (typeof navigator.fileMgr == "undefined") navigator.fileMgr = new FileMgr();});
 
 
-// File error codes
-// Found in DOMException ( 1-3 )
-// Added by this specification ( 4 - 8 )
-
-FileError = {
-    NOT_IMPLEMENTED:-1,
-    NOT_FOUND_ERR:1,
-    SECURITY_ERR:2,
-    ABORT_ERR:3,
-    NOT_READABLE_ERR:4,
-    ENCODING_ERR:5,
-    NO_MODIFICATION_ALLOWED_ERR:6,
-    INVALID_STATE_ERR:7,
-    SYNTAX_ERR:8
+function FileError() {
+   this.code = null;
 };
+
+// File error codes
+// Found in DOMException
+FileError.NOT_FOUND_ERR = 1;
+FileError.SECURITY_ERR = 2;
+FileError.ABORT_ERR = 3;
+
+// Added by this specification
+FileError.NOT_READABLE_ERR = 4;
+FileError.ENCODING_ERR = 5;
+FileError.NO_MODIFICATION_ALLOWED_ERR = 6;
+FileError.INVALID_STATE_ERR = 7;
+FileError.SYNTAX_ERR = 8;
 
 /**
  * Create an event object since we can't set target on DOM event.
@@ -137,32 +138,33 @@ FileMgr.prototype = {
      */
     reader_onloadstart:function(filePath,result)
     {
-    	this.fileReaders[filePath].result = unescape(result);
     	var evt = File._createEvent("loadstart", this.fileReaders[filePath]);
     	this.fileReaders[filePath].onloadstart(evt);
     },
 
     reader_onprogress:function(filePath,result){
-    	this.fileReaders[filePath].result = unescape(result);
+    	this.fileReaders[filePath].result = decodeURIComponent(result);
+    	// will need to create a ProgessEvent as well but onprogress not currently supported
     	var evt = File._createEvent("progress", this.fileReaders[filePath]);
     	this.fileReaders[filePath].onprogress(evt);
     },
 
     reader_onload:function(filePath,result){
-    	this.fileReaders[filePath].result = unescape(result);
+    	this.fileReaders[filePath].result = decodeURIComponent(result);
     	var evt = File._createEvent("load", this.fileReaders[filePath]);
     	this.fileReaders[filePath].onload(evt);
     },
 
     reader_onerror:function(filePath,err){
-    	this.fileReaders[filePath].result = err;
-    	this.fileReaders[filePath].result = unescape(result);
+    	var fe = new FileError();
+    	fe.code = err;
+    	this.fileReaders[filePath].error = fe;
     	var evt = File._createEvent("error", this.fileReaders[filePath]);
     	this.fileReaders[filePath].onerror(evt);
     },
 
     reader_onloadend:function(filePath,result){
-        this.fileReaders[filePath].result = unescape(result);
+        this.fileReaders[filePath].result = decodeURIComponent(result);
         var evt = File._createEvent("loadend", this.fileReaders[filePath]);
     	this.fileReaders[filePath].onloadend(evt);
     },
@@ -173,7 +175,9 @@ FileMgr.prototype = {
      *	called from native code
     */
     writer_onerror:function(filePath,err){
-        this.fileWriters[filePath].error = err;
+    	var fe = new FileError();
+    	fe.code = err;
+        this.fileWriters[filePath].error = fe;
     	this.fileWriters[filePath].onerror(err);
     },
 
@@ -186,8 +190,6 @@ FileMgr.prototype = {
         var evt = File._createEvent("writeend", writer);
         writer.onwriteend(evt);
 
-        evt.type = "complete";
-    	writer.oncomplete(evt); // result contains bytes written
     },
     
     
@@ -250,7 +252,7 @@ FileMgr.prototype = {
 
 
 
-//*******************************  File Reader
+// *******************************  File Reader
 
 function FileReader(filename){this.fileName = filename;}
 
@@ -268,7 +270,29 @@ FileReader.prototype = {
 	onerror:null,
 	onloadend:null,
 	abort:function(){
-	    
+    	this.readyState = FileReader.DONE;
+    	this.result = null;
+
+    	// set error
+    	var error = new FileError();
+    	error.code = error.ABORT_ERR;
+    	this.error = error;
+   
+    	// If error callback
+    	if (typeof this.onerror == "function") {
+        	var evt = File._createEvent("error", this);
+        	this.onerror(evt);
+    	}
+    	// If abort callback
+    	if (typeof this.onabort == "function") {
+        	var evt = File._createEvent("abort", this);
+        	this.onabort(evt);
+    	}
+    	// If load end callback
+    	if (typeof this.onloadend == "function") {
+        	var evt = File._createEvent("loadend", this);
+       	 this.onloadend(evt);
+    	}
 	},
 	
 	readAsBinaryString:function(filename){
@@ -321,10 +345,8 @@ FileWriter.prototype = {
 	result:null,
 	readyState:0, // 0 | 1 | 2 == INIT | WRITING | DONE
 	onerror:null,
-	oncomplete:null,
 	onwritestart:null,
 	onprogress:null,
-	onload:null,
 	onabort:null,
 	onerror:null,
 	onwriteend:null,
@@ -341,8 +363,7 @@ FileWriter.prototype = {
 	// Shortens the file to the length specified.
 	// Note that length does not change postition UNLESS position has become invalid
 	truncate:function(offset){
-	    
-	    //alert("truncate" + this.fileName);
+
         if(this.readyState == FileWriter.WRITING)
 	    {
 	        throw FileError.INVALID_STATE_ERR;
@@ -402,12 +423,10 @@ FileWriter.prototype = {
 */ 
 //Aborts writing file.
 	abort:function(){
-
-	    if(this.readyState != FileWriter.WRITING)
-	    {
-	        throw FileError.INVALID_STATE_ERR;
-	    }
-	    
+		// check for invalid state 
+    	if (this.readyState === FileWriter.DONE || this.readyState === FileWriter.INIT) {
+        	throw FileError.INVALID_STATE_ERR;
+    	}
 	    var error = new FileError();
             error.code = FileError.ABORT_ERR;
             this.error = error;
@@ -426,9 +445,9 @@ FileWriter.prototype = {
         this.readyState = FileWriter.DONE;
 
         // If load end callback
-        if (typeof this.onloadend == "function") {
+        if (typeof this.onwriteend == "function") {
             var evt = File._createEvent("writeend", this);
-            this.onloadend(evt);
+            this.onwriteend(evt);
         }
 	},
 	

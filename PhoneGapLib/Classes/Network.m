@@ -25,12 +25,18 @@
 		return;
 	}
 	
-	if ([options existsValue:@"true" forKey:@"isIpAddress"]) {
+    id isIpAddressObj = [options valueForKey:@"isIpAddress"];
+    BOOL isIpAddress = NO;
+    if (isIpAddressObj) {
+        isIpAddress = [isIpAddressObj boolValue];
+    }
+    
+	if (isIpAddress) {
 		[[Reachability sharedReachability] setAddress:hostName];
 	} else {
 		[[Reachability sharedReachability] setHostName:hostName];
-	}
-	
+	}	
+		
 	//[[Reachability sharedReachability] setNetworkStatusNotificationsEnabled:YES];
 	[self updateReachability:callback];
     

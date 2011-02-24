@@ -9,7 +9,7 @@
 #import "Categories.h"
 #import <math.h>
 
-@implementation NSMutableDictionary(NSDictionary_Extension)
+@implementation NSDictionary(com_phonegap_NSDictionary_Extension)
 
 - (bool) existsValue:(NSString*)expectedValue forKey:(NSString*)key
 {
@@ -39,5 +39,73 @@
 	return value;
 }
 
+/*
+ *	Determine the type of object stored in a dictionary
+ *	IN:
+ *	(BOOL*) bString - if exists will be set to YES if object is an NSString, NO if not
+ *	(BOOL*) bNull - if exists will be set to YES if object is an NSNull, NO if not
+ *	(BOOL*) bArray - if exists will be set to YES if object is an NSArray, NO if not
+ *	(BOOL*) bNumber - if exsists will be set to YES if object is an NSNumber, NO if not
+ *
+ *	OUT:
+ *	YES if key exists
+ *  NO if key does not exist.  Input parameters remain untouched
+ *
+ */
+
+- (BOOL) typeValueForKey:(NSString *)key isArray:(BOOL*)bArray isNull:(BOOL*)bNull isNumber:(BOOL*) bNumber isString:(BOOL*)bString   
+{
+	BOOL bExists = YES;
+	NSObject* value = [self objectForKey: key];
+	if (value) {
+		bExists = YES;
+		if (bString)
+			*bString = [value isKindOfClass: [NSString class]];
+		if (bNull)
+			*bNull = [value isKindOfClass: [NSNull class]];
+		if (bArray)
+			*bArray = [value isKindOfClass: [NSArray class]];
+		if (bNumber)
+			*bNumber = [value isKindOfClass:[NSNumber class]];
+	}
+	return bExists;
+}
+- (BOOL) valueForKeyIsArray:(NSString *)key
+{
+	BOOL bArray = NO;
+	NSObject* value = [self objectForKey: key];
+	if (value) {
+		bArray = [value isKindOfClass: [NSArray class]];
+	}
+	return bArray;
+}
+- (BOOL) valueForKeyIsNull:(NSString *)key
+{
+	BOOL bNull = NO;
+	NSObject* value = [self objectForKey: key];
+	if (value) {
+		bNull = [value isKindOfClass: [NSNull class]];
+	}
+	return bNull;
+}
+- (BOOL) valueForKeyIsString:(NSString *)key
+{
+	BOOL bString = NO;
+	NSObject* value = [self objectForKey: key];
+	if (value) {
+		bString = [value isKindOfClass: [NSString class]];
+	}
+	return bString;
+}
+- (BOOL) valueForKeyIsNumber:(NSString *)key
+{
+	BOOL bNumber = NO;
+	NSObject* value = [self objectForKey: key];
+	if (value) {
+		bNumber = [value isKindOfClass: [NSNumber class]];
+	}
+	return bNumber;
+}
+	
 @end
 

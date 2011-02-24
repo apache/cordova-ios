@@ -43,7 +43,10 @@
 	else if ([fullUrl hasSuffix:@"/"] && pathLength > 0)
 		pathLength -= 1; // 1 is the "/" char 
 	
-    NSString *path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
+    NSString* path = @"";
+	if (pathLength > 0) {
+		path = [fullUrl substringWithRange:NSMakeRange(prefixLength, pathLength)];
+	}
 	
 	// Array of arguments
 	NSMutableArray* arguments = [NSMutableArray arrayWithArray:[path componentsSeparatedByString:@"/"]];
@@ -53,10 +56,9 @@
 													  stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	}
 	iuc.arguments = arguments;
-    
+
 	// Dictionary of options
 	NSString* objectString = [[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSLog(@"query string = %@",objectString);
 	iuc.options = (NSMutableDictionary*)[objectString JSONValue];
 	NSArray* components = [iuc.command componentsSeparatedByString:@"."];
 	if (components.count == 2) {

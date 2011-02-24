@@ -24,7 +24,8 @@ DebugConsole.prototype.setLevel = function(level) {
  * @param {Object|String} message The string or object to convert to an indented string
  * @private
  */
-DebugConsole.prototype.processMessage = function(message) {
+DebugConsole.prototype.processMessage = function(message, maxDepth) {
+	if (maxDepth === undefined) maxDepth = 0;
     if (typeof(message) != 'object') {
         return (this.isDeprecated ? "WARNING: debug object is deprecated, please use console object \n" + message : message);
     } else {
@@ -39,11 +40,11 @@ DebugConsole.prototype.processMessage = function(message) {
          * @function
          * @ignore
          */
-        function makeStructured(obj) {
+        function makeStructured(obj, depth) {
             var str = "";
             for (var i in obj) {
                 try {
-                    if (typeof(obj[i]) == 'object') {
+                    if (typeof(obj[i]) == 'object' && depth < maxDepth) {
                         str += i + ":\n" + indent(makeStructured(obj[i])) + "\n";
                     } else {
                         str += i + " = " + indent(String(obj[i])).replace(/^    /, "") + "\n";
@@ -55,7 +56,7 @@ DebugConsole.prototype.processMessage = function(message) {
             return str;
         }
         
-        return ((this.isDeprecated ? "WARNING: debug object is deprecated, please use console object\n" :  "") + "Object:\n" + makeStructured(message));
+        return ((this.isDeprecated ? "WARNING: debug object is deprecated, please use console object\n" :  "") + "Object:\n" + makeStructured(message, maxDepth));
     }
 };
 
@@ -63,10 +64,10 @@ DebugConsole.prototype.processMessage = function(message) {
  * Print a normal log message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-DebugConsole.prototype.log = function(message) {
+DebugConsole.prototype.log = function(message, maxDepth) {
     if (PhoneGap.available && this.logLevel <= DebugConsole.INFO_LEVEL)
         PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message),
+            this.processMessage(message, maxDepth),
             { logLevel: 'INFO' }
         );
     else
@@ -77,10 +78,10 @@ DebugConsole.prototype.log = function(message) {
  * Print a warning message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-DebugConsole.prototype.warn = function(message) {
+DebugConsole.prototype.warn = function(message, maxDepth) {
     if (PhoneGap.available && this.logLevel <= DebugConsole.WARN_LEVEL)
         PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message),
+            this.processMessage(message, maxDepth),
             { logLevel: 'WARN' }
         );
     else
@@ -91,10 +92,10 @@ DebugConsole.prototype.warn = function(message) {
  * Print an error message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-DebugConsole.prototype.error = function(message) {
+DebugConsole.prototype.error = function(message, maxDepth) {
     if (PhoneGap.available && this.logLevel <= DebugConsole.ERROR_LEVEL)
         PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message),
+            this.processMessage(message, maxDepth),
             { logLevel: 'ERROR' }
         );
     else
