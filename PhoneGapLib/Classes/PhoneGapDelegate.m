@@ -445,7 +445,7 @@ static NSString *gapVersion;
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
 	NSURL *url = [request URL];
-
+	
     /*
      * Get Command and Options From URL
      * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
@@ -463,16 +463,25 @@ static NSString *gapVersion;
 
 		 return NO;
 	}
-    
     /*
      * If a URL is being loaded that's a file/http/https URL, just load it internally
      */
-    else if ([url isFileURL] || 
-			 [[url scheme] isEqualToString:@"http"] || 
-			 [[url scheme] isEqualToString:@"https"])
+    else if ([url isFileURL])
     {
         return YES;
     }
+	else if ( [ [url scheme] isEqualToString:@"http"] || [ [url scheme] isEqualToString:@"https"] ) 
+	{
+		if(navigationType == UIWebViewNavigationTypeOther)
+		{
+			[[UIApplication sharedApplication] openURL:url];
+			return NO;
+		}
+		else 
+		{
+			return YES;
+		}
+	}
     
     /*
      * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
