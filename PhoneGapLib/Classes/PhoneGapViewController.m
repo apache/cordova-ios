@@ -55,7 +55,7 @@
 	
 	// if js did not handle the new orientation ( no return value ) we will look it up in the plist -jm
 	
-	BOOL autoRotate = [self.supportedOrientations count] > 1; // autorotate if only more than 1 orientation supported
+	BOOL autoRotate = [self.supportedOrientations count] > 0; // autorotate if only more than 1 orientation supported
 	if (autoRotate)
 	{
 		if ([self.supportedOrientations containsObject:
