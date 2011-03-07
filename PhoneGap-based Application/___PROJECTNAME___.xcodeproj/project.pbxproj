@@ -329,7 +329,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# get the PhoneGapLib version\nexport pgver=`head -1 ${PHONEGAPLIB}/VERSION`\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\necho cp ${PHONEGAPLIB}/javascripts/phonegap.*.js ${PROJECT_DIR}/www\ncp ${PHONEGAPLIB}/javascripts/phonegap.*.js ${PROJECT_DIR}/www\n\n# replace [src=\"phonegap.js\"] in all files in www\nfind ${PROJECT_DIR}/www | xargs grep 'src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]' -sl | xargs -L1 sed -i \"\" \"s/src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]/src=\\\"phonegap.${pgver}.min.js\\\"/g\"";
+			shellScript = "# get the PhoneGapLib version\nPGVER=`head -1 \"${PHONEGAPLIB}/VERSION\"`\n\nSRC1=\"${PHONEGAPLIB}/javascripts/phonegap.${PGVER}.js\"\nSRC2=\"${PHONEGAPLIB}/javascripts/phonegap.${PGVER}.min.js\"\nTARGET=\"${PROJECT_DIR}/www\"\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\ncp \"${SRC1}\" \"${TARGET}\"\ncp \"${SRC2}\" \"${TARGET}\"\n\n# replace [src=\"phonegap.js\"] in all files in www\nfind \"${TARGET}\" | xargs grep 'src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]' -sl | xargs -L1 sed -i \"\" \"s/src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]/src=\\\"phonegap.${PGVER}.min.js\\\"/g\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -387,6 +387,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
@@ -396,7 +397,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = "$(PHONEGAPLIB)/Classes/JSON $(PHONEGAPLIB)/Classes";
+				USER_HEADER_SEARCH_PATHS = "\"$(PHONEGAPLIB)/Classes/JSON\" \"$(PHONEGAPLIB)/Classes\"";
 			};
 			name = Debug;
 		};
@@ -407,6 +408,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
@@ -416,7 +418,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = "$(PHONEGAPLIB)/Classes/JSON $(PHONEGAPLIB)/Classes";
+				USER_HEADER_SEARCH_PATHS = "\"$(PHONEGAPLIB)/Classes/JSON\" \"$(PHONEGAPLIB)/Classes\"";
 			};
 			name = Release;
 		};
