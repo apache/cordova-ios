@@ -28,7 +28,7 @@ typedef NSUInteger DestinationType;
 @property (assign) NSInteger quality;
 @property (copy)   NSString* callbackId;
 @property (copy)   NSString* postUrl;
-@property (nonatomic) DestinationType returnType;
+@property (nonatomic) enum DestinationType returnType;
 
 - (void) dealloc;
 

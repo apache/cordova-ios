@@ -98,7 +98,7 @@
 
 - (unsigned long long) truncateFile:(NSString*)filePath atPosition:(unsigned long long)pos
 {
-	unsigned long long newPos;
+	unsigned long long newPos = 0UL;
 	
 	NSFileHandle* file = [ NSFileHandle fileHandleForWritingAtPath:filePath];
 	if(file)
@@ -122,14 +122,13 @@
 	NSString *appFile = [ [ self appDocsPath ] stringByAppendingPathComponent:argPath];
 	
 	unsigned long long pos = 0UL;
-	unsigned long long newPos = 0UL;
 	
 	if(argc > 2)
 	{
 		pos = (unsigned long long)[[ arguments objectAtIndex:2] longLongValue];
 		if(pos > 0)
 		{
-			newPos = [ self truncateFile:appFile atPosition:pos];
+			[ self truncateFile:appFile atPosition:pos];
 		}
 	}
 	
