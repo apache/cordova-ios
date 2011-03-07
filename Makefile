@@ -34,15 +34,12 @@ clean:
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.mode1v3
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.perspectivev3
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.pbxuser
-	$(RM_F) PhoneGapLib/javascripts/phonegap.js
+	$(RM_F) PhoneGapLib/javascripts/phonegap.*.js
 	$(RM_RF) PhoneGap-based\ Application/build/
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
-	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___-iPad.xcodeproj/*.mode1v3
-	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___-iPad.xcodeproj/*.perspectivev3
-	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___-iPad.xcodeproj/*.pbxuser
-	$(RM_F) PhoneGap-based\ Application/www/phonegap.js
+	$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
 	
 installer: clean
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
