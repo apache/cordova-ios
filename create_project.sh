@@ -65,6 +65,8 @@ if [ ! -d "$NEW_PROJECT_PATH" ]; then
 	exit 1
 fi
 
+NEW_PROJECT_PATH=`cd $NEW_PROJECT_PATH; pwd`
+
 # ##############################################
 # TEMPORARY WORKING DIRECTORY
 # ##############################################
