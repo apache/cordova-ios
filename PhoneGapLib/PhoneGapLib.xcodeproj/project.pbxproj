@@ -453,6 +453,7 @@
 				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = PhoneGapLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -467,6 +468,7 @@
 				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = PhoneGapLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -485,6 +487,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "i386 armv6 armv7";
 			};
@@ -504,6 +507,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				VALID_ARCHS = "i386 armv6 armv7";
 			};
 			name = Release;
