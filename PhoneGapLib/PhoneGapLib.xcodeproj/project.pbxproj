@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C04CC12BC247D004F9E10 /* Contact.h */; };
 		1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C04CD12BC247D004F9E10 /* Contact.m */; };
+		1F92F4A01314023E0046367C /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; };
+		1F92F4A11314023E0046367C /* PluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F92F49F1314023E0046367C /* PluginResult.m */; };
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
 		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
@@ -74,6 +76,8 @@
 /* Begin PBXFileReference section */
 		1F3C04CC12BC247D004F9E10 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contact.h; path = Classes/Contact.h; sourceTree = "<group>"; };
 		1F3C04CD12BC247D004F9E10 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contact.m; path = Classes/Contact.m; sourceTree = "<group>"; };
+		1F92F49E1314023E0046367C /* PluginResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginResult.h; path = Classes/PluginResult.h; sourceTree = "<group>"; };
+		1F92F49F1314023E0046367C /* PluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PluginResult.m; path = Classes/PluginResult.m; sourceTree = "<group>"; };
 		30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor-Expanded.h"; path = "Classes/UIColor-Expanded.h"; sourceTree = "<group>"; };
 		30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor-Expanded.m"; path = "Classes/UIColor-Expanded.m"; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
@@ -185,6 +189,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				1F92F49E1314023E0046367C /* PluginResult.h */,
+				1F92F49F1314023E0046367C /* PluginResult.m */,
 				30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */,
 				30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */,
 				88BA573B109BB46F00FB5E78 /* Accelerometer.h */,
@@ -322,6 +328,7 @@
 				88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */,
 				30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */,
 				1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */,
+				1F92F4A01314023E0046367C /* PluginResult.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +431,7 @@
 				88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */,
 				30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */,
 				1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */,
+				1F92F4A11314023E0046367C /* PluginResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +453,7 @@
 				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = PhoneGapLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -459,6 +468,7 @@
 				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = PhoneGapLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -468,6 +478,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_LDFLAGS = (
@@ -476,6 +487,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "i386 armv6 armv7";
 			};
@@ -486,6 +498,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_LDFLAGS = (
@@ -494,6 +507,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				VALID_ARCHS = "i386 armv6 armv7";
 			};
 			name = Release;

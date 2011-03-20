@@ -1,48 +1,22 @@
 /**
  * This class provides access to notifications on the device.
  */
-function Notification() 
-{
-	this.resultsCallback = null;
-};
-
-/**
- * Causes the device to blink a status LED.
- * @param {Integer} count The number of blinks.
- * @param {String} colour The colour of the light.
- */
-Notification.prototype.blink = function(count, colour) {
-	
-};
-
-Notification.prototype.vibrate = function(mills) {
-	PhoneGap.exec("Notification.vibrate");
-};
-
-Notification.prototype.beep = function(count, volume) {
-	// No Volume yet for the iphone interface
-	// We can use a canned beep sound and call that
-	new Media('beep.wav').play();
+function Notification() {
 };
 
 /**
  * Open a native alert dialog, with a customizable title and button text.
  *
  * @param {String} message              Message to print in the body of the alert
- * @param {Function} resultCallback     The callback that is called when user clicks on a button. 
+ * @param {Function} completeCallback   The callback that is called when user clicks on a button.
  * @param {String} title                Title of the alert dialog (default: Alert)
- * @param {String} buttonLabel          Label for close button
+ * @param {String} buttonLabel          Label of the close button (default: OK)
  */
-Notification.prototype.alert = function(message, resultCallback, title, buttonLabel) 
-{
-	var options = {};
-	options.title = (title || "Alert");
-	options.buttonLabel = (buttonLabel || "OK");
-	this.resultsCallback = resultCallback;
-	PhoneGap.exec('Notification.alert', message, options);
-	return;
+Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
+    var _title = (title || "Alert");
+    var _buttonLabel = (buttonLabel || "OK");
+    PhoneGap.exec(completeCallback, null, "Notification", "alert", [message,{ "title": _title, "buttonLabel": _buttonLabel}]);
 };
-
 
 /**
  * Open a native confirm dialog, with a customizable title and button text.
@@ -53,38 +27,50 @@ Notification.prototype.alert = function(message, resultCallback, title, buttonLa
  * @param {String} title                Title of the alert dialog (default: Confirm)
  * @param {String} buttonLabels         Comma separated list of the labels of the buttons (default: 'OK,Cancel')
  */
-Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) 
-{
-
-	var confirmTitle = title ? title : "Confirm";
-	var labels = buttonLabels ? buttonLabels : "OK,Cancel";
-	return this.alert(message, resultCallback, confirmTitle, labels);
+Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) {
+    var _title = (title || "Confirm");
+    var _buttonLabels = (buttonLabels || "OK,Cancel");
+    this.alert(message, resultCallback, _title, _buttonLabels);
 };
-
-Notification.prototype._alertCallback = function(index)
-{
-	try {
-        this.resultsCallback(index);
-    }
-    catch (e) {
-        console.log("Error in user's result callback: " + e);
-    }
-};
-
-
-
+/**
+ * Start spinning the activity indicator on the statusbar
+ */
 Notification.prototype.activityStart = function() {
-    PhoneGap.exec("Notification.activityStart");
-};
-Notification.prototype.activityStop = function() {
-    PhoneGap.exec("Notification.activityStop");
+    PhoneGap.exec(null, null, "Notification", "activityStart", []);
 };
 
-Notification.prototype.loadingStart = function(options) {
-    PhoneGap.exec("Notification.loadingStart", options);
+/**
+ * Stop spinning the activity indicator on the statusbar, if it's currently spinning
+ */
+Notification.prototype.activityStop = function() {
+    PhoneGap.exec(null, null, "Notification", "activityStop", []);
 };
+
+// iPhone only
+Notification.prototype.loadingStart = function(options) {
+    PhoneGap.exec(null, null, "Notification","loadingStart", [options]);
+};
+// iPhone only
 Notification.prototype.loadingStop = function() {
-    PhoneGap.exec("Notification.loadingStop");
+    PhoneGap.exec(null, null, "Notification","loadingStop", []);
+};
+/**
+ * Causes the device to blink a status LED.
+ * @param {Integer} count The number of blinks.
+ * @param {String} colour The colour of the light.
+ */
+Notification.prototype.blink = function(count, colour) {
+// NOT IMPLEMENTED	
+};
+
+Notification.prototype.vibrate = function(mills) {
+	PhoneGap.exec(null, null, "Notification", "vibrate", []);
+};
+
+Notification.prototype.beep = function(count, volume) {
+	// No Volume yet for the iphone interface
+	// We can use a canned beep sound and call that
+	new Media('beep.wav').play();
 };
 
 PhoneGap.addConstructor(function() {

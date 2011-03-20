@@ -96,7 +96,7 @@ A. This was working in Xcode 3, but not 4. Add the architecture "i386" to VALID_
 
 **Q. I've tried almost everything and Xcode fails to compile PhoneGapDelegate.m in PhoneGapLib.**
 
-A. Check whether there is a space in the path to PhoneGapLib, particularly if there's a space in your home folder name. Unfortunately at this time you either have to change your home folder name (since PhoneGapLib is installed under it, in your Documents folder) or relocate PhoneGapLib to a location that has no space in the path (and make sure you update the PHONEGAPLIB Xcode variable in Xcode Preferences --> Source Trees)
+A. Check whether there is a space in the path to PhoneGapLib, particularly if there's a space in your home folder name. Unfortunately at this time you either have to change your home folder name (since PhoneGapLib is installed under it, in your Documents folder) or relocate PhoneGapLib to a location that has no space in the path (and make sure you update the PHONEGAPLIB Xcode variable in Xcode Preferences --> Source Trees). This has been fixed in the latest codebase as of Mar 7th 2011.
 
 **Q. I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?**
 

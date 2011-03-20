@@ -27,3 +27,12 @@
 - (void)loadingStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end
+
+@interface PGAlertView : UIAlertView {
+	NSString* callBackId;
+}
+@property(nonatomic, retain) NSString* callbackId;
+
+-(void) dealloc;
+
+@end

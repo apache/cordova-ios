@@ -18,8 +18,7 @@ typedef NSUInteger DestinationType;
 
 @interface CameraPicker : UIImagePickerController
 {
-	NSString* successCallback;
-	NSString* errorCallback;
+	NSString* callbackid;
 	NSInteger quality;
 	NSString* postUrl;
 	enum DestinationType returnType;
@@ -27,10 +26,9 @@ typedef NSUInteger DestinationType;
 
 
 @property (assign) NSInteger quality;
-@property (copy)   NSString* successCallback;
-@property (copy)   NSString* errorCallback;
+@property (copy)   NSString* callbackId;
 @property (copy)   NSString* postUrl;
-@property (nonatomic) DestinationType returnType;
+@property (nonatomic) enum DestinationType returnType;
 
 - (void) dealloc;
 

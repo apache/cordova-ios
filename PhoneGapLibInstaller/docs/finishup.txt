@@ -8,8 +8,5 @@ Select the "Choose..." button, name your project and choose the location where y
 
 That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
-iPad:
-Go to your project folder and launch the "[projectname]-iPad" Xcode project. You will need the 3.2 iPhone OS SDK.
-
 http://www.phonegap.com
 http://github.com/phonegap

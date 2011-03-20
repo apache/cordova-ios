@@ -76,15 +76,30 @@ PhoneGap.addConstructor = function(func) {
 })();
 
 
+// centralized callbacks
+PhoneGap.callbackId = 0;
+PhoneGap.callbacks = {};
+PhoneGap.callbackStatus = {
+    NO_RESULT: 0,
+    OK: 1,
+    CLASS_NOT_FOUND_EXCEPTION: 2,
+    ILLEGAL_ACCESS_EXCEPTION: 3,
+    INSTANTIATION_EXCEPTION: 4,
+    MALFORMED_URL_EXCEPTION: 5,
+    IO_EXCEPTION: 6,
+    INVALID_ACTION: 7,
+    JSON_EXCEPTION: 8,
+    ERROR: 9
+    };
+
 /**
  * Execute a PhoneGap command in a queued fashion, to ensure commands do not
  * execute with any race conditions, and only run when PhoneGap is ready to
- * recieve them.
- * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
- * @param {String[]} [args] Zero or more arguments to pass to the method
- * object paramters are passed as an array object [object1, object2] each object will be passed as JSON strings
+ * receive them.
+ *
  */
-PhoneGap.exec = function() {
+PhoneGap.exec = function() { 
+	
     PhoneGap.queue.commands.push(arguments);
     if (PhoneGap.queue.timer == null)
         PhoneGap.queue.timer = setInterval(PhoneGap.run_command, 10);
@@ -94,7 +109,22 @@ PhoneGap.exec = function() {
  * Internal function used to dispatch the request to PhoneGap.  It processes the
  * command queue and executes the next command on the list.  Simple parameters are passed
  * as arguments on the url.  JavaScript objects converted into a JSON string and passed as a
- * query string argument of the url.  
+ * query string argument of the url.
+ * Arguments may be in one of two formats:
+ *   FORMAT ONE (preferable)
+ * The native side will call PhoneGap.callbackSuccess or PhoneGap.callbackError,
+ * depending upon the result of the action.
+ *
+ * @param {Function} success    The success callback
+ * @param {Function} fail       The fail callback
+ * @param {String} service      The name of the service to use
+ * @param {String} action		The name of the action to use
+ * @param {String[]} [args]     Zero or more arguments to pass to the method
+ *  	
+ * FORMAT TWO
+ * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
+ * @param {String[]} [args] Zero or more arguments to pass to the method
+ * object parameters are passed as an array object [object1, object2] each object will be passed as JSON strings 
  * @private
  */
 PhoneGap.run_command = function() {
@@ -108,25 +138,107 @@ PhoneGap.run_command = function() {
         clearInterval(PhoneGap.queue.timer);
         PhoneGap.queue.timer = null;
     }
+	
+	var service;
+	var callbackId = null;
+	var start=0;
+    try {
+ 		if (args[0] == null || typeof args[0] === "function") {
+ 			var success = args[0];
+ 			var fail = args[1];
+ 			service = args[2] + "." + args[3];
+			args = args[4];  //array of arguments to 
+ 			callbackId = service + PhoneGap.callbackId++;
+        	if (success || fail) {
+            	PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
+        	}
+ 		} else { 
+ 			service = args[0]; 
+ 			start = 1;
+ 		}
+        
+        var uri = [];
+    	var dict = null;
+    
+    	for (var i = start; i < args.length; i++) {
+        	var arg = args[i];
+        	if (arg == undefined || arg == null)
+            	continue;
+        	if (typeof(arg) == 'object')
+            	dict = arg;
+        	else
+            	uri.push(encodeURIComponent(arg));
+    	}
+    	var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
+    	var url = "gap://" + service + next + uri.join("/");
 
-    var uri = [];
-    var dict = null;
-    for (var i = 1; i < args.length; i++) {
-        var arg = args[i];
-        if (arg == undefined || arg == null)
-            continue;
-        if (typeof(arg) == 'object')
-            dict = arg;
-        else
-            uri.push(encodeURIComponent(arg));
+    	if (dict != null) {
+        	url += "?" + encodeURIComponent(JSON.stringify(dict));
+    	}
+		document.location = url;
+   
+    } catch (e) {
+        console.log("PhoneGapExec Error: "+e);
     }
-    var url = "gap://" + args[0] + "/" + uri.join("/");
-    if (dict != null) {
-        url += "?" + encodeURIComponent(JSON.stringify(dict));
-    }
-    document.location = url;
+    
 
 };
+/**
+ * Called by native code when returning successful result from an action.
+ *
+ * @param callbackId
+ * @param args
+ *		args.status - PhoneGap.callbackStatus
+ *		args.message - return value
+ *		args.keepCallback - 0 to remove callback, 1 to keep callback in PhoneGap.callbacks[]
+ */
+PhoneGap.callbackSuccess = function(callbackId, args) {
+    if (PhoneGap.callbacks[callbackId]) {
+
+        // If result is to be sent to callback
+        if (args.status == PhoneGap.callbackStatus.OK) {
+            try {
+                if (PhoneGap.callbacks[callbackId].success) {
+               		PhoneGap.callbacks[callbackId].success(args.message);
+                }
+            }
+            catch (e) {
+                console.log("Error in success callback: "+callbackId+" = "+e);
+            }
+        }
+    
+        // Clear callback if not expecting any more results
+        if (!args.keepCallback) {
+            delete PhoneGap.callbacks[callbackId];
+        }
+    }
+};
+
+/**
+ * Called by native code when returning error result from an action.
+ *
+ * @param callbackId
+ * @param args
+ */
+PhoneGap.callbackError = function(callbackId, args) {
+    if (PhoneGap.callbacks[callbackId]) {
+        try {
+            if (PhoneGap.callbacks[callbackId].fail) {
+                PhoneGap.callbacks[callbackId].fail(args.message);
+            }
+        }
+        catch (e) {
+            console.log("Error in error callback: "+callbackId+" = "+e);
+        }
+        
+        // Clear callback if not expecting any more results
+        if (!args.keepCallback) {
+            delete PhoneGap.callbacks[callbackId];
+        }
+    }
+};
+
+
 /**
  * Does a deep clone of the object.
  *

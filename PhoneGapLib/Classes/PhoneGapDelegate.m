@@ -16,6 +16,7 @@
 @implementation PhoneGapDelegate
 
 @synthesize window;
+@synthesize webView;
 @synthesize viewController;
 @synthesize activityView;
 @synthesize commandObjects;
@@ -109,6 +110,8 @@ static NSString *gapVersion;
 {
 	NSMutableArray* result = [[[NSMutableArray alloc] init] autorelease];
 	
+	
+	
 	if (orientations != nil) 
 	{
 		NSEnumerator* enumerator = [orientations objectEnumerator];
@@ -173,7 +176,7 @@ static NSString *gapVersion;
 	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
 	webViewBounds.origin = screenBounds.origin;
 	webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
-    [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
+    webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	
 	viewController.webView = webView;
 	[viewController.view addSubview:webView];
@@ -442,7 +445,7 @@ static NSString *gapVersion;
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
 	NSURL *url = [request URL];
-
+	
     /*
      * Get Command and Options From URL
      * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
@@ -460,16 +463,25 @@ static NSString *gapVersion;
 
 		 return NO;
 	}
-    
     /*
      * If a URL is being loaded that's a file/http/https URL, just load it internally
      */
-    else if ([url isFileURL] || 
-			 [[url scheme] isEqualToString:@"http"] || 
-			 [[url scheme] isEqualToString:@"https"])
+    else if ([url isFileURL])
     {
         return YES;
     }
+	else if ( [ [url scheme] isEqualToString:@"http"] || [ [url scheme] isEqualToString:@"https"] ) 
+	{
+		if(navigationType == UIWebViewNavigationTypeOther)
+		{
+			[[UIApplication sharedApplication] openURL:url];
+			return NO;
+		}
+		else 
+		{
+			return YES;
+		}
+	}
     
     /*
      * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
@@ -509,6 +521,9 @@ static NSString *gapVersion;
 	return YES;
 }
 
+/*
+ This method lets your application know that it is about to be terminated and purged from memory entirely
+*/
 - (void)applicationWillTerminate:(UIApplication *)application
 {
 	NSLog(@"applicationWillTerminate");
@@ -522,7 +537,64 @@ static NSString *gapVersion;
 	[fileMgr release];
 	// clean up any Contact objects
 	[[Contact class] releaseDefaults];
+	
 }
+
+/*
+ This method is called to let your application know that it is about to move from the active to inactive state.
+ You should use this method to pause ongoing tasks, disable timer, ...
+*/
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+	NSLog(@"%@",@"applicationWillResignActive");
+	
+	NSString* jsString = 
+	@"(function(){"
+	"var e = document.createEvent('Events');"
+	"e.initEvent('pause');"
+	"document.dispatchEvent(e);"
+	"})();";
+	
+	[self.webView stringByEvaluatingJavaScriptFromString:jsString];
+	
+}
+
+/*
+ In iOS 4.0 and later, this method is called as part of the transition from the background to the inactive state. 
+ You can use this method to undo many of the changes you made to your application upon entering the background.
+ invariably followed by applicationDidBecomeActive
+*/
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+	NSLog(@"%@",@"applicationWillEnterForeground");
+	
+	NSString* jsString = 
+	@"(function(){"
+	"var e = document.createEvent('Events');"
+	"e.initEvent('resume');"
+	"document.dispatchEvent(e);"
+	"})();";
+	
+	[self.webView stringByEvaluatingJavaScriptFromString:jsString];
+
+}
+
+// This method is called to let your application know that it moved from the inactive to active state. 
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+	NSLog(@"%@",@"applicationDidBecomeActive");
+}
+
+/*
+ In iOS 4.0 and later, this method is called instead of the applicationWillTerminate: method 
+ when the user quits an application that supports background execution.
+ */
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+	NSLog(@"%@",@"applicationDidEnterBackground");
+}
+
+
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
