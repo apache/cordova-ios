@@ -472,15 +472,19 @@ static NSString *gapVersion;
     }
 	else if ( [ [url scheme] isEqualToString:@"http"] || [ [url scheme] isEqualToString:@"https"] ) 
 	{
-		if(navigationType == UIWebViewNavigationTypeOther)
-		{
-			[[UIApplication sharedApplication] openURL:url];
-			return NO;
+		// iterate through settings externalDomains
+		// check for equality
+		NSEnumerator *e = [[settings objectForKey:@"ExternalHosts"] objectEnumerator];
+		id obj;
+
+		while (obj = [e nextObject]) {
+			if ([[url host] isEqualToString:obj]) {
+				return YES;
+			}
 		}
-		else 
-		{
-			return YES;
-		}
+
+		[[UIApplication sharedApplication] openURL:url];
+		return NO;
 	}
     
     /*
