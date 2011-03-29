@@ -134,7 +134,7 @@
 						 ];
 	
     NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({ timestamp: %d, %@ });", epoch, coords];
-    NSLog(@"%@", jsCallBack);
+    //NSLog(@"%@", jsCallBack);
     
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }

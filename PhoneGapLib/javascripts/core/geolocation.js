@@ -126,7 +126,15 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 	var that = this;
 	return setInterval(function() 
 	{
-		that.getCurrentPosition(successCallback, errorCallback, options);
+        var filterFun = function(position) {
+            if (that.lastPosition && 
+                (that.lastPosition.latitude != position.latitude || 
+                 that.lastPosition.longitude != position.longitude)) {
+                // only call the success callback when there is a change in position, per W3C
+                successCallback(position);
+            }
+        };
+		that.getCurrentPosition(filterFun, errorCallback, options);
 	}, frequency);
 
 };
