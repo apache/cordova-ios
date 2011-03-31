@@ -124,15 +124,22 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 	var frequency = (options && options.frequency) ? options.frequency : 10000; // default 10 second refresh
 
 	var that = this;
+    
+    // easy clone (members only, no funcs)
+    var lastPos = that.lastPosition? JSON.parse(JSON.stringify(that.lastPosition)) : null;
+    
 	return setInterval(function() 
 	{
         var filterFun = function(position) {
-            if (that.lastPosition && 
-                (that.lastPosition.latitude != position.latitude || 
-                 that.lastPosition.longitude != position.longitude)) {
+            if (lastPos && lastPos.coords &&
+                (lastPos.coords.latitude != position.coords.latitude || 
+                 lastPos.coords.longitude != position.coords.longitude)) {
                 // only call the success callback when there is a change in position, per W3C
                 successCallback(position);
             }
+            
+            // clone the new position, save it as our last position (internal var)
+            lastPos = JSON.parse(JSON.stringify(position));
         };
 		that.getCurrentPosition(filterFun, errorCallback, options);
 	}, frequency);
