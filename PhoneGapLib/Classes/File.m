@@ -1055,7 +1055,7 @@
 	NSString* jsString = nil;
 	FileError errCode = INVALID_MODIFICATION_ERR; 
 	int bytesWritten = 0;
-	NSData* encData = [ data dataUsingEncoding:NSUTF8StringEncoding];
+	NSData* encData = [ data dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
 	if (filePath) {
 		NSOutputStream* fileStream = [NSOutputStream outputStreamToFileAtPath:filePath append:shouldAppend ];
 		if (fileStream) {
