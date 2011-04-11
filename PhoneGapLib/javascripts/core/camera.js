@@ -1,5 +1,8 @@
+if (!PhoneGap.hasResource("camera")) {
+	PhoneGap.addResource("camera");
+	
 // adding in preparation to switch to Media capture API
-function CaptureError() {
+CaptureError = function() {
    this.code = null;
 }
 
@@ -13,7 +16,7 @@ CaptureError.CAPTURE_NO_MEDIA_FILES = 3;
  * This class provides access to the device camera.
  * @constructor
  */
-function Camera() {
+Camera = function() {
 	
 }
 
@@ -70,11 +73,11 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
     }
 	
 	PhoneGap.exec(successCallback, errorCallback, "Camera","getPicture",[options]);
-}
+};
 
 
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
 });
-
+};

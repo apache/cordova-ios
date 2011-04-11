@@ -1,8 +1,11 @@
+if (!PhoneGap.hasResource("accelerometer")) {
+	PhoneGap.addResource("accelerometer");
+
 /**
  * This class provides access to device accelerometer data.
  * @constructor
  */
-function Accelerometer() 
+Accelerometer = function() 
 {
 	/**
 	 * The last known acceleration.
@@ -27,13 +30,13 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
 	if (typeof successCallback == "function") {
 		successCallback(this.lastAcceleration);
 	}
-}
+};
 
 // private callback called from Obj-C by name
 Accelerometer.prototype._onAccelUpdate = function(x,y,z)
 {
    this.lastAcceleration = new Acceleration(x,y,z);
-}
+};
 
 /**
  * Asynchronously aquires the acceleration repeatedly at a given interval.
@@ -57,7 +60,7 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 	return setInterval(function() {
 		navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
 	}, frequency);
-}
+};
 
 /**
  * Clears the specified accelerometer watch.
@@ -66,8 +69,9 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 Accelerometer.prototype.clearWatch = function(watchId) {
 	PhoneGap.exec("Accelerometer.stop");
 	clearInterval(watchId);
-}
+};
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
 });
+};

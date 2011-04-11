@@ -1,3 +1,6 @@
+if (!PhoneGap.hasResource("position")) {
+	PhoneGap.addResource("position");
+
 /**
  * This class contains position information.
  * @param {Object} lat
@@ -9,12 +12,12 @@
  * @param {Object} vel
  * @constructor
  */
-function Position(coords, timestamp) {
+Position = function(coords, timestamp) {
 	this.coords = coords;
         this.timestamp = new Date().getTime();
-}
+};
 
-function Coordinates(lat, lng, alt, acc, head, vel, altAcc) {
+Coordinates = function(lat, lng, alt, acc, head, vel, altAcc) {
 	/**
 	 * The latitude of the position.
 	 */
@@ -43,13 +46,13 @@ function Coordinates(lat, lng, alt, acc, head, vel, altAcc) {
 	 * The altitude accuracy of the position.
 	 */
 	this.altitudeAccuracy = (altAcc != 'undefined') ? altAcc : null; 
-}
+};
 
 /**
  * This class specifies the options for requesting position data.
  * @constructor
  */
-function PositionOptions() {
+PositionOptions = function() {
 	/**
 	 * Specifies the desired position accuracy.
 	 */
@@ -59,18 +62,19 @@ function PositionOptions() {
 	 * is called.
 	 */
 	this.timeout = 10000;
-}
+};
 
 /**
  * This class contains information about any GSP errors.
  * @constructor
  */
-function PositionError() {
+PositionError = function() {
 	this.code = null;
 	this.message = "";
-}
+};
 
 PositionError.UNKNOWN_ERROR = 0;
 PositionError.PERMISSION_DENIED = 1;
 PositionError.POSITION_UNAVAILABLE = 2;
 PositionError.TIMEOUT = 3;
+};

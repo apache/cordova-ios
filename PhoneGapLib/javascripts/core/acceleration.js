@@ -1,3 +1,7 @@
+if (!PhoneGap.hasResource("acceleration")) {
+	PhoneGap.addResource("acceleration");
+ 	
+
 /**
  * This class contains acceleration information
  * @constructor
@@ -5,7 +9,7 @@
  * @param {Number} y The force applied by the device in the y-axis.
  * @param {Number} z The force applied by the device in the z-axis.
  */
-function Acceleration(x, y, z) {
+Acceleration = function(x, y, z) {
 	/**
 	 * The force applied by the device in the x-axis.
 	 */
@@ -28,10 +32,11 @@ function Acceleration(x, y, z) {
  * This class specifies the options for requesting acceleration data.
  * @constructor
  */
-function AccelerationOptions() {
+AccelerationOptions = function() {
 	/**
 	 * The timeout after which if acceleration data cannot be obtained the errorCallback
 	 * is called.
 	 */
 	this.timeout = 10000;
 }
+};

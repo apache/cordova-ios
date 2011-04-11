@@ -1,4 +1,8 @@
-function PositionError()
+if (!PhoneGap.hasResource("geolocation")) {
+	PhoneGap.addResource("geolocation");
+
+
+PositionError = function()
 {
 	this.code = 0;
 	this.message = "";
@@ -12,7 +16,7 @@ PositionError.TIMEOUT = 3;
  * This class provides access to device GPS data.
  * @constructor
  */
-function Geolocation() {
+Geolocation = function() {
     /**
      * The last known GPS position.
      */
@@ -185,7 +189,7 @@ Geolocation.prototype.stop = function() {
 // replace origObj's functions ( listed in funkList ) with the same method name on proxyObj
 // this is a workaround to prevent UIWebView/MobileSafari default implementation of GeoLocation
 // because it includes the full page path as the title of the alert prompt
-function __proxyObj(origObj,proxyObj,funkList)
+__proxyObj = function(origObj,proxyObj,funkList)
 {
     var replaceFunk = function(org,proxy,fName)
     { 
@@ -211,3 +215,4 @@ PhoneGap.addConstructor(function()
     }
 
 });
+};

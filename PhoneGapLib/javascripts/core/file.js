@@ -1,3 +1,6 @@
+if (!PhoneGap.hasResource("file")) {
+	PhoneGap.addResource("file");
+
 /**
  * This class provides generic read and write access to the mobile device file system.
  * They are not used to read files from a server.
@@ -8,7 +11,7 @@
  * This is the fields returned when navigator.fileMgr.getFileProperties() 
  * is called.
  */
-function FileProperties(filePath) {
+FileProperties = function(filePath) {
     this.filePath = filePath;
     this.size = 0;
     this.lastModifiedDate = null;
@@ -22,7 +25,7 @@ function FileProperties(filePath) {
  * lastModifiedDate {Date} last modified date
  * size {Number} size of the file in bytes
  */
-function File(name, fullPath, type, lastModifiedDate, size) {
+File = function(name, fullPath, type, lastModifiedDate, size) {
 	this.name = name || null;
     this.fullPath = fullPath || null;
 	this.type = type || null;
@@ -45,7 +48,7 @@ File._createEvent = function(type, target) {
     return evt;
 };
 
-function FileError() {
+FileError = function() {
    this.code = null;
 }
 
@@ -70,7 +73,7 @@ FileError.PATH_EXISTS_ERR = 12;
 // File manager
 //-----------------------------------------------------------------------------
 
-function FileMgr() {
+FileMgr = function() {
 }
 
 FileMgr.prototype.testFileExists = function(fileName, successCallback, errorCallback) {
@@ -121,7 +124,7 @@ PhoneGap.addConstructor(function() {
  * This class reads the mobile device file system.
  *
  */
-function FileReader() {
+FileReader = function() {
     this.fileName = "";
 
     this.readyState = 0;
@@ -376,7 +379,7 @@ FileReader.prototype.readAsArrayBuffer = function(file) {
  *
   @param file {File} a File object representing a file on the file system
 */
-function FileWriter(file) {
+FileWriter = function(file) {
     this.fileName = "";
     this.length = 0;
 	if (file) {
@@ -736,7 +739,7 @@ FileWriter.prototype.truncate = function(size) {
     );
 };
 
-function LocalFileSystem() {
+LocalFileSystem = function() {
 };
 
 // File error codes
@@ -866,7 +869,7 @@ LocalFileSystem.prototype._castError = function(pluginResult) {
  * 
  * {Date} modificationTime (readonly)
  */
-function Metadata() {
+Metadata = function() {
     this.modificationTime=null;
 };
 
@@ -876,7 +879,7 @@ function Metadata() {
  * @param {boolean} create file or directory if it doesn't exist 
  * @param {boolean} exclusive if true the command will fail if the file or directory exists
  */
-function Flags(create, exclusive) {
+Flags = function(create, exclusive) {
     this.create = create || false;
     this.exclusive = exclusive || false;
 };
@@ -887,7 +890,7 @@ function Flags(create, exclusive) {
  * {DOMString} name the unique name of the file system (readonly)
  * {DirectoryEntry} root directory of the file system (readonly)
  */
-function FileSystem() {
+FileSystem = function() {
     this.name = null;
     this.root = null;
 };
@@ -901,7 +904,7 @@ function FileSystem() {
  * {DOMString} fullPath the absolute full path to the directory (readonly)
  * {FileSystem} filesystem on which the directory resides (readonly)
  */
-function DirectoryEntry() {
+DirectoryEntry = function() {
     this.isFile = false;
     this.isDirectory = true;
     this.name = null;
@@ -1019,7 +1022,7 @@ DirectoryEntry.prototype.removeRecursively = function(successCallback, errorCall
 /**
  * An interface that lists the files and directories in a directory.
  */
-function DirectoryReader(fullPath){
+DirectoryReader = function(fullPath){
 	this.fullPath = fullPath || null;    
 };
 
@@ -1042,7 +1045,7 @@ DirectoryReader.prototype.readEntries = function(successCallback, errorCallback)
  * {DOMString} fullPath the absolute full path to the file (readonly)
  * {FileSystem} filesystem on which the directory resides (readonly)
  */
-function FileEntry() {
+FileEntry = function() {
     this.isFile = true;
     this.isDirectory = false;
     this.name = null;
@@ -1158,6 +1161,7 @@ PhoneGap.addConstructor(function() {
     if(typeof window.requestFileSystem == "undefined") window.requestFileSystem  = pgLocalFileSystem.requestFileSystem;
     if(typeof window.resolveLocalFileSystemURI == "undefined") window.resolveLocalFileSystemURI = pgLocalFileSystem.resolveLocalFileSystemURI;
 });
+};
 
 
 

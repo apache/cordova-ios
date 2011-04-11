@@ -1,8 +1,11 @@
+if (!PhoneGap.hasResource("sms")) {
+	PhoneGap.addResource("sms");
+
 /**
  * This class provides access to the device SMS functionality.
  * @constructor
  */
-function Sms() {
+Sms = function() {
 
 }
 
@@ -15,9 +18,10 @@ function Sms() {
  * @param {PositionOptions} options The options for accessing the GPS location such as timeout and accuracy.
  */
 Sms.prototype.send = function(number, message, successCallback, errorCallback, options) {
-	
-}
+	// not sure why this is here when it does nothing????
+};
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
 });
+};

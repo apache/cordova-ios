@@ -1,7 +1,10 @@
+if (!PhoneGap.hasResource("notification")) {
+	PhoneGap.addResource("notification");
+
 /**
  * This class provides access to notifications on the device.
  */
-function Notification() {
+Notification = function() {
 };
 
 /**
@@ -76,4 +79,4 @@ Notification.prototype.beep = function(count, volume) {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
 });
-
+};
