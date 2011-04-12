@@ -63,6 +63,8 @@ typedef int FileSystemType;
 - (void) readEntries:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+-(NSString*) getMimeTypeFromPath: (NSString*) fullPath;
 - (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) testFileExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) testDirectoryExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

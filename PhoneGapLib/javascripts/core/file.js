@@ -105,8 +105,7 @@ FileMgr.prototype.readAsText = function(fileName, encoding, successCallback, err
 };
 
 FileMgr.prototype.readAsDataURL = function(fileName, successCallback, errorCallback) {
-	// not implemented in iOS
-    //PhoneGap.exec(successCallback, errorCallback, "File", "readAsDataURL", [fileName]);
+	PhoneGap.exec(successCallback, errorCallback, "File", "readAsDataURL", [fileName]);
 };
 
 PhoneGap.addConstructor(function() {
@@ -273,11 +272,16 @@ FileReader.prototype.readAsText = function(file, encoding) {
  * A data url is of the form:
  *      data:[<mediatype>][;base64],<data>
  *
- * @param file          The name of the file
+ * @param file          {File} File object containing file properties
  */
 FileReader.prototype.readAsDataURL = function(file) {
-   // not implemented on iOS
-    /*this.fileName = file;
+    this.fileName = "";
+    
+    if (typeof file.fullPath === "undefined") {
+        this.fileName = file;
+    } else {
+        this.fileName = file.fullPath;
+    }
 
     // LOADING state
     this.readyState = FileReader.LOADING;
@@ -291,7 +295,7 @@ FileReader.prototype.readAsDataURL = function(file) {
     var me = this;
 
     // Read file
-    navigator.fileMgr.readAsDataURL(file,
+    navigator.fileMgr.readAsDataURL(this.fileName,
 
         // Success callback
         function(r) {
@@ -347,7 +351,7 @@ FileReader.prototype.readAsDataURL = function(file) {
                 me.onloadend(evt);
             }
         }
-        );*/
+        );
 };
 
 /**

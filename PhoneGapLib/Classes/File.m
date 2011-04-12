@@ -10,6 +10,8 @@
 #import "File.h"
 #import <Categories.h>
 #import <JSON.h>
+#import <NSData+Base64.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 
 
 @implementation File
@@ -861,6 +863,15 @@
 	[self writeJavascript: jsString];
 	
 }
+/* read and return file data 
+ * IN: 
+ * NSArray* arguments
+ *	0 - NSString* callbackId
+ *	1 - NSString* fullPath
+ *	2 - NSString* encoding - NOT USED,  iOS reads and writes using UTF8!
+ * NSMutableDictionary* options
+ *	empty
+ */
 - (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
@@ -895,7 +906,78 @@
 	
 
 }
-
+/* Read content of text file and return as base64 encoded data url.
+ * IN: 
+ * NSArray* arguments
+ *	0 - NSString* callbackId
+ *	1 - NSString* fullPath
+ * NSMutableDictionary* options
+ *	empty
+ * 
+ * Determines the mime type from the file extension, returns ENCODING_ERR if mimetype can not be determined. 
+ */
+ 
+- (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
+	FileError errCode = ABORT_ERR; 
+	
+	PluginResult* result = nil;
+	NSString* jsString = nil;
+	
+	if(!argPath){
+		errCode = SYNTAX_ERR;
+	} else {
+		NSString* mimeType = [self getMimeTypeFromPath:argPath];
+		if (!mimeType) {
+			// can't return as data URL if can't figure out the mimeType
+			errCode = ENCODING_ERR;
+		} else {
+			NSFileHandle* file = [ NSFileHandle fileHandleForReadingAtPath:argPath];
+			NSData* readData = [ file readDataToEndOfFile];
+			[file closeFile];
+			if (readData) {
+				NSString* output = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, [readData base64EncodedString]];
+				result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString: output];
+				jsString = [result toSuccessCallbackString:callbackId];
+			} else {
+				errCode = NOT_FOUND_ERR;
+			}
+		}
+	}
+	if (!jsString){
+		result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt: errCode cast: @"window.localFileSystem._castError"];
+		jsString = [result toErrorCallbackString:callbackId];
+	}
+	//NSLog(@"readAsDataURL return: %@", jsString);
+	[self writeJavascript:jsString];
+		
+	
+}
+/* helper function to get the mimeType from the file extension
+ * IN:
+ *	NSString* fullPath - filename (may include path)
+ * OUT:
+ *	NSString* the mime type as type/subtype.  nil if not able to determine
+ */
+-(NSString*) getMimeTypeFromPath: (NSString*) fullPath
+{	
+	
+	NSString* mimeType = nil;
+	if(fullPath) {
+		CFStringRef typeId = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(CFStringRef)[fullPath pathExtension], NULL);
+		if (typeId) {
+			mimeType = (NSString*)UTTypeCopyPreferredTagWithClass(typeId,kUTTagClassMIMEType);
+			if (mimeType) {
+				[mimeType autorelease];
+				//NSLog(@"mime type: %@", mimeType);
+			}
+			CFRelease(typeId);
+		}
+	}
+	return mimeType;
+}
 
 - (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
