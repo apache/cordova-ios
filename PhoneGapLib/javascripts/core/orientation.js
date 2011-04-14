@@ -1,8 +1,11 @@
+if (!PhoneGap.hasResource("orientation")) {
+	PhoneGap.addResource("orientation");
+
 /**
  * This class provides access to the device orientation.
  * @constructor
  */
-function Orientation() {
+Orientation  = function() {
 	/**
 	 * The current orientation, or null if the orientation hasn't changed yet.
 	 */
@@ -65,3 +68,4 @@ Orientation.prototype.clearWatch = function(watchId) {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
 });
+};

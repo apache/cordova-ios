@@ -534,6 +534,10 @@ static NSString *gapVersion;
 	if (![fileMgr removeItemAtPath: tmpPath error: &err]){
 		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
 	}
+	// clear NSTemporaryDirectory (TODO use this for photos as well - then no need for tmpFolderPath above)
+	if (![fileMgr removeItemAtPath: NSTemporaryDirectory() error:&err]) {
+		NSLog(@"Error removing file manager temporary directory: %@", [err localizedDescription]);
+	}
 	[fileMgr release];
 	// clean up any Contact objects
 	[[Contact class] releaseDefaults];
@@ -609,7 +613,8 @@ static NSString *gapVersion;
 
 - (void)dealloc
 {
-    [commandObjects release];
+    [PluginResult releaseStatus];
+	[commandObjects release];
 	[imageView release];
 	[viewController release];
     [activityView release];

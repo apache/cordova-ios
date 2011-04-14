@@ -36,7 +36,7 @@ typedef int PGCommandStatus;
 @property (nonatomic, retain, readonly) NSString* cast;
 
 -(PluginResult*) init;
-
++(void) releaseStatus;
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal;
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsString: (NSString*) theMessage;
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsArray: (NSArray*) theMessage;

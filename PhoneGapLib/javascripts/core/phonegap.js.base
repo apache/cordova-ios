@@ -1,6 +1,8 @@
-if (typeof(DeviceInfo) != 'object')
-    DeviceInfo = {};
+if (typeof PhoneGap === "undefined") {
 
+if (typeof(DeviceInfo) !== 'object'){
+    DeviceInfo = {};
+}
 /**
  * This represents the PhoneGap API itself, and provides a global namespace for accessing
  * information about the state of PhoneGap.
@@ -13,6 +15,31 @@ PhoneGap = {
         timer: null
     },
     _constructors: []
+};
+
+/**
+ * List of resource files loaded by PhoneGap.
+ * This is used to ensure JS and other files are loaded only once.
+ */
+PhoneGap.resources = {base: true};
+
+/**
+ * Determine if resource has been loaded by PhoneGap
+ *
+ * @param name
+ * @return
+ */
+PhoneGap.hasResource = function(name) {
+    return PhoneGap.resources[name];
+};
+
+/**
+ * Add a resource to list of loaded resources by PhoneGap
+ *
+ * @param name
+ */
+PhoneGap.addResource = function(name) {
+    PhoneGap.resources[name] = true;
 };
 
 /**
@@ -277,4 +304,5 @@ PhoneGap.clone = function(obj) {
 		}
 	}
 	return retVal;
+};
 };

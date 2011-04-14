@@ -1,9 +1,12 @@
+if (!PhoneGap.hasResource("device")) {
+	PhoneGap.addResource("device");
+
 /**
  * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
  * phone, etc.
  * @constructor
  */
-function Device() 
+Device = function() 
 {
     this.platform = null;
     this.version  = null;
@@ -29,3 +32,4 @@ function Device()
 PhoneGap.addConstructor(function() {
     navigator.device = window.device = new Device();
 });
+};

@@ -1,4 +1,8 @@
-function PositionError()
+if (!PhoneGap.hasResource("geolocation")) {
+	PhoneGap.addResource("geolocation");
+
+
+PositionError = function()
 {
 	this.code = 0;
 	this.message = "";
@@ -12,7 +16,7 @@ PositionError.TIMEOUT = 3;
  * This class provides access to device GPS data.
  * @constructor
  */
-function Geolocation() {
+Geolocation = function() {
     /**
      * The last known GPS position.
      */
@@ -124,9 +128,24 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 	var frequency = (options && options.frequency) ? options.frequency : 10000; // default 10 second refresh
 
 	var that = this;
+    
+    // easy clone (members only, no funcs)
+    var lastPos = that.lastPosition? JSON.parse(JSON.stringify(that.lastPosition)) : null;
+    
 	return setInterval(function() 
 	{
-		that.getCurrentPosition(successCallback, errorCallback, options);
+        var filterFun = function(position) {
+            if (lastPos && lastPos.coords &&
+                (lastPos.coords.latitude != position.coords.latitude || 
+                 lastPos.coords.longitude != position.coords.longitude)) {
+                // only call the success callback when there is a change in position, per W3C
+                successCallback(position);
+            }
+            
+            // clone the new position, save it as our last position (internal var)
+            lastPos = JSON.parse(JSON.stringify(position));
+        };
+		that.getCurrentPosition(filterFun, errorCallback, options);
 	}, frequency);
 
 };
@@ -170,7 +189,7 @@ Geolocation.prototype.stop = function() {
 // replace origObj's functions ( listed in funkList ) with the same method name on proxyObj
 // this is a workaround to prevent UIWebView/MobileSafari default implementation of GeoLocation
 // because it includes the full page path as the title of the alert prompt
-function __proxyObj(origObj,proxyObj,funkList)
+__proxyObj = function(origObj,proxyObj,funkList)
 {
     var replaceFunk = function(org,proxy,fName)
     { 
@@ -196,3 +215,4 @@ PhoneGap.addConstructor(function()
     }
 
 });
+};

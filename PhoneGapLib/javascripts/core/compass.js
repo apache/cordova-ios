@@ -1,8 +1,11 @@
+if (!PhoneGap.hasResource("compass")) {
+	PhoneGap.addResource("compass");
+	
 /**
  * This class provides access to device Compass data.
  * @constructor
  */
-function Compass() {
+Compass = function() {
     /**
      * The last known Compass position.
      */
@@ -102,3 +105,4 @@ Compass.prototype.stop = function() {
 PhoneGap.addConstructor(function() {
     if (typeof navigator.compass == "undefined") navigator.compass = new Compass();
 });
+};

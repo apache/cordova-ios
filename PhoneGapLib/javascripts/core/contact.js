@@ -1,10 +1,6 @@
-/*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
- * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
- *
- * Copyright (c) 2005-2010, Nitobi Software Inc.
- * Copyright (c) 2010, IBM Corporation
- */
+if (!PhoneGap.hasResource("contact")) {
+	PhoneGap.addResource("contact");
+
 
 /**
 * Contains information about a single contact.
@@ -421,4 +417,4 @@ PhoneGap.addConstructor(function() {
     if(typeof navigator.service == "undefined") navigator.service = new Object();
     if(typeof navigator.service.contacts == "undefined") navigator.service.contacts = new Contacts();
 });
-
+};

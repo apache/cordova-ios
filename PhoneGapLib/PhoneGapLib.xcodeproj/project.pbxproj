@@ -71,6 +71,8 @@
 		88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* Accelerometer.h */; };
 		88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* Accelerometer.m */; };
 		AA747D9F0F9514B9006C5449 /* PhoneGapLib_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */; };
+		C937A4561337599E002C4C79 /* FileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* FileTransfer.h */; };
+		C937A4571337599E002C4C79 /* FileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* FileTransfer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -138,6 +140,8 @@
 		88BA573B109BB46F00FB5E78 /* Accelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Accelerometer.h; path = Classes/Accelerometer.h; sourceTree = "<group>"; };
 		88BA573C109BB46F00FB5E78 /* Accelerometer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Accelerometer.m; path = Classes/Accelerometer.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* PhoneGapLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		C937A4541337599E002C4C79 /* FileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTransfer.h; path = Classes/FileTransfer.h; sourceTree = "<group>"; };
+		C937A4551337599E002C4C79 /* FileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTransfer.m; path = Classes/FileTransfer.m; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libPhoneGapLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPhoneGapLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -211,6 +215,8 @@
 				8887FD331090FBE7009987E8 /* Image.m */,
 				8887FD341090FBE7009987E8 /* InvokedUrlCommand.h */,
 				8887FD351090FBE7009987E8 /* InvokedUrlCommand.m */,
+				C937A4541337599E002C4C79 /* FileTransfer.h */,
+				C937A4551337599E002C4C79 /* FileTransfer.m */,
 				8887FD441090FBE7009987E8 /* LoadingView.h */,
 				8887FD451090FBE7009987E8 /* LoadingView.m */,
 				8887FD461090FBE7009987E8 /* Location.h */,
@@ -329,6 +335,7 @@
 				30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */,
 				1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */,
 				1F92F4A01314023E0046367C /* PluginResult.h in Headers */,
+				C937A4561337599E002C4C79 /* FileTransfer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,6 +439,7 @@
 				30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */,
 				1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */,
 				1F92F4A11314023E0046367C /* PluginResult.m in Sources */,
+				C937A4571337599E002C4C79 /* FileTransfer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,8 +1,11 @@
+if (!PhoneGap.hasResource("debugconsole")) {
+	PhoneGap.addResource("debugconsole");
+	
 /**
  * This class provides access to the debugging console.
  * @constructor
  */
-function DebugConsole(isDeprecated) {
+DebugConsole = function(isDeprecated) {
     this.logLevel = DebugConsole.INFO_LEVEL;
     this.isDeprecated = isDeprecated ? true : false;
 }
@@ -16,7 +19,7 @@ DebugConsole.NONE_LEVEL   = 8;
 													
 DebugConsole.prototype.setLevel = function(level) {
     this.logLevel = level;
-}
+};
 
 /**
  * Utility function for rendering and indenting strings, or serializing
@@ -106,3 +109,4 @@ PhoneGap.addConstructor(function() {
     window.console = new DebugConsole();
     window.debug = new DebugConsole(true);
 });
+};
