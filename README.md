@@ -102,6 +102,10 @@ A. Check whether there is a space in the path to PhoneGapLib, particularly if th
 
 A. In your project, there should be a PhoneGapBuildSettings.xcconfig file. Modify the PHONEGAPLIB variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
 
+**Q. I installed Xcode 4, but I don't see the PhoneGap template when creating a New Project? Where is it?**
+
+A. The Xcode 4 template specification file is new, and undocumented. We are trying to work around this, currently you can create a new project using a shell script. More info  [here](http://bit.ly/fhr05y).
+
 
 BUGS?
 -----
