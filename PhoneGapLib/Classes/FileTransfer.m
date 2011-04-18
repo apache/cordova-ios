@@ -4,6 +4,7 @@
  * 
  * Copyright (c) 2005-2011, Nitobi Software Inc.
  * Copyright (c) 2011, Matt Kane
+ * Copyright (c) 2011, IBM Corporation
  */
 
 #import "FileTransfer.h"
@@ -20,6 +21,7 @@
     NSString* filePath = (NSString*)[options objectForKey:@"filePath"];
     NSString* server = (NSString*)[options objectForKey:@"server"];
     PluginResult* result = nil;
+    FileTransferError errorCode = 0;
 
     
     NSURL* file;
@@ -34,12 +36,14 @@
 
     
     if(![file isFileURL]) {
-        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"Invalid file path or URL"];
-
+        NSLog(@"File Transfer Error: Invalid file path or URL");
     } else if (!url) {
-        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"Invalid server URL"];
+        NSLog(@"File Transfer Error: Invalid server URL");
+
+        
     }
-    if(result) {
+    if(errorCode > 0) {
+        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
         return;
     }
@@ -67,7 +71,8 @@
 	NSData *imageData = [NSData dataWithContentsOfURL:file];
 	
 	if(!imageData) {
-        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"Could not open file"];
+        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: FILE_NOT_FOUND_ERR cast: @"navigator.fileTransfer._castTransferError"];
+        NSLog(@"File Transfer Error: Could not open file");
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
 
 		return;
@@ -96,11 +101,11 @@
 	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	[req setHTTPBody:postBody];
 	
-	FileTransferDelegate* delegate = [[FileTransferDelegate alloc] init];
+	FileTransferDelegate* delegate = [[[FileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
     delegate.callbackId = callbackId;
 	
-	[[NSURLConnection connectionWithRequest:req delegate:delegate] retain];
+	[NSURLConnection connectionWithRequest:req delegate:delegate];
     
 }
 
@@ -114,19 +119,17 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection 
 {
-	NSString* response = [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: response];
+	NSString* response = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [response stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] cast: @"navigator.fileTransfer._castUploadResult"];
     [command writeJavascript:[result toSuccessCallbackString:callbackId]];
-	[connection autorelease];
-	[self autorelease];
+    [response release];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error 
 {
-    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [error localizedDescription]];
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: CONNECTION_ERR cast: @"navigator.fileTransfer._castTransferError"];
+    NSLog(@"File Transfer Error: %@", [error localizedDescription]);
     [command writeJavascript:[result toErrorCallbackString:callbackId]];
-	[connection autorelease];
-	[self autorelease];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data

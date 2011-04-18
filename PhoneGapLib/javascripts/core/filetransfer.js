@@ -65,11 +65,6 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
         return;
     }
 
-	/* We need to unescape the result, because it must be escape so non-js-safe content can be passed-through. */
-	var success = function(result) {
-		result = unescape(result);
-		successCallback(result);
-	}
 
     // errorCallback optional
     if (errorCallback && (typeof errorCallback != "function")) {
@@ -77,8 +72,24 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
         return;
     }
 	
-    PhoneGap.exec(success, errorCallback, 'FileTransfer', 'upload', [options]);
+    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'upload', [options]);
 };
+
+FileTransfer.prototype._castTransferError = function(pluginResult) {
+	var fileError = new FileTransferError();
+	fileError.code = pluginResult.message;
+	pluginResult.message = fileError;
+	return pluginResult;
+}
+
+FileTransfer.prototype._castUploadResult = function(pluginResult) {
+	var result = new FileUploadResult();
+	result.bytesSent = "";  // unknown
+	// responseCode inited to null in constructor - is not returned in iOS
+	result.response = unescape(pluginResult.message);
+	pluginResult.message = result;
+	return pluginResult;
+}
 
 /**
  * Options to customize the HTTP request used to upload files.
@@ -87,7 +98,7 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
  * @param mimeType {String}  Mimetype of the uploaded file. Defaults to image/jpeg.
  * @param params {Object}    Object with key: value params to send to the server.
  */
-FileTransferOptions = function(fileKey, fileName, mimeType, params) {
+FileUploadOptions = function(fileKey, fileName, mimeType, params) {
     this.fileKey = fileKey || null;
     this.fileName = fileName || null;
     this.mimeType = mimeType || null;
