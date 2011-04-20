@@ -97,6 +97,11 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage cast:theCast] autorelease];
 }
++(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageToErrorObject: (int) errorCode 
+{
+    NSDictionary* errDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errorCode] forKey:@"code"];
+	return [[[self alloc] initWithStatus: statusOrdinal message: errDict cast:nil] autorelease];
+}
 
 
 -(void) setKeepCallbackAsBool:(BOOL)bKeepCallback
@@ -127,7 +132,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 					[self.status intValue], self.message, [self.keepCallback boolValue]];
 	}
 
-	//NSLog(@"PluginResult:toJSONString - %@", resultString);
+	NSLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;
 }
 -(NSString*) toSuccessCallbackString: (NSString*) callbackId
@@ -153,7 +158,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 	else {
 		errorCB = [NSString stringWithFormat:@"PhoneGap.callbackError('%@',%@);", callbackId, [self toJSONString]];
 	}
-	//NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
+	NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
 	return errorCB;
 }	
 										 

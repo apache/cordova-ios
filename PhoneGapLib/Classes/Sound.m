@@ -42,7 +42,7 @@
 // "Naked" resource paths are assumed to be from the www folder as its base
 - (NSURL*) urlForResource:(NSString*)resourcePath
 {
-	NSURL* resourceURL = nil;
+	NSURL* resourceURL = [NSURL fileURLWithPath:resourcePath];
 	
 	// attempt to find file path
     NSString* filePath = [PhoneGapDelegate pathForResource:resourcePath];
@@ -58,7 +58,7 @@
 			
 			NSString* recordingPath = [NSString stringWithFormat:@"%@/%@", [PhoneGapDelegate applicationDocumentsDirectory], [resourceURL host]];
 			resourceURL = [NSURL fileURLWithPath:recordingPath];
-		} else {
+		} else if (![resourceURL isFileURL]){
 			NSLog(@"Unknown resource '%@'", resourcePath);
 		}
     }

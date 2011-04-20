@@ -23,6 +23,10 @@
 /* Begin PBXBuildFile section */
 		1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C04CC12BC247D004F9E10 /* Contact.h */; };
 		1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C04CD12BC247D004F9E10 /* Contact.m */; };
+		1F584B9B1385A28A00ED25E8 /* Capture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F584B991385A28900ED25E8 /* Capture.h */; };
+		1F584B9C1385A28A00ED25E8 /* Capture.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F584B9A1385A28900ED25E8 /* Capture.m */; };
+		1F5AC3C51396F75000EC7B95 /* Capture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F584B991385A28900ED25E8 /* Capture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1F5AC3C61396F76700EC7B95 /* Capture.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F584B9A1385A28900ED25E8 /* Capture.m */; };
 		1F92F4A01314023E0046367C /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; };
 		1F92F4A11314023E0046367C /* PluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F92F49F1314023E0046367C /* PluginResult.m */; };
 		30325990136B325100982B63 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* Camera.m */; };
@@ -85,13 +89,13 @@
 		303259C9136B326300982B63 /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259CA136B326300982B63 /* FileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* FileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30325A0C136B343700982B63 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
-		30383DCE1385F59900E37E22 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
+		30383DCE1385F59900E37E22 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30383DE01385F65600E37E22 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		307A8F9E1385A2EC00E43782 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
 		307A8F9F1385A2EC00E43782 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		30956FD2138F1F5600FC3563 /* PGMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* PGMotion.h */; };
 		30956FD3138F1F5600FC3563 /* PGMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* PGMotion.m */; };
-		30956FFC138F317200FC3563 /* PGMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* PGMotion.h */; };
+		30956FFC138F317200FC3563 /* PGMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* PGMotion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30956FFD138F317200FC3563 /* PGMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* PGMotion.m */; };
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
 		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
@@ -153,6 +157,8 @@
 /* Begin PBXFileReference section */
 		1F3C04CC12BC247D004F9E10 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contact.h; path = Classes/Contact.h; sourceTree = "<group>"; };
 		1F3C04CD12BC247D004F9E10 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contact.m; path = Classes/Contact.m; sourceTree = "<group>"; };
+		1F584B991385A28900ED25E8 /* Capture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Capture.h; path = Classes/Capture.h; sourceTree = "<group>"; };
+		1F584B9A1385A28900ED25E8 /* Capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Capture.m; path = Classes/Capture.m; sourceTree = "<group>"; };
 		1F92F49E1314023E0046367C /* PluginResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginResult.h; path = Classes/PluginResult.h; sourceTree = "<group>"; };
 		1F92F49F1314023E0046367C /* PluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PluginResult.m; path = Classes/PluginResult.m; sourceTree = "<group>"; };
 		303258D8136B2C9400982B63 /* PhoneGap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhoneGap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -245,7 +251,7 @@
 				303258D8136B2C9400982B63 /* PhoneGap.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
+			sourceTree = PHONEGAPLIB;
 		};
 		0867D691FE84028FC02AAC07 /* PhoneGapLib */ = {
 			isa = PBXGroup;
@@ -289,6 +295,8 @@
 				88BA573C109BB46F00FB5E78 /* Accelerometer.m */,
 				8887FD261090FBE7009987E8 /* Camera.h */,
 				8887FD271090FBE7009987E8 /* Camera.m */,
+				1F584B991385A28900ED25E8 /* Capture.h */,
+				1F584B9A1385A28900ED25E8 /* Capture.m */,
 				8887FD281090FBE7009987E8 /* Categories.h */,
 				8887FD291090FBE7009987E8 /* Categories.m */,
 				1F3C04CC12BC247D004F9E10 /* Contact.h */,
@@ -384,7 +392,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				30383DCE1385F59900E37E22 /* Connection.h in Headers */,
 				303259AD136B326300982B63 /* Camera.h in Headers */,
 				303259AE136B326300982B63 /* Categories.h in Headers */,
 				303259AF136B326300982B63 /* Contacts.h in Headers */,
@@ -414,8 +421,10 @@
 				303259C7136B326300982B63 /* UIColor-Expanded.h in Headers */,
 				303259C8136B326300982B63 /* Contact.h in Headers */,
 				303259C9136B326300982B63 /* PluginResult.h in Headers */,
-				303259CA136B326300982B63 /* FileTransfer.h in Headers */,
+				30383DCE1385F59900E37E22 /* Connection.h in Headers */,
 				30956FFC138F317200FC3563 /* PGMotion.h in Headers */,
+				303259CA136B326300982B63 /* FileTransfer.h in Headers */,
+				1F5AC3C51396F75000EC7B95 /* Capture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,6 +464,7 @@
 				C937A4561337599E002C4C79 /* FileTransfer.h in Headers */,
 				307A8F9E1385A2EC00E43782 /* Connection.h in Headers */,
 				30956FD2138F1F5600FC3563 /* PGMotion.h in Headers */,
+				1F584B9B1385A28A00ED25E8 /* Capture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +597,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F5AC3C61396F76700EC7B95 /* Capture.m in Sources */,
 				30383DE01385F65600E37E22 /* Connection.m in Sources */,
 				30325990136B325100982B63 /* Camera.m in Sources */,
 				30325991136B325100982B63 /* Categories.m in Sources */,
@@ -656,6 +667,7 @@
 				C937A4571337599E002C4C79 /* FileTransfer.m in Sources */,
 				307A8F9F1385A2EC00E43782 /* Connection.m in Sources */,
 				30956FD3138F1F5600FC3563 /* PGMotion.m in Sources */,
+				1F584B9C1385A28A00ED25E8 /* Capture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,6 +720,7 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -715,6 +728,7 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "i386 armv6 armv7";
 			};
@@ -729,6 +743,7 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -736,6 +751,7 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "i386 armv6 armv7";
 			};
 			name = Release;
@@ -745,7 +761,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
@@ -757,12 +773,14 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = PhoneGap;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -783,12 +801,14 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = PhoneGap;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = NO;
 			};

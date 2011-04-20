@@ -1,16 +1,6 @@
 if (!PhoneGap.hasResource("camera")) {
 	PhoneGap.addResource("camera");
 	
-// adding in preparation to switch to Media capture API
-CaptureError = function() {
-   this.code = null;
-}
-
-// capture error codes
-CaptureError.CAPTURE_INTERNAL_ERR = 0;
-CaptureError.CAPTURE_APPLICATION_BUSY = 1;
-CaptureError.CAPTURE_INVALID_ARGUMENT = 2;
-CaptureError.CAPTURE_NO_MEDIA_FILES = 3;
 
 /**
  * This class provides access to the device camera.
@@ -81,3 +71,4 @@ PhoneGap.addConstructor(function() {
     if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
 });
 };
+
