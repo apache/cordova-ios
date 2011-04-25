@@ -109,7 +109,7 @@ A. The Xcode 4 template specification file is new, and undocumented. We are tryi
 
 BUGS?
 -----
-File them at [http://phonegap.lighthouseapp.com](http://phonegap.lighthouseapp.com/projects/20116-iphone)
+File them at [PhoneGap-iOS GitHub Issues](https://github.com/phonegap/phonegap-iphone/issues)
 
 MORE INFO
 ----------
