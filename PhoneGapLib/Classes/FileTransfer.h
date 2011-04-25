@@ -29,10 +29,14 @@ typedef int FileTransferError;
 @interface FileTransferDelegate : NSObject {
 	FileTransfer* command;
 	NSString* callbackId;
+    NSInteger bytesWritten;
+    
 }
 
 @property (nonatomic, retain) NSMutableData* responseData;
 @property (nonatomic, retain) FileTransfer* command;
 @property (nonatomic, retain) NSString* callbackId;
+@property NSInteger bytesWritten;
+
 
 @end;

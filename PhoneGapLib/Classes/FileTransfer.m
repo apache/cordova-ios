@@ -114,14 +114,19 @@
 
 @implementation FileTransferDelegate
 
-@synthesize callbackId, responseData, command;
+@synthesize callbackId, responseData, command, bytesWritten;
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection 
 {
-	NSString* response = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [response stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] cast: @"navigator.fileTransfer._castUploadResult"];
-    [command writeJavascript:[result toSuccessCallbackString:callbackId]];
+    NSString* response = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+    // create dictionary to return FileUploadResult object
+    NSMutableDictionary* uploadResult = [NSMutableDictionary dictionaryWithCapacity:3];
+    [uploadResult setObject: [response stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
+    [uploadResult setObject:[NSNumber numberWithInt: self.bytesWritten] forKey:@"bytesSent"];
+    [uploadResult setObject:[NSNull null] forKey: @"responseCode"];
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: uploadResult cast: @"navigator.fileTransfer._castUploadResult"];
+    [command writeJavascript:[result toSuccessCallbackString: callbackId]];
     [response release];
 }
 
@@ -129,14 +134,44 @@
 {
     PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: CONNECTION_ERR cast: @"navigator.fileTransfer._castTransferError"];
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
-    [command writeJavascript:[result toErrorCallbackString:callbackId]];
+    [command writeJavascript:[result toErrorCallbackString: callbackId]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [responseData appendData:data];
 }
+- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
+{
+    self.bytesWritten = totalBytesWritten;
+}
+/* TESTING ONLY CODE
+// use ONLY for testing with self signed certificates
+// uncomment and modify server name in connectiondidReceiveAuthenticationChallenge
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
 
+- (void)connection:(NSURLConnection *) connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge*)challenge
+{
+	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+	{
+        //NSLog(@"challenge host: %@", challenge.protectionSpace.host);
+		// we only trust our own domain
+		if ([challenge.protectionSpace.host isEqualToString:@"serverName.domain.com"]){
+            NSURLCredential* myCredential = [NSURLCredential credentialForTrust: challenge.protectionSpace.serverTrust];
+            
+            [challenge.sender useCredential:myCredential forAuthenticationChallenge:challenge];
+			
+		}
+	}
+    
+	[challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+// uncomment the above two methods for testing servers with self signed certificates
+// END TESTING ONLY CODE
+ */
 - (id) init
 {
     if ((self = [super init])) {

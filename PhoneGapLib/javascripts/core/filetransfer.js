@@ -26,8 +26,8 @@ FileUploadResult = function() {
 /**
  * FileTransferError
  */
-FileTransferError = function() {
-    this.code = null;
+FileTransferError = function(errorCode) {
+    this.code = errorCode || null;
 }
 
 FileTransferError.FILE_NOT_FOUND_ERR = 1;
@@ -76,17 +76,17 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
 };
 
 FileTransfer.prototype._castTransferError = function(pluginResult) {
-	var fileError = new FileTransferError();
-	fileError.code = pluginResult.message;
+	var fileError = new FileTransferError(pluginResult.message);
+	//fileError.code = pluginResult.message;
 	pluginResult.message = fileError;
 	return pluginResult;
 }
 
 FileTransfer.prototype._castUploadResult = function(pluginResult) {
 	var result = new FileUploadResult();
-	result.bytesSent = "";  // unknown
-	// responseCode inited to null in constructor - is not returned in iOS
-	result.response = unescape(pluginResult.message);
+	result.bytesSent = pluginResult.message.bytesSent;
+	result.responseCode = pluginResult.message.responseCode;
+	result.response = decodeURIComponent(pluginResult.message.response);
 	pluginResult.message = result;
 	return pluginResult;
 }
