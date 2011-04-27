@@ -52,12 +52,6 @@
 		8887FD8E1090FBE7009987E8 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4F1090FBE7009987E8 /* Notification.m */; };
 		8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD501090FBE7009987E8 /* NSData+Base64.h */; };
 		8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD511090FBE7009987E8 /* NSData+Base64.m */; };
-		8887FD911090FBE7009987E8 /* OCABMutableMultiValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD521090FBE7009987E8 /* OCABMutableMultiValue.h */; };
-		8887FD921090FBE7009987E8 /* OCABMutableMultiValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD531090FBE7009987E8 /* OCABMutableMultiValue.m */; };
-		8887FD931090FBE7009987E8 /* OCABRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD541090FBE7009987E8 /* OCABRecord.h */; };
-		8887FD941090FBE7009987E8 /* OCABRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD551090FBE7009987E8 /* OCABRecord.m */; };
-		8887FD951090FBE7009987E8 /* OCCFObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD561090FBE7009987E8 /* OCCFObject.h */; };
-		8887FD961090FBE7009987E8 /* OCCFObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD571090FBE7009987E8 /* OCCFObject.m */; };
 		8887FD971090FBE7009987E8 /* PhoneGapCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD581090FBE7009987E8 /* PhoneGapCommand.h */; };
 		8887FD981090FBE7009987E8 /* PhoneGapCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD591090FBE7009987E8 /* PhoneGapCommand.m */; };
 		8887FD991090FBE7009987E8 /* PhoneGapDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5A1090FBE7009987E8 /* PhoneGapDelegate.h */; };
@@ -121,12 +115,6 @@
 		8887FD4F1090FBE7009987E8 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Notification.m; path = Classes/Notification.m; sourceTree = "<group>"; };
 		8887FD501090FBE7009987E8 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "Classes/NSData+Base64.h"; sourceTree = "<group>"; };
 		8887FD511090FBE7009987E8 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "Classes/NSData+Base64.m"; sourceTree = "<group>"; };
-		8887FD521090FBE7009987E8 /* OCABMutableMultiValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCABMutableMultiValue.h; path = Classes/OCABMutableMultiValue.h; sourceTree = "<group>"; };
-		8887FD531090FBE7009987E8 /* OCABMutableMultiValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCABMutableMultiValue.m; path = Classes/OCABMutableMultiValue.m; sourceTree = "<group>"; };
-		8887FD541090FBE7009987E8 /* OCABRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCABRecord.h; path = Classes/OCABRecord.h; sourceTree = "<group>"; };
-		8887FD551090FBE7009987E8 /* OCABRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCABRecord.m; path = Classes/OCABRecord.m; sourceTree = "<group>"; };
-		8887FD561090FBE7009987E8 /* OCCFObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCCFObject.h; path = Classes/OCCFObject.h; sourceTree = "<group>"; };
-		8887FD571090FBE7009987E8 /* OCCFObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCCFObject.m; path = Classes/OCCFObject.m; sourceTree = "<group>"; };
 		8887FD581090FBE7009987E8 /* PhoneGapCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapCommand.h; path = Classes/PhoneGapCommand.h; sourceTree = "<group>"; };
 		8887FD591090FBE7009987E8 /* PhoneGapCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapCommand.m; path = Classes/PhoneGapCommand.m; sourceTree = "<group>"; };
 		8887FD5A1090FBE7009987E8 /* PhoneGapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapDelegate.h; path = Classes/PhoneGapDelegate.h; sourceTree = "<group>"; };
@@ -249,12 +237,6 @@
 			children = (
 				8887FD501090FBE7009987E8 /* NSData+Base64.h */,
 				8887FD511090FBE7009987E8 /* NSData+Base64.m */,
-				8887FD521090FBE7009987E8 /* OCABMutableMultiValue.h */,
-				8887FD531090FBE7009987E8 /* OCABMutableMultiValue.m */,
-				8887FD541090FBE7009987E8 /* OCABRecord.h */,
-				8887FD551090FBE7009987E8 /* OCABRecord.m */,
-				8887FD561090FBE7009987E8 /* OCCFObject.h */,
-				8887FD571090FBE7009987E8 /* OCCFObject.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -323,9 +305,6 @@
 				8887FD8B1090FBE7009987E8 /* Network.h in Headers */,
 				8887FD8D1090FBE7009987E8 /* Notification.h in Headers */,
 				8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */,
-				8887FD911090FBE7009987E8 /* OCABMutableMultiValue.h in Headers */,
-				8887FD931090FBE7009987E8 /* OCABRecord.h in Headers */,
-				8887FD951090FBE7009987E8 /* OCCFObject.h in Headers */,
 				8887FD971090FBE7009987E8 /* PhoneGapCommand.h in Headers */,
 				8887FD991090FBE7009987E8 /* PhoneGapDelegate.h in Headers */,
 				8887FD9B1090FBE7009987E8 /* PhoneGapViewController.h in Headers */,
@@ -427,9 +406,6 @@
 				8887FD8C1090FBE7009987E8 /* Network.m in Sources */,
 				8887FD8E1090FBE7009987E8 /* Notification.m in Sources */,
 				8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */,
-				8887FD921090FBE7009987E8 /* OCABMutableMultiValue.m in Sources */,
-				8887FD941090FBE7009987E8 /* OCABRecord.m in Sources */,
-				8887FD961090FBE7009987E8 /* OCCFObject.m in Sources */,
 				8887FD981090FBE7009987E8 /* PhoneGapCommand.m in Sources */,
 				8887FD9A1090FBE7009987E8 /* PhoneGapDelegate.m in Sources */,
 				8887FD9C1090FBE7009987E8 /* PhoneGapViewController.m in Sources */,
