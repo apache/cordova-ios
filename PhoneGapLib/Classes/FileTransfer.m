@@ -25,6 +25,7 @@
 
     
     NSURL* file;
+    NSData *fileData = nil;
     
     if ([filePath hasPrefix:@"/"]) {
         file = [NSURL fileURLWithPath:filePath];
@@ -33,15 +34,33 @@
     }
     
     NSURL *url = [NSURL URLWithString:server];
-
     
-    if(![file isFileURL]) {
-        NSLog(@"File Transfer Error: Invalid file path or URL");
-    } else if (!url) {
+    
+    if (!url) {
+        errorCode = INVALID_URL_ERR;
         NSLog(@"File Transfer Error: Invalid server URL");
-
-        
+    } else if(![file isFileURL]) {
+        errorCode = FILE_NOT_FOUND_ERR;
+        NSLog(@"File Transfer Error: Invalid file path or URL");
+    } else {
+        // check that file is valid
+        NSFileManager* fileMgr = [[NSFileManager alloc] init];
+        BOOL bIsDirectory = NO;
+        BOOL bExists = [fileMgr fileExistsAtPath:[file path] isDirectory:&bIsDirectory];
+        if (!bExists || bIsDirectory) {
+            errorCode = FILE_NOT_FOUND_ERR;
+        } else {
+            // file exists, make sure we can get the data
+            fileData = [NSData dataWithContentsOfURL:file];
+            
+            if(!fileData) {
+                errorCode =  FILE_NOT_FOUND_ERR;
+                NSLog(@"File Transfer Error: Could not read file data");
+            }
+        }
+        [fileMgr release];
     }
+    
     if(errorCode > 0) {
         result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
@@ -61,23 +80,15 @@
 	NSString *boundary = @"*****com.phonegap.formBoundary";
     
 	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
-	[req setValue:contentType forHTTPHeaderField:@"Content-type"];
+	[req setValue:contentType forHTTPHeaderField:@"Content-Type"];
+    //Content-Type: multipart/form-data; boundary=*****com.phonegap.formBoundary
 	[req setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 	NSString* userAgent = [[webView request] valueForHTTPHeaderField:@"User-agent"];
 	if(userAgent) {
-		[req setValue: userAgent forHTTPHeaderField:@"User-agent"];
+		[req setValue: userAgent forHTTPHeaderField:@"User-Agent"];
 	}
-	
-	NSData *imageData = [NSData dataWithContentsOfURL:file];
-	
-	if(!imageData) {
-        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: FILE_NOT_FOUND_ERR cast: @"navigator.fileTransfer._castTransferError"];
-        NSLog(@"File Transfer Error: Could not open file");
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
 
-		return;
-	}
-	
+    
 	NSMutableData *postBody = [NSMutableData data];
 	
 	NSEnumerator *enumerator = [params keyEnumerator];
@@ -96,10 +107,14 @@
     
 	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileKey, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:imageData];
-	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
+    NSLog(@"fileData length: %d", [fileData length]);
+	[postBody appendData:fileData];
+	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //[req setValue:[[NSNumber numberWithInteger:[postBody length]] stringValue] forHTTPHeaderField:@"Content-Length"];
 	[req setHTTPBody:postBody];
+    
 	
 	FileTransferDelegate* delegate = [[[FileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
