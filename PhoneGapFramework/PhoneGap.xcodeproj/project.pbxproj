@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		303257C6136B2A5900982B63 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 303257C5136B2A5900982B63 /* VERSION */; };
 		3072C9AE136A41460060FDF1 /* PhoneGap-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3072C9AC136A41460060FDF1 /* PhoneGap-Info.plist */; };
 		3072C9AF136A41460060FDF1 /* PhoneGap-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 3072C9AD136A41460060FDF1 /* PhoneGap-Prefix.pch */; settings = {ATTRIBUTES = (Public, ); }; };
 		3072C9ED136A41590060FDF1 /* Accelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3072C9B1136A41590060FDF1 /* Accelerometer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,6 +86,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		303257C5136B2A5900982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = VERSION; path = ../PhoneGapLib/VERSION; sourceTree = SOURCE_ROOT; };
 		3046CF74136A409300E01004 /* PhoneGap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhoneGap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3072C9AC136A41460060FDF1 /* PhoneGap-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PhoneGap-Info.plist"; sourceTree = "<group>"; };
 		3072C9AD136A41460060FDF1 /* PhoneGap-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PhoneGap-Prefix.pch"; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 		3046CF67136A409300E01004 = {
 			isa = PBXGroup;
 			children = (
+				303257C5136B2A5900982B63 /* VERSION */,
 				3072C9B0136A41590060FDF1 /* Classes */,
 				3072C9AC136A41460060FDF1 /* PhoneGap-Info.plist */,
 				3072C9AD136A41460060FDF1 /* PhoneGap-Prefix.pch */,
@@ -345,6 +348,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3072C9AE136A41460060FDF1 /* PhoneGap-Info.plist in Resources */,
+				303257C6136B2A5900982B63 /* VERSION in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

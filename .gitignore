@@ -7,3 +7,6 @@ docs
 PhoneGapLibInstaller.pkg
 
 /PhoneGapLib/javascripts/phonegap-uncompressed.js
+*.mode1v3
+*.pbxuser
+build
