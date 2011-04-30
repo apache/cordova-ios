@@ -12,6 +12,8 @@
 //  appreciated but not required.
 //
 
+#import <Foundation/Foundation.h>
+
 void *NewBase64Decode(
 	const char *inputBuffer,
 	size_t length,

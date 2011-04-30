@@ -5,6 +5,7 @@
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  */
 
+#import <Foundation/Foundation.h>
 
 @interface NSDictionary(com_phonegap_NSDictionary_Extension)
 

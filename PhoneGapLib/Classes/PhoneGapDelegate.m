@@ -13,6 +13,9 @@
 #import "InvokedUrlCommand.h"
 #import "Contact.h"
 
+#define SYMBOL_TO_NSSTRING_HELPER(x) @#x
+#define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
+
 @implementation PhoneGapDelegate
 
 @synthesize window;
@@ -70,12 +73,18 @@ This only touches the filesystem once and stores the result in the class variabl
 static NSString *gapVersion;
 + (NSString*) phoneGapVersion
 {
+#ifdef PG_VERSION
+	gapVersion = SYMBOL_TO_NSSTRING(PG_VERSION);
+#else
+
 	if (gapVersion == nil) {
 		NSBundle *mainBundle = [NSBundle mainBundle];
 		NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
 		// read from the filesystem and save in the variable
 		gapVersion = [ [ NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL ] retain ];
 	}
+#endif
+	
 	return gapVersion;
 }
 + (NSString*) tmpFolderName
