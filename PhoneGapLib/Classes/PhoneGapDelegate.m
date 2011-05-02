@@ -268,7 +268,7 @@ static NSString *gapVersion;
 	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
 	 * You can change this image by swapping out the Default.png file within the resource folder.
 	 */
-	UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]];
+	UIImage* image = [UIImage imageNamed:@"Default"];
 	imageView = [[UIImageView alloc] initWithImage:image];
 	[image release];
 	
