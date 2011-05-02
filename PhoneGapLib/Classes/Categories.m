@@ -22,14 +22,14 @@
 	return exists;
 }
 
-- (NSUInteger) integerValueForKey:(NSString*)key  defaultValue:(NSUInteger)defaultValue withRange:(NSRange)range
+- (NSInteger) integerValueForKey:(NSString*)key  defaultValue:(NSInteger)defaultValue withRange:(NSRange)range
 {
 
-	NSUInteger value = defaultValue;
+	NSInteger value = defaultValue;
 	
 	NSNumber* val = [self valueForKey:key];  //value is an NSNumber
 	if (val != nil) {
-		value = [val unsignedIntValue];
+		value = [val integerValue];
 	}
 	
 	// min, max checks
