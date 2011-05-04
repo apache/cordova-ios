@@ -6,10 +6,10 @@
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 
-#import "___PROJECTNAMEASIDENTIFIER___AppDelegate.h"
+#import "AppDelegate.h"
 #import "PhoneGapViewController.h"
 
-@implementation ___PROJECTNAMEASIDENTIFIER___AppDelegate
+@implementation AppDelegate
 
 - (id) init
 {	

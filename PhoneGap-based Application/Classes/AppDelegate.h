@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "PhoneGapDelegate.h"
 
-@interface ___PROJECTNAMEASIDENTIFIER___AppDelegate : PhoneGapDelegate {
+@interface AppDelegate : PhoneGapDelegate {
 }
 
 @end
