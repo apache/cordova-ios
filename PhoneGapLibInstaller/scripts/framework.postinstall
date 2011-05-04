@@ -1,0 +1,4 @@
+#!/bin/sh
+cp -R ~/Library/Frameworks/PhoneGap.framework /Users/Shared/Frameworks
+chmod ugo+rw /Users/Shared/Frameworks/PhoneGap.framework
+rm -rf ~/Library/Frameworks/PhoneGap.framework/

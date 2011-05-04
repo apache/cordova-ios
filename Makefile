@@ -20,6 +20,7 @@ JAVA = java
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 PACKAGEMAKER = /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
+XC = xcodebuild
 
 all :: installer
 
@@ -30,14 +31,18 @@ phonegap-js-core:
 	$(MAKE) -C PhoneGapLib
 
 xcode4-template: clean
-	$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap.xctemplate
-	$(CP) -R PhoneGap-based\ Application/Classes PhoneGap.xctemplate
-	$(CP) -R PhoneGap-based\ Application/Plugins PhoneGap.xctemplate
-	$(CP) -R PhoneGap-based\ Application/Resources PhoneGap.xctemplate
-	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist PhoneGap.xctemplate/___PACKAGENAME___-Info.plist
-	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch PhoneGap.xctemplate/___PACKAGENAME___-Prefix.pch
-	$(CP) PhoneGap-based\ Application/main.m PhoneGap.xctemplate
-	$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap.xctemplate
+	$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap-based\ Application.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Classes PhoneGap-based\ Application.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Plugins PhoneGap-based\ Application.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Resources PhoneGap-based\ Application.xctemplate
+	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
+	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
+	$(CP) PhoneGap-based\ Application/main.m PhoneGap-based\ Application.xctemplate
+	$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap-based\ Application.xctemplate
+	
+phonegap-framework:
+	cd PhoneGapLib;$(XC) -target UniversalFramework;cd -;
+	cp -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
 	
 clean:
 	$(RM_RF) PhoneGapLib/build/
@@ -51,7 +56,7 @@ clean:
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
 	$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
 	
-installer: xcode4-template
+installer: xcode4-template phonegap-framework
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
 
 uninstall:
