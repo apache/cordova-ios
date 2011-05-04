@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DEST_DIR=/Users/Shared/Frameworks
+DEST_DIR=/Users/Shared/Library/Frameworks
 
 cp -R "$2" ${DEST_DIR}
 chmod ugo+rw ${DEST_DIR}/PhoneGap.framework
