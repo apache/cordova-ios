@@ -70,11 +70,21 @@ clean: clean-xcode4-template
 installer: xcode4-template phonegap-framework
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
 
+install: installer
+	open PhoneGapLibInstaller.pkg
+	
 uninstall:
 	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap
+	$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/PhoneGap-based\ Application.xctemplate
 	@read -p "Delete all files in ~/Documents/PhoneGapLib/?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
 	$(RM_RF) ~/Documents/PhoneGapLib/ ; \
+	else \
+	echo "" ; \
+	fi	
+	@read -p "Delete the PhoneGap framework /Users/Shared/Frameworks/PhoneGap.framework?: " ; \
+	if [ "$$REPLY" == "y" ]; then \
+	$(RM_RF) /Users/Shared/Frameworks/PhoneGap.framework/ ; $(RM_RF) ~/Library/Frameworks/PhoneGap.framework ; \
 	else \
 	echo "" ; \
 	fi	
