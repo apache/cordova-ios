@@ -29,6 +29,16 @@ PhoneGapLib/javascripts/phonegap-min.js: phonegap-js-core
 phonegap-js-core:
 	$(MAKE) -C PhoneGapLib
 
+xcode4-template: clean
+	$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Classes PhoneGap.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Plugins PhoneGap.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Resources PhoneGap.xctemplate
+	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist PhoneGap.xctemplate/___PACKAGENAME___-Info.plist
+	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch PhoneGap.xctemplate/___PACKAGENAME___-Prefix.pch
+	$(CP) PhoneGap-based\ Application/main.m PhoneGap.xctemplate
+	$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap.xctemplate
+	
 clean:
 	$(RM_RF) PhoneGapLib/build/
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.mode1v3
@@ -41,7 +51,7 @@ clean:
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
 	$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
 	
-installer: clean
+installer: xcode4-template
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
 
 uninstall:
