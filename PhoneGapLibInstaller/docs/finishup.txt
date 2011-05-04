@@ -1,7 +1,7 @@
 Thanks for installing PhoneGapLib, PhoneGap Framework, and the PhoneGap Xcode Templates!
 
 XCODE 3
--------
+-------------
 To get started creating PhoneGap projects, launch Xcode 3, then under the File menu, select "New Project...".
 
 Navigate to the "User Templates" section, select PhoneGap, then in the right pane, select "PhoneGap-based Application"
@@ -11,7 +11,7 @@ Select the "Choose..." button, name your project and choose the location where y
 That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
 XCODE 4
--------
+-------------
 
 To get started creating PhoneGap projects, launch Xcode 4, then under the File menu, select "New Project...".
 
@@ -25,4 +25,4 @@ That's it! Modify the contents of the "www" directory to add your HTML, CSS and 
 
 
 http://www.phonegap.com
-http://github.com/phonegap
+http://github.com/phonegap/phonegap-iphone
