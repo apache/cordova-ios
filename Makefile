@@ -40,11 +40,21 @@ xcode4-template: clean
 	$(CP) PhoneGap-based\ Application/main.m PhoneGap-based\ Application.xctemplate
 	$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap-based\ Application.xctemplate
 	
+clean-xcode4-template:
+	$(RM_RF) _tmp
+	$(MKPATH) _tmp
+	$(CP) PhoneGap-based\ Application.xctemplate/TemplateInfo.plist _tmp
+	$(CP) PhoneGap-based\ Application.xctemplate/README _tmp
+	$(CP) -Rf PhoneGap-based\ Application.xctemplate ~/.Trash
+	$(RM_RF) PhoneGap-based\ Application.xctemplate
+	$(MV) _tmp PhoneGap-based\ Application.xctemplate 
+	
 phonegap-framework:
 	cd PhoneGapLib;$(XC) -target UniversalFramework;cd -;
-	cp -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
+	$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
+	$(CP) -R PhoneGap-based\ Application/www PhoneGap.framework
 	
-clean:
+clean: clean-xcode4-template
 	$(RM_RF) PhoneGapLib/build/
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.mode1v3
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.perspectivev3
@@ -55,6 +65,7 @@ clean:
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
 	$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
+	$(RM_RF) PhoneGap.framework
 	
 installer: xcode4-template phonegap-framework
 	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
