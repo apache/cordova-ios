@@ -296,7 +296,7 @@
                                     echo &quot;!!!WARNING!!!&quot;
                                     echo &quot; &quot;
 								    echo &quot;The www folder $PROJECT_DIR/www does not exist. Copying sample.&quot;
-									cp -R /Users/Shared/Library/Frameworks/PhoneGap.framework/www $PROJECT_DIR
+									cp -R /Users/Shared/Library/Frameworks/PhoneGap.framework/www &quot;$PROJECT_DIR&quot;
 									echo &quot;Add $PROJECT_DIR/www as a folder reference in your project.&quot;
                                     echo &quot;Just drag and drop the folder into your project, in Xcode 4.&quot;
                                     echo &quot; &quot;
