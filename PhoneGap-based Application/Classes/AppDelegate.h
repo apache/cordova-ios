@@ -1,5 +1,5 @@
 //
-//  ___PROJECTNAMEASIDENTIFIER___AppDelegate.h
+//  AppDelegate.h
 //  ___PROJECTNAME___
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
