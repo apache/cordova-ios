@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <pkmkdoc spec="1.12">
 	<properties>
-		<title>PhoneGapLib</title>
-		<build>/Users/shazron/Desktop/agae.pkg</build>
+		<title>PhoneGap</title>
 		<organization>com.phonegap.phonegaplibinstaller</organization>
 		<userSees ui="both"/>
 		<min-target os="3"/>
@@ -38,7 +37,7 @@
 		<requirement id="file" operator="eq" value="true" required="false">
 			<file>/Developer/Applications/Xcode.app</file>
 			<message-title>Xcode not installed</message-title>
-			<message>Please install Xcode Developer Tools (download from http://developer.apple.com/ios)</message>
+			<message>Please install Xcode Developer Tools (download from http://developer.apple.com/ios) or the Mac App Store</message>
 		</requirement>
 		<requirement id="file" operator="eq" value="true" required="false">
 			<file>/Developer/Platforms/iPhoneOS.platform</file>

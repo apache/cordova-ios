@@ -71,10 +71,10 @@ clean: clean-xcode4-template
 	$(RM_RF) PhoneGap.framework
 	
 installer: xcode4-template phonegap-framework
-	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
+	$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o PhoneGapInstaller.pkg
 
 install: installer
-	open PhoneGapLibInstaller.pkg
+	open PhoneGapInstaller.pkg
 	
 uninstall:
 	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap

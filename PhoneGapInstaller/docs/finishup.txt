@@ -1,4 +1,4 @@
-Thanks for installing PhoneGapLib, PhoneGap Framework, and the PhoneGap Xcode Templates!
+Thanks for installing PhoneGap!
 
 XCODE 3
 -------------

@@ -3,7 +3,7 @@
 *.cso
 tmp
 lib
-PhoneGapLibInstaller.pkg
+PhoneGapInstaller.pkg
 
 /PhoneGapLib/javascripts/phonegap-uncompressed.js
 *.mode1v3
