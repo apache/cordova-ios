@@ -21,6 +21,7 @@ DOXYGEN =
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 PACKAGEMAKER = /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
 XC = xcodebuild
+PGVER = $(shell head -1 PhoneGapLib/VERSION)
 
 all :: installer
 
@@ -53,6 +54,8 @@ phonegap-framework:
 	cd PhoneGapLib;$(XC) -target UniversalFramework;cd -;
 	$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
 	$(CP) -R PhoneGap-based\ Application/www PhoneGap.framework
+	find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]/src=\"phonegap.${PGVER}.min.js\"/g"
+	$(MV) PhoneGap.framework/*.js PhoneGap.framework/www
 	
 clean: clean-xcode4-template
 	$(RM_RF) PhoneGapLib/build/
