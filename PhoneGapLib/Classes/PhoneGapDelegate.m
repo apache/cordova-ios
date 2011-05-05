@@ -25,6 +25,7 @@
 @synthesize commandObjects;
 @synthesize settings;
 @synthesize invokedURL;
+@synthesize loadFromString;
 
 - (id) init
 {
@@ -227,7 +228,7 @@ static NSString *gapVersion;
 	/*
 	 * Create tmp directory. Files written here will be deleted when app terminates
 	 */
-	NSFileManager *fileMgr = [[NSFileManager alloc] init];
+	NSFileManager *fileMgr = [[[NSFileManager alloc] init] autorelease];
 	NSString *docsDir = [[self class] applicationDocumentsDirectory];
 	NSString* tmpDirectory = [docsDir stringByAppendingPathComponent: [[self class] tmpFolderName]];
 	
@@ -239,7 +240,6 @@ static NSString *gapVersion;
 			NSLog(@"Unable to create tmp directory");  // not much we can do it this fails
 		}
 	}
-	[fileMgr release];
 
 	webView.delegate = self;
 
@@ -252,13 +252,31 @@ static NSString *gapVersion;
 	
 	NSString* startPage = [[self class] startPage];
 	NSURL *appURL = [NSURL URLWithString:startPage];
+	NSString* loadErr = nil;
+	
 	if(![appURL scheme])
 	{
-		appURL = [NSURL fileURLWithPath:[[self class] pathForResource:startPage]];
+		NSString* startFilePath = [[self class] pathForResource:startPage];
+		if (startFilePath == nil)
+		{
+			loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
+			NSLog(@"%@", loadErr);
+			appURL = nil;
+		}
+		else {
+			appURL = [NSURL fileURLWithPath:startFilePath];
+		}
 	}
 	
-    NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-	[webView loadRequest:appReq];
+	if (!loadErr) {
+		NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+		[webView loadRequest:appReq];
+	} else {
+		NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+		[webView loadHTMLString:html baseURL:nil];
+		self.loadFromString = YES;
+	}
+
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 30000
 	webView.detectsPhoneNumbers = [detectNumber boolValue];
@@ -298,6 +316,10 @@ static NSString *gapVersion;
     [activityView startAnimating];
 
 	[window makeKeyAndVisible];
+	
+	if (self.loadFromString) {
+		imageView.hidden = YES;
+	}
 	
 	return YES;
 }
@@ -495,7 +517,14 @@ static NSString *gapVersion;
 		[[UIApplication sharedApplication] openURL:url];
 		return NO;
 	}
-    
+	/*
+	 *	If we loaded the HTML from a string, we let the app handle it
+	 */
+	else if (self.loadFromString == YES) 
+	{
+		self.loadFromString = NO;
+		return YES;
+	}
     /*
      * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
 	 * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555

@@ -47,6 +47,8 @@
     NSDictionary *settings;
     NSMutableDictionary *commandObjects;
     NSURL *invokedURL;
+	
+	BOOL loadFromString;
 }
 
 @property (nonatomic, retain) UIWindow *window;
@@ -56,6 +58,7 @@
 @property (nonatomic, retain) NSMutableDictionary *commandObjects;
 @property (nonatomic, retain) NSDictionary *settings;
 @property (nonatomic, retain) NSURL *invokedURL;
+@property (assign) BOOL loadFromString;
 
 - (id) getCommandInstance:(NSString*)className;
 - (void) javascriptAlert:(NSString*)text;

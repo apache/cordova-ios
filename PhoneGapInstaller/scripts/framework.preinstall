@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p /Users/Shared/Library/Frameworks
+chmod ugo+rw /Users/Shared/Library/Frameworks

@@ -20,6 +20,8 @@ JAVA = java
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 PACKAGEMAKER = /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
+XC = xcodebuild
+PGVER = $(shell head -1 PhoneGapLib/VERSION)
 
 all :: installer
 
@@ -29,7 +31,33 @@ PhoneGapLib/javascripts/phonegap-min.js: phonegap-js-core
 phonegap-js-core:
 	$(MAKE) -C PhoneGapLib
 
-clean:
+xcode4-template: clean
+	$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap-based\ Application.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Classes PhoneGap-based\ Application.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Plugins PhoneGap-based\ Application.xctemplate
+	$(CP) -R PhoneGap-based\ Application/Resources PhoneGap-based\ Application.xctemplate
+	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
+	$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
+	$(CP) PhoneGap-based\ Application/main.m PhoneGap-based\ Application.xctemplate
+	$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap-based\ Application.xctemplate
+	
+clean-xcode4-template:
+	$(RM_RF) _tmp
+	$(MKPATH) _tmp
+	$(CP) PhoneGap-based\ Application.xctemplate/TemplateInfo.plist _tmp
+	$(CP) PhoneGap-based\ Application.xctemplate/README _tmp
+	$(CP) -Rf PhoneGap-based\ Application.xctemplate ~/.Trash
+	$(RM_RF) PhoneGap-based\ Application.xctemplate
+	$(MV) _tmp PhoneGap-based\ Application.xctemplate 
+	
+phonegap-framework:
+	cd PhoneGapLib;$(XC) -target UniversalFramework;cd -;
+	$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
+	$(CP) -R PhoneGap-based\ Application/www PhoneGap.framework
+	find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]/src=\"phonegap.${PGVER}.min.js\"/g"
+	$(MV) PhoneGap.framework/*.js PhoneGap.framework/www
+	
+clean: clean-xcode4-template
 	$(RM_RF) PhoneGapLib/build/
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.mode1v3
 	$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.perspectivev3
@@ -40,15 +68,26 @@ clean:
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
 	$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
 	$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
+	$(RM_RF) PhoneGap.framework
 	
-installer: clean
-	$(PACKAGEMAKER) -d PhoneGapLibInstaller/PhoneGapLibInstaller.pmdoc -o PhoneGapLibInstaller.pkg
+installer: xcode4-template phonegap-framework
+	$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o PhoneGapInstaller.pkg
 
+install: installer
+	open PhoneGapInstaller.pkg
+	
 uninstall:
 	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap
+	$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/PhoneGap-based\ Application.xctemplate
 	@read -p "Delete all files in ~/Documents/PhoneGapLib/?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
 	$(RM_RF) ~/Documents/PhoneGapLib/ ; \
+	else \
+	echo "" ; \
+	fi	
+	@read -p "Delete the PhoneGap framework /Users/Shared/Frameworks/PhoneGap.framework?: " ; \
+	if [ "$$REPLY" == "y" ]; then \
+	$(RM_RF) /Users/Shared/Frameworks/PhoneGap.framework/ ; $(RM_RF) ~/Library/Frameworks/PhoneGap.framework ; \
 	else \
 	echo "" ; \
 	fi	

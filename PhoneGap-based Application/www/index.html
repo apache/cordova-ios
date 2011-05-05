@@ -5,8 +5,6 @@
 
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
-    <title>___PROJECTNAME___</title>
-	
 	<!-- iPad/iPhone specific css below, add after your main css >
 	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
 	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
@@ -34,11 +32,13 @@
 	function onDeviceReady()
 	{
 		// do your thing!
+		navigator.notification.alert("PhoneGap is working")
 	}
     
     </script>
   </head>
   <body onload="onBodyLoad()">
-  	
+  	  <h1>Hey, it's PhoneGap!</h1>
+	  <p>Don't know how to get started? Check out <em><a href="http://github.com/phonegap/phonegap-start">PhoneGap Start</a></em>  	
   </body>
 </html>

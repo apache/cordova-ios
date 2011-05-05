@@ -1,2 +1,3 @@
 #!/bin/sh
 mkdir -p ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/PhoneGap/PhoneGap-based\ Application
+mkdir -p ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/PhoneGap-based\ Application.xctemplate

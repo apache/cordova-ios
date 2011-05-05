@@ -1,5 +1,5 @@
 //
-//  ___PROJECTNAMEASIDENTIFIER___AppDelegate.m
+//  AppDelegate.m
 //  ___PROJECTNAME___
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
@@ -7,7 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "PhoneGapViewController.h"
+#ifdef PHONEGAP_FRAMEWORK
+	#import <PhoneGap/PhoneGapViewController.h>
+#else
+	#import "PhoneGapViewController.h"
+#endif
 
 @implementation AppDelegate
 
