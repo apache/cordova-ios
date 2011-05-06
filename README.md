@@ -4,7 +4,7 @@ PhoneGapLib is a static library that enables users to include PhoneGap in their 
 
 Pre-requisites
 -------------------------------------------------------------
-Make sure you have installed the latest iPhone SDK. Download at [http://developer.apple.com/iphone](http://developer.apple.com/iphone)
+Make sure you have installed the latest iPhone SDK. Download at [http://developer.apple.com/ios](http://developer.apple.com/ios)
 
 Build and install the Installer Package
 -------------------------------------------------------------
@@ -12,18 +12,31 @@ Build and install the Installer Package
 2. Navigate to the folder where Makefile is (this folder)
 3. Type in "make" then press Enter
 
-The installer should build "PhoneGapLibInstaller.pkg" into this folder, then:
+The installer should build "PhoneGapInstaller.pkg" into this folder, then:
 
 1. Quit Xcode
-2. Launch "PhoneGapLibInstaller.pkg" to install PhoneGapLib and the PhoneGap Xcode Template.
+2. Launch "PhoneGapInstaller.pkg" to install PhoneGapLib, the PhoneGap framework and the PhoneGap Xcode Templates.
 
-Create a PhoneGap project
+Create a PhoneGap project (Xcode 3)
 -------------------------------------------------------------
 
 1. Launch Xcode, then under the File menu, select "New Project...".
 2. Navigate to the "User Templates" section, select PhoneGap, then in the right pane, select "PhoneGap-based Application"
 3. Select the "Choose..." button, name your project and choose the location where you want the new project to be.
 4. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
+
+Create a PhoneGap project (Xcode 4)
+-------------------------------------------------------------
+
+1. Launch Xcode, then under the File menu, select "New Project...".
+2. Navigate to the "iOS" section, under "Applications" - then in the right pane, select "PhoneGap-based Application"
+3. Select the "Next" button, name your project and company idenfifier, then select the "Next" button again.
+4. Choose the location where you want the new project to be.
+5. Run the project at least once to create the "www" folder in your project folder.
+6. Drag and drop this "www" folder into your project in Xcode, and add it as a folder reference.
+7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
+
+Alternately, you can [watch this screencast](http://bit.ly/phonegap-xcode4-template).
 
 Uninstalling PhoneGapLib and the Xcode Templates
 -------------------------------------------------------------
