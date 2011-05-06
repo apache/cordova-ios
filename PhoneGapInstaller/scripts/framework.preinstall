@@ -1,11 +1,12 @@
 #!/bin/sh
 
 # do a migration
+PHONEGAP_SHARED_DIR=/Users/Shared/PhoneGap
 OLD_FRAMEWORKS_DIR=/Users/Shared/Library/Frameworks
-NEW_FRAMEWORKS_DIR=/Users/Shared/PhoneGap/Frameworks
+NEW_FRAMEWORKS_DIR=${PHONEGAP_SHARED_DIR}/Frameworks
 
 rm -rf ${OLD_FRAMEWORKS_DIR}/PhoneGap.framework
 ln -s ${NEW_FRAMEWORKS_DIR}/PhoneGap.framework ${OLD_FRAMEWORKS_DIR}/PhoneGap.framework
 
 mkdir -p ${NEW_FRAMEWORKS_DIR}
-chmod -R a+rw ${NEW_FRAMEWORKS_DIR}
+chmod -R a+rw ${PHONEGAP_SHARED_DIR}
