@@ -60,7 +60,7 @@
 				<key>PhoneGap</key>
 					<dict>
 						<key>Path</key>
-						<string>/Users/Shared/Library/Frameworks/PhoneGap.framework</string>
+						<string>/Users/Shared/PhoneGap/Frameworks/PhoneGap.framework</string>
 						<key>PathType</key>
 						<string>Absolute</string>
 					</dict>
@@ -351,7 +351,7 @@
 		            <key>ALWAYS_SEARCH_USER_PATHS</key>
 		            <string>YES</string>
 		            <key>FRAMEWORK_SEARCH_PATHS</key>
-		            <string>/Users/Shared/Library/Frameworks</string>
+		            <string>/Users/Shared/PhoneGap/Frameworks</string>
 		            <key>PRODUCT_NAME</key>
 		            <string>$(TARGET_NAME)</string>
 		        </dict>

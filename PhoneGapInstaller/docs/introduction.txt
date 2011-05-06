@@ -6,7 +6,7 @@ PhoneGap is a static library and static framework that enables users to include 
 - Added Xcode 4 Template (need to add in www folder reference manually - sample 'www' folder created after first run)
 - Added PhoneGap static framework generation (as the UniversalFramework target in PhoneGapLib xcodeproj)
 - Modified Xcode 3 Template (for compatibility with the Xcode 4 template)
-- Installed PhoneGap static framework in /Users/Shared/Library/Frameworks/PhoneGap.framework (for non-admin privilege users, this may change in further updates)
+- Installed PhoneGap static framework in /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework (for non-admin privilege users, this may change in further updates)
 
 20110306
 - Updated PhoneGap application template to handle project and PhoneGapLib locations with spaces in it

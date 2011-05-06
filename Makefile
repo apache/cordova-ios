@@ -85,9 +85,9 @@ uninstall:
 	else \
 	echo "" ; \
 	fi	
-	@read -p "Delete the PhoneGap framework /Users/Shared/Frameworks/PhoneGap.framework?: " ; \
+	@read -p "Delete the PhoneGap framework /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
-	$(RM_RF) /Users/Shared/Frameworks/PhoneGap.framework/ ; $(RM_RF) ~/Library/Frameworks/PhoneGap.framework ; \
+	$(RM_RF) /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/ ; $(RM_RF) ~/Library/Frameworks/PhoneGap.framework ; \
 	else \
 	echo "" ; \
 	fi	

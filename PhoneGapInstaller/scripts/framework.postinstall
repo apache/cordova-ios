@@ -1,9 +1,10 @@
 #!/bin/sh
 
-DEST_DIR=/Users/Shared/Library/Frameworks
+DEST_DIR=/Users/Shared/PhoneGap/Frameworks
 
 cp -R "$2" ${DEST_DIR}
-chmod ugo+rw ${DEST_DIR}/PhoneGap.framework
+chmod -R a+rw ${DEST_DIR}/PhoneGap.framework
 rm -rf "$2"
+
 ln -s ${DEST_DIR}/PhoneGap.framework ~/Library/Frameworks/PhoneGap.framework
 defaults write ~/Library/Preferences/com.phonegap.phonegapframework InstallLocation ${DEST_DIR}
