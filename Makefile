@@ -54,9 +54,8 @@ clean-xcode4-template:
 phonegap-framework:
 	cd PhoneGapLib;$(XC) -target UniversalFramework;cd -;
 	$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
-	$(CP) -R PhoneGap-based\ Application/www PhoneGap.framework
+	$(CP) -R PhoneGap-based\ Application/www/ PhoneGap.framework/www
 	find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]/src=\"phonegap.${PGVER}.min.js\"/g"
-	$(MV) PhoneGap.framework/*.js PhoneGap.framework/www
 	
 clean: clean-xcode4-template
 	$(RM_RF) PhoneGapLib/build/
