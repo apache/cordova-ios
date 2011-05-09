@@ -19,7 +19,8 @@ ECHO_N = echo -n
 JAVA = java
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
-PACKAGEMAKER = /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
+DEVELOPER = $(shell xcode-select -print-path)
+PACKAGEMAKER = $(DEVELOPER)/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
 XC = xcodebuild
 PGVER = $(shell head -1 PhoneGapLib/VERSION)
 
@@ -77,7 +78,7 @@ install: installer
 	open PhoneGapInstaller.pkg
 	
 uninstall:
-	$(RM_RF) ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap
+	$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/PhoneGap
 	$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/PhoneGap-based\ Application.xctemplate
 	@read -p "Delete all files in ~/Documents/PhoneGapLib/?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
