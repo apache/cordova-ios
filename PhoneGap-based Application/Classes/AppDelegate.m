@@ -31,6 +31,14 @@
 	[ super applicationDidFinishLaunching:application ];
 }
 
+/**
+ * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
+ */
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
 -(id) getCommandInstance:(NSString*)className
 {
 	/** You can catch your own commands here, if you wanted to extend the gap: protocol, or add your
