@@ -25,16 +25,19 @@ XC = xcodebuild
 PGVER = $(shell head -1 PhoneGapLib/VERSION)
 GIT = $(shell which git)
 COMMIT_HASH=$(shell git describe --tags)	
+PKG_ERROR_LOG=pkg_error_log
 
 all :: installer
 
 PhoneGapLib/javascripts/phonegap-min.js: phonegap-lib
 	@$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ PhoneGapLib/javascripts/phonegap.js
 	
-phonegap-lib:
-	@$(MAKE) -C PhoneGapLib
+phonegap-lib: clean-phonegap-lib
+	@echo "Packaging PhoneGap Javascript..."
+	@$(MAKE) -C PhoneGapLib > /dev/null
+	@echo "Done."
 
-xcode4-template: clean
+xcode4-template: clean-xcode4-template
 	@$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap-based\ Application.xctemplate
 	@$(CP) -R PhoneGap-based\ Application/Classes PhoneGap-based\ Application.xctemplate
 	@$(CP) -R PhoneGap-based\ Application/Plugins PhoneGap-based\ Application.xctemplate
@@ -44,7 +47,7 @@ xcode4-template: clean
 	@$(CP) PhoneGap-based\ Application/main.m PhoneGap-based\ Application.xctemplate
 	@$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap-based\ Application.xctemplate
 	
-clean-xcode4-template:
+clean-xcode4-template: clean-xcode3-template
 	@$(RM_RF) _tmp
 	@$(MKPATH) _tmp
 	@$(CP) PhoneGap-based\ Application.xctemplate/TemplateInfo.plist _tmp
@@ -52,6 +55,13 @@ clean-xcode4-template:
 	@$(CP) -Rf PhoneGap-based\ Application.xctemplate ~/.Trash
 	@$(RM_RF) PhoneGap-based\ Application.xctemplate
 	@$(MV) _tmp PhoneGap-based\ Application.xctemplate 
+
+clean-xcode3-template:
+	@$(RM_RF) PhoneGap-based\ Application/build/
+	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
+	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
+	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
+	@$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
 
 clean-phonegap-framework:
 	@$(RM_RF) PhoneGap.framework
@@ -63,8 +73,11 @@ clean-phonegap-lib:
 	@$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.pbxuser
 	@$(RM_F) PhoneGapLib/javascripts/phonegap.*.js
 	
-phonegap-framework: clean-phonegap-framework
-	@cd PhoneGapLib;$(XC) -target UniversalFramework;cd -;
+phonegap-framework: phonegap-lib clean-phonegap-framework
+	@echo "Building PhoneGap.framework..."
+	@cd PhoneGapLib;$(XC) -target UniversalFramework > /dev/null;
+	@cd ..
+	@echo "Done."
 	@$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
 	@$(CP) -R PhoneGap-based\ Application/www/ PhoneGap.framework/www
 	@find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]/src=\"phonegap.${PGVER}.min.js\"/g"
@@ -72,15 +85,13 @@ phonegap-framework: clean-phonegap-framework
 	echo -e '\n$(COMMIT_HASH)' >> PhoneGap.framework/VERSION; \
 	fi	
 	
-clean: clean-phonegap-lib clean-xcode4-template clean-phonegap-framework
-	@$(RM_RF) PhoneGap-based\ Application/build/
-	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
-	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
-	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
-	@$(RM_F) PhoneGap-based\ Application/www/phonegap.*.js
+clean: clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework
+	@$(RM_F) $(PKG_ERROR_LOG)
 	
-installer: phonegap-lib xcode4-template phonegap-framework
-	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o PhoneGapInstaller.pkg
+installer: clean phonegap-lib xcode4-template phonegap-framework
+	@echo "Building PhoneGapInstaller.pkg..."	
+	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o PhoneGapInstaller.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@echo "Done."	
 
 install: installer
 	@open PhoneGapInstaller.pkg

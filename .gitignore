@@ -10,3 +10,4 @@ PhoneGapInstaller.pkg
 *.pbxuser
 build
 /PhoneGap.framework/
+/pkg_error_log
