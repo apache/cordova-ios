@@ -17,23 +17,25 @@
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
 {
     self = [self initWithWebView:theWebView];
-    if (self)
-        [self setSettings:classSettings];
+    if (self) {
+        self.settings = classSettings;
+	}
     return self;
 }
 
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
     self = [super init];
-    if (self)
-        [self setWebView:theWebView];
+    if (self) {
+        self.webView = theWebView;
+	}
     return self;
 }
 
 - (void)dealloc
 {
-    if (self.settings)
-        [self.settings release];
+	self.settings = nil;
+	self.webView = nil;
     [super dealloc];
 }
 
@@ -49,7 +51,7 @@
 
 - (void) writeJavascript:(NSString*)javascript
 {
-	[webView stringByEvaluatingJavaScriptFromString:javascript];
+	[self.webView stringByEvaluatingJavaScriptFromString:javascript];
 }
 
 - (void) clearCaches
