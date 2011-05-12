@@ -57,6 +57,17 @@
 	
 	return self;
 }
+
+
+// overridden to clean up Contact statics
+-(void)onAppTerminate
+{
+	NSLog(@"Contacts::onAppTerminate",0);
+	[ Contact releaseDefaults];
+
+}
+
+
 // iPhone only method to create a new contact through the GUI
 - (void) newContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 {	

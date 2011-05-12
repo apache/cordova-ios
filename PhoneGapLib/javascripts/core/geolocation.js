@@ -8,21 +8,35 @@ PositionError = function()
 	this.message = "";
 }
 
-PositionError.PERMISSION_DENIED = 1;
-PositionError.POSITION_UNAVAILABLE = 2;
-PositionError.TIMEOUT = 3;
 
 /**
  * This class provides access to device GPS data.
  * @constructor
  */
 Geolocation = function() {
-    /**
-     * The last known GPS position.
-     */
+    // The last known GPS position.
     this.lastPosition = null;
-    this.lastError = null;
+    this.listener = null;
+    this.timeoutTimerId = 0;
+
 };
+
+
+/**
+ * Position error object
+ *
+ * @param code
+ * @param message
+ */
+PositionError = function(code, message) {
+    this.code = code;
+    this.message = message;
+};
+
+PositionError.PERMISSION_DENIED = 1;
+PositionError.POSITION_UNAVAILABLE = 2;
+PositionError.TIMEOUT = 3;
+
 
 /**
  * Asynchronously aquires the current position.
@@ -59,56 +73,79 @@ PositionOptions
 }
 
  */
+ 
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) 
 {
-    var referenceTime = 0;
+    // if (this.listener != null) 
+    // {
+    //     console.log("Geolocation Error: Still waiting for previous getCurrentPosition() request.");
+    //     if (errorCallback && typeof(errorCallback) == 'function')
+    //     {
+    //         errorCallback(new PositionError(PositionError.TIMEOUT, "Geolocation Error: Still waiting for previous getCurrentPosition() request."));
+    //     } 
+    //     return PositionError.TIMEOUT;
+    // }
+    
+    // create an always valid local success callback
+    var win = successCallback;
+    if (!win || typeof(win) != 'function')
+    {
+        win = function() {};
+    }
+    
+    // create an always valid local error callback
+    var fail = errorCallback;
+    if (!fail || typeof(fail) != 'function')
+    {
+        fail = function() {};
+    }	
+
+    var self = this;
+    var totalTime = 0;
+	var timeoutTimerId;
 	
-	if(this.lastError != null)
-	{
-		if(typeof(errorCallback) == 'function')
-		{
-			errorCallback.call(null,this.lastError);
-		}
-		this.stop();
-		return;
-	}
-
-	this.start(options);
-
-    var timeout = 30000; // defaults
-    var interval = 2000;
+	// set params to our default values
+	var params = {
+	    maximumAge:10000,
+	    enableHighAccuracy:false,
+	    timeout:10000
+	};
 	
-    if (options && options.interval)
-        interval = options.interval;
-
-    if (typeof(successCallback) != 'function')
-        successCallback = function() {};
-    if (typeof(errorCallback) != 'function')
-        errorCallback = function() {};
-
-    var dis = this;
-    var delay = 0;
-	var timer;
-	var onInterval = function()
+    if (options) 
+    {
+        if (options.maximumAge) 
+        {
+            // special case here if we have a cached value that is younger than maximumAge
+            if(this.lastPosition)
+            {
+                var now = new Date().getTime();
+                if(now - this.lastPosition.timestamp < options.maximumAge)
+                {
+                    win(this.lastPosition);
+                    return;                 // Note, execution stops here -jm
+                }
+            }
+            params.maximumAge = options.maximumAge;
+        }
+        if (options.enableHighAccuracy) 
+        {
+            params.enableHighAccuracy = (options.enableHighAccuracy == true); // make sure it's truthy
+        }
+        if (options.timeout) 
+        {
+            params.timeout = options.timeout;
+        }
+    }
+    
+    this.listener = {"success":win,"fail":fail};
+    this.start(params);
+	
+	var onTimeout = function()
 	{
-		delay += interval;
-		if(dis.lastPosition != null && dis.lastPosition.timestamp > referenceTime)
-		{
-			clearInterval(timer);
-            successCallback(dis.lastPosition);
-		}
-		else if(delay > timeout)
-		{
-			clearInterval(timer);
-            errorCallback("Error Timeout");
-		}
-		else if(dis.lastError != null)
-		{
-			clearInterval(timer);
-			errorCallback(dis.lastError);
-		}
-	}
-    timer = setInterval(onInterval,interval);     
+	    self.setError(new PositionError(PositionError.TIMEOUT,"Geolocation Error: Timeout."));
+	};
+	 
+    this.timeoutTimerId = setTimeout(onTimeout,timeout); 
 };
 
 /**
@@ -123,9 +160,29 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
+	var self = this; // those == this & that
 	
-	this.getCurrentPosition(successCallback, errorCallback, options);
-	var frequency = (options && options.frequency) ? options.frequency : 10000; // default 10 second refresh
+	var params = {
+	    maximumAge:10000,
+	    enableHighAccuracy:false,
+	    timeout:10000
+	}
+
+    if(options)
+    {
+    	if (options.frequency) {
+            params.maximumAge = options.frequency;
+        }
+        if (options.maximumAge) {
+            params.maximumAge = options.maximumAge;
+        }
+        if (options.enableHighAccuracy) {
+            params.enableHighAccuracy = options.enableHighAccuracy;
+        }
+        if (options.timeout) {
+            params.timeout = options.timeout;
+        }
+    }
 
 	var that = this;
     
@@ -165,48 +222,75 @@ Geolocation.prototype.clearWatch = function(watchId) {
  */
 Geolocation.prototype.setLocation = function(position) 
 {
+    if(this.timeoutTimerId)
+    {
+        clearTimeout(this.timeoutTimerId);
+        this.timeoutTimerId = 0;
+    }
+    
 	this.lastError = null;
     this.lastPosition = position;
-
+    
+    if(this.listener && typeof(this.listener.success) == 'function')
+    {
+        this.listener.success(position);
+    }
+    
+    this.listener = null;
 };
 
 /**
  * Called by the geolocation framework when an error occurs while looking up the current position.
  * @param {String} message The text of the error message.
  */
-Geolocation.prototype.setError = function(error) {
+Geolocation.prototype.setError = function(error) 
+{
+    if(this.timeoutTimerId)
+    {
+        clearTimeout(this.timeoutTimerId);
+        this.timeoutTimerId = 0;
+    }
+    
     this.lastError = error;
+    // call error handlers directly
+    if(this.listener && typeof(this.listener.fail) == 'function')
+    {
+        this.listener.fail(position);
+    }
+    this.listener = null;
+
 };
 
-Geolocation.prototype.start = function(args) {
+Geolocation.prototype.start = function(args) 
+{
     PhoneGap.exec("Location.startLocation", args);
 };
 
-Geolocation.prototype.stop = function() {
+Geolocation.prototype.stop = function() 
+{
     PhoneGap.exec("Location.stopLocation");
 };
-
-// replace origObj's functions ( listed in funkList ) with the same method name on proxyObj
-// this is a workaround to prevent UIWebView/MobileSafari default implementation of GeoLocation
-// because it includes the full page path as the title of the alert prompt
-__proxyObj = function(origObj,proxyObj,funkList)
-{
-    var replaceFunk = function(org,proxy,fName)
-    { 
-        org[fName] = function()
-        { 
-           return proxy[fName].apply(proxy,arguments); 
-        }; 
-    };
-	 
-    for(var v in funkList) { replaceFunk(origObj,proxyObj,funkList[v]);}
-}
 
 
 PhoneGap.addConstructor(function() 
 {
     if (typeof navigator._geo == "undefined") 
     {
+        // replace origObj's functions ( listed in funkList ) with the same method name on proxyObj
+        // this is a workaround to prevent UIWebView/MobileSafari default implementation of GeoLocation
+        // because it includes the full page path as the title of the alert prompt
+        var __proxyObj = function (origObj,proxyObj,funkList)
+        {
+            var replaceFunk = function(org,proxy,fName)
+            { 
+                org[fName] = function()
+                { 
+                   return proxy[fName].apply(proxy,arguments); 
+                }; 
+            };
+
+            for(var v in funkList) { replaceFunk(origObj,proxyObj,funkList[v]);}
+        }
         navigator._geo = new Geolocation();
         __proxyObj(navigator.geolocation, navigator._geo,
                  ["setLocation","getCurrentPosition","watchPosition",

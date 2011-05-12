@@ -22,6 +22,7 @@ typedef NSUInteger DestinationType;
 	NSInteger quality;
 	NSString* postUrl;
 	enum DestinationType returnType;
+	UIPopoverController* popoverController; 
 }
 
 
@@ -29,15 +30,22 @@ typedef NSUInteger DestinationType;
 @property (copy)   NSString* callbackId;
 @property (copy)   NSString* postUrl;
 @property (nonatomic) enum DestinationType returnType;
+@property (assign) UIPopoverController* popoverController; 
 
 - (void) dealloc;
 
 @end
 
-@interface Camera : PhoneGapCommand<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+// ======================================================================= //
+
+@interface Camera : PhoneGapCommand<UIImagePickerControllerDelegate, 
+									UINavigationControllerDelegate,
+									UIPopoverControllerDelegate>
 {
 	CameraPicker* pickerController;
 }
+
+@property (retain) CameraPicker* pickerController;
 
 /*
  * getPicture

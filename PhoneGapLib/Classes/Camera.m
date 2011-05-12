@@ -14,13 +14,22 @@
 
 @implementation Camera
 
+@synthesize pickerController;
+
+-(BOOL)popoverSupported
+{
+	return ( NSClassFromString(@"UIPopoverController") != nil) && 
+	(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+}
+
 - (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 	
 	NSString* sourceTypeString = [options valueForKey:@"sourceType"];
 	UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeCamera; // default
-	if (sourceTypeString != nil) {
+	if (sourceTypeString != nil) 
+	{
 		sourceType = (UIImagePickerControllerSourceType)[sourceTypeString intValue];
 	}
 
@@ -33,48 +42,80 @@
     bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
 	
 	
-	if (pickerController == nil) {
-		pickerController = [[CameraPicker alloc] init];
+	if (self.pickerController == nil) 
+	{
+		self.pickerController = [[CameraPicker alloc] init];
 	}
 	
-	pickerController.delegate = self;
-	pickerController.sourceType = sourceType;
-	pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
-	pickerController.callbackId = callbackId;
-	//pickerController.successCallback = successCallback;
-	//pickerController.errorCallback = errorCallback;
-	pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
-	pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
+	self.pickerController.delegate = self;
+	self.pickerController.sourceType = sourceType;
+	self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
+	self.pickerController.callbackId = callbackId;
+
+	self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
+	self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
 	
-	[[super appViewController] presentModalViewController:pickerController animated:YES];
+	if([self popoverSupported])
+	{
+		if (self.pickerController.popoverController == nil) 
+		{ 
+			self.pickerController.popoverController = [[NSClassFromString(@"UIPopoverController") alloc] 
+												  initWithContentViewController:self.pickerController]; 
+		} 
+		self.pickerController.popoverController.delegate = self; 
+		
+		
+		[ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
+											 inView:[webView superview]
+											 permittedArrowDirections:UIPopoverArrowDirectionAny 
+											 animated:YES]; 
+	}
+	else 
+	{ 
+        [[super appViewController] 
+		 presentModalViewController:self.pickerController animated:YES]; 
+	} 
+}
+
+
+- (void)popoverControllerDidDismissPopover:(id)popoverController
+{
+	[ self imagePickerControllerDidCancel:self.pickerController ];	
 }
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
 {
-	CameraPicker* cameraPicker = (CameraPicker*)picker;
-	CGFloat quality = (double)cameraPicker.quality / 100.0; 
-	NSString* callbackId = cameraPicker.callbackId;
+
+	CGFloat quality = self.pickerController.quality / 100.0f; 
+	NSString* callbackId =  self.pickerController.callbackId;
 	
-	[picker dismissModalViewControllerAnimated:YES];
-	
+	if([self popoverSupported])
+	{
+		[self.pickerController.popoverController dismissPopoverAnimated:YES]; 
+		self.pickerController.popoverController.delegate = nil;
+		self.pickerController.popoverController = nil;
+	}
+	else 
+	{
+		[self.pickerController dismissModalViewControllerAnimated:YES]; 
+	}
 	
 	NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
 	if ([mediaType isEqualToString:(NSString*)kUTTypeImage])
 	{
-		
 		
 		NSString* jsString = NULL;
 		PluginResult* result = nil;
 		
 		// get the image
 		UIImage* image = nil;
-		if (cameraPicker.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
+		if (self.pickerController.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
 			image = [info objectForKey:UIImagePickerControllerEditedImage];
 		}else {
 			image = [info objectForKey:UIImagePickerControllerOriginalImage];
 		}
 		NSData* data = UIImageJPEGRepresentation(image, quality);
-		if (cameraPicker.returnType == DestinationTypeFileUri){
+		if (self.pickerController.returnType == DestinationTypeFileUri){
 			
 			// write to temp directory and reutrn URI
 			// get the temp directory path
@@ -107,11 +148,13 @@
 		}else{
 			result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [data base64EncodedString]];
 			jsString = [result toSuccessCallbackString:callbackId];
-			//jsString = [NSString stringWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [data base64EncodedString]];
 		}
 		[webView stringByEvaluatingJavaScriptFromString:jsString];
 		
 	}
+	
+	self.pickerController.delegate = nil;
+	self.pickerController = nil;
 }
 
 // older api calls newer didFinishPickingMediaWithInfo
@@ -130,6 +173,15 @@
 	// return media Capture error value for now (will update when implement MediaCapture api)
 	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"3"]; // error callback expects string ATM
 	[webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
+	
+	if([self popoverSupported])
+	{
+		self.pickerController.popoverController.delegate = nil;
+		self.pickerController.popoverController = nil;
+	}
+	
+	self.pickerController.delegate = nil;
+	self.pickerController = nil;
 	
 }
 
@@ -173,9 +225,11 @@
 
 - (void) dealloc
 {
-	if (pickerController) {
-		[pickerController release];
+	if (self.pickerController) 
+	{
+		self.pickerController.delegate = nil;
 	}
+	self.pickerController = nil;
 	[super dealloc];
 }
 
@@ -187,6 +241,7 @@
 @synthesize quality, postUrl;
 @synthesize returnType;
 @synthesize callbackId;
+@synthesize popoverController;
 
 
 - (void) dealloc

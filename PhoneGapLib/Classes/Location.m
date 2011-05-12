@@ -15,7 +15,8 @@
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Location*)[super initWithWebView:(UIWebView*)theWebView];
-    if (self) {
+    if (self) 
+	{
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
     }
@@ -25,12 +26,12 @@
 - (BOOL) hasHeadingSupport
 {
 	BOOL headingInstancePropertyAvailable = [self.locationManager respondsToSelector:@selector(headingAvailable)]; // iOS 3.x
-	BOOL headingClassPropertyAvailable = [[self.locationManager class] respondsToSelector:@selector(headingAvailable)]; // iOS 4.x
+	BOOL headingClassPropertyAvailable = [CLLocationManager respondsToSelector:@selector(headingAvailable)]; // iOS 4.x
 	
 	if (headingInstancePropertyAvailable) { // iOS 3.x
 		return [(id)self.locationManager headingAvailable];
 	} else if (headingClassPropertyAvailable) { // iOS 4.x
-		return [[self.locationManager class] headingAvailable];
+		return [CLLocationManager headingAvailable];
 	} else { // iOS 2.x
 		return NO;
 	}
@@ -39,19 +40,23 @@
 - (BOOL) isLocationServicesEnabled
 {
 	BOOL locationServicesEnabledInstancePropertyAvailable = [self.locationManager respondsToSelector:@selector(locationServicesEnabled)]; // iOS 3.x
-	BOOL locationServicesEnabledClassPropertyAvailable = [[self.locationManager class] respondsToSelector:@selector(locationServicesEnabled)]; // iOS 4.x
+	BOOL locationServicesEnabledClassPropertyAvailable = [CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]; // iOS 4.x
 	
-	if (locationServicesEnabledInstancePropertyAvailable) { // iOS 2.x, iOS 3.x
+	if (locationServicesEnabledClassPropertyAvailable) 
+	{ // iOS 4.x
+		return [CLLocationManager locationServicesEnabled];
+	} 
+	else if (locationServicesEnabledInstancePropertyAvailable) 
+	{ // iOS 2.x, iOS 3.x
 		return [(id)self.locationManager locationServicesEnabled];
-	} else if (locationServicesEnabledClassPropertyAvailable) { // iOS 4.x
-		return [[self.locationManager class] locationServicesEnabled];
-	} else {
+	} 
+	else 
+	{
 		return NO;
 	}
 }
 
-- (void)startLocation:(NSMutableArray*)arguments
-     withDict:(NSMutableDictionary*)options
+- (void)startLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
     if ([self isLocationServicesEnabled] != YES)
 	{
@@ -100,30 +105,35 @@
     }
 }
 
-- (void)stopLocation:(NSMutableArray*)arguments
-    withDict:(NSMutableDictionary*)options
+- (void)stopLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    if (__locationStarted == NO)
-        return;
-    if ([self isLocationServicesEnabled] != YES)
-        return;
+    if (__locationStarted)
+	{
+		if ([self isLocationServicesEnabled] != YES)
+			return;
     
-    [self.locationManager stopUpdatingLocation];
-    __locationStarted = NO;
+		[self.locationManager stopUpdatingLocation];
+		__locationStarted = NO;
+	}
 }
 
 - (void)locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation
+							didUpdateToLocation:(CLLocation *)newLocation
+							fromLocation:(CLLocation *)oldLocation
 {
-    int epoch = [newLocation.timestamp timeIntervalSince1970];
+    double epoch = [newLocation.timestamp timeIntervalSince1970] * 1000.0; // msec
+
+	// <+49.20871478, -122.81349765> +/- 10.00m (speed 0.00 mps / course -1.00)
+	// NSLog(@"newLocation: %@",[newLocation description]);
+	
+	
     float course = -1.0f;
     float speed  = -1.0f;
-#ifdef __IPHONE_2_2
+
     course = newLocation.course;
     speed  = newLocation.speed;
-#endif
-	NSString* coords =  [NSString stringWithFormat:@"coords: { latitude: %f, longitude: %f, altitude: %f, heading: %f, speed: %f, accuracy: %f, altitudeAccuracy: %f }",
+
+	NSString* coords =  [NSString stringWithFormat:@"coords: { latitude: %f, longitude: %f, altitude: %.02f, heading: %.02f, speed: %.02f, accuracy: %.02f, altitudeAccuracy: %.02f }",
 							newLocation.coordinate.latitude,
 							newLocation.coordinate.longitude,
 							newLocation.altitude,
@@ -133,40 +143,52 @@
 							newLocation.verticalAccuracy
 						 ];
 	
-    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({ timestamp: %d, %@ });", epoch, coords];
-    //NSLog(@"%@", jsCallBack);
+    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({ timestamp: %.00f, %@ });", epoch, coords];
+    NSLog(@"%@", jsCallBack);
     
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
 - (void)startHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-#ifdef __IPHONE_3_0
-    if (__headingStarted == YES)
-        return;
-    if ([self hasHeadingSupport] == NO) 
-        return;
-	
-    // Tell the location manager to start notifying us of heading updates
-    [self.locationManager startUpdatingHeading];
-    __headingStarted = YES;
-#endif	
+    if (!__headingStarted)
+	{
+		if ([self hasHeadingSupport] == NO) 
+		{
+			// TODO: error
+			return;
+		}
+		
+		int freq = 0;
+		
+		if ([options objectForKey:@"frequency"]) 
+		{
+			 freq = [(NSString *)[options objectForKey:@"frequency"] integerValue];
+		}
+		
+		
+		// Tell the location manager to start notifying us of heading updates
+		self.locationManager.headingFilter = 0.2;
+		[self.locationManager startUpdatingHeading];
+		__headingStarted = YES;
+	}
 }	
 
 - (void)stopHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-#ifdef __IPHONE_3_0
-    if (__headingStarted == NO)
-        return;
-    if ([self hasHeadingSupport] == NO) 
-		return;
-    
-    [self.locationManager stopUpdatingHeading];
-    __headingStarted = NO;
-#endif
+    if (__headingStarted)
+	{
+		if ([self hasHeadingSupport] == NO) 
+		{
+			// TODO: error
+			return;
+		}
+		
+		[self.locationManager stopUpdatingHeading];
+		__headingStarted = NO;
+	}
 }	
 
-#ifdef __IPHONE_3_0
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
 {
@@ -174,39 +196,47 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager
-	   didUpdateHeading:(CLHeading *)heading
+						didUpdateHeading:(CLHeading *)heading
 {
-	int epoch = [heading.timestamp timeIntervalSince1970];
+	double epoch = [heading.timestamp timeIntervalSince1970] * 1000.0;
+
 	
-    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.compass.setHeading({ timestamp: %d, magneticHeading: %f, trueHeading: %f, headingAccuracy: %f });", 
-							 epoch, heading.magneticHeading, heading.trueHeading, heading.headingAccuracy];
-   // NSLog(@"%@", jsCallBack);
+	
+	// NSLog(@"Heading = %@",[heading description]);
+	
+    NSString * jsCallBack = [NSString stringWithFormat:@"navigator.compass.setHeading({ timestamp: %.00f, magneticHeading: %.02f, trueHeading: %.02f, headingAccuracy: %.02f, x:%.03f,y:%.03f,z:%.03f });", 
+							 epoch, 
+							 heading.magneticHeading, 
+							 heading.trueHeading, 
+							 heading.headingAccuracy,
+							 heading.x,
+							 heading.y,
+							 heading.z];
+    NSLog(@"%@", jsCallBack);
     
-    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [ webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
 
-#endif
 
-- (void)locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
 
-	
 	NSString* jsCallBack = @"";
 	
-	#ifdef __IPHONE_3_0
-	if ([error code] == kCLErrorHeadingFailure) {
+	if ([error code] == kCLErrorHeadingFailure)
+	{
 		jsCallBack = [NSString stringWithFormat:@"navigator.compass.setError(\"%@\");",
 					  [error localizedDescription]
 					  ];
-	} else 
-	#endif
+	} 
+	else 
 	{
 		NSString* pErrorDesc = [error localizedFailureReason];
-#pragma unused(pErrorDesc)
+		NSLog(@"locationManager::didFailWithError %@",pErrorDesc);
+		
 		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError({ 'code': %d, 'message': '%@' });", 
-									 1, // 1 is PERMISSION_DENIED
-									 [error localizedDescription]];
+									 [ error code ],
+									 [ error localizedDescription ]];
 	}
     NSLog(@"%@", jsCallBack);
 	
@@ -216,7 +246,9 @@
 	
 }
 
-- (void)dealloc {
+- (void)dealloc 
+{
+	self.locationManager.delegate = nil;
     [self.locationManager release];
 	[super dealloc];
 }

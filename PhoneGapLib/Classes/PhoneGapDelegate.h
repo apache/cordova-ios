@@ -25,12 +25,7 @@
 @class Console;
 //@class Image;
 
-@interface PhoneGapDelegate : NSObject <
-    UIApplicationDelegate, 
-    UIWebViewDelegate, 
-    UIAccelerometerDelegate,
-    UINavigationControllerDelegate
-  >
+@interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
 {
 	
 	IBOutlet UIWindow *window;
@@ -40,12 +35,11 @@
 	IBOutlet UIImageView *imageView;
 	IBOutlet UIActivityIndicatorView *activityView;
 
-	NSURLConnection *conn;				// added by urbian
-	NSMutableData *receivedData;		// added by urbian	
-
     UIInterfaceOrientation orientationType;
     NSDictionary *settings;
     NSMutableDictionary *commandObjects;
+	
+	
     NSURL *invokedURL;
 	
 	BOOL loadFromString;
@@ -60,14 +54,6 @@
 @property (nonatomic, retain) NSURL *invokedURL;
 @property (assign) BOOL loadFromString;
 
-- (id) getCommandInstance:(NSString*)className;
-- (void) javascriptAlert:(NSString*)text;
-- (BOOL) execute:(InvokedUrlCommand*)command;
-- (NSString*) appURLScheme;
-- (NSDictionary*) deviceProperties;
-- (void)applicationWillTerminate:(UIApplication *)application;
-
-
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;
 + (NSString*) pathForResource:(NSString*)resourcepath;
@@ -75,5 +61,20 @@
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) tmpFolderName;
 + (NSString*) startPage;
+
+
+- (id) getCommandInstance:(NSString*)className;
+- (void) javascriptAlert:(NSString*)text;
+- (BOOL) execute:(InvokedUrlCommand*)command;
+- (NSString*) appURLScheme;
+- (NSDictionary*) deviceProperties;
+
+- (void)applicationDidEnterBackground:(UIApplication *)application;
+- (void)applicationWillEnterForeground:(UIApplication *)application;
+- (void)applicationWillResignActive:(UIApplication *)application;
+- (void)applicationWillTerminate:(UIApplication *)application;
+
+
+
 
 @end

@@ -14,6 +14,12 @@ PhoneGap is a static library and static framework that enables users to include 
 - Updated compiler of application template and PhoneGapLib to LLVM GCC 4.2
 - Cleaned up static analyzer warnings.
 
+20110306
+- Updated PhoneGap application template to handle project and PhoneGapLib locations with spaces in it
+- Removed iPad template
+- Updated compiler of application template and PhoneGapLib to LLVM GCC 4.2
+- Cleaned up static analyzer warnings.
+
 20110126
 - phonegap.js is minified using the YUI compressor, and also renamed to phonegap.{ver}.min.js where {ver} is the version number of PhoneGapLib from the VERSION file
 - the PhoneGap template is changed as well, at build time it will replace any references to 'src="phonegap.js"' to the new versioned js file (and copy the new phonegap.{ver}.min.js file). This replacement will look in all files in the 'www' folder.
