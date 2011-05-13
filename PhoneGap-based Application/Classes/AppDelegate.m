@@ -25,6 +25,9 @@
     return [super init];
 }
 
+/**
+ * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
+ */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 	
@@ -48,14 +51,6 @@
 	[webView stringByEvaluatingJavaScriptFromString:jsString];
 	
 	return YES;
-}
-
-/**
- * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
- */
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 -(id) getCommandInstance:(NSString*)className
