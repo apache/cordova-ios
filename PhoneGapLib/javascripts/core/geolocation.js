@@ -1,14 +1,6 @@
 if (!PhoneGap.hasResource("geolocation")) {
 	PhoneGap.addResource("geolocation");
 
-
-PositionError = function()
-{
-	this.code = 0;
-	this.message = "";
-}
-
-
 /**
  * This class provides access to device GPS data.
  * @constructor
@@ -20,22 +12,6 @@ Geolocation = function() {
     this.timeoutTimerId = 0;
 
 };
-
-
-/**
- * Position error object
- *
- * @param code
- * @param message
- */
-PositionError = function(code, message) {
-    this.code = code;
-    this.message = message;
-};
-
-PositionError.PERMISSION_DENIED = 1;
-PositionError.POSITION_UNAVAILABLE = 2;
-PositionError.TIMEOUT = 3;
 
 
 /**
@@ -90,14 +66,14 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
     var win = successCallback;
     if (!win || typeof(win) != 'function')
     {
-        win = function() {};
+        win = function(position) {};
     }
     
     // create an always valid local error callback
     var fail = errorCallback;
     if (!fail || typeof(fail) != 'function')
     {
-        fail = function() {};
+        fail = function(positionError) {};
     }	
 
     var self = this;
@@ -105,11 +81,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 	var timeoutTimerId;
 	
 	// set params to our default values
-	var params = {
-	    maximumAge:10000,
-	    enableHighAccuracy:false,
-	    timeout:10000
-	};
+	var params = new PositionOptions();
 	
     if (options) 
     {
@@ -121,7 +93,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
                 var now = new Date().getTime();
                 if(now - this.lastPosition.timestamp < options.maximumAge)
                 {
-                    win(this.lastPosition);
+                    win(this.lastPosition); // send cached position immediately 
                     return;                 // Note, execution stops here -jm
                 }
             }
@@ -145,7 +117,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 	    self.setError(new PositionError(PositionError.TIMEOUT,"Geolocation Error: Timeout."));
 	};
 	 
-    this.timeoutTimerId = setTimeout(onTimeout,timeout); 
+    this.timeoutTimerId = setTimeout(onTimeout, params.timeout); 
 };
 
 /**
@@ -160,19 +132,13 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
 	// Invoke the appropriate callback with a new Position object every time the implementation 
 	// determines that the position of the hosting device has changed. 
+
 	var self = this; // those == this & that
 	
-	var params = {
-	    maximumAge:10000,
-	    enableHighAccuracy:false,
-	    timeout:10000
-	}
+	var params = new PositionOptions();
 
     if(options)
     {
-    	if (options.frequency) {
-            params.maximumAge = options.frequency;
-        }
         if (options.maximumAge) {
             params.maximumAge = options.maximumAge;
         }
@@ -185,26 +151,21 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
     }
 
 	var that = this;
-    
-    // easy clone (members only, no funcs)
-    var lastPos = that.lastPosition? JSON.parse(JSON.stringify(that.lastPosition)) : null;
+    var lastPos = that.lastPosition? that.lastPosition.clone() : null;
     
 	return setInterval(function() 
 	{
         var filterFun = function(position) {
-            if (lastPos && lastPos.coords &&
-                (lastPos.coords.latitude != position.coords.latitude || 
-                 lastPos.coords.longitude != position.coords.longitude)) {
+            if (lastPos == null || !position.equals(lastPos)) {
                 // only call the success callback when there is a change in position, per W3C
                 successCallback(position);
             }
             
             // clone the new position, save it as our last position (internal var)
-            lastPos = JSON.parse(JSON.stringify(position));
+            lastPos = position.clone();
         };
-		that.getCurrentPosition(filterFun, errorCallback, options);
-	}, frequency);
-
+		that.getCurrentPosition(filterFun, errorCallback, params);
+	}, params.timeout);
 };
 
 
@@ -222,6 +183,8 @@ Geolocation.prototype.clearWatch = function(watchId) {
  */
 Geolocation.prototype.setLocation = function(position) 
 {
+    var _position = new Position(position.coords, position.timestamp);
+
     if(this.timeoutTimerId)
     {
         clearTimeout(this.timeoutTimerId);
@@ -229,11 +192,11 @@ Geolocation.prototype.setLocation = function(position)
     }
     
 	this.lastError = null;
-    this.lastPosition = position;
+    this.lastPosition = _position;
     
     if(this.listener && typeof(this.listener.success) == 'function')
     {
-        this.listener.success(position);
+        this.listener.success(_position);
     }
     
     this.listener = null;
@@ -245,17 +208,19 @@ Geolocation.prototype.setLocation = function(position)
  */
 Geolocation.prototype.setError = function(error) 
 {
+	var _error = new PositionError(error.code, error.message);
+	
     if(this.timeoutTimerId)
     {
         clearTimeout(this.timeoutTimerId);
         this.timeoutTimerId = 0;
     }
     
-    this.lastError = error;
+    this.lastError = _error;
     // call error handlers directly
     if(this.listener && typeof(this.listener.fail) == 'function')
     {
-        this.listener.fail(position);
+        this.listener.fail(_error);
     }
     this.listener = null;
 

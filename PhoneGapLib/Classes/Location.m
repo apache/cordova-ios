@@ -144,7 +144,6 @@
 						 ];
 	
     NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({ timestamp: %.00f, %@ });", epoch, coords];
-    NSLog(@"%@", jsCallBack);
     
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
@@ -232,13 +231,25 @@
 	else 
 	{
 		NSString* pErrorDesc = [error localizedFailureReason];
-		NSLog(@"locationManager::didFailWithError %@",pErrorDesc);
+		NSLog(@"locationManager::didFailWithError %@", pErrorDesc);
+		
+		/*
+			W3C PositionError
+			 PositionError.UNKNOWN_ERROR = 0;  // equivalent to kCLErrorLocationUnknown=0
+			 PositionError.PERMISSION_DENIED = 1; // equivalent to kCLErrorDenied=1
+			 PositionError.POSITION_UNAVAILABLE = 2; // equivalent to kCLErrorNetwork=2
+		 
+			(any other errors are translated to PositionError.UNKNOWN_ERROR)
+		 */
+		NSInteger code = [error code];
+		if (code > kCLErrorNetwork) {
+			code = kCLErrorLocationUnknown;
+		}
 		
 		jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setError({ 'code': %d, 'message': '%@' });", 
-									 [ error code ],
+									 code,
 									 [ error localizedDescription ]];
 	}
-    NSLog(@"%@", jsCallBack);
 	
     [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	[self.locationManager stopUpdatingLocation];
