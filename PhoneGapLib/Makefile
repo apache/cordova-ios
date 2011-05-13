@@ -30,11 +30,12 @@ javascripts/phonegap.$(pgver).js: clean $(PG_JS_CORE)/license.js $(PG_JS_CORE)/p
 	$(CAT) $(PG_JS_CORE)/license.js >> $@
 	$(CAT) $(PG_JS_CORE)/GetFunctionName.js >> $@
 	$(CAT) $(PG_JS_CORE)/phonegap.js.base >> $@
+	$(CAT) $(PG_JS_CORE)/debugconsole.js >> $@
+	$(CAT) $(PG_JS_CORE)/position.js >> $@
 	$(CAT) $(PG_JS_CORE)/acceleration.js >> $@
 	$(CAT) $(PG_JS_CORE)/accelerometer.js >> $@
 	$(CAT) $(PG_JS_CORE)/camera.js >> $@
 	$(CAT) $(PG_JS_CORE)/contact.js >> $@
-	$(CAT) $(PG_JS_CORE)/debugconsole.js >> $@
 	$(CAT) $(PG_JS_CORE)/device.js >> $@
 	$(CAT) $(PG_JS_CORE)/file.js >> $@
 	$(CAT) $(PG_JS_CORE)/filetransfer.js >> $@
@@ -43,7 +44,6 @@ javascripts/phonegap.$(pgver).js: clean $(PG_JS_CORE)/license.js $(PG_JS_CORE)/p
 	$(CAT) $(PG_JS_CORE)/media.js >> $@
 	$(CAT) $(PG_JS_CORE)/notification.js >> $@
 	$(CAT) $(PG_JS_CORE)/orientation.js >> $@
-	$(CAT) $(PG_JS_CORE)/position.js >> $@
 	$(CAT) $(PG_JS_CORE)/sms.js >> $@
 	$(CAT) $(PG_JS_CORE)/telephony.js >> $@
 	$(CAT) $(PG_JS_CORE)/network.js >> $@
