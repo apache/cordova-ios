@@ -5,7 +5,7 @@ git submodule init
 
 cd PhoneGapLibTest/www
 git remote update
-git merge origin/master
+git pull origin master
 
 cd -
 git submodule update
