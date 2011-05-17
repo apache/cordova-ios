@@ -48,7 +48,7 @@ xcode3-template: clean-xcode3-template
 	@$(CP) -Rf PhoneGap-based\ Application/www $(BUILD_BAK)
 	@cd PhoneGap-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap.*.*.js[\\'\"]/src=\"phonegap.${PGVER}.min.js\"/g"
 	@cd ..
-	cp PhoneGapLib/javascripts/phonegap.*.js PhoneGap-based\ Application/www
+	@cp PhoneGapLib/javascripts/phonegap.*.js PhoneGap-based\ Application/www
 
 xcode4-template: clean-xcode4-template
 	@$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap-based\ Application.xctemplate
