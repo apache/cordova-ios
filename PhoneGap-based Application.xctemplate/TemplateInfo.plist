@@ -291,19 +291,15 @@
 							<string>/bin/bash</string>
 						<key>ShellScript</key>
 							<string>
-								if [ ! -d &quot;$PROJECT_DIR/www&quot; ]; then
-                                    echo &quot;******************************************************************************************&quot;
-                                    echo &quot;!!!WARNING!!!&quot;
-                                    echo &quot; &quot;
-								    echo &quot;The www folder $PROJECT_DIR/www does not exist. Copying sample.&quot;
+								if [ ! -d &quot;$PROJECT_DIR/www&quot; ]&amp; then
 									cp -R /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/www &quot;$PROJECT_DIR&quot;
-									echo &quot;Add $PROJECT_DIR/www as a folder reference in your project.&quot;
-                                    echo &quot;Just drag and drop the folder into your project, in Xcode 4.&quot;
-                                    echo &quot; &quot;
-									echo &quot;******************************************************************************************&quot;
-									exit 1 
 								fi
-							</string>
+								# detect www folder reference in project, if missing, print warning
+								grep &quot;{isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = \&quot;&lt;group&gt;\&quot;; };&quot; &quot;$PROJECT_DIR/$PROJECT_NAME.xcodeproj/project.pbxproj&quot;
+								rc=$? 
+								if [ $rc != 0 ] ; then
+								echo -e &quot;warning: Missing - Add $PROJECT_DIR/www as a folder reference in your project. Just drag and drop the folder into your project, in Xcode 4.&quot; 1>&amp;2
+								fi							</string>
 					</dict>					
 		        </array>
 		        <key>Configurations</key> <!-- Target Configuration -->
