@@ -242,7 +242,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "___PROJECTNAME___" */;
 			buildPhases = (
-				30E9A9A110B758320022D3BA /* Copy PhoneGap Javascript */,
+				30E9A9A110B758320022D3BA /* Check PhoneGap Reference */,
 				304B58A110DAC018002A0835 /* Touch www folder */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -342,19 +342,19 @@
 			shellPath = /bin/sh;
 			shellScript = "touch -cm ${PROJECT_DIR}/www";
 		};
-		30E9A9A110B758320022D3BA /* Copy PhoneGap Javascript */ = {
+		30E9A9A110B758320022D3BA /* Check PhoneGap Reference */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy PhoneGap Javascript";
+			name = "Check PhoneGap Reference";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# get the PhoneGapLib version\nPGVER=`head -1 \"${PHONEGAPLIB}/VERSION\"`\n\nSRC1=\"${PHONEGAPLIB}/javascripts/phonegap.${PGVER}.js\"\nSRC2=\"${PHONEGAPLIB}/javascripts/phonegap.${PGVER}.min.js\"\nTARGET=\"${PROJECT_DIR}/www\"\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\ncp \"${SRC1}\" \"${TARGET}\"\ncp \"${SRC2}\" \"${TARGET}\"\n\n# replace [src=\"phonegap.js\"] in all files in www\nfind \"${TARGET}\" | xargs grep 'src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]' -sl | xargs -L1 sed -i \"\" \"s/src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]/src=\\\"phonegap.${PGVER}.min.js\\\"/g\"";
+			shellScript = "# get the PhoneGapLib version\nPGVER=`head -1 \"${PHONEGAPLIB}/VERSION\"`\nTARGET=\"${PROJECT_DIR}/www\"\n\n# look for a reference in all files for \"phonegap.{PGVER}.*.js\" in www, warn if missing\nfind \"${TARGET}\" | xargs grep \"phonegap.${PGVER}.*.js\" -sl\nrc=$?\nif [ $rc != 0 ] ; then\n\techo -e \"${PROJECT_DIR}/www:0: warning: Missing - A reference to 'phonegap.${PGVER}.js' or 'phonegap.${PGVER}.min.js' was not found in your HTML file(s).\" 1>&2\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
