@@ -1,6 +1,11 @@
-VERSION 20110503
+VERSION 20110516
 
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
+
+20110516
+- Xcode 3 Template does not copy in the PhoneGap javascript files anymore to your www, the javascript files are now part of the template (Note for upgraders from the old templates: you will need to grab the .js files manually from ~/Documents/PhoneGapLib/javascripts after building your project at least once)
+- PhoneGapLib use is considered deprecated, for the next installer the Xcode 3 Template will use the PhoneGap.framework exclusively
+- Xcode 4 Template has an improved build script - it will detect whether the 'www' folder reference was added and will warn you if it has not been added
 
 20110503
 - Added Xcode 4 Template (need to add in www folder reference manually - sample 'www' folder created after first run)
