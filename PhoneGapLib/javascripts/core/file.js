@@ -573,11 +573,12 @@ FileWriter.prototype.write = function(text) {
                 return;
             }
 
-            // So if the user wants to keep appending to the file
-            me.length = Math.max(me.length, me.position + r);
+            
             // position always increases by bytes written because file would be extended
             me.position += r;
-
+			// The length of the file is now where we are done writing.
+			me.length = me.position;
+            
             // If onwrite callback
             if (typeof me.onwrite === "function") {
                 evt = File._createEvent("write", me);

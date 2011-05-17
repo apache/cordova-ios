@@ -880,24 +880,29 @@
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	
-	NSString *filePath = argPath; //[ self getFullPath: argPath];
+	NSFileHandle* file = [ NSFileHandle fileHandleForReadingAtPath:argPath];
 	
-	if(!filePath){
+	if(!file){
 		// invalid path entry
 		result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast: @"window.localFileSystem._castError"];
 		jsString = [result toErrorCallbackString:callbackId];
 	} else {
-		NSFileHandle* file = [ NSFileHandle fileHandleForReadingAtPath:filePath];
-		
 		NSData* readData = [ file readDataToEndOfFile];
 		
 		[file closeFile];
-		
-		NSString* pNStrBuff = [[NSString alloc] initWithBytes: [readData bytes] length: [readData length] encoding: NSUTF8StringEncoding];
-		
-		result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
-		jsString = [result toSuccessCallbackString:callbackId];
-		[ pNStrBuff release ];
+        NSString* pNStrBuff = nil;
+		if (readData) {
+            pNStrBuff = [[NSString alloc] initWithBytes: [readData bytes] length: [readData length] encoding: NSUTF8StringEncoding];
+        } else {
+            // return empty string if no data
+            pNStrBuff = [[NSString alloc] initWithString: @""];
+        }
+        
+        
+        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
+        jsString = [result toSuccessCallbackString:callbackId];
+        [ pNStrBuff release ];
+        
 		
 	}
 	if (jsString){
