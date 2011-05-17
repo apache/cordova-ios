@@ -499,6 +499,7 @@ static NSString *gapVersion;
 	
 	// Fetch an instance of this class
 	PhoneGapCommand* obj = [self getCommandInstance:command.className];
+	BOOL retVal = YES;
 	
 	// construct the fill method name to ammend the second argument.
 	NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName];
@@ -507,12 +508,12 @@ static NSString *gapVersion;
 	}
 	else {
 		// There's no method to call, so throw an error.
-		NSLog(@"Class method '%@' not defined in class '%@'", fullMethodName, command.className);
-		[NSException raise:NSInternalInconsistencyException format:@"Class method '%@' not defined against class '%@'.", fullMethodName, command.className];
+		NSLog(@"ERROR: Class method '%@' not defined in class '%@'", fullMethodName, command.className);
+		retVal = NO;
 	}
 	[fullMethodName release];
 	
-	return YES;
+	return retVal;
 }
 
 /*
