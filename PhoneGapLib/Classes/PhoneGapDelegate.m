@@ -86,7 +86,12 @@ static NSString *gapVersion;
 		NSBundle *mainBundle = [NSBundle mainBundle];
 		NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
 		// read from the filesystem and save in the variable
-		gapVersion = [ [ NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL ] retain ];
+		// first, separate by new line
+		NSString* fileContents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
+		NSArray* all_lines = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		NSString* first_line = [all_lines objectAtIndex:0];		
+		
+		gapVersion = [first_line retain];
 	}
 #endif
 	
