@@ -173,9 +173,6 @@ static NSString *gapVersion;
 	
 	viewController = [ [ PhoneGapViewController alloc ] init ];
 	
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 30000
-    NSNumber *detectNumber         = [settings objectForKey:@"DetectPhoneNumber"];
-#endif
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
     NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
 	
@@ -259,11 +256,6 @@ static NSString *gapVersion;
 		[webView loadHTMLString:html baseURL:nil];
 		self.loadFromString = YES;
 	}
-
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 30000
-	webView.detectsPhoneNumbers = [detectNumber boolValue];
-#endif
 
 	/*
 	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
