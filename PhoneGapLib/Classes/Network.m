@@ -12,6 +12,18 @@
 
 @implementation Network
 
+
+-(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+{
+    self = (Network*)[super initWithWebView:(UIWebView*)theWebView];
+    if (self) 
+	{
+		[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(reachabilityChanged:) name: kReachabilityChangedNotification object: nil];
+    }
+    return self;
+}
+
+
 - (void) isReachable:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSUInteger argc = [arguments count];
@@ -31,36 +43,40 @@
         isIpAddress = [isIpAddressObj boolValue];
     }
     
-	if (isIpAddress) {
-		[[Reachability sharedReachability] setAddress:hostName];
-	} else {
-		[[Reachability sharedReachability] setHostName:hostName];
-	}	
-		
-	//[[Reachability sharedReachability] setNetworkStatusNotificationsEnabled:YES];
-	[self updateReachability:callback];
+	Reachability* hostReach = [[Reachability reachabilityWithHostName:hostName] retain];
+	[self updateReachability:hostReach withCallback:callback];
     
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:nil];
 }
 
 - (void)reachabilityChanged:(NSNotification *)note
 {
-    [self updateReachability:nil];
+	NSLog(@"Reachability changed.");
+	Reachability* curReach = [note object];
+	NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
+	[self updateReachability:curReach withCallback:nil];
 }
 
-- (void)updateReachability:(NSString*)callback
+- (void)updateReachability:(Reachability*) reachability withCallback:(NSString*)callback
 {
 	NSString* jsCallback = @"navigator.network.updateReachability";
-	if (callback)
+	if (callback) {
 		jsCallback = callback;
+	}
 	
+	/* Note that in Reachability.h (v2.2) lines 52-56, I swapped the values
+	 for ReachableViaWiFi (was 1, now 2) and ReachableViaWWAN (was 2, now 1) 
+	 to conform to existing PhoneGap API values for backward compatibility reasons. 
+	 If a new version is substituted in, those values have to be changed again.
+	 */
 	NSString* status = [[NSString alloc] initWithFormat:@"%@(%d);", 
 						jsCallback,
-					   [[Reachability sharedReachability] internetConnectionStatus]];
+					   [reachability currentReachabilityStatus]];
 	
 	
     [webView stringByEvaluatingJavaScriptFromString:status];
 	[status release];
+	[reachability release];
 }
 
 @end
