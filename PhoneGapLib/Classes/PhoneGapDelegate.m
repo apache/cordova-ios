@@ -263,7 +263,6 @@ static NSString *gapVersion;
 	 */
 	UIImage* image = [UIImage imageNamed:@"Default"];
 	imageView = [[UIImageView alloc] initWithImage:image];
-	[image release];
 	
     imageView.tag = 1;
 	[window addSubview:imageView];
