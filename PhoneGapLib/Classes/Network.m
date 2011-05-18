@@ -16,9 +16,7 @@
 -(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Network*)[super initWithWebView:(UIWebView*)theWebView];
-    if (self) 
-	{
-		[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(reachabilityChanged:) name: kReachabilityChangedNotification object: nil];
+    if (self) {
     }
     return self;
 }
@@ -33,50 +31,54 @@
 	if (argc > 1) callback = [arguments objectAtIndex:1];
 	
 	if (argc < 1) {
-		NSLog(@"Network.startReachability: Missing 1st argument (hostName).");
+		NSLog(@"Network.isReachable: Missing 1st argument (hostName).");
 		return;
 	}
 	
-    id isIpAddressObj = [options valueForKey:@"isIpAddress"];
-    BOOL isIpAddress = NO;
-    if (isIpAddressObj) {
-        isIpAddress = [isIpAddressObj boolValue];
-    }
-    
 	Reachability* hostReach = [[Reachability reachabilityWithHostName:hostName] retain];
-	[self updateReachability:hostReach withCallback:callback];
-    
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:nil];
-}
-
-- (void)reachabilityChanged:(NSNotification *)note
-{
-	NSLog(@"Reachability changed.");
-	Reachability* curReach = [note object];
-	NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
-	[self updateReachability:curReach withCallback:nil];
-}
-
-- (void)updateReachability:(Reachability*) reachability withCallback:(NSString*)callback
-{
-	NSString* jsCallback = @"navigator.network.updateReachability";
-	if (callback) {
-		jsCallback = callback;
-	}
+	NetworkStatus code = [hostReach currentReachabilityStatus];
+    BOOL connectionRequired = [hostReach connectionRequired];
+	
+	NSString* message = @"";
+	switch(code)
+	{
+        case NotReachable:
+        {
+            message = NSLocalizedString(@"Access Not Available", @"Access Not Available");
+            //Minor interface detail- connectionRequired may return yes, even when the host is unreachable.  We cover that up here...
+            connectionRequired= NO;  
+            break;
+        }
+        case ReachableViaWWAN:
+        {
+            message = NSLocalizedString(@"Reachable WWAN", @"Reachable WWAN");
+            break;
+        }
+        case ReachableViaWiFi:
+        {
+			message = NSLocalizedString(@"Reachable WiFi", @"Reachable WiFi");
+            break;
+		}
+    }
+	
+    if(connectionRequired) {
+        message = [NSString stringWithFormat: @"%@, Connection Required", message];
+    }
 	
 	/* Note that in Reachability.h (v2.2) lines 52-56, I swapped the values
 	 for ReachableViaWiFi (was 1, now 2) and ReachableViaWWAN (was 2, now 1) 
 	 to conform to existing PhoneGap API values for backward compatibility reasons. 
 	 If a new version is substituted in, those values have to be changed again.
 	 */
-	NSString* status = [[NSString alloc] initWithFormat:@"%@(%d);", 
-						jsCallback,
-					   [reachability currentReachabilityStatus]];
+	NSString* status = [[NSString alloc] initWithFormat:@"%@({ code: %d, message: '%@'});", 
+						callback,
+						code,
+						message];
 	
 	
     [webView stringByEvaluatingJavaScriptFromString:status];
 	[status release];
-	[reachability release];
+	[hostReach release];
 }
 
 @end

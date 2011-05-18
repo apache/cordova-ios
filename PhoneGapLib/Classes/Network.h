@@ -16,7 +16,4 @@
 
 - (void) isReachable:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (void) reachabilityChanged:(NSNotification *)note;
-- (void) updateReachability:(Reachability*)reachability withCallback:(NSString*)callback;
-
 @end

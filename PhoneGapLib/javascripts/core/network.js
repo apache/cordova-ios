@@ -46,31 +46,18 @@ NetworkStatus.REACHABLE_VIA_WIFI_NETWORK = 2;
  * @constructor
  */
 Network = function() {
-    /**
-     * The last known Network status.
-	 * { hostName: string, ipAddress: string, 
-		remoteHostStatus: int(0/1/2), internetConnectionStatus: int(0/1/2), localWiFiConnectionStatus: int (0/2) }
-     */
-	this.lastReachability = null;
 };
 
 /**
  * 
  * @param {Function} successCallback
  * @param {Function} errorCallback
- * @param {Object} options (isIpAddress:boolean)
+ * @param {Object} options
  */
 Network.prototype.isReachable = function(hostName, successCallback, options) {
 	PhoneGap.exec("Network.isReachable", hostName, GetFunctionName(successCallback), options);
 };
 
-/**
- * Called by the geolocation framework when the reachability status has changed.
- * @param {Reachibility} reachability The current reachability status.
- */
-Network.prototype.updateReachability = function(reachability) {
-    this.lastReachability = reachability;
-};
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.network == "undefined") navigator.network = new Network();
