@@ -9,9 +9,8 @@
 #import "PhoneGapDelegate.h"
 #import "PhoneGapViewController.h"
 #import <UIKit/UIKit.h>
-#import "Movie.h"
 #import "InvokedUrlCommand.h"
-#import "Contact.h"
+#import "Connection.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
@@ -316,6 +315,22 @@ static NSString *gapVersion;
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
     [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
+	
+	id cmd = [self getCommandInstance:@"Connection"];
+	if (cmd && [cmd isKindOfClass:[Connection class]]) 
+	{
+		Connection* connection = (Connection*)cmd;
+		NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
+		[connProps setObject:[NSNumber numberWithInt:connection.type] forKey:@"type"];
+		if (connection.currentNW) {
+			[connProps setObject:connection.currentNW forKey:@"currentNW"];
+		}
+		if (connection.homeNW) {
+			[connProps setObject:connection.homeNW forKey:@"homeNW"];
+		}
+
+		[devProps setObject:connProps forKey:@"connection"];
+	}
 	
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;
