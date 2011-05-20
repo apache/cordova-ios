@@ -85,6 +85,8 @@
 		303259C9136B326300982B63 /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259CA136B326300982B63 /* FileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* FileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30325A0C136B343700982B63 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
+		30383DCE1385F59900E37E22 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
+		30383DE01385F65600E37E22 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		307A8F9E1385A2EC00E43782 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
 		307A8F9F1385A2EC00E43782 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
@@ -374,6 +376,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30383DCE1385F59900E37E22 /* Connection.h in Headers */,
 				303259AD136B326300982B63 /* Camera.h in Headers */,
 				303259AE136B326300982B63 /* Categories.h in Headers */,
 				303259AF136B326300982B63 /* Contacts.h in Headers */,
@@ -574,6 +577,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30383DE01385F65600E37E22 /* Connection.m in Sources */,
 				30325990136B325100982B63 /* Camera.m in Sources */,
 				30325991136B325100982B63 /* Categories.m in Sources */,
 				30325992136B325100982B63 /* Contacts.m in Sources */,

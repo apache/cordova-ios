@@ -335,6 +335,7 @@
 					<string>QuartzCore</string>
 					<string>SystemConfiguration</string>
 					<string>MobileCoreServices</string>
+					<string>CoreTelephony</string>
 		        </array>
 		        <key>Name</key>
 		        <string>___PACKAGENAME___</string> <!-- Package Name. -->
