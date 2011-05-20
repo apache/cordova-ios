@@ -64,14 +64,14 @@
 	
 	// write the current cellular network
 	if (self.currentNW != nil) {
-		js = [NSString stringWithFormat:@"navigator.connection.currentNW = '%@';", self.currentNW];
+		js = [NSString stringWithFormat:@"navigator.network.connection.currentNW = '%@';", self.currentNW];
 	} else {
-		js = @"navigator.connection.currentNW = null;";
+		js = @"navigator.network.connection.currentNW = null;";
 	}
 	[super writeJavascript:js];
 	
 	// write the connection type
-	js = [NSString stringWithFormat:@"navigator.connection.type = %d;", self.type];
+	js = [NSString stringWithFormat:@"navigator.network.connection.type = %d;", self.type];
 	[super writeJavascript:js];
 }
 
@@ -103,7 +103,7 @@
 	if (ctClass) 
 	{
 		self.networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-		self.currentNW = self.networkInfo.subscriberCellularProvider.carrierName;	
+		self.currentNW = [self isCellularConnection:self.type]? self.networkInfo.subscriberCellularProvider.carrierName : nil;	
 		self.networkInfo.subscriberCellularProviderDidUpdateNotifier = ^(CTCarrier* carrier){
 			[self performSelectorOnMainThread:@selector(updateCarrier:) withObject:carrier waitUntilDone:NO];
 		};		
