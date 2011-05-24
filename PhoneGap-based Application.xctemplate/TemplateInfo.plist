@@ -291,7 +291,7 @@
 							<string>/bin/bash</string>
 						<key>ShellScript</key>
 							<string>
-								if [ ! -d &quot;$PROJECT_DIR/www&quot; ]&amp; then
+								if [ ! -d &quot;$PROJECT_DIR/www&quot; ] ; then
 									cp -R /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/www &quot;$PROJECT_DIR&quot;
 								fi
 								# detect www folder reference in project, if missing, print warning
