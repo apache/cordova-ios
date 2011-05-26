@@ -64,7 +64,13 @@
     NSString       *filename       = [directoryParts lastObject];
     [directoryParts removeLastObject];
 	
-    NSString *directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
+	NSString* directoryPartsJoined =[directoryParts componentsJoinedByString:@"/"];
+	NSString* directoryStr = [self wwwFolderName];
+	
+	if ([directoryPartsJoined length] > 0) {
+		directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
+	}
+	
     return [mainBundle pathForResource:filename
 					   ofType:@""
                        inDirectory:directoryStr];
