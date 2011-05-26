@@ -977,7 +977,12 @@
 			if (mimeType) {
 				[mimeType autorelease];
 				//NSLog(@"mime type: %@", mimeType);
-			}
+			} else {
+                // special case for m4a
+                if ([(NSString*)typeId rangeOfString: @"m4a-audio"].location != NSNotFound){
+                    mimeType = @"audio/mp4";
+                }
+            }
 			CFRelease(typeId);
 		}
 	}
