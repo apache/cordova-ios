@@ -352,10 +352,12 @@ document.removeEventListener = function(evt, handler, capture)
 /**
  * Method to fire event from native code
  */
-PhoneGap.fireEvent = function(type) {
+PhoneGap.fireEvent = function(type, target) {
     var e = document.createEvent('Events');
     e.initEvent(type);
-    document.dispatchEvent(e);
+
+	target = target || document;
+    target.dispatchEvent(e);
 };
 
 };

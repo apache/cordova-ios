@@ -92,7 +92,7 @@
 			break;
 	}
 	
-	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); PhoneGap.fireEvent('orientationchange');",i];
+	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); PhoneGap.fireEvent('orientationchange', window);",i];
 	[webView stringByEvaluatingJavaScriptFromString:jsCallback];
 	 
 }
