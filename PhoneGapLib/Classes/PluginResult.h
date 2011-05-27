@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-enum PGCommandStatus {
+typedef enum {
 	PGCommandStatus_NO_RESULT = 0,
 	PGCommandStatus_OK,
 	PGCommandStatus_CLASS_NOT_FOUND_EXCEPTION,
@@ -19,9 +19,8 @@ enum PGCommandStatus {
 	PGCommandStatus_INVALID_ACTION,
 	PGCommandStatus_JSON_EXCEPTION,
 	PGCommandStatus_ERROR
-};
-typedef int PGCommandStatus;
-
+} PGCommandStatus;
+	
 @interface PluginResult : NSObject {
 	NSNumber* status;
 	id message;
