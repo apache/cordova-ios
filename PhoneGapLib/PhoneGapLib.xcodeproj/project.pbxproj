@@ -89,6 +89,10 @@
 		30383DE01385F65600E37E22 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		307A8F9E1385A2EC00E43782 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
 		307A8F9F1385A2EC00E43782 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
+		30956FD2138F1F5600FC3563 /* PGMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* PGMotion.h */; };
+		30956FD3138F1F5600FC3563 /* PGMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* PGMotion.m */; };
+		30956FFC138F317200FC3563 /* PGMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* PGMotion.h */; };
+		30956FFD138F317200FC3563 /* PGMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* PGMotion.m */; };
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
 		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
@@ -155,6 +159,8 @@
 		30325A0B136B343700982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		307A8F9C1385A2EC00E43782 /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Connection.h; path = Classes/Connection.h; sourceTree = "<group>"; };
 		307A8F9D1385A2EC00E43782 /* Connection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Connection.m; path = Classes/Connection.m; sourceTree = "<group>"; };
+		30956FD0138F1F5600FC3563 /* PGMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMotion.h; path = Classes/PGMotion.h; sourceTree = "<group>"; };
+		30956FD1138F1F5600FC3563 /* PGMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGMotion.m; path = Classes/PGMotion.m; sourceTree = "<group>"; };
 		30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor-Expanded.h"; path = "Classes/UIColor-Expanded.h"; sourceTree = "<group>"; };
 		30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor-Expanded.m"; path = "Classes/UIColor-Expanded.m"; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
@@ -271,6 +277,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30956FD0138F1F5600FC3563 /* PGMotion.h */,
+				30956FD1138F1F5600FC3563 /* PGMotion.m */,
 				307A8F9C1385A2EC00E43782 /* Connection.h */,
 				307A8F9D1385A2EC00E43782 /* Connection.m */,
 				1F92F49E1314023E0046367C /* PluginResult.h */,
@@ -407,6 +415,7 @@
 				303259C8136B326300982B63 /* Contact.h in Headers */,
 				303259C9136B326300982B63 /* PluginResult.h in Headers */,
 				303259CA136B326300982B63 /* FileTransfer.h in Headers */,
+				30956FFC138F317200FC3563 /* PGMotion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +454,7 @@
 				1F92F4A01314023E0046367C /* PluginResult.h in Headers */,
 				C937A4561337599E002C4C79 /* FileTransfer.h in Headers */,
 				307A8F9E1385A2EC00E43782 /* Connection.h in Headers */,
+				30956FD2138F1F5600FC3563 /* PGMotion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,6 +617,7 @@
 				303259AA136B325100982B63 /* Contact.m in Sources */,
 				303259AB136B325100982B63 /* PluginResult.m in Sources */,
 				303259AC136B325100982B63 /* FileTransfer.m in Sources */,
+				30956FFD138F317200FC3563 /* PGMotion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +655,7 @@
 				1F92F4A11314023E0046367C /* PluginResult.m in Sources */,
 				C937A4571337599E002C4C79 /* FileTransfer.m in Sources */,
 				307A8F9F1385A2EC00E43782 /* Connection.m in Sources */,
+				30956FD3138F1F5600FC3563 /* PGMotion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
