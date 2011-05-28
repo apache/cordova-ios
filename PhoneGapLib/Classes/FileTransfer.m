@@ -94,11 +94,21 @@
 	NSEnumerator *enumerator = [params keyEnumerator];
 	id key;
 	id val;
+	
 	while ((key = [enumerator nextObject])) {
 		val = [params objectForKey:key];
 		if(!val || val == [NSNull null]) {
 			continue;	
 		}
+		// if it responds to stringValue selector (eg NSNumber) get the NSString
+		if ([val respondsToSelector:@selector(stringValue)]) {
+			val = [val stringValue];
+		}
+		// finally, check whether it is a NSString (for dataUsingEncoding selector below)
+		if (![val isKindOfClass:[NSString class]]) {
+			continue;
+		}
+		
 		[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 		[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", key] dataUsingEncoding:NSUTF8StringEncoding]];
 		[postBody appendData:[val dataUsingEncoding:NSUTF8StringEncoding]];
