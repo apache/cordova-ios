@@ -571,7 +571,6 @@ static NSString *gapVersion;
 - (void)applicationWillResignActive:(UIApplication *)application
 {
 	//NSLog(@"%@",@"applicationWillResignActive");
-	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireEvent('pause');"];
 }
 
 /*
@@ -599,6 +598,7 @@ static NSString *gapVersion;
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	//NSLog(@"%@",@"applicationDidEnterBackground");
+	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireEvent('pause');"];
 }
 
 
