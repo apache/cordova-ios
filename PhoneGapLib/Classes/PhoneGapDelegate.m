@@ -480,8 +480,15 @@ static NSString *gapVersion;
 			}
 		}
 
-		[[UIApplication sharedApplication] openURL:url];
-		return NO;
+		if(navigationType == UIWebViewNavigationTypeOther)
+		{
+			[[UIApplication sharedApplication] openURL:url];
+			return NO;
+		}
+		else 
+		{
+			return YES;
+		}		
 	}
 	/*
 	 *	If we loaded the HTML from a string, we let the app handle it
