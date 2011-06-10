@@ -48,7 +48,7 @@
 {
 	// Do something with the url here
 	NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
-	[webView stringByEvaluatingJavaScriptFromString:jsString];
+	[self.webView stringByEvaluatingJavaScriptFromString:jsString];
 	
 	return YES;
 }

@@ -147,6 +147,17 @@
 						<key>PathType</key>
 						<string>Group</string>
 					</dict>
+				<key>Commands.plist</key>
+					<dict>
+						<key>Path</key>
+						<string>./Commands.plist</string>
+						<key>Group</key>
+							<array>
+								<string>Supporting Files</string>
+							</array>
+						<key>PathType</key>
+						<string>Group</string>
+					</dict>
 				<key>Classes/AppDelegate.h</key>
 					<dict>
 						<key>Path</key>
@@ -196,6 +207,7 @@
 				<string>Resources/splash/Default@2x.png</string>
 				<string>Resources/splash/Default~iPad.png</string>
 				<string>PhoneGap.plist</string>
+				<string>Commands.plist</string>
 				<string>Classes/AppDelegate.h</string>
 				<string>Classes/AppDelegate.m</string>
 				<string>Plugins/README</string>

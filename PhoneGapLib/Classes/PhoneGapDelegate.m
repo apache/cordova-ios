@@ -17,20 +17,15 @@
 
 @implementation PhoneGapDelegate
 
-@synthesize window;
-@synthesize webView;
-@synthesize viewController;
-@synthesize activityView;
-@synthesize commandObjects;
-@synthesize settings;
-@synthesize invokedURL;
-@synthesize loadFromString;
+@synthesize window, webView, viewController, activityView, imageView;
+@synthesize settings, invokedURL, loadFromString, orientationType;
+@synthesize commandObjects, commandMap;
 
 - (id) init
 {
     self = [super init];
     if (self != nil) {
-        commandObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+        self.commandObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
 		// Turn on cookie support ( shared with our app only! )
 		NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
 		[cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
@@ -112,21 +107,33 @@ static NSString *gapVersion;
 /**
  Returns an instance of a PhoneGapCommand object, based on its name.  If one exists already, it is returned.
  */
--(id) getCommandInstance:(NSString*)className
+-(id) getCommandInstance:(NSString*)serviceName
 {
-    id obj = [commandObjects objectForKey:className];
+	// first, we try to find the serviceName in the commandMap 
+	// (acts as a whitelist as well) if it does not exist, we return nil
+	NSString* className = [self.commandMap objectForKey:serviceName];
+	if (className == nil) {
+		return nil;
+	}
+	
+    id obj = [self.commandObjects objectForKey:className];
     if (!obj) 
 	{
         // attempt to load the settings for this command class
-        NSDictionary* classSettings = [settings objectForKey:className];
+        NSDictionary* classSettings = [self.settings objectForKey:className];
 
-        if (classSettings)
+        if (classSettings) {
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
-        else
+		} else {
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
+		}
         
-        [commandObjects setObject:obj forKey:className];
-		[obj release];
+		if (obj != nil) {
+			[self.commandObjects setObject:obj forKey:className];
+			[obj release];
+		} else {
+			NSLog(@"PhoneGapCommand class %@ (serviceName: %@) does not exist", className, serviceName);
+		}
     }
     return obj;
 }
@@ -174,9 +181,19 @@ static NSString *gapVersion;
 	
     // read from PhoneGap.plist in the app bundle
 	NSDictionary *temp = [[self class] getBundlePlist:@"PhoneGap"];
-    settings = [[NSDictionary alloc] initWithDictionary:temp];
+	if (temp == nil) {
+		NSLog(@"WARNING: PhoneGap.plist is missing.");
+	}
+    self.settings = [[NSDictionary alloc] initWithDictionary:temp];
+
+    // read from Commands.plist in the app bundle
+	NSDictionary *commands = [[self class] getBundlePlist:@"Commands"];
+	if (commands == nil) {
+		NSLog(@"WARNING: Commands.plist is missing! PhoneGap will not work, you need to have this file.");
+	}
+    self.commandMap = [[NSDictionary alloc] initWithDictionary:commands];
 	
-	viewController = [ [ PhoneGapViewController alloc ] init ];
+	self.viewController = [ [ PhoneGapViewController alloc ] init ];
 	
     NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
     NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
@@ -193,14 +210,14 @@ static NSString *gapVersion;
 	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
 
 
-	window.autoresizesSubviews = YES;
+	self.window.autoresizesSubviews = YES;
 	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
 	webViewBounds.origin = screenBounds.origin;
-	webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
-    webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+	self.webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
+    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	
-	viewController.webView = webView;
-	[viewController.view addSubview:webView];
+	viewController.webView = self.webView;
+	[self.viewController.view addSubview:self.webView];
 	
 		
 	/*
@@ -226,9 +243,9 @@ static NSString *gapVersion;
 		}
 	}
 
-	webView.delegate = self;
+	self.webView.delegate = self;
 
-	[window addSubview:viewController.view];
+	[self.window addSubview:self.viewController.view];
 
 	/*
 	 * webView
@@ -255,10 +272,10 @@ static NSString *gapVersion;
 	
 	if (!loadErr) {
 		NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-		[webView loadRequest:appReq];
+		[self.webView loadRequest:appReq];
 	} else {
 		NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-		[webView loadHTMLString:html baseURL:nil];
+		[self.webView loadHTMLString:html baseURL:nil];
 		self.loadFromString = YES;
 	}
 
@@ -267,11 +284,10 @@ static NSString *gapVersion;
 	 * You can change this image by swapping out the Default.png file within the resource folder.
 	 */
 	UIImage* image = [UIImage imageNamed:@"Default"];
-	imageView = [[UIImageView alloc] initWithImage:image];
+	self.imageView = [[UIImageView alloc] initWithImage:image];
 	
-    imageView.tag = 1;
-	[window addSubview:imageView];
-	[imageView release];
+    self.imageView.tag = 1;
+	[window addSubview:self.imageView];
 
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
@@ -289,15 +305,16 @@ static NSString *gapVersion;
     } else if ([topActivityIndicator isEqualToString:@"gray"]) {
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
-    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] retain];
-    activityView.tag = 2;
-    [window addSubview:activityView];
-    [activityView startAnimating];
+    
+	self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
+    self.activityView.tag = 2;
+    [self.window addSubview:self.activityView];
+    [self.activityView startAnimating];
 
-	[window makeKeyAndVisible];
+	[self.window makeKeyAndVisible];
 	
 	if (self.loadFromString) {
-		imageView.hidden = YES;
+		self.imageView.hidden = YES;
 	}
 	
 	return YES;
@@ -412,11 +429,11 @@ static NSString *gapVersion;
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 	activityView.hidden = YES;	
 
-	imageView.hidden = YES;
+	self.imageView.hidden = YES;
 	
-	[window bringSubviewToFront:viewController.view];
+	[self.window bringSubviewToFront:self.viewController.view];
 	
-	[viewController didRotateFromInterfaceOrientation:[[UIDevice currentDevice] orientation]];
+	[self.viewController didRotateFromInterfaceOrientation:[[UIDevice currentDevice] orientation]];
 }
 
 
@@ -623,11 +640,11 @@ static NSString *gapVersion;
 - (void)dealloc
 {
     [PluginResult releaseStatus];
-	[commandObjects release];
-	[imageView release];
-	[viewController release];
-    [activityView release];
-	[window release];
+	self.commandObjects = nil;
+	self.viewController = nil;
+	self.activityView = nil;
+	self.window = nil;
+	self.imageView = nil;
 	
 	[super dealloc];
 }

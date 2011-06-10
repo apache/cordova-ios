@@ -27,32 +27,19 @@
 
 @interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
 {
-	
-	IBOutlet UIWindow *window;
-	IBOutlet UIWebView *webView;
-	IBOutlet PhoneGapViewController *viewController;
-	
-	IBOutlet UIImageView *imageView;
-	IBOutlet UIActivityIndicatorView *activityView;
-
-    UIInterfaceOrientation orientationType;
-    NSDictionary *settings;
-    NSMutableDictionary *commandObjects;
-	
-	
-    NSURL *invokedURL;
-	
-	BOOL loadFromString;
 }
 
-@property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) UIWebView *webView;
-@property (nonatomic, retain) PhoneGapViewController *viewController;
-@property (nonatomic, retain) UIActivityIndicatorView *activityView;
+@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) IBOutlet UIWebView *webView;
+@property (nonatomic, retain) IBOutlet PhoneGapViewController *viewController;
+@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityView;
+@property (nonatomic, retain) UIImageView *imageView;
 @property (nonatomic, retain) NSMutableDictionary *commandObjects;
+@property (nonatomic, retain) NSDictionary *commandMap;
 @property (nonatomic, retain) NSDictionary *settings;
 @property (nonatomic, retain) NSURL *invokedURL;
 @property (assign) BOOL loadFromString;
+@property (assign) UIInterfaceOrientation orientationType;
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;
@@ -63,7 +50,7 @@
 + (NSString*) startPage;
 
 
-- (id) getCommandInstance:(NSString*)className;
+- (id) getCommandInstance:(NSString*)serviceName;
 - (void) javascriptAlert:(NSString*)text;
 - (BOOL) execute:(InvokedUrlCommand*)command;
 - (NSString*) appURLScheme;
