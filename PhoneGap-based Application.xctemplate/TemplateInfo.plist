@@ -136,6 +136,17 @@
 						<key>PathType</key>
 						<string>Group</string>
 					</dict>
+				<key>Resources/Capture.bundle</key>
+					<dict>
+						<key>Path</key>
+						<string>./Resources/capture.bundle</string>
+						<key>Group</key>
+							<array>
+								<string>Resources</string>
+							</array>
+						<key>PathType</key>
+						<string>Group</string>
+					</dict>
 				<key>PhoneGap.plist</key>
 					<dict>
 						<key>Path</key>
@@ -195,6 +206,7 @@
 				<string>Resources/splash/Default.png</string>
 				<string>Resources/splash/Default@2x.png</string>
 				<string>Resources/splash/Default~iPad.png</string>
+				<string>Resources/Capture.bundle</string>
 				<string>PhoneGap.plist</string>
 				<string>Classes/AppDelegate.h</string>
 				<string>Classes/AppDelegate.m</string>
@@ -336,6 +348,7 @@
 					<string>SystemConfiguration</string>
 					<string>MobileCoreServices</string>
 					<string>CoreTelephony</string>
+					<string>CoreMedia</string>
 		        </array>
 		        <key>Name</key>
 		        <string>___PACKAGENAME___</string> <!-- Package Name. -->
