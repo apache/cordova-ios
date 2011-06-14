@@ -112,7 +112,7 @@
 	// NOTE: homeNW cannot be known with the iOS 4.x API currently.
 }
 
-- (PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Connection*)[super initWithWebView:theWebView];
     if (self) {

@@ -6,10 +6,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 
-@interface PGMotion : PhoneGapCommand {
+@interface PGMotion : PGPlugin {
 }
 
 @property (readonly, getter=isDeviceMotionAvailable) BOOL deviceMotionAvailable;

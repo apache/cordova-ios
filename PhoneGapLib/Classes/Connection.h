@@ -6,7 +6,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 #import "Reachability.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -24,7 +24,7 @@ typedef enum {
 } w3cConnectionType;
 
 
-@interface Connection : PhoneGapCommand {
+@interface Connection : PGPlugin {
 	w3cConnectionType type;
 	NSString* homeNW;
 	NSString* currentNW;

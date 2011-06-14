@@ -7,9 +7,9 @@
 
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
-@interface Image : PhoneGapCommand {
+@interface Image : PGPlugin {
 	IBOutlet UIWindow *window;
 	
 	UIImagePickerController *picker;	// added by urbian

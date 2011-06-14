@@ -50,7 +50,7 @@
 + (NSString*) startPage;
 
 
-- (id) getCommandInstance:(NSString*)serviceName;
+- (id) getCommandInstance:(NSString*)pluginName;
 - (void) javascriptAlert:(NSString*)text;
 - (BOOL) execute:(InvokedUrlCommand*)command;
 - (NSString*) appURLScheme;

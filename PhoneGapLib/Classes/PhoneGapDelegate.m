@@ -107,11 +107,11 @@ static NSString *gapVersion;
 /**
  Returns an instance of a PhoneGapCommand object, based on its name.  If one exists already, it is returned.
  */
--(id) getCommandInstance:(NSString*)serviceName
+-(id) getCommandInstance:(NSString*)pluginName
 {
-	// first, we try to find the serviceName in the commandMap 
+	// first, we try to find the pluginName in the pluginsMap 
 	// (acts as a whitelist as well) if it does not exist, we return nil
-	NSString* className = [self.pluginsMap objectForKey:serviceName];
+	NSString* className = [self.pluginsMap objectForKey:pluginName];
 	if (className == nil) {
 		return nil;
 	}
@@ -132,7 +132,7 @@ static NSString *gapVersion;
 			[self.pluginObjects setObject:obj forKey:className];
 			[obj release];
 		} else {
-			NSLog(@"PhoneGapCommand class %@ (serviceName: %@) does not exist", className, serviceName);
+			NSLog(@"PGPlugin class %@ (pluginName: %@) does not exist", className, pluginName);
 		}
     }
     return obj;
@@ -540,17 +540,19 @@ static NSString *gapVersion;
 	}
 	
 	// Fetch an instance of this class
-	PhoneGapCommand* obj = [self getCommandInstance:command.className];
+	PGPlugin* obj = [self getCommandInstance:command.className];
+	if (![obj isKindOfClass:[PGPlugin class]]) {
+		NSLog(@"ERROR: Plugin '%@' not found. Check your plugin mapping in PhoneGap.plist.", command.className);
+	}
 	BOOL retVal = YES;
 	
 	// construct the fill method name to ammend the second argument.
 	NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName];
 	if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)]) {
 		[obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
-	}
-	else {
+	} else {
 		// There's no method to call, so throw an error.
-		NSLog(@"ERROR: Class method '%@' not defined in class '%@'", fullMethodName, command.className);
+		NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
 		retVal = NO;
 	}
 	[fullMethodName release];

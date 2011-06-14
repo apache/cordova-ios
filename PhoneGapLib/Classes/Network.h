@@ -6,11 +6,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 @class Reachability;
 
-@interface Network : PhoneGapCommand {
+@interface Network : PGPlugin {
 		
 }
 

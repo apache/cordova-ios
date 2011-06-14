@@ -14,15 +14,15 @@
 
 @class PhoneGapDelegate;
 
-@interface PhoneGapCommand : NSObject {
+@interface PGPlugin : NSObject {
     UIWebView*    webView;
     NSDictionary* settings;
 }
 @property (nonatomic, retain) UIWebView *webView;
 @property (nonatomic, retain) NSDictionary *settings;
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView;
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView;
 
 -(void)onAppTerminate;
 

@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <AddressBook/ABAddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 #import "Contact.h"
 
-@interface Contacts : PhoneGapCommand <ABNewPersonViewControllerDelegate, 
+@interface Contacts : PGPlugin <ABNewPersonViewControllerDelegate, 
 									   ABPersonViewControllerDelegate,
 									   ABPeoplePickerNavigationControllerDelegate
 									  > 

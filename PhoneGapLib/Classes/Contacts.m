@@ -47,7 +47,7 @@
 	[contacts addressBookDirty];
 }*/
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Contacts*)[super initWithWebView:(UIWebView*)theWebView];
     /*if (self) {

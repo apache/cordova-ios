@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioServices.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 #import "LoadingView.h"
 
-@interface Notification : PhoneGapCommand <UIAlertViewDelegate>{
+@interface Notification : PGPlugin <UIAlertViewDelegate>{
 	LoadingView* loadingView;
 }
 

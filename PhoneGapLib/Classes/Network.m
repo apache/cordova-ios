@@ -13,7 +13,7 @@
 @implementation Network
 
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Network*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {

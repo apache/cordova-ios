@@ -6,11 +6,11 @@
 */
 
 #import <UIKit/UIKit.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 
 
-@interface Accelerometer : PhoneGapCommand<UIAccelerometerDelegate> 
+@interface Accelerometer : PGPlugin<UIAccelerometerDelegate> 
 {
 	bool _bIsRunning;
 	

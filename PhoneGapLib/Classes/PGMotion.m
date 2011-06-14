@@ -24,7 +24,7 @@
 	// If gyro is available (see CMMotionManagerin CoreMotion.framework) AND !isDeviceOrientationAvailable, we pump out the events
 }
 
-- (PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (PGMotion*)[super initWithWebView:theWebView];
     if (self) {

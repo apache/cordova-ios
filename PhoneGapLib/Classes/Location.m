@@ -12,7 +12,7 @@
 
 @synthesize locationManager;
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Location*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) 

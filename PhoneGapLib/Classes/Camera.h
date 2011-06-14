@@ -7,7 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 enum DestinationType {
 	DestinationTypeDataUrl = 0,
@@ -38,7 +38,7 @@ typedef NSUInteger DestinationType;
 
 // ======================================================================= //
 
-@interface Camera : PhoneGapCommand<UIImagePickerControllerDelegate, 
+@interface Camera : PGPlugin<UIImagePickerControllerDelegate, 
 									UINavigationControllerDelegate,
 									UIPopoverControllerDelegate>
 {

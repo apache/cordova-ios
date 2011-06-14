@@ -9,16 +9,16 @@
  */
 
 
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 #import "PhoneGapDelegate.h"
 
 
-@implementation PhoneGapCommand
+@implementation PGPlugin
 @synthesize webView;
 @synthesize settings;
 
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
 {
     self = [self initWithWebView:theWebView];
     if (self) {
@@ -27,7 +27,7 @@
     return self;
 }
 
--(PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+-(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = [super init];
     if (self) {

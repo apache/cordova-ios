@@ -9,7 +9,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 enum FileTransferError {
 	FILE_NOT_FOUND_ERR = 1,
@@ -18,7 +18,7 @@ enum FileTransferError {
 };
 typedef int FileTransferError;
 
-@interface FileTransfer : PhoneGapCommand {
+@interface FileTransfer : PGPlugin {
     
 }
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

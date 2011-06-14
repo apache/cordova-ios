@@ -5,12 +5,12 @@
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  */
 
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 #import <AudioToolbox/AudioServices.h>
 #import <MediaPlayer/MediaPlayer.h>
 
 
-@interface Movie : PhoneGapCommand {
+@interface Movie : PGPlugin {
     BOOL stopReceived;
     BOOL repeat;
     MPMoviePlayerController	*theMovie;

@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
-@interface Location : PhoneGapCommand <CLLocationManagerDelegate> {
+@interface Location : PGPlugin <CLLocationManagerDelegate> {
 	CLLocationManager *locationManager;
     BOOL              __locationStarted;
     BOOL              __headingStarted;

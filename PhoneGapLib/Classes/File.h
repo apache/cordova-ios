@@ -7,7 +7,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 enum FileError {
 	NOT_FOUND_ERR = 1,
@@ -31,7 +31,7 @@ enum FileSystemType {
 };
 typedef int FileSystemType;
 
-@interface File : PhoneGapCommand {
+@interface File : PGPlugin {
 	
 	NSString *appDocsPath;	
 	NSString *appLibraryPath;	

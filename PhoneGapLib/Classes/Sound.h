@@ -10,7 +10,7 @@
 #import <AudioToolbox/AudioServices.h>
 #import <AVFoundation/AVFoundation.h>
 
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 
 @interface AudioFile : NSObject
 {
@@ -38,7 +38,7 @@
 
 @end
 
-@interface Sound : PhoneGapCommand 
+@interface Sound : PGPlugin 
 <AVAudioPlayerDelegate
 #ifdef __IPHONE_3_0
 , AVAudioRecorderDelegate

@@ -15,7 +15,7 @@
 
 @synthesize theMovie,stopReceived,repeat;
 
-- (PhoneGapCommand*) initWithWebView:(UIWebView*)theWebView
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Movie*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {
