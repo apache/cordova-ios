@@ -19,13 +19,13 @@
 
 @synthesize window, webView, viewController, activityView, imageView;
 @synthesize settings, invokedURL, loadFromString, orientationType;
-@synthesize commandObjects, commandMap;
+@synthesize pluginObjects, pluginsMap;
 
 - (id) init
 {
     self = [super init];
     if (self != nil) {
-        self.commandObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+        self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
 		// Turn on cookie support ( shared with our app only! )
 		NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
 		[cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
@@ -111,12 +111,12 @@ static NSString *gapVersion;
 {
 	// first, we try to find the serviceName in the commandMap 
 	// (acts as a whitelist as well) if it does not exist, we return nil
-	NSString* className = [self.commandMap objectForKey:serviceName];
+	NSString* className = [self.pluginsMap objectForKey:serviceName];
 	if (className == nil) {
 		return nil;
 	}
 	
-    id obj = [self.commandObjects objectForKey:className];
+    id obj = [self.pluginObjects objectForKey:className];
     if (!obj) 
 	{
         // attempt to load the settings for this command class
@@ -129,7 +129,7 @@ static NSString *gapVersion;
 		}
         
 		if (obj != nil) {
-			[self.commandObjects setObject:obj forKey:className];
+			[self.pluginObjects setObject:obj forKey:className];
 			[obj release];
 		} else {
 			NSLog(@"PhoneGapCommand class %@ (serviceName: %@) does not exist", className, serviceName);
@@ -180,18 +180,22 @@ static NSString *gapVersion;
 											   [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 	
     // read from PhoneGap.plist in the app bundle
-	NSDictionary *temp = [[self class] getBundlePlist:@"PhoneGap"];
-	if (temp == nil) {
-		NSLog(@"WARNING: PhoneGap.plist is missing.");
+	NSString* appPlistName = @"PhoneGap";
+	NSDictionary* phonegapPlist = [[self class] getBundlePlist:appPlistName];
+	if (phonegapPlist == nil) {
+		NSLog(@"WARNING: %@.plist is missing.", appPlistName);
+		return NO;
 	}
-    self.settings = [[NSDictionary alloc] initWithDictionary:temp];
+    self.settings = [[NSDictionary alloc] initWithDictionary:phonegapPlist];
 
-    // read from Commands.plist in the app bundle
-	NSDictionary *commands = [[self class] getBundlePlist:@"Commands"];
-	if (commands == nil) {
-		NSLog(@"WARNING: Commands.plist is missing! PhoneGap will not work, you need to have this file.");
+    // read from Plugins dict in PhoneGap.plist in the app bundle
+	NSString* pluginsKey = @"Plugins";
+	NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
+	if (pluginsDict == nil) {
+		NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", appPlistName, pluginsKey);
+		return NO;
 	}
-    self.commandMap = [[NSDictionary alloc] initWithDictionary:commands];
+    self.pluginsMap = [[NSDictionary alloc] initWithDictionary:pluginsDict];
 	
 	self.viewController = [ [ PhoneGapViewController alloc ] init ];
 	
@@ -640,7 +644,8 @@ static NSString *gapVersion;
 - (void)dealloc
 {
     [PluginResult releaseStatus];
-	self.commandObjects = nil;
+	self.pluginObjects = nil;
+	self.pluginsMap	= nil;
 	self.viewController = nil;
 	self.activityView = nil;
 	self.window = nil;

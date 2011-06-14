@@ -12,5 +12,36 @@
 	<true/>
 	<key>ExternalHosts</key>
 	<array/>
+	<key>Plugins</key>
+	<dict>
+		<key>Accelerometer</key>
+		<string>Accelerometer</string>
+		<key>Camera</key>
+		<string>Camera</string>
+		<key>Connection</key>
+		<string>Connection</string>
+		<key>Contacts</key>
+		<string>Contacts</string>
+		<key>DebugConsole</key>
+		<string>DebugConsole</string>
+		<key>Contacts</key>
+		<string>Contacts</string>
+		<key>File</key>
+		<string>File</string>
+		<key>FileTransfer</key>
+		<string>FileTransfer</string>
+		<key>Image</key>
+		<string>Image</string>
+		<key>Location</key>
+		<string>Location</string>
+		<key>Movie</key>
+		<string>Movie</string>
+		<key>Network</key>
+		<string>Network</string>
+		<key>Notification</key>
+		<string>Notification</string>
+		<key>Sound</key>
+		<string>Sound</string>
+	</dict>
 </dict>
 </plist>

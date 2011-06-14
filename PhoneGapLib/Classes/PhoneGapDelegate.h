@@ -34,8 +34,8 @@
 @property (nonatomic, retain) IBOutlet PhoneGapViewController *viewController;
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityView;
 @property (nonatomic, retain) UIImageView *imageView;
-@property (nonatomic, retain) NSMutableDictionary *commandObjects;
-@property (nonatomic, retain) NSDictionary *commandMap;
+@property (nonatomic, retain) NSMutableDictionary *pluginObjects;
+@property (nonatomic, retain) NSDictionary *pluginsMap;
 @property (nonatomic, retain) NSDictionary *settings;
 @property (nonatomic, retain) NSURL *invokedURL;
 @property (assign) BOOL loadFromString;

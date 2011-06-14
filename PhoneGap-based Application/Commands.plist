@@ -2,34 +2,4 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <!-- key is the plugin namespace (i.e com.phonegap.Camera), value is the classname in Obj-C -->
-<dict>
-	<key>Accelerometer</key>
-	<string>Accelerometer</string>
-	<key>Camera</key>
-	<string>Camera</string>
-	<key>Connection</key>
-	<string>Connection</string>
-	<key>Contacts</key>
-	<string>Contacts</string>
-	<key>DebugConsole</key>
-	<string>DebugConsole</string>
-	<key>Contacts</key>
-	<string>Contacts</string>
-	<key>File</key>
-	<string>File</string>
-	<key>FileTransfer</key>
-	<string>FileTransfer</string>
-	<key>Image</key>
-	<string>Image</string>
-	<key>Location</key>
-	<string>Location</string>
-	<key>Movie</key>
-	<string>Movie</string>
-	<key>Network</key>
-	<string>Network</string>
-	<key>Notification</key>
-	<string>Notification</string>
-	<key>Sound</key>
-	<string>Sound</string>
-</dict>
 </plist>

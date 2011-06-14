@@ -11,3 +11,5 @@ PhoneGapInstaller.pkg
 build
 /PhoneGap.framework/
 /pkg_error_log
+*.xcworkspace
+xcuserdata
