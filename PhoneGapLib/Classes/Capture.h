@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <AVFoundation/AVFoundation.h>
-#import "PhoneGapCommand.h"
+#import "PGPlugin.h"
 #import "File.h"
 
 enum CaptureError {
@@ -37,7 +37,7 @@ typedef NSUInteger CaptureError;
 
 @end
 
-@interface Capture : PhoneGapCommand<UIImagePickerControllerDelegate, UINavigationControllerDelegate> 
+@interface Capture : PGPlugin<UIImagePickerControllerDelegate, UINavigationControllerDelegate> 
 {
     PGImagePicker* pickerController;
     BOOL inUse;
@@ -97,7 +97,7 @@ typedef NSUInteger CaptureError;
 @property (nonatomic, retain) NSString* resultString;
 @property (nonatomic, retain) NSTimer* timer;
 
-- (id) initWithCommand: (PhoneGapCommand*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId;
+- (id) initWithCommand: (PGPlugin*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId;
 - (void) processButton: (id) sender;
 - (void) stopRecordingCleanup;
 - (void) dismissAudioView: (id) sender;
