@@ -42,6 +42,8 @@
 		<string>Notification</string>
 		<key>Sound</key>
 		<string>Sound</string>
+		<key>Capture</key>
+		<string>Capture</string>
 	</dict>
 </dict>
 </plist>
