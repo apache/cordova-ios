@@ -36,6 +36,22 @@
 		308D053D1370CCF300D202BF /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 308D05351370CCF300D202BF /* Default@2x.png */; };
 		308D053E1370CCF300D202BF /* Default~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 308D05361370CCF300D202BF /* Default~iPad.png */; };
 		30E1352710E2C1420031B30D /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30E1352610E2C1420031B30D /* PhoneGap.plist */; };
+		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; };
+		30E564A513A7FCBC007403D8 /* controls_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649613A7FCBC007403D8 /* controls_bg.png */; };
+		30E564A613A7FCBC007403D8 /* controls_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649713A7FCBC007403D8 /* controls_bg@2x.png */; };
+		30E564A713A7FCBC007403D8 /* controls_bg~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649813A7FCBC007403D8 /* controls_bg~ipad.png */; };
+		30E564A813A7FCBC007403D8 /* microphone.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649913A7FCBC007403D8 /* microphone.jpg */; };
+		30E564A913A7FCBC007403D8 /* microphone@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649A13A7FCBC007403D8 /* microphone@2x.jpg */; };
+		30E564AA13A7FCBC007403D8 /* microphone~ipad.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649B13A7FCBC007403D8 /* microphone~ipad.jpg */; };
+		30E564AB13A7FCBC007403D8 /* record_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649C13A7FCBC007403D8 /* record_button.png */; };
+		30E564AC13A7FCBC007403D8 /* record_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649D13A7FCBC007403D8 /* record_button@2x.png */; };
+		30E564AD13A7FCBC007403D8 /* record_button~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649E13A7FCBC007403D8 /* record_button~ipad.png */; };
+		30E564AE13A7FCBC007403D8 /* recording_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649F13A7FCBC007403D8 /* recording_bg.png */; };
+		30E564AF13A7FCBC007403D8 /* recording_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E564A013A7FCBC007403D8 /* recording_bg@2x.png */; };
+		30E564B013A7FCBC007403D8 /* recording_bg~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E564A113A7FCBC007403D8 /* recording_bg~ipad.png */; };
+		30E564B113A7FCBC007403D8 /* stop_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E564A213A7FCBC007403D8 /* stop_button.png */; };
+		30E564B213A7FCBC007403D8 /* stop_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E564A313A7FCBC007403D8 /* stop_button@2x.png */; };
+		30E564B313A7FCBC007403D8 /* stop_button~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E564A413A7FCBC007403D8 /* stop_button~ipad.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +110,22 @@
 		308D05351370CCF300D202BF /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		308D05361370CCF300D202BF /* Default~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default~iPad.png"; sourceTree = "<group>"; };
 		30E1352610E2C1420031B30D /* PhoneGap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
+		30E5649113A7FCAF007403D8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		30E5649613A7FCBC007403D8 /* controls_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = controls_bg.png; sourceTree = "<group>"; };
+		30E5649713A7FCBC007403D8 /* controls_bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "controls_bg@2x.png"; sourceTree = "<group>"; };
+		30E5649813A7FCBC007403D8 /* controls_bg~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "controls_bg~ipad.png"; sourceTree = "<group>"; };
+		30E5649913A7FCBC007403D8 /* microphone.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = microphone.jpg; sourceTree = "<group>"; };
+		30E5649A13A7FCBC007403D8 /* microphone@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "microphone@2x.jpg"; sourceTree = "<group>"; };
+		30E5649B13A7FCBC007403D8 /* microphone~ipad.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "microphone~ipad.jpg"; sourceTree = "<group>"; };
+		30E5649C13A7FCBC007403D8 /* record_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_button.png; sourceTree = "<group>"; };
+		30E5649D13A7FCBC007403D8 /* record_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_button@2x.png"; sourceTree = "<group>"; };
+		30E5649E13A7FCBC007403D8 /* record_button~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_button~ipad.png"; sourceTree = "<group>"; };
+		30E5649F13A7FCBC007403D8 /* recording_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recording_bg.png; sourceTree = "<group>"; };
+		30E564A013A7FCBC007403D8 /* recording_bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "recording_bg@2x.png"; sourceTree = "<group>"; };
+		30E564A113A7FCBC007403D8 /* recording_bg~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "recording_bg~ipad.png"; sourceTree = "<group>"; };
+		30E564A213A7FCBC007403D8 /* stop_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop_button.png; sourceTree = "<group>"; };
+		30E564A313A7FCBC007403D8 /* stop_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop_button@2x.png"; sourceTree = "<group>"; };
+		30E564A413A7FCBC007403D8 /* stop_button~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop_button~ipad.png"; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* ___PROJECTNAMEASIDENTIFIER___-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "___PROJECTNAMEASIDENTIFIER___-Prefix.pch"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* ___PROJECTNAMEASIDENTIFIER___-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "___PROJECTNAMEASIDENTIFIER___-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -118,6 +150,7 @@
 				301BF5C5109A6A2B0062928A /* SystemConfiguration.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
 				307A90FC1385EFFA00E43782 /* CoreTelephony.framework in Frameworks */,
+				30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +201,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				30E5649513A7FCBC007403D8 /* audio */,
 				308D052D1370CCF300D202BF /* icons */,
 				308D05311370CCF300D202BF /* splash */,
 				30E1352610E2C1420031B30D /* PhoneGap.plist */,
@@ -195,6 +229,7 @@
 				301BF5C4109A6A2B0062928A /* SystemConfiguration.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
 				307A90FB1385EFFA00E43782 /* CoreTelephony.framework */,
+				30E5649113A7FCAF007403D8 /* CoreMedia.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -237,6 +272,29 @@
 			);
 			name = splash;
 			path = Resources/splash;
+			sourceTree = "<group>";
+		};
+		30E5649513A7FCBC007403D8 /* audio */ = {
+			isa = PBXGroup;
+			children = (
+				30E5649613A7FCBC007403D8 /* controls_bg.png */,
+				30E5649713A7FCBC007403D8 /* controls_bg@2x.png */,
+				30E5649813A7FCBC007403D8 /* controls_bg~ipad.png */,
+				30E5649913A7FCBC007403D8 /* microphone.jpg */,
+				30E5649A13A7FCBC007403D8 /* microphone@2x.jpg */,
+				30E5649B13A7FCBC007403D8 /* microphone~ipad.jpg */,
+				30E5649C13A7FCBC007403D8 /* record_button.png */,
+				30E5649D13A7FCBC007403D8 /* record_button@2x.png */,
+				30E5649E13A7FCBC007403D8 /* record_button~ipad.png */,
+				30E5649F13A7FCBC007403D8 /* recording_bg.png */,
+				30E564A013A7FCBC007403D8 /* recording_bg@2x.png */,
+				30E564A113A7FCBC007403D8 /* recording_bg~ipad.png */,
+				30E564A213A7FCBC007403D8 /* stop_button.png */,
+				30E564A313A7FCBC007403D8 /* stop_button@2x.png */,
+				30E564A413A7FCBC007403D8 /* stop_button~ipad.png */,
+			);
+			name = audio;
+			path = Resources/audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,6 +384,21 @@
 				308D053C1370CCF300D202BF /* Default.png in Resources */,
 				308D053D1370CCF300D202BF /* Default@2x.png in Resources */,
 				308D053E1370CCF300D202BF /* Default~iPad.png in Resources */,
+				30E564A513A7FCBC007403D8 /* controls_bg.png in Resources */,
+				30E564A613A7FCBC007403D8 /* controls_bg@2x.png in Resources */,
+				30E564A713A7FCBC007403D8 /* controls_bg~ipad.png in Resources */,
+				30E564A813A7FCBC007403D8 /* microphone.jpg in Resources */,
+				30E564A913A7FCBC007403D8 /* microphone@2x.jpg in Resources */,
+				30E564AA13A7FCBC007403D8 /* microphone~ipad.jpg in Resources */,
+				30E564AB13A7FCBC007403D8 /* record_button.png in Resources */,
+				30E564AC13A7FCBC007403D8 /* record_button@2x.png in Resources */,
+				30E564AD13A7FCBC007403D8 /* record_button~ipad.png in Resources */,
+				30E564AE13A7FCBC007403D8 /* recording_bg.png in Resources */,
+				30E564AF13A7FCBC007403D8 /* recording_bg@2x.png in Resources */,
+				30E564B013A7FCBC007403D8 /* recording_bg~ipad.png in Resources */,
+				30E564B113A7FCBC007403D8 /* stop_button.png in Resources */,
+				30E564B213A7FCBC007403D8 /* stop_button@2x.png in Resources */,
+				30E564B313A7FCBC007403D8 /* stop_button~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
