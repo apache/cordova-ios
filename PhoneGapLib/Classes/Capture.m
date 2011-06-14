@@ -535,14 +535,14 @@
 
     // make backgrounds
     
-    UIImage* microphone = [UIImage imageNamed:@"microphone.jpg"];
+    UIImage* microphone = [UIImage imageNamed:@"Capture.bundle/microphone.jpg"];
     UIView* microphoneView = [[[UIView alloc] initWithFrame: CGRectMake(0,0,viewRect.size.width, microphone.size.height)] autorelease];
     [microphoneView setBackgroundColor:[UIColor colorWithPatternImage:microphone]];
     [microphoneView setIsAccessibilityElement:NO];
     [tmp addSubview:microphoneView];
 
     // add bottom bar view
-    UIImage* grayBkg = [UIImage imageNamed: @"controls_bg.png"];
+    UIImage* grayBkg = [UIImage imageNamed: @"Capture.bundle/controls_bg.png"];
     UIView* controls = [[[UIView alloc] initWithFrame:CGRectMake(0, microphone.size.height, viewRect.size.width,grayBkg.size.height )] autorelease];
     [controls setBackgroundColor:[UIColor colorWithPatternImage: grayBkg]];
     [controls setIsAccessibilityElement:NO];
@@ -554,7 +554,7 @@
     //recordButton.frame = CGRectMake(viewRect.size.width/4, viewRect.size.height/4, viewRect.size.width/2,viewRect.size.height/2);
     */
     // make red recording background view
-    UIImage* recordingBkg = [UIImage imageNamed: @"recording_bg.png"];
+    UIImage* recordingBkg = [UIImage imageNamed: @"Capture.bundle/recording_bg.png"];
     UIColor *background = [UIColor colorWithPatternImage:recordingBkg];
     self.recordingView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
     [self.recordingView setBackgroundColor:background];
@@ -580,8 +580,8 @@
     
     // Add record button
     
-    self.recordImage = [UIImage imageNamed: @"record_button.png"];
-    self.stopRecordImage = [UIImage imageNamed: @"stop_button.png"];
+    self.recordImage = [UIImage imageNamed: @"Capture.bundle/record_button.png"];
+    self.stopRecordImage = [UIImage imageNamed: @"Capture.bundle/stop_button.png"];
     self.recordButton.accessibilityTraits |= UIAccessibilityTraitStartsMediaSession;
     self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
     [self.recordButton setIsAccessibilityElement:YES];
