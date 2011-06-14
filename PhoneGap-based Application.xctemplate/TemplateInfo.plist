@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	
-		<!-- STANDARD -------------------------------------------------------------------------- -->
+		<!-- STANDARD __________________________________________________________________________ -->
 		
         <key>Ancestors</key>
             <array>
@@ -20,7 +20,7 @@
         <key>Kind</key>
             <string>Xcode.Xcode3.ProjectTemplateUnitKind</string> <!-- Kind Must be in all Templates. For Project Template: "Xcode.Xcode3.ProjectTemplateUnitKind", File Template: "Xcode.IDEKit.TextSubstitutionFileTemplateKind" -->
 
-		<!-- DEFINITIONS -------------------------------------------------------------------------- -->
+		<!-- DEFINITIONS __________________________________________________________________________ -->
 
 		<key>Definitions</key>
 			<dict>
@@ -45,6 +45,9 @@
 						</array>
 					<key>PathType</key>
 					<string>Group</string>
+					<!-- to exclude from any target, add this key with empty array -->
+					<key>TargetIndices</key>
+					<array/>					
 				</dict>
 				<key>main.m</key>
 				<dict>
@@ -168,6 +171,9 @@
 							</array>
 						<key>PathType</key>
 						<string>Group</string>
+						<!-- to exclude from any target, add this key with empty array -->
+						<key>TargetIndices</key>
+						<array/>					
 					</dict>
 				<key>Classes/AppDelegate.m</key>
 					<dict>
@@ -190,10 +196,13 @@
 							</array>
 						<key>PathType</key>
 						<string>Group</string>
+						<!-- to exclude from any target, add this key with empty array -->
+						<key>TargetIndices</key>
+						<array/>					
 					</dict>
 			</dict>
 			
-		<!-- NODES -------------------------------------------------------------------------- -->
+		<!-- NODES __________________________________________________________________________ -->
 		<key>Nodes</key>
 			<array>
 				<string>main.m</string>
@@ -213,7 +222,7 @@
 				<string>Plugins/README</string>
 			</array>
 
-		<!-- OPTIONS -------------------------------------------------------------------------- -->
+		<!-- OPTIONS __________________________________________________________________________ -->
 		<key>Options</key>
 			<array>
 				<!--
@@ -236,13 +245,13 @@
 				-->
 	    	</array>
 
-		<!-- PLATFORMS -------------------------------------------------------------------------- -->
+		<!-- PLATFORMS __________________________________________________________________________ -->
 		<key>Platforms</key>
 			<array>
 				<string>com.apple.platform.iphoneos</string>
 			</array>
 		
-		<!-- PROJECT -------------------------------------------------------------------------- -->
+		<!-- PROJECT __________________________________________________________________________ -->
 		<key>Project</key>
 			<dict>
 				<key>SDK</key>
@@ -267,7 +276,7 @@
 					</dict>
 			</dict>
 
-		<!-- TARGETS -------------------------------------------------------------------------- -->
+		<!-- TARGETS __________________________________________________________________________ -->
 		<key>Targets</key>
 		<array>
 		    <dict>
