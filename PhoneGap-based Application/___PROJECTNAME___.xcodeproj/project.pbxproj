@@ -36,7 +36,7 @@
 		308D053D1370CCF300D202BF /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 308D05351370CCF300D202BF /* Default@2x.png */; };
 		308D053E1370CCF300D202BF /* Default~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 308D05361370CCF300D202BF /* Default~iPad.png */; };
 		30E1352710E2C1420031B30D /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30E1352610E2C1420031B30D /* PhoneGap.plist */; };
-		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; };
+		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		30E564A513A7FCBC007403D8 /* controls_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649613A7FCBC007403D8 /* controls_bg.png */; };
 		30E564A613A7FCBC007403D8 /* controls_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649713A7FCBC007403D8 /* controls_bg@2x.png */; };
 		30E564A713A7FCBC007403D8 /* controls_bg~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E5649813A7FCBC007403D8 /* controls_bg~ipad.png */; };
