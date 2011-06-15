@@ -99,6 +99,10 @@
 		30A9DFEB13A7EBC1009AA950 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
 		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
 		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
+		30C7E18C13A87B770074D196 /* PhoneGapCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C7E18A13A87B770074D196 /* PhoneGapCommand.h */; };
+		30C7E18D13A87B770074D196 /* PhoneGapCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C7E18B13A87B770074D196 /* PhoneGapCommand.m */; };
+		30C7E18E13A87B770074D196 /* PhoneGapCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C7E18A13A87B770074D196 /* PhoneGapCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30C7E18F13A87B770074D196 /* PhoneGapCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C7E18B13A87B770074D196 /* PhoneGapCommand.m */; };
 		30E33AF213A7E24B00594D64 /* PGPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E33AF013A7E24B00594D64 /* PGPlugin.h */; };
 		30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
@@ -169,6 +173,8 @@
 		30956FD1138F1F5600FC3563 /* PGMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGMotion.m; path = Classes/PGMotion.m; sourceTree = "<group>"; };
 		30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor-Expanded.h"; path = "Classes/UIColor-Expanded.h"; sourceTree = "<group>"; };
 		30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor-Expanded.m"; path = "Classes/UIColor-Expanded.m"; sourceTree = "<group>"; };
+		30C7E18A13A87B770074D196 /* PhoneGapCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapCommand.h; path = Classes/PhoneGapCommand.h; sourceTree = "<group>"; };
+		30C7E18B13A87B770074D196 /* PhoneGapCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapCommand.m; path = Classes/PhoneGapCommand.m; sourceTree = "<group>"; };
 		30E33AF013A7E24B00594D64 /* PGPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGPlugin.h; path = Classes/PGPlugin.h; sourceTree = "<group>"; };
 		30E33AF113A7E24B00594D64 /* PGPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPlugin.m; path = Classes/PGPlugin.m; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
@@ -283,6 +289,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30C7E18A13A87B770074D196 /* PhoneGapCommand.h */,
+				30C7E18B13A87B770074D196 /* PhoneGapCommand.m */,
 				30E33AF013A7E24B00594D64 /* PGPlugin.h */,
 				30E33AF113A7E24B00594D64 /* PGPlugin.m */,
 				30956FD0138F1F5600FC3563 /* PGMotion.h */,
@@ -426,6 +434,7 @@
 				30956FFC138F317200FC3563 /* PGMotion.h in Headers */,
 				303259CA136B326300982B63 /* FileTransfer.h in Headers */,
 				1F5AC3C51396F75000EC7B95 /* Capture.h in Headers */,
+				30C7E18E13A87B770074D196 /* PhoneGapCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +475,7 @@
 				30956FD2138F1F5600FC3563 /* PGMotion.h in Headers */,
 				1F584B9B1385A28A00ED25E8 /* Capture.h in Headers */,
 				30E33AF213A7E24B00594D64 /* PGPlugin.h in Headers */,
+				30C7E18C13A87B770074D196 /* PhoneGapCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,6 +640,7 @@
 				303259AB136B325100982B63 /* PluginResult.m in Sources */,
 				303259AC136B325100982B63 /* FileTransfer.m in Sources */,
 				30956FFD138F317200FC3563 /* PGMotion.m in Sources */,
+				30C7E18F13A87B770074D196 /* PhoneGapCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,6 +680,7 @@
 				30956FD3138F1F5600FC3563 /* PGMotion.m in Sources */,
 				1F584B9C1385A28A00ED25E8 /* Capture.m in Sources */,
 				30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */,
+				30C7E18D13A87B770074D196 /* PhoneGapCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

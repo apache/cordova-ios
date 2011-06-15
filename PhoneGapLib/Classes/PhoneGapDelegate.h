@@ -16,14 +16,14 @@
 
 
 #import "DebugConsole.h"
-//#import "Image.h"
+
 
 @class InvokedUrlCommand;
 @class PhoneGapViewController;
 @class Sound;
 @class Contacts;
 @class Console;
-//@class Image;
+
 
 @interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
 {
