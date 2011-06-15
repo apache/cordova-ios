@@ -107,6 +107,7 @@ phonegap-framework: phonegap-lib clean-phonegap-framework
 	@if [ -e "$(GIT)" ]; then \
 	echo -e '\n$(COMMIT_HASH)' >> PhoneGap.framework/VERSION; \
 	fi	
+	@$(CP) -R PhoneGap-based\ Application/Resources/Capture.bundle/ PhoneGap.framework/Capture.bundle
 
 clean: clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework
 	@if [ -e "$(PKG_ERROR_LOG)" ]; then \
