@@ -29,7 +29,7 @@
 		1F5AC3C61396F76700EC7B95 /* Capture.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F584B9A1385A28900ED25E8 /* Capture.m */; };
 		1F92F4A01314023E0046367C /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; };
 		1F92F4A11314023E0046367C /* PluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F92F49F1314023E0046367C /* PluginResult.m */; };
-		3024509C13A95AB900F9B5D2 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
+		3024509C13A95AB900F9B5D2 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		302965BC13A94E9D007046C5 /* PGDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 302965BB13A94E9D007046C5 /* PGDebug.h */; };
 		302965BD13A94E9D007046C5 /* PGDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 302965BB13A94E9D007046C5 /* PGDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30325990136B325100982B63 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* Camera.m */; };
