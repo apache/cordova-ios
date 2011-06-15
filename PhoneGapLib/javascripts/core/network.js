@@ -7,33 +7,23 @@ Connection = function() {
 	/*
 	 * One of the connection constants below.
 	 */
-	this.type = 0;
-	/*
-	 * The home network provider, only valid if cellular based.
-	 */
-	this.homeNW = null;
-	/*
-	 * The current network provider, only valid if cellular based.
-     */
-	this.currentNW = null;
+	this.type = Connection.UNKNOWN;
 
 	/* initialize from the extended DeviceInfo properties */
     try {      
-		this.type		= DeviceInfo.connection.type;
-		this.homeNW		= DeviceInfo.connection.homeNW;
-		this.currentNW	= DeviceInfo.connection.currentNW;
+		this.type	= DeviceInfo.connection.type;
     } 
 	catch(e) {
     }
 };
 
-Connection.UNKNOWN = 0; // Unknown connection type
-Connection.ETHERNET = 1;
-Connection.WIFI = 2;
-Connection.CELL_2G = 3;
-Connection.CELL_3G = 4;
-Connection.CELL_4G = 5;
-Connection.NONE = 20; // NO connectivity
+Connection.UNKNOWN = "unknown"; // Unknown connection type
+Connection.ETHERNET = "ethernet";
+Connection.WIFI = "wifi";
+Connection.CELL_2G = "2g";
+Connection.CELL_3G = "3g";
+Connection.CELL_4G = "4g";
+Connection.NONE = "none"; // NO connectivity
 
 // //////////////////////////////////////////////////////////////////
 	

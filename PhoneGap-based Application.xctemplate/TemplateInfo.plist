@@ -356,7 +356,6 @@
 					<string>QuartzCore</string>
 					<string>SystemConfiguration</string>
 					<string>MobileCoreServices</string>
-					<string>CoreTelephony</string>
 					<string>CoreMedia</string>
 		        </array>
 		        <key>Name</key>

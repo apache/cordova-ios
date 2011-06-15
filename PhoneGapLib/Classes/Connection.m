@@ -9,70 +9,50 @@
 #import "Connection.h"
 #import "Reachability.h"
 
+@interface Connection(PrivateMethods)
+- (void) updateOnlineStatus;
+@end
+
 @implementation Connection
 
-@synthesize type, homeNW, currentNW, internetReach, networkInfo;
+@synthesize type, internetReach;
 
-- (w3cConnectionType) w3cConnectionTypeFor:(Reachability*)reachability
+- (NSString*) w3cConnectionTypeFor:(Reachability*)reachability
 {
 	NetworkStatus networkStatus = [reachability currentReachabilityStatus];
 	switch(networkStatus)
 	{
         case NotReachable:
-			return ConnectionTypeUnknown;
+			return @"unknown";
         case ReachableViaWWAN:
-			return ConnectionTypeCell2G; // no generic default, so we use the lowest common denominator
+			return @"2g"; // no generic default, so we use the lowest common denominator
         case ReachableViaWiFi:
-			return ConnectionTypeWiFi;
+			return @"wifi";
 		default:
-			return ConnectionTypeNone;
+			return @"none";
     }
 }
 
-- (BOOL) isCellularConnection:(w3cConnectionType)connectionType
+- (BOOL) isCellularConnection:(NSString*)connectionType
 {
-	switch(connectionType)
-	{
-        case ConnectionTypeCell2G:
-        case ConnectionTypeCell3G:
-        case ConnectionTypeCell4G:
-			return YES;
-		default:
-			return NO;
-    }
+	return	[connectionType isEqualToString:@"2g"] ||
+			[connectionType isEqualToString:@"3g"] ||
+			[connectionType isEqualToString:@"4g"];
 }
 
-- (void) updateReachability:(Reachability*)reachability withCarrier:(CTCarrier*)carrier
+- (void) updateReachability:(Reachability*)reachability
 {
-	if (carrier) {
-		self.currentNW = carrier.carrierName;	
-	}
 	if (reachability) {
 		self.type = [self w3cConnectionTypeFor:reachability];
 	}
 	
-	// if it is not a cellular connection, remove currentNW
-	if (![self isCellularConnection:self.type]) {
-		self.currentNW = nil;
-	} 
-	// if it is a cellular connection, restore currentNW
-	else {
-		self.currentNW = self.networkInfo.subscriberCellularProvider.carrierName;
-	}
-
 	NSString* js = nil;
-	
-	// write the current cellular network
-	if (self.currentNW != nil) {
-		js = [NSString stringWithFormat:@"navigator.network.connection.currentNW = '%@';", self.currentNW];
-	} else {
-		js = @"navigator.network.connection.currentNW = null;";
-	}
-	[super writeJavascript:js];
-	
 	// write the connection type
-	js = [NSString stringWithFormat:@"navigator.network.connection.type = %d;", self.type];
+	js = [NSString stringWithFormat:@"navigator.network.connection.type = '%@';", self.type];
 	[super writeJavascript:js];
+	
+	// send "online"/"offline" event
+	[self updateOnlineStatus];
 }
 
 - (void) updateConnectionType:(NSNotification*)note
@@ -80,14 +60,19 @@
 	Reachability* curReach = [note object];
 	NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
 	
-	[self updateReachability:curReach withCarrier:nil];
+	[self updateReachability:curReach];
 }
 
-- (void) updateCarrier:(CTCarrier*)carrier
+- (void) updateOnlineStatus
 {
-	NSParameterAssert([carrier isKindOfClass:[CTCarrier class]]);
-	
-	[self updateReachability:nil withCarrier:carrier];
+	// send "online"/"offline" event
+	NetworkStatus status = [self.internetReach currentReachabilityStatus];
+	BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
+	if (online) {
+		[super writeJavascript:@"PhoneGap.fireEvent('online');"];
+	} else {
+		[super writeJavascript:@"PhoneGap.fireEvent('offline');"];
+	}
 }
 
 - (void) prepare
@@ -99,28 +84,14 @@
 	[self.internetReach startNotifier];
 	self.type = [self w3cConnectionTypeFor:self.internetReach];
 	
-	Class ctClass = NSClassFromString(@"CTTelephonyNetworkInfo");
-	if (ctClass) 
-	{
-		self.networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-		self.currentNW = [self isCellularConnection:self.type]? self.networkInfo.subscriberCellularProvider.carrierName : nil;	
-		self.networkInfo.subscriberCellularProviderDidUpdateNotifier = ^(CTCarrier* carrier){
-			[self performSelectorOnMainThread:@selector(updateCarrier:) withObject:carrier waitUntilDone:NO];
-		};		
-	}
-	
-	// NOTE: homeNW cannot be known with the iOS 4.x API currently.
+	[self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (Connection*)[super initWithWebView:theWebView];
     if (self) {
-		self.type = ConnectionTypeNone;
-		self.networkInfo = nil;
-		self.currentNW = nil;
-		self.homeNW = nil;
-		
+		self.type = @"none";
 		[self prepare];
     }
     return self;
@@ -128,7 +99,6 @@
 
 - (void)dealloc
 {
-	self.networkInfo = nil;
 	self.internetReach = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self 
 													name:kReachabilityChangedNotification object:nil];

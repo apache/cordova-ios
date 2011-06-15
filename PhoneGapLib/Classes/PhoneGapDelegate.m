@@ -348,13 +348,7 @@ static NSString *gapVersion;
 	{
 		Connection* connection = (Connection*)cmd;
 		NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
-		[connProps setObject:[NSNumber numberWithInt:connection.type] forKey:@"type"];
-		if (connection.currentNW) {
-			[connProps setObject:connection.currentNW forKey:@"currentNW"];
-		}
-		if (connection.homeNW) {
-			[connProps setObject:connection.homeNW forKey:@"homeNW"];
-		}
+		[connProps setObject:connection.type forKey:@"type"];
 
 		[devProps setObject:connProps forKey:@"connection"];
 	}
