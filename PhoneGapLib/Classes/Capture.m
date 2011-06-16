@@ -55,6 +55,10 @@
 {
     NSString* callbackId = [arguments objectAtIndex:0];
     NSNumber* duration = [options objectForKey:@"duration"];
+    // the default value of duration is 0 so use nil (no duration) if default value
+    if (duration) {
+        duration = [duration doubleValue] == 0 ? nil : duration;
+    }
     PluginResult* result = nil;
     
     if (NSClassFromString(@"AVAudioRecorder") == nil) {

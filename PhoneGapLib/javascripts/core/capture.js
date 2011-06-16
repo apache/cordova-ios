@@ -104,35 +104,35 @@ function ConfigurationData() {
 /**
  * Encapsulates all image capture operation configuration options.
  */
-function CaptureImageOptions() {
+var CaptureImageOptions = function() {
     // Upper limit of images user can take. Value must be equal or greater than 1.
     this.limit = 1; 
     // The selected image mode. Must match with one of the elements in supportedImageModes array.
-    this.mode; 
+    this.mode = null; 
 };
 
 /**
  * Encapsulates all video capture operation configuration options.
  */
-function CaptureVideoOptions() {
+var CaptureVideoOptions = function() {
     // Upper limit of videos user can record. Value must be equal or greater than 1.
-    this.limit;
+    this.limit = 1;
     // Maximum duration of a single video clip in seconds.
-    this.duration;
+    this.duration = 0;
     // The selected video mode. Must match with one of the elements in supportedVideoModes array.
-    this.mode;
+    this.mode = null;
 };
 
 /**
  * Encapsulates all audio capture operation configuration options.
  */
-function CaptureAudioOptions() {
+var CaptureAudioOptions = function() {
     // Upper limit of sound clips user can record. Value must be equal or greater than 1.
-    this.limit;
+    this.limit = 1;
     // Maximum duration of a single sound clip in seconds.
-    this.duration;
+    this.duration = 0;
     // The selected audio mode. Must match with one of the elements in supportedAudioModes array.
-    this.mode;
+    this.mode = null;
 };
 
 /**
