@@ -1,0 +1,12 @@
+The .txt files are gone, you will need to generate the .rtf files from the .html files - consequently edit the .html files, not the generated .rtf files. 
+The conversions should have been taken care of in the Makefile.
+
+The conversion is done by the 'textutil' command line utility, included in OS X.
+
+example:
+    textutil -convert rtf introduction.html
+
+which will output a file:
+   introduction.rtf
+
+All .rtf files are git ignored in this folder.

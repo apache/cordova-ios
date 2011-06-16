@@ -84,6 +84,9 @@ clean-xcode3-template:
 clean-phonegap-framework:
 	@$(RM_RF) PhoneGap.framework
 
+clean-installer:
+	@$(RM_F) PhoneGapInstaller/docs/*.rtf
+
 clean-phonegap-lib:
 	@if [ -e "$(BUILD_BAK)/VERSION" ]; then \
 		$(CP) -Rf "PhoneGapLib/VERSION" ~/.Trash; \
@@ -109,14 +112,15 @@ phonegap-framework: phonegap-lib clean-phonegap-framework
 	fi	
 	@$(CP) -R PhoneGap-based\ Application/Resources/Capture.bundle/ PhoneGap.framework/Capture.bundle
 
-clean: clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework
+clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework
 	@if [ -e "$(PKG_ERROR_LOG)" ]; then \
 		$(MV) $(PKG_ERROR_LOG) ~/.Trash; \
 		$(RM_F) $(PKG_ERROR_LOG); \
 	fi
 	@$(RM_RF) $(BUILD_BAK)
 
-installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework
+installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework	
+	@textutil -convert rtf PhoneGapInstaller/docs/*.html
 	@echo "Building PhoneGapInstaller.pkg..."	
 	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o PhoneGapInstaller.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@echo "Done."
