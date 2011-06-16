@@ -57,6 +57,7 @@ typedef int FileSystemType;
 - (NSString*) doRemove:(NSString*)fullPath callback: (NSString*)callbackId;
 - (void) copyTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) moveTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+-(BOOL) canCopyMoveSrc: (NSString*) src ToDestination: (NSString*) dest;
 - (void) doCopyMove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options  isCopy:(BOOL)bCopy;
 //- (void) toURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) getFileMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

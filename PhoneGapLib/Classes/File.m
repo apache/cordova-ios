@@ -214,9 +214,9 @@
 		//jsString = [NSString stringWithFormat:@"window.fileSystem.localFileSystem._errorCB(%d)", ENCODING_ERR];
 	} else {
 		NSFileManager* fileMgr = [[NSFileManager alloc] init];
-		NSString* path = [testUri path];
+		NSString* path = [testUri path]; //[[testUri path] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 		//NSLog(@"url path: %@", path);
-		BOOL	isDir;
+		BOOL	isDir = NO;
 		// see if exists and is file or dir
 		BOOL bExists = [fileMgr fileExistsAtPath:path isDirectory: &isDir];
 		if (bExists) {
@@ -619,6 +619,35 @@
 {
 	[self doCopyMove:arguments withDict:options isCopy:NO];
 }
+/**
+ * Helpfer function to check to see if the user attempted to copy an entry into its parent without changing its name, 
+ * or attempted to copy a directory into a directory that it contains directly or indirectly.
+ * 
+ * IN: 
+ *  NSString* srcDir
+ *  NSString* destinationDir
+ * OUT:
+ *  YES copy/ move is allows
+ *  NO move is onto itself
+ */	
+-(BOOL) canCopyMoveSrc: (NSString*) src ToDestination: (NSString*) dest
+{
+    // This weird test is to determine if we are copying or moving a directory into itself.  
+    // Copy /Documents/myDir to /Documents/myDir-backup is okay but
+    // Copy /Documents/myDir to /Documents/myDir/backup not okay
+    BOOL copyOK = YES;
+    NSRange range = [dest rangeOfString:src];
+    
+    if (range.location != NSNotFound) {
+        NSRange testRange = {range.length-1, ([dest length] - range.length)};
+        NSRange resultRange = [dest rangeOfString: @"/" options: 0 range: testRange];
+        if (resultRange.location != NSNotFound){
+            copyOK = NO;
+        }
+    }
+    return copyOK;
+    
+}
 /* Copy/move a file or directory to a new location
  * IN: 
  * NSArray* arguments
@@ -681,10 +710,10 @@
 				NSError* error = nil;
 				BOOL bSuccess = NO;
 				if (bCopy){
-					if([newFullPath hasPrefix:srcFullPath]) {
-						// can't copy into self
+					if (bSrcIsDir && ![self canCopyMoveSrc: srcFullPath ToDestination: newFullPath]/*[newFullPath hasPrefix:srcFullPath]*/) {
+						// can't copy dir into self
 						errCode = INVALID_MODIFICATION_ERR;
-					}else if (bNewExists) {
+					} else if (bNewExists) {
 						// the full destination should NOT already exist if a copy
 						errCode = PATH_EXISTS_ERR;
 					}  else {
@@ -697,7 +726,7 @@
 					if (!bSrcIsDir && (bNewExists && bNewIsDir)){
 						// can't move a file to directory
 						errCode = INVALID_MODIFICATION_ERR;
-					} else if (bSrcIsDir && [newFullPath hasPrefix:srcFullPath]){
+					} else if (bSrcIsDir && ![self canCopyMoveSrc: srcFullPath ToDestination: newFullPath] ) { //[newFullPath hasPrefix:srcFullPath]){
 						// can't move a dir into itself
 						errCode = INVALID_MODIFICATION_ERR;	
 					} else if (bNewExists) {
