@@ -94,7 +94,9 @@ Accelerometer.installDeviceMotionHandler = function()
 	// backup original `window.addEventListener`, `window.removeEventListener`
     var _addEventListener = window.addEventListener;
     var _removeEventListener = window.removeEventListener;
-
+													
+	var windowDispatchAvailable = !(window.dispatchEvent === undefined); // undefined in iOS 3.x
+													
 	var accelWin = function(acceleration) {
 		var evt = document.createEvent('Events');
 	    evt.initEvent(devicemotionEvent);
@@ -107,25 +109,34 @@ Accelerometer.installDeviceMotionHandler = function()
 		evt.interval =  (self.deviceMotionLastEventTimestamp == 0) ? 0 : (currentTime - self.deviceMotionLastEventTimestamp);
 		self.deviceMotionLastEventTimestamp = currentTime;
 		
-	    window.dispatchEvent(evt);
+		if (windowDispatchAvailable) {
+			window.dispatchEvent(evt);
+		} else {
+			document.dispatchEvent(evt);
+		}
 	};
 	
 	var accelFail = function() {
 		
 	};
-
-    // override `window.addEventListener` aka duck-punch
+													
+    // override `window.addEventListener`
     window.addEventListener = function() {
         if (arguments[0] === devicemotionEvent) {
             ++(self.deviceMotionListenerCount);
 			if (self.deviceMotionListenerCount == 1) { // start
-				self.deviceMotionWatchId = navigator.accelerometer.watchAcceleration(accelWin, accelFail);
+				self.deviceMotionWatchId = navigator.accelerometer.watchAcceleration(accelWin, accelFail, { frequency:500});
 			}
 		} 
-        return _addEventListener.apply(this, arguments);
+													
+		if (!windowDispatchAvailable) {
+			return document.addEventListener.apply(this, arguments);
+		} else {
+			return _addEventListener.apply(this, arguments);
+		}
     };	
 
-    // override `window.removeEventListener' aka duck-punch
+    // override `window.removeEventListener'
     window.removeEventListener = function() {
         if (arguments[0] === devicemotionEvent) {
             --(self.deviceMotionListenerCount);
@@ -134,7 +145,11 @@ Accelerometer.installDeviceMotionHandler = function()
 			}
 		} 
 		
-        return _removeEventListener.apply(this, arguments);
+		if (!windowDispatchAvailable) {
+			return document.removeEventListener.apply(this, arguments);
+		} else {
+			return _removeEventListener.apply(this, arguments);
+		}
     };	
 };
 
