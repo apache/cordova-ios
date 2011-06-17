@@ -104,7 +104,7 @@ Accelerometer.installDeviceMotionHandler = function()
 		evt.accelerationIncludingGravity = acceleration; // accelerometer, all iOS devices have it
 		
 		var currentTime = new Date().getTime();
-		evt.interval =  currentTime - self.deviceMotionLastEventTimestamp;
+		evt.interval =  (self.deviceMotionLastEventTimestamp == 0) ? 0 : (currentTime - self.deviceMotionLastEventTimestamp);
 		self.deviceMotionLastEventTimestamp = currentTime;
 		
 	    window.dispatchEvent(evt);
