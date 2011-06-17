@@ -161,7 +161,7 @@ PhoneGap.run_command = function() {
     PhoneGap.queue.ready = false;
 
     if(!this.gapBridge){
-        this.gapBridge = document.createElement("IFRAME");
+        this.gapBridge = document.createElement("iframe");
 		this.gapBridge.setAttribute("style", "display:none;");
 		this.gapBridge.setAttribute("height","0px");
 		this.gapBridge.setAttribute("width","0px");
