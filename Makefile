@@ -59,6 +59,7 @@ xcode4-template: clean-xcode4-template
 	@$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
 	@$(CP) PhoneGap-based\ Application/main.m PhoneGap-based\ Application.xctemplate
 	@$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap-based\ Application.xctemplate
+	@sed -i "" 's/com\.yourcompany\.___PROJECTNAMEASIDENTIFIER___/___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___\.___PROJECTNAMEASIDENTIFIER___/g' PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
 
 clean-xcode4-template: clean-xcode3-template
 	@$(RM_RF) _tmp
