@@ -357,6 +357,10 @@ PhoneGap.fireEvent = function(type, target) {
     e.initEvent(type);
 
 	target = target || document;
+	if (target.dispatchEvent === undefined) { // ie window.dispatchEvent is undefined in iOS 3.x
+		target = document;
+	} 
+
     target.dispatchEvent(e);
 };
 
