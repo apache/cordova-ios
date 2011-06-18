@@ -65,7 +65,61 @@ Orientation.prototype.clearWatch = function(watchId) {
 	clearInterval(watchId);
 };
 
-PhoneGap.addConstructor(function() {
-    if (typeof navigator.orientation == "undefined") navigator.orientation = new Orientation();
-});
+Orientation.install = function()
+{
+    if (typeof navigator.orientation == "undefined") { 
+		navigator.orientation = new Orientation();
+	}
+	
+	var windowDispatchAvailable = !(window.dispatchEvent === undefined); // undefined in iOS 3.x
+	if (windowDispatchAvailable) {
+		return;
+	} 
+	
+	// the code below is to capture window.add/remove eventListener calls on window
+	// this is for iOS 3.x where listening on 'orientationchange' events don't work on document/window (don't know why)
+	// however, window.onorientationchange DOES handle the 'orientationchange' event (sent through document), so...
+	// then we multiplex the window.onorientationchange event (consequently - people shouldn't overwrite this)
+	
+	var self = this;
+	var orientationchangeEvent = 'orientationchange';
+	var newOrientationchangeEvent = 'orientationchange_pg';
+	
+	// backup original `window.addEventListener`, `window.removeEventListener`
+    var _addEventListener = window.addEventListener;
+    var _removeEventListener = window.removeEventListener;
+
+	window.onorientationchange = function() {
+		PhoneGap.fireEvent(newOrientationchangeEvent, window);
+	}
+	
+    // override `window.addEventListener`
+    window.addEventListener = function() {
+        if (arguments[0] === orientationchangeEvent) {
+			arguments[0] = newOrientationchangeEvent; 
+		} 
+													
+		if (!windowDispatchAvailable) {
+			return document.addEventListener.apply(this, arguments);
+		} else {
+			return _addEventListener.apply(this, arguments);
+		}
+    };	
+
+    // override `window.removeEventListener'
+    window.removeEventListener = function() {
+        if (arguments[0] === orientationchangeEvent) {
+			arguments[0] = newOrientationchangeEvent; 
+		} 
+		
+		if (!windowDispatchAvailable) {
+			return document.removeEventListener.apply(this, arguments);
+		} else {
+			return _removeEventListener.apply(this, arguments);
+		}
+    };	
+};
+
+PhoneGap.addConstructor(Orientation.install);
+
 };
