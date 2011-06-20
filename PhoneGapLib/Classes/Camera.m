@@ -4,6 +4,9 @@
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010, IBM Corporation
+ *
+ * DEPRECATED: Use the Media Capture API instead, this will be removed in 1.0
+ * add "__attribute__ ((unavailable))" when finally removed.
  */
 
 #import "Camera.h"

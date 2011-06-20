@@ -50,6 +50,7 @@ Camera.prototype.PictureSourceType = Camera.PictureSourceType;
  * @param {Object} options
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
+	console.warn("Camera.getPicture is deprecated and will be removed in 1.0. Plese use the Media Capture API instead.");
 	// successCallback required
 	if (typeof successCallback != "function") {
         console.log("Camera Error: successCallback is not a function");

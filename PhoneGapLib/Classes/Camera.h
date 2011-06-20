@@ -4,19 +4,22 @@
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010, IBM Corporation
+ * 
+ * DEPRECATED: Use the Media Capture API instead, this will be removed in 1.0
+ * add "__attribute__ ((unavailable))" when finally removed.
  */
 
 #import <Foundation/Foundation.h>
 #import "PGPlugin.h"
 
-enum DestinationType {
+__attribute__ ((deprecated)) enum DestinationType {
 	DestinationTypeDataUrl = 0,
 	DestinationTypeFileUri
 };
 typedef NSUInteger DestinationType;
 
 
-@interface CameraPicker : UIImagePickerController
+__attribute__ ((deprecated)) @interface CameraPicker : UIImagePickerController
 {
 	NSString* callbackid;
 	NSInteger quality;
@@ -38,7 +41,7 @@ typedef NSUInteger DestinationType;
 
 // ======================================================================= //
 
-@interface Camera : PGPlugin<UIImagePickerControllerDelegate, 
+__attribute__ ((deprecated)) @interface Camera : PGPlugin<UIImagePickerControllerDelegate, 
 									UINavigationControllerDelegate,
 									UIPopoverControllerDelegate>
 {
