@@ -36,45 +36,48 @@
 	bool hasCamera = [UIImagePickerController isSourceTypeAvailable:sourceType];
 	if (!hasCamera) {
 		NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
-		return;
-	}
-
-    bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
-	
-	
-	if (self.pickerController == nil) 
-	{
-		self.pickerController = [[CameraPicker alloc] init];
-	}
-	
-	self.pickerController.delegate = self;
-	self.pickerController.sourceType = sourceType;
-	self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
-	self.pickerController.callbackId = callbackId;
-
-	self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
-	self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
-	
-	if([self popoverSupported])
-	{
-		if (self.pickerController.popoverController == nil) 
-		{ 
-			self.pickerController.popoverController = [[NSClassFromString(@"UIPopoverController") alloc] 
-												  initWithContentViewController:self.pickerController]; 
-		} 
-		self.pickerController.popoverController.delegate = self; 
-		
-		
-		[ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
-											 inView:[webView superview]
-											 permittedArrowDirections:UIPopoverArrowDirectionAny 
-											 animated:YES]; 
-	}
-	else 
-	{ 
-        [[super appViewController] 
-		 presentModalViewController:self.pickerController animated:YES]; 
-	} 
+		PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"no camera available"];
+        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        
+	} else {
+        
+        bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
+        
+        
+        if (self.pickerController == nil) 
+        {
+            self.pickerController = [[CameraPicker alloc] init];
+        }
+        
+        self.pickerController.delegate = self;
+        self.pickerController.sourceType = sourceType;
+        self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
+        self.pickerController.callbackId = callbackId;
+        
+        self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
+        self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
+        
+        if([self popoverSupported])
+        {
+            if (self.pickerController.popoverController == nil) 
+            { 
+                self.pickerController.popoverController = [[NSClassFromString(@"UIPopoverController") alloc] 
+                                                           initWithContentViewController:self.pickerController]; 
+            } 
+            self.pickerController.popoverController.delegate = self; 
+            
+            
+            [ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
+                                                                      inView:[webView superview]
+                                                    permittedArrowDirections:UIPopoverArrowDirectionAny 
+                                                                    animated:YES]; 
+        }
+        else 
+        { 
+            [[super appViewController] 
+             presentModalViewController:self.pickerController animated:YES]; 
+        }
+    }
 }
 
 
