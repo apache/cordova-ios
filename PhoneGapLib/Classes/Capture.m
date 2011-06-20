@@ -24,6 +24,16 @@
 @synthesize mimeType;
 
 
+- (uint64_t) accessibilityTraits
+{
+	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+	if (([systemVersion compare:@"4.0" options:NSNumericSearch] != NSOrderedAscending)) { // this means system version is not less than 4.0 
+		return UIAccessibilityTraitStartsMediaSession;
+	}
+
+	return UIAccessibilityTraitNone;
+}
+
 - (void) dealloc
 {
 	if (callbackId) {
@@ -586,7 +596,7 @@
     
     self.recordImage = [UIImage imageNamed: @"Capture.bundle/record_button.png"];
     self.stopRecordImage = [UIImage imageNamed: @"Capture.bundle/stop_button.png"];
-    self.recordButton.accessibilityTraits |= UIAccessibilityTraitStartsMediaSession;
+	self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
     [self.recordButton setIsAccessibilityElement:YES];
     [self.recordButton setAccessibilityLabel:  @"toggle recording start"];
@@ -670,7 +680,7 @@
         // begin recording
         [self.recordButton setImage: stopRecordImage forState:UIControlStateNormal];
         self.recordButton.accessibilityLabel = @"toggle recording";
-        self.recordButton.accessibilityTraits &= ~UIAccessibilityTraitStartsMediaSession;
+        self.recordButton.accessibilityTraits &= ~[self accessibilityTraits];
         [self.recordingView setHidden:NO];
         NSError* error = nil;
         [self.avSession  setActive: YES error: &error];
@@ -697,7 +707,7 @@
 - (void) stopRecordingCleanup
 {
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
-    self.recordButton.accessibilityTraits |= UIAccessibilityTraitStartsMediaSession;
+    self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     self.recordButton.accessibilityLabel = @"toggle recording";  // labels need to be internationalized!!
     [self.recordingView setHidden:YES];
     self.doneButton.enabled = YES;
