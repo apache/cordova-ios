@@ -522,14 +522,28 @@
 @implementation AudioRecorderViewController
 @synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer;
 
+- (BOOL) isIPad 
+{
+#ifdef UI_USER_INTERFACE_IDIOM
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#else
+    return NO;
+#endif
+}
+
 - (NSString*) resolveImageResource:(NSString*)resource
 {
 	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
-	// only the iPad had firmwares 3.2 and 3.2.2
-	BOOL isIPad = [systemVersion compare:@"3.2" options:NSNumericSearch] == NSOrderedSame || [systemVersion compare:@"3.2.2" options:NSNumericSearch] == NSOrderedSame; 
-	if (isIPad) {
-		// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
-		return [NSString stringWithFormat:@"%@~ipad.png", resource];
+	BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
+	
+	// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
+	if (isLessThaniOS4)
+	{
+		if ([self isIPad]) {
+			return [NSString stringWithFormat:@"%@~ipad.png", resource];
+		} else {
+			return [NSString stringWithFormat:@"%@.png", resource];
+		}
 	}
 	
 	return resource;
