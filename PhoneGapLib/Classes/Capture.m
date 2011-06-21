@@ -528,7 +528,6 @@
 	// only the iPad had firmwares 3.2 and 3.2.2
 	BOOL isIPad = [systemVersion compare:@"3.2" options:NSNumericSearch] == NSOrderedSame || [systemVersion compare:@"3.2.2" options:NSNumericSearch] == NSOrderedSame; 
 	if (isIPad) {
-		NSLog(@"IS IPAD");
 		// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
 		return [NSString stringWithFormat:@"%@~ipad.png", resource];
 	}
