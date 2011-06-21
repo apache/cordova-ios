@@ -521,6 +521,21 @@
 
 @implementation AudioRecorderViewController
 @synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer;
+
+- (NSString*) resolveImageResource:(NSString*)resource
+{
+	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+	// only the iPad had firmwares 3.2 and 3.2.2
+	BOOL isIPad = [systemVersion compare:@"3.2" options:NSNumericSearch] == NSOrderedSame || [systemVersion compare:@"3.2.2" options:NSNumericSearch] == NSOrderedSame; 
+	if (isIPad) {
+		NSLog(@"IS IPAD");
+		// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
+		return [NSString stringWithFormat:@"%@~ipad.png", resource];
+	}
+	
+	return resource;
+}
+
 - (id) initWithCommand:  (Capture*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId 
 {
     if ((self = [super init])) {
@@ -549,14 +564,14 @@
 
     // make backgrounds
     
-    UIImage* microphone = [UIImage imageNamed:@"Capture.bundle/microphone.jpg"];
+    UIImage* microphone = [UIImage imageNamed:[self resolveImageResource:@"Capture.bundle/microphone"]];
     UIView* microphoneView = [[[UIView alloc] initWithFrame: CGRectMake(0,0,viewRect.size.width, microphone.size.height)] autorelease];
     [microphoneView setBackgroundColor:[UIColor colorWithPatternImage:microphone]];
     [microphoneView setIsAccessibilityElement:NO];
     [tmp addSubview:microphoneView];
 
     // add bottom bar view
-    UIImage* grayBkg = [UIImage imageNamed: @"Capture.bundle/controls_bg.png"];
+    UIImage* grayBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/controls_bg"]];
     UIView* controls = [[[UIView alloc] initWithFrame:CGRectMake(0, microphone.size.height, viewRect.size.width,grayBkg.size.height )] autorelease];
     [controls setBackgroundColor:[UIColor colorWithPatternImage: grayBkg]];
     [controls setIsAccessibilityElement:NO];
@@ -568,7 +583,7 @@
     //recordButton.frame = CGRectMake(viewRect.size.width/4, viewRect.size.height/4, viewRect.size.width/2,viewRect.size.height/2);
     */
     // make red recording background view
-    UIImage* recordingBkg = [UIImage imageNamed: @"Capture.bundle/recording_bg.png"];
+    UIImage* recordingBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/recording_bg"]];
     UIColor *background = [UIColor colorWithPatternImage:recordingBkg];
     self.recordingView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
     [self.recordingView setBackgroundColor:background];
@@ -594,8 +609,8 @@
     
     // Add record button
     
-    self.recordImage = [UIImage imageNamed: @"Capture.bundle/record_button.png"];
-    self.stopRecordImage = [UIImage imageNamed: @"Capture.bundle/stop_button.png"];
+    self.recordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/record_button"]];
+    self.stopRecordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/stop_button"]];
 	self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
     [self.recordButton setIsAccessibilityElement:YES];
