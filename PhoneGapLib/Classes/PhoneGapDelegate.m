@@ -55,6 +55,34 @@
 	return @"index.html";
 }
 
++ (BOOL) isIPad 
+{
+#ifdef UI_USER_INTERFACE_IDIOM
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#else
+    return NO;
+#endif
+}
+
++ (NSString*) resolveImageResource:(NSString*)resource
+{
+	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+	BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
+	
+	// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
+	if (isLessThaniOS4)
+	{
+		if ([[self class] isIPad]) {
+			return [NSString stringWithFormat:@"%@~ipad.png", resource];
+		} else {
+			return [NSString stringWithFormat:@"%@.png", resource];
+		}
+	}
+	
+	return resource;
+}
+
+
 + (NSString*) pathForResource:(NSString*)resourcepath
 {
     NSBundle * mainBundle = [NSBundle mainBundle];
@@ -290,7 +318,7 @@ static NSString *gapVersion;
 	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
 	 * You can change this image by swapping out the Default.png file within the resource folder.
 	 */
-	UIImage* image = [UIImage imageNamed:@"Default"];
+	UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
 	self.imageView = [[UIImageView alloc] initWithImage:image];
 	
     self.imageView.tag = 1;

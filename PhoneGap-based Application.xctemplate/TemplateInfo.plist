@@ -115,10 +115,10 @@
 						<key>PathType</key>
 						<string>Group</string>
 					</dict>
-				<key>Resources/splash/Default~iPad.png</key>
+				<key>Resources/splash/Default~ipad.png</key>
 					<dict>
 						<key>Path</key>
-						<string>./Resources/splash/Default~iPad.png</string>
+						<string>./Resources/splash/Default~ipad.png</string>
 						<key>Group</key>
 							<array>
 								<string>Resources</string>
@@ -214,7 +214,7 @@
 				<string>Resources/icons/icon-72.png</string>
 				<string>Resources/splash/Default.png</string>
 				<string>Resources/splash/Default@2x.png</string>
-				<string>Resources/splash/Default~iPad.png</string>
+				<string>Resources/splash/Default~ipad.png</string>
 				<string>Resources/Capture.bundle</string>
 				<string>PhoneGap.plist</string>
 				<string>Classes/AppDelegate.h</string>
