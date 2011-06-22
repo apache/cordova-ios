@@ -17,7 +17,7 @@
     self = (Location*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) 
 	{
-        self.locationManager = [[[CLLocationManager alloc] init] autorelease];
+        self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
     }
     return self;
@@ -163,6 +163,7 @@
 		if ([options objectForKey:@"frequency"]) 
 		{
 			 freq = [(NSString *)[options objectForKey:@"frequency"] integerValue];
+#pragma unused(freq)
 		}
 		
 		
@@ -260,7 +261,7 @@
 - (void)dealloc 
 {
 	self.locationManager.delegate = nil;
-    [self.locationManager release];
+	self.locationManager = nil;
 	[super dealloc];
 }
 

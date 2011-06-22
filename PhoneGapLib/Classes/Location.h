@@ -11,7 +11,6 @@
 #import "PGPlugin.h"
 
 @interface Location : PGPlugin <CLLocationManagerDelegate> {
-	CLLocationManager *locationManager;
     BOOL              __locationStarted;
     BOOL              __headingStarted;
 }
@@ -35,8 +34,6 @@
 
 - (BOOL) isLocationServicesEnabled;
 
-#ifdef __IPHONE_3_0
-
 - (void)startHeading:(NSMutableArray*)arguments
 			withDict:(NSMutableDictionary*)options;
 
@@ -47,7 +44,5 @@
 	   didUpdateHeading:(CLHeading *)heading;
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager;
-
-#endif
 
 @end
