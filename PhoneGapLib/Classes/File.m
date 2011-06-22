@@ -1010,6 +1010,8 @@
                 // special case for m4a
                 if ([(NSString*)typeId rangeOfString: @"m4a-audio"].location != NSNotFound){
                     mimeType = @"audio/mp4";
+                } else if ([[fullPath pathExtension] rangeOfString:@"wav"].location != NSNotFound){
+                    mimeType = @"audio/wav";
                 }
             }
 			CFRelease(typeId);
