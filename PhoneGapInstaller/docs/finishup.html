@@ -11,6 +11,8 @@
 <li>Copy the new <em>phonegap.*.js</em> files in manually to your <em>"www"</em> folder (COPY from <em>/Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/www</em>)</li>
 <li>Update your script references in your HTML files to point to the .js files in (3).</li>
 <li>Copy <em>"Capture.bundle"</em> from <em>/Users/Shared/PhoneGap/Frameworks/PhoneGap.framework</em> and add it to your project as well (or copy from a new project) </li>
+<li>Set the existing framework <em>"UIKit"</em> to "Weak/Optional" in your project</li>
+<li>Set the existing framework <em>"AVFoundation"</em> to "Weak/Optional" in your project</li>
 <li>You can remove <em>"CoreTelephony.framework"</em> if it exists (and none of your plugins use it), it is not used by PhoneGap anymore</li>
 </ol>
 
@@ -31,7 +33,9 @@
 <br />
 
 <p><span style="font-weight:bold">*IMPORTANT*:</span> On first run, it will create a sample "www" folder for you inside your project. After that, you MUST drag and drop the "www" folder into your project in Xcode, to create a folder reference for it.</p>
-<p><span style="font-weight:bold">*IMPORTANT*:</span> For the "CoreMedia" framework, you MUST set the linkage as "optional", if not iOS 3.x devices will crash. The linkage type could not be set in the template itself (undocumented).</p>
+<p><span style="font-weight:bold">*IMPORTANT*:</span> For the "CoreMedia" framework, you MUST set the linkage as "Optional", if not iOS 3.x devices will crash. The linkage type could not be set in the template itself (undocumented).</p>
+<p><span style="font-weight:bold">*IMPORTANT*:</span> For the "UIKit" framework, you MUST set the linkage as "Optional", if not iOS 3.x devices will crash. The linkage type could not be set in the template itself (undocumented).</p>
+<p><span style="font-weight:bold">*IMPORTANT*:</span> For the "AVFoundation" framework, you MUST set the linkage as "Optional", if not iOS 3.x devices will crash. The linkage type could not be set in the template itself (undocumented).</p>
 <p>That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.</p>
 
 <br />

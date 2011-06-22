@@ -1,18 +1,19 @@
 <html>
 <body style="font-family:Helvetica Neue;">
 	
-<h2>VERSION 0.9.5.1 (20110615)</h2>
+<h2>VERSION 0.9.5.1 (20110621)</h2>
 <p>
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 </p>
 
 <br />
 
-<h2>20110615</h2>
+<h2>20110621</h2>
 <ul>
 <li>Xcode 3 Template includes the CoreMedia framework (as a weak reference for iOS 3.x) for the W3C Media Capture API</li>
 <li>Xcode 4 Template includes the CoreMedia framework (as a required reference, template spec limitation) for the W3C Network API. You must change this to an 'optional' reference to target iOS 3.x devices, if not they will crash.</li>
 <li>UPGRADERS: add the existing framework "CoreMedia" to your project, set it to weak/optional in your Target, copy the new phonegap.*.js files in manually to your www folder, and update your script references. Copy the .js files from /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/www. Copy the "Capture.bundle" from /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework and add it to your project as well (or copy from a new project)</li>
+<li>UPGRADERS: set the existing frameworks "UIKit" and "AVFoundation" to weak/optional</li>
 <li>CoreTelephony.framework can be removed in all projects, it is not needed anymore for the W3C Network Information API</li>
 </ul>
 
