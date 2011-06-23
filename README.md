@@ -85,61 +85,35 @@ You should run step (3) again before running any tests, to get the updated mobil
 
 FAQ
 ---
-**Q. PhoneGapLib.xcodeproj is red in my PhoneGap-based application and I get build errors?**
 
-A. The Xcode variable for PhoneGapLib is not set. Xcode must be closed when the installer is running. Either run the installer again, or add a PHONEGAPLIB variable in Xcode Preferences --> Source Trees, with the location of PhoneGapLib. The installer would have installed it in ~/Documents/PhoneGapLib.
-
-**Q. What is this warning I get when I am packaging the installer? "Warning: "Require Admin Authorization" is recommended but not enabled. Installation may fail."**
-
-A. You can safely ignore this warning, it will not affect installation. The installer only installs for the current user, thus it does not need Admin privileges.
-
-**Q. I get this "Invalid architecture" error. How do I fix it?**
-
-A. The Active SDK for the project is set to "Use Base SDK", change it to one of the iPhone targets in the drop-down. Unfortunately this is a user-specific project setting and cannot be set in the Xcode template. 
-
-**Q. I get this "_kUTTypeImage" link error. How do I fix it?**
-
-A. This relates to framework added for the new UIImagePickerController delegate. Add "MobileCoreServices.framework" to your project. This only relates to pre-existing projects that have updated their PhoneGapLib. New projects should not see this error.
-
-**Q. I have Framework errors in red when creating a PhoneGap project in Xcode 3.2.3 for iOS 4.x? How do I fix it?**
-
-A. Change your Base SDK. Go to the Project Menu --> Edit Project Settings --> General Tab --> Base SDK for all Configurations. Change it to "Latest iOS"
-
-**Q. I still have some "Invalid Architecture" errors. Yes, I've looked at the items above. How do I fix this?**
-
-A. The Base SDK for your project and PhoneGapLib must be exactly the same. Launch PhoneGapLib.xcodeproj (double-click on it in your project), and set its Base SDK to the same one in your project.
-
-**Q. I get a "no architectures to compile" error in PhoneGapLib when building for the Simulator in Xcode 4. Help?**
-
-A. This was working in Xcode 3, but not 4. Add the architecture "i386" to VALID_ARCHS in the PhoneGapLib project (do it for All Configurations). This has been fixed in the latest codebase as of Feb 6th 2011.
-
-**Q. I've tried almost everything and Xcode fails to compile PhoneGapDelegate.m in PhoneGapLib.**
-
-A. Check whether there is a space in the path to PhoneGapLib, particularly if there's a space in your home folder name. Unfortunately at this time you either have to change your home folder name (since PhoneGapLib is installed under it, in your Documents folder) or relocate PhoneGapLib to a location that has no space in the path (and make sure you update the PHONEGAPLIB Xcode variable in Xcode Preferences --> Source Trees). This has been fixed in the latest codebase as of Mar 7th 2011.
-
-**Q. I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this? (Xcode 3)** 
+**Q. In Xcode 3, I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?** 
 
 A. In your project, there should be a PhoneGapBuildSettings.xcconfig file. Modify the PHONEGAPLIB variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
 
-**Q. I want to have a project-specific copy of PhoneGap.framework for my project, not a global one. How do I do this? (Xcode 4)** 
+**Q. In Xcode 4, I want to have a project-specific copy of PhoneGap.framework for my project, not a global one. How do I do this?** 
 
 A. Remove the existing PhoneGap.framework from your project, and drag and drop your own PhoneGap.framework in, that's all there is to it. To compile your own version of PhoneGap.framework, go to ~/Documents/PhoneGapLib and run the Xcode project with the UniversalFramework target.
-
-**Q. I installed Xcode 4, but I don't see the PhoneGap template when creating a New Project? Where is it?**
-
-A. The Xcode 4 template specification file is new, and undocumented. We are trying to work around this, currently you can create a new project using a shell script. More info  [here](http://bit.ly/fhr05y). We have a beta version of the PhoneGap installer with an Xcode 4 template - download it [here](http://blogs.nitobi.com/shazron/2011/05/05/phonegap-xcode-4-template)
 
 **Q. I've created a PhoneGap project using Xcode 4, but there are errors! Help!**
 
 A. Watch the screencast [here](http://bit.ly/phonegap-xcode4-template) or see the Xcode 4 issues below.
 
-**Q. In Xcode 4, after creating a new PhoneGap project, I get an error on first run?**
-
-A. This is a known issue with the Xcode 4 Template - we can't specify a folder reference. On first run, the project copies a sample "www" folder to your project directory for you to include as a folder reference in your project. This error only happens on first run. You should then drag and drop the created "www" folder into your project as a folder reference.
-
 **Q. In Xcode 4, I get an error that "The Start Page 'www/index.html' was not found."?**
 
 A. This is a known issue with the Xcode 4 Template - we can't specify a folder reference. You need to go to the folder where your project is in, and drag and drop in the "www" folder, then add it as a folder reference, then run the project again.
+
+**Q. In Xcode 4, I get the compile-time error "Undefined symbols for architecture armv6: _CMTimeGetSeconds"?**
+
+A. [Add](http://stackoverflow.com/questions/3352664/how-to-add-existing-frameworks-in-xcode-4) CoreMedia.framework to your project. This error would only occur for pre-0.9.6 created projects. New projects should have this framework added automatically through the template. 
+
+**Q. I've got 'symbol not found' errors during runtime? Usually it's because I'm deploying to an iOS 3.x device.**
+
+A. With version 0.9.6 we implemented the W3C Media Capture API, which requires use of some iOS 4 APIs and frameworks. If you are deploying to an iOS 3.x device, you will need to "weak/optional" link three frameworks: UIKit, CoreMedia, and AVFoundation.
+
+**Q. I've got other PhoneGap-specific issues not covered here?**
+
+A. Older issues have been put in the [PhoneGap iOS FAQ](http://wiki.phonegap.com/w/page/41631150/PhoneGap-for-iOS-FAQ) on the [Wiki](http://wiki.phonegap.com).
+
 
 BUGS?
 -----
