@@ -72,7 +72,7 @@
 									 1, // 1 is PERMISSION_DENIED
 									 @"Location Services Not Enabled"];
 			NSLog(@"%@", jsErrorCallBack);
-			[webView stringByEvaluatingJavaScriptFromString:jsErrorCallBack];
+			[super writeJavascript:jsErrorCallBack];
 			return;
 		}
 	}
@@ -145,7 +145,7 @@
 	
     NSString * jsCallBack = [NSString stringWithFormat:@"navigator.geolocation.setLocation({ timestamp: %.00f, %@ });", epoch, coords];
     
-    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [super writeJavascript:jsCallBack];
 }
 
 - (void)startHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -214,7 +214,7 @@
 							 heading.z];
     NSLog(@"%@", jsCallBack);
     
-    [ webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [super writeJavascript:jsCallBack];
 }
 
 
@@ -252,7 +252,7 @@
 									 [ error localizedDescription ]];
 	}
 	
-    [webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    [super writeJavascript:jsCallBack];
 	[self.locationManager stopUpdatingLocation];
     __locationStarted = NO;
 	
