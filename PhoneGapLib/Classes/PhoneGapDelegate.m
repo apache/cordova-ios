@@ -613,9 +613,19 @@ static NSString *gapVersion;
 		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
 	}
 	// clear NSTemporaryDirectory (TODO use this for photos as well - then no need for tmpFolderPath above)
-	if (![fileMgr removeItemAtPath: NSTemporaryDirectory() error:&err]) {
-		NSLog(@"Error removing file manager temporary directory: %@", [err localizedDescription]);
-	}
+	// clear contents of NSTemporaryDirectory (TODO use this for photos as well - then no need for tmpFolderPath above)
+	NSString* tempDirectoryPath = NSTemporaryDirectory();
+	NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
+	NSString* fileName = nil;
+	BOOL result;
+	
+	while (fileName = [directoryEnumerator nextObject]) {
+		NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+		result = [fileMgr removeItemAtPath:filePath error:&err];
+		if (!result && err) {
+			NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+		}
+	}	
 	[fileMgr release];
 }
 
