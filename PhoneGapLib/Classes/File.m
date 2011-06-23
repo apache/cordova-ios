@@ -146,7 +146,6 @@
 			[fileSystem setObject:dirEntry forKey:@"root"];
 			result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: fileSystem cast: @"window.localFileSystem._castFS"];
 			jsString = [result toSuccessCallbackString:callbackId];
-			//jsCallback = [NSString stringWithFormat:@"window.fileSystem.localFileSystem._requestFileSystemCB(%@);",[fileSystem JSONRepresentation]];
 		}
 	}
 	[self writeJavascript: jsString];
@@ -202,19 +201,21 @@
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 	NSString* jsString = nil;
-	NSString* inputUri = [arguments objectAtIndex:1];
-	NSString* strUri = [inputUri stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
-	NSURL* testUri = [NSURL URLWithString:strUri];  //needs to be encoded when creating NSURL
+    NSString* inputUri = [arguments objectAtIndex:1];
+    // don't know if string is encoded or not so unescape 
+    NSString* cleanUri = [inputUri stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	// now escape in order to create URL
+    NSString* strUri = [cleanUri stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+	NSURL* testUri = [NSURL URLWithString:strUri];  
 	PluginResult* result = nil;
 	
 	if (!testUri || ![testUri isFileURL]) {
 		// issue ENCODING_ERR
 		result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: ENCODING_ERR cast: @"window.localFileSystem._castError"];
 		jsString = [result toErrorCallbackString:callbackId];
-		//jsString = [NSString stringWithFormat:@"window.fileSystem.localFileSystem._errorCB(%d)", ENCODING_ERR];
 	} else {
 		NSFileManager* fileMgr = [[NSFileManager alloc] init];
-		NSString* path = [testUri path]; //[[testUri path] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		NSString* path = [testUri path];
 		//NSLog(@"url path: %@", path);
 		BOOL	isDir = NO;
 		// see if exists and is file or dir
@@ -251,9 +252,6 @@
 			
 		}
 
-		// use NSString URL access methods - NSURL methods are more efficient but only avail as of iOS 4.0 
-		//NSArray* parts = [strUri pathComponents];
-		//NSLog(@"file uri parts %@", [parts componentsJoinedByString:@" : "]);
 		[fileMgr release];
 	}
 	if (jsString != nil){
@@ -392,7 +390,6 @@
 		// create error callback
 		result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: errorCode cast: @"window.localFileSystem._castError"];
 		jsString = [result toErrorCallbackString:callbackId];
-		//jsCallback = [NSString stringWithFormat:@"navigator.fileMgr._entryErrorCB(%d)", errorCode];
 	}
 	
 	
