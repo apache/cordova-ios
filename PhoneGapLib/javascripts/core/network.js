@@ -54,6 +54,7 @@ Network = function() {
  * @param {Object} options
  */
 Network.prototype.isReachable = function(hostName, successCallback, options) {
+	console.warn("Network.isReachable is deprecated and will be removed in 1.0. Plese use the Network Information API instead.");
 	PhoneGap.exec("Network.isReachable", hostName, GetFunctionName(successCallback), options);
 };
 
