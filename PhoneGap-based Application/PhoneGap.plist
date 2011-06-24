@@ -7,9 +7,11 @@
 	<key>TopActivityIndicator</key>
 	<string>gray</string>
 	<key>EnableLocation</key>
-	<true/>
+	<false/>
 	<key>EnableAcceleration</key>
 	<true/>
+	<key>EnableViewportScale</key>
+	<false/>
 	<key>ExternalHosts</key>
 	<array/>
 	<key>Plugins</key>

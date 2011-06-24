@@ -230,8 +230,9 @@ static NSString *gapVersion;
 	
 	self.viewController = [ [ PhoneGapViewController alloc ] init ];
 	
-    NSNumber *useLocation          = [settings objectForKey:@"UseLocation"];
-    NSString *topActivityIndicator = [settings objectForKey:@"TopActivityIndicator"];
+    NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
+    NSString *topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
+    NSString *enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
 	
 	
 	// The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
@@ -250,6 +251,7 @@ static NSString *gapVersion;
 	webViewBounds.origin = screenBounds.origin;
 	self.webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+	self.webView.scalesPageToFit = [enableViewportScale boolValue];
 	
 	viewController.webView = self.webView;
 	[self.viewController.view addSubview:self.webView];
@@ -258,7 +260,7 @@ static NSString *gapVersion;
 	/*
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
-    if ([useLocation boolValue]) {
+    if ([enableLocation boolValue]) {
         [[self getCommandInstance:@"Location"] startLocation:nil withDict:nil];
     }
 	
@@ -517,7 +519,7 @@ static NSString *gapVersion;
 	{
 		// iterate through settings externalDomains
 		// check for equality
-		NSEnumerator *e = [[settings objectForKey:@"ExternalHosts"] objectEnumerator];
+		NSEnumerator *e = [[self.settings objectForKey:@"ExternalHosts"] objectEnumerator];
 		id obj;
 
 		while (obj = [e nextObject]) {
