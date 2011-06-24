@@ -567,19 +567,14 @@
 {
     // create view and display
     CGRect viewRect = [[UIScreen mainScreen] applicationFrame];
-	UIView *tmp = [[UIView alloc] initWithFrame:viewRect];
-    [tmp setIsAccessibilityElement:NO];
-
-    /*tmp.autoresizesSubviews = YES;
-    int reSizeMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
-    tmp.autoresizingMask = reSizeMask;*/
-    
+	UIView *tmp = [[[UIView alloc] initWithFrame:viewRect] autorelease];
 
     // make backgrounds
     
     UIImage* microphone = [UIImage imageNamed:[self resolveImageResource:@"Capture.bundle/microphone"]];
     UIView* microphoneView = [[[UIView alloc] initWithFrame: CGRectMake(0,0,viewRect.size.width, microphone.size.height)] autorelease];
     [microphoneView setBackgroundColor:[UIColor colorWithPatternImage:microphone]];
+    [microphoneView setUserInteractionEnabled: NO];
     [microphoneView setIsAccessibilityElement:NO];
     [tmp addSubview:microphoneView];
 
@@ -587,20 +582,17 @@
     UIImage* grayBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/controls_bg"]];
     UIView* controls = [[[UIView alloc] initWithFrame:CGRectMake(0, microphone.size.height, viewRect.size.width,grayBkg.size.height )] autorelease];
     [controls setBackgroundColor:[UIColor colorWithPatternImage: grayBkg]];
+    [controls setUserInteractionEnabled: NO];
     [controls setIsAccessibilityElement:NO];
     [tmp addSubview:controls];
    
-    /*recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake(viewRect.size.width/4, viewRect.size.height/4, viewRect.size.width/2,viewRect.size.height/2)];
-    recordButton.autoresizingMask = reSizeMask;
-    //UIButton* recordButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
-    //recordButton.frame = CGRectMake(viewRect.size.width/4, viewRect.size.height/4, viewRect.size.width/2,viewRect.size.height/2);
-    */
     // make red recording background view
     UIImage* recordingBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/recording_bg"]];
     UIColor *background = [UIColor colorWithPatternImage:recordingBkg];
     self.recordingView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
     [self.recordingView setBackgroundColor:background];
     [self.recordingView setHidden:YES];
+    [self.recordingView setUserInteractionEnabled: NO];
     [self.recordingView setIsAccessibilityElement:NO];
     [tmp addSubview:self.recordingView];
     
@@ -611,14 +603,9 @@
     [self.timerLabel setTextColor:[UIColor whiteColor]];
     [self.timerLabel setTextAlignment: UITextAlignmentCenter];
     [self.timerLabel setText:@"0:00"];
-    [self.timerLabel setIsAccessibilityElement:YES];
     self.timerLabel.accessibilityTraits |=  UIAccessibilityTraitUpdatesFrequently;
     self.timerLabel.accessibilityTraits &= ~UIAccessibilityTraitStaticText;
     [tmp addSubview:self.timerLabel];
-    
-    
-
-    
     
     // Add record button
     
@@ -626,7 +613,6 @@
     self.stopRecordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/stop_button"]];
 	self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
-    [self.recordButton setIsAccessibilityElement:YES];
     [self.recordButton setAccessibilityLabel:  NSLocalizedString(@"toggle audio recording", nil)];
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
     [self.recordButton addTarget: self action:@selector(processButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -635,22 +621,19 @@
     // make and add done button to navigation bar
     self.doneButton = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)];
 	[self.doneButton setStyle:UIBarButtonSystemItemDone];
-    [self.doneButton setIsAccessibilityElement:YES];
 	self.navigationItem.rightBarButtonItem = self.doneButton;
-    
+
 	[self setView:tmp];
-    [tmp release];
 	
 }
 - (void)viewDidLoad 
 {	
     
     [super viewDidLoad];
-    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
+    UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
     NSError* error = nil;
     // create audio session
     self.avSession = [AVAudioSession sharedInstance];
-    [self.avSession setCategory:AVAudioSessionCategoryRecord error:&error];
     if (error) {
         // return error if can't create recording audio session
         NSLog(@"error creating audio session: %@", [[error userInfo] description]);
@@ -710,6 +693,7 @@
         self.recordButton.accessibilityTraits &= ~[self accessibilityTraits];
         [self.recordingView setHidden:NO];
         NSError* error = nil;
+        [self.avSession setCategory:AVAudioSessionCategoryRecord error:&error];
         [self.avSession  setActive: YES error: &error];
         if(error) {
             // can't continue without active audio session
@@ -737,6 +721,9 @@
     self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     [self.recordingView setHidden:YES];
     self.doneButton.enabled = YES;
+    // deactivate session so sounds can come through
+    [self.avSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    [self.avSession  setActive: NO error: nil];
 }
 - (void) dismissAudioView: (id) sender
 {
@@ -779,8 +766,6 @@
     // may be called when timed audio finishes - need to stop time and reset buttons
     [self.timer invalidate];
     [self stopRecordingCleanup];
-    // deactivate session so sounds can come through
-    [self.avSession  setActive: NO error: nil];
     
     // generate success result
     if (flag) {
