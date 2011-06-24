@@ -349,10 +349,15 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 						bSuccess = ABPersonRemoveImageData(person, &error);
 					} else {
 						// use this image
-						NSURL* photoUrl = [NSURL URLWithString:value];
+						// don't know if string is encoded or not so first unencode it then encode it again
+                        NSString* cleanPath = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						NSURL* photoUrl = [NSURL URLWithString: [cleanPath stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]];
 						// caller is responsible for checking for a connection, if no connection this will fail
 						NSError* err = nil;
-						NSData* data = [NSData dataWithContentsOfURL:photoUrl options: NSDataReadingUncached error:&err];
+						NSData* data = nil;
+                        if (photoUrl) {
+                            data = [NSData dataWithContentsOfURL:photoUrl options: NSDataReadingUncached error:&err];
+                        }
 						if(data && [data length] > 0){
 							bSuccess = ABPersonSetImageData(person, (CFDataRef)data, &error);
 						}
@@ -394,7 +399,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		} // really only need to set if different - more efficient to just update value or compare and only set if necessay???
 		bSuccess = ABRecordSetValue(aRecord, aProperty, aValue, &error);
 		if (!bSuccess){
-			NSLog(@"error setting @% property", aProperty);
+			NSLog(@"error setting %d property", aProperty);
 		}
 	}
 
