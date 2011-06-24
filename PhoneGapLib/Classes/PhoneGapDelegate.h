@@ -46,7 +46,6 @@
 + (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
-+ (NSString*) tmpFolderName;
 + (NSString*) startPage;
 
 

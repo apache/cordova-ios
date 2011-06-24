@@ -609,19 +609,15 @@ static NSString *gapVersion;
 	
 	// empty the tmp directory
 	NSFileManager* fileMgr = [[NSFileManager alloc] init];
-	NSString* tmpPath = [[[self class] applicationDocumentsDirectory] stringByAppendingPathComponent: [[self class] tmpFolderName]];
 	NSError* err = nil;	
-	if (![fileMgr removeItemAtPath: tmpPath error: &err]){
-		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
-	}
-	// clear NSTemporaryDirectory (TODO use this for photos as well - then no need for tmpFolderPath above)
-	// clear contents of NSTemporaryDirectory (TODO use this for photos as well - then no need for tmpFolderPath above)
+
+	// clear contents of NSTemporaryDirectory 
 	NSString* tempDirectoryPath = NSTemporaryDirectory();
 	NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
 	NSString* fileName = nil;
 	BOOL result;
 	
-	while (fileName = [directoryEnumerator nextObject]) {
+	while ((fileName = [directoryEnumerator nextObject])) {
 		NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
 		result = [fileMgr removeItemAtPath:filePath error:&err];
 		if (!result && err) {
