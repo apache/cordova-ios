@@ -39,6 +39,7 @@ Notification.prototype.confirm = function(message, resultCallback, title, button
  * Start spinning the activity indicator on the statusbar
  */
 Notification.prototype.activityStart = function() {
+	console.warn("Notification.activityStart is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
     PhoneGap.exec(null, null, "Notification", "activityStart", []);
 };
 
@@ -46,15 +47,18 @@ Notification.prototype.activityStart = function() {
  * Stop spinning the activity indicator on the statusbar, if it's currently spinning
  */
 Notification.prototype.activityStop = function() {
+	console.warn("Notification.activityStop is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
     PhoneGap.exec(null, null, "Notification", "activityStop", []);
 };
 
 // iPhone only
 Notification.prototype.loadingStart = function(options) {
+	console.warn("Notification.loadingStart is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
     PhoneGap.exec(null, null, "Notification","loadingStart", [options]);
 };
 // iPhone only
 Notification.prototype.loadingStop = function() {
+	console.warn("Notification.loadingStop is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
     PhoneGap.exec(null, null, "Notification","loadingStop", []);
 };
 /**

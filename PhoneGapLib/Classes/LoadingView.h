@@ -16,7 +16,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LoadingView : UIView
+__attribute__ ((deprecated)) @interface LoadingView : UIView
 {
 	NSTimeInterval minDuration;
 	NSDate* timestamp;

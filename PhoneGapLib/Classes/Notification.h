@@ -18,13 +18,13 @@
 
 @property (nonatomic, retain) LoadingView* loadingView;
 
-- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-
-- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options; // confirm is just a variant of alert
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)loadingStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)loadingStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__ ((deprecated));
+- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__ ((deprecated));
+- (void)loadingStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__ ((deprecated));
+- (void)loadingStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__ ((deprecated));
 
 @end
 
