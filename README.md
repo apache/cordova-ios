@@ -112,7 +112,7 @@ A. Watch the screencast [here](http://bit.ly/phonegap-xcode4-template) or see th
 
 **Q. In Xcode 4, I get an error that "The Start Page 'www/index.html' was not found."?**
 
-A. This is a known issue with the Xcode 4 Template - we can't specify a folder reference. You need to go to build the project at least once, then go to the folder where your project is in, and drag and drop in the "www" folder, then add it as a folder reference, then run the project again. Check your project warnings as well for clues.
+A. This is a known issue with the Xcode 4 Template - we can't specify a folder reference. You need to build the project at least once, then go to the folder where your project is in, and drag and drop in the "www" folder, then add it as a 'folder reference' (will end up as a blue folder, not yellow), then run the project again. Check your project warnings as well for clues.
 
 **Q. In Xcode 4, I get the compile-time error "Undefined symbols for architecture armv6: _CMTimeGetSeconds"?**
 
