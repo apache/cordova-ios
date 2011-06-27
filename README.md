@@ -86,6 +86,18 @@ You should run step (3) again before running any tests, to get the updated mobil
 FAQ
 ---
 
+**Q. When I run the Installer, the installation fails?** 
+
+A. Follow the [instructions here](http://wiki.phonegap.com/PhoneGap-Installer-Fails)
+
+**Q. When I add Plugins, they are not found or won't compile?** 
+
+A. Follow the [instructions here](http://wiki.phonegap.com/PhoneGap-iOS-Plugins-Problems)
+
+**Q. How do I override the location of the start page www/index.html?** 
+
+A. You can override it by copy and pasting these [functions](https://github.com/shazron/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
+
 **Q. In Xcode 3, I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?** 
 
 A. In your project, there should be a PhoneGapBuildSettings.xcconfig file. Modify the PHONEGAPLIB variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
@@ -100,7 +112,7 @@ A. Watch the screencast [here](http://bit.ly/phonegap-xcode4-template) or see th
 
 **Q. In Xcode 4, I get an error that "The Start Page 'www/index.html' was not found."?**
 
-A. This is a known issue with the Xcode 4 Template - we can't specify a folder reference. You need to go to the folder where your project is in, and drag and drop in the "www" folder, then add it as a folder reference, then run the project again.
+A. This is a known issue with the Xcode 4 Template - we can't specify a folder reference. You need to go to build the project at least once, then go to the folder where your project is in, and drag and drop in the "www" folder, then add it as a folder reference, then run the project again. Check your project warnings as well for clues.
 
 **Q. In Xcode 4, I get the compile-time error "Undefined symbols for architecture armv6: _CMTimeGetSeconds"?**
 
@@ -123,3 +135,5 @@ MORE INFO
 ----------
 - [http://docs.phonegap.com](http://docs.phonegap.com)
 - [http://wiki.phonegap.com](http://wiki.phonegap.com)
+- [http://groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
+- #phonegap channel on [Freenode IRC](http://freenode.net/)
