@@ -1236,13 +1236,9 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 		NSData* data = (NSData*)photoData;
 		// write to temp directory and store URI in photos array
 		// get the temp directory path
-		NSString* docsPath = [[PhoneGapDelegate applicationDocumentsDirectory] stringByAppendingPathComponent: [PhoneGapDelegate tmpFolderName]];
+		NSString* docsPath = [NSTemporaryDirectory() stringByStandardizingPath];
 		NSError* err = nil;
-		NSFileManager* fileMgr = [[NSFileManager alloc] init]; //recommended by apple (vs [NSFileManager defaultManager]) to be theadsafe
-		
-		if ( [fileMgr fileExistsAtPath:docsPath] == NO ){ // check in case tmp dir got deleted
-			[fileMgr createDirectoryAtPath:docsPath withIntermediateDirectories: NO attributes: nil error: nil];
-		}
+		NSFileManager* fileMgr = [[NSFileManager alloc] init]; 		
 		// generate unique file name
 		NSString* filePath;
 		int i=1;
