@@ -94,9 +94,13 @@ A. Follow the [instructions here](http://wiki.phonegap.com/PhoneGap-Installer-Fa
 
 A. Follow the [instructions here](http://wiki.phonegap.com/PhoneGap-iOS-Plugins-Problems)
 
+**Q. All my iframes are loading in Mobile Safari?** 
+
+A. You'll have to add the src domain under the ExternalHosts key in PhoneGap.plist. Note - if the domain you put as the iframe src is re-directed, you will need to add that domain in the ExternalHosts key as well. For example, in Canada, www.google.com re-directs to www.google.ca, so you will have to add that domain as well.  Another example, phonegap.com re-directs to www.phonegap.com. This domain value must be exact, wild-card support is not available.
+
 **Q. How do I override the location of the start page www/index.html?** 
 
-A. You can override it by copy and pasting these [functions](https://github.com/shazron/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
+A. You can override it by copy and pasting these [functions](https://github.com/phonegap/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
 
 **Q. In Xcode 3, I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?** 
 
