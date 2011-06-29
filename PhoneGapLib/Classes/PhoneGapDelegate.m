@@ -223,7 +223,7 @@ static NSString *gapVersion;
 	NSString* pluginsKey = @"Plugins";
 	NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
 	if (pluginsDict == nil) {
-		NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", appPlistName, pluginsKey);
+		NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
 		return NO;
 	}
     self.pluginsMap = [[NSDictionary alloc] initWithDictionary:pluginsDict];
