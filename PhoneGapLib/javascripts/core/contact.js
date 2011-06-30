@@ -96,17 +96,24 @@ Contact.prototype.remove = function(successCB, errorCB) {
 /**
 * iOS ONLY
 * displays contact via iOS UI
+*	NOT part of W3C spec so no official documentation
 *
 * @param errorCB error callback
+* @param options object
+*	allowsEditing: boolean AS STRING
+*		"true" to allow editing the contact
+*		"false" (default) display contact
 */
-Contact.prototype.display = function(successCB, errorCB, options) { 
+Contact.prototype.display = function(errorCB, options) { 
 	if (this.id == null) {
-        var errorObj = new ContactError();
-        errorObj.code = ContactError.UNKNOWN_ERROR;
-        errorCB(errorObj);
+        if (typeof errorCB == "function") {
+        	var errorObj = new ContactError();
+        	errorObj.code = ContactError.UNKNOWN_ERROR;
+        	errorCB(errorObj);
+		}
     }
     else {
-        PhoneGap.exec(successCB, errorCB, "Contacts","displayContact", [this.id, options]);
+        PhoneGap.exec(null, errorCB, "Contacts","displayContact", [this.id, options]);
     }
 };
 

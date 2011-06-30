@@ -64,7 +64,6 @@
 {
 	//NSLog(@"Contacts::onAppTerminate");
 	[PGContact releaseDefaults];
-
 }
 
 
@@ -82,9 +81,6 @@
 	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:npController] autorelease];
 	[[super appViewController] presentModalViewController:navController animated: YES];
  
-
-			
-		
 }
 
 - (void) newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
@@ -114,59 +110,35 @@
 
 		
 	
-	//bool allowsEditing = [options isKindOfClass:[NSNull class]] ? false : [options existsValue:@"true" forKey:@"allowsEditing"];
+	bool bEdit = [options isKindOfClass:[NSNull class]] ? false : [options existsValue:@"true" forKey:@"allowsEditing"];
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
 	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addrBook, recordID);
 	if (rec) {
 		ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
 		personController.displayedPerson = rec;
 		personController.personViewDelegate = self;
-		personController.allowsEditing = NO; //allowsEditing currently not supported
+		personController.allowsEditing = NO;
 		
-		UIBarButtonItem* doneButton = [[UIBarButtonItem alloc]
+		UIBarButtonItem* doneButton = [[[UIBarButtonItem alloc]
 									   initWithBarButtonSystemItem:UIBarButtonSystemItemDone
 									   target: self
-									   action: @selector(dismissModalView:)];
+									   action: @selector(dismissModalView:)] autorelease];
 		
 		UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
-		[[super appViewController] presentModalViewController:navController animated: YES];
+		[self.appViewController presentModalViewController:navController animated: YES];
 		
 		// this needs to be AFTER presentModal, if not it does not show up (iOS 4 regression: workaround)
 		personController.navigationItem.rightBarButtonItem = doneButton;
-		
-		[doneButton release];												
-		
-	  //Commented out code is various attempts to get editing
-		// navigation working properly
-		
-		/*CGFloat width = webView.frame.size.width;
-		UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:
-								   CGRectMake(0,0,width,52)];
-		navBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		 */
-		//[[super appNavController] pushViewController:personController animated: YES];
-		
-		/*ContactsPicker* pickerController = [[[ContactsPicker alloc] init] autorelease];
-		pickerController.peoplePickerDelegate = self;
-		*/
-		//UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
-		//UINavigationBar* navBar = navController.navigationBar;
-		//NSLog(@"isNavBar == nil %d", (navBar == nil));
-		//[navBar setNavigationBarHidden: NO animated: NO];
-		
-		//NSArray* navArray = [NSArray arrayWithObjects:pickerController, navController, nil];
-		//[navController setViewControllers: navArray animated: YES];
-		//[navController pushViewController:personController animated:NO];
-		
-	
-	
-		//[navBar pushNavigationItem: doneButton animated:YES];
-		//UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
-		//[navController pushViewController:personController animated:YES];
-		
-		
-		//personController.navigationItem.rightBarButtonItem = [navController editButtonItem]; 
-		
+
+		if (bEdit) {
+            // create the editing controller and push it onto the stack
+            ABPersonViewController* editPersonController = [[[ABPersonViewController alloc] init] autorelease];
+            editPersonController.displayedPerson = rec;
+            editPersonController.personViewDelegate = self;
+            editPersonController.allowsEditing = YES; 
+            [navController pushViewController:editPersonController animated:YES];
+            
+        }
 	} 
 	else 
 	{
@@ -180,8 +152,7 @@
 
 - (void) dismissModalView:(id)sender 
 {
-	UIViewController* controller = ([super appViewController]);
-	[controller.modalViewController dismissModalViewControllerAnimated:YES]; 
+	[self.appViewController dismissModalViewControllerAnimated:YES];
 }
 								   
 - (BOOL) personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
