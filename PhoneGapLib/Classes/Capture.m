@@ -627,7 +627,7 @@
 	self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
     [self.recordButton setIsAccessibilityElement:YES];
-    [self.recordButton setAccessibilityLabel:  @"toggle recording start"];
+    [self.recordButton setAccessibilityLabel:  NSLocalizedString(@"toggle audio recording", nil)];
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
     [self.recordButton addTarget: self action:@selector(processButton:) forControlEvents:UIControlEventTouchUpInside];
     [tmp addSubview:recordButton];
@@ -707,7 +707,6 @@
     } else {
         // begin recording
         [self.recordButton setImage: stopRecordImage forState:UIControlStateNormal];
-        self.recordButton.accessibilityLabel = @"toggle recording";
         self.recordButton.accessibilityTraits &= ~[self accessibilityTraits];
         [self.recordingView setHidden:NO];
         NSError* error = nil;
@@ -736,7 +735,6 @@
 {
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
     self.recordButton.accessibilityTraits |= [self accessibilityTraits];
-    self.recordButton.accessibilityLabel = @"toggle recording";  // labels need to be internationalized!!
     [self.recordingView setHidden:YES];
     self.doneButton.enabled = YES;
 }
