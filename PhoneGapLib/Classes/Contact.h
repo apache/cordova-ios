@@ -15,11 +15,10 @@
 enum ContactError {
 	UNKNOWN_ERROR = 0,
 	INVALID_ARGUMENT_ERROR = 1,
-	NOT_FOUND_ERROR = 2,
-	TIMEOUT_ERROR = 3,
-	PENDING_OPERATION_ERROR = 4,
-	IO_ERROR = 5,
-	NOT_SUPPORTED_ERROR = 6,
+	TIMEOUT_ERROR = 2,
+	PENDING_OPERATION_ERROR = 2,
+	IO_ERROR = 4,
+	NOT_SUPPORTED_ERROR = 5,
 	PERMISSION_DENIED_ERROR = 20
 };
 typedef NSUInteger ContactError;
@@ -127,17 +126,10 @@ typedef NSUInteger ContactError;
 #define kW3ContactOrganizationName @"name"
 #define kW3ContactTitle @"title"
 #define kW3ContactDepartment @"department"
-#define kW3ContactStartDate @"startDate"
-#define kW3ContactEndDate @"endDate"
-#define kW3ContactLocation @"location"
-#define KW3ContactDescription @"description"
-#define kW3ContactUpdated @"revision"
 #define kW3ContactBirthday @"birthday"
 #define kW3ContactNote @"note"
-#define kW3ContactGender @"gender"
 #define kW3ContactPhotos @"photos"
 #define kW3ContactCategories @"categories"
 #define kW3ContactUrls @"urls"
-#define kW3ContactTimezone @"timezone"
 
 

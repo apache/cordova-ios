@@ -13,16 +13,14 @@ if (!PhoneGap.hasResource("contact")) {
 * @param {ContactAddress[]} addresses array of addresses
 * @param {ContactField[]} ims instant messaging user ids
 * @param {ContactOrganization[]} organizations
-* @param {DOMString} revision date contact was last updated
 * @param {DOMString} birthday contact's birthday
-* @param {DOMString} gender contact's gender
 * @param {DOMString} note user notes about contact
 * @param {ContactField[]} photos
+* @param {Array.<ContactField>} categories
 * @param {ContactField[]} urls contact's web sites
-* @param {DOMString} timezone UTC time zone offset
 */
 var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, addresses,
-    ims, organizations, revision, birthday, gender, note, photos, categories, urls, timezone) {
+    ims, organizations, birthday, note, photos, categories, urls) {
     this.id = id || null;
     this.displayName = displayName || null;
     this.name = name || null; // ContactName
@@ -32,14 +30,11 @@ var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, ad
     this.addresses = addresses || null; // ContactAddress[]
     this.ims = ims || null; // ContactField[]
     this.organizations = organizations || null; // ContactOrganization[]
-    this.revision = revision || null; // JS Date
     this.birthday = birthday || null; // JS Date
-    this.gender = gender || null;
     this.note = note || null;
     this.photos = photos || null; // ContactField[]
     this.categories = categories || null; 
     this.urls = urls || null; // ContactField[]
-    this.timezone = timezone || null;
 };
 
 /**
@@ -47,7 +42,7 @@ var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, ad
 */
 Contact.prototype.convertDatesOut = function()
 {
-	var dates = new Array("revision", "birthday");
+	var dates = new Array("birthday");
 	for (var i=0; i<dates.length; i++){
 		var value = this[dates[i]];
 		if (value){
@@ -71,7 +66,7 @@ Contact.prototype.convertDatesOut = function()
 */
 Contact.prototype.convertDatesIn = function()
 {
-	var dates = new Array("revision", "birthday");
+	var dates = new Array("birthday");
 	for (var i=0; i<dates.length; i++){
 		var value = this[dates[i]];
 		if (value){
@@ -91,7 +86,7 @@ Contact.prototype.convertDatesIn = function()
 Contact.prototype.remove = function(successCB, errorCB) {
 	if (this.id == null) {
         var errorObj = new ContactError();
-        errorObj.code = ContactError.NOT_FOUND_ERROR;
+        errorObj.code = ContactError.UNKNOWN_ERROR;
         errorCB(errorObj);
     }
     else {
@@ -107,7 +102,7 @@ Contact.prototype.remove = function(successCB, errorCB) {
 Contact.prototype.display = function(successCB, errorCB, options) { 
 	if (this.id == null) {
         var errorObj = new ContactError();
-        errorObj.code = ContactError.NOT_FOUND_ERROR;
+        errorObj.code = ContactError.UNKNOWN_ERROR;
         errorCB(errorObj);
     }
     else {
@@ -196,7 +191,7 @@ var ContactName = function(formatted, familyName, givenName, middle, prefix, suf
 * Generic contact field.
 * @param type
 * @param value
-* @param primary
+* @param pref
 * @param id
 */
 var ContactField = function(type, value, pref, id) {
@@ -208,6 +203,8 @@ var ContactField = function(type, value, pref, id) {
 
 /**
 * Contact address.
+* @param pref - boolean is primary / preferred address
+* @param type - string - work, home…..
 * @param formatted
 * @param streetAddress
 * @param locality
@@ -215,7 +212,9 @@ var ContactField = function(type, value, pref, id) {
 * @param postalCode
 * @param country
 */
-var ContactAddress = function(formatted, streetAddress, locality, region, postalCode, country, id) {
+var ContactAddress = function(pref, type, formatted, streetAddress, locality, region, postalCode, country, id) {
+	this.pref = pref != "undefined" ? pref : null;
+	this.type = type != "undefined" ? type : null;
     this.formatted = formatted != "undefined" ? formatted : null;
     this.streetAddress = streetAddress != "undefined" ? streetAddress : null;
     this.locality = locality != "undefined" ? locality : null;
@@ -227,22 +226,18 @@ var ContactAddress = function(formatted, streetAddress, locality, region, postal
 
 /**
 * Contact organization.
+* @param pref - boolean is primary / preferred address
+* @param type - string - work, home…..
 * @param name
 * @param dept
 * @param title
-* @param startDate
-* @param endDate
-* @param location
-* @param desc
 */
-var ContactOrganization = function(name, dept, title, startDate, endDate, location, desc) {
+var ContactOrganization = function(pref, type, name, dept, title) {
+	this.pref = pref != "undefined" ? pref : null;
+	this.type = type != "undefined" ? type : null;
     this.name = name != "undefined" ? name : null;
     this.department = dept != "undefined" ? dept : null;
     this.title = title != "undefined" ? title : null;
-    this.startDate = startDate != "undefined" ? startDate : null;
-    this.endDate = endDate != "undefined" ? endDate : null;
-    this.location = location != "undefined" ? location : null;
-    this.description = desc != "undefined" ? desc : null;
 };
 
 /**
@@ -251,11 +246,11 @@ var ContactOrganization = function(name, dept, title, startDate, endDate, locati
 * @param username
 * @param userid
 */
-var ContactAccount = function(domain, username, userid) {
+/*var ContactAccount = function(domain, username, userid) {
     this.domain = domain != "undefined" ? domain : null;
     this.username = username != "undefined" ? username : null;
     this.userid = userid != "undefined" ? userid : null;
-}
+}*/
 
 /**
 * Represents a group of Contacts.
@@ -263,8 +258,6 @@ var ContactAccount = function(domain, username, userid) {
 var Contacts = function() {
     this.inProgress = false;
     this.records = new Array();
-    this.resultsCallback = null;
-    this.errorCallback = null;
 };
 /**
 * Returns an array of Contacts matching the search criteria.
@@ -275,26 +268,16 @@ var Contacts = function() {
 * @return array of Contacts matching search criteria
 */
 Contacts.prototype.find = function(fields, successCB, errorCB, options) {
-	var theOptions = options || null;
-	if (theOptions != null){
-		// convert updatedSince to ms
-		var value = theOptions.updatedSince
-		if (value != ''){
-			if (!value instanceof Date){
-				try {
-					value = new Date(value);
-				} catch(exception){
-					value = null;
-				}
-			}
-			if (value instanceof Date){
-				theOptions.updatedSince = value.valueOf();
-			}
-		}
-	}
-
-	PhoneGap.exec(successCB, errorCB, "Contacts","search", [{"fields":fields, "findOptions":theOptions}]);
-	
+	if (successCB === null) {
+        throw new TypeError("You must specify a success callback for the find command.");
+    }
+    if (fields === null || fields === "undefined" || fields.length === "undefined" || fields.length <= 0) {
+    	if (typeof errorCB === "function") {
+			errorCB({"code": ContactError.INVALID_ARGUMENT_ERROR});
+    	}
+    } else {
+		PhoneGap.exec(successCB, errorCB, "Contacts","search", [{"fields":fields, "findOptions":options}]);
+    }
 };
 /**
 * need to turn the array of JSON strings representing contact objects into actual objects
@@ -306,7 +289,7 @@ Contacts.prototype._findCallback = function(pluginResult) {
 	var contacts = new Array();
 	try {
 		for (var i=0; i<pluginResult.message.length; i++) {
-			var newContact = navigator.service.contacts.create(pluginResult.message[i]); 
+			var newContact = navigator.contacts.create(pluginResult.message[i]); 
 			newContact.convertDatesIn();
 			contacts.push(newContact);
 		}
@@ -328,7 +311,7 @@ Contacts.prototype._contactCallback = function(pluginResult)
 	var newContact = null;
 	if (pluginResult.message){
 		try {
-			newContact = navigator.service.contacts.create(pluginResult.message);
+			newContact = navigator.contacts.create(pluginResult.message);
 			newContact.convertDatesIn();
 		} catch(e){
 			console.log("Error parsing contact");
@@ -369,10 +352,11 @@ Contacts.prototype.chooseContact = function(successCallback, options) {
 * @returns new Contact object
 */
 Contacts.prototype.create = function(properties) {
+    var i;
     var contact = new Contact();
     for (i in properties) {
-        if (contact[i]!='undefined') {
-            contact[i]=properties[i];
+        if (contact[i] !== 'undefined') {
+            contact[i] = properties[i];
         }
     }
     return contact;
@@ -382,12 +366,10 @@ Contacts.prototype.create = function(properties) {
  * ContactFindOptions.
  * @param filter used to match contacts against
  * @param multiple boolean used to determine if more than one contact should be returned
- * @param updatedSince return only contact records that have been updated on or after the given time
  */
 var ContactFindOptions = function(filter, multiple, updatedSince) {
     this.filter = filter || '';
-    this.multiple = multiple || true;
-    this.updatedSince = updatedSince || '';
+    this.multiple = multiple || false;
 };
 
 /**
@@ -403,18 +385,18 @@ var ContactError = function() {
  */
 ContactError.UNKNOWN_ERROR = 0;
 ContactError.INVALID_ARGUMENT_ERROR = 1;
-ContactError.NOT_FOUND_ERROR = 2;
-ContactError.TIMEOUT_ERROR = 3;
-ContactError.PENDING_OPERATION_ERROR = 4;
-ContactError.IO_ERROR = 5;
-ContactError.NOT_SUPPORTED_ERROR = 6;
+ContactError.TIMEOUT_ERROR = 2;
+ContactError.PENDING_OPERATION_ERROR = 3;
+ContactError.IO_ERROR = 4;
+ContactError.NOT_SUPPORTED_ERROR = 5;
 ContactError.PERMISSION_DENIED_ERROR = 20;
 
 /**
  * Add the contact interface into the browser.
  */
 PhoneGap.addConstructor(function() { 
-    if(typeof navigator.service == "undefined") navigator.service = new Object();
-    if(typeof navigator.service.contacts == "undefined") navigator.service.contacts = new Contacts();
+    if(typeof navigator.contacts == "undefined") {
+    	navigator.contacts = new Contacts();
+    }
 });
 };

@@ -62,7 +62,7 @@
 // overridden to clean up Contact statics
 -(void)onAppTerminate
 {
-	NSLog(@"Contacts::onAppTerminate",0);
+	//NSLog(@"Contacts::onAppTerminate");
 	[ Contact releaseDefaults];
 
 }
@@ -135,7 +135,6 @@
 		personController.navigationItem.rightBarButtonItem = doneButton;
 		
 		[doneButton release];												
-		CFRelease(rec);
 		
 	  //Commented out code is various attempts to get editing
 		// navigation working properly
@@ -172,7 +171,7 @@
 	else 
 	{
 		// no record, return error
-		PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt:  NOT_FOUND_ERROR];
+		PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt:  UNKNOWN_ERROR];
 		[self writeJavascript:[result toErrorCallbackString:callbackId]];
 		
 	}
@@ -264,12 +263,8 @@
 
 	addrBook = ABAddressBookCreate();
 	// get the findOptions values
-	BOOL multiple = YES; // default is true
-	//int limit = 1; // default if multiple is FALSE, will be set below if multiple is TRUE
-	double msUpdatedSince = 0;
-	BOOL bCheckDate = NO;
+	BOOL multiple = NO; // default is false
 	NSString* filter = nil;
-	BOOL bIncludeRecord = YES;
 	if (![findOptions isKindOfClass:[NSNull class]]){
 		id value = nil;
 		filter = (NSString*)[findOptions objectForKey:@"filter"];
@@ -279,36 +274,18 @@
 			multiple = [(NSNumber*)value boolValue];
 			//NSLog(@"multiple is: %d", multiple);
 		}
-		/* limit removed from Dec 2010 W3C contacts spec
-		 if (multiple == YES){
-			// we only care about limit if multiple is true
-			value = [findOptions objectForKey:@"limit"];
-			if ([value isKindOfClass:[NSNumber class]]){
-				limit = [(NSNumber*)value intValue];
-				//NSLog(@"limit is: %d", limit);
-			} else {
-				// no limit specified, set it to -1 to get all
-				limit = -1;
-			}
-		}*/
-		// see if there is an updated date
-		id ms = [findOptions valueForKey:@"updatedSince"];
-		if (ms && [ms isKindOfClass:[NSNumber class]]){
-			msUpdatedSince = [ms doubleValue];
-			bCheckDate = YES;
-		}
-		
 	}
 
 	NSDictionary* returnFields = [[Contact class] calcReturnFields: fields];
 	
 	NSMutableArray* matches = nil;
 	if (!filter || [filter isEqualToString:@""]){ 
-		// get all records - use fields to determine what properties to return
+		// get all records 
 		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
 		if (foundRecords && [foundRecords count] > 0){
 			// create Contacts and put into matches array
-			int xferCount = [foundRecords count];
+            // doesn't make sense to ask for all records when multiple == NO but better check
+			int xferCount = multiple == YES ? [foundRecords count] : 1;
 			matches = [NSMutableArray arrayWithCapacity:xferCount];
 			for(int k = 0; k<xferCount; k++){
 				Contact* xferContact = [[[Contact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]] autorelease];
@@ -337,48 +314,24 @@
 	NSMutableArray* returnContacts = [NSMutableArray arrayWithCapacity:1];
 	
 	if (matches != nil && [matches count] > 0){
-
 		// convert to JS Contacts format and return in callback
+        // - returnFields  determines what properties to return
 		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
-		//int count = (limit > 0 ? MIN(limit,[matches count]) : [matches count]);
 		int count = multiple == YES ? [matches count] : 1;
 		for(int i = 0; i<count; i++){
 			Contact* newContact = [matches objectAtIndex:i];
-			if (bCheckDate) {
-				NSNumber* modDate = [newContact getDateAsNumber:kABPersonModificationDateProperty];
-				if (modDate){
-					double modDateMs = [modDate doubleValue];
-					if(round(modDateMs) < round(msUpdatedSince)){
-						bIncludeRecord = NO;
-					} else {
-						bIncludeRecord = YES;
-					}
-
-				}
-			}
-			if(bIncludeRecord){
-				NSDictionary* aContact = [newContact toDictionary: returnFields];
-				NSString* contactStr = [aContact JSONRepresentation];
-				[returnContacts addObject:contactStr];
-			}
+			NSDictionary* aContact = [newContact toDictionary: returnFields];
+			NSString* contactStr = [aContact JSONRepresentation];
+			[returnContacts addObject:contactStr];
 		}
 		[pool release];
-		
-		
 	}
 	PluginResult* result = nil;
-	if ([returnContacts count] == 0){
-		// return error
-		result = [PluginResult resultWithStatus:PGCommandStatus_ERROR messageAsInt: NOT_FOUND_ERROR cast: @"navigator.service.contacts._errCallback"];
-		jsString = [result toErrorCallbackString:callbackId];
-		//jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", NOT_FOUND_ERROR];
-	}else {
-		// return found contacts
-		result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsArray: returnContacts  cast: @"navigator.service.contacts._findCallback"];
-		jsString = [result toSuccessCallbackString:callbackId];
-		NSLog(@"findCallback string: %@", jsString);
-		//jsString = [NSString stringWithFormat: @"%@([%@]);", @"navigator.service.contacts._findCallback", [returnContacts componentsJoinedByString:@","]];
-	}
+    // return found contacts (array is empty if no contacts found)
+    result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsArray: returnContacts  cast: @"navigator.contacts._findCallback"];
+    jsString = [result toSuccessCallbackString:callbackId];
+    NSLog(@"findCallback string: %@", jsString);
+	
 
 	if(addrBook){
 		CFRelease(addrBook);
@@ -389,8 +342,7 @@
 	
 	if(jsString){
 		[self writeJavascript:jsString];
-		//[webView stringByEvaluatingJavaScriptFromString:jsString];
-	}
+    }
 	return;
 	
 	
@@ -440,7 +392,7 @@
 			// for now (while testing) give back saved, full contact
 			NSDictionary* newContact = [aContact toDictionary: [Contact defaultFields]];
 			//NSString* contactStr = [newContact JSONRepresentation];
-			result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: newContact cast: @"navigator.service.contacts._contactCallback" ];
+			result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: newContact cast: @"navigator.contacts._contactCallback" ];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
 	} else {
@@ -451,9 +403,8 @@
 	CFRelease(addrBook);
 		
 	if (bIsError){
-		result = [PluginResult resultWithStatus:PGCommandStatus_ERROR messageAsInt: errCode cast:@"navigator.service.contacts._errCallback" ];
+		result = [PluginResult resultWithStatus:PGCommandStatus_ERROR messageAsInt: errCode cast:@"navigator.contacts._errCallback" ];
 		jsString = [result toErrorCallbackString:callbackId];
-		//jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", errCode];
 	}
 	
 	if(jsString){
@@ -492,17 +443,15 @@
 				}else {
 					// set id to null
 					[contactDict setObject:[NSNull null] forKey:kW3ContactId];
-					//[result initWithStatus:PGCommandStatus_OK message: [contactDict JSONRepresentation] cast: @"navigator.service.contacts._contactCallback"];
-					result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: contactDict cast: @"navigator.service.contacts._contactCallback"];
+					result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: contactDict cast: @"navigator.contacts._contactCallback"];
 					jsString = [result toSuccessCallbackString:callbackId];
 					//NSString* contactStr = [contactDict JSONRepresentation];
-					//jsString = [NSString stringWithFormat: @"%@(%@);", @"navigator.service.contacts._contactCallback", contactStr];
 				}
 			}						
 		} else {
 			// no record found return error
 			bIsError = TRUE;
-			errCode = NOT_FOUND_ERROR;
+			errCode = UNKNOWN_ERROR;
 		}
 		
 	} else {
@@ -516,13 +465,11 @@
 		CFRelease(addrBook);
 	}
 	if (bIsError){
-		result = [PluginResult resultWithStatus:PGCommandStatus_ERROR messageAsInt: errCode cast: @"navigator.service.contacts._errCallback"];
+		result = [PluginResult resultWithStatus:PGCommandStatus_ERROR messageAsInt: errCode cast: @"navigator.contacts._errCallback"];
 		 jsString = [result toErrorCallbackString:callbackId];
-		 //jsString = [NSString stringWithFormat:@"%@(%d);", @"navigator.service.contacts._errCallback", errCode];
 	}
 	if (jsString){
 		[self writeJavascript:jsString];
-		//[webView stringByEvaluatingJavaScriptFromString:jsString];
 	}	
 		
 	return;
