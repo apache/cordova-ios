@@ -393,6 +393,7 @@ static NSString *gapVersion;
 	self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
     self.activityView.tag = 2;
     [self.window addSubview:self.activityView];
+    self.activityView.center = self.viewController.view.center;
     [self.activityView startAnimating];
 
 	[self.window makeKeyAndVisible];
