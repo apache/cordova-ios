@@ -332,7 +332,7 @@ static NSString *gapVersion;
     if (window.bounds.size.height <= 480){
         
         if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
-            UIImage* image = [UIImage imageNamed:@"Default"];
+            UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
             imageView.image = image;
             imageView.tag = 1;
             
@@ -343,7 +343,7 @@ static NSString *gapVersion;
     if (window.bounds.size.height >= 480 && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown) && UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad){
         
         if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
-            UIImage* image = [UIImage imageNamed:@"Default@2x"];
+            UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default@2x"]];
             imageView.image = image;
             imageView.tag = 1;
             
@@ -352,13 +352,13 @@ static NSString *gapVersion;
     };//end height >= 480
     
     if ( window.bounds.size.height >= 1004 && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
-        UIImage* image = [UIImage imageNamed:@"Default-Portrait~ipad"];
+        UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Portrait~ipad"]];
         imageView.image = image;
         imageView.tag = 1;
         
     } else {
         
-        UIImage* image = [UIImage imageNamed:@"Default-Landscape~ipad"];
+        UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Landscape~ipad"]];
         imageView.image = image;
         imageView.tag = 1;
         
