@@ -9,9 +9,17 @@ if (!PhoneGap.hasResource("camera")) {
 Camera = function() {
 	
 }
-
 /**
- * Format of image that returned from getPicture.
+ *  Available Camera Options
+ *  {boolean} allowEdit - true to allow editing image, default = false
+ *	{number} quality 0-100 (low to high) default =  100
+ *  {Camera.DestinationType} destinationType default = DATA_URL
+ *	{Camera.PictureSourceType} sourceType default = CAMERA
+ *	{number} targetWidth - width in pixels to scale image default = 0 (no scaling)
+ *  {number} targetHeight - height in pixels to scale image default = 0 (no scaling)
+ */
+/**
+ * Format of image that is returned from getPicture.
  *
  * Example: navigator.camera.getPicture(success, fail,
  *              { quality: 80,
@@ -20,7 +28,7 @@ Camera = function() {
  */
 Camera.DestinationType = {
     DATA_URL: 0,                // Return base64 encoded string
-    FILE_URI: 1                 // Return file uri (content://media/external/images/media/2 for Android)
+    FILE_URI: 1                 // Return file uri 
 };
 Camera.prototype.DestinationType = Camera.DestinationType;
 

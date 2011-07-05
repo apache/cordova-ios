@@ -3,7 +3,8 @@
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
- * Copyright (c) 2010, IBM Corporation
+ * Copyright (c) 2011, IBM Corporation
+* Copyright (c) 2011, Ambrose Software, Inc
  * 
  * DEPRECATED: Use the Media Capture API instead, this will be removed in 1.0
  * add "__attribute__ ((unavailable))" when finally removed.
@@ -23,6 +24,7 @@ typedef NSUInteger DestinationType;
 {
 	NSString* callbackid;
 	NSInteger quality;
+    CGSize targetSize;
 	NSString* postUrl;
 	enum DestinationType returnType;
 	UIPopoverController* popoverController; 
@@ -34,6 +36,7 @@ typedef NSUInteger DestinationType;
 @property (copy)   NSString* postUrl;
 @property (nonatomic) enum DestinationType returnType;
 @property (assign) UIPopoverController* popoverController; 
+@property (assign) CGSize targetSize;
 
 - (void) dealloc;
 
@@ -66,7 +69,7 @@ typedef NSUInteger DestinationType;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
-
+- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize;
 - (void) dealloc;
 
 @end

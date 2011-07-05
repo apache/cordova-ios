@@ -3,7 +3,8 @@
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
- * Copyright (c) 2010, IBM Corporation
+ * Copyright (c) 2011, IBM Corporation
+ * Copyright (c) 2011, Ambrose Software, Inc
  *
  * DEPRECATED: Use the Media Capture API instead, this will be removed in 1.0
  * add "__attribute__ ((unavailable))" when finally removed.
@@ -45,6 +46,13 @@
 	} else {
         
         bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
+        NSNumber* targetWidth = [options valueForKey:@"targetWidth"];
+        NSNumber* targetHeight = [options valueForKey:@"targetHeight"];
+        
+        CGSize targetSize = CGSizeMake(0, 0);
+        if (targetWidth != nil && targetHeight != nil) {
+            targetSize = CGSizeMake([targetWidth floatValue], [targetHeight floatValue]);
+        }
         
         
         if (self.pickerController == nil) 
@@ -56,6 +64,7 @@
         self.pickerController.sourceType = sourceType;
         self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
+        self.pickerController.targetSize = targetSize;
         
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
         self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
@@ -94,7 +103,7 @@
 
 	CGFloat quality = self.pickerController.quality / 100.0f; 
 	NSString* callbackId =  self.pickerController.callbackId;
-	
+   	
 	if([self popoverSupported])
 	{
 		[self.pickerController.popoverController dismissPopoverAnimated:YES]; 
@@ -120,8 +129,15 @@
 		}else {
 			image = [info objectForKey:UIImagePickerControllerOriginalImage];
 		}
-		NSData* data = UIImageJPEGRepresentation(image, quality);
-		if (self.pickerController.returnType == DestinationTypeFileUri){
+        
+        UIImage *scaledImage = nil;
+        
+        if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
+            scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
+        }
+		NSData* data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, quality);
+		
+        if (self.pickerController.returnType == DestinationTypeFileUri){
 			
 			// write to temp directory and reutrn URI
 			// get the temp directory path
@@ -139,11 +155,9 @@
 			if (![data writeToFile: filePath options: NSAtomicWrite error: &err]){
 				result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [err localizedDescription]];
 				jsString = [result toErrorCallbackString:callbackId];
-				//jsString = [NSString stringWithFormat:@"%@(\"%@\");", cameraPicker.errorCallback, [err localizedDescription]];
 			}else{
 				result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [NSURL fileURLWithPath: filePath]];
 				jsString = [result toSuccessCallbackString:callbackId];
-				//jsString = [NSString stringWithFormat:@"%@(\"%@\");", cameraPicker.successCallback, [NSURL fileURLWithPath: filePath]];
 			}
 			[fileMgr release];
 			
@@ -168,12 +182,12 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
 {
-	CameraPicker* cameraPicker = (CameraPicker*)picker;
-	NSString* callbackId = cameraPicker.callbackId;
+	
+	NSString* callbackId = self.pickerController.callbackId;
 	
 	[picker dismissModalViewControllerAnimated:YES];
-	// return media Capture error value for now (will update when implement MediaCapture api)
-	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"3"]; // error callback expects string ATM
+	
+	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
 	[webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
 	
 	if([self popoverSupported])
@@ -185,6 +199,61 @@
 	self.pickerController.delegate = nil;
 	self.pickerController = nil;
 	
+}
+- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize
+{
+    UIImage *sourceImage = anImage;
+    UIImage *newImage = nil;        
+    CGSize imageSize = sourceImage.size;
+    CGFloat width = imageSize.width;
+    CGFloat height = imageSize.height;
+    CGFloat targetWidth = targetSize.width;
+    CGFloat targetHeight = targetSize.height;
+    CGFloat scaleFactor = 0.0;
+    CGFloat scaledWidth = targetWidth;
+    CGFloat scaledHeight = targetHeight;
+    CGPoint thumbnailPoint = CGPointMake(0.0,0.0);
+    
+    if (CGSizeEqualToSize(imageSize, targetSize) == NO) 
+    {
+        CGFloat widthFactor = targetWidth / width;
+        CGFloat heightFactor = targetHeight / height;
+        
+        if (widthFactor > heightFactor) 
+            scaleFactor = widthFactor; // scale to fit height
+        else
+            scaleFactor = heightFactor; // scale to fit width
+        scaledWidth  = width * scaleFactor;
+        scaledHeight = height * scaleFactor;
+        
+        // center the image
+        if (widthFactor > heightFactor)
+        {
+            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5; 
+        }
+        else 
+            if (widthFactor < heightFactor)
+            {
+                thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
+            }
+    }       
+    
+    UIGraphicsBeginImageContext(targetSize); // this will crop
+    
+    CGRect thumbnailRect = CGRectZero;
+    thumbnailRect.origin = thumbnailPoint;
+    thumbnailRect.size.width  = scaledWidth;
+    thumbnailRect.size.height = scaledHeight;
+    
+    [sourceImage drawInRect:thumbnailRect];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    if(newImage == nil) 
+        NSLog(@"could not scale image");
+    
+    //pop the context to get back to the default
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url 
@@ -244,6 +313,7 @@
 @synthesize returnType;
 @synthesize callbackId;
 @synthesize popoverController;
+@synthesize targetSize;
 
 
 - (void) dealloc
