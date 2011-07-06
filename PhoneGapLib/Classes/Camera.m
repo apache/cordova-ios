@@ -15,7 +15,7 @@
 #import "PhonegapDelegate.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
-@implementation Camera
+@implementation PGCamera
 
 @synthesize pickerController;
 

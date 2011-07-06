@@ -8,7 +8,7 @@
 
 #import "Accelerometer.h"
 
-@implementation Accelerometer
+@implementation PGAccelerometer
 
 // defaults to 100 msec
 #define kAccelerometerInterval      100 

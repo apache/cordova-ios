@@ -8,7 +8,7 @@
 
 #import "Image.h"
 
-@implementation Image
+@implementation PGImage
 
 @synthesize window;
 @synthesize picker;

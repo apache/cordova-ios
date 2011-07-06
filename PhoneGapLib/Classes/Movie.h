@@ -10,7 +10,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 
-@interface Movie : PGPlugin {
+@interface PGMovie : PGPlugin {
     BOOL stopReceived;
     BOOL repeat;
     MPMoviePlayerController	*theMovie;

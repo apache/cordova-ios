@@ -10,7 +10,7 @@
 #import "Reachability.h"
 
 
-@interface Connection : PGPlugin {
+@interface PGConnection : PGPlugin {
 	NSString* type;
 	
 	Reachability* internetReach;

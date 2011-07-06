@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPlugin.h"
 
-@interface Image : PGPlugin {
+@interface PGImage : PGPlugin {
 	IBOutlet UIWindow *window;
 	
 	UIImagePickerController *picker;	// added by urbian

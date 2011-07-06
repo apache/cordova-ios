@@ -23,7 +23,7 @@ enum ContactError {
 };
 typedef NSUInteger ContactError;
 
-@interface Contact : NSObject {
+@interface PGContact : NSObject {
 	
 	ABRecordRef record;			// the ABRecord associated with this contact
 	NSDictionary* returnFields;	// dictionary of fields to return when performing search

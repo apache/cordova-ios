@@ -17,35 +17,35 @@
 	<key>Plugins</key>
 	<dict>
 		<key>Accelerometer</key>
-		<string>Accelerometer</string>
+		<string>PGAccelerometer</string>
 		<key>Camera</key>
-		<string>Camera</string>
+		<string>PGCamera</string>
 		<key>Connection</key>
-		<string>Connection</string>
+		<string>PGConnection</string>
 		<key>Contacts</key>
-		<string>Contacts</string>
+		<string>PGContacts</string>
 		<key>DebugConsole</key>
-		<string>DebugConsole</string>
+		<string>PGDebugConsole</string>
 		<key>Contacts</key>
-		<string>Contacts</string>
+		<string>PGContacts</string>
 		<key>File</key>
-		<string>File</string>
+		<string>PGFile</string>
 		<key>FileTransfer</key>
-		<string>FileTransfer</string>
+		<string>PGFileTransfer</string>
 		<key>Image</key>
-		<string>Image</string>
+		<string>PGImage</string>
 		<key>Location</key>
-		<string>Location</string>
+		<string>PGLocation</string>
 		<key>Movie</key>
-		<string>Movie</string>
+		<string>PGMovie</string>
 		<key>Network</key>
-		<string>Network</string>
+		<string>PGNetwork</string>
 		<key>Notification</key>
-		<string>Notification</string>
+		<string>PGNotification</string>
 		<key>Sound</key>
-		<string>Sound</string>
+		<string>PGSound</string>
 		<key>Capture</key>
-		<string>Capture</string>
+		<string>PGCapture</string>
 	</dict>
 </dict>
 </plist>

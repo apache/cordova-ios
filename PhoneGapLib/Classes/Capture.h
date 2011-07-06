@@ -37,7 +37,7 @@ typedef NSUInteger CaptureError;
 
 @end
 
-@interface Capture : PGPlugin<UIImagePickerControllerDelegate, UINavigationControllerDelegate> 
+@interface PGCapture : PGPlugin<UIImagePickerControllerDelegate, UINavigationControllerDelegate> 
 {
     PGImagePicker* pickerController;
     BOOL inUse;
@@ -69,7 +69,7 @@ typedef NSUInteger CaptureError;
     CaptureError errorCode;
     NSString* callbackId;
     NSNumber* duration;
-    Capture* captureCommand;
+    PGCapture* captureCommand;
     UIBarButtonItem* doneButton;
     UIView* recordingView;
     UIButton* recordButton;
@@ -85,7 +85,7 @@ typedef NSUInteger CaptureError;
 @property (nonatomic) CaptureError errorCode;
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, copy) NSNumber* duration;
-@property (nonatomic, retain) Capture* captureCommand;
+@property (nonatomic, retain) PGCapture* captureCommand;
 @property (nonatomic, retain) UIBarButtonItem* doneButton;
 @property (nonatomic, retain) UIView* recordingView;
 @property (nonatomic, retain) UIButton* recordButton;

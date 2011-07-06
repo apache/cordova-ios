@@ -10,7 +10,7 @@
 
 @class Reachability;
 
-__attribute__ ((deprecated)) @interface Network : PGPlugin {
+__attribute__ ((deprecated)) @interface PGNetwork : PGPlugin {
 		
 }
 

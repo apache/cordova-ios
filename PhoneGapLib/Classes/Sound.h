@@ -12,7 +12,7 @@
 
 #import "PGPlugin.h"
 
-@interface AudioFile : NSObject
+@interface PGAudioFile : NSObject
 {
 	NSString* successCallback;
 	NSString* errorCallback;
@@ -20,9 +20,7 @@
 	NSString* resourcePath;
 	NSURL* resourceURL;
 	AVAudioPlayer* player;
-#ifdef __IPHONE_3_0
 	AVAudioRecorder* recorder;
-#endif
 }
 
 @property (nonatomic, copy) NSString* resourcePath;
@@ -31,33 +29,23 @@
 @property (nonatomic, copy) NSString* errorCallback;
 @property (nonatomic, copy) NSString* downloadCompleteCallback;
 @property (nonatomic, retain) AVAudioPlayer* player;
-
-#ifdef __IPHONE_3_0
 @property (nonatomic, retain) AVAudioRecorder* recorder;
-#endif
 
 @end
 
-@interface Sound : PGPlugin 
-<AVAudioPlayerDelegate
-#ifdef __IPHONE_3_0
-, AVAudioRecorderDelegate
-#endif
->
+@interface PGSound : PGPlugin <AVAudioPlayerDelegate, AVAudioRecorderDelegate>
 {
 	NSMutableDictionary* soundCache;
-	AudioFile* audFile;
+	PGAudioFile* audFile;
 }
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (NSURL*) urlForResource:(NSString*)resourcePath;
-- (AudioFile*) audioFileForResource:(NSString*) resourcePath;
+- (PGAudioFile*) audioFileForResource:(NSString*) resourcePath;
 
-#ifdef __IPHONE_3_0
 - (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-#endif
 
 @end

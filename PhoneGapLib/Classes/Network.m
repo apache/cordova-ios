@@ -10,12 +10,12 @@
 #import "Reachability.h"
 #import "Categories.h"
 
-@implementation Network
+@implementation PGNetwork
 
 
 -(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (Network*)[super initWithWebView:(UIWebView*)theWebView];
+    self = (PGNetwork*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {
     }
     return self;

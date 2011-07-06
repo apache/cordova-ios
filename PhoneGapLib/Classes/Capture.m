@@ -49,12 +49,12 @@
 
 @end
 
-@implementation Capture
+@implementation PGCapture
 @synthesize inUse;
 
 -(id)initWithWebView:(UIWebView *)theWebView
 {
-	self = (Capture*)[super initWithWebView:theWebView];
+	self = (PGCapture*)[super initWithWebView:theWebView];
 	if(self)
 	{
         self.inUse = NO;
@@ -338,7 +338,7 @@
     
     if (!mimeType){
         // try to determine mime type if not provided
-        File* pgFile = [[self appDelegate] getCommandInstance: @"File"];
+        PGFile* pgFile = [[self appDelegate] getCommandInstance: @"File"];
         mimeType = [pgFile getMimeTypeFromPath:fullPath];
         if (!mimeType) {
             // can't do much without mimeType, return error
@@ -421,7 +421,7 @@
     [fileDict setObject: fullPath forKey:@"fullPath"];
     // determine type
     if(!type) {
-    File* pgFile = [[self appDelegate] getCommandInstance: @"File"];
+    PGFile* pgFile = [[self appDelegate] getCommandInstance: @"File"];
     NSString* mimeType = [pgFile getMimeTypeFromPath:fullPath];
     [fileDict setObject: (mimeType != nil ? (NSObject*)mimeType : [NSNull null]) forKey:@"type"];
     }
@@ -549,7 +549,7 @@
 	return resource;
 }
 
-- (id) initWithCommand:  (Capture*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId 
+- (id) initWithCommand:  (PGCapture*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId 
 {
     if ((self = [super init])) {
         
