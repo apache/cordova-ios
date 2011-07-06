@@ -12,7 +12,7 @@
 #import "PGPlugin.h"
 #import "LoadingView.h"
 
-@interface Notification : PGPlugin <UIAlertViewDelegate>{
+@interface PGNotification : PGPlugin <UIAlertViewDelegate>{
 	LoadingView* loadingView;
 }
 

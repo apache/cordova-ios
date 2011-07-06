@@ -12,7 +12,7 @@
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"
 #define HTTP_SCHEME_PREFIX			@"http://"
 
-@implementation Sound
+@implementation PGSound
 
 // Maps a url to the original resource path
 - (NSString*) resourceForUrl:(NSURL*)url
@@ -72,7 +72,7 @@
 }
 
 // Creates or gets the cached audio file resource object
-- (AudioFile*) audioFileForResource:(NSString*) resourcePath
+- (PGAudioFile*) audioFileForResource:(NSString*) resourcePath
 {
 	NSURL* resourceURL = [self urlForResource:resourcePath];
 	if([resourcePath isEqualToString:@""]){
@@ -89,11 +89,11 @@
 		soundCache = [[NSMutableDictionary alloc] initWithCapacity:4];
 	}
 	
-	AudioFile* audioFile = [soundCache objectForKey:resourcePath];
+	PGAudioFile* audioFile = [soundCache objectForKey:resourcePath];
 	if (audioFile == nil) {
 		NSError *error;
 		
-		audioFile = [[[AudioFile alloc] init] autorelease];
+		audioFile = [[[PGAudioFile alloc] init] autorelease];
 		audioFile.resourcePath = resourcePath;
 		audioFile.resourceURL = resourceURL;
 		
@@ -115,7 +115,7 @@
 
 - (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
 	if (audioFile == nil) {
 		return;
 	}
@@ -142,7 +142,7 @@
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
 	NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
 	NSInteger numberOfLoops = 0;
 	if (loopOption != nil) {
@@ -178,7 +178,7 @@
 
 - (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
 	
 	if (audioFile != nil) {
 		if (audioFile.player != nil) {
@@ -191,7 +191,7 @@
 
 - (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
 	
 	if (audioFile != nil) {
 		if (audioFile.player != nil) {
@@ -201,11 +201,9 @@
 	}
 }
 
-#ifdef __IPHONE_3_0
-
 - (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
 	if (audioFile == nil) {
 		return;
 	}
@@ -231,7 +229,7 @@
 
 - (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	AudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
 	if (audioFile == nil) {
 		return;
 	}
@@ -245,7 +243,7 @@
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder*)recorder successfully:(BOOL)flag
 {
 	NSString* resourcePath = [self resourceForUrl:recorder.url];
-	AudioFile* audioFile = [self audioFileForResource:[recorder.url path]];
+	PGAudioFile* audioFile = [self audioFileForResource:[recorder.url path]];
 	NSLog(@"Finished recording audio sample '%@'", resourcePath);
 	
 	if (audioFile != nil) {
@@ -264,12 +262,10 @@
 	}
 }
 
-#endif
-
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer*)player successfully:(BOOL)flag 
 {
 	NSString* resourcePath = [self resourceForUrl:player.url];
-	AudioFile* audioFile = audFile;
+	PGAudioFile* audioFile = audFile;
 	NSLog(@"Finished playing audio sample '%@'", resourcePath);
 	
 	if (audioFile != nil) {
@@ -302,7 +298,7 @@
 
 @end
 
-@implementation AudioFile
+@implementation PGAudioFile
 
 @synthesize resourcePath;
 @synthesize resourceURL;

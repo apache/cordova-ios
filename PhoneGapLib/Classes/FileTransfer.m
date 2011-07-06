@@ -10,7 +10,7 @@
 #import "FileTransfer.h"
 
 
-@implementation FileTransfer
+@implementation PGFileTransfer
 
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSString* callbackId = [arguments objectAtIndex:0];

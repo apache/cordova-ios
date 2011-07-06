@@ -41,7 +41,7 @@ __attribute__ ((deprecated)) @interface CameraPicker : UIImagePickerController
 
 // ======================================================================= //
 
-__attribute__ ((deprecated)) @interface Camera : PGPlugin<UIImagePickerControllerDelegate, 
+__attribute__ ((deprecated)) @interface PGCamera : PGPlugin<UIImagePickerControllerDelegate, 
 									UINavigationControllerDelegate,
 									UIPopoverControllerDelegate>
 {

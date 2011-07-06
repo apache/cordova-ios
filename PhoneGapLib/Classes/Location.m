@@ -8,13 +8,13 @@
 
 #import "Location.h"
 
-@implementation Location
+@implementation PGLocation
 
 @synthesize locationManager;
 
 -(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (Location*)[super initWithWebView:(UIWebView*)theWebView];
+    self = (PGLocation*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) 
 	{
         self.locationManager = [[CLLocationManager alloc] init];

@@ -31,7 +31,7 @@ enum FileSystemType {
 };
 typedef int FileSystemType;
 
-@interface File : PGPlugin {
+@interface PGFile : PGPlugin {
 	
 	NSString *appDocsPath;	
 	NSString *appLibraryPath;	

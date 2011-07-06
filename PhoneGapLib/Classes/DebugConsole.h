@@ -11,7 +11,7 @@
 #import "PGPlugin.h"
 
 
-@interface DebugConsole : PGPlugin {
+@interface PGDebugConsole : PGPlugin {
 }
 
 - (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

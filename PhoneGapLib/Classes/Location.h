@@ -10,7 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "PGPlugin.h"
 
-@interface Location : PGPlugin <CLLocationManagerDelegate> {
+@interface PGLocation : PGPlugin <CLLocationManagerDelegate> {
     BOOL              __locationStarted;
     BOOL              __headingStarted;
 }

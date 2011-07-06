@@ -11,7 +11,7 @@
 #import "UIColor-Expanded.h"
 
 
-@implementation Notification
+@implementation PGNotification
 
 @synthesize loadingView;
 

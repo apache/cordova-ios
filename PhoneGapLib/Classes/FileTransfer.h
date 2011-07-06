@@ -18,7 +18,7 @@ enum FileTransferError {
 };
 typedef int FileTransferError;
 
-@interface FileTransfer : PGPlugin {
+@interface PGFileTransfer : PGPlugin {
     
 }
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
@@ -27,14 +27,14 @@ typedef int FileTransferError;
 
 
 @interface FileTransferDelegate : NSObject {
-	FileTransfer* command;
+	PGFileTransfer* command;
 	NSString* callbackId;
     NSInteger bytesWritten;
     
 }
 
 @property (nonatomic, retain) NSMutableData* responseData;
-@property (nonatomic, retain) FileTransfer* command;
+@property (nonatomic, retain) PGFileTransfer* command;
 @property (nonatomic, retain) NSString* callbackId;
 @property NSInteger bytesWritten;
 

@@ -10,7 +10,7 @@
 
 
 
-@interface Accelerometer : PGPlugin<UIAccelerometerDelegate> 
+@interface PGAccelerometer : PGPlugin<UIAccelerometerDelegate> 
 {
 	bool _bIsRunning;
 	

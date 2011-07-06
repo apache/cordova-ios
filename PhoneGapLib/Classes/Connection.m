@@ -9,11 +9,11 @@
 #import "Connection.h"
 #import "Reachability.h"
 
-@interface Connection(PrivateMethods)
+@interface PGConnection(PrivateMethods)
 - (void) updateOnlineStatus;
 @end
 
-@implementation Connection
+@implementation PGConnection
 
 @synthesize type, internetReach;
 
@@ -89,7 +89,7 @@
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (Connection*)[super initWithWebView:theWebView];
+    self = (PGConnection*)[super initWithWebView:theWebView];
     if (self) {
 		self.type = @"none";
 		[self prepare];

@@ -11,13 +11,13 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 
-@implementation Movie
+@implementation PGMovie
 
 @synthesize theMovie,stopReceived,repeat;
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (Movie*)[super initWithWebView:(UIWebView*)theWebView];
+    self = (PGMovie*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) {
         stopReceived = false;
         repeat = false;

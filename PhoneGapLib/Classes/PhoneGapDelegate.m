@@ -377,12 +377,12 @@ static NSString *gapVersion;
     [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
 	
 	id cmd = [self getCommandInstance:@"Connection"];
-	if (cmd && [cmd isKindOfClass:[Connection class]]) 
+	if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
 	{
-		Connection* connection = (Connection*)cmd;
 		NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
-		[connProps setObject:connection.type forKey:@"type"];
-
+		if ([cmd respondsToSelector:@selector(type)]) {
+			[connProps setObject:[cmd type] forKey:@"type"];
+		}
 		[devProps setObject:connProps forKey:@"connection"];
 	}
 	

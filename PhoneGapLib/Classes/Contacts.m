@@ -34,7 +34,7 @@
 @end
 
 
-@implementation Contacts
+@implementation PGContacts
 
 // no longer used since code gets AddressBook for each operation. 
 // If address book changes during save or remove operation, may get error but not much we can do about it
@@ -49,7 +49,7 @@
 
 -(PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (Contacts*)[super initWithWebView:(UIWebView*)theWebView];
+    self = (PGContacts*)[super initWithWebView:(UIWebView*)theWebView];
     /*if (self) {
 		addressBook = ABAddressBookCreate();
 		ABAddressBookRegisterExternalChangeCallback(addressBook, addressBookChanged, self);
@@ -63,7 +63,7 @@
 -(void)onAppTerminate
 {
 	//NSLog(@"Contacts::onAppTerminate");
-	[ Contact releaseDefaults];
+	[PGContact releaseDefaults];
 
 }
 
@@ -276,7 +276,7 @@
 		}
 	}
 
-	NSDictionary* returnFields = [[Contact class] calcReturnFields: fields];
+	NSDictionary* returnFields = [[PGContact class] calcReturnFields: fields];
 	
 	NSMutableArray* matches = nil;
 	if (!filter || [filter isEqualToString:@""]){ 
@@ -288,7 +288,7 @@
 			int xferCount = multiple == YES ? [foundRecords count] : 1;
 			matches = [NSMutableArray arrayWithCapacity:xferCount];
 			for(int k = 0; k<xferCount; k++){
-				Contact* xferContact = [[[Contact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]] autorelease];
+				PGContact* xferContact = [[[PGContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]] autorelease];
 				[matches addObject:xferContact];
 				xferContact = nil;
 				
@@ -300,7 +300,7 @@
 		BOOL bFound = NO;
 		int testCount = [foundRecords count];
 		for(int j=0; j<testCount; j++){
-			Contact* testContact = [[[Contact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]] autorelease];
+			PGContact* testContact = [[[PGContact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]] autorelease];
 			if (testContact){
 				bFound = [testContact foundValue:filter inFields:returnFields];
 				if(bFound){
@@ -319,7 +319,7 @@
 		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
 		int count = multiple == YES ? [matches count] : 1;
 		for(int i = 0; i<count; i++){
-			Contact* newContact = [matches objectAtIndex:i];
+			PGContact* newContact = [matches objectAtIndex:i];
 			NSDictionary* aContact = [newContact toDictionary: returnFields];
 			NSString* contactStr = [aContact JSONRepresentation];
 			[returnContacts addObject:contactStr];
@@ -361,17 +361,17 @@
 	
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
 	NSNumber* cId = [contactDict valueForKey:kW3ContactId];
-	Contact* aContact = nil; 
+	PGContact* aContact = nil; 
 	ABRecordRef rec = nil;
 	if (cId && ![cId isKindOfClass:[NSNull class]]){
 		rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
 		if (rec){
-			aContact = [[Contact alloc] initFromABRecord: rec ];
+			aContact = [[PGContact alloc] initFromABRecord: rec ];
 			bUpdate = YES;
 		}
 	}
 	if (!aContact){
-		aContact = [[Contact alloc] init]; 			
+		aContact = [[PGContact alloc] init]; 			
 	}
 	
 	bSuccess = [aContact setFromContactDict: contactDict asUpdate: bUpdate];
@@ -390,7 +390,7 @@
 			// give original dictionary back?  If generate dictionary from saved contact, have no returnFields specified
 			// so would give back all fields (which W3C spec. indicates is not desired)
 			// for now (while testing) give back saved, full contact
-			NSDictionary* newContact = [aContact toDictionary: [Contact defaultFields]];
+			NSDictionary* newContact = [aContact toDictionary: [PGContact defaultFields]];
 			//NSString* contactStr = [newContact JSONRepresentation];
 			result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: newContact cast: @"navigator.contacts._contactCallback" ];
 			jsString = [result toSuccessCallbackString:callbackId];

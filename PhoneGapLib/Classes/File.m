@@ -14,7 +14,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 
 
-@implementation File
+@implementation PGFile
 
 @synthesize appDocsPath, appLibraryPath, appTempPath, persistentPath, temporaryPath, userHasAllowed;
 
@@ -22,7 +22,7 @@
 
 -(id)initWithWebView:(UIWebView *)theWebView
 {
-	self = (File*)[super initWithWebView:theWebView];
+	self = (PGFile*)[super initWithWebView:theWebView];
 	if(self)
 	{
 		// get the documents directory path

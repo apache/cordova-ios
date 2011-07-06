@@ -12,7 +12,7 @@
 #import "PGPlugin.h"
 #import "Contact.h"
 
-@interface Contacts : PGPlugin <ABNewPersonViewControllerDelegate, 
+@interface PGContacts : PGPlugin <ABNewPersonViewControllerDelegate, 
 									   ABPersonViewControllerDelegate,
 									   ABPeoplePickerNavigationControllerDelegate
 									  > 

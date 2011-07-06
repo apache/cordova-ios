@@ -8,7 +8,7 @@
 
 #import "DebugConsole.h"
 
-@implementation DebugConsole
+@implementation PGDebugConsole
 
 - (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
