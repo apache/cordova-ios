@@ -51,16 +51,6 @@ Notification.prototype.activityStop = function() {
     PhoneGap.exec(null, null, "Notification", "activityStop", []);
 };
 
-// iPhone only
-Notification.prototype.loadingStart = function(options) {
-	console.warn("Notification.loadingStart is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
-    PhoneGap.exec(null, null, "Notification","loadingStart", [options]);
-};
-// iPhone only
-Notification.prototype.loadingStop = function() {
-	console.warn("Notification.loadingStop is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
-    PhoneGap.exec(null, null, "Notification","loadingStop", []);
-};
 /**
  * Causes the device to blink a status LED.
  * @param {Integer} count The number of blinks.
