@@ -45,7 +45,6 @@
 		3032599A136B325100982B63 /* SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD3F1090FBE7009987E8 /* SBJsonBase.m */; };
 		3032599B136B325100982B63 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD411090FBE7009987E8 /* SBJsonParser.m */; };
 		3032599C136B325100982B63 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD431090FBE7009987E8 /* SBJsonWriter.m */; };
-		3032599D136B325100982B63 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD451090FBE7009987E8 /* LoadingView.m */; };
 		3032599E136B325100982B63 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD471090FBE7009987E8 /* Location.m */; };
 		3032599F136B325100982B63 /* Movie.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4B1090FBE7009987E8 /* Movie.m */; };
 		303259A1136B325100982B63 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4F1090FBE7009987E8 /* Notification.m */; };
@@ -73,7 +72,6 @@
 		303259B8136B326300982B63 /* SBJsonBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD3E1090FBE7009987E8 /* SBJsonBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259B9136B326300982B63 /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD401090FBE7009987E8 /* SBJsonParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259BA136B326300982B63 /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD421090FBE7009987E8 /* SBJsonWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		303259BB136B326300982B63 /* LoadingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD441090FBE7009987E8 /* LoadingView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259BC136B326300982B63 /* Location.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD461090FBE7009987E8 /* Location.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259BD136B326300982B63 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4A1090FBE7009987E8 /* Movie.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259BF136B326300982B63 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4E1090FBE7009987E8 /* Notification.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -128,8 +126,6 @@
 		8887FD801090FBE7009987E8 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD411090FBE7009987E8 /* SBJsonParser.m */; };
 		8887FD811090FBE7009987E8 /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD421090FBE7009987E8 /* SBJsonWriter.h */; };
 		8887FD821090FBE7009987E8 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD431090FBE7009987E8 /* SBJsonWriter.m */; };
-		8887FD831090FBE7009987E8 /* LoadingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD441090FBE7009987E8 /* LoadingView.h */; };
-		8887FD841090FBE7009987E8 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD451090FBE7009987E8 /* LoadingView.m */; };
 		8887FD851090FBE7009987E8 /* Location.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD461090FBE7009987E8 /* Location.h */; };
 		8887FD861090FBE7009987E8 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD471090FBE7009987E8 /* Location.m */; };
 		8887FD891090FBE7009987E8 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4A1090FBE7009987E8 /* Movie.h */; };
@@ -197,8 +193,6 @@
 		8887FD411090FBE7009987E8 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
 		8887FD421090FBE7009987E8 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		8887FD431090FBE7009987E8 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
-		8887FD441090FBE7009987E8 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingView.h; path = Classes/LoadingView.h; sourceTree = "<group>"; };
-		8887FD451090FBE7009987E8 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoadingView.m; path = Classes/LoadingView.m; sourceTree = "<group>"; };
 		8887FD461090FBE7009987E8 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Location.h; path = Classes/Location.h; sourceTree = "<group>"; };
 		8887FD471090FBE7009987E8 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Location.m; path = Classes/Location.m; sourceTree = "<group>"; };
 		8887FD4A1090FBE7009987E8 /* Movie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Movie.h; path = Classes/Movie.h; sourceTree = "<group>"; };
@@ -312,8 +306,6 @@
 				8887FD351090FBE7009987E8 /* InvokedUrlCommand.m */,
 				C937A4541337599E002C4C79 /* FileTransfer.h */,
 				C937A4551337599E002C4C79 /* FileTransfer.m */,
-				8887FD441090FBE7009987E8 /* LoadingView.h */,
-				8887FD451090FBE7009987E8 /* LoadingView.m */,
 				8887FD461090FBE7009987E8 /* Location.h */,
 				8887FD471090FBE7009987E8 /* Location.m */,
 				8887FD4A1090FBE7009987E8 /* Movie.h */,
@@ -402,7 +394,6 @@
 				303259B8136B326300982B63 /* SBJsonBase.h in Headers */,
 				303259B9136B326300982B63 /* SBJsonParser.h in Headers */,
 				303259BA136B326300982B63 /* SBJsonWriter.h in Headers */,
-				303259BB136B326300982B63 /* LoadingView.h in Headers */,
 				303259BC136B326300982B63 /* Location.h in Headers */,
 				303259BD136B326300982B63 /* Movie.h in Headers */,
 				303259BF136B326300982B63 /* Notification.h in Headers */,
@@ -442,7 +433,6 @@
 				8887FD7D1090FBE7009987E8 /* SBJsonBase.h in Headers */,
 				8887FD7F1090FBE7009987E8 /* SBJsonParser.h in Headers */,
 				8887FD811090FBE7009987E8 /* SBJsonWriter.h in Headers */,
-				8887FD831090FBE7009987E8 /* LoadingView.h in Headers */,
 				8887FD851090FBE7009987E8 /* Location.h in Headers */,
 				8887FD891090FBE7009987E8 /* Movie.h in Headers */,
 				8887FD8D1090FBE7009987E8 /* Notification.h in Headers */,
@@ -609,7 +599,6 @@
 				3032599A136B325100982B63 /* SBJsonBase.m in Sources */,
 				3032599B136B325100982B63 /* SBJsonParser.m in Sources */,
 				3032599C136B325100982B63 /* SBJsonWriter.m in Sources */,
-				3032599D136B325100982B63 /* LoadingView.m in Sources */,
 				3032599E136B325100982B63 /* Location.m in Sources */,
 				3032599F136B325100982B63 /* Movie.m in Sources */,
 				303259A1136B325100982B63 /* Notification.m in Sources */,
@@ -644,7 +633,6 @@
 				8887FD7E1090FBE7009987E8 /* SBJsonBase.m in Sources */,
 				8887FD801090FBE7009987E8 /* SBJsonParser.m in Sources */,
 				8887FD821090FBE7009987E8 /* SBJsonWriter.m in Sources */,
-				8887FD841090FBE7009987E8 /* LoadingView.m in Sources */,
 				8887FD861090FBE7009987E8 /* Location.m in Sources */,
 				8887FD8A1090FBE7009987E8 /* Movie.m in Sources */,
 				8887FD8E1090FBE7009987E8 /* Notification.m in Sources */,
