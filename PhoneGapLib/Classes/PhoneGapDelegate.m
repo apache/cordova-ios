@@ -318,12 +318,60 @@ static NSString *gapVersion;
 	/*
 	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
 	 * You can change this image by swapping out the Default.png file within the resource folder.
-	 */
+	 *
 	UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
 	self.imageView = [[UIImageView alloc] initWithImage:image];
 	
     self.imageView.tag = 1;
 	[window addSubview:self.imageView];
+    
+    There is a bug when runnning iPhone only apps on iPad
+    More incentive to suport universal binaries!!!
+    - @RandyMcMillan
+    */
+    if (window.bounds.size.height <= 480){
+        
+        if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
+            UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
+            imageView.image = image;
+            imageView.tag = 1;
+            
+        }else{};//end IPHONE NON RETINA IDIOM
+        
+    };//end height <= 480
+    
+    if (window.bounds.size.height >= 480 && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown) && UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad){
+        
+        if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
+            UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default@2x"]];
+            imageView.image = image;
+            imageView.tag = 1;
+            
+        }else{};//end IPHONE RETINA IDIOM
+        
+    };//end height >= 480
+    
+    if ( window.bounds.size.height >= 1004 && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
+        UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Portrait~ipad"]];
+        imageView.image = image;
+        imageView.tag = 1;
+        
+    } else {
+        
+        UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Landscape~ipad"]];
+        imageView.image = image;
+        imageView.tag = 1;
+        
+    };
+    imageView.center = window.center;
+    imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
+    [viewController.view addSubview:imageView];
+    [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250 	self.window.autoresizesSubviews = YES;
+    
+    
+
+    
+    
 
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
@@ -345,6 +393,7 @@ static NSString *gapVersion;
 	self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
     self.activityView.tag = 2;
     [self.window addSubview:self.activityView];
+    self.activityView.center = self.viewController.view.center;
     [self.activityView startAnimating];
 
 	[self.window makeKeyAndVisible];
