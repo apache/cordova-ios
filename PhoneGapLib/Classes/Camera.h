@@ -12,14 +12,14 @@
 #import <Foundation/Foundation.h>
 #import "PGPlugin.h"
 
-__attribute__ ((deprecated)) enum DestinationType {
+enum DestinationType {
 	DestinationTypeDataUrl = 0,
 	DestinationTypeFileUri
 };
 typedef NSUInteger DestinationType;
 
 
-__attribute__ ((deprecated)) @interface CameraPicker : UIImagePickerController
+@interface CameraPicker : UIImagePickerController
 {
 	NSString* callbackid;
 	NSInteger quality;
@@ -41,7 +41,7 @@ __attribute__ ((deprecated)) @interface CameraPicker : UIImagePickerController
 
 // ======================================================================= //
 
-__attribute__ ((deprecated)) @interface PGCamera : PGPlugin<UIImagePickerControllerDelegate, 
+@interface PGCamera : PGPlugin<UIImagePickerControllerDelegate, 
 									UINavigationControllerDelegate,
 									UIPopoverControllerDelegate>
 {
