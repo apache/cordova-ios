@@ -13,7 +13,6 @@
 #import "Connection.h"
 
 #import "PGPlugin.h"
-#import "PhoneGapCommand.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
@@ -569,13 +568,8 @@ static NSString *gapVersion;
 	// Fetch an instance of this class
 	PGPlugin* obj = [self getCommandInstance:command.className];
 	
-	BOOL isDeprecatedClass = [obj isKindOfClass:[PhoneGapCommand class]];
-	if (isDeprecatedClass) { // still allow deprecated class, until 1.0 release, print deprecation warning
-		NSLog(@"DEPRECATED: Plugin '%@' uses the deprecated base-class PhoneGapCommand. This base-class will be removed in 1.0. Use the PGPlugin base class instead.", command.className);
-	}
-	
-	if (!([obj isKindOfClass:[PGPlugin class]] || isDeprecatedClass)) { // still allow deprecated class, until 1.0 release
-		NSLog(@"ERROR: Plugin '%@' not found. Check your plugin mapping in PhoneGap.plist.", command.className);
+	if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
+		NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
 		return NO;
 	}
 	BOOL retVal = YES;
