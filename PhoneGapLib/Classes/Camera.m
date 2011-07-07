@@ -69,16 +69,14 @@
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
         self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
         
-        if([self popoverSupported])
+        if([self popoverSupported] && sourceType != UIImagePickerControllerSourceTypeCamera)
         {
             if (self.pickerController.popoverController == nil) 
             { 
                 self.pickerController.popoverController = [[NSClassFromString(@"UIPopoverController") alloc] 
                                                            initWithContentViewController:self.pickerController]; 
             } 
-            self.pickerController.popoverController.delegate = self; 
-            
-            
+            self.pickerController.popoverController.delegate = self;
             [ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
                                                                       inView:[webView superview]
                                                     permittedArrowDirections:UIPopoverArrowDirectionAny 
@@ -95,7 +93,7 @@
 
 - (void)popoverControllerDidDismissPopover:(id)popoverController
 {
-	[ self imagePickerControllerDidCancel:self.pickerController ];	
+    [ self imagePickerControllerDidCancel:self.pickerController ];	
 }
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
@@ -103,8 +101,8 @@
 
 	CGFloat quality = self.pickerController.quality / 100.0f; 
 	NSString* callbackId =  self.pickerController.callbackId;
-   	
-	if([self popoverSupported])
+	
+	if([self popoverSupported] && self.pickerController.popoverController != nil)
 	{
 		[self.pickerController.popoverController dismissPopoverAnimated:YES]; 
 		self.pickerController.popoverController.delegate = nil;
@@ -181,16 +179,16 @@
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
-{
-	
+{	
 	NSString* callbackId = self.pickerController.callbackId;
 	
 	[picker dismissModalViewControllerAnimated:YES];
 	
 	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
+
 	[webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
 	
-	if([self popoverSupported])
+	if([self popoverSupported] && self.pickerController.popoverController != nil)
 	{
 		self.pickerController.popoverController.delegate = nil;
 		self.pickerController.popoverController = nil;
