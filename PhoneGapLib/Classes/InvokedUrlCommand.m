@@ -60,10 +60,11 @@
 	// Dictionary of options
 	NSString* objectString = [[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	iuc.options = (NSMutableDictionary*)[objectString JSONValue];
-	NSArray* components = [iuc.command componentsSeparatedByString:@"."];
-	if (components.count == 2) {
-		iuc.className = [components objectAtIndex:0];
-		iuc.methodName = [components objectAtIndex:1];
+	NSMutableArray* components = [NSMutableArray arrayWithArray:[iuc.command componentsSeparatedByString:@"."]];
+	if (components.count >= 2) {
+		iuc.methodName = [components lastObject];
+		[components removeLastObject];
+		iuc.className = [components componentsJoinedByString:@"."];
 	}		
 	
 	return iuc;
