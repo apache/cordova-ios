@@ -12,24 +12,34 @@
 #import <UIKit/UIKit.h>
 #import "PluginResult.h"
 
+#define PGPluginHandleOpenUrlNotification	@"PGPluginHandleOpenUrlNotification"
+
 @class PhoneGapDelegate;
 
 @interface PGPlugin : NSObject {
-    UIWebView*    webView;
-    NSDictionary* settings;
 }
+
 @property (nonatomic, retain) UIWebView *webView;
 @property (nonatomic, retain) NSDictionary *settings;
 
--(PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
--(PGPlugin*) initWithWebView:(UIWebView*)theWebView;
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView;
 
--(void)onAppTerminate;
+- (void) handleOpenUrl:(NSNotification*)notification;
+- (void) onAppTerminate;
+- (void) onMemoryWarning;
 
--(PhoneGapDelegate*) appDelegate;
--(UIViewController*) appViewController;
+/*
+ // see initWithWebView implementation
+ - (void) onPause {}
+ - (void) onResume {}
+ - (void) onOrientationWillChange {}
+ - (void) onOrientationDidChange {}
+ */
 
-- (void) writeJavascript:(NSString*)javascript;
-- (void) clearCaches;
+- (PhoneGapDelegate*) appDelegate;
+- (UIViewController*) appViewController;
+
+- (NSString*) writeJavascript:(NSString*)javascript;
 
 @end

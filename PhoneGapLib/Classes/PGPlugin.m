@@ -18,7 +18,7 @@
 @synthesize settings;
 
 
--(PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
 {
     self = [self initWithWebView:theWebView];
     if (self) {
@@ -27,48 +27,87 @@
     return self;
 }
 
--(PGPlugin*) initWithWebView:(UIWebView*)theWebView
+- (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = [super init];
     if (self) {
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppTerminate) name:UIApplicationWillTerminateNotification object:nil];
-        self.webView = theWebView;
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenUrl:) name:PGPluginHandleOpenUrlNotification object:nil];
+        
+		self.webView = theWebView;
+		
+		// You can listen to more app notifications, see:
+		// http://developer.apple.com/library/ios/#DOCUMENTATION/UIKit/Reference/UIApplication_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40006728-CH3-DontLinkElementID_4
+		/*
+		 // NOTE: make sure you uncomment the corresponding notification handler, and also the removeObserver in dealloc
+		 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
+		 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
+		 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationWillChange) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
+		 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationDidChange) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+		 */
 	}
     return self;
 }
 
--(void)onAppTerminate
+/*
+- (void) onPause {}
+- (void) onResume {}
+- (void) onOrientationWillChange {}
+- (void) onOrientationDidChange {}
+*/
+
+- (void) handleOpenUrl:(NSNotification*)notification
 {
-	// override this if you need to do any cleanup on app exit
-	//NSLog(@"PhoneGapCommand::onAppTerminate",0);
+	// override to handle urls sent to your app
+	// register your url schemes in your App-Info.plist
+	
+	NSURL* url = [notification object];
+	if ([url isKindOfClass:[NSURL class]]) {
+		/* Do your thing! */
+	}
 }
 
-- (void)dealloc
+- (void) onAppTerminate
+{
+	// override this if you need to do any cleanup on app exit
+	// NSLog(@"PhoneGapCommand::onAppTerminate",0);
+}
+
+- (void) onMemoryWarning
+{
+	// override to remove caches, etc
+}
+
+- (void) dealloc
 {
 	self.settings = nil;
 	self.webView = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:PGPluginHandleOpenUrlNotification object:nil];
+	/*
+	 [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+	 [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+	 [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
+	 [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+	 */
     [super dealloc];
 }
 
--(PhoneGapDelegate*) appDelegate
+- (PhoneGapDelegate*) appDelegate
 {
 	return (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
 }
 
--(UIViewController*) appViewController
+- (UIViewController*) appViewController
 {
 	return (UIViewController*)[self appDelegate].viewController;
 }
 
-- (void) writeJavascript:(NSString*)javascript
+- (NSString*) writeJavascript:(NSString*)javascript
 {
-	[self.webView stringByEvaluatingJavaScriptFromString:javascript];
-}
-
-- (void) clearCaches
-{
-	// override
+	return [self.webView stringByEvaluatingJavaScriptFromString:javascript];
 }
 
 @end
