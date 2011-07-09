@@ -5,9 +5,8 @@ if (!PhoneGap.hasResource("debugconsole")) {
  * This class provides access to the debugging console.
  * @constructor
  */
-DebugConsole = function(isDeprecated) {
+DebugConsole = function() {
     this.logLevel = DebugConsole.INFO_LEVEL;
-    this.isDeprecated = isDeprecated ? true : false;
 }
 
 // from most verbose, to least verbose
@@ -59,7 +58,7 @@ DebugConsole.prototype.processMessage = function(message, maxDepth) {
             return str;
         }
         
-        return ((this.isDeprecated ? "WARNING: debug object is deprecated, please use console object\n" :  "") + "Object:\n" + makeStructured(message, maxDepth));
+        return ("Object:\n" + makeStructured(message, maxDepth));
     }
 };
 
@@ -69,9 +68,8 @@ DebugConsole.prototype.processMessage = function(message, maxDepth) {
  */
 DebugConsole.prototype.log = function(message, maxDepth) {
     if (PhoneGap.available && this.logLevel <= DebugConsole.INFO_LEVEL)
-        PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message, maxDepth),
-            { logLevel: 'INFO' }
+        PhoneGap.exec(null, null, 'com.phonegap.debugconsole', 'log',
+            [ this.processMessage(message, maxDepth), { logLevel: 'INFO' } ]
         );
     else
         console.log(message);
@@ -83,9 +81,8 @@ DebugConsole.prototype.log = function(message, maxDepth) {
  */
 DebugConsole.prototype.warn = function(message, maxDepth) {
     if (PhoneGap.available && this.logLevel <= DebugConsole.WARN_LEVEL)
-        PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message, maxDepth),
-            { logLevel: 'WARN' }
+    	PhoneGap.exec(null, null, 'com.phonegap.debugconsole', 'log',
+            [ this.processMessage(message, maxDepth), { logLevel: 'WARN' } ]
         );
     else
         console.error(message);
@@ -97,9 +94,8 @@ DebugConsole.prototype.warn = function(message, maxDepth) {
  */
 DebugConsole.prototype.error = function(message, maxDepth) {
     if (PhoneGap.available && this.logLevel <= DebugConsole.ERROR_LEVEL)
-        PhoneGap.exec('DebugConsole.log',
-            this.processMessage(message, maxDepth),
-            { logLevel: 'ERROR' }
+		PhoneGap.exec(null, null, 'com.phonegap.debugconsole', 'log',
+            [ this.processMessage(message, maxDepth), { logLevel: 'ERROR' } ]
         );
     else
         console.error(message);
@@ -107,6 +103,5 @@ DebugConsole.prototype.error = function(message, maxDepth) {
 
 PhoneGap.addConstructor(function() {
     window.console = new DebugConsole();
-    window.debug = new DebugConsole(true);
 });
 };

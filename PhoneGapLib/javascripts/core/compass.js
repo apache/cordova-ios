@@ -152,14 +152,14 @@ Compass.prototype.setError = function(message)
     this.stop();
 };
 
-Compass.prototype.start = function(args) 
+Compass.prototype.start = function(options) 
 {
-    PhoneGap.exec("Location.startHeading", args);
+    PhoneGap.exec(null, null, "com.phonegap.geolocation", "startHeading", [options]);
 };
 
 Compass.prototype.stop = function() 
 {
-    PhoneGap.exec("Location.stopHeading");
+    PhoneGap.exec(null, null, "com.phonegap.geolocation", "stopHeading", []);
 };
 
 PhoneGap.addConstructor(function() 

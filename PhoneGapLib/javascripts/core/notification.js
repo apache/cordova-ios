@@ -18,7 +18,7 @@ Notification = function() {
 Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
     var _title = (title || "Alert");
     var _buttonLabel = (buttonLabel || "OK");
-    PhoneGap.exec(completeCallback, null, "Notification", "alert", [message,{ "title": _title, "buttonLabel": _buttonLabel}]);
+    PhoneGap.exec(completeCallback, null, "com.phonegap.notification", "alert", [message,{ "title": _title, "buttonLabel": _buttonLabel}]);
 };
 
 /**
@@ -40,7 +40,7 @@ Notification.prototype.confirm = function(message, resultCallback, title, button
  */
 Notification.prototype.activityStart = function() {
 	console.warn("Notification.activityStart is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
-    PhoneGap.exec(null, null, "Notification", "activityStart", []);
+    PhoneGap.exec(null, null, "com.phonegap.notification", "activityStart", []);
 };
 
 /**
@@ -48,7 +48,7 @@ Notification.prototype.activityStart = function() {
  */
 Notification.prototype.activityStop = function() {
 	console.warn("Notification.activityStop is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
-    PhoneGap.exec(null, null, "Notification", "activityStop", []);
+    PhoneGap.exec(null, null, "com.phonegap.notification", "activityStop", []);
 };
 
 /**
@@ -61,7 +61,7 @@ Notification.prototype.blink = function(count, colour) {
 };
 
 Notification.prototype.vibrate = function(mills) {
-	PhoneGap.exec(null, null, "Notification", "vibrate", []);
+	PhoneGap.exec(null, null, "com.phonegap.notification", "vibrate", []);
 };
 
 Notification.prototype.beep = function(count, volume) {

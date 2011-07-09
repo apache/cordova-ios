@@ -16,35 +16,31 @@
 	<array/>
 	<key>Plugins</key>
 	<dict>
-		<key>Accelerometer</key>
+		<key>com.phonegap.accelerometer</key>
 		<string>PGAccelerometer</string>
-		<key>Camera</key>
+		<key>com.phonegap.camera</key>
 		<string>PGCamera</string>
-		<key>Connection</key>
+		<key>com.phonegap.connection</key>
 		<string>PGConnection</string>
-		<key>Contacts</key>
+		<key>com.phonegap.contacts</key>
 		<string>PGContacts</string>
-		<key>DebugConsole</key>
+		<key>com.phonegap.debugconsole</key>
 		<string>PGDebugConsole</string>
-		<key>Contacts</key>
-		<string>PGContacts</string>
-		<key>File</key>
+		<key>com.phonegap.file</key>
 		<string>PGFile</string>
-		<key>FileTransfer</key>
+		<key>com.phonegap.filetransfer</key>
 		<string>PGFileTransfer</string>
-		<key>Image</key>
+		<key>com.phonegap.image</key>
 		<string>PGImage</string>
-		<key>Location</key>
+		<key>com.phonegap.geolocation</key>
 		<string>PGLocation</string>
-		<key>Movie</key>
+		<key>com.phonegap.movie</key>
 		<string>PGMovie</string>
-		<key>Network</key>
-		<string>PGNetwork</string>
-		<key>Notification</key>
+		<key>com.phonegap.notification</key>
 		<string>PGNotification</string>
-		<key>Sound</key>
+		<key>com.phonegap.media</key>
 		<string>PGSound</string>
-		<key>Capture</key>
+		<key>com.phonegap.mediacapture</key>
 		<string>PGCapture</string>
 	</dict>
 </dict>

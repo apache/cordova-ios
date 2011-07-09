@@ -78,7 +78,7 @@
             } 
             self.pickerController.popoverController.delegate = self;
             [ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
-                                                                      inView:[webView superview]
+                                                                      inView:[self.webView superview]
                                                     permittedArrowDirections:UIPopoverArrowDirectionAny 
                                                                     animated:YES]; 
         }
@@ -163,7 +163,7 @@
 			result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [data base64EncodedString]];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
-		[webView stringByEvaluatingJavaScriptFromString:jsString];
+		[self.webView stringByEvaluatingJavaScriptFromString:jsString];
 		
 	}
 	
@@ -186,7 +186,7 @@
 	
 	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
 
-	[webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
+	[self.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
 	
 	if([self popoverSupported] && self.pickerController.popoverController != nil)
 	{

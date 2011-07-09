@@ -64,8 +64,8 @@
 	
 	[[thePicker parentViewController] dismissModalViewControllerAnimated:YES];
 	
-	webView.hidden = NO;
-	[window bringSubviewToFront:webView];
+	self.webView.hidden = NO;
+	[window bringSubviewToFront:self.webView];
 	
 }
 
@@ -80,13 +80,13 @@
 	NSString * jsCallBack = nil;
 	
 	jsCallBack = [[NSString alloc] initWithFormat:@"gotPhoto('CANCEL');", lastUploadedPhoto];
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];  
+	[self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];  
 	[jsCallBack release];
 	
 	// Hide the imagePicker and bring the web page back into focus
 	NSLog(@"Photo Cancel Request");
-	webView.hidden = NO;
-	[window bringSubviewToFront:webView];
+	self.webView.hidden = NO;
+	[window bringSubviewToFront:self.webView];
 }
 
 
@@ -113,7 +113,7 @@
 	
 	jsCallBack = [[NSString alloc] initWithFormat:@"gotPhoto('%@');", lastUploadedPhoto];
 	
-	[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+	[self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 	
 	NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
 	NSLog(@"%@", jsCallBack);

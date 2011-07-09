@@ -72,7 +72,7 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
         return;
     }
 	
-    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'upload', [options]);
+    PhoneGap.exec(successCallback, errorCallback, 'com.phonegap.filetransfer', 'upload', [options]);
 };
 
 FileTransfer.prototype._castTransferError = function(pluginResult) {

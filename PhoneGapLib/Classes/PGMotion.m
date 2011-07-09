@@ -43,7 +43,7 @@
 - (BOOL) deviceMotionAvailable
 {
 	NSString* js = @"window.DeviceMotionEvent != undefined";
-	NSString* result = [webView stringByEvaluatingJavaScriptFromString:js];
+	NSString* result = [self.webView stringByEvaluatingJavaScriptFromString:js];
 	
 	return [result isEqualToString:@"true"];
 }
@@ -51,7 +51,7 @@
 - (BOOL) deviceOrientationAvailable
 {
 	NSString* js = @"window.DeviceOrientationEvent != undefined";
-	NSString* result = [webView stringByEvaluatingJavaScriptFromString:js];
+	NSString* result = [self.webView stringByEvaluatingJavaScriptFromString:js];
 	
 	return [result isEqualToString:@"true"];
 }

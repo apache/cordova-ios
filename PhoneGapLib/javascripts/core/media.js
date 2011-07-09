@@ -21,37 +21,37 @@ Media = function(src, successCallback, errorCallback, downloadCompleteCallback) 
 	this.downloadCompleteCallback = downloadCompleteCallback || null;
     
 	if (this.src != null) {
-		PhoneGap.exec("Sound.prepare", this.src, successCB, errorCB, downloadCB);
+		PhoneGap.exec(null, null, "com.phonegap.media", "prepare", [this.src, successCB, errorCB, downloadCB]);
 	}
 }
  
 Media.prototype.play = function(options) {
 	if (this.src != null) {
-		PhoneGap.exec("Sound.play", this.src, options);
+		PhoneGap.exec(null, null, "com.phonegap.media", "play", [this.src, options]);
 	}
 };
 
 Media.prototype.pause = function() {
 	if (this.src != null) {
-		PhoneGap.exec("Sound.pause", this.src);
+		PhoneGap.exec(null, null, "com.phonegap.media", "pause", [this.src]);
 	}
 };
 
 Media.prototype.stop = function() {
 	if (this.src != null) {
-		PhoneGap.exec("Sound.stop", this.src);
+		PhoneGap.exec(null, null, "com.phonegap.media", "stop", [this.src]);
 	}
 };
 
 Media.prototype.startAudioRecord = function(options) {
 	if (this.src != null) {
-		PhoneGap.exec("Sound.startAudioRecord", this.src, options);
+		PhoneGap.exec(null, null, "com.phonegap.media", "startAudioRecord", [this.src, options]);
 	}
 };
 
 Media.prototype.stopAudioRecord = function() {
 	if (this.src != null) {
-		PhoneGap.exec("Sound.stopAudioRecord", this.src);
+		PhoneGap.exec(null, null, "com.phonegap.media", "stopAudioRecord", [this.src]);
 	}
 };
 

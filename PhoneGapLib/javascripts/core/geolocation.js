@@ -226,14 +226,15 @@ Geolocation.prototype.setError = function(error)
 
 };
 
-Geolocation.prototype.start = function(args) 
+Geolocation.prototype.start = function(positionOptions) 
 {
-    PhoneGap.exec("Location.startLocation", args);
+    PhoneGap.exec(null, null, "com.phonegap.geolocation", "startLocation", [positionOptions]);
+
 };
 
 Geolocation.prototype.stop = function() 
 {
-    PhoneGap.exec("Location.stopLocation");
+    PhoneGap.exec(null, null, "com.phonegap.geolocation", "stopLocation", []);
 };
 
 

@@ -39,7 +39,7 @@ Capture.prototype.captureAudio = function(successCallback, errorCallback, option
 				"code": CaptureError.CAPTURE_NOT_SUPPORTED
 			});
 	}*/
-    PhoneGap.exec(successCallback, errorCallback, "Capture", "captureAudio", [options]);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.mediacapture", "captureAudio", [options]);
 };
 
 /**
@@ -50,7 +50,7 @@ Capture.prototype.captureAudio = function(successCallback, errorCallback, option
  * @param {CaptureImageOptions} options
  */
 Capture.prototype.captureImage = function(successCallback, errorCallback, options) {
-    PhoneGap.exec(successCallback, errorCallback, "Capture", "captureImage", [options]);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.mediacapture", "captureImage", [options]);
 };
 
 /**
@@ -84,7 +84,7 @@ Capture.prototype._castMediaFile = function(pluginResult) {
  * @param {CaptureVideoOptions} options
  */
 Capture.prototype.captureVideo = function(successCallback, errorCallback, options) {
-    PhoneGap.exec(successCallback, errorCallback, "Capture", "captureVideo", [options]);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.mediacapture", "captureVideo", [options]);
 };
 
 /**
@@ -164,7 +164,7 @@ MediaFile.prototype.getFormatData = function(successCallback, errorCallback) {
 				"code": CaptureError.CAPTURE_INVALID_ARGUMENT
 			});
 	} else {
-    	PhoneGap.exec(successCallback, errorCallback, "Capture", "getFormatData", [this.fullPath, this.type]);
+    	PhoneGap.exec(successCallback, errorCallback, "com.phonegap.mediacapture", "getFormatData", [this.fullPath, this.type]);
 	}	
 };
 

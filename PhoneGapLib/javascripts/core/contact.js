@@ -90,7 +90,7 @@ Contact.prototype.remove = function(successCB, errorCB) {
         errorCB(errorObj);
     }
     else {
-        PhoneGap.exec(successCB, errorCB, "Contacts", "remove", [{ "contact": this}]);
+        PhoneGap.exec(successCB, errorCB, "com.phonegap.contacts", "remove", [{ "contact": this}]);
     }
 };
 /**
@@ -113,7 +113,7 @@ Contact.prototype.display = function(errorCB, options) {
 		}
     }
     else {
-        PhoneGap.exec(null, errorCB, "Contacts","displayContact", [this.id, options]);
+        PhoneGap.exec(null, errorCB, "com.phonegap.contacts","displayContact", [this.id, options]);
     }
 };
 
@@ -173,7 +173,7 @@ Contact.prototype.save = function(successCB, errorCB) {
 	// don't modify the original contact
 	var cloned = PhoneGap.clone(this);
 	cloned.convertDatesOut(); 
-	PhoneGap.exec(successCB, errorCB, "Contacts","save", [{"contact": cloned}]);
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.contacts","save", [{"contact": cloned}]);
 };
 
 /**
@@ -283,7 +283,7 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
 			errorCB({"code": ContactError.INVALID_ARGUMENT_ERROR});
     	}
     } else {
-		PhoneGap.exec(successCB, errorCB, "Contacts","search", [{"fields":fields, "findOptions":options}]);
+		PhoneGap.exec(successCB, errorCB, "com.phonegap.contacts","search", [{"fields":fields, "findOptions":options}]);
     }
 };
 /**
@@ -343,11 +343,11 @@ Contacts.prototype._errCallback = function(pluginResult)
 };
 // iPhone only api to create a new contact via the GUI
 Contacts.prototype.newContactUI = function(successCallback) { 
-    PhoneGap.exec(successCallback, null, "Contacts","newContact", []);
+    PhoneGap.exec(successCallback, null, "com.phonegap.contacts","newContact", []);
 };
 // iPhone only api to select a contact via the GUI
 Contacts.prototype.chooseContact = function(successCallback, options) {
-    PhoneGap.exec(successCallback, null, "Contacts","chooseContact", options);
+    PhoneGap.exec(successCallback, null, "com.phonegap.contacts","chooseContact", options);
 };
 
 

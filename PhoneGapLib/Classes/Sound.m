@@ -115,15 +115,17 @@
 
 - (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSString* callbackId = [arguments objectAtIndex:0]; 
+#pragma unused(callbackId)
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:1]];
 	if (audioFile == nil) {
 		return;
 	}
 	
 	NSUInteger argc = [arguments count];
-	if (argc > 1) audioFile.successCallback = [arguments objectAtIndex:1];
-	if (argc > 2) audioFile.errorCallback = [arguments objectAtIndex:2];
-	if (argc > 3) audioFile.downloadCompleteCallback = [arguments objectAtIndex:3];
+	if (argc > 2) audioFile.successCallback = [arguments objectAtIndex:2];
+	if (argc > 3) audioFile.errorCallback = [arguments objectAtIndex:3];
+	if (argc > 4) audioFile.downloadCompleteCallback = [arguments objectAtIndex:4];
 	
 	[soundCache setObject:audioFile forKey:audioFile.resourcePath];
 	if (audioFile.player != nil) {
@@ -142,7 +144,10 @@
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSString* callbackId = [arguments objectAtIndex:0];
+#pragma unused(callbackId)
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:1]];
+	
 	NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
 	NSInteger numberOfLoops = 0;
 	if (loopOption != nil) {
@@ -178,7 +183,9 @@
 
 - (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSString* callbackId = [arguments objectAtIndex:0];
+#pragma unused(callbackId)
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:1]];
 	
 	if (audioFile != nil) {
 		if (audioFile.player != nil) {
@@ -191,7 +198,9 @@
 
 - (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSString* callbackId = [arguments objectAtIndex:0];
+#pragma unused(callbackId)
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:1]];
 	
 	if (audioFile != nil) {
 		if (audioFile.player != nil) {
@@ -203,7 +212,9 @@
 
 - (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSString* callbackId = [arguments objectAtIndex:0];
+#pragma unused(callbackId)
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:1]];
 	if (audioFile == nil) {
 		return;
 	}
@@ -229,7 +240,10 @@
 
 - (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:0]];
+	NSString* callbackId = [arguments objectAtIndex:0];
+#pragma unused(callbackId)
+	PGAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:1]];
+	
 	if (audioFile == nil) {
 		return;
 	}
@@ -287,13 +301,13 @@
 
 }
 
-- (void) clearCaches
+- (void) onMemoryWarning
 {
 	[soundCache removeAllObjects];
 	[soundCache release];
 	soundCache = nil;
 	
-	[super clearCaches];
+	[super onMemoryWarning];
 }
 
 @end
