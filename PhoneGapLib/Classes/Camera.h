@@ -4,10 +4,8 @@
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2011, IBM Corporation
-* Copyright (c) 2011, Ambrose Software, Inc
+ * Copyright (c) 2011, Ambrose Software, Inc
  * 
- * DEPRECATED: Use the Media Capture API instead, this will be removed in 1.0
- * add "__attribute__ ((unavailable))" when finally removed.
  */
 
 #import <Foundation/Foundation.h>

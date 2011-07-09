@@ -6,8 +6,6 @@
  * Copyright (c) 2011, IBM Corporation
  * Copyright (c) 2011, Ambrose Software, Inc
  *
- * DEPRECATED: Use the Media Capture API instead, this will be removed in 1.0
- * add "__attribute__ ((unavailable))" when finally removed.
  */
 
 #import "Camera.h"
