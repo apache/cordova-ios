@@ -35,21 +35,6 @@ Notification.prototype.confirm = function(message, resultCallback, title, button
     var _buttonLabels = (buttonLabels || "OK,Cancel");
     this.alert(message, resultCallback, _title, _buttonLabels);
 };
-/**
- * Start spinning the activity indicator on the statusbar
- */
-Notification.prototype.activityStart = function() {
-	console.warn("Notification.activityStart is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
-    PhoneGap.exec(null, null, "com.phonegap.notification", "activityStart", []);
-};
-
-/**
- * Stop spinning the activity indicator on the statusbar, if it's currently spinning
- */
-Notification.prototype.activityStop = function() {
-	console.warn("Notification.activityStop is deprecated and will be removed in 1.0. It will be moved to the plugins repo.");
-    PhoneGap.exec(null, null, "com.phonegap.notification", "activityStop", []);
-};
 
 /**
  * Causes the device to blink a status LED.

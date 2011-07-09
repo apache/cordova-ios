@@ -17,9 +17,6 @@
 - (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options; // confirm is just a variant of alert
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__ ((deprecated));
-- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__ ((deprecated));
-
 @end
 
 @interface PGAlertView : UIAlertView {

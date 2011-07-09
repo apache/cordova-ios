@@ -84,24 +84,6 @@
     //[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }
  
-
-- (void)activityStart:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] startAnimating];
-    NSLog(@"Activity starting");
-    UIApplication* app = [UIApplication sharedApplication];
-    app.networkActivityIndicatorVisible = YES;
-}
-
-- (void)activityStop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    //[(UIActivityIndicatorView*)[self.webView.window viewWithTag:2] stopAnimating];
-
-    NSLog(@"Activitiy stopping ");
-    UIApplication* app = [UIApplication sharedApplication];
-    app.networkActivityIndicatorVisible = NO;
-}
-
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
