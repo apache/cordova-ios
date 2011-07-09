@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 #import "PluginResult.h"
 
-#define PGPluginHandleOpenUrlNotification	@"PGPluginHandleOpenUrlNotification"
+#define PGPluginHandleOpenURLNotification	@"PGPluginHandleOpenURLNotification"
 
 @class PhoneGapDelegate;
 
@@ -25,7 +25,7 @@
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView;
 
-- (void) handleOpenUrl:(NSNotification*)notification;
+- (void) handleOpenURL:(NSNotification*)notification;
 - (void) onAppTerminate;
 - (void) onMemoryWarning;
 
