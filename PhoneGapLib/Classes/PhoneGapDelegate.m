@@ -260,7 +260,7 @@ static NSString *gapVersion;
 	 * Fire up the GPS Service right away as it takes a moment for data to come back.
 	 */
     if ([enableLocation boolValue]) {
-        [[self getCommandInstance:@"Location"] startLocation:nil withDict:nil];
+        [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
     }
 	
 	/*
@@ -424,7 +424,7 @@ static NSString *gapVersion;
     [devProps setObject:[device name] forKey:@"name"];
     [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
 	
-	id cmd = [self getCommandInstance:@"Connection"];
+	id cmd = [self getCommandInstance:@"com.phonegap.connection"];
 	if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
 	{
 		NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
