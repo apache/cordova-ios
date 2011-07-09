@@ -722,7 +722,7 @@ static NSString *gapVersion;
 	NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
 	[self.webView stringByEvaluatingJavaScriptFromString:jsString];
 	
-	[[NSNotification defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenUrlNotification object:url]];
+	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenUrlNotification object:url]];
 	
 	return YES;
 }
