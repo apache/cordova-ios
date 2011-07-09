@@ -27,6 +27,7 @@ Connection.NONE = "none"; // NO connectivity
 
 
 PhoneGap.addConstructor(function() {
+    if (typeof navigator.network == "undefined") navigator.network = {};
     if (typeof navigator.network.connection == "undefined") navigator.network.connection = new Connection();
 });
 
