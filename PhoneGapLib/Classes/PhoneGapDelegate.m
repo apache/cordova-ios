@@ -712,19 +712,20 @@ static NSString *gapVersion;
  Determine the URL passed to this application.
  Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 */
-//- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
-//{
-//	if (!url) { return NO; }
-//	if ([[url scheme] isEqualToString:[self appURLScheme]]) 
-//	{
-//		NSString *optionsStr = [NSString stringWithFormat:@"var Invoke_params=\"%@\";",[url absoluteURL] ];
-//		NSLog(@"optionsStr: %@", optionsStr);
-//		[webView stringByEvaluatingJavaScriptFromString:optionsStr];
-//		
-//		return YES;
-//	}
-//	return NO;
-//}
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+	if (!url) { 
+		return NO; 
+	}
+
+	// Do something with the url here
+	NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
+	[self.webView stringByEvaluatingJavaScriptFromString:jsString];
+	
+	[[NSNotification defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenUrlNotification object:url]];
+	
+	return YES;
+}
 
 - (void)dealloc
 {
