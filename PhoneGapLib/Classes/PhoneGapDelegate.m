@@ -128,11 +128,6 @@ static NSString *gapVersion;
 	return gapVersion;
 }
 
-+ (NSString*) tmpFolderName
-{
-	return @"tmp";
-}
-
 
 /**
  Returns an instance of a PhoneGapCommand object, based on its name.  If one exists already, it is returned.
@@ -263,21 +258,6 @@ static NSString *gapVersion;
         [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
     }
 	
-	/*
-	 * Create tmp directory. Files written here will be deleted when app terminates
-	 */
-	NSFileManager *fileMgr = [[[NSFileManager alloc] init] autorelease];
-	NSString *docsDir = [[self class] applicationDocumentsDirectory];
-	NSString* tmpDirectory = [docsDir stringByAppendingPathComponent: [[self class] tmpFolderName]];
-	
-	if ([fileMgr createDirectoryAtPath:tmpDirectory withIntermediateDirectories: NO attributes: nil error: nil] == NO)
-	{
-		// might have failed because it already exists
-		if ( [fileMgr fileExistsAtPath:tmpDirectory] == NO )
-		{
-			NSLog(@"Unable to create tmp directory");  // not much we can do it this fails
-		}
-	}
 
 	self.webView.delegate = self;
 
