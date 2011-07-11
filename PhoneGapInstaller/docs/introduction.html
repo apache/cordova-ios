@@ -1,20 +1,34 @@
 <html>
 <body style="font-family:Helvetica Neue;">
 	
-<h2>VERSION 1.0 RC1 (20110712)</h2>
+<h2>VERSION 1.0.0rc1 (20110712)</h2>
 <p>
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 </p>
 
-<h2>20110712</h2>
+<h2>1.0.0rc1 (20110712)</h2>
 <ul>
-<li>TODO: PGPlugin::handleOpenURL, PGPlugin::onMemoryWarning, PGPlugin::onAppTerminate - plus others, Upgrade PhoneGap.plist and phonegap.js, deprecated items removed (list them - include debug.log, File.writeAsText also), Camera un-deprecated, PhoneGap.exec new signature preferred (with example, and Obj-C use) with support for service names with periods (like RDN), allow scaling in Camera.getPicture, new phonegap.js hyphen convention, splash screen fixes, EnableViewportScale key in PhoneGap.plist (to enable viewport initial-scale metadata tag)</li>
-<li>TODO: remove unused core plugins like Image, Movie to the Plugins repo</li>
+<li>FIX: Splash screen fixes for iPad</li>
+<li>REMOVED: Deprecated items removed: Notification activityStart/activityStop, Notification loadingStart/loadingStop, Network.isReachable, debug.log, File.writeAsText, PhoneGapCommand base class for Plugins, unused Image and Movie plugins removed</li>
+<li>RESTORED: Camera core plugin has been un-deprecated until a suitable replacement can be found to grab photos from the Camera Roll/Photo Library.</li>
+<li>NEW: phonegap.js naming convention: now phonegap-1.0.0rc.js, was phonegap.1.0.0rc1.js</li>
+<li>NEW: Camera core plugin supports image scaling</li>
+<li>NEW: Contacts core plugin updated to W3C June 2011 Spec</li>
+<li>NEW: Contacts core plugin supports display and edit contact</li>
+<li>NEW: Capture core plugin supports localized files for a11y prompt in Audio capture.</li>
+<li>NEW: EnableViewportScale key in PhoneGap.plist (to enable viewport initial-scale metadata tag)</li>
+<li>NEW: EnableViewportScale key in PhoneGap.plist (to enable viewport initial-scale metadata tag)</li>
+<li>NEW: Plugins: PhoneGap.exec supports service names in Reverse Domain Name (RDN) notation i.e "com.phonegap.MyPlugin"</li>
+<li>NEW: Plugins: PhoneGap.exec should support new signature: PhoneGap.exec(successCallback, failCallback, serviceName, action, [arg0, arg1])</li>
+<li>NEW: Plugins: Ability to override onMemoryWarning() to handle app memory warnings</li>
+<li>NEW: Plugins: Ability to override onAppTerminate() to handle app termination</li>
+<li>NEW: Plugins: Ability to override handleOpenURL:(NSNotification*) to handle launch of the app from a custom URL</li>
+<li>UPGRADERS: Create a new project, and copy in the new phonegap-1.0.0rc1.*.js and PhoneGap.plist into your existing project</li>
 </ul>
 
 <br />
 
-<h2>20110628</h2>
+<h2>0.9.6 (20110628)</h2>
 <ul>
 <li>Xcode 3 Template includes the CoreMedia framework (as a weak reference for iOS 3.x) for the W3C Media Capture API</li>
 <li>Xcode 4 Template includes the CoreMedia framework (as a required reference, template spec limitation) for the W3C Network API. You must change this to an 'optional' reference to target iOS 3.x devices, if not they will crash.</li>
