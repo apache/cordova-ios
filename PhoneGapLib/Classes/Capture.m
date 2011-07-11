@@ -338,7 +338,7 @@
     
     if (!mimeType){
         // try to determine mime type if not provided
-        PGFile* pgFile = [[self appDelegate] getCommandInstance: @"File"];
+        PGFile* pgFile = [[self appDelegate] getCommandInstance: @"com.phonegap.file"];
         mimeType = [pgFile getMimeTypeFromPath:fullPath];
         if (!mimeType) {
             // can't do much without mimeType, return error
@@ -421,7 +421,7 @@
     [fileDict setObject: fullPath forKey:@"fullPath"];
     // determine type
     if(!type) {
-    PGFile* pgFile = [[self appDelegate] getCommandInstance: @"File"];
+    PGFile* pgFile = [[self appDelegate] getCommandInstance: @"com.phonegap.file"];
     NSString* mimeType = [pgFile getMimeTypeFromPath:fullPath];
     [fileDict setObject: (mimeType != nil ? (NSObject*)mimeType : [NSNull null]) forKey:@"type"];
     }
