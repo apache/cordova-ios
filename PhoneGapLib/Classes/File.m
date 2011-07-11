@@ -1047,26 +1047,8 @@
 	}
 	return newPos;
 } 
-/* writeAsText  - deprecated
- * IN:
- * NSArray* arguments
- *  0 - NSString* callbackId
- *  1 - NSString* file path to write to
- *  2 - NSString* data to write
- *  3 - NSNumber* 1 to append to file, 0 to overwrite
- */
-- (void) writeAsText:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
-	NSString* argData = [arguments objectAtIndex:2];
-	BOOL bAppend = [[arguments objectAtIndex:3] boolValue];
-	
-	//[self writeToFile:[self getFullPath:argPath] withData:argData append: bAppend callback: callbackId];
-	[self writeToFile:argPath withData:argData append: bAppend callback: callbackId];
-	
-}
-/* writeAsText  - deprecated
+
+/* write
  * IN:
  * NSArray* arguments
  *  0 - NSString* callbackId
