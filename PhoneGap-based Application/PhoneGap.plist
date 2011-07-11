@@ -30,12 +30,8 @@
 		<string>PGFile</string>
 		<key>com.phonegap.filetransfer</key>
 		<string>PGFileTransfer</string>
-		<key>com.phonegap.image</key>
-		<string>PGImage</string>
 		<key>com.phonegap.geolocation</key>
 		<string>PGLocation</string>
-		<key>com.phonegap.movie</key>
-		<string>PGMovie</string>
 		<key>com.phonegap.notification</key>
 		<string>PGNotification</string>
 		<key>com.phonegap.media</key>
