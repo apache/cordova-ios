@@ -30,9 +30,6 @@ BUILD_BAK=_build.bak
 
 all :: installer
 
-PhoneGapLib/javascripts/phonegap-min.js: phonegap-lib
-	@$(JAVA) -jar util/yuicompressor-2.4.2.jar --charset UTF-8 -o $@ PhoneGapLib/javascripts/phonegap.js
-
 phonegap-lib: clean-phonegap-lib
 	@echo "Packaging PhoneGap Javascript..."
 	@$(MKPATH) $(BUILD_BAK)
@@ -46,7 +43,7 @@ phonegap-lib: clean-phonegap-lib
 xcode3-template: clean-xcode3-template
 	@$(MKPATH) $(BUILD_BAK)
 	@$(CP) -Rf PhoneGap-based\ Application/www $(BUILD_BAK)
-	@cd PhoneGap-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]/src=\"phonegap-${PGVER}.min.js\"/g"
+	@cd PhoneGap-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]/src=\"phonegap-${PGVER}.js\"/g"
 	@cd ..
 	@cp PhoneGapLib/javascripts/phonegap-*.js PhoneGap-based\ Application/www
 
@@ -107,7 +104,7 @@ phonegap-framework: phonegap-lib clean-phonegap-framework
 	@echo "Done."
 	@$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
 	@$(CP) -R PhoneGap-based\ Application/www/index.html PhoneGap.framework/www
-	@find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]/src=\"phonegap-${PGVER}.min.js\"/g"
+	@find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]/src=\"phonegap-${PGVER}.js\"/g"
 	@if [ -e "$(GIT)" ]; then \
 	echo -e '\n$(COMMIT_HASH)' >> PhoneGap.framework/VERSION; \
 	fi	
