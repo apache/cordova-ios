@@ -554,7 +554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# compile and copy PhoneGapLib\nmake\nmkdir \"${CONFIGURATION_BUILD_DIR}/${TARGET_NAME}.framework/www\"\ncp ${PROJECT_DIR}/javascripts/phonegap-*.js \"${CONFIGURATION_BUILD_DIR}/${TARGET_NAME}.framework/www\"\n";
+			shellScript = "# compile and copy PhoneGapLib\nmake\nmkdir -p \"${CONFIGURATION_BUILD_DIR}/${TARGET_NAME}.framework/www\"\ncp ${PROJECT_DIR}/javascripts/phonegap-*.js \"${CONFIGURATION_BUILD_DIR}/${TARGET_NAME}.framework/www\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
