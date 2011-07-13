@@ -520,7 +520,7 @@
 @end
 
 @implementation AudioRecorderViewController
-@synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer;
+@synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer, isTimed;
 
 - (BOOL) isIPad 
 {
@@ -557,6 +557,7 @@
         self.duration = theDuration;
         self.callbackId = theCallbackId;
         self.errorCode = CAPTURE_NO_MEDIA_FILES;
+        self.isTimed = self.duration != nil;
         
 		return self;
 	}
@@ -603,6 +604,7 @@
     [self.timerLabel setTextColor:[UIColor whiteColor]];
     [self.timerLabel setTextAlignment: UITextAlignmentCenter];
     [self.timerLabel setText:@"0:00"];
+    [self.timerLabel setAccessibilityHint:NSLocalizedString(@"recorded time in minutes and seconds", nil)];
     self.timerLabel.accessibilityTraits |=  UIAccessibilityTraitUpdatesFrequently;
     self.timerLabel.accessibilityTraits &= ~UIAccessibilityTraitStaticText;
     [tmp addSubview:self.timerLabel];
@@ -632,13 +634,16 @@
     [super viewDidLoad];
     UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
     NSError* error = nil;
-    // create audio session
-    self.avSession = [AVAudioSession sharedInstance];
-    if (error) {
-        // return error if can't create recording audio session
-        NSLog(@"error creating audio session: %@", [[error userInfo] description]);
-        self.errorCode = CAPTURE_INTERNAL_ERR;
-        [self dismissAudioView: nil];
+    
+    if (self.avSession == nil) {
+        // create audio session
+        self.avSession = [AVAudioSession sharedInstance];
+        if (error) {
+            // return error if can't create recording audio session
+            NSLog(@"error creating audio session: %@", [[error userInfo] description]);
+            self.errorCode = CAPTURE_INTERNAL_ERR;
+            [self dismissAudioView: nil];
+        }
     }
     
     // create file to record to in temporary dir
@@ -684,9 +689,9 @@
 {
     if (self.avRecorder.recording) {
         // stop recording
-        [self stopRecordingCleanup];
         [self.avRecorder stop];
-        
+        self.isTimed = NO;  // recording was stopped via button so reset isTimed
+        // view cleanup will occur in audioRecordingDidFinishRecording
     } else {
         // begin recording
         [self.recordButton setImage: stopRecordImage forState:UIControlStateNormal];
@@ -701,6 +706,7 @@
             [self dismissAudioView: nil];
         } else {
             if(self.duration) {
+                self.isTimed = true;
                 [self.avRecorder recordForDuration: [duration doubleValue]];
             } else {
                 [self.avRecorder record];
@@ -709,21 +715,40 @@
             self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5f target: self selector:@selector(updateTime) userInfo:nil repeats:YES ];
             self.doneButton.enabled = NO;
         }
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
     }
-    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
+    
 }
 /*
  * helper method to clean up when stop recording
  */
 - (void) stopRecordingCleanup
 {
+    if (self.avRecorder.recording) {
+        [self.avRecorder stop];
+    }
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
     self.recordButton.accessibilityTraits |= [self accessibilityTraits];
     [self.recordingView setHidden:YES];
     self.doneButton.enabled = YES;
-    // deactivate session so sounds can come through
-    [self.avSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    [self.avSession  setActive: NO error: nil];
+    if (self.avSession) {
+        // deactivate session so sounds can come through
+        [self.avSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        [self.avSession  setActive: NO error: nil];
+    }
+    if (self.duration && self.isTimed) {
+        // VoiceOver announcement so user knows timed recording has finished
+        BOOL isUIAccessibilityAnnouncementNotification = (&UIAccessibilityAnnouncementNotification != NULL);
+        if (isUIAccessibilityAnnouncementNotification) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 500ull * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, NSLocalizedString(@"timed recording complete", nil));
+                 });
+            
+        }
+    } else {
+        // issue a layout notification change so that VO will reannounce the button label when recording completes
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
+    }
 }
 - (void) dismissAudioView: (id) sender
 {
@@ -785,7 +810,6 @@
 {
     [self.timer invalidate];
     [self stopRecordingCleanup];
-    [self.avRecorder stop];
     
     NSLog(@"error recording audio");
     PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:CAPTURE_INTERNAL_ERR];

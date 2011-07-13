@@ -80,6 +80,7 @@ typedef NSUInteger CaptureError;
     AVAudioSession *avSession;
     NSString* resultString;
     NSTimer* timer;
+    BOOL isTimed;
     
 }
 @property (nonatomic) CaptureError errorCode;
@@ -96,6 +97,7 @@ typedef NSUInteger CaptureError;
 @property (nonatomic, retain) AVAudioSession* avSession;
 @property (nonatomic, retain) NSString* resultString;
 @property (nonatomic, retain) NSTimer* timer;
+@property (nonatomic) BOOL isTimed;
 
 - (id) initWithCommand: (PGPlugin*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId;
 - (void) processButton: (id) sender;
