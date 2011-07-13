@@ -122,9 +122,9 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 
 installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework	
 	@textutil -convert rtf PhoneGapInstaller/docs/*.html
-	@echo "Building PhoneGapInstaller.pkg..."	
+	@echo "Building PhoneGap-${PGVER}.pkg..."	
 	@$(MKPATH) dist
-	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGapInstaller-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@osacompile -o dist/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(CONVERTPDF) -f LICENSE -o PhoneGapInstaller/docs/LICENSE.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
@@ -136,7 +136,7 @@ installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@make clean
 
 install: installer
-	@open dist/PhoneGapInstaller-${PGVER}.pkg
+	@open dist/PhoneGap-${PGVER}.pkg
 
 uninstall:
 	@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/PhoneGap
