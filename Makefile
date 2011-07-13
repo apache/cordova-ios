@@ -125,11 +125,12 @@ installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@echo "Building PhoneGapInstaller.pkg..."	
 	@$(MKPATH) dist
 	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGapInstaller-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
-	@osacompile -o dist/Uninstall\ Phonegap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
+	@osacompile -o dist/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(CONVERTPDF) -f LICENSE -o PhoneGapInstaller/docs/LICENSE.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/finishup.html -o PhoneGapInstaller/docs/finishup.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/readme.html -o PhoneGapInstaller/docs/readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
-	@$(COMBINEPDF) -o dist/Readme.pdf PhoneGapInstaller/docs/finishup.pdf PhoneGapInstaller/docs/readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(COMBINEPDF) -o dist/Readme.pdf PhoneGapInstaller/docs/finishup.pdf PhoneGapInstaller/docs/readme.pdf PhoneGapInstaller/docs/LICENSE.pdf  > /dev/null 2>> $(PKG_ERROR_LOG)
 	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
 	@echo "Done."
 	@make clean
