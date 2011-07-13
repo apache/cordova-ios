@@ -29,7 +29,7 @@
 		<locale lang="en">
 			<resource relative="true" mod="true" type="background">phonegap.png</resource>
 			<resource relative="true" mod="true" type="readme">docs/readme.rtf</resource>
-			<resource relative="true" mod="true" type="welcome">docs/introduction.rtf</resource>
+			<resource relative="true" mod="true" type="welcome">docs/releasenotes.rtf</resource>
 			<resource relative="true" mod="true" type="conclusion">docs/finishup.rtf</resource>
 		</locale>
 	</resources>
