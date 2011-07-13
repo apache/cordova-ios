@@ -1,15 +1,16 @@
-PhoneGap is available under *either* the terms of the modified BSD license *or* the
-MIT License (2008). As a recipient of PhonegGap, you may choose which
+PhoneGap is available under *either* the terms of the modified BSD license *or* 
+the MIT License (2008). As a recipient of PhonegGap, you may choose which
 license to receive this code under (except as noted in per-module LICENSE
 files). Some modules may not be the copyright of Nitobi.   These
-modules contain explicit declarations of copyright in both the LICENSE files in
-the directories in which they reside and in the code itself. No external
+modules contain explicit declarations of copyright in both the LICENSE files 
+in the directories in which they reside and in the code itself. No external
 contributions are allowed under licenses which are fundamentally incompatible
 with the MIT or BSD licenses that PhoneGap is distributed under.
 
 The text of the MIT and BSD licenses is reproduced below. 
 
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
 The "New" BSD License:
 **********************
 
@@ -29,8 +30,8 @@ modification, are permitted provided that the following conditions are met:
     without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
 FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
@@ -39,7 +40,8 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
 The MIT License
 *****************
 
