@@ -122,16 +122,22 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 	fi
 	@$(RM_RF) $(BUILD_BAK)
 
-installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework	
+installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework
+	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html PhoneGapInstaller/docs/releasenotes.html.bak 
+	@$(MV) -f PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/finishup.html.bak 
+	@$(CAT) PhoneGapInstaller/docs/finishup.html.bak | sed 's/{VERSION}/${PGVER}/' >> PhoneGapInstaller/docs/finishup.html
+	@$(CAT) PhoneGapInstaller/docs/releasenotes.html.bak | sed 's/{VERSION}/${PGVER}/' >> PhoneGapInstaller/docs/releasenotes.html
 	@textutil -convert rtf PhoneGapInstaller/docs/*.html
 	@echo "Building PhoneGap-${PGVER}.pkg..."	
 	@$(MKPATH) dist
 	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
-	@osacompile -o dist/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
-	@textutil -convert html -font CourierNew LICENSE -output PhoneGapInstaller/docs/LICENSE.html
+	@osacompile -o ./dist/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o ./dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@textutil -convert html -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.html
 	@textutil -cat html PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/readme.html PhoneGapInstaller/docs/LICENSE.html -output PhoneGapInstaller/docs/combined.html
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/combined.html -o dist/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html.bak PhoneGapInstaller/docs/releasenotes.html 
+	@$(MV) -f PhoneGapInstaller/docs/finishup.html.bak PhoneGapInstaller/docs/finishup.html 
 	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
 	@echo "Done."
 	@make clean
