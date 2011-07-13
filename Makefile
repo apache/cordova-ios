@@ -17,6 +17,8 @@ OPEN = open
 ECHO = echo
 ECHO_N = echo -n
 JAVA = java
+CONVERTPDF = /System/Library/Printers/Libraries/convert
+COMBINEPDF = /System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 DEVELOPER = $(shell xcode-select -print-path)
@@ -84,6 +86,7 @@ clean-phonegap-framework:
 
 clean-installer:
 	@$(RM_F) PhoneGapInstaller/docs/*.rtf
+	@$(RM_F) PhoneGapInstaller/docs/*.pdf
 
 clean-phonegap-lib:
 	@if [ -e "$(BUILD_BAK)/VERSION" ]; then \
@@ -123,7 +126,10 @@ installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@$(MKPATH) dist
 	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGapInstaller-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@osacompile -o dist/Uninstall\ Phonegap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
-	@$(CP) PhoneGapInstaller/docs/releasenotes.html dist/ReleaseNotes.html
+	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(CONVERTPDF) -f PhoneGapInstaller/docs/finishup.html -o PhoneGapInstaller/docs/finishup.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(CONVERTPDF) -f PhoneGapInstaller/docs/readme.html -o PhoneGapInstaller/docs/readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(COMBINEPDF) -o dist/Readme.pdf PhoneGapInstaller/docs/finishup.pdf PhoneGapInstaller/docs/readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
 	@echo "Done."
 	@make clean
