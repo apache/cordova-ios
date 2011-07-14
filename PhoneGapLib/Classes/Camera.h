@@ -17,6 +17,12 @@ enum DestinationType {
 };
 typedef NSUInteger DestinationType;
 
+enum EncodingType {
+    EncodingTypeJPEG = 0,
+    EncodingTypePNG
+};
+typedef NSUInteger EncodingType;
+
 
 @interface CameraPicker : UIImagePickerController
 {
@@ -25,6 +31,7 @@ typedef NSUInteger DestinationType;
     CGSize targetSize;
 	NSString* postUrl;
 	enum DestinationType returnType;
+    enum EncodingType encodingType;
 	UIPopoverController* popoverController; 
 }
 
@@ -33,6 +40,7 @@ typedef NSUInteger DestinationType;
 @property (copy)   NSString* callbackId;
 @property (copy)   NSString* postUrl;
 @property (nonatomic) enum DestinationType returnType;
+@property (nonatomic) enum EncodingType encodingType;
 @property (assign) UIPopoverController* popoverController; 
 @property (assign) CGSize targetSize;
 

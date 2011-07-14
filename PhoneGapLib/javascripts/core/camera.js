@@ -17,6 +17,7 @@ Camera = function() {
  *	{Camera.PictureSourceType} sourceType default = CAMERA
  *	{number} targetWidth - width in pixels to scale image default = 0 (no scaling)
  *  {number} targetHeight - height in pixels to scale image default = 0 (no scaling)
+ *  {Camera.EncodingType} - encodingType default = JPEG
  */
 /**
  * Format of image that is returned from getPicture.
@@ -47,6 +48,21 @@ Camera.PictureSourceType = {
 };
 Camera.prototype.PictureSourceType = Camera.PictureSourceType;
 
+/** 
+ * Encoding of image returned from getPicture. 
+ * 
+ * Example: navigator.camera.getPicture(success, fail, 
+ *              { quality: 80, 
+ *                destinationType: Camera.DestinationType.DATA_URL, 
+ *                sourceType: Camera.PictureSourceType.CAMERA, 
+ *                encodingType: Camera.EncodingType.PNG}) 
+ */ 
+Camera.EncodingType = { 
+	JPEG: 0,                    // Return JPEG encoded image 
+	PNG: 1                      // Return PNG encoded image 
+};
+Camera.prototype.EncodingType = Camera.EncodingType;
+
 /**
  * Gets a picture from source defined by "options.sourceType", and returns the
  * image as defined by the "options.destinationType" option.
@@ -58,7 +74,6 @@ Camera.prototype.PictureSourceType = Camera.PictureSourceType;
  * @param {Object} options
  */
 Camera.prototype.getPicture = function(successCallback, errorCallback, options) {
-	console.warn("Camera.getPicture is deprecated and will be removed in 1.0, and put in the plugins repo. Plese use the Media Capture API instead.");
 	// successCallback required
 	if (typeof successCallback != "function") {
         console.log("Camera Error: successCallback is not a function");
@@ -71,7 +86,7 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
         return;
     }
 	
-	PhoneGap.exec(successCallback, errorCallback, "Camera","getPicture",[options]);
+	PhoneGap.exec(successCallback, errorCallback, "com.phonegap.camera","getPicture",[options]);
 };
 
 

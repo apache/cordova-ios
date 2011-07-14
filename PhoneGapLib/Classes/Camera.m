@@ -63,6 +63,7 @@
         self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
+        self.pickerController.encodingType = [[options valueForKey:@"encodingType"] intValue] || EncodingTypeJPEG;
         
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
         self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
@@ -97,7 +98,6 @@
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
 {
 
-	CGFloat quality = self.pickerController.quality / 100.0f; 
 	NSString* callbackId =  self.pickerController.callbackId;
 	
 	if([self popoverSupported] && self.pickerController.popoverController != nil)
@@ -131,8 +131,13 @@
         if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
             scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
         }
-		NSData* data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, quality);
-		
+        NSData* data = nil;
+		if (self.pickerController.encodingType == EncodingTypePNG) {
+            data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
+        }
+        else {
+            data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, self.pickerController.quality / 100.0f);
+		}
         if (self.pickerController.returnType == DestinationTypeFileUri){
 			
 			// write to temp directory and reutrn URI
@@ -145,7 +150,7 @@
 			NSString* filePath;
 			int i=1;
 			do {
-				filePath = [NSString stringWithFormat:@"%@/photo_%03d.jpg", docsPath, i++];
+				filePath = [NSString stringWithFormat:@"%@/photo_%03d.%@", docsPath, i++, self.pickerController.encodingType == EncodingTypePNG ? @"png" : @"jpg"];
 			} while([fileMgr fileExistsAtPath: filePath]);
 			// save file
 			if (![data writeToFile: filePath options: NSAtomicWrite error: &err]){
@@ -310,6 +315,7 @@
 @synthesize callbackId;
 @synthesize popoverController;
 @synthesize targetSize;
+@synthesize encodingType;
 
 
 - (void) dealloc
