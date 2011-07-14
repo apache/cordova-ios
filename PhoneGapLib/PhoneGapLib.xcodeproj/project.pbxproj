@@ -52,7 +52,6 @@
 		303259A6136B325100982B63 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5F1090FBE7009987E8 /* Reachability.m */; };
 		303259A7136B325100982B63 /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD611090FBE7009987E8 /* Sound.m */; };
 		303259A8136B325100982B63 /* Accelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* Accelerometer.m */; };
-		303259A9136B325100982B63 /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
 		303259AA136B325100982B63 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C04CD12BC247D004F9E10 /* Contact.m */; };
 		303259AB136B325100982B63 /* PluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F92F49F1314023E0046367C /* PluginResult.m */; };
 		303259AC136B325100982B63 /* FileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* FileTransfer.m */; };
@@ -77,7 +76,6 @@
 		303259C4136B326300982B63 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5E1090FBE7009987E8 /* Reachability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C5136B326300982B63 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD601090FBE7009987E8 /* Sound.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C6136B326300982B63 /* Accelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* Accelerometer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		303259C7136B326300982B63 /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C8136B326300982B63 /* Contact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C04CC12BC247D004F9E10 /* Contact.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C9136B326300982B63 /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259CA136B326300982B63 /* FileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* FileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -91,8 +89,6 @@
 		30956FFD138F317200FC3563 /* PGMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* PGMotion.m */; };
 		30A9DFE913A7EB9F009AA950 /* PGPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E33AF013A7E24B00594D64 /* PGPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30A9DFEB13A7EBC1009AA950 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
-		30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */; };
-		30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */; };
 		30E33AF213A7E24B00594D64 /* PGPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E33AF013A7E24B00594D64 /* PGPlugin.h */; };
 		30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
@@ -154,8 +150,6 @@
 		307A8F9D1385A2EC00E43782 /* Connection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Connection.m; path = Classes/Connection.m; sourceTree = "<group>"; };
 		30956FD0138F1F5600FC3563 /* PGMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMotion.h; path = Classes/PGMotion.h; sourceTree = "<group>"; };
 		30956FD1138F1F5600FC3563 /* PGMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGMotion.m; path = Classes/PGMotion.m; sourceTree = "<group>"; };
-		30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor-Expanded.h"; path = "Classes/UIColor-Expanded.h"; sourceTree = "<group>"; };
-		30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor-Expanded.m"; path = "Classes/UIColor-Expanded.m"; sourceTree = "<group>"; };
 		30E33AF013A7E24B00594D64 /* PGPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGPlugin.h; path = Classes/PGPlugin.h; sourceTree = "<group>"; };
 		30E33AF113A7E24B00594D64 /* PGPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPlugin.m; path = Classes/PGPlugin.m; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
@@ -270,8 +264,6 @@
 				307A8F9D1385A2EC00E43782 /* Connection.m */,
 				1F92F49E1314023E0046367C /* PluginResult.h */,
 				1F92F49F1314023E0046367C /* PluginResult.m */,
-				30AA0D5111C0BF650068F0FD /* UIColor-Expanded.h */,
-				30AA0D5211C0BF650068F0FD /* UIColor-Expanded.m */,
 				88BA573B109BB46F00FB5E78 /* Accelerometer.h */,
 				88BA573C109BB46F00FB5E78 /* Accelerometer.m */,
 				8887FD261090FBE7009987E8 /* Camera.h */,
@@ -385,7 +377,6 @@
 				303259C4136B326300982B63 /* Reachability.h in Headers */,
 				303259C5136B326300982B63 /* Sound.h in Headers */,
 				303259C6136B326300982B63 /* Accelerometer.h in Headers */,
-				303259C7136B326300982B63 /* UIColor-Expanded.h in Headers */,
 				303259C8136B326300982B63 /* Contact.h in Headers */,
 				303259C9136B326300982B63 /* PluginResult.h in Headers */,
 				303259CA136B326300982B63 /* FileTransfer.h in Headers */,
@@ -422,7 +413,6 @@
 				8887FD9D1090FBE7009987E8 /* Reachability.h in Headers */,
 				8887FD9F1090FBE7009987E8 /* Sound.h in Headers */,
 				88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */,
-				30AA0D5311C0BF650068F0FD /* UIColor-Expanded.h in Headers */,
 				1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */,
 				1F92F4A01314023E0046367C /* PluginResult.h in Headers */,
 				C937A4561337599E002C4C79 /* FileTransfer.h in Headers */,
@@ -586,7 +576,6 @@
 				303259A6136B325100982B63 /* Reachability.m in Sources */,
 				303259A7136B325100982B63 /* Sound.m in Sources */,
 				303259A8136B325100982B63 /* Accelerometer.m in Sources */,
-				303259A9136B325100982B63 /* UIColor-Expanded.m in Sources */,
 				303259AA136B325100982B63 /* Contact.m in Sources */,
 				303259AB136B325100982B63 /* PluginResult.m in Sources */,
 				303259AC136B325100982B63 /* FileTransfer.m in Sources */,
@@ -618,7 +607,6 @@
 				8887FD9E1090FBE7009987E8 /* Reachability.m in Sources */,
 				8887FDA01090FBE7009987E8 /* Sound.m in Sources */,
 				88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */,
-				30AA0D5411C0BF650068F0FD /* UIColor-Expanded.m in Sources */,
 				1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */,
 				1F92F4A11314023E0046367C /* PluginResult.m in Sources */,
 				C937A4571337599E002C4C79 /* FileTransfer.m in Sources */,

@@ -8,7 +8,6 @@
 
 #import "Notification.h"
 #import "Categories.h"
-#import "UIColor-Expanded.h"
 
 
 @implementation PGNotification
