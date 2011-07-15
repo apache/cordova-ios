@@ -309,49 +309,27 @@ static NSString *gapVersion;
     More incentive to suport universal binaries!!!
     - @RandyMcMillan
     */
-    if (window.bounds.size.height <= 480){
-        
-        if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
-            UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
-            imageView.image = image;
-            imageView.tag = 1;
-            
-        }else{};//end IPHONE NON RETINA IDIOM
-        
-    };//end height <= 480
-    
-    if (window.bounds.size.height >= 480 && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown) && UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad){
-        
-        if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
-            UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default@2x"]];
-            imageView.image = image;
-            imageView.tag = 1;
-            
-        }else{};//end IPHONE RETINA IDIOM
-        
-    };//end height >= 480
-    
-    if ( window.bounds.size.height >= 1004 && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [[UIDevice currentDevice] orientation] == (UIDeviceOrientationPortrait | UIDeviceOrientationPortraitUpsideDown)) {
-        UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Portrait~ipad"]];
-        imageView.image = image;
-        imageView.tag = 1;
-        
-    } else {
-        
-        UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Landscape~ipad"]];
-        imageView.image = image;
-        imageView.tag = 1;
-        
-    };
-    imageView.center = window.center;
-    imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
-    [viewController.view addSubview:imageView];
+	UIImage* image = nil;
+	UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
+	if ([[self class] isIPad]) 
+	{
+		if (currentOrientation == UIDeviceOrientationPortrait || currentOrientation == UIDeviceOrientationPortraitUpsideDown) {
+			// imageNamed automagically gets the proper ~ipad
+			image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Portrait"]];
+		} else {
+			image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Landscape"]];
+		}
+	} else {
+		// imageNamed automagically gets the proper retina or non-retina image without needing @2x
+		image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
+	}
+	
+	self.imageView = [[UIImageView alloc] initWithImage:image];	
+	self.imageView.tag = 1;
+    self.imageView.center = window.center;
+    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
+	[self.window addSubview:self.imageView];
     [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250 	self.window.autoresizesSubviews = YES;
-    
-    
-
-    
-    
 
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
@@ -372,8 +350,14 @@ static NSString *gapVersion;
     
 	self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
     self.activityView.tag = 2;
-    [self.window addSubview:self.activityView];
-    self.activityView.center = self.viewController.view.center;
+
+	id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
+	// backwards compatibility - if key is missing, default to true
+	if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
+		[self.window addSubview:self.activityView];
+	}
+    
+	self.activityView.center = self.viewController.view.center;
     [self.activityView startAnimating];
 
 	[self.window makeKeyAndVisible];
@@ -486,11 +470,14 @@ static NSString *gapVersion;
 	 * Hide the Top Activity THROBBER in the Battery Bar
 	 */
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-	activityView.hidden = YES;	
 
-	self.imageView.hidden = YES;
-	
-	[self.window bringSubviewToFront:self.viewController.view];
+	id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
+	// if value is missing, default to yes
+	if (autoHideSplashScreenValue == nil || [autoHideSplashScreenValue boolValue]) {
+		self.imageView.hidden = YES;
+		self.activityView.hidden = YES;	
+		[self.window bringSubviewToFront:self.viewController.view];
+	}
 	
 	[self.viewController didRotateFromInterfaceOrientation:[[UIDevice currentDevice] orientation]];
 }

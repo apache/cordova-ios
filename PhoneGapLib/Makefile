@@ -22,7 +22,7 @@ pgver = $(shell head -1 VERSION)
 
 all :: javascripts/phonegap-$(pgver).js
 
-javascripts/phonegap-$(pgver).js: clean $(PG_JS_CORE)/license.js $(PG_JS_CORE)/phonegap.js.base $(PG_JS_CORE)/acceleration.js $(PG_JS_CORE)/accelerometer.js $(PG_JS_CORE)/camera.js $(PG_JS_CORE)/capture.js $(PG_JS_CORE)/contact.js $(PG_JS_CORE)/debugconsole.js $(PG_JS_CORE)/device.js $(PG_JS_CORE)/file.js $(PG_JS_CORE)/filetransfer.js $(PG_JS_CORE)/geolocation.js $(PG_JS_CORE)/compass.js $(PG_JS_CORE)/media.js $(PG_JS_CORE)/notification.js $(PG_JS_CORE)/orientation.js $(PG_JS_CORE)/position.js $(PG_JS_CORE)/sms.js $(PG_JS_CORE)/telephony.js $(PG_JS_CORE)/network.js $(PG_JS_CORE)/GetFunctionName.js
+javascripts/phonegap-$(pgver).js: clean $(PG_JS_CORE)/license.js $(PG_JS_CORE)/phonegap.js.base $(PG_JS_CORE)/acceleration.js $(PG_JS_CORE)/accelerometer.js $(PG_JS_CORE)/camera.js $(PG_JS_CORE)/capture.js $(PG_JS_CORE)/contact.js $(PG_JS_CORE)/debugconsole.js $(PG_JS_CORE)/device.js $(PG_JS_CORE)/file.js $(PG_JS_CORE)/filetransfer.js $(PG_JS_CORE)/geolocation.js $(PG_JS_CORE)/compass.js $(PG_JS_CORE)/media.js $(PG_JS_CORE)/notification.js $(PG_JS_CORE)/orientation.js $(PG_JS_CORE)/position.js $(PG_JS_CORE)/sms.js $(PG_JS_CORE)/telephony.js $(PG_JS_CORE)/network.js $(PG_JS_CORE)/splashscreen.js $(PG_JS_CORE)/GetFunctionName.js
 	$(RM_F) $@
 	$(CAT) $(PG_JS_CORE)/license.js | sed 's/{VERSION}/$(pgver)/' >> $@
 	$(CAT) $(PG_JS_CORE)/GetFunctionName.js >> $@
@@ -45,6 +45,7 @@ javascripts/phonegap-$(pgver).js: clean $(PG_JS_CORE)/license.js $(PG_JS_CORE)/p
 	$(CAT) $(PG_JS_CORE)/sms.js >> $@
 	$(CAT) $(PG_JS_CORE)/telephony.js >> $@
 	$(CAT) $(PG_JS_CORE)/network.js >> $@
+	$(CAT) $(PG_JS_CORE)/splashscreen.js >> $@
 	
 clean:
 	$(RM_F) javascripts/phonegap-*.js

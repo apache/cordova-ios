@@ -12,6 +12,10 @@
 	<true/>
 	<key>EnableViewportScale</key>
 	<false/>
+	<key>AutoHideSplashScreen</key>
+	<true/>
+	<key>ShowSplashScreenSpinner</key>
+	<true/>
 	<key>ExternalHosts</key>
 	<array/>
 	<key>Plugins</key>
@@ -38,6 +42,8 @@
 		<string>PGSound</string>
 		<key>com.phonegap.mediacapture</key>
 		<string>PGCapture</string>
+		<key>com.phonegap.splashscreen</key>
+		<string>PGSplashScreen</string>
 	</dict>
 </dict>
 </plist>
