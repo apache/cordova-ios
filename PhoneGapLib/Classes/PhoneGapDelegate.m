@@ -313,7 +313,7 @@ static NSString *gapVersion;
 	UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
 	if ([[self class] isIPad]) 
 	{
-		if (currentOrientation == UIDeviceOrientationPortrait || currentOrientation == UIDeviceOrientationPortraitUpsideDown) {
+		if (UIDeviceOrientationIsPortrait(currentOrientation)) {
 			// imageNamed automagically gets the proper ~ipad
 			image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Portrait"]];
 		} else {
