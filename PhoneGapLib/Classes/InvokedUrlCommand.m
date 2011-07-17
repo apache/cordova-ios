@@ -32,7 +32,7 @@
     iuc.command = [url host];
 	
 	NSString * fullUrl = [url description];
-	int prefixLength = [[url scheme] length] + [@"://" length] + [iuc.command length] + 1; // "yourscheme://" plus command plus the leading "/" (magic number 1)
+	int prefixLength = [[NSString stringWithFormat:@"%@://%@/", [url scheme], [iuc command]] length];
 	int qsLength = [[url query] length];
 	int pathLength = [fullUrl length] - prefixLength;
 
