@@ -6,6 +6,21 @@
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 </p>
 
+<h3>1.0.0rc2 (20110719)</h3>
+<ul>
+<li>FIX: #167 Generated (by script) Xcode 3 template file fails in Xcode 4</li>
+<li>FIX: #162 better accessibility for timed audio </li>
+<li>FIX: #168 Warning in Xcode 3 project that you haven't added phonegap.*.js, warning never goes away</li>
+<li>FIX: iPhone splash screen not showing (no issue #, fixed in splash screen new feature below)</li>
+<li>ADDED: New PhoneGap.plist options: AutoHideSplashScreen (bool=true), ShowSplashScreenSpinner (bool=true). If AutoHideSplashScreen is false, you can control hiding the splash screen in JavaScript by calling navigator.splashscreen.hide().</li>
+<li>ADDED: #164 Add phonegap version inside the JavaScript file itself</li>
+<li>ADDED: #166 Create uninstaller for PhoneGapInstaller </li>
+<li>ADDED: #6 implemented Camera.EncodingType to return images as jpg or png from getPicture.</li>
+<li>CHANGED: Sample splash screen images are annotated</li>
+<li>REMOVED: #165 Remove minification of phonegap.*.js file</li>
+</ul>
+</h3>
+
 <h3>1.0.0rc1 (20110712)</h3>
 <ul>
 <li>FIX: Splash screen fixes for iPad</li>
