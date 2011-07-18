@@ -20,7 +20,7 @@
 {
     /*
 	 * Get Command and Options From URL
-	 * We are looking for URLS that match yourscheme://<Class>.<command>/[<arguments>][?<dictionary>]
+	 * We are looking for URLS that match yourscheme://<sessionKey>@<Class>.<command>/[<arguments>][?<dictionary>]
 	 * We have to strip off the leading slash for the options.
 	 *
 	 * Note: We have to go through the following contortions because NSURL "helpfully" unescapes
@@ -32,7 +32,7 @@
     iuc.command = [url host];
 	
 	NSString * fullUrl = [url description];
-	int prefixLength = [[NSString stringWithFormat:@"%@://%@/", [url scheme], [iuc command]] length];
+	int prefixLength = [[NSString stringWithFormat:@"%@://%@@%@/", [url scheme], [url user], [iuc command]] length]; //sessionKey is encoded in user credentials
 	int qsLength = [[url query] length];
 	int pathLength = [fullUrl length] - prefixLength;
 
