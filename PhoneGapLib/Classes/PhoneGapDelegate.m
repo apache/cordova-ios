@@ -545,7 +545,8 @@ static NSString *gapVersion;
             // Check to see if we are provided a class:method style command.
             [self execute:iuc];
         } else {
-            NSLog(@"Not running gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
+            NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
+            NSLog(@"Complete call: %@", [url absoluteString]);
         }
         return NO;
 	}
