@@ -20,7 +20,7 @@
 @implementation PhoneGapDelegate
 
 @synthesize window, webView, viewController, activityView, imageView;
-@synthesize settings, invokedURL, loadFromString, orientationType;
+@synthesize settings, invokedURL, loadFromString, orientationType, sessionKey;
 @synthesize pluginObjects, pluginsMap;
 
 - (id) init
@@ -31,6 +31,10 @@
 		// Turn on cookie support ( shared with our app only! )
 		NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
 		[cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+        
+        // Create the sessionKey to use throughout the lifetime of the application
+        // to authenticate the source of the gap calls
+        self.sessionKey = [NSString stringWithFormat:@"%d", arc4random()];
 		
     }
     return self; 
@@ -448,6 +452,11 @@ static NSString *gapVersion;
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView 
 {
 
+    // Share session key with the WebView by setting PhoneGap.sessionKey
+    NSString *sessionKeyScript = [NSString stringWithFormat:@"PhoneGap.sessionKey = \"%@\";", self.sessionKey];
+    [theWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
+
+    
     NSDictionary *deviceProperties = [ self deviceProperties];
     NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
     
@@ -512,16 +521,21 @@ static NSString *gapVersion;
      * We have to strip off the leading slash for the options.
      */
      if ([[url scheme] isEqualToString:@"gap"]) {
-		 
-		InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:url] autorelease];
-        
-		// Tell the JS code that we've gotten this command, and we're ready for another
-        [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
-		
-		// Check to see if we are provided a class:method style command.
-		[self execute:iuc];
-
-		 return NO;
+        // SessionKey should be in the user credentials portion of the URL 
+        NSString *sessionKeyFromWebView = [url user];
+        if([sessionKey isEqualToString:sessionKeyFromWebView]) {
+            InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:url] autorelease];
+            
+            // Tell the JS code that we've gotten this command, and we're ready for another
+            [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
+            
+            // Check to see if we are provided a class:method style command.
+            [self execute:iuc];
+        } else {
+            NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
+            NSLog(@"Complete call: %@", [url absoluteString]);
+        }
+        return NO;
 	}
     /*
      * If a URL is being loaded that's a file/http/https URL, just load it internally

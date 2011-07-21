@@ -102,6 +102,8 @@ PhoneGap.addConstructor = function(func) {
     }, 1);
 })();
 
+// session id for calls
+PhoneGap.sessionKey = 0;
 
 // centralized callbacks
 PhoneGap.callbackId = 0;
@@ -206,7 +208,8 @@ PhoneGap.run_command = function() {
             	uri.push(encodeURIComponent(arg));
     	}
     	var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
-    	var url = "gap://" + service + next + uri.join("/");
+        //add the sessionId in the user field of the URL conforming to RFC1808
+        var url = "gap://" + PhoneGap.sessionKey + "@" + service + next + uri.join("/");
 
     	if (dict != null) {
         	url += "?" + encodeURIComponent(JSON.stringify(dict));
