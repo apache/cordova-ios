@@ -84,6 +84,9 @@ clean-xcode3-template:
 clean-phonegap-framework:
 	@$(RM_RF) PhoneGap.framework
 
+clean-markdown:
+	@$(RM_RF) PhoneGapInstaller/docs/readme.html
+
 clean-installer:
 	@$(RM_F) PhoneGapInstaller/docs/*.rtf
 	@$(RM_F) PhoneGapInstaller/docs/*.pdf
@@ -115,19 +118,19 @@ phonegap-framework: phonegap-lib clean-phonegap-framework
 	fi	
 	@$(CP) -R PhoneGap-based\ Application/Resources/Capture.bundle/ PhoneGap.framework/Capture.bundle
 
-clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework
+clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework clean-markdown
 	@if [ -e "$(PKG_ERROR_LOG)" ]; then \
 		$(MV) $(PKG_ERROR_LOG) ~/.Trash; \
 		$(RM_F) $(PKG_ERROR_LOG); \
 	fi
 	@$(RM_RF) $(BUILD_BAK)
 
-installer: clean phonegap-lib xcode3-template xcode4-template phonegap-framework
+installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html PhoneGapInstaller/docs/releasenotes.html.bak 
 	@$(MV) -f PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/finishup.html.bak 
 	@$(CAT) PhoneGapInstaller/docs/finishup.html.bak | sed 's/{VERSION}/${PGVER}/' >> PhoneGapInstaller/docs/finishup.html
 	@$(CAT) PhoneGapInstaller/docs/releasenotes.html.bak | sed 's/{VERSION}/${PGVER}/' >> PhoneGapInstaller/docs/releasenotes.html
-	@textutil -convert rtf PhoneGapInstaller/docs/*.html
+	@textutil -convert rtf -font 'Helvetica' PhoneGapInstaller/docs/*.html
 	@echo "Building PhoneGap-${PGVER}.pkg..."	
 	@$(MKPATH) dist
 	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
@@ -160,3 +163,13 @@ uninstall:
 	else \
 	echo "" ; \
 	fi	
+	
+markdown:
+	@if [[ ! -d "Markdown_1.0.1" ]]; then \
+		echo "Downloading Markdown 1.0.1..."; \
+		curl -L http://daringfireball.net/projects/downloads/Markdown_1.0.1.zip > Markdown_1.0.1.zip; \
+		unzip Markdown_1.0.1.zip -d . > /dev/null; \
+	fi
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/readme.html
+	@perl Markdown_1.0.1/Markdown.pl README.md >> PhoneGapInstaller/docs/readme.html
+	@echo '</body></html>'  >> PhoneGapInstaller/docs/readme.html
