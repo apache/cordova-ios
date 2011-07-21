@@ -1233,25 +1233,35 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	if (fields == nil) { // no name fields requested
 		return nil;
 	}
-	NSObject*  array = [NSMutableArray arrayWithCapacity:1];
+	NSObject*  array = nil;
 	NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity:5];
 	id value;
+    int validValueCount = 0;
 	for (id i in fields){
 		id key = [[PGContact defaultW3CtoAB] valueForKey:i];
 		if (key && [key isKindOfClass:[NSNumber class]]){
 			value = [(NSString *)ABRecordCopyValue(self.record, (ABPropertyID)[[[PGContact defaultW3CtoAB] valueForKey:i] intValue]) autorelease];
+            if (value != nil) {
+                // if there are no organization values we should return null for organization
+                // this counter keeps indicates if any organization values have been set
+                validValueCount++;
+            }
 			[newDict setObject:(value != nil) ? value : [NSNull null] forKey:i];
 		}else { // not a key iOS supports, set to null
 			[newDict setObject:[NSNull null] forKey:i];
 		}
 	}
-	if ([newDict count] > 0) {
+	if ([newDict count] > 0 && validValueCount > 0) {
         // add pref and type
         // they are not supported by iOS and thus these values never change
         [newDict setObject: @"false" forKey:kW3ContactFieldPrimary];
         [newDict setObject: [NSNull null] forKey: kW3ContactFieldType];
+        array = [NSMutableArray arrayWithCapacity:1];
 		[(NSMutableArray*)array addObject:newDict];
 	}
+    else {
+        array = [NSNull null];
+    }
 	return array;
 }
 
