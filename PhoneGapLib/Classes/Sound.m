@@ -300,11 +300,13 @@
 
 	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
     double position = [[arguments objectAtIndex:3 ] doubleValue];
+    double posInSeconds = position/1000;
 
 	
     if (audioFile != nil && audioFile.player != nil && position){
-        audioFile.player.currentTime = position/1000;
-        NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%f);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_POSITION, position];
+        audioFile.player.currentTime = posInSeconds;
+        NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%f);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_POSITION, posInSeconds];
+
         [super writeJavascript: jsString];
         
     }
@@ -346,13 +348,12 @@
 	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
     double position = -1;
 	
-    if (audioFile != nil && audioFile.player != nil){
-        position = audioFile.player.currentTime;
-    
+    if (audioFile != nil && audioFile.player != nil && [audioFile.player isPlaying]){ 
+            position = audioFile.player.currentTime;
     }
     PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDouble: position];
-	NSString* jsString = [result toSuccessCallbackString:callbackId];
-	
+	NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%f);\n%@", @"PhoneGap.Media.onStatus", mediaId, MEDIA_POSITION, position, [result toSuccessCallbackString:callbackId]];
+
     [super writeJavascript:jsString];
     
 	return;
