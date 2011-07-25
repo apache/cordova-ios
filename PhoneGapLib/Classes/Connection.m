@@ -58,9 +58,11 @@
 - (void) updateConnectionType:(NSNotification*)note
 {
 	Reachability* curReach = [note object];
-	NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
-	
-	[self updateReachability:curReach];
+
+	if (curReach != nil && [curReach isKindOfClass:[Reachability class]])
+	{
+		[self updateReachability:curReach];
+	}
 }
 
 - (void) updateOnlineStatus
