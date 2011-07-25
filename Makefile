@@ -129,8 +129,8 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html PhoneGapInstaller/docs/releasenotes.html.bak 
 	@$(MV) -f PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/finishup.html.bak 
-	@$(CAT) PhoneGapInstaller/docs/finishup.html.bak | sed 's/{VERSION}/${PGVER}/' >> PhoneGapInstaller/docs/finishup.html
-	@$(CAT) PhoneGapInstaller/docs/releasenotes.html.bak | sed 's/{VERSION}/${PGVER}/' >> PhoneGapInstaller/docs/releasenotes.html
+	@$(CAT) PhoneGapInstaller/docs/finishup.html.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/finishup.html
+	@$(CAT) PhoneGapInstaller/docs/releasenotes.html.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/releasenotes.html
 	@textutil -convert rtf -font 'Helvetica' PhoneGapInstaller/docs/*.html
 	@echo "Building PhoneGap-${PGVER}.pkg..."	
 	@$(MKPATH) dist
