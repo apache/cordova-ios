@@ -119,7 +119,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 }
 
 -(NSString*) toJSONString{
-	NSString* resultString;
+	NSString* resultString = @"";
 	// create the returned strings properly based on return type.  Assumes that non-strings are to be returned as objects
 	if ([self.message isKindOfClass: [NSNumber class]]) {
 		// return as number
