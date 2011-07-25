@@ -29,6 +29,7 @@ GIT = $(shell which git)
 COMMIT_HASH=$(shell git describe --tags)	
 PKG_ERROR_LOG=pkg_error_log
 BUILD_BAK=_build.bak
+CERTIFICATE = 'PhoneGap Support'
 
 all :: installer
 
@@ -140,7 +141,12 @@ installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-
 	@textutil -cat html PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/readme.html PhoneGapInstaller/docs/LICENSE.html -output PhoneGapInstaller/docs/combined.html
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/combined.html -o dist/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html.bak PhoneGapInstaller/docs/releasenotes.html 
-	@$(MV) -f PhoneGapInstaller/docs/finishup.html.bak PhoneGapInstaller/docs/finishup.html 
+	@$(MV) -f PhoneGapInstaller/docs/finishup.html.bak PhoneGapInstaller/docs/finishup.html
+	@# must be run under one line to get return code
+	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
+	if [ $$? -eq 0 ] ; then \
+		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/PhoneGap-${PGVER}.pkg;  \
+	fi
 	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
 	@echo "Done."
 	@make clean
@@ -163,7 +169,7 @@ uninstall:
 	else \
 	echo "" ; \
 	fi	
-	
+
 markdown:
 	@if [[ ! -d "Markdown_1.0.1" ]]; then \
 		echo "Downloading Markdown 1.0.1..."; \
