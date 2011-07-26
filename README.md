@@ -40,6 +40,9 @@ Alternately, you can [watch this screencast](http://bit.ly/phonegap-xcode4-templ
 
 Uninstalling PhoneGapLib, PhoneGap.framework and the Xcode Templates
 --------------------------------------------------------------------
+
+Use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file, OR:
+
 1. Launch "Terminal.app"
 2. Navigate to the folder where Makefile is (this folder)
 3. Type in "make uninstall" then press Enter
@@ -62,12 +65,8 @@ Items that will be installed:
 
 To uninstall:
 
-1. Remove the PHONEGAPLIB value in Xcode Preferences -> Source Trees
-2. Delete the ~/Documents/PhoneGapLib folder
-3. Delete the ~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap folder
-4. Delete the "~/Library/Application Support/Developer/Shared/Xcode/Templates/Project Templates/Application/PhoneGap-based Application.xctemplate" folder
-5. Delete the /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework folder
-6. Delete the ~/Library/Frameworks/PhoneGap.framework symlink
+Delete the files listed above, or use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file.
+
 
 PhoneGapLib Tests
 -------------------------------------------------------------

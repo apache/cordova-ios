@@ -5,7 +5,7 @@
 
 <h2>Plugins</h2>
 <ul>
-<li>Plugins MUST add their plugin mapping to their app's PhoneGap.plist Plugins key, if not they will not work.</li>
+<li>Plugins MUST add their plugin mapping to their app's PhoneGap.plist Plugins key, if not they will not work (see your plugin's README)</li>
 <li>A lot of plugins have changed their mapping names in PhoneGap.plist, you might have to copy and use the new PhoneGap.plist in your app.</li>
 <li>Modify your Plugin headers as well: <a href="http://wiki.phonegap.com/PhoneGap-iOS-Plugins-Problems">http://wiki.phonegap.com/PhoneGap-iOS-Plugins-Problems</a> </li>
 <li>UN-DEPRECATED: Camera.getPicture core Plugin granted a reprieve.</li>
@@ -28,6 +28,7 @@
 <li>Set the existing framework <em>"UIKit"</em> to "Weak/Optional" in your project (to support iOS 3.x devices)</li>
 <li>Set the existing framework <em>"AVFoundation"</em> to "Weak/Optional" in your project (to support iOS 3.x devices)</li>
 <li>You can remove <em>"CoreTelephony.framework"</em> if it exists (and none of your plugins use it), it is not used by PhoneGap anymore</li>
+<li>Recommended steps: <a href="http://wiki.phonegap.com/Upgrading%20your%20iOS%20PhoneGap%20Project">http://wiki.phonegap.com/Upgrading%20your%20iOS%20PhoneGap%20Project</a>
 </ol>
 
 <br />
