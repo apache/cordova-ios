@@ -313,19 +313,27 @@ static NSString *gapVersion;
     More incentive to suport universal binaries!!!
     - @RandyMcMillan
     */
-	UIImage* image = nil;
 	UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
+	NSString* imageName = nil;
+	
 	if ([[self class] isIPad]) 
 	{
 		if (UIDeviceOrientationIsPortrait(currentOrientation)) {
 			// imageNamed automagically gets the proper ~ipad
-			image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Portrait"]];
+			imageName = @"Default-Portrait";
 		} else {
-			image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default-Landscape"]];
+			imageName = @"Default-Landscape";
 		}
 	} else {
 		// imageNamed automagically gets the proper retina or non-retina image without needing @2x
-		image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
+		imageName = @"Default";
+	}
+	
+	imageName = [[self class] resolveImageResource:imageName];
+	UIImage* image = [UIImage imageNamed:imageName];
+
+	if (image == nil) {
+		NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", imageName, currentOrientation, [[self class] isIPad]);
 	}
 	
 	self.imageView = [[UIImageView alloc] initWithImage:image];	
