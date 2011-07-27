@@ -9,6 +9,7 @@ PhoneGap is a static library and static framework that enables users to include 
 <h3>1.0.0rc3 (20110726)</h3>
 <ul>
 <li>CHANGED: Update media implementation to match documentation. Significant modifications to match documentation. Using media.js from Android so significant changes to the code to match that architecture.  Created wrapper for AVAudioPlayer and Recorder to store the mediaId. Kept iOS only prepare() method but removed downloadCompleteCallback. Added seekTo method.</li>
+<li>CHANGED: Default-Landscape.png width increased to 1024px for #185 fix below</li>
 <li>FIX: #188 Xcode 3 Template does not weak-link UIKit, AVFoundation and CoreMedia by default</li>
 <li>FIX: #183 make fails when a user's Developer (Xcode) folder has spaces in it</li>
 <li>FIX: #180 Add README.md to the installer package</li>
@@ -16,7 +17,9 @@ PhoneGap is a static library and static framework that enables users to include 
 <li>FIX: #182 updated getCurrentPosition to update _position variable. Fixed bug where seekTo was setting the _position value in milliseconds rather than seconds. getCurrentPosition was not setting _position to -1 when media was not playing.</li>
 <li>FIX: #191 (CRASH) PhoneGap app re-suspends when resumed after Airplane Mode toggled</li>
 <li>FIX: #196 PhoneGapInstaller.pkg should be signed</li>
+<li>FIX: #185 splash screen ignores supported device orientations (fixed for Universal only - iPhone only on iPad has an iOS bug)</li>
 <li>REMOVED: Installer readme.html is now generated from README.md markdown in the root</li>
+<li>REMOVED: Default~ipad.png is removed from the project templates</li>
 <li>ADDED: Prevents iframes from executing PhoneGap calls via gap urls</li>
 <li>ADDED: Added warning log if splash-screen image is missing.</li>
 </ul>
