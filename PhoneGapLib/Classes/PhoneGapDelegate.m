@@ -31,7 +31,6 @@
 // readwrite access for self
 
 @property (nonatomic, readwrite, retain) IBOutlet UIWindow *window;
-@property (nonatomic, readwrite, retain) IBOutlet UIWebView *webView;
 @property (nonatomic, readwrite, retain) IBOutlet PhoneGapViewController *viewController;
 @property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView *activityView;
 @property (nonatomic, readwrite, retain) UIImageView *imageView;
@@ -371,7 +370,9 @@ BOOL gSplashScreenShown = NO;
 	self.window.autoresizesSubviews = YES;
 	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
 	webViewBounds.origin = screenBounds.origin;
-	self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
+    if (!self.webView) {
+        self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
+    }
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	self.webView.scalesPageToFit = [enableViewportScale boolValue];
 	
