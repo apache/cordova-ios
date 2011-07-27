@@ -17,6 +17,8 @@
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
 
+#define degreesToRadian(x) (M_PI * (x) / 180.0)
+
 @implementation PhoneGapDelegate
 
 @synthesize window, webView, viewController, activityView, imageView;
@@ -28,6 +30,8 @@
     self = [super init];
     if (self != nil) {
         self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+		self.imageView = nil;
+		
 		// Turn on cookie support ( shared with our app only! )
 		NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
 		[cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
@@ -36,6 +40,9 @@
         // to authenticate the source of the gap calls
         self.sessionKey = [NSString stringWithFormat:@"%d", arc4random()];
 		
+		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
+												   object:nil];
     }
     return self; 
 }
@@ -198,6 +205,85 @@ static NSString *gapVersion;
 	return result;
 }
 
+- (void) showSplashScreen
+{
+	NSString* launchImageFile = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UILaunchImageFile"];
+    if (launchImageFile == nil) { // fallback if no launch image was specified
+		launchImageFile = @"Default"; 
+	}
+	
+	NSString* orientedLaunchImageFile = nil;    
+	CGAffineTransform startupImageTransform = CGAffineTransformIdentity;
+	UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+	CGRect screenBounds = [[UIScreen mainScreen] bounds];
+	UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+	BOOL isIPad = [[self class] isIPad];
+	UIImage* launchImage = nil;
+	
+	if (isIPad)
+	{
+		if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
+			deviceOrientation = statusBarOrientation;
+		}
+		
+		switch (deviceOrientation) 
+		{
+			case UIDeviceOrientationLandscapeLeft: // this is where the home button is on the right (yeah, I know, confusing)
+			{
+				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
+				startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(90));
+			}
+				break;
+			case UIDeviceOrientationLandscapeRight: // this is where the home button is on the left (yeah, I know, confusing)
+			{
+				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
+				startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(-90));
+			} 
+				break;
+			case UIDeviceOrientationPortraitUpsideDown:
+			{
+				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
+				startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
+			} 
+				break;
+			case UIDeviceOrientationPortrait:
+			default:
+			{
+				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
+				startupImageTransform = CGAffineTransformIdentity;
+			}
+				break;
+		}
+		
+		launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+	}
+	else // not iPad
+	{
+		orientedLaunchImageFile = @"Default";
+		launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+	}
+	
+	if (launchImage == nil) {
+		NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
+	}
+	
+	self.imageView = [[UIImageView alloc] initWithImage:launchImage];	
+	self.imageView.tag = 1;
+	self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
+	
+    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
+	[self.imageView setTransform:startupImageTransform];
+	[self.window addSubview:self.imageView];
+    [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250 	self.window.autoresizesSubviews = YES;
+}	
+
+- (void) receivedOrientationChange
+{
+	if (self.imageView == nil) {
+		[self showSplashScreen];
+	}
+}
+
 /**
  * This is main kick off after the app inits, the views and Settings are setup here.
  */
@@ -298,50 +384,6 @@ static NSString *gapVersion;
 		[self.webView loadHTMLString:html baseURL:nil];
 		self.loadFromString = YES;
 	}
-
-	/*
-	 * imageView - is the Default loading screen, it stay up until the app and UIWebView (WebKit) has completly loaded.
-	 * You can change this image by swapping out the Default.png file within the resource folder.
-	 *
-	UIImage* image = [UIImage imageNamed:[[self class] resolveImageResource:@"Default"]];
-	self.imageView = [[UIImageView alloc] initWithImage:image];
-	
-    self.imageView.tag = 1;
-	[window addSubview:self.imageView];
-    
-    There is a bug when runnning iPhone only apps on iPad
-    More incentive to suport universal binaries!!!
-    - @RandyMcMillan
-    */
-	UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
-	NSString* imageName = nil;
-	
-	if ([[self class] isIPad]) 
-	{
-		if (UIDeviceOrientationIsPortrait(currentOrientation)) {
-			// imageNamed automagically gets the proper ~ipad
-			imageName = @"Default-Portrait";
-		} else {
-			imageName = @"Default-Landscape";
-		}
-	} else {
-		// imageNamed automagically gets the proper retina or non-retina image without needing @2x
-		imageName = @"Default";
-	}
-	
-	imageName = [[self class] resolveImageResource:imageName];
-	UIImage* image = [UIImage imageNamed:imageName];
-
-	if (image == nil) {
-		NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", imageName, currentOrientation, [[self class] isIPad]);
-	}
-	
-	self.imageView = [[UIImageView alloc] initWithImage:image];	
-	self.imageView.tag = 1;
-    self.imageView.center = window.center;
-    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
-	[self.window addSubview:self.imageView];
-    [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250 	self.window.autoresizesSubviews = YES;
 
 	/*
 	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.

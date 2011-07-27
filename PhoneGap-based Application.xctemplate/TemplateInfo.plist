@@ -196,18 +196,6 @@
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
-		<key>Resources/splash/Default~ipad.png</key>
-		<dict>
-			<key>Group</key>
-			<array>
-				<string>Resources</string>
-				<string>splash</string>
-			</array>
-			<key>Path</key>
-			<string>./Resources/splash/Default~ipad.png</string>
-			<key>PathType</key>
-			<string>Group</string>
-		</dict>
 	</dict>
 	<key>Description</key>
 	<string>This template provides a starting point for a PhoneGap based application. On first run, it will create the www folder. You must drag and drop in the www folder into your project (as a folder reference). Then just modify the www folder contents with your HTML, CSS and Javascript.</string>
@@ -228,7 +216,6 @@
 		<string>Resources/icons/icon-72.png</string>
 		<string>Resources/splash/Default.png</string>
 		<string>Resources/splash/Default@2x.png</string>
-		<string>Resources/splash/Default~ipad.png</string>
 		<string>Resources/Capture.bundle</string>
 		<string>PhoneGap.plist</string>
 		<string>Classes/AppDelegate.h</string>
