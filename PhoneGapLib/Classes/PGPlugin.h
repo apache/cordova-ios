@@ -11,8 +11,13 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "PluginResult.h"
+#import "NSMutableArray+QueueAdditions.h"
 
 #define PGPluginHandleOpenURLNotification	@"PGPluginHandleOpenURLNotification"
+
+#define VERIFY_ARGUMENTS(args, expectedCount, callbackId) if (![self verifyArguments:args withExpectedCount:expectedCount andCallbackId:callbackId \
+callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
+
 
 @class PhoneGapDelegate;
 
@@ -41,5 +46,7 @@
 - (UIViewController*) appViewController;
 
 - (NSString*) writeJavascript:(NSString*)javascript;
+- (BOOL) verifyArguments:(NSMutableArray*)arguments withExpectedCount:(NSUInteger)expectedCount andCallbackId:(NSString*)callbackId 
+		  callerFileName:(const char*)callerFileName callerFunctionName:(const char*)callerFunctionName;
 
 @end

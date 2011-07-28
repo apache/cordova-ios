@@ -91,10 +91,14 @@
 		30A9DFEB13A7EBC1009AA950 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
 		30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; };
 		30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* PGSplashScreen.m */; };
-		30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; };
+		30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30B39EC113D0268B0009682A /* PGSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* PGSplashScreen.m */; };
 		30E33AF213A7E24B00594D64 /* PGPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E33AF013A7E24B00594D64 /* PGPlugin.h */; };
 		30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
+		30E563CF13E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */; };
+		30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */; };
+		30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30E563D213E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
 		8887FD671090FBE7009987E8 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* Camera.m */; };
 		8887FD681090FBE7009987E8 /* Categories.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD281090FBE7009987E8 /* Categories.h */; };
@@ -158,6 +162,8 @@
 		30B39EBD13D0268B0009682A /* PGSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGSplashScreen.m; path = Classes/PGSplashScreen.m; sourceTree = "<group>"; };
 		30E33AF013A7E24B00594D64 /* PGPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGPlugin.h; path = Classes/PGPlugin.h; sourceTree = "<group>"; };
 		30E33AF113A7E24B00594D64 /* PGPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPlugin.m; path = Classes/PGPlugin.m; sourceTree = "<group>"; };
+		30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMutableArray+QueueAdditions.h"; path = "Classes/NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
+		30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSMutableArray+QueueAdditions.m"; path = "Classes/NSMutableArray+QueueAdditions.m"; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
 		8887FD271090FBE7009987E8 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Camera.m; path = Classes/Camera.m; sourceTree = "<group>"; };
 		8887FD281090FBE7009987E8 /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Categories.h; path = Classes/Categories.h; sourceTree = "<group>"; };
@@ -262,6 +268,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */,
+				30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */,
 				30B39EBC13D0268B0009682A /* PGSplashScreen.h */,
 				30B39EBD13D0268B0009682A /* PGSplashScreen.m */,
 				30E33AF013A7E24B00594D64 /* PGPlugin.h */,
@@ -394,6 +402,7 @@
 				30A9DFE913A7EB9F009AA950 /* PGPlugin.h in Headers */,
 				302965BD13A94E9D007046C5 /* PGDebug.h in Headers */,
 				30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */,
+				30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +440,7 @@
 				30E33AF213A7E24B00594D64 /* PGPlugin.h in Headers */,
 				302965BC13A94E9D007046C5 /* PGDebug.h in Headers */,
 				30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */,
+				30E563CF13E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,6 +601,7 @@
 				303259AC136B325100982B63 /* FileTransfer.m in Sources */,
 				30956FFD138F317200FC3563 /* PGMotion.m in Sources */,
 				30B39EC113D0268B0009682A /* PGSplashScreen.m in Sources */,
+				30E563D213E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,6 +637,7 @@
 				1F584B9C1385A28A00ED25E8 /* Capture.m in Sources */,
 				30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */,
 				30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */,
+				30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
