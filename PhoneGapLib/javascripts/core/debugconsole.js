@@ -5,7 +5,8 @@ if (!PhoneGap.hasResource("debugconsole")) {
  * This class provides access to the debugging console.
  * @constructor
  */
-DebugConsole = function() {
+var DebugConsole = function() {
+    this.winConsole = window.console;
     this.logLevel = DebugConsole.INFO_LEVEL;
 }
 
@@ -72,7 +73,7 @@ DebugConsole.prototype.log = function(message, maxDepth) {
             [ this.processMessage(message, maxDepth), { logLevel: 'INFO' } ]
         );
     else
-        console.log(message);
+        this.winConsole.log(message);
 };
 
 /**
@@ -85,7 +86,7 @@ DebugConsole.prototype.warn = function(message, maxDepth) {
             [ this.processMessage(message, maxDepth), { logLevel: 'WARN' } ]
         );
     else
-        console.error(message);
+        this.winConsole.error(message);
 };
 
 /**
@@ -98,7 +99,7 @@ DebugConsole.prototype.error = function(message, maxDepth) {
             [ this.processMessage(message, maxDepth), { logLevel: 'ERROR' } ]
         );
     else
-        console.error(message);
+        this.winConsole.error(message);
 };
 
 PhoneGap.addConstructor(function() {
