@@ -147,7 +147,10 @@ static NSString *gapVersion;
 {
 	// first, we try to find the pluginName in the pluginsMap 
 	// (acts as a whitelist as well) if it does not exist, we return nil
-	NSString* className = [self.pluginsMap objectForKey:pluginName];
+    // NOTE: plugin names are matched as lowercase to avoid problems - however, a 
+    // possible issue is there can be duplicates possible if you had:
+    // "com.phonegap.Foo" and "com.phonegap.foo" - only the lower-cased entry will match
+	NSString* className = [self.pluginsMap objectForKey:[pluginName lowercaseString]];
 	if (className == nil) {
 		return nil;
 	}
