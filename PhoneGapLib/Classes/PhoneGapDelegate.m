@@ -315,7 +315,8 @@ BOOL gSplashScreenShown = NO;
 		NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
 		return NO;
 	}
-    self.pluginsMap = [[NSDictionary alloc] initWithDictionary:pluginsDict];
+	
+    self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
 	
 	self.viewController = [ [ PhoneGapViewController alloc ] init ];
 	
@@ -776,5 +777,20 @@ BOOL gSplashScreenShown = NO;
 	[super dealloc];
 }
 
+@end
+
+@implementation NSDictionary (LowercaseKeys)
+
+- (NSDictionary*) dictionaryWithLowercaseKeys 
+{
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:self.count];
+    NSString* key;
+	
+    for (key in self) {
+        [result setObject:[self objectForKey:key] forKey:[key lowercaseString]];
+    }
+	
+    return result;
+}
 
 @end
