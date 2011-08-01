@@ -333,6 +333,8 @@
 				<string>PHONEGAP_FRAMEWORK=YES</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>OTHER_LDFLAGS</key>
+				<string>-weak_library /usr/lib/libSystem.B.dylib</string>
 			</dict>
 		</dict>
 	</array>
