@@ -61,7 +61,11 @@
 - (void)applicationWillResignActive:(UIApplication *)application;
 - (void)applicationWillTerminate:(UIApplication *)application;
 
+@end
 
+@interface NSDictionary (LowercaseKeys)
 
+- (NSDictionary*) dictionaryWithLowercaseKeys;
 
 @end
+
