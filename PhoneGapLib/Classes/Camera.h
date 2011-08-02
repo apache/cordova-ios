@@ -29,10 +29,11 @@ typedef NSUInteger EncodingType;
 	NSString* callbackid;
 	NSInteger quality;
   CGSize targetSize;
-  bool correctOrientation;
-	NSString* postUrl;
+  bool correctOrientation; 
+  bool saveToPhotoAlbum;
+  NSString* postUrl;
 	enum DestinationType returnType;
-    enum EncodingType encodingType;
+  enum EncodingType encodingType;
 	UIPopoverController* popoverController; 
 }
 
@@ -45,6 +46,7 @@ typedef NSUInteger EncodingType;
 @property (assign) UIPopoverController* popoverController; 
 @property (assign) CGSize targetSize;
 @property (assign) bool correctOrientation;
+@property (assign) bool saveToPhotoAlbum;
 
 - (void) dealloc;
 
