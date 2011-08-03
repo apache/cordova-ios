@@ -87,7 +87,7 @@
 	if ([self soundCache] == nil) {
 		[self setSoundCache: [NSMutableDictionary dictionaryWithCapacity:1]];
 	}else {
-		audioFile = [[self soundCache] objectForKey: resourcePath];
+		audioFile = [[self soundCache] objectForKey: mediaId];
 	}
 	if (audioFile == nil){
 		// validate resourcePath and create
@@ -112,7 +112,7 @@
 			audioFile = [[[PGAudioFile alloc] init] autorelease];
 			audioFile.resourcePath = resourcePath;
 			audioFile.resourceURL = resourceURL;
-			[[self soundCache] setObject:audioFile forKey: resourcePath];
+			[[self soundCache] setObject:audioFile forKey: mediaId];
 		}
 	}
 	return audioFile;
@@ -210,7 +210,7 @@
     MediaStates state = MEDIA_STARTING;
     NSString* jsString = nil;
     
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     if (audioFile == nil) {
         // did not already exist, try to create
         audioFile = [self audioFileForResource:[arguments objectAtIndex:2] withId: mediaId];
@@ -247,7 +247,7 @@
 	NSString* callbackId = [arguments objectAtIndex:0];
 #pragma unused(callbackId)
 	NSString* mediaId = [arguments objectAtIndex:1];
-    PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+    PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
 	NSString* jsString = nil;
 
 	if (audioFile != nil && audioFile.player!= nil) {
@@ -270,7 +270,7 @@
 #pragma unused(callbackId)
 	NSString* mediaId = [arguments objectAtIndex:1];
     NSString* jsString = nil;
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
 	
 	if (audioFile != nil && audioFile.player != nil) {
             NSLog(@"Paused playing audio sample '%@'", audioFile.resourcePath);
@@ -298,7 +298,7 @@
 #pragma unused(callbackId)
 	NSString* mediaId = [arguments objectAtIndex:1];
 
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     double position = [[arguments objectAtIndex:3 ] doubleValue];
     double posInSeconds = position/1000;
 
@@ -322,7 +322,7 @@
     NSString* mediaId = [arguments objectAtIndex:1];
 
 	if (mediaId != nil){
-		PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+		PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
 		if (audioFile != nil){
 			if (audioFile.player && [audioFile.player isPlaying]){
 				[audioFile.player stop];
@@ -330,7 +330,7 @@
 			if(audioFile.recorder && [audioFile.recorder isRecording]){
 				[audioFile.recorder stop];
 			}
-			[[self soundCache] removeObjectForKey: [arguments objectAtIndex:2]];
+			[[self soundCache] removeObjectForKey: mediaId];
 			NSLog(@"Media with id %@ released", mediaId);
 		}
 	}
@@ -345,7 +345,7 @@
 	NSString* callbackId = [arguments objectAtIndex:0];
 	NSString* mediaId = [arguments objectAtIndex:1];
 #pragma unused(mediaId)
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     double position = -1;
 	
     if (audioFile != nil && audioFile.player != nil && [audioFile.player isPlaying]){ 
@@ -405,13 +405,13 @@
 #pragma unused(callbackId)
 	NSString* mediaId = [arguments objectAtIndex:1];
 
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [arguments objectAtIndex:2]];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     NSString* jsString = nil;
 	
 	if (audioFile != nil && audioFile.recorder != nil) {
 		NSLog(@"Stopped recording audio sample '%@'", audioFile.resourcePath);
 		[audioFile.recorder stop];
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+        // no callback - that will happen in audioRecorderDidFinishRecording
 	} else {
         jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_NONE];
     }
@@ -424,46 +424,41 @@
 
 	AudioRecorder* aRecorder = (AudioRecorder*)recorder;
 	NSString* mediaId = aRecorder.mediaId;
-    //NSString* resourcePath = [self resourceForUrl:recorder.url];
-	//PGAudioFile* audioFile = [self audioFileForResource:[aRecorder.url path] withId:mediaId];
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [aRecorder.url path]]; //mediaId];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
 	NSString* jsString = nil;
 
 	
 	if (audioFile != nil) {
 		NSLog(@"Finished recording audio sample '%@'", audioFile.resourcePath);
-		if (flag){
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
-		} else {
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
-		}
-		[super writeJavascript:jsString];
-	}
+    }
+    if (flag){
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+    } else {
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
+    }
+    [super writeJavascript:jsString];
+	
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer*)player successfully:(BOOL)flag 
 {
 	AudioPlayer* aPlayer = (AudioPlayer*)player;
 	NSString* mediaId = aPlayer.mediaId;
-    //PGAudioFile* audioFile = [self audioFileForResource:[player.url path] withId: mediaId];
-	PGAudioFile* audioFile = [[self soundCache] objectForKey: [player.url path]];
+	PGAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
+    NSString* jsString = nil;
 		
 	if (audioFile != nil) {
 		NSLog(@"Finished playing audio sample '%@'", audioFile.resourcePath);
-
-		if (flag){
-			NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
-			[super writeJavascript: jsString];
-
-		} else {
-			NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
-			[super writeJavascript: jsString];
-
-		}
-	} else {
-		NSLog(@"audio file nil");
-	}
-
+    }
+    if (flag){
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+        
+    } else {
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
+        
+    }
+    [super writeJavascript: jsString];
+	
 }
 
 - (void) onMemoryWarning
