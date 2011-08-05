@@ -97,8 +97,12 @@
 	 
 }
 
-- (void) setWebView:(UIWebView*) theWebView {
-    webView = theWebView;
+- (void) dealloc
+{
+    self.supportedOrientations = nil;
+    self.webView = nil;
+    
+    [super dealloc];
 }
 
 @end

@@ -10,8 +10,6 @@
 #import <Foundation/Foundation.h>
 
 @interface PhoneGapViewController : UIViewController {
-    IBOutlet UIWebView *webView;
-	NSArray* supportedOrientations;
 }
 
 @property (nonatomic, retain) 	NSArray* supportedOrientations;
