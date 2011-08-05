@@ -96,12 +96,12 @@ find "$TEMP_PROJECT_DIR_PATH" | xargs grep '___PROJECTNAMEASIDENTIFIER___' -sl |
 checkExitCode
 
 # replace filenames that have ___PROJECTNAME___ token
-cd "$TEMP_PROJECT_DIR_PATH";find . -name "*___PROJECTNAME___*"| awk '{print("mv "$1" "$1)}' | sed "s/___PROJECTNAME___/${PROJECT_NAME}/2" | sh;cd -
+cd "$TEMP_PROJECT_DIR_PATH";find . -d -name "*___PROJECTNAME___*" | awk '{print("mv "$1 " " $1)}' | sed "s/\(.*\)___PROJECTNAME___/\1${PROJECT_NAME}/g" | sh;
 
 checkExitCode
 
 # replace filenames that have ___PROJECTNAMEASIDENTIFIER___ token
-cd "$TEMP_PROJECT_DIR_PATH";find . -name "*___PROJECTNAMEASIDENTIFIER___*" | awk '{print("mv "$1" "$1)}' | sed "s/___PROJECTNAMEASIDENTIFIER___/${PROJECT_NAME}/2" | sh;cd -
+cd "$TEMP_PROJECT_DIR_PATH";find . -d -name "*___PROJECTNAMEASIDENTIFIER___*" | awk '{print("mv "$1" "$1)}' | sed "s/\(.*\)___PROJECTNAMEASIDENTIFIER___/\1${PROJECT_NAME}/g" | sh;
 
 checkExitCode
 
