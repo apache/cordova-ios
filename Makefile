@@ -148,6 +148,7 @@ installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-
 		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/PhoneGap-${PGVER}.pkg;  \
 	fi
 	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
+	@cd dist;openssl sha1 PhoneGap-${PGVER}.dmg > PhoneGap-${PGVER}.dmg.SHA1;cd -;
 	@echo "Done."
 	@make clean
 
