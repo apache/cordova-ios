@@ -28,7 +28,8 @@ typedef NSUInteger EncodingType;
 {
 	NSString* callbackid;
 	NSInteger quality;
-    CGSize targetSize;
+  CGSize targetSize;
+  bool correctOrientation;
 	NSString* postUrl;
 	enum DestinationType returnType;
     enum EncodingType encodingType;
@@ -43,6 +44,7 @@ typedef NSUInteger EncodingType;
 @property (nonatomic) enum EncodingType encodingType;
 @property (assign) UIPopoverController* popoverController; 
 @property (assign) CGSize targetSize;
+@property (assign) bool correctOrientation;
 
 - (void) dealloc;
 
@@ -75,7 +77,8 @@ typedef NSUInteger EncodingType;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
-- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize;
+- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)image toSize:(CGSize)targetSize;
+- (UIImage *)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 - (void) dealloc;
 
 @end

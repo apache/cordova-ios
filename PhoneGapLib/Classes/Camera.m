@@ -63,6 +63,7 @@
         self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
+        self.pickerController.correctOrientation = [[options valueForKey:@"correctOrientation"] boolValue];
         self.pickerController.encodingType = [[options valueForKey:@"encodingType"] intValue] || EncodingTypeJPEG;
         
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
@@ -125,13 +126,16 @@
 		}else {
 			image = [info objectForKey:UIImagePickerControllerOriginalImage];
 		}
-        
-        UIImage *scaledImage = nil;
-        
-        if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
-            scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
-        }
-        NSData* data = nil;
+    if (self.pickerController.correctOrientation) {
+      image = [self imageCorrectedForCaptureOrientation:image];
+    }
+    
+    UIImage *scaledImage = nil;
+    
+    if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
+        scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
+    }
+    NSData* data = nil;
 		if (self.pickerController.encodingType == EncodingTypePNG) {
             data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
         }
@@ -257,6 +261,49 @@
     return newImage;
 }
 
+- (UIImage *)imageCorrectedForCaptureOrientation:(UIImage*)image
+{   
+   float rotation_radians = 0;
+   bool perpendicular = false;
+   switch ([image imageOrientation]) {
+    case UIImageOrientationUp:
+      rotation_radians = 0.0;
+      break;
+    case UIImageOrientationDown:   
+      rotation_radians = M_PI; //don't be scared of radians, if you're reading this, you're good at math
+      break;
+    case UIImageOrientationRight:
+      rotation_radians = M_PI_2;
+      perpendicular = true;
+      break;
+    case UIImageOrientationLeft:
+      rotation_radians = -M_PI_2;
+      perpendicular = true;
+      break;
+   }
+   
+   UIGraphicsBeginImageContext(CGSizeMake(image.size.width, image.size.height));
+   CGContextRef context = UIGraphicsGetCurrentContext();
+   
+   //Rotate around the center point
+   CGContextTranslateCTM(context, image.size.width/2, image.size.height/2);
+   CGContextRotateCTM(context, rotation_radians);
+   
+   CGContextScaleCTM(context, 1.0, -1.0);
+   float width = perpendicular ? image.size.height : image.size.width;
+   float height = perpendicular ? image.size.width : image.size.height;
+   CGContextDrawImage(context, CGRectMake(-width / 2, -height / 2, width, height), [image CGImage]);
+   
+   // Move the origin back since the rotation might've change it (if its 90 degrees)
+   if (perpendicular) {
+     CGContextTranslateCTM(context, -image.size.height/2, -image.size.width/2);
+   }
+   
+   UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+   UIGraphicsEndImageContext();
+   return newImage;
+}
+
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url 
 {
 	NSString *boundary = @"----BOUNDARY_IS_I";
@@ -315,6 +362,7 @@
 @synthesize callbackId;
 @synthesize popoverController;
 @synthesize targetSize;
+@synthesize correctOrientation;
 @synthesize encodingType;
 
 
