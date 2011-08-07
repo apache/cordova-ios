@@ -616,16 +616,20 @@ BOOL gSplashScreenShown = NO;
      * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
      * We have to strip off the leading slash for the options.
      */
-    if ([[url scheme] isEqualToString:@"gap"]) {
-        // SessionKey should be in the user credentials portion of the URL
+     if ([[url scheme] isEqualToString:@"gap"]) {
+        // SessionKey should be in the user credentials portion of the URL 
         NSString *sessionKeyFromWebView = [url user];
         if([sessionKey isEqualToString:sessionKeyFromWebView]) {
+            // Tell the JS code that we've finished executing this command and
+            // ready for another. We don't have to worry about the next command
+            // executing immediately here since this delegate method can't be
+            // called again until we renter the main event loop.
+            [theWebView stringByEvaluatingJavaScriptFromString:
+                @"PhoneGap.finish_exec()"];
+
+            // Execute the requested command as long as it's specified
+            // correctly.
             InvokedUrlCommand* iuc = [InvokedUrlCommand commandFromUrl:url];
-            
-            // Tell the JS code that we've gotten this command, and we're ready for another
-            [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
-            
-            // Check to see if we are provided a class:method style command.
             [self execute:iuc];
         } else {
             NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
