@@ -46,8 +46,10 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 
 - (void) setRecord:(ABRecordRef)aRecord
 {
-    if (aRecord != NULL) {
+    if (record != NULL) {
         CFRelease(record);
+    }
+    if (aRecord != NULL) {
         record = CFRetain(aRecord);
     }
 }
