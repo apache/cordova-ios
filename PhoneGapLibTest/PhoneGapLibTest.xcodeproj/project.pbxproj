@@ -207,7 +207,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "PhoneGapLibTest" */;
 			buildPhases = (
-				30E9A9A110B758320022D3BA /* Copy PhoneGap Javascript */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -283,23 +282,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		30E9A9A110B758320022D3BA /* Copy PhoneGap Javascript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy PhoneGap Javascript";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# get the PhoneGapLib version\nexport pgver=`head -1 ${PHONEGAPLIB}/VERSION`\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\necho cp ${PHONEGAPLIB}/javascripts/phonegap.*.js ${PROJECT_DIR}/www\ncp ${PHONEGAPLIB}/javascripts/phonegap.*.js ${PROJECT_DIR}/www\n\n# replace [src=\"phonegap.js\"] in all files in www\nfind ${PROJECT_DIR}/www | xargs grep 'src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]' -sl | xargs -L1 sed -i \"\" \"s/src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]/src=\\\"phonegap.${pgver}.min.js\\\"/g\"";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
