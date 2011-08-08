@@ -55,7 +55,7 @@
         
         if (self.pickerController == nil) 
         {
-            self.pickerController = [[CameraPicker alloc] init];
+            self.pickerController = [[[CameraPicker alloc] init] autorelease];
         }
         
         self.pickerController.delegate = self;
@@ -73,8 +73,8 @@
         {
             if (self.pickerController.popoverController == nil) 
             { 
-                self.pickerController.popoverController = [[NSClassFromString(@"UIPopoverController") alloc] 
-                                                           initWithContentViewController:self.pickerController]; 
+                self.pickerController.popoverController = [[[NSClassFromString(@"UIPopoverController") alloc] 
+                                                           initWithContentViewController:self.pickerController] autorelease]; 
             } 
             self.pickerController.popoverController.delegate = self;
             [ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
@@ -279,6 +279,8 @@
     case UIImageOrientationLeft:
       rotation_radians = -M_PI_2;
       perpendicular = true;
+      break;
+    default:
       break;
    }
    

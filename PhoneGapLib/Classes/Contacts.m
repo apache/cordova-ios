@@ -73,8 +73,11 @@
 	NSString* callbackId = [arguments objectAtIndex:0];
 
 	NewContactsController* npController = [[[NewContactsController alloc] init] autorelease];
-		
-	npController.addressBook = ABAddressBookCreate();
+	
+	ABAddressBookRef ab = ABAddressBookCreate();
+	npController.addressBook = ab; // a CF retaining assign
+    CFRelease(ab);
+    
 	npController.newPersonViewDelegate = self;
 	npController.callbackId = callbackId;
 

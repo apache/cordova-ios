@@ -78,13 +78,6 @@
 	}
 }
 
-- (void)dealloc
-{
-    if (self.settings)
-        [self.settings release];
-    [super dealloc];
-}
-
 // TODO: Consider using filtering to isolate instantaneous data vs. gravity data -jm
 
 /* 

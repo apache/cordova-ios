@@ -590,7 +590,7 @@
     // make red recording background view
     UIImage* recordingBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/recording_bg"]];
     UIColor *background = [UIColor colorWithPatternImage:recordingBkg];
-    self.recordingView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
+    self.recordingView = [[[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)] autorelease];
     [self.recordingView setBackgroundColor:background];
     [self.recordingView setHidden:YES];
     [self.recordingView setUserInteractionEnabled: NO];
@@ -598,7 +598,7 @@
     [tmp addSubview:self.recordingView];
     
     // add label
-    self.timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width,recordingBkg.size.height)];
+    self.timerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width,recordingBkg.size.height)] autorelease];
     //timerLabel.autoresizingMask = reSizeMask;
     [self.timerLabel setBackgroundColor:[UIColor clearColor]];
     [self.timerLabel setTextColor:[UIColor whiteColor]];
@@ -614,14 +614,14 @@
     self.recordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/record_button"]];
     self.stopRecordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/stop_button"]];
 	self.recordButton.accessibilityTraits |= [self accessibilityTraits];
-    self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
+    self.recordButton = [[[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)] autorelease];
     [self.recordButton setAccessibilityLabel:  NSLocalizedString(@"toggle audio recording", nil)];
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
     [self.recordButton addTarget: self action:@selector(processButton:) forControlEvents:UIControlEventTouchUpInside];
     [tmp addSubview:recordButton];
     
     // make and add done button to navigation bar
-    self.doneButton = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)];
+    self.doneButton = [[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)] autorelease];
 	[self.doneButton setStyle:UIBarButtonSystemItemDone];
 	self.navigationItem.rightBarButtonItem = self.doneButton;
 
@@ -663,7 +663,7 @@
     [fileMgr release];
     
     // create AVAudioPlayer
-    self.avRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:nil error:&err];
+    self.avRecorder = [[[AVAudioRecorder alloc] initWithURL:fileURL settings:nil error:&err] autorelease];
     if (err) {
 		NSLog(@"Failed to initialize AVAudioRecorder: %@\n", [err localizedDescription]);
 		self.avRecorder = nil;
@@ -760,7 +760,6 @@
         self.resultString = [result toErrorCallbackString:callbackId];
     }
     
-    [self.avRecorder release];
     self.avRecorder = nil;
     [self.avSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     [self.avSession  setActive: NO error: nil];

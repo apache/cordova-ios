@@ -180,10 +180,10 @@
     // create the player
     NSURL* resourceURL = audioFile.resourceURL;
     if ([resourceURL isFileURL]) {
-        audioFile.player = [[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&error];
+        audioFile.player = [[[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&error] autorelease];
     } else {
         NSData* data = [NSData dataWithContentsOfURL:resourceURL];
-        audioFile.player = [[ AudioPlayer alloc ] initWithData:data error:&error];
+        audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&error] autorelease];
     }
     
     if (error != nil) {
@@ -378,7 +378,7 @@
 			audioFile.recorder = nil;
 		}
 		// create a new recorder for each start record 
-		audioFile.recorder = [[AudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error];
+		audioFile.recorder = [[[AudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error] autorelease];
 	
 		if (error != nil) {
 			NSLog(@"Failed to initialize AVAudioRecorder: %@\n", error);
@@ -484,16 +484,9 @@
 {
 	self.resourcePath = nil;
     self.resourceURL = nil;
-    if (self.player) { 
-		[self.player release];
-		self.player = nil;
-	}
-#ifdef __IPHONE_3_0
-	if(self.recorder) {
-		[self.recorder release];
-		self.recorder = nil;
-	}
-#endif
+    self.player = nil;
+    self.recorder = nil;
+    
 	[super dealloc];
 }
 
@@ -502,8 +495,7 @@
 @synthesize mediaId;
 - (void) dealloc
 {
-	if(self.mediaId)
-		self.mediaId = nil;
+    self.mediaId = nil;
 	
 	[super dealloc];
 }
@@ -514,8 +506,7 @@
 @synthesize mediaId;
 - (void) dealloc
 {
-	if(self.mediaId)
-		self.mediaId = nil;
+    self.mediaId = nil;
 	
 	[super dealloc];
 }
