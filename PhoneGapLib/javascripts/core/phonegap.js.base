@@ -11,7 +11,7 @@ if (typeof(DeviceInfo) !== 'object'){
 PhoneGap = {
     // This queue holds the currently executing command and all pending
     // commands.
-    queue: [],
+    commandQueue: [],
     _constructors: [],
     documentEventHandler: {},   // Collection of custom document event handlers
     windowEventHandler: {} 
@@ -122,44 +122,14 @@ PhoneGap.callbackStatus = {
     };
 
 /** 
- * Execute a PhoneGap command in a queued fashion, to ensure command execution
- * does not hit any race conditions. The risk is if we set the iframe src twice
+ * Execute a PhoneGap command, possibly queuing it up instead of executing it
+ * immediately if another command has run previously but has not yet been
+ * acknowledged by the native code. This ensures command execution happens
+ * without any race conditions.  The risk is if we set the iframe src twice
  * (each signifying a command) before the native code gets notified of the
  * change. If this happens, the first command will never get run. 
- */
-PhoneGap.exec = function() { 
-    if (!PhoneGap.available) {
-        alert("ERROR: Attempting to call PhoneGap.exec()"
-              +" before 'deviceready'. Ignoring.");
-        return;
-    }
-
-    PhoneGap.queue.push(arguments);
-
-    // As long as this is the only command on the queue, we can execute it
-    // immediately. If there are already commands queued, this command will be
-    // kicked off by the native code after the preceding command is executed.
-    if (PhoneGap.queue.length == 1) {
-      PhoneGap.run_command();
-    }
-};
-
-/**
- * Called by native code to signal that we're ready for the next command to
- * run.
- */
-PhoneGap.finish_exec = function() {
-  PhoneGap.queue.shift();
-
-  if (PhoneGap.queue.length != 0) {
-    PhoneGap.run_command();
-  }
-}
-
-/**
- * Internal function used to dispatch the request to PhoneGap.  It processes
- * the command queue and executes the next command on the list.  Simple
- * parameters are passed as arguments on the url.  JavaScript objects are
+ *
+ * Simple parameters are passed as arguments on the url. JavaScript objects are
  * converted into a JSON string and passed as a query string argument of the
  * url.
  *
@@ -182,20 +152,9 @@ PhoneGap.finish_exec = function() {
  *                            object parameters are passed as an array object
  *                            [object1, object2] each object will be passed as
  *                            JSON strings 
- *
- * @private
  */
-PhoneGap.run_command = function() {
-    if(!this.gapBridge){
-        this.gapBridge = document.createElement("iframe");
-        this.gapBridge.setAttribute("style", "display:none;");
-        this.gapBridge.setAttribute("height","0px");
-        this.gapBridge.setAttribute("width","0px");
-        this.gapBridge.setAttribute("frameborder","0");
-        document.documentElement.appendChild(this.gapBridge);
-    }
-
-    var args = PhoneGap.queue[0];
+PhoneGap.exec = function() { 
+    var args = arguments;
     var service;
     var callbackId = null;
     var start=0;
@@ -234,10 +193,54 @@ PhoneGap.run_command = function() {
             url += "?" + encodeURIComponent(JSON.stringify(dict));
         }
 
-        this.gapBridge.src = url;
+        PhoneGap.commandQueue.push(url);
+        // As long as this is the only command on the queue, we can execute it
+        // immediately. If there are already commands queued, this command will
+        // be kicked off by the native code after the preceding command is
+        // executed.
+        if (PhoneGap.commandQueue.length == 1) {
+            PhoneGap.run_command();
+        }
     } catch (e) {
         console.log("PhoneGapExec Error: "+e);
     }
+};
+
+/**
+ * Called by native code to signal that we're ready for the next command to
+ * run.
+ */
+PhoneGap.finish_exec = function() {
+  PhoneGap.commandQueue.shift();
+
+  if (PhoneGap.commandQueue.length != 0) {
+      PhoneGap.run_command();
+  }
+}
+
+/**
+ * Internal function used to dispatch the request to PhoneGap. It executes the
+ * next command on the queue.
+ * 
+ * @private
+ */
+PhoneGap.run_command = function() {
+    if (!PhoneGap.available) {
+        alert("ERROR: Attempting to call PhoneGap.exec()"
+              +" before 'deviceready'. Ignoring.");
+        return;
+    }
+
+    if(!this.gapBridge){
+        this.gapBridge = document.createElement("iframe");
+        this.gapBridge.setAttribute("style", "display:none;");
+        this.gapBridge.setAttribute("height","0px");
+        this.gapBridge.setAttribute("width","0px");
+        this.gapBridge.setAttribute("frameborder","0");
+        document.documentElement.appendChild(this.gapBridge);
+    }
+
+    this.gapBridge.src = PhoneGap.commandQueue[0];
 };
 /**
  * Called by native code when returning successful result from an action.
