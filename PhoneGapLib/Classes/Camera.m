@@ -64,6 +64,7 @@
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
         self.pickerController.correctOrientation = [[options valueForKey:@"correctOrientation"] boolValue];
+        self.pickerController.saveToPhotoAlbum = [[options valueForKey:@"saveToPhotoAlbum"] boolValue];
         self.pickerController.encodingType = [[options valueForKey:@"encodingType"] intValue] || EncodingTypeJPEG;
         
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
@@ -126,6 +127,10 @@
 		}else {
 			image = [info objectForKey:UIImagePickerControllerOriginalImage];
 		}
+    if (self.pickerController.saveToPhotoAlbum) {
+      UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+    }
+    
     if (self.pickerController.correctOrientation) {
       image = [self imageCorrectedForCaptureOrientation:image];
     }
@@ -363,6 +368,7 @@
 @synthesize popoverController;
 @synthesize targetSize;
 @synthesize correctOrientation;
+@synthesize saveToPhotoAlbum;
 @synthesize encodingType;
 
 
