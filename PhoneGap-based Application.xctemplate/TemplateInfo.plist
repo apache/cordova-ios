@@ -248,7 +248,7 @@
 			<key>GCC_VERSION</key>
 			<string>com.apple.compilers.llvmgcc42</string>
 			<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-			<string>3.1</string>
+			<string>3.0</string>
 		</dict>
 	</dict>
 	<key>Targets</key>
@@ -335,6 +335,8 @@
 				<string>$(TARGET_NAME)</string>
 				<key>OTHER_LDFLAGS</key>
 				<string>-weak_framework UIKit -weak_framework AVFoundation -weak_framework CoreMedia -weak_library /usr/lib/libSystem.B.dylib</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
 			</dict>
 		</dict>
 	</array>
