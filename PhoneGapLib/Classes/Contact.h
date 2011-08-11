@@ -30,7 +30,7 @@ typedef NSUInteger ContactError;
 } 
 
 @property (nonatomic, assign) ABRecordRef record;
-@property (nonatomic, assign) NSDictionary* returnFields;
+@property (nonatomic, retain) NSDictionary* returnFields;
 
 +(NSDictionary*) defaultABtoW3C;
 +(NSDictionary*) defaultW3CtoAB;

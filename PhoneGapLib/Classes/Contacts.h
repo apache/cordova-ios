@@ -100,7 +100,7 @@
 }
 
 @property BOOL allowsEditing;
-@property (retain) NSString* callbackId;
+@property (copy) NSString* callbackId;
 @property ABRecordID selectedId;
 
 @end
@@ -109,7 +109,7 @@
 {
 	NSString* callbackId;
 }
-@property (retain) NSString* callbackId;
+@property (copy) NSString* callbackId;
 @end
 
 @interface DisplayContactsController : ABPersonViewController
@@ -117,8 +117,8 @@
 	NSString* successCallback;
 	NSString* errorCallback;
 }
-@property (retain) NSString* successCallback;
-@property (retain) NSString* errorCallback;
+@property (copy) NSString* successCallback;
+@property (copy) NSString* errorCallback;
 
 //- (void)setEditing:(BOOL)flag animated:(BOOL)animated; 
 

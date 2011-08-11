@@ -22,20 +22,41 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 
 @implementation PGContact : NSObject
 
-@synthesize record;
 @synthesize returnFields;
    
 - (id) init
 {
-	if ((self = [super init]) != nil)
-		self.record = ABPersonCreate();
+	if ((self = [super init]) != nil) {
+        ABRecordRef rec = ABPersonCreate();
+		self.record = rec;
+        CFRelease(rec);
+    }
 	return self;
 }
+
 - (id) initFromABRecord:(ABRecordRef)aRecord
 {
-	if ((self = [super init]) != nil) 
-		self.record = CFRetain(aRecord);
+	if ((self = [super init]) != nil) {
+		self.record = aRecord;
+    }
 	return self;	
+}
+
+/* synthesize 'record' ourselves to have retain properties for CF types */
+
+- (void) setRecord:(ABRecordRef)aRecord
+{
+    if (record != NULL) {
+        CFRelease(record);
+    }
+    if (aRecord != NULL) {
+        record = CFRetain(aRecord);
+    }
+}
+
+- (ABRecordRef) record
+{
+    return record;
 }
 
 
@@ -1680,10 +1701,10 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 
 - (void) dealloc
 {
-	if (self.record){
-		CFRelease(self.record);
+	if (record != NULL){
+		CFRelease(record);
 	}
-
+    self.returnFields = nil;
 
 	[super dealloc];
 }	

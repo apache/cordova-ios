@@ -29,7 +29,7 @@
 {
     self = [super init];
     if (self != nil) {
-        self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+        self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
 		self.imageView = nil;
 		
 		// Turn on cookie support ( shared with our app only! )
@@ -226,7 +226,7 @@ static NSString *gapVersion;
 	if (isIPad)
 	{
 		if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
-			deviceOrientation = statusBarOrientation;
+			deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
 		}
 		
 		switch (deviceOrientation) 
@@ -270,7 +270,7 @@ static NSString *gapVersion;
 		NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
 	}
 	
-	self.imageView = [[UIImageView alloc] initWithImage:launchImage];	
+	self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];	
 	self.imageView.tag = 1;
 	self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
 	
@@ -306,7 +306,7 @@ BOOL gSplashScreenShown = NO;
 		NSLog(@"WARNING: %@.plist is missing.", appPlistName);
 		return NO;
 	}
-    self.settings = [[NSDictionary alloc] initWithDictionary:phonegapPlist];
+    self.settings = [[[NSDictionary alloc] initWithDictionary:phonegapPlist] autorelease];
 
     // read from Plugins dict in PhoneGap.plist in the app bundle
 	NSString* pluginsKey = @"Plugins";
@@ -318,7 +318,7 @@ BOOL gSplashScreenShown = NO;
 	
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
 	
-	self.viewController = [ [ PhoneGapViewController alloc ] init ];
+	self.viewController = [[[PhoneGapViewController alloc] init] autorelease];
 	
     NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
     NSString *topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
@@ -339,7 +339,7 @@ BOOL gSplashScreenShown = NO;
 	self.window.autoresizesSubviews = YES;
 	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
 	webViewBounds.origin = screenBounds.origin;
-	self.webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
+	self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	self.webView.scalesPageToFit = [enableViewportScale boolValue];
 	
@@ -408,7 +408,7 @@ BOOL gSplashScreenShown = NO;
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
     
-	self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
+	self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
     self.activityView.tag = 2;
 
 	id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
@@ -544,7 +544,7 @@ BOOL gSplashScreenShown = NO;
 		[self.window bringSubviewToFront:self.viewController.view];
 	}
 	
-	[self.viewController didRotateFromInterfaceOrientation:[[UIDevice currentDevice] orientation]];
+	[self.viewController didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 
@@ -683,8 +683,7 @@ BOOL gSplashScreenShown = NO;
 	NSString* jsString = @"PhoneGap.onUnload();";
 	// Doing nothing with the callback string, just to make sure we are making a sync call
 	NSString* ret = [self.webView stringByEvaluatingJavaScriptFromString:jsString];
-	ret;
-	
+#pragma unused(ret)	
 	NSLog(@"applicationWillTerminate");
 	
 	// empty the tmp directory

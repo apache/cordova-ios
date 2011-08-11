@@ -82,7 +82,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConnectionType:) 
 												 name:kReachabilityChangedNotification object:nil];
 	
-	self.internetReach = [[Reachability reachabilityForInternetConnection] retain];
+	self.internetReach = [Reachability reachabilityForInternetConnection];
 	[self.internetReach startNotifier];
 	self.type = [self w3cConnectionTypeFor:self.internetReach];
 	
