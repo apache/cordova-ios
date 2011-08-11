@@ -334,7 +334,7 @@
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>OTHER_LDFLAGS</key>
-				<string>-weak_library /usr/lib/libSystem.B.dylib</string>
+				<string>-weak_framework UIKit -weak_framework AVFoundation -weak_framework CoreMedia -weak_library /usr/lib/libSystem.B.dylib</string>
 			</dict>
 		</dict>
 	</array>
