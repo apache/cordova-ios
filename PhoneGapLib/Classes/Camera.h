@@ -77,8 +77,8 @@ typedef NSUInteger EncodingType;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
-- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)image toSize:(CGSize)targetSize;
-- (UIImage *)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
+- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize;
+- (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 - (void) dealloc;
 
 @end
