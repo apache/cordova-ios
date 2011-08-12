@@ -127,33 +127,36 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 	@$(RM_RF) $(BUILD_BAK)
 
 installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
+	@if [ -d "dist" ]; then \
+		$(CP) -Rf dist ~/.Trash; \
+		$(RM_RF) dist; \
+	fi		
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html PhoneGapInstaller/docs/releasenotes.html.bak 
 	@$(MV) -f PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/finishup.html.bak 
 	@$(CAT) PhoneGapInstaller/docs/finishup.html.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/finishup.html
 	@$(CAT) PhoneGapInstaller/docs/releasenotes.html.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/releasenotes.html
 	@textutil -convert rtf -font 'Helvetica' PhoneGapInstaller/docs/*.html
 	@echo "Building PhoneGap-${PGVER}.pkg..."	
-	@$(MKPATH) dist
-	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
-	@osacompile -o ./dist/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o ./dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
-	@textutil -convert html -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.html
-	@textutil -cat html PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/readme.html PhoneGapInstaller/docs/LICENSE.html -output PhoneGapInstaller/docs/combined.html
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/combined.html -o dist/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(MKPATH) dist/files
+	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/files/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@osacompile -o ./dist/files/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
+	@textutil -convert rtf  PhoneGapInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
+	@textutil -convert rtf -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.rtf
+	@textutil -cat rtf PhoneGapInstaller/docs/finishup.rtf PhoneGapInstaller/docs/readme.rtf PhoneGapInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html.bak PhoneGapInstaller/docs/releasenotes.html 
 	@$(MV) -f PhoneGapInstaller/docs/finishup.html.bak PhoneGapInstaller/docs/finishup.html
 	@# must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
-		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/PhoneGap-${PGVER}.pkg;  \
+		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/files/PhoneGap-${PGVER}.pkg;  \
 	fi
-	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
+	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/files/ -ov -volname PhoneGap-${PGVER}
 	@cd dist;openssl sha1 PhoneGap-${PGVER}.dmg > PhoneGap-${PGVER}.dmg.SHA1;cd -;
 	@echo "Done."
 	@make clean
 
 install: installer
-	@open dist/PhoneGap-${PGVER}.pkg
+	@open dist/files/PhoneGap-${PGVER}.pkg
 
 uninstall:
 	@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/PhoneGap
