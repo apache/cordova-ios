@@ -612,7 +612,7 @@ BOOL gSplashScreenShown = NO;
 		// SessionKey should be in the user credentials portion of the URL
 		NSString *sessionKeyFromWebView = [url user];
 		if([sessionKey isEqualToString:sessionKeyFromWebView]) {
-			InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:url] autorelease];
+			InvokedUrlCommand* iuc = [InvokedUrlCommand commandFromUrl:url];
             
 			// Tell the JS code that we've gotten this command, and we're ready for another
 			[theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];

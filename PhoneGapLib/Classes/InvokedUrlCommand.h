@@ -22,7 +22,7 @@
 @property(copy) NSString* className;
 @property(copy) NSString* methodName;
 
-+ (InvokedUrlCommand*) newFromUrl:(NSURL*)url;
++ (InvokedUrlCommand*) commandFromUrl:(NSURL*)url;
 
 - (void) dealloc;
 
