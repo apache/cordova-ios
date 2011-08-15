@@ -625,7 +625,7 @@ BOOL gSplashScreenShown = NO;
             // executing immediately here since this delegate method can't be
             // called again until we renter the main event loop.
             [theWebView stringByEvaluatingJavaScriptFromString:
-                @"PhoneGap.finish_exec()"];
+                @"PhoneGap.finishExec()"];
 
             // Execute the requested command as long as it's specified
             // correctly.

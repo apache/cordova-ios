@@ -199,7 +199,7 @@ PhoneGap.exec = function() {
         // be kicked off by the native code after the preceding command is
         // executed.
         if (PhoneGap.commandQueue.length == 1) {
-            PhoneGap.run_command();
+            PhoneGap.runCommand();
         }
     } catch (e) {
         console.log("PhoneGapExec Error: "+e);
@@ -210,11 +210,11 @@ PhoneGap.exec = function() {
  * Called by native code to signal that we're ready for the next command to
  * run.
  */
-PhoneGap.finish_exec = function() {
+PhoneGap.finishExec = function() {
   PhoneGap.commandQueue.shift();
 
   if (PhoneGap.commandQueue.length != 0) {
-      PhoneGap.run_command();
+      PhoneGap.runCommand();
   }
 }
 
@@ -224,7 +224,7 @@ PhoneGap.finish_exec = function() {
  * 
  * @private
  */
-PhoneGap.run_command = function() {
+PhoneGap.runCommand = function() {
     if (!PhoneGap.available) {
         alert("ERROR: Attempting to call PhoneGap.exec()"
               +" before 'deviceready'. Ignoring.");
