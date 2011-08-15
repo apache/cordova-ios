@@ -59,19 +59,19 @@
     self = [super init];
     if (self != nil) {
         self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
-		self.imageView = nil;
-		
-		// Turn on cookie support ( shared with our app only! )
-		NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
-		[cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+        self.imageView = nil;
+        
+        // Turn on cookie support ( shared with our app only! )
+        NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
+        [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
         
         // Create the sessionKey to use throughout the lifetime of the application
         // to authenticate the source of the gap calls
         self.sessionKey = [NSString stringWithFormat:@"%d", arc4random()];
-		
-		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
-												   object:nil];
+        
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
+                                                   object:nil];
         
         [PGURLProtocol registerPGHttpURLProtocol];
     }
@@ -79,7 +79,7 @@
 }
 
 + (NSString*) applicationDocumentsDirectory {
-	
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
     return basePath;
@@ -88,12 +88,12 @@
 
 + (NSString*) wwwFolderName
 {
-	return @"www";
+    return @"www";
 }
 
 + (NSString*) startPage
 {
-	return @"index.html";
+    return @"index.html";
 }
 
 + (BOOL) isIPad 
@@ -107,20 +107,20 @@
 
 + (NSString*) resolveImageResource:(NSString*)resource
 {
-	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
-	BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
-	
-	// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
-	if (isLessThaniOS4)
-	{
-		if ([[self class] isIPad]) {
-			return [NSString stringWithFormat:@"%@~ipad.png", resource];
-		} else {
-			return [NSString stringWithFormat:@"%@.png", resource];
-		}
-	}
-	
-	return resource;
+    NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+    BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
+    
+    // the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
+    if (isLessThaniOS4)
+    {
+        if ([[self class] isIPad]) {
+            return [NSString stringWithFormat:@"%@~ipad.png", resource];
+        } else {
+            return [NSString stringWithFormat:@"%@.png", resource];
+        }
+    }
+    
+    return resource;
 }
 
 
@@ -130,16 +130,16 @@
     NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
     NSString       *filename       = [directoryParts lastObject];
     [directoryParts removeLastObject];
-	
-	NSString* directoryPartsJoined =[directoryParts componentsJoinedByString:@"/"];
-	NSString* directoryStr = [self wwwFolderName];
-	
-	if ([directoryPartsJoined length] > 0) {
-		directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
-	}
-	
+    
+    NSString* directoryPartsJoined =[directoryParts componentsJoinedByString:@"/"];
+    NSString* directoryStr = [self wwwFolderName];
+    
+    if ([directoryPartsJoined length] > 0) {
+        directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
+    }
+    
     return [mainBundle pathForResource:filename
-					   ofType:@""
+                       ofType:@""
                        inDirectory:directoryStr];
 }
 
@@ -151,23 +151,23 @@ static NSString *gapVersion;
 + (NSString*) phoneGapVersion
 {
 #ifdef PG_VERSION
-	gapVersion = SYMBOL_TO_NSSTRING(PG_VERSION);
+    gapVersion = SYMBOL_TO_NSSTRING(PG_VERSION);
 #else
 
-	if (gapVersion == nil) {
-		NSBundle *mainBundle = [NSBundle mainBundle];
-		NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
-		// read from the filesystem and save in the variable
-		// first, separate by new line
-		NSString* fileContents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
-		NSArray* all_lines = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-		NSString* first_line = [all_lines objectAtIndex:0];		
-		
-		gapVersion = [first_line retain];
-	}
+    if (gapVersion == nil) {
+        NSBundle *mainBundle = [NSBundle mainBundle];
+        NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
+        // read from the filesystem and save in the variable
+        // first, separate by new line
+        NSString* fileContents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
+        NSArray* all_lines = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+        NSString* first_line = [all_lines objectAtIndex:0];        
+        
+        gapVersion = [first_line retain];
+    }
 #endif
-	
-	return gapVersion;
+    
+    return gapVersion;
 }
 
 
@@ -176,148 +176,148 @@ static NSString *gapVersion;
  */
 -(id) getCommandInstance:(NSString*)pluginName
 {
-	// first, we try to find the pluginName in the pluginsMap 
-	// (acts as a whitelist as well) if it does not exist, we return nil
+    // first, we try to find the pluginName in the pluginsMap 
+    // (acts as a whitelist as well) if it does not exist, we return nil
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a 
     // possible issue is there can be duplicates possible if you had:
     // "com.phonegap.Foo" and "com.phonegap.foo" - only the lower-cased entry will match
-	NSString* className = [self.pluginsMap objectForKey:[pluginName lowercaseString]];
-	if (className == nil) {
-		return nil;
-	}
-	
+    NSString* className = [self.pluginsMap objectForKey:[pluginName lowercaseString]];
+    if (className == nil) {
+        return nil;
+    }
+    
     id obj = [self.pluginObjects objectForKey:className];
     if (!obj) 
-	{
+    {
         // attempt to load the settings for this command class
         NSDictionary* classSettings = [self.settings objectForKey:className];
 
         if (classSettings) {
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
-		} else {
+        } else {
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
-		}
+        }
         
-		if (obj != nil) {
-			[self.pluginObjects setObject:obj forKey:className];
-			[obj release];
-		} else {
-			NSLog(@"PGPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
-		}
+        if (obj != nil) {
+            [self.pluginObjects setObject:obj forKey:className];
+            [obj release];
+        } else {
+            NSLog(@"PGPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
+        }
     }
     return obj;
 }
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
 {
-	NSMutableArray* result = [[[NSMutableArray alloc] init] autorelease];
+    NSMutableArray* result = [[[NSMutableArray alloc] init] autorelease];
 
-	if (orientations != nil) 
-	{
-		NSEnumerator* enumerator = [orientations objectEnumerator];
-		NSString* orientationString;
-		
-		while (orientationString = [enumerator nextObject]) 
-		{
-			if ([orientationString isEqualToString:@"UIInterfaceOrientationPortrait"]) {
-				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
-			} else if ([orientationString isEqualToString:@"UIInterfaceOrientationPortraitUpsideDown"]) {
-				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortraitUpsideDown]];
-			} else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeLeft"]) {
-				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeLeft]];
-			} else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeRight"]) {
-				[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight]];
-			}
-		}
-	}
-	
-	// default
-	if ([result count] == 0) {
-		[result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
-	}
-	
-	return result;
+    if (orientations != nil) 
+    {
+        NSEnumerator* enumerator = [orientations objectEnumerator];
+        NSString* orientationString;
+        
+        while (orientationString = [enumerator nextObject]) 
+        {
+            if ([orientationString isEqualToString:@"UIInterfaceOrientationPortrait"]) {
+                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
+            } else if ([orientationString isEqualToString:@"UIInterfaceOrientationPortraitUpsideDown"]) {
+                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortraitUpsideDown]];
+            } else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeLeft"]) {
+                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeLeft]];
+            } else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeRight"]) {
+                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight]];
+            }
+        }
+    }
+    
+    // default
+    if ([result count] == 0) {
+        [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
+    }
+    
+    return result;
 }
 
 - (void) showSplashScreen
 {
-	NSString* launchImageFile = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UILaunchImageFile"];
+    NSString* launchImageFile = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UILaunchImageFile"];
     if (launchImageFile == nil) { // fallback if no launch image was specified
-		launchImageFile = @"Default"; 
-	}
-	
-	NSString* orientedLaunchImageFile = nil;    
-	CGAffineTransform startupImageTransform = CGAffineTransformIdentity;
-	UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-	CGRect screenBounds = [[UIScreen mainScreen] bounds];
-	UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-	BOOL isIPad = [[self class] isIPad];
-	UIImage* launchImage = nil;
-	
-	if (isIPad)
-	{
-		if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
-			deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
-		}
-		
-		switch (deviceOrientation) 
-		{
-			case UIDeviceOrientationLandscapeLeft: // this is where the home button is on the right (yeah, I know, confusing)
-			{
-				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
-				startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(90));
-			}
-				break;
-			case UIDeviceOrientationLandscapeRight: // this is where the home button is on the left (yeah, I know, confusing)
-			{
-				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
-				startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(-90));
-			} 
-				break;
-			case UIDeviceOrientationPortraitUpsideDown:
-			{
-				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
-				startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
-			} 
-				break;
-			case UIDeviceOrientationPortrait:
-			default:
-			{
-				orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
-				startupImageTransform = CGAffineTransformIdentity;
-			}
-				break;
-		}
-		
-		launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
-	}
-	else // not iPad
-	{
-		orientedLaunchImageFile = @"Default";
-		launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
-	}
-	
-	if (launchImage == nil) {
-		NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
-	}
-	
-	self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];	
-	self.imageView.tag = 1;
-	self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
-	
+        launchImageFile = @"Default"; 
+    }
+    
+    NSString* orientedLaunchImageFile = nil;    
+    CGAffineTransform startupImageTransform = CGAffineTransformIdentity;
+    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    BOOL isIPad = [[self class] isIPad];
+    UIImage* launchImage = nil;
+    
+    if (isIPad)
+    {
+        if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
+            deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
+        }
+        
+        switch (deviceOrientation) 
+        {
+            case UIDeviceOrientationLandscapeLeft: // this is where the home button is on the right (yeah, I know, confusing)
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
+                startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(90));
+            }
+                break;
+            case UIDeviceOrientationLandscapeRight: // this is where the home button is on the left (yeah, I know, confusing)
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
+                startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(-90));
+            } 
+                break;
+            case UIDeviceOrientationPortraitUpsideDown:
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
+                startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
+            } 
+                break;
+            case UIDeviceOrientationPortrait:
+            default:
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
+                startupImageTransform = CGAffineTransformIdentity;
+            }
+                break;
+        }
+        
+        launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+    }
+    else // not iPad
+    {
+        orientedLaunchImageFile = @"Default";
+        launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+    }
+    
+    if (launchImage == nil) {
+        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
+    }
+    
+    self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];    
+    self.imageView.tag = 1;
+    self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
+    
     self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
-	[self.imageView setTransform:startupImageTransform];
-	[self.window addSubview:self.imageView];
+    [self.imageView setTransform:startupImageTransform];
+    [self.window addSubview:self.imageView];
     
     
-	/*
-	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
-	 *
-	 *	 whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
-	 *	 white      = UIActivityIndicatorViewStyleWhite
-	 *	 gray       = UIActivityIndicatorViewStyleGray
-	 *
-	 */
+    /*
+     * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
+     *
+     *     whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
+     *     white      = UIActivityIndicatorViewStyleWhite
+     *     gray       = UIActivityIndicatorViewStyleGray
+     *
+     */
     NSString *topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
     UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     
@@ -329,29 +329,29 @@ static NSString *gapVersion;
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
     
-	self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
+    self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
     self.activityView.tag = 2;
 
-	id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
-	// backwards compatibility - if key is missing, default to true
-	if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
-		[self.window addSubview:self.activityView];
-	}
+    id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
+    // backwards compatibility - if key is missing, default to true
+    if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
+        [self.window addSubview:self.activityView];
+    }
     
-	self.activityView.center = self.viewController.view.center;
+    self.activityView.center = self.viewController.view.center;
     [self.activityView startAnimating];
     
     
-    [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250 	self.window.autoresizesSubviews = YES;
-}	
+    [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250     self.window.autoresizesSubviews = YES;
+}    
 
 BOOL gSplashScreenShown = NO;
 - (void) receivedOrientationChange
 {
-	if (self.imageView == nil) {
-		gSplashScreenShown = YES;
-		[self showSplashScreen];
-	}
+    if (self.imageView == nil) {
+        gSplashScreenShown = YES;
+        [self showSplashScreen];
+    }
 }
 
 /**
@@ -359,114 +359,114 @@ BOOL gSplashScreenShown = NO;
  */
 // - (void)applicationDidFinishLaunching:(UIApplication *)application
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{	
-	// read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-	NSArray* supportedOrientations = [self parseInterfaceOrientations:
-											   [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
-	
+{    
+    // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
+    NSArray* supportedOrientations = [self parseInterfaceOrientations:
+                                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
+    
     // read from PhoneGap.plist in the app bundle
-	NSString* appPlistName = @"PhoneGap";
-	NSDictionary* phonegapPlist = [[self class] getBundlePlist:appPlistName];
-	if (phonegapPlist == nil) {
-		NSLog(@"WARNING: %@.plist is missing.", appPlistName);
-		return NO;
-	}
+    NSString* appPlistName = @"PhoneGap";
+    NSDictionary* phonegapPlist = [[self class] getBundlePlist:appPlistName];
+    if (phonegapPlist == nil) {
+        NSLog(@"WARNING: %@.plist is missing.", appPlistName);
+        return NO;
+    }
     self.settings = [[[NSDictionary alloc] initWithDictionary:phonegapPlist] autorelease];
 
     // read from Plugins dict in PhoneGap.plist in the app bundle
-	NSString* pluginsKey = @"Plugins";
-	NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
-	if (pluginsDict == nil) {
-		NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
-		return NO;
-	}
+    NSString* pluginsKey = @"Plugins";
+    NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
+    if (pluginsDict == nil) {
+        NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
+        return NO;
+    }
     
     // set the whitelist
     self.whitelist = [[[PGWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]] autorelease];
-	
+    
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
-	
-	self.viewController = [[[PhoneGapViewController alloc] init] autorelease];
-	
+    
+    self.viewController = [[[PhoneGapViewController alloc] init] autorelease];
+    
     NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
     NSString *enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
-	
-	
-	// The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
-	[[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
-	
-	// Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
+    
+    
+    // The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
+    [[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
+    
+    // Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
     viewController.supportedOrientations = supportedOrientations;
-	
-	
-	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
-	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
+    
+    
+    CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
+    self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
 
 
-	self.window.autoresizesSubviews = YES;
-	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
-	webViewBounds.origin = screenBounds.origin;
+    self.window.autoresizesSubviews = YES;
+    CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
+    webViewBounds.origin = screenBounds.origin;
     if (!self.webView) {
         self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
     }
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-	self.webView.scalesPageToFit = [enableViewportScale boolValue];
-	
-	viewController.webView = self.webView;
-	[self.viewController.view addSubview:self.webView];
-	
-		
-	/*
-	 * Fire up the GPS Service right away as it takes a moment for data to come back.
-	 */
+    self.webView.scalesPageToFit = [enableViewportScale boolValue];
+    
+    viewController.webView = self.webView;
+    [self.viewController.view addSubview:self.webView];
+    
+        
+    /*
+     * Fire up the GPS Service right away as it takes a moment for data to come back.
+     */
     if ([enableLocation boolValue]) {
         [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
     }
-	
+    
 
-	self.webView.delegate = self;
+    self.webView.delegate = self;
 
-	[self.window addSubview:self.viewController.view];
+    [self.window addSubview:self.viewController.view];
 
-	/*
-	 * webView
-	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
-	 */
-	
-	NSString* startPage = [[self class] startPage];
-	NSURL *appURL = [NSURL URLWithString:startPage];
-	NSString* loadErr = nil;
-	
-	if(![appURL scheme])
-	{
-		NSString* startFilePath = [[self class] pathForResource:startPage];
-		if (startFilePath == nil)
-		{
-			loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
-			NSLog(@"%@", loadErr);
-			appURL = nil;
-		}
-		else {
-			appURL = [NSURL fileURLWithPath:startFilePath];
-		}
-	}
-	
-	if (!loadErr) {
-		NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-		[self.webView loadRequest:appReq];
-	} else {
-		NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-		[self.webView loadHTMLString:html baseURL:nil];
-		self.loadFromString = YES;
-	}
+    /*
+     * webView
+     * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
+     */
+    
+    NSString* startPage = [[self class] startPage];
+    NSURL *appURL = [NSURL URLWithString:startPage];
+    NSString* loadErr = nil;
+    
+    if(![appURL scheme])
+    {
+        NSString* startFilePath = [[self class] pathForResource:startPage];
+        if (startFilePath == nil)
+        {
+            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
+            NSLog(@"%@", loadErr);
+            appURL = nil;
+        }
+        else {
+            appURL = [NSURL fileURLWithPath:startFilePath];
+        }
+    }
+    
+    if (!loadErr) {
+        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [self.webView loadRequest:appReq];
+    } else {
+        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+        [self.webView loadHTMLString:html baseURL:nil];
+        self.loadFromString = YES;
+    }
 
-	[self.window makeKeyAndVisible];
-	
-	if (self.loadFromString) {
-		self.imageView.hidden = YES;
-	}
-	
-	return YES;
+    [self.window makeKeyAndVisible];
+    
+    if (self.loadFromString) {
+        self.imageView.hidden = YES;
+    }
+    
+    return YES;
 }
 
 /**
@@ -475,55 +475,55 @@ BOOL gSplashScreenShown = NO;
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView 
 {
-	
+    
 }
 
 - (NSDictionary*) deviceProperties
 {
-	UIDevice *device = [UIDevice currentDevice];
+    UIDevice *device = [UIDevice currentDevice];
     NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
     [devProps setObject:[device model] forKey:@"platform"];
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
     [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
-	
-	id cmd = [self getCommandInstance:@"com.phonegap.connection"];
-	if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
-	{
-		NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
-		if ([cmd respondsToSelector:@selector(type)]) {
-			[connProps setObject:[cmd type] forKey:@"type"];
-		}
-		[devProps setObject:connProps forKey:@"connection"];
-	}
-	
+    
+    id cmd = [self getCommandInstance:@"com.phonegap.connection"];
+    if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
+    {
+        NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
+        if ([cmd respondsToSelector:@selector(type)]) {
+            [connProps setObject:[cmd type] forKey:@"type"];
+        }
+        [devProps setObject:connProps forKey:@"connection"];
+    }
+    
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;
 }
 
 - (NSString*) appURLScheme
 {
-	NSString* URLScheme = nil;
-	
+    NSString* URLScheme = nil;
+    
     NSArray *URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
     if(URLTypes != nil ) {
-		NSDictionary* dict = [URLTypes objectAtIndex:0];
-		if(dict != nil ) {
-			NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
-			if( URLSchemes != nil ) {    
-				URLScheme = [URLSchemes objectAtIndex:0];
-			}
-		}
-	}
-	
-	return URLScheme;
+        NSDictionary* dict = [URLTypes objectAtIndex:0];
+        if(dict != nil ) {
+            NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
+            if( URLSchemes != nil ) {    
+                URLScheme = [URLSchemes objectAtIndex:0];
+            }
+        }
+    }
+    
+    return URLScheme;
 }
 
 - (void) javascriptAlert:(NSString*)text
 {
-	NSString* jsString = [NSString stringWithFormat:@"alert('%@');", text];
-	[webView stringByEvaluatingJavaScriptFromString:jsString];
+    NSString* jsString = [NSString stringWithFormat:@"alert('%@');", text];
+    [webView stringByEvaluatingJavaScriptFromString:jsString];
 }
 
 /**
@@ -537,7 +537,7 @@ BOOL gSplashScreenShown = NO;
     NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
     NSDictionary *temp = (NSDictionary *)[NSPropertyListSerialization
                                           propertyListFromData:plistXML
-                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves			  
+                                          mutabilityOption:NSPropertyListMutableContainersAndLeaves              
                                           format:&format errorDescription:&errorDesc];
     return temp;
 }
@@ -557,34 +557,34 @@ BOOL gSplashScreenShown = NO;
     NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
     
     /* Settings.plist
-	 * Read the optional Settings.plist file and push these user-defined settings down into the web application.
-	 * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
+     * Read the optional Settings.plist file and push these user-defined settings down into the web application.
+     * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
-	 */
-	
+     */
+    
     NSDictionary *temp = [[self class] getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONFragment)]) {
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
     }
-	
+    
     NSLog(@"Device initialization: %@", result);
     [theWebView stringByEvaluatingJavaScriptFromString:result];
-	[result release];
-	
-	/*
-	 * Hide the Top Activity THROBBER in the Battery Bar
-	 */
-	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    [result release];
+    
+    /*
+     * Hide the Top Activity THROBBER in the Battery Bar
+     */
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 
-	id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
-	// if value is missing, default to yes
-	if (autoHideSplashScreenValue == nil || [autoHideSplashScreenValue boolValue]) {
-		self.imageView.hidden = YES;
-		self.activityView.hidden = YES;	
-		[self.window bringSubviewToFront:self.viewController.view];
-	}
-	
-	[self.viewController didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+    id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
+    // if value is missing, default to yes
+    if (autoHideSplashScreenValue == nil || [autoHideSplashScreenValue boolValue]) {
+        self.imageView.hidden = YES;
+        self.activityView.hidden = YES;    
+        [self.window bringSubviewToFront:self.viewController.view];
+    }
+    
+    [self.viewController didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 
@@ -595,9 +595,9 @@ BOOL gSplashScreenShown = NO;
  */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
-	/*
+    /*
     if ([error code] != NSURLErrorCancelled)
-		alert([error localizedDescription]);
+        alert([error localizedDescription]);
      */
 }
 
@@ -609,41 +609,41 @@ BOOL gSplashScreenShown = NO;
  */
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	NSURL *url = [request URL];
+    NSURL *url = [request URL];
     
-	/*
-	 * Get Command and Options From URL
-	 * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
-	 * We have to strip off the leading slash for the options.
-	 */
-	if ([[url scheme] isEqualToString:@"gap"]) {
-		// SessionKey should be in the user credentials portion of the URL
-		NSString *sessionKeyFromWebView = [url user];
-		if([sessionKey isEqualToString:sessionKeyFromWebView]) {
-			InvokedUrlCommand* iuc = [InvokedUrlCommand commandFromUrl:url];
+    /*
+     * Get Command and Options From URL
+     * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
+     * We have to strip off the leading slash for the options.
+     */
+    if ([[url scheme] isEqualToString:@"gap"]) {
+        // SessionKey should be in the user credentials portion of the URL
+        NSString *sessionKeyFromWebView = [url user];
+        if([sessionKey isEqualToString:sessionKeyFromWebView]) {
+            InvokedUrlCommand* iuc = [InvokedUrlCommand commandFromUrl:url];
             
-			// Tell the JS code that we've gotten this command, and we're ready for another
-			[theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
+            // Tell the JS code that we've gotten this command, and we're ready for another
+            [theWebView stringByEvaluatingJavaScriptFromString:@"PhoneGap.queue.ready = true;"];
             
-			// Check to see if we are provided a class:method style command.
-			[self execute:iuc];
-		} else {
-			NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
-			NSLog(@"Complete call: %@", [url absoluteString]);
-		}
-		return NO;
-	}
-	/*
-	 * If a URL is being loaded that's a file/http/https URL, just load it internally
-	 */
-	else if ([url isFileURL])
-	{
-		return YES;
-	}
-	else if ([self.whitelist schemeIsAllowed:[url scheme]])
-	{            
+            // Check to see if we are provided a class:method style command.
+            [self execute:iuc];
+        } else {
+            NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
+            NSLog(@"Complete call: %@", [url absoluteString]);
+        }
+        return NO;
+    }
+    /*
+     * If a URL is being loaded that's a file/http/https URL, just load it internally
+     */
+    else if ([url isFileURL])
+    {
+        return YES;
+    }
+    else if ([self.whitelist schemeIsAllowed:[url scheme]])
+    {            
         if ([self.whitelist URLIsAllowed:url] == YES)
-		{
+        {
             // anchor target="_blank" - load in Mobile Safari
             if (navigationType == UIWebViewNavigationTypeOther)
             {
@@ -655,66 +655,66 @@ BOOL gSplashScreenShown = NO;
             {
                 return YES;
             }
-		}
+        }
         
-		return NO;
-	}
-	/*
-	 *	If we loaded the HTML from a string, we let the app handle it
-	 */
-	else if (self.loadFromString == YES)
-	{
-		self.loadFromString = NO;
-		return YES;
-	}
-	/*
-	 * all about: scheme urls are not handled
-	 */
-	else if ([[url scheme] isEqualToString:@"about"])
-	{
-		return NO;
-	}
-	/*
-	 * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
-	 * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555
-	 */
-	else
-	{
-		NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
-		[[UIApplication sharedApplication] openURL:url];
-		return NO;
-	}
+        return NO;
+    }
+    /*
+     *    If we loaded the HTML from a string, we let the app handle it
+     */
+    else if (self.loadFromString == YES)
+    {
+        self.loadFromString = NO;
+        return YES;
+    }
+    /*
+     * all about: scheme urls are not handled
+     */
+    else if ([[url scheme] isEqualToString:@"about"])
+    {
+        return NO;
+    }
+    /*
+     * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
+     * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555
+     */
+    else
+    {
+        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
+        [[UIApplication sharedApplication] openURL:url];
+        return NO;
+    }
     
-	return YES;
+    return YES;
 }
 
 - (BOOL) execute:(InvokedUrlCommand*)command
 {
-	if (command.className == nil || command.methodName == nil) {
-		return NO;
-	}
-	
-	// Fetch an instance of this class
-	PGPlugin* obj = [self getCommandInstance:command.className];
-	
-	if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
-		NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
-		return NO;
-	}
-	BOOL retVal = YES;
-	
-	// construct the fill method name to ammend the second argument.
-	NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName];
-	if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)]) {
-		[obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
-	} else {
-		// There's no method to call, so throw an error.
-		NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
-		retVal = NO;
-	}
-	[fullMethodName release];
-	
-	return retVal;
+    if (command.className == nil || command.methodName == nil) {
+        return NO;
+    }
+    
+    // Fetch an instance of this class
+    PGPlugin* obj = [self getCommandInstance:command.className];
+    
+    if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
+        NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
+        return NO;
+    }
+    BOOL retVal = YES;
+    
+    // construct the fill method name to ammend the second argument.
+    NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName];
+    if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)]) {
+        [obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
+    } else {
+        // There's no method to call, so throw an error.
+        NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
+        retVal = NO;
+    }
+    [fullMethodName release];
+    
+    return retVal;
 }
 
 /*
@@ -723,26 +723,26 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationWillTerminate:(UIApplication *)application
 {
 
-	NSLog(@"applicationWillTerminate");
-	
-	// empty the tmp directory
-	NSFileManager* fileMgr = [[NSFileManager alloc] init];
-	NSError* err = nil;	
+    NSLog(@"applicationWillTerminate");
+    
+    // empty the tmp directory
+    NSFileManager* fileMgr = [[NSFileManager alloc] init];
+    NSError* err = nil;    
 
-	// clear contents of NSTemporaryDirectory 
-	NSString* tempDirectoryPath = NSTemporaryDirectory();
-	NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
-	NSString* fileName = nil;
-	BOOL result;
-	
-	while ((fileName = [directoryEnumerator nextObject])) {
-		NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
-		result = [fileMgr removeItemAtPath:filePath error:&err];
-		if (!result && err) {
-			NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
-		}
-	}	
-	[fileMgr release];
+    // clear contents of NSTemporaryDirectory 
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
+    NSString* fileName = nil;
+    BOOL result;
+    
+    while ((fileName = [directoryEnumerator nextObject])) {
+        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        result = [fileMgr removeItemAtPath:filePath error:&err];
+        if (!result && err) {
+            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+        }
+    }    
+    [fileMgr release];
 }
 
 /*
@@ -751,7 +751,7 @@ BOOL gSplashScreenShown = NO;
 */
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-	//NSLog(@"%@",@"applicationWillResignActive");
+    //NSLog(@"%@",@"applicationWillResignActive");
 }
 
 /*
@@ -761,15 +761,14 @@ BOOL gSplashScreenShown = NO;
 */
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	//NSLog(@"%@",@"applicationWillEnterForeground");
-	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resume');"];
-
+    //NSLog(@"%@",@"applicationWillEnterForeground");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resume');"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state. 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	//NSLog(@"%@",@"applicationDidBecomeActive");
+    //NSLog(@"%@",@"applicationDidBecomeActive");
 }
 
 /*
@@ -778,8 +777,8 @@ BOOL gSplashScreenShown = NO;
  */
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	//NSLog(@"%@",@"applicationDidEnterBackground");
-	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('pause');"];
+    //NSLog(@"%@",@"applicationDidEnterBackground");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('pause');"];
 }
 
 
@@ -789,31 +788,31 @@ BOOL gSplashScreenShown = NO;
 */
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-	if (!url) { 
-		return NO; 
-	}
+    if (!url) { 
+        return NO; 
+    }
 
-	// Do something with the url here
-	NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
-	[self.webView stringByEvaluatingJavaScriptFromString:jsString];
-	
-	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenURLNotification object:url]];
-	
-	return YES;
+    // Do something with the url here
+    NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
+    [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+    
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenURLNotification object:url]];
+    
+    return YES;
 }
 
 - (void)dealloc
 {
     [PluginResult releaseStatus];
-	self.pluginObjects = nil;
-	self.pluginsMap	= nil;
-	self.viewController = nil;
-	self.activityView = nil;
-	self.window = nil;
-	self.imageView = nil;
+    self.pluginObjects = nil;
+    self.pluginsMap    = nil;
+    self.viewController = nil;
+    self.activityView = nil;
+    self.window = nil;
+    self.imageView = nil;
     self.whitelist = nil;
-	
-	[super dealloc];
+    
+    [super dealloc];
 }
 
 @end
@@ -824,11 +823,11 @@ BOOL gSplashScreenShown = NO;
 {
     NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:self.count];
     NSString* key;
-	
+    
     for (key in self) {
         [result setObject:[self objectForKey:key] forKey:[key lowercaseString]];
     }
-	
+    
     return result;
 }
 
