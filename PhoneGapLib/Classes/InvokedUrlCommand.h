@@ -9,7 +9,6 @@
 
 
 @interface InvokedUrlCommand : NSObject {
-	NSString* command;
 	NSString* className;
 	NSString* methodName;
 	NSMutableArray* arguments;
@@ -18,11 +17,11 @@
 
 @property(retain) NSMutableArray* arguments;
 @property(retain) NSMutableDictionary* options;
-@property(copy) NSString* command;
 @property(copy) NSString* className;
 @property(copy) NSString* methodName;
 
 + (InvokedUrlCommand*) commandFromUrl:(NSURL*)url;
++ (InvokedUrlCommand*) commandFromObject:(NSDictionary*)object;
 
 - (void) dealloc;
 

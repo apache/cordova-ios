@@ -10,8 +10,11 @@ if (typeof(DeviceInfo) !== 'object'){
  */
 PhoneGap = {
     // This queue holds the currently executing command and all pending
-    // commands.
+    // commands executed with PhoneGap.exec().
     commandQueue: [],
+    // This queue is the same as commandQueue, but for PhoneGap.fastExec()
+    // commands.
+    fastExecCommandQueue: [],
     _constructors: [],
     documentEventHandler: {},   // Collection of custom document event handlers
     windowEventHandler: {} 
@@ -225,23 +228,101 @@ PhoneGap.finishExec = function() {
 }
 
 /**
+ * Creates a gap bridge iframe used to notify the native code about queued
+ * commands.
+ */
+PhoneGap.createGapBridge = function() {
+    gapBridge = document.createElement("iframe");
+    gapBridge.setAttribute("style", "display:none;");
+    gapBridge.setAttribute("height","0px");
+    gapBridge.setAttribute("width","0px");
+    gapBridge.setAttribute("frameborder","0");
+    document.documentElement.appendChild(gapBridge);
+    return gapBridge;
+}
+
+/**
  * Internal function used to dispatch the request to PhoneGap. It executes the
  * next command on the queue.
  * 
  * @private
  */
 PhoneGap.runCommand = function() {
-    if(!this.gapBridge){
-        this.gapBridge = document.createElement("iframe");
-        this.gapBridge.setAttribute("style", "display:none;");
-        this.gapBridge.setAttribute("height","0px");
-        this.gapBridge.setAttribute("width","0px");
-        this.gapBridge.setAttribute("frameborder","0");
-        document.documentElement.appendChild(this.gapBridge);
+    if (!PhoneGap.available) {
+        alert("ERROR: Attempting to call PhoneGap.exec()"
+              +" before 'deviceready'. Ignoring.");
+        return;
     }
 
-    this.gapBridge.src = PhoneGap.commandQueue[0];
+    if (!PhoneGap.execGapBridge) {
+        PhoneGap.execGapBridge = PhoneGap.createGapBridge();
+    }
+
+    PhoneGap.execGapBridge.src = PhoneGap.commandQueue[0];
 };
+
+/**
+ * This function executes a PhoneGap command just like PhoneGap.exec(), but
+ * using a simpler and faster method. This function exists in addition to
+ * PhoneGap.exec() because unlike PhoneGap.exec(), this function does not work
+ * from an embedded iframe.
+ *
+ * Arguments this function are the same as FORMAT ONE of PhoneGap.exec(). See
+ * the documentation on PhoneGap.exec() for more information.
+ */
+PhoneGap.fastExec = function(
+    successCallback, failCallback, service, action, actionArgs) {
+    // Register the callbacks if given.
+    var callbackId = null;
+    if (successCallback || failCallback) {
+        callbackId = service + PhoneGap.callbackId++;
+        PhoneGap.callbacks[callbackId] = 
+            {success:successCallback, fail:failCallback};
+    }
+
+    // Build the command object.
+    var command = {
+        className: service,
+        methodName: action,
+        arguments: [callbackId]
+    };
+
+    for (var i = 0; i < actionArgs.length; ++i) {
+        var arg = actionArgs[i];
+        if (arg == undefined || arg == null) {
+            continue;
+        } else if (typeof(arg) == 'object') {
+            command.options = arg;
+        } else {
+            command.arguments.push(arg);
+        }
+    }
+
+    // Stringify and queue the command. We stringify to command now to
+    // effectively clone the command arguments in case they are mutated before
+    // the command is executed.
+    PhoneGap.fastExecCommandQueue.push(JSON.stringify(command));
+
+    // If the queue length is 1, then that means it was empty before we queued
+    // the given command, so let the native side know that we have some
+    // commands to execute.
+    if (PhoneGap.fastExecCommandQueue.length == 1) {
+        if (!PhoneGap.fastExecGapBridge) {
+            PhoneGap.fastExecGapBridge = PhoneGap.createGapBridge();
+        }
+        PhoneGap.fastExecGapBridge.src = "fastgap://ready";
+    }
+}
+
+/**
+ * Called by native code to retrieve all outstanding fastExec commands.
+ */
+PhoneGap.getAndClearQueuedFastExecCommands = function() {
+  json = JSON.stringify(PhoneGap.fastExecCommandQueue);
+  PhoneGap.fastExecCommandQueue = [];
+  return json;
+}
+
 /**
  * Called by native code when returning successful result from an action.
  *

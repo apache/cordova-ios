@@ -602,6 +602,51 @@ BOOL gSplashScreenShown = NO;
 }
 
 /**
+ * Fetches the fast exec command queue and executes each command. It is
+ * possible that the queue will not be empty after this function has completed
+ * since the executed commands may have run callbacks which queued more
+ * commands.
+ *
+ * Returns the number of executed commands.
+ */
+- (int)executeQueuedFastExecCommands
+{
+    // Grab all the queued commands from the JS side.
+    NSString* queuedCommandsJSON =
+        [self.webView stringByEvaluatingJavaScriptFromString:
+        @"PhoneGap.getAndClearQueuedFastExecCommands()"];
+
+    // Parse the returned JSON array.
+    SBJsonParser* jsonParser = [[[SBJsonParser alloc] init] autorelease];
+    NSArray* queuedCommands =
+        [jsonParser objectWithString:queuedCommandsJSON];
+
+    // Iterate over and execute all of the commands.
+    for (NSString* commandJson in queuedCommands) {
+        [self execute:
+            [InvokedUrlCommand commandFromObject:
+                [jsonParser objectWithString:commandJson]]];
+    }
+
+    return [queuedCommands count];
+}
+
+/**
+ * Repeatedly fetches and executes the fast exec command queue until it is
+ * empty.
+ */
+- (void)flushFastExecQueue
+{
+    // Keep executing the command queue until no commands get executed.
+    // This ensures that commands that are queued while executing other
+    // commands are executed as well.
+    int numExecutedCommands = 0;
+    do {
+        numExecutedCommands = [self executeQueuedFastExecCommands];
+    } while (numExecutedCommands != 0);
+}
+
+/**
  * Start Loading Request
  * This is where most of the magic happens... We take the request(s) and process the response.
  * From here we can re direct links and other protocalls to different internal methods.
@@ -635,6 +680,9 @@ BOOL gSplashScreenShown = NO;
             NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
             NSLog(@"Complete call: %@", [url absoluteString]);
         }
+        return NO;
+    } else if ([[url scheme] isEqualToString:@"fastgap"]) {
+        [self flushFastExecQueue];
         return NO;
     }
     /*

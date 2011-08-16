@@ -12,7 +12,6 @@
 
 @synthesize arguments;
 @synthesize options;
-@synthesize command;
 @synthesize className;
 @synthesize methodName;
 
@@ -29,10 +28,8 @@
      */
     InvokedUrlCommand* iuc = [[[InvokedUrlCommand alloc] init] autorelease];
     
-    iuc.command = [url host];
-    
     NSString * fullUrl = [url description];
-    int prefixLength = [[NSString stringWithFormat:@"%@://%@@%@/", [url scheme], [url user], [iuc command]] length]; //sessionKey is encoded in user credentials
+    int prefixLength = [[NSString stringWithFormat:@"%@://%@@%@/", [url scheme], [url user], [url host]] length]; //sessionKey is encoded in user credentials
     int qsLength = [[url query] length];
     int pathLength = [fullUrl length] - prefixLength;
 
@@ -60,7 +57,7 @@
     // Dictionary of options
     NSString* objectString = [[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     iuc.options = (NSMutableDictionary*)[objectString JSONValue];
-    NSMutableArray* components = [NSMutableArray arrayWithArray:[iuc.command componentsSeparatedByString:@"."]];
+    NSMutableArray* components = [NSMutableArray arrayWithArray:[[url host] componentsSeparatedByString:@"."]];
     if (components.count >= 2) {
         iuc.methodName = [components lastObject];
         [components removeLastObject];
@@ -70,11 +67,21 @@
     return iuc;
 }
 
++ (InvokedUrlCommand*) commandFromObject:(NSDictionary*)object
+{
+    InvokedUrlCommand* iuc = [[[InvokedUrlCommand alloc] init] autorelease];
+    iuc.className = [object objectForKey:@"className"];
+    iuc.methodName = [object objectForKey:@"methodName"];
+    iuc.arguments = [object objectForKey:@"arguments"];
+    iuc.options = [object objectForKey:@"options"];
+
+    return iuc;
+}
+
 - (void) dealloc
 {
     [arguments release];
     [options release];
-    [command release];
     [className release];
     [methodName release];
     
