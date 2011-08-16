@@ -1,10 +1,12 @@
 PhoneGap iOS
 =============================================================
 PhoneGapLib is a static library that enables users to include PhoneGap in their iOS application projects easily, and also create new PhoneGap based iOS application projects through a Xcode project template.
+<br />
 
 Pre-requisites
 -------------------------------------------------------------
 Make sure you have installed the latest iOS SDK. Download at [http://developer.apple.com/ios](http://developer.apple.com/ios)
+<br />
 
 Build and install the Installer Package
 -------------------------------------------------------------
@@ -12,10 +14,14 @@ Build and install the Installer Package
 2. Navigate to the folder where Makefile is (this folder)
 3. Type in "make" then press Enter
 
+<br />
+
 The installer should build "PhoneGapInstaller.pkg" into this folder, then:
 
 1. Quit Xcode
 2. Launch "PhoneGapInstaller.pkg" to install PhoneGapLib, the PhoneGap framework and the PhoneGap Xcode Templates.
+
+<br />
 
 Create a PhoneGap project (Xcode 3)
 -------------------------------------------------------------
@@ -24,6 +30,8 @@ Create a PhoneGap project (Xcode 3)
 2. Navigate to the "User Templates" section, select PhoneGap, then in the right pane, select "PhoneGap-based Application"
 3. Select the "Choose..." button, name your project and choose the location where you want the new project to be.
 4. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
+
+<br />
 
 Create a PhoneGap project (Xcode 4)
 -------------------------------------------------------------
@@ -36,7 +44,10 @@ Create a PhoneGap project (Xcode 4)
 6. Drag and drop this "www" folder into your project in Xcode, and add it as a folder reference.
 7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
+<br />
+
 Alternately, you can [watch this screencast](http://bit.ly/phonegap-xcode4-template).
+<br />
 
 Uninstalling PhoneGapLib, PhoneGap.framework and the Xcode Templates
 --------------------------------------------------------------------
@@ -47,8 +58,10 @@ Use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file, OR:
 2. Navigate to the folder where Makefile is (this folder)
 3. Type in "make uninstall" then press Enter
 
-NOTE: It will ask you to confirm whether you want to delete the installed PhoneGapLib directory (just in case you made changes there) as well as the PhoneGap framework. It will not ask for confirmation in deleting the installed Xcode templates.
+<br />
 
+**NOTE:** It will ask you to confirm whether you want to delete the installed PhoneGapLib directory (just in case you made changes there) as well as the PhoneGap framework. It will not ask for confirmation in deleting the installed Xcode templates.
+<br />
 
 Installer Notes
 -------------------------------------------------------------
@@ -63,10 +76,12 @@ Items that will be installed:
 5. PhoneGap Xcode static framework under /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework (may change in future updates)
 6. Symlink to the framework in (5) under ~/Library/Frameworks
 
+<br />
+
 To uninstall:
 
 Delete the files listed above, or use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file.
-
+<br />
 
 PhoneGapLib Tests
 -------------------------------------------------------------
@@ -78,9 +93,12 @@ Set up the test project:
 2. Type in "chmod 755 update_test.sh"
 3. Type in "./update_test.sh"
 
+<br />
+
 This will get the mobile-spec submodule and install it under the PhoneGapLibTests folder. You can then build and run the PhoneGapLibTest project to see the results.
 
 You should run step (3) again before running any tests, to get the updated mobile-spec.
+<br />
 
 FAQ
 ---
@@ -127,12 +145,13 @@ A. With version 0.9.6 we implemented the W3C Media Capture API, which requires u
 
 **Q. I've got other PhoneGap-specific issues not covered here?**
 
-A. Older issues have been put in the [PhoneGap iOS FAQ](http://wiki.phonegap.com/w/page/41631150/PhoneGap-for-iOS-FAQ) on the [Wiki](http://wiki.phonegap.com).
+A. Older issues have been put in the [PhoneGap iOS FAQ](http://wiki.phonegap.com/w/page/41631150/PhoneGap-for-iOS-FAQ) on the [Wiki](http://wiki.phonegap.com).      
 
 
 BUGS?
 -----
-File them at [PhoneGap-iOS GitHub Issues](https://github.com/phonegap/phonegap-iphone/issues)
+File them at [PhoneGap-iOS GitHub Issues](https://github.com/phonegap/phonegap-iphone/issues)      
+<br />
 
 MORE INFO
 ----------
@@ -140,3 +159,5 @@ MORE INFO
 - [http://wiki.phonegap.com](http://wiki.phonegap.com)
 - [http://groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
 - #phonegap channel on [Freenode IRC](http://freenode.net/)
+
+<br />
