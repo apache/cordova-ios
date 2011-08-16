@@ -270,25 +270,42 @@ PhoneGap.runCommand = function() {
  * PhoneGap.exec() because unlike PhoneGap.exec(), this function does not work
  * from an embedded iframe.
  *
- * Arguments this function are the same as FORMAT ONE of PhoneGap.exec(). See
- * the documentation on PhoneGap.exec() for more information.
+ * Arguments for this function are the same as for PhoneGap.exec(). See the
+ * documentation on PhoneGap.exec() for more information.
  */
-PhoneGap.fastExec = function(
-    successCallback, failCallback, service, action, actionArgs) {
-    // Register the callbacks if given.
+PhoneGap.fastExec = function() {
+    var successCallback, failCallback, service, action, actionArgs;
+    if (typeof arguments[0] !== "string") {
+        // FORMAT ONE
+        successCallback = arguments[0];
+        failCallback = arguments[1];
+        service = arguments[2];
+        action = arguments[3];
+        actionArgs = arguments[4];
+    } else {
+        // FORMAT TWO
+        splitCommand = arguments[0].split(".");
+        action = splitCommand.pop();
+        service = splitCommand.join(".");
+        actionArgs = Array.prototype.splice.call(arguments, 1);
+    }
+    
+    // Start building the command object.
+    var command = {
+        className: service,
+        methodName: action,
+        arguments: []
+    };
+
+    // Register the callbacks and add the callbackId to the positional
+    // arguments if given.
     var callbackId = null;
     if (successCallback || failCallback) {
         callbackId = service + PhoneGap.callbackId++;
         PhoneGap.callbacks[callbackId] = 
             {success:successCallback, fail:failCallback};
+        command.arguments.push(callbackId);
     }
-
-    // Build the command object.
-    var command = {
-        className: service,
-        methodName: action,
-        arguments: [callbackId]
-    };
 
     for (var i = 0; i < actionArgs.length; ++i) {
         var arg = actionArgs[i];
