@@ -15,6 +15,9 @@ PhoneGap = {
     // This queue is the same as commandQueue, but for PhoneGap.fastExec()
     // commands.
     fastExecCommandQueue: [],
+    // Indicates if we're currently in the middle of flushing the fast exec
+    // queue on the native side.
+    fastExecFlushing: false,
     _constructors: [],
     documentEventHandler: {},   // Collection of custom document event handlers
     windowEventHandler: {} 
@@ -305,8 +308,10 @@ PhoneGap.fastExec = function(
 
     // If the queue length is 1, then that means it was empty before we queued
     // the given command, so let the native side know that we have some
-    // commands to execute.
-    if (PhoneGap.fastExecCommandQueue.length == 1) {
+    // commands to execute, unless the queue is currently being flushed, in
+    // which case the command will be picked up without notification.
+    if (PhoneGap.fastExecCommandQueue.length == 1 
+        && !PhoneGap.fastExecFlushing) {
         if (!PhoneGap.fastExecGapBridge) {
             PhoneGap.fastExecGapBridge = PhoneGap.createGapBridge();
         }

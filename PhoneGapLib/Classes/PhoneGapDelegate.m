@@ -637,6 +637,9 @@ BOOL gSplashScreenShown = NO;
  */
 - (void)flushFastExecQueue
 {
+    [self.webView stringByEvaluatingJavaScriptFromString:
+        @"PhoneGap.fastExecFlushing = true"];
+
     // Keep executing the command queue until no commands get executed.
     // This ensures that commands that are queued while executing other
     // commands are executed as well.
@@ -644,6 +647,9 @@ BOOL gSplashScreenShown = NO;
     do {
         numExecutedCommands = [self executeQueuedFastExecCommands];
     } while (numExecutedCommands != 0);
+
+    [self.webView stringByEvaluatingJavaScriptFromString:
+        @"PhoneGap.fastExecFlushing = false"];
 }
 
 /**
