@@ -43,19 +43,15 @@
 <br />
 
 **IMPORTANT:** On first run, it will create a sample "www" folder for you inside your project. After that, you MUST drag and drop the "www" folder into your project in Xcode, to create a **folder reference** for it.
-
 <br />
 
 **IMPORTANT:** For the "CoreMedia", "UIKit" and "AVFoundation" frameworks, you MUST set the linkage as "Optional", if not iOS 3.x devices will crash. The linkage type could not be set in the template itself (undocumented).
-
 <br />
 
 **NOTE:** In post-1.0.0 releases, new project templates have these 3 frameworks specified above weak linked through linker flags during compile time, and you will not have to do this manually anymore.
-
 <br />
 
 That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
-
 <br />
 
 ## Xcode 3
