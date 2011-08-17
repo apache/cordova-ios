@@ -26,14 +26,6 @@ typedef NSUInteger EncodingType;
 
 @interface CameraPicker : UIImagePickerController
 {
-	NSString* callbackid;
-	NSInteger quality;
-  CGSize targetSize;
-  bool correctOrientation;
-	NSString* postUrl;
-	enum DestinationType returnType;
-    enum EncodingType encodingType;
-	UIPopoverController* popoverController; 
 }
 
 
@@ -42,7 +34,7 @@ typedef NSUInteger EncodingType;
 @property (copy)   NSString* postUrl;
 @property (nonatomic) enum DestinationType returnType;
 @property (nonatomic) enum EncodingType encodingType;
-@property (assign) UIPopoverController* popoverController; 
+@property (retain) UIPopoverController* popoverController; 
 @property (assign) CGSize targetSize;
 @property (assign) bool correctOrientation;
 
