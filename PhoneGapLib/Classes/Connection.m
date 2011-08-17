@@ -71,9 +71,9 @@
 	NetworkStatus status = [self.internetReach currentReachabilityStatus];
 	BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
 	if (online) {
-		[super writeJavascript:@"PhoneGap.fireEvent('online');"];
+		[super writeJavascript:@"PhoneGap.fireDocumentEvent('online');"];
 	} else {
-		[super writeJavascript:@"PhoneGap.fireEvent('offline');"];
+		[super writeJavascript:@"PhoneGap.fireDocumentEvent('offline');"];
 	}
 }
 

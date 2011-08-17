@@ -680,10 +680,6 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationWillTerminate:(UIApplication *)application
 {
 
-	NSString* jsString = @"PhoneGap.onUnload();";
-	// Doing nothing with the callback string, just to make sure we are making a sync call
-	NSString* ret = [self.webView stringByEvaluatingJavaScriptFromString:jsString];
-#pragma unused(ret)	
 	NSLog(@"applicationWillTerminate");
 	
 	// empty the tmp directory
@@ -723,7 +719,7 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
 	//NSLog(@"%@",@"applicationWillEnterForeground");
-	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireEvent('resume');"];
+	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resume');"];
 
 }
 
@@ -740,7 +736,7 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	//NSLog(@"%@",@"applicationDidEnterBackground");
-	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireEvent('pause');"];
+	[self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('pause');"];
 }
 
 

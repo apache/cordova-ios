@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1F2BECC013F9785B00A93BF6 /* Battery.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2BECBE13F9785B00A93BF6 /* Battery.h */; };
+		1F2BECC113F9785B00A93BF6 /* Battery.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2BECBF13F9785B00A93BF6 /* Battery.m */; };
 		1F3C04CE12BC247D004F9E10 /* Contact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C04CC12BC247D004F9E10 /* Contact.h */; };
 		1F3C04CF12BC247D004F9E10 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C04CD12BC247D004F9E10 /* Contact.m */; };
 		1F584B9B1385A28A00ED25E8 /* Capture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F584B991385A28900ED25E8 /* Capture.h */; };
@@ -145,6 +147,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F2BECBE13F9785B00A93BF6 /* Battery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Battery.h; path = Classes/Battery.h; sourceTree = "<group>"; };
+		1F2BECBF13F9785B00A93BF6 /* Battery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Battery.m; path = Classes/Battery.m; sourceTree = "<group>"; };
 		1F3C04CC12BC247D004F9E10 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contact.h; path = Classes/Contact.h; sourceTree = "<group>"; };
 		1F3C04CD12BC247D004F9E10 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contact.m; path = Classes/Contact.m; sourceTree = "<group>"; };
 		1F584B991385A28900ED25E8 /* Capture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Capture.h; path = Classes/Capture.h; sourceTree = "<group>"; };
@@ -268,6 +272,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				1F2BECBE13F9785B00A93BF6 /* Battery.h */,
+				1F2BECBF13F9785B00A93BF6 /* Battery.m */,
 				30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */,
 				30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */,
 				30B39EBC13D0268B0009682A /* PGSplashScreen.h */,
@@ -441,6 +447,7 @@
 				302965BC13A94E9D007046C5 /* PGDebug.h in Headers */,
 				30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */,
 				30E563CF13E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
+				1F2BECC013F9785B00A93BF6 /* Battery.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -638,6 +645,7 @@
 				30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */,
 				30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */,
 				30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
+				1F2BECC113F9785B00A93BF6 /* Battery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
