@@ -91,8 +91,7 @@ clean-markdown:
 clean-installer:
 	@$(RM_F) PhoneGapInstaller/docs/*.rtf
 	@$(RM_F) PhoneGapInstaller/docs/*.pdf
-	@$(RM_F) PhoneGapInstaller/docs/LICENSE.html
-	@$(RM_F) PhoneGapInstaller/docs/combined.html
+	@$(RM_F) PhoneGapInstaller/docs/*.html
 
 clean-phonegap-lib:
 	@if [ -e "$(BUILD_BAK)/VERSION" ]; then \
@@ -127,33 +126,52 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 	@$(RM_RF) $(BUILD_BAK)
 
 installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
-	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html PhoneGapInstaller/docs/releasenotes.html.bak 
-	@$(MV) -f PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/finishup.html.bak 
-	@$(CAT) PhoneGapInstaller/docs/finishup.html.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/finishup.html
-	@$(CAT) PhoneGapInstaller/docs/releasenotes.html.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/releasenotes.html
+	@# remove the dist folder
+	@if [ -d "dist" ]; then \
+		$(CP) -Rf dist ~/.Trash; \
+		$(RM_RF) dist; \
+	fi		
+	@# backup markdown files for version replace
+	@$(MV) -f PhoneGapInstaller/docs/releasenotes.md PhoneGapInstaller/docs/releasenotes.md.bak 
+	@$(MV) -f PhoneGapInstaller/docs/finishup.md PhoneGapInstaller/docs/finishup.md.bak 
+	@$(CAT) PhoneGapInstaller/docs/finishup.md.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/finishup.md
+	@$(CAT) PhoneGapInstaller/docs/releasenotes.md.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/releasenotes.md
+	@# generate releasenotes html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/releasenotes.html
+	@perl Markdown_1.0.1/Markdown.pl PhoneGapInstaller/docs/releasenotes.md >> PhoneGapInstaller/docs/releasenotes.html
+	@echo '</body></html>'  >> PhoneGapInstaller/docs/releasenotes.html
+	@# generate finishup html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/finishup.html
+	@perl Markdown_1.0.1/Markdown.pl PhoneGapInstaller/docs/finishup.md >> PhoneGapInstaller/docs/finishup.html
+	@echo '</body></html>'  >> PhoneGapInstaller/docs/finishup.html
+	@# convert all the html files to rtf
 	@textutil -convert rtf -font 'Helvetica' PhoneGapInstaller/docs/*.html
+	@# build the .pkg file
 	@echo "Building PhoneGap-${PGVER}.pkg..."	
-	@$(MKPATH) dist
-	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
-	@osacompile -o ./dist/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/releasenotes.html -o ./dist/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
-	@textutil -convert html -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.html
-	@textutil -cat html PhoneGapInstaller/docs/finishup.html PhoneGapInstaller/docs/readme.html PhoneGapInstaller/docs/LICENSE.html -output PhoneGapInstaller/docs/combined.html
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/combined.html -o dist/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
-	@$(MV) -f PhoneGapInstaller/docs/releasenotes.html.bak PhoneGapInstaller/docs/releasenotes.html 
-	@$(MV) -f PhoneGapInstaller/docs/finishup.html.bak PhoneGapInstaller/docs/finishup.html
-	@# must be run under one line to get return code
+	@$(MKPATH) dist/files
+	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/files/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@# create the applescript uninstaller
+	@osacompile -o ./dist/files/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
+	@# convert the html docs to rtf, concatenate
+	@textutil -convert rtf  PhoneGapInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
+	@textutil -convert rtf -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.rtf
+	@textutil -cat rtf PhoneGapInstaller/docs/finishup.rtf PhoneGapInstaller/docs/readme.rtf PhoneGapInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
+	@# restore backed-up markdown files
+	@$(MV) -f PhoneGapInstaller/docs/releasenotes.md.bak PhoneGapInstaller/docs/releasenotes.md 
+	@$(MV) -f PhoneGapInstaller/docs/finishup.md.bak PhoneGapInstaller/docs/finishup.md
+	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
-		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/PhoneGap-${PGVER}.pkg;  \
+		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/files/PhoneGap-${PGVER}.pkg;  \
 	fi
-	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/ -ov -volname PhoneGap-${PGVER}
+	@# create the .dmg	
+	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/files/ -ov -volname PhoneGap-${PGVER}
 	@cd dist;openssl sha1 PhoneGap-${PGVER}.dmg > PhoneGap-${PGVER}.dmg.SHA1;cd -;
 	@echo "Done."
 	@make clean
 
 install: installer
-	@open dist/PhoneGap-${PGVER}.pkg
+	@open dist/files/PhoneGap-${PGVER}.pkg
 
 uninstall:
 	@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/PhoneGap
@@ -172,11 +190,13 @@ uninstall:
 	fi	
 
 markdown:
+	@# download markdown if necessary
 	@if [[ ! -d "Markdown_1.0.1" ]]; then \
 		echo "Downloading Markdown 1.0.1..."; \
 		curl -L http://daringfireball.net/projects/downloads/Markdown_1.0.1.zip > Markdown_1.0.1.zip; \
 		unzip Markdown_1.0.1.zip -d . > /dev/null; \
 	fi
+	@# generate readme html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/readme.html
 	@perl Markdown_1.0.1/Markdown.pl README.md >> PhoneGapInstaller/docs/readme.html
 	@echo '</body></html>'  >> PhoneGapInstaller/docs/readme.html

@@ -425,7 +425,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "___PROJECTNAMEASIDENTIFIER___-Prefix.pch";
 				INFOPLIST_FILE = "___PROJECTNAMEASIDENTIFIER___-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PRODUCT_NAME = "___PROJECTNAME___";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -437,7 +439,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "___PROJECTNAMEASIDENTIFIER___-Prefix.pch";
 				INFOPLIST_FILE = "___PROJECTNAMEASIDENTIFIER___-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PRODUCT_NAME = "___PROJECTNAME___";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -453,6 +457,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
+					"-weak_framework",
+					UIKit,
+					"-weak_framework",
+					AVFoundation,
+					"-weak_framework",
+					CoreMedia,
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
 					"-all_load",
@@ -477,6 +487,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
+					"-weak_framework",
+					UIKit,
+					"-weak_framework",
+					AVFoundation,
+					"-weak_framework",
+					CoreMedia,
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
 					"-all_load",
