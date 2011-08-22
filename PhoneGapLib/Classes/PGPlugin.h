@@ -46,6 +46,7 @@ callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
 - (UIViewController*) appViewController;
 
 - (NSString*) writeJavascript:(NSString*)javascript;
+- (NSString*) success:(PluginResult*)pluginResult callbackId:(NSString*)callbackId;
 - (BOOL) verifyArguments:(NSMutableArray*)arguments withExpectedCount:(NSUInteger)expectedCount andCallbackId:(NSString*)callbackId 
 		  callerFileName:(const char*)callerFileName callerFunctionName:(const char*)callerFunctionName;
 

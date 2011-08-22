@@ -140,4 +140,14 @@
 	return [self.webView stringByEvaluatingJavaScriptFromString:javascript];
 }
 
+- (NSString*) success:(PluginResult*)pluginResult callbackId:(NSString*)callbackId
+{
+	return [self writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toSuccessCallbackString:callbackId]]];
+}
+
+- (NSString*) error:(PluginResult*)pluginResult callbackId:(NSString*)callbackId
+{
+	return [self writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toErrorCallbackString:callbackId]]];
+}
+
 @end
