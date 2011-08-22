@@ -631,6 +631,10 @@ BOOL gSplashScreenShown = NO;
 		self.loadFromString = NO;
 		return YES;
 	}
+    else if ([[url scheme] isEqualToString:@"about"]) 
+    {
+        return NO;
+    }
     /*
      * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
 	 * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555
