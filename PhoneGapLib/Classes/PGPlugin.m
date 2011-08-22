@@ -142,7 +142,12 @@
 
 - (NSString*) success:(PluginResult*)pluginResult callbackId:(NSString*)callbackId
 {
-	return [self.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toSuccessCallbackString:self.callbackId]]];
+	return [self writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toSuccessCallbackString:callbackId]]];
+}
+
+- (NSString*) error:(PluginResult*)pluginResult callbackId:(NSString*)callbackId
+{
+	return [self writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toErrorCallbackString:callbackId]]];
 }
 
 @end
