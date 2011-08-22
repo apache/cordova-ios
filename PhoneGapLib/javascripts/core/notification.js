@@ -16,7 +16,10 @@ Notification = function() {
  * @param {String} buttonLabel          Label of the close button (default: OK)
  */
 Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
-    var _title = (title || "Alert");
+    var _title = title;
+    if (title == null || typeof title === 'undefined') {
+        _title = "Alert";
+    }
     var _buttonLabel = (buttonLabel || "OK");
     PhoneGap.exec(completeCallback, null, "com.phonegap.notification", "alert", [message,{ "title": _title, "buttonLabel": _buttonLabel}]);
 };
