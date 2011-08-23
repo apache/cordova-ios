@@ -602,26 +602,33 @@ BOOL gSplashScreenShown = NO;
     }
 	else if ( [ [url scheme] isEqualToString:@"http"] || [ [url scheme] isEqualToString:@"https"] ) 
 	{
-		// iterate through settings externalDomains
-		// check for equality
-		NSEnumerator *e = [[self.settings objectForKey:@"ExternalHosts"] objectEnumerator];
-		id obj;
+		// iterate through settings ExternalHosts, check for equality
+		NSEnumerator* enumerator = [[self.settings objectForKey:@"ExternalHosts"] objectEnumerator];
+		id obj = nil;
 
-		while (obj = [e nextObject]) {
-			if ([[url host] isEqualToString:obj]) {
-				return YES;
+        // if the url host IS found in the whitelist, load it in the app (however UIWebViewNavigationTypeOther kicks it out to Safari)
+        // if the url host IS NOT found in the whitelist, we do nothing
+		while (obj = [enumerator nextObject]) 
+        {
+			if ([[url host] isEqualToString:obj]) 
+            {
+                // anchor target="_blank" - load in Mobile Safari
+                if (navigationType == UIWebViewNavigationTypeOther) 
+                {
+                    [[UIApplication sharedApplication] openURL:url];
+                    return NO;
+                }
+                // other anchor target - load in PhoneGap webView
+                else 
+                {
+                    return YES;
+                }		
 			}
 		}
-
-		if(navigationType == UIWebViewNavigationTypeOther)
-		{
-			[[UIApplication sharedApplication] openURL:url];
-			return NO;
-		}
-		else 
-		{
-			return YES;
-		}		
+        
+        // if we got here, the url host is not in the white-list, do nothing
+		NSLog(@"ERROR: Url '%@' is not in the white-list at PhoneGap.plist/ExternalHosts", [url description]);
+        return NO;
 	}
 	/*
 	 *	If we loaded the HTML from a string, we let the app handle it
@@ -631,6 +638,9 @@ BOOL gSplashScreenShown = NO;
 		self.loadFromString = NO;
 		return YES;
 	}
+    /*
+     * all about: scheme urls are not handled
+     */
     else if ([[url scheme] isEqualToString:@"about"]) 
     {
         return NO;
