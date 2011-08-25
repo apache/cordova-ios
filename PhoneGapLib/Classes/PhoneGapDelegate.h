@@ -7,23 +7,14 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import <UIKit/UINavigationController.h>
 #import "JSON.h"
-
-#import "Location.h"
-#import "Sound.h"
-
-
-#import "DebugConsole.h"
-
 
 @class InvokedUrlCommand;
 @class PhoneGapViewController;
 @class Sound;
 @class Contacts;
 @class Console;
-
+@class PGWhitelist;
 
 @interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
 {
@@ -41,6 +32,7 @@
 @property (assign) BOOL loadFromString;
 @property (assign) UIInterfaceOrientation orientationType;
 @property (nonatomic, retain) NSString *sessionKey;
+@property (nonatomic, retain) PGWhitelist* whitelist;
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;

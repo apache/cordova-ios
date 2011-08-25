@@ -6,12 +6,18 @@
  * Copyright (c) 2010, IBM Corporation
  */
 
-#import "PhoneGapDelegate.h"
-#import "PhoneGapViewController.h"
 #import <UIKit/UIKit.h>
-#import "InvokedUrlCommand.h"
+#import <CoreLocation/CoreLocation.h>
+
+#import "Location.h"
+#import "Sound.h"
+#import "DebugConsole.h"
 #import "Connection.h"
 
+#import "PGWhitelist.h"
+#import "InvokedUrlCommand.h"
+#import "PhoneGapDelegate.h"
+#import "PhoneGapViewController.h"
 #import "PGPlugin.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
@@ -23,7 +29,7 @@
 
 @synthesize window, webView, viewController, activityView, imageView;
 @synthesize settings, invokedURL, loadFromString, orientationType, sessionKey;
-@synthesize pluginObjects, pluginsMap;
+@synthesize pluginObjects, pluginsMap, whitelist;
 
 - (id) init
 {
@@ -315,6 +321,9 @@ BOOL gSplashScreenShown = NO;
 		NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
 		return NO;
 	}
+    
+    // set the whitelist
+    self.whitelist = [[[PGWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]] autorelease];
 	
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
 	
@@ -601,58 +610,22 @@ BOOL gSplashScreenShown = NO;
 		return YES;
 	}
 	else if ( [ [url scheme] isEqualToString:@"http"] || [ [url scheme] isEqualToString:@"https"] )
-	{
-		// iterate through settings ExternalHosts, check for equality
-		NSEnumerator* enumerator = [[self.settings objectForKey:@"ExternalHosts"] objectEnumerator];
-		id externalHost = nil;
-		NSString* urlHost = [url host];
-        
-        // only allow known TLDs (since Aug 23rd 2011), and two character country codes
-        // does not match internationalized domain names with non-ASCII characters
-        NSString* tld_match = @"(aero|asia|arpa|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx|[a-z][a-z])";
-        
-		// if the url host IS found in the whitelist, load it in the app (however UIWebViewNavigationTypeOther kicks it out to Safari)
-		// if the url host IS NOT found in the whitelist, we do nothing
-		while (externalHost = [enumerator nextObject])
+	{            
+        if ([self.whitelist URLIsAllowed:url] == YES)
 		{
-			NSString* regex = [[externalHost copy] autorelease];
-            
-            // starts with wildcard match - we make the first '.' optional (so '*.phonegap.com' will match 'phonegap.com')
-            if ([regex hasPrefix:@"*."]) { 
-                // replace the first two characters '*.' with our regex
-                regex = [regex stringByReplacingCharactersInRange:NSMakeRange(0, 2) withString:@"(\\s{0}|*.)"]; // the '*' and '.' will be substituted later
+            // anchor target="_blank" - load in Mobile Safari
+            if (navigationType == UIWebViewNavigationTypeOther)
+            {
+                [[UIApplication sharedApplication] openURL:url];
+                return NO;
             }
-
-            // ends with wildcard match for TLD
-            if ([regex hasSuffix:@".*"]) { 
-                // replace * with tld_match
-                regex = [regex stringByReplacingCharactersInRange:NSMakeRange([regex length]-1, 1) withString:tld_match];
+            // other anchor target - load in PhoneGap webView
+            else
+            {
+                return YES;
             }
-             // escape periods - since '.' means any character in regex
-			regex = [regex stringByReplacingOccurrencesOfString:@"." withString:@"\\."];
-            // wildcard is match 1 or more characters (to make it simple, since we are not doing verification whether the hostname is valid)
-			regex = [regex stringByReplacingOccurrencesOfString:@"*" withString:@".*"];  
-            
-			NSPredicate* regex_test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-            
-			if ([regex_test evaluateWithObject:urlHost] == YES)
-			{
-				// anchor target="_blank" - load in Mobile Safari
-				if (navigationType == UIWebViewNavigationTypeOther)
-				{
-					[[UIApplication sharedApplication] openURL:url];
-					return NO;
-				}
-				// other anchor target - load in PhoneGap webView
-				else
-				{
-					return YES;
-				}
-			}
 		}
         
-		// if we got here, the url host is not in the white-list, do nothing
-		NSLog(@"ERROR: Url '%@' is not in the white-list at PhoneGap.plist/ExternalHosts", [url description]);
 		return NO;
 	}
 	/*
@@ -807,6 +780,7 @@ BOOL gSplashScreenShown = NO;
 	self.activityView = nil;
 	self.window = nil;
 	self.imageView = nil;
+    self.whitelist = nil;
 	
 	[super dealloc];
 }
