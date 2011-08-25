@@ -25,6 +25,29 @@
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
+// class extension
+@interface PhoneGapDelegate ()
+
+// readwrite access for self
+
+@property (nonatomic, readwrite, retain) IBOutlet UIWindow *window;
+@property (nonatomic, readwrite, retain) IBOutlet UIWebView *webView;
+@property (nonatomic, readwrite, retain) IBOutlet PhoneGapViewController *viewController;
+@property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView *activityView;
+@property (nonatomic, readwrite, retain) UIImageView *imageView;
+@property (nonatomic, readwrite, retain) NSMutableDictionary *pluginObjects;
+@property (nonatomic, readwrite, retain) NSDictionary *pluginsMap;
+@property (nonatomic, readwrite, retain) NSDictionary *settings;
+@property (nonatomic, readwrite, retain) NSURL *invokedURL;
+@property (readwrite, assign) BOOL loadFromString;
+@property (readwrite, assign) UIInterfaceOrientation orientationType;
+
+@property (nonatomic, readwrite, retain) NSString *sessionKey; 
+@property (nonatomic, readwrite, retain) PGWhitelist* whitelist; 
+
+@end
+
+
 @implementation PhoneGapDelegate
 
 @synthesize window, webView, viewController, activityView, imageView;

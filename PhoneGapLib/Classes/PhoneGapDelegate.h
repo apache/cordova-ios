@@ -20,19 +20,15 @@
 {
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet UIWebView *webView;
-@property (nonatomic, retain) IBOutlet PhoneGapViewController *viewController;
-@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityView;
-@property (nonatomic, retain) UIImageView *imageView;
-@property (nonatomic, retain) NSMutableDictionary *pluginObjects;
-@property (nonatomic, retain) NSDictionary *pluginsMap;
-@property (nonatomic, retain) NSDictionary *settings;
-@property (nonatomic, retain) NSURL *invokedURL;
-@property (assign) BOOL loadFromString;
-@property (assign) UIInterfaceOrientation orientationType;
-@property (nonatomic, retain) NSString *sessionKey;
-@property (nonatomic, retain) PGWhitelist* whitelist;
+@property (nonatomic, readonly, retain) IBOutlet UIWindow *window;
+@property (nonatomic, readonly, retain) IBOutlet UIWebView *webView;
+@property (nonatomic, readonly, retain) IBOutlet PhoneGapViewController *viewController;
+@property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView *activityView;
+@property (nonatomic, readonly, retain) UIImageView *imageView;
+@property (nonatomic, readonly, retain) NSMutableDictionary *pluginObjects;
+@property (nonatomic, readonly, retain) NSDictionary *pluginsMap;
+@property (nonatomic, readonly, retain) NSDictionary *settings;
+@property (nonatomic, readonly, retain) PGWhitelist* whitelist; // readonly for public
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;
