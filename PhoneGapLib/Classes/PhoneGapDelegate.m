@@ -306,6 +306,40 @@ static NSString *gapVersion;
     self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
 	[self.imageView setTransform:startupImageTransform];
 	[self.window addSubview:self.imageView];
+    
+    
+	/*
+	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
+	 *
+	 *	 whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
+	 *	 white      = UIActivityIndicatorViewStyleWhite
+	 *	 gray       = UIActivityIndicatorViewStyleGray
+	 *
+	 */
+    NSString *topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
+    UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    
+    if ([topActivityIndicator isEqualToString:@"whiteLarge"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    } else if ([topActivityIndicator isEqualToString:@"white"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
+    } else if ([topActivityIndicator isEqualToString:@"gray"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    }
+    
+	self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
+    self.activityView.tag = 2;
+
+	id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
+	// backwards compatibility - if key is missing, default to true
+	if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
+		[self.window addSubview:self.activityView];
+	}
+    
+	self.activityView.center = self.viewController.view.center;
+    [self.activityView startAnimating];
+    
+    
     [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250 	self.window.autoresizesSubviews = YES;
 }	
 
@@ -353,7 +387,6 @@ BOOL gSplashScreenShown = NO;
 	self.viewController = [[[PhoneGapViewController alloc] init] autorelease];
 	
     NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
-    NSString *topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
     NSString *enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
 	
 	
@@ -422,35 +455,6 @@ BOOL gSplashScreenShown = NO;
 		[self.webView loadHTMLString:html baseURL:nil];
 		self.loadFromString = YES;
 	}
-
-	/*
-	 * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
-	 *
-	 *	 whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
-	 *	 white      = UIActivityIndicatorViewStyleWhite
-	 *	 gray       = UIActivityIndicatorViewStyleGray
-	 *
-	 */
-    UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-    if ([topActivityIndicator isEqualToString:@"whiteLarge"]) {
-        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    } else if ([topActivityIndicator isEqualToString:@"white"]) {
-        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
-    } else if ([topActivityIndicator isEqualToString:@"gray"]) {
-        topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-    }
-    
-	self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
-    self.activityView.tag = 2;
-
-	id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
-	// backwards compatibility - if key is missing, default to true
-	if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
-		[self.window addSubview:self.activityView];
-	}
-    
-	self.activityView.center = self.viewController.view.center;
-    [self.activityView startAnimating];
 
 	[self.window makeKeyAndVisible];
 	
