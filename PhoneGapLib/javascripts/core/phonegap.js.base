@@ -275,6 +275,7 @@ PhoneGap.runCommand = function() {
  */
 PhoneGap.fastExec = function() {
     var successCallback, failCallback, service, action, actionArgs;
+    var callbackId = null;
     if (typeof arguments[0] !== "string") {
         // FORMAT ONE
         successCallback = arguments[0];
@@ -282,6 +283,12 @@ PhoneGap.fastExec = function() {
         service = arguments[2];
         action = arguments[3];
         actionArgs = arguments[4];
+
+        // Since we need to maintain backwards compatibility, we have to pass
+        // an invalid callbackId even if no callback was provided since plugins
+        // will be expecting it. The PhoneGap.exec() implementation allocates
+        // an invalid callbackId and passes it even if no callbacks were given.
+        callbackId = 'INVALID';
     } else {
         // FORMAT TWO
         splitCommand = arguments[0].split(".");
@@ -299,11 +306,12 @@ PhoneGap.fastExec = function() {
 
     // Register the callbacks and add the callbackId to the positional
     // arguments if given.
-    var callbackId = null;
     if (successCallback || failCallback) {
         callbackId = service + PhoneGap.callbackId++;
         PhoneGap.callbacks[callbackId] = 
             {success:successCallback, fail:failCallback};
+    }
+    if (callbackId != null) {
         command.arguments.push(callbackId);
     }
 
