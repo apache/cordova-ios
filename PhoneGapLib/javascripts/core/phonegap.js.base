@@ -274,6 +274,12 @@ PhoneGap.runCommand = function() {
  * documentation on PhoneGap.exec() for more information.
  */
 PhoneGap.fastExec = function() {
+    if (!PhoneGap.available) {
+        alert("ERROR: Attempting to call PhoneGap.fastExec()"
+              +" before 'deviceready'. Ignoring.");
+        return;
+    }
+
     var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
     if (typeof arguments[0] !== "string") {
