@@ -22,6 +22,14 @@
     return self;
 }
 
+- (BOOL) schemeIsAllowed:(NSString*)scheme
+{
+    return ([scheme isEqualToString:@"http"] || 
+            [scheme isEqualToString:@"https"] || 
+            [scheme isEqualToString:@"ftp"] || 
+            [scheme isEqualToString:@"ftps"] );
+}
+
 - (BOOL) URLIsAllowed:(NSURL*)url
 {
     if (self.whitelist == nil) {
@@ -69,9 +77,14 @@
         }
     }
     
+    NSLog([self errorStringForURL:url], @"");
     // if we got here, the url host is not in the white-list, do nothing
-    NSLog(@"ERROR: Url '%@' is not in the white-list at PhoneGap.plist/ExternalHosts", [url description]);
     return NO;
+}
+
+- (NSString*) errorStringForURL:(NSURL*)url
+{
+    return [NSString stringWithFormat:@"ERROR whitelist rejection: url='%@'", [url absoluteString]];
 }
 
 @end

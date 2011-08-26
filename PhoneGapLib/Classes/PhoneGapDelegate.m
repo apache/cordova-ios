@@ -14,6 +14,7 @@
 #import "DebugConsole.h"
 #import "Connection.h"
 
+#import "PGURLProtocol.h"
 #import "PGWhitelist.h"
 #import "InvokedUrlCommand.h"
 #import "PhoneGapDelegate.h"
@@ -72,6 +73,8 @@
 		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
 												   object:nil];
+        
+        [PGURLProtocol registerPGHttpURLProtocol];
     }
     return self; 
 }
@@ -636,7 +639,7 @@ BOOL gSplashScreenShown = NO;
 	{
 		return YES;
 	}
-	else if ( [ [url scheme] isEqualToString:@"http"] || [ [url scheme] isEqualToString:@"https"] )
+	else if ([self.whitelist schemeIsAllowed:[url scheme]])
 	{            
         if ([self.whitelist URLIsAllowed:url] == YES)
 		{

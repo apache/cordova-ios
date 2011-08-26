@@ -99,6 +99,10 @@
 		30C684811406CB38004C1A8E /* PGWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C6847E1406CB38004C1A8E /* PGWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30C684821406CB38004C1A8E /* PGWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C6847F1406CB38004C1A8E /* PGWhitelist.m */; };
 		30C684831406CB38004C1A8E /* PGWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C6847F1406CB38004C1A8E /* PGWhitelist.m */; };
+		30C684941407044B004C1A8E /* PGURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C684921407044A004C1A8E /* PGURLProtocol.h */; };
+		30C684951407044B004C1A8E /* PGURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C684921407044A004C1A8E /* PGURLProtocol.h */; };
+		30C684961407044B004C1A8E /* PGURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C684931407044A004C1A8E /* PGURLProtocol.m */; };
+		30C684971407044B004C1A8E /* PGURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C684931407044A004C1A8E /* PGURLProtocol.m */; };
 		30E33AF213A7E24B00594D64 /* PGPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E33AF013A7E24B00594D64 /* PGPlugin.h */; };
 		30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
 		30E563CF13E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */; };
@@ -170,6 +174,8 @@
 		30B39EBD13D0268B0009682A /* PGSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGSplashScreen.m; path = Classes/PGSplashScreen.m; sourceTree = "<group>"; };
 		30C6847E1406CB38004C1A8E /* PGWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGWhitelist.h; path = Classes/PGWhitelist.h; sourceTree = "<group>"; };
 		30C6847F1406CB38004C1A8E /* PGWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGWhitelist.m; path = Classes/PGWhitelist.m; sourceTree = "<group>"; };
+		30C684921407044A004C1A8E /* PGURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGURLProtocol.h; path = Classes/PGURLProtocol.h; sourceTree = "<group>"; };
+		30C684931407044A004C1A8E /* PGURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGURLProtocol.m; path = Classes/PGURLProtocol.m; sourceTree = "<group>"; };
 		30E33AF013A7E24B00594D64 /* PGPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGPlugin.h; path = Classes/PGPlugin.h; sourceTree = "<group>"; };
 		30E33AF113A7E24B00594D64 /* PGPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPlugin.m; path = Classes/PGPlugin.m; sourceTree = "<group>"; };
 		30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMutableArray+QueueAdditions.h"; path = "Classes/NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
@@ -278,6 +284,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30C684921407044A004C1A8E /* PGURLProtocol.h */,
+				30C684931407044A004C1A8E /* PGURLProtocol.m */,
 				30C6847E1406CB38004C1A8E /* PGWhitelist.h */,
 				30C6847F1406CB38004C1A8E /* PGWhitelist.m */,
 				1F2BECBE13F9785B00A93BF6 /* Battery.h */,
@@ -418,6 +426,7 @@
 				30C684811406CB38004C1A8E /* PGWhitelist.h in Headers */,
 				30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */,
 				30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
+				30C684951407044B004C1A8E /* PGURLProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +467,7 @@
 				30E563CF13E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
 				1F2BECC013F9785B00A93BF6 /* Battery.h in Headers */,
 				30C684801406CB38004C1A8E /* PGWhitelist.h in Headers */,
+				30C684941407044B004C1A8E /* PGURLProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +630,7 @@
 				30B39EC113D0268B0009682A /* PGSplashScreen.m in Sources */,
 				30E563D213E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
 				30C684831406CB38004C1A8E /* PGWhitelist.m in Sources */,
+				30C684971407044B004C1A8E /* PGURLProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +669,7 @@
 				30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
 				1F2BECC113F9785B00A93BF6 /* Battery.m in Sources */,
 				30C684821406CB38004C1A8E /* PGWhitelist.m in Sources */,
+				30C684961407044B004C1A8E /* PGURLProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,5 +14,7 @@
 
 - (id) initWithArray:(NSArray*)array;
 - (BOOL) URLIsAllowed:(NSURL*)url;
+- (BOOL) schemeIsAllowed:(NSString*)scheme;
+- (NSString*) errorStringForURL:(NSURL*)url;
 
 @end
