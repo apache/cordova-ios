@@ -16,7 +16,7 @@
 @synthesize className;
 @synthesize methodName;
 
-+ (InvokedUrlCommand*) newFromUrl:(NSURL*)url
++ (InvokedUrlCommand*) commandFromUrl:(NSURL*)url
 {
     /*
 	 * Get Command and Options From URL
@@ -27,7 +27,7 @@
 	 * certain characters, such as "/" from their hex encoding for us. This normally wouldn't
 	 * be a problem, unless your argument has a "/" in it, such as a file path.
 	 */
-	InvokedUrlCommand* iuc = [[InvokedUrlCommand alloc] init];
+	InvokedUrlCommand* iuc = [[[InvokedUrlCommand alloc] init] autorelease];
 	
     iuc.command = [url host];
 	
