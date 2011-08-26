@@ -57,50 +57,50 @@ PhoneGap.available = DeviceInfo.uuid != undefined;
 PhoneGap.addConstructor = function(func) {
     var state = document.readyState;
     if ( ( state == 'loaded' || state == 'complete' ) && DeviceInfo.uuid != null )
-	{
-		func();
-	}
+    {
+        func();
+    }
     else
-	{
+    {
         PhoneGap._constructors.push(func);
-	}
+    }
 };
 
 (function() 
  {
     var timer = setInterval(function()
-	{
-							
-		var state = document.readyState;
-							
+    {
+                            
+        var state = document.readyState;
+                            
         if ( ( state == 'loaded' || state == 'complete' ) && DeviceInfo.uuid != null )
-		{
-			clearInterval(timer); // stop looking
-			// run our constructors list
-			while (PhoneGap._constructors.length > 0) 
-			{
-				var constructor = PhoneGap._constructors.shift();
-				try 
-				{
-					constructor();
-				} 
-				catch(e) 
-				{
-					if (typeof(console['log']) == 'function')
-					{
-						console.log("Failed to run constructor: " + console.processMessage(e));
-					}
-					else
-					{
-						alert("Failed to run constructor: " + e.message);
-					}
-				}
+        {
+            clearInterval(timer); // stop looking
+            // run our constructors list
+            while (PhoneGap._constructors.length > 0) 
+            {
+                var constructor = PhoneGap._constructors.shift();
+                try 
+                {
+                    constructor();
+                } 
+                catch(e) 
+                {
+                    if (typeof(console['log']) == 'function')
+                    {
+                        console.log("Failed to run constructor: " + console.processMessage(e));
+                    }
+                    else
+                    {
+                        alert("Failed to run constructor: " + e.message);
+                    }
+                }
             }
-			// all constructors run, now fire the deviceready event
-			var e = document.createEvent('Events'); 
-			e.initEvent('deviceready');
-			document.dispatchEvent(e);
-		}
+            // all constructors run, now fire the deviceready event
+            var e = document.createEvent('Events'); 
+            e.initEvent('deviceready');
+            document.dispatchEvent(e);
+        }
     }, 1);
 })();
 
@@ -130,7 +130,7 @@ PhoneGap.callbackStatus = {
  *
  */
 PhoneGap.exec = function() { 
-	
+    
     PhoneGap.queue.commands.push(arguments);
     if (PhoneGap.queue.timer == null)
         PhoneGap.queue.timer = setInterval(PhoneGap.run_command, 10);
@@ -149,9 +149,9 @@ PhoneGap.exec = function() {
  * @param {Function} success    The success callback
  * @param {Function} fail       The fail callback
  * @param {String} service      The name of the service to use
- * @param {String} action		The name of the action to use
+ * @param {String} action        The name of the action to use
  * @param {String[]} [args]     Zero or more arguments to pass to the method
- *  	
+ *      
  * FORMAT TWO
  * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
  * @param {String[]} [args] Zero or more arguments to pass to the method
@@ -166,11 +166,11 @@ PhoneGap.run_command = function() {
 
     if(!this.gapBridge){
         this.gapBridge = document.createElement("iframe");
-		this.gapBridge.setAttribute("style", "display:none;");
-		this.gapBridge.setAttribute("height","0px");
-		this.gapBridge.setAttribute("width","0px");
-		this.gapBridge.setAttribute("frameborder","0");
-		document.documentElement.appendChild(this.gapBridge);
+        this.gapBridge.setAttribute("style", "display:none;");
+        this.gapBridge.setAttribute("height","0px");
+        this.gapBridge.setAttribute("width","0px");
+        this.gapBridge.setAttribute("frameborder","0");
+        document.documentElement.appendChild(this.gapBridge);
     }
 
     var args = PhoneGap.queue.commands.shift();
@@ -178,61 +178,58 @@ PhoneGap.run_command = function() {
         clearInterval(PhoneGap.queue.timer);
         PhoneGap.queue.timer = null;
     }
-	
-	var service;
-	var callbackId = null;
-	var start=0;
+    
+    var service;
+    var callbackId = null;
+    var start=0;
     try {
- 		if (args[0] == null || typeof args[0] === "function") {
- 			var success = args[0];
- 			var fail = args[1];
- 			service = args[2] + "." + args[3];
-			args = args[4];  //array of arguments to 
- 			callbackId = service + PhoneGap.callbackId++;
-        	if (success || fail) {
-            	PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
-        	}
- 		} else { 
- 			service = args[0]; 
- 			start = 1;
- 		}
+        if (args[0] == null || typeof args[0] === "function") {
+            var success = args[0];
+            var fail = args[1];
+            service = args[2] + "." + args[3];
+            args = args[4];  //array of arguments to 
+            callbackId = service + PhoneGap.callbackId++;
+            if (success || fail) {
+                PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
+            }
+        } else { 
+            service = args[0]; 
+            start = 1;
+        }
         
         var uri = [];
-    	var dict = null;
+        var dict = null;
     
-    	for (var i = start; i < args.length; i++) {
-        	var arg = args[i];
-        	if (arg == undefined || arg == null)
-            	continue;
-        	if (typeof(arg) == 'object')
-            	dict = arg;
-        	else
-            	uri.push(encodeURIComponent(arg));
-    	}
-    	var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
+        for (var i = start; i < args.length; i++) {
+            var arg = args[i];
+            if (arg == undefined || arg == null)
+                continue;
+            if (typeof(arg) == 'object')
+                dict = arg;
+            else
+                uri.push(encodeURIComponent(arg));
+        }
+        var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
         //add the sessionId in the user field of the URL conforming to RFC1808
         var url = "gap://" + PhoneGap.sessionKey + "@" + service + next + uri.join("/");
 
-    	if (dict != null) {
-        	url += "?" + encodeURIComponent(JSON.stringify(dict));
-    	}
+        if (dict != null) {
+            url += "?" + encodeURIComponent(JSON.stringify(dict));
+        }
 
         this.gapBridge.src = url;
-   
     } catch (e) {
         console.log("PhoneGapExec Error: "+e);
     }
-    
-
 };
 /**
  * Called by native code when returning successful result from an action.
  *
  * @param callbackId
  * @param args
- *		args.status - PhoneGap.callbackStatus
- *		args.message - return value
- *		args.keepCallback - 0 to remove callback, 1 to keep callback in PhoneGap.callbacks[]
+ *        args.status - PhoneGap.callbackStatus
+ *        args.message - return value
+ *        args.keepCallback - 0 to remove callback, 1 to keep callback in PhoneGap.callbacks[]
  */
 PhoneGap.callbackSuccess = function(callbackId, args) {
     if (PhoneGap.callbacks[callbackId]) {
@@ -241,7 +238,7 @@ PhoneGap.callbackSuccess = function(callbackId, args) {
         if (args.status == PhoneGap.callbackStatus.OK) {
             try {
                 if (PhoneGap.callbacks[callbackId].success) {
-               		PhoneGap.callbacks[callbackId].success(args.message);
+                       PhoneGap.callbacks[callbackId].success(args.message);
                 }
             }
             catch (e) {
@@ -288,37 +285,37 @@ PhoneGap.callbackError = function(callbackId, args) {
  * @return
  */
 PhoneGap.clone = function(obj) {
-	if(!obj) { 
-		return obj;
-	}
+    if(!obj) { 
+        return obj;
+    }
 
-	if(obj instanceof Array){
-		var retVal = new Array();
-		for(var i = 0; i < obj.length; ++i){
-			retVal.push(PhoneGap.clone(obj[i]));
-		}
-		return retVal;
-	}
+    if(obj instanceof Array){
+        var retVal = new Array();
+        for(var i = 0; i < obj.length; ++i){
+            retVal.push(PhoneGap.clone(obj[i]));
+        }
+        return retVal;
+    }
 
-	if (obj instanceof Function) {
-		return obj;
-	}
+    if (obj instanceof Function) {
+        return obj;
+    }
 
-	if(!(obj instanceof Object)){
-		return obj;
-	}
-	
-	if (obj instanceof Date) {
-		return obj;
-	}
+    if(!(obj instanceof Object)){
+        return obj;
+    }
+    
+    if (obj instanceof Date) {
+        return obj;
+    }
 
-	retVal = new Object();
-	for(i in obj){
-		if(!(i in retVal) || retVal[i] != obj[i]) {
-			retVal[i] = PhoneGap.clone(obj[i]);
-		}
-	}
-	return retVal;
+    retVal = new Object();
+    for(i in obj){
+        if(!(i in retVal) || retVal[i] != obj[i]) {
+            retVal[i] = PhoneGap.clone(obj[i]);
+        }
+    }
+    return retVal;
 };
 
 // Intercept calls to document.addEventListener 
@@ -334,7 +331,7 @@ PhoneGap.m_window_addEventListener = window.addEventListener;
  * @param {Function} callback       The event handler
  */
 PhoneGap.addWindowEventHandler = function(event, callback) {
-	    PhoneGap.windowEventHandler[event] = callback;
+    PhoneGap.windowEventHandler[event] = callback;
 }
 
 /**
@@ -357,15 +354,14 @@ PhoneGap.addDocumentEventHandler = function(event, callback) {
 document.addEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
            
-        // If subscribing to an event that is handled by a plugin
-        if (typeof PhoneGap.documentEventHandler[e] !== "undefined") {
-            if (PhoneGap.documentEventHandler[e](e, handler, true)) {
-                return; // Stop default behavior
-            }
+    // If subscribing to an event that is handled by a plugin
+    if (typeof PhoneGap.documentEventHandler[e] !== "undefined") {
+        if (PhoneGap.documentEventHandler[e](e, handler, true)) {
+            return; // Stop default behavior
         }
-		
-       	PhoneGap.m_document_addEventListener.call(document, evt, handler, capture); 
-		   	
+    }
+    
+    PhoneGap.m_document_addEventListener.call(document, evt, handler, capture); 
 };
 
 /**
@@ -477,15 +473,15 @@ PhoneGap.fireWindowEvent = function(type, data) {
 PhoneGap.fireEvent = function(type, target, data) {
     var e = document.createEvent('Events');
     e.initEvent(type);
-	if (data) {
+    if (data) {
         for (var i in data) {
             e[i] = data[i];
         }
     }
-	target = target || document;
-	if (target.dispatchEvent === undefined) { // ie window.dispatchEvent is undefined in iOS 3.x
-		target = document;
-	} 
+    target = target || document;
+    if (target.dispatchEvent === undefined) { // ie window.dispatchEvent is undefined in iOS 3.x
+        target = document;
+    } 
 
     target.dispatchEvent(e);
 };
