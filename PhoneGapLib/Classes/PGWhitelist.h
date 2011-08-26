@@ -10,7 +10,8 @@
 
 @interface PGWhitelist : NSObject
 
-@property (nonatomic, retain) NSArray* whitelist;
+@property (nonatomic, readonly, retain) NSArray* whitelist;
+@property (nonatomic, readonly, retain) NSArray* expandedWhitelist;
 
 - (id) initWithArray:(NSArray*)array;
 - (BOOL) URLIsAllowed:(NSURL*)url;
