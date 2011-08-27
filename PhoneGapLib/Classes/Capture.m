@@ -622,7 +622,7 @@
     
     // make and add done button to navigation bar
     self.doneButton = [[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)] autorelease];
-	[self.doneButton setStyle:UIBarButtonSystemItemDone];
+	[self.doneButton setStyle:UIBarButtonItemStyleDone];
 	self.navigationItem.rightBarButtonItem = self.doneButton;
 
 	[self setView:tmp];
