@@ -10,8 +10,11 @@ if (typeof(DeviceInfo) !== 'object'){
  */
 PhoneGap = {
     // This queue holds the currently executing command and all pending
-    // commands.
+    // commands executed with PhoneGap.exec().
     commandQueue: [],
+    // Indicates if we're currently in the middle of flushing the command
+    // queue on the native side.
+    commandQueueFlushing: false,
     _constructors: [],
     documentEventHandler: {},   // Collection of custom document event handlers
     windowEventHandler: {} 
@@ -121,17 +124,26 @@ PhoneGap.callbackStatus = {
     ERROR: 9
     };
 
-/** 
- * Execute a PhoneGap command, possibly queuing it up instead of executing it
- * immediately if another command has run previously but has not yet been
- * acknowledged by the native code. This ensures command execution happens
- * without any race conditions.  The risk is if we set the iframe src twice
- * (each signifying a command) before the native code gets notified of the
- * change. If this happens, the first command will never get run. 
+/**
+ * Creates a gap bridge iframe used to notify the native code about queued
+ * commands.
  *
- * Simple parameters are passed as arguments on the url. JavaScript objects are
- * converted into a JSON string and passed as a query string argument of the
- * url.
+ * @private
+ */
+PhoneGap.createGapBridge = function() {
+    gapBridge = document.createElement("iframe");
+    gapBridge.setAttribute("style", "display:none;");
+    gapBridge.setAttribute("height","0px");
+    gapBridge.setAttribute("width","0px");
+    gapBridge.setAttribute("frameborder","0");
+    document.documentElement.appendChild(gapBridge);
+    return gapBridge;
+}
+
+/** 
+ * Execute a PhoneGap command by queuing it and letting the native side know
+ * there are queued commands. The native side will then request all of the
+ * queued commands and execute them.
  *
  * Arguments may be in one of two formats:
  *
@@ -160,88 +172,85 @@ PhoneGap.exec = function() {
         return;
     }
 
-    var args = arguments;
-    var service;
+    var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
-    var start=0;
-    try {
-        if (args[0] == null || typeof args[0] === "function") {
-            var success = args[0];
-            var fail = args[1];
-            service = args[2] + "." + args[3];
-            args = args[4];  //array of arguments to 
-            callbackId = service + PhoneGap.callbackId++;
-            if (success || fail) {
-                PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
-            }
-        } else { 
-            service = args[0]; 
-            start = 1;
-        }
-        
-        var uri = [];
-        var dict = null;
-    
-        for (var i = start; i < args.length; i++) {
-            var arg = args[i];
-            if (arg == undefined || arg == null)
-                continue;
-            if (typeof(arg) == 'object')
-                dict = arg;
-            else
-                uri.push(encodeURIComponent(arg));
-        }
-        var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
-        //add the sessionId in the user field of the URL conforming to RFC1808
-        var url = "gap://" + PhoneGap.sessionKey + "@" + service + next + uri.join("/");
+    if (typeof arguments[0] !== "string") {
+        // FORMAT ONE
+        successCallback = arguments[0];
+        failCallback = arguments[1];
+        service = arguments[2];
+        action = arguments[3];
+        actionArgs = arguments[4];
 
-        if (dict != null) {
-            url += "?" + encodeURIComponent(JSON.stringify(dict));
-        }
-
-        PhoneGap.commandQueue.push(url);
-        // As long as this is the only command on the queue, we can execute it
-        // immediately. If there are already commands queued, this command will
-        // be kicked off by the native code after the preceding command is
-        // executed.
-        if (PhoneGap.commandQueue.length == 1) {
-            PhoneGap.runCommand();
-        }
-    } catch (e) {
-        console.log("PhoneGapExec Error: "+e);
+        // Since we need to maintain backwards compatibility, we have to pass
+        // an invalid callbackId even if no callback was provided since plugins
+        // will be expecting it. The PhoneGap.exec() implementation allocates
+        // an invalid callbackId and passes it even if no callbacks were given.
+        callbackId = 'INVALID';
+    } else {
+        // FORMAT TWO
+        splitCommand = arguments[0].split(".");
+        action = splitCommand.pop();
+        service = splitCommand.join(".");
+        actionArgs = Array.prototype.splice.call(arguments, 1);
     }
-};
+    
+    // Start building the command object.
+    var command = {
+        className: service,
+        methodName: action,
+        arguments: []
+    };
 
-/**
- * Called by native code to signal that we're ready for the next command to
- * run.
- */
-PhoneGap.finishExec = function() {
-  PhoneGap.commandQueue.shift();
+    // Register the callbacks and add the callbackId to the positional
+    // arguments if given.
+    if (successCallback || failCallback) {
+        callbackId = service + PhoneGap.callbackId++;
+        PhoneGap.callbacks[callbackId] = 
+            {success:successCallback, fail:failCallback};
+    }
+    if (callbackId != null) {
+        command.arguments.push(callbackId);
+    }
 
-  if (PhoneGap.commandQueue.length != 0) {
-      PhoneGap.runCommand();
-  }
+    for (var i = 0; i < actionArgs.length; ++i) {
+        var arg = actionArgs[i];
+        if (arg == undefined || arg == null) {
+            continue;
+        } else if (typeof(arg) == 'object') {
+            command.options = arg;
+        } else {
+            command.arguments.push(arg);
+        }
+    }
+
+    // Stringify and queue the command. We stringify to command now to
+    // effectively clone the command arguments in case they are mutated before
+    // the command is executed.
+    PhoneGap.commandQueue.push(JSON.stringify(command));
+
+    // If the queue length is 1, then that means it was empty before we queued
+    // the given command, so let the native side know that we have some
+    // commands to execute, unless the queue is currently being flushed, in
+    // which case the command will be picked up without notification.
+    if (PhoneGap.commandQueue.length == 1 && !PhoneGap.commandQueueFlushing) {
+        if (!PhoneGap.gapBridge) {
+            PhoneGap.gapBridge = PhoneGap.createGapBridge();
+        }
+
+        PhoneGap.gapBridge.src = "gap://ready";
+    }
 }
 
 /**
- * Internal function used to dispatch the request to PhoneGap. It executes the
- * next command on the queue.
- * 
- * @private
+ * Called by native code to retrieve all queued commands and clear the queue.
  */
-PhoneGap.runCommand = function() {
-    if(!this.gapBridge){
-        this.gapBridge = document.createElement("iframe");
-        this.gapBridge.setAttribute("style", "display:none;");
-        this.gapBridge.setAttribute("height","0px");
-        this.gapBridge.setAttribute("width","0px");
-        this.gapBridge.setAttribute("frameborder","0");
-        document.documentElement.appendChild(this.gapBridge);
-    }
+PhoneGap.getAndClearQueuedCommands = function() {
+  json = JSON.stringify(PhoneGap.commandQueue);
+  PhoneGap.commandQueue = [];
+  return json;
+}
 
-    this.gapBridge.src = PhoneGap.commandQueue[0];
-};
 /**
  * Called by native code when returning successful result from an action.
  *

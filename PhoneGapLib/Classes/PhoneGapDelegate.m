@@ -602,6 +602,55 @@ BOOL gSplashScreenShown = NO;
 }
 
 /**
+ * Fetches the command queue and executes each command. It is possible that the
+ * queue will not be empty after this function has completed since the executed
+ * commands may have run callbacks which queued more commands.
+ *
+ * Returns the number of executed commands.
+ */
+- (int)executeQueuedCommands
+{
+    // Grab all the queued commands from the JS side.
+    NSString* queuedCommandsJSON =
+        [self.webView stringByEvaluatingJavaScriptFromString:
+        @"PhoneGap.getAndClearQueuedCommands()"];
+
+    // Parse the returned JSON array.
+    SBJsonParser* jsonParser = [[[SBJsonParser alloc] init] autorelease];
+    NSArray* queuedCommands =
+        [jsonParser objectWithString:queuedCommandsJSON];
+
+    // Iterate over and execute all of the commands.
+    for (NSString* commandJson in queuedCommands) {
+        [self execute:
+            [InvokedUrlCommand commandFromObject:
+                [jsonParser objectWithString:commandJson]]];
+    }
+
+    return [queuedCommands count];
+}
+
+/**
+ * Repeatedly fetches and executes the command queue until it is empty.
+ */
+- (void)flushCommandQueue
+{
+    [self.webView stringByEvaluatingJavaScriptFromString:
+        @"PhoneGap.commandQueueFlushing = true"];
+
+    // Keep executing the command queue until no commands get executed.
+    // This ensures that commands that are queued while executing other
+    // commands are executed as well.
+    int numExecutedCommands = 0;
+    do {
+        numExecutedCommands = [self executeQueuedCommands];
+    } while (numExecutedCommands != 0);
+
+    [self.webView stringByEvaluatingJavaScriptFromString:
+        @"PhoneGap.commandQueueFlushing = false"];
+}
+
+/**
  * Start Loading Request
  * This is where most of the magic happens... We take the request(s) and process the response.
  * From here we can re direct links and other protocalls to different internal methods.
@@ -612,31 +661,13 @@ BOOL gSplashScreenShown = NO;
     NSURL *url = [request URL];
     
     /*
-     * Get Command and Options From URL
-     * We are looking for URLS that match gap://<Class>.<command>/[<arguments>][?<dictionary>]
-     * We have to strip off the leading slash for the options.
+     * Execute any commands queued with PhoneGap.exec() on the JS side.
+     * The part of the URL after gap:// is irrelevant.
      */
      if ([[url scheme] isEqualToString:@"gap"]) {
-        // SessionKey should be in the user credentials portion of the URL 
-        NSString *sessionKeyFromWebView = [url user];
-        if([sessionKey isEqualToString:sessionKeyFromWebView]) {
-            // Tell the JS code that we've finished executing this command and
-            // ready for another. We don't have to worry about the next command
-            // executing immediately here since this delegate method can't be
-            // called again until we renter the main event loop.
-            [theWebView stringByEvaluatingJavaScriptFromString:
-                @"PhoneGap.finishExec()"];
-
-            // Execute the requested command as long as it's specified
-            // correctly.
-            InvokedUrlCommand* iuc = [InvokedUrlCommand commandFromUrl:url];
-            [self execute:iuc];
-        } else {
-            NSLog(@"Ignoring gap command with incorrect sessionKey; expecting: %@ received: %@", self.sessionKey, sessionKeyFromWebView);
-            NSLog(@"Complete call: %@", [url absoluteString]);
-        }
+        [self flushCommandQueue];
         return NO;
-    }
+     }
     /*
      * If a URL is being loaded that's a file/http/https URL, just load it internally
      */

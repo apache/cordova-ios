@@ -37,6 +37,8 @@
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) startPage;
 
+- (int)executeQueuedCommands;
+- (void)flushCommandQueue;
 
 - (id) getCommandInstance:(NSString*)pluginName;
 - (void) javascriptAlert:(NSString*)text;
