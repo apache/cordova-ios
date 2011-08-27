@@ -12,12 +12,9 @@ PhoneGap = {
     // This queue holds the currently executing command and all pending
     // commands executed with PhoneGap.exec().
     commandQueue: [],
-    // This queue is the same as commandQueue, but for PhoneGap.fastExec()
-    // commands.
-    fastExecCommandQueue: [],
-    // Indicates if we're currently in the middle of flushing the fast exec
+    // Indicates if we're currently in the middle of flushing the command
     // queue on the native side.
-    fastExecFlushing: false,
+    commandQueueFlushing: false,
     _constructors: [],
     documentEventHandler: {},   // Collection of custom document event handlers
     windowEventHandler: {} 
@@ -127,17 +124,26 @@ PhoneGap.callbackStatus = {
     ERROR: 9
     };
 
-/** 
- * Execute a PhoneGap command, possibly queuing it up instead of executing it
- * immediately if another command has run previously but has not yet been
- * acknowledged by the native code. This ensures command execution happens
- * without any race conditions.  The risk is if we set the iframe src twice
- * (each signifying a command) before the native code gets notified of the
- * change. If this happens, the first command will never get run. 
+/**
+ * Creates a gap bridge iframe used to notify the native code about queued
+ * commands.
  *
- * Simple parameters are passed as arguments on the url. JavaScript objects are
- * converted into a JSON string and passed as a query string argument of the
- * url.
+ * @private
+ */
+PhoneGap.createGapBridge = function() {
+    gapBridge = document.createElement("iframe");
+    gapBridge.setAttribute("style", "display:none;");
+    gapBridge.setAttribute("height","0px");
+    gapBridge.setAttribute("width","0px");
+    gapBridge.setAttribute("frameborder","0");
+    document.documentElement.appendChild(gapBridge);
+    return gapBridge;
+}
+
+/** 
+ * Execute a PhoneGap command by queuing it and letting the native side know
+ * there are queued commands. The native side will then request all of the
+ * queued commands and execute them.
  *
  * Arguments may be in one of two formats:
  *
@@ -162,120 +168,6 @@ PhoneGap.callbackStatus = {
 PhoneGap.exec = function() { 
     if (!PhoneGap.available) {
         alert("ERROR: Attempting to call PhoneGap.exec()"
-              +" before 'deviceready'. Ignoring.");
-        return;
-    }
-
-    var args = arguments;
-    var service;
-    var callbackId = null;
-    var start=0;
-    try {
-        if (args[0] == null || typeof args[0] === "function") {
-            var success = args[0];
-            var fail = args[1];
-            service = args[2] + "." + args[3];
-            args = args[4];  //array of arguments to 
-            callbackId = service + PhoneGap.callbackId++;
-            if (success || fail) {
-                PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
-            }
-        } else { 
-            service = args[0]; 
-            start = 1;
-        }
-        
-        var uri = [];
-        var dict = null;
-    
-        for (var i = start; i < args.length; i++) {
-            var arg = args[i];
-            if (arg == undefined || arg == null)
-                continue;
-            if (typeof(arg) == 'object')
-                dict = arg;
-            else
-                uri.push(encodeURIComponent(arg));
-        }
-        var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
-        //add the sessionId in the user field of the URL conforming to RFC1808
-        var url = "gap://" + PhoneGap.sessionKey + "@" + service + next + uri.join("/");
-
-        if (dict != null) {
-            url += "?" + encodeURIComponent(JSON.stringify(dict));
-        }
-
-        PhoneGap.commandQueue.push(url);
-        // As long as this is the only command on the queue, we can execute it
-        // immediately. If there are already commands queued, this command will
-        // be kicked off by the native code after the preceding command is
-        // executed.
-        if (PhoneGap.commandQueue.length == 1) {
-            PhoneGap.runCommand();
-        }
-    } catch (e) {
-        console.log("PhoneGapExec Error: "+e);
-    }
-};
-
-/**
- * Called by native code to signal that we're ready for the next command to
- * run.
- */
-PhoneGap.finishExec = function() {
-  PhoneGap.commandQueue.shift();
-
-  if (PhoneGap.commandQueue.length != 0) {
-      PhoneGap.runCommand();
-  }
-}
-
-/**
- * Creates a gap bridge iframe used to notify the native code about queued
- * commands.
- */
-PhoneGap.createGapBridge = function() {
-    gapBridge = document.createElement("iframe");
-    gapBridge.setAttribute("style", "display:none;");
-    gapBridge.setAttribute("height","0px");
-    gapBridge.setAttribute("width","0px");
-    gapBridge.setAttribute("frameborder","0");
-    document.documentElement.appendChild(gapBridge);
-    return gapBridge;
-}
-
-/**
- * Internal function used to dispatch the request to PhoneGap. It executes the
- * next command on the queue.
- * 
- * @private
- */
-PhoneGap.runCommand = function() {
-    if (!PhoneGap.available) {
-        alert("ERROR: Attempting to call PhoneGap.exec()"
-              +" before 'deviceready'. Ignoring.");
-        return;
-    }
-
-    if (!PhoneGap.execGapBridge) {
-        PhoneGap.execGapBridge = PhoneGap.createGapBridge();
-    }
-
-    PhoneGap.execGapBridge.src = PhoneGap.commandQueue[0];
-};
-
-/**
- * This function executes a PhoneGap command just like PhoneGap.exec(), but
- * using a simpler and faster method. This function exists in addition to
- * PhoneGap.exec() because unlike PhoneGap.exec(), this function does not work
- * from an embedded iframe.
- *
- * Arguments for this function are the same as for PhoneGap.exec(). See the
- * documentation on PhoneGap.exec() for more information.
- */
-PhoneGap.fastExec = function() {
-    if (!PhoneGap.available) {
-        alert("ERROR: Attempting to call PhoneGap.fastExec()"
               +" before 'deviceready'. Ignoring.");
         return;
     }
@@ -335,27 +227,27 @@ PhoneGap.fastExec = function() {
     // Stringify and queue the command. We stringify to command now to
     // effectively clone the command arguments in case they are mutated before
     // the command is executed.
-    PhoneGap.fastExecCommandQueue.push(JSON.stringify(command));
+    PhoneGap.commandQueue.push(JSON.stringify(command));
 
     // If the queue length is 1, then that means it was empty before we queued
     // the given command, so let the native side know that we have some
     // commands to execute, unless the queue is currently being flushed, in
     // which case the command will be picked up without notification.
-    if (PhoneGap.fastExecCommandQueue.length == 1 
-        && !PhoneGap.fastExecFlushing) {
-        if (!PhoneGap.fastExecGapBridge) {
-            PhoneGap.fastExecGapBridge = PhoneGap.createGapBridge();
+    if (PhoneGap.commandQueue.length == 1 && !PhoneGap.commandQueueFlushing) {
+        if (!PhoneGap.gapBridge) {
+            PhoneGap.gapBridge = PhoneGap.createGapBridge();
         }
-        PhoneGap.fastExecGapBridge.src = "fastgap://ready";
+
+        PhoneGap.gapBridge.src = "gap://ready";
     }
 }
 
 /**
- * Called by native code to retrieve all outstanding fastExec commands.
+ * Called by native code to retrieve all queued commands and clear the queue.
  */
-PhoneGap.getAndClearQueuedFastExecCommands = function() {
-  json = JSON.stringify(PhoneGap.fastExecCommandQueue);
-  PhoneGap.fastExecCommandQueue = [];
+PhoneGap.getAndClearQueuedCommands = function() {
+  json = JSON.stringify(PhoneGap.commandQueue);
+  PhoneGap.commandQueue = [];
   return json;
 }
 
