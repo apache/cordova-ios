@@ -154,6 +154,12 @@ PhoneGap.callbackStatus = {
  *                            JSON strings 
  */
 PhoneGap.exec = function() { 
+    if (!PhoneGap.available) {
+        alert("ERROR: Attempting to call PhoneGap.exec()"
+              +" before 'deviceready'. Ignoring.");
+        return;
+    }
+
     var args = arguments;
     var service;
     var callbackId = null;
@@ -225,12 +231,6 @@ PhoneGap.finishExec = function() {
  * @private
  */
 PhoneGap.runCommand = function() {
-    if (!PhoneGap.available) {
-        alert("ERROR: Attempting to call PhoneGap.exec()"
-              +" before 'deviceready'. Ignoring.");
-        return;
-    }
-
     if(!this.gapBridge){
         this.gapBridge = document.createElement("iframe");
         this.gapBridge.setAttribute("style", "display:none;");
