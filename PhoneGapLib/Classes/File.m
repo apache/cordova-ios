@@ -98,11 +98,13 @@
 	}
 	return fullPath;
 } */
+
 /* Request the File System info
  *
  * IN:
  * arguments[0] - type (number as string)
  *	TEMPORARY = 0, PERSISTENT = 1;
+ * arguments[1] - size
  *
  * OUT:
  *	Dictionary representing FileSystem object
@@ -117,10 +119,14 @@
 
 - (void) requestFileSystem:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* strType = [arguments objectAtIndex: 1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+    
+    // arguments
+	NSString* strType = [arguments objectAtIndex: 0];
+	unsigned long long size = [[arguments objectAtIndex:1] longLongValue];
+
 	int type = [strType intValue];
-	unsigned long long size = [[arguments objectAtIndex:2] longLongValue];
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	
@@ -199,9 +205,14 @@
  */
 - (void) resolveLocalFileSystemURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+    NSString* inputUri = [arguments objectAtIndex:0];
+    
 	NSString* jsString = nil;
-    NSString* inputUri = [arguments objectAtIndex:1];
+    
     // don't know if string is encoded or not so unescape 
     NSString* cleanUri = [inputUri stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	// now escape in order to create URL
@@ -303,10 +314,13 @@
  */
 - (void) getFile: (NSMutableArray*) arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+    
 	// arguments are URL encoded
-	NSString* fullPath = [arguments objectAtIndex:1];
-	NSString* requestedPath = [arguments objectAtIndex:2];
+	NSString* fullPath = [arguments objectAtIndex:0];
+	NSString* requestedPath = [arguments objectAtIndex:1];
+    
 	NSString* jsString = nil;
 	PluginResult* result = nil;
 	BOOL bDirRequest = NO;
@@ -408,9 +422,12 @@
  */
 - (void) getParent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
 	// arguments are URL encoded
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* fullPath = [arguments objectAtIndex:0];
+    
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	NSString* newPath = nil;
@@ -451,8 +468,11 @@
  */
 - (void) getMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
 	NSString* testPath = argPath; //[self getFullPath: argPath];
 	
 	NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -502,13 +522,15 @@
 */
 - (void) remove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* fullPath = [arguments objectAtIndex:0];
 	
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	FileError errorCode = 0;  // !! 0 not currently defined 
-	
 	
 	// error if try to remove top level (documents or tmp) dir
 	if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]){
@@ -549,8 +571,11 @@
  */
 - (void) removeRecursively:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* fullPath = [arguments objectAtIndex:0];
 	
 	PluginResult* result = nil;
 	NSString* jsString = nil;
@@ -657,20 +682,18 @@
  */
 - (void) doCopyMove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options  isCopy:(BOOL)bCopy
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* srcFullPath = [arguments objectAtIndex:1];
-	NSString* newName = nil;
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+	// arguments
+    NSString* srcFullPath = [arguments objectAtIndex:0];
+    // optional argument
+    NSString* newName = ([arguments count] > 1) ? [arguments objectAtIndex:1] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
+
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	FileError errCode = 0;  // !! Currently 0 is not defined, use this to signal error !!
 		
-	if ([arguments count] > 2){
-		newName = [arguments objectAtIndex:2];
-	} else {
-		// use last component from appPath if new name not provided
-		newName = [srcFullPath lastPathComponent];
-	}
-	
 	NSString* destRootPath = nil;
 	NSString* key = @"fullPath";
 	if([options valueForKeyIsString:key]){
@@ -818,8 +841,12 @@
 }*/
 - (void) getFileMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
+    
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	
@@ -852,10 +879,14 @@
 	
 	[self writeJavascript:jsString];
 }
+
 - (void) readEntries:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+
+	// arguments
+    NSString* fullPath = [arguments objectAtIndex:0];
 	
 	PluginResult* result = nil;
 	NSString* jsString = nil;
@@ -900,8 +931,12 @@
  */
 - (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
+    
 	//NSString* encoding = [arguments objectAtIndex:2];   // not currently used
 	PluginResult* result = nil;
 	NSString* jsString = nil;
@@ -950,10 +985,13 @@
  
 - (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
+    
 	FileError errCode = ABORT_ERR; 
-	
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	
@@ -1019,10 +1057,12 @@
 
 - (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
-	
-	unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:2 ] longLongValue];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
+	unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:1 ] longLongValue];
 	
 	NSString *appFile = argPath; //[self getFullPath:argPath];
 	
@@ -1058,10 +1098,13 @@
  */
 - (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
-	NSString* argData = [arguments objectAtIndex:2];
-	unsigned long long pos = (unsigned long long)[[ arguments objectAtIndex:3] longLongValue];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 3, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argData = [arguments objectAtIndex:1];
+	unsigned long long pos = (unsigned long long)[[ arguments objectAtIndex:2] longLongValue];
 	
 	NSString* fullPath = argPath; //[self getFullPath:argPath];
 	
@@ -1109,8 +1152,12 @@
 
 - (void) testFileExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
+    
 	NSString* jsString = nil;
 	// Get the file manager
 	NSFileManager* fMgr = [ NSFileManager defaultManager ];
@@ -1127,8 +1174,11 @@
 
 - (void) testDirectoryExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* argPath = [arguments objectAtIndex:0];
 	
 	NSString* jsString = nil;
 	// Get the file manager
@@ -1148,7 +1198,10 @@
 // Returns number of bytes available via callback
 - (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = [arguments pop];
+    
+    // no arguments
+    
 	NSNumber* pNumAvail = [self checkFreeDiskSpace:self.appDocsPath];
 	
 	NSString* strFreeSpace = [NSString stringWithFormat:@"%qu", [ pNumAvail unsignedLongLongValue ] ];
