@@ -132,8 +132,8 @@ static NSArray* com_phonegap_CommandStatusMsgs;
         }
 	} else if ([self.message isKindOfClass:[NSArray class]]){
 		// return as array of strings
-		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": [%@],\"keepCallback\":%d}", 
-					[self.status intValue], [self.message componentsJoinedByString: @","], [self.keepCallback boolValue]];
+		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %@,\"keepCallback\":%d}", 
+               [self.status intValue], [self.message JSONRepresentation], [self.keepCallback boolValue]];
 	} else if ([self.message isKindOfClass: [NSDictionary class]]) {
 		// return as object 
 		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %@,\"keepCallback\":%d}", 
