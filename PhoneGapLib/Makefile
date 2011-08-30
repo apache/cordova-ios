@@ -32,9 +32,9 @@ javascripts/phonegap-$(pgver).js: clean $(PG_JS_CORE)/license.js $(PG_JS_CORE)/p
 	$(CAT) $(PG_JS_CORE)/accelerometer.js >> $@
 	$(CAT) $(PG_JS_CORE)/battery.js >> $@
 	$(CAT) $(PG_JS_CORE)/camera.js >> $@
+	$(CAT) $(PG_JS_CORE)/device.js >> $@
 	$(CAT) $(PG_JS_CORE)/capture.js >> $@
 	$(CAT) $(PG_JS_CORE)/contact.js >> $@
-	$(CAT) $(PG_JS_CORE)/device.js >> $@
 	$(CAT) $(PG_JS_CORE)/file.js >> $@
 	$(CAT) $(PG_JS_CORE)/filetransfer.js >> $@
 	$(CAT) $(PG_JS_CORE)/geolocation.js >> $@
