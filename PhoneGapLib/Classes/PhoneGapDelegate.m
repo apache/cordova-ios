@@ -703,6 +703,13 @@ BOOL gSplashScreenShown = NO;
         return YES;
     }
     /*
+     * all tel: scheme urls we let the UIWebview handle it using the default behaviour
+     */
+    else if ([[url scheme] isEqualToString:@"tel"])
+    {
+        return YES;
+    }
+    /*
      * all about: scheme urls are not handled
      */
     else if ([[url scheme] isEqualToString:@"about"])
