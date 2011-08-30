@@ -716,7 +716,13 @@ BOOL gSplashScreenShown = NO;
     else
     {
         NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
-        [[UIApplication sharedApplication] openURL:url];
+
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url];
+        } else { // handle any custom schemes to plugins
+            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenURLNotification object:url]];
+        }
+
         return NO;
     }
     
