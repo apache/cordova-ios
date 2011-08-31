@@ -119,32 +119,11 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 }
 
 -(NSString*) toJSONString{
-	NSString* resultString = @"";
-	// create the returned strings properly based on return type.  Assumes that non-strings are to be returned as objects
-	if ([self.message isKindOfClass: [NSNumber class]]) {
-		// return as number
-        if((strcmp([self.message objCType], @encode(int))) == 0) {
-            resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %d,\"keepCallback\":%d}", 
-							[self.status intValue], [self.message intValue], [self.keepCallback boolValue]];
-        } else if((strcmp([self.message objCType], @encode(double))) == 0) {
-            resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %f,\"keepCallback\":%d}", 
-							[self.status intValue], [self.message doubleValue], [self.keepCallback boolValue]];
-        }
-	} else if ([self.message isKindOfClass:[NSArray class]]){
-		// return as array of strings
-		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %@,\"keepCallback\":%d}", 
-               [self.status intValue], [self.message JSONRepresentation], [self.keepCallback boolValue]];
-	} else if ([self.message isKindOfClass: [NSDictionary class]]) {
-		// return as object 
-		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": %@,\"keepCallback\":%d}", 
-					[self.status intValue], [self.message  JSONRepresentation], [self.keepCallback boolValue]];
-	
-	}else { 
-		// assume NSString - return quoted string
-		resultString = [NSString stringWithFormat: @"{\"status\": %d, \"message\": \"%@\",\"keepCallback\":%d}", 
-					[self.status intValue], self.message, [self.keepCallback boolValue]];
-	}
-
+    NSString* resultString = [[NSDictionary dictionaryWithObjectsAndKeys:
+                               self.status, @"status",
+                               self.message ? self.message : [NSNull null], @"message",
+                               self.keepCallback, @"keepCallback",
+                               nil] JSONRepresentation];
 	DLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;
 }
