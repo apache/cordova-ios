@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'PhoneGapLibTests' target in the 'PhoneGapLibTests' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+#endif
