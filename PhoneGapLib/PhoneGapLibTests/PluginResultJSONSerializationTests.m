@@ -48,6 +48,60 @@
     }
 }
 
+- (void) __testDictionary:(NSDictionary*)dictA withDictionary:(NSDictionary*)dictB
+{
+    STAssertTrue([dictA isKindOfClass:[NSDictionary class]], nil);
+    STAssertTrue([dictB isKindOfClass:[NSDictionary class]], nil);
+    
+    STAssertTrue([[dictA allKeys ]count] == [[dictB allKeys] count], nil);
+    
+    for (NSInteger i = 0; i < [dictA count]; i++) {
+        id keyA =  [[dictA allKeys] objectAtIndex:i];
+        id objA = [dictA objectForKey:keyA];
+        id objB = [dictB objectForKey:keyA];
+        
+        STAssertTrue([[dictB allKeys] containsObject:keyA], nil); // key exists
+        if ([objA isKindOfClass:[NSDictionary class]]) {
+            [self __testDictionary:objA withDictionary:objB];
+        } else {
+            STAssertTrue([objA isEqual:objB], nil); // key's value equality
+        }
+    }
+}
+
+- (void) testSerializingMessageAsDictionary
+{
+    NSMutableDictionary *testValues = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                           [NSNull null], @"nullItem",
+                           @"string",  @"stringItem",
+                           [NSNumber numberWithInt:5],  @"intItem",
+                           [NSNumber numberWithDouble:5.5], @"doubleItem",
+                           [NSNumber numberWithBool:true],  @"boolItem",
+                           nil];
+
+    NSDictionary *nestedDict = [[testValues copy] autorelease];    
+    [testValues setValue:nestedDict forKey:@"nestedDict"];
+    
+    PluginResult *result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:testValues];
+    NSDictionary *dic = [[result toJSONString] JSONFragmentValue];
+    NSDictionary *message = [dic objectForKey:@"message"];
+    
+    [self __testDictionary:testValues withDictionary:message];
+}
+
+- (void)testSerializingMessageAsErrorCode
+{
+    NSMutableDictionary *testValues = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       [NSNumber numberWithInt:1], @"code",
+                                       nil];
+    
+    PluginResult *result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:1];
+    NSDictionary *dic = [[result toJSONString] JSONFragmentValue];
+    NSDictionary *message = [dic objectForKey:@"message"];
+    
+    [self __testDictionary:testValues withDictionary:message];
+}
+
 - (void)testSerializingMessageAsStringContainingQuotes {
     NSString *quotedString = @"\"quoted\"";
     PluginResult *result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:quotedString];
