@@ -10,7 +10,7 @@
 #
 set -e
 
-PROJECT_PATH=${1:-"./example"}
+PROJECT_PATH=${1:-"."}
 PROJECT_NAME=${2:-"PhoneGapExample"}
 PRJ=$PROJECT_NAME.xcodeproj
 APP=build/Release-iphonesimulator/$PROJECT_NAME.app
