@@ -61,13 +61,16 @@
 
 - (void) testWildcardInTLD
 {
+    // NOTE: if the user chooses to do this (a wildcard in the TLD, not a wildcard as the TLD), we allow it because we assume they know what they are doing! We don't replace it with known TLDs
+    // This might be applicable for custom TLDs on a local network DNS
+    
     NSArray* allowedHosts = [NSArray arrayWithObjects: 
                              @"phonegap.c*m",
                              nil];
     
     PGWhitelist* whitelist = [[PGWhitelist alloc] initWithArray:allowedHosts];
     
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://phonegap.coom"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://phonegap.corporateroom"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://phonegap.foo"]], nil);
     
     [whitelist release];
@@ -182,6 +185,25 @@
     
     [whitelist release];
 }
+
+- (void) testWildcardMix
+{    
+    NSArray* allowedHosts = [NSArray arrayWithObjects: 
+                             @"*.phone*gap.*",
+                             nil];
+    
+    PGWhitelist* whitelist = [[PGWhitelist alloc] initWithArray:allowedHosts];
+    
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.phonegap.com"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://phonegap.com"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://phoneMACgap.ca"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://phoneMACgap.museum"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://blahMACgap.museum"]], nil);
+    
+    [whitelist release];
+}
+
+
 
 
 @end
