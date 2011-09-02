@@ -82,6 +82,9 @@
 		303259C9136B326300982B63 /* PluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* PluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259CA136B326300982B63 /* FileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* FileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30325A0C136B343700982B63 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
+		30356214141049E1006C2D43 /* PGWhitelistTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 30356212141049E1006C2D43 /* PGWhitelistTests.h */; };
+		3035621714104C34006C2D43 /* PGWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* PGWhitelistTests.m */; };
+		3035621814104C3E006C2D43 /* PGWhitelistTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 30356212141049E1006C2D43 /* PGWhitelistTests.h */; };
 		30383DE01385F65600E37E22 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		307A8F9E1385A2EC00E43782 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
 		307A8F9F1385A2EC00E43782 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
@@ -191,6 +194,8 @@
 		302965BB13A94E9D007046C5 /* PGDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGDebug.h; path = Classes/PGDebug.h; sourceTree = "<group>"; };
 		303258D8136B2C9400982B63 /* PhoneGap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhoneGap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30325A0B136B343700982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
+		30356212141049E1006C2D43 /* PGWhitelistTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGWhitelistTests.h; sourceTree = "<group>"; };
+		30356213141049E1006C2D43 /* PGWhitelistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGWhitelistTests.m; sourceTree = "<group>"; };
 		307A8F9C1385A2EC00E43782 /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Connection.h; path = Classes/Connection.h; sourceTree = "<group>"; };
 		307A8F9D1385A2EC00E43782 /* Connection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Connection.m; path = Classes/Connection.m; sourceTree = "<group>"; };
 		30956FD0138F1F5600FC3563 /* PGMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMotion.h; path = Classes/PGMotion.h; sourceTree = "<group>"; };
@@ -361,6 +366,8 @@
 				686357B7141002F200DF4CF2 /* PluginResultJSONSerializationTests.h */,
 				686357B9141002F200DF4CF2 /* PluginResultJSONSerializationTests.m */,
 				686357B1141002F200DF4CF2 /* Supporting Files */,
+				30356212141049E1006C2D43 /* PGWhitelistTests.h */,
+				30356213141049E1006C2D43 /* PGWhitelistTests.m */,
 			);
 			path = PhoneGapLibTests;
 			sourceTree = "<group>";
@@ -562,6 +569,7 @@
 				1F2BECC013F9785B00A93BF6 /* Battery.h in Headers */,
 				30C684801406CB38004C1A8E /* PGWhitelist.h in Headers */,
 				30C684941407044B004C1A8E /* PGURLProtocol.h in Headers */,
+				30356214141049E1006C2D43 /* PGWhitelistTests.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +674,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3035621814104C3E006C2D43 /* PGWhitelistTests.h in Resources */,
 				686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */,
 				686357B8141002F200DF4CF2 /* PluginResultJSONSerializationTests.h in Resources */,
 			);
@@ -775,6 +784,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3035621714104C34006C2D43 /* PGWhitelistTests.m in Sources */,
 				686357BA141002F200DF4CF2 /* PluginResultJSONSerializationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
