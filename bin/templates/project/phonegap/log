@@ -4,4 +4,4 @@
 #
 #  ./log [path]
 #
-tail -f ${1:-"./example"}/console.log
+tail -f ${1:-"."}/console.log
