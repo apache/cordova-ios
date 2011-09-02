@@ -1,0 +1,9 @@
+#! /bin/sh
+# 
+# USAGE
+#   ./replaces path from to
+#
+# EXAMPLE
+#   ./replaces ./foo.txt FOO BAR
+#
+sed "s/$2/$3/g" $1 > tmpFile ; mv tmpFile $1

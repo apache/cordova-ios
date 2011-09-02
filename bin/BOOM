@@ -1,0 +1,3 @@
+#! /bin/sh
+# this one is for steve jobs
+./bin/create && ./bin/debug && say 'boom' && ./bin/log
