@@ -7,6 +7,8 @@
 
 
 #import "Location.h"
+#import "PhoneGapViewController.h"
+#import "PhoneGapDelegate.h"
 
 #pragma mark Constants
 
@@ -39,11 +41,40 @@
 @end
 
 #pragma mark -
+#pragma mark PGHeadingData
+
+@implementation PGHeadingData
+
+@synthesize headingStatus, headingRepeats, headingInfo, headingCallbacks, headingFilter;
+-(PGHeadingData*) init
+{
+    self = (PGHeadingData*)[super init];
+    if (self) 
+	{
+        self.headingRepeats = NO;
+        self.headingStatus = HEADINGSTOPPED;
+        self.headingInfo = nil;
+        self.headingCallbacks = nil;
+        self.headingFilter = nil;
+    }
+    return self;
+}
+-(void) dealloc 
+{
+    self.headingInfo = nil;
+    self.headingCallbacks = nil;
+    self.headingFilter = nil;
+    [super dealloc];  
+}
+
+@end
+
+#pragma mark -
 #pragma mark PGLocation
 
 @implementation PGLocation
 
-@synthesize locationManager;
+@synthesize locationManager, headingData;
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
@@ -52,6 +83,8 @@
 	{
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
+        __locationStarted = NO;
+        self.headingData = nil;        
     }
     return self;
 }
@@ -122,24 +155,24 @@
             
 			return;
 		}
-        
-        if (![self isAuthorized]) 
-        {
-            NSUInteger code = -1;
-            BOOL authStatusAvailable = [CLLocationManager respondsToSelector:@selector(authorizationStatus)]; // iOS 4.2+
-            if (authStatusAvailable) {
-                code = [CLLocationManager authorizationStatus];
-            }
-            
-            NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
-                              [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
-
-			NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error localizedDescription]];
-			[super writeJavascript:jsCallback];
-            
-			return;
+    }
+    if (![self isAuthorized]) 
+    {
+        NSUInteger code = -1;
+        BOOL authStatusAvailable = [CLLocationManager respondsToSelector:@selector(authorizationStatus)]; // iOS 4.2+
+        if (authStatusAvailable) {
+            code = [CLLocationManager authorizationStatus];
         }
-	}
+        
+        NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
+                          [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
+        
+        NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
+        [super writeJavascript:jsCallback];
+        
+        return;
+    }
+	
     
     // Tell the location manager to start notifying us of location updates
     [self.locationManager startUpdatingLocation];
@@ -197,45 +230,148 @@
     NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setLocation(%@);", [newLocation JSONRepresentation]];
     [super writeJavascript:jsCallback];
 }
+// called to get the current heading
+// Will call location manager to startUpdatingHeading if necessary
 
-- (void) startHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)getCurrentHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    if (!__headingStarted)
-	{
-		if (![self hasHeadingSupport]) {
-			return;
-		}
-		
-		int freq = 0;
-		
-		if ([options objectForKey:kPGLocationFrequencyKey]) 
-		{
-			 freq = [(NSString *)[options objectForKey:kPGLocationFrequencyKey] integerValue];
-#pragma unused(freq)
-		}
-		
-		
-		// Tell the location manager to start notifying us of heading updates
-		self.locationManager.headingFilter = 0.2;
-		[self.locationManager startUpdatingHeading];
-		__headingStarted = YES;
-	}
-}	
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSNumber* repeats = [options valueForKey:@"repeats"];  // indicates this call will be repeated at regular intervals
+    
+    if ([self hasHeadingSupport] == NO) 
+    {
+        PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:20];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    } else {
+       // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
+        if (!self.headingData) {
+            self.headingData = [[PGHeadingData alloc] init];
+        }
+        PGHeadingData* hData = self.headingData;
+        
+        if (repeats != nil) {
+            hData.headingRepeats = YES;
+        }
+        if (!hData.headingCallbacks) {
+            hData.headingCallbacks = [NSMutableArray arrayWithCapacity:1];
+        }
+        // add the callbackId into the array so we can call back when get data
+        [hData.headingCallbacks addObject:callbackId]; 
+        
+        if (hData.headingStatus != HEADINGRUNNING && hData.headingStatus != HEADINGERROR) {
+            // Tell the location manager to start notifying us of heading updates
+            [self startHeadingWithFilter: 0.2];
+        }
+        else {
+            [self returnHeadingInfo: callbackId keepCallback:NO]; 
+        }
+    }
+  
+          
+} 
+// called to request heading updates when heading changes by a certain amount (filter)
+- (void)watchHeadingFilter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSNumber* filter = [options valueForKey:@"filter"];
+    PGHeadingData* hData = self.headingData;
+    if ([self hasHeadingSupport] == NO) {
+        PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:20];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    } else {
+        if (!hData) {
+            self.headingData = [[PGHeadingData alloc] init];
+            hData = self.headingData;
+        }
+        if (hData.headingStatus != HEADINGRUNNING) {
+            // Tell the location manager to start notifying us of heading updates
+            [self startHeadingWithFilter: [filter doubleValue]];
+        } else {
+            // if already running check to see if due to existing watch filter
+            if (hData.headingFilter && ![hData.headingFilter isEqualToString:callbackId]){
+                // new watch filter being specified
+                // send heading data one last time to clear old successCallback
+                [self returnHeadingInfo:hData.headingFilter keepCallback: NO];
+            } 
+            
+        }
+        // save the new filter callback and update the headingFilter setting
+        hData.headingFilter = callbackId;
+        // check if need to stop and restart in order to change value???
+        self.locationManager.headingFilter = [filter doubleValue];
+    } 
+}
+- (void)returnHeadingInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain
+{
+    PluginResult* result = nil;
+    NSString* jsString = nil;
+    PGHeadingData* hData = self.headingData;
+    
+    if (hData && hData.headingStatus == HEADINGERROR) {
+        // return error
+        result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:0];
+        jsString = [result toErrorCallbackString:callbackId];
+    } else if (hData && hData.headingStatus == HEADINGRUNNING && hData.headingInfo) {
+        // if there is heading info, return it
+        CLHeading* hInfo = hData.headingInfo;
+        NSMutableDictionary* returnInfo = [NSMutableDictionary dictionaryWithCapacity:4];
+        NSNumber* timestamp = [NSNumber numberWithDouble:([hInfo.timestamp timeIntervalSince1970]*1000)];
+        [returnInfo setObject:timestamp forKey:@"timestamp"];
+        [returnInfo setObject:[NSNumber numberWithDouble: hInfo.magneticHeading] forKey:@"magneticHeading"];
+        id trueHeading = __locationStarted ? (id)[NSNumber numberWithDouble:hInfo.trueHeading]:(id)[NSNull null];
+        [returnInfo setObject:trueHeading forKey:@"trueHeading"];
+        [returnInfo setObject:[NSNumber numberWithDouble: hInfo.headingAccuracy] forKey:@"headingAccuracy"];
+        
+        result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: returnInfo];
+        [result setKeepCallbackAsBool:bRetain];
+
+        jsString = [result toSuccessCallbackString:callbackId];
+    }
+    if (jsString) {
+        [super writeJavascript:jsString];
+    }
+    
+    
+}
 
 - (void) stopHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    if (__headingStarted)
+    PGHeadingData* hData = self.headingData;
+    if (hData && hData.headingStatus != HEADINGSTOPPED)
 	{
-		if (![self hasHeadingSupport]) {
-			return;
-		}
-		
-		[self.locationManager stopUpdatingHeading];
-		__headingStarted = NO;
+		if (hData.headingFilter) {
+            // callback one last time to clear callback
+            [self returnHeadingInfo:hData.headingFilter keepCallback:NO];
+            hData.headingFilter = nil;
+        }
+        [self.locationManager stopUpdatingHeading];		
+        self.headingData = nil;
 	}
 }	
 
-- (BOOL) locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
+
+// helper method to check the orientation and start updating headings
+- (void) startHeadingWithFilter: (CLLocationDegrees) filter
+{
+    if ([self.locationManager respondsToSelector: @selector(headingOrientation)]) {
+        UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
+        if (currentOrientation != UIDeviceOrientationUnknown) {
+            PhoneGapDelegate* pgDelegate = [self appDelegate];
+            PhoneGapViewController* pgViewController = pgDelegate.viewController;
+            
+            if ([[pgViewController supportedOrientations] containsObject:
+                 [NSNumber numberWithInt:currentOrientation]]) {
+                
+                self.locationManager.headingOrientation = (CLDeviceOrientation)currentOrientation;
+                // FYI UIDeviceOrientation and CLDeviceOrientation enums are currently the same
+            }   
+        }
+    }
+    self.locationManager.headingFilter = filter;
+    [self.locationManager startUpdatingHeading];
+    self.headingData.headingStatus = HEADINGSTARTING;
+}
+- (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
 {
 	return YES;
 }
@@ -243,12 +379,28 @@
 - (void) locationManager:(CLLocationManager *)manager
 						didUpdateHeading:(CLHeading *)heading
 {
-    NSString* jsCallback = [NSString stringWithFormat:@"navigator.compass.setHeading(%@)", [heading JSONRepresentation]];
-    [super writeJavascript:jsCallback];
+    PGHeadingData* hData = self.headingData;
+    // save the data for next call into getHeadingData
+    hData.headingInfo = heading;
+    
+    if (hData.headingStatus == HEADINGSTARTING) {
+        hData.headingStatus = HEADINGRUNNING; // so returnHeading info will work
+        //this is the first update
+        for (NSString* callbackId in hData.headingCallbacks) {
+            [self returnHeadingInfo:callbackId keepCallback:NO];
+        }
+        [hData.headingCallbacks removeAllObjects];
+        if (!hData.headingRepeats && !hData.headingFilter) {
+            [self stopHeading:nil withDict:nil];
+        }
+    }
+    if (hData.headingFilter) {
+        [self returnHeadingInfo: hData.headingFilter keepCallback:YES];
+    }
+    hData.headingStatus = HEADINGRUNNING;  // to clear any error
+
 }
-
-
-- (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     NSLog(@"locationManager::didFailWithError %@", [error localizedFailureReason]);
 	NSString* jsCallback = @"";
@@ -256,7 +408,22 @@
     // Compass Error
 	if ([error code] == kCLErrorHeadingFailure)
 	{
-		jsCallback = [NSString stringWithFormat:@"navigator.compass.setError(%@);", [error JSONRepresentation] ];
+		PGHeadingData* hData = self.headingData;
+        if (hData) {
+            if (hData.headingStatus == HEADINGSTARTING) {
+                // heading error during startup - report error
+                for (NSString* callbackId in hData.headingCallbacks) {
+                    PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:0];
+                    [super writeJavascript: [result toErrorCallbackString:callbackId]];
+                }
+                [hData.headingCallbacks removeAllObjects];
+            } // else for frequency watches next call to getCurrentHeading will report error
+            else if (hData.headingFilter) {
+                PluginResult* resultFilter = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:0];
+                [super writeJavascript: [resultFilter toErrorCallbackString:hData.headingFilter]];
+            }
+            hData.headingStatus = HEADINGERROR;
+        }
 	} 
     // Location Error
 	else 
@@ -286,6 +453,7 @@
 {
 	self.locationManager.delegate = nil;
 	self.locationManager = nil;
+    self.headingData = nil;
 	[super dealloc];
 }
 
@@ -315,25 +483,6 @@
 
 @end
 
-#pragma mark CLHeading(JSONMethods)
-
-@implementation CLHeading(JSONMethods)
-
-- (NSString*) JSONRepresentation
-{
-    return [NSString stringWithFormat:
-            @"{ timestamp: %.00f, magneticHeading: %.02f, trueHeading: %.02f, headingAccuracy: %.02f, x:%.03f, y:%.03f, z:%.03f }", 
-            [self.timestamp timeIntervalSince1970] * 1000.0, 
-			self.magneticHeading, 
-			self.trueHeading, 
-			self.headingAccuracy,
-			self.x,
-			self.y,
-			self.z
-            ];
-}
-
-@end
 
 #pragma mark NSError(JSONMethods)
 
