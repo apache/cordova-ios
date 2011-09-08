@@ -61,7 +61,7 @@
 		  callerFileName:(const char*)callerFileName callerFunctionName:(const char*)callerFunctionName 
 {
 	NSUInteger argc = [arguments count];
-	BOOL ok = (argc == expectedCount);
+	BOOL ok = (argc >= expectedCount); // allow for optional arguments
 	
 	if (!ok) {
 		NSString* errorString = [NSString stringWithFormat:@"Incorrect no. of arguments for plugin: was %d, expected %d", argc, expectedCount];
