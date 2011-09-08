@@ -178,7 +178,7 @@
         // create MediaFile object
         
         NSDictionary* fileDict = [self getMediaDictionaryFromPath:filePath ofType: mimeType];
-        NSArray* fileArray = [NSArray arrayWithObject:[fileDict JSONRepresentation]];
+        NSArray* fileArray = [NSArray arrayWithObject:fileDict];
         
         result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsArray: fileArray cast:@"navigator.device.capture._castMediaFile"];
         jsString = [result toSuccessCallbackString:callbackId];
@@ -263,7 +263,7 @@
     }*/
     // create MediaFile object
     NSDictionary* fileDict = [self getMediaDictionaryFromPath:moviePath ofType:nil];
-    NSArray* fileArray = [NSArray arrayWithObject:[fileDict JSONRepresentation]];
+    NSArray* fileArray = [NSArray arrayWithObject:fileDict];
     
     result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsArray: fileArray cast:@"navigator.device.capture._castMediaFile"];
     jsString = [result toSuccessCallbackString:callbackId];
@@ -796,7 +796,7 @@
         NSString* filePath = [avRecorder.url path];
         //NSLog(@"filePath: %@", filePath);
         NSDictionary* fileDict = [captureCommand getMediaDictionaryFromPath:filePath ofType: @"audio/wav"];
-        NSArray* fileArray = [NSArray arrayWithObject:[fileDict JSONRepresentation]];
+        NSArray* fileArray = [NSArray arrayWithObject:fileDict];
         
         PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsArray: fileArray cast:@"navigator.device.capture._castMediaFile"];
         self.resultString = [result toSuccessCallbackString:callbackId];

@@ -904,7 +904,7 @@
 				BOOL bIsDir = NO;
 				[fileMgr fileExistsAtPath:entryPath isDirectory: &bIsDir];
 				NSDictionary* entryDict = [self getDirectoryEntry:entryPath isDirectory:bIsDir];
-				[entries addObject:[entryDict JSONRepresentation]];
+				[entries addObject:entryDict];
 			}
 		}
 		result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsArray: entries cast: @"window.localFileSystem._castEntries"];
