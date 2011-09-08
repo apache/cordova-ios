@@ -295,8 +295,7 @@
 		for(int i = 0; i<count; i++){
 			PGContact* newContact = [matches objectAtIndex:i];
 			NSDictionary* aContact = [newContact toDictionary: returnFields];
-			NSString* contactStr = [aContact JSONRepresentation];
-			[returnContacts addObject:contactStr];
+			[returnContacts addObject:aContact];
 		}
 		[pool release];
 	}
