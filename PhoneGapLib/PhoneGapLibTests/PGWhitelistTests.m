@@ -3,7 +3,7 @@
 //  PhoneGapLib
 //
 //  Created by Shazron Abdullah on 11-09-01.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 Nitobi Software Inc. All rights reserved.
 //
 
 #import "PGWhitelistTests.h"

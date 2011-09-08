@@ -94,6 +94,10 @@
 		30956FFD138F317200FC3563 /* PGMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* PGMotion.m */; };
 		30A9DFE913A7EB9F009AA950 /* PGPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E33AF013A7E24B00594D64 /* PGPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30A9DFEB13A7EBC1009AA950 /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E33AF113A7E24B00594D64 /* PGPlugin.m */; };
+		30AE4E8D1419532F005A9C9A /* PGContactsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AE4E8C1419532F005A9C9A /* PGContactsTests.m */; };
+		30AE4E97141953C7005A9C9A /* MockUIWebview.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AE4E96141953C7005A9C9A /* MockUIWebview.m */; };
+		30AE4EA81419596F005A9C9A /* PGContactsTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 30AE4E8B1419532F005A9C9A /* PGContactsTests.h */; };
+		30AE4EA91419596F005A9C9A /* MockUIWebview.h in Resources */ = {isa = PBXBuildFile; fileRef = 30AE4E95141953C7005A9C9A /* MockUIWebview.h */; };
 		30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; };
 		30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* PGSplashScreen.m */; };
 		30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -200,6 +204,10 @@
 		307A8F9D1385A2EC00E43782 /* Connection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Connection.m; path = Classes/Connection.m; sourceTree = "<group>"; };
 		30956FD0138F1F5600FC3563 /* PGMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMotion.h; path = Classes/PGMotion.h; sourceTree = "<group>"; };
 		30956FD1138F1F5600FC3563 /* PGMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGMotion.m; path = Classes/PGMotion.m; sourceTree = "<group>"; };
+		30AE4E8B1419532F005A9C9A /* PGContactsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGContactsTests.h; sourceTree = "<group>"; };
+		30AE4E8C1419532F005A9C9A /* PGContactsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGContactsTests.m; sourceTree = "<group>"; };
+		30AE4E95141953C7005A9C9A /* MockUIWebview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockUIWebview.h; sourceTree = "<group>"; };
+		30AE4E96141953C7005A9C9A /* MockUIWebview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockUIWebview.m; sourceTree = "<group>"; };
 		30B39EBC13D0268B0009682A /* PGSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGSplashScreen.h; path = Classes/PGSplashScreen.h; sourceTree = "<group>"; };
 		30B39EBD13D0268B0009682A /* PGSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGSplashScreen.m; path = Classes/PGSplashScreen.m; sourceTree = "<group>"; };
 		30C6847E1406CB38004C1A8E /* PGWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGWhitelist.h; path = Classes/PGWhitelist.h; sourceTree = "<group>"; };
@@ -368,6 +376,10 @@
 				686357B1141002F200DF4CF2 /* Supporting Files */,
 				30356212141049E1006C2D43 /* PGWhitelistTests.h */,
 				30356213141049E1006C2D43 /* PGWhitelistTests.m */,
+				30AE4E8B1419532F005A9C9A /* PGContactsTests.h */,
+				30AE4E8C1419532F005A9C9A /* PGContactsTests.m */,
+				30AE4E95141953C7005A9C9A /* MockUIWebview.h */,
+				30AE4E96141953C7005A9C9A /* MockUIWebview.m */,
 			);
 			path = PhoneGapLibTests;
 			sourceTree = "<group>";
@@ -674,6 +686,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30AE4EA81419596F005A9C9A /* PGContactsTests.h in Resources */,
+				30AE4EA91419596F005A9C9A /* MockUIWebview.h in Resources */,
 				3035621814104C3E006C2D43 /* PGWhitelistTests.h in Resources */,
 				686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */,
 				686357B8141002F200DF4CF2 /* PluginResultJSONSerializationTests.h in Resources */,
@@ -786,6 +800,8 @@
 			files = (
 				3035621714104C34006C2D43 /* PGWhitelistTests.m in Sources */,
 				686357BA141002F200DF4CF2 /* PluginResultJSONSerializationTests.m in Sources */,
+				30AE4E8D1419532F005A9C9A /* PGContactsTests.m in Sources */,
+				30AE4E97141953C7005A9C9A /* MockUIWebview.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1039,7 +1055,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "PhoneGapLibTests/PhoneGapLibTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -1063,7 +1079,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhoneGapLibTests/PhoneGapLibTests-Prefix.pch";
 				INFOPLIST_FILE = "PhoneGapLibTests/PhoneGapLibTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
