@@ -161,7 +161,7 @@
 				result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [err localizedDescription]];
 				jsString = [result toErrorCallbackString:callbackId];
 			}else{
-				result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [NSURL fileURLWithPath: filePath]];
+				result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [[NSURL fileURLWithPath: filePath] absoluteString]];
 				jsString = [result toSuccessCallbackString:callbackId];
 			}
 			[fileMgr release];
