@@ -35,7 +35,7 @@
 	
 	function onBodyLoad()
 	{		
-		document.addEventListener("deviceready",onDeviceReady,false);
+		document.addEventListener("deviceready", onDeviceReady, false);
 	}
 	
 	/* When this function is called, PhoneGap has been initialized and is ready to roll */
@@ -51,7 +51,12 @@
     </script>
   </head>
   <body onload="onBodyLoad()">
-  	  <h1>Hey, it's PhoneGap!</h1>
-	  <p>Don't know how to get started? Check out <em><a href="http://github.com/phonegap/phonegap-start">PhoneGap Start</a></em>  	
+	<h1>Hey, it's PhoneGap!</h1>
+	<p>Don't know how to get started? Check out <em><a target="_blank" href="http://www.phonegap.com/start#ios-x4">PhoneGap Start</a></em>
+	<br />
+	<ol>
+		<li>Check your console log for any white-list rejection errors.</li>
+		<li>Add your allowed hosts in PhoneGap.plist/ExternalHosts (wildcards OK)</li>
+	</ol>
   </body>
 </html>
