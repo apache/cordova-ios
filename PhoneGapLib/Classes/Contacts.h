@@ -112,14 +112,17 @@
 @property (copy) NSString* callbackId;
 @end
 
-@interface DisplayContactsController : ABPersonViewController
-{
-	NSString* successCallback;
-	NSString* errorCallback;
-}
-@property (copy) NSString* successCallback;
-@property (copy) NSString* errorCallback;
 
-//- (void)setEditing:(BOOL)flag animated:(BOOL)animated; 
+@interface DisplayContactViewController : ABPersonViewController
+{
+
+    PGPlugin* contactsPlugin;  // needed in order to retrieve the appViewController to dismiss the presented modalview
+
+    
+}
+@property (nonatomic,retain) PGPlugin* contactsPlugin;
+
+
+
 
 @end

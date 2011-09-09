@@ -27,13 +27,6 @@
 
 @end
 
-@implementation DisplayContactsController
-@synthesize successCallback;
-@synthesize errorCallback;
-
-@end
-
-
 @implementation PGContacts
 
 // no longer used since code gets AddressBook for each operation. 
@@ -117,21 +110,19 @@
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
 	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addrBook, recordID);
 	if (rec) {
-		ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
+		DisplayContactViewController* personController = [[[DisplayContactViewController alloc] init] autorelease];
 		personController.displayedPerson = rec;
 		personController.personViewDelegate = self;
 		personController.allowsEditing = NO;
+        personController.contactsPlugin = self;  //pass in the PGPlugin object so can dismiss the picker view later
 		
-		UIBarButtonItem* doneButton = [[[UIBarButtonItem alloc]
-									   initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-									   target: self
-									   action: @selector(dismissModalView:)] autorelease];
-		
-		UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:personController] autorelease];
+        // create this so DisplayContactViewController will have a "back" button.
+        UIViewController* parentController = [[[UIViewController alloc] init] autorelease];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:parentController];
+
+        [navController pushViewController:personController animated:YES];
+
 		[self.appViewController presentModalViewController:navController animated: YES];
-		
-		// this needs to be AFTER presentModal, if not it does not show up (iOS 4 regression: workaround)
-		personController.navigationItem.rightBarButtonItem = doneButton;
 
 		if (bEdit) {
             // create the editing controller and push it onto the stack
@@ -151,11 +142,6 @@
 		
 	}
 	CFRelease(addrBook);
-}
-
-- (void) dismissModalView:(id)sender 
-{
-	[self.appViewController dismissModalViewControllerAnimated:YES];
 }
 								   
 - (BOOL) personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
@@ -463,18 +449,27 @@
 
 @end
 
-/*@implementation ContactsViewController
-- (void)setEditing:(BOOL)flag animated:(BOOL)animated
+/* ABPersonViewController does not have any UI to dismiss.  Adding navigationItems to it does not work properly
+ * The navigationItems are lost when the app goes into the background.  The solution was to create an empty
+ * NavController in front of the ABPersonViewController. This will cause the ABPersonViewController to have a back button. By subclassing the ABPersonViewController, we can override viewDidDisappear and take down the entire NavigationController.
+ */ 
+@implementation DisplayContactViewController
+@synthesize contactsPlugin;
+
+
+- (void)viewDidDisappear: (BOOL)animated
 {
-	[super setEditing:flag animated:animated]; 
-	if (flag == YES){ 
-		// change the view to an editable view 
-		[ [self navigationController] setEditing:YES animated:NO];
-	} else {
-		// save the changes and change the view to noneditable 
-		[ [self navigationController] setEditing:NO animated:NO]; 
-	}
+    [super viewDidDisappear: animated];
+    // I couldn't find the appViewController in the hierarchy of this UIViewController 
+    // so using the passed ContactPlugin to access it.
+    [self.contactsPlugin.appViewController dismissModalViewControllerAnimated:NO];
+    
 }
-@end		
-*/
+-(void) dealloc
+{
+    self.contactsPlugin=nil;
+    [super dealloc];
+}
+
+@end
 
