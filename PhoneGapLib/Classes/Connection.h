@@ -16,7 +16,7 @@
 	Reachability* internetReach;
 }
 
-@property (copy) NSString* type;
+@property (copy) NSString* connectionType;
 @property (retain) Reachability* internetReach;
 
 @end

@@ -31,7 +31,6 @@
 
 // readwrite access for self
 
-@property (nonatomic, readwrite, retain) IBOutlet UIWindow *window;
 @property (nonatomic, readwrite, retain) IBOutlet PhoneGapViewController *viewController;
 @property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView *activityView;
 @property (nonatomic, readwrite, retain) UIImageView *imageView;
@@ -492,8 +491,8 @@ BOOL gSplashScreenShown = NO;
     if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
     {
         NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
-        if ([cmd respondsToSelector:@selector(type)]) {
-            [connProps setObject:[cmd type] forKey:@"type"];
+        if ([cmd respondsToSelector:@selector(connectionType)]) {
+            [connProps setObject:[cmd connectionType] forKey:@"type"];
         }
         [devProps setObject:connProps forKey:@"connection"];
     }
