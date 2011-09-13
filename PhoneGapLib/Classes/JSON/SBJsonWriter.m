@@ -29,7 +29,7 @@
 
 #import "SBJsonWriter.h"
 
-@interface SBJsonWriter ()
+@interface PG_SBJsonWriter ()
 
 - (BOOL)appendValue:(id)fragment into:(NSMutableString*)json;
 - (BOOL)appendArray:(NSArray*)fragment into:(NSMutableString*)json;
@@ -40,7 +40,7 @@
 
 @end
 
-@implementation SBJsonWriter
+@implementation PG_SBJsonWriter
 
 @synthesize sortKeys;
 @synthesize humanReadable;

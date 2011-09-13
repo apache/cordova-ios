@@ -35,7 +35,7 @@
  
  This exists so the SBJSON facade can implement the options in the writer without having to re-declare them.
  */
-@protocol SBJsonWriter
+@protocol PG_SBJsonWriter
 
 /**
  @brief Whether we are generating human-readable (multiline) JSON.
@@ -91,7 +91,7 @@
  way you would expect.
  
  */
-@interface SBJsonWriter : SBJsonBase <SBJsonWriter> {
+@interface PG_SBJsonWriter : PG_SBJsonBase <PG_SBJsonWriter> {
 
 @private
     BOOL sortKeys, humanReadable;
@@ -100,7 +100,7 @@
 @end
 
 // don't use - exists for backwards compatibility. Will be removed in 2.3.
-@interface SBJsonWriter (Private)
+@interface PG_SBJsonWriter (Private)
 - (NSString*)stringWithFragment:(id)value;
 @end
 
@@ -123,7 +123,7 @@
  @endcode
  
  */
-@interface NSObject (SBProxyForJson)
+@interface NSObject (PG_SBProxyForJson)
 - (id)proxyForJson;
 @end
 

@@ -35,7 +35,7 @@
  
  This exists so the SBJSON facade can implement the options in the parser without having to re-declare them.
  */
-@protocol SBJsonParser
+@protocol PG_SBJsonParser
 
 /**
  @brief Return the object represented by the given string.
@@ -71,7 +71,7 @@
  as we can thus avoid any loss of precision. (JSON allows ridiculously large numbers.)
  
  */
-@interface SBJsonParser : SBJsonBase <SBJsonParser> {
+@interface PG_SBJsonParser : PG_SBJsonBase <PG_SBJsonParser> {
     
 @private
     const char *c;
@@ -80,7 +80,7 @@
 @end
 
 // don't use - exists for backwards compatibility with 2.1.x only. Will be removed in 2.3.
-@interface SBJsonParser (Private)
+@interface PG_SBJsonParser (Private)
 - (id)fragmentWithString:(id)repr;
 @end
 

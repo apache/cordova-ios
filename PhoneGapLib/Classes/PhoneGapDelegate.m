@@ -615,7 +615,7 @@ BOOL gSplashScreenShown = NO;
         @"PhoneGap.getAndClearQueuedCommands()"];
 
     // Parse the returned JSON array.
-    SBJsonParser* jsonParser = [[[SBJsonParser alloc] init] autorelease];
+    PG_SBJsonParser* jsonParser = [[[PG_SBJsonParser alloc] init] autorelease];
     NSArray* queuedCommands =
         [jsonParser objectWithString:queuedCommandsJSON];
 

@@ -36,11 +36,11 @@
 
  Requests are forwarded to instances of SBJsonWriter and SBJsonParser.
  */
-@interface SBJSON : SBJsonBase <SBJsonParser, SBJsonWriter> {
+@interface PG_SBJSON : PG_SBJsonBase <PG_SBJsonParser, PG_SBJsonWriter> {
 
 @private    
-    SBJsonParser *jsonParser;
-    SBJsonWriter *jsonWriter;
+    PG_SBJsonParser *jsonParser;
+    PG_SBJsonWriter *jsonWriter;
 }
 
 

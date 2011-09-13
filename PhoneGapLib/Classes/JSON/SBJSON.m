@@ -29,13 +29,13 @@
 
 #import "SBJSON.h"
 
-@implementation SBJSON
+@implementation PG_SBJSON
 
 - (id)init {
     self = [super init];
     if (self) {
-        jsonWriter = [SBJsonWriter new];
-        jsonParser = [SBJsonParser new];
+        jsonWriter = [PG_SBJsonWriter new];
+        jsonParser = [PG_SBJsonParser new];
         [self setMaxDepth:512];
 
     }
