@@ -143,9 +143,9 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
 	var that = this;
     var lastPos = that.lastPosition? that.lastPosition.clone() : null;
     
-	return setInterval(function() 
-	{
-        var filterFun = function(position) {
+	var intervalFunction = function() {
+        
+		var filterFun = function(position) {
             if (lastPos == null || !position.equals(lastPos)) {
                 // only call the success callback when there is a change in position, per W3C
                 successCallback(position);
@@ -154,8 +154,14 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
             // clone the new position, save it as our last position (internal var)
             lastPos = position.clone();
         };
+		
 		that.getCurrentPosition(filterFun, errorCallback, params);
-	}, params.timeout);
+	};
+	
+    // Retrieve location immediately and schedule next retrieval afterwards
+	intervalFunction();
+	
+	return setInterval(intervalFunction, params.timeout);
 };
 
 
