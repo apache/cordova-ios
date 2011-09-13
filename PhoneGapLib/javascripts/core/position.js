@@ -107,6 +107,10 @@ PositionOptions = function(enableHighAccuracy, timeout, maximumAge) {
      * in milliseconds. 
      */
 	this.maximumAge = maximumAge || 0;
+	
+	if (this.maximumAge < 0) {
+		this.maximumAge = 0;
+	}
 };
 
 /**

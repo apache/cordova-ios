@@ -11,8 +11,8 @@
 #import "PGPlugin.h"
 
 @interface PGLocation : PGPlugin <CLLocationManagerDelegate> {
-    BOOL              __locationStarted;
-    BOOL              __headingStarted;
+    @private BOOL   __locationStarted;
+    @private BOOL   __headingStarted;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;

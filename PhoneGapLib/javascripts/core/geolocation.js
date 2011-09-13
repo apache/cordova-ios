@@ -52,16 +52,6 @@ PositionOptions
  
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) 
 {
-    // if (this.listener != null) 
-    // {
-    //     console.log("Geolocation Error: Still waiting for previous getCurrentPosition() request.");
-    //     if (errorCallback && typeof(errorCallback) == 'function')
-    //     {
-    //         errorCallback(new PositionError(PositionError.TIMEOUT, "Geolocation Error: Still waiting for previous getCurrentPosition() request."));
-    //     } 
-    //     return PositionError.TIMEOUT;
-    // }
-    
     // create an always valid local success callback
     var win = successCallback;
     if (!win || typeof(win) != 'function')
@@ -91,7 +81,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
             if(this.lastPosition)
             {
                 var now = new Date().getTime();
-                if(now - this.lastPosition.timestamp < options.maximumAge)
+                if((now - this.lastPosition.timestamp) < options.maximumAge)
                 {
                     win(this.lastPosition); // send cached position immediately 
                     return;                 // Note, execution stops here -jm
