@@ -42,10 +42,11 @@
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
         
 	} else {
-        
         bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
         NSNumber* targetWidth = [options valueForKey:@"targetWidth"];
         NSNumber* targetHeight = [options valueForKey:@"targetHeight"];
+        NSNumber* mediaValue = [options valueForKey:@"mediaType"];
+        MediaType mediaType = (mediaValue) ? [mediaValue intValue] : MediaTypePicture;
         
         CGSize targetSize = CGSizeMake(0, 0);
         if (targetWidth != nil && targetHeight != nil) {
@@ -69,6 +70,17 @@
         
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
         self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
+       
+        if (sourceType == UIImagePickerControllerSourceTypeCamera) {
+            // we only allow taking pictures (no video) in this api
+            self.pickerController.mediaTypes = [NSArray arrayWithObjects: (NSString*) kUTTypeImage, nil];
+        } else if (mediaType == MediaTypeAll) {
+            self.pickerController.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType: sourceType];
+        } else {
+            NSArray* mediaArray = [NSArray arrayWithObjects: (NSString*) (mediaType == MediaTypeVideo ? kUTTypeMovie : kUTTypeImage), nil];
+            self.pickerController.mediaTypes = mediaArray;
+            
+        }
         
         if([self popoverSupported] && sourceType != UIImagePickerControllerSourceTypeCamera)
         {
@@ -112,13 +124,14 @@
 	{
 		[self.pickerController dismissModalViewControllerAnimated:YES]; 
 	}
-	
+	NSString* jsString = nil;
+    PluginResult* result = nil;
+    
 	NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
 	if ([mediaType isEqualToString:(NSString*)kUTTypeImage])
 	{
 		
-		NSString* jsString = NULL;
-		PluginResult* result = nil;
+		
 		
 		// get the image
 		UIImage* image = nil;
@@ -175,9 +188,18 @@
 			result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: [data base64EncodedString]];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
-		[self.webView stringByEvaluatingJavaScriptFromString:jsString];
 		
-	}
+		
+	} else {
+        // was movie type
+         NSString *moviePath = [[info objectForKey: UIImagePickerControllerMediaURL] absoluteString];
+        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: moviePath];
+        jsString = [result toSuccessCallbackString:callbackId];
+        
+    }
+    if (jsString) {
+        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+    }
 	
 	self.pickerController.delegate = nil;
 	self.pickerController = nil;

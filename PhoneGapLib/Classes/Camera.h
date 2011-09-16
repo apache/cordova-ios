@@ -23,6 +23,12 @@ enum EncodingType {
 };
 typedef NSUInteger EncodingType;
 
+enum MediaType {
+    MediaTypePicture = 0,
+    MediaTypeVideo,
+    MediaTypeAll
+};
+typedef NSUInteger MediaType;
 
 @interface CameraPicker : UIImagePickerController
 {

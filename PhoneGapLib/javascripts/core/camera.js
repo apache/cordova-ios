@@ -63,6 +63,23 @@ Camera.EncodingType = {
 };
 Camera.prototype.EncodingType = Camera.EncodingType;
 
+/** 
+ * Type of pictures to select from.  Only applicable when
+ *	PictureSourceType is PHOTOLIBRARY or SAVEDPHOTOALBUM 
+ * 
+ * Example: navigator.camera.getPicture(success, fail, 
+ *              { quality: 80, 
+ *                destinationType: Camera.DestinationType.DATA_URL, 
+ *                sourceType: Camera.PictureSourceType.PHOTOLIBRARY, 
+ *                mediaType: Camera.MediaType.PICTURE}) 
+ */ 
+Camera.MediaType = { 
+	PICTURE: 0,             // allow selection of still pictures only. DEFAULT. Will return format specified via DestinationType
+	VIDEO: 1,                // allow selection of video only, ONLY RETURNS URL
+	ALLMEDIA : 2			// allow selection from all media types
+};
+Camera.prototype.MediaType = Camera.MediaType;
+
 /**
  * Gets a picture from source defined by "options.sourceType", and returns the
  * image as defined by the "options.destinationType" option.
