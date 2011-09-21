@@ -16,10 +16,14 @@ You don't need to do this if you downloaded the installer from [phonegap.com](ht
 2. Navigate to the folder where Makefile is (this folder)
 3. Type in "make" then press Enter
 
+<br />
+
 The installer should build "PhoneGapInstaller.pkg" into this folder, then:
 
 1. Quit Xcode
 2. Launch "PhoneGapInstaller.pkg" to install PhoneGapLib, the PhoneGap framework and the PhoneGap Xcode Templates.
+
+<br />
 
 Create a PhoneGap project (Xcode 3)
 -------------------------------------------------------------
@@ -28,6 +32,8 @@ Create a PhoneGap project (Xcode 3)
 2. Navigate to the "User Templates" section, select PhoneGap, then in the right pane, select "PhoneGap-based Application"
 3. Select the "Choose..." button, name your project and choose the location where you want the new project to be.
 4. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
+
+<br />
 
 Create a PhoneGap project (Xcode 4)
 -------------------------------------------------------------
@@ -40,6 +46,8 @@ Create a PhoneGap project (Xcode 4)
 6. Drag and drop this "www" folder into your project in Xcode, and add it as a folder reference.
 7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
+<br />
+
 Uninstalling PhoneGapLib, PhoneGap.framework and the Xcode Templates
 --------------------------------------------------------------------
 
@@ -48,6 +56,8 @@ Use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file, OR:
 1. Launch "Terminal.app"
 2. Navigate to the folder where Makefile is (this folder)
 3. Type in "make uninstall" then press Enter
+
+<br />
 
 **NOTE:** 
 
@@ -66,6 +76,8 @@ Items that will be installed:
 5. PhoneGap Xcode static framework under _/Users/Shared/PhoneGap/Frameworks/PhoneGap.framework_ (may change in future updates)
 6. Symlink to the framework in (5) under _~/Library/Frameworks_
 
+<br />
+
 To uninstall:
 
 Delete the files listed above, or use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file.
@@ -79,6 +91,8 @@ Set up the test project:
 1. Launch "Terminal.app"
 2. Type in "chmod 755 update_test.sh"
 3. Type in "./update_test.sh"
+
+<br />
 
 This will get the mobile-spec submodule and install it under the PhoneGapLibTests folder. You can then build and run the PhoneGapLibTest project to see the results.
 
@@ -105,6 +119,8 @@ This can be because of:
 2. You did _not_ add the plugin code as a "group" (__yellow__ folder) but added it as a "folder reference" (blue folder) 
 3. You are having #import problems - see [this article](http://wiki.phonegap.com/PhoneGap%20iOS%20Plugins%20Problems). 
 
+<br />  
+
 **4. I get this error in my Xcode Run Log - 'ERROR whitelist rejection: url='http://&lt;MYHOSTNAME&gt;/'**
 
 This error occurs because of the new white-list feature in version 1.1.
@@ -116,6 +132,8 @@ This includes external http/https/ftp/ftps links in:
 1. HTML anchor tags
 2. connections in JavaScript (i.e through XMLHttpRequest)
 3. connections through Objective-C plugins 
+  
+<br />
 
 **5. How do I effectively upgrade my project?**
 
@@ -125,7 +143,9 @@ This includes external http/https/ftp/ftps links in:
 4. If you have plugins, copy them to the __Plugins__ folder then __re-add__ them in Xcode (__NOT__ as folder references in blue, they should be folder groups in __yellow__). 
 5. Modify __PhoneGap.plist/Plugins__ to add your plugin mappings (see FAQ question(s) above) 
 6. Modify __PhoneGap.plist/ExternalHosts__ to add your external hosts to the white-list (see FAQ question(s) above)
-  
+
+<br />
+
 **6. I've got 'symbol not found' errors during runtime? Usually it's because I'm deploying to an iOS 3.x device.**
 
 With version 0.9.6, we implemented the W3C Media Capture API, which requires use of some iOS 4 APIs and frameworks. If you are deploying to an iOS 3.x device, you will need to "weak/optional" link three frameworks: __UIKit__, __CoreMedia__, and __AVFoundation__. 
@@ -138,8 +158,7 @@ Starting with version 1.1, when creating a new project, the weak-linking is adde
 
 **7. How do I override the location of the start page www/index.html?** 
 
-A. You can override it by copy and pasting these [functions](https://github.com/phonegap/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
-
+You can override it by copy and pasting these [functions](https://github.com/phonegap/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
 
 **8. What's the difference between the Xcode 3 and Xcode 4 templates?**
 
@@ -152,9 +171,11 @@ Links:
 1. [https://build.phonegap.com/generate](https://build.phonegap.com/generate)
 2. [https://raw.github.com/phonegap/phonegap-iphone/1.0.0/create_project.sh](https://raw.github.com/phonegap/phonegap-iphone/1.0.0/create_project.sh)
 
+<br />
+
 **9. In Xcode 3, I want to have a project-specific copy of PhoneGapLib for my project, not a global one. How do I do this?** 
 
-A. In your project, there should be a _PhoneGapBuildSettings.xcconfig_ file. Modify the _PHONEGAPLIB_ variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
+In your project, there should be a _PhoneGapBuildSettings.xcconfig_ file. Modify the _PHONEGAPLIB_ variable in the file to point to your project specific PhoneGapLib folder. You can use relative paths, off $(PROJECT_DIR).
 
 **10. In Xcode 4, I want to have a project-specific copy of PhoneGap.framework for my project, not a global one. How do I do this?** 
 
