@@ -245,7 +245,7 @@
     } else {
        // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
-            self.headingData = [[PGHeadingData alloc] init];
+            self.headingData = [[[PGHeadingData alloc] init] autorelease];
         }
         PGHeadingData* hData = self.headingData;
         
@@ -280,7 +280,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {
-            self.headingData = [[PGHeadingData alloc] init];
+            self.headingData = [[[PGHeadingData alloc] init] autorelease];
             hData = self.headingData;
         }
         if (hData.headingStatus != HEADINGRUNNING) {
