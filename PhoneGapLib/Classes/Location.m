@@ -108,7 +108,8 @@
 	BOOL authorizationStatusClassPropertyAvailable = [CLLocationManager respondsToSelector:@selector(authorizationStatus)]; // iOS 4.2+
     if (authorizationStatusClassPropertyAvailable)
     {
-        return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
+        NSUInteger authStatus = [CLLocationManager authorizationStatus];
+        return  (authStatus == kCLAuthorizationStatusAuthorized) || (authStatus == kCLAuthorizationStatusNotDetermined);
     }
     
     // by default, assume YES (for iOS < 4.2)
@@ -149,6 +150,7 @@
 		{
             NSError* error = [NSError errorWithDomain:kPGLocationErrorDomain code:1 userInfo:
                               [NSDictionary dictionaryWithObject:@"Location services is not enabled" forKey:NSLocalizedDescriptionKey]];
+            NSLog(@"%@", [error JSONRepresentation]);
             
 			NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]]; 
 			[super writeJavascript:jsCallback];
@@ -166,14 +168,14 @@
         
         NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
                           [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
-        
+        NSLog(@"%@", [error JSONRepresentation]);
+
         NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
         [super writeJavascript:jsCallback];
         
         return;
     }
 	
-    
     // Tell the location manager to start notifying us of location updates
     [self.locationManager startUpdatingLocation];
     __locationStarted = YES;
