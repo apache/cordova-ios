@@ -77,6 +77,8 @@ clean-xcode3-template:
 		$(MV) $(BUILD_BAK)/www/ "PhoneGap-based Application/www"; \
 	fi	
 	@$(RM_RF) PhoneGap-based\ Application/build/
+	@$(RM_RF) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/xcuserdata
+	@$(RM_RF) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/project.xcworkspace
 	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
 	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
 	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
