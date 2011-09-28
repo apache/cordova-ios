@@ -118,7 +118,7 @@
 		
         // create this so DisplayContactViewController will have a "back" button.
         UIViewController* parentController = [[[UIViewController alloc] init] autorelease];
-        UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:parentController] autorelease];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:parentController];
 
         [navController pushViewController:personController animated:YES];
 
