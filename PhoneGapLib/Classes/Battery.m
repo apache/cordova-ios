@@ -110,6 +110,12 @@
 /* turn off battery monitoring */
 - (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+    // callback one last time to clear the callback function on JS side
+    if (self.callbackId) {
+        PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:[self getBatteryStatus]];
+        [result setKeepCallbackAsBool:NO];
+        [super writeJavascript:[result toSuccessCallbackString:self.callbackId]];
+    }
     self.callbackId = nil;
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:NO];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceBatteryStateDidChangeNotification object:nil];
