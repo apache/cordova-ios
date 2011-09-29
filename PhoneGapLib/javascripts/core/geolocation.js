@@ -106,7 +106,8 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 	{
 	    self.setError(new PositionError(PositionError.TIMEOUT,"Geolocation Error: Timeout."));
 	};
-	 
+
+    clearTimeout(this.timeoutTimerId);
     this.timeoutTimerId = setTimeout(onTimeout, params.timeout); 
 };
 
