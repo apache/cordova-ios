@@ -14,7 +14,7 @@
 
 @implementation PGSound
 
-@synthesize soundCache;
+@synthesize soundCache, avSession;
 /*
 // Maps a url to the original resource path
 - (NSString*) resourceForUrl:(NSURL*)url
@@ -117,6 +117,23 @@
 	}
 	return audioFile;
 }
+// returns whether or not audioSession is available - creates it if necessary 
+- (BOOL) hasAudioSession
+{
+    BOOL bSession = YES;
+    if (!self.avSession) {
+        NSError* error = nil;
+        
+        self.avSession = [AVAudioSession sharedInstance];
+        if (error) {
+            // is not fatal if can't get AVAudioSession , just log the error
+            NSLog(@"error creating audio session: %@", [[error userInfo] description]);
+            self.avSession = nil;
+            bSession = NO;
+        }
+    }
+    return bSession;
+}
 
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -165,7 +182,7 @@
 				audioFile.player.numberOfLoops = numberOfLoops;
 				[audioFile.player play];
 			} */
-			// error creating the player
+			// error creating the session or player
 			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_NONE_SUPPORTED];
 			[super writeJavascript:jsString];
 		}
@@ -176,19 +193,33 @@
 - (BOOL) prepareToPlay: (PGAudioFile*) audioFile withId: (NSString*) mediaId
 {
     BOOL bError = NO;
-    NSError* error = nil;
-    // create the player
-    NSURL* resourceURL = audioFile.resourceURL;
-    if ([resourceURL isFileURL]) {
-        audioFile.player = [[[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&error] autorelease];
-    } else {
-        NSData* data = [NSData dataWithContentsOfURL:resourceURL];
-        audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&error] autorelease];
+    NSError* playerError = nil;
+    // get the audioSession and set the category to allow Playing when device is locked or ring/silent switch engaged
+    if ([self hasAudioSession]) {
+        NSError* err = nil;
+        [self.avSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+        if (![self.avSession  setActive: YES error: &err]){
+            // other audio with higher priority that does not allow mixing could cause this to fail
+            NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
+            bError = YES;
+        }
     }
-    
-    if (error != nil) {
-        NSLog(@"Failed to initialize AVAudioPlayer: %@\n", error);
+    if (!bError) {
+        // create the player
+        NSURL* resourceURL = audioFile.resourceURL;
+        if ([resourceURL isFileURL]) {
+            audioFile.player = [[[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&playerError] autorelease];
+        } else {
+            NSData* data = [NSData dataWithContentsOfURL:resourceURL];
+            audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
+        }
+    }
+    if (playerError != nil) {
+        NSLog(@"Failed to initialize AVAudioPlayer: %@\n", [playerError localizedFailureReason]);
         audioFile.player = nil;
+        if (self.avSession) {
+            [self.avSession setActive:NO error:nil];
+        }
         bError = YES;
     } else {
         audioFile.player.mediaId = mediaId;
@@ -330,6 +361,10 @@
 			if(audioFile.recorder && [audioFile.recorder isRecording]){
 				[audioFile.recorder stop];
 			}
+            if (self.avSession) {
+                [self.avSession setActive:NO error: nil];
+                self.avSession = nil;
+            }
 			[[self soundCache] removeObjectForKey: mediaId];
 			NSLog(@"Media with id %@ released", mediaId);
 		}
@@ -377,12 +412,27 @@
 			[audioFile.recorder stop];
 			audioFile.recorder = nil;
 		}
-		// create a new recorder for each start record 
-		audioFile.recorder = [[[AudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error] autorelease];
-	
+        // get the audioSession and set the category to allow recording when device is locked or ring/silent switch engaged
+        if ([self hasAudioSession]) {
+            [self.avSession setCategory:AVAudioSessionCategoryRecord error:nil];
+            if (![self.avSession  setActive: YES error: &error]){
+                // other audio with higher priority that does not allow mixing could cause this to fail
+                NSLog(@"Unable to record audio: %@", [error localizedFailureReason]);
+                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
+                [super writeJavascript:jsString];
+                return;
+            }
+        }
+        
+        // create a new recorder for each start record 
+        audioFile.recorder = [[[AudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error] autorelease];
+        
 		if (error != nil) {
 			NSLog(@"Failed to initialize AVAudioRecorder: %@\n", error);
 			audioFile.recorder = nil;
+            if (self.avSession) {
+                [self.avSession setActive:NO error:nil];
+            }
 			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
 			
 		} else {
@@ -436,6 +486,9 @@
     } else {
         jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
     }
+    if (self.avSession) {
+        [self.avSession setActive:NO error:nil];
+    }
     [super writeJavascript:jsString];
 	
 }
@@ -457,6 +510,9 @@
         jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
         
     }
+    if (self.avSession) {
+        [self.avSession setActive:NO error:nil];
+    }
     [super writeJavascript: jsString];
 	
 }
@@ -465,10 +521,18 @@
 {
 	[[self soundCache] removeAllObjects];
 	[self setSoundCache: nil];
+    [self setAvSession: nil];
 	
 	[super onMemoryWarning];
 }
-
+- (void) dealloc
+{
+    [[self soundCache] removeAllObjects];
+	[self setSoundCache: nil];
+    [self setAvSession: nil];
+    
+    [super dealloc];
+}
 @end
 
 @implementation PGAudioFile
