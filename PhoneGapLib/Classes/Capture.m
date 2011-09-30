@@ -537,10 +537,12 @@
 	BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
 	
 	// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
+    // if user wants iPhone only app to run on iPad they must remove *~ipad.* images from capture.bundle
 	if (isLessThaniOS4)
 	{
-		if ([self isIPad]) {
-			return [NSString stringWithFormat:@"%@~ipad.png", resource];
+		NSString* iPadResource = [NSString stringWithFormat:@"%@~ipad.png", resource];
+        if ([self isIPad] && [UIImage imageNamed:iPadResource]) {
+            return iPadResource;
 		} else {
 			return [NSString stringWithFormat:@"%@.png", resource];
 		}
