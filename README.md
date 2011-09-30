@@ -13,15 +13,15 @@ Build and install the Installer Package
 You don't need to do this if you downloaded the installer from [phonegap.com](http://phonegap.com), this is only for developers that need to compile the source.
 
 1. Launch "Terminal.app"
-2. Navigate to the folder where Makefile is (this folder)
+2. Navigate to the folder where the Makefile is
 3. Type in "make" then press Enter
 
 <br />
 
-The installer should build "PhoneGapInstaller.pkg" into this folder, then:
+The installer should build "PhoneGapInstaller.dmg" into the **dist** folder, mount the .dmg, then:
 
 1. Quit Xcode
-2. Launch "PhoneGapInstaller.pkg" to install PhoneGapLib, the PhoneGap framework and the PhoneGap Xcode Templates.
+2. Launch "PhoneGapInstaller.pkg" from the mounted .dmg, to install PhoneGapLib, the PhoneGap framework and the PhoneGap Xcode Templates.
 
 <br />
 
@@ -184,6 +184,11 @@ A. Remove the existing PhoneGap.framework from your project, and drag and drop y
 **11. I've got other PhoneGap-specific issues not covered here?**
 
 A. Older pre-1.0 issues have been put in the [PhoneGap iOS FAQ](http://wiki.phonegap.com/w/page/41631150/PhoneGap-for-iOS-FAQ) on the [Wiki](http://wiki.phonegap.com).      
+
+**12. On an iOS 3.2 iPad, and launching an iPhone only app, when I use the Media Capture API, the user interface shown is iPad sized, not iPhone sized?**
+
+A. You must delete the *~ipad.png images from **Capture.bundle** if they want to build an iPhone only app and have captureAudio() display properly on an iPad. This additional fix is just for iPad running iOS 3.2 - if the requested *~ipad.png is not available it returns the iPhone sized image.  
+
 
 BUGS?
 -----

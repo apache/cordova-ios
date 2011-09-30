@@ -2,9 +2,66 @@
   
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
   
-### 1.0.x (YYYYMMDD)  
+### 1.1.0 (20110930)  
   
-* TODO: Point release stuff here
+* fixes issue #212 media play not always calling success callback
+* added support for W3C battery status events
+* fix audio view sizing on iPad when built for iPhone
+* refs #277 regression in camera due to PluginResult changes
+* fix broken file tests in mobile-spec
+* fix #265 display contact not restoring after pause
+* issue #230 Update compass implementation
+* fixes #271 Implemented selecting picture type when getting images from library.
+* fix #289 update contact to deal with an address with no type specified
+* fix #293  Now clearing callback function when battery events stopped
+* fix #232 Allow media playback to work when device locked or       add correctOrientation option to rotate images before returning them  
+* add option for saving photo to the album
+* add success,error method sugar to PGPlugin
+* moved `device.js` before `capture.js` because `Capture`'s install function depends on `Device`'s constructor.
+* fix, simplify, and extend PluginResult's toJSONString function.
+* add unit-test target/product to PhoneGapLib.
+* update Capture, Contacts, and File to not rely on PluginResult's previous bug.
+* allow for using a custom UIWebView object. Just set self.webView in application:didFinishLaunchingWithOptions: before calling super.
+* rework PhoneGap.exec() to execute commands much faster.
+* fix a race condition in PhoneGap.exec().
+* put the PhoneGap.exec() before deviceready warning in the right place.
+* fixed issue #219: geolocation.watchposition() delayed
+* fixes #207 iOS 3.x crash: NSConcreteGlobalBlock symbol not found
+* fixed #228 getPicture crashes when getting picture from photobook on iPad
+* added failing unit-tests for PGContacts.
+* updated sample index.html with notes about the white-list.
+* fixed #290 regression - modalViewController does not retain the UINavigationController as expected. This will still cause a static analyzer issue though
+* restructuring for cli scripts, first pass at test automation, mobile-spec automation
+* fixed #215 Add sha1 checksum for the .dmg file
+* PhoneGapLib: Re-applied IPHONEOS_DEPLOYMENT_TARGET = 3.0 setting that was clobbered in a pull-request
+* fixes #202 PhoneGapViewController code cleanup
+* updated PhoneGapLibTest for 1.0.0 release, updated test submodule to latest
+* fixed #221 Add linker flags for weak-linking frameworks, to templates
+* fixed #225 Xcode 4 www folder warning - add additional help text
+* fixed #224 make the default projects universal
+* fixed #201 README.pdf - links from converted README.md not clickable, plus re-structure
+* converted installer docs to markdown
+* updated Makefile for new markdown docs.
+* fixed #241 navigator.notification.alert - cannot set empty title
+* fixed #199 Unnecessary warnings in console (about:blank)
+* fixed #194 Enable white listing of domains that an application can access. All http and https urls MUST be in PhoneGap.plist/ExternalHosts or they will not be handled.
+* fixed #233 wildcard support for ACL
+* set properties to readonly in the AppDelegate, and removed some of the properties from the public interface.
+* fixed #243 Splash screen spinner not visible
+Removed GetFunctionName.js (unused)
+* fixed #246 Add whitelist capability that includes XMLHttpRequest calls
+* usage of VERIFY_ARGUMENTS macro in File plugin - related to #244
+* fixed #259: PluginResult toJSONString does not quote strings in arrays
+* added ability so that unhanded URLs (i.e. custom schemes in a web-page) will notify PhoneGap plugins of this custom url so that the plugins can handle it themselves. This would give the ability to handle callbacks for OAuth logins (Twitter/Facebook) in the main PhoneGap UIWebview, and not require the ChildBrowser plugin.
+* fixes #263 Phone call - tel: scheme handling hides default behaviour
+* fixes #269 - Add Obj-C unit-tests for whitelist implementation
+* fixed #256 PhoneGapDelegate (UIApplicationDelegate) property hides new property in iOS 5
+* fixed #254 Prefix the SBJSON classes included in PhoneGap with 'PG'
+* updated README FAQ to be up to date, and numbered the questions for easy reference.
+* removed user cruft in .xcodeproj - project.workspace and xcuserdata folders.
+* fixed geolocation authorizationStatus on first use. Changes to help debug issue #197
+* fixed #197 navigator.geolocation.getCurrentPosition timeouts when native app works
+* fixed #255 ability to play inline videos
 
 <br />
 
