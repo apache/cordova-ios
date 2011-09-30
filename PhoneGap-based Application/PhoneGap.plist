@@ -16,6 +16,10 @@
 	<true/>
 	<key>ShowSplashScreenSpinner</key>
 	<true/>
+	<key>MediaPlaybackRequiresUserAction</key>
+	<false/>
+	<key>AllowInlineMediaPlayback</key>
+	<false/>
 	<key>ExternalHosts</key>
 	<array/>
 	<key>Plugins</key>

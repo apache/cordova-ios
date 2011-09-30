@@ -389,7 +389,8 @@ BOOL gSplashScreenShown = NO;
     
     NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
     NSString *enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
-    
+    NSNumber *allowInlineMediaPlayback = [self.settings objectForKey:@"AllowInlineMediaPlayback"];
+    NSNumber *mediaPlaybackRequiresUserAction = [self.settings objectForKey:@"MediaPlaybackRequiresUserAction"];
     
     // The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
     [[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
@@ -417,6 +418,16 @@ BOOL gSplashScreenShown = NO;
         
     /*
      * Fire up the GPS Service right away as it takes a moment for data to come back.
+     */
+    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
+        self.webView.allowsInlineMediaPlayback = YES;
+    }
+    if ([mediaPlaybackRequiresUserAction boolValue] && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
+        self.webView.mediaPlaybackRequiresUserAction = YES;
+    }
+
+    /*
+     * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
      */
     if ([enableLocation boolValue]) {
         [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
