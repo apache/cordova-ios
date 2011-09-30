@@ -72,7 +72,7 @@ Items that will be installed:
 1. Xcode global var in _~/Library/Preferences/com.apple.Xcode.plist _ (which will be listed under Xcode Preferences -> Source Trees)
 2. PhoneGapLib Xcode static library project under _~/Documents/PhoneGapLib_
 3. Xcode project template in _~/Library/Application Support/Developer/Shared/Xcode/Project Templates/PhoneGap_
-4. Xcode 4 project template in _~/Library/Application Support/Developer/Shared/Xcode/Templates/Project Templates/Application_
+4. Xcode 4 project template in _~/Library/Developer/Xcode/Templates/Project Templates/Application_
 5. PhoneGap Xcode static framework under _/Users/Shared/PhoneGap/Frameworks/PhoneGap.framework_ (may change in future updates)
 6. Symlink to the framework in (5) under _~/Library/Frameworks_
 
