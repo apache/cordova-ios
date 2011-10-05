@@ -689,8 +689,11 @@ BOOL gSplashScreenShown = NO;
     {            
         if ([self.whitelist URLIsAllowed:url] == YES)
         {
+            // mainDocument will be nil for an iFrame
+            NSString* mainDocument = [webView.request.mainDocumentURL absoluteString];
+
             // anchor target="_blank" - load in Mobile Safari
-            if (navigationType == UIWebViewNavigationTypeOther)
+            if (navigationType == UIWebViewNavigationTypeOther && mainDocument != nil)
             {
                 [[UIApplication sharedApplication] openURL:url];
                 return NO;
