@@ -10,6 +10,8 @@
 
 @implementation PGMotion
 
+@synthesize deviceMotionAvailable, deviceOrientationAvailable;
+
 - (void) startDeviceMotionEvents
 {
 	// TODO: all iOS devices have accelerometers. Barring a way to detect if any listeners are bound,
