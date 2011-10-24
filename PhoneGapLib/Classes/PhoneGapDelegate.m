@@ -689,6 +689,12 @@ BOOL gSplashScreenShown = NO;
     {            
         if ([self.whitelist URLIsAllowed:url] == YES)
         {
+            NSNumber *openAllInWhitelistSetting = [self.settings objectForKey:@"OpenAllWhitelistURLsInWebView"];
+            if ((nil != openAllInWhitelistSetting) && [openAllInWhitelistSetting boolValue]) {
+                NSLog(@"OpenAllWhitelistURLsInWebView set: opening in webview");
+                return YES;
+            }
+
             // mainDocument will be nil for an iFrame
             NSString* mainDocument = [webView.request.mainDocumentURL absoluteString];
 
