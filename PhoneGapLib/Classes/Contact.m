@@ -1552,7 +1552,7 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 	if ([[PGContact defaultW3CtoAB] valueForKeyIsNumber: property ]) {
 		ABPropertyID propId = [[[PGContact defaultW3CtoAB] objectForKey: property] intValue];
 		if(ABPersonGetTypeOfProperty(propId) == kABDateTimePropertyType){
-			NSDate* date = [(NSString*)ABRecordCopyValue(self.record, propId) autorelease];
+			NSDate* date = [(NSDate*)ABRecordCopyValue(self.record, propId) autorelease];
 			if (date != nil) {
 				NSString* dateString = [date descriptionWithLocale:[NSLocale currentLocale]];
 				NSPredicate *containPred = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", testValue];  
