@@ -143,7 +143,6 @@ MediaError = function() {
 	this.message = "";
 }
 
-
 MediaError.MEDIA_ERR_ABORTED        = 1;
 MediaError.MEDIA_ERR_NETWORK        = 2;
 MediaError.MEDIA_ERR_DECODE         = 3;

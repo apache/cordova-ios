@@ -95,7 +95,7 @@ typedef NSUInteger MediaMsg;
 // helper methods
 - (PGAudioFile*) audioFileForResource:(NSString*) resourcePath withId: (NSString*)mediaId;
 - (BOOL) prepareToPlay: (PGAudioFile*) audioFile withId: (NSString*)mediaId;
-
+- (NSString*) createMediaErrorWithCode: (MediaError) code message: (NSString*) message;
 
 - (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
