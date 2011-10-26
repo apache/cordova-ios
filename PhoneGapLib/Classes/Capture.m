@@ -7,7 +7,7 @@
  */
 
 #import "Capture.h"
-#import "JSON.h"
+#import "JSONKit.h"
 #import "PhoneGapDelegate.h"
 
 #define kW3CMediaFormatHeight @"height"
@@ -316,7 +316,7 @@
                           movieArray ? (NSObject*)movieArray : [NSNull null], @"video",
                           audioArray ? (NSObject*)audioArray : [NSNull null], @"audio",
                           nil];
-    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes JSONRepresentation]];
+    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes JSONString]];
     [self writeJavascript:jsString];
     
     

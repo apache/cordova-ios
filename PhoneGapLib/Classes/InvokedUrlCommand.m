@@ -6,7 +6,7 @@
  */
 
 #import "InvokedUrlCommand.h"
-#import "JSON.h"
+#import "JSONKit.h"
 
 @implementation InvokedUrlCommand
 

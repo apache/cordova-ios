@@ -564,7 +564,7 @@ BOOL gSplashScreenShown = NO;
 
     
     NSDictionary *deviceProperties = [ self deviceProperties];
-    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONFragment]];
+    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONString]];
     
     /* Settings.plist
      * Read the optional Settings.plist file and push these user-defined settings down into the web application.
@@ -573,8 +573,8 @@ BOOL gSplashScreenShown = NO;
      */
     
     NSDictionary *temp = [[self class] getBundlePlist:@"Settings"];
-    if ([temp respondsToSelector:@selector(JSONFragment)]) {
-        [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
+    if ([temp respondsToSelector:@selector(JSONString)]) {
+        [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONString]];
     }
     
     NSLog(@"Device initialization: %@", result);
@@ -626,15 +626,15 @@ BOOL gSplashScreenShown = NO;
         @"PhoneGap.getAndClearQueuedCommands()"];
 
     // Parse the returned JSON array.
-    PG_SBJsonParser* jsonParser = [[[PG_SBJsonParser alloc] init] autorelease];
+    //PG_SBJsonParser* jsonParser = [[[PG_SBJsonParser alloc] init] autorelease];
     NSArray* queuedCommands =
-        [jsonParser objectWithString:queuedCommandsJSON];
+        [queuedCommandsJSON objectFromJSONString];
 
     // Iterate over and execute all of the commands.
     for (NSString* commandJson in queuedCommands) {
         [self execute:
             [InvokedUrlCommand commandFromObject:
-                [jsonParser objectWithString:commandJson]]];
+                [commandJson mutableObjectFromJSONString]]];
     }
 
     return [queuedCommands count];

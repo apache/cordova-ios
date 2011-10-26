@@ -8,7 +8,7 @@
 
 
 #import "PluginResult.h"
-#import "JSON.h"
+#import "JSONKit.h"
 #import "PGDebug.h"
 
 @interface PluginResult()
@@ -123,7 +123,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
                                self.status, @"status",
                                self.message ? self.message : [NSNull null], @"message",
                                self.keepCallback, @"keepCallback",
-                               nil] JSONRepresentation];
+                               nil] JSONString];
 	DLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;
 }
