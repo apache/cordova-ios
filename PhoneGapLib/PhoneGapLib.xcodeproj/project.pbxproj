@@ -810,7 +810,6 @@
 				ARCHS = (
 					armv6,
 					armv7,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/PhoneGapLib.dst;
@@ -835,7 +834,6 @@
 				ARCHS = (
 					armv6,
 					armv7,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				DSTROOT = /tmp/PhoneGapLib.dst;
 				GCC_MODEL_TUNING = G5;
@@ -856,7 +854,6 @@
 				ARCHS = (
 					armv6,
 					armv7,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -885,7 +882,6 @@
 				ARCHS = (
 					armv6,
 					armv7,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
@@ -912,7 +908,6 @@
 				ARCHS = (
 					armv7,
 					armv6,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
@@ -930,7 +925,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = PhoneGap;
 				SDKROOT = iphoneos;
@@ -946,7 +941,6 @@
 				ARCHS = (
 					armv7,
 					armv6,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
@@ -963,7 +957,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = PhoneGap;
 				SDKROOT = iphoneos;
@@ -1024,7 +1018,6 @@
 				ARCHS = (
 					armv7,
 					armv6,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1056,7 +1049,6 @@
 				ARCHS = (
 					armv7,
 					armv6,
-					"$(ARCHS_STANDARD_32_BIT)",
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
