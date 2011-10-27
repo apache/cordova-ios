@@ -89,12 +89,25 @@
 	[self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
+- (void) onPause 
+{
+	[self.internetReach stopNotifier];
+}
+
+- (void) onResume 
+{
+    [self.internetReach startNotifier];
+    [self updateReachability:self.internetReach];
+}
+
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (PGConnection*)[super initWithWebView:theWebView];
     if (self) {
-		self.connectionType = @"none";
-		[self prepare];
+        self.connectionType = @"none";
+        [self prepare];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
     }
     return self;
 }
