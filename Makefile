@@ -130,7 +130,7 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 checkos:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
 	
-installer: checkos clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
+installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
