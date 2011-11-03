@@ -12,6 +12,7 @@
 
 @property (nonatomic, readonly, retain) NSArray* whitelist;
 @property (nonatomic, readonly, retain) NSArray* expandedWhitelist;
+@property (nonatomic, readonly, assign) BOOL allowAll;
 
 - (id) initWithArray:(NSArray*)array;
 - (BOOL) URLIsAllowed:(NSURL*)url;

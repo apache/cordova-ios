@@ -12,6 +12,7 @@
 
 @property (nonatomic, readwrite, retain) NSArray* whitelist;
 @property (nonatomic, readwrite, retain) NSArray* expandedWhitelist;
+@property (nonatomic, readwrite, assign) BOOL allowAll;
 
 - (void) processWhitelist;
 
@@ -19,7 +20,7 @@
 
 @implementation PGWhitelist
 
-@synthesize whitelist, expandedWhitelist;
+@synthesize whitelist, expandedWhitelist, allowAll;
 
 - (id) initWithArray:(NSArray*)array
 {
@@ -27,6 +28,7 @@
     if (self) {
         self.whitelist = array;
         self.expandedWhitelist = nil;
+        self.allowAll = NO;
         [self processWhitelist];
     }
     
@@ -53,6 +55,13 @@
     while (externalHost = [enumerator nextObject])
     {
         NSString* regex = [[externalHost copy] autorelease];
+        
+        // check for single wildcard '*', if found set allowAll to YES
+        if ([regex isEqualToString:@"*"]) {
+            self.allowAll = YES;
+            self.expandedWhitelist = [NSArray arrayWithObject:regex];
+            break;
+        }
         
         // starts with wildcard match - we make the first '.' optional (so '*.phonegap.com' will match 'phonegap.com')
         NSString* prefix = @"*.";
@@ -90,6 +99,10 @@
     if (self.expandedWhitelist == nil) {
         NSLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
         return NO;
+    }
+    
+    if (self.allowAll) {
+        return YES;
     }
 
     // iterate through settings ExternalHosts, check for equality
