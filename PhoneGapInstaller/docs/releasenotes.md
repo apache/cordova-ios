@@ -1,8 +1,23 @@
-## Release Notes for PhoneGap ({VERSION})  
+## Release Notes for PhoneGap ({VERSION})  ##
   
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
-  
-### 1.1.0 (20110930)  
+
+### 1.2.0 (20111103) ###
+
+* Update for iOS 5 - Switched to using LLVM Compiler and fixed associated warnings. Added armv6 to architectures so can use devices running < iOS5
+* Fixed phonegap/phonegap-iphone#313 - return MediaError in error callback
+* Added documentation for correctOrientation and saveToAlbum options of camera.getPicture
+* Fixed phonegap/phonegap-iphone#302 Compiler warnings in PGMotion
+* Fixed phonegap/phonegap-iphone#296 iFrames open in Mobile Safari
+* Fixed callback/callback-ios#5 - Optimization: If white-list contains "*" (wildcard), do not do URL processing
+* Fixed callback/callback-ios#3 - UniversalFramework target of PhoneGapLib does not compile under Xcode 4.2
+* Fixed callback/callback-ios#2 - Convert SBJson library use to JSONKit use
+* Fixed problem where deploying to device using PhoneGap.framework, the armv7 slice is missing from the fat binary 
+* Connection plugin (Reachability) - stop/start notifier on pause/resume of app (attempt at Reachability crash fix)
+
+<br />
+
+### 1.1.0 (20110930) ###
   
 * fixes issue #212 media play not always calling success callback
 * added support for W3C battery status events
@@ -65,7 +80,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 1.0.0 (20110728)  
+### 1.0.0 (20110728) ###
   
 * **CHANGED:** Update media implementation to match documentation. Significant modifications to match documentation. Using media.js from Android so significant changes to the code to match that architecture.  Created wrapper for AVAudioPlayer and Recorder to store the mediaId. Kept iOS only prepare() method but removed downloadCompleteCallback. Added seekTo method. 
 * **CHANGED:** Default-Landscape.png width increased to 1024px for #185 fix below 
@@ -85,7 +100,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 1.0.0rc2 (20110719)  
+### 1.0.0rc2 (20110719) ###
   
 * **FIX:** #167 Generated (by script) Xcode 3 template file fails in Xcode 4 
 * **FIX:** #162 better accessibility for timed audio  
@@ -100,7 +115,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 1.0.0rc1 (20110712)  
+### 1.0.0rc1 (20110712) ###
   
 * **FIX:** Splash screen fixes for iPad 
 * **REMOVED:** Deprecated items **REMOVED:** Notification activityStart/activityStop, Notification loadingStart/loadingStop, Network.isReachable, debug.log, File.writeAsText, PhoneGapCommand base class for Plugins, unused Image and Movie plugins removed 
@@ -120,7 +135,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 0.9.6 (20110628)  
+### 0.9.6 (20110628) ###
   
 * Xcode 3 Template includes the CoreMedia framework (as a weak reference for iOS 3.x) for the W3C Media Capture API 
 * Xcode 4 Template includes the CoreMedia framework (as a required reference, template spec limitation) for the W3C Network API. You must change this to an 'optional' reference to target iOS 3.x devices, if not they will crash. 
@@ -135,7 +150,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 0.9.5.1 (20110524)  
+### 0.9.5.1 (20110524) ###
   
 * Xcode 3 Template includes the CoreTelephony framework (as a weak reference for iOS 3.x) for the W3C Network Information API 
 * Xcode 4 Template includes the CoreTelephony framework (as a required reference, template spec limitation) for the W3C Network Information API. You must change this to an 'optional' reference to target iOS 3.x devices, if not they will crash. 
@@ -150,7 +165,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 0.9.5 (20110427)  
+### 0.9.5 (20110427) ### 
   
 * Updated PhoneGap application template to handle project and PhoneGapLib locations with spaces in it 
 * Removed iPad template 
@@ -163,7 +178,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 0.9.4 (20110203)  
+### 0.9.4 (20110203) ###
   
 * phonegap.js is minified using the YUI compressor, and also renamed to phonegap.{ver}.min.js where {ver} is the version number of PhoneGapLib from the VERSION file 
 * the PhoneGap template is changed as well, at build time it will replace any references to 'src="phonegap.js"' to the new versioned js file (and copy the new phonegap.{ver}.min.js file). This replacement will look in all files in the 'www' folder. 
@@ -171,26 +186,26 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 20101102  
+### 20101102 ###
   
 * Updated the Base SDK to "Latest iOS" (iOS 4.2 is the minimum to submit to the App Store) for the project files. This setting requires the latest Xcode 3.2.5 (included with the iOS 4.2 SDK) 
 
 <br />
 
-### 20101019  
+### 20101019 ### 
   
 * Updated the Base SDK to iOS 4.1 (the minimum to submit to the App Store) for the project files 
 
 <br />
 
-### 20100902  
+### 20100902 ###  
   
 * Updated the Base SDK to iOS 4.0 (the minimum to submit to the App Store) for the project files 
 * Added PhoneGapBuildSettings.xcconfig to the template. To override your PHONEGAPLIB folder on a project by project basis, modify the PHONEGAPLIB value in this file. 
 
 <br />
 
-### 20100416  
+### 20100416 ###
   
 * Removed keys from PhoneGap.plist (AutoRotate, StartOrientation, RotateOrientation). 
 * To support orientation in your app: edit/add the UISupportedInterfaceOrientations (iPhone) or UISupportedInterfaceOrientations~ipad (iPad) key into your app's [appname]-Info.plist, with an array of strings that show what orientation your app supports. The supported values are: UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeRight.  
@@ -198,7 +213,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 20100406  
+### 20100406 ###
   
 * added iPad universal xcodeproj file (3.2 OS required) 
 
@@ -210,7 +225,7 @@ Removed GetFunctionName.js (unused)
 
 <br />
 
-### 20091030  
+### 20091030 ### 
   
 * initial release 
   
