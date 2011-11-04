@@ -14,6 +14,7 @@ PhoneGap is a static library and static framework that enables users to include 
 * Fixed callback/callback-ios#2 - Convert SBJson library use to JSONKit use
 * Fixed problem where deploying to device using PhoneGap.framework, the armv7 slice is missing from the fat binary 
 * Connection plugin (Reachability) - stop/start notifier on pause/resume of app (attempt at Reachability crash fix)
+* Added OpenAllWhitelistURLsInWebView setting in PhoneGap.plist (to open all white-listed URLs in the PhoneGap webview)
 
 <br />
 
