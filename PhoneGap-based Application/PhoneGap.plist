@@ -20,6 +20,8 @@
 	<false/>
 	<key>AllowInlineMediaPlayback</key>
 	<false/>
+	<key>OpenAllWhitelistURLsInWebView</key>
+	<false/>
 	<key>ExternalHosts</key>
 	<array/>
 	<key>Plugins</key>
