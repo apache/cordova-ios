@@ -228,8 +228,14 @@
         if ([resourceURL isFileURL]) {
             audioFile.player = [[[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&playerError] autorelease];
         } else {
-            NSData* data = [NSData dataWithContentsOfURL:resourceURL];
-            audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
+            NSURLRequest *request = [NSURLRequest requestWithURL:resourceURL];
+            NSURLResponse *response = nil;
+            NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
+            if (playerError) {
+                NSLog(@"Unable to download audio from: %@", [resourceURL absoluteString]);
+            } else {
+                audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
+            }
         }
     }
     if (playerError != nil) {
