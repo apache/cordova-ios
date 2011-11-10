@@ -392,12 +392,34 @@ BOOL gSplashScreenShown = NO;
     NSNumber *allowInlineMediaPlayback = [self.settings objectForKey:@"AllowInlineMediaPlayback"];
     NSNumber *mediaPlaybackRequiresUserAction = [self.settings objectForKey:@"MediaPlaybackRequiresUserAction"];
     
-    // The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
-    [[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
-    
     // Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
     viewController.supportedOrientations = supportedOrientations;
     
+    //check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation
+    BOOL forceStartupRotation = YES;
+    UIDeviceOrientation curDevOrientation = [[UIDevice currentDevice] orientation];
+
+    if (UIDeviceOrientationUnknown == curDevOrientation) {
+        //UIDevice isn't firing orientation notifications yet...go look at status bar
+        curDevOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+    }
+
+    if (UIDeviceOrientationIsValidInterfaceOrientation(curDevOrientation)) {
+        for (NSNumber *orient in supportedOrientations) {
+            if ([orient intValue] == curDevOrientation) {
+                forceStartupRotation = NO;
+                break;
+            }
+        }
+    } 
+    
+    if (forceStartupRotation) {
+        NSLog(@"supportedOrientations: %@",supportedOrientations);
+        // The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
+        UIInterfaceOrientation newOrient = [[supportedOrientations objectAtIndex:0] intValue];
+        NSLog(@"PhoneGapDelegate forcing status bar to: %d from: %d",newOrient,curDevOrientation);
+        [[UIApplication sharedApplication] setStatusBarOrientation:newOrient];
+    }
     
     CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
     self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
