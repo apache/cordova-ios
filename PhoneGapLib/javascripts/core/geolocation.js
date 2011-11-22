@@ -98,8 +98,24 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
             params.timeout = options.timeout;
         }
     }
+
+    var successListener = win;
+    var failListener = fail;
+    if (!this.locationRunning)
+    {
+        successListener = function(position)
+        { 
+            win(position);
+            self.stop();
+        };
+        errorListener = function(positionError)
+        { 
+            fail(positionError);
+            self.stop();
+        };
+    }
     
-    this.listener = {"success":win,"fail":fail};
+    this.listener = {"success":successListener,"fail":failListener};
     this.start(params);
 	
 	var onTimeout = function()
@@ -206,6 +222,8 @@ Geolocation.prototype.setLocation = function(position)
 Geolocation.prototype.setError = function(error) 
 {
 	var _error = new PositionError(error.code, error.message);
+
+    this.locationRunning = false
 	
     if(this.timeoutTimerId)
     {
@@ -226,12 +244,14 @@ Geolocation.prototype.setError = function(error)
 Geolocation.prototype.start = function(positionOptions) 
 {
     PhoneGap.exec(null, null, "com.phonegap.geolocation", "startLocation", [positionOptions]);
+    this.locationRunning = true
 
 };
 
 Geolocation.prototype.stop = function() 
 {
     PhoneGap.exec(null, null, "com.phonegap.geolocation", "stopLocation", []);
+    this.locationRunning = false
 };
 
 
