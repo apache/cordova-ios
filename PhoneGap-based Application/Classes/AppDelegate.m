@@ -29,16 +29,14 @@
  * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
  */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-	
-	NSArray *keyArray = [launchOptions allKeys];
-	if ([launchOptions objectForKey:[keyArray objectAtIndex:0]]!=nil) 
-	{
-		NSURL *url = [launchOptions objectForKey:[keyArray objectAtIndex:0]];
-		self.invokeString = [url absoluteString];
+{    
+    NSURL* url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    if (url && [url isKindOfClass:[NSURL class]])
+    {
+        self.invokeString = [url absoluteString];
 		NSLog(@"___PROJECTNAME___ launchOptions = %@",url);
-	}
-	
+    }    
+		
 	return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
