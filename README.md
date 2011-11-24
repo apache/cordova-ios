@@ -189,6 +189,9 @@ A. Older pre-1.0 issues have been put in the [PhoneGap iOS FAQ](http://wiki.phon
 
 A. You must delete the *~ipad.png images from **Capture.bundle** if they want to build an iPhone only app and have captureAudio() display properly on an iPad. This additional fix is just for iPad running iOS 3.2 - if the requested *~ipad.png is not available it returns the iPhone sized image.  
 
+**13. I get this linker error: "ld: warning: ignoring file libPhoneGap.a, file was built for archive which is not the architecture being linked (armv7)"** 
+
+A. In your project's Build Settings, set **"Build for Active Architecture Only"** to **NO**. This has been fixed in PhoneGap 1.2 for newly created projects. This is usually because Xcode 4 will only build for armv7 by default, and not armv6.
 
 BUGS?
 -----
