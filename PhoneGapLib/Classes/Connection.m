@@ -43,7 +43,13 @@
 - (void) updateReachability:(Reachability*)reachability
 {
 	if (reachability) {
-		self.connectionType = [self w3cConnectionTypeFor:reachability];
+        // check whether the connection type has changed
+        NSString* newConnectionType = [self w3cConnectionTypeFor:reachability];
+        if ([newConnectionType isEqualToString:self.connectionType]) { // the same as before, remove dupes
+            return;
+        } else {
+            self.connectionType = [self w3cConnectionTypeFor:reachability];
+        }
 	}
 	
 	NSString* js = nil;
