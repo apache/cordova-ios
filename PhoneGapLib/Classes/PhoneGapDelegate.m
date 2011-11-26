@@ -401,7 +401,7 @@ BOOL gSplashScreenShown = NO;
 
     if (UIDeviceOrientationUnknown == curDevOrientation) {
         //UIDevice isn't firing orientation notifications yet...go look at status bar
-        curDevOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        curDevOrientation = (UIDeviceOrientation)[[UIApplication sharedApplication] statusBarOrientation];
     }
 
     if (UIDeviceOrientationIsValidInterfaceOrientation(curDevOrientation)) {
