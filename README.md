@@ -158,7 +158,7 @@ Starting with version 1.1, when creating a new project, the weak-linking is adde
 
 **7. How do I override the location of the start page www/index.html?** 
 
-You can override it by copy and pasting these [functions](https://github.com/phonegap/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
+You can override it by copy and pasting these [functions 'wwwFolderName' and 'startPage'](https://github.com/callback/callback-ios/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L88-96) into your project's AppDelegate.m, and make the appropriate changes.
 
 **8. What's the difference between the Xcode 3 and Xcode 4 templates?**
 
