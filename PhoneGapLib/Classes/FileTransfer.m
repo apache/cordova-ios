@@ -8,11 +8,10 @@
  */
 
 #import "FileTransfer.h"
+#import "File.h"
 
 
 @implementation PGFileTransfer
-
-@synthesize callbackID;
 
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSString* callbackId = [arguments objectAtIndex:0];
@@ -149,6 +148,7 @@
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSData* data = [NSData dataWithContentsOfURL: [NSURL URLWithString:sourceUrl] ];
+    NSArray * results = nil;
     
     NSLog(@"Write file %@", filePath);
     NSError *error=[[[NSError alloc]init] autorelease];
@@ -163,11 +163,12 @@
         
         if ( response == NO ) {
         	// send our results back to the main thread
-            NSArray * results = [NSArray arrayWithObjects: callbackId, [error description], nil];
+            results = [NSArray arrayWithObjects: callbackId, [error description], nil];
         	[self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
     	} else {
         	// jump back to main thread
-        	[self performSelectorOnMainThread:@selector(downloadSuccess:) withObject:arguments waitUntilDone:YES];
+            results = [NSArray arrayWithObjects: callbackId, filePath, nil];
+        	[self performSelectorOnMainThread:@selector(downloadSuccess:) withObject:results waitUntilDone:YES];
     	}
     }
     @catch (id exception) {
@@ -183,14 +184,16 @@
 -(void) downloadSuccess:(NSMutableArray *)arguments 
 {
     NSString * callbackId = [arguments objectAtIndex:0];
-    NSString * filePath = [arguments objectAtIndex:2];
+    NSString * filePath = [arguments objectAtIndex:1];
+
+    BOOL bDirRequest = NO;
 
     NSLog(@"File Transfert Download success");
     
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString: 
-                                    [filePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-                                    
-    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];
+    PGFile * file = [[PGFile alloc] init];
+    
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: filePath isDirectory: bDirRequest] cast: @"window.localFileSystem._castEntry"];
+    [self writeJavascript: [result toSuccessCallbackString:callbackId]];
 }
 
 -(void) downloadFail:(NSMutableArray *)arguments 

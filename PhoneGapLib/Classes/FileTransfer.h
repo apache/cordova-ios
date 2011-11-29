@@ -22,8 +22,6 @@ typedef int FileTransferError;
     
 }
 
-@property (nonatomic, copy) NSString* callbackID;
-
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
