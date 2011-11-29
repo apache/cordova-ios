@@ -21,8 +21,13 @@ typedef int FileTransferError;
 @interface PGFileTransfer : PGPlugin {
     
 }
-- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
+- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+-(void) downloadFile:(NSMutableArray*)arguments;
+-(void) downloadSuccess:(NSMutableArray*)arguments; 
+-(void) downloadFail:(NSMutableArray*)arguments; 
 @end
 
 

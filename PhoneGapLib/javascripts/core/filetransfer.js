@@ -91,6 +91,10 @@ FileTransfer.prototype._castUploadResult = function(pluginResult) {
 	return pluginResult;
 }
 
+FileTransfer.prototype.download = function(sourceUrl, filePath, successCallback, errorCallback) {
+	PhoneGap.exec(successCallback, errorCallback, 'com.phonegap.filetransfer', 'download', [sourceUrl, filePath]);
+};
+
 /**
  * Options to customize the HTTP request used to upload files.
  * @param fileKey {String}   Name of file request parameter.
