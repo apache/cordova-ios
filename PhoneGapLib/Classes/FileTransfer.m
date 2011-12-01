@@ -63,7 +63,10 @@
     }
     
     if(errorCode > 0) {
-        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
+        //result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
+        
+        result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: [self createFileTransferError:[NSString stringWithFormat:@"%d", errorCode] AndSource:filePath AndTarget:server]];
+        
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
         return;
     }
@@ -130,6 +133,8 @@
 	FileTransferDelegate* delegate = [[[FileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
     delegate.callbackId = callbackId;
+    delegate.source = server;
+    delegate.target = filePath;
 	
 	[NSURLConnection connectionWithRequest:req delegate:delegate];
     
@@ -163,7 +168,7 @@
         
         if ( response == NO ) {
         	// send our results back to the main thread
-            results = [NSArray arrayWithObjects: callbackId, [error description], nil];
+            results = [NSArray arrayWithObjects: callbackId, [NSString stringWithFormat:@"%d", INVALID_URL_ERR], sourceUrl, filePath, nil];
         	[self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
     	} else {
         	// jump back to main thread
@@ -172,10 +177,9 @@
     	}
     }
     @catch (id exception) {
-        NSLog(@"File Transfer Error %@", [error description]);
-            
         // jump back to main thread
-        [self performSelectorOnMainThread:@selector(fail:) withObject:[error description] waitUntilDone:YES];
+        results = [NSArray arrayWithObjects: callbackId, [NSString stringWithFormat:@"%d", FILE_NOT_FOUND_ERR], sourceUrl, filePath, nil];
+        [self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
     }
     
     [pool drain];
@@ -199,14 +203,25 @@
 -(void) downloadFail:(NSMutableArray *)arguments 
 {
     NSString * callbackId = [arguments objectAtIndex:0];
-    NSString * error = [arguments objectAtIndex:1];
+    NSString * code = [arguments objectAtIndex:1];
+    NSString * source = [arguments objectAtIndex:2];
+    NSString * target = [arguments objectAtIndex:3];
+
+    NSLog(@"File Transfer Error: %@", source);
     
-    NSLog(@"File Transfer Error: %@", [error description]);
-    
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString: 
-                                    [error stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: [self createFileTransferError:code AndSource:source AndTarget:target]];
                                     
     [self writeJavascript: [pluginResult toErrorCallbackString:callbackId]];
+}
+
+-(NSMutableDictionary*) createFileTransferError:(NSString*)code AndSource:(NSString*)source AndTarget:(NSString*)target
+{
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:3];
+    [result setObject: code forKey:@"code"];
+	[result setObject: source forKey:@"source"];
+	[result setObject: target forKey:@"target"];
+    
+    return result;
 }
 
 @end
@@ -214,7 +229,7 @@
 
 @implementation FileTransferDelegate
 
-@synthesize callbackId, responseData, command, bytesWritten;
+@synthesize callbackId, source, target, responseData, command, bytesWritten;
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection 
@@ -232,7 +247,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error 
 {
-    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: CONNECTION_ERR cast: @"navigator.fileTransfer._castTransferError"];
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: [command createFileTransferError: [NSString stringWithFormat: @"%d", CONNECTION_ERR] AndSource:source AndTarget:target]];
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
     [command writeJavascript:[result toErrorCallbackString: callbackId]];
 }
