@@ -203,6 +203,41 @@
     [whitelist release];
 }
 
+- (void) testIpExactMatch
+{    
+    NSArray* allowedHosts = [NSArray arrayWithObjects: 
+                             @"192.168.1.1",
+                             @"192.168.2.1",
+                             nil];
+    
+    PGWhitelist* whitelist = [[PGWhitelist alloc] initWithArray:allowedHosts];
+    
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://mydomain.com"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.3.1"]], nil);
+    
+    [whitelist release];
+}
+
+- (void) testIpWildcardMatch
+{    
+    NSArray* allowedHosts = [NSArray arrayWithObjects: 
+                             @"192.168.1.*",
+                             @"192.168.2.*",
+                             nil];
+    
+    PGWhitelist* whitelist = [[PGWhitelist alloc] initWithArray:allowedHosts];
+    
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://mydomain.com"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.2"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.2"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.3.1"]], nil);
+    
+    [whitelist release];
+}
 
 
 

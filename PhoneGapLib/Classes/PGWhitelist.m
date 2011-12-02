@@ -35,6 +35,41 @@
     return self;
 }
 
+- (BOOL) isIPv4Address:(NSString*)externalHost
+{
+    // an IPv4 address has 4 octets b.b.b.b where b is a number between 0 and 255. 
+    // for our purposes, b can also be the wildcard character '*'
+
+    // we could use a regex to solve this problem but then I would have two problems
+    // anyways, this is much clearer and maintainable
+    NSArray* octets = [externalHost componentsSeparatedByString: @"."];
+    NSUInteger num_octets = [octets count];
+    
+    // quick check
+    if (num_octets != 4) {
+        return NO;
+    }
+    
+    // restrict number parsing to 0-255
+    NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setMinimum:[NSNumber numberWithUnsignedInteger:0]];
+    [numberFormatter setMaximum:[NSNumber numberWithUnsignedInteger:255]];
+    
+    // iterate through each octet, and test for a number between 0-255 or if it equals '*'
+    for (NSUInteger i=0; i < num_octets; ++i)
+    {
+        NSString* octet = [octets objectAtIndex:i];
+        
+        if ([octet isEqualToString:@"*"]) { // passes - check next octet
+            continue;
+        } else if ([numberFormatter numberFromString:octet] == nil) { // fails - not a number and not within our range, return
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
 - (void) processWhitelist
 {
     if (self.whitelist == nil) {
@@ -55,6 +90,7 @@
     while (externalHost = [enumerator nextObject])
     {
         NSString* regex = [[externalHost copy] autorelease];
+        BOOL is_ip = [self isIPv4Address:regex];
         
         // check for single wildcard '*', if found set allowAll to YES
         if ([regex isEqualToString:@"*"]) {
@@ -71,7 +107,7 @@
         }
         
         // ends with wildcard match for TLD
-        if ([regex hasSuffix:@".*"]) { 
+        if (!is_ip && [regex hasSuffix:@".*"]) { 
             // replace * with tld_match
             regex = [regex stringByReplacingCharactersInRange:NSMakeRange([regex length]-1, 1) withString:tld_match];
         }
