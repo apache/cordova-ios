@@ -2,6 +2,18 @@
   
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 
+### 1.3.0rc1 (20111205) ###
+* Added download method to filetransfer, interface is the same like on Android
+* When playing audio from remote URL, stop as soon as download fails and make loading cacheable.
+* Fixed #197 errors on repeated getCurrentPosition calls. If the location services were off when getCurrentPosition was called, turn them off again after the position is received.
+* Don't force an orientation change unless the current orientation is unsupported
+* Fixed callback/callback-ios#15 - Xcode 3.2.6 Linker error when Build for Active Architecture Only = YES
+* Fixed callback/callback-ios#23 - on app resume, it always throws either an offline/online event even though the online state never changed
+* Fixed warning - implicit conversion of UIInterfaceOrientation to UIDeviceOrientation (which are equivalent, for the two Portraits and two Landscape orientations)
+* Fixed callback/callback-ios#22 - Removed unused DetectPhoneNumber and EnableAcceleration values in PhoneGap.plist
+* Fixed CB-96 PGWhitelist does not handle IPv4 host addresses with wild-cards
+* Added 'resign' and 'active' lifecycle events.
+
 ### 1.2.0 (20111103) ###
 
 * Update for iOS 5 - Switched to using LLVM Compiler and fixed associated warnings. Added armv6 to architectures so can use devices running < iOS5
