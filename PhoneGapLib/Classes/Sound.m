@@ -45,39 +45,43 @@
 // "Naked" resource paths are assumed to be from the www folder as its base
 - (NSURL*) urlForResource:(NSString*)resourcePath
 {
-	NSURL* resourceURL = [NSURL fileURLWithPath:resourcePath];
+	NSURL* resourceURL = nil;
+    NSString* filePath = nil;
 	
-	// attempt to find file path in www directory
-    NSString* filePath = [PhoneGapDelegate pathForResource:resourcePath];
-	
-	if (filePath == nil) {
-		// if it is a http url, use it
-		if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX]){
-			NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
-			resourceURL = [NSURL URLWithString:resourcePath];
-		} else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
-			NSLog(@"Will use resource '%@' from the documents folder.", resourcePath);
-			resourceURL = [NSURL URLWithString:resourcePath];
-			
-			NSString* recordingPath = [NSString stringWithFormat:@"%@/%@", [PhoneGapDelegate applicationDocumentsDirectory], [resourceURL host]];
-			NSLog(@"recordingPath = %@", recordingPath);
-			resourceURL = [NSURL fileURLWithPath:recordingPath];
-		} else { 
-            // try to access file
-            NSFileManager* fMgr = [[NSFileManager alloc] init];
-            if (![fMgr fileExistsAtPath:resourcePath]) {
-                resourceURL = nil;
-                NSLog(@"Unknown resource '%@'", resourcePath);
-            }
-            [fMgr release];
-		}
+    // first try to find HTTP:// or Documents:// resources
+    
+    if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX]){
+        // if it is a http url, use it
+        NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
+        resourceURL = [NSURL URLWithString:resourcePath];
+    } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
+        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/",[PhoneGapDelegate applicationDocumentsDirectory]]];
+       NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
+    } else {
+        // attempt to find file path in www directory
+        filePath = [PhoneGapDelegate pathForResource:resourcePath];
+        if (filePath != nil) {
+            NSLog(@"Found resource '%@' in the web folder.", filePath);
+        }else {
+            filePath = resourcePath;
+            NSLog(@"Will attempt to use file resource '%@'", filePath);
+            
+        }
+
     }
-	else {
-		NSLog(@"Found resource '%@' in the web folder.", filePath);
-		// it's a file url, use it
-		resourceURL = [NSURL fileURLWithPath:filePath];
-	}
-	
+    // check that file exists for all but HTTP_SHEME_PREFIX
+    if(filePath != nil) {
+        // try to access file
+        NSFileManager* fMgr = [[NSFileManager alloc] init];
+        if (![fMgr fileExistsAtPath:filePath]) {
+            resourceURL = nil;
+            NSLog(@"Unknown resource '%@'", resourcePath);
+        } else {
+            // it's a valid file url, use it
+            resourceURL = [NSURL fileURLWithPath:filePath];
+        }
+        [fMgr release];
+    }     
 	return resourceURL;
 }
 
@@ -169,24 +173,37 @@
 		}	
 		if (!bError){
 			// audioFile.player != nil  or player was sucessfully created
-			NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
-            NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
-            NSInteger numberOfLoops = 0;
-            if (loopOption != nil) { 
-                numberOfLoops = [loopOption intValue] - 1;
+            // get the audioSession and set the category to allow Playing when device is locked or ring/silent switch engaged
+            if ([self hasAudioSession]) {
+                NSError* err = nil;
+                [self.avSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+                if (![self.avSession  setActive: YES error: &err]){
+                    // other audio with higher priority that does not allow mixing could cause this to fail
+                    NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
+                    bError = YES;
+                }
             }
-			audioFile.player.numberOfLoops = numberOfLoops;
-			
-			if(audioFile.player.isPlaying){
-				[audioFile.player stop];
-				audioFile.player.currentTime = 0;
-			}
-			[audioFile.player play];
-            double position = round(audioFile.player.duration * 1000)/1000;
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_DURATION, position, @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
-			[super writeJavascript:jsString];
-			
-		} else {
+            if (!bError) {
+                NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
+                NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
+                NSInteger numberOfLoops = 0;
+                if (loopOption != nil) { 
+                    numberOfLoops = [loopOption intValue] - 1;
+                }
+                audioFile.player.numberOfLoops = numberOfLoops;
+                
+                if(audioFile.player.isPlaying){
+                    [audioFile.player stop];
+                    audioFile.player.currentTime = 0;
+                }
+                [audioFile.player play];
+                double position = round(audioFile.player.duration * 1000)/1000;
+                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@(\"%@\",%d,%d);", @"PhoneGap.Media.onStatus", mediaId, MEDIA_DURATION, position, @"PhoneGap.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
+                [super writeJavascript:jsString];
+                
+            }
+        }
+        if (bError) {
 			/*  I don't see a problem playing previously recorded audio so removing this section - BG
 			NSError* error;
 			// try loading it one more time, in case the file was recorded previously
@@ -212,32 +229,21 @@
     BOOL bError = NO;
     NSError* playerError = nil;
     
-    // get the audioSession and set the category to allow Playing when device is locked or ring/silent switch engaged
-    if ([self hasAudioSession]) {
-        NSError* err = nil;
-        [self.avSession setCategory:AVAudioSessionCategoryPlayback error:nil];
-        if (![self.avSession  setActive: YES error: &err]){
-            // other audio with higher priority that does not allow mixing could cause this to fail
-            NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
-            bError = YES;
-        }
-    }
-    if (!bError) {
-        // create the player
-        NSURL* resourceURL = audioFile.resourceURL;
-        if ([resourceURL isFileURL]) {
-            audioFile.player = [[[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&playerError] autorelease];
+    // create the player
+    NSURL* resourceURL = audioFile.resourceURL;
+    if ([resourceURL isFileURL]) {
+        audioFile.player = [[[ AudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&playerError] autorelease];
+    } else {
+        NSURLRequest *request = [NSURLRequest requestWithURL:resourceURL];
+        NSURLResponse *response = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
+        if (playerError) {
+            NSLog(@"Unable to download audio from: %@", [resourceURL absoluteString]);
         } else {
-            NSURLRequest *request = [NSURLRequest requestWithURL:resourceURL];
-            NSURLResponse *response = nil;
-            NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
-            if (playerError) {
-                NSLog(@"Unable to download audio from: %@", [resourceURL absoluteString]);
-            } else {
-                audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
-            }
+            audioFile.player = [[[ AudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
         }
     }
+    
     if (playerError != nil) {
         NSLog(@"Failed to initialize AVAudioPlayer: %@\n", [playerError localizedFailureReason]);
         audioFile.player = nil;
