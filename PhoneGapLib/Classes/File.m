@@ -8,9 +8,9 @@
 
 
 #import "File.h"
-#import <Categories.h>
-#import <JSONKit.h>
-#import <NSData+Base64.h>
+#import "Categories.h"
+#import "JSONKit.h"
+#import "NSData+Base64.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 
