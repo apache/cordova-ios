@@ -1,4 +1,3 @@
-
 if (!PhoneGap.hasResource("capture")) {
 	PhoneGap.addResource("capture");
 /**
@@ -54,11 +53,10 @@ Capture.prototype.captureImage = function(successCallback, errorCallback, option
 };
 
 /**
- * Launch camera application for taking image(s).
- * 
- * @param {Function} successCB
- * @param {Function} errorCB
- * @param {CaptureImageOptions} options
+ * Casts a PluginResult message property  (array of objects) to an array of MediaFile objects
+ * (used in Objective-C)
+ *
+ * @param {PluginResult} pluginResult
  */
 Capture.prototype._castMediaFile = function(pluginResult) {
     var mediaFiles = [];
