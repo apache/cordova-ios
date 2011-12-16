@@ -289,7 +289,7 @@
     // return found contacts (array is empty if no contacts found)
     result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsArray: returnContacts  cast: @"navigator.contacts._findCallback"];
     jsString = [result toSuccessCallbackString:callbackId];
-    NSLog(@"findCallback string: %@", jsString);
+    // NSLog(@"findCallback string: %@", jsString);
 	
 
 	if(addrBook){
