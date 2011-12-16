@@ -89,7 +89,7 @@
 /**
  * Start Loading Request
  * This is where most of the magic happens... We take the request(s) and process the response.
- * From here we can re direct links and other protocalls to different internal methods.
+ * From here we can redirect links and other protocols to different internal methods.
  */
 - (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
