@@ -195,7 +195,7 @@ A. In your project's Build Settings, set **"Build for Active Architecture Only"*
 
 BUGS?
 -----
-File them at [PhoneGap-iOS GitHub Issues](https://github.com/phonegap/phonegap-iphone/issues)      
+File them at the [Callback-iOS Issue Tracker](https://issues.apache.org/jira/browse/CB)      
 <br />
 
 MORE INFO
