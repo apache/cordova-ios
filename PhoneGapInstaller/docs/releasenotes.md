@@ -2,10 +2,9 @@
   
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 
-### 1.3.0rc2 (20111213) ###
+### 1.3.0 (20111219) ###
+* added battery into PhoneGap framework compilation
 * Fixes CB-101 can't access media in documents://subDir
-
-### 1.3.0rc1 (20111205) ###
 * Added download method to filetransfer, interface is the same like on Android
 * When playing audio from remote URL, stop as soon as download fails and make loading cacheable.
 * Fixed #197 errors on repeated getCurrentPosition calls. If the location services were off when getCurrentPosition was called, turn them off again after the position is received.
