@@ -644,13 +644,22 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 					dict = [NSMutableDictionary dictionaryWithCapacity:1];
 					NSDictionary* existingDictionary = (NSDictionary*)ABMultiValueCopyValueAtIndex(multi, idx);
                     NSString* existingABLabel = [(NSString*)ABMultiValueCopyLabelAtIndex(multi, idx) autorelease];
-                    CFStringRef w3cLabel = [PGContact convertContactTypeToPropertyLabel:[field valueForKey: kW3ContactFieldType]];
-                    if (w3cLabel && ![existingABLabel isEqualToString:(NSString*)w3cLabel]){
-                        //replace the label
-                        ABMultiValueReplaceLabelAtIndex(multi, w3cLabel,idx);
-                        bUpdateLabel = YES;
-                    }
-                         for (id k in propArray){
+                    NSString* testLabel = [field valueForKey:kW3ContactFieldType];
+                    // fixes cb-143 where setting empty label could cause address to not be removed 
+                    //   (because empty label would become 'other'  in convertContactTypeToPropertyLabel
+                    //   which may not have matched existing label thus resulting in an incorrect updating of the label
+                    //   and the address not getting removed at the end of the for loop)
+                    if (testLabel && [testLabel isKindOfClass:[NSString class]] && [testLabel length] > 0)
+                    {
+                        CFStringRef w3cLabel = [PGContact convertContactTypeToPropertyLabel:testLabel];
+                        if (w3cLabel && ![existingABLabel isEqualToString:(NSString*)w3cLabel]){
+                            //replace the label
+                            ABMultiValueReplaceLabelAtIndex(multi, w3cLabel,idx);
+                            bUpdateLabel = YES;
+                        }
+                    } // else was invalid or empty label string so do not update
+                
+                    for (id k in propArray){
 						value = [field valueForKey:k];
 						bool bSet = (value != nil && ![value isKindOfClass:[NSNull class]] && ([value isKindOfClass:[NSString class]] && [value length] > 0));
 						// if there is a contact value, put it into dictionary
@@ -664,16 +673,17 @@ static NSDictionary*	com_phonegap_contacts_defaultFields = nil;
 								[dict setValue:valueAB forKey:[[PGContact defaultW3CtoAB] valueForKey:k]];
 							}
 						} // else if value == "" it will not be added into updated dict and thus removed
-						if ([dict count] > 0){
-							// something was added into new dict,
-							ABMultiValueReplaceValueAtIndex(multi, dict, idx);
-						} else if (!bUpdateLabel) { 
-                            // nothing added into new dict and no label change so remove this property entry
-							ABMultiValueRemoveValueAndLabelAtIndex(multi, idx);
-						}
-					}
+                    } // end of for loop (moving here fixes cb-143, need to end for loop before replacing or removing multivalue)
+                    if ([dict count] > 0){
+                        // something was added into new dict,
+                        ABMultiValueReplaceValueAtIndex(multi, dict, idx);
+                    } else if (!bUpdateLabel) { 
+                        // nothing added into new dict and no label change so remove this property entry
+                        ABMultiValueRemoveValueAndLabelAtIndex(multi, idx);
+                    }
+					
 					CFRelease(existingDictionary);
-					} else {
+                } else {
 						// not found in multivalue so add it
 						dict = [self translateW3Dict:field forProperty:prop];
 						if (dict){
