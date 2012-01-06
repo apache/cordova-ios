@@ -16,15 +16,20 @@
 
 @property (nonatomic, readwrite, retain) NSDictionary *settings;
 @property (nonatomic, readwrite, retain) PGWhitelist* whitelist; 
+@property (nonatomic, readwrite, retain) NSMutableDictionary *pluginObjects;
+@property (nonatomic, readwrite, retain) NSDictionary *pluginsMap;
 
 @end
 
 
 @implementation PGViewController
 
-@synthesize webView;
+@synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize activityView, imageView, settings;
+
+
+
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -32,9 +37,10 @@
 {
     [super viewDidLoad];
 	
-	
+    self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
+    
 	// read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-    NSArray* supportedOrientations = [self parseInterfaceOrientations:
+    self.supportedOrientations = [self parseInterfaceOrientations:
 									  [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
     
     // read from PhoneGap.plist in the app bundle
@@ -57,8 +63,10 @@
     // set the whitelist
     self.whitelist = [[[PGWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]] autorelease];
 	
+    
 	
-	
+    self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
+    
 	NSString* path = [PGViewController pathForResource:@"index.html"];
 	NSURL *appURL  = [NSURL fileURLWithPath:path];//[NSURL URLWithString:path];
 	//[NSURL fileURLWithPath:path];
@@ -104,6 +112,52 @@
     return result;
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
+{
+	// First ask the webview via JS if it wants to support the new orientation -jm
+	int i = 0;
+	
+	switch (interfaceOrientation){
+            
+		case UIInterfaceOrientationPortraitUpsideDown:
+			i = 180;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			i = -90;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			i = 90;
+			break;
+		default:
+		case UIInterfaceOrientationPortrait:
+			// noop
+			break;
+	}
+	
+	NSString* jsCall = [ NSString stringWithFormat:@"shouldRotateToOrientation(%d);",i];
+	NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
+	
+	if([res length] > 0)
+	{
+		return [res boolValue];
+	}
+	
+	// if js did not handle the new orientation ( no return value ) we will look it up in the plist -jm
+	
+	BOOL autoRotate = [self.supportedOrientations count] > 0; // autorotate if only more than 1 orientation supported
+	if (autoRotate)
+	{
+		if ([self.supportedOrientations containsObject:
+			 [NSNumber numberWithInt:interfaceOrientation]]) {
+			return YES;
+		}
+    }
+	
+	// default return value is NO! -jm
+	
+	return NO;
+}
+
 
 -(void)createGapView
 {
@@ -139,13 +193,6 @@
 	// e.g. self.myOutlet = nil;
 }
 
-
-
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	// Return YES for supported orientations.
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
 
 #pragma mark UIWebViewDelegate
 

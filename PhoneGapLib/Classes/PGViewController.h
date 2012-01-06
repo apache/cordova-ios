@@ -10,7 +10,8 @@
 
 #import "JSONKit.h"
 #import "InvokedUrlCommand.h"
-@class PGWhitelist;
+
+#import "PGWhitelist.h"
 
 @interface PGViewController : UIViewController<UIWebViewDelegate> {
 	
@@ -25,6 +26,8 @@
 @property (nonatomic, readonly, retain) NSDictionary *pluginsMap;
 @property (nonatomic, readonly, retain) NSDictionary *settings;
 @property (nonatomic, readonly, retain) PGWhitelist* whitelist; // readonly for public
+
+@property (nonatomic, retain) 	NSArray* supportedOrientations;
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;
