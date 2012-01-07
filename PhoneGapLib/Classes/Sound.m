@@ -8,6 +8,7 @@
 
 #import "Sound.h"
 #import "PhonegapDelegate.h"
+#import "PGViewController.h"
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"
 #define HTTP_SCHEME_PREFIX			@"http://"
@@ -55,11 +56,11 @@
         NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
         resourceURL = [NSURL URLWithString:resourcePath];
     } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
-        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/",[PhoneGapDelegate applicationDocumentsDirectory]]];
+        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/",[PGViewController applicationDocumentsDirectory]]];
        NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
     } else {
         // attempt to find file path in www directory
-        filePath = [PhoneGapDelegate pathForResource:resourcePath];
+        filePath = [PGViewController pathForResource:resourcePath];
         if (filePath != nil) {
             NSLog(@"Found resource '%@' in the web folder.", filePath);
         }else {

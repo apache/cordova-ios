@@ -6,14 +6,13 @@
  */
 
 
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
+#import "PGViewController.h"
 
-@interface PhoneGapViewController : UIViewController {
+/* This is here for legacy reasons - deprecated */
+ __attribute__((deprecated)) @interface PhoneGapViewController : PGViewController {
 }
+@end
 
-@property (nonatomic, retain) 	NSArray* supportedOrientations;
-@property (nonatomic, retain)	UIWebView* webView;
-
-
+/* here for legacy reasons - deprecated */
+@implementation PhoneGapViewController
 @end

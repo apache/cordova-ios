@@ -8,7 +8,8 @@
 
 #import "PGURLProtocol.h"
 #import "PGWhitelist.h"
-#import  "PhoneGapDelegate.h"
+#import "PhoneGapDelegate.h"
+#import "PGViewController.h"
 
 static PGWhitelist* gWhitelist = nil;
 
@@ -30,7 +31,7 @@ static PGWhitelist* gWhitelist = nil;
     
     if (gWhitelist == nil) {
         PhoneGapDelegate* delegate = (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
-        gWhitelist = [delegate.whitelist retain];
+        gWhitelist = [delegate.viewController.whitelist retain];
     }
     
     // we only care about http and https connections

@@ -1,6 +1,5 @@
 //
-//  MainViewController.h
-//  Cleaver
+//  PGViewController.h
 //
 //  Created by Jesse MacFadyen on 11-12-08.
 //  Copyright 2011 Nitobi. All rights reserved.
@@ -15,21 +14,20 @@
 
 @interface PGViewController : UIViewController<UIWebViewDelegate> {
 	
-	IBOutlet UIGapView* webView;
 }
 
-@property (nonatomic, retain) UIGapView *webView;
+@property (nonatomic, retain) IBOutlet UIGapView* webView;
 
-@property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView *activityView;
-@property (nonatomic, readonly, retain) UIImageView *imageView;
-@property (nonatomic, readonly, retain) NSMutableDictionary *pluginObjects;
-@property (nonatomic, readonly, retain) NSDictionary *pluginsMap;
-@property (nonatomic, readonly, retain) NSDictionary *settings;
+@property (nonatomic, readonly, retain) NSMutableDictionary* pluginObjects;
+@property (nonatomic, readonly, retain) NSDictionary* pluginsMap;
+@property (nonatomic, readonly, retain) NSDictionary* settings;
 @property (nonatomic, readonly, retain) PGWhitelist* whitelist; // readonly for public
+@property (nonatomic, readonly, retain) NSArray* supportedOrientations;
+@property (nonatomic, readonly, copy)   NSString* sessionKey;
 
-@property (nonatomic, retain) 	NSArray* supportedOrientations;
 
-+ (NSDictionary*)getBundlePlist:(NSString *)plistName;
+
++ (NSDictionary*) getBundlePlist:(NSString*)plistName;
 + (NSString*) wwwFolderName;
 + (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;
@@ -37,10 +35,10 @@
 - (NSString*) startPage;
 
 
--(void)createGapView;
+- (void) createGapView;
 
-- (int)executeQueuedCommands;
-- (void)flushCommandQueue;
+- (int) executeQueuedCommands;
+- (void) flushCommandQueue;
 
 - (id) getCommandInstance:(NSString*)pluginName;
 - (void) javascriptAlert:(NSString*)text;
@@ -49,8 +47,6 @@
 - (NSDictionary*) deviceProperties;
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
-
-
 
 @end
 

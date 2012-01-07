@@ -1,6 +1,5 @@
 //
-//  MainViewController.m
-//  Cleaver
+//  PGViewController.m
 //
 //  Created by Jesse MacFadyen on 11-12-08.
 //  Copyright 2011 Nitobi. All rights reserved.
@@ -8,16 +7,20 @@
 
 #import "PGViewController.h"
 #import "PGPlugin.h"
+#import "Location.h"
+#import "Connection.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
 
 @interface PGViewController ()
 
-@property (nonatomic, readwrite, retain) NSDictionary *settings;
+@property (nonatomic, readwrite, retain) NSDictionary* settings;
 @property (nonatomic, readwrite, retain) PGWhitelist* whitelist; 
-@property (nonatomic, readwrite, retain) NSMutableDictionary *pluginObjects;
-@property (nonatomic, readwrite, retain) NSDictionary *pluginsMap;
+@property (nonatomic, readwrite, retain) NSMutableDictionary* pluginObjects;
+@property (nonatomic, readwrite, retain) NSDictionary* pluginsMap;
+@property (nonatomic, readwrite, retain) NSArray* supportedOrientations;
+@property (nonatomic, readwrite, copy)   NSString* sessionKey;
 
 @end
 
@@ -26,15 +29,16 @@
 
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
-@synthesize activityView, imageView, settings;
-
-
-
+@synthesize settings, sessionKey;
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad 
+- (void) viewDidLoad 
 {
+    if (self.sessionKey == nil) {
+        self.sessionKey = [NSString stringWithFormat:@"%d", arc4random()];
+    }
+    
     [super viewDidLoad];
 	
     self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
@@ -63,22 +67,65 @@
     // set the whitelist
     self.whitelist = [[[PGWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]] autorelease];
 	
-    
-	
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
     
-	NSString* path = [PGViewController pathForResource:@"index.html"];
-	NSURL *appURL  = [NSURL fileURLWithPath:path];//[NSURL URLWithString:path];
-	//[NSURL fileURLWithPath:path];
-	
-	
-    NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestReloadRevalidatingCacheData timeoutInterval:20.0];
-	
-	[ self createGapView];
-	[ self.webView loadRequest:appReq];
+	NSString* path = [PGViewController pathForResource:[self startPage]];
+	NSURL* appURL  = [NSURL fileURLWithPath:path];
+    
+    ///////////////////
 
+    NSString* loadErr = nil;
+    
+    if(![appURL scheme]) {
+        NSString* startFilePath = [[self class] pathForResource:[self startPage]];
+        if (startFilePath == nil) {
+            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], [self startPage]];
+            NSLog(@"%@", loadErr);
+            appURL = nil;
+        } else {
+            appURL = [NSURL fileURLWithPath:startFilePath];
+        }
+    }
+    
+    ///////////////////
+    
+    NSNumber* enableLocation       = [settings objectForKey:@"EnableLocation"];
+    NSString* enableViewportScale  = [settings objectForKey:@"EnableViewportScale"];
+    NSNumber* allowInlineMediaPlayback = [settings objectForKey:@"AllowInlineMediaPlayback"];
+    NSNumber* mediaPlaybackRequiresUserAction = [settings objectForKey:@"MediaPlaybackRequiresUserAction"];
+    
+    self.webView.scalesPageToFit = [enableViewportScale boolValue];
+    
+    /*
+     * Fire up the GPS Service right away as it takes a moment for data to come back.
+     */
+    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
+        self.webView.allowsInlineMediaPlayback = YES;
+    }
+    if ([mediaPlaybackRequiresUserAction boolValue] && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
+        self.webView.mediaPlaybackRequiresUserAction = YES;
+    }
+    
+    /*
+     * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
+     */
+    if ([enableLocation boolValue]) {
+        [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
+    }
+    
+    ///////////////////
+    
+    [ self createGapView];
+    
+    if (!loadErr) {
+        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [self.webView loadRequest:appReq];
+    } else {
+        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+        [self.webView loadHTMLString:html baseURL:nil];
+    }
+    
 	//[self loadingStart];
-
 }
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
@@ -112,7 +159,7 @@
     return result;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// First ask the webview via JS if it wants to support the new orientation -jm
 	int i = 0;
@@ -159,28 +206,25 @@
 }
 
 
--(void)createGapView
+- (void) createGapView
 {
     CGRect webViewBounds = self.view.bounds;
     webViewBounds.origin = self.view.bounds.origin;
 	
-    if (!webView) 
+    if (!self.webView) 
 	{
-        webView = [[ [ UIGapView alloc ] initWithFrame:webViewBounds] autorelease];
-		webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		webView.scalesPageToFit = YES;//[enableViewportScale boolValue];
+        self.webView = [[ [ UIGapView alloc ] initWithFrame:webViewBounds] autorelease];
+		self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+		self.webView.scalesPageToFit = YES;//[enableViewportScale boolValue];
 		
-		[ self.view addSubview:webView];
-		[ self.view sendSubviewToBack:webView];
+		[self.view addSubview:self.webView];
+		[self.view sendSubviewToBack:self.webView];
 		
-		webView.delegate = self;
+		self.webView.delegate = self;
     }
-
-	
 }
 
-
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
 	
@@ -188,7 +232,7 @@
 }
 
 
-- (void)viewDidUnload {
+- (void) viewDidUnload {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
 }
@@ -200,7 +244,7 @@
  When web application loads Add stuff to the DOM, mainly the user-defined settings from the Settings.plist file, and
  the device's data such as device ID, platform version, etc.
  */
-- (void)webViewDidStartLoad:(UIWebView *)theWebView 
+- (void) webViewDidStartLoad:(UIWebView*)theWebView 
 {
     
 }
@@ -208,10 +252,10 @@
 /**
  Called when the webview finishes loading.  This stops the activity view and closes the imageview
  */
-- (void)webViewDidFinishLoad:(UIWebView *)theWebView 
+- (void) webViewDidFinishLoad:(UIWebView*)theWebView 
 {
     // Share session key with the WebView by setting PhoneGap.sessionKey
-    NSString *sessionKeyScript = [NSString stringWithFormat:@"PhoneGap.sessionKey = \"%@\";", @"bobbyDallas"];//]self.sessionKey];
+    NSString *sessionKeyScript = [NSString stringWithFormat:@"PhoneGap.sessionKey = \"%@\";", self.sessionKey];
     [theWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
 	
     
@@ -249,7 +293,8 @@
 //    [self.viewController didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+- (void) webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error 
+{
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
     /*
 	 if ([error code] != NSURLErrorCancelled)
@@ -257,9 +302,9 @@
      */
 }
 
-- (BOOL)webView:(UIWebView *)_webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+- (BOOL) webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	NSURL *url = [request URL];
+	NSURL* url = [request URL];
     
     /*
      * Execute any commands queued with PhoneGap.exec() on the JS side.
@@ -276,34 +321,34 @@
     {
         return YES;
     }
-//    else if ([self.whitelist schemeIsAllowed:[url scheme]])
-//    {            
-//        if ([self.whitelist URLIsAllowed:url] == YES)
-//        {
-//            NSNumber *openAllInWhitelistSetting = [self.settings objectForKey:@"OpenAllWhitelistURLsInWebView"];
-//            if ((nil != openAllInWhitelistSetting) && [openAllInWhitelistSetting boolValue]) {
-//                NSLog(@"OpenAllWhitelistURLsInWebView set: opening in webview");
-//                return YES;
-//            }
-//			
-//            // mainDocument will be nil for an iFrame
-//            NSString* mainDocument = [_webView.request.mainDocumentURL absoluteString];
-//			
-//            // anchor target="_blank" - load in Mobile Safari
-//            if (navigationType == UIWebViewNavigationTypeOther && mainDocument != nil)
-//            {
-//                [[UIApplication sharedApplication] openURL:url];
-//                return NO;
-//            }
-//            // other anchor target - load in PhoneGap webView
-//            else
-//            {
-//                return YES;
-//            }
-//        }
-//        
-//        return NO;
-//    }
+    else if ([self.whitelist schemeIsAllowed:[url scheme]])
+    {            
+        if ([self.whitelist URLIsAllowed:url] == YES)
+        {
+            NSNumber *openAllInWhitelistSetting = [self.settings objectForKey:@"OpenAllWhitelistURLsInWebView"];
+            if ((nil != openAllInWhitelistSetting) && [openAllInWhitelistSetting boolValue]) {
+                NSLog(@"OpenAllWhitelistURLsInWebView set: opening in webview");
+                return YES;
+            }
+			
+            // mainDocument will be nil for an iFrame
+            NSString* mainDocument = [theWebView.request.mainDocumentURL absoluteString];
+			
+            // anchor target="_blank" - load in Mobile Safari
+            if (navigationType == UIWebViewNavigationTypeOther && mainDocument != nil)
+            {
+                [[UIApplication sharedApplication] openURL:url];
+                return NO;
+            }
+            // other anchor target - load in PhoneGap webView
+            else
+            {
+                return YES;
+            }
+        }
+        
+        return NO;
+    }
     /*
      *    If we loaded the HTML from a string, we let the app handle it
      */
@@ -332,19 +377,18 @@
      */
     else
     {
-//        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
-//		
-//        if ([[UIApplication sharedApplication] canOpenURL:url]) {
-//            [[UIApplication sharedApplication] openURL:url];
-//        } else { // handle any custom schemes to plugins
-//            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenURLNotification object:url]];
-//        }
+        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
+		
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url];
+        } else { // handle any custom schemes to plugins
+            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenURLNotification object:url]];
+        }
 		
         return NO;
     }
     
     return YES;
-	
 }
 
 #pragma mark GapHelpers
@@ -355,7 +399,6 @@
     [webView stringByEvaluatingJavaScriptFromString:jsString];
 }
 
-/*Gap stuff*/
 + (NSString*) wwwFolderName
 {
     return @"www";
@@ -380,13 +423,11 @@
         directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
     }
     
-    return [mainBundle pathForResource:filename
-								ofType:@""
-						   inDirectory:directoryStr];
+    return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];
 }
 
-+ (NSString*) applicationDocumentsDirectory {
-    
++ (NSString*) applicationDocumentsDirectory 
+{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
     return basePath;
@@ -401,7 +442,7 @@
  *
  * Returns the number of executed commands.
  */
-- (int)executeQueuedCommands
+- (int) executeQueuedCommands
 {
     // Grab all the queued commands from the JS side.
     NSString* queuedCommandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:
@@ -430,7 +471,7 @@
 /**
  * Repeatedly fetches and executes the command queue until it is empty.
  */
-- (void)flushCommandQueue
+- (void) flushCommandQueue
 {
     [self.webView stringByEvaluatingJavaScriptFromString:
 	 @"PhoneGap.commandQueueFlushing = true"];
@@ -474,13 +515,12 @@
     [fullMethodName release];
     
     return retVal;
-
 }
 
 /**
  Returns an instance of a PhoneGapCommand object, based on its name.  If one exists already, it is returned.
  */
--(id) getCommandInstance:(NSString*)pluginName
+- (id) getCommandInstance:(NSString*)pluginName
 {
     // first, we try to find the pluginName in the pluginsMap 
     // (acts as a whitelist as well) if it does not exist, we return nil
@@ -525,17 +565,17 @@
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
-//    [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
-//    
-//    id cmd = [self getCommandInstance:@"com.phonegap.connection"];
-//    if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
-//    {
-//        NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
-//        if ([cmd respondsToSelector:@selector(connectionType)]) {
-//            [connProps setObject:[cmd connectionType] forKey:@"type"];
-//        }
-//        [devProps setObject:connProps forKey:@"connection"];
-//    }
+    [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
+    
+    id cmd = [self getCommandInstance:@"com.phonegap.connection"];
+    if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
+    {
+        NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
+        if ([cmd respondsToSelector:@selector(connectionType)]) {
+            [connProps setObject:[cmd connectionType] forKey:@"type"];
+        }
+        [devProps setObject:connProps forKey:@"connection"];
+    }
     
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;
@@ -564,7 +604,7 @@
 /**
  Returns the contents of the named plist bundle, loaded as a dictionary object
  */
-+ (NSDictionary*)getBundlePlist:(NSString *)plistName
++ (NSDictionary*) getBundlePlist:(NSString*)plistName
 {
     NSString *errorDesc = nil;
     NSPropertyListFormat format;
@@ -604,11 +644,26 @@ static NSString *gapVersion;
     return gapVersion;
 }
 
-
-
 - (void)dealloc {
     [super dealloc];
 }
 
+@end
+
+#pragma mark -
+
+@implementation NSDictionary (LowercaseKeys)
+
+- (NSDictionary*) dictionaryWithLowercaseKeys 
+{
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:self.count];
+    NSString* key;
+    
+    for (key in self) {
+        [result setObject:[self objectForKey:key] forKey:[key lowercaseString]];
+    }
+    
+    return result;
+}
 
 @end
