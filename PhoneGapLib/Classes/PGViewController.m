@@ -21,6 +21,7 @@
 @property (nonatomic, readwrite, retain) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, retain) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, copy)   NSString* sessionKey;
+@property (nonatomic, readwrite, assign) BOOL loadFromString;
 
 @end
 
@@ -29,7 +30,7 @@
 
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
-@synthesize settings, sessionKey;
+@synthesize settings, sessionKey, loadFromString;
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -69,24 +70,21 @@
 	
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
     
-	NSString* path = [PGViewController pathForResource:[self startPage]];
-	NSURL* appURL  = [NSURL fileURLWithPath:path];
-    
     ///////////////////
-
+    
+	NSString* startFilePath = [[self class] pathForResource:[self startPage]];
+	NSURL* appURL  = nil;
     NSString* loadErr = nil;
     
-    if(![appURL scheme]) {
-        NSString* startFilePath = [[self class] pathForResource:[self startPage]];
-        if (startFilePath == nil) {
-            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], [self startPage]];
-            NSLog(@"%@", loadErr);
-            appURL = nil;
-        } else {
-            appURL = [NSURL fileURLWithPath:startFilePath];
-        }
+    if (startFilePath == nil) {
+        loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], [self startPage]];
+        NSLog(@"%@", loadErr);
+        self.loadFromString = YES;
+        appURL = nil;
+    } else {
+        appURL = [NSURL fileURLWithPath:startFilePath];
     }
-    
+
     ///////////////////
     
     NSNumber* enableLocation       = [settings objectForKey:@"EnableLocation"];
@@ -352,11 +350,11 @@
     /*
      *    If we loaded the HTML from a string, we let the app handle it
      */
-//    else if (self.loadFromString == YES)
-//    {
-//        self.loadFromString = NO;
-//        return YES;
-//    }
+    else if (self.loadFromString == YES)
+    {
+        self.loadFromString = NO;
+        return YES;
+    }
     /*
      * all tel: scheme urls we let the UIWebview handle it using the default behaviour
      */

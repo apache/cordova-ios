@@ -24,7 +24,7 @@
 @property (nonatomic, readonly, retain) PGWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, retain) NSArray* supportedOrientations;
 @property (nonatomic, readonly, copy)   NSString* sessionKey;
-
+@property (nonatomic, readonly, assign) BOOL loadFromString;
 
 
 + (NSDictionary*) getBundlePlist:(NSString*)plistName;
