@@ -17,8 +17,6 @@
 
 @property (nonatomic, readwrite, retain) IBOutlet UIWindow* window;
 @property (nonatomic, readonly, retain) IBOutlet PGViewController* viewController;
-@property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView* activityView;
-@property (nonatomic, readonly, retain) UIImageView *imageView;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 - (void)applicationWillEnterForeground:(UIApplication *)application;

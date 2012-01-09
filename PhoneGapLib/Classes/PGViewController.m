@@ -12,6 +12,7 @@
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
+#define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface PGViewController ()
 
@@ -23,6 +24,10 @@
 @property (nonatomic, readwrite, copy)   NSString* sessionKey;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
 
+@property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView* activityView;
+@property (nonatomic, readwrite, retain) UIImageView* imageView;
+
+
 @end
 
 
@@ -31,7 +36,18 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize settings, sessionKey, loadFromString;
+@synthesize imageView, activityView, useSplashScreen;
 
+- (id) init
+{
+    self = [super init];
+    if (self != nil) {
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
+                                                   object:nil];
+    }
+    return self; 
+}
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void) viewDidLoad 
@@ -278,17 +294,17 @@
     /*
      * Hide the Top Activity THROBBER in the Battery Bar
      */
-//    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-//	
-//    id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
-//    // if value is missing, default to yes
-//    if (autoHideSplashScreenValue == nil || [autoHideSplashScreenValue boolValue]) {
-//        self.imageView.hidden = YES;
-//        self.activityView.hidden = YES;    
-//        [self.window bringSubviewToFront:self.viewController.view];
-//    }
-//    
-//    [self.viewController didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+	
+    id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
+    // if value is missing, default to yes
+    if (autoHideSplashScreenValue == nil || [autoHideSplashScreenValue boolValue]) {
+        self.imageView.hidden = YES;
+        self.activityView.hidden = YES;    
+        [self.view bringSubviewToFront:self.webView];
+    }
+    
+    [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void) webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error 
@@ -407,6 +423,33 @@
     return @"index.html";
 }
 
++ (BOOL) isIPad 
+{
+#ifdef UI_USER_INTERFACE_IDIOM
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#else
+    return NO;
+#endif
+}
+
++ (NSString*) resolveImageResource:(NSString*)resource
+{
+    NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+    BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
+    
+    // the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
+    if (isLessThaniOS4)
+    {
+        if ([[self class] isIPad]) {
+            return [NSString stringWithFormat:@"%@~ipad.png", resource];
+        } else {
+            return [NSString stringWithFormat:@"%@.png", resource];
+        }
+    }
+    
+    return resource;
+}
+
 + (NSString*) pathForResource:(NSString*)resourcepath
 {
     NSBundle * mainBundle = [NSBundle mainBundle];
@@ -429,6 +472,122 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
     return basePath;
+}
+
+- (void) showSplashScreen
+{
+    NSString* launchImageFile = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UILaunchImageFile"];
+    if (launchImageFile == nil) { // fallback if no launch image was specified
+        launchImageFile = @"Default"; 
+    }
+    
+    NSString* orientedLaunchImageFile = nil;    
+    CGAffineTransform startupImageTransform = CGAffineTransformIdentity;
+    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    BOOL isIPad = [[self class] isIPad];
+    UIImage* launchImage = nil;
+    
+    if (isIPad)
+    {
+        if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
+            deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
+        }
+        
+        switch (deviceOrientation) 
+        {
+            case UIDeviceOrientationLandscapeLeft: // this is where the home button is on the right (yeah, I know, confusing)
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
+                startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(90));
+            }
+                break;
+            case UIDeviceOrientationLandscapeRight: // this is where the home button is on the left (yeah, I know, confusing)
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
+                startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(-90));
+            } 
+                break;
+            case UIDeviceOrientationPortraitUpsideDown:
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
+                startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
+            } 
+                break;
+            case UIDeviceOrientationPortrait:
+            default:
+            {
+                orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
+                startupImageTransform = CGAffineTransformIdentity;
+            }
+                break;
+        }
+        
+        launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+    }
+    else // not iPad
+    {
+        orientedLaunchImageFile = @"Default";
+        launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+    }
+    
+    if (launchImage == nil) {
+        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
+    }
+    
+    self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];    
+    self.imageView.tag = 1;
+    self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
+    
+    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
+    [self.imageView setTransform:startupImageTransform];
+    [self.view addSubview:self.imageView];
+    
+    
+    /*
+     * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
+     *
+     *     whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
+     *     white      = UIActivityIndicatorViewStyleWhite
+     *     gray       = UIActivityIndicatorViewStyleGray
+     *
+     */
+    NSString* topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
+    UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    
+    if ([topActivityIndicator isEqualToString:@"whiteLarge"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    } else if ([topActivityIndicator isEqualToString:@"white"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
+    } else if ([topActivityIndicator isEqualToString:@"gray"]) {
+        topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    }
+    
+    self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
+    self.activityView.tag = 2;
+    
+    id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
+    // backwards compatibility - if key is missing, default to true
+    if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
+        [self.view addSubview:self.activityView];
+    }
+    
+    self.activityView.center = self.view.center;
+    [self.activityView startAnimating];
+    
+    [self.view layoutSubviews];
+}    
+
+BOOL gSplashScreenShown = NO;
+- (void) receivedOrientationChange
+{
+    if (self.imageView == nil) {
+        gSplashScreenShown = YES;
+        if (self.useSplashScreen) {
+            [self showSplashScreen];
+        }
+    }
 }
 
 #pragma mark PhoneGapCommands

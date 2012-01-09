@@ -26,6 +26,9 @@
 @property (nonatomic, readonly, copy)   NSString* sessionKey;
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 
+@property (nonatomic, readwrite, assign) BOOL useSplashScreen;
+@property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView* activityView;
+@property (nonatomic, readonly, retain) UIImageView *imageView;
 
 + (NSDictionary*) getBundlePlist:(NSString*)plistName;
 + (NSString*) wwwFolderName;
