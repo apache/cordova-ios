@@ -229,7 +229,6 @@
 	{
         self.webView = [[ [ UIGapView alloc ] initWithFrame:webViewBounds] autorelease];
 		self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		self.webView.scalesPageToFit = YES;//[enableViewportScale boolValue];
 		
 		[self.view addSubview:self.webView];
 		[self.view sendSubviewToBack:self.webView];
