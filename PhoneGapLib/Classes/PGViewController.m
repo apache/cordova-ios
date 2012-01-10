@@ -301,7 +301,7 @@
     if (autoHideSplashScreenValue == nil || [autoHideSplashScreenValue boolValue]) {
         self.imageView.hidden = YES;
         self.activityView.hidden = YES;    
-        [self.view bringSubviewToFront:self.webView];
+        [self.view.superview bringSubviewToFront:self.webView];
     }
     
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
@@ -542,7 +542,7 @@
     
     self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
     [self.imageView setTransform:startupImageTransform];
-    [self.view addSubview:self.imageView];
+    [self.view.superview addSubview:self.imageView];
     
     
     /*
@@ -570,13 +570,13 @@
     id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
     // backwards compatibility - if key is missing, default to true
     if (showSplashScreenSpinnerValue == nil || [showSplashScreenSpinnerValue boolValue]) {
-        [self.view addSubview:self.activityView];
+        [self.view.superview addSubview:self.activityView];
     }
     
     self.activityView.center = self.view.center;
     [self.activityView startAnimating];
     
-    [self.view layoutSubviews];
+    [self.view.superview layoutSubviews];
 }    
 
 BOOL gSplashScreenShown = NO;
