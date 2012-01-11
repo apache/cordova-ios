@@ -8,7 +8,7 @@
 
 #import "Location.h"
 #import "PGViewController.h"
-#import "PhoneGapDelegate.h"
+#import "PGAppDelegate.h"
 
 #pragma mark Constants
 
@@ -361,7 +361,7 @@
     if ([self.locationManager respondsToSelector: @selector(headingOrientation)]) {
         UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
         if (currentOrientation != UIDeviceOrientationUnknown) {
-            PhoneGapDelegate* pgDelegate = [self appDelegate];
+            PGAppDelegate* pgDelegate = [self appDelegate];
             PGViewController* pgViewController = pgDelegate.viewController;
             
             if ([pgViewController.supportedOrientations containsObject:

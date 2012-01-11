@@ -390,7 +390,7 @@
      */
     else
     {
-        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
+        NSLog(@"PGAppDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
 		
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
             [[UIApplication sharedApplication] openURL:url];
@@ -700,6 +700,10 @@ BOOL gSplashScreenShown = NO;
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         }
         
+        if ([obj isKindOfClass:[PGPlugin class]] && [obj respondsToSelector:@selector(setViewController)]) { 
+            [obj setViewController:self];
+        }
+        
         if (obj != nil) {
             [self.pluginObjects setObject:obj forKey:className];
             [obj release];
@@ -711,7 +715,7 @@ BOOL gSplashScreenShown = NO;
 }
 
 
-#pragma mark PhoneGapDelegate?
+#pragma mark -
 
 - (NSDictionary*) deviceProperties
 {

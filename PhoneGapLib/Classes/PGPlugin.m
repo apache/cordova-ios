@@ -10,12 +10,11 @@
 
 
 #import "PGPlugin.h"
-#import "PhoneGapDelegate.h"
+#import "PGAppDelegate.h"
 
 
 @implementation PGPlugin
-@synthesize webView;
-@synthesize settings;
+@synthesize webView, settings, viewController;
 
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
@@ -125,14 +124,15 @@
     [super dealloc];
 }
 
-- (PhoneGapDelegate*) appDelegate
+- (id) appDelegate
 {
-	return (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
+	return [[UIApplication sharedApplication] delegate];
 }
 
+/* deprecated - just use the viewController property */
 - (UIViewController*) appViewController
 {
-	return (UIViewController*)[self appDelegate].viewController;
+	return self.viewController;
 }
 
 - (NSString*) writeJavascript:(NSString*)javascript

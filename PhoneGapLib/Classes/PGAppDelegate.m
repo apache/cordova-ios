@@ -17,12 +17,12 @@
 #import "PGURLProtocol.h"
 #import "PGWhitelist.h"
 #import "InvokedUrlCommand.h"
-#import "PhoneGapDelegate.h"
+#import "PGAppDelegate.h"
 #import "PGViewController.h"
 #import "PGPlugin.h"
 
 // class extension
-@interface PhoneGapDelegate ()
+@interface PGAppDelegate ()
 
 // readwrite access for self
 
@@ -31,7 +31,7 @@
 @end
 
 
-@implementation PhoneGapDelegate
+@implementation PGAppDelegate
 
 @synthesize window, viewController;
 

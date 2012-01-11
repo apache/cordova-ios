@@ -7,7 +7,7 @@
 
 
 #import "Sound.h"
-#import "PhonegapDelegate.h"
+#import "PGAppDelegate.h"
 #import "PGViewController.h"
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"
@@ -16,31 +16,6 @@
 @implementation PGSound
 
 @synthesize soundCache, avSession;
-/*
-// Maps a url to the original resource path
-- (NSString*) resourceForUrl:(NSURL*)url
-{
-    NSBundle* mainBundle = [NSBundle mainBundle];
-	NSString* urlString = [url description];
-	NSString* retVal = @"";
-	
-	NSString* wwwPath = [mainBundle pathForResource:[PhoneGapDelegate wwwFolderName] ofType:@"" inDirectory:@""];
-	NSString* wwwUrl = [[NSURL fileURLWithPath:wwwPath] description];
-	NSString* documentsUrl = [[NSURL fileURLWithPath:[PhoneGapDelegate applicationDocumentsDirectory]] description];
-	
-	if ([urlString hasPrefix:wwwUrl]) {
-		retVal = [urlString substringFromIndex:[wwwUrl length]];
-	} else if ([urlString hasPrefix:HTTP_SCHEME_PREFIX]) {
-		retVal = urlString;
-	} else if ([urlString hasPrefix:documentsUrl]) {
-		retVal = [NSString stringWithFormat:@"%@%@", DOCUMENTS_SCHEME_PREFIX, [urlString substringFromIndex:[documentsUrl length]]];
-	} else {
-		NSLog(@"Cannot map url '%@' to a resource path.", urlString);
-	}
-
-	return retVal;
-}
-*/ 
 
 // Maps a url for a resource path
 // "Naked" resource paths are assumed to be from the www folder as its base

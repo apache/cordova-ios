@@ -8,7 +8,7 @@
 
 #import "PGURLProtocol.h"
 #import "PGWhitelist.h"
-#import "PhoneGapDelegate.h"
+#import "PGAppDelegate.h"
 #import "PGViewController.h"
 
 static PGWhitelist* gWhitelist = nil;
@@ -30,7 +30,7 @@ static PGWhitelist* gWhitelist = nil;
     NSString* theScheme = [theUrl scheme];
     
     if (gWhitelist == nil) {
-        PhoneGapDelegate* delegate = (PhoneGapDelegate*)[[UIApplication sharedApplication] delegate];
+        PGAppDelegate* delegate = (PGAppDelegate*)[[UIApplication sharedApplication] delegate];
         gWhitelist = [delegate.viewController.whitelist retain];
     }
     

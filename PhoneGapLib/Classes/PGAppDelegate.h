@@ -11,7 +11,7 @@
 
 @class PGViewController;
 
-@interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
+@interface PGAppDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
 {
 }
 
