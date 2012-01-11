@@ -88,6 +88,10 @@
 		30AE4E97141953C7005A9C9A /* MockUIWebview.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AE4E96141953C7005A9C9A /* MockUIWebview.m */; };
 		30AE4EA81419596F005A9C9A /* PGContactsTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 30AE4E8B1419532F005A9C9A /* PGContactsTests.h */; };
 		30AE4EA91419596F005A9C9A /* MockUIWebview.h in Resources */ = {isa = PBXBuildFile; fileRef = 30AE4E95141953C7005A9C9A /* MockUIWebview.h */; };
+		30B05D6F14BD22F10046A9AC /* PhoneGapDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B05D6B14BD22F10046A9AC /* PhoneGapDelegate.h */; };
+		30B05D7014BD22F10046A9AC /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6C14BD22F10046A9AC /* PhoneGapDelegate.m */; };
+		30B05D7114BD22F10046A9AC /* PhoneGapViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B05D6D14BD22F10046A9AC /* PhoneGapViewController.h */; };
+		30B05D7214BD22F10046A9AC /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6E14BD22F10046A9AC /* PhoneGapViewController.m */; };
 		30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; };
 		30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* PGSplashScreen.m */; };
 		30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -195,6 +199,10 @@
 		30AE4E8C1419532F005A9C9A /* PGContactsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGContactsTests.m; sourceTree = "<group>"; };
 		30AE4E95141953C7005A9C9A /* MockUIWebview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockUIWebview.h; sourceTree = "<group>"; };
 		30AE4E96141953C7005A9C9A /* MockUIWebview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockUIWebview.m; sourceTree = "<group>"; };
+		30B05D6B14BD22F10046A9AC /* PhoneGapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapDelegate.h; path = Classes/PhoneGapDelegate.h; sourceTree = "<group>"; };
+		30B05D6C14BD22F10046A9AC /* PhoneGapDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapDelegate.m; path = Classes/PhoneGapDelegate.m; sourceTree = "<group>"; };
+		30B05D6D14BD22F10046A9AC /* PhoneGapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapViewController.h; path = Classes/PhoneGapViewController.h; sourceTree = "<group>"; };
+		30B05D6E14BD22F10046A9AC /* PhoneGapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapViewController.m; path = Classes/PhoneGapViewController.m; sourceTree = "<group>"; };
 		30B39EBC13D0268B0009682A /* PGSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGSplashScreen.h; path = Classes/PGSplashScreen.h; sourceTree = "<group>"; };
 		30B39EBD13D0268B0009682A /* PGSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGSplashScreen.m; path = Classes/PGSplashScreen.m; sourceTree = "<group>"; };
 		30C6847E1406CB38004C1A8E /* PGWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGWhitelist.h; path = Classes/PGWhitelist.h; sourceTree = "<group>"; };
@@ -347,6 +355,17 @@
 			name = Cleaver;
 			sourceTree = "<group>";
 		};
+		30B05D6914BD22D30046A9AC /* Deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				30B05D6B14BD22F10046A9AC /* PhoneGapDelegate.h */,
+				30B05D6C14BD22F10046A9AC /* PhoneGapDelegate.m */,
+				30B05D6D14BD22F10046A9AC /* PhoneGapViewController.h */,
+				30B05D6E14BD22F10046A9AC /* PhoneGapViewController.m */,
+			);
+			name = Deprecated;
+			sourceTree = "<group>";
+		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,6 +473,7 @@
 		8887FD101090FB43009987E8 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				30B05D6914BD22D30046A9AC /* Deprecated */,
 				3054098714B77FF3009841CA /* Cleaver */,
 				888700D710922F56009987E8 /* Commands */,
 				8887FD361090FBE7009987E8 /* JSON */,
@@ -547,6 +567,8 @@
 				30A90B9114588697006178D3 /* JSONKit.h in Headers */,
 				8852C43A14B65FD800F0E735 /* PGViewController.h in Headers */,
 				8852C43F14B65FD800F0E735 /* UIGapView.h in Headers */,
+				30B05D6F14BD22F10046A9AC /* PhoneGapDelegate.h in Headers */,
+				30B05D7114BD22F10046A9AC /* PhoneGapViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -804,6 +826,8 @@
 				30A90B9314588697006178D3 /* JSONKit.m in Sources */,
 				8852C43C14B65FD800F0E735 /* PGViewController.m in Sources */,
 				8852C44114B65FD800F0E735 /* UIGapView.m in Sources */,
+				30B05D7014BD22F10046A9AC /* PhoneGapDelegate.m in Sources */,
+				30B05D7214BD22F10046A9AC /* PhoneGapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
