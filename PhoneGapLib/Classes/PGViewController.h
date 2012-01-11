@@ -12,7 +12,19 @@
 
 #import "PGWhitelist.h"
 
-@interface PGViewController : UIViewController<UIWebViewDelegate> {
+
+/* PGCommandDelegate */
+
+@protocol PGCommandDelegate <NSObject>
+
+- (id) getCommandInstance:(NSString*)pluginName;
+- (BOOL) execute:(InvokedUrlCommand*)command;
+
+@end
+
+/* PGViewController */
+
+@interface PGViewController : UIViewController<UIWebViewDelegate, PGCommandDelegate> {
 	
 }
 
@@ -29,6 +41,7 @@
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
 @property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readonly, retain) UIImageView *imageView;
+@property (nonatomic, readwrite, assign) id<PGCommandDelegate> commandDelegate;
 
 + (NSDictionary*) getBundlePlist:(NSString*)plistName;
 + (NSString*) wwwFolderName;
@@ -52,6 +65,8 @@
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
 
 @end
+
+/* Category */
 
 @interface NSDictionary (LowercaseKeys)
 

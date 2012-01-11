@@ -36,7 +36,7 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize settings, sessionKey, loadFromString;
-@synthesize imageView, activityView, useSplashScreen;
+@synthesize imageView, activityView, useSplashScreen, commandDelegate;
 
 - (id) init
 {
@@ -124,7 +124,7 @@
      * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
      */
     if ([enableLocation boolValue]) {
-        [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
+        [[self.commandDelegate getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
     }
     
     ///////////////////
@@ -139,7 +139,7 @@
         [self.webView loadHTMLString:html baseURL:nil];
     }
     
-	//[self loadingStart];
+	self.commandDelegate = self;
 }
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
@@ -613,7 +613,7 @@ BOOL gSplashScreenShown = NO;
     // Iterate over and execute all of the commands.
     for (NSString* commandJson in queuedCommands) {
 		
-        if(![self execute:
+        if(![self.commandDelegate execute:
 		 [InvokedUrlCommand commandFromObject:
 		  [commandJson mutableObjectFromJSONString]]])
 		{
@@ -651,7 +651,7 @@ BOOL gSplashScreenShown = NO;
     }
     
     // Fetch an instance of this class
-    PGPlugin* obj = [self getCommandInstance:command.className];
+    PGPlugin* obj = [self.commandDelegate getCommandInstance:command.className];
     
     if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
         NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
@@ -723,7 +723,7 @@ BOOL gSplashScreenShown = NO;
     [devProps setObject:[device name] forKey:@"name"];
     [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
     
-    id cmd = [self getCommandInstance:@"com.phonegap.connection"];
+    id cmd = [self.commandDelegate getCommandInstance:@"com.phonegap.connection"];
     if (cmd && [cmd isKindOfClass:[PGConnection class]]) 
     {
         NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];

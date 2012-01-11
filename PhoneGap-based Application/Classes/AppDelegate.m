@@ -7,11 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#ifdef PHONEGAP_FRAMEWORK
-	#import <PhoneGap/PhoneGapViewController.h>
-#else
-	#import "PhoneGapViewController.h"
-#endif
 
 @implementation AppDelegate
 
@@ -40,6 +35,7 @@
 	BOOL ok = [super application:application didFinishLaunchingWithOptions:launchOptions];
     if (ok) {
         self.viewController.webView.delegate = self;
+        self.viewController.commandDelegate = self;
     }
     return ok;
 }
