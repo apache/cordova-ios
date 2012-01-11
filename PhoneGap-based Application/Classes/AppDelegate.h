@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #ifdef PHONEGAP_FRAMEWORK
-	#import <PhoneGap/PhoneGapDelegate.h>
+	#import <PhoneGap/PGAppDelegate.h>
+    #import <PhoneGap/PGViewController.h>
 #else
-	#import "PhoneGapDelegate.h"
+	#import "PGAppDelegate.h"
+    #import "PGViewController.h"
 #endif
 
-@interface AppDelegate : PhoneGapDelegate {
+@interface AppDelegate : PGAppDelegate < PGCommandDelegate > {
 
 	NSString* invokeString;
 }

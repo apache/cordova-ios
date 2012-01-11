@@ -344,11 +344,11 @@ static NSString *gapVersion;
     [self.window layoutSubviews];//asking window to do layout AFTER imageView is created refer to line: 250     self.window.autoresizesSubviews = YES;
 }    
 
-BOOL gSplashScreenShown = NO;
+BOOL gSplashScreenShown_ = NO;
 - (void) receivedOrientationChange
 {
     if (self.imageView == nil) {
-        gSplashScreenShown = YES;
+        gSplashScreenShown_ = YES;
         [self showSplashScreen];
     }
 }

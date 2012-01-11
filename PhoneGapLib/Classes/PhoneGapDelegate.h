@@ -16,7 +16,7 @@
 @class Console;
 @class PGWhitelist;
 
-@interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
+__attribute__((deprecated)) @interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
 {
 }
 
