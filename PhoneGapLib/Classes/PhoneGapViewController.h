@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
-@interface PhoneGapViewController : UIViewController {
+__attribute__((deprecated)) @interface PhoneGapViewController : UIViewController {
 }
 
 @property (nonatomic, retain) 	NSArray* supportedOrientations;
