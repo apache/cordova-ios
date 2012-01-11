@@ -621,7 +621,7 @@ BOOL gSplashScreenShown = NO;
 		}
     }
 	
-    return 0;//[queuedCommands count];
+    return [queuedCommands count];
 }
 
 /**
