@@ -92,6 +92,8 @@
 		30B05D7014BD22F10046A9AC /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6C14BD22F10046A9AC /* PhoneGapDelegate.m */; };
 		30B05D7114BD22F10046A9AC /* PhoneGapViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B05D6D14BD22F10046A9AC /* PhoneGapViewController.h */; };
 		30B05D7214BD22F10046A9AC /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6E14BD22F10046A9AC /* PhoneGapViewController.m */; };
+		30B05DDA14BD24A10046A9AC /* PhoneGapDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B05D6B14BD22F10046A9AC /* PhoneGapDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30B05DDB14BD24A10046A9AC /* PhoneGapViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B05D6D14BD22F10046A9AC /* PhoneGapViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; };
 		30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* PGSplashScreen.m */; };
 		30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* PGSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -531,6 +533,8 @@
 				30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
 				8852C43B14B65FD800F0E735 /* PGViewController.h in Headers */,
 				8852C44014B65FD800F0E735 /* UIGapView.h in Headers */,
+				30B05DDA14BD24A10046A9AC /* PhoneGapDelegate.h in Headers */,
+				30B05DDB14BD24A10046A9AC /* PhoneGapViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
