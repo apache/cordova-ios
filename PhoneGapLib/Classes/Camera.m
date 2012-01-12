@@ -69,7 +69,7 @@
         self.pickerController.encodingType = [[options valueForKey:@"encodingType"] intValue] || EncodingTypeJPEG;
         
         self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
-        self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:0 withRange:NSMakeRange(0, 2)];
+        self.pickerController.returnType = (DestinationType)[options integerValueForKey:@"destinationType" defaultValue:1 withRange:NSMakeRange(0, 2)];
        
         if (sourceType == UIImagePickerControllerSourceTypeCamera) {
             // we only allow taking pictures (no video) in this api
