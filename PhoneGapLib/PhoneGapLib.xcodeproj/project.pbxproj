@@ -72,6 +72,8 @@
 		3035621714104C34006C2D43 /* PGWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* PGWhitelistTests.m */; };
 		3035621814104C3E006C2D43 /* PGWhitelistTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 30356212141049E1006C2D43 /* PGWhitelistTests.h */; };
 		30383DE01385F65600E37E22 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
+		304D303C14C4F74400261D84 /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6C14BD22F10046A9AC /* PhoneGapDelegate.m */; };
+		304D303E14C4F74700261D84 /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6E14BD22F10046A9AC /* PhoneGapViewController.m */; };
 		307A8F9E1385A2EC00E43782 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
 		307A8F9F1385A2EC00E43782 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
 		30956FD2138F1F5600FC3563 /* PGMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* PGMotion.h */; };
@@ -766,12 +768,16 @@
 				30325996136B325100982B63 /* InvokedUrlCommand.m in Sources */,
 				3032599E136B325100982B63 /* Location.m in Sources */,
 				303259A1136B325100982B63 /* Notification.m in Sources */,
+				304D303E14C4F74700261D84 /* PhoneGapViewController.m in Sources */,
+				8852C43D14B65FD800F0E735 /* PGViewController.m in Sources */,
 				303259A2136B325100982B63 /* NSData+Base64.m in Sources */,
 				303259A4136B325100982B63 /* PGAppDelegate.m in Sources */,
+				8852C44214B65FD800F0E735 /* UIGapView.m in Sources */,
 				303259A6136B325100982B63 /* Reachability.m in Sources */,
 				303259A7136B325100982B63 /* Sound.m in Sources */,
 				303259A8136B325100982B63 /* Accelerometer.m in Sources */,
 				303259AA136B325100982B63 /* Contact.m in Sources */,
+				304D303C14C4F74400261D84 /* PhoneGapDelegate.m in Sources */,
 				303259AB136B325100982B63 /* PluginResult.m in Sources */,
 				303259AC136B325100982B63 /* FileTransfer.m in Sources */,
 				30956FFD138F317200FC3563 /* PGMotion.m in Sources */,
@@ -780,8 +786,6 @@
 				30C684831406CB38004C1A8E /* PGWhitelist.m in Sources */,
 				30C684971407044B004C1A8E /* PGURLProtocol.m in Sources */,
 				30A90B9414588697006178D3 /* JSONKit.m in Sources */,
-				8852C43D14B65FD800F0E735 /* PGViewController.m in Sources */,
-				8852C44214B65FD800F0E735 /* UIGapView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
