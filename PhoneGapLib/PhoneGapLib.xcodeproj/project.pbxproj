@@ -72,6 +72,10 @@
 		3035621714104C34006C2D43 /* PGWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* PGWhitelistTests.m */; };
 		3035621814104C3E006C2D43 /* PGWhitelistTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 30356212141049E1006C2D43 /* PGWhitelistTests.h */; };
 		30383DE01385F65600E37E22 /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* Connection.m */; };
+		3047725B14C64D2700D535B5 /* NSDictionary+LowercaseKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 3047725914C64D2700D535B5 /* NSDictionary+LowercaseKeys.h */; };
+		3047725C14C64D2700D535B5 /* NSDictionary+LowercaseKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 3047725914C64D2700D535B5 /* NSDictionary+LowercaseKeys.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3047725D14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 3047725A14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m */; };
+		3047725E14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 3047725A14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m */; };
 		304D303C14C4F74400261D84 /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6C14BD22F10046A9AC /* PhoneGapDelegate.m */; };
 		304D303E14C4F74700261D84 /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B05D6E14BD22F10046A9AC /* PhoneGapViewController.m */; };
 		307A8F9E1385A2EC00E43782 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* Connection.h */; };
@@ -193,6 +197,8 @@
 		30325A0B136B343700982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		30356212141049E1006C2D43 /* PGWhitelistTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGWhitelistTests.h; sourceTree = "<group>"; };
 		30356213141049E1006C2D43 /* PGWhitelistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGWhitelistTests.m; sourceTree = "<group>"; };
+		3047725914C64D2700D535B5 /* NSDictionary+LowercaseKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+LowercaseKeys.h"; path = "Classes/NSDictionary+LowercaseKeys.h"; sourceTree = "<group>"; };
+		3047725A14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+LowercaseKeys.m"; path = "Classes/NSDictionary+LowercaseKeys.m"; sourceTree = "<group>"; };
 		307A8F9C1385A2EC00E43782 /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Connection.h; path = Classes/Connection.h; sourceTree = "<group>"; };
 		307A8F9D1385A2EC00E43782 /* Connection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Connection.m; path = Classes/Connection.m; sourceTree = "<group>"; };
 		30956FD0138F1F5600FC3563 /* PGMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMotion.h; path = Classes/PGMotion.h; sourceTree = "<group>"; };
@@ -454,6 +460,8 @@
 				8887FD601090FBE7009987E8 /* Sound.h */,
 				8887FD611090FBE7009987E8 /* Sound.m */,
 				302965BB13A94E9D007046C5 /* PGDebug.h */,
+				3047725914C64D2700D535B5 /* NSDictionary+LowercaseKeys.h */,
+				3047725A14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -536,6 +544,7 @@
 				8852C43B14B65FD800F0E735 /* PGViewController.h in Headers */,
 				8852C44014B65FD800F0E735 /* UIGapView.h in Headers */,
 				30B05DDA14BD24A10046A9AC /* PhoneGapDelegate.h in Headers */,
+				3047725C14C64D2700D535B5 /* NSDictionary+LowercaseKeys.h in Headers */,
 				30B05DDB14BD24A10046A9AC /* PhoneGapViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -575,6 +584,7 @@
 				8852C43F14B65FD800F0E735 /* UIGapView.h in Headers */,
 				30B05D6F14BD22F10046A9AC /* PhoneGapDelegate.h in Headers */,
 				30B05D7114BD22F10046A9AC /* PhoneGapViewController.h in Headers */,
+				3047725B14C64D2700D535B5 /* NSDictionary+LowercaseKeys.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -786,6 +796,7 @@
 				30C684831406CB38004C1A8E /* PGWhitelist.m in Sources */,
 				30C684971407044B004C1A8E /* PGURLProtocol.m in Sources */,
 				30A90B9414588697006178D3 /* JSONKit.m in Sources */,
+				3047725E14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,6 +847,7 @@
 				8852C44114B65FD800F0E735 /* UIGapView.m in Sources */,
 				30B05D7014BD22F10046A9AC /* PhoneGapDelegate.m in Sources */,
 				30B05D7214BD22F10046A9AC /* PhoneGapViewController.m in Sources */,
+				3047725D14C64D2700D535B5 /* NSDictionary+LowercaseKeys.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

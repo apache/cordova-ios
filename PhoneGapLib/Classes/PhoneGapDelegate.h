@@ -53,9 +53,3 @@ __attribute__((deprecated)) @interface PhoneGapDelegate : NSObject <UIApplicatio
 
 @end
 
-@interface NSDictionary (LowercaseKeys)
-
-- (NSDictionary*) dictionaryWithLowercaseKeys;
-
-@end
-
