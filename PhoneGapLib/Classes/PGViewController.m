@@ -9,6 +9,7 @@
 #import "PGPlugin.h"
 #import "Location.h"
 #import "Connection.h"
+#import "NSDictionary+LowercaseKeys.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
@@ -27,7 +28,6 @@
 @property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readwrite, retain) UIImageView* imageView;
 
-
 @end
 
 
@@ -37,6 +37,7 @@
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize settings, sessionKey, loadFromString;
 @synthesize imageView, activityView, useSplashScreen, commandDelegate;
+@synthesize wwwFolderName, startPage;
 
 - (id) init
 {
@@ -45,6 +46,8 @@
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
                                                    object:nil];
+        self.wwwFolderName = @"www";
+        self.startPage = @"index.html";
     }
     return self; 
 }
@@ -88,12 +91,12 @@
     
     ///////////////////
     
-	NSString* startFilePath = [[self class] pathForResource:[self startPage]];
+	NSString* startFilePath = [self pathForResource:self.startPage];
 	NSURL* appURL  = nil;
     NSString* loadErr = nil;
     
     if (startFilePath == nil) {
-        loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], [self startPage]];
+        loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
         NSLog(@"%@", loadErr);
         self.loadFromString = YES;
         appURL = nil;
@@ -412,16 +415,6 @@
     [webView stringByEvaluatingJavaScriptFromString:jsString];
 }
 
-+ (NSString*) wwwFolderName
-{
-    return @"www";
-}
-
-- (NSString*) startPage
-{
-    return @"index.html";
-}
-
 + (BOOL) isIPad 
 {
 #ifdef UI_USER_INTERFACE_IDIOM
@@ -449,7 +442,7 @@
     return resource;
 }
 
-+ (NSString*) pathForResource:(NSString*)resourcepath
+- (NSString*) pathForResource:(NSString*)resourcepath
 {
     NSBundle * mainBundle = [NSBundle mainBundle];
     NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
@@ -457,10 +450,10 @@
     [directoryParts removeLastObject];
     
     NSString* directoryPartsJoined =[directoryParts componentsJoinedByString:@"/"];
-    NSString* directoryStr = [self wwwFolderName];
+    NSString* directoryStr = self.wwwFolderName;
     
     if ([directoryPartsJoined length] > 0) {
-        directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
+        directoryStr = [NSString stringWithFormat:@"%@/%@", self.wwwFolderName, [directoryParts componentsJoinedByString:@"/"]];
     }
     
     return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];
@@ -806,24 +799,6 @@ static NSString *gapVersion;
 
 - (void)dealloc {
     [super dealloc];
-}
-
-@end
-
-#pragma mark -
-
-@implementation NSDictionary (LowercaseKeys)
-
-- (NSDictionary*) dictionaryWithLowercaseKeys 
-{
-    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:self.count];
-    NSString* key;
-    
-    for (key in self) {
-        [result setObject:[self objectForKey:key] forKey:[key lowercaseString]];
-    }
-    
-    return result;
 }
 
 @end

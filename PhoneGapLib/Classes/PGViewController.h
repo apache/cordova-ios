@@ -43,19 +43,19 @@
 @property (nonatomic, readonly, retain) UIImageView *imageView;
 @property (nonatomic, readwrite, assign) id<PGCommandDelegate> commandDelegate;
 
+@property (nonatomic, readwrite, copy) NSString* wwwFolderName;
+@property (nonatomic, readwrite, copy) NSString* startPage;
+
 + (NSDictionary*) getBundlePlist:(NSString*)plistName;
-+ (NSString*) wwwFolderName;
-+ (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
-- (NSString*) startPage;
-
 
 - (void) createGapView;
 
 - (int) executeQueuedCommands;
 - (void) flushCommandQueue;
 
+- (NSString*) pathForResource:(NSString*)resourcepath;
 - (id) getCommandInstance:(NSString*)pluginName;
 - (void) javascriptAlert:(NSString*)text;
 - (BOOL) execute:(InvokedUrlCommand*)command;
@@ -63,13 +63,5 @@
 - (NSDictionary*) deviceProperties;
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
-
-@end
-
-/* Category */
-
-@interface NSDictionary (LowercaseKeys)
-
-- (NSDictionary*) dictionaryWithLowercaseKeys;
 
 @end
