@@ -705,7 +705,7 @@ BOOL gSplashScreenShown = NO;
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         }
         
-        if ([obj isKindOfClass:[PGPlugin class]] && [obj respondsToSelector:@selector(setViewController)]) { 
+        if ([obj isKindOfClass:[PGPlugin class]] && [obj respondsToSelector:@selector(setViewController:)]) { 
             [obj setViewController:self];
         }
         
