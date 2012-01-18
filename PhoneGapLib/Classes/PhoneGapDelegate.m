@@ -209,6 +209,10 @@ static NSString *gapVersion;
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         }
         
+        if ([obj isKindOfClass:[PGPlugin class]] && [obj respondsToSelector:@selector(setViewController:)]) { 
+            [obj setViewController:self.viewController];
+        }
+
         if (obj != nil) {
             [self.pluginObjects setObject:obj forKey:className];
             [obj release];
