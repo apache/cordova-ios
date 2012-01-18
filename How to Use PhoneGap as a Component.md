@@ -50,8 +50,8 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
 9. Press the key combination **Option-Command-1** to show the **File Inspector**
 10. Choose **"Relative to PHONEGAPLIB"** in the **File Inspector** for the drop-down menu for **Location** 
 11. Click on the **project icon** in the Project Navigator, select your **Project**, then select the **"Build Settings"** tab
-12. In the search field, enter **"Header Search Paths"**
-13. For the **"Header Search Paths"** value, enter **"$(PHONEGAPLIB)/Classes"** and check the **Recursive** checkbox
+12. Enter **"Header Search Paths"** in the search field
+13. Enter **"$(PHONEGAPLIB)/Classes"** and check the **Recursive** checkbox - for the **"Header Search Paths"** value
 14. Click on the **project icon** in the Project Navigator, select your **Target**, then select the **"Build Phases"** tab
 15. Expand **"Link Binaries with Libraries"**
 16. Click on the **"+" button**, and add these **frameworks** (and optionally in the Project Navigator, **move** them under the Frameworks group):
@@ -109,7 +109,7 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
 2. Put your **HTML, CSS and JavaScript assets** into this folder
 3. **Drag and drop** the folder into the Project Navigator of Xcode
 4. **Choose** the radio-button **"Create folder references for any added folders"**
-5. Make sure when you instantiate the PGViewController, you **set the appropriate "wwwFolderName" and "startPage" properties** for the folder you created in **(1)** or use the defaults (see previous section).
+5. **Set the appropriate "wwwFolderName" and "startPage" properties** for the folder you created in **(1)** or use the defaults (see previous section) when you instantiate the PGViewController.
 
         /*
          if you created a folder called 'myfolder' and
