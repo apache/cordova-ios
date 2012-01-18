@@ -96,7 +96,11 @@
         UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:audioViewController] autorelease];
         self.inUse = YES;
         
-        [self.viewController presentModalViewController:navController animated: YES];
+        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+            [self.viewController presentViewController:navController animated:YES completion:nil];        
+        } else {
+            [self.viewController presentModalViewController:navController animated:YES ];
+        }              
     }
         
     if (result) {
@@ -141,7 +145,11 @@
         pickerController.callbackId = callbackId;
         pickerController.mimeType = mode;
 	
-        [self.viewController presentModalViewController:pickerController animated:YES];
+        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+            [self.viewController presentViewController:pickerController animated:YES completion:nil];        
+        } else {
+            [self.viewController presentModalViewController:pickerController animated:YES ];
+        }              
     }
 
 }
@@ -256,7 +264,11 @@
         // PGImagePicker specific property
         pickerController.callbackId = callbackId;
         
-        [self.viewController presentModalViewController:pickerController animated:YES];
+        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+            [self.viewController presentViewController:pickerController animated:YES completion:nil];        
+        } else {
+            [self.viewController presentModalViewController:pickerController animated:YES ];
+        }              
     }
     
 }
@@ -475,7 +487,11 @@
     PGImagePicker* cameraPicker = (PGImagePicker*)picker;
 	NSString* callbackId = cameraPicker.callbackId;
 	
-	[picker dismissModalViewControllerAnimated:YES];
+    if ([picker respondsToSelector:@selector(presentingViewController)]) { 
+        [[picker presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[picker parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
 	
     NSString* jsString = nil;
     PluginResult* result = nil;
@@ -518,7 +534,11 @@
     PGImagePicker* cameraPicker = (PGImagePicker*)picker;
 	NSString* callbackId = cameraPicker.callbackId;
 	
-	[picker dismissModalViewControllerAnimated:YES];
+    if ([picker respondsToSelector:@selector(presentingViewController)]) { 
+        [[picker presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[picker parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
 	
     NSString* jsString = nil;
     PluginResult* result = nil;
@@ -776,7 +796,12 @@
 - (void) dismissAudioView: (id) sender
 {
     // called when done button pressed or when error condition to do cleanup and remove view
-    [self.captureCommand.viewController.modalViewController dismissModalViewControllerAnimated:YES];
+    if ([self.captureCommand.viewController.modalViewController respondsToSelector:@selector(presentingViewController)]) { 
+        [[self.captureCommand.viewController.modalViewController presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[self.captureCommand.viewController.modalViewController parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
+    
     if (!self.resultString) {
         // return error
         PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageToErrorObject:self.errorCode];

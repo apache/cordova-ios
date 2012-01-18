@@ -106,7 +106,11 @@
         }
         else 
         { 
-            [self.viewController presentModalViewController:self.pickerController animated:YES]; 
+            if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+                [self.viewController presentViewController:self.pickerController animated:YES completion:nil];        
+            } else {
+                [self.viewController presentModalViewController:self.pickerController animated:YES ];
+            }              
         }
     }
 }
@@ -130,7 +134,11 @@
 	}
 	else 
 	{
-		[self.pickerController dismissModalViewControllerAnimated:YES]; 
+        if ([self.pickerController respondsToSelector:@selector(presentingViewController)]) { 
+            [[self.pickerController presentingViewController] dismissModalViewControllerAnimated:YES];
+        } else {
+            [[self.pickerController parentViewController] dismissModalViewControllerAnimated:YES];
+        }        
 	}
 	NSString* jsString = nil;
     PluginResult* result = nil;
@@ -224,7 +232,11 @@
 {	
 	NSString* callbackId = self.pickerController.callbackId;
 	
-	[picker dismissModalViewControllerAnimated:YES];
+    if ([picker respondsToSelector:@selector(presentingViewController)]) { 
+        [[picker presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[picker parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
 	
 	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
 

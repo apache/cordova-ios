@@ -86,8 +86,12 @@
 	npController.callbackId = callbackId;
 
 	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:npController] autorelease];
-	[self.viewController presentModalViewController:navController animated: YES];
- 
+    
+    if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+        [self.viewController presentViewController:navController animated:YES completion:nil];        
+    } else {
+        [self.viewController presentModalViewController:navController animated:YES ];
+    }              
 }
 
 - (void) newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
@@ -101,7 +105,13 @@
 			//return the contact id
 			recordId = ABRecordGetRecordID(person);
 	}
-	[newPersonViewController dismissModalViewControllerAnimated:YES];
+
+    if ([newPersonViewController respondsToSelector:@selector(presentingViewController)]) { 
+        [[newPersonViewController presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[newPersonViewController parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
+    
 	PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt:  recordId];
 	//jsString = [NSString stringWithFormat: @"%@(%d);", newCP.jsCallback, recordId];
 	[self writeJavascript: [result toSuccessCallbackString:callbackId]];
@@ -133,7 +143,11 @@
 
         [navController pushViewController:personController animated:YES];
 
-		[self.viewController presentModalViewController:navController animated: YES];
+        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+            [self.viewController presentViewController:navController animated:YES completion:nil];        
+        } else {
+            [self.viewController presentModalViewController:navController animated:YES ];
+        }              
 
 		if (bEdit) {
             // create the editing controller and push it onto the stack
@@ -142,7 +156,6 @@
             editPersonController.personViewDelegate = self;
             editPersonController.allowsEditing = YES; 
             [navController pushViewController:editPersonController animated:YES];
-            
         }
 	} 
 	else 
@@ -171,7 +184,11 @@
 	pickerController.selectedId = kABRecordInvalidID;
 	pickerController.allowsEditing = (BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
 	
-	[self.viewController presentModalViewController:pickerController animated: YES];
+    if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+        [self.viewController presentViewController:pickerController animated:YES completion:nil];        
+    } else {
+        [self.viewController presentModalViewController:pickerController animated:YES ];
+    }              
 }
 
 - (BOOL) peoplePickerNavigationController:(ABPeoplePickerNavigationController*)peoplePicker 
@@ -197,8 +214,11 @@
 		PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: contactId];
 		[self writeJavascript:[result toSuccessCallbackString: picker.callbackId]];
 		
-
-		[picker dismissModalViewControllerAnimated:YES];
+        if ([picker respondsToSelector:@selector(presentingViewController)]) { 
+            [[picker presentingViewController] dismissModalViewControllerAnimated:YES];
+        } else {
+            [[picker parentViewController] dismissModalViewControllerAnimated:YES];
+        }        
 	}
 	return NO;
 }
@@ -216,7 +236,11 @@
 	PluginResult* result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt: picker.selectedId];
 	[self writeJavascript:[result toSuccessCallbackString:picker.callbackId]];
 	
-	[peoplePicker dismissModalViewControllerAnimated:YES]; 
+    if ([peoplePicker respondsToSelector:@selector(presentingViewController)]) { 
+        [[peoplePicker presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[peoplePicker parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
 }
 
 - (void) search:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -473,8 +497,11 @@
     [super viewDidDisappear: animated];
     // I couldn't find the appViewController in the hierarchy of this UIViewController 
     // so using the passed ContactPlugin to access it.
-    [self.contactsPlugin.viewController dismissModalViewControllerAnimated:NO];
-    
+    if ([self.contactsPlugin.viewController respondsToSelector:@selector(presentingViewController)]) { 
+        [[self.contactsPlugin.viewController presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[self.contactsPlugin.viewController parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
 }
 -(void) dealloc
 {
