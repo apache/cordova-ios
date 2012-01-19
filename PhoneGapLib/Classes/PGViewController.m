@@ -116,6 +116,8 @@
         appURL = [NSURL fileURLWithPath:startFilePath];
     }
 
+    [ self createGapView];
+    
     ///////////////////
     
     NSNumber* enableLocation       = [settings objectForKey:@"EnableLocation"];
@@ -143,8 +145,6 @@
     }
     
     ///////////////////
-    
-    [ self createGapView];
     
     if (!loadErr) {
         NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
