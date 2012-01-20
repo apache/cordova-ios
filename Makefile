@@ -89,6 +89,7 @@ clean-phonegap-framework:
 
 clean-markdown:
 	@$(RM_RF) PhoneGapInstaller/docs/readme.html
+	@$(RM_RF) PhoneGapInstaller/docs/cleaver.html
 
 clean-installer:
 	@$(RM_F) PhoneGapInstaller/docs/*.rtf
@@ -129,7 +130,7 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 
 checkos:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
-	
+
 installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
@@ -160,6 +161,7 @@ installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-
 	@# convert the html docs to rtf, concatenate
 	@textutil -convert rtf  PhoneGapInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
 	@textutil -convert rtf -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.rtf
+	@$(CONVERTPDF) -f PhoneGapInstaller/docs/cleaver.html -o 'dist/files/How to Use PhoneGap as a Component.pdf'
 	@textutil -cat rtf PhoneGapInstaller/docs/finishup.rtf PhoneGapInstaller/docs/readme.rtf PhoneGapInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
 	@# restore backed-up markdown files
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.md.bak PhoneGapInstaller/docs/releasenotes.md 
@@ -205,3 +207,7 @@ markdown:
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/readme.html
 	@perl Markdown_1.0.1/Markdown.pl README.md >> PhoneGapInstaller/docs/readme.html
 	@echo '</body></html>'  >> PhoneGapInstaller/docs/readme.html
+	@# generate 'How to Use PhoneGap as a Component' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/cleaver.html
+	@perl Markdown_1.0.1/Markdown.pl 'How to Use PhoneGap as a Component.md' >> PhoneGapInstaller/docs/cleaver.html
+	@echo '</body></html>'  >> PhoneGapInstaller/docs/cleaver.html

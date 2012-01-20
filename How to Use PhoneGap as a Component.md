@@ -120,6 +120,7 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
         */
         viewController.wwwFolderName = @"myfolder";
         viewController.startPage = @"mypage.html"
+<br />
 
 ## PhoneGap.plist ##
 
