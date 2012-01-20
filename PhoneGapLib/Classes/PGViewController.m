@@ -123,25 +123,29 @@
     NSNumber* enableLocation       = [settings objectForKey:@"EnableLocation"];
     NSString* enableViewportScale  = [settings objectForKey:@"EnableViewportScale"];
     NSNumber* allowInlineMediaPlayback = [settings objectForKey:@"AllowInlineMediaPlayback"];
-    NSNumber* mediaPlaybackRequiresUserAction = [settings objectForKey:@"MediaPlaybackRequiresUserAction"];
+    BOOL mediaPlaybackRequiresUserAction = YES;  // default value
+    if ([settings objectForKey:@"MediaPlaybackRequiresUserAction"]) {
+        mediaPlaybackRequiresUserAction = [(NSNumber*)[settings objectForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
+    }
     
     self.webView.scalesPageToFit = [enableViewportScale boolValue];
     
     /*
      * Fire up the GPS Service right away as it takes a moment for data to come back.
      */
-    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
-        self.webView.allowsInlineMediaPlayback = YES;
-    }
-    if ([mediaPlaybackRequiresUserAction boolValue] && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
-        self.webView.mediaPlaybackRequiresUserAction = YES;
+    
+    if ([enableLocation boolValue]) {
+        [[self.commandDelegate getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
     }
     
     /*
      * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
      */
-    if ([enableLocation boolValue]) {
-        [[self.commandDelegate getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
+    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
+        self.webView.allowsInlineMediaPlayback = YES;
+    }
+    if (mediaPlaybackRequiresUserAction == NO && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
+        self.webView.mediaPlaybackRequiresUserAction = NO;
     }
     
     ///////////////////
