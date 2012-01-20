@@ -68,6 +68,8 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
         CoreMedia.framework
 17. Expand **"Target Dependencies"**
 18. Click on the **"+" button**, and add the **"PhoneGapLib"** build product
+19. Expand **"Link Binaries with Libraries"**
+20. Click on the **"+" button**, and add **libPhoneGap.a** 
 
 ## Using PGViewController in your code ##
 
