@@ -59,6 +59,11 @@
 	return [super.viewController execute:command];
 }
 
+- (NSString*) pathForResource:(NSString*)resourcepath;
+{
+	return [super.viewController pathForResource:resourcepath];
+}
+
 #pragma UIWebDelegate implementation
 
 - (void) webViewDidFinishLoad:(UIWebView*) theWebView 
