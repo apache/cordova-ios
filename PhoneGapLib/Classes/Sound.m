@@ -47,7 +47,7 @@
        NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
     } else {
         // attempt to find file path in www directory
-        filePath = [(PGViewController*)self.viewController pathForResource:resourcePath];
+        filePath = [self.commandDelegate pathForResource:resourcePath];
         if (filePath != nil) {
             NSLog(@"Found resource '%@' in the web folder.", filePath);
         }else {

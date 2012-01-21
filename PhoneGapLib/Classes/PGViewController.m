@@ -713,6 +713,10 @@ BOOL gSplashScreenShown = NO;
             [obj setViewController:self];
         }
         
+        if ([obj isKindOfClass:[PGPlugin class]] && [obj respondsToSelector:@selector(setCommandDelegate:)]) { 
+            [obj setCommandDelegate:self.commandDelegate];
+        }
+
         if (obj != nil) {
             [self.pluginObjects setObject:obj forKey:className];
             [obj release];

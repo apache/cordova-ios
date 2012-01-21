@@ -21,6 +21,7 @@
 #import <UIKit/UIKit.h>
 #import "PluginResult.h"
 #import "NSMutableArray+QueueAdditions.h"
+#import "PGCommandDelegate.h"
 
 #define PGPluginHandleOpenURLNotification	@"PGPluginHandleOpenURLNotification"
 
@@ -34,6 +35,7 @@ callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
 @property (nonatomic, retain) UIWebView* webView;
 @property (nonatomic, retain) NSDictionary* settings;
 @property (nonatomic, retain) UIViewController* viewController;
+@property (nonatomic, retain) id<PGCommandDelegate> commandDelegate;
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView;

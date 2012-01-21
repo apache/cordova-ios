@@ -213,6 +213,10 @@ static NSString *gapVersion;
             [obj setViewController:self.viewController];
         }
 
+        if ([obj isKindOfClass:[PGPlugin class]] && [obj respondsToSelector:@selector(setCommandDelegate:)]) { 
+            [obj setCommandDelegate:self];
+        }
+
         if (obj != nil) {
             [self.pluginObjects setObject:obj forKey:className];
             [obj release];

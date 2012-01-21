@@ -118,6 +118,8 @@
 		30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */; };
 		30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30E563D213E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */; };
+		30F5EBAB14CA26E700987760 /* PGCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F5EBA914CA26E700987760 /* PGCommandDelegate.h */; };
+		30F5EBAC14CA26E700987760 /* PGCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F5EBA914CA26E700987760 /* PGCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
 		686357B8141002F200DF4CF2 /* PluginResultJSONSerializationTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 686357B7141002F200DF4CF2 /* PluginResultJSONSerializationTests.h */; };
 		686357BA141002F200DF4CF2 /* PluginResultJSONSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686357B9141002F200DF4CF2 /* PluginResultJSONSerializationTests.m */; };
@@ -223,6 +225,7 @@
 		30E33AF113A7E24B00594D64 /* PGPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPlugin.m; path = Classes/PGPlugin.m; sourceTree = "<group>"; };
 		30E563CD13E217EC00C949AA /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMutableArray+QueueAdditions.h"; path = "Classes/NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
 		30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSMutableArray+QueueAdditions.m"; path = "Classes/NSMutableArray+QueueAdditions.m"; sourceTree = "<group>"; };
+		30F5EBA914CA26E700987760 /* PGCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGCommandDelegate.h; path = Classes/PGCommandDelegate.h; sourceTree = "<group>"; };
 		686357A9141002F100DF4CF2 /* PhoneGapLibTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhoneGapLibTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		686357AA141002F100DF4CF2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		686357AC141002F100DF4CF2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -413,6 +416,7 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30F5EBA914CA26E700987760 /* PGCommandDelegate.h */,
 				30C684921407044A004C1A8E /* PGURLProtocol.h */,
 				30C684931407044A004C1A8E /* PGURLProtocol.m */,
 				30C6847E1406CB38004C1A8E /* PGWhitelist.h */,
@@ -543,6 +547,7 @@
 				30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
 				8852C43B14B65FD800F0E735 /* PGViewController.h in Headers */,
 				8852C44014B65FD800F0E735 /* UIGapView.h in Headers */,
+				30F5EBAC14CA26E700987760 /* PGCommandDelegate.h in Headers */,
 				30B05DDA14BD24A10046A9AC /* PhoneGapDelegate.h in Headers */,
 				3047725C14C64D2700D535B5 /* NSDictionary+LowercaseKeys.h in Headers */,
 				30B05DDB14BD24A10046A9AC /* PhoneGapViewController.h in Headers */,
@@ -585,6 +590,7 @@
 				30B05D6F14BD22F10046A9AC /* PhoneGapDelegate.h in Headers */,
 				30B05D7114BD22F10046A9AC /* PhoneGapViewController.h in Headers */,
 				3047725B14C64D2700D535B5 /* NSDictionary+LowercaseKeys.h in Headers */,
+				30F5EBAB14CA26E700987760 /* PGCommandDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

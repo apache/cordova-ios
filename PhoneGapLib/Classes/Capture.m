@@ -362,8 +362,7 @@
     
     if (!mimeType){
         // try to determine mime type if not provided
-        PGViewController* vc = (PGViewController*)self.viewController;
-        id command = [vc getCommandInstance: @"com.phonegap.file"];
+        id command = [self.commandDelegate getCommandInstance: @"com.phonegap.file"];
         bError = !([command isKindOfClass:[PGFile class]]);
         if (!bError) {
             PGFile* pgFile = (PGFile*)command;
@@ -450,8 +449,7 @@
     [fileDict setObject: fullPath forKey:@"fullPath"];
     // determine type
     if(!type) {
-        PGViewController* vc = (PGViewController*)self.viewController;
-        id command = [vc getCommandInstance: @"com.phonegap.file"];
+        id command = [self.commandDelegate getCommandInstance: @"com.phonegap.file"];
         if([command isKindOfClass:[PGFile class]]) {
             PGFile* pgFile = (PGFile*)command;
             NSString* mimeType = [pgFile getMimeTypeFromPath:fullPath];

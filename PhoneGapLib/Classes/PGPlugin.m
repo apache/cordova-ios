@@ -23,7 +23,7 @@
 
 
 @implementation PGPlugin
-@synthesize webView, settings, viewController;
+@synthesize webView, settings, viewController, commandDelegate;
 
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings

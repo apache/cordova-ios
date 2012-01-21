@@ -21,20 +21,9 @@
 
 #import "JSONKit.h"
 #import "InvokedUrlCommand.h"
-
+#import "PGCommandDelegate.h"
 #import "PGWhitelist.h"
 
-
-/* PGCommandDelegate */
-
-@protocol PGCommandDelegate <NSObject>
-
-- (id) getCommandInstance:(NSString*)pluginName;
-- (BOOL) execute:(InvokedUrlCommand*)command;
-
-@end
-
-/* PGViewController */
 
 @interface PGViewController : UIViewController<UIWebViewDelegate, PGCommandDelegate> {
 	
@@ -53,7 +42,7 @@
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
 @property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readonly, retain) UIImageView *imageView;
-@property (nonatomic, readwrite, assign) id<PGCommandDelegate> commandDelegate;
+@property (nonatomic, readwrite, retain) id<PGCommandDelegate> commandDelegate;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
@@ -67,10 +56,7 @@
 - (int) executeQueuedCommands;
 - (void) flushCommandQueue;
 
-- (NSString*) pathForResource:(NSString*)resourcepath;
-- (id) getCommandInstance:(NSString*)pluginName;
 - (void) javascriptAlert:(NSString*)text;
-- (BOOL) execute:(InvokedUrlCommand*)command;
 - (NSString*) appURLScheme;
 - (NSDictionary*) deviceProperties;
 

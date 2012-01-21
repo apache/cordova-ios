@@ -19,6 +19,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JSONKit.h"
+#import "PGCommandDelegate.h"
 
 @class InvokedUrlCommand;
 @class PhoneGapViewController;
@@ -27,7 +28,7 @@
 @class Console;
 @class PGWhitelist;
 
-__attribute__((deprecated)) @interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate>
+__attribute__((deprecated)) @interface PhoneGapDelegate : NSObject <UIApplicationDelegate, UIWebViewDelegate, PGCommandDelegate>
 {
 }
 
@@ -43,7 +44,6 @@ __attribute__((deprecated)) @interface PhoneGapDelegate : NSObject <UIApplicatio
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) wwwFolderName;
-+ (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) startPage;
@@ -51,9 +51,7 @@ __attribute__((deprecated)) @interface PhoneGapDelegate : NSObject <UIApplicatio
 - (int)executeQueuedCommands;
 - (void)flushCommandQueue;
 
-- (id) getCommandInstance:(NSString*)pluginName;
 - (void) javascriptAlert:(NSString*)text;
-- (BOOL) execute:(InvokedUrlCommand*)command;
 - (NSString*) appURLScheme;
 - (NSDictionary*) deviceProperties;
 
