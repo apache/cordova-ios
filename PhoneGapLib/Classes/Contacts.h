@@ -123,12 +123,13 @@
 @property (copy) NSString* callbackId;
 @end
 
-
+/* ABPersonViewController does not have any UI to dismiss.  Adding navigationItems to it does not work properly,  thenavigationItems are lost when the app goes into the background.  
+    The solution was to create an empty NavController in front of the ABPersonViewController. This
+    causes the ABPersonViewController to have a back button. By subclassing the ABPersonViewController,
+    we can override viewWillDisappear and take down the entire NavigationController at that time.
+ */ 
 @interface DisplayContactViewController : ABPersonViewController
 {
-
-    PGPlugin* contactsPlugin;  // needed in order to retrieve the appViewController to dismiss the presented modalview
-
     
 }
 @property (nonatomic,retain) PGPlugin* contactsPlugin;

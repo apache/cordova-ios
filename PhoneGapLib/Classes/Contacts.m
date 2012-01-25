@@ -107,7 +107,7 @@
 	}
 
     if ([newPersonViewController respondsToSelector:@selector(presentingViewController)]) { 
-        [[newPersonViewController presentingViewController] dismissModalViewControllerAnimated:YES];
+        [[newPersonViewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     } else {
         [[newPersonViewController parentViewController] dismissModalViewControllerAnimated:YES];
     }        
@@ -135,11 +135,10 @@
 		personController.displayedPerson = rec;
 		personController.personViewDelegate = self;
 		personController.allowsEditing = NO;
-        personController.contactsPlugin = self;  //pass in the PGPlugin object so can dismiss the picker view later
 		
         // create this so DisplayContactViewController will have a "back" button.
         UIViewController* parentController = [[[UIViewController alloc] init] autorelease];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:parentController];
+        UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:parentController] autorelease];
 
         [navController pushViewController:personController animated:YES];
 
@@ -215,7 +214,7 @@
 		[self writeJavascript:[result toSuccessCallbackString: picker.callbackId]];
 		
         if ([picker respondsToSelector:@selector(presentingViewController)]) { 
-            [[picker presentingViewController] dismissModalViewControllerAnimated:YES];
+            [[picker presentingViewController] dismissViewControllerAnimated:YES completion:nil];
         } else {
             [[picker parentViewController] dismissModalViewControllerAnimated:YES];
         }        
@@ -237,7 +236,7 @@
 	[self writeJavascript:[result toSuccessCallbackString:picker.callbackId]];
 	
     if ([peoplePicker respondsToSelector:@selector(presentingViewController)]) { 
-        [[peoplePicker presentingViewController] dismissModalViewControllerAnimated:YES];
+        [[peoplePicker presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     } else {
         [[peoplePicker parentViewController] dismissModalViewControllerAnimated:YES];
     }        
@@ -492,16 +491,16 @@
 @synthesize contactsPlugin;
 
 
-- (void)viewDidDisappear: (BOOL)animated
+- (void)viewWillDisappear: (BOOL)animated
 {
-    [super viewDidDisappear: animated];
-    // I couldn't find the appViewController in the hierarchy of this UIViewController 
-    // so using the passed ContactPlugin to access it.
-    if ([self.contactsPlugin.viewController respondsToSelector:@selector(presentingViewController)]) { 
-        [[self.contactsPlugin.viewController presentingViewController] dismissModalViewControllerAnimated:YES];
+    [super viewWillDisappear: animated];
+    
+    if ([self respondsToSelector:@selector(presentingViewController)]) { 
+        [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [[self.contactsPlugin.viewController parentViewController] dismissModalViewControllerAnimated:YES];
+        [[self parentViewController] dismissModalViewControllerAnimated:YES];
     }        
+    
 }
 -(void) dealloc
 {
