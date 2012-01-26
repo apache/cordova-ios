@@ -2,6 +2,20 @@
   
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 
+### 1.4.0rc1 (20120126) ###
+* Fixed CB-143 - Removing address from iOS contact causes crash
+* Fixed CB-153 - Camera default destination should be FILE_URI
+* Fixed CB-7 - Update source headers to apache license
+* Fixed CB-42 - MediaPlaybackRequiresUserAction can now be set to NO
+* Added stand-alone PGViewController (Cleaver - PhoneGap as a Component)
+* Fixed iOS 5 quirks with presenting/dismissing modal viewcontrollers.
+* Added 'How to Use PhoneGap as a Component' doc to the .dmg  (as a PDF)
+* Added for legacy support of deprecated PhoneGapDelegate - in core plugins.
+* Removed PhoneGapLibTest project and folder
+* Updated the app icons, splash-screens, and template icons for the Xcode template to Cordova ones.
+* Added Battery core plugin to PhoneGap.plist
+
+
 ### 1.3.0 (20111219) ###
 * added battery into PhoneGap framework compilation
 * Fixes CB-101 can't access media in documents://subDir
