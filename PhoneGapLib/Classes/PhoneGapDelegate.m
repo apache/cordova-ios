@@ -134,6 +134,10 @@
     return resource;
 }
 
+- (NSString*) pathForResource:(NSString*)resourcepath
+{
+    return [[self class] pathForResource:resourcepath];
+}
 
 + (NSString*) pathForResource:(NSString*)resourcepath
 {
