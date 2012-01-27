@@ -97,9 +97,9 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
 
         viewController.useSplashScreen = YES;
 
-5. Set the **view bounds** (always set this as the last property):
+5. Set the **view frame** (always set this as the last property):
 
-        viewController.view.bounds = CGRectMake(0, 0, 320, 480);
+        viewController.view.frame = CGRectMake(0, 0, 320, 480);
 
 6. **Add** Cleaver to your view:
 
