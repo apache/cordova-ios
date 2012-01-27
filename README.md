@@ -43,7 +43,7 @@ Create a PhoneGap project (Xcode 4)
 3. Select the "Next" button, name your project and company idenfifier, then select the "Next" button again.
 4. Choose the location where you want the new project to be.
 5. Run the project at least once to create the "www" folder in your project folder.
-6. Drag and drop this "www" folder into your project in Xcode, and add it as a folder reference.
+6. Drag and drop this "www" folder into your project in Xcode, and add it as a **folder reference** (**BLUE** folder).
 7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
 <br />
@@ -63,6 +63,13 @@ Use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file, OR:
 
 It will ask you to confirm whether you want to delete the installed PhoneGapLib directory (just in case you made changes there) as well as the PhoneGap framework. It will not ask for confirmation in deleting the installed Xcode templates.
 
+Unit Tests
+--------------------------------------------------------------------
+1. **Create** a new PhoneGap-based Application project
+2. **Download** the code from the **[mobile-spec](https://github.com/apache/incubator-cordova-mobile-spec)** and put all of it in the root of your **www** folder
+3. **Modify phonegap.js** to point to your correct phonegap-X.X.X.js version
+4. **Run** the project
+
 Installer Notes
 -------------------------------------------------------------
 This installer will only install items under your home folder (signified by ~)
@@ -81,22 +88,6 @@ Items that will be installed:
 To uninstall:
 
 Delete the files listed above, or use the "Uninstall PhoneGap" app included in the PhoneGap iOS DMG file.
-
-PhoneGapLib Tests
--------------------------------------------------------------
-There is a Xcode project that will test PhoneGapLib according to the mobile spec. There is some setup needed before the project can be run. You will also need git installed and in your path.
-
-Set up the test project:
-
-1. Launch "Terminal.app"
-2. Type in "chmod 755 update_test.sh"
-3. Type in "./update_test.sh"
-
-<br />
-
-This will get the mobile-spec submodule and install it under the PhoneGapLibTests folder. You can then build and run the PhoneGapLibTest project to see the results.
-
-You should run step (3) again before running any tests, to get the updated mobile-spec.
 
 FAQ
 ---
@@ -125,7 +116,7 @@ This can be because of:
 
 This error occurs because of the new white-list feature in version 1.1.
 
-You will have to add any hosts your app uses or connects to (hostnames/IP addresses only, without the protocol) in __PhoneGap.plist/ExternalHosts__. Wildcards are supported.
+You will have to add any hosts your app uses or connects to (hostnames/IP addresses only, **without** the protocol) in __PhoneGap.plist/ExternalHosts__. Wildcards are supported.
 
 This includes external http/https/ftp/ftps links in:
 
@@ -158,7 +149,12 @@ Starting with version 1.1, when creating a new project, the weak-linking is adde
 
 **7. How do I override the location of the start page www/index.html?** 
 
-You can override it by copy and pasting these [functions 'wwwFolderName' and 'startPage'](https://github.com/callback/callback-ios/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L88-96) into your project's AppDelegate.m, and make the appropriate changes.
+Starting with PhoneGap **1.4**, you can set this directly in the function **application:didFinishLaunchingWithOptions:** in your project's **AppDelegate.m** file.
+
+Modify these lines appropriately:
+
+1. self.viewController.wwwFolderName = @"www";
+2. self.viewController.startPage = @"index.html";
 
 **8. What's the difference between the Xcode 3 and Xcode 4 templates?**
 
@@ -166,10 +162,9 @@ The PhoneGapLib static library is only used by the Xcode 3 template. The Xcode 4
 
 You can still create projects using the command line if you want to use the Xcode 3 Template in Xcode 4. This is particularly useful for developers debugging the PhoneGap core.
 
-Links:
+Link:
 
-1. [https://build.phonegap.com/generate](https://build.phonegap.com/generate)
-2. [https://raw.github.com/phonegap/phonegap-iphone/1.0.0/create_project.sh](https://raw.github.com/phonegap/phonegap-iphone/1.0.0/create_project.sh)
+1. [https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh](https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh)
 
 <br />
 
@@ -195,7 +190,7 @@ A. In your project's Build Settings, set **"Build for Active Architecture Only"*
 
 BUGS?
 -----
-File them at the [Callback-iOS Issue Tracker](https://issues.apache.org/jira/browse/CB)      
+File them at the [Cordova-iOS Issue Tracker](https://issues.apache.org/jira/browse/CB)      
 <br />
 
 MORE INFO
