@@ -19,7 +19,6 @@
 
 #import "PGURLProtocol.h"
 #import "PGWhitelist.h"
-#import "PGAppDelegate.h"
 #import "PhoneGapDelegate.h"
 #import "PGViewController.h"
 
@@ -42,11 +41,15 @@ static PGWhitelist* gWhitelist = nil;
     NSString* theScheme = [theUrl scheme];
     
     if (gWhitelist == nil) {
-        id delegate = [[UIApplication sharedApplication] delegate];
-        if ([delegate isKindOfClass:[PGAppDelegate class]]) {
-            gWhitelist = [((PGAppDelegate*)delegate).viewController.whitelist retain];
-        } else if ([delegate isKindOfClass:[PhoneGapDelegate class]]) {
+        id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+        
+        if ([delegate isKindOfClass:[PhoneGapDelegate class]]) {
             gWhitelist = [((PhoneGapDelegate*)delegate).whitelist retain];
+        } else if ([delegate respondsToSelector:@selector(viewController)]) {
+            id vc = [delegate performSelector:@selector(viewController)];
+            if ([vc isKindOfClass:[PGViewController class]]) {
+                gWhitelist = [((PGViewController*)vc).whitelist retain];
+            }
         }
     }
     

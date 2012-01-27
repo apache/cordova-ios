@@ -45,7 +45,6 @@
 		3032599E136B325100982B63 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD471090FBE7009987E8 /* Location.m */; };
 		303259A1136B325100982B63 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4F1090FBE7009987E8 /* Notification.m */; };
 		303259A2136B325100982B63 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD511090FBE7009987E8 /* NSData+Base64.m */; };
-		303259A4136B325100982B63 /* PGAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5B1090FBE7009987E8 /* PGAppDelegate.m */; };
 		303259A6136B325100982B63 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5F1090FBE7009987E8 /* Reachability.m */; };
 		303259A7136B325100982B63 /* Sound.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD611090FBE7009987E8 /* Sound.m */; };
 		303259A8136B325100982B63 /* Accelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* Accelerometer.m */; };
@@ -61,7 +60,6 @@
 		303259BC136B326300982B63 /* Location.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD461090FBE7009987E8 /* Location.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259BF136B326300982B63 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD4E1090FBE7009987E8 /* Notification.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C0136B326300982B63 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD501090FBE7009987E8 /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		303259C2136B326300982B63 /* PGAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5A1090FBE7009987E8 /* PGAppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C4136B326300982B63 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5E1090FBE7009987E8 /* Reachability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C5136B326300982B63 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD601090FBE7009987E8 /* Sound.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259C6136B326300982B63 /* Accelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* Accelerometer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -163,8 +161,6 @@
 		8887FD8E1090FBE7009987E8 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD4F1090FBE7009987E8 /* Notification.m */; };
 		8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD501090FBE7009987E8 /* NSData+Base64.h */; };
 		8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD511090FBE7009987E8 /* NSData+Base64.m */; };
-		8887FD991090FBE7009987E8 /* PGAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5A1090FBE7009987E8 /* PGAppDelegate.h */; };
-		8887FD9A1090FBE7009987E8 /* PGAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5B1090FBE7009987E8 /* PGAppDelegate.m */; };
 		8887FD9D1090FBE7009987E8 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD5E1090FBE7009987E8 /* Reachability.h */; };
 		8887FD9E1090FBE7009987E8 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD5F1090FBE7009987E8 /* Reachability.m */; };
 		8887FD9F1090FBE7009987E8 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD601090FBE7009987E8 /* Sound.h */; };
@@ -266,8 +262,6 @@
 		8887FD4F1090FBE7009987E8 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Notification.m; path = Classes/Notification.m; sourceTree = "<group>"; };
 		8887FD501090FBE7009987E8 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "Classes/NSData+Base64.h"; sourceTree = "<group>"; };
 		8887FD511090FBE7009987E8 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "Classes/NSData+Base64.m"; sourceTree = "<group>"; };
-		8887FD5A1090FBE7009987E8 /* PGAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGAppDelegate.h; path = Classes/PGAppDelegate.h; sourceTree = "<group>"; };
-		8887FD5B1090FBE7009987E8 /* PGAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGAppDelegate.m; path = Classes/PGAppDelegate.m; sourceTree = "<group>"; };
 		8887FD5E1090FBE7009987E8 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = Classes/Reachability.h; sourceTree = "<group>"; };
 		8887FD5F1090FBE7009987E8 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = Classes/Reachability.m; sourceTree = "<group>"; };
 		8887FD601090FBE7009987E8 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = Classes/Sound.h; sourceTree = "<group>"; };
@@ -495,8 +489,6 @@
 				8887FD361090FBE7009987E8 /* JSON */,
 				888700D910923009009987E8 /* Util */,
 				888700D810922FD3009987E8 /* Plugins */,
-				8887FD5A1090FBE7009987E8 /* PGAppDelegate.h */,
-				8887FD5B1090FBE7009987E8 /* PGAppDelegate.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -528,7 +520,6 @@
 				303259BC136B326300982B63 /* Location.h in Headers */,
 				303259BF136B326300982B63 /* Notification.h in Headers */,
 				303259C0136B326300982B63 /* NSData+Base64.h in Headers */,
-				303259C2136B326300982B63 /* PGAppDelegate.h in Headers */,
 				303259C4136B326300982B63 /* Reachability.h in Headers */,
 				303259C5136B326300982B63 /* Sound.h in Headers */,
 				303259C6136B326300982B63 /* Accelerometer.h in Headers */,
@@ -567,7 +558,6 @@
 				8887FD851090FBE7009987E8 /* Location.h in Headers */,
 				8887FD8D1090FBE7009987E8 /* Notification.h in Headers */,
 				8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */,
-				8887FD991090FBE7009987E8 /* PGAppDelegate.h in Headers */,
 				8887FD9D1090FBE7009987E8 /* Reachability.h in Headers */,
 				8887FD9F1090FBE7009987E8 /* Sound.h in Headers */,
 				88BA573D109BB46F00FB5E78 /* Accelerometer.h in Headers */,
@@ -787,7 +777,6 @@
 				304D303E14C4F74700261D84 /* PhoneGapViewController.m in Sources */,
 				8852C43D14B65FD800F0E735 /* PGViewController.m in Sources */,
 				303259A2136B325100982B63 /* NSData+Base64.m in Sources */,
-				303259A4136B325100982B63 /* PGAppDelegate.m in Sources */,
 				8852C44214B65FD800F0E735 /* UIGapView.m in Sources */,
 				303259A6136B325100982B63 /* Reachability.m in Sources */,
 				303259A7136B325100982B63 /* Sound.m in Sources */,
@@ -832,7 +821,6 @@
 				8887FD861090FBE7009987E8 /* Location.m in Sources */,
 				8887FD8E1090FBE7009987E8 /* Notification.m in Sources */,
 				8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */,
-				8887FD9A1090FBE7009987E8 /* PGAppDelegate.m in Sources */,
 				8887FD9E1090FBE7009987E8 /* Reachability.m in Sources */,
 				8887FDA01090FBE7009987E8 /* Sound.m in Sources */,
 				88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */,

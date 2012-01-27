@@ -59,6 +59,41 @@
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
+		<key>Classes/MainViewController.h</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>Classes</string>
+			</array>
+			<key>Path</key>
+			<string>./Classes/MainViewController.h</string>
+			<key>PathType</key>
+			<string>Group</string>
+			<key>TargetIndices</key>
+			<array/>
+		</dict>
+		<key>Classes/MainViewController.m</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>Classes</string>
+			</array>
+			<key>Path</key>
+			<string>./Classes/MainViewController.m</string>
+			<key>PathType</key>
+			<string>Group</string>
+		</dict>
+		<key>Classes/MainViewController.xib</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>Supporting Files</string>
+			</array>
+			<key>Path</key>
+			<string>./Classes/MainViewController.xib</string>
+			<key>PathType</key>
+			<string>Group</string>
+		</dict>
 		<key>main.m</key>
 		<dict>
 			<key>Group</key>
@@ -220,6 +255,9 @@
 		<string>PhoneGap.plist</string>
 		<string>Classes/AppDelegate.h</string>
 		<string>Classes/AppDelegate.m</string>
+		<string>Classes/MainViewController.h</string>
+		<string>Classes/MainViewController.m</string>
+		<string>Classes/MainViewController.xib</string>
 		<string>Plugins/README</string>
 	</array>
 	<key>Options</key>

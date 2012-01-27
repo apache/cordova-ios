@@ -19,7 +19,6 @@
 
 #import "Capture.h"
 #import "JSONKit.h"
-#import "PGAppDelegate.h"
 #import "PGViewController.h"
 
 #define kW3CMediaFormatHeight @"height"

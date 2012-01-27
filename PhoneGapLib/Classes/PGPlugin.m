@@ -19,7 +19,6 @@
 
 
 #import "PGPlugin.h"
-#import "PGAppDelegate.h"
 
 
 @implementation PGPlugin

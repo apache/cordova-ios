@@ -16,6 +16,7 @@
  specific language governing permissions and limitations
  under the License.
  */
+
 //
 //  AppDelegate.m
 //  ___PROJECTNAME___
@@ -25,18 +26,35 @@
 //
 
 #import "AppDelegate.h"
+#import "MainViewController.h"
+
+#ifdef PHONEGAP_FRAMEWORK
+    #import <PhoneGap/PGPlugin.h>
+    #import <PhoneGap/PGURLProtocol.h>
+#else
+    #import "PGPlugin.h"
+    #import "PGURLProtocol.h"
+#endif
+
 
 @implementation AppDelegate
 
-@synthesize invokeString;
+@synthesize invokeString, window, viewController;
 
 - (id) init
 {	
 	/** If you need to do any extra app-specific initialization, you can do it here
 	 *  -jm
 	 **/
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
+    [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+    
+    [PGURLProtocol registerPGHttpURLProtocol];
+    
     return [super init];
 }
+
+#pragma UIApplicationDelegate implementation
 
 /**
  * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
@@ -44,49 +62,100 @@
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {    
     NSURL* url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
-    if (url && [url isKindOfClass:[NSURL class]])
-    {
+    if (url && [url isKindOfClass:[NSURL class]]) {
         self.invokeString = [url absoluteString];
-		NSLog(@"___PROJECTNAME___ launchOptions = %@",url);
+		NSLog(@"___PROJECTNAME___ launchOptions = %@", url);
     }    
-		
-	BOOL ok = [super application:application didFinishLaunchingWithOptions:launchOptions];
-    if (ok) {
-        self.viewController.webView.delegate = self;
-        self.viewController.commandDelegate = self;
+    
+    CGRect screenBounds = [[UIScreen mainScreen] applicationFrame];
+    self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
+    self.window.autoresizesSubviews = YES;
+    
+    CGRect viewBounds = screenBounds;
+    viewBounds.origin.y = 0; 
+    
+    self.viewController = [[[MainViewController alloc] init] autorelease];
+    self.viewController.useSplashScreen = YES;
+    self.viewController.wwwFolderName = @"www";
+    self.viewController.startPage = @"index.html";
+    self.viewController.view.bounds = viewBounds;
+    
+    // over-ride delegates
+    self.viewController.webView.delegate = self;
+    self.viewController.commandDelegate = self;
+
+    // check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation
+    BOOL forceStartupRotation = YES;
+    UIDeviceOrientation curDevOrientation = [[UIDevice currentDevice] orientation];
+    
+    if (UIDeviceOrientationUnknown == curDevOrientation) {
+        // UIDevice isn't firing orientation notifications yet… go look at the status bar
+        curDevOrientation = (UIDeviceOrientation)[[UIApplication sharedApplication] statusBarOrientation];
     }
-    return ok;
+    
+    if (UIDeviceOrientationIsValidInterfaceOrientation(curDevOrientation)) {
+        for (NSNumber *orient in self.viewController.supportedOrientations) {
+            if ([orient intValue] == curDevOrientation) {
+                forceStartupRotation = NO;
+                break;
+            }
+        }
+    } 
+    
+    if (forceStartupRotation) {
+        NSLog(@"supportedOrientations: %@", self.viewController.supportedOrientations);
+        // The first item in the supportedOrientations array is the start orientation (guaranteed to be at least Portrait)
+        UIInterfaceOrientation newOrient = [[self.viewController.supportedOrientations objectAtIndex:0] intValue];
+        NSLog(@"AppDelegate forcing status bar to: %d from: %d", newOrient, curDevOrientation);
+        [[UIApplication sharedApplication] setStatusBarOrientation:newOrient];
+    }
+    
+    [self.window addSubview:self.viewController.view];
+    [self.window makeKeyAndVisible];
+    
+    return YES;
 }
 
 // this happens while we are running ( in the background, or from within our own app )
-// only valid if ___PROJECTNAME___.plist specifies a protocol to handle
+// only valid if FooBar.plist specifies a protocol to handle
 - (BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url 
 {
-    // must call super so all plugins will get the notification, and their handlers will be called 
-	// super also calls into javascript global function 'handleOpenURL'
-    return [super application:application handleOpenURL:url];
+    if (!url) { 
+        return NO; 
+    }
+    
+	// calls into javascript global function 'handleOpenURL'
+    NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
+    [self.viewController.webView stringByEvaluatingJavaScriptFromString:jsString];
+    
+    // all plugins will get the notification, and their handlers will be called 
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:PGPluginHandleOpenURLNotification object:url]];
+    
+    return YES;    
 }
+
+#pragma PGCommandDelegate implementation
 
 - (id) getCommandInstance:(NSString*)className
 {
-	return [super.viewController getCommandInstance:className];
+	return [self.viewController getCommandInstance:className];
 }
 
 - (BOOL) execute:(InvokedUrlCommand*)command
 {
-	return [super.viewController execute:command];
+	return [self.viewController execute:command];
 }
 
 - (NSString*) pathForResource:(NSString*)resourcepath;
 {
-	return [super.viewController pathForResource:resourcepath];
+	return [self.viewController pathForResource:resourcepath];
 }
 
 #pragma UIWebDelegate implementation
 
 - (void) webViewDidFinishLoad:(UIWebView*) theWebView 
 {
-	// only valid if ___PROJECTNAME___.plist specifies a protocol to handle
+	// only valid if FooBar.plist specifies a protocol to handle
 	if (self.invokeString)
 	{
 		// this is passed before the deviceready event is fired, so you can access it in js when you receive deviceready
@@ -97,22 +166,22 @@
 	 // Black base color for background matches the native apps
    	theWebView.backgroundColor = [UIColor blackColor];
     
-	return [super.viewController webViewDidFinishLoad:theWebView];
+	return [self.viewController webViewDidFinishLoad:theWebView];
 }
 
 - (void) webViewDidStartLoad:(UIWebView*)theWebView 
 {
-	return [super.viewController webViewDidStartLoad:theWebView];
+	return [self.viewController webViewDidStartLoad:theWebView];
 }
 
 - (void) webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error 
 {
-	return [super.viewController webView:theWebView didFailLoadWithError:error];
+	return [self.viewController webView:theWebView didFailLoadWithError:error];
 }
 
 - (BOOL) webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	return [super.viewController webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
+	return [self.viewController webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 
 - (void) dealloc

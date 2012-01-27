@@ -16,6 +16,7 @@
  specific language governing permissions and limitations
  under the License.
  */
+
 //
 //  AppDelegate.h
 //  ___PROJECTNAME___
@@ -25,25 +26,27 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #ifdef PHONEGAP_FRAMEWORK
-	#import <PhoneGap/PGAppDelegate.h>
     #import <PhoneGap/PGViewController.h>
 #else
-	#import "PGAppDelegate.h"
     #import "PGViewController.h"
 #endif
 
-@interface AppDelegate : PGAppDelegate < PGCommandDelegate > {
+
+@interface AppDelegate : NSObject < UIApplicationDelegate, UIWebViewDelegate, PGCommandDelegate > {
 
 	NSString* invokeString;
 }
 
 // invoke string is passed to your app on launch, this is only valid if you 
-// edit ___PROJECTNAME___.plist to add a protocol
+// edit FooBar.plist to add a protocol
 // a simple tutorial can be found here : 
 // http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 
-@property (copy)  NSString* invokeString;
+@property (nonatomic, copy)  NSString* invokeString;
+@property (nonatomic, retain) IBOutlet UIWindow* window;
+@property (nonatomic, retain) IBOutlet PGViewController* viewController;
 
 @end
 

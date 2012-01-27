@@ -19,7 +19,6 @@
 
 
 #import "Sound.h"
-#import "PGAppDelegate.h"
 #import "PGViewController.h"
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"

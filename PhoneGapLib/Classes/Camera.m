@@ -20,7 +20,6 @@
 #import "Camera.h"
 #import "NSData+Base64.h"
 #import "Categories.h"
-#import "PGAppDelegate.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
 @implementation PGCamera

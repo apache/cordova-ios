@@ -19,7 +19,6 @@
 
 
 #import "PGSplashScreen.h"
-#import "PGAppDelegate.h"
 #import "PGViewController.h"
 #import "PhoneGapDelegate.h"
 
@@ -29,14 +28,17 @@
 - (void) __show:(BOOL)show
 {
     // Legacy support - once deprecated classes removed, clean this up
-    id delg = [self appDelegate];
+    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
     
-    if ([delg isKindOfClass:[PGAppDelegate class]]) {
-        ((PGAppDelegate*)delg).viewController.imageView.hidden = !show;
-        ((PGAppDelegate*)delg).viewController.activityView.hidden = !show;
-    } if ([delg isKindOfClass:[PhoneGapDelegate class]]) {
-        ((PhoneGapDelegate*)delg).imageView.hidden = !show;
-        ((PhoneGapDelegate*)delg).activityView.hidden = !show;
+    if ([delegate isKindOfClass:[PhoneGapDelegate class]]) {
+        ((PhoneGapDelegate*)delegate).imageView.hidden = !show;
+        ((PhoneGapDelegate*)delegate).activityView.hidden = !show;
+    } else if ([delegate respondsToSelector:@selector(viewController)]) {
+        id vc = [delegate performSelector:@selector(viewController)];
+        if ([vc isKindOfClass:[PGViewController class]]) {
+            ((PGViewController*)vc).imageView.hidden = !show;
+            ((PGViewController*)vc).activityView.hidden = !show;
+        }
     }
 }
 

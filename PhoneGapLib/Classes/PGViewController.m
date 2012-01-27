@@ -56,8 +56,20 @@
     self = [super init];
     if (self != nil) {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) name:UIDeviceOrientationDidChangeNotification
-                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) 
+                                                     name:UIDeviceOrientationDidChangeNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillTerminate:) 
+                                                     name:UIApplicationWillTerminateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillResignActive:) 
+                                                     name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:) 
+                                                     name:UIApplicationWillEnterForegroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidBecomeActive:) 
+                                                     name:UIApplicationDidBecomeActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:) 
+                                                     name:UIApplicationDidEnterBackgroundNotification object:nil];
+
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
     }
@@ -772,8 +784,6 @@ BOOL gSplashScreenShown = NO;
     return URLScheme;
 }
 
-
-
 /**
  Returns the contents of the named plist bundle, loaded as a dictionary object
  */
@@ -817,7 +827,86 @@ static NSString *gapVersion;
     return gapVersion;
 }
 
-- (void)dealloc {
+
+#pragma mark -
+#pragma mark UIApplicationDelegate impl
+
+/*
+ This method lets your application know that it is about to be terminated and purged from memory entirely
+ */
+- (void) onAppWillTerminate:(NSNotification*)notification
+{
+    NSLog(@"applicationWillTerminate");
+    
+    // empty the tmp directory
+    NSFileManager* fileMgr = [[NSFileManager alloc] init];
+    NSError* err = nil;    
+    
+    // clear contents of NSTemporaryDirectory 
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
+    NSString* fileName = nil;
+    BOOL result;
+    
+    while ((fileName = [directoryEnumerator nextObject])) {
+        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        result = [fileMgr removeItemAtPath:filePath error:&err];
+        if (!result && err) {
+            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+        }
+    }    
+    [fileMgr release];
+}
+
+/*
+ This method is called to let your application know that it is about to move from the active to inactive state.
+ You should use this method to pause ongoing tasks, disable timer, ...
+ */
+- (void) onAppWillResignActive:(NSNotification*)notification
+{
+    //NSLog(@"%@",@"applicationWillResignActive");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resign');"];
+}
+
+/*
+ In iOS 4.0 and later, this method is called as part of the transition from the background to the inactive state. 
+ You can use this method to undo many of the changes you made to your application upon entering the background.
+ invariably followed by applicationDidBecomeActive
+ */
+- (void) onAppWillEnterForeground:(NSNotification*)notification
+{
+    //NSLog(@"%@",@"applicationWillEnterForeground");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resume');"];
+}
+
+// This method is called to let your application know that it moved from the inactive to active state. 
+- (void) onAppDidBecomeActive:(NSNotification*)notification
+{
+    //NSLog(@"%@",@"applicationDidBecomeActive");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('active');"];
+}
+
+/*
+ In iOS 4.0 and later, this method is called instead of the applicationWillTerminate: method 
+ when the user quits an application that supports background execution.
+ */
+- (void) onAppDidEnterBackground:(NSNotification*)notification
+{
+    //NSLog(@"%@",@"applicationDidEnterBackground");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('pause');"];
+}
+
+// ///////////////////////
+
+
+- (void)dealloc 
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
     [super dealloc];
 }
 

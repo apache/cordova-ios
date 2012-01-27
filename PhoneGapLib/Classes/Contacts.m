@@ -20,7 +20,6 @@
 
 #import "Contacts.h"
 #import <UIKit/UIKit.h>
-#import "PGAppDelegate.h"
 #import "Categories.h"
 #import "Notification.h"
 

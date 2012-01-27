@@ -20,7 +20,6 @@
 
 #import "Location.h"
 #import "PGViewController.h"
-#import "PGAppDelegate.h"
 
 #pragma mark Constants
 
@@ -373,8 +372,7 @@
     if ([self.locationManager respondsToSelector: @selector(headingOrientation)]) {
         UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
         if (currentOrientation != UIDeviceOrientationUnknown) {
-            PGAppDelegate* pgDelegate = [self appDelegate];
-            PGViewController* pgViewController = pgDelegate.viewController;
+            PGViewController* pgViewController = (PGViewController*)self.viewController;
             
             if ([pgViewController.supportedOrientations containsObject:
                  [NSNumber numberWithInt:currentOrientation]]) {
