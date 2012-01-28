@@ -10,11 +10,13 @@ PhoneGap is a static library and static framework that enables users to include 
 * Added stand-alone PGViewController (Cleaver - PhoneGap as a Component)
 * Fixed iOS 5 quirks with presenting/dismissing modal viewcontrollers.
 * Added 'How to Use PhoneGap as a Component' doc to the .dmg  (as a PDF)
+* Added 'PhoneGap Upgrade Guide' doc to the .dmg  (as a PDF)
 * Added for legacy support of deprecated PhoneGapDelegate - in core plugins.
 * Removed PhoneGapLibTest project and folder
 * Updated the app icons, splash-screens, and template icons for the Xcode template to Cordova ones.
 * Added Battery core plugin to PhoneGap.plist
 
+<br />
 
 ### 1.3.0 (20111219) ###
 * added battery into PhoneGap framework compilation
@@ -29,6 +31,8 @@ PhoneGap is a static library and static framework that enables users to include 
 * Fixed callback/callback-ios#22 - Removed unused DetectPhoneNumber and EnableAcceleration values in PhoneGap.plist
 * Fixed CB-96 PGWhitelist does not handle IPv4 host addresses with wild-cards
 * Added 'resign' and 'active' lifecycle events.
+
+<br />
 
 ### 1.2.0 (20111103) ###
 

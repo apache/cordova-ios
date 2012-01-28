@@ -109,6 +109,7 @@ clean-phonegap-framework:
 clean-markdown:
 	@$(RM_RF) PhoneGapInstaller/docs/readme.html
 	@$(RM_RF) PhoneGapInstaller/docs/cleaver.html
+	@$(RM_RF) PhoneGapInstaller/docs/upgrade.html
 
 clean-installer:
 	@$(RM_F) PhoneGapInstaller/docs/*.rtf
@@ -181,6 +182,7 @@ installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-
 	@textutil -convert rtf  PhoneGapInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
 	@textutil -convert rtf -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.rtf
 	@$(CONVERTPDF) -f PhoneGapInstaller/docs/cleaver.html -o 'dist/files/How to Use PhoneGap as a Component.pdf'
+	@$(CONVERTPDF) -f PhoneGapInstaller/docs/upgrade.html -o 'dist/files/PhoneGap Upgrade Guide.pdf'
 	@textutil -cat rtf PhoneGapInstaller/docs/finishup.rtf PhoneGapInstaller/docs/readme.rtf PhoneGapInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
 	@# restore backed-up markdown files
 	@$(MV) -f PhoneGapInstaller/docs/releasenotes.md.bak PhoneGapInstaller/docs/releasenotes.md 
@@ -223,10 +225,14 @@ markdown:
 		unzip Markdown_1.0.1.zip -d . > /dev/null; \
 	fi
 	@# generate readme html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/readme.html
+	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 PhoneGapInstaller/docs/readme.html
 	@perl Markdown_1.0.1/Markdown.pl README.md >> PhoneGapInstaller/docs/readme.html
 	@echo '</body></html>'  >> PhoneGapInstaller/docs/readme.html
 	@# generate 'How to Use PhoneGap as a Component' html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/cleaver.html
+	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 PhoneGapInstaller/docs/cleaver.html
 	@perl Markdown_1.0.1/Markdown.pl 'How to Use PhoneGap as a Component.md' >> PhoneGapInstaller/docs/cleaver.html
 	@echo '</body></html>'  >> PhoneGapInstaller/docs/cleaver.html
+	@# generate 'PhoneGap Upgrade Guide' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 PhoneGapInstaller/docs/upgrade.html
+	@perl Markdown_1.0.1/Markdown.pl 'PhoneGap Upgrade Guide.md' >> PhoneGapInstaller/docs/upgrade.html
+	@echo '</body></html>'  >> PhoneGapInstaller/docs/upgrade.html

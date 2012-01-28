@@ -12,7 +12,7 @@
 
 ## Upgraders
 	
-1. Recommended steps: [Upgrading your iOS PhoneGap Project](http://wiki.phonegap.com/Upgrading%20your%20iOS%20PhoneGap%20Project)
+1. Please see the "PhoneGap Upgrade Guide" included in the .dmg distribution
 2. See the FAQ in the README.rtf as well
 
 <br />
@@ -62,7 +62,7 @@ That's it! Modify the contents of the "www" directory to add your HTML, CSS and 
 
 * [www.phonegap.com](http://www.phonegap.com)
 * [docs.phonegap.com](http://docs.phonegap.com)
-* [github.com/phonegap/phonegap-iphone](http://github.com/phonegap/phonegap-iphone)
-* [File issues and feature requests](http://github.com/phonegap/phonegap-iphone/issues)
+* [github.com/apache/incubator-cordova-ios](github.com/apache/incubator-cordova-ios)
+* [File issues and feature requests](https://issues.apache.org/jira/browse/CB)
 
 <br />
