@@ -67,12 +67,11 @@
 		NSLog(@"___PROJECTNAME___ launchOptions = %@", url);
     }    
     
-    CGRect screenBounds = [[UIScreen mainScreen] applicationFrame];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
     self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
     self.window.autoresizesSubviews = YES;
     
-    CGRect viewBounds = screenBounds;
-    viewBounds.origin.y = 0; 
+    CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
     self.viewController = [[[MainViewController alloc] init] autorelease];
     self.viewController.useSplashScreen = YES;
