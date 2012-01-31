@@ -15,10 +15,10 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
 1. **Copy** the **"PhoneGap.plist"** file into your project folder on disk
 2. **Drag and drop** the **"PhoneGap.plist"** file into the Project Navigator of Xcode
 3. **Choose** the radio-button **"Create groups for any added folders"**
-4. Press the key combination **Option-Command-A**, which should drop down a sheet to add files to your project (the **"Add Files…" sheet**). Make sure the **"Created groups for any added folders"** radio-button is selected
+4. Press the key combination **Option-Command-A**, which should drop down a sheet to add files to your project (the **"Add Files..." sheet**). Make sure the **"Created groups for any added folders"** radio-button is selected
 5. Press the key combination **Shift-Command-G**, which should drop down another sheet for you to go to a folder (the **"Go to the folder:" sheet**)
 6. Enter **"/Users/Shared/PhoneGap/Frameworks/PhoneGap.framework"** in the **"Go to the folder:" sheet** and then press the **"Go"** button
-7. Press the **"Add"** button in the **"Add Files…" sheet**
+7. Press the **"Add"** button in the **"Add Files..." sheet**
 8. **Select "PhoneGap.framework"** in the Project Navigator
 9. Press the key combination **Option-Command-1** to show the **File Inspector**
 10. Choose **"Absolute Path"** in the **File Inspector** for the drop-down menu for **Location** 
@@ -42,10 +42,10 @@ It is recommended that you follow the PhoneGap.framework instructions below, the
 1. **Copy** the **"PhoneGap.plist"** file into your project folder on disk
 2. **Drag and drop** the **"PhoneGap.plist"** file into the Project Navigator of Xcode
 3. **Choose** the radio-button **"Create groups for any added folders"**
-4. Press the key combination **Option-Command-A**, which should drop down a sheet to add files to your project (the **"Add Files…" sheet**). Make sure the **"Created groups for any added folders"** radio-button is selected
+4. Press the key combination **Option-Command-A**, which should drop down a sheet to add files to your project (the **"Add Files..." sheet**). Make sure the **"Created groups for any added folders"** radio-button is selected
 5. Press the key combination **Shift-Command-G**, which should drop down another sheet for you to go to a folder (the **"Go to the folder:" sheet**)
 6. Enter **"~/Documents/PhoneGapLib/PhoneGapLib.xcodeproj"** in the **"Go to the folder:" sheet** and then press the **"Go"** button
-7. Press the **"Add"** button in the **"Add Files…" sheet**
+7. Press the **"Add"** button in the **"Add Files..." sheet**
 8. **Select "PhoneGapLib.xcodeproj"** in the Project Navigator
 9. Press the key combination **Option-Command-1** to show the **File Inspector**
 10. Choose **"Relative to PHONEGAPLIB"** in the **File Inspector** for the drop-down menu for **Location** 
