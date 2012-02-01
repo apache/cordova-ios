@@ -2,6 +2,11 @@
   
 PhoneGap is a static library and static framework that enables users to include the PhoneGap API in their iPhone application projects easily, and also create new PhoneGap-based iPhone application projects through an Xcode project template.
 
+### 1.4.1 (20120201) ###
+* Fixed CB-212 - iOS orientation switch broken in 1.4.0
+
+<br/>
+
 ### 1.4.0 (20120130) ###
 * Fixed CB-143 - Removing address from iOS contact causes crash
 * Fixed CB-153 - Camera default destination should be FILE_URI
