@@ -171,6 +171,30 @@
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
+		<key>Resources/de.lproj/Localizable.strings</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>Resources</string>
+				<string>de.lproj</string>
+			</array>
+			<key>Path</key>
+			<string>./Resources/de.lproj/Localizable.strings</string>
+			<key>PathType</key>
+			<string>Group</string>
+		</dict>
+		<key>Resources/se.lproj/Localizable.strings</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>Resources</string>
+				<string>se.lproj</string>
+			</array>
+			<key>Path</key>
+			<string>./Resources/se.lproj/Localizable.strings</string>
+			<key>PathType</key>
+			<string>Group</string>
+		</dict>
 		<key>Resources/icons/icon-72.png</key>
 		<dict>
 			<key>Group</key>
@@ -246,6 +270,8 @@
 		<string>___PACKAGENAME___-Info.plist</string>
 		<string>Resources/en.lproj/Localizable.strings</string>
 		<string>Resources/es.lproj/Localizable.strings</string>
+		<string>Resources/de.lproj/Localizable.strings</string>
+		<string>Resources/se.lproj/Localizable.strings</string>
 		<string>Resources/icons/icon.png</string>
 		<string>Resources/icons/icon@2x.png</string>
 		<string>Resources/icons/icon-72.png</string>
