@@ -132,11 +132,11 @@
     
     ///////////////////
     
-    NSNumber* enableLocation       = [settings objectForKey:@"EnableLocation"];
-    NSString* enableViewportScale  = [settings objectForKey:@"EnableViewportScale"];
-    NSNumber* allowInlineMediaPlayback = [settings objectForKey:@"AllowInlineMediaPlayback"];
+    NSNumber* enableLocation       = [self.settings objectForKey:@"EnableLocation"];
+    NSString* enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
+    NSNumber* allowInlineMediaPlayback = [self.settings objectForKey:@"AllowInlineMediaPlayback"];
     BOOL mediaPlaybackRequiresUserAction = YES;  // default value
-    if ([settings objectForKey:@"MediaPlaybackRequiresUserAction"]) {
+    if ([self.settings objectForKey:@"MediaPlaybackRequiresUserAction"]) {
         mediaPlaybackRequiresUserAction = [(NSNumber*)[settings objectForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
     }
     
@@ -158,6 +158,22 @@
     }
     if (mediaPlaybackRequiresUserAction == NO && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
         self.webView.mediaPlaybackRequiresUserAction = NO;
+    }
+    
+    // UIWebViewBounce property - defaults to true
+    NSNumber* bouncePreference = [self.settings objectForKey:@"UIWebViewBounce"];
+    BOOL bounceAllowed = (bouncePreference==nil || [bouncePreference boolValue]); 
+    
+    // prevent webView from bouncing
+    // based on UIWebViewBounce key in PhoneGap.plist
+    if (!bounceAllowed) {
+        if ([ self.webView respondsToSelector:@selector(scrollView) ]) {
+            ((UIScrollView *) [self.webView scrollView]).bounces = NO;
+        } else {
+            for (id subview in self.webView.subviews)
+                if ([[subview class] isSubclassOfClass: [UIScrollView class]])
+                    ((UIScrollView *)subview).bounces = NO;
+        }
     }
     
     ///////////////////
