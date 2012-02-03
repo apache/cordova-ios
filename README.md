@@ -128,12 +128,7 @@ This includes external http/https/ftp/ftps links in:
 
 **5. How do I effectively upgrade my project?**
 
-1. Create a __new__ project
-2. Copy your files into the __www__ folder __EXCEPT__ your _phonegap-*.js_ files
-3. In your __index.html__, edit the __script__ tag to point to the __new__ _phonegap-*.js_ file
-4. If you have plugins, copy them to the __Plugins__ folder then __re-add__ them in Xcode (__NOT__ as folder references in blue, they should be folder groups in __yellow__). 
-5. Modify __PhoneGap.plist/Plugins__ to add your plugin mappings (see FAQ question(s) above) 
-6. Modify __PhoneGap.plist/ExternalHosts__ to add your external hosts to the white-list (see FAQ question(s) above)
+Starting with PhoneGap 1.4, follow the instructions in the **"PhoneGap Upgrade Guide"** document that is included with the distribution.
 
 <br />
 
