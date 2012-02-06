@@ -72,6 +72,7 @@
 
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
+        [self setWantsFullScreenLayout:YES];
     }
     return self; 
 }
