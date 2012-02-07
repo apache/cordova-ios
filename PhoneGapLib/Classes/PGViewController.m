@@ -268,6 +268,33 @@
 }
 
 
+/**
+ Called by UIKit when the device starts to rotate to a new orientation.  This fires the \c setOrientation
+ method on the Orientation object in JavaScript.  Look at the JavaScript documentation for more information.
+ */
+- (void)didRotateFromInterfaceOrientation: (UIInterfaceOrientation)fromInterfaceOrientation
+{
+	int i = 0;
+	
+	switch (self.interfaceOrientation){
+		case UIInterfaceOrientationPortrait:
+			i = 0;
+			break;
+		case UIInterfaceOrientationPortraitUpsideDown:
+			i = 180;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			i = -90;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			i = 90;
+			break;
+	}
+	
+	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); PhoneGap.fireEvent('orientationchange', window);",i];
+	[self.webView stringByEvaluatingJavaScriptFromString:jsCallback];    
+}
+
 - (void) createGapView
 {
     CGRect webViewBounds = self.view.bounds;
