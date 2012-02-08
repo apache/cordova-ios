@@ -62,7 +62,7 @@
     }
     
     // restrict number parsing to 0-255
-    NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
+    NSNumberFormatter* numberFormatter = [[[NSNumberFormatter alloc] init] autorelease];
     [numberFormatter setMinimum:[NSNumber numberWithUnsignedInteger:0]];
     [numberFormatter setMaximum:[NSNumber numberWithUnsignedInteger:255]];
     

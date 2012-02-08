@@ -204,7 +204,7 @@
 
     NSLog(@"File Transfert Download success");
     
-    PGFile * file = [[PGFile alloc] init];
+    PGFile * file = [[[PGFile alloc] init] autorelease];
     
     PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: filePath isDirectory: bDirRequest] cast: @"window.localFileSystem._castEntry"];
     [self writeJavascript: [result toSuccessCallbackString:callbackId]];
