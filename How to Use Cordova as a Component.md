@@ -51,10 +51,11 @@ It is recommended that you follow the Cordova.framework instructions below, the 
 10. Choose **"Relative to CORDOVALIB"** in the **File Inspector** for the drop-down menu for **Location** 
 11. Click on the **project icon** in the Project Navigator, select your **Project**, then select the **"Build Settings"** tab
 12. Enter **"Header Search Paths"** in the search field
-13. Enter **"$(CORDOVAPLIB)/Classes"** and check the **Recursive** checkbox - for the **"Header Search Paths"** value
-14. Click on the **project icon** in the Project Navigator, select your **Target**, then select the **"Build Phases"** tab
-15. Expand **"Link Binaries with Libraries"**
-16. Click on the **"+" button**, and add these **frameworks** (and optionally in the Project Navigator, **move** them under the Frameworks group):
+13. Add **"$(CORDOVALIB)/Classes"** and check the **Recursive** checkbox - for the **"Header Search Paths"** value
+14. Add **"-all_load"** and **"-Obj-C"** - for the **"Other Linker Flags"** value
+15. Click on the **project icon** in the Project Navigator, select your **Target**, then select the **"Build Phases"** tab
+16. Expand **"Link Binaries with Libraries"**
+17. Click on the **"+" button**, and add these **frameworks** (and optionally in the Project Navigator, **move** them under the Frameworks group):
 
         AddressBook.framework
         AddressBookUI.framework
@@ -66,10 +67,10 @@ It is recommended that you follow the Cordova.framework instructions below, the 
         SystemConfiguration.framework
         MobileCoreServices.framework
         CoreMedia.framework
-17. Expand **"Target Dependencies"**
-18. Click on the **"+" button**, and add the **"CordovaLib"** build product
-19. Expand **"Link Binaries with Libraries"**
-20. Click on the **"+" button**, and add **libCordova.a** 
+18. Expand **"Target Dependencies"**
+19. Click on the **"+" button**, and add the **"CordovaLib"** build product
+20. Expand **"Link Binaries with Libraries"**
+21. Click on the **"+" button**, and add **libCordova.a** 
 
 ## Using CDVViewController in your code ##
 
