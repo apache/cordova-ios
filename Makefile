@@ -43,105 +43,105 @@ IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 DEVELOPER = $(shell xcode-select -print-path)
 PACKAGEMAKER = '$(DEVELOPER)/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker'
 XC = xcodebuild
-PGVER = $(shell head -1 PhoneGapLib/VERSION)
+CDV_VER = $(shell head -1 CordovaLib/VERSION)
 GIT = $(shell which git)
 COMMIT_HASH=$(shell git describe --tags)	
 PKG_ERROR_LOG=pkg_error_log
 BUILD_BAK=_build.bak
-CERTIFICATE = 'PhoneGap Support'
+CERTIFICATE = 'Cordova Support'
 
 all :: installer
 
-phonegap-lib: clean-phonegap-lib
-	@echo "Packaging PhoneGap Javascript..."
+cordova-lib: clean-cordova-lib
+	@echo "Packaging Cordova Javascript..."
 	@$(MKPATH) $(BUILD_BAK)
-	@$(CP) -f PhoneGapLib/VERSION $(BUILD_BAK)
-	@$(MAKE) -C PhoneGapLib > /dev/null
+	@$(CP) -f CordovaLib/VERSION $(BUILD_BAK)
+	@$(MAKE) -C CordovaLib > /dev/null
 	@if [ -e "$(GIT)" ]; then \
-		echo -e '\n$(COMMIT_HASH)' >> PhoneGapLib/VERSION; \
+		echo -e '\n$(COMMIT_HASH)' >> CordovaLib/VERSION; \
 	fi	
 	@echo "Done."
 
 xcode3-template: clean-xcode3-template
 	@$(MKPATH) $(BUILD_BAK)
-	@$(CP) -Rf PhoneGap-based\ Application/www $(BUILD_BAK)
-	@cd PhoneGap-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]/src=\"phonegap-${PGVER}.js\"/g"
+	@$(CP) -Rf Cordova-based\ Application/www $(BUILD_BAK)
+	@cd Cordova-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
 	@cd ..
-	@cp PhoneGapLib/javascripts/phonegap-*.js PhoneGap-based\ Application/www
+	@cp CordovaLib/javascripts/cordova-*.js Cordova-based\ Application/www
 
 xcode4-template: clean-xcode4-template
-	@$(CP) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns PhoneGap-based\ Application.xctemplate
-	@$(CP) -R PhoneGap-based\ Application/Classes PhoneGap-based\ Application.xctemplate
-	@$(CP) -R PhoneGap-based\ Application/Plugins PhoneGap-based\ Application.xctemplate
-	@$(CP) -R PhoneGap-based\ Application/Resources PhoneGap-based\ Application.xctemplate
-	@$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
-	@$(CP) PhoneGap-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
-	@$(CP) PhoneGap-based\ Application/main.m PhoneGap-based\ Application.xctemplate
-	@$(CP) PhoneGap-based\ Application/PhoneGap.plist PhoneGap-based\ Application.xctemplate
-	@sed -i "" 's/com\.yourcompany\.___PROJECTNAMEASIDENTIFIER___/___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___\.___PROJECTNAMEASIDENTIFIER___/g' PhoneGap-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
+	@$(CP) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns Cordova-based\ Application.xctemplate
+	@$(CP) -R Cordova-based\ Application/Classes Cordova-based\ Application.xctemplate
+	@$(CP) -R Cordova-based\ Application/Plugins Cordova-based\ Application.xctemplate
+	@$(CP) -R Cordova-based\ Application/Resources Cordova-based\ Application.xctemplate
+	@$(CP) Cordova-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist Cordova-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
+	@$(CP) Cordova-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch Cordova-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
+	@$(CP) Cordova-based\ Application/main.m Cordova-based\ Application.xctemplate
+	@$(CP) Cordova-based\ Application/Cordova.plist Cordova-based\ Application.xctemplate
+	@sed -i "" 's/com\.yourcompany\.___PROJECTNAMEASIDENTIFIER___/___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___\.___PROJECTNAMEASIDENTIFIER___/g' Cordova-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
 
 clean-xcode4-template: clean-xcode3-template
 	@$(RM_RF) _tmp
 	@$(MKPATH) _tmp
-	@$(CP) PhoneGap-based\ Application.xctemplate/TemplateInfo.plist _tmp
-	@$(CP) PhoneGap-based\ Application.xctemplate/README _tmp
-	@$(CP) -Rf PhoneGap-based\ Application.xctemplate ~/.Trash
-	@$(RM_RF) PhoneGap-based\ Application.xctemplate
-	@$(MV) _tmp PhoneGap-based\ Application.xctemplate 
+	@$(CP) Cordova-based\ Application.xctemplate/TemplateInfo.plist _tmp
+	@$(CP) Cordova-based\ Application.xctemplate/README _tmp
+	@$(CP) -Rf Cordova-based\ Application.xctemplate ~/.Trash
+	@$(RM_RF) Cordova-based\ Application.xctemplate
+	@$(MV) _tmp Cordova-based\ Application.xctemplate 
 
 clean-xcode3-template:
 	@if [ -d "$(BUILD_BAK)/www" ]; then \
-		$(CP) -Rf "PhoneGap-based Application/www" ~/.Trash; \
-		$(RM_RF) "PhoneGap-based Application/www"; \
-		$(MV) $(BUILD_BAK)/www/ "PhoneGap-based Application/www"; \
+		$(CP) -Rf "Cordova-based Application/www" ~/.Trash; \
+		$(RM_RF) "Cordova-based Application/www"; \
+		$(MV) $(BUILD_BAK)/www/ "Cordova-based Application/www"; \
 	fi	
-	@$(RM_RF) PhoneGap-based\ Application/build/
-	@$(RM_RF) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/xcuserdata
-	@$(RM_RF) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/project.xcworkspace
-	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
-	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
-	@$(RM_F) PhoneGap-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
-	@$(RM_F) PhoneGap-based\ Application/www/phonegap-*.js
+	@$(RM_RF) Cordova-based\ Application/build/
+	@$(RM_RF) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/xcuserdata
+	@$(RM_RF) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/project.xcworkspace
+	@$(RM_F) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
+	@$(RM_F) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
+	@$(RM_F) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
+	@$(RM_F) Cordova-based\ Application/www/cordova-*.js
 
-clean-phonegap-framework:
-	@$(RM_RF) PhoneGap.framework
+clean-cordova-framework:
+	@$(RM_RF) Cordova.framework
 
 clean-markdown:
-	@$(RM_RF) PhoneGapInstaller/docs/readme.html
-	@$(RM_RF) PhoneGapInstaller/docs/cleaver.html
-	@$(RM_RF) PhoneGapInstaller/docs/upgrade.html
+	@$(RM_RF) CordovaInstaller/docs/readme.html
+	@$(RM_RF) CordovaInstaller/docs/cleaver.html
+	@$(RM_RF) CordovaInstaller/docs/upgrade.html
 
 clean-installer:
-	@$(RM_F) PhoneGapInstaller/docs/*.rtf
-	@$(RM_F) PhoneGapInstaller/docs/*.pdf
-	@$(RM_F) PhoneGapInstaller/docs/*.html
+	@$(RM_F) CordovaInstaller/docs/*.rtf
+	@$(RM_F) CordovaInstaller/docs/*.pdf
+	@$(RM_F) CordovaInstaller/docs/*.html
 
-clean-phonegap-lib:
+clean-cordova-lib:
 	@if [ -e "$(BUILD_BAK)/VERSION" ]; then \
-		$(CP) -Rf "PhoneGapLib/VERSION" ~/.Trash; \
-		$(RM_RF) "PhoneGapLib/VERSION"; \
-		$(MV) $(BUILD_BAK)/VERSION "PhoneGapLib/VERSION"; \
+		$(CP) -Rf "CordovaLib/VERSION" ~/.Trash; \
+		$(RM_RF) "CordovaLib/VERSION"; \
+		$(MV) $(BUILD_BAK)/VERSION "CordovaLib/VERSION"; \
 	fi	
-	@$(RM_RF) PhoneGapLib/build/
-	@$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.mode1v3
-	@$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.perspectivev3
-	@$(RM_F) PhoneGapLib/PhoneGapLib.xcodeproj/*.pbxuser
-	@$(RM_F) PhoneGapLib/javascripts/phonegap-*.js
+	@$(RM_RF) CordovaLib/build/
+	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.mode1v3
+	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.perspectivev3
+	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.pbxuser
+	@$(RM_F) CordovaLib/javascripts/cordova-*.js
 
-phonegap-framework: phonegap-lib clean-phonegap-framework
-	@echo "Building PhoneGap.framework..."
-	@cd PhoneGapLib;$(XC) -target UniversalFramework > /dev/null;
+cordova-framework: cordova-lib clean-cordova-framework
+	@echo "Building Cordova.framework..."
+	@cd CordovaLib;$(XC) -target UniversalFramework > /dev/null;
 	@cd ..
 	@echo "Done."
-	@$(CP) -R PhoneGapLib/build/Release-universal/PhoneGap.framework .
-	@$(CP) -R PhoneGap-based\ Application/www/index.html PhoneGap.framework/www
-	@find "PhoneGap.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]phonegap-*.*.js[\\'\"]/src=\"phonegap-${PGVER}.js\"/g"
+	@$(CP) -R CordovaLib/build/Release-universal/Cordova.framework .
+	@$(CP) -R Cordova-based\ Application/www/index.html Cordova.framework/www
+	@find "Cordova.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
 	@if [ -e "$(GIT)" ]; then \
-	echo -e '\n$(COMMIT_HASH)' >> PhoneGap.framework/VERSION; \
+	echo -e '\n$(COMMIT_HASH)' >> Cordova.framework/VERSION; \
 	fi	
-	@$(CP) -R PhoneGap-based\ Application/Resources/Capture.bundle/ PhoneGap.framework/Capture.bundle
+	@$(CP) -R Cordova-based\ Application/Resources/Capture.bundle/ Cordova.framework/Capture.bundle
 
-clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-template clean-phonegap-framework clean-markdown
+clean: clean-installer clean-cordova-lib clean-xcode3-template clean-xcode4-template clean-cordova-framework clean-markdown
 	@if [ -e "$(PKG_ERROR_LOG)" ]; then \
 		$(MV) $(PKG_ERROR_LOG) ~/.Trash; \
 		$(RM_F) $(PKG_ERROR_LOG); \
@@ -151,68 +151,68 @@ clean: clean-installer clean-phonegap-lib clean-xcode3-template clean-xcode4-tem
 checkos:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
 
-installer: clean markdown phonegap-lib xcode3-template xcode4-template phonegap-framework
+installer: clean markdown cordova-lib xcode3-template xcode4-template cordova-framework
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
 		$(RM_RF) dist; \
 	fi		
 	@# backup markdown files for version replace
-	@$(MV) -f PhoneGapInstaller/docs/releasenotes.md PhoneGapInstaller/docs/releasenotes.md.bak 
-	@$(MV) -f PhoneGapInstaller/docs/finishup.md PhoneGapInstaller/docs/finishup.md.bak 
-	@$(CAT) PhoneGapInstaller/docs/finishup.md.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/finishup.md
-	@$(CAT) PhoneGapInstaller/docs/releasenotes.md.bak | sed 's/{VERSION}/${PGVER}/' > PhoneGapInstaller/docs/releasenotes.md
+	@$(MV) -f CordovaInstaller/docs/releasenotes.md CordovaInstaller/docs/releasenotes.md.bak 
+	@$(MV) -f CordovaInstaller/docs/finishup.md CordovaInstaller/docs/finishup.md.bak 
+	@$(CAT) CordovaInstaller/docs/finishup.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/finishup.md
+	@$(CAT) CordovaInstaller/docs/releasenotes.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/releasenotes.md
 	@# generate releasenotes html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/releasenotes.html
-	@perl Markdown_1.0.1/Markdown.pl PhoneGapInstaller/docs/releasenotes.md >> PhoneGapInstaller/docs/releasenotes.html
-	@echo '</body></html>'  >> PhoneGapInstaller/docs/releasenotes.html
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/releasenotes.html
+	@perl Markdown_1.0.1/Markdown.pl CordovaInstaller/docs/releasenotes.md >> CordovaInstaller/docs/releasenotes.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/releasenotes.html
 	@# generate finishup html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;">' >	 PhoneGapInstaller/docs/finishup.html
-	@perl Markdown_1.0.1/Markdown.pl PhoneGapInstaller/docs/finishup.md >> PhoneGapInstaller/docs/finishup.html
-	@echo '</body></html>'  >> PhoneGapInstaller/docs/finishup.html
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/finishup.html
+	@perl Markdown_1.0.1/Markdown.pl CordovaInstaller/docs/finishup.md >> CordovaInstaller/docs/finishup.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/finishup.html
 	@# convert all the html files to rtf
-	@textutil -convert rtf -font 'Helvetica' PhoneGapInstaller/docs/*.html
+	@textutil -convert rtf -font 'Helvetica' CordovaInstaller/docs/*.html
 	@# build the .pkg file
-	@echo "Building PhoneGap-${PGVER}.pkg..."	
+	@echo "Building Cordova-${CDV_VER}.pkg..."	
 	@$(MKPATH) dist/files
-	@$(PACKAGEMAKER) -d PhoneGapInstaller/PhoneGapInstaller.pmdoc -o dist/files/PhoneGap-${PGVER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@$(PACKAGEMAKER) -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@# create the applescript uninstaller
-	@osacompile -o ./dist/files/Uninstall\ PhoneGap.app Uninstall\ PhoneGap.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
+	@osacompile -o ./dist/files/Uninstall\ Cordova.app Uninstall\ Cordova.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
 	@# convert the html docs to rtf, concatenate
-	@textutil -convert rtf  PhoneGapInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
-	@textutil -convert rtf -font 'Courier New' LICENSE -output PhoneGapInstaller/docs/LICENSE.rtf
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/cleaver.html -o 'dist/files/How to Use PhoneGap as a Component.pdf'
-	@$(CONVERTPDF) -f PhoneGapInstaller/docs/upgrade.html -o 'dist/files/PhoneGap Upgrade Guide.pdf'
-	@textutil -cat rtf PhoneGapInstaller/docs/finishup.rtf PhoneGapInstaller/docs/readme.rtf PhoneGapInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
+	@textutil -convert rtf  CordovaInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
+	@textutil -convert rtf -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.rtf
+	@$(CONVERTPDF) -f CordovaInstaller/docs/cleaver.html -o 'dist/files/How to Use Cordova as a Component.pdf'
+	@$(CONVERTPDF) -f CordovaInstaller/docs/upgrade.html -o 'dist/files/Cordova Upgrade Guide.pdf'
+	@textutil -cat rtf CordovaInstaller/docs/finishup.rtf CordovaInstaller/docs/readme.rtf CordovaInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
 	@# restore backed-up markdown files
-	@$(MV) -f PhoneGapInstaller/docs/releasenotes.md.bak PhoneGapInstaller/docs/releasenotes.md 
-	@$(MV) -f PhoneGapInstaller/docs/finishup.md.bak PhoneGapInstaller/docs/finishup.md
+	@$(MV) -f CordovaInstaller/docs/releasenotes.md.bak CordovaInstaller/docs/releasenotes.md 
+	@$(MV) -f CordovaInstaller/docs/finishup.md.bak CordovaInstaller/docs/finishup.md
 	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
-		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/files/PhoneGap-${PGVER}.pkg;  \
+		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/files/Cordova-${CDV_VER}.pkg;  \
 	fi
 	@# create the .dmg	
-	@hdiutil create ./dist/PhoneGap-${PGVER}.dmg -srcfolder ./dist/files/ -ov -volname PhoneGap-${PGVER}
-	@cd dist;openssl sha1 PhoneGap-${PGVER}.dmg > PhoneGap-${PGVER}.dmg.SHA1;cd -;
+	@hdiutil create ./dist/Cordova-${CDV_VER}.dmg -srcfolder ./dist/files/ -ov -volname Cordova-${CDV_VER}
+	@cd dist;openssl sha1 Cordova-${CDV_VER}.dmg > Cordova-${CDV_VER}.dmg.SHA1;cd -;
 	@echo "Done."
 	@make clean
 
 install: installer	
-	@open dist/files/PhoneGap-${PGVER}.pkg
+	@open dist/files/Cordova-${CDV_VER}.pkg
 
 uninstall:
-	@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/PhoneGap
-	@$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/PhoneGap-based\ Application.xctemplate
-	@read -p "Delete all files in ~/Documents/PhoneGapLib/?: " ; \
+	@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/Cordova
+	@$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/Cordova-based\ Application.xctemplate
+	@read -p "Delete all files in ~/Documents/CordovaLib/?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
-	$(RM_RF) ~/Documents/PhoneGapLib/ ; \
+	$(RM_RF) ~/Documents/CordovaLib/ ; \
 	else \
 	echo "" ; \
 	fi	
-	@read -p "Delete the PhoneGap framework /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework?: " ; \
+	@read -p "Delete the Cordova framework /Users/Shared/Cordova/Frameworks/Cordova.framework?: " ; \
 	if [ "$$REPLY" == "y" ]; then \
-	$(RM_RF) /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/ ; $(RM_RF) ~/Library/Frameworks/PhoneGap.framework ; \
+	$(RM_RF) /Users/Shared/Cordova/Frameworks/Cordova.framework/ ; $(RM_RF) ~/Library/Frameworks/Cordova.framework ; \
 	else \
 	echo "" ; \
 	fi	
@@ -225,14 +225,14 @@ markdown:
 		unzip Markdown_1.0.1.zip -d . > /dev/null; \
 	fi
 	@# generate readme html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 PhoneGapInstaller/docs/readme.html
-	@perl Markdown_1.0.1/Markdown.pl README.md >> PhoneGapInstaller/docs/readme.html
-	@echo '</body></html>'  >> PhoneGapInstaller/docs/readme.html
-	@# generate 'How to Use PhoneGap as a Component' html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 PhoneGapInstaller/docs/cleaver.html
-	@perl Markdown_1.0.1/Markdown.pl 'How to Use PhoneGap as a Component.md' >> PhoneGapInstaller/docs/cleaver.html
-	@echo '</body></html>'  >> PhoneGapInstaller/docs/cleaver.html
-	@# generate 'PhoneGap Upgrade Guide' html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 PhoneGapInstaller/docs/upgrade.html
-	@perl Markdown_1.0.1/Markdown.pl 'PhoneGap Upgrade Guide.md' >> PhoneGapInstaller/docs/upgrade.html
-	@echo '</body></html>'  >> PhoneGapInstaller/docs/upgrade.html
+	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/readme.html
+	@perl Markdown_1.0.1/Markdown.pl README.md >> CordovaInstaller/docs/readme.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/readme.html
+	@# generate 'How to Use Cordova as a Component' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/cleaver.html
+	@perl Markdown_1.0.1/Markdown.pl 'How to Use Cordova as a Component.md' >> CordovaInstaller/docs/cleaver.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/cleaver.html
+	@# generate 'Cordova Upgrade Guide' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/upgrade.html
+	@perl Markdown_1.0.1/Markdown.pl 'Cordova Upgrade Guide.md' >> CordovaInstaller/docs/upgrade.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/upgrade.html

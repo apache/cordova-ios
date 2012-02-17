@@ -3,14 +3,12 @@
 *.cso
 tmp
 lib
-PhoneGapInstaller.pkg
-
-/PhoneGapLib/javascripts/phonegap-uncompressed.js
+CordovaInstaller.pkg
 *.mode1v3
 *.pbxuser
 build
 _build.bak
-/PhoneGap.framework/
+/Cordova.framework/
 /pkg_error_log
 *.xcworkspace
 xcuserdata

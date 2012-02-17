@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<pkmkdoc spec="1.12">
+	<properties>
+		<title>Cordova</title>
+		<organization>org.apache.cordovalibinstaller</organization>
+		<userSees ui="both"/>
+		<min-target os="3"/>
+		<domain user="true"/>
+	</properties>
+	<distribution>
+		<versions min-spec="1.000000"/>
+		<scripts/>
+	</distribution>
+	<contents>
+		<choice title="CordovaLib" id="choice5" starts_selected="true" starts_enabled="true" starts_hidden="false">
+			<pkgref id="org.apache.cordovalibinstaller.cordovalib.pkg"/>
+		</choice>
+		<choice title="Cordova-based Application" id="choice15" starts_selected="true" starts_enabled="true" starts_hidden="false">
+			<pkgref id="org.apache.cordovalibinstaller.Cordova-basedApplication.pkg"/>
+		</choice>
+		<choice title="Cordova.xctemplate" id="choice18" starts_selected="true" starts_enabled="true" starts_hidden="false">
+			<pkgref id="org.apache.cordovalibinstaller.Cordova-basedApplication.xctemplate.pkg"/>
+		</choice>
+		<choice title="Cordova.framework" id="choice19" starts_selected="true" starts_enabled="true" starts_hidden="false">
+			<pkgref id="org.apache.cordovalibinstaller.Cordova.framework.pkg"/>
+		</choice>
+	</contents>
+	<resources bg-scale="none" bg-align="topleft">
+		<locale lang="en">
+			<resource relative="true" mod="true" type="background">cordova.png</resource>
+			<resource relative="true" mod="true" type="readme">docs/readme.rtf</resource>
+			<resource relative="true" mod="true" type="welcome">docs/releasenotes.rtf</resource>
+			<resource relative="true" mod="true" type="conclusion">docs/finishup.rtf</resource>
+		</locale>
+	</resources>
+	<requirements>
+		<requirement id="file" operator="eq" value="true" required="false">
+			<file>/Developer/Applications/Xcode.app</file>
+			<message-title>Xcode not installed</message-title>
+			<message>Please install Xcode Developer Tools (download from http://developer.apple.com/ios) or the Mac App Store</message>
+		</requirement>
+		<requirement id="file" operator="eq" value="true" required="false">
+			<file>/Developer/Platforms/iPhoneOS.platform</file>
+			<message-title>iOS SDK not found</message-title>
+			<message>Please download and install the iOS SDK from http://developer.apple.com/ios</message>
+		</requirement>
+	</requirements>
+	<flags/>
+	<item type="file">01cordovalib.xml</item>
+	<item type="file">02cordova.xml</item>
+	<item type="file">03cordova.xml</item>
+	<item type="file">04cordova.xml</item>
+	<mod>properties.title</mod>
+	<mod>properties.userDomain</mod>
+	<mod>properties.anywhereDomain</mod>
+	<mod>preinstallActions.actions</mod>
+</pkmkdoc>
