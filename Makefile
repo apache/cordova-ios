@@ -49,6 +49,7 @@ COMMIT_HASH=$(shell git describe --tags)
 PKG_ERROR_LOG=pkg_error_log
 BUILD_BAK=_build.bak
 CERTIFICATE = 'Cordova Support'
+WKHTMLTOPDF = wkhtmltopdf/wkhtmltopdf --encoding utf-8 --page-size Letter --footer-font-name "Helvetica" --footer-font-size 10 --footer-spacing 10 --footer-right "[page]/[topage]" -B 1in -L 0.5in -R 0.5in -T 0.5in
 
 all :: installer
 
@@ -78,6 +79,7 @@ xcode4-template: clean-xcode4-template
 	@$(CP) Cordova-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch Cordova-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
 	@$(CP) Cordova-based\ Application/main.m Cordova-based\ Application.xctemplate
 	@$(CP) Cordova-based\ Application/Cordova.plist Cordova-based\ Application.xctemplate
+	@$(CP) Cordova-based\ Application/verify.sh Cordova-based\ Application.xctemplate
 	@sed -i "" 's/com\.yourcompany\.___PROJECTNAMEASIDENTIFIER___/___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___\.___PROJECTNAMEASIDENTIFIER___/g' Cordova-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
 
 clean-xcode4-template: clean-xcode3-template
@@ -151,7 +153,7 @@ clean: clean-installer clean-cordova-lib clean-xcode3-template clean-xcode4-temp
 checkos:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
 
-installer: clean markdown cordova-lib xcode3-template xcode4-template cordova-framework
+installer: clean markdown wkhtmltopdf cordova-lib xcode3-template xcode4-template cordova-framework
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
@@ -170,20 +172,23 @@ installer: clean markdown cordova-lib xcode3-template xcode4-template cordova-fr
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/finishup.html
 	@perl Markdown_1.0.1/Markdown.pl CordovaInstaller/docs/finishup.md >> CordovaInstaller/docs/finishup.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/finishup.html
-	@# convert all the html files to rtf
+	@# convert all the html files to rtf (for PackageMaker)
 	@textutil -convert rtf -font 'Helvetica' CordovaInstaller/docs/*.html
 	@# build the .pkg file
 	@echo "Building Cordova-${CDV_VER}.pkg..."	
-	@$(MKPATH) dist/files
+	@$(MKPATH) dist/files/Guides
 	@$(PACKAGEMAKER) -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@# create the applescript uninstaller
 	@osacompile -o ./dist/files/Uninstall\ Cordova.app Uninstall\ Cordova.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
-	@# convert the html docs to rtf, concatenate
-	@textutil -convert rtf  CordovaInstaller/docs/releasenotes.html -output dist/files/ReleaseNotes.rtf
-	@textutil -convert rtf -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.rtf
-	@$(CONVERTPDF) -f CordovaInstaller/docs/cleaver.html -o 'dist/files/How to Use Cordova as a Component.pdf'
-	@$(CONVERTPDF) -f CordovaInstaller/docs/upgrade.html -o 'dist/files/Cordova Upgrade Guide.pdf'
-	@textutil -cat rtf CordovaInstaller/docs/finishup.rtf CordovaInstaller/docs/readme.rtf CordovaInstaller/docs/LICENSE.rtf -output dist/files/Readme.rtf
+	@# convert the html docs to pdf, concatenate readme and license
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Release Notes" CordovaInstaller/docs/releasenotes.html dist/files/ReleaseNotes.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "How to use Cordova ${CDV_VER} as a Component" CordovaInstaller/docs/cleaver.html 'dist/files/Guides/How to Use Cordova as a Component.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Upgrade Guide" CordovaInstaller/docs/upgrade.html 'dist/files/Guides/Cordova Upgrade Guide.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Plugin Upgrade Guide" CordovaInstaller/docs/plugin_upgrade.html 'dist/files/Guides/Cordova Plugin Upgrade Guide.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
+	@textutil -convert html -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.html > /dev/null 2>> $(PKG_ERROR_LOG)
+	@textutil -cat html CordovaInstaller/docs/finishup.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(RM_F) dist/files/Readme.html
 	@# restore backed-up markdown files
 	@$(MV) -f CordovaInstaller/docs/releasenotes.md.bak CordovaInstaller/docs/releasenotes.md 
 	@$(MV) -f CordovaInstaller/docs/finishup.md.bak CordovaInstaller/docs/finishup.md
@@ -193,8 +198,19 @@ installer: clean markdown cordova-lib xcode3-template xcode4-template cordova-fr
 		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/files/Cordova-${CDV_VER}.pkg;  \
 	fi
 	@# create the .dmg	
-	@hdiutil create ./dist/Cordova-${CDV_VER}.dmg -srcfolder ./dist/files/ -ov -volname Cordova-${CDV_VER}
-	@cd dist;openssl sha1 Cordova-${CDV_VER}.dmg > Cordova-${CDV_VER}.dmg.SHA1;cd -;
+	@hdiutil create ./dist/Cordova-${CDV_VER}_temp.dmg -srcfolder ./dist/files/ -ov -volname Cordova-${CDV_VER} -format UDRW > /dev/null 2>> $(PKG_ERROR_LOG)
+	@# set the volume icon
+	@hdiutil attach -readwrite -noverify -noautoopen ./dist/Cordova-${CDV_VER}_temp.dmg > /dev/null 2>> $(PKG_ERROR_LOG)
+	@cp "Cordova-based Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns" /Volumes/Cordova-${CDV_VER}/.VolumeIcon.icns
+	@SetFile -c icnC /Volumes/Cordova-${CDV_VER}/.VolumeIcon.icns > /dev/null 2>> $(PKG_ERROR_LOG)
+	@SetFile -a C /Volumes/Cordova-${CDV_VER}/ > /dev/null 2>> $(PKG_ERROR_LOG)
+	@hdiutil detach /Volumes/Cordova-${CDV_VER}/ > /dev/null 2>> $(PKG_ERROR_LOG)
+	@# compress dmg
+	@hdiutil convert ./dist/Cordova-${CDV_VER}_temp.dmg -format UDZO -imagekey zlib-level=9 -o ./dist/Cordova-${CDV_VER}.dmg > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(RM_F) ./dist/Cordova-${CDV_VER}_temp.dmg
+	@# generate sha1
+	@openssl sha1 dist/Cordova-${CDV_VER}.dmg > dist/Cordova-${CDV_VER}.dmg.SHA1;
+	@# done
 	@echo "Done."
 	@make clean
 
@@ -217,6 +233,16 @@ uninstall:
 	echo "" ; \
 	fi	
 
+wkhtmltopdf:
+	@# download wkhtmltopdf if necessary
+	@if [[ ! -d "wkhtmltopdf" ]]; then \
+		echo "Downloading wkhtmltopdf..."; \
+		curl -L http://wkhtmltopdf.googlecode.com/files/wkhtmltopdf-0.9.9-OS-X.i368 > wkhtmltopdf_temp; \
+		$(MKPATH) wkhtmltopdf; \
+		mv wkhtmltopdf_temp wkhtmltopdf/wkhtmltopdf; \
+		chmod 755 wkhtmltopdf/wkhtmltopdf; \
+	fi
+
 markdown:
 	@# download markdown if necessary
 	@if [[ ! -d "Markdown_1.0.1" ]]; then \
@@ -230,9 +256,13 @@ markdown:
 	@echo '</body></html>'  >> CordovaInstaller/docs/readme.html
 	@# generate 'How to Use Cordova as a Component' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/cleaver.html
-	@perl Markdown_1.0.1/Markdown.pl 'How to Use Cordova as a Component.md' >> CordovaInstaller/docs/cleaver.html
+	@perl Markdown_1.0.1/Markdown.pl 'guides/How to Use Cordova as a Component.md' >> CordovaInstaller/docs/cleaver.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/cleaver.html
 	@# generate 'Cordova Upgrade Guide' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/upgrade.html
-	@perl Markdown_1.0.1/Markdown.pl 'Cordova Upgrade Guide.md' >> CordovaInstaller/docs/upgrade.html
+	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Upgrade Guide.md' >> CordovaInstaller/docs/upgrade.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/upgrade.html
+	@# generate 'Cordova Plugin Upgrade Guide' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/plugin_upgrade.html
+	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Plugin Upgrade Guide.md' >> CordovaInstaller/docs/plugin_upgrade.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/plugin_upgrade.html

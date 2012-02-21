@@ -10,7 +10,7 @@ Make sure you have installed the latest iOS SDK. Download it at [http://develope
 
 Build and install the Installer Package
 -------------------------------------------------------------
-You don't need to do this if you downloaded the installer from [phonegap.com](http://phonegap.com), this is only for developers that need to compile the source.
+You don't need to do this if you downloaded the installer from [http://incubator.apache.org/callback/](http://incubator.apache.org/callback/), this is only for developers that need to compile the source.
 
 1. Launch "Terminal.app"
 2. Navigate to the folder where the Makefile is
@@ -98,7 +98,7 @@ This is a known issue with the Xcode 4 Template - we can't specify a folder refe
 
 **2. When I run the Installer, the installation fails?** 
 
-Usually it's a folder permissions issue with the templates folder, changed by other third-party installers. You can trouble-shoot using the [instructions here](http://wiki.phonegap.com/PhoneGap-Installer-Fails).
+Usually it's a folder permissions issue with the templates folder, changed by other third-party installers. You can trouble-shoot using the [instructions here](https://issues.apache.org/jira/browse/CB-270).
 
 **3. When I add Plugins, they are not found or won't compile?** 
 
@@ -108,7 +108,7 @@ This can be because of:
 
 1. You did not add the plugin mapping in __Cordova.plist/Plugins__ (contact the plugin creator for the proper mapping). The __key__ is the service name used in the JavaScript interface and the __value__ is the classname used in the Objective-C interface. Often the key and value are the same.
 2. You did _not_ add the plugin code as a "group" (__yellow__ folder) but added it as a "folder reference" (blue folder) 
-3. You are having #import problems - see [this article](http://wiki.phonegap.com/PhoneGap%20iOS%20Plugins%20Problems). 
+3. You are having #import problems - see the "Cordova Upgrade Guide" document included in the distribution's "Guides" folder. 
 
 <br />  
 
@@ -173,7 +173,7 @@ A. Remove the existing Cordova.framework from your project, and drag and drop yo
 
 **11. I've got other Cordova-specific issues not covered here?**
 
-A. Older pre-1.0 issues have been put in the [Cordova iOS FAQ](http://wiki.phonegap.com/w/page/41631150/PhoneGap-for-iOS-FAQ) on the [Wiki](http://wiki.phonegap.com).      
+A. Do a search in the Apache JIRA Issue Tracker [Apache JIRA](https://issues.apache.org/jira/browse/CB) or the [Wiki](http://wiki.apache.org/cordova/FrontPage).      
 
 **12. On an iOS 3.2 iPad, and launching an iPhone only app, when I use the Media Capture API, the user interface shown is iPad sized, not iPhone sized?**
 
@@ -185,14 +185,16 @@ A. In your project's Build Settings, set **"Build for Active Architecture Only"*
 
 BUGS?
 -----
-File them at the [Cordova-iOS Issue Tracker](https://issues.apache.org/jira/browse/CB)      
+File them at the [Cordova Issue Tracker](https://issues.apache.org/jira/browse/CB)      
 <br />
 
 MORE INFO
 ----------
 * [http://docs.phonegap.com](http://docs.phonegap.com)
-* [http://wiki.phonegap.com](http://wiki.phonegap.com)
+* [http://wiki.apache.org/cordova/](http://wiki.apache.org/cordova/)
+* [http://github.com/apache/incubator-cordova-ios/](http://github.com/apache/incubator-cordova-ios/)
 * [http://groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
-* \#phonegap channel on [Freenode IRC](http://freenode.net/)
+* \#phonegap or \#phonegap-dev channel on [Freenode IRC](http://freenode.net/)
+* [File issues and feature requests](https://issues.apache.org/jira/browse/CB)
 
 <br />

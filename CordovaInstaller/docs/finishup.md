@@ -6,14 +6,13 @@
 * Plugins **MUST** add any external hosts they connect to to the white-list in Cordova.plist/ExternalHosts (add hostnames **only**)
 * A plugin's Objective-C code **MUST** be added to the project properly in a "group" (**YELLOW** folder), if you incorrectly added it as a folder reference it would be a blue folder (just delete the reference, and re-add)
 * A lot of plugins have changed their mapping names in Cordova.plist, you might have to copy and use the new Cordova.plist in your app.
-* [Modify](http://wiki.phonegap.com/PhoneGap-iOS-Plugins-Problems) your Plugin headers as well.
 
 <br />
 
 ## Upgraders
 	
-1. Please see the "Cordova Upgrade Guide" included in the .dmg distribution
-2. See the FAQ in the README.rtf as well
+1. Please see the "Cordova Upgrade Guide" included in the .dmg distribution, in the "Guides" sub-folder
+2. See the FAQ in the README.pdf as well
 
 <br />
 
@@ -60,9 +59,11 @@ That's it! Modify the contents of the "www" directory to add your HTML, CSS and 
 
 ## Links
 
-* [www.phonegap.com](http://www.phonegap.com)
-* [docs.phonegap.com](http://docs.phonegap.com)
-* [github.com/apache/incubator-cordova-ios](github.com/apache/incubator-cordova-ios)
+* [http://docs.phonegap.com](http://docs.phonegap.com)
+* [http://wiki.apache.org/cordova/](http://wiki.apache.org/cordova/)
+* [http://github.com/apache/incubator-cordova-ios/](http://github.com/apache/incubator-cordova-ios/)
+* [http://groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
+* \#phonegap or \#phonegap-dev channel on [Freenode IRC](http://freenode.net/)
 * [File issues and feature requests](https://issues.apache.org/jira/browse/CB)
 
 <br />

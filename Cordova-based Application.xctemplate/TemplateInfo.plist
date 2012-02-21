@@ -255,6 +255,17 @@
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
+		<key>verify.sh</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>Supporting Files</string>
+			</array>
+			<key>Path</key>
+			<string>./verify.sh</string>
+			<key>PathType</key>
+			<string>Group</string>
+		</dict>
 	</dict>
 	<key>Description</key>
 	<string>This template provides a starting point for a Cordova based application. On first run, it will create the www folder. You must drag and drop in the www folder into your project (as a folder reference). Then just modify the www folder contents with your HTML, CSS and Javascript.</string>
@@ -285,6 +296,7 @@
 		<string>Classes/MainViewController.m</string>
 		<string>Classes/MainViewController.xib</string>
 		<string>Plugins/README</string>
+		<string>verify.sh</string>
 	</array>
 	<key>Options</key>
 	<array/>
@@ -335,15 +347,9 @@
 					<string>/bin/bash</string>
 					<key>ShellScript</key>
 					<string>
-								if [ ! -d &quot;$PROJECT_DIR/www&quot; ] ; then
-									cp -R /Users/Shared/Cordova/Frameworks/Cordova.framework/www &quot;$PROJECT_DIR&quot;
-								fi
-								# detect www folder reference in project, if missing, print warning
-								grep &quot;{isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = \&quot;&lt;group&gt;\&quot;; };&quot; &quot;$PROJECT_DIR/$PROJECT_NAME.xcodeproj/project.pbxproj&quot;
-								rc=$? 
-								if [ $rc != 0 ] ; then
-								echo -e &quot;warning: Missing - Add $PROJECT_DIR/www as a folder reference in your project. Just drag and drop the folder into your project, into the Project Navigator of Xcode 4. Make sure you select the second radio-button: &apos;Create folder references for any added folders&apos; (which will create a blue folder)&quot; 1&gt;&amp;2
-								fi							</string>
+								chmod 755 $PROJECT_DIR/$PROJECT_NAME/verify.sh
+								$PROJECT_DIR/$PROJECT_NAME/verify.sh
+					</string>
 				</dict>
 			</array>
 			<key>Configurations</key>

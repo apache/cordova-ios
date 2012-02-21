@@ -1,6 +1,6 @@
 ## Release Notes for Cordova ({VERSION})  ##
   
-Cordova is a static library and static framework that enables users to include the Cordova API in their iPhone application projects easily, and also create new Cordova-based iPhone application projects through an Xcode project template.
+Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
 ### 1.4.1 (20120201) ###
 * Fixed CB-212 - iOS orientation switch broken in 1.4.0
