@@ -318,11 +318,11 @@
 		<key>SharedSettings</key>
 		<dict>
 			<key>ARCHS</key>
-			<string>$(ARCHS_STANDARD_32_BIT)</string>
+			<string>armv6 $(ARCHS_STANDARD_32_BIT)</string>
 			<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 			<string>iPhone Developer</string>
 			<key>GCC_VERSION</key>
-			<string>com.apple.compilers.llvmgcc42</string>
+			<string>com.apple.compilers.llvm.clang.1_0</string>
 			<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 			<string>3.0</string>
 		</dict>
