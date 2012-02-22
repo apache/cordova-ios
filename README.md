@@ -10,7 +10,7 @@ Make sure you have installed the latest iOS SDK. Download it at [http://develope
 
 Build and install the Installer Package
 -------------------------------------------------------------
-You don't need to do this if you downloaded the installer from [http://incubator.apache.org/callback/](http://incubator.apache.org/callback/), this is only for developers that need to compile the source.
+You don't need to do this if you downloaded the installer from [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/), this is only for developers that need to compile the source.
 
 1. Launch "Terminal.app"
 2. Navigate to the folder where the Makefile is
@@ -190,11 +190,6 @@ File them at the [Cordova Issue Tracker](https://issues.apache.org/jira/browse/C
 
 MORE INFO
 ----------
-* [http://docs.phonegap.com](http://docs.phonegap.com)
-* [http://wiki.apache.org/cordova/](http://wiki.apache.org/cordova/)
-* [http://github.com/apache/incubator-cordova-ios/](http://github.com/apache/incubator-cordova-ios/)
-* [http://groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
-* \#phonegap or \#phonegap-dev channel on [Freenode IRC](http://freenode.net/)
-* [File issues and feature requests](https://issues.apache.org/jira/browse/CB)
+* [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/)
 
 <br />

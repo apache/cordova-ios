@@ -59,11 +59,7 @@ That's it! Modify the contents of the "www" directory to add your HTML, CSS and 
 
 ## Links
 
-* [http://docs.phonegap.com](http://docs.phonegap.com)
-* [http://wiki.apache.org/cordova/](http://wiki.apache.org/cordova/)
-* [http://github.com/apache/incubator-cordova-ios/](http://github.com/apache/incubator-cordova-ios/)
-* [http://groups.google.com/group/phonegap](http://groups.google.com/group/phonegap)
-* \#phonegap or \#phonegap-dev channel on [Freenode IRC](http://freenode.net/)
-* [File issues and feature requests](https://issues.apache.org/jira/browse/CB)
+* [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/)
+
 
 <br />

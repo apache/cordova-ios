@@ -71,6 +71,8 @@
 		30325A0C136B343700982B63 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
 		3035621714104C34006C2D43 /* CDVWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* CDVWhitelistTests.m */; };
 		30383DE01385F65600E37E22 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* CDVConnection.m */; };
+		30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */; };
+		30392E5014F502C200B9E0B8 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		307A8F9E1385A2EC00E43782 /* CDVConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* CDVConnection.h */; };
 		307A8F9F1385A2EC00E43782 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* CDVConnection.m */; };
 		30956FD2138F1F5600FC3563 /* CDVMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* CDVMotion.h */; };
@@ -180,6 +182,7 @@
 		30325A0B136B343700982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		30356212141049E1006C2D43 /* CDVWhitelistTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVWhitelistTests.h; sourceTree = "<group>"; };
 		30356213141049E1006C2D43 /* CDVWhitelistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWhitelistTests.m; sourceTree = "<group>"; };
+		30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAvailability.h; path = Classes/CDVAvailability.h; sourceTree = "<group>"; };
 		307A8F9C1385A2EC00E43782 /* CDVConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVConnection.h; path = Classes/CDVConnection.h; sourceTree = "<group>"; };
 		307A8F9D1385A2EC00E43782 /* CDVConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVConnection.m; path = Classes/CDVConnection.m; sourceTree = "<group>"; };
 		30956FD0138F1F5600FC3563 /* CDVMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVMotion.h; path = Classes/CDVMotion.h; sourceTree = "<group>"; };
@@ -379,6 +382,7 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */,
 				30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */,
 				30C684921407044A004C1A8E /* CDVURLProtocol.h */,
 				30C684931407044A004C1A8E /* CDVURLProtocol.m */,
@@ -497,6 +501,7 @@
 				8852C43B14B65FD800F0E735 /* CDVViewController.h in Headers */,
 				8852C44014B65FD800F0E735 /* CDVCordovaView.h in Headers */,
 				30F5EBAC14CA26E700987760 /* CDVCommandDelegate.h in Headers */,
+				30392E5014F502C200B9E0B8 /* CDVAvailability.h in Headers */,
 				301F2F2B14F3C9CA003FE9FC /* CDV.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -535,6 +540,7 @@
 				8852C43F14B65FD800F0E735 /* CDVCordovaView.h in Headers */,
 				30F5EBAB14CA26E700987760 /* CDVCommandDelegate.h in Headers */,
 				301F2F2A14F3C9CA003FE9FC /* CDV.h in Headers */,
+				30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

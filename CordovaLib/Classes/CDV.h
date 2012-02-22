@@ -17,6 +17,8 @@
  under the License.
  */
 
+#import "CDVAvailability.h"
+
 #import "CDVPlugin.h"
 #import "CDVViewController.h"
 #import "CDVCommandDelegate.h"
