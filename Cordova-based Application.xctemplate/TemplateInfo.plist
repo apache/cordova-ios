@@ -360,6 +360,8 @@
 					<string>NO</string>
 					<key>GCC_DYNAMIC_NO_PIC</key>
 					<string>NO</string>
+					<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+					<string>DEBUG=1, CORDOVA_FRAMEWORK=1</string>
 				</dict>
 				<key>Release</key>
 				<dict>
@@ -369,6 +371,8 @@
 					<string>dwarf-with-dsym</string>
 					<key>VALIDATE_PRODUCT</key>
 					<string>YES</string>
+					<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+					<string>NDEBUG=1, CORDOVA_FRAMEWORK=1</string>
 				</dict>
 			</dict>
 			<key>Frameworks</key>
@@ -399,8 +403,6 @@
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
 				<string>/Users/Shared/Cordova/Frameworks</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-				<string>CORDOVA_FRAMEWORK=YES</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>OTHER_LDFLAGS</key>
