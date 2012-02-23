@@ -363,7 +363,7 @@
 {
     // Share session key with the WebView by setting Cordova.sessionKey
     // TODO: wtf is the sessionKey ?
-    NSString *sessionKeyScript = [NSString stringWithFormat:@"Cordova.sessionKey = \"%@\";", self.sessionKey];
+    NSString *sessionKeyScript = [NSString stringWithFormat:@"sessionKey = \"%@\";", self.sessionKey];
     [theWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
 	
     NSDictionary *deviceProperties = [ self deviceProperties];
@@ -928,7 +928,8 @@ static NSString* cdvVersion;
 - (void) onAppWillResignActive:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationWillResignActive");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"Cordova.fireDocumentEvent('resign');"];
+    // TODO: uhh, wut? pause/resume not enough?
+    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('resign');"];
 }
 
 /*
@@ -939,14 +940,15 @@ static NSString* cdvVersion;
 - (void) onAppWillEnterForeground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationWillEnterForeground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"Cordova.fireDocumentEvent('resume');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('resume');"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state. 
 - (void) onAppDidBecomeActive:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationDidBecomeActive");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"Cordova.fireDocumentEvent('active');"];
+    // TODO: uhh, wut? pause/resume not enough?
+    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('active');"];
 }
 
 /*
@@ -956,7 +958,7 @@ static NSString* cdvVersion;
 - (void) onAppDidEnterBackground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"Cordova.fireDocumentEvent('pause');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('pause');"];
 }
 
 // ///////////////////////
