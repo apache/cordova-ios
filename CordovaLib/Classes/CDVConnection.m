@@ -29,6 +29,11 @@
 
 @synthesize connectionType, internetReach;
 
+- (NSString*) getConnectionInfo
+{
+    return self.connectionType;
+}
+
 - (NSString*) w3cConnectionTypeFor:(CDVReachability*)reachability
 {
 	NetworkStatus networkStatus = [reachability currentReachabilityStatus];
