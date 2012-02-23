@@ -34,16 +34,6 @@
 		</locale>
 	</resources>
 	<requirements>
-		<requirement id="file" operator="eq" value="true" required="false">
-			<file>/Developer/Applications/Xcode.app</file>
-			<message-title>Xcode not installed</message-title>
-			<message>Please install Xcode Developer Tools (download from http://developer.apple.com/ios) or the Mac App Store</message>
-		</requirement>
-		<requirement id="file" operator="eq" value="true" required="false">
-			<file>/Developer/Platforms/iPhoneOS.platform</file>
-			<message-title>iOS SDK not found</message-title>
-			<message>Please download and install the iOS SDK from http://developer.apple.com/ios</message>
-		</requirement>
 	</requirements>
 	<flags/>
 	<item type="file">01cordovalib.xml</item>
