@@ -137,28 +137,30 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 	DLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;
 }
+// TODO: get rid of casting
 -(NSString*) toSuccessCallbackString: (NSString*) callbackId
 {
 	NSString* successCB;
 	
 	if ([self cast] != nil) {
-		successCB = [NSString stringWithFormat: @"var temp = %@(%@);\nCordova.callbackSuccess('%@',temp);", self.cast, [self toJSONString], callbackId];
+		successCB = [NSString stringWithFormat: @"var temp = %@(%@);\nrequire('cordova').callbackSuccess('%@',temp);", self.cast, [self toJSONString], callbackId];
 	}
 	else {
-		successCB = [NSString stringWithFormat:@"Cordova.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];			
+		successCB = [NSString stringWithFormat:@"require('cordova').callbackSuccess('%@',%@);", callbackId, [self toJSONString]];			
 	}
 	DLog(@"PluginResult toSuccessCallbackString: %@", successCB);
 	return successCB;
 }
+// TODO: get rid of casting
 -(NSString*) toErrorCallbackString: (NSString*) callbackId
 {
 	NSString* errorCB = nil;
 	
 	if ([self cast] != nil) {
-		errorCB = [NSString stringWithFormat: @"var temp = %@(%@);\nCordova.callbackError('%@',temp);", self.cast, [self toJSONString], callbackId];
+		errorCB = [NSString stringWithFormat: @"var temp = %@(%@);\nrequire('cordova').callbackError('%@',temp);", self.cast, [self toJSONString], callbackId];
 	}
 	else {
-		errorCB = [NSString stringWithFormat:@"Cordova.callbackError('%@',%@);", callbackId, [self toJSONString]];
+		errorCB = [NSString stringWithFormat:@"require('cordova').callbackError('%@',%@);", callbackId, [self toJSONString]];
 	}
 	DLog(@"PluginResult toErrorCallbackString: %@", errorCB);
 	return errorCB;

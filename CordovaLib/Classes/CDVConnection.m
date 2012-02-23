@@ -29,9 +29,15 @@
 
 @synthesize connectionType, internetReach;
 
-- (NSString*) getConnectionInfo
+- (void) getConnectionInfo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    return self.connectionType;
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+	NSString* callbackId = [arguments objectAtIndex:0];
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
+    jsString = [result toSuccessCallbackString:callbackId];
+    [self writeJavascript:jsString];
 }
 
 - (NSString*) w3cConnectionTypeFor:(CDVReachability*)reachability
