@@ -166,6 +166,7 @@
      */
     
     if ([enableLocation boolValue]) {
+        // TODO: change this package name
         [[self.commandDelegate getCommandInstance:@"org.apache.cordova.geolocation"] startLocation:nil withDict:nil];
     }
     
@@ -308,7 +309,7 @@
 			i = 90;
 			break;
 	}
-	
+	// TODO: update JS references here
 	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); Cordova.fireEvent('orientationchange', window);",i];
 	[self.webView stringByEvaluatingJavaScriptFromString:jsCallback];    
 }
@@ -361,19 +362,19 @@
 - (void) webViewDidFinishLoad:(UIWebView*)theWebView 
 {
     // Share session key with the WebView by setting Cordova.sessionKey
+    // TODO: wtf is the sessionKey ?
     NSString *sessionKeyScript = [NSString stringWithFormat:@"Cordova.sessionKey = \"%@\";", self.sessionKey];
     [theWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
 	
-    
     NSDictionary *deviceProperties = [ self deviceProperties];
-    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONString]];
+    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"try{require('cordova/plugin/ios/device').setInfo(%@);}catch(e){alert('errorz1!!!');alert(JSON.stringify(e))}", [deviceProperties JSONString]];
     
     /* Settings.plist
      * Read the optional Settings.plist file and push these user-defined settings down into the web application.
      * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
      */
-    
+    // TODO: turn this into an iOS only plugin
     NSDictionary *temp = [[self class] getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONString)]) {
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONString]];
@@ -685,7 +686,7 @@ BOOL gSplashScreenShown = NO;
 {
     // Grab all the queued commands from the JS side.
     NSString* queuedCommandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:
-									@"Cordova.getAndClearQueuedCommands()"];
+									@"require('cordova/plugin/ios/nativecomm')()"];
 	
 	
     // Parse the returned JSON array.
@@ -713,7 +714,7 @@ BOOL gSplashScreenShown = NO;
 - (void) flushCommandQueue
 {
     [self.webView stringByEvaluatingJavaScriptFromString:
-	 @"Cordova.commandQueueFlushing = true"];
+	 @"require('cordova').commandQueueFlushing = true"];
 	
     // Keep executing the command queue until no commands get executed.
     // This ensures that commands that are queued while executing other
@@ -724,7 +725,7 @@ BOOL gSplashScreenShown = NO;
     } while (numExecutedCommands != 0);
 	
     [self.webView stringByEvaluatingJavaScriptFromString:
-	 @"Cordova.commandQueueFlushing = false"];
+	 @"require('cordova').commandQueueFlushing = false"];
 }
 
 - (BOOL) execute:(CDVInvokedUrlCommand*)command
