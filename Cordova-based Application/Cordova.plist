@@ -24,31 +24,31 @@
 	<array/>
 	<key>Plugins</key>
 	<dict>
-		<key>org.apache.cordova.accelerometer</key>
+		<key>Accelerometer</key>
 		<string>CDVAccelerometer</string>
-		<key>org.apache.cordova.camera</key>
+		<key>Camera</key>
 		<string>CDVCamera</string>
-		<key>org.apache.cordova.connection</key>
+    <key>Network Status</key>
 		<string>CDVConnection</string>
-		<key>org.apache.cordova.contacts</key>
+		<key>Contacts</key>
 		<string>CDVContacts</string>
-		<key>org.apache.cordova.debugconsole</key>
+		<key>Debug Console</key>
 		<string>CDVDebugConsole</string>
-		<key>org.apache.cordova.file</key>
+		<key>File</key>
 		<string>CDVFile</string>
 		<key>org.apache.cordova.filetransfer</key>
 		<string>CDVFileTransfer</string>
-		<key>org.apache.cordova.geolocation</key>
+		<key>Geolocation</key>
 		<string>CDVLocation</string>
-		<key>org.apache.cordova.notification</key>
+		<key>Notification</key>
 		<string>CDVNotification</string>
 		<key>org.apache.cordova.media</key>
 		<string>CDVSound</string>
-		<key>org.apache.cordova.mediacapture</key>
+		<key>Capture</key>
 		<string>CDVCapture</string>
-		<key>org.apache.cordova.splashscreen</key>
+		<key>Splash Screen</key>
 		<string>CDVSplashScreen</string>
-		<key>org.apache.cordova.battery</key>
+		<key>Battery</key>
 		<string>CDVBattery</string>
 	</dict>
 </dict>
