@@ -819,17 +819,6 @@ BOOL gSplashScreenShown = NO;
     [devProps setObject:[device name] forKey:@"name"];
     [devProps setObject:[[self class] cordovaVersion ] forKey:@"gap"];
     
-    // TODO: why do we blast this onto the device object? can't we just leave it alone as a plugin?
-    id cmd = [self.commandDelegate getCommandInstance:@"org.apache.cordova.connection"];
-    if (cmd && [cmd isKindOfClass:[CDVConnection class]]) 
-    {
-        NSMutableDictionary *connProps = [NSMutableDictionary dictionaryWithCapacity:3];
-        if ([cmd respondsToSelector:@selector(connectionType)]) {
-            [connProps setObject:[cmd connectionType] forKey:@"type"];
-        }
-        [devProps setObject:connProps forKey:@"connection"];
-    }
-    
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;
 }

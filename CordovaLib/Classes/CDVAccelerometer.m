@@ -29,33 +29,30 @@
 // min rate of 1/sec
 #define kMaxAccelerometerInterval   1000
 
+- (CDVAccelerometer*) init
+{
+    self = [super init];
+    if (self)
+    {
+        timeout = 30000;
+        x = 0;
+        y = 0;
+        z = 0;
+        timestamp = 0;
+        lastAccessTime = 0;
+    }
+    return self;
+}
 
+- (void) dealloc {
+    [self stop];
+    [super dealloc]; // pretty important.
+}
 
-
-- (void)start:(NSMutableArray*)arguments
-	 withDict:(NSMutableDictionary*)options
+- (void)start
 {
 	
 	NSTimeInterval desiredFrequency_num = kAccelerometerInterval;
-	
-	if ([options objectForKey:@"frequency"]) 
-	{
-		int nDesFreq = [(NSString *)[options objectForKey:@"frequency"] intValue];
-		// Special case : returns 0 if int conversion fails
-		if(nDesFreq == 0)
-		{
-			nDesFreq = desiredFrequency_num;
-		}
-		else if(nDesFreq < kMinAccelerometerInterval) 
-		{
-			nDesFreq = kMinAccelerometerInterval;
-		}
-		else if(nDesFreq > kMaxAccelerometerInterval)
-		{
-			nDesFreq = kMaxAccelerometerInterval;
-		}
-		desiredFrequency_num = nDesFreq;
-	}
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
 	pAccel.updateInterval = desiredFrequency_num / 1000;
@@ -67,26 +64,80 @@
 }
 
 
-- (void)stop:(NSMutableArray*)arguments
-	withDict:(NSMutableDictionary*)options
+- (void)stop
 {
 	UIAccelerometer*  theAccelerometer = [UIAccelerometer sharedAccelerometer];
 	theAccelerometer.delegate = nil;
 	_bIsRunning = NO;
 }
 
-
 /**
  * Sends Accel Data back to the Device.
+ */
+- (void)getAcceleration:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+	NSString* callbackId = [arguments objectAtIndex:0];
+    
+    if(!_bIsRunning)
+    {
+        [self start];
+    }
+    // set last access time to right now
+    lastAccessTime = ([[NSDate date] timeIntervalSince1970] * 1000);
+    
+    // Create an acceleration object
+    NSMutableDictionary *accelProps = [NSMutableDictionary dictionaryWithCapacity:4];
+    [accelProps setValue:[NSNumber numberWithInteger:x] forKey:@"x"];
+    [accelProps setObject:[NSNumber numberWithInteger:y] forKey:@"y"];
+    [accelProps setObject:[NSNumber numberWithInteger:z] forKey:@"z"];
+    [accelProps setObject:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
+    jsString = [result toSuccessCallbackString:callbackId];
+    [self writeJavascript:jsString];
+}
+
+- (void)getTimeout:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+	NSString* callbackId = [arguments objectAtIndex:0];
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:timeout];
+    jsString = [result toSuccessCallbackString:callbackId];
+    [self writeJavascript:jsString];
+}
+
+- (void)setTimeout:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+	NSString* callbackId = [arguments objectAtIndex:0];
+    float newTimeout = [[arguments objectAtIndex:1] floatValue];
+    timeout = newTimeout;
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    jsString = [result toSuccessCallbackString:callbackId];
+    [self writeJavascript:jsString];
+}
+/**
+ * Picks up accel updates from device and stores them in this class
  */
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration 
 {
 	if(_bIsRunning)
 	{
-		NSString * jsCallBack = nil;
-		jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._onAccelUpdate(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];
-		[self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-		[jsCallBack release];
+        x = acceleration.x;
+        y = acceleration.y;
+        z = acceleration.z;
+        timestamp = ([[NSDate date] timeIntervalSince1970] * 1000);
+        
+        // read frequency and compare to timeout so we can see if we should turn off accel listening
+        if ((timestamp - lastAccessTime) > timeout) {
+			[self stop];
+		}		
 	}
 }
 
