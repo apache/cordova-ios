@@ -974,7 +974,13 @@ DirectoryEntry.prototype.remove = function(successCallback, errorCallback) {
  * @param {Function} successCallback is called with the new entry
  * @param {Function} errorCallback is called with a FileError
  */
+ DirectoryEntry.prototype.toURL = function(mimeType, successCallback, errorCallback) {
+    return "file://localhost" + this.fullPath;
+    //Cordova.exec(successCallback, errorCallback, "org.apache.cordova.file", "toURI", [this.fullPath, mimeType]);
+};
+
 DirectoryEntry.prototype.toURI = function(mimeType, successCallback, errorCallback) {
+	console.log("DEPRECATED: Update your code to use 'toURL'");
     return "file://localhost" + this.fullPath;
     //Cordova.exec(successCallback, errorCallback, "org.apache.cordova.file", "toURI", [this.fullPath, mimeType]);
 };
@@ -1115,7 +1121,13 @@ FileEntry.prototype.remove = function(successCallback, errorCallback) {
  * @param {Function} successCallback is called with the new entry
  * @param {Function} errorCallback is called with a FileError
  */
+FileEntry.prototype.toURL = function(mimeType, successCallback, errorCallback) {
+    return "file://localhost" + this.fullPath;
+    //Cordova.exec(successCallback, errorCallback, "org.apache.cordova.file", "toURI", [this.fullPath, mimeType]);
+};
+
 FileEntry.prototype.toURI = function(mimeType, successCallback, errorCallback) {
+	console.log("DEPRECATED: Update your code to use 'toURL'");
     return "file://localhost" + this.fullPath;
     //Cordova.exec(successCallback, errorCallback, "org.apache.cordova.file", "toURI", [this.fullPath, mimeType]);
 };
