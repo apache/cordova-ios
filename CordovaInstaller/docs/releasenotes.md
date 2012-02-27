@@ -1,6 +1,23 @@
-## Release Notes for Cordova ({VERSION})  ##
+## Release Notes for Cordova (1.5.0rc1)  ##
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
+### 1.5.0rc1 (20120227) ###
+
+* Updated the Upgrade Guide for 1.4.1
+* Added UIWebViewBounce key to PhoneGap.plist (default is YES) (originally from an @alunny pull 
+* Updated README.md FAQ item #5 (upgrades)
+* Added the German and Swedish resources to the Xcode templates
+* Fixes CB-149 - Black Bar visible after landscape video
+* Fixes CB-221 - On an orientation change, the orientationchange event not fired on iOS 3 and 4 
+* Rename PhoneGap to Cordova.
+* Fixed typo, added missing step.
+* Cordova rename fixes.
+* Completed Cordova Guides for 1.5.0
+* Fixed CB-253 - Xcode 4 Cordova-based Application - DEBUG macro not defined
+* Default GCC_VERSION is com.apple.compilers.llvm.clang.1_0 now
+* Removed Xcode and iOS SDK checks in the installer (for Xcode 4.3 installs which go under /Appl
+
+<br/>
 
 ### 1.4.1 (20120201) ###
 * Fixed CB-212 - iOS orientation switch broken in 1.4.0

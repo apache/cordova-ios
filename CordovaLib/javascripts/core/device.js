@@ -11,14 +11,14 @@ Device = function()
     this.platform = null;
     this.version  = null;
     this.name     = null;
-    this.phonegap      = null;
+    this.cordova  = null;
     this.uuid     = null;
     try 
 	{      
 		this.platform = DeviceInfo.platform;
 		this.version  = DeviceInfo.version;
 		this.name     = DeviceInfo.name;
-		this.phonegap = DeviceInfo.gap;
+		this.cordova  = DeviceInfo.gap;
 		this.uuid     = DeviceInfo.uuid;
 
     } 
