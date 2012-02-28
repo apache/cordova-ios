@@ -170,7 +170,7 @@
         }
     }
     
-    NSLog([self errorStringForURL:url], @"");
+    NSLog(@"%@",[self errorStringForURL:url]);
     // if we got here, the url host is not in the white-list, do nothing
     return NO;
 }
