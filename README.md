@@ -43,6 +43,9 @@ Create a Cordova project (Xcode 4)
 3. Select the "Next" button, name your project and company idenfifier, then select the "Next" button again.
 4. Choose the location where you want the new project to be.
 5. Run the project at least once to create the "www" folder in your project folder.
+  - If you get compilation errors complaining about "NSAutoreleasePool",
+    make sure to change project's Build Settings in Xcode for the
+    "Compiler for C/C++/Objective-C" to "LLVM GCC 4.2"
 6. Drag and drop this "www" folder into your project in Xcode, and add it as a **folder reference** (**BLUE** folder).
 7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
