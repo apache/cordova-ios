@@ -25,10 +25,10 @@
 @interface CDVAccelerometer : CDVPlugin<UIAccelerometerDelegate> 
 {
 	bool _bIsRunning;
-	float x;
-    float y;
-    float z;
-    float timeout;
+	double x;
+    double y;
+    double z;
+    double timeout;
     NSTimeInterval timestamp;
     NSTimeInterval lastAccessTime;
 }

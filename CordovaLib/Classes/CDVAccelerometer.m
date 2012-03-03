@@ -51,7 +51,6 @@
 
 - (void)start
 {
-	
 	NSTimeInterval desiredFrequency_num = kAccelerometerInterval;
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
@@ -89,10 +88,10 @@
     
     // Create an acceleration object
     NSMutableDictionary *accelProps = [NSMutableDictionary dictionaryWithCapacity:4];
-    [accelProps setValue:[NSNumber numberWithInteger:x] forKey:@"x"];
-    [accelProps setObject:[NSNumber numberWithInteger:y] forKey:@"y"];
-    [accelProps setObject:[NSNumber numberWithInteger:z] forKey:@"z"];
-    [accelProps setObject:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
+    [accelProps setValue:[NSNumber numberWithDouble:x] forKey:@"x"];
+    [accelProps setValue:[NSNumber numberWithDouble:y] forKey:@"y"];
+    [accelProps setValue:[NSNumber numberWithDouble:z] forKey:@"z"];
+    [accelProps setValue:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
     
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
     jsString = [result toSuccessCallbackString:callbackId];
