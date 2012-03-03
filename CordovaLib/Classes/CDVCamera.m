@@ -32,11 +32,11 @@
 	(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
-- (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 	
-	NSString* sourceTypeString = [options valueForKey:@"sourceType"];
+	NSString* sourceTypeString = [arguments objectAtIndex:3];
 	UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeCamera; // default
 	if (sourceTypeString != nil) 
 	{
@@ -50,9 +50,10 @@
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
         
 	} else {
-        bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
-        NSNumber* targetWidth = [options valueForKey:@"targetWidth"];
-        NSNumber* targetHeight = [options valueForKey:@"targetHeight"];
+        // TODO: re-enable this?
+        // bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
+        NSNumber* targetWidth = [arguments objectAtIndex:4];
+        NSNumber* targetHeight = [arguments objectAtIndex:5];
         NSNumber* mediaValue = [options valueForKey:@"mediaType"];
         CDVMediaType mediaType = (mediaValue) ? [mediaValue intValue] : MediaTypePicture;
         
@@ -69,15 +70,17 @@
         
         self.pickerController.delegate = self;
         self.pickerController.sourceType = sourceType;
-        self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
+        //self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
+        // TODO: wtf?
         self.pickerController.correctOrientation = [[options valueForKey:@"correctOrientation"] boolValue];
         self.pickerController.saveToPhotoAlbum = [[options valueForKey:@"saveToPhotoAlbum"] boolValue];
-        self.pickerController.encodingType = [[options valueForKey:@"encodingType"] intValue] || EncodingTypeJPEG;
         
-        self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
-        self.pickerController.returnType = (CDVDestinationType)[options integerValueForKey:@"destinationType" defaultValue:1 withRange:NSMakeRange(0, 2)];
+        self.pickerController.encodingType = [[arguments objectAtIndex:6] intValue] || EncodingTypeJPEG;
+        
+        self.pickerController.quality = [[arguments objectAtIndex:1] intValue] || 50;
+        self.pickerController.returnType = (CDVDestinationType)[[arguments objectAtIndex:2] intValue] || DestinationTypeFileUri;
        
         if (sourceType == UIImagePickerControllerSourceTypeCamera) {
             // we only allow taking pictures (no video) in this api
