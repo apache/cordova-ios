@@ -24,11 +24,13 @@
 @interface CDVBattery : CDVPlugin {
 	UIDeviceBatteryState state;
     float level; 
+    bool isPlugged;
 	NSString* callbackId;
 }
 
 @property (nonatomic) UIDeviceBatteryState state;
 @property (nonatomic) float level;
+@property (nonatomic) bool isPlugged;
 @property (retain) NSString* callbackId;
 
 - (void) updateBatteryStatus:(NSNotification*)notification;

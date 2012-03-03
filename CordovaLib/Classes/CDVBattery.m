@@ -27,7 +27,7 @@
 
 @implementation CDVBattery
 
-@synthesize state, level, callbackId;
+@synthesize state, level, callbackId, isPlugged;
 
 
 /*  determining type of event occurs on JavaScript side
@@ -75,11 +75,10 @@
  */
 - (NSDictionary*) getBatteryStatus
 {
-    
     UIDevice* currentDevice = [UIDevice currentDevice];
     UIDeviceBatteryState currentState = [currentDevice batteryState];
     
-    BOOL isPlugged = FALSE; // UIDeviceBatteryStateUnknown or UIDeviceBatteryStateUnplugged
+    isPlugged = FALSE; // UIDeviceBatteryStateUnknown or UIDeviceBatteryStateUnplugged
     if (currentState == UIDeviceBatteryStateCharging || currentState == UIDeviceBatteryStateFull) {
         isPlugged = TRUE;
     }
