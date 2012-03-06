@@ -96,12 +96,13 @@ typedef NSUInteger CDVMediaMsg;
 @property (nonatomic, retain) NSMutableDictionary* soundCache;
 @property (nonatomic, retain) AVAudioSession* avSession;
 
-- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) stopPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) seekToAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) release:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+//- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (BOOL) hasAudioSession;
 
 // helper methods
@@ -109,7 +110,7 @@ typedef NSUInteger CDVMediaMsg;
 - (BOOL) prepareToPlay: (CDVAudioFile*) audioFile withId: (NSString*)mediaId;
 - (NSString*) createMediaErrorWithCode: (CDVMediaError) code message: (NSString*) message;
 
-- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end
