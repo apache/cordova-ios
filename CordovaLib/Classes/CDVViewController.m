@@ -166,8 +166,7 @@
      */
     
     if ([enableLocation boolValue]) {
-        // TODO: change this package name
-        [[self.commandDelegate getCommandInstance:@"org.apache.cordova.geolocation"] startLocation:nil withDict:nil];
+        [[self.commandDelegate getCommandInstance:@"Geolocation"] startLocation];
     }
     
     /*
@@ -207,6 +206,7 @@
     }
     
 	self.commandDelegate = self;
+
 }
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
@@ -353,7 +353,6 @@
  */
 - (void) webViewDidStartLoad:(UIWebView*)theWebView 
 {
-    
 }
 
 /**
@@ -817,7 +816,7 @@ BOOL gSplashScreenShown = NO;
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
-    [devProps setObject:[[self class] cordovaVersion ] forKey:@"gap"];
+    //[devProps setObject:[[self class] cordovaVersion ] forKey:@"gap"];
     
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;
@@ -880,7 +879,6 @@ static NSString* cdvVersion;
         cdvVersion = [first_line retain];
     }
 #endif
-    
     return cdvVersion;
 }
 
@@ -893,7 +891,6 @@ static NSString* cdvVersion;
  */
 - (void) onAppWillTerminate:(NSNotification*)notification
 {
-    NSLog(@"applicationWillTerminate");
     
     // empty the tmp directory
     NSFileManager* fileMgr = [[NSFileManager alloc] init];

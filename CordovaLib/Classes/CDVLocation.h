@@ -22,49 +22,35 @@
 #import <CoreLocation/CoreLocation.h>
 #import "CDVPlugin.h"
 
-enum CDVHeadingStatus {
-	HEADINGSTOPPED = 0,
-    HEADINGSTARTING,
-	HEADINGRUNNING,
-    HEADINGERROR
-};
-typedef NSUInteger CDVHeadingStatus;
-
-// simple object to keep track of heading information
-@interface CDVHeadingData : NSObject {
-    CDVHeadingStatus     headingStatus;
-    BOOL              headingRepeats;
-    CLHeading*        headingInfo;
-    NSMutableArray*   headingCallbacks;
-    NSString*         headingFilter;
-    
-}
-
-@property (nonatomic, assign) CDVHeadingStatus headingStatus;
-@property (nonatomic, assign) BOOL headingRepeats;
-@property (nonatomic, retain) CLHeading* headingInfo;
-@property (nonatomic, retain) NSMutableArray* headingCallbacks;
-@property (nonatomic, retain) NSString* headingFilter;
-
-@end
-
 @interface CDVLocation : CDVPlugin <CLLocationManagerDelegate> {
-
-    @private BOOL              __locationStarted;
-    CDVHeadingData*    headingData;
+    @private BOOL __locationStarted;
+    @private NSString *callbackId;
+    double timestamp;
+    double latitude;
+    double longitude;
+    double altitude;
+    double velocity;
+    double heading;
+    double accuracy;
+    double altitudeAccuracy;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, retain) CDVHeadingData* headingData;
+@property double timestamp;
+@property double latitude;
+@property double longitude;
+@property double altitude;
+@property double velocity;
+@property double heading;
+@property double accuracy;
+@property double altitudeAccuracy;
 
-
-- (BOOL) hasHeadingSupport;
-
-- (void)startLocation:(NSMutableArray*)arguments
+- (void)getLocation:(NSMutableArray*)arguments
      withDict:(NSMutableDictionary*)options;
 
-- (void)stopLocation:(NSMutableArray*)arguments
-    withDict:(NSMutableDictionary*)options;
+- (void)startLocation;
+
+- (void)stopLocation;
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -74,17 +60,6 @@ typedef NSUInteger CDVHeadingStatus;
        didFailWithError:(NSError *)error;
 
 - (BOOL) isLocationServicesEnabled;
-
-- (void)getCurrentHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)returnHeadingInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
-
-- (void)stopHeading:(NSMutableArray*)arguments
-		   withDict:(NSMutableDictionary*)options;
-- (void) startHeadingWithFilter: (CLLocationDegrees) filter;
-- (void)locationManager:(CLLocationManager *)manager
-	   didUpdateHeading:(CLHeading *)heading;
-
-- (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager;
 
 @end
 
