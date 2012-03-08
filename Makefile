@@ -40,9 +40,11 @@ CONVERTPDF = /System/Library/Printers/Libraries/convert
 COMBINEPDF = /System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
-DEVELOPER = $(shell xcode-select -print-path)
-PACKAGEMAKER = '$(DEVELOPER)/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker'
-XC = xcodebuild
+XC_APP = '$(shell mdfind "kMDItemDisplayName=='Xcode' && kMDItemKind=='Application'")'
+DEVELOPER = '$(XC_APP)/Contents/Developer'
+PM_APP = '$(shell mdfind "kMDItemDisplayName=='PackageMaker*' && kMDItemKind=='Application'")'
+PACKAGEMAKER = '$(PM_APP)/Contents/MacOS/PackageMaker'
+XC = $(DEVELOPER)/usr/bin/xcodebuild
 CDV_VER = $(shell head -1 CordovaLib/VERSION)
 GIT = $(shell which git)
 COMMIT_HASH=$(shell git describe --tags)	
@@ -150,10 +152,18 @@ clean: clean-installer clean-cordova-lib clean-xcode3-template clean-xcode4-temp
 	fi
 	@$(RM_RF) $(BUILD_BAK)
 
-checkos:
+check-os:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
 
-installer: clean markdown wkhtmltopdf cordova-lib xcode3-template xcode4-template cordova-framework
+check-utils:
+		@if [ $(XC_APP) == '' ] ; then \
+			echo 'No Xcode found. Please download from the Mac App Store.'; exit 1;  \
+		fi
+		@if [ $(PM_APP) == '' ] ; then \
+			echo 'No PackageMaker found. You need to download the Xcode Auxiliary Tools: https://developer.apple.com/downloads/index.action?name=auxiliary'; exit 1; \
+		fi
+
+installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xcode4-template cordova-framework
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
