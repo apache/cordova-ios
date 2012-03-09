@@ -95,6 +95,11 @@ typedef NSUInteger CDVMediaMsg;
 }
 @property (nonatomic, retain) NSMutableDictionary* soundCache;
 @property (nonatomic, retain) AVAudioSession* avSession;
+//DEPRECATED
+- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));	  	
+- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED
 
 - (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
@@ -102,13 +107,23 @@ typedef NSUInteger CDVMediaMsg;
 - (void) seekToAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) release:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-//- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+// DEPRECATED
+- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED
+
 - (BOOL) hasAudioSession;
 
 // helper methods
 - (CDVAudioFile*) audioFileForResource:(NSString*) resourcePath withId: (NSString*)mediaId;
 - (BOOL) prepareToPlay: (CDVAudioFile*) audioFile withId: (NSString*)mediaId;
 - (NSString*) createMediaErrorWithCode: (CDVMediaError) code message: (NSString*) message;
+
+// DEPRECATED
+- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED
 
 - (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

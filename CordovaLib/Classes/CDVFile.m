@@ -142,7 +142,7 @@
 	NSString* jsString = nil;
 	
 	if (type > 1){
-		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 		jsString = [result toErrorCallbackString:callbackId];
 		NSLog(@"iOS only supports TEMPORARY and PERSISTENT file systems");
 	} else {
@@ -153,7 +153,7 @@
 		NSNumber* pNumAvail = [self checkFreeDiskSpace: fullPath];
 		//NSLog(@"Free space: %@", [NSString stringWithFormat:@"%qu", [ pNumAvail unsignedLongLongValue ]]);
 		if (pNumAvail && [pNumAvail unsignedLongLongValue] < size) {
-			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: QUOTA_EXCEEDED_ERR cast: @"window.localFileSystem._castError"];
+			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: QUOTA_EXCEEDED_ERR];
 			jsString = [result toErrorCallbackString:callbackId];
 		} 
 		else {
@@ -161,7 +161,7 @@
 			[fileSystem setObject: (type == TEMPORARY ? kW3FileTemporary : kW3FilePersistent)forKey:@"name"];
 			NSDictionary* dirEntry = [self getDirectoryEntry: fullPath isDirectory: YES];
 			[fileSystem setObject:dirEntry forKey:@"root"];
-			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: fileSystem cast: @"window.localFileSystem._castFS"];
+			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: fileSystem];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
 	}
@@ -233,7 +233,7 @@
 	
 	if (!testUri || ![testUri isFileURL]) {
 		// issue ENCODING_ERR
-		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: ENCODING_ERR cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: ENCODING_ERR];
 		jsString = [result toErrorCallbackString:callbackId];
 	} else {
 		NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -258,18 +258,18 @@
 			}
 			if (foundFullPath == nil) {
 				// error SECURITY_ERR - not one of the two paths types supported
-				result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: SECURITY_ERR cast: @"window.localFileSystem._castError"];
+				result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: SECURITY_ERR];
 				jsString = [result toErrorCallbackString:callbackId];
 			} else {
 				NSDictionary* fileSystem = [self getDirectoryEntry: path isDirectory: isDir];
-				result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: fileSystem cast: @"window.localFileSystem._castEntry"];
+				result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: fileSystem];
 				jsString = [result toSuccessCallbackString:callbackId];
 								
 			}
 		
 		} else {
 			// return NOT_FOUND_ERR
-			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast: @"window.localFileSystem._castError"];
+			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 			jsString = [result toErrorCallbackString:callbackId];
 			
 		}
@@ -403,7 +403,7 @@
 			} else {
 				//NSLog(@"newly created file/dir (%@) exists: %d", reqFullPath, [fileMgr fileExistsAtPath:reqFullPath]);
 				// file existed or was created
-				result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [self getDirectoryEntry: reqFullPath isDirectory: bDirRequest] cast: @"window.localFileSystem._castEntry"];
+				result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [self getDirectoryEntry: reqFullPath isDirectory: bDirRequest]];
 				jsString = [result toSuccessCallbackString: callbackId];
 			}
 		} // are all possible conditions met?
@@ -413,7 +413,7 @@
 	
 	if (errorCode > 0) {
 		// create error callback
-		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: errorCode cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: errorCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	
@@ -460,14 +460,14 @@
 		BOOL bIsDir;
 		BOOL bExists = [fileMgr fileExistsAtPath: newPath isDirectory: &bIsDir];
 		if (bExists) {
-			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [self getDirectoryEntry:newPath isDirectory:bIsDir] cast: @"window.localFileSystem._castEntry"];
+			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [self getDirectoryEntry:newPath isDirectory:bIsDir]];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
 		[fileMgr release];
 	}
 	if (!jsString) {
 		// invalid path or file does not exist
-		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 		jsString = [result toErrorCallbackString: callbackId];
 	}
 	[self writeJavascript:jsString];
@@ -496,10 +496,11 @@
 	if (fileAttribs){
 		NSDate* modDate = [fileAttribs fileModificationDate];
 		if (modDate){
-			NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970]*1000];
-			NSMutableDictionary* metadataDict = [NSMutableDictionary dictionaryWithCapacity:1];
-			[metadataDict setObject:msDate forKey:@"modificationTime"];
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: metadataDict cast: @"window.localFileSystem._castDate"];
+			//NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970]*1000];
+			//NSMutableDictionary* metadataDict = [NSMutableDictionary dictionaryWithCapacity:1];
+			//[metadataDict setObject:msDate forKey:@"modificationTime"];
+			//result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: metadataDict cast: @"window.localFileSystem._castDate"];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: [modDate timeIntervalSince1970]*1000];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
 	} else {
@@ -510,7 +511,7 @@
 			errorCode = NOT_FOUND_ERR;
 		}
 		// log [NSNumber numberWithDouble: theMessage] objCtype to see what it returns
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	if (jsString){
@@ -560,7 +561,7 @@
 		[fileMgr release];
 	}
 	if (errorCode > 0) {
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode cast:@"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	} else {
 		// perform actual remove
@@ -593,7 +594,7 @@
 	
 	// error if try to remove top level (documents or tmp) dir
 	if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]){
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NO_MODIFICATION_ALLOWED_ERR cast:@"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NO_MODIFICATION_ALLOWED_ERR];
 		jsString = [result toErrorCallbackString:callbackId];
 	} else {
 		jsString = [self doRemove: fullPath callback: callbackId];
@@ -632,11 +633,11 @@
 				errorCode = NO_MODIFICATION_ALLOWED_ERR;
 			}
 			
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode cast: @"window.localFileSystem._castError"];
+			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode];
 			jsString = [result toErrorCallbackString:callbackId];
 		}
 	} @catch (NSException* e) { // NSInvalidArgumentException if path is . or ..
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: SYNTAX_ERR cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: SYNTAX_ERR];
 		jsString = [result toErrorCallbackString:callbackId];	
 	}
 	@finally {
@@ -694,22 +695,23 @@
 - (void) doCopyMove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options  isCopy:(BOOL)bCopy
 {
 	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    VERIFY_ARGUMENTS(arguments, 2, callbackId)
     
 	// arguments
     NSString* srcFullPath = [arguments objectAtIndex:0];
+    NSString* destRootPath = [arguments objectAtIndex:1];
     // optional argument
-    NSString* newName = ([arguments count] > 1) ? [arguments objectAtIndex:1] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
+    NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
 
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
 	CDVFileError errCode = 0;  // !! Currently 0 is not defined, use this to signal error !!
 		
-	NSString* destRootPath = nil;
+	/*NSString* destRootPath = nil;
 	NSString* key = @"fullPath";
 	if([options valueForKeyIsString:key]){
 	   destRootPath = [options objectForKey:@"fullPath"];
-	}
+	}*/
 	
 	if (!destRootPath) {
 		// no destination provided
@@ -786,7 +788,7 @@
 				if (bSuccess) {
 					// should verify it is there and of the correct type???
 					NSDictionary* newEntry = [self getDirectoryEntry: newFullPath isDirectory:bSrcIsDir]; //should be the same type as source
-					result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: newEntry cast: @"window.localFileSystem._castEntry"];
+					result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: newEntry];
 					jsString = [result toSuccessCallbackString:callbackId];
 				}
 				else {
@@ -806,7 +808,7 @@
 		}
 	}
 	if (errCode > 0) {
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errCode cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	
@@ -868,7 +870,7 @@
 		// make sure it exists and is not a directory
 		BOOL bExists = [fileMgr fileExistsAtPath:fullPath isDirectory: &bIsDir];
 		if(!bExists || bIsDir){
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast:@"window.localFileSystem._castError"];
+			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 			jsString = [result toErrorCallbackString:callbackId];
 		} else {
 			// create dictionary of file info
@@ -882,7 +884,7 @@
 			NSDate* modDate = [fileAttrs fileModificationDate];
 			NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970]*1000];
 			[fileInfo setObject:msDate forKey:@"lastModifiedDate"];
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: fileInfo cast: @"window.localFileSystem._castDate"];
+			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: fileInfo];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
 		[fileMgr release];
@@ -918,11 +920,11 @@
 				[entries addObject:entryDict];
 			}
 		}
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: entries cast: @"window.localFileSystem._castEntries"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: entries];
 		jsString = [result toSuccessCallbackString:callbackId];
 	} else {
 		// assume not found but could check error for more specific error conditions
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 		jsString = [result toErrorCallbackString:callbackId];
 	} 
 
@@ -931,6 +933,13 @@
 	[self writeJavascript: jsString];
 	
 }
+// DEPRECATED
+- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"readFile is DEPRECATED!  Use readAsText");
+    [self readAsText: arguments withDict: options];
+}
+
 /* read and return file data 
  * IN: 
  * NSArray* arguments
@@ -940,7 +949,7 @@
  * NSMutableDictionary* options
  *	empty
  */
-- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) readAsText:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments pop];
     VERIFY_ARGUMENTS(arguments, 1, callbackId)
@@ -956,7 +965,7 @@
 	
 	if(!file){
 		// invalid path entry
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 		jsString = [result toErrorCallbackString:callbackId];
 	} else {
 		NSData* readData = [ file readDataToEndOfFile];
@@ -1027,7 +1036,7 @@
 		}
 	}
 	if (!jsString){
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errCode cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	//NSLog(@"readAsDataURL return: %@", jsString);
@@ -1065,8 +1074,13 @@
 	}
 	return mimeType;
 }
-
+// DEPRECATED
 - (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"truncateFile is DEPRECATED!  Use truncate");
+    [self truncate: arguments withDict: options];
+}
+- (void) truncate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments pop];
     VERIFY_ARGUMENTS(arguments, 2, callbackId)
@@ -1154,7 +1168,7 @@
 	}
 	if(!jsString) {
 		// was an error 
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errCode cast: @"window.localFileSystem._castError"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	[self writeJavascript: jsString];

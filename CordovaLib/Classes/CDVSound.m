@@ -143,7 +143,12 @@
     return [errorDict JSONString];
     
 }
-
+// DEPRECATED
+- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"play is DEPRECATED!  Use startPlayingAudio.");
+    [self startPlayingAudio:arguments withDict:options];
+}
 - (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 
@@ -263,9 +268,11 @@
 // if no errors sets status to starting and calls successCallback with no parameters
 // Calls the success call back immediately as there is no mechanism to determine that the file is loaded
 // other than the return from prepareToPlay.  Thus, IMHO not really worth calling
-/*
+
 - (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+    NSLog(@"prepare is DEPRECATED! Recoding will be prepared when startPlayingAudio is called");
+    
 	NSString* callbackId = [arguments objectAtIndex:0]; 
     
     NSString* mediaId = [arguments objectAtIndex:1];
@@ -303,9 +310,14 @@
         [super writeJavascript:jsString];
     }
 	
-}*/
+}
 
-
+// DEPRECATED
+- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"stop is DEPRECATED!  Use stopPlayingAudio.");
+    [self stopPlayingAudio:arguments withDict:options];
+}
 
 - (void) stopPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -324,6 +336,12 @@
     if (jsString){
         [super writeJavascript: jsString];
     }
+}
+// DEPRECATED
+- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"pause is DEPRECATED!  Use pausePlayingAudio.");
+    [self pausePlayingAudio:arguments withDict:options];
 }
 
 - (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -400,6 +418,12 @@
 		}
 	}
 }
+// DEPRECATED
+- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"getCurrentPosition is DEPRECATED!  Use getCurrentPositionAudio.");
+    [self getCurrentPositionAudio:arguments withDict:options];
+}
 
 - (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -422,6 +446,12 @@
     
 	return;
 		
+}
+// DEPRECATED
+- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"startAudioRecord is DEPRECATED!  Use startRecordingAudio.");
+    [self startRecordingAudio:arguments withDict:options];
 }
 
 - (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -479,6 +509,12 @@
        [super writeJavascript:jsString]; 
     }
 	return;
+}
+// DEPRECATED
+- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"stopAudioRecord is DEPRECATED!  Use stopRecordingAudio.");
+    [self stopRecordingAudio:arguments withDict:options];
 }
 
 - (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options

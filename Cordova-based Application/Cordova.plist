@@ -26,6 +26,8 @@
 	</array>
 	<key>Plugins</key>
 	<dict>
+		<key>Compass</key>
+		<string>CDVLocation</string>
 		<key>Accelerometer</key>
 		<string>CDVAccelerometer</string>
 		<key>Camera</key>
