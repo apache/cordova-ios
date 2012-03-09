@@ -366,7 +366,7 @@
     [theWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
 	
     NSDictionary *deviceProperties = [ self deviceProperties];
-    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"try{require('cordova/plugin/ios/device').setInfo(%@);}catch(e){alert('errorz1!!!');alert(JSON.stringify(e))}", [deviceProperties JSONString]];
+    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"try{cordova.require('cordova/plugin/ios/device').setInfo(%@);}catch(e){alert('errorz1!!!');alert(JSON.stringify(e))}", [deviceProperties JSONString]];
     
     /* Settings.plist
      * Read the optional Settings.plist file and push these user-defined settings down into the web application.
@@ -399,7 +399,7 @@
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
     
     // Tell the webview that native is ready.
-    NSString* nativeReady = @"try{require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
+    NSString* nativeReady = @"try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
     [theWebView stringByEvaluatingJavaScriptFromString:nativeReady];
 }
 
@@ -689,7 +689,7 @@ BOOL gSplashScreenShown = NO;
 {
     // Grab all the queued commands from the JS side.
     NSString* queuedCommandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:
-									@"require('cordova/plugin/ios/nativecomm')()"];
+									@"cordova.require('cordova/plugin/ios/nativecomm')()"];
 	
 	
     // Parse the returned JSON array.
@@ -717,7 +717,7 @@ BOOL gSplashScreenShown = NO;
 - (void) flushCommandQueue
 {
     [self.webView stringByEvaluatingJavaScriptFromString:
-	 @"require('cordova').commandQueueFlushing = true"];
+	 @"cordova.commandQueueFlushing = true"];
 	
     // Keep executing the command queue until no commands get executed.
     // This ensures that commands that are queued while executing other
@@ -728,11 +728,20 @@ BOOL gSplashScreenShown = NO;
     } while (numExecutedCommands != 0);
 	
     [self.webView stringByEvaluatingJavaScriptFromString:
-	 @"require('cordova').commandQueueFlushing = false"];
+	 @"cordova.commandQueueFlushing = false"];
 }
 
 - (BOOL) execute:(CDVInvokedUrlCommand*)command
 {
+    NSLog(@"execute %@ : %@", command.className, command.methodName);
+    NSLog(@"arguments:");
+    for (id t in command.arguments) {
+        NSLog(@"%@", t);
+    }
+    NSLog(@"options:");
+    for (id t in command.options) {
+        NSLog(@"%@", t);
+    }
     if (command.className == nil || command.methodName == nil) {
         return NO;
     }
@@ -920,7 +929,7 @@ static NSString* cdvVersion;
 {
     //NSLog(@"%@",@"applicationWillResignActive");
     // TODO: uhh, wut? pause/resume not enough?
-    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('resign');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resign');"];
 }
 
 /*
@@ -931,7 +940,7 @@ static NSString* cdvVersion;
 - (void) onAppWillEnterForeground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationWillEnterForeground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('resume');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resume');"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state. 
@@ -939,7 +948,7 @@ static NSString* cdvVersion;
 {
     //NSLog(@"%@",@"applicationDidBecomeActive");
     // TODO: uhh, wut? pause/resume not enough?
-    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('active');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('active');"];
 }
 
 /*
@@ -949,7 +958,7 @@ static NSString* cdvVersion;
 - (void) onAppDidEnterBackground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"require('cordova').fireDocumentEvent('pause');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('pause');"];
 }
 
 // ///////////////////////
