@@ -54,7 +54,7 @@ It is recommended that you follow the Cordova.framework instructions below, the 
 13. Add **"$(CORDOVALIB)/Classes"** and check the **Recursive** checkbox - for the **"Header Search Paths"** value
 14. Add **"-all_load"** and **"-Obj-C"** - for the **"Other Linker Flags"** value
 15. Click on the **project icon** in the Project Navigator, select your **Target**, then select the **"Build Phases"** tab
-16. Expand **"Link Binaries with Libraries"**
+16. Expand **"Link Binaries with Libraries"** 
 17. Click on the **"+" button**, and add these **frameworks** (and optionally in the Project Navigator, **move** them under the Frameworks group):
 
         AddressBook.framework
@@ -67,10 +67,26 @@ It is recommended that you follow the Cordova.framework instructions below, the 
         SystemConfiguration.framework
         MobileCoreServices.framework
         CoreMedia.framework
-18. Expand **"Target Dependencies"**
+18. Expand **"Target Dependencies"** - the top box labeled like this if
+    you have multiple boxes!
 19. Click on the **"+" button**, and add the **"CordovaLib"** build product
-20. Expand **"Link Binaries with Libraries"**
+20. Expand **"Link Binaries with Libraries"** - the top box labeled like
+    this if you have multiple boxes!
 21. Click on the **"+" button**, and add **libCordova.a** 
+
+### Adding new classes to CordovaLib sub-project ###
+
+In general if you are only modifying or debugging existing CordovaLib
+classes you should be OK with just the above steps. However if you are
+adding new classes you need to follow a few additional steps:
+
+1. In your project's Frameworks directory in Xcode, remove
+   "Cordova.framework".
+2. Just to reiterate step 18 and 20 above: make sure your dependencies
+   and libraries are in the top-most boxes under Build Phases for your
+   project's Target.
+3. In your project's Target's Build Settings, search for "Other Linker
+   Flags". Add "-Obj-C" and "-all_load" to this.
 
 ## Using CDVViewController in your code ##
 
