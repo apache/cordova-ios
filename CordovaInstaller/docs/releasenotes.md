@@ -1,7 +1,7 @@
-## Release Notes for Cordova (1.5.0rc1)  ##
+## Release Notes for Cordova ({VERSION})  ##
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
-### 1.5.0r (20120302) ###
+### 1.5.0 (20120302) ###
 
 * Fix NSLog crash in CDVWhitelist.m - parameter order reversed
 * Updated the Upgrade Guide for 1.4.1
