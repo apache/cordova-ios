@@ -34,7 +34,7 @@
 #endif
 
 
-@interface AppDelegate : NSObject < UIApplicationDelegate, UIWebViewDelegate, CDVCommandDelegate > {
+@interface AppDelegate : NSObject < UIApplicationDelegate > {
 
 	NSString* invokeString;
 }

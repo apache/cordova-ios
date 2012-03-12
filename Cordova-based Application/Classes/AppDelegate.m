@@ -79,10 +79,6 @@
     self.viewController.startPage = @"index.html";
     self.viewController.view.frame = viewBounds;
     
-    // over-ride delegates
-    self.viewController.webView.delegate = self;
-    self.viewController.commandDelegate = self;
-
     // check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation
     BOOL forceStartupRotation = YES;
     UIDeviceOrientation curDevOrientation = [[UIDevice currentDevice] orientation];
@@ -131,56 +127,6 @@
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
     
     return YES;    
-}
-
-#pragma PGCommandDelegate implementation
-
-- (id) getCommandInstance:(NSString*)className
-{
-	return [self.viewController getCommandInstance:className];
-}
-
-- (BOOL) execute:(CDVInvokedUrlCommand*)command
-{
-	return [self.viewController execute:command];
-}
-
-- (NSString*) pathForResource:(NSString*)resourcepath;
-{
-	return [self.viewController pathForResource:resourcepath];
-}
-
-#pragma UIWebDelegate implementation
-
-- (void) webViewDidFinishLoad:(UIWebView*) theWebView 
-{
-	// only valid if FooBar.plist specifies a protocol to handle
-	if (self.invokeString)
-	{
-		// this is passed before the deviceready event is fired, so you can access it in js when you receive deviceready
-		NSString* jsString = [NSString stringWithFormat:@"var invokeString = \"%@\";", self.invokeString];
-		[theWebView stringByEvaluatingJavaScriptFromString:jsString];
-	}
-	
-	 // Black base color for background matches the native apps
-   	theWebView.backgroundColor = [UIColor blackColor];
-    
-	return [self.viewController webViewDidFinishLoad:theWebView];
-}
-
-- (void) webViewDidStartLoad:(UIWebView*)theWebView 
-{
-	return [self.viewController webViewDidStartLoad:theWebView];
-}
-
-- (void) webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error 
-{
-	return [self.viewController webView:theWebView didFailLoadWithError:error];
-}
-
-- (BOOL) webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
-{
-	return [self.viewController webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 
 - (void) dealloc
