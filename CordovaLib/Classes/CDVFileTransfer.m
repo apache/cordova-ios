@@ -249,7 +249,9 @@
     NSString* response = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
     // create dictionary to return FileUploadResult object
     NSMutableDictionary* uploadResult = [NSMutableDictionary dictionaryWithCapacity:3];
-    [uploadResult setObject: [response stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
+    if (response != nil) {
+        [uploadResult setObject: [response stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
+    }
     [uploadResult setObject:[NSNumber numberWithInt: self.bytesWritten] forKey:@"bytesSent"];
     [uploadResult setObject:[NSNull null] forKey: @"responseCode"];
     CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadResult cast: @"navigator.fileTransfer._castUploadResult"];
