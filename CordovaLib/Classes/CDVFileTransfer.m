@@ -19,7 +19,7 @@
 
 #import "CDVFileTransfer.h"
 #import "CDVFile.h"
-
+#import "CDVDebug.h"
 
 @implementation CDVFileTransfer
 
@@ -132,7 +132,9 @@
 	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileKey, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
-    NSLog(@"fileData length: %d", [fileData length]);
+    [postBody appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n\r\n", [fileData length]] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    DLog(@"fileData length: %d", [fileData length]);
 	[postBody appendData:fileData];
 	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -151,7 +153,7 @@
 }
 
 - (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"File Transfer downloading file...");
+    DLog(@"File Transfer downloading file...");
     
     [self performSelectorInBackground:@selector(downloadFile:) withObject:arguments];
 }
@@ -165,7 +167,7 @@
     NSData* data = [NSData dataWithContentsOfURL: [NSURL URLWithString:sourceUrl] ];
     NSArray * results = nil;
     
-    NSLog(@"Write file %@", filePath);
+    DLog(@"Write file %@", filePath);
     NSError *error=[[[NSError alloc]init] autorelease];
     
     @try {
@@ -202,7 +204,7 @@
 
     BOOL bDirRequest = NO;
 
-    NSLog(@"File Transfert Download success");
+    DLog(@"File Transfer Download success");
     
     CDVFile * file = [[[CDVFile alloc] init] autorelease];
     
