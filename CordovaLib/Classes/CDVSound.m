@@ -23,6 +23,7 @@
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"
 #define HTTP_SCHEME_PREFIX			@"http://"
+#define HTTPS_SCHEME_PREFIX			@"https://"
 
 @implementation CDVSound
 
@@ -37,7 +38,7 @@
 	
     // first try to find HTTP:// or Documents:// resources
     
-    if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX]){
+    if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX] || [resourcePath hasPrefix:HTTPS_SCHEME_PREFIX]){
         // if it is a http url, use it
         NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
         resourceURL = [NSURL URLWithString:resourcePath];
@@ -223,11 +224,21 @@
     } else {
         NSURLRequest *request = [NSURLRequest requestWithURL:resourceURL];
         NSURLResponse *response = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
+        NSData* data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
         if (playerError) {
             NSLog(@"Unable to download audio from: %@", [resourceURL absoluteString]);
         } else {
-            audioFile.player = [[[ CDVAudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
+            
+            // bug in AVAudioPlayer when playing downloaded data in NSData - we have to download the file and play from disk
+            CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+            CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+            NSString* filePath = [NSString stringWithFormat:@"%@/%@.mp3", NSTemporaryDirectory(), uuidString];
+            CFRelease(uuidString);
+            CFRelease(uuidRef);
+            
+            [data writeToFile:filePath atomically:YES];            
+            NSURL* fileURL = [NSURL fileURLWithPath:filePath];
+            audioFile.player = [[[ CDVAudioPlayer alloc ] initWithContentsOfURL:fileURL error:&playerError] autorelease];
         }
     }
     
