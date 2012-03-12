@@ -40,7 +40,7 @@ CONVERTPDF = /System/Library/Printers/Libraries/convert
 COMBINEPDF = /System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
-XC_APP = '$(shell mdfind "kMDItemDisplayName=='Xcode' && kMDItemKind=='Application'")'
+XC_APP = '$(shell mdfind "kMDItemDisplayName=='Xcode*' && kMDItemKind=='Application'")'
 DEVELOPER = '$(XC_APP)/Contents/Developer'
 PM_APP = '$(shell mdfind "kMDItemDisplayName=='PackageMaker*' && kMDItemKind=='Application'")'
 PACKAGEMAKER = '$(PM_APP)/Contents/MacOS/PackageMaker'
