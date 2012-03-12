@@ -220,8 +220,8 @@ Cordova.exec = function() {
 
     for (var i = 0; i < actionArgs.length; ++i) {
         var arg = actionArgs[i];
-        if (arg == undefined || arg == null) {
-            continue;
+        if (arg == undefined || arg == null) { // nulls are pushed to the args now (becomes NSNull)
+            command.arguments.push(arg);
         } else if (typeof(arg) == 'object') {
             command.options = arg;
         } else {
