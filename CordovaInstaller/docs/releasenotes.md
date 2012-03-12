@@ -5,18 +5,16 @@ Cordova is a static library and static framework that enables developers to incl
 
 * Fix NSLog crash in CDVWhitelist.m - parameter order reversed
 * Updated the Upgrade Guide for 1.4.1
-* Added UIWebViewBounce key to PhoneGap.plist (default is YES) (originally from an @alunny pull 
+* Added UIWebViewBounce key to PhoneGap.plist (default is YES) (originally from an @alunny pull request)
 * Updated README.md FAQ item #5 (upgrades)
 * Added the German and Swedish resources to the Xcode templates
 * Fixes CB-149 - Black Bar visible after landscape video
 * Fixes CB-221 - On an orientation change, the orientationchange event not fired on iOS 3 and 4 
 * Rename PhoneGap to Cordova.
-* Fixed typo, added missing step.
-* Cordova rename fixes.
 * Completed Cordova Guides for 1.5.0
 * Fixed CB-253 - Xcode 4 Cordova-based Application - DEBUG macro not defined
 * Default GCC_VERSION is com.apple.compilers.llvm.clang.1_0 now
-* Removed Xcode and iOS SDK checks in the installer (for Xcode 4.3 installs which go under /Appl
+* Removed Xcode and iOS SDK checks in the installer (for the Xcode 4.3 install which goes under the /Applications folder)
 
 <br/>
 
