@@ -247,12 +247,11 @@
 	NSString* callbackId = [arguments objectAtIndex:0];
 	
 	
-	NSArray* fields = [options valueForKey:@"fields"];
-	NSDictionary* findOptions = [options valueForKey:@"findOptions"];
-	
+	//NSArray* fields = [options valueForKey:@"fields"];
+    NSArray* fields = [arguments objectAtIndex:1];
+	NSDictionary* findOptions = options;
 	ABAddressBookRef  addrBook = nil;
 	NSArray* foundRecords = nil;
-	
 
 	addrBook = ABAddressBookCreate();
 	// get the findOptions values
@@ -320,7 +319,7 @@
 	}
 	CDVPluginResult* result = nil;
     // return found contacts (array is empty if no contacts found)
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: returnContacts  cast: @"navigator.contacts._findCallback"];
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: returnContacts];
     jsString = [result toSuccessCallbackString:callbackId];
     // NSLog(@"findCallback string: %@", jsString);
 	
@@ -349,7 +348,7 @@
 	CFErrorRef error;
 	CDVPluginResult* result = nil;	
 	
-	NSMutableDictionary* contactDict = [options valueForKey:@"contact"];
+	NSMutableDictionary* contactDict = options; //[options valueForKey:@"contact"];
 	
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
 	NSNumber* cId = [contactDict valueForKey:kW3ContactId];
@@ -384,7 +383,7 @@
 			// for now (while testing) give back saved, full contact
 			NSDictionary* newContact = [aContact toDictionary: [CDVContact defaultFields]];
 			//NSString* contactStr = [newContact JSONRepresentation];
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: newContact cast: @"navigator.contacts._contactCallback" ];
+			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: newContact];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
 	} else {
@@ -395,7 +394,7 @@
 	CFRelease(addrBook);
 		
 	if (bIsError){
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt: errCode cast:@"navigator.contacts._errCallback" ];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject: errCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	
@@ -409,6 +408,7 @@
 - (void) remove: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
+    NSNumber* cId = [arguments objectAtIndex:1];
 	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	CDVContactError errCode = UNKNOWN_ERROR;
@@ -417,9 +417,9 @@
 	ABRecordRef rec = nil;
 	CDVPluginResult* result = nil;
 	
-	NSMutableDictionary* contactDict = [options valueForKey:@"contact"];
+	//NSMutableDictionary* contactDict = options;
 	addrBook = ABAddressBookCreate();	
-	NSNumber* cId = [contactDict valueForKey:kW3ContactId];
+	//NSNumber* cId = [contactDict valueForKey:kW3ContactId];
 	if (cId && ![cId isKindOfClass:[NSNull class]] && [cId intValue] != kABRecordInvalidID){
 		rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
 		if (rec){
@@ -434,8 +434,9 @@
 					errCode = IO_ERROR;
 				}else {
 					// set id to null
-					[contactDict setObject:[NSNull null] forKey:kW3ContactId];
-					result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: contactDict cast: @"navigator.contacts._contactCallback"];
+					//[contactDict setObject:[NSNull null] forKey:kW3ContactId];
+                    //result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: contactDict];
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 					jsString = [result toSuccessCallbackString:callbackId];
 					//NSString* contactStr = [contactDict JSONRepresentation];
 				}
@@ -457,7 +458,7 @@
 		CFRelease(addrBook);
 	}
 	if (bIsError){
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt: errCode cast: @"navigator.contacts._errCallback"];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject: errCode];
 		 jsString = [result toErrorCallbackString:callbackId];
 	}
 	if (jsString){

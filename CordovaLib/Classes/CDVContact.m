@@ -283,19 +283,19 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	// set phoneNumbers
 	//NSLog(@"setting phoneNumbers");
 	NSArray* array = [aContact valueForKey:kW3ContactPhoneNumbers];
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		[self setMultiValueStrings: array forProperty: kABPersonPhoneProperty inRecord: person asUpdate: bUpdate];
 	}
 	// set Emails
 	//NSLog(@"setting emails");
 	array = [aContact valueForKey:kW3ContactEmails];
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		[self setMultiValueStrings: array forProperty: kABPersonEmailProperty inRecord: person asUpdate: bUpdate];
 	}
 	// set Urls
 	//NSLog(@"setting urls");
 	array = [aContact valueForKey:kW3ContactUrls];
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		[self setMultiValueStrings: array forProperty: kABPersonURLProperty inRecord: person asUpdate: bUpdate];
 	}
 	
@@ -306,13 +306,13 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	//NSLog(@"setting addresses");
 	error = nil;
 	array = [aContact valueForKey:kW3ContactAddresses];
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		[self setMultiValueDictionary: array forProperty: kABPersonAddressProperty inRecord: person asUpdate: bUpdate];
 	}
 	//ims
 	//NSLog(@"setting ims");
 	array = [aContact valueForKey:kW3ContactIms];
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		[self setMultiValueDictionary: array forProperty: kABPersonInstantMessageProperty inRecord: person asUpdate: bUpdate];
 	}
 	
@@ -321,7 +321,7 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	// iOS only supports name, title, department
 	//NSLog(@"setting organizations");
 	array = [aContact valueForKey:kW3ContactOrganizations];  // iOS only supports one organization - use first one
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		NSDictionary* dict = [array objectAtIndex:0];
 		if ([dict isKindOfClass:[NSDictionary class]]){
 			[self setValue: [dict valueForKey:@"name"] forProperty: kABPersonOrganizationProperty inRecord: person asUpdate: bUpdate];
@@ -360,7 +360,7 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	
 	// photo
 	array = [aContact valueForKey: kW3ContactPhotos];
-	if ([array isKindOfClass:[NSArray class]]){
+	if ([array isKindOfClass:[NSArray class]] && [array count] > 0){
 		if (bUpdate && [array count] == 0){
 			// remove photo
 			bSuccess = ABPersonRemoveImageData(person, &error);
