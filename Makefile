@@ -40,9 +40,9 @@ CONVERTPDF = /System/Library/Printers/Libraries/convert
 COMBINEPDF = /System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
-XC_APP = '$(shell mdfind "kMDItemDisplayName=='Xcode*' && kMDItemKind=='Application'")'
-DEVELOPER = '$(XC_APP)/Contents/Developer'
-PM_APP = '$(shell mdfind "kMDItemDisplayName=='PackageMaker*' && kMDItemKind=='Application'")'
+XC_AVAILABLE = '$(shell mdfind "kMDItemFSName=='Xcode.app' && kMDItemKind=='Application'" | head -1)'
+DEVELOPER = '$(shell xcode-select -print-path)'
+PM_APP = '$(shell mdfind "kMDItemFSName=='PackageMaker.app' && kMDItemKind=='Application'" | head -1)'
 PACKAGEMAKER = '$(PM_APP)/Contents/MacOS/PackageMaker'
 XC = $(DEVELOPER)/usr/bin/xcodebuild
 CDV_VER = $(shell head -1 CordovaLib/VERSION)
@@ -56,14 +56,14 @@ WKHTMLTOPDF = wkhtmltopdf/wkhtmltopdf --encoding utf-8 --page-size Letter --foot
 all :: installer
 
 cordova-lib: clean-cordova-lib
-	@echo "Packaging Cordova Javascript..."
+	@echo -n "Packaging Cordova Javascript..."
 	@$(MKPATH) $(BUILD_BAK)
 	@$(CP) -f CordovaLib/VERSION $(BUILD_BAK)
 	@$(MAKE) -C CordovaLib > /dev/null
 	@if [ -e "$(GIT)" ]; then \
 		echo -e '\n$(COMMIT_HASH)' >> CordovaLib/VERSION; \
 	fi	
-	@echo "Done."
+	@echo -e "\t\033[32mok.\033[m"
 
 xcode3-template: clean-xcode3-template
 	@$(MKPATH) $(BUILD_BAK)
@@ -133,10 +133,10 @@ clean-cordova-lib:
 	@$(RM_F) CordovaLib/javascripts/cordova-*.js
 
 cordova-framework: cordova-lib clean-cordova-framework
-	@echo "Building Cordova.framework..."
+	@echo -n "Building Cordova.framework..."
 	@cd CordovaLib;$(XC) -target UniversalFramework > /dev/null;
 	@cd ..
-	@echo "Done."
+	@echo -e "\t\033[32mok.\033[m"
 	@$(CP) -R CordovaLib/build/Release-universal/Cordova.framework .
 	@$(CP) -R Cordova-based\ Application/www/index.html Cordova.framework/www
 	@find "Cordova.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
@@ -156,12 +156,17 @@ check-os:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
 
 check-utils:
-		@if [ $(XC_APP) == '' ] ; then \
-			echo 'No Xcode found. Please download from the Mac App Store.'; exit 1;  \
+		@if [ $(XC_AVAILABLE) == '' ] ; then \
+			echo -e '\033[31mError: Xcode.app was not found. Please download from the Mac App Store.\033[m'; exit 1;  \
+		fi
+		@if [[ ! -d $(DEVELOPER) ]]; then \
+			echo -e '\033[31mError: The Xcode folder at $(DEVELOPER) was not found. Please set it to the proper one using xcode-select. For Xcode >= 4.3.1, set it using "sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer"\033[m'; exit 1;  \
 		fi
 		@if [ $(PM_APP) == '' ] ; then \
-			echo 'No PackageMaker found. You need to download the Xcode Auxiliary Tools: https://developer.apple.com/downloads/index.action?name=auxiliary'; exit 1; \
+			echo -e '\033[31mError: PackageMaker.app was not found. You need to download the Xcode Auxiliary Tools: https://developer.apple.com/downloads/index.action?name=auxiliary\033[m'; exit 1; \
 		fi
+		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
+		@echo -e "Using PackageMaker app: \033[33m$(PM_APP)\033[m";
 
 installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xcode4-template cordova-framework
 	@# remove the dist folder
@@ -185,7 +190,7 @@ installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xc
 	@# convert all the html files to rtf (for PackageMaker)
 	@textutil -convert rtf -font 'Helvetica' CordovaInstaller/docs/*.html
 	@# build the .pkg file
-	@echo "Building Cordova-${CDV_VER}.pkg..."	
+	@echo -n "Building Cordova-${CDV_VER}.pkg..."	
 	@$(MKPATH) dist/files/Guides
 	@$(PACKAGEMAKER) -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@# create the applescript uninstaller
@@ -221,7 +226,8 @@ installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xc
 	@# generate sha1
 	@openssl sha1 dist/Cordova-${CDV_VER}.dmg > dist/Cordova-${CDV_VER}.dmg.SHA1;
 	@# done
-	@echo "Done."
+	@echo -e "\t\033[32mok.\033[m"
+	@echo -e "Build products are in: \033[33m$(PWD)/dist\033[m";
 	@make clean
 
 install: installer	
