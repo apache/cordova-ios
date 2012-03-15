@@ -458,7 +458,7 @@
 		CFRelease(addrBook);
 	}
 	if (bIsError){
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject: errCode];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt: errCode];
 		 jsString = [result toErrorCallbackString:callbackId];
 	}
 	if (jsString){
