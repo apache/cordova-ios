@@ -73,8 +73,26 @@
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
         [self setWantsFullScreenLayout:YES];
+        
+        [self printMultitaskingInfo];
     }
     return self; 
+}
+
+- (void) printMultitaskingInfo
+{
+    UIDevice* device = [UIDevice currentDevice];
+    BOOL backgroundSupported = NO;
+    if ([device respondsToSelector:@selector(isMultitaskingSupported)]) {
+        backgroundSupported = device.multitaskingSupported;
+    }
+    
+    NSNumber* exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
+    if (exitsOnSuspend == nil) { // if it's missing, it should be NO (i.e. multi-tasking on by default)
+        exitsOnSuspend = [NSNumber numberWithBool:NO];
+    }
+
+    NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported? @"YES" : @"NO"), (![exitsOnSuspend intValue])? @"YES" : @"NO");
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
