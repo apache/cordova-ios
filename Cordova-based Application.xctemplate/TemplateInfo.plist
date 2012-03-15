@@ -347,8 +347,8 @@
 					<string>/bin/bash</string>
 					<key>ShellScript</key>
 					<string>
-								chmod 755 $PROJECT_DIR/$PROJECT_NAME/verify.sh
-								$PROJECT_DIR/$PROJECT_NAME/verify.sh
+								chmod 755 "$PROJECT_DIR/$PROJECT_NAME/verify.sh"
+								"$PROJECT_DIR/$PROJECT_NAME/verify.sh"
 					</string>
 				</dict>
 			</array>
