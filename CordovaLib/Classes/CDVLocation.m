@@ -80,12 +80,34 @@
 
 @end
 
+@implementation CDVLocationData
+
+@synthesize locationInfo, locationCallbacks;
+-(CDVLocationData*) init
+{
+    self = (CDVLocationData*)[super init];
+    if (self) 
+	{
+        self.locationInfo = nil;
+        self.locationCallbacks = nil;
+    }
+    return self;
+}
+-(void) dealloc 
+{
+    self.locationInfo = nil;
+    self.locationCallbacks = nil;
+    [super dealloc];  
+}
+
+@end
+
 #pragma mark -
 #pragma mark CDVLocation
 
 @implementation CDVLocation
 
-@synthesize locationManager, headingData;
+@synthesize locationManager, headingData, locationData;
 
 - (CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
@@ -95,7 +117,8 @@
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
         __locationStarted = NO;
-        self.headingData = nil;        
+        self.headingData = nil;   
+        self.locationData = nil;
     }
     return self;
 }
@@ -146,23 +169,25 @@
 	}
 }
 
-- (void) startLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) startLocation
 {
+    // TODO: clean up the old options that were ios-only.
     if (![self isLocationServicesEnabled])
 	{
 		BOOL forcePrompt = NO;
 		// if forcePrompt is true iPhone will still show the "Location Services not active." Settings | Cancel prompt.
+        /*
 		if ([options objectForKey:kPGLocationForcePromptKey]) 
 		{
 			forcePrompt = [[options objectForKey:kPGLocationForcePromptKey] boolValue];
 		}
-        
+        */
 		if (!forcePrompt)
 		{
             NSError* error = [NSError errorWithDomain:kPGLocationErrorDomain code:1 userInfo:
                               [NSDictionary dictionaryWithObject:@"Location services is not enabled" forKey:NSLocalizedDescriptionKey]];
             NSLog(@"%@", [error JSONRepresentation]);
-            
+            // TODO: new style of sending errors.
 			NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]]; 
 			[super writeJavascript:jsCallback];
             
@@ -180,7 +205,7 @@
         NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
                           [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
         NSLog(@"%@", [error JSONRepresentation]);
-        
+        // TODO: new style of sending errors.
         NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
         [super writeJavascript:jsCallback];
         
@@ -193,7 +218,7 @@
     [self.locationManager stopUpdatingLocation];
     [self.locationManager startUpdatingLocation];
     __locationStarted = YES;
-    
+    /*
     if ([options objectForKey:kPGLocationDistanceFilterKey]) 
 	{
         CLLocationDistance distanceFilter = [(NSString *)[options objectForKey:kPGLocationDistanceFilterKey] doubleValue];
@@ -223,9 +248,10 @@
         
         self.locationManager.desiredAccuracy = desiredAccuracy;
     }
+     */
 }
 
-- (void) stopLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stopLocation
 {
     if (__locationStarted)
 	{
@@ -242,10 +268,39 @@
      didUpdateToLocation:(CLLocation *)newLocation
             fromLocation:(CLLocation *)oldLocation
 {
-	
-    NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setLocation(%@);", [newLocation JSONRepresentation]];
-    [super writeJavascript:jsCallback];
+	CDVLocationData* cData = self.locationData;
+    cData.locationInfo = newLocation;
 }
+
+- (void) getLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    if ([self isLocationServicesEnabled] == NO)
+    {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:2];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    } else {
+        if (!self.locationData) {
+            self.locationData [[[CDVLocationData alloc] init] autorelease];
+        }
+        CDVLocationData* cData = self.locationData;
+        if (!cData.locationCallbacks) {
+            cData.locationCallbacks = [NSMutableArray arrayWithCapacity:1];
+        }
+        
+        if (!__locationStarted) {
+            // add the callbackId into the array so we can call back when get data
+            [cData.locationCallbacks addObject:callbackId];
+            // Tell the location manager to start notifying us of heading updates
+            [self startLocation];
+        }
+        else {
+            [self returnLocationInfo: callbackId keepCallback:NO]; 
+        }
+
+    }
+}
+
 // called to get the current heading
 // Will call location manager to startUpdatingHeading if necessary
 
@@ -256,7 +311,7 @@
     
     if ([self hasHeadingSupport] == NO) 
     {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:20];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
@@ -292,7 +347,7 @@
     NSNumber* filter = [options valueForKey:@"filter"];
     CDVHeadingData* hData = self.headingData;
     if ([self hasHeadingSupport] == NO) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:20];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {

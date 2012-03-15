@@ -48,25 +48,35 @@ typedef NSUInteger CDVHeadingStatus;
 
 @end
 
+// simple ojbect to keep track of location information
+@interface CDVLocationData : NSObject {
+    NSMutableArray*  locationCallbacks;
+    CLLocation*      locationInfo;
+}
+
+@property (nonatomic, retain) CLLocation* locationInfo;
+@property (nonatomic, retain) NSMutableArray* locationCallbacks;
+
+@end
+
 @interface CDVLocation : CDVPlugin <CLLocationManagerDelegate> {
-    
-@private BOOL              __locationStarted;
+    @private BOOL      __locationStarted;
     CDVHeadingData*    headingData;
+    CDVLocationData*   locationData;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CDVHeadingData* headingData;
+@property (nonatomic, retain) CDVLocationData* locationData;
 
 
 - (BOOL) hasHeadingSupport;
+- (void) getLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) returnLocationInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
+- (void) startLocation;
+- (void) stopLocation;
 
-- (void)startLocation:(NSMutableArray*)arguments
-             withDict:(NSMutableDictionary*)options;
-
-- (void)stopLocation:(NSMutableArray*)arguments
-            withDict:(NSMutableDictionary*)options;
-
-- (void)locationManager:(CLLocationManager *)manager
+- (void) locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation;
 
