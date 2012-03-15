@@ -30,6 +30,13 @@ enum CDVHeadingStatus {
 };
 typedef NSUInteger CDVHeadingStatus;
 
+enum CDVLocationStatus {
+    PERMISSIONDENIED = 1,
+    POSITIONUNAVAILABLE,
+    TIMEOUT
+};
+typedef NSUInteger CDVLocationStatus;
+
 // simple object to keep track of heading information
 @interface CDVHeadingData : NSObject {
     CDVHeadingStatus     headingStatus;
@@ -50,10 +57,12 @@ typedef NSUInteger CDVHeadingStatus;
 
 // simple ojbect to keep track of location information
 @interface CDVLocationData : NSObject {
+    CDVLocationStatus locationStatus;
     NSMutableArray*  locationCallbacks;
     CLLocation*      locationInfo;
 }
 
+@property (nonatomic, assign) CDVLocationStatus locationStatus;
 @property (nonatomic, retain) CLLocation* locationInfo;
 @property (nonatomic, retain) NSMutableArray* locationCallbacks;
 
@@ -72,7 +81,7 @@ typedef NSUInteger CDVHeadingStatus;
 
 - (BOOL) hasHeadingSupport;
 - (void) getLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) returnLocationInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
+- (void) returnLocationInfo: (NSString*) callbackId;
 - (void) startLocation;
 - (void) stopLocation;
 

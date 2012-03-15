@@ -184,13 +184,7 @@
         */
 		if (!forcePrompt)
 		{
-            NSError* error = [NSError errorWithDomain:kPGLocationErrorDomain code:1 userInfo:
-                              [NSDictionary dictionaryWithObject:@"Location services is not enabled" forKey:NSLocalizedDescriptionKey]];
-            NSLog(@"%@", [error JSONRepresentation]);
-            // TODO: new style of sending errors.
-			NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]]; 
-			[super writeJavascript:jsCallback];
-            
+            [self returnLocationError:PERMISSIONDENIED];
 			return;
 		}
     }
@@ -202,12 +196,7 @@
             code = [CLLocationManager authorizationStatus];
         }
         
-        NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
-                          [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
-        NSLog(@"%@", [error JSONRepresentation]);
-        // TODO: new style of sending errors.
-        NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
-        [super writeJavascript:jsCallback];
+        [self returnLocationError:code];
         
         return;
     }
@@ -270,6 +259,12 @@
 {
 	CDVLocationData* cData = self.locationData;
     cData.locationInfo = newLocation;
+    if (self.locationData.locationCallbacks.count > 0) {
+        for (NSString *callbackId in self.locationData.locationCallbacks) {
+            [self returnLocationInfo:callbackId];
+        }
+        [self.locationData.locationCallbacks removeAllObjects];
+    }
 }
 
 - (void) getLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
@@ -281,26 +276,65 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!self.locationData) {
-            self.locationData [[[CDVLocationData alloc] init] autorelease];
+            self.locationData = [[[CDVLocationData alloc] init] autorelease];
         }
-        CDVLocationData* cData = self.locationData;
-        if (!cData.locationCallbacks) {
-            cData.locationCallbacks = [NSMutableArray arrayWithCapacity:1];
+        CDVLocationData* lData = self.locationData;
+        if (!lData.locationCallbacks) {
+            lData.locationCallbacks = [NSMutableArray arrayWithCapacity:1];
         }
         
         if (!__locationStarted) {
             // add the callbackId into the array so we can call back when get data
-            [cData.locationCallbacks addObject:callbackId];
+            [lData.locationCallbacks addObject:callbackId];
             // Tell the location manager to start notifying us of heading updates
             [self startLocation];
         }
         else {
-            [self returnLocationInfo: callbackId keepCallback:NO]; 
+            [self returnLocationInfo: callbackId]; 
         }
 
     }
 }
-
+- (void)returnLocationInfo: (NSString*) callbackId
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+    CDVLocationData* lData = self.locationData;
+    
+    if (lData && !lData.locationInfo) {
+        // return error
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:POSITIONUNAVAILABLE];
+        jsString = [result toErrorCallbackString:callbackId];
+    } else if (lData && lData.locationInfo) {
+        CLLocation* lInfo = lData.locationInfo;
+        NSMutableDictionary* returnInfo = [NSMutableDictionary dictionaryWithCapacity:8];
+        NSNumber* timestamp = [NSNumber numberWithDouble:([lInfo.timestamp timeIntervalSince1970]*1000)];
+        [returnInfo setObject:timestamp forKey:@"timestamp"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.speed] forKey:@"velocity"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.verticalAccuracy] forKey:@"altitudeAccuracy"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.horizontalAccuracy] forKey:@"accuracy"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.course] forKey:@"heading"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.altitude] forKey:@"altitude"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.coordinate.latitude] forKey:@"latitude"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.coordinate.longitude] forKey:@"longitude"];
+        
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: returnInfo];
+        [result setKeepCallbackAsBool:NO];
+        
+        jsString = [result toSuccessCallbackString:callbackId];
+    }
+    if (jsString) {
+        [super writeJavascript:jsString];
+    }
+}
+- (void)returnLocationError: (NSInteger*) errorCode
+{
+    for (NSString *callbackId in self.locationData.locationCallbacks) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:*errorCode];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    }
+    [self.locationData.locationCallbacks removeAllObjects];
+}
 // called to get the current heading
 // Will call location manager to startUpdatingHeading if necessary
 
@@ -380,7 +414,7 @@
     
     if (hData && hData.headingStatus == HEADINGERROR) {
         // return error
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:0];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
         jsString = [result toErrorCallbackString:callbackId];
     } else if (hData && hData.headingStatus == HEADINGRUNNING && hData.headingInfo) {
         // if there is heading info, return it
@@ -483,13 +517,13 @@
             if (hData.headingStatus == HEADINGSTARTING) {
                 // heading error during startup - report error
                 for (NSString* callbackId in hData.headingCallbacks) {
-                    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:0];
+                    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
                     [super writeJavascript: [result toErrorCallbackString:callbackId]];
                 }
                 [hData.headingCallbacks removeAllObjects];
             } // else for frequency watches next call to getCurrentHeading will report error
             else if (hData.headingFilter) {
-                CDVPluginResult* resultFilter = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:0];
+                CDVPluginResult* resultFilter = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
                 [super writeJavascript: [resultFilter toErrorCallbackString:hData.headingFilter]];
             }
             hData.headingStatus = HEADINGERROR;
@@ -498,22 +532,20 @@
     // Location Error
 	else 
 	{
-		/*
-         W3C PositionError
-         PositionError.UNKNOWN_ERROR = 0;  // equivalent to kCLErrorLocationUnknown=0
-         PositionError.PERMISSION_DENIED = 1; // equivalent to kCLErrorDenied=1
-         PositionError.POSITION_UNAVAILABLE = 2; // equivalent to kCLErrorNetwork=2
-		 
-         (any other errors are translated to PositionError.UNKNOWN_ERROR)
-		 */
-		if (error.code > kCLErrorNetwork) {
-            error = [NSError errorWithDomain:error.domain code:kCLErrorLocationUnknown userInfo:error.userInfo];
-		}
-		
-		jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
+        CDVLocationData* lData = self.locationData;
+        if (lData && __locationStarted) {
+            // TODO: probably have to once over the various error codes and return one of:
+            // PositionError.PERMISSION_DENIED = 1;
+            // PositionError.POSITION_UNAVAILABLE = 2;
+            // PositionError.TIMEOUT = 3;
+            NSInteger positionError = POSITIONUNAVAILABLE;
+            if (error.code == kCLErrorDenied) {
+                positionError = PERMISSIONDENIED;
+            }
+            [self returnLocationError:positionError];
+
+        }
 	}
-	
-    [super writeJavascript:jsCallback];
     
 	[self.locationManager stopUpdatingLocation];
     __locationStarted = NO;
