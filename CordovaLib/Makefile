@@ -36,35 +36,12 @@ OPEN = open
 JAVA = java
 ECHO = echo
 ECHO_N = echo -n
-CDV_JS_CORE = javascripts/core
 CDV_VER = $(shell head -1 VERSION)
 
-all :: javascripts/cordova-$(CDV_VER).js
+all :: javascript/cordova-$(CDV_VER).js
 
-javascripts/cordova-$(CDV_VER).js: clean $(CDV_JS_CORE)/license.js $(CDV_JS_CORE)/cordova.js.base $(CDV_JS_CORE)/acceleration.js $(CDV_JS_CORE)/accelerometer.js $(CDV_JS_CORE)/battery.js $(CDV_JS_CORE)/camera.js $(CDV_JS_CORE)/capture.js $(CDV_JS_CORE)/contact.js $(CDV_JS_CORE)/debugconsole.js $(CDV_JS_CORE)/device.js $(CDV_JS_CORE)/file.js $(CDV_JS_CORE)/filetransfer.js $(CDV_JS_CORE)/geolocation.js $(CDV_JS_CORE)/compass.js $(CDV_JS_CORE)/media.js $(CDV_JS_CORE)/notification.js $(CDV_JS_CORE)/orientation.js $(CDV_JS_CORE)/position.js $(CDV_JS_CORE)/sms.js $(CDV_JS_CORE)/telephony.js $(CDV_JS_CORE)/network.js $(CDV_JS_CORE)/splashscreen.js
-	$(RM_F) $@
-	$(CAT) $(CDV_JS_CORE)/license.js | sed 's/{VERSION}/$(CDV_VER)/' >> $@
-	$(CAT) $(CDV_JS_CORE)/cordova.js.base >> $@
-	$(CAT) $(CDV_JS_CORE)/debugconsole.js >> $@
-	$(CAT) $(CDV_JS_CORE)/position.js >> $@
-	$(CAT) $(CDV_JS_CORE)/acceleration.js >> $@
-	$(CAT) $(CDV_JS_CORE)/accelerometer.js >> $@
-	$(CAT) $(CDV_JS_CORE)/battery.js >> $@
-	$(CAT) $(CDV_JS_CORE)/camera.js >> $@
-	$(CAT) $(CDV_JS_CORE)/device.js >> $@
-	$(CAT) $(CDV_JS_CORE)/capture.js >> $@
-	$(CAT) $(CDV_JS_CORE)/contact.js >> $@
-	$(CAT) $(CDV_JS_CORE)/file.js >> $@
-	$(CAT) $(CDV_JS_CORE)/filetransfer.js >> $@
-	$(CAT) $(CDV_JS_CORE)/geolocation.js >> $@
-	$(CAT) $(CDV_JS_CORE)/compass.js >> $@
-	$(CAT) $(CDV_JS_CORE)/media.js >> $@
-	$(CAT) $(CDV_JS_CORE)/notification.js >> $@
-	$(CAT) $(CDV_JS_CORE)/orientation.js >> $@
-	$(CAT) $(CDV_JS_CORE)/sms.js >> $@
-	$(CAT) $(CDV_JS_CORE)/telephony.js >> $@
-	$(CAT) $(CDV_JS_CORE)/network.js >> $@
-	$(CAT) $(CDV_JS_CORE)/splashscreen.js >> $@
+javascript/cordova-$(CDV_VER).js: clean
+	$(CP) javascript/cordova.ios.js $@
 	
 clean:
-	$(RM_F) javascripts/cordova-*.js
+	$(RM_F) javascript/cordova-*.js
