@@ -28,6 +28,8 @@
 #define kMinAccelerometerInterval    40  
 // min rate of 1/sec
 #define kMaxAccelerometerInterval   1000
+// g constant: -9.81 m/s^2
+#define kGravitionalConstant        -9.81
 
 - (CDVAccelerometer*) init
 {
@@ -88,9 +90,9 @@
     
     // Create an acceleration object
     NSMutableDictionary *accelProps = [NSMutableDictionary dictionaryWithCapacity:4];
-    [accelProps setValue:[NSNumber numberWithDouble:x] forKey:@"x"];
-    [accelProps setValue:[NSNumber numberWithDouble:y] forKey:@"y"];
-    [accelProps setValue:[NSNumber numberWithDouble:z] forKey:@"z"];
+    [accelProps setValue:[NSNumber numberWithDouble:x*kGravitionalConstant] forKey:@"x"];
+    [accelProps setValue:[NSNumber numberWithDouble:y*kGravitionalConstant] forKey:@"y"];
+    [accelProps setValue:[NSNumber numberWithDouble:z*kGravitionalConstant] forKey:@"z"];
     [accelProps setValue:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
     
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
