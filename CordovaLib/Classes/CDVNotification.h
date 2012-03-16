@@ -26,7 +26,8 @@
 @interface CDVNotification : CDVPlugin <UIAlertViewDelegate>{
 }
 
-- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options; // confirm is just a variant of alert
+- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

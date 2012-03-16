@@ -57,8 +57,10 @@
 	[alertView show];
 	[alertView release];
 }
-
-
+- (void)confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{   // confirm is just a variant of alert
+    [self alert: arguments withDict:options];
+}
 - (void)prompt:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
