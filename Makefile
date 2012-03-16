@@ -70,7 +70,7 @@ xcode3-template: clean-xcode3-template
 	@$(CP) -Rf Cordova-based\ Application/www $(BUILD_BAK)
 	@cd Cordova-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
 	@cd ..
-	@cp CordovaLib/javascripts/cordova-*.js Cordova-based\ Application/www
+	@cp CordovaLib/javascript/cordova-*.js Cordova-based\ Application/www
 
 xcode4-template: clean-xcode4-template
 	@$(CP) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns Cordova-based\ Application.xctemplate
@@ -130,7 +130,7 @@ clean-cordova-lib:
 	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.mode1v3
 	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.perspectivev3
 	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.pbxuser
-	@$(RM_F) CordovaLib/javascripts/cordova-*.js
+	@$(RM_F) CordovaLib/javascript/cordova-*.js
 
 cordova-framework: cordova-lib clean-cordova-framework
 	@echo -n "Building Cordova.framework..."
