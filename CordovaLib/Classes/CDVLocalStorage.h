@@ -17,15 +17,25 @@
  under the License.
  */
 
-#import "CDVInvokedUrlCommand.h"
+#import "CDVPlugin.h"
 
-@class CDVPlugin;
+#define kCDVLocalStorageErrorDomain @"kCDVLocalStorageErrorDomain" 
+#define kCDVLocalStorageFileOperationError  1
 
-@protocol CDVCommandDelegate <NSObject>
+@interface CDVLocalStorage : CDVPlugin < UIWebViewDelegate >
 
-- (NSString*) pathForResource:(NSString*)resourcepath;
-- (id) getCommandInstance:(NSString*)pluginName;
-- (void) registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
-- (BOOL) execute:(CDVInvokedUrlCommand*)command;
+@property (nonatomic, readonly, retain) NSMutableArray* backupInfo;
+
+- (void)  backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) restore:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+
+@end
+
+@interface CDVBackupInfo : NSObject
+
+@property (nonatomic, copy) NSString* original;
+@property (nonatomic, copy) NSString* backup;
+@property (nonatomic, copy) NSString* label;
 
 @end

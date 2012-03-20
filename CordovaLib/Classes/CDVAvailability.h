@@ -38,3 +38,13 @@
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
     #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_5_0
 #endif
+
+/* 
+ Returns YES if it is at least version specified as NSString(X)
+ Usage: 
+     if (IsiOSVersion(@"5.1")) {
+         // do something for iOS 5.1 or greater
+     }
+ */
+#define IsiOSVersion(X) ([[[UIDevice currentDevice] systemVersion] compare:X options:NSNumericSearch] != NSOrderedAscending)
+

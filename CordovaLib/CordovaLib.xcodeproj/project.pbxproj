@@ -69,6 +69,10 @@
 		303259C9136B326300982B63 /* CDVPluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* CDVPluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		303259CA136B326300982B63 /* CDVFileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* CDVFileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30325A0C136B343700982B63 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
+		3034979C1513D56A0090E688 /* CDVLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3034979A1513D56A0090E688 /* CDVLocalStorage.h */; };
+		3034979D1513D56A0090E688 /* CDVLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3034979A1513D56A0090E688 /* CDVLocalStorage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3034979B1513D56A0090E688 /* CDVLocalStorage.m */; };
+		3034979F1513D56A0090E688 /* CDVLocalStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3034979B1513D56A0090E688 /* CDVLocalStorage.m */; };
 		3035621714104C34006C2D43 /* CDVWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* CDVWhitelistTests.m */; };
 		30383DE01385F65600E37E22 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* CDVConnection.m */; };
 		30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */; };
@@ -180,6 +184,8 @@
 		302965BB13A94E9D007046C5 /* CDVDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVDebug.h; path = Classes/CDVDebug.h; sourceTree = "<group>"; };
 		303258D8136B2C9400982B63 /* Cordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Cordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30325A0B136B343700982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
+		3034979A1513D56A0090E688 /* CDVLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLocalStorage.h; path = Classes/CDVLocalStorage.h; sourceTree = "<group>"; };
+		3034979B1513D56A0090E688 /* CDVLocalStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVLocalStorage.m; path = Classes/CDVLocalStorage.m; sourceTree = "<group>"; };
 		30356212141049E1006C2D43 /* CDVWhitelistTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVWhitelistTests.h; sourceTree = "<group>"; };
 		30356213141049E1006C2D43 /* CDVWhitelistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWhitelistTests.m; sourceTree = "<group>"; };
 		30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAvailability.h; path = Classes/CDVAvailability.h; sourceTree = "<group>"; };
@@ -382,6 +388,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				3034979A1513D56A0090E688 /* CDVLocalStorage.h */,
+				3034979B1513D56A0090E688 /* CDVLocalStorage.m */,
 				30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */,
 				30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */,
 				30C684921407044A004C1A8E /* CDVURLProtocol.h */,
@@ -503,6 +511,7 @@
 				30F5EBAC14CA26E700987760 /* CDVCommandDelegate.h in Headers */,
 				30392E5014F502C200B9E0B8 /* CDVAvailability.h in Headers */,
 				301F2F2B14F3C9CA003FE9FC /* CDV.h in Headers */,
+				3034979D1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,6 +550,7 @@
 				30F5EBAB14CA26E700987760 /* CDVCommandDelegate.h in Headers */,
 				301F2F2A14F3C9CA003FE9FC /* CDV.h in Headers */,
 				30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */,
+				3034979C1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -745,6 +755,7 @@
 				30C684831406CB38004C1A8E /* CDVWhitelist.m in Sources */,
 				30C684971407044B004C1A8E /* CDVURLProtocol.m in Sources */,
 				30A90B9414588697006178D3 /* JSONKit.m in Sources */,
+				3034979F1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -790,6 +801,7 @@
 				30A90B9314588697006178D3 /* JSONKit.m in Sources */,
 				8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */,
 				8852C44114B65FD800F0E735 /* CDVCordovaView.m in Sources */,
+				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,11 +17,7 @@
  under the License.
  */
 
-#import "CDVViewController.h"
-#import "CDVPlugin.h"
-#import "CDVLocation.h"
-#import "CDVConnection.h"
-#import "NSDictionary+Extensions.h"
+#import "CDV.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
@@ -70,6 +66,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:) 
                                                      name:UIApplicationDidEnterBackgroundNotification object:nil];
 
+        self.commandDelegate = self;
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
         [self setWantsFullScreenLayout:YES];
@@ -170,6 +167,11 @@
     }
     
     /*
+     * Fire up CDVLocalStorage to work-around iOS 5.1 WebKit storage bug limitations
+     */
+    [self.commandDelegate registerPlugin:[[[CDVLocalStorage alloc] initWithWebView:self.webView] autorelease] withClassName:NSStringFromClass([CDVLocalStorage class])];
+    
+    /*
      * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
      */
     if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
@@ -204,9 +206,6 @@
         NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
         [self.webView loadHTMLString:html baseURL:nil];
     }
-    
-	self.commandDelegate = self;
-
 }
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
@@ -487,7 +486,7 @@
      */
     else
     {
-        NSLog(@"PGAppDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
+        NSLog(@"AppDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
 		
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
             [[UIApplication sharedApplication] openURL:url];
@@ -693,7 +692,6 @@ BOOL gSplashScreenShown = NO;
 	
 	
     // Parse the returned JSON array.
-    //PG_SBJsonParser* jsonParser = [[[PG_SBJsonParser alloc] init] autorelease];
     NSArray* queuedCommands =
 	[queuedCommandsJSON objectFromJSONString];
 	
@@ -769,6 +767,19 @@ BOOL gSplashScreenShown = NO;
     return retVal;
 }
 
+- (void) registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
+{
+    if ([plugin respondsToSelector:@selector(setViewController:)]) { 
+        [plugin setViewController:self];
+    }
+    
+    if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) { 
+        [plugin setCommandDelegate:self.commandDelegate];
+    }
+    
+    [self.pluginObjects setObject:plugin forKey:className];
+}
+
 /**
  Returns an instance of a CordovaCommand object, based on its name.  If one exists already, it is returned.
  */
@@ -796,16 +807,8 @@ BOOL gSplashScreenShown = NO;
             obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         }
         
-        if ([obj isKindOfClass:[CDVPlugin class]] && [obj respondsToSelector:@selector(setViewController:)]) { 
-            [obj setViewController:self];
-        }
-        
-        if ([obj isKindOfClass:[CDVPlugin class]] && [obj respondsToSelector:@selector(setCommandDelegate:)]) { 
-            [obj setCommandDelegate:self.commandDelegate];
-        }
-
-        if (obj != nil) {
-            [self.pluginObjects setObject:obj forKey:className];
+        if (obj != nil && [obj isKindOfClass:[CDVPlugin class]]) {
+            [self registerPlugin:obj withClassName:className];
             [obj release];
         } else {
             NSLog(@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
