@@ -77,9 +77,9 @@
         self.pickerController.correctOrientation = [[options valueForKey:@"correctOrientation"] boolValue];
         self.pickerController.saveToPhotoAlbum = [[options valueForKey:@"saveToPhotoAlbum"] boolValue];
         
-        self.pickerController.encodingType = [[arguments objectAtIndex:6] intValue] || EncodingTypeJPEG;
+        self.pickerController.encodingType = ([arguments objectAtIndex:6]) ? [[arguments objectAtIndex:6] intValue] : EncodingTypeJPEG;
         
-        self.pickerController.quality = [[arguments objectAtIndex:1] intValue] || 50;
+        self.pickerController.quality = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : 50;
         self.pickerController.returnType = (CDVDestinationType)[[arguments objectAtIndex:2] intValue] || DestinationTypeFileUri;
        
         if (sourceType == UIImagePickerControllerSourceTypeCamera) {

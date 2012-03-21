@@ -82,7 +82,7 @@
 
 @implementation CDVLocationData
 
-@synthesize locationInfo, locationCallbacks;
+@synthesize locationStatus, locationInfo, locationCallbacks;
 -(CDVLocationData*) init
 {
     self = (CDVLocationData*)[super init];
@@ -184,19 +184,25 @@
         */
 		if (!forcePrompt)
 		{
-            [self returnLocationError:PERMISSIONDENIED];
+            [self returnLocationError:PERMISSIONDENIED withMessage: nil];
 			return;
 		}
     }
     if (![self isAuthorized]) 
     {
-        NSUInteger code = -1;
+        NSString* message = nil;
         BOOL authStatusAvailable = [CLLocationManager respondsToSelector:@selector(authorizationStatus)]; // iOS 4.2+
         if (authStatusAvailable) {
-            code = [CLLocationManager authorizationStatus];
+            NSUInteger code = [CLLocationManager authorizationStatus];
+            if (code == kCLAuthorizationStatusNotDetermined) {
+                // could return POSITION_UNAVAILABLE but need to coordinate with other platforms
+                message = @"User undecided on application's use of location services";
+            } else if (code == kCLAuthorizationStatusRestricted) {
+                message = @"application use of location services is restricted";
+            }
         }
-        
-        [self returnLocationError:code];
+        //PERMISSIONDENIED is only PositionError that makes sense when authorization denied
+        [self returnLocationError:PERMISSIONDENIED withMessage: message];
         
         return;
     }
@@ -303,7 +309,7 @@
     
     if (lData && !lData.locationInfo) {
         // return error
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:POSITIONUNAVAILABLE];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:POSITIONUNAVAILABLE];
         jsString = [result toErrorCallbackString:callbackId];
     } else if (lData && lData.locationInfo) {
         CLLocation* lInfo = lData.locationInfo;
@@ -327,10 +333,13 @@
         [super writeJavascript:jsString];
     }
 }
-- (void)returnLocationError: (NSInteger*) errorCode
+- (void)returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message
 {
+    NSMutableDictionary* posError = [NSMutableDictionary dictionaryWithCapacity:2];
+    [posError setObject: [NSNumber numberWithInt: errorCode] forKey:@"code"];
+    [posError setObject: message ? message : @"" forKey: @"message"];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
     for (NSString *callbackId in self.locationData.locationCallbacks) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:*errorCode];
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     }
     [self.locationData.locationCallbacks removeAllObjects];
@@ -507,7 +516,6 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     NSLog(@"locationManager::didFailWithError %@", [error localizedFailureReason]);
-	NSString* jsCallback = @"";
 	
     // Compass Error
 	if ([error code] == kCLErrorHeadingFailure)
@@ -538,11 +546,11 @@
             // PositionError.PERMISSION_DENIED = 1;
             // PositionError.POSITION_UNAVAILABLE = 2;
             // PositionError.TIMEOUT = 3;
-            NSInteger positionError = POSITIONUNAVAILABLE;
+            NSUInteger positionError = POSITIONUNAVAILABLE;
             if (error.code == kCLErrorDenied) {
                 positionError = PERMISSIONDENIED;
             }
-            [self returnLocationError:positionError];
+            [self returnLocationError:positionError withMessage: [error localizedDescription]];
 
         }
 	}

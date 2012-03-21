@@ -105,8 +105,8 @@
 			errMsg = [NSString stringWithFormat: @"Cannot use audio file from resource '%@'", resourcePath];
 		}
 		if (bError) {
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, errcode];
-            //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,[self createMediaErrorWithCode: errcode message: errMsg]];
+			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, errcode];
+            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,[self createMediaErrorWithCode: errcode message: errMsg]];
 			[super writeJavascript:jsString];
 		} else {
 			audioFile = [[[CDVAudioFile alloc] init] autorelease];
@@ -179,14 +179,12 @@
             }
             if (!bError) {
                 NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
-                /* TODO:  do we want to keep numberOfLoops option for iOS only?
                 NSNumber* loopOption = [options objectForKey:@"numberOfLoops"];
                 NSInteger numberOfLoops = 0;
                 if (loopOption != nil) { 
                     numberOfLoops = [loopOption intValue] - 1;
                 }
                 audioFile.player.numberOfLoops = numberOfLoops;
-                */
                 if(audioFile.player.isPlaying){
                     [audioFile.player stop];
                     audioFile.player.currentTime = 0;
@@ -212,8 +210,8 @@
 				[audioFile.player play];
 			} */
 			// error creating the session or player
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,  MEDIA_ERR_NONE_SUPPORTED];
-            //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];
+			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,  MEDIA_ERR_NONE_SUPPORTED];
+            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];
 			[super writeJavascript:jsString];
 		}
 	}
@@ -301,10 +299,10 @@
         
         // NSLog(@"Prepared audio sample '%@' for playback.", audioFile.resourcePath);
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);\n%@", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, state, [result toSuccessCallbackString:callbackId]];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);\n%@", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, state, [result toSuccessCallbackString:callbackId]];
         
 	} else {
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];   
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];   
     }
     if (jsString) {
         [super writeJavascript:jsString];
@@ -478,8 +476,8 @@
             if (![self.avSession  setActive: YES error: &error]){
                 // other audio with higher priority that does not allow mixing could cause this to fail
                 errorMsg = [NSString stringWithFormat: @"Unable to record audio: %@", [error localizedFailureReason]];
-                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
-               // jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg] ];
+                //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
+                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg] ];
                 [super writeJavascript:jsString];
                 return;
             }
@@ -494,8 +492,8 @@
             if (self.avSession) {
                 [self.avSession setActive:NO error:nil];
             }
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
-			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg]];
+			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
+			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg]];
 			
 		} else {
 			audioFile.recorder.delegate = self;
@@ -551,8 +549,8 @@
     if (flag){
         jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
     } else {
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
-        //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
+        //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatuss", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
     }
     if (self.avSession) {
         [self.avSession setActive:NO error:nil];
@@ -575,8 +573,8 @@
         jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
         
     } else {
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
-        //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
+        //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
         
     }
     if (self.avSession) {

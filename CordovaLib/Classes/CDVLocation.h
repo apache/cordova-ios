@@ -82,6 +82,7 @@ typedef NSUInteger CDVLocationStatus;
 - (BOOL) hasHeadingSupport;
 - (void) getLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) returnLocationInfo: (NSString*) callbackId;
+- (void) returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message;
 - (void) startLocation;
 - (void) stopLocation;
 
