@@ -85,6 +85,11 @@
 {
 	return [super pathForResource:resourcepath];
 }
+ 
+- (void) registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
+{
+    return [super registerPlugin:plugin withClassName:className];
+}
 */
 
 /* Comment out the block below to over-ride */
