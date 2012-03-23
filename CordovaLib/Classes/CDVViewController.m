@@ -802,14 +802,13 @@ BOOL gSplashScreenShown = NO;
         NSDictionary* classSettings = [self.settings objectForKey:className];
 		
         if (classSettings) {
-            obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
+            obj = [[[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings] autorelease];
         } else {
-            obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
+            obj = [[[NSClassFromString(className) alloc] initWithWebView:webView] autorelease];
         }
         
         if (obj != nil && [obj isKindOfClass:[CDVPlugin class]]) {
             [self registerPlugin:obj withClassName:className];
-            [obj release];
         } else {
             NSLog(@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
         }
