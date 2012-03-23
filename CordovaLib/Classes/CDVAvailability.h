@@ -25,6 +25,7 @@
 #define __CORDOVA_1_4_0  10400
 #define __CORDOVA_1_4_1  10401
 #define __CORDOVA_1_5_0  10500
+#define __CORDOVA_1_6_0  10500
 #define __CORDOVA_NA     99999  /* not available */
 
 
@@ -36,7 +37,7 @@
  #endif
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_5_0
+    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_6_0
 #endif
 
 /* 
