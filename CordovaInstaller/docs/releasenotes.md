@@ -1,6 +1,44 @@
 ## Release Notes for Cordova ({VERSION})  ##
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
+### 1.6.0rc1 (20120323) ###
+* Updates for Media API
+* Contacts updates for Unified JavaScript
+* Fixed Contacts.save return value and Notification.confirm
+* Changed Device initialization to use a require-based pattern
+* Added require syntax for firing events in ios
+* Added a getConnectionInfo method for compatibility
+* Added require in pluginresult helper funcs
+* Updated plist of plugin names -> classes to adhere to common labels in other platforms
+* Rewrite of accelerometer code and removed DeviceInfo old init approach
+* Added warning about changing compiler settings in xcode
+* Changed Accel values to doubles
+* Tweaked battery plugin for cordova-js use
+* Updated interface to get Camera working. 
+* Rewrote Location class to use cordova-js unified approach.
+* Updated refs from require("cordova") to just "cordova", and other require calls to cordova.require
+* Updated sub-project cordovalib steps
+* Fixed Compass, Location for cordova-js integration
+* Added unification of accelerometer values on ios (based on android values)
+* Removed old JS, added cordova-js version
+* Changes to CordovaLib makefile for generating JS
+* Fixed CB-260: Can't install Phonegap with new Xcode 4.3
+* Fixed Xcode app detection (using Spotlight) in Makefile
+* Fixed CB-306 - Remove extra template App delegate methods
+* Fixes CB-255 - iOS: a parameter with value 'null' is not passed to 'arguments' array
+* Fixed CB-236 - Add ContentLength Header in Upload request
+* Fixed CB-300 - CDVFileTransfer crashes with 303 and empty response
+* Fixed CB-148, CB-316: Playing HTTP / HTTPS urls using the Media API is not working
+* Improved Makefile for mixed Xcode 4.2 and Xcode 4.3.1 environment.
+* Fixed CB-329 - Add warning if multi-tasking is not supported on an iOS device (to console log)
+* Fixed CB-317 : Xcode: Shell Script Invocation Error when directory has spaces in name
+* Fixed CB-330 - localStorage / SQLDatabase no longer persistent after iOS 5.01 update
+* Fixed CB-347 - iOS 5.1 localStorage / SQLDatabase error after upgrading an app
+* Fixed shell script error - picks up new location of cordova.js (unified) now
+* Fixed NOTICE file with correct project name
+* Added new CDVCommandDelegate stub to MainViewController
+
+
 ### 1.5.0 (20120302) ###
 
 * Fix NSLog crash in CDVWhitelist.m - parameter order reversed
