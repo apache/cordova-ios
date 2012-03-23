@@ -25,7 +25,7 @@
 #define __CORDOVA_1_4_0  10400
 #define __CORDOVA_1_4_1  10401
 #define __CORDOVA_1_5_0  10500
-#define __CORDOVA_1_6_0  10500
+#define __CORDOVA_1_6_0  10600
 #define __CORDOVA_NA     99999  /* not available */
 
 
@@ -43,7 +43,7 @@
 /* 
  Returns YES if it is at least version specified as NSString(X)
  Usage: 
-     if (IsiOSVersion(@"5.1")) {
+     if (IsAtLeastiOSVersion(@"5.1")) {
          // do something for iOS 5.1 or greater
      }
  */
