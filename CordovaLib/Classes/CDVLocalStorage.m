@@ -170,16 +170,33 @@
 /* copy from webkitDbLocation to persistentDbLocation */
 - (void) backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 {
+    NSString* callbackId = [arguments objectAtIndex:0];
+
     NSError* error = nil;
+    CDVPluginResult* result = nil;
+    NSString* message = nil;
     
     for (CDVBackupInfo* info in self.backupInfo)
     {
-        [self copyFrom:info.original to:info.backup error:&error];
-        
-        if (error == nil) {
-            NSLog(@"Backed up: %@", info.label);
-        } else {
-            NSLog(@"Error in CDVLocalStorage (%@) backup: %@", info.label, [error localizedDescription]);
+        if ([info shouldBackup])
+        {
+            [self copyFrom:info.original to:info.backup error:&error];
+            
+            if (error == nil) {
+                message = [NSString stringWithFormat:@"Backed up: %@", info.label];
+                NSLog(@"%@", message);
+                
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
+                [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+                
+            } else {
+                message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) backup: %@", info.label, [error localizedDescription]];
+                NSLog(@"%@", message);
+                
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
+                [self writeJavascript:[result toErrorCallbackString:callbackId]];
+
+            }
         }
     }
 }
@@ -187,44 +204,77 @@
 /* copy from persistentDbLocation to webkitDbLocation */
 - (void) restore:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 {
+    NSString* callbackId = [arguments objectAtIndex:0];
+    
     NSError* error = nil;
+    CDVPluginResult* result = nil;
+    NSString* message = nil;
     
     for (CDVBackupInfo* info in self.backupInfo)
     {
-        [self copyFrom:info.backup to:info.original error:&error];
-        
-        if (error == nil) {
-            NSLog(@"CDVLocalStorage restored: %@", info.label);
-        } else {
-            NSLog(@"Error in CDVLocalStorage (%@) restore: %@", info.label, [error localizedDescription]);
+        if ([info shouldRestore])
+        {
+            [self copyFrom:info.backup to:info.original error:&error];
+            
+            if (error == nil) {
+                message = [NSString stringWithFormat:@"Restored: %@", info.label];
+                NSLog(@"%@", message);
+                
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
+                [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+                
+            } else {
+                message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) restore: %@", info.label, [error localizedDescription]];
+                NSLog(@"%@", message);
+                
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
+                [self writeJavascript:[result toErrorCallbackString:callbackId]];
+                
+            }
         }
     }
 }
 
 - (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options
 {
+    [[self class] verifyAndFixDatabaseLocations];
+}
+
++ (void) verifyAndFixDatabaseLocations
+{
+    NSString* libraryCaches = @"Library/Caches";
+    NSString* libraryWebKit = @"Library/WebKit";
+    NSString* libraryPreferences = @"Library/Preferences";
+    
     NSUserDefaults* appPreferences = [NSUserDefaults standardUserDefaults];
     NSBundle* mainBundle = [NSBundle mainBundle];
 
     NSString* bundlePath = [[mainBundle bundlePath] stringByDeletingLastPathComponent];
     NSString* bundleIdentifier = [[mainBundle infoDictionary] objectForKey:@"CFBundleIdentifier"];
 
-    NSString* appPlistPath = [[bundlePath stringByAppendingPathComponent:@"Library/Preferences"] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", bundleIdentifier]];
+    NSString* appPlistPath = [[bundlePath stringByAppendingPathComponent:libraryPreferences] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", bundleIdentifier]];
     NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithContentsOfFile:appPlistPath];
     
     NSArray* keysToCheck = [NSArray arrayWithObjects:
-                            @"WebKitLocalStorageDatabasePathPreferenceKey", @"WebDatabaseDirectory", nil];
-    
+                            @"WebKitLocalStorageDatabasePathPreferenceKey", 
+                            @"WebDatabaseDirectory", 
+                            nil];
     
     BOOL dirty = NO;
-    NSString* pathSuffix =  (IsiOSVersion(@"5.1")) ? @"Library/Caches" : @"Library/WebKit";
-
+    
     for (NSString* key in keysToCheck) 
     {
         NSString* value = [appPlistDict objectForKey:key];
         // verify path is in app bundle, if not - fix
-        if (![value hasPrefix:bundlePath]) {
-            [appPlistDict setValue:[bundlePath stringByAppendingPathComponent:pathSuffix] forKey:key];
+        if (![value hasPrefix:bundlePath]) 
+        {
+            // the pathSuffix to use may be wrong - OTA upgrades from < 5.1 to 5.1 do keep the old path Library/WebKit, 
+            // while Xcode synced ones do change the storage location to Library/Caches
+            NSString* newBundlePath = [bundlePath stringByAppendingPathComponent:libraryCaches];
+            if (![[NSFileManager defaultManager] fileExistsAtPath:newBundlePath]) {
+                newBundlePath = [bundlePath stringByAppendingPathComponent:libraryWebKit];
+            }
+            [appPlistDict setValue:newBundlePath forKey:key];
             dirty = YES;
         }
     }
@@ -295,5 +345,69 @@
 @implementation CDVBackupInfo
 
 @synthesize original, backup, label;
+
+- (BOOL) file:(NSString*)aPath isNewerThanFile:(NSString*)bPath
+{
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSError* error = nil;
+
+    NSDictionary* aPathAttribs = [fileManager attributesOfItemAtPath:aPath error:&error];
+    NSDictionary* bPathAttribs = [fileManager attributesOfItemAtPath:bPath error:&error];
+    
+    NSDate* aPathModDate = [aPathAttribs objectForKey:NSFileModificationDate];
+    NSDate* bPathModDate = [bPathAttribs objectForKey:NSFileModificationDate];
+    
+    if (nil == aPathModDate && nil == bPathModDate) {
+        return NO;
+    }
+    
+    return ([aPathModDate compare:bPathModDate] == NSOrderedDescending || bPathModDate == nil);
+}
+
+- (BOOL) item:(NSString*)aPath isNewerThanItem:(NSString*)bPath
+{
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    
+    BOOL aPathIsDir = NO, bPathIsDir = NO;
+    BOOL aPathExists = [fileManager fileExistsAtPath:aPath isDirectory:&aPathIsDir];
+    [fileManager fileExistsAtPath:bPath isDirectory:&bPathIsDir];
+    
+    if (!aPathExists) { 
+        return NO;
+    }
+    
+    if (!(aPathIsDir && bPathIsDir)){ // just a file
+        return [self file:aPath isNewerThanFile:bPath];
+    }
+    
+    // essentially we want rsync here, but have to settle for our poor man's implementation
+    // we get the files in aPath, and see if it is newer than the file in bPath 
+    // (it is newer if it doesn't exist in bPath) if we encounter the FIRST file that is newer,
+    // we return YES
+    NSDirectoryEnumerator* directoryEnumerator = [fileManager enumeratorAtPath:aPath];
+    NSString* path;
+    
+    while ((path = [directoryEnumerator nextObject])) {
+        NSString* aPathFile = [aPath stringByAppendingPathComponent:path];
+        NSString* bPathFile = [bPath stringByAppendingPathComponent:path];
+        
+        BOOL isNewer = [self file:aPathFile isNewerThanFile:bPathFile];
+        if (isNewer) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+- (BOOL) shouldBackup
+{
+    return [self item:self.original isNewerThanItem:self.backup];
+}
+
+- (BOOL) shouldRestore
+{
+    return [self item:self.backup isNewerThanItem:self.original];
+}
 
 @end
