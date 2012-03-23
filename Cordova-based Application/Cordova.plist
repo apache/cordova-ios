@@ -40,7 +40,7 @@
 		<string>CDVDebugConsole</string>
 		<key>File</key>
 		<string>CDVFile</string>
-		<key>org.apache.cordova.filetransfer</key>
+		<key>FileTransfer</key>
 		<string>CDVFileTransfer</string>
 		<key>Geolocation</key>
 		<string>CDVLocation</string>
