@@ -30,7 +30,7 @@
 - (void) restore:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 
-+ (void) verifyAndFixDatabaseLocations;
++ (void) __verifyAndFixDatabaseLocations;
 
 @end
 

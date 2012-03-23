@@ -237,10 +237,10 @@
 
 - (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    [[self class] verifyAndFixDatabaseLocations];
+    [[self class] __verifyAndFixDatabaseLocations];
 }
 
-+ (void) verifyAndFixDatabaseLocations
++ (void) __verifyAndFixDatabaseLocations
 {
     NSString* libraryCaches = @"Library/Caches";
     NSString* libraryWebKit = @"Library/WebKit";
