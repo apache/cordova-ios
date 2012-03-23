@@ -55,7 +55,7 @@
         //////////// LOCALSTORAGE
         
         original = [[appLibraryFolder stringByAppendingPathComponent:
-                                 (IsiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/LocalStorage"]
+                                 (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/LocalStorage"]
                                  stringByAppendingPathComponent:@"file__0.localstorage"]; 
                                    
         backup = [backupsFolder stringByAppendingPathComponent:@"localstorage.appdata.db"];
@@ -70,7 +70,7 @@
         //////////// WEBSQL MAIN DB
 
         original = [[appLibraryFolder stringByAppendingPathComponent:
-                     (IsiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
+                     (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
                     stringByAppendingPathComponent:@"Databases.db"]; 
         
         backup = [backupsFolder stringByAppendingPathComponent:@"websqlmain.appdata.db"];
@@ -85,7 +85,7 @@
         //////////// WEBSQL DATABASES
         
         original = [[appLibraryFolder stringByAppendingPathComponent:
-                     (IsiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
+                     (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
                     stringByAppendingPathComponent:@"file__0"]; 
         
         backup = [backupsFolder stringByAppendingPathComponent:@"websqldbs.appdata.db"];
