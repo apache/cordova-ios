@@ -825,9 +825,8 @@ BOOL gSplashScreenShown = NO;
     NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
     [devProps setObject:[device model] forKey:@"platform"];
     [devProps setObject:[device systemVersion] forKey:@"version"];
-    [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
+    [devProps setObject:[device uniqueAppInstanceIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
-    //[devProps setObject:[[self class] cordovaVersion ] forKey:@"gap"];
     
     NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
     return devReturn;

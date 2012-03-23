@@ -50,6 +50,7 @@
 #import "NSData+Base64.h"
 #import "NSDictionary+Extensions.h"
 #import "NSMutableArray+QueueAdditions.h"
+#import "UIDevice+Extensions.h"
 
 #import "JSONKit.h"
 
