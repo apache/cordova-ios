@@ -36,7 +36,6 @@
 @property (nonatomic, readonly, retain) NSDictionary* settings;
 @property (nonatomic, readonly, retain) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, retain) NSArray* supportedOrientations;
-@property (nonatomic, readonly, copy)   NSString* sessionKey;
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;

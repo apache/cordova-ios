@@ -30,7 +30,6 @@
 @property (nonatomic, readwrite, retain) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, retain) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, retain) NSArray* supportedOrientations;
-@property (nonatomic, readwrite, copy)   NSString* sessionKey;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
 
 @property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView* activityView;
@@ -43,7 +42,7 @@
 
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
-@synthesize settings, sessionKey, loadFromString;
+@synthesize settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen, commandDelegate;
 @synthesize wwwFolderName, startPage;
 
@@ -95,10 +94,6 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void) viewDidLoad 
 {
-    if (self.sessionKey == nil) {
-        self.sessionKey = [NSString stringWithFormat:@"%d", arc4random()];
-    }
-    
     [super viewDidLoad];
 	
     self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
@@ -359,11 +354,6 @@
  */
 - (void) webViewDidFinishLoad:(UIWebView*)theWebView 
 {
-    // Share session key with the WebView by setting Cordova.sessionKey
-    // TODO: wtf is the sessionKey ?
-    NSString *sessionKeyScript = [NSString stringWithFormat:@"sessionKey = \"%@\";", self.sessionKey];
-    [theWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
-	
     NSDictionary *deviceProperties = [ self deviceProperties];
     NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"try{cordova.require('cordova/plugin/ios/device').setInfo(%@);}catch(e){alert('errorz1!!!');alert(JSON.stringify(e))}", [deviceProperties JSONString]];
     
