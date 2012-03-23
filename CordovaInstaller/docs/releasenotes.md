@@ -37,6 +37,7 @@ Cordova is a static library and static framework that enables developers to incl
 * Fixed shell script error - picks up new location of cordova.js (unified) now
 * Fixed NOTICE file with correct project name
 * Added new CDVCommandDelegate stub to MainViewController
+* Fixed CB-49 - UUID replacement
 
 
 ### 1.5.0 (20120302) ###
