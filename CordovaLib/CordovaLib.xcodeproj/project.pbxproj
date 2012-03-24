@@ -81,6 +81,7 @@
 		3062D121151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3062D11E151D0EDB000D9128 /* UIDevice+Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3062D11F151D0EDB000D9128 /* UIDevice+Extensions.m */; };
 		3062D123151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3062D11F151D0EDB000D9128 /* UIDevice+Extensions.m */; };
+		3062D1AE151D4D9D000D9128 /* CDVLocalStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */; };
 		307A8F9E1385A2EC00E43782 /* CDVConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* CDVConnection.h */; };
 		307A8F9F1385A2EC00E43782 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* CDVConnection.m */; };
 		30956FD2138F1F5600FC3563 /* CDVMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* CDVMotion.h */; };
@@ -195,6 +196,8 @@
 		30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAvailability.h; path = Classes/CDVAvailability.h; sourceTree = "<group>"; };
 		3062D11E151D0EDB000D9128 /* UIDevice+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIDevice+Extensions.h"; path = "Classes/UIDevice+Extensions.h"; sourceTree = "<group>"; };
 		3062D11F151D0EDB000D9128 /* UIDevice+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIDevice+Extensions.m"; path = "Classes/UIDevice+Extensions.m"; sourceTree = "<group>"; };
+		3062D1AC151D4D9D000D9128 /* CDVLocalStorageTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVLocalStorageTests.h; sourceTree = "<group>"; };
+		3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVLocalStorageTests.m; sourceTree = "<group>"; };
 		307A8F9C1385A2EC00E43782 /* CDVConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVConnection.h; path = Classes/CDVConnection.h; sourceTree = "<group>"; };
 		307A8F9D1385A2EC00E43782 /* CDVConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVConnection.m; path = Classes/CDVConnection.m; sourceTree = "<group>"; };
 		30956FD0138F1F5600FC3563 /* CDVMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVMotion.h; path = Classes/CDVMotion.h; sourceTree = "<group>"; };
@@ -368,6 +371,8 @@
 		686357B0141002F100DF4CF2 /* CordovaLibTests */ = {
 			isa = PBXGroup;
 			children = (
+				3062D1AC151D4D9D000D9128 /* CDVLocalStorageTests.h */,
+				3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */,
 				686357B7141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.h */,
 				686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */,
 				30356212141049E1006C2D43 /* CDVWhitelistTests.h */,
@@ -778,6 +783,7 @@
 				686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */,
 				30AE4E8D1419532F005A9C9A /* CDVContactsTests.m in Sources */,
 				30AE4E97141953C7005A9C9A /* CDVMockUIWebview.m in Sources */,
+				3062D1AE151D4D9D000D9128 /* CDVLocalStorageTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
