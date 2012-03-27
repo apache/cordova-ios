@@ -17,18 +17,28 @@
  under the License.
  */
 
-#import "CDVContactsTests.h"
-#import "CDVContacts.h"
+#import "CDVWebViewTest.h"
+#import "CDVViewController.h"
 
-@implementation CDVContactsTests
+@implementation CDVWebViewTest
 
-@synthesize webView, contacts;
+@synthesize webView;
 
 - (void)setUp
 {
     [super setUp];
-
-    self.contacts = (CDVContacts*)[[CDVContacts alloc] initWithWebView:self.webView];
+    
+    // setup code here
+    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate respondsToSelector:@selector(viewController)]) {
+        id vc = [delegate performSelector:@selector(viewController)];
+        if ([vc respondsToSelector:@selector(webView)]) {
+            id wv = [vc webView];
+            if ([wv isKindOfClass:[UIWebView class]]) {
+                self.webView = wv;
+            }
+        }
+    }
 }
 
 - (void)tearDown
@@ -36,27 +46,12 @@
     // Tear-down code here.
 	
     [super tearDown];
-	self.contacts = nil;
+	self.webView = nil;
 }
 
-- (void) testSearchContacts
+- (void) testWebViewAvailable
 {
-	STAssertTrue(NO, @"TODO: testSearchContacts");
-}
-
-- (void) testSaveContact
-{
-	STAssertTrue(NO, @"TODO: testSaveContact");
-}
-
-- (void) testNewContact
-{
-	STAssertTrue(NO, @"TODO: testNewContact");
-}
-
-- (void) testRemoveContact
-{
-	STAssertTrue(NO, @"TODO: testRemoveContact");
+	STAssertTrue(self.webView != nil, @"The test application's webView is not accessible. The webView is required by the test.");
 }
 
 @end

@@ -17,27 +17,29 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#import "ViewController.h"
 
-
-@interface CDVMockUIWebview : NSObject {
-		
-}
-
-@property (nonatomic, retain) NSMutableArray* javascriptQueue; // array of JsOperation objects
-@property (nonatomic, retain) UIWebView* webView;
+@interface ViewController ()
 
 @end
 
+@implementation ViewController
 
-@interface CDVJsOperation : NSObject
+- (void)viewDidLoad
 {
+    [super viewDidLoad];
+	// Do any additional setup after loading the view, typically from a nib.
 }
 
-- (id) initWithScript:(NSString*)script andResult:(NSString*)result;
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+}
 
-@property (nonatomic, copy) NSString* script;
-@property (nonatomic, copy) NSString* scriptResult;
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+}
 
 @end
-

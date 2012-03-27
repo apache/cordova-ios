@@ -17,15 +17,9 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
-#import "CDVWebViewTest.h"
+#import <UIKit/UIKit.h>
+#import "CDVViewController.h"
 
-@class CDVContacts;
-
-@interface CDVContactsTests : CDVWebViewTest {
-	
-}
-
-@property (nonatomic, retain) CDVContacts* contacts;
+@interface ViewController : CDVViewController
 
 @end

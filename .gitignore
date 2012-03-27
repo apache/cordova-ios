@@ -19,3 +19,5 @@ example
 CordovaLib/javascript/cordova-*.js
 wkhtmltopdf.dmg
 wkhtmltopdf/
+
+CordovaLib/CordovaLibApp/www/cordova.ios.js

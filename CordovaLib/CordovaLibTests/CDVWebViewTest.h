@@ -18,14 +18,11 @@
  */
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "CDVWebViewTest.h"
 
-@class CDVContacts;
-
-@interface CDVContactsTests : CDVWebViewTest {
+@interface CDVWebViewTest : SenTestCase {
 	
 }
 
-@property (nonatomic, retain) CDVContacts* contacts;
+@property (nonatomic, retain) UIWebView* webView;
 
 @end
