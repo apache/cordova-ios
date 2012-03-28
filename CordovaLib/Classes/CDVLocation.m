@@ -84,7 +84,7 @@
 
 @implementation CDVLocationData
 
-@synthesize locationStatus, locationInfo, locationCallbacks;
+@synthesize locationStatus, locationInfo, locationCallbacks, watchCallbacks;
 -(CDVLocationData*) init
 {
     self = (CDVLocationData*)[super init];
@@ -92,6 +92,7 @@
 	{
         self.locationInfo = nil;
         self.locationCallbacks = nil;
+        self.watchCallbacks = nil;
     }
     return self;
 }
@@ -99,6 +100,7 @@
 {
     self.locationInfo = nil;
     self.locationCallbacks = nil;
+    self.watchCallbacks = nil;
     [super dealloc];  
 }
 
@@ -119,6 +121,7 @@
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
         __locationStarted = NO;
+        __highAccuracyEnabled = NO;
         self.headingData = nil;   
         self.locationData = nil;
     }
@@ -171,24 +174,12 @@
 	}
 }
 
-- (void) startLocation
+- (void) startLocation:(BOOL) enableHighAccuracy
 {
-    // TODO: clean up the old options that were ios-only.
     if (![self isLocationServicesEnabled])
 	{
-		BOOL forcePrompt = NO;
-		// if forcePrompt is true iPhone will still show the "Location Services not active." Settings | Cancel prompt.
-        /*
-		if ([options objectForKey:kPGLocationForcePromptKey]) 
-		{
-			forcePrompt = [[options objectForKey:kPGLocationForcePromptKey] boolValue];
-		}
-        */
-		if (!forcePrompt)
-		{
-            [self returnLocationError:PERMISSIONDENIED withMessage: nil];
-			return;
-		}
+        [self returnLocationError:PERMISSIONDENIED withMessage: @"Location services are not enabled."];
+        return;
     }
     if (![self isAuthorized]) 
     {
@@ -198,9 +189,9 @@
             NSUInteger code = [CLLocationManager authorizationStatus];
             if (code == kCLAuthorizationStatusNotDetermined) {
                 // could return POSITION_UNAVAILABLE but need to coordinate with other platforms
-                message = @"User undecided on application's use of location services";
+                message = @"User undecided on application's use of location services.";
             } else if (code == kCLAuthorizationStatusRestricted) {
-                message = @"application use of location services is restricted";
+                message = @"Application's use of location services is restricted.";
             }
         }
         //PERMISSIONDENIED is only PositionError that makes sense when authorization denied
@@ -215,37 +206,18 @@
     [self.locationManager stopUpdatingLocation];
     [self.locationManager startUpdatingLocation];
     __locationStarted = YES;
-    /*
-    if ([options objectForKey:kPGLocationDistanceFilterKey]) 
-	{
-        CLLocationDistance distanceFilter = [(NSString *)[options objectForKey:kPGLocationDistanceFilterKey] doubleValue];
-        self.locationManager.distanceFilter = distanceFilter;
+    if (enableHighAccuracy) {
+        __highAccuracyEnabled = YES;
+        // Set to distance filter to "none" - which should be the minimum for best results.
+        self.locationManager.distanceFilter = kCLDistanceFilterNone;
+        // Set desired accuracy to Best.
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    } else {
+        __highAccuracyEnabled = NO;
+        // TODO: Set distance filter to 10 meters? and desired accuracy to nearest ten meters? arbitrary.
+        self.locationManager.distanceFilter = 10;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     }
-    
-    if ([options objectForKey:kPGLocationDesiredAccuracyKey]) 
-    {
-        int desiredAccuracy_num = [(NSString *)[options objectForKey:kPGLocationDesiredAccuracyKey] integerValue];
-        CLLocationAccuracy desiredAccuracy = kCLLocationAccuracyBest;
-        
-        if (desiredAccuracy_num < 10) {
-            desiredAccuracy = kCLLocationAccuracyBest;
-        }
-        else if (desiredAccuracy_num < 100) {
-            desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
-        }
-        else if (desiredAccuracy_num < 1000) {
-            desiredAccuracy = kCLLocationAccuracyHundredMeters;
-        }
-        else if (desiredAccuracy_num < 3000) {
-            desiredAccuracy = kCLLocationAccuracyKilometer;
-        }
-        else {
-            desiredAccuracy = kCLLocationAccuracyThreeKilometers;
-        }
-        
-        self.locationManager.desiredAccuracy = desiredAccuracy;
-    }
-     */
 }
 
 - (void) _stopLocation
@@ -258,6 +230,7 @@
         
 		[self.locationManager stopUpdatingLocation];
 		__locationStarted = NO;
+        __highAccuracyEnabled = NO;
 	}
 }
 
@@ -273,16 +246,28 @@
         }
         [self.locationData.locationCallbacks removeAllObjects];
     }
+    if (self.locationData.watchCallbacks.count > 0) {
+        for (NSString *callbackId in self.locationData.watchCallbacks) {
+            [self returnLocationInfo:callbackId];
+        }
+    } else {
+        // No callbacks waiting on us anymore, turn off listening.
+        [self stopLocation];
+    }
 }
 
 - (void) getLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
 {
     NSUInteger argc = [arguments count];
     NSString* callbackId = (argc > 0)? [arguments objectAtIndex:0] : @"INVALID";
-    
+    BOOL enableHighAccuracy = [[arguments objectAtIndex:1] boolValue];
+
     if ([self isLocationServicesEnabled] == NO)
     {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:2];
+        NSMutableDictionary* posError = [NSMutableDictionary dictionaryWithCapacity:2];
+        [posError setObject: [NSNumber numberWithInt: PERMISSIONDENIED] forKey:@"code"];
+        [posError setObject: @"Location services are disabled." forKey: @"message"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!self.locationData) {
@@ -293,16 +278,55 @@
             lData.locationCallbacks = [NSMutableArray arrayWithCapacity:1];
         }
         
-        if (!__locationStarted) {
+        if (!__locationStarted || __highAccuracyEnabled != enableHighAccuracy) {
             // add the callbackId into the array so we can call back when get data
             [lData.locationCallbacks addObject:callbackId];
             // Tell the location manager to start notifying us of heading updates
-            [self startLocation];
+            [self startLocation: enableHighAccuracy];
         }
         else {
             [self returnLocationInfo: callbackId]; 
         }
-
+    }
+}
+- (void) addWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* timerId = [arguments objectAtIndex:1];
+    BOOL enableHighAccuracy = [[arguments objectAtIndex:2] boolValue];
+    
+    if (!self.locationData) {
+        self.locationData = [[[CDVLocationData alloc] init] autorelease];
+    }
+    CDVLocationData* lData = self.locationData;
+    
+    if (!lData.watchCallbacks) {
+        lData.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
+    }
+    
+    // add the callbackId into the dictionary so we can call back whenever get data
+    [lData.watchCallbacks setObject:callbackId forKey:timerId];
+    
+    if ([self isLocationServicesEnabled] == NO)
+    {
+        NSMutableDictionary* posError = [NSMutableDictionary dictionaryWithCapacity:2];
+        [posError setObject: [NSNumber numberWithInt: PERMISSIONDENIED] forKey:@"code"];
+        [posError setObject: @"Location services are disabled." forKey: @"message"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    } else {
+        if (!__locationStarted || __highAccuracyEnabled != enableHighAccuracy) {
+            // Tell the location manager to start notifying us of location updates
+            [self startLocation: enableHighAccuracy];
+        }
+    }
+}
+- (void) clearWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    //NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* timerId = [arguments objectAtIndex:1];
+    if (self.locationData && self.locationData.watchCallbacks && [self.locationData.watchCallbacks objectForKey:timerId]) {
+        [self.locationData.watchCallbacks removeObjectForKey:timerId];
     }
 }
 
@@ -353,6 +377,9 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     }
     [self.locationData.locationCallbacks removeAllObjects];
+    for (NSString *callbackId in self.locationData.watchCallbacks) {
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    }
 }
 // called to get the current heading
 // Will call location manager to startUpdatingHeading if necessary
