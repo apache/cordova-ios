@@ -262,8 +262,9 @@ var cordova = {
             }
         }
     },
-    
+    // TODO: remove in 2.0.
     addPlugin: function(name, obj) {
+        console.log("[DEPRECATION NOTICE] window.addPlugin and window.plugins will be removed in version 2.0.");
         if (!window.plugins[name]) {
             window.plugins[name] = obj;
         }
@@ -285,6 +286,7 @@ var cordova = {
 
 /** 
  * Legacy variable for plugin support
+ * TODO: remove in 2.0.
  */
 if (!window.PhoneGap) {
     window.PhoneGap = cordova;
@@ -292,6 +294,7 @@ if (!window.PhoneGap) {
 
 /**
  * Plugins object
+ * TODO: remove in 2.0.
  */
 if (!window.plugins) {
     window.plugins = {};
@@ -347,7 +350,7 @@ function include(parent, objects, clobber, merge) {
             include(result, obj.children, clobber, merge);
           }
         } catch(e) {
-          alert('Exception building cordova JS globals: ' + e + ' for key "' + key + '"');
+          utils.alert('Exception building cordova JS globals: ' + e + ' for key "' + key + '"');
         }
     });
 }
@@ -798,6 +801,7 @@ define("cordova/exec", function(require, exports, module) {
      * @private
      */
 var cordova = require('cordova'),
+    utils = require('cordova/utils'),
     gapBridge,
     createGapBridge = function() {
         gapBridge = document.createElement("iframe");
@@ -811,7 +815,7 @@ var cordova = require('cordova'),
 
 module.exports = function() { 
     if (!channel.onCordovaInfoReady.fired) {
-        alert("ERROR: Attempting to call cordova.exec()" +
+        utils.alert("ERROR: Attempting to call cordova.exec()" +
               " before 'deviceready'. Ignoring.");
         return;
     }
@@ -3879,6 +3883,7 @@ define("cordova/plugin/ios/device", function(require, exports, module) {
  * @constructor
  */
 var exec = require('cordova/exec'),
+    utils = require('cordova/utils'),
     channel = require('cordova/channel');
 
 var Device = function() {
@@ -3898,7 +3903,7 @@ Device.prototype.setInfo = function(info) {
         this.uuid = info.uuid;
         channel.onCordovaInfoReady.fire();
     } catch(e) {
-        alert('Error during device info setting in cordova/plugin/ios/device!');
+        utils.alert('Error during device info setting in cordova/plugin/ios/device!');
     }
 };
 
@@ -3990,7 +3995,7 @@ var NetworkConnection = function () {
  */
 NetworkConnection.prototype.getInfo = function (successCallback, errorCallback) {
     // Get info
-    exec(successCallback, errorCallback, "Network Status", "getConnectionInfo", []);
+    exec(successCallback, errorCallback, "NetworkStatus", "getConnectionInfo", []);
 };
 
 module.exports = new NetworkConnection();
@@ -4240,8 +4245,18 @@ var _self = {
             Child.__super__ = Parent.prototype;
             Child.prototype.constructor = Child;
         };
-    }())
+    }()),
 
+    /**
+     * Alerts a message in any available way: alert or console.log.
+     */
+    alert:function(msg) {
+        if (alert) {
+            alert(msg);
+        } else if (console && console.log) {
+            console.log(msg);
+        }
+    }
 };
 
 module.exports = _self;
