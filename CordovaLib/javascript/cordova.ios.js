@@ -3175,8 +3175,12 @@ define("cordova/plugin/Position", function(require, exports, module) {
 var Coordinates = require('cordova/plugin/Coordinates');
 
 var Position = function(coords, timestamp) {
-    this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
-    this.timestamp = (timestamp !== undefined) ? timestamp : new Date().getTime();
+  if (coords) {
+	    this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
+  } else {
+      this.coords = new Coordinates();
+  }
+	this.timestamp = (timestamp !== undefined) ? timestamp : new Date();
 };
 
 module.exports = Position;
@@ -3700,27 +3704,45 @@ var timers = {};   // list of timers in use
 // Returns default params, overrides if provided with values
 function parseParameters(options) {
     var opt = {
-        maximumAge: 10000,
+        maximumAge: 0,
         enableHighAccuracy: false,
-        timeout: 10000
+        timeout: Infinity
     };
 
     if (options) {
-        if (options.maximumAge !== undefined) {
+        if (options.maximumAge !== undefined && !isNaN(options.maximumAge) && options.maximumAge > 0) {
             opt.maximumAge = options.maximumAge;
         }
         if (options.enableHighAccuracy !== undefined) {
             opt.enableHighAccuracy = options.enableHighAccuracy;
         }
-        if (options.timeout !== undefined) {
-            opt.timeout = options.timeout;
+        if (options.timeout !== undefined && !isNaN(options.timeout)) {
+            if (options.timeout < 0) {
+                opt.timeout = 0;
+            } else {
+                opt.timeout = options.timeout;
+            }
         }
     }
 
     return opt;
 }
 
+// Returns a timeout failure, closed over a specified timeout value and error callback.
+function createTimeout(errorCallback, timeout) {
+    var t = setTimeout(function() {
+        clearTimeout(t);
+        t = null;
+        errorCallback({
+            code:PositionError.TIMEOUT,
+            message:"Position retrieval timed out."
+        });
+    }, timeout);
+    return t;
+}
+
 var geolocation = {
+    lastPosition:null, // reference to last known (cached) position returned
     /**
    * Asynchronously aquires the current position.
    *
@@ -3729,10 +3751,24 @@ var geolocation = {
    * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
    */
     getCurrentPosition:function(successCallback, errorCallback, options) {
+        if (arguments.length === 0) {
+            throw new Error("getCurrentPosition must be called with at least one argument.");
+        }
         options = parseParameters(options);
 
+        // Timer var that will fire an error callback if no position is retrieved from native
+        // before the "timeout" param provided expires
+        var timeoutTimer = null;
+
         var win = function(p) {
-            successCallback(new Position(
+            clearTimeout(timeoutTimer);
+            if (!timeoutTimer) {
+                // Timeout already happened, or native fired error callback for
+                // this geo request.
+                // Don't continue with success callback.
+                return;
+            }
+            var pos = new Position(
                 {
                     latitude:p.latitude,
                     longitude:p.longitude,
@@ -3743,13 +3779,45 @@ var geolocation = {
                     altitudeAccuracy:p.altitudeAccuracy
                 },
                 p.timestamp || new Date()
-            ));
+            );
+            geolocation.lastPosition = pos;
+            successCallback(pos);
         };
         var fail = function(e) {
-            errorCallback(new PositionError(e.code, e.message));
+            clearTimeout(timeoutTimer);
+            timeoutTimer = null;
+            var err = new PositionError(e.code, e.message);
+            if (errorCallback) {
+                errorCallback(err);
+            }
         };
 
-        exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.timeout, options.maximumAge]);
+        // Check our cached position, if its timestamp difference with current time is less than the maximumAge, then just
+        // fire the success callback with the cached position.
+        if (geolocation.lastPosition && options.maximumAge && (((new Date()).getTime() - geolocation.lastPosition.timestamp.getTime()) <= options.maximumAge)) {
+            successCallback(geolocation.lastPosition);
+        // If the cached position check failed and the timeout was set to 0, error out with a TIMEOUT error object.
+        } else if (options.timeout === 0) {
+            fail({
+                code:PositionError.TIMEOUT,
+                message:"timeout value in PositionOptions set to 0 and no cached Position object available, or cached Position object's age exceed's provided PositionOptions' maximumAge parameter."
+            });
+        // Otherwise we have to call into native to retrieve a position.
+        } else {
+            if (options.timeout !== Infinity) {
+                // If the timeout value was not set to Infinity (default), then
+                // set up a timeout function that will fire the error callback 
+                // if no successful position was retrieved before timeout expired.
+                timeoutTimer = createTimeout(fail, options.timeout);
+            } else {
+                // This is here so the check in the win function doesn't mess stuff up
+                // may seem weird but this guarantees timeoutTimer is 
+                // always truthy before we call into native
+                timeoutTimer = true; 
+            }
+            exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.maximumAge]); 
+        }
+        return timeoutTimer;
     },
     /**
      * Asynchronously watches the geolocation for changes to geolocation.  When a change occurs,
@@ -3761,12 +3829,46 @@ var geolocation = {
      * @return String                       The watch id that must be passed to #clearWatch to stop watching.
      */
     watchPosition:function(successCallback, errorCallback, options) {
+        if (arguments.length === 0) {
+            throw new Error("watchPosition must be called with at least one argument.");
+        }
         options = parseParameters(options);
 
         var id = utils.createUUID();
-        timers[id] = window.setInterval(function() {
-            geolocation.getCurrentPosition(successCallback, errorCallback, options);
-        }, options.timeout);
+
+        // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
+        timers[id] = geolocation.getCurrentPosition(successCallback, errorCallback, options);
+
+        var fail = function(e) {
+            clearTimeout(timers[id]);
+            var err = new PositionError(e.code, e.message);
+            if (errorCallback) {
+                errorCallback(err);
+            }
+        };
+
+        var win = function(p) {
+            clearTimeout(timers[id]);
+            if (options.timeout !== Infinity) {
+                timers[id] = createTimeout(fail, options.timeout);
+            }
+            var pos = new Position(
+                {
+                    latitude:p.latitude,
+                    longitude:p.longitude,
+                    altitude:p.altitude,
+                    accuracy:p.accuracy,
+                    heading:p.heading,
+                    velocity:p.velocity,
+                    altitudeAccuracy:p.altitudeAccuracy
+                },
+                p.timestamp || new Date()
+            );
+            geolocation.lastPosition = pos;
+            successCallback(pos);
+        };
+
+        exec(win, fail, "Geolocation", "addWatch", [id, options.enableHighAccuracy]);
 
         return id;
     },
@@ -3777,8 +3879,9 @@ var geolocation = {
      */
     clearWatch:function(id) {
         if (id && timers[id] !== undefined) {
-            window.clearInterval(timers[id]);
+            clearTimeout(timers[id]);
             delete timers[id];
+            exec(null, null, "Geolocation", "clearWatch", [id]); 
         }
     }
 };
