@@ -32,7 +32,7 @@
 		<string>CDVAccelerometer</string>
 		<key>Camera</key>
 		<string>CDVCamera</string>
-		<key>Network Status</key>
+		<key>NetworkStatus</key>
 		<string>CDVConnection</string>
 		<key>Contacts</key>
 		<string>CDVContacts</string>
