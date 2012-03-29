@@ -247,8 +247,8 @@
         [self.locationData.locationCallbacks removeAllObjects];
     }
     if (self.locationData.watchCallbacks.count > 0) {
-        for (NSString *callbackId in self.locationData.watchCallbacks) {
-            [self returnLocationInfo:callbackId];
+        for (NSString *timerId in self.locationData.watchCallbacks) {
+            [self returnLocationInfo:[self.locationData.watchCallbacks objectForKey: timerId ]];
         }
     } else {
         // No callbacks waiting on us anymore, turn off listening.
