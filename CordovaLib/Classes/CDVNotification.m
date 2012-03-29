@@ -90,9 +90,9 @@
 {
     //NSString *buttonLabel = [alertView buttonTitleAtIndex:buttonIndex];
 	
-	CDVAlertView* pgAlertView = (CDVAlertView*) alertView;
+	CDVAlertView* cdvAlertView = (CDVAlertView*) alertView;
 	CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: ++buttonIndex]; 
-	[self writeJavascript:[result toSuccessCallbackString: [pgAlertView callbackId]]];
+	[self writeJavascript:[result toSuccessCallbackString: [cdvAlertView callbackId]]];
 	//NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", ++buttonIndex, buttonLabel];    
     //[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
 }

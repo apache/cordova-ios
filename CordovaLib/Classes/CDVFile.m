@@ -840,13 +840,13 @@
 		NSString* strUri = [fullPath stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 		NSURL* fileUrl = [NSURL fileURLWithPath:strUri];
 		if (fileUrl) {
-			result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString: [fileUrl absoluteString]];
+			result = [PluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: [fileUrl absoluteString]];
 			jsString = [result toSuccessCallbackString:callbackId];
 		} // else NOT_FOUND_ERR
 	}
 	if(!jsString) {
 		// was error
-		result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast:  @"window.localFileSystem._castError"];
+		result = [PluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR cast:  @"window.localFileSystem._castError"];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	

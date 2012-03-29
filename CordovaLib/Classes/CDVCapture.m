@@ -140,7 +140,7 @@
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }*/
-        // PGImagePicker specific property
+        // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         pickerController.mimeType = mode;
 	
@@ -260,7 +260,7 @@
             //pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             //pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
-        // PGImagePicker specific property
+        // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
@@ -364,8 +364,8 @@
         id command = [self.commandDelegate getCommandInstance: @"File"];
         bError = !([command isKindOfClass:[CDVFile class]]);
         if (!bError) {
-            CDVFile* pgFile = (CDVFile*)command;
-            mimeType = [pgFile getMimeTypeFromPath:fullPath];
+            CDVFile* cdvFile = (CDVFile*)command;
+            mimeType = [cdvFile getMimeTypeFromPath:fullPath];
             if (!mimeType) {
                 // can't do much without mimeType, return error
                 bError = YES;
@@ -450,8 +450,8 @@
     if(!type) {
         id command = [self.commandDelegate getCommandInstance: @"File"];
         if([command isKindOfClass:[CDVFile class]]) {
-            CDVFile* pgFile = (CDVFile*)command;
-            NSString* mimeType = [pgFile getMimeTypeFromPath:fullPath];
+            CDVFile* cdvFile = (CDVFile*)command;
+            NSString* mimeType = [cdvFile getMimeTypeFromPath:fullPath];
             [fileDict setObject: (mimeType != nil ? (NSObject*)mimeType : [NSNull null]) forKey:@"type"];
         }
     }

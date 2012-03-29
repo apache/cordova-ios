@@ -470,9 +470,9 @@
     if ([self.locationManager respondsToSelector: @selector(headingOrientation)]) {
         UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
         if (currentOrientation != UIDeviceOrientationUnknown) {
-            CDVViewController* pgViewController = (CDVViewController*)self.viewController;
+            CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
             
-            if ([pgViewController.supportedOrientations containsObject:
+            if ([cdvViewController.supportedOrientations containsObject:
                  [NSNumber numberWithInt:currentOrientation]]) {
                 
                 self.locationManager.headingOrientation = (CLDeviceOrientation)currentOrientation;
