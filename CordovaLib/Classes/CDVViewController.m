@@ -355,7 +355,15 @@
 - (void) webViewDidFinishLoad:(UIWebView*)theWebView 
 {
     NSDictionary *deviceProperties = [ self deviceProperties];
-    NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"try{cordova.require('cordova/plugin/ios/device').setInfo(%@);}catch(e){alert('errorz1!!!');alert(JSON.stringify(e))}", [deviceProperties JSONString]];
+    NSMutableString* result = [[NSMutableString alloc] initWithFormat:
+                               @"(function() { \
+                                    try { \
+                                        cordova.require('cordova/plugin/ios/device').setInfo(%@); \
+                                    } catch (e) { \
+                                        return \"Error: executing module function 'setInfo' in module 'cordova/plugin/ios/device'. Have you included the iOS version of the cordova-%@.js file?\"; \
+                                    } \
+                               })()", 
+                               [deviceProperties JSONString], [CDVViewController cordovaVersion]];
     
     /* Settings.plist
      * Read the optional Settings.plist file and push these user-defined settings down into the web application.
@@ -369,7 +377,12 @@
     }
     
     NSLog(@"Device initialization: %@", result);
-    [theWebView stringByEvaluatingJavaScriptFromString:result];
+    NSString* jsResult = [theWebView stringByEvaluatingJavaScriptFromString:result];
+    // if jsResult is not nil nor empty, an error
+    if (jsResult != nil && [jsResult length] > 0) {
+        NSLog(@"%@", jsResult);
+    }
+    
     [result release];
     
     /*
