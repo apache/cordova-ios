@@ -48,7 +48,7 @@
 		<string>CDVSound</string>
 		<key>Capture</key>
 		<string>CDVCapture</string>
-		<key>Splash Screen</key>
+		<key>SplashScreen</key>
 		<string>CDVSplashScreen</string>
 		<key>Battery</key>
 		<string>CDVBattery</string>
