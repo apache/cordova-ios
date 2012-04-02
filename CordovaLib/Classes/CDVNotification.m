@@ -25,17 +25,21 @@
 @implementation CDVNotification
 
 
-- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* message = [arguments objectAtIndex:1];
-	NSString* title   = [options objectForKey:@"title"];
-	NSString* button  = [options objectForKey:@"buttonLabel"];
+    int argc = [arguments count];
+
+	NSString* callbackId = argc > 0? [arguments objectAtIndex:0] : nil;
+	NSString* message = argc > 1? [arguments objectAtIndex:1] : nil;
+	NSString* title   = argc > 2? [arguments objectAtIndex:2] : nil;
+	NSString* buttons = argc > 3? [arguments objectAtIndex:3] : nil;
 	
-	if (!title)
-        title = @"Alert";
-	if (!button)
-        button = @"OK";
+	if (!title) {
+        title = NSLocalizedString(@"Alert", @"Alert");
+    }
+	if (!buttons) {
+        buttons = NSLocalizedString(@"OK", @"OK");
+    }
 	
 	CDVAlertView *alertView = [[CDVAlertView alloc]
 							  initWithTitle:title
@@ -44,60 +48,53 @@
 							  cancelButtonTitle:nil 
 							  otherButtonTitles:nil];
 	
-	[alertView setCallbackId:callbackId];
-	NSArray* labels = [ button componentsSeparatedByString:@","];
-	
-	int count = [ labels count ];
+	alertView.callbackId = callbackId;
+
+	NSArray* labels = [buttons componentsSeparatedByString:@","];
+	int count = [labels count];
 	
 	for(int n = 0; n < count; n++)
 	{
-		[ alertView addButtonWithTitle:[labels objectAtIndex:n]];
+		[alertView addButtonWithTitle:[labels objectAtIndex:n]];
 	}
 	
 	[alertView show];
 	[alertView release];
 }
-- (void)confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{   // confirm is just a variant of alert
-    [self alert: arguments withDict:options];
-}
-- (void)prompt:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* message = [arguments objectAtIndex:1];
-	NSString* title   = [options objectForKey:@"title"];
-	NSString* button  = [options objectForKey:@"buttonLabel"];
+
+- (void) confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{   
+    int argc = [arguments count];
+
+	NSString* callbackId = argc > 0? [arguments objectAtIndex:0] : nil;
+	NSString* message = argc > 1? [arguments objectAtIndex:1] : nil;
+	NSString* title   = argc > 2? [arguments objectAtIndex:2] : nil;
+	NSString* buttons = argc > 3? [arguments objectAtIndex:3] : nil;
+	
+	if (!title) {
+        title = NSLocalizedString(@"Confirm", @"Confirm");
+    }
+	if (!buttons) {
+        buttons = NSLocalizedString(@"OK,Cancel", @"OK,Cancel");
+    }
     
-    if (!title)
-        title = @"Alert";
-    if (!button)
-        button = @"OK";
-    
-	CDVAlertView *openURLAlert = [[CDVAlertView alloc]
-								 initWithTitle:title
-								 message:message delegate:self cancelButtonTitle:button otherButtonTitles:nil];
-	[openURLAlert setCallbackId: callbackId];
-	[openURLAlert show];
-	[openURLAlert release];
+    NSMutableArray* newArguments = [NSMutableArray arrayWithObjects:callbackId, message, title, buttons, nil];
+    [self alert: newArguments withDict:options];
 }
 
 /**
  Callback invoked when an alert dialog's buttons are clicked.   
  Passes the index + label back to JS
  */
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void) alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    //NSString *buttonLabel = [alertView buttonTitleAtIndex:buttonIndex];
-	
 	CDVAlertView* cdvAlertView = (CDVAlertView*) alertView;
 	CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: ++buttonIndex]; 
-	[self writeJavascript:[result toSuccessCallbackString: [cdvAlertView callbackId]]];
-	//NSString * jsCallBack = [NSString stringWithFormat:@"navigator.notification._alertCallback(%d,\"%@\");", ++buttonIndex, buttonLabel];    
-    //[webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+    
+	[self writeJavascript:[result toSuccessCallbackString:cdvAlertView.callbackId]];
 }
  
-- (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 }
@@ -105,15 +102,13 @@
 @end
 
 @implementation CDVAlertView
+
 @synthesize callbackId;
 
 - (void) dealloc
 {
-	if (callbackId) {
-		[callbackId release];
-	}
-	
-	
+	self.callbackId = nil;
 	[super dealloc];
 }
+
 @end

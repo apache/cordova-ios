@@ -33,9 +33,8 @@
 @end
 
 @interface CDVAlertView : UIAlertView {
-	NSString* callBackId;
 }
-@property(nonatomic, retain) NSString* callbackId;
+@property(nonatomic, copy) NSString* callbackId;
 
 -(void) dealloc;
 
