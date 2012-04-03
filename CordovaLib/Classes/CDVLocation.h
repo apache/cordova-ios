@@ -39,19 +39,21 @@ typedef NSUInteger CDVLocationStatus;
 
 // simple object to keep track of heading information
 @interface CDVHeadingData : NSObject {
-    CDVHeadingStatus     headingStatus;
-    BOOL              headingRepeats;
-    CLHeading*        headingInfo;
-    NSMutableArray*   headingCallbacks;
-    NSString*         headingFilter;
+    CDVHeadingStatus    headingStatus;
+    CLHeading*          headingInfo;
+    NSMutableArray*     headingCallbacks;
+    NSString*           headingFilter;
+    NSDate*             headingTimestamp;
+    NSInteger           timeout;
     
 }
 
 @property (nonatomic, assign) CDVHeadingStatus headingStatus;
-@property (nonatomic, assign) BOOL headingRepeats;
 @property (nonatomic, retain) CLHeading* headingInfo;
 @property (nonatomic, retain) NSMutableArray* headingCallbacks;
 @property (nonatomic, retain) NSString* headingFilter;
+@property (nonatomic, retain) NSDate* headingTimestamp;
+@property (assign) NSInteger timeout;
 
 @end
 
@@ -70,6 +72,7 @@ typedef NSUInteger CDVLocationStatus;
 
 @interface CDVLocation : CDVPlugin <CLLocationManagerDelegate> {
     @private BOOL      __locationStarted;
+    CLLocationManager* locationManager;
     CDVHeadingData*    headingData;
     CDVLocationData*   locationData;
 }
@@ -97,7 +100,7 @@ typedef NSUInteger CDVLocationStatus;
 
 - (void)getHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)returnHeadingInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
-
+- (void)watchHeadingFilter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)stopHeading:(NSMutableArray*)arguments
 		   withDict:(NSMutableDictionary*)options;
 - (void) startHeadingWithFilter: (CLLocationDegrees) filter;

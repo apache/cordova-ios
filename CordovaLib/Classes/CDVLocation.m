@@ -56,17 +56,18 @@
 
 @implementation CDVHeadingData
 
-@synthesize headingStatus, headingRepeats, headingInfo, headingCallbacks, headingFilter;
+@synthesize headingStatus, headingInfo, headingCallbacks, headingFilter, headingTimestamp, timeout;
 -(CDVHeadingData*) init
 {
     self = (CDVHeadingData*)[super init];
     if (self) 
 	{
-        self.headingRepeats = NO;
         self.headingStatus = HEADINGSTOPPED;
         self.headingInfo = nil;
         self.headingCallbacks = nil;
         self.headingFilter = nil;
+        self.headingTimestamp = nil;
+        self.timeout = 10;
     }
     return self;
 }
@@ -75,6 +76,7 @@
     self.headingInfo = nil;
     self.headingCallbacks = nil;
     self.headingFilter = nil;
+    self.headingTimestamp = nil;
     [super dealloc];  
 }
 
@@ -350,8 +352,11 @@
 - (void)getHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
     NSString* callbackId = [arguments objectAtIndex:0];
-    NSNumber* repeats = [options valueForKey:@"repeats"];  // indicates this call will be repeated at regular intervals
-    
+    NSNumber* filter = [options valueForKey:@"filter"];
+    if (filter) {
+        [self watchHeadingFilter: arguments withDict: options];
+        return;
+    }
     if ([self hasHeadingSupport] == NO) 
     {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
@@ -359,13 +364,10 @@
     } else {
         // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
-            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
+            self.headingData = [[CDVHeadingData alloc] init];
         }
         CDVHeadingData* hData = self.headingData;
-        
-        if (repeats != nil) {
-            hData.headingRepeats = YES;
-        }
+
         if (!hData.headingCallbacks) {
             hData.headingCallbacks = [NSMutableArray arrayWithCapacity:1];
         }
@@ -394,7 +396,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {
-            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
+            self.headingData = [[CDVHeadingData alloc] init] ;
             hData = self.headingData;
         }
         if (hData.headingStatus != HEADINGRUNNING) {
@@ -420,6 +422,8 @@
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
     CDVHeadingData* hData = self.headingData;
+    
+    self.headingData.headingTimestamp = [NSDate date];
     
     if (hData && hData.headingStatus == HEADINGERROR) {
         // return error
@@ -450,15 +454,16 @@
 
 - (void) stopHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    CDVHeadingData* hData = self.headingData;
-    if (hData && hData.headingStatus != HEADINGSTOPPED)
+    //CDVHeadingData* hData = self.headingData;
+    if (self.headingData && self.headingData.headingStatus != HEADINGSTOPPED)
 	{
-		if (hData.headingFilter) {
+		if (self.headingData.headingFilter) {
             // callback one last time to clear callback
-            [self returnHeadingInfo:hData.headingFilter keepCallback:NO];
-            hData.headingFilter = nil;
+            [self returnHeadingInfo: self.headingData.headingFilter keepCallback:NO];
+            self.headingData.headingFilter = nil;
         }
-        [self.locationManager stopUpdatingHeading];		
+        [self.locationManager stopUpdatingHeading];	
+        NSLog(@"heading STOPPED");
         self.headingData = nil;
 	}
 }	
@@ -495,6 +500,10 @@
     CDVHeadingData* hData = self.headingData;
     // save the data for next call into getHeadingData
     hData.headingInfo = heading;
+    BOOL bTimeout = NO;
+    if (!hData.headingFilter && hData.headingTimestamp) {
+        bTimeout = fabs([hData.headingTimestamp timeIntervalSinceNow ]) > hData.timeout;
+    }
     
     if (hData.headingStatus == HEADINGSTARTING) {
         hData.headingStatus = HEADINGRUNNING; // so returnHeading info will work
@@ -503,12 +512,11 @@
             [self returnHeadingInfo:callbackId keepCallback:NO];
         }
         [hData.headingCallbacks removeAllObjects];
-        if (!hData.headingRepeats && !hData.headingFilter) {
-            [self stopHeading:nil withDict:nil];
-        }
     }
     if (hData.headingFilter) {
         [self returnHeadingInfo: hData.headingFilter keepCallback:YES];
+    } else if (bTimeout) {
+        [self stopHeading:nil withDict:nil];
     }
     hData.headingStatus = HEADINGRUNNING;  // to clear any error
     
@@ -530,7 +538,7 @@
                 }
                 [hData.headingCallbacks removeAllObjects];
             } // else for frequency watches next call to getCurrentHeading will report error
-            else if (hData.headingFilter) {
+            if (hData.headingFilter) {
                 CDVPluginResult* resultFilter = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
                 [super writeJavascript: [resultFilter toErrorCallbackString:hData.headingFilter]];
             }
