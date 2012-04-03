@@ -25,12 +25,21 @@
 
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* fileKey = (NSString*)[options objectForKey:@"fileKey"];
-    NSString* fileName = (NSString*)[options objectForKey:@"fileName"];
-    NSString* mimeType = (NSString*)[options objectForKey:@"mimeType"];
-    NSMutableDictionary* params = [NSMutableDictionary dictionaryWithDictionary:(NSDictionary*)[options objectForKey:@"params"]];
-    NSString* filePath = (NSString*)[options objectForKey:@"filePath"];
-    NSString* server = (NSString*)[options objectForKey:@"server"];
+    
+    // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
+    // however, params is a JavaScript object and during marshalling is put into the options dict, 
+    // thus debug and chunkedMode are the 6th and 7th arguments
+    
+    NSString* filePath = (NSString*)[arguments objectAtIndex:1];
+    NSString* server = (NSString*)[arguments objectAtIndex:2];
+    NSString* fileKey = (NSString*)[arguments objectAtIndex:3];
+    NSString* fileName = (NSString*)[arguments objectAtIndex:4];
+    NSString* mimeType = (NSString*)[arguments objectAtIndex:5];
+//  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
+//  NSString* chunkedMode = (NSString*)[arguments objectAtIndex:7]; // currently unused
+    
+    NSMutableDictionary* params = options;
+    
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
