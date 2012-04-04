@@ -22,7 +22,13 @@
 @interface CDVURLProtocol : NSURLProtocol {
 }
 
-+ (void) registerPGHttpURLProtocol __attribute__ ((deprecated("Renamed - use registerUrlProtocol instead.")));
++ (void) registerPGHttpURLProtocol 
+#ifdef __clang__
+    __attribute__ ((deprecated("Renamed - use registerUrlProtocol instead.")));
+#else
+    __attribute__ ((deprecated()));
+#endif
+
 + (void) registerURLProtocol;
 
 @end
