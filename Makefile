@@ -192,7 +192,7 @@ installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xc
 	@# build the .pkg file
 	@echo -n "Building Cordova-${CDV_VER}.pkg..."	
 	@$(MKPATH) dist/files/Guides
-	@$(PACKAGEMAKER) -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@'$(PACKAGEMAKER)' -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
 	@# create the applescript uninstaller
 	@osacompile -o ./dist/files/Uninstall\ Cordova.app Uninstall\ Cordova.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
 	@# convert the html docs to pdf, concatenate readme and license
@@ -210,7 +210,7 @@ installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xc
 	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
-		$(PACKAGEMAKER) --certificate $(CERTIFICATE) --sign dist/files/Cordova-${CDV_VER}.pkg;  \
+		'$(PACKAGEMAKER)' --certificate $(CERTIFICATE) --sign dist/files/Cordova-${CDV_VER}.pkg;  \
 	fi
 	@# create the .dmg	
 	@hdiutil create ./dist/Cordova-${CDV_VER}_temp.dmg -srcfolder ./dist/files/ -ov -volname Cordova-${CDV_VER} -format UDRW > /dev/null 2>> $(PKG_ERROR_LOG)
