@@ -2,7 +2,33 @@
 
 This document is for developers who need to upgrade their Cordova-based projects to a newer Cordova version. Starting with Cordova 1.4.0, Cordova has been re-factored to use Cleaver (Cordova as a Component), and some classes that were used before have been removed - namely PhoneGapDelegate and PhoneGapViewController.
 
-For your existing 1.4.0 based projects that use the deprecated classes above, you will have to first use the 1.3.0 -> 1.4.0 instructions at the end of this document (since the classes mentioned above have been removed in 1.5.0), then upgrade using the 1.4.x -> 1.5.0 instructions.
+To upgrade from 1.3.0 to 1.6.0, please go to the 1.4.0 instructions first, then 1.5.0, then 1.6.0
+To upgrade from 1.4.x to 1.6.0, please go to the 1.5.0 instructions first, then 1.6.0
+To upgrade from 1.5.0 to 1.6.0, go straight to the 1.5.0 instructions
+
+## Upgrading Cordova 1.5.0 projects to 1.6.0 ##
+
+1. **Install** Cordova 1.6.0
+2. **Make a backup** of **AppDelegate.m**, **AppDelegate.h**, **MainViewController.m**, **MainViewController.h**, and **Cordova.plist** in your project
+3. **Create a new project** - you will have to grab assets from this new project
+4. **Copy** these files from the **new** project into your 1.5.0 based project folder on disk, **replacing** any old files (**backup** your files first from step 2 above):
+
+        AppDelegate.h
+        AppDelegate.m
+        MainViewController.h
+        MainViewController.m
+        Cordova.plist
+5. **Add** all the new **MainViewController** and **AppDelegate** files into your Xcode project
+6. **Copy** the **www/cordova-1.6.0.js** file from the new project into your **www** folder, and delete your **www/cordova-1.5.0.js** file
+7. **Update** the Cordova script reference in your **www/index.html** file (and any other files that contain the script reference) to point to the new **cordova-1.6.0.js** file
+8. **Add** the new **Cordova.plist** file into your project - this is because the core plugin service names needed to be changed to match the ones from Android and Blackberry, for a unified Cordova JavaScript file (cordova-js). 
+9. **Integrate** any settings, **Plugins** and **ExternalHosts** entries that you had in your **backed-up Cordova.plist** into the new **Cordova.plist**
+10. **Integrate** any project specific code that you have in your **backed-up AppDelegate.h and AppDelegate.m** into the new AppDelegate files. Any **UIWebViewDelegate** or **CDVCommandDelegate** code in **AppDelegate.m** will need to go into MainViewController.m now (see commented out sections in that file)
+11. **Integrate** any project specific code that you have in your **backed-up MainViewController.h and MainViewController.m** into the new MainViewController files
+12. Click on the **project icon** in the Project Navigator, select your **Project**, then select the **"Build Settings"** tab
+13. Enter **"Compiler for C/C++/Objective-C"** in the search field
+14. Select the **"Apple LLVM Compiler 3.1"** value
+
 
 ## Upgrading Cordova 1.4.x projects to 1.5.0 ##
 
