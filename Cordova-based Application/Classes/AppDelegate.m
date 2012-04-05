@@ -39,7 +39,7 @@
 
 @implementation AppDelegate
 
-@synthesize invokeString, window, viewController;
+@synthesize window, viewController;
 
 - (id) init
 {	
@@ -48,8 +48,8 @@
 	 **/
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
     [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
-    
-    [CDVURLProtocol registerPGHttpURLProtocol];
+        
+    [CDVURLProtocol registerURLProtocol];
     
     return [super init];
 }
@@ -62,8 +62,10 @@
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {    
     NSURL* url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    NSString* invokeString = nil;
+    
     if (url && [url isKindOfClass:[NSURL class]]) {
-        self.invokeString = [url absoluteString];
+        invokeString = [url absoluteString];
 		NSLog(@"___PROJECTNAME___ launchOptions = %@", url);
     }    
     
@@ -77,6 +79,7 @@
     self.viewController.useSplashScreen = YES;
     self.viewController.wwwFolderName = @"www";
     self.viewController.startPage = @"index.html";
+    self.viewController.invokeString = invokeString;
     self.viewController.view.frame = viewBounds;
     
     // check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation
@@ -112,7 +115,7 @@
 }
 
 // this happens while we are running ( in the background, or from within our own app )
-// only valid if FooBar.plist specifies a protocol to handle
+// only valid if ___PROJECTNAME___-Info.plist specifies a protocol to handle
 - (BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url 
 {
     if (!url) { 
