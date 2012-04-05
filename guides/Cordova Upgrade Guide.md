@@ -2,9 +2,9 @@
 
 This document is for developers who need to upgrade their Cordova-based projects to a newer Cordova version. Starting with Cordova 1.4.0, Cordova has been re-factored to use Cleaver (Cordova as a Component), and some classes that were used before have been removed - namely PhoneGapDelegate and PhoneGapViewController.
 
-To upgrade from 1.3.0 to 1.6.0, please go to the 1.4.0 instructions first, then 1.5.0, then 1.6.0
-To upgrade from 1.4.x to 1.6.0, please go to the 1.5.0 instructions first, then 1.6.0
-To upgrade from 1.5.0 to 1.6.0, go straight to the 1.5.0 instructions
+- To upgrade from 1.3.0 to 1.6.0, please go to the 1.4.0 instructions first, then 1.5.0, then 1.6.0
+- To upgrade from 1.4.x to 1.6.0, please go to the 1.5.0 instructions first, then 1.6.0
+- To upgrade from 1.5.0 to 1.6.0, go straight to the 1.5.0 instructions
 
 ## Upgrading Cordova 1.5.0 projects to 1.6.0 ##
 
