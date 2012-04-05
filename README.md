@@ -164,6 +164,8 @@ Link:
 
 1. [https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh](https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh)
 
+Next, you will have to replace all references of "PhoneGap" to "Cordova" from [this line](https://github.com/apache/incubator-cordova-ios/blob/1.0.0/create_project.sh#L41).
+
 <br />
 
 **9. In Xcode 3, I want to have a project-specific copy of CordovaLib for my project, not a global one. How do I do this?** 
