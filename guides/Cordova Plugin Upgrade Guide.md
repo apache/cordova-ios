@@ -2,6 +2,14 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+
+## Upgrading older Cordova plugins to 1.6.0 ##
+
+1. **Install** Cordova 1.6.0
+2. Follow the **"Upgrading older Cordova plugins to 1.5.0"** section, if necessary
+3. See the **1.6.0 Plugin Notes** section for new functionality available to plugins
+
+
 ## Upgrading older Cordova plugins to 1.5.0 ##
 
 1. **Install** Cordova 1.5.0
@@ -9,6 +17,27 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 3. Replace import occurrences of **"&lt;PhoneGap/"** with **"&lt;Cordova/"**
 4. Replace class prefixes of **PG** with **CDV** (for example **PG**Plugin becomes **CDV**Plugin)
 5. Replace occurrences of **[self appViewController]** with **self.viewController**. 
+6. See the **1.5.0 Plugin Notes** section for new functionality available to plugins
+
+## 1.6.0 Plugin Notes ##
+
+1. There is a new CDVCommandDelegate protocol method available:
+
+        - (void) registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
+    
+    You use this in your plugin to initialize another plugin that your plugin needs to be available and running (dependency), and all plugins can access the registered plugin from the **getCommandInstance** method of the CDVCommandDelegate. This is a substitute for listing a plugin your plugin depends on, in **Cordova.plist/Plugins**.
+2. There is a new **IsAtLeastiOSVersion** macro available in **CDVAvailability.h**:
+
+        // Returns YES if it is at least version specified as NSString(X)
+        if (IsAtLeastiOSVersion(@"5.1")) {
+            // do something for iOS 5.1 or greater
+        }
+3. There are **Compatibility headers** available for versions 0.9.6 and 1.5.0, in **~/Documents/CordovaLib/Classes/compatibility** (where ~ signifies your Home folder). See the **"README.txt"** in that folder for instructions. 
+    
+    Note that including these headers are all or nothing - you can't have a mix and match of plugin versions, if you include the 0.9.6 compatibility header - all your plugins must be of the same "version". It is highly recommended that you upgrade your plugins to the current version instead of using these stop-gap headers. 
+    
+    The 1.5.0 header shouldn't be used - this is included for the [LocalStorage patch](https://issues.apache.org/jira/browse/CB-330) and is for using core plugins as general plugins that easily support multiple versions, and may be removed in the future.
+
 
 ## 1.5.0 Plugin Notes ##
 
