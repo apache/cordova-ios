@@ -364,7 +364,7 @@
     } else {
         // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
-            self.headingData = [[CDVHeadingData alloc] init];
+            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
         }
         CDVHeadingData* hData = self.headingData;
 
@@ -396,7 +396,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {
-            self.headingData = [[CDVHeadingData alloc] init] ;
+            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
             hData = self.headingData;
         }
         if (hData.headingStatus != HEADINGRUNNING) {

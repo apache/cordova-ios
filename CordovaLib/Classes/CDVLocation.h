@@ -39,19 +39,12 @@ typedef NSUInteger CDVLocationStatus;
 
 // simple object to keep track of heading information
 @interface CDVHeadingData : NSObject {
-    CDVHeadingStatus    headingStatus;
-    CLHeading*          headingInfo;
-    NSMutableArray*     headingCallbacks;
-    NSString*           headingFilter;
-    NSDate*             headingTimestamp;
-    NSInteger           timeout;
-    
 }
 
 @property (nonatomic, assign) CDVHeadingStatus headingStatus;
 @property (nonatomic, retain) CLHeading* headingInfo;
 @property (nonatomic, retain) NSMutableArray* headingCallbacks;
-@property (nonatomic, retain) NSString* headingFilter;
+@property (nonatomic, copy) NSString* headingFilter;
 @property (nonatomic, retain) NSDate* headingTimestamp;
 @property (assign) NSInteger timeout;
 
@@ -59,9 +52,6 @@ typedef NSUInteger CDVLocationStatus;
 
 // simple ojbect to keep track of location information
 @interface CDVLocationData : NSObject {
-    CDVLocationStatus locationStatus;
-    NSMutableArray*  locationCallbacks;
-    CLLocation*      locationInfo;
 }
 
 @property (nonatomic, assign) CDVLocationStatus locationStatus;
@@ -72,9 +62,6 @@ typedef NSUInteger CDVLocationStatus;
 
 @interface CDVLocation : CDVPlugin <CLLocationManagerDelegate> {
     @private BOOL      __locationStarted;
-    CLLocationManager* locationManager;
-    CDVHeadingData*    headingData;
-    CDVLocationData*   locationData;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
