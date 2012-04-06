@@ -44,7 +44,7 @@
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen, commandDelegate;
-@synthesize wwwFolderName, startPage;
+@synthesize wwwFolderName, startPage, invokeString;
 
 - (id) init
 {
