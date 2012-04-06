@@ -1,7 +1,7 @@
 ## Release Notes for Cordova ({VERSION})  ##
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
-### 1.6.0rc1 (20120323) ###
+### 1.6.0 (20120409) ###
 * Updates for Media API
 * Contacts updates for Unified JavaScript
 * Fixed Contacts.save return value and Notification.confirm
@@ -36,8 +36,23 @@ Cordova is a static library and static framework that enables developers to incl
 * Fixed CB-347 - iOS 5.1 localStorage / SQLDatabase error after upgrading an app
 * Fixed shell script error - picks up new location of cordova.js (unified) now
 * Fixed NOTICE file with correct project name
-* Added new CDVCommandDelegate stub to MainViewController
 * Fixed CB-49 - UUID replacement
+* Fixed CB-361 & use timeout to turn off compass sensor
+* Fixed CB-427 - add back iOS only getPicture options
+* Fixed CB-349 - Remove sessionKey usage (unused) in CDVViewController
+* Fixed CB-237 - Updated splash screen assets
+* Fixed CB-387 - try/catch wrapper in native iOS code for cordova-js initialization firing alerts when page without cordova.js is loaded in
+* Fixed CB-425 - Notification buttons and title are not working for confirm and alert
+* Fixed CB-440 - (LLVM-GCC only) Wrong number of arguments specified for 'deprecated' attribute
+* Fixed CB-441 - make fails if PackageMaker.app installed at a path with spaces in a folder name.
+* Fixed CB-444 - Xcode template new project - AppDelegate's self.invokeString usage was removed
+* Fixed CB-380 - Update Cordova Upgrade Guide for 1.6.0
+* Fixed CB-445 - Update "How to use Cordova as Component" Guide for 1.6.0
+* Fixed CB-381 - Update Cordova Plugin Upgrade Guide for 1.6.0
+* Fixed CB-406 - Update README.md
+* Fixed CB-433 - CDVFileTransfer.m methods - convert use of "options" object into "arguments" array
+* Fixed CB-377 - add a check for PM_APP,  XC_APP, and DEVELOPER in the Makefile
+* REMOVED: navigator.splashscreen JavaScript interface (was unofficial) - use **cordova.exec(null, null, "SplashScreen", "hide", [])** OR **cordova.exec(null, null, "SplashScreen", "show", [])**
 
 
 ### 1.5.0 (20120302) ###
