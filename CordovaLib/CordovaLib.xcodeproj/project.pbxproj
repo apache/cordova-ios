@@ -431,7 +431,6 @@
 		3054098714B77FF3009841CA /* Cleaver */ = {
 			isa = PBXGroup;
 			children = (
-				301F2F2914F3C9CA003FE9FC /* CDV.h */,
 				8852C43614B65FD800F0E735 /* CDVViewController.h */,
 				8852C43714B65FD800F0E735 /* CDVViewController.m */,
 				8852C43814B65FD800F0E735 /* CDVCordovaView.h */,
@@ -479,6 +478,7 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				301F2F2914F3C9CA003FE9FC /* CDV.h */,
 				3034979A1513D56A0090E688 /* CDVLocalStorage.h */,
 				3034979B1513D56A0090E688 /* CDVLocalStorage.m */,
 				30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */,

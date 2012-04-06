@@ -376,7 +376,7 @@
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONString]];
     }
     
-    NSLog(@"Device initialization: %@", result);
+    DLog(@"Device initialization: %@", result);
     NSString* jsResult = [theWebView stringByEvaluatingJavaScriptFromString:result];
     // if jsResult is not nil nor empty, an error
     if (jsResult != nil && [jsResult length] > 0) {
@@ -734,15 +734,10 @@ BOOL gSplashScreenShown = NO;
 
 - (BOOL) execute:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"execute %@ : %@", command.className, command.methodName);
-    NSLog(@"arguments:");
-    for (id t in command.arguments) {
-        NSLog(@"%@", t);
-    }
-    NSLog(@"options:");
-    for (id t in command.options) {
-        NSLog(@"%@", t);
-    }
+    DLog(@"execute class:%@ method:%@", command.className, command.methodName);
+    DLog(@"arguments: %@", [command.arguments JSONString]);
+    DLog(@"options: %@", [command.options JSONString]);
+    
     if (command.className == nil || command.methodName == nil) {
         return NO;
     }
