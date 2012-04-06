@@ -17,6 +17,13 @@
 # under the License.
 #
 
+##   You can set these environment variables: 
+##         XC_APP (path to your Xcode.app)
+##         PM_APP (path to your PackageMaker app)
+##         DEVELOPER (path to your Developer folder)
+##              - don't need to set this if  you use 'xcode-select'
+##              - in Xcode 4.3, this is within your app bundle: Xcode.app/Contents/Developer
+
 SHELL = /bin/bash
 CHMOD = chmod
 CP = cp
@@ -40,9 +47,9 @@ CONVERTPDF = /System/Library/Printers/Libraries/convert
 COMBINEPDF = /System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py
 DOXYGEN = 
 IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
-XC_AVAILABLE = '$(shell mdfind "kMDItemFSName=='Xcode.app' && kMDItemKind=='Application'" | head -1)'
-DEVELOPER = '$(shell xcode-select -print-path)'
-PM_APP = '$(shell mdfind "kMDItemFSName=='PackageMaker.app' && kMDItemKind=='Application'" | head -1)'
+DEVELOPER ?= '$(shell xcode-select -print-path)'
+PM_APP ?= '$(shell mdfind "kMDItemFSName=='PackageMaker.app' && kMDItemKind=='Application'" | head -1)'
+XC_APP ?= '$(shell mdfind "kMDItemFSName=='Xcode.app' && kMDItemKind=='Application'" | head -1)'
 PACKAGEMAKER = '$(PM_APP)/Contents/MacOS/PackageMaker'
 XC = $(DEVELOPER)/usr/bin/xcodebuild
 CDV_VER = $(shell head -1 CordovaLib/VERSION)
@@ -156,15 +163,16 @@ check-os:
 	@if [ "$$OSTYPE" != "darwin11" ]; then echo "Error: You need to package the installer on a Mac OS X 10.7 Lion system."; exit 1; fi
 
 check-utils:
-		@if [ $(XC_AVAILABLE) == '' ] ; then \
-			echo -e '\033[31mError: Xcode.app was not found. Please download from the Mac App Store.\033[m'; exit 1;  \
+		@if [[ ! -e $(XC_APP) ]]; then \
+			echo -e '\033[31mError: Xcode.app at "$(XC_APP)" was not found. Please download from the Mac App Store.\033[m'; exit 1;  \
 		fi
 		@if [[ ! -d $(DEVELOPER) ]]; then \
-			echo -e '\033[31mError: The Xcode folder at $(DEVELOPER) was not found. Please set it to the proper one using xcode-select. For Xcode >= 4.3.1, set it using "sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer"\033[m'; exit 1;  \
+			echo -e '\033[31mError: The Xcode folder at "$(DEVELOPER)" was not found. Please set it to the proper one using xcode-select. For Xcode >= 4.3.1, set it using "sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer".\033[m'; exit 1;  \
 		fi
-		@if [ $(PM_APP) == '' ] ; then \
+		@if [[ ! -e $(PM_APP) ]]; then \
 			echo -e '\033[31mError: PackageMaker.app was not found. You need to download the Xcode Auxiliary Tools: https://developer.apple.com/downloads/index.action?name=auxiliary\033[m'; exit 1; \
 		fi
+		@echo -e "Xcode.app: \t\t\033[33m$(XC_APP)\033[m";
 		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
 		@echo -e "Using PackageMaker app: \033[33m$(PM_APP)\033[m";
 
