@@ -15,7 +15,7 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
     
             var cordovaRef = window.PhoneGap || window.Cordova || window.cordova; // old to new fallbacks
         
-    c. Replace any **PhoneGap.exec** or **Cordova.exec** or **cordova.exec** in your plugin JavaScript (within the temporary scope), with **cordovaRef** above
+    c. Replace any **PhoneGap** or **Cordova** or **cordova** in your plugin JavaScript (within the temporary scope), with **cordovaRef** above
         
 
 
