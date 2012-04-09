@@ -8,6 +8,15 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 1. **Install** Cordova 1.6.0
 2. Follow the **"Upgrading older Cordova plugins to 1.5.0"** section, if necessary
 3. See the **1.6.0 Plugin Notes** section for new functionality available to plugins
+4. The global **"Cordova"** (upper-case C) was renamed to **"cordova"** (lower-case c) to match the cordova-js Android implementation in 1.5.0 that is now common to Android, Blackberry and iOS. Please rename your calls to reflect the new lower-case **c**, or you can add a shim (which will support older versions) like so:
+
+    a. Wrap your plugin JavaScript in a temporary scope (self-executing function) - see ["Temporary Scope"](http://ejohn.org/apps/learn/#57) or [this](https://github.com/phonegap/phonegap-plugins/wiki/Wrapping-your-Plugin's-JavaScript)
+    b. Inside your temporary scope, set a **local var** to the global PhoneGap/Cordova/cordova object, for the exec function
+    
+            var cordovaRef = window.PhoneGap || window.Cordova || window.cordova; // old to new fallbacks
+        
+    c. Replace any **PhoneGap.exec** or **Cordova.exec** or **cordova.exec** in your plugin JavaScript (within the temporary scope), with **cordovaRef** above
+        
 
 
 ## Upgrading older Cordova plugins to 1.5.0 ##
