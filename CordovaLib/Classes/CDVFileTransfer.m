@@ -232,6 +232,7 @@
     NSError *error;
     NSString *parentPath;
     BOOL bDirRequest = NO;
+    BOOL errored = NO;
     CDVFile * file;
     
     if(self.direction == CDV_TRANSFER_UPLOAD)
@@ -276,12 +277,19 @@
             @catch (id exception) {
                 // jump back to main thread
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:[NSString stringWithFormat:@"%d", FILE_NOT_FOUND_ERR] AndSource:source AndTarget:target]];
+                errored = YES;
             }
         } else {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:[NSString stringWithFormat:@"%d", CONNECTION_ERR] AndSource:source AndTarget:target]];
+            errored = YES;
         }
     }
-    [self.command writeJavascript:[result toSuccessCallbackString: callbackId]];
+    
+    if(!errored) {
+        [self.command writeJavascript:[result toSuccessCallbackString: callbackId]];
+    } else {
+        [self.command writeJavascript:[result toErrorCallbackString: callbackId]];
+    }    
     [uploadResponse release];
 }
 
