@@ -1,4 +1,4 @@
-// File generated at :: Mon Apr 09 2012 17:16:24 GMT-0700 (PDT)
+// File generated at :: Tue Apr 10 2012 12:28:18 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -2690,7 +2690,7 @@ FileWriter.prototype.seek = function(offset) {
         throw new FileError(FileError.INVALID_STATE_ERR);
     }
 
-    if (!offset) {
+    if (!offset && offset != 0) {
         return;
     }
 
