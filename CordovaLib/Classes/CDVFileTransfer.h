@@ -48,13 +48,13 @@ typedef int CDVFileTransferDirection;
 @interface CDVFileTransferDelegate : NSObject {
 }
 
-@property (nonatomic, retain) NSMutableData* responseData;
+@property (atomic, retain) NSMutableData* responseData;
 @property (nonatomic, retain) CDVFileTransfer* command;
 @property (nonatomic, assign) CDVFileTransferDirection direction;
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, copy) NSString* source;
 @property (nonatomic, copy) NSString* target;
-@property (nonatomic, assign) int responseCode;
+@property (atomic, assign) int responseCode;
 @property (nonatomic, assign) NSInteger bytesWritten;
 
 

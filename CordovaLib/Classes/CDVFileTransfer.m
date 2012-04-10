@@ -82,8 +82,6 @@
     }
     
     if(errorCode > 0) {
-        //result = [PluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
-        
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:[NSString stringWithFormat:@"%d", errorCode] AndSource:filePath AndTarget:server]];
         
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
@@ -153,6 +151,7 @@
 	
 	CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
+    delegate.direction = CDV_TRANSFER_UPLOAD;
     delegate.callbackId = callbackId;
     delegate.source = server;
     delegate.target = filePath;
@@ -244,8 +243,8 @@
             [uploadResult setObject: [uploadResponse stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
         }
         [uploadResult setObject:[NSNumber numberWithInt: self.bytesWritten] forKey:@"bytesSent"];
-        [uploadResult setObject:[NSNull null] forKey: @"responseCode"];
-        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadResult cast: @"navigator.fileTransfer._castUploadResult"];
+        [uploadResult setObject:[NSNumber numberWithInt:self.responseCode] forKey: @"responseCode"];
+        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadResult];
     }
     if(self.direction == CDV_TRANSFER_DOWNLOAD)
     {
@@ -271,7 +270,7 @@
                     
                     file = [[[CDVFile alloc] init] autorelease];
                     
-                    result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: target isDirectory: bDirRequest] cast: @"window.localFileSystem._castEntry"];
+                    result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: target isDirectory: bDirRequest]];
                 }
             }
             @catch (id exception) {
