@@ -266,6 +266,7 @@
                 if ( downloadResponse == NO ) {
                     // send our results back
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:[NSString stringWithFormat:@"%d", INVALID_URL_ERR] AndSource:source AndTarget:target]];
+                    errored = YES;
                 } else {
                     DLog(@"File Transfer Download success");
                     
