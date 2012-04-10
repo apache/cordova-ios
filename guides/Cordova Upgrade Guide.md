@@ -4,7 +4,7 @@ This document is for developers who need to upgrade their Cordova-based projects
 
 - To upgrade from 1.3.0 to 1.6.0, please go to the 1.4.0 instructions first, then 1.5.0, then 1.6.0
 - To upgrade from 1.4.x to 1.6.0, please go to the 1.5.0 instructions first, then 1.6.0
-- To upgrade from 1.5.0 to 1.6.0, go straight to the 1.5.0 instructions
+- To upgrade from 1.5.0 to 1.6.0, go straight to the 1.6.0 instructions
 
 ## Upgrading Cordova 1.5.0 projects to 1.6.0 ##
 
