@@ -44,7 +44,7 @@
  *  8       allowsEdit
  *  9       correctOrientation
  *  10      saveToPhotoAlbum
- *  11	    sizingMethod
+ *  11      cropToSize
  */
 - (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -86,7 +86,7 @@
         self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
-        self.pickerController.sizingMethod = ([arguments objectAtIndex:11]) ? [[arguments objectAtIndex:11] intValue ] : SizingMethodContain;
+        self.pickerController.cropToSize = ([arguments objectAtIndex:11]) ? [[arguments objectAtIndex:11] boolValue ] : false;
         self.pickerController.correctOrientation = [[arguments objectAtIndex:9] boolValue];
         self.pickerController.saveToPhotoAlbum = [[arguments objectAtIndex:10] boolValue];
         
@@ -182,11 +182,11 @@
     UIImage *scaledImage = nil;
     
     if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
-        // if preventCropping, resize image to fit within targetSize without cropping
-        if(self.pickerController.sizingMethod == SizingMethodContain) {
-            scaledImage = [self imageByScalingNotCroppingForSize:image toSize:self.pickerController.targetSize];
-        } else if(self.pickerController.sizingMethod == SizingMethodCover) {
+        // if cropToSize, resize image and crop to target size, otherwise resize to fit target without cropping
+        if(self.pickerController.cropToSize) {
             scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
+        } else {
+            scaledImage = [self imageByScalingNotCroppingForSize:image toSize:self.pickerController.targetSize];
         }
     }
     NSData* data = nil;
@@ -472,7 +472,7 @@
 @synthesize correctOrientation;
 @synthesize saveToPhotoAlbum;
 @synthesize encodingType;
-@synthesize sizingMethod;
+@synthesize cropToSize;
 
 
 - (void) dealloc
