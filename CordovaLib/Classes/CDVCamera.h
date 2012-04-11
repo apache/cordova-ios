@@ -39,6 +39,12 @@ enum CDVMediaType {
 };
 typedef NSUInteger CDVMediaType;
 
+enum CDVSizingMethod {
+		SizingMethodContain = 0,
+		SizingMethodCover
+};
+typedef NSUInteger CDVSizingMethod;
+
 @interface CDVCameraPicker : UIImagePickerController
 {
 }
@@ -53,6 +59,7 @@ typedef NSUInteger CDVMediaType;
 @property (assign) CGSize targetSize;
 @property (assign) bool correctOrientation;
 @property (assign) bool saveToPhotoAlbum;
+@property (nonatomic) enum CDVSizingMethod sizingMethod;
 
 - (void) dealloc;
 
@@ -86,6 +93,7 @@ typedef NSUInteger CDVMediaType;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
 - (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize;
+- (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 - (void) dealloc;
 

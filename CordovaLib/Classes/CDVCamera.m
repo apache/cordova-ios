@@ -44,6 +44,7 @@
  *  8       allowsEdit
  *  9       correctOrientation
  *  10      saveToPhotoAlbum
+ *  11	    sizingMethod
  */
 - (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -85,6 +86,7 @@
         self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
+        self.pickerController.sizingMethod = ([arguments objectAtIndex:11]) ? [[arguments objectAtIndex:11] intValue ] : SizingMethodContain;
         self.pickerController.correctOrientation = [[arguments objectAtIndex:9] boolValue];
         self.pickerController.saveToPhotoAlbum = [[arguments objectAtIndex:10] boolValue];
         
@@ -180,7 +182,12 @@
     UIImage *scaledImage = nil;
     
     if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
-        scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
+        // if preventCropping, resize image to fit within targetSize without cropping
+        if(self.pickerController.sizingMethod == SizingMethodContain) {
+            scaledImage = [self imageByScalingNotCroppingForSize:image toSize:self.pickerController.targetSize];
+        } else if(self.pickerController.sizingMethod == SizingMethodCover) {
+            scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
+        }
     }
     NSData* data = nil;
 		if (self.pickerController.encodingType == EncodingTypePNG) {
@@ -366,6 +373,44 @@
    return newImage;
 }
 
+- (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize
+{
+    UIImage *sourceImage = anImage;
+    UIImage *newImage = nil;        
+    CGSize	imageSize = sourceImage.size;
+    CGFloat width = imageSize.width;
+    CGFloat height = imageSize.height;
+    CGFloat targetWidth = frameSize.width;
+    CGFloat targetHeight = frameSize.height;
+    CGFloat scaleFactor = 0.0;
+    CGSize	scaledSize = frameSize;
+    
+    if (CGSizeEqualToSize(imageSize, frameSize) == NO) 
+    {
+        CGFloat widthFactor = targetWidth / width;
+        CGFloat heightFactor = targetHeight / height;
+        
+        // opposite comparison to imageByScalingAndCroppingForSize in order to contain the image within the given bounds
+        if (widthFactor > heightFactor) 
+            scaleFactor = heightFactor; // scale to fit height
+        else
+            scaleFactor = widthFactor; // scale to fit width
+        scaledSize = CGSizeMake(width * scaleFactor, height * scaleFactor);
+    }
+    
+    UIGraphicsBeginImageContext(scaledSize); // this will resize
+    
+    [sourceImage drawInRect:CGRectMake(0, 0, scaledSize.width, scaledSize.height)];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    if(newImage == nil) 
+        NSLog(@"could not scale image");
+    
+    //pop the context to get back to the default
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url 
 {
 	NSString *boundary = @"----BOUNDARY_IS_I";
@@ -427,6 +472,7 @@
 @synthesize correctOrientation;
 @synthesize saveToPhotoAlbum;
 @synthesize encodingType;
+@synthesize sizingMethod;
 
 
 - (void) dealloc

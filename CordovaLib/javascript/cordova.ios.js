@@ -1103,13 +1103,17 @@ cameraExport.getPicture = function(successCallback, errorCallback, options) {
     	correctOrientation = options.correctOrientation <=0 ? false : true;
     }
     var saveToPhotoAlbum = false;
-	if (typeof options.saveToPhotoAlbum == "boolean") {
+    if (typeof options.saveToPhotoAlbum == "boolean") {
     	saveToPhotoAlbum = options.saveToPhotoAlbum;
     } else if (typeof options.saveToPhotoAlbum == "number") {
     	saveToPhotoAlbum = options.saveToPhotoAlbum <=0 ? false : true;
     }
+    var sizingMethod = Camera.ResizingMethod.CONTAIN;
+    if (typeof options.sizingMethod == "number") {
+        sizingMethod = options.sizingMethod;
+    }
 
-    exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum]);
+    exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, sizingMethod]);
 }
 
 module.exports = cameraExport;
@@ -1136,6 +1140,10 @@ module.exports = {
     PHOTOLIBRARY : 0,    // Choose image from picture library (same as SAVEDPHOTOALBUM for Android)
     CAMERA : 1,          // Take picture from camera
     SAVEDPHOTOALBUM : 2  // Choose image from picture library (same as PHOTOLIBRARY for Android)
+  },
+  ResizingMethod:{       // the ResizingMethod uses the same resizing algorithm as css3 background-size rule
+    CONTAIN : 0,         // Scale the image, while preserving its intrinsic aspect ratio, to the largest size such that both its width and its height can fit inside the targetHeight/Width
+    COVER : 1            // Scale the image, while preserving its intrinsic aspect ratio, to the smallest size such that both its width and its height can completely cover the targetHeight/Width
   }
 };
 
