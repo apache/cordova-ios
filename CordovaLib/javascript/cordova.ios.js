@@ -1,4 +1,6 @@
-// File generated at :: Tue Apr 10 2012 12:28:18 GMT-0700 (PDT)
+// commit 4c1f4dc98859eabf86bb510c73dbc1b9eae356e2
+
+// File generated at :: Wed Apr 11 2012 17:04:38 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -1103,13 +1105,19 @@ cameraExport.getPicture = function(successCallback, errorCallback, options) {
     	correctOrientation = options.correctOrientation <=0 ? false : true;
     }
     var saveToPhotoAlbum = false;
-	if (typeof options.saveToPhotoAlbum == "boolean") {
+    if (typeof options.saveToPhotoAlbum == "boolean") {
     	saveToPhotoAlbum = options.saveToPhotoAlbum;
     } else if (typeof options.saveToPhotoAlbum == "number") {
     	saveToPhotoAlbum = options.saveToPhotoAlbum <=0 ? false : true;
     }
+    var cropToTargetSize = false;
+    if (typeof options.cropToTargetSize == "boolean") {
+        cropToTargetSize = options.cropToTargetSize;
+    } else if (typeof options.cropToTargetSize == "number") {
+        cropToTargetSize = options.cropToTargetSize <= 0 ? false : true;
+    }
 
-    exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum]);
+    exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, cropToTargetSize]);
 }
 
 module.exports = cameraExport;
