@@ -304,7 +304,7 @@
 			break;
 	}
 	// TODO: update JS references here
-	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); Cordova.fireEvent('orientationchange', window);",i];
+	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); cordova.fireEvent('orientationchange', window);",i];
 	[self.webView stringByEvaluatingJavaScriptFromString:jsCallback];    
 }
 
@@ -419,7 +419,7 @@
 	NSURL* url = [request URL];
     
     /*
-     * Execute any commands queued with Cordova.exec() on the JS side.
+     * Execute any commands queued with cordova.exec() on the JS side.
      * The part of the URL after gap:// is irrelevant.
      */
 	if ([[url scheme] isEqualToString:@"gap"]) {
