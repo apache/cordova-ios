@@ -93,7 +93,7 @@
         self.pickerController.encodingType = ([arguments objectAtIndex:6]) ? [[arguments objectAtIndex:6] intValue] : EncodingTypeJPEG;
         
         self.pickerController.quality = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : 50;
-        self.pickerController.returnType = (CDVDestinationType)[[arguments objectAtIndex:2] intValue] || DestinationTypeFileUri;
+        self.pickerController.returnType = ([arguments objectAtIndex:2]) ? [[arguments objectAtIndex:2] intValue] : DestinationTypeFileUri;
        
         if (sourceType == UIImagePickerControllerSourceTypeCamera) {
             // we only allow taking pictures (no video) in this api
