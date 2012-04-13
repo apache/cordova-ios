@@ -100,9 +100,9 @@
 	NetworkStatus status = [self.internetReach currentReachabilityStatus];
 	BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
 	if (online) {
-		[super writeJavascript:@"Cordova.fireDocumentEvent('online');"];
+		[super writeJavascript:@"cordova.fireDocumentEvent('online');"];
 	} else {
-		[super writeJavascript:@"Cordova.fireDocumentEvent('offline');"];
+		[super writeJavascript:@"cordova.fireDocumentEvent('offline');"];
 	}
 }
 
