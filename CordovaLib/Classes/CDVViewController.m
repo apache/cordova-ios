@@ -303,9 +303,14 @@
 			i = 90;
 			break;
 	}
-	// TODO: update JS references here
-	NSString* jsCallback = [NSString stringWithFormat:@"window.__defineGetter__('orientation',function(){ return %d; }); cordova.fireEvent('orientationchange', window);",i];
-	[self.webView stringByEvaluatingJavaScriptFromString:jsCallback];    
+    
+    if (!IsAtLeastiOSVersion(@"5.0")) {
+        NSString* jsCallback = [NSString stringWithFormat:
+                                @"window.__defineGetter__('orientation',function(){ return %d; }); \
+                                  cordova.fireWindowEvent('orientationchange');"
+                                , i];
+        [self.webView stringByEvaluatingJavaScriptFromString:jsCallback];    
+    }
 }
 
 - (void) createGapView
