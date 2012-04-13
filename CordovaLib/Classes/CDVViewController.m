@@ -739,10 +739,6 @@ BOOL gSplashScreenShown = NO;
 
 - (BOOL) execute:(CDVInvokedUrlCommand*)command
 {
-    DLog(@"execute class:%@ method:%@", command.className, command.methodName);
-    DLog(@"arguments: %@", [command.arguments JSONString]);
-    DLog(@"options: %@", [command.options JSONString]);
-    
     if (command.className == nil || command.methodName == nil) {
         return NO;
     }
