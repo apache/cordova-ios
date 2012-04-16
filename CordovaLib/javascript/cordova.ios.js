@@ -1,6 +1,6 @@
-// commit 97775936f44c33af56868029907889b54ffd53d6
+// commit b2de4baa76a94ecb916619a536339ffee9ef6843
 
-// File generated at :: Thu Apr 12 2012 14:48:55 GMT-0700 (PDT)
+// File generated at :: Mon Apr 16 2012 15:13:41 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -1105,19 +1105,13 @@ cameraExport.getPicture = function(successCallback, errorCallback, options) {
     	correctOrientation = options.correctOrientation <=0 ? false : true;
     }
     var saveToPhotoAlbum = false;
-    if (typeof options.saveToPhotoAlbum == "boolean") {
+	if (typeof options.saveToPhotoAlbum == "boolean") {
     	saveToPhotoAlbum = options.saveToPhotoAlbum;
     } else if (typeof options.saveToPhotoAlbum == "number") {
     	saveToPhotoAlbum = options.saveToPhotoAlbum <=0 ? false : true;
     }
-    var cropToTargetSize = false;
-    if (typeof options.cropToTargetSize == "boolean") {
-        cropToTargetSize = options.cropToTargetSize;
-    } else if (typeof options.cropToTargetSize == "number") {
-        cropToTargetSize = options.cropToTargetSize <= 0 ? false : true;
-    }
 
-    exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, cropToTargetSize]);
+    exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum]);
 }
 
 module.exports = cameraExport;
@@ -3913,31 +3907,6 @@ define("cordova/plugin/ios/console", function(require, exports, module) {
 var exec = require('cordova/exec');
 
 /**
- * String indentation/formatting
- */
-function indent(str) {
-    return str.replace(/^/mg, "    ");
-}
-/**
- * Format a string for pretty logging
- */
-function makeStructured(obj, depth) {
-    var str = "";
-    for (var i in obj) {
-        try {
-            if (typeof(obj[i]) == 'object' && depth < maxDepth) {
-                str += i + ":\n" + indent(makeStructured(obj[i])) + "\n";
-            } else {
-                str += i + " = " + indent(String(obj[i])).replace(/^ {4}/, "") + "\n";
-            }
-        } catch(e) {
-            str += i + " = EXCEPTION: " + e.message + "\n";
-        }
-    }
-    return str;
-}
-
-/**
  * This class provides access to the debugging console.
  * @constructor
  */
@@ -3957,58 +3926,55 @@ DebugConsole.prototype.setLevel = function(level) {
     this.logLevel = level;
 };
 
-/**
- * Utility function for rendering and indenting strings, or serializing
- * objects to a string capable of being printed to the console.
- * @param {Object|String} message The string or object to convert to an indented string
- * @private
- */
-DebugConsole.prototype.processMessage = function(message, maxDepth) {
-	if (maxDepth === undefined) maxDepth = 0;
-    if (typeof(message) != 'object') {
-        return (this.isDeprecated ? "WARNING: debug object is deprecated, please use console object \n" + message : message);
-    } else {
-        return ("Object:\n" + makeStructured(message, maxDepth));
-    }
-};
+var stringify = function(message) {
+	try {
+		if (typeof message === "object" && JSON && JSON.stringify) {
+			return JSON.stringify(message);
+		} else {
+			return message.toString();
+		} 
+	} catch (e) {
+		return e.toString();
+	}
+}
 
 /**
  * Print a normal log message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-DebugConsole.prototype.log = function(message, maxDepth) {
-    if (this.logLevel <= DebugConsole.INFO_LEVEL)
-        exec(null, null, 'Debug Console', 'log',
-            [ this.processMessage(message, maxDepth), { logLevel: 'INFO' } ]
-        );
-    else
+DebugConsole.prototype.log = function(message) {
+    if (this.logLevel <= DebugConsole.INFO_LEVEL) {
+        exec(null, null, 'Debug Console', 'log', [ stringify(message), { logLevel: 'INFO' } ]);
+	}
+    else if (this.winConsole && this.winConsole.log) {
         this.winConsole.log(message);
+	}
 };
 
 /**
  * Print a warning message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-DebugConsole.prototype.warn = function(message, maxDepth) {
-    if (this.logLevel <= DebugConsole.WARN_LEVEL)
-        exec(null, null, 'Debug Console', 'log',
-            [ this.processMessage(message, maxDepth), { logLevel: 'WARN' } ]
-        );
-    else
-        this.winConsole.error(message);
+DebugConsole.prototype.warn = function(message) {
+    if (this.logLevel <= DebugConsole.WARN_LEVEL) {
+        exec(null, null, 'Debug Console', 'log', [ stringify(message), { logLevel: 'WARN' } ]);
+    }
+    else if (this.winConsole && this.winConsole.warn) {
+        this.winConsole.warn(message);
+    }
 };
 
 /**
  * Print an error message to the console
  * @param {Object|String} message Message or object to print to the console
  */
-DebugConsole.prototype.error = function(message, maxDepth) {
-    if (this.logLevel <= DebugConsole.ERROR_LEVEL)
-        exec(null, null, 'Debug Console', 'log',
-            [ this.processMessage(message, maxDepth), { logLevel: 'ERROR' } ]
-        );
-    else
+DebugConsole.prototype.error = function(message) {
+    if (this.logLevel <= DebugConsole.ERROR_LEVEL) {
+        exec(null, null, 'Debug Console', 'log', [ stringify(message), { logLevel: 'ERROR' } ]);
+	}
+    else if (this.winConsole && this.winConsole.error){
         this.winConsole.error(message);
+	}
 };
 
 module.exports = new DebugConsole();
