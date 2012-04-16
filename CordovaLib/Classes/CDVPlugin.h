@@ -53,7 +53,12 @@ callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
  */
 
 - (id) appDelegate;
-- (UIViewController*) appViewController __attribute__((deprecated)); /* just use the .viewController property in the future */
+- (UIViewController*) appViewController 
+#ifdef __clang__
+__attribute__ ((deprecated("Use the viewController property instead.")));
+#else
+__attribute__ ((deprecated()));
+#endif
 
 - (NSString*) writeJavascript:(NSString*)javascript;
 - (NSString*) success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
