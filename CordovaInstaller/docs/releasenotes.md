@@ -1,6 +1,17 @@
 ## Release Notes for Cordova ({VERSION})  ##
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
+
+### 1.6.1 (20120416) ###
+
+* Fixed CB-496 - Camera.getPicture - will always return FILE\_URI even though DATA\_URL specified
+* Fixed CB-497 - online and offline events are not being fired in 1.6.0
+* Fixed CB-501 - orientationchange event is not being fired in 1.6.0
+* Fixed CB-302 - orientation change event fired off twice on iOS 5.x
+* Fixed CB-507 - Remove excessive debug logging in execute delegate method in CDVViewController
+
+<br/>
+
 ### 1.6.0 (20120409) ###
 * Updates for Media API
 * Contacts updates for Unified JavaScript
@@ -54,6 +65,7 @@ Cordova is a static library and static framework that enables developers to incl
 * Fixed CB-377 - add a check for PM_APP,  XC_APP, and DEVELOPER in the Makefile
 * REMOVED: navigator.splashscreen JavaScript interface (was unofficial) - use **cordova.exec(null, null, "SplashScreen", "hide", [])** OR **cordova.exec(null, null, "SplashScreen", "show", [])**
 
+<br/>
 
 ### 1.5.0 (20120302) ###
 
