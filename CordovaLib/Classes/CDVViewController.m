@@ -929,7 +929,6 @@ static NSString* cdvVersion;
 - (void) onAppWillResignActive:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationWillResignActive");
-    // TODO: uhh, wut? pause/resume not enough?
     [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resign');"];
 }
 
@@ -941,14 +940,13 @@ static NSString* cdvVersion;
 - (void) onAppWillEnterForeground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationWillEnterForeground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resume');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.require('cordova/channel').onResume.fire();"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state. 
 - (void) onAppDidBecomeActive:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationDidBecomeActive");
-    // TODO: uhh, wut? pause/resume not enough?
     [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('active');"];
 }
 
@@ -959,7 +957,7 @@ static NSString* cdvVersion;
 - (void) onAppDidEnterBackground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('pause');"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.require('cordova/channel').onPause.fire();"];
 }
 
 // ///////////////////////
