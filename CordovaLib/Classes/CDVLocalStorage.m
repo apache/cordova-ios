@@ -265,8 +265,8 @@
     for (NSString* key in keysToCheck) 
     {
         NSString* value = [appPlistDict objectForKey:key];
-        // verify path is in app bundle, if not - fix
-        if (![value hasPrefix:bundlePath]) 
+        // verify key exists, and path is in app bundle, if not - fix
+        if (value != nil && ![value hasPrefix:bundlePath]) 
         {
             // the pathSuffix to use may be wrong - OTA upgrades from < 5.1 to 5.1 do keep the old path Library/WebKit, 
             // while Xcode synced ones do change the storage location to Library/Caches
