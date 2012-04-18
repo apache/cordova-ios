@@ -313,6 +313,11 @@
     }
 }
 
+- (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds
+{
+    return [[CDVCordovaView alloc] initWithFrame:bounds];
+}
+
 - (void) createGapView
 {
     CGRect webViewBounds = self.view.bounds;
@@ -320,7 +325,7 @@
 	
     if (!self.webView) 
 	{
-        self.webView = [[ [ CDVCordovaView alloc ] initWithFrame:webViewBounds] autorelease];
+        self.webView = [[self newCordovaViewWithFrame:webViewBounds] autorelease];
 		self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		
 		[self.view addSubview:self.webView];

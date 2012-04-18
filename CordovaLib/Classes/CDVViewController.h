@@ -53,6 +53,7 @@
 
 - (void) printMultitaskingInfo;
 - (void) createGapView;
+- (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds;
 
 - (int) executeQueuedCommands;
 - (void) flushCommandQueue;

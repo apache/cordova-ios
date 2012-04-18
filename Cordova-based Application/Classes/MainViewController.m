@@ -69,6 +69,14 @@
 
 /* Comment out the block below to over-ride */
 /*
+- (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds
+{
+    return[super newCordovaViewWithFrame:bounds];
+}
+*/
+
+/* Comment out the block below to over-ride */
+/*
 #pragma CDVCommandDelegate implementation
 
 - (id) getCommandInstance:(NSString*)className
