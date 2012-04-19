@@ -248,7 +248,7 @@
      */
 }
 
-- (void) stopLocation
+- (void) _stopLocation
 {
     if (__locationStarted)
 	{
@@ -303,6 +303,12 @@
 
     }
 }
+
+- (void) stopLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    [self _stopLocation];
+}
+
 - (void)returnLocationInfo: (NSString*) callbackId
 {
     CDVPluginResult* result = nil;
