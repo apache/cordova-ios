@@ -44,7 +44,6 @@
  *  8       allowsEdit
  *  9       correctOrientation
  *  10      saveToPhotoAlbum
- *  11      cropToSize
  */
 - (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
@@ -86,7 +85,8 @@
         self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
         self.pickerController.callbackId = callbackId;
         self.pickerController.targetSize = targetSize;
-        self.pickerController.cropToSize = ([arguments objectAtIndex:11]) ? [[arguments objectAtIndex:11] boolValue ] : false;
+        self.pickerController.cropToSize = NO;
+        
         self.pickerController.correctOrientation = [[arguments objectAtIndex:9] boolValue];
         self.pickerController.saveToPhotoAlbum = [[arguments objectAtIndex:10] boolValue];
         
