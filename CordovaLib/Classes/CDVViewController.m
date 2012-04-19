@@ -386,7 +386,6 @@
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONString]];
     }
     
-    DLog(@"Device initialization: %@", result);
     NSString* jsResult = [theWebView stringByEvaluatingJavaScriptFromString:result];
     // if jsResult is not nil nor empty, an error
     if (jsResult != nil && [jsResult length] > 0) {
