@@ -158,7 +158,7 @@
      */
     
     if ([enableLocation boolValue]) {
-        [[self.commandDelegate getCommandInstance:@"Geolocation"] startLocation];
+        [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:nil withDict:nil];
     }
     
     /*

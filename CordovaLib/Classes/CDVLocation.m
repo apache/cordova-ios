@@ -277,7 +277,9 @@
 
 - (void) getLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSUInteger argc = [arguments count];
+    NSString* callbackId = (argc > 0)? [arguments objectAtIndex:0] : @"INVALID";
+    
     if ([self isLocationServicesEnabled] == NO)
     {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:2];
