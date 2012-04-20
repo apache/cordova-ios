@@ -377,7 +377,7 @@
 	NSString* mediaId = [arguments objectAtIndex:1];
 
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
-    double position = [[arguments objectAtIndex:3 ] doubleValue];
+    double position = [[arguments objectAtIndex:2 ] doubleValue];
 	
     if (audioFile != nil && audioFile.player != nil && position){
         double posInSeconds = position/1000;
