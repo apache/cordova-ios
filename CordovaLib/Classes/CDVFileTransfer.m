@@ -17,9 +17,7 @@
  under the License.
  */
 
-#import "CDVFileTransfer.h"
-#import "CDVFile.h"
-#import "CDVDebug.h"
+#import "CDV.h"
 
 @implementation CDVFileTransfer
 
@@ -33,8 +31,8 @@
     NSString* filePath = (NSString*)[arguments objectAtIndex:1];
     NSString* server = (NSString*)[arguments objectAtIndex:2];
     NSString* fileKey = (NSString*)[arguments objectAtIndex:3];
-    NSString* fileName = (NSString*)[arguments objectAtIndex:4];
-    NSString* mimeType = (NSString*)[arguments objectAtIndex:5];
+    NSString* fileName = [arguments objectAtIndex:4 withDefault:@"no-filename"];
+    NSString* mimeType = [arguments objectAtIndex:5 withDefault:nil];
 //  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
 //  NSString* chunkedMode = (NSString*)[arguments objectAtIndex:7]; // currently unused
     
@@ -138,7 +136,9 @@
     
 	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileKey, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
+    if (mimeType != nil) {
+        [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
     [postBody appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n\r\n", [fileData length]] dataUsingEncoding:NSUTF8StringEncoding]];
 
     DLog(@"fileData length: %d", [fileData length]);
