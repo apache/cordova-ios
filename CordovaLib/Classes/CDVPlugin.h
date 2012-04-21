@@ -37,6 +37,8 @@ callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
 @property (nonatomic, retain) UIViewController* viewController;
 @property (nonatomic, retain) id<CDVCommandDelegate> commandDelegate;
 
+@property (readonly, assign) BOOL hasPendingOperation;
+
 - (CDVPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
 - (CDVPlugin*) initWithWebView:(UIWebView*)theWebView;
 

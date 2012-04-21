@@ -336,8 +336,29 @@
 }
 
 - (void) didReceiveMemoryWarning {
-	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
+    
+    // iterate through all the plugin objects, and call hasPendingOperation
+    // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
+    
+    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
+    CDVPlugin* plugin;
+    
+    BOOL doPurge = YES;
+    while ((plugin = [enumerator nextObject])) 
+    {
+        if (plugin.hasPendingOperation) {
+            NSLog(@"Plugin '%@' has a pending operation, memory purge is delayed for didReceiveMemoryWarning.", NSStringFromClass([plugin class]));
+            doPurge = NO;
+        }
+    }
+    
+	if (doPurge) {
+        // Releases the view if it doesn't have a superview.
+        [super didReceiveMemoryWarning];
+    } else {
+        // try again in 10 seconds
+        [self performSelector:@selector(didReceiveMemoryWarning) withObject:nil afterDelay:10];
+    }
 	
 	// Release any cached data, images, etc. that aren't in use.
 }
@@ -346,6 +367,9 @@
 - (void) viewDidUnload {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
+    
+    self.webView.delegate = nil;
+    self.webView = nil;
 }
 
 

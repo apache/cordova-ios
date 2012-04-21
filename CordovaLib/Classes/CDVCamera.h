@@ -54,6 +54,8 @@ typedef NSUInteger CDVMediaType;
 @property (assign) bool correctOrientation;
 @property (assign) bool saveToPhotoAlbum;
 @property (assign) bool cropToSize;
+@property (retain) UIWebView* webView;
+@property (assign) BOOL popoverSupported;
 
 - (void) dealloc;
 
@@ -65,7 +67,6 @@ typedef NSUInteger CDVMediaType;
 									UINavigationControllerDelegate,
 									UIPopoverControllerDelegate>
 {
-	CDVCameraPicker* pickerController;
 }
 
 @property (retain) CDVCameraPicker* pickerController;
@@ -89,6 +90,8 @@ typedef NSUInteger CDVMediaType;
 - (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize;
 - (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
+
+- (void) closePicker:(CDVCameraPicker*)picker;
 - (void) dealloc;
 
 @end
