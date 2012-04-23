@@ -355,9 +355,6 @@
 	if (doPurge) {
         // Releases the view if it doesn't have a superview.
         [super didReceiveMemoryWarning];
-    } else {
-        // try again in 10 seconds
-        [self performSelector:@selector(didReceiveMemoryWarning) withObject:nil afterDelay:10];
     }
 	
 	// Release any cached data, images, etc. that aren't in use.
