@@ -2,6 +2,23 @@
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
+### 1.7.0rc1 (20120423) ###
+
+* Fixed CB-183, CB-54 - ios camera targetWidth/Height don't match the documentation Fixes CB-183 and CB-54
+* Fixed CB-511 Changed deviceproperties version to "cordova" property
+* Fixed CB-483 - FileTransfer - unknown property attribute 'atomic' when building from source (Xcode 3 only)
+* Fixed CB-507 - Remove excessive debug logging in execute delegate method in CDVViewController
+* Implemented CB-536 - Add new selector to CDVViewController to create a new CDVCordovaView, so subclasses can override it
+* Workaround for CB-509 - geolocation.clearWatch doesn't shut the GPS down under iOS
+* Fixed CB-537 - media.seekTo fails with NSRangeException
+* Fixed CB-544 - iOS Geolocation fails if Cordova.plist EnableLocation = YES
+* Fixed CB-543 - FileTransfer.upload WebKit discarded an uncaught exception
+* Fixed CB-391 - camera.getPicture crash
+* Implemented CB-535 - Add a way to log JavaScript exceptions, parse errors, and get JS stack frame events (with line numbers, etc)
+* Fixed CB-494 - Move Cordova.plist section from "How to use Cordova as a Component Guide" to its own doc
+
+<br />
+
 ### 1.6.1 (20120416) ###
 
 * Fixed CB-496 - Camera.getPicture - will always return FILE\_URI even though DATA\_URL specified

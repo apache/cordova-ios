@@ -208,6 +208,8 @@ installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xc
 	@$(WKHTMLTOPDF) --footer-center "How to use Cordova ${CDV_VER} as a Component" CordovaInstaller/docs/cleaver.html 'dist/files/Guides/How to Use Cordova as a Component.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Upgrade Guide" CordovaInstaller/docs/upgrade.html 'dist/files/Guides/Cordova Upgrade Guide.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Plugin Upgrade Guide" CordovaInstaller/docs/plugin_upgrade.html 'dist/files/Guides/Cordova Plugin Upgrade Guide.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Settings File" CordovaInstaller/docs/settings_file.html 'dist/files/Guides/Cordova Settings File.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} JavaScript Exception Logging" CordovaInstaller/docs/exception_logging.html 'dist/files/Guides/Cordova JavaScript Exception Logging.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@textutil -convert html -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@textutil -cat html CordovaInstaller/docs/finishup.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
@@ -290,3 +292,11 @@ markdown:
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/plugin_upgrade.html
 	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Plugin Upgrade Guide.md' >> CordovaInstaller/docs/plugin_upgrade.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/plugin_upgrade.html
+	@# generate 'Cordova Settings File' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/settings_file.html
+	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Settings File.md' >> CordovaInstaller/docs/settings_file.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/settings_file.html
+	@# generate 'Cordova JavaScript Exception Logging' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/exception_logging.html
+	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova JavaScript Exception Logging.md' >> CordovaInstaller/docs/exception_logging.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/exception_logging.html

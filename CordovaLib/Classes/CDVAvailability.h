@@ -27,18 +27,19 @@
 #define __CORDOVA_1_5_0  10500
 #define __CORDOVA_1_6_0  10600
 #define __CORDOVA_1_6_1  10601
+#define __CORDOVA_1_7_0  10700
 #define __CORDOVA_NA     99999  /* not available */
 
 
 /*
- #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_1_5_0
-    // do something when its at least 1.5.0
+ #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_1_7_0
+    // do something when its at least 1.7.0
  #else
-    // do something else (non 1.5.0)
+    // do something else (non 1.7.0)
  #endif
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_6_1
+    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_7_0
 #endif
 
 /* 

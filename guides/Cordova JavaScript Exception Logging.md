@@ -13,6 +13,9 @@ NOTE: when you include these files, it will **always pop up a warning dialog at 
             return [[CDVDebugWebView alloc] initWithFrame:bounds];
         }
         
+4. Don't forget to add the import at the top of your **MainViewController.m** file as well:
+
+        #import "CDVDebugView.h";
 
 
  
