@@ -138,8 +138,14 @@
     } else {
         appURL = [NSURL fileURLWithPath:startFilePath];
     }
+    
+    //// Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
 
-    [ self createGapView];
+    [CDVLocalStorage __verifyAndFixDatabaseLocations];
+    
+    //// Instantiate the WebView ///////////////
+
+    [self createGapView];
     
     ///////////////////
     
@@ -162,7 +168,7 @@
     }
     
     /*
-     * Fire up CDVLocalStorage to work-around iOS 5.1 WebKit storage bug limitations
+     * Fire up CDVLocalStorage to work-around iOS 5.1 WebKit storage limitations
      */
     [self.commandDelegate registerPlugin:[[[CDVLocalStorage alloc] initWithWebView:self.webView] autorelease] withClassName:NSStringFromClass([CDVLocalStorage class])];
     
