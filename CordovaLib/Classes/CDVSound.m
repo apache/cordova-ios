@@ -149,6 +149,13 @@
     NSLog(@"play is DEPRECATED!  Use startPlayingAudio.");
     [self startPlayingAudio:arguments withDict:options];
 }
+
+// not used
+- (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+}
+
+
 - (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 
@@ -249,7 +256,7 @@
     }
     
     if (playerError != nil) {
-        NSLog(@"Failed to initialize AVAudioPlayer: %@\n", [playerError localizedFailureReason]);
+        NSLog(@"Failed to initialize AVAudioPlayer: %@\n", [playerError localizedDescription]);
         audioFile.player = nil;
         if (self.avSession) {
             [self.avSession setActive:NO error:nil];
@@ -502,7 +509,11 @@
 			NSLog(@"Started recording audio sample '%@'", audioFile.resourcePath);
             jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
 		}
-	}
+	} else {
+        // file does not exist
+        NSLog(@"Could not start recording audio, file '%@' does not exist.", audioFile.resourcePath);
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: @"File to record to does not exist"]];
+    }
     if (jsString) {
        [super writeJavascript:jsString]; 
     }
