@@ -3,7 +3,7 @@
 ## Plugins
 
 * Plugins **MUST** add their plugin mapping to their app's Cordova.plist Plugins key, if not they will not work (see your plugin's README)
-* Plugins **MUST** add any external hosts they connect to to the white-list in Cordova.plist/ExternalHosts (add hostnames **only**)
+* Plugins **MUST** add any external hosts they connect to to the white-list in Cordova.plist/ExternalHosts (add hostnames **only**, NO protocols nor paths)
 * A plugin's Objective-C code **MUST** be added to the project properly in a "group" (**YELLOW** folder), if you incorrectly added it as a folder reference it would be a blue folder (just delete the reference, and re-add)
 * A lot of plugins have changed their mapping names in Cordova.plist, you might have to copy and use the new Cordova.plist in your app.
 

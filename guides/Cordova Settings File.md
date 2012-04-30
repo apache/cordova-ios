@@ -3,7 +3,7 @@
 The **Cordova.plist settings file** controls various settings of Cordova. This is application wide, and not set per CDVViewController instance. 
 
 1. A list of **Plugins** allowed to be used in a CDVViewController (set in the Plugins dictionary - key is the servicename used in JavaScript, and the value is the Objective-C class for the plugin that is a CDVPlugin sub-class)
-2. A **white-list** of hosts (with no scheme) that Cordova is allowed to connect to (set in the ExternalHosts array - wildcards allowed)
+2. A **white-list** of hosts (with no scheme nor path, hostnames or IP addresses only) that Cordova is allowed to connect to (set in the ExternalHosts array - wildcards allowed)
 3. Various **other** settings
 
 	a. **UIWebViewBounce (boolean, defaults to YES)** - set to NO if you don't want the WebView to rubber-band

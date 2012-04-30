@@ -2,10 +2,16 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+## Upgrading older Cordova plugins to 1.7.0 ##
 
-## Upgrading older Cordova plugins to 1.6.0 ##
+1. **Install** Cordova 1.7.0
+2. Follow the **"Upgrading older Cordova plugins to 1.6.0"** section, if necessary
+3. No changes in plugin structure from 1.6.x
 
-1. **Install** Cordova 1.6.0
+
+## Upgrading older Cordova plugins to 1.6.x ##
+
+1. **Install** Cordova 1.6.x
 2. Follow the **"Upgrading older Cordova plugins to 1.5.0"** section, if necessary
 3. See the **1.6.0 Plugin Notes** section for new functionality available to plugins
 4. The global **"Cordova"** (upper-case C) was renamed to **"cordova"** (lower-case c) to match the cordova-js Android implementation in 1.5.0 that is now common to Android, Blackberry and iOS. Please rename your calls to reflect the new lower-case **c**, or you can add a shim (which will support older versions) like so:

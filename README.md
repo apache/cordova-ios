@@ -105,7 +105,7 @@ Usually it's a folder permissions issue with the templates folder, changed by ot
 
 **3. When I add Plugins, they are not found or won't compile?** 
 
-Check your Xcode Run Log for clues.
+Check your Xcode Console Log for clues.
 
 This can be because of:
 
@@ -115,11 +115,11 @@ This can be because of:
 
 <br />  
 
-**4. I get this error in my Xcode Run Log - 'ERROR whitelist rejection: url='http://&lt;MYHOSTNAME&gt;/'**
+**4. I get this error in my Xcode Console Log - 'ERROR whitelist rejection: url='http://&lt;MYHOSTNAME&gt;/'**
 
 This error occurs because of the new white-list feature in version 1.1.
 
-You will have to add any hosts your app uses or connects to (hostnames/IP addresses only, **without** the protocol) in __Cordova.plist/ExternalHosts__. Wildcards are supported.
+You will have to add any hosts your app uses or connects to (hostnames/IP addresses only, **without** the protocol nor the path) in __Cordova.plist/ExternalHosts__. Wildcards are supported.
 
 This includes external http/https/ftp/ftps links in:
 
@@ -164,7 +164,7 @@ Link:
 
 1. [https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh](https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh)
 
-Next, you will have to replace all references of "PhoneGap" to "Cordova" from [this line](https://github.com/apache/incubator-cordova-ios/blob/1.0.0/create_project.sh#L41).
+Next, you will have to **replace all references of "PhoneGap" to "Cordova"** from [this line](https://github.com/apache/incubator-cordova-ios/blob/1.0.0/create_project.sh#L41).
 
 <br />
 
@@ -178,7 +178,7 @@ A. Remove the existing Cordova.framework from your project, and drag and drop yo
 
 **11. I've got other Cordova-specific issues not covered here?**
 
-A. Do a search in the Apache JIRA Issue Tracker [Apache JIRA](https://issues.apache.org/jira/browse/CB) or the [Wiki](http://wiki.apache.org/cordova/FrontPage).      
+A. Do a search in the Apache JIRA Issue Tracker [Apache JIRA](https://issues.apache.org/jira/browse/CB) or the [Wiki](http://wiki.apache.org/cordova/).      
 
 **12. On an iOS 3.2 iPad, and launching an iPhone only app, when I use the Media Capture API, the user interface shown is iPad sized, not iPhone sized?**
 
@@ -187,6 +187,7 @@ A. You must delete the *~ipad.png images from **Capture.bundle** if they want to
 **13. I get this linker error: "ld: warning: ignoring file libCordova.a, file was built for archive which is not the architecture being linked (armv7)"** 
 
 A. In your project's Build Settings, set **"Build for Active Architecture Only"** to **NO**. This has been fixed in Cordova 1.2 for newly created projects. This is usually because Xcode 4 will only build for armv7 by default, and not armv6.
+
 
 BUGS?
 -----

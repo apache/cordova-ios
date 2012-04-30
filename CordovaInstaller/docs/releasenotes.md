@@ -2,7 +2,7 @@
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
-### 1.7.0rc1 (20120423) ###
+### 1.7.0 (20120430) ###
 
 * Fixed CB-183, CB-54 - ios camera targetWidth/Height don't match the documentation Fixes CB-183 and CB-54
 * Fixed CB-511 Changed deviceproperties version to "cordova" property
@@ -16,6 +16,10 @@ Cordova is a static library and static framework that enables developers to incl
 * Fixed CB-391 - camera.getPicture crash
 * Implemented CB-535 - Add a way to log JavaScript exceptions, parse errors, and get JS stack frame events (with line numbers, etc)
 * Fixed CB-494 - Move Cordova.plist section from "How to use Cordova as a Component Guide" to its own doc
+* Fixed CB-571 - stubbed out create method to remove error when creating Media objects, also added another check if file does not exist.
+* Fixed CB-386 - added retina iPad splash screens. made sure retina ipad icon files shows up during load.
+* Re-fix CB-347 - localStorage / SQLDatabase Error after App update (timing issue for applying fix)
+* Adjust splash screen position based on orientation and status bar size
 
 <br />
 

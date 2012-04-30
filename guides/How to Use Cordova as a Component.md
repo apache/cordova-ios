@@ -6,7 +6,7 @@ New Cordova-based applications created using the Xcode template provided in Cord
 It is recommended that you follow the Cordova.framework instructions below, the CordovaLib sub-project instructions are for Cordova core developers or users that have custom CordovaLib project code (for ease of debugging the core).
 
 ## Pre-requisites ##
-1. **Cordova 1.4** or greater installed
+1. **Cordova 1.4.1** or greater installed
 2. **Xcode 4.2** or greater installed
 3. **Cordova.plist** file (see 'Cordova Settings' guide)
 
