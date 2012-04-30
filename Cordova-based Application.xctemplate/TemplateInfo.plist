@@ -231,7 +231,7 @@
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
-		<key>Resources/splash/Default.png</key>
+		<key>Resources/splash/Default~iphone.png</key>
 		<dict>
 			<key>Group</key>
 			<array>
@@ -239,11 +239,11 @@
 				<string>splash</string>
 			</array>
 			<key>Path</key>
-			<string>./Resources/splash/Default.png</string>
+			<string>./Resources/splash/Default~iphone.png</string>
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
-		<key>Resources/splash/Default@2x.png</key>
+		<key>Resources/splash/Default@2x~iphone.png</key>
 		<dict>
 			<key>Group</key>
 			<array>
@@ -251,7 +251,7 @@
 				<string>splash</string>
 			</array>
 			<key>Path</key>
-			<string>./Resources/splash/Default@2x.png</string>
+			<string>./Resources/splash/Default@2x~iphone.png</string>
 			<key>PathType</key>
 			<string>Group</string>
 		</dict>
@@ -286,8 +286,8 @@
 		<string>Resources/icons/icon.png</string>
 		<string>Resources/icons/icon@2x.png</string>
 		<string>Resources/icons/icon-72.png</string>
-		<string>Resources/splash/Default.png</string>
-		<string>Resources/splash/Default@2x.png</string>
+		<string>Resources/splash/Default~iphone.png</string>
+		<string>Resources/splash/Default@2x~iphone.png</string>
 		<string>Resources/Capture.bundle</string>
 		<string>Cordova.plist</string>
 		<string>Classes/AppDelegate.h</string>
