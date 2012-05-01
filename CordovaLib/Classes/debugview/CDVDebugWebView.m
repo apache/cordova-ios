@@ -139,16 +139,39 @@
     forWebFrame:(WebFrame *)webFrame
 {
     WebScriptObject* exception = [frame exception]; // this is the bound JavaScript Error object which has two properties: name and message
-    // we use KVC to extract the name and message
-    NSString* exceptionName = [exception valueForKey:@"name"];
-    NSString* exceptionMessage = [exception valueForKey:@"message"];
+    
+    NSString *exceptionName, *exceptionMessage;
+    
+    if ([exception isKindOfClass:[NSString class]]) {
+        exceptionName = @"string";
+        exceptionMessage = (NSString*)exception;
+    } else  if ([exception isKindOfClass:[NSNumber class]]) {
+        exceptionName = @"number";
+        exceptionMessage = [((NSNumber*)exception) stringValue];
+    } 
+    else {
+        // we use KVC to extract the name and message
+        @try  {
+            exceptionName = [exception valueForKey:@"name"];
+            exceptionMessage = [exception valueForKey:@"message"];
+        } @catch (NSException* exc) {
+            if ([[exc name] isEqualToString:NSUndefinedKeyException]) {
+                exceptionName = @"type unknown";
+                exceptionMessage = @"(not an exception object)";
+            }
+        }
+    }
 
     CDVDebugWebSourceData* sourceData = [self.sourceDataDict objectForKey:[NSNumber numberWithInt:sid]];
     
+    NSUInteger max_lines = [sourceData.sourceLines count];
+    if (lineno > max_lines) {
+        lineno = max_lines;
+    }
     NSString* url = sourceData.fromURL? [sourceData trimFilePath] : @"obj-c";
     NSString* line = [sourceData.sourceLines objectAtIndex:lineno-1];
 
-    NSLog(@"JavaScript exception: (%@):%d - %@ - %@\n\tLine: %@", url, lineno, exceptionName, exceptionMessage, line);
+    NSLog(@"JavaScript exception: (%@):%d - %@ - %@\n\tFunction name: '%@'\tLine: '%@'", url, lineno, exceptionName, exceptionMessage, [frame functionName], line);
 }
 
 @end
