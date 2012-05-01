@@ -506,6 +506,14 @@
         didUpdateHeading:(CLHeading *)heading
 {
     CDVHeadingData* hData = self.headingData;
+    
+    // normally we would clear the delegate to stop getting these notifications, but
+    // we are sharing a CLLocationManager to get location data as well, so we do a nil check here
+    // ideally heading and location should use their own CLLocationManager instances
+    if (hData == nil) {
+        return;
+    }
+    
     // save the data for next call into getHeadingData
     hData.headingInfo = heading;
     BOOL bTimeout = NO;

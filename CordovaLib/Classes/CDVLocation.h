@@ -65,7 +65,7 @@ typedef NSUInteger CDVLocationStatus;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, retain) CDVHeadingData* headingData;
+@property (retain) CDVHeadingData* headingData;
 @property (nonatomic, retain) CDVLocationData* locationData;
 
 
