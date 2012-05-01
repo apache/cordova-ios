@@ -1,6 +1,6 @@
-// commit b2bfa321b4b9c952d8977baec786996a745c127d
+// commit 9cfdc134f83b5d51f655e52ec7d4ddab167437c7
 
-// File generated at :: Tue May 01 2012 00:13:51 GMT-0700 (PDT)
+// File generated at :: Tue May 01 2012 14:06:43 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -349,10 +349,10 @@ function deprecateFunctions(obj, objLabel) {
  * TODO: remove in 2.0.
  */
 if (!window.PhoneGap) {
-    window.PhoneGap = cordova;
+    window.PhoneGap = deprecateFunctions(cordova, 'PhoneGap');
 }
 if (!window.Cordova) {
-    window.Cordova = cordova;
+    window.Cordova = deprecateFunctions(cordova, 'Cordova');
 }
 
 /**
@@ -721,6 +721,20 @@ module.exports = {
                 }
             }
         },
+        Cordova: {
+            children: {
+                exec: {
+                    path: 'cordova/exec'
+                }
+            }
+        },
+        PhoneGap:{
+            children: {
+                exec: {
+                    path: 'cordova/exec'
+                }
+            }
+        },
         navigator: {
             children: {
                 notification: {
@@ -891,6 +905,7 @@ module.exports = {
         }
     }
 };
+
 });
 
 // file: lib/ios/exec.js
