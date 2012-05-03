@@ -211,27 +211,23 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	// ugly but it works
 	if (org_apache_cordova_contacts_ABtoW3C != nil) {
 		[org_apache_cordova_contacts_ABtoW3C release];
-		if ([org_apache_cordova_contacts_ABtoW3C retainCount] == 1)
-			org_apache_cordova_contacts_ABtoW3C = nil;
+        org_apache_cordova_contacts_ABtoW3C = nil;
 	}
 	if (org_apache_cordova_contacts_W3CtoAB != nil) {
 		[org_apache_cordova_contacts_W3CtoAB release];
-		if ([org_apache_cordova_contacts_W3CtoAB retainCount] == 1)
-			org_apache_cordova_contacts_W3CtoAB = nil;
+        org_apache_cordova_contacts_W3CtoAB = nil;
 	}
 	if (org_apache_cordova_contacts_W3CtoNull != nil) {
 		[org_apache_cordova_contacts_W3CtoNull release];
-		if ([org_apache_cordova_contacts_W3CtoNull retainCount] == 1)
-			org_apache_cordova_contacts_W3CtoNull = nil;
-	}if (org_apache_cordova_contacts_objectAndProperties != nil) {
+        org_apache_cordova_contacts_W3CtoNull = nil;
+	}
+    if (org_apache_cordova_contacts_objectAndProperties != nil) {
 		[org_apache_cordova_contacts_objectAndProperties release];
-		if ([org_apache_cordova_contacts_objectAndProperties retainCount] == 1)
-			org_apache_cordova_contacts_objectAndProperties = nil;
+        org_apache_cordova_contacts_objectAndProperties = nil;
 	}
 	if (org_apache_cordova_contacts_defaultFields != nil) {
 		[org_apache_cordova_contacts_defaultFields release];
-		if ([org_apache_cordova_contacts_defaultFields retainCount] == 1)
-			org_apache_cordova_contacts_defaultFields = nil;
+        org_apache_cordova_contacts_defaultFields = nil;
 	}
 }
 
