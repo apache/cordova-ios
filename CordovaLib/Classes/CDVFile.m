@@ -496,10 +496,6 @@
 	if (fileAttribs){
 		NSDate* modDate = [fileAttribs fileModificationDate];
 		if (modDate){
-			//NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970]*1000];
-			//NSMutableDictionary* metadataDict = [NSMutableDictionary dictionaryWithCapacity:1];
-			//[metadataDict setObject:msDate forKey:@"modificationTime"];
-			//result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: metadataDict cast: @"window.localFileSystem._castDate"];
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: [modDate timeIntervalSince1970]*1000];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
