@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# compile and launch a phonegap/ios project to the simulator
+# compile and launch a Cordova/iOS project to the simulator
 # 
 # USAGE
 #   ./debug [path name]
@@ -11,7 +11,7 @@
 set -e
 
 PROJECT_PATH=${1:-"."}
-PROJECT_NAME=${2:-"PhoneGapExample"}
+PROJECT_NAME=${2:-"CordovaExample"}
 PRJ=$PROJECT_NAME.xcodeproj
 APP=build/Release-iphonesimulator/$PROJECT_NAME.app
 SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`

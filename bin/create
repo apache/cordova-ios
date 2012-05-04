@@ -1,18 +1,18 @@
 #! /bin/sh
 #
-# create a phonegap/ios project
+# create a Cordova/iOS project
 # 
 # USAGE
 #   ./create [path package name]
 #
 # EXAMPLE
-#  ./create ~/Desktop/radness com.phonegap.radness Radness
+#  ./create ~/Desktop/radness org.apache.cordova.radness Radness
 #
 set -e
 
 PROJECT_PATH=${1:-"./example"}
-PACKAGE=${2:-"com.phonegap.example"}
-ACTIVITY=${3:-"PhoneGapExample"}
+PACKAGE=${2:-"org.apache.cordova.example"}
+ACTIVITY=${3:-"CordovaExample"}
 
 # clobber any existing example
 if [ $# -eq 0 ]
@@ -54,6 +54,8 @@ R=$PROJECT_PATH/$ACTIVITY
 ./bin/replaces $R.xcodeproj/project.pbxproj __TESTING__ $ACTIVITY
 ./bin/replaces $R/Classes/AppDelegate.h     __TESTING__ $ACTIVITY
 ./bin/replaces $R/Classes/AppDelegate.m     __TESTING__ $ACTIVITY
+./bin/replaces $R/Classes/MainViewController.h     __TESTING__ $ACTIVITY
+./bin/replaces $R/Classes/MainViewController.m     __TESTING__ $ACTIVITY
 ./bin/replaces $R/main.m                    __TESTING__ $ACTIVITY
 ./bin/replaces $R/$ACTIVITY-info.plist      __TESTING__ $ACTIVITY
 ./bin/replaces $R/$ACTIVITY-Prefix.pch      __TESTING__ $ACTIVITY

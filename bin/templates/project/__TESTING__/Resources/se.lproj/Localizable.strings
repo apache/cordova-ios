@@ -17,9 +17,10 @@
  under the License.
  */
 
+
 // accessibility label for recording button
-"toggle audio recording" = "grabación de audio cambiar";
+"toggle audio recording" = "börja/avsluta inspelning";
 // notification spoken by VoiceOver when timed recording finishes
-"timed recording complete" = "tiempo de grabación completo";
+"timed recording complete" = "inspelning har avslutad";
 // accessibility hint for display of recorded elapsed time
-"recorded time in minutes and seconds" = "tiempo registrado en minutos y segundos";
+"recorded time in minutes and seconds" = "inspelad tid in minuter och sekund";
