@@ -40,4 +40,5 @@ Updating the template project
        www
        __TESTING__.xcodeproj
        
-9. Check your modified and new project files in to Git, and push it upstream
+9. Run [Apache Rat](http://incubator.apache.org/rat/index.html) on **/bin/templates/project**, and add the Apache License header on affected files
+10. Check your modified and new project files in to Git, and push it upstream
