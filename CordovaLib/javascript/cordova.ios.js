@@ -1,6 +1,6 @@
-// commit 9cfdc134f83b5d51f655e52ec7d4ddab167437c7
+// commit a5f0a62f9a9dc5fd7af95ec3d09b6b17c0b89b44
 
-// File generated at :: Tue May 01 2012 14:06:43 GMT-0700 (PDT)
+// File generated at :: Mon May 07 2012 16:20:11 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -771,6 +771,9 @@ module.exports = {
                             path: 'cordova/plugin/network'
                         }
                     }
+                },
+                splashscreen: {
+                    path: 'cordova/plugin/splashscreen'
                 }
             }
         },
@@ -1692,15 +1695,20 @@ var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
     /**
      * The altitude of the position.
      */
-    this.altitude = alt;
+    this.altitude = (alt !== undefined ? alt : null);
     /**
      * The direction the device is moving at the position.
      */
-    this.heading = head;
+    this.heading = (head !== undefined ? head : null);
     /**
      * The velocity with which the device is moving at the position.
      */
-    this.speed = vel;
+    this.speed = (vel !== undefined ? vel : null);
+
+    if (this.speed === 0 || this.speed === null) {
+        this.heading = NaN;
+    }
+
     /**
      * The altitude accuracy of the position.
      */
@@ -1708,6 +1716,7 @@ var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
 };
 
 module.exports = Coordinates;
+
 });
 
 // file: lib/common/plugin/DirectoryEntry.js
@@ -3175,15 +3184,16 @@ define("cordova/plugin/Position", function(require, exports, module) {
 var Coordinates = require('cordova/plugin/Coordinates');
 
 var Position = function(coords, timestamp) {
-  if (coords) {
-	    this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
-  } else {
-      this.coords = new Coordinates();
-  }
-	this.timestamp = (timestamp !== undefined) ? timestamp : new Date();
+    if (coords) {
+        this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
+    } else {
+        this.coords = new Coordinates();
+    }
+    this.timestamp = (timestamp !== undefined) ? timestamp : new Date().getTime();
 };
 
 module.exports = Position;
+
 });
 
 // file: lib/common/plugin/PositionError.js
@@ -3806,16 +3816,16 @@ var geolocation = {
         } else {
             if (options.timeout !== Infinity) {
                 // If the timeout value was not set to Infinity (default), then
-                // set up a timeout function that will fire the error callback 
+                // set up a timeout function that will fire the error callback
                 // if no successful position was retrieved before timeout expired.
                 timeoutTimer = createTimeout(fail, options.timeout);
             } else {
                 // This is here so the check in the win function doesn't mess stuff up
-                // may seem weird but this guarantees timeoutTimer is 
+                // may seem weird but this guarantees timeoutTimer is
                 // always truthy before we call into native
-                timeoutTimer = true; 
+                timeoutTimer = true;
             }
-            exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.maximumAge]); 
+            exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.maximumAge]);
         }
         return timeoutTimer;
     },
@@ -3881,12 +3891,13 @@ var geolocation = {
         if (id && timers[id] !== undefined) {
             clearTimeout(timers[id]);
             delete timers[id];
-            exec(null, null, "Geolocation", "clearWatch", [id]); 
+            exec(null, null, "Geolocation", "clearWatch", [id]);
         }
     }
 };
 
 module.exports = geolocation;
+
 });
 
 // file: lib/ios/plugin/ios/Contact.js
@@ -4418,8 +4429,165 @@ module.exports = function(uri, successCallback, errorCallback) {
 
 });
 
+// file: lib/common/plugin/splashscreen.js
+define("cordova/plugin/splashscreen", function(require, exports, module) {
+var exec = require('cordova/exec');
+
+var splashscreen = {
+    hide:function() {
+        exec(null, null, "SplashScreen", "hide", []);
+    }
+};
+
+module.exports = splashscreen;
+});
+
 // file: lib/common/utils.js
 define("cordova/utils", function(require, exports, module) {
+var utils = exports;
+
+/**
+ * Returns an indication of whether the argument is an array or not
+ */
+utils.isArray = function(a) {
+    return Object.prototype.toString.call(a) == '[object Array]';
+};
+
+/**
+ * Returns an indication of whether the argument is a Date or not
+ */
+utils.isDate = function(d) {
+    return Object.prototype.toString.call(d) == '[object Date]';
+};
+
+/**
+ * Does a deep clone of the object.
+ */
+utils.clone = function(obj) {
+    if(!obj || typeof obj == 'function' || utils.isDate(obj) || typeof obj != 'object') {
+        return obj;
+    }
+
+    var retVal, i;
+
+    if(utils.isArray(obj)){
+        retVal = [];
+        for(i = 0; i < obj.length; ++i){
+            retVal.push(utils.clone(obj[i]));
+        }
+        return retVal;
+    }
+
+    retVal = {};
+    for(i in obj){
+        if(!(i in retVal) || retVal[i] != obj[i]) {
+            retVal[i] = utils.clone(obj[i]);
+        }
+    }
+    return retVal;
+};
+
+/**
+ * Returns a wrappered version of the function
+ */
+utils.close = function(context, func, params) {
+    if (typeof params == 'undefined') {
+        return function() {
+            return func.apply(context, arguments);
+        };
+    } else {
+        return function() {
+            return func.apply(context, params);
+        };
+    }
+};
+
+/**
+ * Create a UUID
+ */
+utils.createUUID = function() {
+    return UUIDcreatePart(4) + '-' +
+        UUIDcreatePart(2) + '-' +
+        UUIDcreatePart(2) + '-' +
+        UUIDcreatePart(2) + '-' +
+        UUIDcreatePart(6);
+};
+
+/**
+ * Extends a child object from a parent object using classical inheritance
+ * pattern.
+ */
+utils.extend = (function() {
+    // proxy used to establish prototype chain
+    var F = function() {};
+    // extend Child from Parent
+    return function(Child, Parent) {
+        F.prototype = Parent.prototype;
+        Child.prototype = new F();
+        Child.__super__ = Parent.prototype;
+        Child.prototype.constructor = Child;
+    };
+}());
+
+/**
+ * Alerts a message in any available way: alert or console.log.
+ */
+utils.alert = function(msg) {
+    if (alert) {
+        alert(msg);
+    } else if (console && console.log) {
+        console.log(msg);
+    }
+};
+
+/**
+ * Formats a string and arguments following it ala sprintf()
+ *
+ * format chars:
+ *   %j - format arg as JSON
+ *   %o - format arg as JSON
+ *   %c - format arg as ''
+ *   %% - replace with '%'
+ * any other char following % will format it's
+ * arg via toString().
+ *
+ * for rationale, see FireBug's Console API:
+ *    http://getfirebug.com/wiki/index.php/Console_API
+ */
+utils.format = function(formatString /* ,... */) {
+    if (formatString === null || formatString === undefined) return "";
+    if (arguments.length == 1) return formatString.toString();
+
+    var pattern = /(.*?)%(.)(.*)/;
+    var rest    = formatString.toString();
+    var result  = [];
+    var args    = [].slice.call(arguments,1);
+
+    while (args.length) {
+        var arg   = args.shift();
+        var match = pattern.exec(rest);
+
+        if (!match) break;
+
+        rest = match[3];
+
+        result.push(match[1]);
+
+        if (match[2] == '%') {
+            result.push('%');
+            args.unshift(arg);
+            continue;
+        }
+
+        result.push(formatted(arg, match[2]));
+    }
+
+    result.push(rest);
+
+    return result.join('');
+};
+
+//------------------------------------------------------------------------------
 function UUIDcreatePart(length) {
     var uuidpart = "";
     for (var i=0; i<length; i++) {
@@ -4432,92 +4600,19 @@ function UUIDcreatePart(length) {
     return uuidpart;
 }
 
-var _self = {
-    isArray:function(a) {
-        return Object.prototype.toString.call(a) == '[object Array]';
-    },
-    isDate:function(d) {
-        return Object.prototype.toString.call(d) == '[object Date]';
-    },
-    /**
-     * Does a deep clone of the object.
-     */
-    clone: function(obj) {
-        if(!obj || typeof obj == 'function' || _self.isDate(obj) || typeof obj != 'object') {
-            return obj;
-        }
+//------------------------------------------------------------------------------
+function formatted(object, formatChar) {
 
-        var retVal, i;
-
-        if(_self.isArray(obj)){
-            retVal = [];
-            for(i = 0; i < obj.length; ++i){
-                retVal.push(_self.clone(obj[i]));
-            }
-            return retVal;
-        }
-
-        retVal = {};
-        for(i in obj){
-            if(!(i in retVal) || retVal[i] != obj[i]) {
-                retVal[i] = _self.clone(obj[i]);
-            }
-        }
-        return retVal;
-    },
-
-    close: function(context, func, params) {
-        if (typeof params == 'undefined') {
-            return function() {
-                return func.apply(context, arguments);
-            };
-        } else {
-            return function() {
-                return func.apply(context, params);
-            };
-        }
-    },
-
-    /**
-     * Create a UUID
-     */
-    createUUID: function() {
-        return UUIDcreatePart(4) + '-' +
-            UUIDcreatePart(2) + '-' +
-            UUIDcreatePart(2) + '-' +
-            UUIDcreatePart(2) + '-' +
-            UUIDcreatePart(6);
-    },
-
-    /**
-     * Extends a child object from a parent object using classical inheritance
-     * pattern.
-     */
-    extend: (function() {
-        // proxy used to establish prototype chain
-        var F = function() {};
-        // extend Child from Parent
-        return function(Child, Parent) {
-            F.prototype = Parent.prototype;
-            Child.prototype = new F();
-            Child.__super__ = Parent.prototype;
-            Child.prototype.constructor = Child;
-        };
-    }()),
-
-    /**
-     * Alerts a message in any available way: alert or console.log.
-     */
-    alert:function(msg) {
-        if (alert) {
-            alert(msg);
-        } else if (console && console.log) {
-            console.log(msg);
-        }
+    switch(formatChar) {
+        case 'j':
+        case 'o': return JSON.stringify(object);
+        case 'c': return '';
     }
-};
 
-module.exports = _self;
+    if (null === object) return Object.prototype.toString.call(object);
+
+    return object.toString();
+}
 
 });
 
