@@ -21,3 +21,4 @@ wkhtmltopdf.dmg
 wkhtmltopdf/
 
 CordovaLib/CordovaLibApp/www/cordova.ios.js
+console.log

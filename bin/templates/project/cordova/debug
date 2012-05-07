@@ -1,4 +1,5 @@
-#! /bin/sh
+
+#! /bin/bash
 
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -40,5 +41,15 @@ cd $PROJECT_PATH
 
 xcodebuild -project $PRJ -sdk $SDK clean build
 
-ios-sim launch $APP --stderr console.log --stdout console.log &
+
+# launch using ios-sim
+
+if which ios-sim >/dev/null; then
+    ios-sim launch $APP --stderr console.log --stdout console.log &
+else
+    echo -e '\033[31mError: ios-sim was not found. Please download, build and install version > 1.3 from https://github.com/Fingertips/ios-sim into your path. \033[m'; exit 1;
+fi
+
+
+
 
