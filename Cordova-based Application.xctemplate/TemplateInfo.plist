@@ -285,6 +285,8 @@
 			<string>./verify.sh</string>
 			<key>PathType</key>
 			<string>Group</string>
+			<key>TargetIndices</key>
+			<array/>
 		</dict>
 	</dict>
 	<key>Description</key>
