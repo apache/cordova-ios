@@ -507,7 +507,7 @@
 			errorCode = NOT_FOUND_ERR;
 		}
 		// log [NSNumber numberWithDouble: theMessage] objCtype to see what it returns
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode];
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt: errorCode];
 		jsString = [result toErrorCallbackString:callbackId];
 	}
 	if (jsString){
