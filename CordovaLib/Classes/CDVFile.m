@@ -23,7 +23,7 @@
 #import "JSONKit.h"
 #import "NSData+Base64.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-
+#import "sys/xattr.h"
 
 @implementation CDVFile
 
@@ -514,6 +514,46 @@
 		[self writeJavascript:jsString];
 	}
 	[fileMgr release];
+}
+
+/*
+ * set MetaData of entry
+ * Currently we only support "com.apple.MobileBackup" (boolean)
+ */
+- (void) setMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	NSString* callbackId = [arguments pop];
+    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+    
+    // arguments
+	NSString* filePath = [arguments objectAtIndex:0];
+    CDVPluginResult* result = nil;
+    BOOL ok = NO;
+    
+    // we only care about this iCloud key for now. 
+    // set to 1/true to skip backup, set to 0/false to back it up (effectively removing the attribute)
+    NSString* iCloudBackupExtendedAttributeKey = @"com.apple.MobileBackup";
+    id iCloudBackupExtendedAttributeValue = [options objectForKey:iCloudBackupExtendedAttributeKey];
+    
+    if (iCloudBackupExtendedAttributeValue != nil && 
+        [iCloudBackupExtendedAttributeValue isKindOfClass:[NSNumber class]]) {
+        
+        u_int8_t value = [iCloudBackupExtendedAttributeValue intValue];
+        if (value == 0) { // remove the attribute (allow backup, the default)
+            ok = (removexattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], 0) == 0);
+        } else { // set the attribute (skip backup)
+            ok = (setxattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], &value, sizeof(value), 0, 0) == 0);
+        }
+    }
+    
+    if (ok) {
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+		[self writeJavascript:[result toSuccessCallbackString:callbackId]];
+
+    } else {
+		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+		[self writeJavascript:[result toErrorCallbackString:callbackId]];
+    }
 }
 
 /* removes the directory or file entry
