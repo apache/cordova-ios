@@ -252,7 +252,7 @@
         }
     } else {
         // No callbacks waiting on us anymore, turn off listening.
-        [self stopLocation];
+        [self _stopLocation];
     }
 }
 
