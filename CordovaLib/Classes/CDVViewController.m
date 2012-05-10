@@ -979,7 +979,7 @@ static NSString* cdvVersion;
 - (void) onAppWillEnterForeground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationWillEnterForeground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.require('cordova/channel').onResume.fire();"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resume');"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state. 
@@ -996,7 +996,7 @@ static NSString* cdvVersion;
 - (void) onAppDidEnterBackground:(NSNotification*)notification
 {
     //NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.require('cordova/channel').onPause.fire();"];
+    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('pause');"];
 }
 
 // ///////////////////////
