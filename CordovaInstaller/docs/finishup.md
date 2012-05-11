@@ -22,6 +22,7 @@
 
 ## Plugins
 
+* **DO NOT CHECK** the "Automatic Reference Counting" option when creating a new project, if not you will have compile errors.
 * Plugins **MUST** add their plugin mapping to their app's Cordova.plist Plugins key, if not they will not work (see your plugin's README)
 * Plugins **MUST** add any external hosts they connect to to the white-list in Cordova.plist/ExternalHosts (add hostnames **only**, NO protocols nor paths)
 * A plugin's Objective-C code **MUST** be added to the project properly in a "group" (**YELLOW** folder), if you incorrectly added it as a folder reference it would be a blue folder (just delete the reference, and re-add)
