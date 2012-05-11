@@ -161,7 +161,7 @@ With version 0.9.6, we implemented the W3C Media Capture API, which requires use
 
 If you get a "Symbol not found: _NSConcreteGlobalBlock_", you will have to weak link libSystem through a command-line option. 
 
-This is because the LLVM compiler strong links NSConcreteGlobalBlock, but gcc weak links (correctly). Add a linker flag in "Other Linker Flags" in your project target: _"-weak_library /usr/lib/libSystem.B.dylib"_
+This is because the LLVM compiler strong links NSConcreteGlobalBlock, but gcc weak links (correctly). Add a linker flag in "Other Linker Flags" in your project target: _"-weak-lSystem"_
 
 Starting with version 1.1, when creating a new project, the weak-linking is added through a linker flag so you will not need to do this manually.
 

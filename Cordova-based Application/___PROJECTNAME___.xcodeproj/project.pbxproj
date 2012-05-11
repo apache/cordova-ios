@@ -578,8 +578,7 @@
 					AVFoundation,
 					"-weak_framework",
 					CoreMedia,
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
+					"-weak-lSystem",
 					"-all_load",
 					"-Obj-C",
 				);
@@ -607,8 +606,7 @@
 					AVFoundation,
 					"-weak_framework",
 					CoreMedia,
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
+					"-weak-lSystem",
 					"-all_load",
 					"-Obj-C",
 				);
