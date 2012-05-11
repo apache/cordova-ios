@@ -45,16 +45,6 @@ The installer should build "CordovaInstaller.dmg" into the **dist** folder, moun
 
 <br />
 
-Create a Cordova project (Xcode 3)
--------------------------------------------------------------
-
-1. Launch Xcode, then under the File menu, select "New Project...".
-2. Navigate to the "User Templates" section, select Cordova, then in the right pane, select "Cordova-based Application"
-3. Select the "Choose..." button, name your project and choose the location where you want the new project to be.
-4. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
-
-<br />
-
 Create a Cordova project (Xcode 4)
 -------------------------------------------------------------
 
@@ -65,7 +55,7 @@ Create a Cordova project (Xcode 4)
 5. Run the project at least once to create the "www" folder in your project folder.
   - If you get compilation errors complaining about "NSAutoreleasePool",
     make sure to change project's Build Settings in Xcode for the
-    "Compiler for C/C++/Objective-C" to "LLVM GCC 4.2"
+    "Compiler for C/C++/Objective-C" to "Apple LLVM Compiler 3.0"
 6. Drag and drop this "www" folder into your project in Xcode, and add it as a **folder reference** (**BLUE** folder).
 7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 
@@ -174,11 +164,11 @@ Modify these lines appropriately:
 1. self.viewController.wwwFolderName = @"www";
 2. self.viewController.startPage = @"index.html";
 
-**8. What's the difference between the Xcode 3 and Xcode 4 templates?**
+**8. What's the difference between the two templates?**
 
-The CordovaLib static library is only used by the Xcode 3 template. The Xcode 4 template uses Cordova.framework (a static framework) because of Xcode 4's template limitations. Both are based off the same code, just packaged differently.
+The CordovaLib static library is only used by the older subproject-based template. The Xcode 4 template uses Cordova.framework (a static framework) because of Xcode 4's template limitations. Both are based off the same code, just packaged differently.
 
-You can still create projects using the command line if you want to use the Xcode 3 Template in Xcode 4. This is particularly useful for developers debugging the Cordova core.
+You can still create projects using the command line if you want to use sub-project based Template in Xcode 4. This is particularly useful for developers debugging the Cordova core.
 
 Link:
 
@@ -188,7 +178,7 @@ Next, you will have to **replace all references of "PhoneGap" to "Cordova"** fro
 
 <br />
 
-**9. In Xcode 3, I want to have a project-specific copy of CordovaLib for my project, not a global one. How do I do this?** 
+**9. In the sub-project based template, I want to have a project-specific copy of CordovaLib for my project, not a global one. How do I do this?** 
 
 In your project, there should be a _CordovaBuildSettings.xcconfig_ file. Modify the _CORDOVALIB_ variable in the file to point to your project specific CordovaLib folder. You can use relative paths, off $(PROJECT_DIR).
 

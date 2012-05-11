@@ -61,22 +61,6 @@
 That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
 <br />
 
-## Xcode 3
-
-1. Launch Xcode 3
-2. Select "New Project..." then under the File menu
-3. Select Cordova, under the "User Templates" section
-4. Select "Cordova-based Application" then in the right pane
-5. Select the "Choose..." button
-6. Name your project
-7. Choose the location where you want the new project to be.
-
-<br />
-
-That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
-
-<br />
-
 ## Links
 
 * [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/)
