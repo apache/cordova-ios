@@ -262,7 +262,13 @@
 			break;
 	}
 	
-	NSString* jsCall = [ NSString stringWithFormat:@"shouldRotateToOrientation(%d);",i];
+	NSString* jsCall = [NSString stringWithFormat:
+                        @"(function(){ \
+                                if('shouldRotateToOrientation' in window) { \
+                                    return window.shouldRotateToOrientation(%d); \
+                                } \
+                            })()"
+                        , i];
 	NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
 	
 	if([res length] > 0)
