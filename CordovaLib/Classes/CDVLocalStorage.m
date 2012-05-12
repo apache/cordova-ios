@@ -293,12 +293,27 @@
 
 - (void) onResignActive
 {
-    [self backup:nil withDict:nil];    
+    if ([[UIDevice currentDevice] isMultitaskingSupported]) 
+    {
+        __block UIBackgroundTaskIdentifier backgroundTaskID = UIBackgroundTaskInvalid;
+        
+        backgroundTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            NSLog(@"Background task to backup WebSQL/LocalStorage expired.");
+        }];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            [self backup:nil withDict:nil];
+            
+            [[UIApplication sharedApplication] endBackgroundTask: backgroundTaskID];
+            backgroundTaskID = UIBackgroundTaskInvalid;
+        });
+    }
 }
 
 - (void) onAppTerminate
 {
-    [self backup:nil withDict:nil];    
+    [self onResignActive];    
 }
 
 #pragma mark -
