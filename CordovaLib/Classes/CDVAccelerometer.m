@@ -48,9 +48,8 @@
         y = 0;
         z = 0;
         timestamp = 0;
-        self.accelCallbacks = nil;
-        self.watchCallbacks = nil;
-        self.isRunning = NO;
+        accelCallbacks = nil;
+        watchCallbacks = nil;
     }
     return self;
 }
@@ -66,13 +65,13 @@
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
 	pAccel.updateInterval = desiredFrequency_num / 1000;
-    if (!self.accelCallbacks) {
-        self.accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
+    if (!accelCallbacks) {
+        accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
     }
     if (!watchCallbacks) {
-        self.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
+        watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
     }
-	if(!self.isRunning)
+	if(!_bIsRunning)
 	{
 		pAccel.delegate = self;
 		self.isRunning = YES;
@@ -97,10 +96,10 @@
     {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
         [result setKeepCallback:[NSNumber numberWithBool:YES]];
-        if (!self.accelCallbacks) {
-            self.accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
+        if (!accelCallbacks) {
+            accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
         }
-        [self.accelCallbacks addObject:callbackId];
+        [accelCallbacks addObject:callbackId];
         [self start];
         [self writeJavascript:[result toSuccessCallbackString:callbackId]];
     } else {
@@ -113,14 +112,14 @@
     NSString* callbackId = [arguments objectAtIndex:0];
     NSString* timerId = [arguments objectAtIndex:1];
     
-    if (!self.watchCallbacks) {
-        self.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
+    if (!watchCallbacks) {
+        watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
     }
     
     // add the callbackId into the dictionary so we can call back whenever get data
-    [self.watchCallbacks setObject:callbackId forKey:timerId];
+    [watchCallbacks setObject:callbackId forKey:timerId];
     
-    if (!self.isRunning) {
+    if (!_bIsRunning) {
         [self start];
     }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
@@ -131,8 +130,8 @@
 {
     NSString* callbackId = [arguments objectAtIndex:0];
     NSString* timerId = [arguments objectAtIndex:1];
-    if (self.watchCallbacks && [self.watchCallbacks objectForKey:timerId]) {
-        [self.watchCallbacks removeObjectForKey:timerId];
+    if (watchCallbacks && [watchCallbacks objectForKey:timerId]) {
+        [watchCallbacks removeObjectForKey:timerId];
     }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     NSString* jsString = [result toSuccessCallbackString:callbackId];
