@@ -24,15 +24,24 @@
 # compile and launch a Cordova/iOS project to the simulator
 # 
 # USAGE
-#   ./debug [path name]
+#   ./debug [path name] [project name]
 #
 # EXAMPLE
-#  ./debug ~/Desktop/radness Radness
+#  ./debug ~/Desktop/MyProject MyProject
 #
 set -e
 
+function usage(){
+  echo "Usage: $0 [path to project] [name of project]"
+  exit 1
+}
+
+# check arguments
+[ -z "$1" ] && usage
+[ -z "$2" ] && usage
+
 PROJECT_PATH=${1:-"."}
-PROJECT_NAME=${2:-"CordovaExample"}
+PROJECT_NAME=$2
 PRJ=$PROJECT_NAME.xcodeproj
 APP=build/Release-iphonesimulator/$PROJECT_NAME.app
 SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
@@ -41,13 +50,12 @@ cd $PROJECT_PATH
 
 xcodebuild -project $PRJ -sdk $SDK clean build
 
-
 # launch using ios-sim
 
 if which ios-sim >/dev/null; then
     ios-sim launch $APP --stderr console.log --stdout console.log &
 else
-    echo -e '\033[31mError: ios-sim was not found. Please download, build and install version > 1.3 from https://github.com/Fingertips/ios-sim into your path. \033[m'; exit 1;
+    echo -e '\033[31mError: ios-sim was not found. Please download, build and install version 1.4 or greater from https://github.com/phonegap/ios-sim into your path. Or "brew install ios-sim" using homebrew: http://mxcl.github.com/homebrew/\033[m'; exit 1;
 fi
 
 
