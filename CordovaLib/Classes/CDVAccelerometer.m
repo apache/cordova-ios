@@ -20,7 +20,15 @@
 
 #import "CDVAccelerometer.h"
 
+@interface CDVAccelerometer () {
+}
+@property (readwrite, assign) BOOL isRunning;
+@end
+
+
 @implementation CDVAccelerometer
+
+@synthesize accelCallbacks, watchCallbacks, isRunning;
 
 // defaults to 100 msec
 #define kAccelerometerInterval      100 
@@ -36,12 +44,13 @@
     self = [super init];
     if (self)
     {
-        timeout = 30000;
         x = 0;
         y = 0;
         z = 0;
         timestamp = 0;
-        lastAccessTime = 0;
+        self.accelCallbacks = nil;
+        self.watchCallbacks = nil;
+        self.isRunning = NO;
     }
     return self;
 }
@@ -57,19 +66,24 @@
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
 	pAccel.updateInterval = desiredFrequency_num / 1000;
-	if(!_bIsRunning)
+    if (!self.accelCallbacks) {
+        self.accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
+    }
+    if (!watchCallbacks) {
+        self.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
+    }
+	if(!self.isRunning)
 	{
 		pAccel.delegate = self;
-		_bIsRunning = YES;
+		self.isRunning = YES;
 	}
 }
-
 
 - (void)stop
 {
 	UIAccelerometer*  theAccelerometer = [UIAccelerometer sharedAccelerometer];
 	theAccelerometer.delegate = nil;
-	_bIsRunning = NO;
+	self.isRunning = NO;
 }
 
 /**
@@ -77,17 +91,87 @@
  */
 - (void)getAcceleration:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 	NSString* callbackId = [arguments objectAtIndex:0];
     
-    if(!_bIsRunning)
+    if(!self.isRunning)
     {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+        [result setKeepCallback:[NSNumber numberWithBool:YES]];
+        if (!self.accelCallbacks) {
+            self.accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
+        }
+        [self.accelCallbacks addObject:callbackId];
+        [self start];
+        [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+    } else {
+        [self returnAccelInfo:callbackId];
+    }
+}
+
+- (void) addWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* timerId = [arguments objectAtIndex:1];
+    
+    if (!self.watchCallbacks) {
+        self.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
+    }
+    
+    // add the callbackId into the dictionary so we can call back whenever get data
+    [self.watchCallbacks setObject:callbackId forKey:timerId];
+    
+    if (!self.isRunning) {
         [self start];
     }
-    // set last access time to right now
-    lastAccessTime = ([[NSDate date] timeIntervalSince1970] * 1000);
-    
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [result setKeepCallback:[NSNumber numberWithBool:YES]];
+    [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+}
+- (void) clearWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* timerId = [arguments objectAtIndex:1];
+    if (self.watchCallbacks && [self.watchCallbacks objectForKey:timerId]) {
+        [self.watchCallbacks removeObjectForKey:timerId];
+    }
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    NSString* jsString = [result toSuccessCallbackString:callbackId];
+    [self writeJavascript:jsString];
+}
+
+/**
+ * Picks up accel updates from device and stores them in this class
+ */
+- (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration 
+{
+	if(self.isRunning)
+	{
+        x = acceleration.x;
+        y = acceleration.y;
+        z = acceleration.z;
+        timestamp = ([[NSDate date] timeIntervalSince1970] * 1000);
+        if (self.accelCallbacks.count > 0) {
+            for (NSString *callbackId in self.accelCallbacks) {
+                [self returnAccelInfo:callbackId];
+            }
+            [self.accelCallbacks removeAllObjects];
+        }
+        if (self.watchCallbacks.count > 0) {
+            for (NSString *timerId in self.watchCallbacks) {
+                [self returnAccelInfo:[self.watchCallbacks objectForKey: timerId ]];
+            }
+        } else {
+            // No callbacks waiting on us anymore, turn off listening.
+            [self stop];
+        }
+	}
+}
+
+- (void)returnAccelInfo: (NSString*) callbackId
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+
     // Create an acceleration object
     NSMutableDictionary *accelProps = [NSMutableDictionary dictionaryWithCapacity:4];
     [accelProps setValue:[NSNumber numberWithDouble:x*kGravitionalConstant] forKey:@"x"];
@@ -97,49 +181,7 @@
     
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
     jsString = [result toSuccessCallbackString:callbackId];
-    [self writeJavascript:jsString];
-}
-
-- (void)getTimeout:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    CDVPluginResult* result = nil;
-    NSString* jsString = nil;
-	NSString* callbackId = [arguments objectAtIndex:0];
-    
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:timeout];
-    jsString = [result toSuccessCallbackString:callbackId];
-    [self writeJavascript:jsString];
-}
-
-- (void)setTimeout:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    CDVPluginResult* result = nil;
-    NSString* jsString = nil;
-	NSString* callbackId = [arguments objectAtIndex:0];
-    float newTimeout = [[arguments objectAtIndex:1] floatValue];
-    timeout = newTimeout;
-    
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    jsString = [result toSuccessCallbackString:callbackId];
-    [self writeJavascript:jsString];
-}
-/**
- * Picks up accel updates from device and stores them in this class
- */
-- (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration 
-{
-	if(_bIsRunning)
-	{
-        x = acceleration.x;
-        y = acceleration.y;
-        z = acceleration.z;
-        timestamp = ([[NSDate date] timeIntervalSince1970] * 1000);
-        
-        // read frequency and compare to timeout so we can see if we should turn off accel listening
-        if ((timestamp - lastAccessTime) > timeout) {
-			[self stop];
-		}		
-	}
+    [self writeJavascript:jsString]; 
 }
 
 // TODO: Consider using filtering to isolate instantaneous data vs. gravity data -jm
@@ -159,7 +201,4 @@
  
 
  */
-
-
-
 @end
