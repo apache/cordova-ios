@@ -435,7 +435,7 @@
         } else {
             scaleFactor = widthFactor; // scale to fit width
         }
-        scaledSize = CGSizeMake(width * scaleFactor, height * scaleFactor);
+        scaledSize = CGSizeMake(MIN(width * scaleFactor, targetWidth), MIN(height * scaleFactor, targetHeight));
     }
     
     UIGraphicsBeginImageContext(scaledSize); // this will resize
