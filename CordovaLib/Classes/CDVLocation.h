@@ -84,7 +84,6 @@ typedef NSUInteger CDVLocationStatus;
 - (void) returnLocationInfo: (NSString*) callbackId;
 - (void) returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message;
 - (void) startLocation: (BOOL) enableHighAccuracy;
-- (void) stopLocation;
 
 - (void) locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
