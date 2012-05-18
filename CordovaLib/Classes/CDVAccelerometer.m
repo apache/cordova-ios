@@ -28,7 +28,7 @@
 
 @implementation CDVAccelerometer
 
-@synthesize accelCallbacks, watchCallbacks, isRunning;
+@synthesize callbackId, isRunning;
 
 // defaults to 100 msec
 #define kAccelerometerInterval      100 
@@ -48,30 +48,25 @@
         y = 0;
         z = 0;
         timestamp = 0;
-        self.accelCallbacks = nil;
-        self.watchCallbacks = nil;
+        self.callbackId = nil;
         self.isRunning = NO;
     }
     return self;
 }
 
 - (void) dealloc {
-    [self stop];
+    [self stop:nil withDict:nil];
     [super dealloc]; // pretty important.
 }
 
-- (void)start
+- (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+    NSString* cbId = [arguments objectAtIndex:0];
 	NSTimeInterval desiredFrequency_num = kAccelerometerInterval;
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
 	pAccel.updateInterval = desiredFrequency_num / 1000;
-    if (!self.accelCallbacks) {
-        self.accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
-    }
-    if (!watchCallbacks) {
-        self.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
-    }
+    self.callbackId = cbId;
 	if(!self.isRunning)
 	{
 		pAccel.delegate = self;
@@ -79,64 +74,11 @@
 	}
 }
 
-- (void)stop
+- (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	UIAccelerometer*  theAccelerometer = [UIAccelerometer sharedAccelerometer];
 	theAccelerometer.delegate = nil;
 	self.isRunning = NO;
-}
-
-/**
- * Sends Accel Data back to the Device.
- */
-- (void)getAcceleration:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-	NSString* callbackId = [arguments objectAtIndex:0];
-    
-    if(!self.isRunning)
-    {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
-        [result setKeepCallback:[NSNumber numberWithBool:YES]];
-        if (!self.accelCallbacks) {
-            self.accelCallbacks = [NSMutableArray arrayWithCapacity:1];            
-        }
-        [self.accelCallbacks addObject:callbackId];
-        [self start];
-        [self writeJavascript:[result toSuccessCallbackString:callbackId]];
-    } else {
-        [self returnAccelInfo:callbackId];
-    }
-}
-
-- (void) addWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
-{
-    NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* timerId = [arguments objectAtIndex:1];
-    
-    if (!self.watchCallbacks) {
-        self.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
-    }
-    
-    // add the callbackId into the dictionary so we can call back whenever get data
-    [self.watchCallbacks setObject:callbackId forKey:timerId];
-    
-    if (!self.isRunning) {
-        [self start];
-    }
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
-    [result setKeepCallback:[NSNumber numberWithBool:YES]];
-    [self writeJavascript:[result toSuccessCallbackString:callbackId]];
-}
-- (void) clearWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
-{
-    NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* timerId = [arguments objectAtIndex:1];
-    if (self.watchCallbacks && [self.watchCallbacks objectForKey:timerId]) {
-        [self.watchCallbacks removeObjectForKey:timerId];
-    }
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    NSString* jsString = [result toSuccessCallbackString:callbackId];
-    [self writeJavascript:jsString];
 }
 
 /**
@@ -150,24 +92,12 @@
         y = acceleration.y;
         z = acceleration.z;
         timestamp = ([[NSDate date] timeIntervalSince1970] * 1000);
-        if (self.accelCallbacks.count > 0) {
-            for (NSString *callbackId in self.accelCallbacks) {
-                [self returnAccelInfo:callbackId];
-            }
-            [self.accelCallbacks removeAllObjects];
-        }
-        if (self.watchCallbacks.count > 0) {
-            for (NSString *timerId in self.watchCallbacks) {
-                [self returnAccelInfo:[self.watchCallbacks objectForKey: timerId ]];
-            }
-        } else {
-            // No callbacks waiting on us anymore, turn off listening.
-            [self stop];
-        }
+        [self returnAccelInfo];
+        
 	}
 }
 
-- (void)returnAccelInfo: (NSString*) callbackId
+- (void)returnAccelInfo
 {
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
@@ -180,7 +110,8 @@
     [accelProps setValue:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
     
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
-    jsString = [result toSuccessCallbackString:callbackId];
+    [result setKeepCallback:[NSNumber numberWithBool:YES]];
+    jsString = [result toSuccessCallbackString:self.callbackId];
     [self writeJavascript:jsString]; 
 }
 
