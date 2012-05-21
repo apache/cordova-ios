@@ -91,7 +91,7 @@ typedef NSUInteger CDVMediaType;
 - (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 
-- (void) closePicker:(CDVCameraPicker*)picker;
+- (void) closePicker:(CDVCameraPicker*)picker __attribute__((deprecated));
 - (void) dealloc;
 
 @end

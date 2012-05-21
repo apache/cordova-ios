@@ -131,7 +131,6 @@
     }
     else 
     { 
-        self.hasPendingOperation = YES;
         
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
             [self.viewController presentViewController:cameraPicker animated:YES completion:nil];        
@@ -139,7 +138,7 @@
             [self.viewController presentModalViewController:cameraPicker animated:YES ];
         }              
     }
-    
+    self.hasPendingOperation = YES;
     [cameraPicker release];
 }
 
@@ -150,6 +149,15 @@
     UIPopoverController* pc = (UIPopoverController*)popoverController;
     [pc dismissPopoverAnimated:YES]; 
     pc.delegate = nil;
+    if (self.pickerController && self.pickerController.callbackId && self.pickerController.popoverController) {
+        self.pickerController.popoverController = nil;
+        NSString* callbackId = self.pickerController.callbackId;
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
+        // this "delay hack" is in case the callback contains a JavaScript alert. Without this delay or a
+        // setTimeout("alert('fail');", 0) on the JS side, the app will hang when the alert is displayed.
+        [self.webView performSelector:@selector(stringByEvaluatingJavaScriptFromString:) withObject:[result toErrorCallbackString: callbackId] afterDelay:0.5];
+    } 
+    self.hasPendingOperation = NO;
 }
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
@@ -274,6 +282,7 @@
 
 - (void) closePicker:(CDVCameraPicker*)cameraPicker
 {
+    NSLog(@"closePicker is DEPRECATED and will be removed in 2.0!");
     if ([cameraPicker respondsToSelector:@selector(presentingViewController)]) { 
         [[cameraPicker presentingViewController] dismissModalViewControllerAnimated:YES];
     } else {
@@ -297,12 +306,7 @@
     } else {
         [[cameraPicker parentViewController] dismissModalViewControllerAnimated:YES];
     }        
-    
-    if (cameraPicker.popoverSupported && cameraPicker.popoverController != nil)
-    {
-        cameraPicker.popoverController.delegate = nil;
-        cameraPicker.popoverController = nil;
-    }
+    //popoverControllerDidDismissPopover:(id)popoverController is called if popover is cancelled
         
     CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
     [cameraPicker.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
