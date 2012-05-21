@@ -1,24 +1,4 @@
 // !$*UTF8*$!
-/*
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-# 
-# http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-#  KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-*/
 {
 	archiveVersion = 1;
 	classes = {
@@ -154,6 +134,10 @@
 		30F8AE0C152125B6006625B3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357D214100AE700DF4CF2 /* MobileCoreServices.framework */; };
 		30F8AE13152127CE006625B3 /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE12152127CE006625B3 /* Cordova.plist */; };
 		30F8AE1D152129DA006625B3 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE1C152129DA006625B3 /* www */; };
+		3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E76876B156A90EE00EB6FA3 /* CDVLogger.m */; };
+		3E76876E156A90EE00EB6FA3 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E76876B156A90EE00EB6FA3 /* CDVLogger.m */; };
+		3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; };
+		3E768770156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; };
 		686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
 		686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */; };
 		68A32D7514103017006B237C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68A32D7414103017006B237C /* AddressBook.framework */; };
@@ -274,6 +258,8 @@
 		30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCommandDelegate.h; path = Classes/CDVCommandDelegate.h; sourceTree = "<group>"; };
 		30F8AE12152127CE006625B3 /* Cordova.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cordova.plist; path = "../../Cordova-based Application/Cordova.plist"; sourceTree = "<group>"; };
 		30F8AE1C152129DA006625B3 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
+		3E76876B156A90EE00EB6FA3 /* CDVLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVLogger.m; path = Classes/CDVLogger.m; sourceTree = "<group>"; };
+		3E76876C156A90EE00EB6FA3 /* CDVLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLogger.h; path = Classes/CDVLogger.h; sourceTree = "<group>"; };
 		686357A9141002F100DF4CF2 /* CordovaLibTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CordovaLibTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		686357AA141002F100DF4CF2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		686357AC141002F100DF4CF2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -545,6 +531,8 @@
 				8887FD5F1090FBE7009987E8 /* CDVReachability.m */,
 				8887FD601090FBE7009987E8 /* CDVSound.h */,
 				8887FD611090FBE7009987E8 /* CDVSound.m */,
+				3E76876B156A90EE00EB6FA3 /* CDVLogger.m */,
+				3E76876C156A90EE00EB6FA3 /* CDVLogger.h */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -626,6 +614,7 @@
 				301F2F2B14F3C9CA003FE9FC /* CDV.h in Headers */,
 				3062D121151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
 				3034979D1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
+				3E768770156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +655,7 @@
 				30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */,
 				3034979C1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 				3062D120151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
+				3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,6 +907,7 @@
 				30A90B9414588697006178D3 /* JSONKit.m in Sources */,
 				3034979F1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				3062D123151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
+				3E76876E156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -975,6 +966,7 @@
 				8852C44114B65FD800F0E735 /* CDVCordovaView.m in Sources */,
 				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
+				3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
