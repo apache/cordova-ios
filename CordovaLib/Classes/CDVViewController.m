@@ -46,10 +46,10 @@
 @synthesize imageView, activityView, useSplashScreen, commandDelegate;
 @synthesize wwwFolderName, startPage, invokeString;
 
-- (id) init
+- (id) __init
 {
-    self = [super init];
-    if (self != nil) {
+    if (self != nil) 
+    {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) 
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -64,7 +64,7 @@
                                                      name:UIApplicationDidBecomeActiveNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:) 
                                                      name:UIApplicationDidEnterBackgroundNotification object:nil];
-
+        
         self.commandDelegate = self;
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
@@ -72,7 +72,20 @@
         
         [self printMultitaskingInfo];
     }
+    
     return self; 
+}
+
+-(id) initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    return [self __init];
+}
+
+- (id) init
+{
+    self = [super init];
+    return [self __init];
 }
 
 - (void) printMultitaskingInfo

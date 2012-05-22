@@ -59,7 +59,6 @@
 - (void) flushCommandQueue;
 
 - (void) javascriptAlert:(NSString*)text;
-//- (NSString*) pathForResource:(NSString*)resourcepath;
 - (NSString*) appURLScheme;
 - (NSDictionary*) deviceProperties;
 
