@@ -20,6 +20,7 @@
 ##   You can set these environment variables: 
 ##         XC_APP (path to your Xcode.app)
 ##         PM_APP (path to your PackageMaker app)
+##         PKG_ERROR_LOG (error log)
 ##         DEVELOPER (path to your Developer folder)
 ##              - don't need to set this if  you use 'xcode-select'
 ##              - in Xcode 4.3, this is within your app bundle: Xcode.app/Contents/Developer
@@ -55,10 +56,11 @@ XC = $(DEVELOPER)/usr/bin/xcodebuild
 CDV_VER = $(shell head -1 CordovaLib/VERSION)
 GIT = $(shell which git)
 COMMIT_HASH=$(shell git describe --tags)	
-PKG_ERROR_LOG=pkg_error_log
+PKG_ERROR_LOG ?= pkg_error_log
 BUILD_BAK=_build.bak
 CERTIFICATE = 'Cordova Support'
-WKHTMLTOPDF = wkhtmltopdf/wkhtmltopdf --encoding utf-8 --page-size Letter --footer-font-name "Helvetica" --footer-font-size 10 --footer-spacing 10 --footer-right "[page]/[topage]" -B 1in -L 0.5in -R 0.5in -T 0.5in
+WKHTMLTOPDF = wkhtmltopdf --encoding utf-8 --page-size Letter --footer-font-name "Helvetica" --footer-font-size 10 --footer-spacing 10 --footer-right "[page]/[topage]" -B 1in -L 0.5in -R 0.5in -T 0.5in
+MARKDOWN = markdown
 
 all :: installer
 
@@ -176,7 +178,7 @@ check-utils:
 		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
 		@echo -e "Using PackageMaker app: \033[33m$(PM_APP)\033[m";
 
-installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xcode4-template cordova-framework
+installer: check-utils clean check-wkhtmltopdf md-to-html cordova-lib xcode3-template xcode4-template cordova-framework
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
@@ -189,11 +191,11 @@ installer: check-utils clean markdown wkhtmltopdf cordova-lib xcode3-template xc
 	@$(CAT) CordovaInstaller/docs/releasenotes.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/releasenotes.md
 	@# generate releasenotes html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/releasenotes.html
-	@perl Markdown_1.0.1/Markdown.pl CordovaInstaller/docs/releasenotes.md >> CordovaInstaller/docs/releasenotes.html
+	@$(MARKDOWN) CordovaInstaller/docs/releasenotes.md >> CordovaInstaller/docs/releasenotes.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/releasenotes.html
 	@# generate finishup html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/finishup.html
-	@perl Markdown_1.0.1/Markdown.pl CordovaInstaller/docs/finishup.md >> CordovaInstaller/docs/finishup.html
+	@$(MARKDOWN) CordovaInstaller/docs/finishup.md >> CordovaInstaller/docs/finishup.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/finishup.html
 	@# convert all the html files to rtf (for PackageMaker)
 	@textutil -convert rtf -font 'Helvetica' CordovaInstaller/docs/*.html
@@ -259,44 +261,59 @@ uninstall:
 	echo "" ; \
 	fi	
 
-wkhtmltopdf:
-	@# download wkhtmltopdf if necessary
-	@if [[ ! -d "wkhtmltopdf" ]]; then \
-		echo "Downloading wkhtmltopdf..."; \
-		curl -L http://wkhtmltopdf.googlecode.com/files/wkhtmltopdf-0.9.9-OS-X.i368 > wkhtmltopdf_temp; \
-		$(MKPATH) wkhtmltopdf; \
-		mv wkhtmltopdf_temp wkhtmltopdf/wkhtmltopdf; \
-		chmod 755 wkhtmltopdf/wkhtmltopdf; \
+check-brew:
+	@if [[ ! -e `which brew` ]]; then \
+		echo -e '\033[31mError: brew was not found, or not on your path. To install brew, follow the instructions here: https://github.com/mxcl/homebrew/wiki/installation or "make install-brew"\033[m'; exit 1; \
 	fi
 
-markdown:
-	@# download markdown if necessary
-	@if [[ ! -d "Markdown_1.0.1" ]]; then \
-		echo "Downloading Markdown 1.0.1..."; \
-		curl -L http://daringfireball.net/projects/downloads/Markdown_1.0.1.zip > Markdown_1.0.1.zip; \
-		unzip Markdown_1.0.1.zip -d . > /dev/null; \
+install-brew:
+	@/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb | /usr/bin/ruby
+
+check-wkhtmltopdf: check-brew
+	@if [[ ! -e `which wkhtmltopdf` ]]; then \
+		echo -e '\033[31mError: wkhtmltopdf was not found, or not on your path. To install wkhtmltopdf, Install it from homebrew: "brew install wkhtmltopdf" or "make install-wkhtmltopdf"\033[m'; \
+		echo -e '\033[31mNOTE: Version 0.11.0_rc1 is really slow "brew versions wkhtmltopdf" to see how to install version 0.9.9\033[m'; exit 1; \
 	fi
+
+install-wkhtmltopdf: check-brew
+	@echo -e '\033[31mNOTE: Version 0.11.0_rc1 is really slow. "brew versions wkhtmltopdf" to see how to install version 0.9.9, or "make downgrade-wkhtmltopdf"\033[m'
+	@brew install wkhtmltopdf
+
+downgrade-wkhtmltopdf: check-brew
+	@brew unlink wkhtmltopdf
+	@cd `brew --cellar`; git checkout 6e2d550 /usr/local/Library/Formula/wkhtmltopdf.rb
+	@brew install wkhtmltopdf
+
+check-markdown: check-brew
+	@if [[ ! -e `which markdown` ]]; then \
+		echo -e '\033[31mError: markdown was not found, or not on your path. To install markdown, Install it from homebrew: "brew install markdown" or "make install-markdown"\033[m'; exit 1; \
+	fi
+
+install-markdown: check-brew
+	@brew install markdown
+
+md-to-html: check-markdown
 	@# generate readme html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/readme.html
-	@perl Markdown_1.0.1/Markdown.pl README.md >> CordovaInstaller/docs/readme.html
+	@$(MARKDOWN) README.md >> CordovaInstaller/docs/readme.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/readme.html
 	@# generate 'How to Use Cordova as a Component' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/cleaver.html
-	@perl Markdown_1.0.1/Markdown.pl 'guides/How to Use Cordova as a Component.md' >> CordovaInstaller/docs/cleaver.html
+	@$(MARKDOWN) 'guides/How to Use Cordova as a Component.md' >> CordovaInstaller/docs/cleaver.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/cleaver.html
 	@# generate 'Cordova Upgrade Guide' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/upgrade.html
-	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Upgrade Guide.md' >> CordovaInstaller/docs/upgrade.html
+	@$(MARKDOWN) 'guides/Cordova Upgrade Guide.md' >> CordovaInstaller/docs/upgrade.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/upgrade.html
 	@# generate 'Cordova Plugin Upgrade Guide' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/plugin_upgrade.html
-	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Plugin Upgrade Guide.md' >> CordovaInstaller/docs/plugin_upgrade.html
+	@$(MARKDOWN) 'guides/Cordova Plugin Upgrade Guide.md' >> CordovaInstaller/docs/plugin_upgrade.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/plugin_upgrade.html
 	@# generate 'Cordova Settings File' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/settings_file.html
-	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova Settings File.md' >> CordovaInstaller/docs/settings_file.html
+	@$(MARKDOWN) 'guides/Cordova Settings File.md' >> CordovaInstaller/docs/settings_file.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/settings_file.html
 	@# generate 'Cordova JavaScript Exception Logging' html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/exception_logging.html
-	@perl Markdown_1.0.1/Markdown.pl 'guides/Cordova JavaScript Exception Logging.md' >> CordovaInstaller/docs/exception_logging.html
+	@$(MARKDOWN) 'guides/Cordova JavaScript Exception Logging.md' >> CordovaInstaller/docs/exception_logging.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/exception_logging.html
