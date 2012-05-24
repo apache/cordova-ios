@@ -271,16 +271,11 @@ install-brew:
 
 check-wkhtmltopdf: check-brew
 	@if [[ ! -e `which wkhtmltopdf` ]]; then \
-		echo -e '\033[31mError: wkhtmltopdf was not found, or not on your path. To install wkhtmltopdf, Install it from homebrew: "brew install wkhtmltopdf" or "make install-wkhtmltopdf"\033[m'; \
-		echo -e '\033[31mNOTE: Version 0.11.0_rc1 is really slow "brew versions wkhtmltopdf" to see how to install version 0.9.9\033[m'; exit 1; \
+		echo -e '\033[31mError: wkhtmltopdf was not found, or not on your path. To install wkhtmltopdf, install v0.9.9 by running the command "make install-wkhtmltopdf"\033[m'; exit 1;\
 	fi
 
 install-wkhtmltopdf: check-brew
-	@echo -e '\033[31mNOTE: Version 0.11.0_rc1 is really slow. "brew versions wkhtmltopdf" to see how to install version 0.9.9, or "make downgrade-wkhtmltopdf"\033[m'
-	@brew install wkhtmltopdf
-
-downgrade-wkhtmltopdf: check-brew
-	@brew unlink wkhtmltopdf
+	@# note: only version 0.9.9 should be used, 0.11.0_rc1 has a perf issue
 	@cd `brew --cellar`; git checkout 6e2d550 /usr/local/Library/Formula/wkhtmltopdf.rb
 	@brew install wkhtmltopdf
 
