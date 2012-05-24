@@ -22,6 +22,37 @@
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
+### 1.8.0rc1 (20120524) ###
+
+* Fixes CB-819 fail callback not invoked
+* [CB-794] Add HTTP status code to FileTransferError object for iOS
+* [CB-359] Updates to adhere to W3C spec for geolocation. Changing actions based on changes incorporated into cordova-js
+* [CB-683] pause/resume events now should pass in event object into handlers
+* [CB-464] rewrite of accel plugin, simplified accel to start/stop actions.
+* [CB-623] added Logger plugin
+* Fixed CB-513 - Remove cast functionality from CDVPluginResult, obsolete
+* Fixed CB-594 - Remove checks for retainCount
+* Fixed CB-637 - Add a doc on how to update the template project in the bin subfolder
+* Updated bin folder scripts.
+* Fixed CB-669 - verify.sh file in a new Cordova-based application project should not be included in the .app bundle
+* Fixes CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS
+* Fixed typo in File.getMetadata - error callback had OK instead of ERROR status
+* Fixes CB-610 - Capture.bundle missing microphone image resources for retina iPad results in mis-drawn recording interface
+* Fixes CB-751 - Undefined function is called when orientation change
+* Fixes CB-754 - Use of -weak_library in 'other library flags' of generated template XCode app causes crashes in Simulator when Obj-C Blocks are used
+* Fixes CB-628 - Scrub installation process, document artifacts of Xcode 3 support, mention no ARC
+* Fixed CB-628 - Scrub installation process, document artifacts of Xcode 3 support, mention no ARC
+* Fixes CB-684 - Not enough time for background execution of WebSQL/LocalStorage backup (when app goes to the background)
+* Fixes CB-766 - Update bin/debug shell script to point to Homebrew ios-sim 1.4 download
+* Fixes CB-464 - Refactor accelerometer native code in iOS
+* Fixes CB-760 - Camera returns incorrect image size
+* Fixed warning in CDVLocation
+* Fixed EXC_BAD_ACCESS error in CDVAccelerometer
+* Fixes CB-818 - Make CDVViewController also implement initWithNibName
+* Fixes CB-825 - Makefile: remove direct download of Markdown and wkhtmltopdf (uses homebrew to download)
+
+<br />
+
 ### 1.7.0 (20120430) ###
 
 * Fixed CB-183, CB-54 - ios camera targetWidth/Height don't match the documentation Fixes CB-183 and CB-54
