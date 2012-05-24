@@ -1,6 +1,6 @@
-// commit 9cfdc134f83b5d51f655e52ec7d4ddab167437c7
+// commit 95f199e1c207dc89b84e79a9a7b27d6a3cc8fe14
 
-// File generated at :: Tue May 01 2012 14:06:43 GMT-0700 (PDT)
+// File generated at :: Thu May 24 2012 15:40:28 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -98,17 +98,7 @@ var documentEventHandlers = {},
 
 document.addEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
-    if (e == 'deviceready') {
-        channel.onDeviceReady.subscribeOnce(handler);
-    } else if (e == 'resume') {
-        channel.onResume.subscribe(handler);
-        // if subscribing listener after event has already fired, invoke the handler
-        if (channel.onResume.fired && typeof handler == 'function') {
-            handler();
-        }
-    } else if (e == 'pause') {
-        channel.onPause.subscribe(handler);
-    } else if (typeof documentEventHandlers[e] != 'undefined') {
+    if (typeof documentEventHandlers[e] != 'undefined') {
         documentEventHandlers[e].subscribe(handler);
     } else {
         m_document_addEventListener.call(document, evt, handler, capture);
@@ -126,13 +116,8 @@ window.addEventListener = function(evt, handler, capture) {
 
 document.removeEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
-    // Check for pause/resume events first.
-    if (e == 'resume') {
-        channel.onResume.unsubscribe(handler);
-    } else if (e == 'pause') {
-        channel.onPause.unsubscribe(handler);
     // If unsubcribing from an event that is handled by a plugin
-    } else if (typeof documentEventHandlers[e] != "undefined") {
+    if (typeof documentEventHandlers[e] != "undefined") {
         documentEventHandlers[e].unsubscribe(handler);
     } else {
         m_document_removeEventListener.call(document, evt, handler, capture);
@@ -317,6 +302,11 @@ var cordova = {
         });
     }
 };
+
+// Register pause, resume and deviceready channels as events on document.
+channel.onPause = cordova.addDocumentEventHandler('pause');
+channel.onResume = cordova.addDocumentEventHandler('resume');
+channel.onDeviceReady = cordova.addDocumentEventHandler('deviceready');
 
 // Adds deprecation warnings to functions of an object (but only logs a message once)
 function deprecateFunctions(obj, objLabel) {
@@ -645,10 +635,13 @@ Channel.prototype.unsubscribe = function(g) {
     if (g === null || g === undefined) { throw "You must pass _something_ into Channel.unsubscribe"; }
 
     if (typeof g == 'function') { g = g.observer_guid; }
-    this.handlers[g] = null;
-    delete this.handlers[g];
-    this.numHandlers--;
-    if (this.events.onUnsubscribe) this.events.onUnsubscribe.call(this);
+    var handler = this.handlers[g];
+    if (handler) {
+        this.handlers[g] = null;
+        delete this.handlers[g];
+        this.numHandlers--;
+        if (this.events.onUnsubscribe) this.events.onUnsubscribe.call(this);
+    }
 };
 
 /**
@@ -718,6 +711,9 @@ module.exports = {
             children: {
                 exec: {
                     path: 'cordova/exec'
+                },
+                logger: {
+                    path: 'cordova/plugin/logger'
                 }
             }
         },
@@ -771,6 +767,9 @@ module.exports = {
                             path: 'cordova/plugin/network'
                         }
                     }
+                },
+                splashscreen: {
+                    path: 'cordova/plugin/splashscreen'
                 }
             }
         },
@@ -1056,18 +1055,24 @@ module.exports = {
         }
     }
 };
+
+// use the native logger
+var logger = require("cordova/plugin/logger");
+logger.useConsole(false);
+
 });
 
 // file: lib/common/plugin/Acceleration.js
 define("cordova/plugin/Acceleration", function(require, exports, module) {
 var Acceleration = function(x, y, z, timestamp) {
-  this.x = x;
-  this.y = y;
-  this.z = z;
-  this.timestamp = timestamp || (new Date()).getTime();
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.timestamp = timestamp || (new Date()).getTime();
 };
 
 module.exports = Acceleration;
+
 });
 
 // file: lib/common/plugin/Camera.js
@@ -1086,7 +1091,7 @@ for (var key in Camera) {
  * Gets a picture from source defined by "options.sourceType", and returns the
  * image as defined by the "options.destinationType" option.
 
- * The defaults are sourceType=CAMERA and destinationType=FILE_URL.
+ * The defaults are sourceType=CAMERA and destinationType=FILE_URI.
  *
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -1692,15 +1697,20 @@ var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
     /**
      * The altitude of the position.
      */
-    this.altitude = alt;
+    this.altitude = (alt !== undefined ? alt : null);
     /**
      * The direction the device is moving at the position.
      */
-    this.heading = head;
+    this.heading = (head !== undefined ? head : null);
     /**
      * The velocity with which the device is moving at the position.
      */
-    this.speed = vel;
+    this.speed = (vel !== undefined ? vel : null);
+
+    if (this.speed === 0 || this.speed === null) {
+        this.heading = NaN;
+    }
+
     /**
      * The altitude accuracy of the position.
      */
@@ -1708,6 +1718,7 @@ var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
 };
 
 module.exports = Coordinates;
+
 });
 
 // file: lib/common/plugin/DirectoryEntry.js
@@ -1892,6 +1903,21 @@ Entry.prototype.getMetadata = function(successCallback, errorCallback) {
 };
 
 /**
+ * Set the metadata of the entry.
+ *
+ * @param successCallback
+ *            {Function} is called with a Metadata object
+ * @param errorCallback
+ *            {Function} is called with a FileError
+ * @param metadataObject
+ *            {Object} keys and values to set
+ */
+Entry.prototype.setMetadata = function(successCallback, errorCallback, metadataObject) {
+
+  exec(successCallback, errorCallback, "File", "setMetadata", [this.fullPath, metadataObject]);
+};
+
+/**
  * Move a file or directory to a new location.
  *
  * @param parent
@@ -2011,7 +2037,7 @@ Entry.prototype.toURL = function() {
 Entry.prototype.toURI = function(mimeType) {
     console.log("DEPRECATED: Update your code to use 'toURL'");
     // fullPath attribute contains the full URI
-    return this.fullPath;
+    return this.toURL();
 };
 
 /**
@@ -3175,11 +3201,16 @@ define("cordova/plugin/Position", function(require, exports, module) {
 var Coordinates = require('cordova/plugin/Coordinates');
 
 var Position = function(coords, timestamp) {
-    this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
+    if (coords) {
+        this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
+    } else {
+        this.coords = new Coordinates();
+    }
     this.timestamp = (timestamp !== undefined) ? timestamp : new Date().getTime();
 };
 
 module.exports = Position;
+
 });
 
 // file: lib/common/plugin/PositionError.js
@@ -3260,10 +3291,59 @@ define("cordova/plugin/accelerometer", function(require, exports, module) {
  * @constructor
  */
 var utils = require("cordova/utils"),
-    exec = require("cordova/exec");
+    exec = require("cordova/exec"),
+    Acceleration = require('cordova/plugin/Acceleration');
 
-// Local singleton variables.
+// Is the accel sensor running?
+var running = false;
+
+// Keeps reference to watchAcceleration calls.
 var timers = {};
+
+// Array of listeners; used to keep track of when we should call start and stop.
+var listeners = [];
+
+// Last returned acceleration object from native
+var accel = null;
+
+// Tells native to start.
+function start() {
+    exec(function(a) {
+        var tempListeners = listeners.slice(0);
+        accel = new Acceleration(a.x, a.y, a.z, a.timestamp);
+        for (var i = 0, l = tempListeners.length; i < l; i++) {
+            tempListeners[i].win(accel);
+        }
+    }, function(e) {
+        var tempListeners = listeners.slice(0);
+        for (var i = 0, l = tempListeners.length; i < l; i++) {
+            tempListeners[i].fail(e);
+        }
+    }, "Accelerometer", "start", []);
+    running = true;
+}
+
+// Tells native to stop.
+function stop() {
+    exec(null, null, "Accelerometer", "stop", []);
+    running = false;
+}
+
+// Adds a callback pair to the listeners array
+function createCallbackPair(win, fail) {
+    return {win:win, fail:fail};
+}
+
+// Removes a win/fail listener pair from the listeners array
+function removeListeners(l) {
+    var idx = listeners.indexOf(l);
+    if (idx > -1) {
+        listeners.splice(idx, 1);
+        if (listeners.length === 0) {
+            stop();
+        }
+    }
+}
 
 var accelerometer = {
     /**
@@ -3274,21 +3354,27 @@ var accelerometer = {
      * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
      */
     getCurrentAcceleration: function(successCallback, errorCallback, options) {
-
         // successCallback required
         if (typeof successCallback !== "function") {
-            console.log("Accelerometer Error: successCallback is not a function");
-            return;
+            throw "getCurrentAcceleration must be called with at least a success callback function as first parameter.";
         }
 
-        // errorCallback optional
-        if (errorCallback && (typeof errorCallback !== "function")) {
-            console.log("Accelerometer Error: errorCallback is not a function");
-            return;
-        }
+        var p;
+        var win = function(a) {
+            successCallback(a);
+            removeListeners(p);
+        };
+        var fail = function(e) {
+            errorCallback(e);
+            removeListeners(p);
+        };
 
-        // Get acceleration
-        exec(successCallback, errorCallback, "Accelerometer", "getAcceleration", []);
+        p = createCallbackPair(win, fail);
+        listeners.push(p);
+
+        if (!running) {
+            start();
+        }
     },
 
     /**
@@ -3300,36 +3386,38 @@ var accelerometer = {
      * @return String                       The watch id that must be passed to #clearWatch to stop watching.
      */
     watchAcceleration: function(successCallback, errorCallback, options) {
-
         // Default interval (10 sec)
-        var frequency = (options !== undefined && options.frequency !== undefined)? options.frequency : 10000;
+        var frequency = (options && options.frequency && typeof options.frequency == 'number') ? options.frequency : 10000;
 
         // successCallback required
         if (typeof successCallback !== "function") {
-            console.log("Accelerometer Error: successCallback is not a function");
-            return;
+            throw "watchAcceleration must be called with at least a success callback function as first parameter.";
         }
 
-        // errorCallback optional
-        if (errorCallback && (typeof errorCallback !== "function")) {
-            console.log("Accelerometer Error: errorCallback is not a function");
-            return;
-        }
-
-        // Make sure accelerometer timeout > frequency + 10 sec
-        exec(
-            function(timeout) {
-                if (timeout < (frequency + 10000)) {
-                    exec(null, null, "Accelerometer", "setTimeout", [frequency + 10000]);
-                }
-            },
-            function(e) { }, "Accelerometer", "getTimeout", []);
-
-        // Start watch timer
+        // Keep reference to watch id, and report accel readings as often as defined in frequency
         var id = utils.createUUID();
-        timers[id] = window.setInterval(function() {
-            exec(successCallback, errorCallback, "Accelerometer", "getAcceleration", []);
-        }, (frequency ? frequency : 1));
+
+        var p = createCallbackPair(function(){}, function(e) {
+            errorCallback(e);
+            removeListeners(p);
+        });
+        listeners.push(p);
+
+        timers[id] = {
+            timer:window.setInterval(function() {
+                if (accel) {
+                    successCallback(accel);
+                }
+            }, frequency),
+            listeners:p
+        };
+
+        if (running) {
+            // If we're already running then immediately invoke the success callback
+            successCallback(accel);
+        } else {
+            start();
+        }
 
         return id;
     },
@@ -3340,16 +3428,17 @@ var accelerometer = {
      * @param {String} id       The id of the watch returned from #watchAcceleration.
      */
     clearWatch: function(id) {
-
         // Stop javascript timer & remove from timer list
-        if (id && timers[id] !== undefined) {
-            window.clearInterval(timers[id]);
+        if (id && timers[id]) {
+            window.clearInterval(timers[id].timer);
+            removeListeners(timers[id].listeners);
             delete timers[id];
         }
     }
 };
 
 module.exports = accelerometer;
+
 });
 
 // file: lib/common/plugin/battery.js
@@ -3625,6 +3714,177 @@ var exec = require('cordova/exec'),
 module.exports = compass;
 });
 
+// file: lib/common/plugin/console-via-logger.js
+define("cordova/plugin/console-via-logger", function(require, exports, module) {
+//------------------------------------------------------------------------------
+
+var logger = require("cordova/plugin/logger");
+var utils  = require("cordova/utils");
+
+//------------------------------------------------------------------------------
+// object that we're exporting
+//------------------------------------------------------------------------------
+var console = module.exports;
+
+//------------------------------------------------------------------------------
+// copy of the original console object
+//------------------------------------------------------------------------------
+var WinConsole = window.console;
+
+//------------------------------------------------------------------------------
+// whether to use the logger
+//------------------------------------------------------------------------------
+var UseLogger = false;
+
+//------------------------------------------------------------------------------
+// Timers
+//------------------------------------------------------------------------------
+var Timers = {};
+
+//------------------------------------------------------------------------------
+// used for unimplemented methods
+//------------------------------------------------------------------------------
+function noop() {}
+
+//------------------------------------------------------------------------------
+// used for unimplemented methods
+//------------------------------------------------------------------------------
+console.useLogger = function (value) {
+    if (arguments.length) UseLogger = !!value;
+
+    if (UseLogger) {
+        if (logger.useConsole()) {
+            throw new Error("console and logger are too intertwingly");
+        }
+    }
+
+    return UseLogger;
+};
+
+//------------------------------------------------------------------------------
+console.log = function() {
+    if (logger.useConsole()) return;
+    logger.log.apply(logger, [].slice.call(arguments));
+};
+
+//------------------------------------------------------------------------------
+console.error = function() {
+    if (logger.useConsole()) return;
+    logger.error.apply(logger, [].slice.call(arguments));
+};
+
+//------------------------------------------------------------------------------
+console.warn = function() {
+    if (logger.useConsole()) return;
+    logger.warn.apply(logger, [].slice.call(arguments));
+};
+
+//------------------------------------------------------------------------------
+console.info = function() {
+    if (logger.useConsole()) return;
+    logger.info.apply(logger, [].slice.call(arguments));
+};
+
+//------------------------------------------------------------------------------
+console.debug = function() {
+    if (logger.useConsole()) return;
+    logger.debug.apply(logger, [].slice.call(arguments));
+};
+
+//------------------------------------------------------------------------------
+console.assert = function(expression) {
+    if (expression) return;
+
+    var message = utils.vformat(arguments[1], [].slice.call(arguments, 2));
+    console.log("ASSERT: " + message);
+};
+
+//------------------------------------------------------------------------------
+console.clear = function() {};
+
+//------------------------------------------------------------------------------
+console.dir = function(object) {
+    console.log("%o", object);
+};
+
+//------------------------------------------------------------------------------
+console.dirxml = function(node) {
+    console.log(node.innerHTML);
+};
+
+//------------------------------------------------------------------------------
+console.trace = noop;
+
+//------------------------------------------------------------------------------
+console.group = console.log;
+
+//------------------------------------------------------------------------------
+console.groupCollapsed = console.log;
+
+//------------------------------------------------------------------------------
+console.groupEnd = noop;
+
+//------------------------------------------------------------------------------
+console.time = function(name) {
+    Timers[name] = new Date().valueOf();
+};
+
+//------------------------------------------------------------------------------
+console.timeEnd = function(name) {
+    var timeStart = Timers[name];
+    if (!timeStart) {
+        console.warn("unknown timer: " + name);
+        return;
+    }
+
+    var timeElapsed = new Date().valueOf() - timeStart;
+    console.log(name + ": " + timeElapsed + "ms");
+};
+
+//------------------------------------------------------------------------------
+console.timeStamp = noop;
+
+//------------------------------------------------------------------------------
+console.profile = noop;
+
+//------------------------------------------------------------------------------
+console.profileEnd = noop;
+
+//------------------------------------------------------------------------------
+console.count = noop;
+
+//------------------------------------------------------------------------------
+console.exception = console.log;
+
+//------------------------------------------------------------------------------
+console.table = function(data, columns) {
+    console.log("%o", data);
+};
+
+//------------------------------------------------------------------------------
+// return a new function that calls both functions passed as args
+//------------------------------------------------------------------------------
+function wrapperedOrigCall(orgFunc, newFunc) {
+    return function() {
+        var args = [].slice.call(arguments);
+        try { orgFunc.apply(WinConsole, args); } catch (e) {}
+        try { newFunc.apply(console,    args); } catch (e) {}
+    };
+}
+
+//------------------------------------------------------------------------------
+// For every function that exists in the original console object, that
+// also exists in the new console object, wrap the new console method
+// with one that calls both
+//------------------------------------------------------------------------------
+for (var key in console) {
+    if (typeof WinConsole[key] == "function") {
+        console[key] = wrapperedOrigCall(WinConsole[key], console[key]);
+    }
+}
+
+});
+
 // file: lib/common/plugin/contacts.js
 define("cordova/plugin/contacts", function(require, exports, module) {
 var exec = require('cordova/exec'),
@@ -3700,27 +3960,45 @@ var timers = {};   // list of timers in use
 // Returns default params, overrides if provided with values
 function parseParameters(options) {
     var opt = {
-        maximumAge: 10000,
+        maximumAge: 0,
         enableHighAccuracy: false,
-        timeout: 10000
+        timeout: Infinity
     };
 
     if (options) {
-        if (options.maximumAge !== undefined) {
+        if (options.maximumAge !== undefined && !isNaN(options.maximumAge) && options.maximumAge > 0) {
             opt.maximumAge = options.maximumAge;
         }
         if (options.enableHighAccuracy !== undefined) {
             opt.enableHighAccuracy = options.enableHighAccuracy;
         }
-        if (options.timeout !== undefined) {
-            opt.timeout = options.timeout;
+        if (options.timeout !== undefined && !isNaN(options.timeout)) {
+            if (options.timeout < 0) {
+                opt.timeout = 0;
+            } else {
+                opt.timeout = options.timeout;
+            }
         }
     }
 
     return opt;
 }
 
+// Returns a timeout failure, closed over a specified timeout value and error callback.
+function createTimeout(errorCallback, timeout) {
+    var t = setTimeout(function() {
+        clearTimeout(t);
+        t = null;
+        errorCallback({
+            code:PositionError.TIMEOUT,
+            message:"Position retrieval timed out."
+        });
+    }, timeout);
+    return t;
+}
+
 var geolocation = {
+    lastPosition:null, // reference to last known (cached) position returned
     /**
    * Asynchronously aquires the current position.
    *
@@ -3729,10 +4007,24 @@ var geolocation = {
    * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
    */
     getCurrentPosition:function(successCallback, errorCallback, options) {
+        if (arguments.length === 0) {
+            throw new Error("getCurrentPosition must be called with at least one argument.");
+        }
         options = parseParameters(options);
 
+        // Timer var that will fire an error callback if no position is retrieved from native
+        // before the "timeout" param provided expires
+        var timeoutTimer = null;
+
         var win = function(p) {
-            successCallback(new Position(
+            clearTimeout(timeoutTimer);
+            if (!timeoutTimer) {
+                // Timeout already happened, or native fired error callback for
+                // this geo request.
+                // Don't continue with success callback.
+                return;
+            }
+            var pos = new Position(
                 {
                     latitude:p.latitude,
                     longitude:p.longitude,
@@ -3743,13 +4035,45 @@ var geolocation = {
                     altitudeAccuracy:p.altitudeAccuracy
                 },
                 p.timestamp || new Date()
-            ));
+            );
+            geolocation.lastPosition = pos;
+            successCallback(pos);
         };
         var fail = function(e) {
-            errorCallback(new PositionError(e.code, e.message));
+            clearTimeout(timeoutTimer);
+            timeoutTimer = null;
+            var err = new PositionError(e.code, e.message);
+            if (errorCallback) {
+                errorCallback(err);
+            }
         };
 
-        exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.timeout, options.maximumAge]);
+        // Check our cached position, if its timestamp difference with current time is less than the maximumAge, then just
+        // fire the success callback with the cached position.
+        if (geolocation.lastPosition && options.maximumAge && (((new Date()).getTime() - geolocation.lastPosition.timestamp.getTime()) <= options.maximumAge)) {
+            successCallback(geolocation.lastPosition);
+        // If the cached position check failed and the timeout was set to 0, error out with a TIMEOUT error object.
+        } else if (options.timeout === 0) {
+            fail({
+                code:PositionError.TIMEOUT,
+                message:"timeout value in PositionOptions set to 0 and no cached Position object available, or cached Position object's age exceed's provided PositionOptions' maximumAge parameter."
+            });
+        // Otherwise we have to call into native to retrieve a position.
+        } else {
+            if (options.timeout !== Infinity) {
+                // If the timeout value was not set to Infinity (default), then
+                // set up a timeout function that will fire the error callback
+                // if no successful position was retrieved before timeout expired.
+                timeoutTimer = createTimeout(fail, options.timeout);
+            } else {
+                // This is here so the check in the win function doesn't mess stuff up
+                // may seem weird but this guarantees timeoutTimer is
+                // always truthy before we call into native
+                timeoutTimer = true;
+            }
+            exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.maximumAge]);
+        }
+        return timeoutTimer;
     },
     /**
      * Asynchronously watches the geolocation for changes to geolocation.  When a change occurs,
@@ -3761,12 +4085,46 @@ var geolocation = {
      * @return String                       The watch id that must be passed to #clearWatch to stop watching.
      */
     watchPosition:function(successCallback, errorCallback, options) {
+        if (arguments.length === 0) {
+            throw new Error("watchPosition must be called with at least one argument.");
+        }
         options = parseParameters(options);
 
         var id = utils.createUUID();
-        timers[id] = window.setInterval(function() {
-            geolocation.getCurrentPosition(successCallback, errorCallback, options);
-        }, options.timeout);
+
+        // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
+        timers[id] = geolocation.getCurrentPosition(successCallback, errorCallback, options);
+
+        var fail = function(e) {
+            clearTimeout(timers[id]);
+            var err = new PositionError(e.code, e.message);
+            if (errorCallback) {
+                errorCallback(err);
+            }
+        };
+
+        var win = function(p) {
+            clearTimeout(timers[id]);
+            if (options.timeout !== Infinity) {
+                timers[id] = createTimeout(fail, options.timeout);
+            }
+            var pos = new Position(
+                {
+                    latitude:p.latitude,
+                    longitude:p.longitude,
+                    altitude:p.altitude,
+                    accuracy:p.accuracy,
+                    heading:p.heading,
+                    velocity:p.velocity,
+                    altitudeAccuracy:p.altitudeAccuracy
+                },
+                p.timestamp || new Date()
+            );
+            geolocation.lastPosition = pos;
+            successCallback(pos);
+        };
+
+        exec(win, fail, "Geolocation", "addWatch", [id, options.enableHighAccuracy]);
 
         return id;
     },
@@ -3777,13 +4135,15 @@ var geolocation = {
      */
     clearWatch:function(id) {
         if (id && timers[id] !== undefined) {
-            window.clearInterval(timers[id]);
+            clearTimeout(timers[id]);
             delete timers[id];
+            exec(null, null, "Geolocation", "clearWatch", [id]);
         }
     }
 };
 
 module.exports = geolocation;
+
 });
 
 // file: lib/ios/plugin/ios/Contact.js
@@ -4100,6 +4460,233 @@ module.exports = {
 };
 });
 
+// file: lib/common/plugin/logger.js
+define("cordova/plugin/logger", function(require, exports, module) {
+//------------------------------------------------------------------------------
+// The logger module exports the following properties/functions:
+//
+// LOG                          - constant for the level LOG
+// ERROR                        - constant for the level ERROR
+// WARN                         - constant for the level WARN
+// INFO                         - constant for the level INFO
+// DEBUG                        - constant for the level DEBUG
+// logLevel()                   - returns current log level
+// logLevel(value)              - sets and returns a new log level
+// useConsole()                 - returns whether logger is using console
+// useConsole(value)            - sets and returns whether logger is using console
+// log(message,...)             - logs a message at level LOG
+// error(message,...)           - logs a message at level ERROR
+// warn(message,...)            - logs a message at level WARN
+// info(message,...)            - logs a message at level INFO
+// debug(message,...)           - logs a message at level DEBUG
+// logLevel(level,message,...)  - logs a message specified level
+//
+//------------------------------------------------------------------------------
+
+var logger = exports;
+
+var exec    = require('cordova/exec');
+var utils   = require('cordova/utils');
+
+var UseConsole   = true;
+var Queued       = [];
+var DeviceReady  = false;
+var CurrentLevel;
+
+/**
+ * Logging levels
+ */
+
+var Levels = [
+    "LOG",
+    "ERROR",
+    "WARN",
+    "INFO",
+    "DEBUG"
+];
+
+/*
+ * add the logging levels to the logger object and
+ * to a separate levelsMap object for testing
+ */
+
+var LevelsMap = {};
+for (var i=0; i<Levels.length; i++) {
+    var level = Levels[i];
+    LevelsMap[level] = i;
+    logger[level]    = level;
+}
+
+CurrentLevel = LevelsMap.WARN;
+
+/**
+ * Getter/Setter for the logging level
+ *
+ * Returns the current logging level.
+ *
+ * When a value is passed, sets the logging level to that value.
+ * The values should be one of the following constants:
+ *    logger.LOG
+ *    logger.ERROR
+ *    logger.WARN
+ *    logger.INFO
+ *    logger.DEBUG
+ *
+ * The value used determines which messages get printed.  The logging
+ * values above are in order, and only messages logged at the logging
+ * level or above will actually be displayed to the user.  Eg, the
+ * default level is WARN, so only messages logged with LOG, ERROR, or
+ * WARN will be displayed; INFO and DEBUG messages will be ignored.
+ */
+logger.level = function (value) {
+    if (arguments.length) {
+        if (LevelsMap[value] === null) {
+            throw new Error("invalid logging level: " + value);
+        }
+        CurrentLevel = LevelsMap[value];
+    }
+
+    return Levels[CurrentLevel];
+};
+
+/**
+ * Getter/Setter for the useConsole functionality
+ *
+ * When useConsole is true, the logger will log via the
+ * browser 'console' object.  Otherwise, it will use the
+ * native Logger plugin.
+ */
+logger.useConsole = function (value) {
+    if (arguments.length) UseConsole = !!value;
+
+    if (UseConsole) {
+        if (typeof console == "undefined") {
+            throw new Error("global console object is not defined");
+        }
+
+        if (typeof console.log != "function") {
+            throw new Error("global console object does not have a log function");
+        }
+
+        if (typeof console.useLogger == "function") {
+            if (console.useLogger()) {
+                throw new Error("console and logger are too intertwingly");
+            }
+        }
+    }
+
+    return UseConsole;
+};
+
+/**
+ * Logs a message at the LOG level.
+ *
+ * Parameters passed after message are used applied to
+ * the message with utils.format()
+ */
+logger.log   = function(message) { logWithArgs("LOG",   arguments); };
+
+/**
+ * Logs a message at the ERROR level.
+ *
+ * Parameters passed after message are used applied to
+ * the message with utils.format()
+ */
+logger.error = function(message) { logWithArgs("ERROR", arguments); };
+
+/**
+ * Logs a message at the WARN level.
+ *
+ * Parameters passed after message are used applied to
+ * the message with utils.format()
+ */
+logger.warn  = function(message) { logWithArgs("WARN",  arguments); };
+
+/**
+ * Logs a message at the INFO level.
+ *
+ * Parameters passed after message are used applied to
+ * the message with utils.format()
+ */
+logger.info  = function(message) { logWithArgs("INFO",  arguments); };
+
+/**
+ * Logs a message at the DEBUG level.
+ *
+ * Parameters passed after message are used applied to
+ * the message with utils.format()
+ */
+logger.debug = function(message) { logWithArgs("DEBUG", arguments); };
+
+// log at the specified level with args
+function logWithArgs(level, args) {
+    args = [level].concat([].slice.call(args));
+    logger.logLevel.apply(logger, args);
+}
+
+/**
+ * Logs a message at the specified level.
+ *
+ * Parameters passed after message are used applied to
+ * the message with utils.format()
+ */
+logger.logLevel = function(level, message /* , ... */) {
+    // format the message with the parameters
+    var formatArgs = [].slice.call(arguments, 2);
+    message    = utils.vformat(message, formatArgs);
+
+    if (LevelsMap[level] === null) {
+        throw new Error("invalid logging level: " + level);
+    }
+
+    if (LevelsMap[level] > CurrentLevel) return;
+
+    // queue the message if not yet at deviceready
+    if (!DeviceReady && !UseConsole) {
+        Queued.push([level, message]);
+        return;
+    }
+
+    // if not using the console, use the native logger
+    if (!UseConsole) {
+        exec(null, null, "Logger", "logLevel", [level, message]);
+        return;
+    }
+
+    // make sure console is not using logger
+    if (console.__usingCordovaLogger) {
+        throw new Error("console and logger are too intertwingly");
+    }
+
+    // log to the console
+    switch (level) {
+        case logger.LOG:   console.log(message); break;
+        case logger.ERROR: console.log("ERROR: " + message); break;
+        case logger.WARN:  console.log("WARN: "  + message); break;
+        case logger.INFO:  console.log("INFO: "  + message); break;
+        case logger.DEBUG: console.log("DEBUG: " + message); break;
+    }
+};
+
+// when deviceready fires, log queued messages
+logger.__onDeviceReady = function() {
+    if (DeviceReady) return;
+
+    DeviceReady = true;
+
+    for (var i=0; i<Queued.length; i++) {
+        var messageArgs = Queued[i];
+        logger.logLevel(messageArgs[0], messageArgs[1]);
+    }
+
+    Queued = null;
+};
+
+// add a deviceready event to log queued messages
+document.addEventListener("deviceready", logger.__onDeviceReady, false);
+
+});
+
 // file: lib/common/plugin/network.js
 define("cordova/plugin/network", function(require, exports, module) {
 var exec = require('cordova/exec'),
@@ -4288,10 +4875,16 @@ module.exports = function(uri, successCallback, errorCallback) {
             errorCallback(new FileError(error));
         }
     };
+    // sanity check for 'not:valid:filename'
+    if(!uri || uri.split(":").length > 2) {
+        setTimeout( function() {
+            fail(FileError.ENCODING_ERR);
+        },0);
+        return;
+    }
     // if successful, return either a file or directory entry
     var success = function(entry) {
         var result;
-
         if (entry) {
             if (typeof successCallback === 'function') {
                 // create appropriate Entry object
@@ -4315,8 +4908,174 @@ module.exports = function(uri, successCallback, errorCallback) {
 
 });
 
+// file: lib/common/plugin/splashscreen.js
+define("cordova/plugin/splashscreen", function(require, exports, module) {
+var exec = require('cordova/exec');
+
+var splashscreen = {
+    hide:function() {
+        exec(null, null, "SplashScreen", "hide", []);
+    }
+};
+
+module.exports = splashscreen;
+});
+
 // file: lib/common/utils.js
 define("cordova/utils", function(require, exports, module) {
+var utils = exports;
+
+/**
+ * Returns an indication of whether the argument is an array or not
+ */
+utils.isArray = function(a) {
+    return Object.prototype.toString.call(a) == '[object Array]';
+};
+
+/**
+ * Returns an indication of whether the argument is a Date or not
+ */
+utils.isDate = function(d) {
+    return Object.prototype.toString.call(d) == '[object Date]';
+};
+
+/**
+ * Does a deep clone of the object.
+ */
+utils.clone = function(obj) {
+    if(!obj || typeof obj == 'function' || utils.isDate(obj) || typeof obj != 'object') {
+        return obj;
+    }
+
+    var retVal, i;
+
+    if(utils.isArray(obj)){
+        retVal = [];
+        for(i = 0; i < obj.length; ++i){
+            retVal.push(utils.clone(obj[i]));
+        }
+        return retVal;
+    }
+
+    retVal = {};
+    for(i in obj){
+        if(!(i in retVal) || retVal[i] != obj[i]) {
+            retVal[i] = utils.clone(obj[i]);
+        }
+    }
+    return retVal;
+};
+
+/**
+ * Returns a wrappered version of the function
+ */
+utils.close = function(context, func, params) {
+    if (typeof params == 'undefined') {
+        return function() {
+            return func.apply(context, arguments);
+        };
+    } else {
+        return function() {
+            return func.apply(context, params);
+        };
+    }
+};
+
+/**
+ * Create a UUID
+ */
+utils.createUUID = function() {
+    return UUIDcreatePart(4) + '-' +
+        UUIDcreatePart(2) + '-' +
+        UUIDcreatePart(2) + '-' +
+        UUIDcreatePart(2) + '-' +
+        UUIDcreatePart(6);
+};
+
+/**
+ * Extends a child object from a parent object using classical inheritance
+ * pattern.
+ */
+utils.extend = (function() {
+    // proxy used to establish prototype chain
+    var F = function() {};
+    // extend Child from Parent
+    return function(Child, Parent) {
+        F.prototype = Parent.prototype;
+        Child.prototype = new F();
+        Child.__super__ = Parent.prototype;
+        Child.prototype.constructor = Child;
+    };
+}());
+
+/**
+ * Alerts a message in any available way: alert or console.log.
+ */
+utils.alert = function(msg) {
+    if (alert) {
+        alert(msg);
+    } else if (console && console.log) {
+        console.log(msg);
+    }
+};
+
+/**
+ * Formats a string and arguments following it ala sprintf()
+ *
+ * see utils.vformat() for more information
+ */
+utils.format = function(formatString /* ,... */) {
+    var args = [].slice.call(arguments, 1);
+    return utils.vformat(formatString, args);
+};
+
+/**
+ * Formats a string and arguments following it ala vsprintf()
+ *
+ * format chars:
+ *   %j - format arg as JSON
+ *   %o - format arg as JSON
+ *   %c - format arg as ''
+ *   %% - replace with '%'
+ * any other char following % will format it's
+ * arg via toString().
+ *
+ * for rationale, see FireBug's Console API:
+ *    http://getfirebug.com/wiki/index.php/Console_API
+ */
+utils.vformat = function(formatString, args) {
+    if (formatString === null || formatString === undefined) return "";
+    if (arguments.length == 1) return formatString.toString();
+
+    var pattern = /(.*?)%(.)(.*)/;
+    var rest    = formatString.toString();
+    var result  = [];
+
+    while (args.length) {
+        var arg   = args.shift();
+        var match = pattern.exec(rest);
+
+        if (!match) break;
+
+        rest = match[3];
+
+        result.push(match[1]);
+
+        if (match[2] == '%') {
+            result.push('%');
+            args.unshift(arg);
+            continue;
+        }
+
+        result.push(formatted(arg, match[2]));
+    }
+
+    result.push(rest);
+
+    return result.join('');
+};
+
+//------------------------------------------------------------------------------
 function UUIDcreatePart(length) {
     var uuidpart = "";
     for (var i=0; i<length; i++) {
@@ -4329,92 +5088,19 @@ function UUIDcreatePart(length) {
     return uuidpart;
 }
 
-var _self = {
-    isArray:function(a) {
-        return Object.prototype.toString.call(a) == '[object Array]';
-    },
-    isDate:function(d) {
-        return Object.prototype.toString.call(d) == '[object Date]';
-    },
-    /**
-     * Does a deep clone of the object.
-     */
-    clone: function(obj) {
-        if(!obj || typeof obj == 'function' || _self.isDate(obj) || typeof obj != 'object') {
-            return obj;
-        }
+//------------------------------------------------------------------------------
+function formatted(object, formatChar) {
 
-        var retVal, i;
-
-        if(_self.isArray(obj)){
-            retVal = [];
-            for(i = 0; i < obj.length; ++i){
-                retVal.push(_self.clone(obj[i]));
-            }
-            return retVal;
-        }
-
-        retVal = {};
-        for(i in obj){
-            if(!(i in retVal) || retVal[i] != obj[i]) {
-                retVal[i] = _self.clone(obj[i]);
-            }
-        }
-        return retVal;
-    },
-
-    close: function(context, func, params) {
-        if (typeof params == 'undefined') {
-            return function() {
-                return func.apply(context, arguments);
-            };
-        } else {
-            return function() {
-                return func.apply(context, params);
-            };
-        }
-    },
-
-    /**
-     * Create a UUID
-     */
-    createUUID: function() {
-        return UUIDcreatePart(4) + '-' +
-            UUIDcreatePart(2) + '-' +
-            UUIDcreatePart(2) + '-' +
-            UUIDcreatePart(2) + '-' +
-            UUIDcreatePart(6);
-    },
-
-    /**
-     * Extends a child object from a parent object using classical inheritance
-     * pattern.
-     */
-    extend: (function() {
-        // proxy used to establish prototype chain
-        var F = function() {};
-        // extend Child from Parent
-        return function(Child, Parent) {
-            F.prototype = Parent.prototype;
-            Child.prototype = new F();
-            Child.__super__ = Parent.prototype;
-            Child.prototype.constructor = Child;
-        };
-    }()),
-
-    /**
-     * Alerts a message in any available way: alert or console.log.
-     */
-    alert:function(msg) {
-        if (alert) {
-            alert(msg);
-        } else if (console && console.log) {
-            console.log(msg);
-        }
+    switch(formatChar) {
+        case 'j':
+        case 'o': return JSON.stringify(object);
+        case 'c': return '';
     }
-};
 
-module.exports = _self;
+    if (null === object) return Object.prototype.toString.call(object);
+
+    return object.toString();
+}
 
 });
 
@@ -4456,7 +5142,7 @@ window.cordova = require('cordova');
                     // Fire onDeviceReady event once all constructors have run and
                     // cordova info has been received from native side.
                     channel.join(function() {
-                        channel.onDeviceReady.fire();
+                        require('cordova').fireDocumentEvent('deviceready');
                     }, channel.deviceReadyChannelsArray);
 
                 }, [ channel.onDOMContentLoaded, channel.onNativeReady ]);
@@ -4474,5 +5160,6 @@ window.cordova = require('cordova');
     }
 
 }(window));
+
 
 })();
