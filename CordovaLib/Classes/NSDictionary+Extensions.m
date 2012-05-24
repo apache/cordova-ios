@@ -50,6 +50,17 @@
 	
 	return value;
 }
+- (NSInteger) integerValueForKey:(NSString*)key  defaultValue:(NSInteger)defaultValue 
+{
+    
+	NSInteger value = defaultValue;
+	
+	NSNumber* val = [self valueForKey:key];  //value is an NSNumber
+	if (val != nil) {
+		value = [val integerValue];
+	}
+    return value;
+}
 
 /*
  *	Determine the type of object stored in a dictionary

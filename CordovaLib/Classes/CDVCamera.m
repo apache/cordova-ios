@@ -22,6 +22,7 @@
 #import "NSDictionary+Extensions.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
+static NSSet* org_apache_cordova_validArrowDirections;
 
 @interface CDVCamera ()
 
@@ -30,6 +31,11 @@
 @end
 
 @implementation CDVCamera
+
++ (void) initialize
+{
+    org_apache_cordova_validArrowDirections = [[NSSet alloc] initWithObjects: [NSNumber numberWithInt:UIPopoverArrowDirectionUp], [NSNumber numberWithInt:UIPopoverArrowDirectionDown],[NSNumber numberWithInt:UIPopoverArrowDirectionLeft], [NSNumber numberWithInt:UIPopoverArrowDirectionRight], [NSNumber numberWithInt:UIPopoverArrowDirectionAny], nil];
+}
 
 @synthesize hasPendingOperation, pickerController;
 
@@ -122,11 +128,27 @@
         { 
             cameraPicker.popoverController = [[[NSClassFromString(@"UIPopoverController") alloc] 
                                                        initWithContentViewController:cameraPicker] autorelease]; 
-        } 
+        }
+        int x = 0;
+        int y = 32;
+        int width = 320;
+        int height = 480;
+        UIPopoverArrowDirection arrowDirection = UIPopoverArrowDirectionAny;
+        if (options) {
+            x = [options integerValueForKey:@"x" defaultValue:0];
+            y = [options integerValueForKey:@"y" defaultValue:32];
+            width = [options integerValueForKey:@"width" defaultValue:320];
+            height = [options integerValueForKey:@"height" defaultValue:480];
+            arrowDirection = [options integerValueForKey: @"arrowDir" defaultValue:UIPopoverArrowDirectionAny];
+            if(![org_apache_cordova_validArrowDirections containsObject:[NSNumber numberWithInt:arrowDirection]]){
+                arrowDirection = UIPopoverArrowDirectionAny;
+            }
+        }
+        
         cameraPicker.popoverController.delegate = self;
-        [cameraPicker.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
+        [cameraPicker.popoverController presentPopoverFromRect:CGRectMake(x,y,width,height)
                                                                   inView:[self.webView superview]
-                                                permittedArrowDirections:UIPopoverArrowDirectionAny 
+                                                permittedArrowDirections:arrowDirection 
                                                                 animated:YES]; 
     }
     else 
