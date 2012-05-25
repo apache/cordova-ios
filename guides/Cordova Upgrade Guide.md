@@ -25,7 +25,22 @@ This document is for developers who need to upgrade their Cordova-based projects
 - To upgrade from 1.3.0 to 1.6.x, please go to the 1.4.0 instructions first, then 1.5.0, then 1.6.x, then 1.7.0
 - To upgrade from 1.4.x to 1.6.x, please go to the 1.5.0 instructions first, then 1.6.x, then 1.7.0
 - To upgrade from 1.5.0 to 1.7.0, please go to the 1.6.x instructions first, then 1.7.0
-- To upgrade from 1.6.x to 1.7.0, go straight to the 1.7.0 instructions
+- To upgrade from 1.6.x to 1.8.0, please go to the 1.7.x instructions first, then 1.8.0
+- To upgrade from 1.7.x to 1.8.0, go straight to the 1.8.0 instructions
+
+## Upgrading Cordova 1.7.0 projects to 1.8.0 ##
+
+1. **Install** Cordova 1.8.0
+2. **Create a new project** - you will have to grab assets from this new project
+3. **Copy** the **www/cordova-1.8.0.js** file from the new project into your **www** folder, and delete your **www/cordova-1.7.x.js** file
+4. **Update** the Cordova script reference in your **www/index.html** file (and any other files that contain the script reference) to point to the new **cordova-1.8.0.js** file
+
+If you intend on using the **Capture API**, you will need the new **iPad retina-display** assets:
+
+1.  **Copy** the **Resources/Capture.bundle** item from the new project into your project folder, over-writing your existing **Resources/Capture.bundle** item
+2.  In your project, select the **Capture.bundle** item into Xcode into your Project Navigator, and press the **Delete** key, then select **Remove Reference** from the dialog that pops up.
+3.  Drag the new **Capture.bundle** from Step 1. above into Xcode into your Project Navigator, and select the **Create groups for any added folders** radio-button
+   
 
 ## Upgrading Cordova 1.6.0 projects to 1.7.0 ##
 
