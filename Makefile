@@ -268,6 +268,7 @@ check-brew:
 
 install-brew:
 	@/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb | /usr/bin/ruby
+	@/usr/local/bin/brew update
 
 check-wkhtmltopdf: check-brew
 	@if [[ ! -e `which wkhtmltopdf` ]]; then \
@@ -276,7 +277,7 @@ check-wkhtmltopdf: check-brew
 
 install-wkhtmltopdf: check-brew
 	@# note: only version 0.9.9 should be used, 0.11.0_rc1 has a perf issue
-	@cd `brew --cellar`; git checkout 6e2d550 /usr/local/Library/Formula/wkhtmltopdf.rb
+	@cd /usr/local; git checkout 6e2d550 /usr/local/Library/Formula/wkhtmltopdf.rb
 	@brew install wkhtmltopdf
 
 check-markdown: check-brew
