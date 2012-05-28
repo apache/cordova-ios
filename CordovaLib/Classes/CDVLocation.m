@@ -242,13 +242,13 @@
     cData.locationInfo = newLocation;
     if (self.locationData.locationCallbacks.count > 0) {
         for (NSString *callbackId in self.locationData.locationCallbacks) {
-            [self returnLocationInfo:callbackId];
+            [self returnLocationInfo:callbackId andKeepCallback:NO];
         }
         [self.locationData.locationCallbacks removeAllObjects];
     }
     if (self.locationData.watchCallbacks.count > 0) {
         for (NSString *timerId in self.locationData.watchCallbacks) {
-            [self returnLocationInfo:[self.locationData.watchCallbacks objectForKey: timerId ]];
+            [self returnLocationInfo:[self.locationData.watchCallbacks objectForKey: timerId ] andKeepCallback:YES];
         }
     } else {
         // No callbacks waiting on us anymore, turn off listening.
@@ -285,7 +285,7 @@
             [self startLocation: enableHighAccuracy];
         }
         else {
-            [self returnLocationInfo: callbackId]; 
+            [self returnLocationInfo: callbackId andKeepCallback:NO]; 
         }
     }
 }
@@ -335,7 +335,7 @@
     [self _stopLocation];
 }
 
-- (void)returnLocationInfo: (NSString*) callbackId
+- (void)returnLocationInfo: (NSString*) callbackId andKeepCallback:(BOOL)keepCallback
 {
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
@@ -359,7 +359,7 @@
         [returnInfo setObject:[NSNumber numberWithDouble: lInfo.coordinate.longitude] forKey:@"longitude"];
         
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: returnInfo];
-        [result setKeepCallbackAsBool:NO];
+        [result setKeepCallbackAsBool:keepCallback];
         
         jsString = [result toSuccessCallbackString:callbackId];
     }

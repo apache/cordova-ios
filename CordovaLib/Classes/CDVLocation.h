@@ -81,7 +81,7 @@ typedef NSUInteger CDVLocationStatus;
 - (void) getLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) addWatch:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) clearWatch:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) returnLocationInfo: (NSString*) callbackId;
+- (void)returnLocationInfo: (NSString*) callbackId andKeepCallback:(BOOL)keepCallback;
 - (void) returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message;
 - (void) startLocation: (BOOL) enableHighAccuracy;
 
