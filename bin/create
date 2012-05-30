@@ -30,6 +30,7 @@
 #
 set -e
 
+BINDIR=$( cd "$( dirname "$0" )" && pwd )
 PROJECT_PATH=${1:-"./example"}
 PACKAGE=${2:-"org.apache.cordova.example"}
 ACTIVITY=${3:-"CordovaExample"}
@@ -41,7 +42,7 @@ then
 fi
 
 # copy the bitch in; and then rough it up
-cp -r ./bin/templates/project $PROJECT_PATH
+cp -r $BINDIR/templates/project $PROJECT_PATH
 
 # I've tried to be thorough in my documentation of the manual actions below...
 # on first brush it would seem that the right solution would be to brute force
@@ -71,13 +72,13 @@ R=$PROJECT_PATH/$ACTIVITY
 # - ./__TESTING__/Resources/__TESTING__-info.plist
 # - ./__TESTING__/Resources/__TESTING__-Prefix.plist
 
-./bin/replaces $R.xcodeproj/project.pbxproj __TESTING__ $ACTIVITY
-./bin/replaces $R/Classes/AppDelegate.h     __TESTING__ $ACTIVITY
-./bin/replaces $R/Classes/AppDelegate.m     __TESTING__ $ACTIVITY
-./bin/replaces $R/Classes/MainViewController.h     __TESTING__ $ACTIVITY
-./bin/replaces $R/Classes/MainViewController.m     __TESTING__ $ACTIVITY
-./bin/replaces $R/main.m                    __TESTING__ $ACTIVITY
-./bin/replaces $R/$ACTIVITY-info.plist      __TESTING__ $ACTIVITY
-./bin/replaces $R/$ACTIVITY-Prefix.pch      __TESTING__ $ACTIVITY
+$BINDIR/replaces $R.xcodeproj/project.pbxproj __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/Classes/AppDelegate.h     __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/Classes/AppDelegate.m     __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/Classes/MainViewController.h     __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/Classes/MainViewController.m     __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/main.m                    __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/$ACTIVITY-info.plist      __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/$ACTIVITY-Prefix.pch      __TESTING__ $ACTIVITY
 
-./bin/replaces $R/$ACTIVITY-info.plist --ID-- $PACKAGE
+$BINDIR/replaces $R/$ACTIVITY-info.plist --ID-- $PACKAGE
