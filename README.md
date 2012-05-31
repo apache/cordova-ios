@@ -32,9 +32,10 @@ Build and install the Installer Package
 -------------------------------------------------------------
 You don't need to do this if you downloaded the installer from [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/), this is only for developers that need to compile the source.
 
-1. Launch "Terminal.app"
+1. Launch **"Terminal.app"**
 2. Navigate to the folder where the Makefile is
-3. Type in "make" then press Enter
+3. Type in **"make"** then press Enter
+4. **make** will require you to install [Homebrew](http://mxcl.github.com/homebrew/), [wkhtmltopdf](http://code.google.com/p/wkhtmltopdf/) and [Markdown](http://daringfireball.net/projects/markdown/), in that order - you will have to agree to install them manually, we don't install them automatically. Note for **wkhtmltopdf**, follow the instructions exactly - you'll have to install version **0.9.9** through **make install-wkhtmltopdf**, NOT **brew install wkhtmltopdf**
 
 <br />
 
