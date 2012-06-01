@@ -293,7 +293,9 @@
 
 - (void) onResignActive
 {
-    if ([[UIDevice currentDevice] isMultitaskingSupported]) 
+    UIDevice* device = [UIDevice currentDevice];
+    
+    if ([device respondsToSelector:@selector(isMultitaskingSupported)] && [device isMultitaskingSupported]) 
     {
         __block UIBackgroundTaskIdentifier backgroundTaskID = UIBackgroundTaskInvalid;
         

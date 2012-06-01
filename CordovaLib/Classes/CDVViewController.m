@@ -58,12 +58,16 @@
                                                      name:UIApplicationWillTerminateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillResignActive:) 
                                                      name:UIApplicationWillResignActiveNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:) 
-                                                     name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidBecomeActive:) 
                                                      name:UIApplicationDidBecomeActiveNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:) 
-                                                     name:UIApplicationDidEnterBackgroundNotification object:nil];
+        
+        if (IsAtLeastiOSVersion(@"4.0")) 
+        {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:) 
+                                                         name:UIApplicationWillEnterForegroundNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:) 
+                                                         name:UIApplicationDidEnterBackgroundNotification object:nil];
+        }
         
         self.commandDelegate = self;
         self.wwwFolderName = @"www";
