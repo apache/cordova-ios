@@ -212,6 +212,7 @@ installer: check-utils clean check-wkhtmltopdf md-to-html cordova-lib xcode3-tem
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Plugin Upgrade Guide" CordovaInstaller/docs/plugin_upgrade.html 'dist/files/Guides/Cordova Plugin Upgrade Guide.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Settings File" CordovaInstaller/docs/settings_file.html 'dist/files/Guides/Cordova Settings File.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} JavaScript Exception Logging" CordovaInstaller/docs/exception_logging.html 'dist/files/Guides/Cordova JavaScript Exception Logging.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
+	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Custom URL Scheme Handling" CordovaInstaller/docs/custom_url_scheme.html 'dist/files/Guides/Cordova Custom URL Scheme Handling.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@textutil -convert html -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@textutil -cat html CordovaInstaller/docs/finishup.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
@@ -313,3 +314,7 @@ md-to-html: check-markdown
 	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/exception_logging.html
 	@$(MARKDOWN) 'guides/Cordova JavaScript Exception Logging.md' >> CordovaInstaller/docs/exception_logging.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/exception_logging.html
+	@# generate 'Cordova Custom URL Scheme Handling' html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;font-size:10pt;">' >	 CordovaInstaller/docs/custom_url_scheme.html
+	@$(MARKDOWN) 'guides/Cordova Custom URL Scheme Handling.md' >> CordovaInstaller/docs/custom_url_scheme.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/custom_url_scheme.html
