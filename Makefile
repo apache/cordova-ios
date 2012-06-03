@@ -59,7 +59,7 @@ COMMIT_HASH=$(shell git describe --tags)
 PKG_ERROR_LOG ?= pkg_error_log
 BUILD_BAK=_build.bak
 CERTIFICATE = 'Cordova Support'
-WKHTMLTOPDF = wkhtmltopdf --encoding utf-8 --page-size Letter --footer-font-name "Helvetica" --footer-font-size 10 --footer-spacing 10 --footer-right "[page]/[topage]" -B 1in -L 0.5in -R 0.5in -T 0.5in
+WKHTMLTOPDF = wkhtmltopdf/wkhtmltopdf --dpi 300 --encoding utf-8 --page-size Letter --footer-font-name "Helvetica" --footer-font-size 10 --footer-spacing 10 --footer-right "[page]/[topage]" -B 1in -L 0.5in -R 0.5in -T 0.5in
 MARKDOWN = markdown
 
 all :: installer
@@ -271,15 +271,19 @@ install-brew:
 	@/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb | /usr/bin/ruby
 	@/usr/local/bin/brew update
 
-check-wkhtmltopdf: check-brew
-	@if [[ ! -e `which wkhtmltopdf` ]]; then \
-		echo -e '\033[31mError: wkhtmltopdf was not found, or not on your path. To install wkhtmltopdf, install v0.9.9 by running the command "make install-wkhtmltopdf"\033[m'; exit 1;\
-	fi
+install-wkhtmltopdf:
+	@# download wkhtmltopdf if necessary
+	@echo "Downloading http://wkhtmltopdf.googlecode.com/files/wkhtmltopdf-0.9.9-OS-X.i368..."; 
+	@curl -L http://wkhtmltopdf.googlecode.com/files/wkhtmltopdf-0.9.9-OS-X.i368 > wkhtmltopdf_temp;
+	@$(MKPATH) wkhtmltopdf;
+	@mv wkhtmltopdf_temp wkhtmltopdf/wkhtmltopdf;
+	@chmod 755 wkhtmltopdf/wkhtmltopdf;
+	@echo "wkhtmltopdf v0.9.9 downloaded."
 
-install-wkhtmltopdf: check-brew
-	@# note: only version 0.9.9 should be used, 0.11.0_rc1 has a perf issue
-	@cd /usr/local; git checkout 6e2d550 /usr/local/Library/Formula/wkhtmltopdf.rb
-	@brew install wkhtmltopdf
+check-wkhtmltopdf:
+	@if [[  ! -d "wkhtmltopdf" ]]; then \
+		echo -e '\033[31mError: wkhtmltopdf was not found, or not on your path. To install wkhtmltopdf, download and install v0.9.9 by running the command "make install-wkhtmltopdf"\033[m'; exit 1;\
+	fi
 
 check-markdown: check-brew
 	@if [[ ! -e `which markdown` ]]; then \
