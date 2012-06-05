@@ -22,7 +22,7 @@
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
-### 1.8.0rc1 (20120524) ###
+### 1.8.0 (20120605) ###
 
 * Fixes CB-819 fail callback not invoked
 * [CB-794] Add HTTP status code to FileTransferError object for iOS
@@ -50,6 +50,8 @@ Cordova is a static library and static framework that enables developers to incl
 * Fixed EXC_BAD_ACCESS error in CDVAccelerometer
 * Fixes CB-818 - Make CDVViewController also implement initWithNibName
 * Fixes CB-825 - Makefile: remove direct download of Markdown and wkhtmltopdf (uses homebrew to download)
+* Fixes CB-328 - Cordova crashes on iOS 3.x devices
+* Fixes CB-851 - guide for using url schemes in iOS
 
 <br />
 
