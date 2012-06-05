@@ -645,7 +645,7 @@
 
 - (void) showSplashScreen
 {
-    NSString* launchImageFile = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UILaunchImageFile"];
+    NSString* launchImageFile = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey:@"UILaunchImageFile"];
     if (launchImageFile == nil) { // fallback if no launch image was specified
         launchImageFile = @"Default"; 
     }
