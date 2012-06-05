@@ -700,15 +700,13 @@
             }
                 break;
         }
-        
-        launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
     }
     else // not iPad
     {
-        orientedLaunchImageFile = @"Default";
-        launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+        orientedLaunchImageFile = launchImageFile;
     }
     
+    launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
     if (launchImage == nil) {
         NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
     }
