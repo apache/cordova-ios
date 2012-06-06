@@ -22,6 +22,8 @@
 #import "NSDictionary+Extensions.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
+#define CDV_PHOTO_PREFIX    @"cdv_photo_"
+
 static NSSet* org_apache_cordova_validArrowDirections;
 
 @interface CDVCamera ()
@@ -164,6 +166,43 @@ static NSSet* org_apache_cordova_validArrowDirections;
     [cameraPicker release];
 }
 
+- (void) cleanup:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    
+    // empty the tmp directory
+    NSFileManager* fileMgr = [[NSFileManager alloc] init];
+    NSError* err = nil;
+    BOOL hasErrors = NO;
+    
+    // clear contents of NSTemporaryDirectory 
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
+    NSString* fileName = nil;
+    BOOL result;
+    
+    while ((fileName = [directoryEnumerator nextObject])) {
+        // only delete the files we created
+        if (![fileName hasPrefix:CDV_PHOTO_PREFIX]) {
+            continue;
+        }
+        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        result = [fileMgr removeItemAtPath:filePath error:&err];
+        if (!result && err) {
+            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+            hasErrors = YES;
+        }
+    }    
+    [fileMgr release];
+    
+    if (hasErrors) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"One or more files failed to be deleted."];
+        [super writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
+    } else {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [super writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
+    }
+}
 
 - (void) popoverControllerDidDismissPopover:(id)popoverController
 {
@@ -260,7 +299,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
             int i = 1;
             do 
             {
-                filePath = [NSString stringWithFormat:@"%@/photo_%03d.%@", docsPath, i++, cameraPicker.encodingType == EncodingTypePNG ? @"png" : @"jpg"];
+                filePath = [NSString stringWithFormat:@"%@/%@%03d.%@", docsPath, CDV_PHOTO_PREFIX, i++, cameraPicker.encodingType == EncodingTypePNG ? @"png" : @"jpg"];
             } 
             while ([fileMgr fileExistsAtPath: filePath]);
             
