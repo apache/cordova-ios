@@ -75,12 +75,13 @@
         [self setWantsFullScreenLayout:YES];
         
         [self printMultitaskingInfo];
+        [self printDeprecationNotice];
     }
     
     return self; 
 }
 
--(id) initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
+- (id) initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     return [self __init];
@@ -90,6 +91,16 @@
 {
     self = [super init];
     return [self __init];
+}
+
+- (void) printDeprecationNotice
+{
+    if (!IsAtLeastiOSVersion(@"4.2")) { // TODO: change WARNING to CRITICAL for 2.0
+        NSLog(@"WARNING: For Cordova 2.0 (you are using Cordova %@), you will need to upgrade to at least iOS 4.2 or greater. Your current version of iOS is %@.", 
+              [CDVViewController cordovaVersion], 
+              [[UIDevice currentDevice] systemVersion]
+              );
+    } 
 }
 
 - (void) printMultitaskingInfo
