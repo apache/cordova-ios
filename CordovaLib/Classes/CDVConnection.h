@@ -29,6 +29,6 @@
 }
 
 @property (copy) NSString* connectionType;
-@property (retain) CDVReachability* internetReach;
+@property (strong) CDVReachability* internetReach;
 
 @end

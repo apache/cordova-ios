@@ -145,11 +145,9 @@
 
 - (void)dealloc
 {
-	self.internetReach = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self 
 													name:kReachabilityChangedNotification object:nil];
 
-    [super dealloc];
 }
 
 @end

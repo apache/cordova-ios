@@ -149,8 +149,6 @@
 - (void)dealloc
 {
 	[self stop: NULL withDict:NULL]; 
-													
-    [super dealloc];
 }
 
 @end

@@ -42,10 +42,10 @@ typedef NSUInteger CDVLocationStatus;
 }
 
 @property (nonatomic, assign) CDVHeadingStatus headingStatus;
-@property (nonatomic, retain) CLHeading* headingInfo;
-@property (nonatomic, retain) NSMutableArray* headingCallbacks;
+@property (nonatomic, strong) CLHeading* headingInfo;
+@property (nonatomic, strong) NSMutableArray* headingCallbacks;
 @property (nonatomic, copy) NSString* headingFilter;
-@property (nonatomic, retain) NSDate* headingTimestamp;
+@property (nonatomic, strong) NSDate* headingTimestamp;
 @property (assign) NSInteger timeout;
 
 @end
@@ -59,9 +59,9 @@ typedef NSUInteger CDVLocationStatus;
 }
 
 @property (nonatomic, assign) CDVLocationStatus locationStatus;
-@property (nonatomic, retain) CLLocation* locationInfo;
-@property (nonatomic, retain) NSMutableArray* locationCallbacks;
-@property (nonatomic, retain) NSMutableDictionary* watchCallbacks;
+@property (nonatomic, strong) CLLocation* locationInfo;
+@property (nonatomic, strong) NSMutableArray* locationCallbacks;
+@property (nonatomic, strong) NSMutableDictionary* watchCallbacks;
 
 @end
 
@@ -72,9 +72,9 @@ typedef NSUInteger CDVLocationStatus;
     CDVLocationData*   locationData;
 }
 
-@property (nonatomic, retain) CLLocationManager *locationManager;
-@property (retain) CDVHeadingData* headingData;
-@property (nonatomic, retain) CDVLocationData* locationData;
+@property (nonatomic, strong) CLLocationManager *locationManager;
+@property (strong) CDVHeadingData* headingData;
+@property (nonatomic, strong) CDVLocationData* locationData;
 
 
 - (BOOL) hasHeadingSupport;

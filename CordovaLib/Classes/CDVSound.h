@@ -75,12 +75,12 @@ typedef NSUInteger CDVMediaMsg;
     NSNumber* volume;
 }
 
-@property (nonatomic, retain) NSString* resourcePath;
-@property (nonatomic, retain) NSURL* resourceURL;
-@property (nonatomic, retain) CDVAudioPlayer* player;
-@property (nonatomic, retain) NSNumber* volume;
+@property (nonatomic, strong) NSString* resourcePath;
+@property (nonatomic, strong) NSURL* resourceURL;
+@property (nonatomic, strong) CDVAudioPlayer* player;
+@property (nonatomic, strong) NSNumber* volume;
 
-@property (nonatomic, retain) CDVAudioRecorder* recorder;
+@property (nonatomic, strong) CDVAudioRecorder* recorder;
 
 @end
 
@@ -89,8 +89,8 @@ typedef NSUInteger CDVMediaMsg;
 	NSMutableDictionary* soundCache;
     AVAudioSession* avSession;
 }
-@property (nonatomic, retain) NSMutableDictionary* soundCache;
-@property (nonatomic, retain) AVAudioSession* avSession;
+@property (nonatomic, strong) NSMutableDictionary* soundCache;
+@property (nonatomic, strong) AVAudioSession* avSession;
 //DEPRECATED
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));	  	
 - (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));

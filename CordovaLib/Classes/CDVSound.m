@@ -69,7 +69,6 @@
             // it's a valid file url, use it
             resourceURL = [NSURL fileURLWithPath:filePath];
         }
-        [fMgr release];
     }     
 	return resourceURL;
 }
@@ -110,7 +109,7 @@
             jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,[self createMediaErrorWithCode: errcode message: errMsg]];
 			[super writeJavascript:jsString];
 		} else {
-			audioFile = [[[CDVAudioFile alloc] init] autorelease];
+			audioFile = [[CDVAudioFile alloc] init];
 			audioFile.resourcePath = resourcePath;
 			audioFile.resourceURL = resourceURL;
 			[[self soundCache] setObject:audioFile forKey: mediaId];
@@ -209,7 +208,7 @@
 			// audioFile.player != nil  or player was sucessfully created
             // get the audioSession and set the category to allow Playing when device is locked or ring/silent switch engaged
             if ([self hasAudioSession]) {
-                NSError* err = nil;
+                NSError* __autoreleasing err = nil;
                 NSNumber* playAudioWhenScreenIsLocked = [options objectForKey:@"playAudioWhenScreenIsLocked"];
                 BOOL bPlayAudioWhenScreenIsLocked = YES;
                 if (playAudioWhenScreenIsLocked != nil) { 
@@ -272,15 +271,15 @@
 - (BOOL) prepareToPlay: (CDVAudioFile*) audioFile withId: (NSString*) mediaId
 {
     BOOL bError = NO;
-    NSError* playerError = nil;
+    NSError* __autoreleasing playerError = nil;
     
     // create the player
     NSURL* resourceURL = audioFile.resourceURL;
     if ([resourceURL isFileURL]) {
-        audioFile.player = [[[ CDVAudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&playerError] autorelease];
+        audioFile.player = [[ CDVAudioPlayer alloc ] initWithContentsOfURL:resourceURL error:&playerError];
     } else {
         NSURLRequest *request = [NSURLRequest requestWithURL:resourceURL];
-        NSURLResponse *response = nil;
+        NSURLResponse * __autoreleasing response = nil;
         NSData* data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
         if (playerError) {
             NSLog(@"Unable to download audio from: %@", [resourceURL absoluteString]);
@@ -295,7 +294,7 @@
             
             [data writeToFile:filePath atomically:YES];            
             NSURL* fileURL = [NSURL fileURLWithPath:filePath];
-            audioFile.player = [[[ CDVAudioPlayer alloc ] initWithContentsOfURL:fileURL error:&playerError] autorelease];
+            audioFile.player = [[ CDVAudioPlayer alloc ] initWithContentsOfURL:fileURL error:&playerError];
         }
     }
     
@@ -515,7 +514,7 @@
     
 	if (audioFile != nil) {
 		
-		NSError* error = nil;
+		NSError* __autoreleasing error = nil;
 
 		if (audioFile.recorder != nil) {
 			[audioFile.recorder stop];
@@ -535,7 +534,7 @@
         }
         
         // create a new recorder for each start record 
-        audioFile.recorder = [[[CDVAudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error] autorelease];
+        audioFile.recorder = [[CDVAudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error];
         
 		if (error != nil) {
 			errorMsg = [NSString stringWithFormat: @"Failed to initialize AVAudioRecorder: %@\n", [error  localizedFailureReason]];
@@ -650,10 +649,7 @@
 - (void) dealloc
 {
     [[self soundCache] removeAllObjects];
-	[self setSoundCache: nil];
-    [self setAvSession: nil];
     
-    [super dealloc];
 }
 @end
 
@@ -664,37 +660,15 @@
 @synthesize player, volume;
 @synthesize recorder;
 
-- (void) dealloc
-{
-	self.resourcePath = nil;
-    self.resourceURL = nil;
-    self.player = nil;
-    self.recorder = nil;
-    self.volume = nil;
-    
-	[super dealloc];
-}
 
 @end
 @implementation CDVAudioPlayer
 @synthesize mediaId;
-- (void) dealloc
-{
-    self.mediaId = nil;
-	
-	[super dealloc];
-}
 
 @end
 
 @implementation CDVAudioRecorder
 @synthesize mediaId;
-- (void) dealloc
-{
-    self.mediaId = nil;
-	
-	[super dealloc];
-}
 
 @end
 

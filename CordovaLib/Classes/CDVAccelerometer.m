@@ -52,7 +52,6 @@
 
 - (void) dealloc {
     [self stop:nil withDict:nil];
-    [super dealloc]; // pretty important.
 }
 
 - (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options

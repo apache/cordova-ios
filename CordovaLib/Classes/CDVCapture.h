@@ -43,9 +43,6 @@ typedef NSUInteger CDVCaptureError;
 @property (copy)   NSString* callbackId;
 @property (copy)   NSString* mimeType;
 
-
-- (void) dealloc;
-
 @end
 
 @interface CDVCapture : CDVPlugin<UIImagePickerControllerDelegate, UINavigationControllerDelegate> 
@@ -66,7 +63,6 @@ typedef NSUInteger CDVCaptureError;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker;
 
-- (void) dealloc;
 @end
 /* AudioRecorderViewController is used to create a simple view for audio recording.
  *  It is created from [Capture captureAudio].  It creates a very simple interface for
@@ -97,17 +93,17 @@ typedef NSUInteger CDVCaptureError;
 @property (nonatomic) CDVCaptureError errorCode;
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, copy) NSNumber* duration;
-@property (nonatomic, retain) CDVCapture* captureCommand;
-@property (nonatomic, retain) UIBarButtonItem* doneButton;
-@property (nonatomic, retain) UIView* recordingView;
-@property (nonatomic, retain) UIButton* recordButton;
-@property (nonatomic, retain) UIImage* recordImage;
-@property (nonatomic, retain) UIImage* stopRecordImage;
-@property (nonatomic, retain) UILabel* timerLabel;
-@property (nonatomic, retain) AVAudioRecorder* avRecorder;
-@property (nonatomic, retain) AVAudioSession* avSession;
-@property (nonatomic, retain) NSString* resultString;
-@property (nonatomic, retain) NSTimer* timer;
+@property (nonatomic, strong) CDVCapture* captureCommand;
+@property (nonatomic, strong) UIBarButtonItem* doneButton;
+@property (nonatomic, strong) UIView* recordingView;
+@property (nonatomic, strong) UIButton* recordButton;
+@property (nonatomic, strong) UIImage* recordImage;
+@property (nonatomic, strong) UIImage* stopRecordImage;
+@property (nonatomic, strong) UILabel* timerLabel;
+@property (nonatomic, strong) AVAudioRecorder* avRecorder;
+@property (nonatomic, strong) AVAudioSession* avSession;
+@property (nonatomic, strong) NSString* resultString;
+@property (nonatomic, strong) NSTimer* timer;
 @property (nonatomic) BOOL isTimed;
 
 - (id) initWithCommand: (CDVPlugin*) theCommand duration: (NSNumber*) theDuration callbackId: (NSString*) theCallbackId;

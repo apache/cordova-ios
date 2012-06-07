@@ -70,9 +70,5 @@
 	return [result isEqualToString:@"true"];
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 @end

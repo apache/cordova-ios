@@ -49,7 +49,7 @@ static CDVWhitelist* gWhitelist = nil;
         if ([delegate respondsToSelector:@selector(viewController)]) {
             id vc = [delegate performSelector:@selector(viewController)];
             if ([vc isKindOfClass:[CDVViewController class]]) {
-                gWhitelist = [((CDVViewController*)vc).whitelist retain];
+                gWhitelist = ((CDVViewController*)vc).whitelist;
             }
         }
     }
@@ -83,8 +83,7 @@ static CDVWhitelist* gWhitelist = nil;
     [[self client] URLProtocol:self didLoadData:[body dataUsingEncoding:NSASCIIStringEncoding]];
 
     [[self client] URLProtocolDidFinishLoading:self];                
-    
-    [response release];    
+
 }
 
 - (void) stopLoading
@@ -103,10 +102,10 @@ static CDVWhitelist* gWhitelist = nil;
 
 @implementation CDVHTTPURLResponse
 
-- (id) initWithUnauthorizedURL:(NSURL*)url
+- (id) initWithUnauthorizedURL:(__unsafe_unretained NSURL*)url
 {
     NSInteger statusCode = 401;
-    NSDictionary* headerFields = [NSDictionary dictionaryWithObject:@"Digest realm = \"Cordova.plist/ExternalHosts\"" forKey:@"WWW-Authenticate"];
+    NSDictionary* __unsafe_unretained headerFields = [NSDictionary dictionaryWithObject:@"Digest realm = \"Cordova.plist/ExternalHosts\"" forKey:@"WWW-Authenticate"];
     double requestTime = 1;
     
     SEL selector = NSSelectorFromString(@"initWithURL:statusCode:headerFields:requestTime:");

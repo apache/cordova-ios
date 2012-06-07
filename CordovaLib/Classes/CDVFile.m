@@ -63,11 +63,10 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 {
 	NSFileManager* fMgr = [[NSFileManager alloc] init];
 	
-	NSError* pError = nil;
+	NSError* __autoreleasing pError = nil;
 	
 	NSDictionary* pDict = [ fMgr attributesOfFileSystemForPath:appPath error:&pError ];
 	NSNumber* pNumAvail = (NSNumber*)[ pDict objectForKey:NSFileSystemFreeSize ];
-	[fMgr release];
 	return pNumAvail;
 	
 }
@@ -278,8 +277,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 			jsString = [result toErrorCallbackString:callbackId];
 			
 		}
-
-		[fileMgr release];
 	}
 	if (jsString != nil){
 		[self writeJavascript:jsString];
@@ -389,7 +386,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 			// if bExists and create == NO  - just return data
 			// if !bExists and create == YES - create and return data
 			BOOL bSuccess = YES;
-			NSError* pError = nil;
+			NSError __autoreleasing *pError = nil;
 			if(!bExists && create == YES){
 				if(bDirRequest) {
 					// create the dir
@@ -411,7 +408,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 				jsString = [result toSuccessCallbackString: callbackId];
 			}
 		} // are all possible conditions met?
-		[fileMgr release];
 	} 
 
 	
@@ -466,7 +462,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [self getDirectoryEntry:newPath isDirectory:bIsDir]];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
-		[fileMgr release];
 	}
 	if (!jsString) {
 		// invalid path or file does not exist
@@ -489,7 +484,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	NSString* testPath = argPath; //[self getFullPath: argPath];
 	
 	NSFileManager* fileMgr = [[NSFileManager alloc] init];
-	NSError* error = nil;
+	NSError* __autoreleasing error = nil;
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
 	
@@ -515,7 +510,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	if (jsString){
 		[self writeJavascript:jsString];
 	}
-	[fileMgr release];
 }
 
 /*
@@ -541,7 +535,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         if (IsAtLeastiOSVersion(@"5.1")) 
         {
             NSURL* url = [NSURL fileURLWithPath:filePath];
-            NSError* error = nil;
+            NSError* __autoreleasing error = nil;
             
             ok = [url setResourceValue: [NSNumber numberWithBool: [iCloudBackupExtendedAttributeValue boolValue]] forKey: NSURLIsExcludedFromBackupKey error:&error];
         }
@@ -603,7 +597,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 			// dir is not empty
 			errorCode = INVALID_MODIFICATION_ERR;
 		}
-		[fileMgr release];
 	}
 	if (errorCode > 0) {
 		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: errorCode];
@@ -659,7 +652,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
 	BOOL bSuccess = NO;
-	NSError* pError = nil;
+	NSError* __autoreleasing pError = nil;
 	NSFileManager* fileMgr = [[ NSFileManager alloc] init];
 
 	@try {
@@ -685,7 +678,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 		jsString = [result toErrorCallbackString:callbackId];	
 	}
 	@finally {
-		[fileMgr release];
 		return jsString;
 	}
 }
@@ -783,7 +775,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 				// can't copy/move dir to file 
 				errCode = INVALID_MODIFICATION_ERR;
 			} else { // no errors yet
-				NSError* error = nil;
+				NSError* __autoreleasing error = nil;
 				BOOL bSuccess = NO;
 				if (bCopy){
 					if (bSrcIsDir && ![self canCopyMoveSrc: srcFullPath ToDestination: newFullPath]/*[newFullPath hasPrefix:srcFullPath]*/) {
@@ -847,7 +839,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 					}
 				}			
 			}
-			[fileMgr release];	
 		}
 	}
 	if (errCode > 0) {
@@ -916,7 +907,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 			jsString = [result toErrorCallbackString:callbackId];
 		} else {
 			// create dictionary of file info
-			NSError* error = nil;
+			NSError* __autoreleasing error = nil;
 			NSDictionary* fileAttrs = [fileMgr attributesOfItemAtPath:fullPath error:&error];
 			NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
 			[fileInfo setObject: [NSNumber numberWithUnsignedLongLong:[fileAttrs fileSize]] forKey:@"size"];
@@ -929,7 +920,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: fileInfo];
 			jsString = [result toSuccessCallbackString:callbackId];
 		}
-		[fileMgr release];
 	}
 	
 	[self writeJavascript:jsString];
@@ -946,7 +936,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	NSString* jsString = nil;
 	
 	NSFileManager* fileMgr = [[ NSFileManager alloc] init];
-	NSError* error = nil;
+	NSError* __autoreleasing error = nil;
 	NSArray* contents = [fileMgr contentsOfDirectoryAtPath:fullPath error: &error];
 	if (contents) {
 		NSMutableArray* entries = [NSMutableArray arrayWithCapacity:1];
@@ -967,10 +957,8 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 		// assume not found but could check error for more specific error conditions
 		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: NOT_FOUND_ERR];
 		jsString = [result toErrorCallbackString:callbackId];
-	} 
+	}
 
-	[fileMgr release];
-	
 	[self writeJavascript: jsString];
 	
 }
@@ -1022,9 +1010,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [ pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ];
         jsString = [result toSuccessCallbackString:callbackId];
-        [ pNStrBuff release ];
-        
-		
 	}
 	if (jsString){
 		[self writeJavascript: jsString];
@@ -1094,15 +1079,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	
 	NSString* mimeType = nil;
 	if(fullPath) {
-		CFStringRef typeId = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(CFStringRef)[fullPath pathExtension], NULL);
+		CFStringRef typeId = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)[fullPath pathExtension], NULL);
 		if (typeId) {
-			mimeType = (NSString*)UTTypeCopyPreferredTagWithClass(typeId,kUTTagClassMIMEType);
-			if (mimeType) {
-				[mimeType autorelease];
-				//NSLog(@"mime type: %@", mimeType);
-			} else {
+			mimeType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass(typeId,kUTTagClassMIMEType);
+			if (!mimeType) {
                 // special case for m4a
-                if ([(NSString*)typeId rangeOfString: @"m4a-audio"].location != NSNotFound){
+                if ([(__bridge NSString*)typeId rangeOfString: @"m4a-audio"].location != NSNotFound){
                     mimeType = @"audio/mp4";
                 } else if ([[fullPath pathExtension] rangeOfString:@"wav"].location != NSNotFound){
                     mimeType = @"audio/wav";
@@ -1250,8 +1232,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	
 	CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: ( (bExists && bIsDir) ? 1 : 0 )];
 	// keep original format of returning 0 or 1 to success callback
-	jsString = [result toSuccessCallbackString: callbackId];
-	[fMgr release];
+	jsString = [result toSuccessCallbackString: callbackId];;
 	[self writeJavascript: jsString];
 }
 
@@ -1271,20 +1252,5 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	[self writeJavascript:[result toSuccessCallbackString: callbackId]];
 	
 }
-
--(void) dealloc
-{
-	self.appDocsPath = nil;
-	self.appLibraryPath = nil;
-	self.appTempPath = nil;
-	self.persistentPath = nil;
-	self.temporaryPath = nil;
-	
-	[super dealloc];
-}
-
-
-
-
 
 @end

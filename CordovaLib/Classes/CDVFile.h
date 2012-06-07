@@ -101,11 +101,11 @@ typedef int CDVFileSystemType;
 - (unsigned long long) truncateFile:(NSString*)filePath atPosition:(unsigned long long)pos;
 
 
-@property (nonatomic, retain)NSString *appDocsPath;
-@property (nonatomic, retain)NSString *appLibraryPath;
-@property (nonatomic, retain)NSString *appTempPath;
-@property (nonatomic, retain)NSString *persistentPath;
-@property (nonatomic, retain)NSString *temporaryPath;
+@property (nonatomic, strong)NSString *appDocsPath;
+@property (nonatomic, strong)NSString *appLibraryPath;
+@property (nonatomic, strong)NSString *appTempPath;
+@property (nonatomic, strong)NSString *persistentPath;
+@property (nonatomic, strong)NSString *temporaryPath;
 @property BOOL userHasAllowed;
 
 @end

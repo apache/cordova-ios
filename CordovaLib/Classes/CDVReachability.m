@@ -93,26 +93,24 @@ static void CDVReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRe
         return;
     }
     
-    if (![(NSObject*) info isKindOfClass: [CDVReachability class]]) {
+    if (![(__bridge NSObject*) info isKindOfClass: [CDVReachability class]]) {
         NSLog(@"info was wrong class in ReachabilityCallback");
         return;
     }
 
 	//We're on the main RunLoop, so an NSAutoreleasePool is not necessary, but is added defensively
 	// in case someon uses the Reachablity object in a different thread.
-	NSAutoreleasePool* myPool = [[NSAutoreleasePool alloc] init];
-	
-	CDVReachability* noteObject = (CDVReachability*) info;
-	// Post a notification to notify the client that the network reachability changed.
-	[[NSNotificationCenter defaultCenter] postNotificationName: kReachabilityChangedNotification object: noteObject];
-	
-	[myPool release];
+	@autoreleasepool {
+        CDVReachability* noteObject = (__bridge CDVReachability*) info;
+        // Post a notification to notify the client that the network reachability changed.
+        [[NSNotificationCenter defaultCenter] postNotificationName: kReachabilityChangedNotification object: noteObject];
+	}
 }
 
 - (BOOL) startNotifier
 {
 	BOOL retVal = NO;
-	SCNetworkReachabilityContext	context = {0, self, NULL, NULL, NULL};
+	SCNetworkReachabilityContext	context = {0, (__bridge void *)(self), NULL, NULL, NULL};
 	if(SCNetworkReachabilitySetCallback(reachabilityRef, CDVReachabilityCallback, &context))
 	{
 		if(SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode))
@@ -138,7 +136,6 @@ static void CDVReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRe
 	{
 		CFRelease(reachabilityRef);
 	}
-	[super dealloc];
 }
 
 + (CDVReachability*) reachabilityWithHostName: (NSString*) hostName;
@@ -147,7 +144,7 @@ static void CDVReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRe
 	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
 	if(reachability!= NULL)
 	{
-		retVal= [[[self alloc] init] autorelease];
+		retVal= [[self alloc] init];
 		if(retVal!= NULL)
 		{
 			retVal->reachabilityRef = reachability;
@@ -163,7 +160,7 @@ static void CDVReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRe
 	CDVReachability* retVal = NULL;
 	if(reachability!= NULL)
 	{
-		retVal= [[[self alloc] init] autorelease];
+		retVal= [[self alloc] init];
 		if(retVal!= NULL)
 		{
 			retVal->reachabilityRef = reachability;

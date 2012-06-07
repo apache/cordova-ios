@@ -54,7 +54,7 @@
 		30956FD2138F1F5600FC3563 /* CDVMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* CDVMotion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30956FD3138F1F5600FC3563 /* CDVMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* CDVMotion.m */; };
 		30A90B9114588697006178D3 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 30A90B8F14588697006178D3 /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		30A90B9314588697006178D3 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A90B9014588697006178D3 /* JSONKit.m */; };
+		30A90B9314588697006178D3 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A90B9014588697006178D3 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		30AE4E8D1419532F005A9C9A /* CDVContactsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AE4E8C1419532F005A9C9A /* CDVContactsTests.m */; };
 		30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B342F415224B360070E6A5 /* CDVWebViewTest.m */; };
 		30B39EBE13D0268B0009682A /* CDVSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* CDVSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -832,6 +832,7 @@
 					armv6,
 					armv7,
 				);
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -858,6 +859,7 @@
 					armv6,
 					armv7,
 				);
+				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

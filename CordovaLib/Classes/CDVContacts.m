@@ -66,7 +66,6 @@
 -(void)onAppTerminate
 {
 	//NSLog(@"Contacts::onAppTerminate");
-	[CDVContact releaseDefaults];
 }
 
 
@@ -75,7 +74,7 @@
 {	
 	NSString* callbackId = [arguments objectAtIndex:0];
 
-	CDVNewContactsController* npController = [[[CDVNewContactsController alloc] init] autorelease];
+	CDVNewContactsController* npController = [[CDVNewContactsController alloc] init];
 	
 	ABAddressBookRef ab = ABAddressBookCreate();
 	npController.addressBook = ab; // a CF retaining assign
@@ -84,7 +83,7 @@
 	npController.newPersonViewDelegate = self;
 	npController.callbackId = callbackId;
 
-	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:npController] autorelease];
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:npController];
     
     if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
         [self.viewController presentViewController:navController animated:YES completion:nil];        
@@ -130,14 +129,14 @@
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
 	ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addrBook, recordID);
 	if (rec) {
-		CDVDisplayContactViewController* personController = [[[CDVDisplayContactViewController alloc] init] autorelease];
+		CDVDisplayContactViewController* personController = [[CDVDisplayContactViewController alloc] init];
 		personController.displayedPerson = rec;
 		personController.personViewDelegate = self;
 		personController.allowsEditing = NO;
 		
         // create this so DisplayContactViewController will have a "back" button.
-        UIViewController* parentController = [[[UIViewController alloc] init] autorelease];
-        UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:parentController] autorelease];
+        UIViewController* parentController = [[UIViewController alloc] init];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:parentController];
 
         [navController pushViewController:personController animated:YES];
 
@@ -149,7 +148,7 @@
 
 		if (bEdit) {
             // create the editing controller and push it onto the stack
-            ABPersonViewController* editPersonController = [[[ABPersonViewController alloc] init] autorelease];
+            ABPersonViewController* editPersonController = [[ABPersonViewController alloc] init];
             editPersonController.displayedPerson = rec;
             editPersonController.personViewDelegate = self;
             editPersonController.allowsEditing = YES; 
@@ -176,7 +175,7 @@
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 	
-	CDVContactsPicker* pickerController = [[[CDVContactsPicker alloc] init] autorelease];
+	CDVContactsPicker* pickerController = [[CDVContactsPicker alloc] init];
 	pickerController.peoplePickerDelegate = self;
 	pickerController.callbackId = callbackId;
 	pickerController.selectedId = kABRecordInvalidID;
@@ -200,7 +199,7 @@
 	
 	if (picker.allowsEditing) {
 		
-		ABPersonViewController* personController = [[[ABPersonViewController alloc] init] autorelease];
+		ABPersonViewController* personController = [[ABPersonViewController alloc] init];
 		personController.displayedPerson = person;
 		personController.personViewDelegate = self;
 		personController.allowsEditing = picker.allowsEditing;
@@ -273,26 +272,26 @@
 	NSMutableArray* matches = nil;
 	if (!filter || [filter isEqualToString:@""]){ 
 		// get all records 
-		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
+		foundRecords = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
 		if (foundRecords && [foundRecords count] > 0){
 			// create Contacts and put into matches array
             // doesn't make sense to ask for all records when multiple == NO but better check
 			int xferCount = multiple == YES ? [foundRecords count] : 1;
 			matches = [NSMutableArray arrayWithCapacity:xferCount];
 			for(int k = 0; k<xferCount; k++){
-				CDVContact* xferContact = [[[CDVContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]] autorelease];
+				CDVContact* xferContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]];
 				[matches addObject:xferContact];
 				xferContact = nil;
 				
 			}
 		}
 	} else {
-		foundRecords = (NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
+		foundRecords = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
 		matches = [NSMutableArray arrayWithCapacity:1];
 		BOOL bFound = NO;
 		int testCount = [foundRecords count];
 		for(int j=0; j<testCount; j++){
-			CDVContact* testContact = [[[CDVContact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]] autorelease];
+			CDVContact* testContact = [[CDVContact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]];
 			if (testContact){
 				bFound = [testContact foundValue:filter inFields:returnFields];
 				if(bFound){
@@ -308,27 +307,24 @@
 	if (matches != nil && [matches count] > 0){
 		// convert to JS Contacts format and return in callback
         // - returnFields  determines what properties to return
-		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init]; 
-		int count = multiple == YES ? [matches count] : 1;
-		for(int i = 0; i<count; i++){
-			CDVContact* newContact = [matches objectAtIndex:i];
-			NSDictionary* aContact = [newContact toDictionary: returnFields];
-			[returnContacts addObject:aContact];
+        @autoreleasepool {
+            int count = multiple == YES ? [matches count] : 1;
+            for(int i = 0; i<count; i++){
+                CDVContact* newContact = [matches objectAtIndex:i];
+                NSDictionary* aContact = [newContact toDictionary: returnFields];
+                [returnContacts addObject:aContact];
+            }
 		}
-		[pool release];
 	}
 	CDVPluginResult* result = nil;
     // return found contacts (array is empty if no contacts found)
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: returnContacts];
     jsString = [result toSuccessCallbackString:callbackId];
-    // NSLog(@"findCallback string: %@", jsString);
+    //NSLog(@"findCallback string: %@", jsString);
 	
 
 	if(addrBook){
 		CFRelease(addrBook);
-	}
-	if (foundRecords){
-		[foundRecords release];
 	}
 	
 	if(jsString){
@@ -390,7 +386,6 @@
 		bIsError = TRUE;
 		errCode = IO_ERROR; 
 	}
-	[aContact release];	
 	CFRelease(addrBook);
 		
 	if (bIsError){
@@ -469,17 +464,6 @@
 		
 }
 
-- (void)dealloc
-{
-	/*ABAddressBookUnregisterExternalChangeCallback(addressBook, addressBookChanged, self);
-
-	if (addressBook) {
-		CFRelease(addressBook);
-	}
-	*/
-	
-    [super dealloc];
-}
 
 @end
 
@@ -501,11 +485,6 @@
         [[self parentViewController] dismissModalViewControllerAnimated:YES];
     }        
     
-}
--(void) dealloc
-{
-    self.contactsPlugin=nil;
-    [super dealloc];
 }
 
 @end

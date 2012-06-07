@@ -46,7 +46,8 @@
         
     [CDVURLProtocol registerURLProtocol];
     
-    return [super init];
+    self = [super init];
+    return self;
 }
 
 #pragma UIApplicationDelegate implementation
@@ -65,12 +66,12 @@
     }    
     
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
+    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
     self.window.autoresizesSubviews = YES;
     
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
-    self.viewController = [[[MainViewController alloc] init] autorelease];
+    self.viewController = [[MainViewController alloc] init];
     self.viewController.useSplashScreen = YES;
     self.viewController.wwwFolderName = @"www";
     self.viewController.startPage = @"index.html";
@@ -125,11 +126,6 @@
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
     
     return YES;    
-}
-
-- (void) dealloc
-{
-	[super dealloc];
 }
 
 @end

@@ -50,9 +50,7 @@
     if (jsResult != nil && [jsResult length] > 0) {
         NSLog(@"%@", jsResult);
     }
-    
-    [result release];
-    
+
     [self success:pluginResult callbackId:cbId];
 
 }

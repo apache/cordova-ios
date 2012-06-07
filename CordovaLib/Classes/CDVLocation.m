@@ -71,14 +71,6 @@
     }
     return self;
 }
--(void) dealloc 
-{
-    self.headingInfo = nil;
-    self.headingCallbacks = nil;
-    self.headingFilter = nil;
-    self.headingTimestamp = nil;
-    [super dealloc];  
-}
 
 @end
 
@@ -96,13 +88,6 @@
     }
     return self;
 }
--(void) dealloc 
-{
-    self.locationInfo = nil;
-    self.locationCallbacks = nil;
-    self.watchCallbacks = nil;
-    [super dealloc];  
-}
 
 @end
 
@@ -118,7 +103,7 @@
     self = (CDVLocation*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) 
 	{
-        self.locationManager = [[[CLLocationManager alloc] init] autorelease];
+        self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
         __locationStarted = NO;
         __highAccuracyEnabled = NO;
@@ -271,7 +256,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!self.locationData) {
-            self.locationData = [[[CDVLocationData alloc] init] autorelease];
+            self.locationData = [[CDVLocationData alloc] init];
         }
         CDVLocationData* lData = self.locationData;
         if (!lData.locationCallbacks) {
@@ -296,7 +281,7 @@
     BOOL enableHighAccuracy = [[arguments objectAtIndex:2] boolValue];
     
     if (!self.locationData) {
-        self.locationData = [[[CDVLocationData alloc] init] autorelease];
+        self.locationData = [[CDVLocationData alloc] init];
     }
     CDVLocationData* lData = self.locationData;
     
@@ -399,7 +384,7 @@
     } else {
         // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
-            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
+            self.headingData = [[CDVHeadingData alloc] init];
         }
         CDVHeadingData* hData = self.headingData;
 
@@ -431,7 +416,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {
-            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
+            self.headingData = [[CDVHeadingData alloc] init];
             hData = self.headingData;
         }
         if (hData.headingStatus != HEADINGRUNNING) {
@@ -613,9 +598,6 @@
 - (void) dealloc 
 {
 	self.locationManager.delegate = nil;
-	self.locationManager = nil;
-    self.headingData = nil;
-	[super dealloc];
 }
 
 @end

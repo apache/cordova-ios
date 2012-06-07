@@ -41,15 +41,13 @@ typedef NSUInteger CDVContactError;
 } 
 
 @property (nonatomic, assign) ABRecordRef record;
-@property (nonatomic, retain) NSDictionary* returnFields;
+@property (nonatomic, strong) NSDictionary* returnFields;
 
 +(NSDictionary*) defaultABtoW3C;
 +(NSDictionary*) defaultW3CtoAB;
 +(NSSet*) defaultW3CtoNull;
 +(NSDictionary*) defaultObjectAndProperties;
 +(NSDictionary*) defaultFields;
-+(void) releaseDefaults;
-
 
 +(NSDictionary*) calcReturnFields: (NSArray*)fields;
 -(id)init;
@@ -84,9 +82,6 @@ typedef NSUInteger CDVContactError;
 - (NSArray *) valuesForProperty: (ABPropertyID) propId inRecord: (ABRecordRef) aRecord;
 - (NSArray *) labelsForProperty: (ABPropertyID) propId inRecord: (ABRecordRef)aRecord;
 -(BOOL) searchContactFields: (NSArray*) fields forMVDictionaryProperty: (ABPropertyID) propId withValue: (NSString*)testValue;
-
-- (void) dealloc;	
-
 
 @end
 
