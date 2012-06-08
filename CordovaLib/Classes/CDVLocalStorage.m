@@ -187,15 +187,14 @@
                 NSLog(@"%@", message);
                 
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
-                [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toSuccessCallbackString:callbackId] waitUntilDone:NO];
                 
             } else {
                 message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) backup: %@", info.label, [error localizedDescription]];
                 NSLog(@"%@", message);
                 
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
-                [self writeJavascript:[result toErrorCallbackString:callbackId]];
-
+                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toErrorCallbackString:callbackId] waitUntilDone:NO];
             }
         }
     }
@@ -221,15 +220,14 @@
                 NSLog(@"%@", message);
                 
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
-                [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toSuccessCallbackString:callbackId] waitUntilDone:NO];
                 
             } else {
                 message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) restore: %@", info.label, [error localizedDescription]];
                 NSLog(@"%@", message);
                 
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
-                [self writeJavascript:[result toErrorCallbackString:callbackId]];
-                
+                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toErrorCallbackString:callbackId] waitUntilDone:NO];
             }
         }
     }
