@@ -22,6 +22,12 @@
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
+### 1.8.1 (20120612) ###
+
+* Fixes CB-885 - Crash when sliding the notification tray and/or tel link confirm dialog
+* Fixed CB-506 - images taken via Camera.getPicture do not get deleted
+* Implemented CB-857 - Add deprecation notice if user is running iOS lesser than 4.2
+
 ### 1.8.0 (20120605) ###
 
 * Fixes CB-819 fail callback not invoked
