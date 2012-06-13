@@ -130,12 +130,11 @@
 
 - (void) requestFileSystem:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* strType = [arguments objectAtIndex: 0];
-	unsigned long long size = [[arguments objectAtIndex:1] longLongValue];
+	NSString* strType = [arguments objectAtIndex: 1];
+	unsigned long long size = [[arguments objectAtIndex:2] longLongValue];
 
 	int type = [strType intValue];
 	CDVPluginResult* result = nil;
@@ -216,11 +215,10 @@
  */
 - (void) resolveLocalFileSystemURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-    NSString* inputUri = [arguments objectAtIndex:0];
+    NSString* inputUri = [arguments objectAtIndex:1];
     
 	NSString* jsString = nil;
     
@@ -325,12 +323,11 @@
  */
 - (void) getFile: (NSMutableArray*) arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
 	// arguments are URL encoded
-	NSString* fullPath = [arguments objectAtIndex:0];
-	NSString* requestedPath = [arguments objectAtIndex:1];
+	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* requestedPath = [arguments objectAtIndex:2];
     
 	NSString* jsString = nil;
 	CDVPluginResult* result = nil;
@@ -433,11 +430,10 @@
  */
 - (void) getParent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
 	// arguments are URL encoded
-	NSString* fullPath = [arguments objectAtIndex:0];
+	NSString* fullPath = [arguments objectAtIndex:1];
     
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -479,11 +475,10 @@
  */
 - (void) getMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
 	NSString* testPath = argPath; //[self getFullPath: argPath];
 	
 	NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -522,11 +517,10 @@
  */
 - (void) setMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* filePath = [arguments objectAtIndex:0];
+	NSString* filePath = [arguments objectAtIndex:1];
     CDVPluginResult* result = nil;
     BOOL ok = NO;
     
@@ -570,11 +564,10 @@
 */
 - (void) remove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* fullPath = [arguments objectAtIndex:0];
+	NSString* fullPath = [arguments objectAtIndex:1];
 	
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -619,11 +612,10 @@
  */
 - (void) removeRecursively:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* fullPath = [arguments objectAtIndex:0];
+	NSString* fullPath = [arguments objectAtIndex:1];
 	
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -730,14 +722,13 @@
  */
 - (void) doCopyMove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options  isCopy:(BOOL)bCopy
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
 	// arguments
-    NSString* srcFullPath = [arguments objectAtIndex:0];
-    NSString* destRootPath = [arguments objectAtIndex:1];
+    NSString* srcFullPath = [arguments objectAtIndex:1];
+    NSString* destRootPath = [arguments objectAtIndex:2];
     // optional argument
-    NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
+    NSString* newName = ([arguments count] > 3) ? [arguments objectAtIndex:3] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
 
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -890,11 +881,10 @@
 }*/
 - (void) getFileMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
     
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -931,11 +921,10 @@
 
 - (void) readEntries:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
 
 	// arguments
-    NSString* fullPath = [arguments objectAtIndex:0];
+    NSString* fullPath = [arguments objectAtIndex:1];
 	
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -987,11 +976,10 @@
  */
 - (void) readAsText:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
     
 	//NSString* encoding = [arguments objectAtIndex:2];   // not currently used
 	CDVPluginResult* result = nil;
@@ -1041,11 +1029,10 @@
  
 - (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
     
 	CDVFileError errCode = ABORT_ERR; 
 	CDVPluginResult* result = nil;
@@ -1118,12 +1105,11 @@
 }
 - (void) truncate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 2, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
-	unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:1 ] longLongValue];
+	NSString* argPath = [arguments objectAtIndex:1];
+	unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:2 ] longLongValue];
 	
 	NSString *appFile = argPath; //[self getFullPath:argPath];
 	
@@ -1159,13 +1145,12 @@
  */
 - (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 3, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
-	NSString* argData = [arguments objectAtIndex:1];
-	unsigned long long pos = (unsigned long long)[[ arguments objectAtIndex:2] longLongValue];
+	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* argData = [arguments objectAtIndex:2];
+	unsigned long long pos = (unsigned long long)[[ arguments objectAtIndex:3] longLongValue];
 	
 	NSString* fullPath = argPath; //[self getFullPath:argPath];
 	
@@ -1213,11 +1198,10 @@
 
 - (void) testFileExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
     
 	NSString* jsString = nil;
 	// Get the file manager
@@ -1235,11 +1219,10 @@
 
 - (void) testDirectoryExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
-    VERIFY_ARGUMENTS(arguments, 1, callbackId)
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argPath = [arguments objectAtIndex:1];
 	
 	NSString* jsString = nil;
 	// Get the file manager
@@ -1259,7 +1242,7 @@
 // Returns number of bytes available via callback
 - (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-	NSString* callbackId = [arguments pop];
+	NSString* callbackId = [arguments objectAtIndex: 0];
     
     // no arguments
     
