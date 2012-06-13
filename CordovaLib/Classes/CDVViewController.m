@@ -34,6 +34,7 @@
 
 @property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readwrite, retain) UIImageView* imageView;
+@property (readwrite, assign) BOOL initialized;
 
 @end
 
@@ -44,11 +45,11 @@
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen, commandDelegate;
-@synthesize wwwFolderName, startPage, invokeString;
+@synthesize wwwFolderName, startPage, invokeString, initialized;
 
 - (id) __init
 {
-    if (self != nil) 
+    if (self != nil && !self.initialized) 
     {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) 
@@ -76,6 +77,7 @@
         
         [self printMultitaskingInfo];
         [self printDeprecationNotice];
+        self.initialized = YES;
     }
     
     return self; 
