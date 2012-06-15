@@ -785,7 +785,11 @@ BOOL gSplashScreenShown = NO;
 		 [CDVInvokedUrlCommand commandFromObject:
 		  [commandJson mutableObjectFromJSONString]]])
 		{
-			NSLog(@"FAILED pluginJSON = %@",commandJson);
+            static NSUInteger maxLogLength = 1024;
+            NSString* commandString = ([commandJson length] > maxLogLength) ? 
+                [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] : 
+                commandJson;
+			DLog(@"FAILED pluginJSON = %@", commandString);
 		}
     }
 	
@@ -815,6 +819,7 @@ BOOL gSplashScreenShown = NO;
 - (BOOL) execute:(CDVInvokedUrlCommand*)command
 {
     if (command.className == nil || command.methodName == nil) {
+        NSLog(@"ERROR: Classname and/or methodName not found for command.");
         return NO;
     }
     
