@@ -51,7 +51,7 @@
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:server];
+    NSURL *url = [NSURL URLWithString:[server stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     
     if (!url) {
@@ -176,7 +176,7 @@
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:sourceUrl];
+    NSURL *url = [NSURL URLWithString:[sourceUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
