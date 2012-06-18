@@ -59,32 +59,26 @@ typedef NSUInteger CDVMediaMsg;
 @property (nonatomic,copy) NSString* mediaId;
 @end
 
-#ifdef __IPHONE_3_0
 @interface CDVAudioRecorder : AVAudioRecorder
 {
 	NSString* mediaId;
 }
 @property (nonatomic,copy) NSString* mediaId;
 @end
-#endif
 	
 @interface CDVAudioFile : NSObject
 {
 	NSString* resourcePath;
 	NSURL* resourceURL;
 	CDVAudioPlayer* player;
-#ifdef __IPHONE_3_0
 	CDVAudioRecorder* recorder;
-#endif
 }
 
 @property (nonatomic, retain) NSString* resourcePath;
 @property (nonatomic, retain) NSURL* resourceURL;
 @property (nonatomic, retain) CDVAudioPlayer* player;
 
-#ifdef __IPHONE_3_0
 @property (nonatomic, retain) CDVAudioRecorder* recorder;
-#endif
 
 @end
 
