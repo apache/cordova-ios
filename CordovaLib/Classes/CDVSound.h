@@ -72,11 +72,13 @@ typedef NSUInteger CDVMediaMsg;
 	NSURL* resourceURL;
 	CDVAudioPlayer* player;
 	CDVAudioRecorder* recorder;
+    NSNumber* volume;
 }
 
 @property (nonatomic, retain) NSString* resourcePath;
 @property (nonatomic, retain) NSURL* resourceURL;
 @property (nonatomic, retain) CDVAudioPlayer* player;
+@property (nonatomic, retain) NSNumber* volume;
 
 @property (nonatomic, retain) CDVAudioRecorder* recorder;
 
@@ -121,5 +123,7 @@ typedef NSUInteger CDVMediaMsg;
 
 - (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void) setVolume:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

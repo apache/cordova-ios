@@ -150,23 +150,55 @@
     [self startPlayingAudio:arguments withDict:options];
 }
 
-// not used
 - (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* mediaId = [arguments objectAtIndex:1];
+    NSString* resourcePath = [arguments objectAtIndex:2];
+    
+    CDVPluginResult* result;
+    CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId: mediaId];
+    
+    if (audioFile == nil) {
+        NSString* errorMessage = [NSString stringWithFormat:@"Failed to initialize Media file with path %@", resourcePath];
+        NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,[self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMessage]];
+        [super writeJavascript:jsString];
+    } else {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [super writeJavascript:[result toSuccessCallbackString:callbackId]];
+    }
 }
 
+- (void) setVolume:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0]; 
+    #pragma unused(callbackId)
+	NSString* mediaId = [arguments objectAtIndex:1];
+    NSNumber* volume = [arguments objectAtIndex:2 withDefault:[NSNumber numberWithFloat:1.0]];
+    
+    CDVAudioFile* audioFile;
+	if ([self soundCache] == nil) {
+		[self setSoundCache: [NSMutableDictionary dictionaryWithCapacity:1]];
+	} else {
+		audioFile = [[self soundCache] objectForKey: mediaId];
+        audioFile.volume = volume;
+        [[self soundCache] setObject:audioFile forKey:mediaId];
+	}
+    
+    // don't care for any callbacks
+}
 
 - (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-
 	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-	
+    #pragma unused(callbackId)
 	NSString* mediaId = [arguments objectAtIndex:1];
+    NSString* resourcePath = [arguments objectAtIndex:2];
+    
 	BOOL bError = NO;
 	NSString* jsString = nil;
 	
-	CDVAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:2] withId: mediaId];
+	CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId: mediaId];
 	
 	if (audioFile != nil) {
 		if (audioFile.player == nil){
@@ -203,6 +235,10 @@
                     [audioFile.player stop];
                     audioFile.player.currentTime = 0;
                 }
+                if (audioFile.volume != nil) {
+                    audioFile.player.volume = [audioFile.volume floatValue];
+                }
+                
                 [audioFile.player play];
                 double position = round(audioFile.player.duration * 1000)/1000;
                 jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_DURATION, position, @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
@@ -624,10 +660,8 @@
 
 @synthesize resourcePath;
 @synthesize resourceURL;
-@synthesize player;
-#ifdef __IPHONE_3_0
+@synthesize player, volume;
 @synthesize recorder;
-#endif
 
 - (void) dealloc
 {
@@ -635,6 +669,7 @@
     self.resourceURL = nil;
     self.player = nil;
     self.recorder = nil;
+    self.volume = nil;
     
 	[super dealloc];
 }
