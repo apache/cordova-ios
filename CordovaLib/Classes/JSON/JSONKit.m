@@ -128,330 +128,330 @@
 #define __has_feature(x) 0
 #endif
 
-#ifdef JK_ENABLE_CF_TRANSFER_OWNERSHIP_CALLBACKS
-#warning As of JSONKit v1.4, JK_ENABLE_CF_TRANSFER_OWNERSHIP_CALLBACKS is no longer required.  It is no longer a valid option.
+#ifdef CDVJK_ENABLE_CF_TRANSFER_OWNERSHIP_CALLBACKS
+#warning As of CDVJSONKit v1.4, CDVJK_ENABLE_CF_TRANSFER_OWNERSHIP_CALLBACKS is no longer required.  It is no longer a valid option.
 #endif
 
 #ifdef __OBJC_GC__
-#error JSONKit does not support Objective-C Garbage Collection
+#error CDVJSONKit does not support Objective-C Garbage Collection
 #endif
 
 #if __has_feature(objc_arc)
-#error JSONKit does not support Objective-C Automatic Reference Counting (ARC)
+#error CDVJSONKit does not support Objective-C Automatic Reference Counting (ARC)
 #endif
 
 // The following checks are really nothing more than sanity checks.
-// JSONKit technically has a few problems from a "strictly C99 conforming" standpoint, though they are of the pedantic nitpicking variety.
+// CDVJSONKit technically has a few problems from a "strictly C99 conforming" standpoint, though they are of the pedantic nitpicking variety.
 // In practice, though, for the compilers and architectures we can reasonably expect this code to be compiled for, these pedantic nitpicks aren't really a problem.
 // Since we're limited as to what we can do with pre-processor #if checks, these checks are not nearly as through as they should be.
 
 #if (UINT_MAX != 0xffffffffU) || (INT_MIN != (-0x7fffffff-1)) || (ULLONG_MAX != 0xffffffffffffffffULL) || (LLONG_MIN != (-0x7fffffffffffffffLL-1LL))
-#error JSONKit requires the C 'int' and 'long long' types to be 32 and 64 bits respectively.
+#error CDVJSONKit requires the C 'int' and 'long long' types to be 32 and 64 bits respectively.
 #endif
 
 #if !defined(__LP64__) && ((UINT_MAX != ULONG_MAX) || (INT_MAX != LONG_MAX) || (INT_MIN != LONG_MIN) || (WORD_BIT != LONG_BIT))
-#error JSONKit requires the C 'int' and 'long' types to be the same on 32-bit architectures.
+#error CDVJSONKit requires the C 'int' and 'long' types to be the same on 32-bit architectures.
 #endif
 
 // Cocoa / Foundation uses NS*Integer as the type for a lot of arguments.  We make sure that NS*Integer is something we are expecting and is reasonably compatible with size_t / ssize_t
 
 #if (NSUIntegerMax != ULONG_MAX) || (NSIntegerMax != LONG_MAX) || (NSIntegerMin != LONG_MIN)
-#error JSONKit requires NSInteger and NSUInteger to be the same size as the C 'long' type.
+#error CDVJSONKit requires NSInteger and NSUInteger to be the same size as the C 'long' type.
 #endif
 
 #if (NSUIntegerMax != SIZE_MAX) || (NSIntegerMax != SSIZE_MAX)
-#error JSONKit requires NSInteger and NSUInteger to be the same size as the C 'size_t' type.
+#error CDVJSONKit requires NSInteger and NSUInteger to be the same size as the C 'size_t' type.
 #endif
 
 
 // For DJB hash.
-#define JK_HASH_INIT           (1402737925UL)
+#define CDVJK_HASH_INIT           (1402737925UL)
 
 // Use __builtin_clz() instead of trailingBytesForUTF8[] table lookup.
-#define JK_FAST_TRAILING_BYTES
+#define CDVJK_FAST_TRAILING_BYTES
 
-// JK_CACHE_SLOTS must be a power of 2.  Default size is 1024 slots.
-#define JK_CACHE_SLOTS_BITS    (10)
-#define JK_CACHE_SLOTS         (1UL << JK_CACHE_SLOTS_BITS)
-// JK_CACHE_PROBES is the number of probe attempts.
-#define JK_CACHE_PROBES        (4UL)
-// JK_INIT_CACHE_AGE must be (1 << AGE) - 1
-#define JK_INIT_CACHE_AGE      (0)
+// CDVJK_CACHE_SLOTS must be a power of 2.  Default size is 1024 slots.
+#define CDVJK_CACHE_SLOTS_BITS    (10)
+#define CDVJK_CACHE_SLOTS         (1UL << CDVJK_CACHE_SLOTS_BITS)
+// CDVJK_CACHE_PROBES is the number of probe attempts.
+#define CDVJK_CACHE_PROBES        (4UL)
+// CDVJK_INIT_CACHE_AGE must be (1 << AGE) - 1
+#define CDVJK_INIT_CACHE_AGE      (0)
 
-// JK_TOKENBUFFER_SIZE is the default stack size for the temporary buffer used to hold "non-simple" strings (i.e., contains \ escapes)
-#define JK_TOKENBUFFER_SIZE    (1024UL * 2UL)
+// CDVJK_TOKENBUFFER_SIZE is the default stack size for the temporary buffer used to hold "non-simple" strings (i.e., contains \ escapes)
+#define CDVJK_TOKENBUFFER_SIZE    (1024UL * 2UL)
 
-// JK_STACK_OBJS is the default number of spaces reserved on the stack for temporarily storing pointers to Obj-C objects before they can be transferred to a NSArray / NSDictionary.
-#define JK_STACK_OBJS          (1024UL * 1UL)
+// CDVJK_STACK_OBJS is the default number of spaces reserved on the stack for temporarily storing pointers to Obj-C objects before they can be transferred to a NSArray / NSDictionary.
+#define CDVJK_STACK_OBJS          (1024UL * 1UL)
 
-#define JK_JSONBUFFER_SIZE     (1024UL * 4UL)
-#define JK_UTF8BUFFER_SIZE     (1024UL * 16UL)
+#define CDVJK_JSONBUFFER_SIZE     (1024UL * 4UL)
+#define CDVJK_UTF8BUFFER_SIZE     (1024UL * 16UL)
 
-#define JK_ENCODE_CACHE_SLOTS  (1024UL)
+#define CDVJK_ENCODE_CACHE_SLOTS  (1024UL)
 
 
 #if       defined (__GNUC__) && (__GNUC__ >= 4)
-#define JK_ATTRIBUTES(attr, ...)        __attribute__((attr, ##__VA_ARGS__))
-#define JK_EXPECTED(cond, expect)       __builtin_expect((long)(cond), (expect))
-#define JK_EXPECT_T(cond)               JK_EXPECTED(cond, 1U)
-#define JK_EXPECT_F(cond)               JK_EXPECTED(cond, 0U)
-#define JK_PREFETCH(ptr)                __builtin_prefetch(ptr)
+#define CDVJK_ATTRIBUTES(attr, ...)        __attribute__((attr, ##__VA_ARGS__))
+#define CDVJK_EXPECTED(cond, expect)       __builtin_expect((long)(cond), (expect))
+#define CDVJK_EXPECT_T(cond)               CDVJK_EXPECTED(cond, 1U)
+#define CDVJK_EXPECT_F(cond)               CDVJK_EXPECTED(cond, 0U)
+#define CDVJK_PREFETCH(ptr)                __builtin_prefetch(ptr)
 #else  // defined (__GNUC__) && (__GNUC__ >= 4) 
-#define JK_ATTRIBUTES(attr, ...)
-#define JK_EXPECTED(cond, expect)       (cond)
-#define JK_EXPECT_T(cond)               (cond)
-#define JK_EXPECT_F(cond)               (cond)
-#define JK_PREFETCH(ptr)
+#define CDVJK_ATTRIBUTES(attr, ...)
+#define CDVJK_EXPECTED(cond, expect)       (cond)
+#define CDVJK_EXPECT_T(cond)               (cond)
+#define CDVJK_EXPECT_F(cond)               (cond)
+#define CDVJK_PREFETCH(ptr)
 #endif // defined (__GNUC__) && (__GNUC__ >= 4) 
 
-#define JK_STATIC_INLINE                         static __inline__ JK_ATTRIBUTES(always_inline)
-#define JK_ALIGNED(arg)                                            JK_ATTRIBUTES(aligned(arg))
-#define JK_UNUSED_ARG                                              JK_ATTRIBUTES(unused)
-#define JK_WARN_UNUSED                                             JK_ATTRIBUTES(warn_unused_result)
-#define JK_WARN_UNUSED_CONST                                       JK_ATTRIBUTES(warn_unused_result, const)
-#define JK_WARN_UNUSED_PURE                                        JK_ATTRIBUTES(warn_unused_result, pure)
-#define JK_WARN_UNUSED_SENTINEL                                    JK_ATTRIBUTES(warn_unused_result, sentinel)
-#define JK_NONNULL_ARGS(arg, ...)                                  JK_ATTRIBUTES(nonnull(arg, ##__VA_ARGS__))
-#define JK_WARN_UNUSED_NONNULL_ARGS(arg, ...)                      JK_ATTRIBUTES(warn_unused_result, nonnull(arg, ##__VA_ARGS__))
-#define JK_WARN_UNUSED_CONST_NONNULL_ARGS(arg, ...)                JK_ATTRIBUTES(warn_unused_result, const, nonnull(arg, ##__VA_ARGS__))
-#define JK_WARN_UNUSED_PURE_NONNULL_ARGS(arg, ...)                 JK_ATTRIBUTES(warn_unused_result, pure, nonnull(arg, ##__VA_ARGS__))
+#define CDVJK_STATIC_INLINE                         static __inline__ CDVJK_ATTRIBUTES(always_inline)
+#define CDVJK_ALIGNED(arg)                                            CDVJK_ATTRIBUTES(aligned(arg))
+#define CDVJK_UNUSED_ARG                                              CDVJK_ATTRIBUTES(unused)
+#define CDVJK_WARN_UNUSED                                             CDVJK_ATTRIBUTES(warn_unused_result)
+#define CDVJK_WARN_UNUSED_CONST                                       CDVJK_ATTRIBUTES(warn_unused_result, const)
+#define CDVJK_WARN_UNUSED_PURE                                        CDVJK_ATTRIBUTES(warn_unused_result, pure)
+#define CDVJK_WARN_UNUSED_SENTINEL                                    CDVJK_ATTRIBUTES(warn_unused_result, sentinel)
+#define CDVJK_NONNULL_ARGS(arg, ...)                                  CDVJK_ATTRIBUTES(nonnull(arg, ##__VA_ARGS__))
+#define CDVJK_WARN_UNUSED_NONNULL_ARGS(arg, ...)                      CDVJK_ATTRIBUTES(warn_unused_result, nonnull(arg, ##__VA_ARGS__))
+#define CDVJK_WARN_UNUSED_CONST_NONNULL_ARGS(arg, ...)                CDVJK_ATTRIBUTES(warn_unused_result, const, nonnull(arg, ##__VA_ARGS__))
+#define CDVJK_WARN_UNUSED_PURE_NONNULL_ARGS(arg, ...)                 CDVJK_ATTRIBUTES(warn_unused_result, pure, nonnull(arg, ##__VA_ARGS__))
 
 #if       defined (__GNUC__) && (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 3)
-#define JK_ALLOC_SIZE_NON_NULL_ARGS_WARN_UNUSED(as, nn, ...) JK_ATTRIBUTES(warn_unused_result, nonnull(nn, ##__VA_ARGS__), alloc_size(as))
+#define CDVJK_ALLOC_SIZE_NON_NULL_ARGS_WARN_UNUSED(as, nn, ...) CDVJK_ATTRIBUTES(warn_unused_result, nonnull(nn, ##__VA_ARGS__), alloc_size(as))
 #else  // defined (__GNUC__) && (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 3)
-#define JK_ALLOC_SIZE_NON_NULL_ARGS_WARN_UNUSED(as, nn, ...) JK_ATTRIBUTES(warn_unused_result, nonnull(nn, ##__VA_ARGS__))
+#define CDVJK_ALLOC_SIZE_NON_NULL_ARGS_WARN_UNUSED(as, nn, ...) CDVJK_ATTRIBUTES(warn_unused_result, nonnull(nn, ##__VA_ARGS__))
 #endif // defined (__GNUC__) && (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 3)
 
 
-@class JKArray, JKDictionaryEnumerator, JKDictionary;
+@class CDVJKArray, CDVJKDictionaryEnumerator, CDVJKDictionary;
 
 enum {
-  JSONNumberStateStart                 = 0,
-  JSONNumberStateFinished              = 1,
-  JSONNumberStateError                 = 2,
-  JSONNumberStateWholeNumberStart      = 3,
-  JSONNumberStateWholeNumberMinus      = 4,
-  JSONNumberStateWholeNumberZero       = 5,
-  JSONNumberStateWholeNumber           = 6,
-  JSONNumberStatePeriod                = 7,
-  JSONNumberStateFractionalNumberStart = 8,
-  JSONNumberStateFractionalNumber      = 9,
-  JSONNumberStateExponentStart         = 10,
-  JSONNumberStateExponentPlusMinus     = 11,
-  JSONNumberStateExponent              = 12,
+  CDVJSONNumberStateStart                 = 0,
+  CDVJSONNumberStateFinished              = 1,
+  CDVJSONNumberStateError                 = 2,
+  CDVJSONNumberStateWholeNumberStart      = 3,
+  CDVJSONNumberStateWholeNumberMinus      = 4,
+  CDVJSONNumberStateWholeNumberZero       = 5,
+  CDVJSONNumberStateWholeNumber           = 6,
+  CDVJSONNumberStatePeriod                = 7,
+  CDVJSONNumberStateFractionalNumberStart = 8,
+  CDVJSONNumberStateFractionalNumber      = 9,
+  CDVJSONNumberStateExponentStart         = 10,
+  CDVJSONNumberStateExponentPlusMinus     = 11,
+  CDVJSONNumberStateExponent              = 12,
 };
 
 enum {
-  JSONStringStateStart                           = 0,
-  JSONStringStateParsing                         = 1,
-  JSONStringStateFinished                        = 2,
-  JSONStringStateError                           = 3,
-  JSONStringStateEscape                          = 4,
-  JSONStringStateEscapedUnicode1                 = 5,
-  JSONStringStateEscapedUnicode2                 = 6,
-  JSONStringStateEscapedUnicode3                 = 7,
-  JSONStringStateEscapedUnicode4                 = 8,
-  JSONStringStateEscapedUnicodeSurrogate1        = 9,
-  JSONStringStateEscapedUnicodeSurrogate2        = 10,
-  JSONStringStateEscapedUnicodeSurrogate3        = 11,
-  JSONStringStateEscapedUnicodeSurrogate4        = 12,
-  JSONStringStateEscapedNeedEscapeForSurrogate   = 13,
-  JSONStringStateEscapedNeedEscapedUForSurrogate = 14,
+  CDVJSONStringStateStart                           = 0,
+  CDVJSONStringStateParsing                         = 1,
+  CDVJSONStringStateFinished                        = 2,
+  CDVJSONStringStateError                           = 3,
+  CDVJSONStringStateEscape                          = 4,
+  CDVJSONStringStateEscapedUnicode1                 = 5,
+  CDVJSONStringStateEscapedUnicode2                 = 6,
+  CDVJSONStringStateEscapedUnicode3                 = 7,
+  CDVJSONStringStateEscapedUnicode4                 = 8,
+  CDVJSONStringStateEscapedUnicodeSurrogate1        = 9,
+  CDVJSONStringStateEscapedUnicodeSurrogate2        = 10,
+  CDVJSONStringStateEscapedUnicodeSurrogate3        = 11,
+  CDVJSONStringStateEscapedUnicodeSurrogate4        = 12,
+  CDVJSONStringStateEscapedNeedEscapeForSurrogate   = 13,
+  CDVJSONStringStateEscapedNeedEscapedUForSurrogate = 14,
 };
 
 enum {
-  JKParseAcceptValue      = (1 << 0),
-  JKParseAcceptComma      = (1 << 1),
-  JKParseAcceptEnd        = (1 << 2),
-  JKParseAcceptValueOrEnd = (JKParseAcceptValue | JKParseAcceptEnd),
-  JKParseAcceptCommaOrEnd = (JKParseAcceptComma | JKParseAcceptEnd),
+  CDVJKParseAcceptValue      = (1 << 0),
+  CDVJKParseAcceptComma      = (1 << 1),
+  CDVJKParseAcceptEnd        = (1 << 2),
+  CDVJKParseAcceptValueOrEnd = (CDVJKParseAcceptValue | CDVJKParseAcceptEnd),
+  CDVJKParseAcceptCommaOrEnd = (CDVJKParseAcceptComma | CDVJKParseAcceptEnd),
 };
 
 enum {
-  JKClassUnknown    = 0,
-  JKClassString     = 1,
-  JKClassNumber     = 2,
-  JKClassArray      = 3,
-  JKClassDictionary = 4,
-  JKClassNull       = 5,
+  CDVJKClassUnknown    = 0,
+  CDVJKClassString     = 1,
+  CDVJKClassNumber     = 2,
+  CDVJKClassArray      = 3,
+  CDVJKClassDictionary = 4,
+  CDVJKClassNull       = 5,
 };
 
 enum {
-  JKManagedBufferOnStack        = 1,
-  JKManagedBufferOnHeap         = 2,
-  JKManagedBufferLocationMask   = (0x3),
-  JKManagedBufferLocationShift  = (0),
+  CDVJKManagedBufferOnStack        = 1,
+  CDVJKManagedBufferOnHeap         = 2,
+  CDVJKManagedBufferLocationMask   = (0x3),
+  CDVJKManagedBufferLocationShift  = (0),
   
-  JKManagedBufferMustFree       = (1 << 2),
+  CDVJKManagedBufferMustFree       = (1 << 2),
 };
-typedef JKFlags JKManagedBufferFlags;
+typedef CDVJKFlags CDVJKManagedBufferFlags;
 
 enum {
-  JKObjectStackOnStack        = 1,
-  JKObjectStackOnHeap         = 2,
-  JKObjectStackLocationMask   = (0x3),
-  JKObjectStackLocationShift  = (0),
+  CDVJKObjectStackOnStack        = 1,
+  CDVJKObjectStackOnHeap         = 2,
+  CDVJKObjectStackLocationMask   = (0x3),
+  CDVJKObjectStackLocationShift  = (0),
   
-  JKObjectStackMustFree       = (1 << 2),
+  CDVJKObjectStackMustFree       = (1 << 2),
 };
-typedef JKFlags JKObjectStackFlags;
+typedef CDVJKFlags CDVJKObjectStackFlags;
 
 enum {
-  JKTokenTypeInvalid     = 0,
-  JKTokenTypeNumber      = 1,
-  JKTokenTypeString      = 2,
-  JKTokenTypeObjectBegin = 3,
-  JKTokenTypeObjectEnd   = 4,
-  JKTokenTypeArrayBegin  = 5,
-  JKTokenTypeArrayEnd    = 6,
-  JKTokenTypeSeparator   = 7,
-  JKTokenTypeComma       = 8,
-  JKTokenTypeTrue        = 9,
-  JKTokenTypeFalse       = 10,
-  JKTokenTypeNull        = 11,
-  JKTokenTypeWhiteSpace  = 12,
+  CDVJKTokenTypeInvalid     = 0,
+  CDVJKTokenTypeNumber      = 1,
+  CDVJKTokenTypeString      = 2,
+  CDVJKTokenTypeObjectBegin = 3,
+  CDVJKTokenTypeObjectEnd   = 4,
+  CDVJKTokenTypeArrayBegin  = 5,
+  CDVJKTokenTypeArrayEnd    = 6,
+  CDVJKTokenTypeSeparator   = 7,
+  CDVJKTokenTypeComma       = 8,
+  CDVJKTokenTypeTrue        = 9,
+  CDVJKTokenTypeFalse       = 10,
+  CDVJKTokenTypeNull        = 11,
+  CDVJKTokenTypeWhiteSpace  = 12,
 };
-typedef NSUInteger JKTokenType;
+typedef NSUInteger CDVJKTokenType;
 
 // These are prime numbers to assist with hash slot probing.
 enum {
-  JKValueTypeNone             = 0,
-  JKValueTypeString           = 5,
-  JKValueTypeLongLong         = 7,
-  JKValueTypeUnsignedLongLong = 11,
-  JKValueTypeDouble           = 13,
+  CDVJKValueTypeNone             = 0,
+  CDVJKValueTypeString           = 5,
+  CDVJKValueTypeLongLong         = 7,
+  CDVJKValueTypeUnsignedLongLong = 11,
+  CDVJKValueTypeDouble           = 13,
 };
-typedef NSUInteger JKValueType;
+typedef NSUInteger CDVJKValueType;
 
 enum {
-  JKEncodeOptionAsData              = 1,
-  JKEncodeOptionAsString            = 2,
-  JKEncodeOptionAsTypeMask          = 0x7,
-  JKEncodeOptionCollectionObj       = (1 << 3),
-  JKEncodeOptionStringObj           = (1 << 4),
-  JKEncodeOptionStringObjTrimQuotes = (1 << 5),
+  CDVJKEncodeOptionAsData              = 1,
+  CDVJKEncodeOptionAsString            = 2,
+  CDVJKEncodeOptionAsTypeMask          = 0x7,
+  CDVJKEncodeOptionCollectionObj       = (1 << 3),
+  CDVJKEncodeOptionStringObj           = (1 << 4),
+  CDVJKEncodeOptionStringObjTrimQuotes = (1 << 5),
   
 };
-typedef NSUInteger JKEncodeOptionType;
+typedef NSUInteger CDVJKEncodeOptionType;
 
-typedef NSUInteger JKHash;
+typedef NSUInteger CDVJKHash;
 
-typedef struct JKTokenCacheItem  JKTokenCacheItem;
-typedef struct JKTokenCache      JKTokenCache;
-typedef struct JKTokenValue      JKTokenValue;
-typedef struct JKParseToken      JKParseToken;
-typedef struct JKPtrRange        JKPtrRange;
-typedef struct JKObjectStack     JKObjectStack;
-typedef struct JKBuffer          JKBuffer;
-typedef struct JKConstBuffer     JKConstBuffer;
-typedef struct JKConstPtrRange   JKConstPtrRange;
-typedef struct JKRange           JKRange;
-typedef struct JKManagedBuffer   JKManagedBuffer;
-typedef struct JKFastClassLookup JKFastClassLookup;
-typedef struct JKEncodeCache     JKEncodeCache;
-typedef struct JKEncodeState     JKEncodeState;
-typedef struct JKObjCImpCache    JKObjCImpCache;
-typedef struct JKHashTableEntry  JKHashTableEntry;
+typedef struct CDVJKTokenCacheItem  CDVJKTokenCacheItem;
+typedef struct CDVJKTokenCache      CDVJKTokenCache;
+typedef struct CDVJKTokenValue      CDVJKTokenValue;
+typedef struct CDVJKParseToken      CDVJKParseToken;
+typedef struct CDVJKPtrRange        CDVJKPtrRange;
+typedef struct CDVJKObjectStack     CDVJKObjectStack;
+typedef struct CDVJKBuffer          CDVJKBuffer;
+typedef struct CDVJKConstBuffer     CDVJKConstBuffer;
+typedef struct CDVJKConstPtrRange   CDVJKConstPtrRange;
+typedef struct CDVJKRange           CDVJKRange;
+typedef struct CDVJKManagedBuffer   CDVJKManagedBuffer;
+typedef struct CDVJKFastClassLookup CDVJKFastClassLookup;
+typedef struct CDVJKEncodeCache     CDVJKEncodeCache;
+typedef struct CDVJKEncodeState     CDVJKEncodeState;
+typedef struct CDVJKObjCImpCache    CDVJKObjCImpCache;
+typedef struct CDVJKHashTableEntry  CDVJKHashTableEntry;
 
 typedef id (*NSNumberAllocImp)(id receiver, SEL selector);
 typedef id (*NSNumberInitWithUnsignedLongLongImp)(id receiver, SEL selector, unsigned long long value);
-typedef id (*JKClassFormatterIMP)(id receiver, SEL selector, id object);
+typedef id (*CDVJKClassFormatterIMP)(id receiver, SEL selector, id object);
 #ifdef __BLOCKS__
-typedef id (^JKClassFormatterBlock)(id formatObject);
+typedef id (^CDVJKClassFormatterBlock)(id formatObject);
 #endif
 
 
-struct JKPtrRange {
+struct CDVJKPtrRange {
   unsigned char *ptr;
   size_t         length;
 };
 
-struct JKConstPtrRange {
+struct CDVJKConstPtrRange {
   const unsigned char *ptr;
   size_t               length;
 };
 
-struct JKRange {
+struct CDVJKRange {
   size_t location, length;
 };
 
-struct JKManagedBuffer {
-  JKPtrRange           bytes;
-  JKManagedBufferFlags flags;
+struct CDVJKManagedBuffer {
+  CDVJKPtrRange           bytes;
+  CDVJKManagedBufferFlags flags;
   size_t               roundSizeUpToMultipleOf;
 };
 
-struct JKObjectStack {
+struct CDVJKObjectStack {
   void               **objects, **keys;
   CFHashCode          *cfHashes;
   size_t               count, index, roundSizeUpToMultipleOf;
-  JKObjectStackFlags   flags;
+  CDVJKObjectStackFlags   flags;
 };
 
-struct JKBuffer {
-  JKPtrRange bytes;
+struct CDVJKBuffer {
+  CDVJKPtrRange bytes;
 };
 
-struct JKConstBuffer {
-  JKConstPtrRange bytes;
+struct CDVJKConstBuffer {
+  CDVJKConstPtrRange bytes;
 };
 
-struct JKTokenValue {
-  JKConstPtrRange   ptrRange;
-  JKValueType       type;
-  JKHash            hash;
+struct CDVJKTokenValue {
+  CDVJKConstPtrRange   ptrRange;
+  CDVJKValueType       type;
+  CDVJKHash            hash;
   union {
     long long          longLongValue;
     unsigned long long unsignedLongLongValue;
     double             doubleValue;
   } number;
-  JKTokenCacheItem *cacheItem;
+  CDVJKTokenCacheItem *cacheItem;
 };
 
-struct JKParseToken {
-  JKConstPtrRange tokenPtrRange;
-  JKTokenType     type;
-  JKTokenValue    value;
-  JKManagedBuffer tokenBuffer;
+struct CDVJKParseToken {
+  CDVJKConstPtrRange tokenPtrRange;
+  CDVJKTokenType     type;
+  CDVJKTokenValue    value;
+  CDVJKManagedBuffer tokenBuffer;
 };
 
-struct JKTokenCacheItem {
+struct CDVJKTokenCacheItem {
   void          *object;
-  JKHash         hash;
+  CDVJKHash         hash;
   CFHashCode     cfHash;
   size_t         size;
   unsigned char *bytes;
-  JKValueType    type;
+  CDVJKValueType    type;
 };
 
-struct JKTokenCache {
-  JKTokenCacheItem *items;
+struct CDVJKTokenCache {
+  CDVJKTokenCacheItem *items;
   size_t            count;
   unsigned int      prng_lfsr;
-  unsigned char     age[JK_CACHE_SLOTS];
+  unsigned char     age[CDVJK_CACHE_SLOTS];
 };
 
-struct JKObjCImpCache {
+struct CDVJKObjCImpCache {
   Class                               NSNumberClass;
   NSNumberAllocImp                    NSNumberAlloc;
   NSNumberInitWithUnsignedLongLongImp NSNumberInitWithUnsignedLongLong;
 };
 
-struct JKParseState {
-  JKParseOptionFlags  parseOptionFlags;
-  JKConstBuffer       stringBuffer;
+struct CDVJKParseState {
+  CDVJKParseOptionFlags  parseOptionFlags;
+  CDVJKConstBuffer       stringBuffer;
   size_t              atIndex, lineNumber, lineStartIndex;
   size_t              prev_atIndex, prev_lineNumber, prev_lineStartIndex;
-  JKParseToken        token;
-  JKObjectStack       objectStack;
-  JKTokenCache        cache;
-  JKObjCImpCache      objCImpCache;
+  CDVJKParseToken        token;
+  CDVJKObjectStack       objectStack;
+  CDVJKTokenCache        cache;
+  CDVJKObjCImpCache      objCImpCache;
   NSError            *error;
   int                 errorIsPrev;
   BOOL                mutableCollections;
 };
 
-struct JKFastClassLookup {
+struct CDVJKFastClassLookup {
   void *stringClass;
   void *numberClass;
   void *arrayClass;
@@ -459,48 +459,48 @@ struct JKFastClassLookup {
   void *nullClass;
 };
 
-struct JKEncodeCache {
+struct CDVJKEncodeCache {
   id object;
   size_t offset;
   size_t length;
 };
 
-struct JKEncodeState {
-  JKManagedBuffer         utf8ConversionBuffer;
-  JKManagedBuffer         stringBuffer;
+struct CDVJKEncodeState {
+  CDVJKManagedBuffer         utf8ConversionBuffer;
+  CDVJKManagedBuffer         stringBuffer;
   size_t                  atIndex;
-  JKFastClassLookup       fastClassLookup;
-  JKEncodeCache           cache[JK_ENCODE_CACHE_SLOTS];
-  JKSerializeOptionFlags  serializeOptionFlags;
-  JKEncodeOptionType      encodeOption;
+  CDVJKFastClassLookup       fastClassLookup;
+  CDVJKEncodeCache           cache[CDVJK_ENCODE_CACHE_SLOTS];
+  CDVJKSerializeOptionFlags  serializeOptionFlags;
+  CDVJKEncodeOptionType      encodeOption;
   size_t                  depth;
   NSError                *error;
   id                      classFormatterDelegate;
   SEL                     classFormatterSelector;
-  JKClassFormatterIMP     classFormatterIMP;
+  CDVJKClassFormatterIMP     classFormatterIMP;
 #ifdef __BLOCKS__
-  JKClassFormatterBlock   classFormatterBlock;
+  CDVJKClassFormatterBlock   classFormatterBlock;
 #endif
 };
 
-// This is a JSONKit private class.
-@interface JKSerializer : NSObject {
-  JKEncodeState *encodeState;
+// This is a CDVJSONKit private class.
+@interface CDVJKSerializer : NSObject {
+  CDVJKEncodeState *encodeState;
 }
 
 #ifdef __BLOCKS__
-#define JKSERIALIZER_BLOCKS_PROTO id(^)(id object)
+#define CDVJKSERIALIZER_BLOCKS_PROTO id(^)(id object)
 #else
-#define JKSERIALIZER_BLOCKS_PROTO id
+#define CDVJKSERIALIZER_BLOCKS_PROTO id
 #endif
 
-+ (id)serializeObject:(id)object options:(JKSerializeOptionFlags)optionFlags encodeOption:(JKEncodeOptionType)encodeOption block:(JKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
-- (id)serializeObject:(id)object options:(JKSerializeOptionFlags)optionFlags encodeOption:(JKEncodeOptionType)encodeOption block:(JKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
++ (id)serializeObject:(id)object options:(CDVJKSerializeOptionFlags)optionFlags encodeOption:(CDVJKEncodeOptionType)encodeOption block:(CDVJKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
+- (id)serializeObject:(id)object options:(CDVJKSerializeOptionFlags)optionFlags encodeOption:(CDVJKEncodeOptionType)encodeOption block:(CDVJKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
 - (void)releaseState;
 
 @end
 
-struct JKHashTableEntry {
+struct CDVJKHashTableEntry {
   NSUInteger keyHash;
   id key, object;
 };
@@ -528,7 +528,7 @@ typedef enum {
 #define UNI_SUR_LOW_END      (UTF32)0xDFFF
 
 
-#if !defined(JK_FAST_TRAILING_BYTES)
+#if !defined(CDVJK_FAST_TRAILING_BYTES)
 static const char trailingBytesForUTF8[256] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -544,112 +544,112 @@ static const char trailingBytesForUTF8[256] = {
 static const UTF32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL, 0x03C82080UL, 0xFA082080UL, 0x82082080UL };
 static const UTF8  firstByteMark[7]   = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
-#define JK_AT_STRING_PTR(x)  (&((x)->stringBuffer.bytes.ptr[(x)->atIndex]))
-#define JK_END_STRING_PTR(x) (&((x)->stringBuffer.bytes.ptr[(x)->stringBuffer.bytes.length]))
+#define CDVJK_AT_STRING_PTR(x)  (&((x)->stringBuffer.bytes.ptr[(x)->atIndex]))
+#define CDVJK_END_STRING_PTR(x) (&((x)->stringBuffer.bytes.ptr[(x)->stringBuffer.bytes.length]))
 
 
-static JKArray          *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection);
-static void              _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger objectIndex);
-static void              _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger objectIndex, id newObject);
-static void              _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex);
+static CDVJKArray          *_CDVJKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection);
+static void              _CDVJKArrayInsertObjectAtIndex(CDVJKArray *array, id newObject, NSUInteger objectIndex);
+static void              _CDVJKArrayReplaceObjectAtIndexWithObject(CDVJKArray *array, NSUInteger objectIndex, id newObject);
+static void              _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectIndex);
 
 
-static NSUInteger        _JKDictionaryCapacityForCount(NSUInteger count);
-static JKDictionary     *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection);
-static JKHashTableEntry *_JKDictionaryHashEntry(JKDictionary *dictionary);
-static NSUInteger        _JKDictionaryCapacity(JKDictionary *dictionary);
-static void              _JKDictionaryResizeIfNeccessary(JKDictionary *dictionary);
-static void              _JKDictionaryRemoveObjectWithEntry(JKDictionary *dictionary, JKHashTableEntry *entry);
-static void              _JKDictionaryAddObject(JKDictionary *dictionary, NSUInteger keyHash, id key, id object);
-static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *dictionary, id aKey);
+static NSUInteger        _CDVJKDictionaryCapacityForCount(NSUInteger count);
+static CDVJKDictionary     *_CDVJKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection);
+static CDVJKHashTableEntry *_CDVJKDictionaryHashEntry(CDVJKDictionary *dictionary);
+static NSUInteger        _CDVJKDictionaryCapacity(CDVJKDictionary *dictionary);
+static void              _CDVJKDictionaryResizeIfNeccessary(CDVJKDictionary *dictionary);
+static void              _CDVJKDictionaryRemoveObjectWithEntry(CDVJKDictionary *dictionary, CDVJKHashTableEntry *entry);
+static void              _CDVJKDictionaryAddObject(CDVJKDictionary *dictionary, NSUInteger keyHash, id key, id object);
+static CDVJKHashTableEntry *_CDVJKDictionaryHashTableEntryForKey(CDVJKDictionary *dictionary, id aKey);
 
 
-static void _JSONDecoderCleanup(JSONDecoder *decoder);
+static void _JSONDecoderCleanup(CDVJSONDecoder *decoder);
 
-static id _NSStringObjectFromJSONString(NSString *jsonString, JKParseOptionFlags parseOptionFlags, NSError **error, BOOL mutableCollection);
-
-
-static void jk_managedBuffer_release(JKManagedBuffer *managedBuffer);
-static void jk_managedBuffer_setToStackBuffer(JKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length);
-static unsigned char *jk_managedBuffer_resize(JKManagedBuffer *managedBuffer, size_t newSize);
-static void jk_objectStack_release(JKObjectStack *objectStack);
-static void jk_objectStack_setToStackBuffer(JKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count);
-static int  jk_objectStack_resize(JKObjectStack *objectStack, size_t newCount);
-
-static void   jk_error(JKParseState *parseState, NSString *format, ...);
-static int    jk_parse_string(JKParseState *parseState);
-static int    jk_parse_number(JKParseState *parseState);
-static size_t jk_parse_is_newline(JKParseState *parseState, const unsigned char *atCharacterPtr);
-JK_STATIC_INLINE int jk_parse_skip_newline(JKParseState *parseState);
-JK_STATIC_INLINE void jk_parse_skip_whitespace(JKParseState *parseState);
-static int    jk_parse_next_token(JKParseState *parseState);
-static void   jk_error_parse_accept_or3(JKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String);
-static void  *jk_create_dictionary(JKParseState *parseState, size_t startingObjectIndex);
-static void  *jk_parse_dictionary(JKParseState *parseState);
-static void  *jk_parse_array(JKParseState *parseState);
-static void  *jk_object_for_token(JKParseState *parseState);
-static void  *jk_cachedObjects(JKParseState *parseState);
-JK_STATIC_INLINE void jk_cache_age(JKParseState *parseState);
-JK_STATIC_INLINE void jk_set_parsed_token(JKParseState *parseState, const unsigned char *ptr, size_t length, JKTokenType type, size_t advanceBy);
+static id _NSStringObjectFromJSONString(NSString *jsonString, CDVJKParseOptionFlags parseOptionFlags, NSError **error, BOOL mutableCollection);
 
 
-static void jk_encode_error(JKEncodeState *encodeState, NSString *format, ...);
-static int jk_encode_printf(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...);
-static int jk_encode_write(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format);
-static int jk_encode_writePrettyPrintWhiteSpace(JKEncodeState *encodeState);
-static int jk_encode_write1slow(JKEncodeState *encodeState, ssize_t depthChange, const char *format);
-static int jk_encode_write1fast(JKEncodeState *encodeState, ssize_t depthChange JK_UNUSED_ARG, const char *format);
-static int jk_encode_writen(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length);
-JK_STATIC_INLINE JKHash jk_encode_object_hash(void *objectPtr);
-JK_STATIC_INLINE void jk_encode_updateCache(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object);
-static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *objectPtr);
+static void jk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer);
+static void jk_managedBuffer_setToStackBuffer(CDVJKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length);
+static unsigned char *jk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer, size_t newSize);
+static void jk_objectStack_release(CDVJKObjectStack *objectStack);
+static void jk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count);
+static int  jk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount);
 
-#define jk_encode_write1(es, dc, f)  (JK_EXPECT_F(_jk_encode_prettyPrint) ? jk_encode_write1slow(es, dc, f) : jk_encode_write1fast(es, dc, f))
+static void   jk_error(CDVJKParseState *parseState, NSString *format, ...);
+static int    jk_parse_string(CDVJKParseState *parseState);
+static int    jk_parse_number(CDVJKParseState *parseState);
+static size_t jk_parse_is_newline(CDVJKParseState *parseState, const unsigned char *atCharacterPtr);
+CDVJK_STATIC_INLINE int jk_parse_skip_newline(CDVJKParseState *parseState);
+CDVJK_STATIC_INLINE void jk_parse_skip_whitespace(CDVJKParseState *parseState);
+static int    jk_parse_next_token(CDVJKParseState *parseState);
+static void   jk_error_parse_accept_or3(CDVJKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String);
+static void  *jk_create_dictionary(CDVJKParseState *parseState, size_t startingObjectIndex);
+static void  *jk_parse_dictionary(CDVJKParseState *parseState);
+static void  *jk_parse_array(CDVJKParseState *parseState);
+static void  *jk_object_for_token(CDVJKParseState *parseState);
+static void  *jk_cachedObjects(CDVJKParseState *parseState);
+CDVJK_STATIC_INLINE void jk_cache_age(CDVJKParseState *parseState);
+CDVJK_STATIC_INLINE void jk_set_parsed_token(CDVJKParseState *parseState, const unsigned char *ptr, size_t length, CDVJKTokenType type, size_t advanceBy);
 
 
-JK_STATIC_INLINE size_t jk_min(size_t a, size_t b);
-JK_STATIC_INLINE size_t jk_max(size_t a, size_t b);
-JK_STATIC_INLINE JKHash calculateHash(JKHash currentHash, unsigned char c);
+static void jk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...);
+static int jk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...);
+static int jk_encode_write(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format);
+static int jk_encode_writePrettyPrintWhiteSpace(CDVJKEncodeState *encodeState);
+static int jk_encode_write1slow(CDVJKEncodeState *encodeState, ssize_t depthChange, const char *format);
+static int jk_encode_write1fast(CDVJKEncodeState *encodeState, ssize_t depthChange CDVJK_UNUSED_ARG, const char *format);
+static int jk_encode_writen(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length);
+CDVJK_STATIC_INLINE CDVJKHash jk_encode_object_hash(void *objectPtr);
+CDVJK_STATIC_INLINE void jk_encode_updateCache(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object);
+static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *objectPtr);
 
-// JSONKit v1.4 used both a JKArray : NSArray and JKMutableArray : NSMutableArray, and the same for the dictionary collection type.
+#define jk_encode_write1(es, dc, f)  (CDVJK_EXPECT_F(_jk_encode_prettyPrint) ? jk_encode_write1slow(es, dc, f) : jk_encode_write1fast(es, dc, f))
+
+
+CDVJK_STATIC_INLINE size_t jk_min(size_t a, size_t b);
+CDVJK_STATIC_INLINE size_t jk_max(size_t a, size_t b);
+CDVJK_STATIC_INLINE CDVJKHash calculateHash(CDVJKHash currentHash, unsigned char c);
+
+// CDVJSONKit v1.4 used both a CDVJKArray : NSArray and CDVJKMutableArray : NSMutableArray, and the same for the dictionary collection type.
 // However, Louis Gerbarg (via cocoa-dev) pointed out that Cocoa / Core Foundation actually implements only a single class that inherits from the 
 // mutable version, and keeps an ivar bit for whether or not that instance is mutable.  This means that the immutable versions of the collection
 // classes receive the mutating methods, but this is handled by having those methods throw an exception when the ivar bit is set to immutable.
-// We adopt the same strategy here.  It's both cleaner and gets rid of the method swizzling hackery used in JSONKit v1.4.
+// We adopt the same strategy here.  It's both cleaner and gets rid of the method swizzling hackery used in CDVJSONKit v1.4.
 
 
 // This is a workaround for issue #23 https://github.com/johnezang/JSONKit/pull/23
 // Basically, there seem to be a problem with using +load in static libraries on iOS.  However, __attribute__ ((constructor)) does work correctly.
 // Since we do not require anything "special" that +load provides, and we can accomplish the same thing using __attribute__ ((constructor)), the +load logic was moved here.
 
-static Class                               _JKArrayClass                           = NULL;
-static size_t                              _JKArrayInstanceSize                    = 0UL;
-static Class                               _JKDictionaryClass                      = NULL;
-static size_t                              _JKDictionaryInstanceSize               = 0UL;
+static Class                               _CDVJKArrayClass                           = NULL;
+static size_t                              _CDVJKArrayInstanceSize                    = 0UL;
+static Class                               _CDVJKDictionaryClass                      = NULL;
+static size_t                              _CDVJKDictionaryInstanceSize               = 0UL;
 
-// For JSONDecoder...
-static Class                               _jk_NSNumberClass                       = NULL;
-static NSNumberAllocImp                    _jk_NSNumberAllocImp                    = NULL;
-static NSNumberInitWithUnsignedLongLongImp _jk_NSNumberInitWithUnsignedLongLongImp = NULL;
+// For CDVJSONDecoder...
+static Class                               _CDVjk_NSNumberClass                       = NULL;
+static NSNumberAllocImp                    _CDVjk_NSNumberAllocImp                    = NULL;
+static NSNumberInitWithUnsignedLongLongImp _CDVjk_NSNumberInitWithUnsignedLongLongImp = NULL;
 
 extern void jk_collectionClassLoadTimeInitialization(void) __attribute__ ((constructor));
 
 void jk_collectionClassLoadTimeInitialization(void) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at load time initialization may be less than ideal.
   
-  _JKArrayClass             = objc_getClass("JKArray");
-  _JKArrayInstanceSize      = jk_max(16UL, class_getInstanceSize(_JKArrayClass));
+  _CDVJKArrayClass             = objc_getClass("CDVJKArray");
+  _CDVJKArrayInstanceSize      = jk_max(16UL, class_getInstanceSize(_CDVJKArrayClass));
   
-  _JKDictionaryClass        = objc_getClass("JKDictionary");
-  _JKDictionaryInstanceSize = jk_max(16UL, class_getInstanceSize(_JKDictionaryClass));
+  _CDVJKDictionaryClass        = objc_getClass("CDVJKDictionary");
+  _CDVJKDictionaryInstanceSize = jk_max(16UL, class_getInstanceSize(_CDVJKDictionaryClass));
   
-  // For JSONDecoder...
-  _jk_NSNumberClass = [NSNumber class];
-  _jk_NSNumberAllocImp = (NSNumberAllocImp)[NSNumber methodForSelector:@selector(alloc)];
+  // For CDVJSONDecoder...
+  _CDVjk_NSNumberClass = [NSNumber class];
+  _CDVjk_NSNumberAllocImp = (NSNumberAllocImp)[NSNumber methodForSelector:@selector(alloc)];
   
   // Hacktacular.  Need to do it this way due to the nature of class clusters.
   id temp_NSNumber = [NSNumber alloc];
-  _jk_NSNumberInitWithUnsignedLongLongImp = (NSNumberInitWithUnsignedLongLongImp)[temp_NSNumber methodForSelector:@selector(initWithUnsignedLongLong:)];
+  _CDVjk_NSNumberInitWithUnsignedLongLongImp = (NSNumberInitWithUnsignedLongLongImp)[temp_NSNumber methodForSelector:@selector(initWithUnsignedLongLong:)];
   [[temp_NSNumber init] release];
   temp_NSNumber = NULL;
   
@@ -658,30 +658,30 @@ void jk_collectionClassLoadTimeInitialization(void) {
 
 
 #pragma mark -
-@interface JKArray : NSMutableArray <NSCopying, NSMutableCopying, NSFastEnumeration> {
+@interface CDVJKArray : NSMutableArray <NSCopying, NSMutableCopying, NSFastEnumeration> {
   id         *objects;
   NSUInteger  count, capacity, mutations;
 }
 @end
 
-@implementation JKArray
+@implementation CDVJKArray
 
 + (id)allocWithZone:(NSZone *)zone
 {
 #pragma unused(zone)
-  [NSException raise:NSInvalidArgumentException format:@"*** - [%@ %@]: The %@ class is private to JSONKit and should not be used in this fashion.", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSStringFromClass([self class])];
+  [NSException raise:NSInvalidArgumentException format:@"*** - [%@ %@]: The %@ class is private to CDVJSONKit and should not be used in this fashion.", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSStringFromClass([self class])];
   return(NULL);
 }
 
-static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection) {
-  NSCParameterAssert((objects != NULL) && (_JKArrayClass != NULL) && (_JKArrayInstanceSize > 0UL));
-  JKArray *array = NULL;
-  if(JK_EXPECT_T((array = (JKArray *)calloc(1UL, _JKArrayInstanceSize)) != NULL)) { // Directly allocate the JKArray instance via calloc.
-    array->isa      = _JKArrayClass;
+static CDVJKArray *_CDVJKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection) {
+  NSCParameterAssert((objects != NULL) && (_CDVJKArrayClass != NULL) && (_CDVJKArrayInstanceSize > 0UL));
+  CDVJKArray *array = NULL;
+  if(CDVJK_EXPECT_T((array = (CDVJKArray *)calloc(1UL, _CDVJKArrayInstanceSize)) != NULL)) { // Directly allocate the CDVJKArray instance via calloc.
+    array->isa      = _CDVJKArrayClass;
     if((array = [array init]) == NULL) { return(NULL); }
     array->capacity = count;
     array->count    = count;
-    if(JK_EXPECT_F((array->objects = (id *)malloc(sizeof(id) * array->capacity)) == NULL)) { [array autorelease]; return(NULL); }
+    if(CDVJK_EXPECT_F((array->objects = (id *)malloc(sizeof(id) * array->capacity)) == NULL)) { [array autorelease]; return(NULL); }
     memcpy(array->objects, objects, array->capacity * sizeof(id));
     array->mutations = (mutableCollection == NO) ? 0UL : 1UL;
   }
@@ -689,7 +689,7 @@ static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollec
 }
 
 // Note: The caller is responsible for -retaining the object that is to be added.
-static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger objectIndex) {
+static void _CDVJKArrayInsertObjectAtIndex(CDVJKArray *array, id newObject, NSUInteger objectIndex) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count <= array->capacity) && (objectIndex <= array->count) && (newObject != NULL));
   if(!((array != NULL) && (array->objects != NULL) && (objectIndex <= array->count) && (newObject != NULL))) { [newObject autorelease]; return; }
   if((array->count + 1UL) >= array->capacity) {
@@ -705,7 +705,7 @@ static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger
 }
 
 // Note: The caller is responsible for -retaining the object that is to be added.
-static void _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger objectIndex, id newObject) {
+static void _CDVJKArrayReplaceObjectAtIndexWithObject(CDVJKArray *array, NSUInteger objectIndex, id newObject) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL));
   if(!((array != NULL) && (array->objects != NULL) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL))) { [newObject autorelease]; return; }
   CFRelease(array->objects[objectIndex]);
@@ -713,7 +713,7 @@ static void _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger ob
   array->objects[objectIndex] = newObject;
 }
 
-static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) {
+static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectIndex) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count > 0UL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL));
   if(!((array != NULL) && (array->objects != NULL) && (array->count > 0UL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL))) { return; }
   CFRelease(array->objects[objectIndex]);
@@ -724,9 +724,9 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 
 - (void)dealloc
 {
-  if(JK_EXPECT_T(objects != NULL)) {
+  if(CDVJK_EXPECT_T(objects != NULL)) {
     NSUInteger atObject = 0UL;
-    for(atObject = 0UL; atObject < count; atObject++) { if(JK_EXPECT_T(objects[atObject] != NULL)) { CFRelease(objects[atObject]); objects[atObject] = NULL; } }
+    for(atObject = 0UL; atObject < count; atObject++) { if(CDVJK_EXPECT_T(objects[atObject] != NULL)) { CFRelease(objects[atObject]); objects[atObject] = NULL; } }
     free(objects); objects = NULL;
   }
   
@@ -757,11 +757,11 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
 {
   NSParameterAssert((state != NULL) && (stackbuf != NULL) && (len > 0UL) && (objects != NULL) && (count <= capacity));
-  if(JK_EXPECT_F(state->state == 0UL))   { state->mutationsPtr = (unsigned long *)&mutations; state->itemsPtr = stackbuf; }
-  if(JK_EXPECT_F(state->state >= count)) { return(0UL); }
+  if(CDVJK_EXPECT_F(state->state == 0UL))   { state->mutationsPtr = (unsigned long *)&mutations; state->itemsPtr = stackbuf; }
+  if(CDVJK_EXPECT_F(state->state >= count)) { return(0UL); }
   
   NSUInteger enumeratedCount  = 0UL;
-  while(JK_EXPECT_T(enumeratedCount < len) && JK_EXPECT_T(state->state < count)) { NSParameterAssert(objects[state->state] != NULL); stackbuf[enumeratedCount++] = objects[state->state++]; }
+  while(CDVJK_EXPECT_T(enumeratedCount < len) && CDVJK_EXPECT_T(state->state < count)) { NSParameterAssert(objects[state->state] != NULL); stackbuf[enumeratedCount++] = objects[state->state++]; }
   
   return(enumeratedCount);
 }
@@ -776,7 +776,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 #else
   anObject = [anObject retain];
 #endif
-  _JKArrayInsertObjectAtIndex(self, anObject, objectIndex);
+  _CDVJKArrayInsertObjectAtIndex(self, anObject, objectIndex);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
 
@@ -784,7 +784,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
-  _JKArrayRemoveObjectAtIndex(self, objectIndex);
+  _CDVJKArrayRemoveObjectAtIndex(self, objectIndex);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
 
@@ -798,7 +798,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 #else
   anObject = [anObject retain];
 #endif
-  _JKArrayReplaceObjectAtIndexWithObject(self, objectIndex, anObject);
+  _CDVJKArrayReplaceObjectAtIndexWithObject(self, objectIndex, anObject);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
 
@@ -818,20 +818,20 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 
 
 #pragma mark -
-@interface JKDictionaryEnumerator : NSEnumerator {
+@interface CDVJKDictionaryEnumerator : NSEnumerator {
   id         collection;
   NSUInteger nextObject;
 }
 
-- (id)initWithJKDictionary:(JKDictionary *)initDictionary;
+- (id)initWithJKDictionary:(CDVJKDictionary *)initDictionary;
 - (NSArray *)allObjects;
 - (id)nextObject;
 
 @end
 
-@implementation JKDictionaryEnumerator
+@implementation CDVJKDictionaryEnumerator
 
-- (id)initWithJKDictionary:(JKDictionary *)initDictionary
+- (id)initWithJKDictionary:(CDVJKDictionary *)initDictionary
 {
   NSParameterAssert(initDictionary != NULL);
   if((self = [super init]) == NULL) { return(NULL); }
@@ -858,9 +858,9 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 
 - (id)nextObject
 {
-  NSParameterAssert((collection != NULL) && (_JKDictionaryHashEntry(collection) != NULL));
-  JKHashTableEntry *entry        = _JKDictionaryHashEntry(collection);
-  NSUInteger        capacity     = _JKDictionaryCapacity(collection);
+  NSParameterAssert((collection != NULL) && (_CDVJKDictionaryHashEntry(collection) != NULL));
+  CDVJKHashTableEntry *entry        = _CDVJKDictionaryHashEntry(collection);
+  NSUInteger        capacity     = _CDVJKDictionaryCapacity(collection);
   id                returnObject = NULL;
 
   if(entry != NULL) { while((nextObject < capacity) && ((returnObject = entry[nextObject++].key) == NULL)) { /* ... */ } }
@@ -871,22 +871,22 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 @end
 
 #pragma mark -
-@interface JKDictionary : NSMutableDictionary <NSCopying, NSMutableCopying, NSFastEnumeration> {
+@interface CDVJKDictionary : NSMutableDictionary <NSCopying, NSMutableCopying, NSFastEnumeration> {
   NSUInteger count, capacity, mutations;
-  JKHashTableEntry *entry;
+  CDVJKHashTableEntry *entry;
 }
 @end
 
-@implementation JKDictionary
+@implementation CDVJKDictionary
 
 + (id)allocWithZone:(NSZone *)zone
 {
 #pragma unused(zone)
-  [NSException raise:NSInvalidArgumentException format:@"*** - [%@ %@]: The %@ class is private to JSONKit and should not be used in this fashion.", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSStringFromClass([self class])];
+  [NSException raise:NSInvalidArgumentException format:@"*** - [%@ %@]: The %@ class is private to CDVJSONKit and should not be used in this fashion.", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSStringFromClass([self class])];
   return(NULL);
 }
 
-// These values are taken from Core Foundation CF-550 CFBasicHash.m.  As a bonus, they align very well with our JKHashTableEntry struct too.
+// These values are taken from Core Foundation CF-550 CFBasicHash.m.  As a bonus, they align very well with our CDVJKHashTableEntry struct too.
 static const NSUInteger jk_dictionaryCapacities[] = {
   0UL, 3UL, 7UL, 13UL, 23UL, 41UL, 71UL, 127UL, 191UL, 251UL, 383UL, 631UL, 1087UL, 1723UL,
   2803UL, 4523UL, 7351UL, 11959UL, 19447UL, 31231UL, 50683UL, 81919UL, 132607UL,
@@ -895,46 +895,46 @@ static const NSUInteger jk_dictionaryCapacities[] = {
   111638519UL, 180634607UL, 292272623UL, 472907251UL
 };
 
-static NSUInteger _JKDictionaryCapacityForCount(NSUInteger count) {
+static NSUInteger _CDVJKDictionaryCapacityForCount(NSUInteger count) {
   NSUInteger bottom = 0UL, top = sizeof(jk_dictionaryCapacities) / sizeof(NSUInteger), mid = 0UL, tableSize = lround(floor((count) * 1.33));
   while(top > bottom) { mid = (top + bottom) / 2UL; if(jk_dictionaryCapacities[mid] < tableSize) { bottom = mid + 1UL; } else { top = mid; } }
   return(jk_dictionaryCapacities[bottom]);
 }
 
-static void _JKDictionaryResizeIfNeccessary(JKDictionary *dictionary) {
+static void _CDVJKDictionaryResizeIfNeccessary(CDVJKDictionary *dictionary) {
   NSCParameterAssert((dictionary != NULL) && (dictionary->entry != NULL) && (dictionary->count <= dictionary->capacity));
 
   NSUInteger capacityForCount = 0UL;
-  if(dictionary->capacity < (capacityForCount = _JKDictionaryCapacityForCount(dictionary->count + 1UL))) { // resize
+  if(dictionary->capacity < (capacityForCount = _CDVJKDictionaryCapacityForCount(dictionary->count + 1UL))) { // resize
     NSUInteger        oldCapacity = dictionary->capacity;
 #ifndef NS_BLOCK_ASSERTIONS
     NSUInteger oldCount = dictionary->count;
 #endif
-    JKHashTableEntry *oldEntry    = dictionary->entry;
-    if(JK_EXPECT_F((dictionary->entry = (JKHashTableEntry *)calloc(1UL, sizeof(JKHashTableEntry) * capacityForCount)) == NULL)) { [NSException raise:NSMallocException format:@"Unable to allocate memory for hash table."]; }
+    CDVJKHashTableEntry *oldEntry    = dictionary->entry;
+    if(CDVJK_EXPECT_F((dictionary->entry = (CDVJKHashTableEntry *)calloc(1UL, sizeof(CDVJKHashTableEntry) * capacityForCount)) == NULL)) { [NSException raise:NSMallocException format:@"Unable to allocate memory for hash table."]; }
     dictionary->capacity = capacityForCount;
     dictionary->count    = 0UL;
     
     NSUInteger idx = 0UL;
-    for(idx = 0UL; idx < oldCapacity; idx++) { if(oldEntry[idx].key != NULL) { _JKDictionaryAddObject(dictionary, oldEntry[idx].keyHash, oldEntry[idx].key, oldEntry[idx].object); oldEntry[idx].keyHash = 0UL; oldEntry[idx].key = NULL; oldEntry[idx].object = NULL; } }
+    for(idx = 0UL; idx < oldCapacity; idx++) { if(oldEntry[idx].key != NULL) { _CDVJKDictionaryAddObject(dictionary, oldEntry[idx].keyHash, oldEntry[idx].key, oldEntry[idx].object); oldEntry[idx].keyHash = 0UL; oldEntry[idx].key = NULL; oldEntry[idx].object = NULL; } }
     NSCParameterAssert((oldCount == dictionary->count));
     free(oldEntry); oldEntry = NULL;
   }
 }
 
-static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection) {
-  NSCParameterAssert((keys != NULL) && (keyHashes != NULL) && (objects != NULL) && (_JKDictionaryClass != NULL) && (_JKDictionaryInstanceSize > 0UL));
-  JKDictionary *dictionary = NULL;
-  if(JK_EXPECT_T((dictionary = (JKDictionary *)calloc(1UL, _JKDictionaryInstanceSize)) != NULL)) { // Directly allocate the JKDictionary instance via calloc.
-    dictionary->isa      = _JKDictionaryClass;
+static CDVJKDictionary *_CDVJKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection) {
+  NSCParameterAssert((keys != NULL) && (keyHashes != NULL) && (objects != NULL) && (_CDVJKDictionaryClass != NULL) && (_CDVJKDictionaryInstanceSize > 0UL));
+  CDVJKDictionary *dictionary = NULL;
+  if(CDVJK_EXPECT_T((dictionary = (CDVJKDictionary *)calloc(1UL, _CDVJKDictionaryInstanceSize)) != NULL)) { // Directly allocate the CDVJKDictionary instance via calloc.
+    dictionary->isa      = _CDVJKDictionaryClass;
     if((dictionary = [dictionary init]) == NULL) { return(NULL); }
-    dictionary->capacity = _JKDictionaryCapacityForCount(count);
+    dictionary->capacity = _CDVJKDictionaryCapacityForCount(count);
     dictionary->count    = 0UL;
     
-    if(JK_EXPECT_F((dictionary->entry = (JKHashTableEntry *)calloc(1UL, sizeof(JKHashTableEntry) * dictionary->capacity)) == NULL)) { [dictionary autorelease]; return(NULL); }
+    if(CDVJK_EXPECT_F((dictionary->entry = (CDVJKHashTableEntry *)calloc(1UL, sizeof(CDVJKHashTableEntry) * dictionary->capacity)) == NULL)) { [dictionary autorelease]; return(NULL); }
 
     NSUInteger idx = 0UL;
-    for(idx = 0UL; idx < count; idx++) { _JKDictionaryAddObject(dictionary, keyHashes[idx], keys[idx], objects[idx]); }
+    for(idx = 0UL; idx < count; idx++) { _CDVJKDictionaryAddObject(dictionary, keyHashes[idx], keys[idx], objects[idx]); }
 
     dictionary->mutations = (mutableCollection == NO) ? 0UL : 1UL;
   }
@@ -943,11 +943,11 @@ static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *ob
 
 - (void)dealloc
 {
-  if(JK_EXPECT_T(entry != NULL)) {
+  if(CDVJK_EXPECT_T(entry != NULL)) {
     NSUInteger atEntry = 0UL;
     for(atEntry = 0UL; atEntry < capacity; atEntry++) {
-      if(JK_EXPECT_T(entry[atEntry].key    != NULL)) { CFRelease(entry[atEntry].key);    entry[atEntry].key    = NULL; }
-      if(JK_EXPECT_T(entry[atEntry].object != NULL)) { CFRelease(entry[atEntry].object); entry[atEntry].object = NULL; }
+      if(CDVJK_EXPECT_T(entry[atEntry].key    != NULL)) { CFRelease(entry[atEntry].key);    entry[atEntry].key    = NULL; }
+      if(CDVJK_EXPECT_T(entry[atEntry].object != NULL)) { CFRelease(entry[atEntry].object); entry[atEntry].object = NULL; }
     }
   
     free(entry); entry = NULL;
@@ -956,17 +956,17 @@ static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *ob
   [super dealloc];
 }
 
-static JKHashTableEntry *_JKDictionaryHashEntry(JKDictionary *dictionary) {
+static CDVJKHashTableEntry *_CDVJKDictionaryHashEntry(CDVJKDictionary *dictionary) {
   NSCParameterAssert(dictionary != NULL);
   return(dictionary->entry);
 }
 
-static NSUInteger _JKDictionaryCapacity(JKDictionary *dictionary) {
+static NSUInteger _CDVJKDictionaryCapacity(CDVJKDictionary *dictionary) {
   NSCParameterAssert(dictionary != NULL);
   return(dictionary->capacity);
 }
 
-static void _JKDictionaryRemoveObjectWithEntry(JKDictionary *dictionary, JKHashTableEntry *entry) {
+static void _CDVJKDictionaryRemoveObjectWithEntry(CDVJKDictionary *dictionary, CDVJKHashTableEntry *entry) {
   NSCParameterAssert((dictionary != NULL) && (entry != NULL) && (entry->key != NULL) && (entry->object != NULL) && (dictionary->count > 0UL) && (dictionary->count <= dictionary->capacity));
   CFRelease(entry->key);    entry->key    = NULL;
   CFRelease(entry->object); entry->object = NULL;
@@ -977,7 +977,7 @@ static void _JKDictionaryRemoveObjectWithEntry(JKDictionary *dictionary, JKHashT
   NSCParameterAssert((removeIdx < dictionary->capacity));
   for(idx = 0UL; idx < dictionary->capacity; idx++) {
     NSUInteger entryIdx = (removeIdx + idx + 1UL) % dictionary->capacity;
-    JKHashTableEntry *atEntry = &dictionary->entry[entryIdx];
+    CDVJKHashTableEntry *atEntry = &dictionary->entry[entryIdx];
     if(atEntry->key == NULL) { break; }
     NSUInteger keyHash = atEntry->keyHash;
     id key = atEntry->key, object = atEntry->object;
@@ -987,20 +987,20 @@ static void _JKDictionaryRemoveObjectWithEntry(JKDictionary *dictionary, JKHashT
     atEntry->object  = NULL;
     NSUInteger addKeyEntry = keyHash % dictionary->capacity, addIdx = 0UL;
     for(addIdx = 0UL; addIdx < dictionary->capacity; addIdx++) {
-      JKHashTableEntry *atAddEntry = &dictionary->entry[((addKeyEntry + addIdx) % dictionary->capacity)];
-      if(JK_EXPECT_T(atAddEntry->key == NULL)) { NSCParameterAssert((atAddEntry->keyHash == 0UL) && (atAddEntry->object == NULL)); atAddEntry->key = key; atAddEntry->object = object; atAddEntry->keyHash = keyHash; break; }
+      CDVJKHashTableEntry *atAddEntry = &dictionary->entry[((addKeyEntry + addIdx) % dictionary->capacity)];
+      if(CDVJK_EXPECT_T(atAddEntry->key == NULL)) { NSCParameterAssert((atAddEntry->keyHash == 0UL) && (atAddEntry->object == NULL)); atAddEntry->key = key; atAddEntry->object = object; atAddEntry->keyHash = keyHash; break; }
     }
   }
 }
 
-static void _JKDictionaryAddObject(JKDictionary *dictionary, NSUInteger keyHash, id key, id object) {
+static void _CDVJKDictionaryAddObject(CDVJKDictionary *dictionary, NSUInteger keyHash, id key, id object) {
   NSCParameterAssert((dictionary != NULL) && (key != NULL) && (object != NULL) && (dictionary->count < dictionary->capacity) && (dictionary->entry != NULL));
   NSUInteger keyEntry = keyHash % dictionary->capacity, idx = 0UL;
   for(idx = 0UL; idx < dictionary->capacity; idx++) {
     NSUInteger entryIdx = (keyEntry + idx) % dictionary->capacity;
-    JKHashTableEntry *atEntry = &dictionary->entry[entryIdx];
-    if(JK_EXPECT_F(atEntry->keyHash == keyHash) && JK_EXPECT_T(atEntry->key != NULL) && (JK_EXPECT_F(key == atEntry->key) || JK_EXPECT_F(CFEqual(atEntry->key, key)))) { _JKDictionaryRemoveObjectWithEntry(dictionary, atEntry); }
-    if(JK_EXPECT_T(atEntry->key == NULL)) { NSCParameterAssert((atEntry->keyHash == 0UL) && (atEntry->object == NULL)); atEntry->key = key; atEntry->object = object; atEntry->keyHash = keyHash; dictionary->count++; return; }
+    CDVJKHashTableEntry *atEntry = &dictionary->entry[entryIdx];
+    if(CDVJK_EXPECT_F(atEntry->keyHash == keyHash) && CDVJK_EXPECT_T(atEntry->key != NULL) && (CDVJK_EXPECT_F(key == atEntry->key) || CDVJK_EXPECT_F(CFEqual(atEntry->key, key)))) { _CDVJKDictionaryRemoveObjectWithEntry(dictionary, atEntry); }
+    if(CDVJK_EXPECT_T(atEntry->key == NULL)) { NSCParameterAssert((atEntry->keyHash == 0UL) && (atEntry->object == NULL)); atEntry->key = key; atEntry->object = object; atEntry->keyHash = keyHash; dictionary->count++; return; }
   }
 
   // We should never get here.  If we do, we -release the key / object because it's our responsibility.
@@ -1013,15 +1013,15 @@ static void _JKDictionaryAddObject(JKDictionary *dictionary, NSUInteger keyHash,
   return(count);
 }
 
-static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *dictionary, id aKey) {
+static CDVJKHashTableEntry *_CDVJKDictionaryHashTableEntryForKey(CDVJKDictionary *dictionary, id aKey) {
   NSCParameterAssert((dictionary != NULL) && (dictionary->entry != NULL) && (dictionary->count <= dictionary->capacity));
   if((aKey == NULL) || (dictionary->capacity == 0UL)) { return(NULL); }
   NSUInteger        keyHash = CFHash(aKey), keyEntry = (keyHash % dictionary->capacity), idx = 0UL;
-  JKHashTableEntry *atEntry = NULL;
+  CDVJKHashTableEntry *atEntry = NULL;
   for(idx = 0UL; idx < dictionary->capacity; idx++) {
     atEntry = &dictionary->entry[(keyEntry + idx) % dictionary->capacity];
-    if(JK_EXPECT_T(atEntry->keyHash == keyHash) && JK_EXPECT_T(atEntry->key != NULL) && ((atEntry->key == aKey) || CFEqual(atEntry->key, aKey))) { NSCParameterAssert(atEntry->object != NULL); return(atEntry); break; }
-    if(JK_EXPECT_F(atEntry->key == NULL)) { NSCParameterAssert(atEntry->object == NULL); return(NULL); break; } // If the key was in the table, we would have found it by now.
+    if(CDVJK_EXPECT_T(atEntry->keyHash == keyHash) && CDVJK_EXPECT_T(atEntry->key != NULL) && ((atEntry->key == aKey) || CFEqual(atEntry->key, aKey))) { NSCParameterAssert(atEntry->object != NULL); return(atEntry); break; }
+    if(CDVJK_EXPECT_F(atEntry->key == NULL)) { NSCParameterAssert(atEntry->object == NULL); return(NULL); break; } // If the key was in the table, we would have found it by now.
   }
   return(NULL);
 }
@@ -1029,7 +1029,7 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
 - (id)objectForKey:(id)aKey
 {
   NSParameterAssert((entry != NULL) && (count <= capacity));
-  JKHashTableEntry *entryForKey = _JKDictionaryHashTableEntryForKey(self, aKey);
+  CDVJKHashTableEntry *entryForKey = _CDVJKDictionaryHashTableEntryForKey(self, aKey);
   return((entryForKey != NULL) ? entryForKey->object : NULL);
 }
 
@@ -1038,10 +1038,10 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
   NSParameterAssert((entry != NULL) && (count <= capacity));
   NSUInteger atEntry = 0UL; NSUInteger arrayIdx = 0UL;
   for(atEntry = 0UL; atEntry < capacity; atEntry++) {
-    if(JK_EXPECT_T(entry[atEntry].key != NULL)) {
+    if(CDVJK_EXPECT_T(entry[atEntry].key != NULL)) {
       NSCParameterAssert((entry[atEntry].object != NULL) && (arrayIdx < count));
-      if(JK_EXPECT_T(keys    != NULL)) { keys[arrayIdx]    = entry[atEntry].key;    }
-      if(JK_EXPECT_T(objects != NULL)) { objects[arrayIdx] = entry[atEntry].object; }
+      if(CDVJK_EXPECT_T(keys    != NULL)) { keys[arrayIdx]    = entry[atEntry].key;    }
+      if(CDVJK_EXPECT_T(objects != NULL)) { objects[arrayIdx] = entry[atEntry].object; }
       arrayIdx++;
     }
   }
@@ -1050,18 +1050,18 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
 {
   NSParameterAssert((state != NULL) && (stackbuf != NULL) && (len > 0UL) && (entry != NULL) && (count <= capacity));
-  if(JK_EXPECT_F(state->state == 0UL))      { state->mutationsPtr = (unsigned long *)&mutations; state->itemsPtr = stackbuf; }
-  if(JK_EXPECT_F(state->state >= capacity)) { return(0UL); }
+  if(CDVJK_EXPECT_F(state->state == 0UL))      { state->mutationsPtr = (unsigned long *)&mutations; state->itemsPtr = stackbuf; }
+  if(CDVJK_EXPECT_F(state->state >= capacity)) { return(0UL); }
   
   NSUInteger enumeratedCount  = 0UL;
-  while(JK_EXPECT_T(enumeratedCount < len) && JK_EXPECT_T(state->state < capacity)) { if(JK_EXPECT_T(entry[state->state].key != NULL)) { stackbuf[enumeratedCount++] = entry[state->state].key; } state->state++; }
+  while(CDVJK_EXPECT_T(enumeratedCount < len) && CDVJK_EXPECT_T(state->state < capacity)) { if(CDVJK_EXPECT_T(entry[state->state].key != NULL)) { stackbuf[enumeratedCount++] = entry[state->state].key; } state->state++; }
     
   return(enumeratedCount);
 }
 
 - (NSEnumerator *)keyEnumerator
 {
-  return([[[JKDictionaryEnumerator alloc] initWithJKDictionary:self] autorelease]);
+  return([[[CDVJKDictionaryEnumerator alloc] initWithJKDictionary:self] autorelease]);
 }
 
 - (void)setObject:(id)anObject forKey:(id)aKey
@@ -1070,12 +1070,12 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
   if(aKey      == NULL) { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil key",                NSStringFromClass([self class]), NSStringFromSelector(_cmd)];       }
   if(anObject  == NULL) { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil value (key: %@)",    NSStringFromClass([self class]), NSStringFromSelector(_cmd), aKey]; }
   
-  _JKDictionaryResizeIfNeccessary(self);
+  _CDVJKDictionaryResizeIfNeccessary(self);
 #ifndef __clang_analyzer__
   aKey     = [aKey     copy];   // Why on earth would clang complain that this -copy "might leak", 
   anObject = [anObject retain]; // but this -retain doesn't!?
 #endif // __clang_analyzer__
-  _JKDictionaryAddObject(self, CFHash(aKey), aKey, anObject);
+  _CDVJKDictionaryAddObject(self, CFHash(aKey), aKey, anObject);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
 
@@ -1083,9 +1083,9 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
 {
   if(mutations == 0UL)  { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(aKey      == NULL) { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to remove nil key",                NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  JKHashTableEntry *entryForKey = _JKDictionaryHashTableEntryForKey(self, aKey);
+  CDVJKHashTableEntry *entryForKey = _CDVJKDictionaryHashTableEntryForKey(self, aKey);
   if(entryForKey != NULL) {
-    _JKDictionaryRemoveObjectWithEntry(self, entryForKey);
+    _CDVJKDictionaryRemoveObjectWithEntry(self, entryForKey);
     mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
   }
 }
@@ -1108,12 +1108,12 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
 
 #pragma mark -
 
-JK_STATIC_INLINE size_t jk_min(size_t a, size_t b) { return((a < b) ? a : b); }
-JK_STATIC_INLINE size_t jk_max(size_t a, size_t b) { return((a > b) ? a : b); }
+CDVJK_STATIC_INLINE size_t jk_min(size_t a, size_t b) { return((a < b) ? a : b); }
+CDVJK_STATIC_INLINE size_t jk_max(size_t a, size_t b) { return((a > b) ? a : b); }
 
-JK_STATIC_INLINE JKHash calculateHash(JKHash currentHash, unsigned char c) { return(((currentHash << 5) + currentHash) + c); }
+CDVJK_STATIC_INLINE CDVJKHash calculateHash(CDVJKHash currentHash, unsigned char c) { return(((currentHash << 5) + currentHash) + c); }
 
-static void jk_error(JKParseState *parseState, NSString *format, ...) {
+static void jk_error(CDVJKParseState *parseState, NSString *format, ...) {
   NSCParameterAssert((parseState != NULL) && (format != NULL));
 
   va_list varArgsList;
@@ -1126,23 +1126,23 @@ static void jk_error(JKParseState *parseState, NSString *format, ...) {
   const unsigned char *lineEnd        = lineStart;
   const unsigned char *atCharacterPtr = NULL;
 
-  for(atCharacterPtr = lineStart; atCharacterPtr < JK_END_STRING_PTR(parseState); atCharacterPtr++) { lineEnd = atCharacterPtr; if(jk_parse_is_newline(parseState, atCharacterPtr)) { break; } }
+  for(atCharacterPtr = lineStart; atCharacterPtr < CDVJK_END_STRING_PTR(parseState); atCharacterPtr++) { lineEnd = atCharacterPtr; if(jk_parse_is_newline(parseState, atCharacterPtr)) { break; } }
 
   NSString *lineString = @"", *carretString = @"";
-  if(lineStart < JK_END_STRING_PTR(parseState)) {
+  if(lineStart < CDVJK_END_STRING_PTR(parseState)) {
     lineString   = [[[NSString alloc] initWithBytes:lineStart length:(lineEnd - lineStart) encoding:NSUTF8StringEncoding] autorelease];
     carretString = [NSString stringWithFormat:@"%*.*s^", (int)(parseState->atIndex - parseState->lineStartIndex), (int)(parseState->atIndex - parseState->lineStartIndex), " "];
   }
 #endif
 
   if(parseState->error == NULL) {
-    parseState->error = [NSError errorWithDomain:@"JKErrorDomain" code:-1L userInfo:
+    parseState->error = [NSError errorWithDomain:@"CDVJKErrorDomain" code:-1L userInfo:
                                    [NSDictionary dictionaryWithObjectsAndKeys:
                                                                               formatString,                                             NSLocalizedDescriptionKey,
-                                                                              [NSNumber numberWithUnsignedLong:parseState->atIndex],    @"JKAtIndexKey",
-                                                                              [NSNumber numberWithUnsignedLong:parseState->lineNumber], @"JKLineNumberKey",
-                                                 //lineString,   @"JKErrorLine0Key",
-                                                 //carretString, @"JKErrorLine1Key",
+                                                                              [NSNumber numberWithUnsignedLong:parseState->atIndex],    @"CDVJKAtIndexKey",
+                                                                              [NSNumber numberWithUnsignedLong:parseState->lineNumber], @"CDVJKLineNumberKey",
+                                                 //lineString,   @"CDVJKErrorLine0Key",
+                                                 //carretString, @"CDVJKErrorLine1Key",
                                                                               NULL]];
   }
 }
@@ -1150,41 +1150,41 @@ static void jk_error(JKParseState *parseState, NSString *format, ...) {
 #pragma mark -
 #pragma mark Buffer and Object Stack management functions
 
-static void jk_managedBuffer_release(JKManagedBuffer *managedBuffer) {
-  if((managedBuffer->flags & JKManagedBufferMustFree)) {
+static void jk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer) {
+  if((managedBuffer->flags & CDVJKManagedBufferMustFree)) {
     if(managedBuffer->bytes.ptr != NULL) { free(managedBuffer->bytes.ptr); managedBuffer->bytes.ptr = NULL; }
-    managedBuffer->flags &= ~JKManagedBufferMustFree;
+    managedBuffer->flags &= ~CDVJKManagedBufferMustFree;
   }
 
   managedBuffer->bytes.ptr     = NULL;
   managedBuffer->bytes.length  = 0UL;
-  managedBuffer->flags        &= ~JKManagedBufferLocationMask;
+  managedBuffer->flags        &= ~CDVJKManagedBufferLocationMask;
 }
 
-static void jk_managedBuffer_setToStackBuffer(JKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length) {
+static void jk_managedBuffer_setToStackBuffer(CDVJKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length) {
   jk_managedBuffer_release(managedBuffer);
   managedBuffer->bytes.ptr     = ptr;
   managedBuffer->bytes.length  = length;
-  managedBuffer->flags         = (managedBuffer->flags & ~JKManagedBufferLocationMask) | JKManagedBufferOnStack;
+  managedBuffer->flags         = (managedBuffer->flags & ~CDVJKManagedBufferLocationMask) | CDVJKManagedBufferOnStack;
 }
 
-static unsigned char *jk_managedBuffer_resize(JKManagedBuffer *managedBuffer, size_t newSize) {
+static unsigned char *jk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer, size_t newSize) {
   size_t roundedUpNewSize = newSize;
 
   if(managedBuffer->roundSizeUpToMultipleOf > 0UL) { roundedUpNewSize = newSize + ((managedBuffer->roundSizeUpToMultipleOf - (newSize % managedBuffer->roundSizeUpToMultipleOf)) % managedBuffer->roundSizeUpToMultipleOf); }
 
   if((roundedUpNewSize != managedBuffer->bytes.length) && (roundedUpNewSize > managedBuffer->bytes.length)) {
-    if((managedBuffer->flags & JKManagedBufferLocationMask) == JKManagedBufferOnStack) {
-      NSCParameterAssert((managedBuffer->flags & JKManagedBufferMustFree) == 0);
+    if((managedBuffer->flags & CDVJKManagedBufferLocationMask) == CDVJKManagedBufferOnStack) {
+      NSCParameterAssert((managedBuffer->flags & CDVJKManagedBufferMustFree) == 0);
       unsigned char *newBuffer = NULL, *oldBuffer = managedBuffer->bytes.ptr;
       
       if((newBuffer = (unsigned char *)malloc(roundedUpNewSize)) == NULL) { return(NULL); }
       memcpy(newBuffer, oldBuffer, jk_min(managedBuffer->bytes.length, roundedUpNewSize));
-      managedBuffer->flags        = (managedBuffer->flags & ~JKManagedBufferLocationMask) | (JKManagedBufferOnHeap | JKManagedBufferMustFree);
+      managedBuffer->flags        = (managedBuffer->flags & ~CDVJKManagedBufferLocationMask) | (CDVJKManagedBufferOnHeap | CDVJKManagedBufferMustFree);
       managedBuffer->bytes.ptr    = newBuffer;
       managedBuffer->bytes.length = roundedUpNewSize;
     } else {
-      NSCParameterAssert(((managedBuffer->flags & JKManagedBufferMustFree) != 0) && ((managedBuffer->flags & JKManagedBufferLocationMask) == JKManagedBufferOnHeap));
+      NSCParameterAssert(((managedBuffer->flags & CDVJKManagedBufferMustFree) != 0) && ((managedBuffer->flags & CDVJKManagedBufferLocationMask) == CDVJKManagedBufferOnHeap));
       if((managedBuffer->bytes.ptr = (unsigned char *)reallocf(managedBuffer->bytes.ptr, roundedUpNewSize)) == NULL) { return(NULL); }
       managedBuffer->bytes.length = roundedUpNewSize;
     }
@@ -1195,7 +1195,7 @@ static unsigned char *jk_managedBuffer_resize(JKManagedBuffer *managedBuffer, si
 
 
 
-static void jk_objectStack_release(JKObjectStack *objectStack) {
+static void jk_objectStack_release(CDVJKObjectStack *objectStack) {
   NSCParameterAssert(objectStack != NULL);
 
   NSCParameterAssert(objectStack->index <= objectStack->count);
@@ -1206,12 +1206,12 @@ static void jk_objectStack_release(JKObjectStack *objectStack) {
   }
   objectStack->index = 0UL;
 
-  if(objectStack->flags & JKObjectStackMustFree) {
-    NSCParameterAssert((objectStack->flags & JKObjectStackLocationMask) == JKObjectStackOnHeap);
+  if(objectStack->flags & CDVJKObjectStackMustFree) {
+    NSCParameterAssert((objectStack->flags & CDVJKObjectStackLocationMask) == CDVJKObjectStackOnHeap);
     if(objectStack->objects  != NULL) { free(objectStack->objects);  objectStack->objects  = NULL; }
     if(objectStack->keys     != NULL) { free(objectStack->keys);     objectStack->keys     = NULL; }
     if(objectStack->cfHashes != NULL) { free(objectStack->cfHashes); objectStack->cfHashes = NULL; }
-    objectStack->flags &= ~JKObjectStackMustFree;
+    objectStack->flags &= ~CDVJKObjectStackMustFree;
   }
 
   objectStack->objects  = NULL;
@@ -1219,24 +1219,24 @@ static void jk_objectStack_release(JKObjectStack *objectStack) {
   objectStack->cfHashes = NULL;
 
   objectStack->count    = 0UL;
-  objectStack->flags   &= ~JKObjectStackLocationMask;
+  objectStack->flags   &= ~CDVJKObjectStackLocationMask;
 }
 
-static void jk_objectStack_setToStackBuffer(JKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count) {
+static void jk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count) {
   NSCParameterAssert((objectStack != NULL) && (objects != NULL) && (keys != NULL) && (cfHashes != NULL) && (count > 0UL));
   jk_objectStack_release(objectStack);
   objectStack->objects  = objects;
   objectStack->keys     = keys;
   objectStack->cfHashes = cfHashes;
   objectStack->count    = count;
-  objectStack->flags    = (objectStack->flags & ~JKObjectStackLocationMask) | JKObjectStackOnStack;
+  objectStack->flags    = (objectStack->flags & ~CDVJKObjectStackLocationMask) | CDVJKObjectStackOnStack;
 #ifndef NS_BLOCK_ASSERTIONS
   size_t idx;
   for(idx = 0UL; idx < objectStack->count; idx++) { objectStack->objects[idx] = NULL; objectStack->keys[idx] = NULL; objectStack->cfHashes[idx] = 0UL; }
 #endif
 }
 
-static int jk_objectStack_resize(JKObjectStack *objectStack, size_t newCount) {
+static int jk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount) {
   size_t roundedUpNewCount = newCount;
   int    returnCode = 0;
 
@@ -1246,8 +1246,8 @@ static int jk_objectStack_resize(JKObjectStack *objectStack, size_t newCount) {
   if(objectStack->roundSizeUpToMultipleOf > 0UL) { roundedUpNewCount = newCount + ((objectStack->roundSizeUpToMultipleOf - (newCount % objectStack->roundSizeUpToMultipleOf)) % objectStack->roundSizeUpToMultipleOf); }
 
   if((roundedUpNewCount != objectStack->count) && (roundedUpNewCount > objectStack->count)) {
-    if((objectStack->flags & JKObjectStackLocationMask) == JKObjectStackOnStack) {
-      NSCParameterAssert((objectStack->flags & JKObjectStackMustFree) == 0);
+    if((objectStack->flags & CDVJKObjectStackLocationMask) == CDVJKObjectStackOnStack) {
+      NSCParameterAssert((objectStack->flags & CDVJKObjectStackMustFree) == 0);
 
       if((newObjects  = (void **     )calloc(1UL, roundedUpNewCount * sizeof(void *    ))) == NULL) { returnCode = 1; goto errorExit; }
       memcpy(newObjects, objectStack->objects,   jk_min(objectStack->count, roundedUpNewCount) * sizeof(void *));
@@ -1257,13 +1257,13 @@ static int jk_objectStack_resize(JKObjectStack *objectStack, size_t newCount) {
       if((newCFHashes = (CFHashCode *)calloc(1UL, roundedUpNewCount * sizeof(CFHashCode))) == NULL) { returnCode = 1; goto errorExit; }
       memcpy(newCFHashes, objectStack->cfHashes, jk_min(objectStack->count, roundedUpNewCount) * sizeof(CFHashCode));
 
-      objectStack->flags    = (objectStack->flags & ~JKObjectStackLocationMask) | (JKObjectStackOnHeap | JKObjectStackMustFree);
+      objectStack->flags    = (objectStack->flags & ~CDVJKObjectStackLocationMask) | (CDVJKObjectStackOnHeap | CDVJKObjectStackMustFree);
       objectStack->objects  = newObjects;  newObjects  = NULL;
       objectStack->keys     = newKeys;     newKeys     = NULL;
       objectStack->cfHashes = newCFHashes; newCFHashes = NULL;
       objectStack->count    = roundedUpNewCount;
     } else {
-      NSCParameterAssert(((objectStack->flags & JKObjectStackMustFree) != 0) && ((objectStack->flags & JKObjectStackLocationMask) == JKObjectStackOnHeap));
+      NSCParameterAssert(((objectStack->flags & CDVJKObjectStackMustFree) != 0) && ((objectStack->flags & CDVJKObjectStackLocationMask) == CDVJKObjectStackOnHeap));
       if((newObjects  = (void  **    )realloc(objectStack->objects,  roundedUpNewCount * sizeof(void *    ))) != NULL) { objectStack->objects  = newObjects;  newObjects  = NULL; } else { returnCode = 1; goto errorExit; }
       if((newKeys     = (void  **    )realloc(objectStack->keys,     roundedUpNewCount * sizeof(void *    ))) != NULL) { objectStack->keys     = newKeys;     newKeys     = NULL; } else { returnCode = 1; goto errorExit; }
       if((newCFHashes = (CFHashCode *)realloc(objectStack->cfHashes, roundedUpNewCount * sizeof(CFHashCode))) != NULL) { objectStack->cfHashes = newCFHashes; newCFHashes = NULL; } else { returnCode = 1; goto errorExit; }
@@ -1288,13 +1288,13 @@ static int jk_objectStack_resize(JKObjectStack *objectStack, size_t newCount) {
 #pragma mark -
 #pragma mark Unicode related functions
 
-JK_STATIC_INLINE ConversionResult isValidCodePoint(UTF32 *u32CodePoint) {
+CDVJK_STATIC_INLINE ConversionResult isValidCodePoint(UTF32 *u32CodePoint) {
   ConversionResult result = conversionOK;
   UTF32            ch     = *u32CodePoint;
 
-  if(JK_EXPECT_F(ch >= UNI_SUR_HIGH_START) && (JK_EXPECT_T(ch <= UNI_SUR_LOW_END)))                                                        { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
-  if(JK_EXPECT_F(ch >= 0xFDD0U) && (JK_EXPECT_F(ch <= 0xFDEFU) || JK_EXPECT_F((ch & 0xFFFEU) == 0xFFFEU)) && JK_EXPECT_T(ch <= 0x10FFFFU)) { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
-  if(JK_EXPECT_F(ch == 0U))                                                                                                                { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
+  if(CDVJK_EXPECT_F(ch >= UNI_SUR_HIGH_START) && (CDVJK_EXPECT_T(ch <= UNI_SUR_LOW_END)))                                                        { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
+  if(CDVJK_EXPECT_F(ch >= 0xFDD0U) && (CDVJK_EXPECT_F(ch <= 0xFDEFU) || CDVJK_EXPECT_F((ch & 0xFFFEU) == 0xFFFEU)) && CDVJK_EXPECT_T(ch <= 0x10FFFFU)) { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
+  if(CDVJK_EXPECT_F(ch == 0U))                                                                                                                { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
 
  finished:
   *u32CodePoint = ch;
@@ -1308,22 +1308,22 @@ static int isLegalUTF8(const UTF8 *source, size_t length) {
 
   switch(length) {
     default: return(0); // Everything else falls through when "true"...
-    case 4: if(JK_EXPECT_F(((a = (*--srcptr)) < 0x80) || (a > 0xBF))) { return(0); }
-    case 3: if(JK_EXPECT_F(((a = (*--srcptr)) < 0x80) || (a > 0xBF))) { return(0); }
-    case 2: if(JK_EXPECT_F( (a = (*--srcptr)) > 0xBF               )) { return(0); }
+    case 4: if(CDVJK_EXPECT_F(((a = (*--srcptr)) < 0x80) || (a > 0xBF))) { return(0); }
+    case 3: if(CDVJK_EXPECT_F(((a = (*--srcptr)) < 0x80) || (a > 0xBF))) { return(0); }
+    case 2: if(CDVJK_EXPECT_F( (a = (*--srcptr)) > 0xBF               )) { return(0); }
       
       switch(*source) { // no fall-through in this inner switch
-        case 0xE0: if(JK_EXPECT_F(a < 0xA0)) { return(0); } break;
-        case 0xED: if(JK_EXPECT_F(a > 0x9F)) { return(0); } break;
-        case 0xF0: if(JK_EXPECT_F(a < 0x90)) { return(0); } break;
-        case 0xF4: if(JK_EXPECT_F(a > 0x8F)) { return(0); } break;
-        default:   if(JK_EXPECT_F(a < 0x80)) { return(0); }
+        case 0xE0: if(CDVJK_EXPECT_F(a < 0xA0)) { return(0); } break;
+        case 0xED: if(CDVJK_EXPECT_F(a > 0x9F)) { return(0); } break;
+        case 0xF0: if(CDVJK_EXPECT_F(a < 0x90)) { return(0); } break;
+        case 0xF4: if(CDVJK_EXPECT_F(a > 0x8F)) { return(0); } break;
+        default:   if(CDVJK_EXPECT_F(a < 0x80)) { return(0); }
       }
       
-    case 1: if(JK_EXPECT_F((JK_EXPECT_T(*source < 0xC2)) && JK_EXPECT_F(*source >= 0x80))) { return(0); }
+    case 1: if(CDVJK_EXPECT_F((CDVJK_EXPECT_T(*source < 0xC2)) && CDVJK_EXPECT_F(*source >= 0x80))) { return(0); }
   }
 
-  if(JK_EXPECT_F(*source > 0xF4)) { return(0); }
+  if(CDVJK_EXPECT_F(*source > 0xF4)) { return(0); }
 
   return(1);
 }
@@ -1333,13 +1333,13 @@ static ConversionResult ConvertSingleCodePointInUTF8(const UTF8 *sourceStart, co
   const UTF8 *source = sourceStart;
   UTF32 ch = 0UL;
 
-#if !defined(JK_FAST_TRAILING_BYTES)
+#if !defined(CDVJK_FAST_TRAILING_BYTES)
   unsigned short extraBytesToRead = trailingBytesForUTF8[*source];
 #else
   unsigned short extraBytesToRead = __builtin_clz(((*source)^0xff) << 25);
 #endif
 
-  if(JK_EXPECT_F((source + extraBytesToRead + 1) > sourceEnd) || JK_EXPECT_F(!isLegalUTF8(source, extraBytesToRead + 1))) {
+  if(CDVJK_EXPECT_F((source + extraBytesToRead + 1) > sourceEnd) || CDVJK_EXPECT_F(!isLegalUTF8(source, extraBytesToRead + 1))) {
     source++;
     while((source < sourceEnd) && (((*source) & 0xc0) == 0x80) && ((source - sourceStart) < (extraBytesToRead + 1))) { source++; } 
     NSCParameterAssert(source <= sourceEnd);
@@ -1401,7 +1401,7 @@ static ConversionResult ConvertUTF32toUTF8 (UTF32 u32CodePoint, UTF8 **targetSta
   return(result);
 }
 
-JK_STATIC_INLINE int jk_string_add_unicodeCodePoint(JKParseState *parseState, uint32_t unicodeCodePoint, size_t *tokenBufferIdx, JKHash *stringHash) {
+CDVJK_STATIC_INLINE int jk_string_add_unicodeCodePoint(CDVJKParseState *parseState, uint32_t unicodeCodePoint, size_t *tokenBufferIdx, CDVJKHash *stringHash) {
   UTF8             *u8s = &parseState->token.tokenBuffer.bytes.ptr[*tokenBufferIdx];
   ConversionResult  result;
 
@@ -1417,48 +1417,48 @@ JK_STATIC_INLINE int jk_string_add_unicodeCodePoint(JKParseState *parseState, ui
 #pragma mark -
 #pragma mark Decoding / parsing / deserializing functions
 
-static int jk_parse_string(JKParseState *parseState) {
-  NSCParameterAssert((parseState != NULL) && (JK_AT_STRING_PTR(parseState) <= JK_END_STRING_PTR(parseState)));
-  const unsigned char *stringStart       = JK_AT_STRING_PTR(parseState) + 1;
-  const unsigned char *endOfBuffer       = JK_END_STRING_PTR(parseState);
+static int jk_parse_string(CDVJKParseState *parseState) {
+  NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
+  const unsigned char *stringStart       = CDVJK_AT_STRING_PTR(parseState) + 1;
+  const unsigned char *endOfBuffer       = CDVJK_END_STRING_PTR(parseState);
   const unsigned char *atStringCharacter = stringStart;
   unsigned char       *tokenBuffer       = parseState->token.tokenBuffer.bytes.ptr;
   size_t               tokenStartIndex   = parseState->atIndex;
   size_t               tokenBufferIdx    = 0UL;
 
-  int      onlySimpleString        = 1,  stringState     = JSONStringStateStart;
+  int      onlySimpleString        = 1,  stringState     = CDVJSONStringStateStart;
   uint16_t escapedUnicode1         = 0U, escapedUnicode2 = 0U;
   uint32_t escapedUnicodeCodePoint = 0U;
-  JKHash   stringHash              = JK_HASH_INIT;
+  CDVJKHash   stringHash              = CDVJK_HASH_INIT;
     
   while(1) {
     unsigned long currentChar;
 
-    if(JK_EXPECT_F(atStringCharacter == endOfBuffer)) { /* XXX Add error message */ stringState = JSONStringStateError; goto finishedParsing; }
+    if(CDVJK_EXPECT_F(atStringCharacter == endOfBuffer)) { /* XXX Add error message */ stringState = CDVJSONStringStateError; goto finishedParsing; }
     
-    if(JK_EXPECT_F((currentChar = *atStringCharacter++) >= 0x80UL)) {
+    if(CDVJK_EXPECT_F((currentChar = *atStringCharacter++) >= 0x80UL)) {
       const unsigned char *nextValidCharacter = NULL;
       UTF32                u32ch              = 0U;
       ConversionResult     result;
 
-      if(JK_EXPECT_F((result = ConvertSingleCodePointInUTF8(atStringCharacter - 1, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { goto switchToSlowPath; }
+      if(CDVJK_EXPECT_F((result = ConvertSingleCodePointInUTF8(atStringCharacter - 1, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { goto switchToSlowPath; }
       stringHash = calculateHash(stringHash, currentChar);
-      while(atStringCharacter < nextValidCharacter) { NSCParameterAssert(JK_AT_STRING_PTR(parseState) <= JK_END_STRING_PTR(parseState)); stringHash = calculateHash(stringHash, *atStringCharacter++); }
+      while(atStringCharacter < nextValidCharacter) { NSCParameterAssert(CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)); stringHash = calculateHash(stringHash, *atStringCharacter++); }
       continue;
     } else {
-      if(JK_EXPECT_F(currentChar == (unsigned long)'"')) { stringState = JSONStringStateFinished; goto finishedParsing; }
+      if(CDVJK_EXPECT_F(currentChar == (unsigned long)'"')) { stringState = CDVJSONStringStateFinished; goto finishedParsing; }
 
-      if(JK_EXPECT_F(currentChar == (unsigned long)'\\')) {
+      if(CDVJK_EXPECT_F(currentChar == (unsigned long)'\\')) {
       switchToSlowPath:
         onlySimpleString = 0;
-        stringState      = JSONStringStateParsing;
+        stringState      = CDVJSONStringStateParsing;
         tokenBufferIdx   = (atStringCharacter - stringStart) - 1L;
-        if(JK_EXPECT_F((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length)) { if((tokenBuffer = jk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { jk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; } }
+        if(CDVJK_EXPECT_F((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length)) { if((tokenBuffer = jk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { jk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
         memcpy(tokenBuffer, stringStart, tokenBufferIdx);
         goto slowMatch;
       }
 
-      if(JK_EXPECT_F(currentChar < 0x20UL)) { jk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = JSONStringStateError; goto finishedParsing; }
+      if(CDVJK_EXPECT_F(currentChar < 0x20UL)) { jk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing; }
 
       stringHash = calculateHash(stringHash, currentChar);
     }
@@ -1467,17 +1467,17 @@ static int jk_parse_string(JKParseState *parseState) {
  slowMatch:
 
   for(atStringCharacter = (stringStart + ((atStringCharacter - stringStart) - 1L)); (atStringCharacter < endOfBuffer) && (tokenBufferIdx < parseState->token.tokenBuffer.bytes.length); atStringCharacter++) {
-    if((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length) { if((tokenBuffer = jk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { jk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; } }
+    if((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length) { if((tokenBuffer = jk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { jk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
 
     NSCParameterAssert(tokenBufferIdx < parseState->token.tokenBuffer.bytes.length);
 
     unsigned long currentChar = (*atStringCharacter), escapedChar;
 
-    if(JK_EXPECT_T(stringState == JSONStringStateParsing)) {
-      if(JK_EXPECT_T(currentChar >= 0x20UL)) {
-        if(JK_EXPECT_T(currentChar < (unsigned long)0x80)) { // Not a UTF8 sequence
-          if(JK_EXPECT_F(currentChar == (unsigned long)'"'))  { stringState = JSONStringStateFinished; atStringCharacter++; goto finishedParsing; }
-          if(JK_EXPECT_F(currentChar == (unsigned long)'\\')) { stringState = JSONStringStateEscape; continue; }
+    if(CDVJK_EXPECT_T(stringState == CDVJSONStringStateParsing)) {
+      if(CDVJK_EXPECT_T(currentChar >= 0x20UL)) {
+        if(CDVJK_EXPECT_T(currentChar < (unsigned long)0x80)) { // Not a UTF8 sequence
+          if(CDVJK_EXPECT_F(currentChar == (unsigned long)'"'))  { stringState = CDVJSONStringStateFinished; atStringCharacter++; goto finishedParsing; }
+          if(CDVJK_EXPECT_F(currentChar == (unsigned long)'\\')) { stringState = CDVJSONStringStateEscape; continue; }
           stringHash = calculateHash(stringHash, currentChar);
           tokenBuffer[tokenBufferIdx++] = currentChar;
           continue;
@@ -1486,10 +1486,10 @@ static int jk_parse_string(JKParseState *parseState) {
           UTF32                u32ch              = 0U;
           ConversionResult     result;
           
-          if(JK_EXPECT_F((result = ConvertSingleCodePointInUTF8(atStringCharacter, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) {
-            if((result == sourceIllegal) && ((parseState->parseOptionFlags & JKParseOptionLooseUnicode) == 0)) { jk_error(parseState, @"Illegal UTF8 sequence found in \"\" string.");              stringState = JSONStringStateError; goto finishedParsing; }
-            if(result == sourceExhausted)                                                                      { jk_error(parseState, @"End of buffer reached while parsing UTF8 in \"\" string."); stringState = JSONStringStateError; goto finishedParsing; }
-            if(jk_string_add_unicodeCodePoint(parseState, u32ch, &tokenBufferIdx, &stringHash))                { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; }
+          if(CDVJK_EXPECT_F((result = ConvertSingleCodePointInUTF8(atStringCharacter, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) {
+            if((result == sourceIllegal) && ((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0)) { jk_error(parseState, @"Illegal UTF8 sequence found in \"\" string.");              stringState = CDVJSONStringStateError; goto finishedParsing; }
+            if(result == sourceExhausted)                                                                      { jk_error(parseState, @"End of buffer reached while parsing UTF8 in \"\" string."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+            if(jk_string_add_unicodeCodePoint(parseState, u32ch, &tokenBufferIdx, &stringHash))                { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; }
             atStringCharacter = nextValidCharacter - 1;
             continue;
           } else {
@@ -1499,16 +1499,16 @@ static int jk_parse_string(JKParseState *parseState) {
           }
         }
       } else { // currentChar < 0x20
-        jk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = JSONStringStateError; goto finishedParsing;
+        jk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing;
       }
 
-    } else { // stringState != JSONStringStateParsing
+    } else { // stringState != CDVJSONStringStateParsing
       int isSurrogate = 1;
 
       switch(stringState) {
-        case JSONStringStateEscape:
+        case CDVJSONStringStateEscape:
           switch(currentChar) {
-            case 'u': escapedUnicode1 = 0U; escapedUnicode2 = 0U; escapedUnicodeCodePoint = 0U; stringState = JSONStringStateEscapedUnicode1; break;
+            case 'u': escapedUnicode1 = 0U; escapedUnicode2 = 0U; escapedUnicodeCodePoint = 0U; stringState = CDVJSONStringStateEscapedUnicode1; break;
 
             case 'b':  escapedChar = '\b'; goto parsedEscapedChar;
             case 'f':  escapedChar = '\f'; goto parsedEscapedChar;
@@ -1520,23 +1520,23 @@ static int jk_parse_string(JKParseState *parseState) {
             case '"':  escapedChar = '"';  goto parsedEscapedChar;
               
             parsedEscapedChar:
-              stringState = JSONStringStateParsing;
+              stringState = CDVJSONStringStateParsing;
               stringHash  = calculateHash(stringHash, escapedChar);
               tokenBuffer[tokenBufferIdx++] = escapedChar;
               break;
               
-            default: jk_error(parseState, @"Invalid escape sequence found in \"\" string."); stringState = JSONStringStateError; goto finishedParsing; break;
+            default: jk_error(parseState, @"Invalid escape sequence found in \"\" string."); stringState = CDVJSONStringStateError; goto finishedParsing; break;
           }
           break;
 
-        case JSONStringStateEscapedUnicode1:
-        case JSONStringStateEscapedUnicode2:
-        case JSONStringStateEscapedUnicode3:
-        case JSONStringStateEscapedUnicode4:           isSurrogate = 0;
-        case JSONStringStateEscapedUnicodeSurrogate1:
-        case JSONStringStateEscapedUnicodeSurrogate2:
-        case JSONStringStateEscapedUnicodeSurrogate3:
-        case JSONStringStateEscapedUnicodeSurrogate4:
+        case CDVJSONStringStateEscapedUnicode1:
+        case CDVJSONStringStateEscapedUnicode2:
+        case CDVJSONStringStateEscapedUnicode3:
+        case CDVJSONStringStateEscapedUnicode4:           isSurrogate = 0;
+        case CDVJSONStringStateEscapedUnicodeSurrogate1:
+        case CDVJSONStringStateEscapedUnicodeSurrogate2:
+        case CDVJSONStringStateEscapedUnicodeSurrogate3:
+        case CDVJSONStringStateEscapedUnicodeSurrogate4:
           {
             uint16_t hexValue = 0U;
 
@@ -1548,68 +1548,68 @@ static int jk_parse_string(JKParseState *parseState) {
               parsedHex:
               if(!isSurrogate) { escapedUnicode1 = (escapedUnicode1 << 4) | hexValue; } else { escapedUnicode2 = (escapedUnicode2 << 4) | hexValue; }
                 
-              if(stringState == JSONStringStateEscapedUnicode4) {
+              if(stringState == CDVJSONStringStateEscapedUnicode4) {
                 if(((escapedUnicode1 >= 0xD800U) && (escapedUnicode1 < 0xE000U))) {
-                  if((escapedUnicode1 >= 0xD800U) && (escapedUnicode1 < 0xDC00U)) { stringState = JSONStringStateEscapedNeedEscapeForSurrogate; }
+                  if((escapedUnicode1 >= 0xD800U) && (escapedUnicode1 < 0xDC00U)) { stringState = CDVJSONStringStateEscapedNeedEscapeForSurrogate; }
                   else if((escapedUnicode1 >= 0xDC00U) && (escapedUnicode1 < 0xE000U)) { 
-                    if((parseState->parseOptionFlags & JKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = UNI_REPLACEMENT_CHAR; }
-                    else { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = JSONStringStateError; goto finishedParsing; }
+                    if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = UNI_REPLACEMENT_CHAR; }
+                    else { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
                   }
                 }
                 else { escapedUnicodeCodePoint = escapedUnicode1; }
               }
 
-              if(stringState == JSONStringStateEscapedUnicodeSurrogate4) {
+              if(stringState == CDVJSONStringStateEscapedUnicodeSurrogate4) {
                 if((escapedUnicode2 < 0xdc00) || (escapedUnicode2 > 0xdfff)) {
-                  if((parseState->parseOptionFlags & JKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = UNI_REPLACEMENT_CHAR; }
-                  else { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = JSONStringStateError; goto finishedParsing; }
+                  if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = UNI_REPLACEMENT_CHAR; }
+                  else { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
                 }
                 else { escapedUnicodeCodePoint = ((escapedUnicode1 - 0xd800) * 0x400) + (escapedUnicode2 - 0xdc00) + 0x10000; }
               }
                 
-              if((stringState == JSONStringStateEscapedUnicode4) || (stringState == JSONStringStateEscapedUnicodeSurrogate4)) { 
-                if((isValidCodePoint(&escapedUnicodeCodePoint) == sourceIllegal) && ((parseState->parseOptionFlags & JKParseOptionLooseUnicode) == 0)) { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = JSONStringStateError; goto finishedParsing; }
-                stringState = JSONStringStateParsing;
-                if(jk_string_add_unicodeCodePoint(parseState, escapedUnicodeCodePoint, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; }
+              if((stringState == CDVJSONStringStateEscapedUnicode4) || (stringState == CDVJSONStringStateEscapedUnicodeSurrogate4)) { 
+                if((isValidCodePoint(&escapedUnicodeCodePoint) == sourceIllegal) && ((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0)) { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+                stringState = CDVJSONStringStateParsing;
+                if(jk_string_add_unicodeCodePoint(parseState, escapedUnicodeCodePoint, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; }
               }
-              else if((stringState >= JSONStringStateEscapedUnicode1) && (stringState <= JSONStringStateEscapedUnicodeSurrogate4)) { stringState++; }
+              else if((stringState >= CDVJSONStringStateEscapedUnicode1) && (stringState <= CDVJSONStringStateEscapedUnicodeSurrogate4)) { stringState++; }
               break;
 
-              default: jk_error(parseState, @"Unexpected character found in \\u Unicode escape sequence.  Found '%c', expected [0-9a-fA-F].", currentChar); stringState = JSONStringStateError; goto finishedParsing; break;
+              default: jk_error(parseState, @"Unexpected character found in \\u Unicode escape sequence.  Found '%c', expected [0-9a-fA-F].", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing; break;
             }
           }
           break;
 
-        case JSONStringStateEscapedNeedEscapeForSurrogate:
-          if(currentChar == '\\') { stringState = JSONStringStateEscapedNeedEscapedUForSurrogate; }
+        case CDVJSONStringStateEscapedNeedEscapeForSurrogate:
+          if(currentChar == '\\') { stringState = CDVJSONStringStateEscapedNeedEscapedUForSurrogate; }
           else { 
-            if((parseState->parseOptionFlags & JKParseOptionLooseUnicode) == 0) { jk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = JSONStringStateError; goto finishedParsing; }
-            else { stringState = JSONStringStateParsing; atStringCharacter--;    if(jk_string_add_unicodeCodePoint(parseState, UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; } }
+            if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0) { jk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+            else { stringState = CDVJSONStringStateParsing; atStringCharacter--;    if(jk_string_add_unicodeCodePoint(parseState, UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
           }
           break;
 
-        case JSONStringStateEscapedNeedEscapedUForSurrogate:
-          if(currentChar == 'u') { stringState = JSONStringStateEscapedUnicodeSurrogate1; }
+        case CDVJSONStringStateEscapedNeedEscapedUForSurrogate:
+          if(currentChar == 'u') { stringState = CDVJSONStringStateEscapedUnicodeSurrogate1; }
           else { 
-            if((parseState->parseOptionFlags & JKParseOptionLooseUnicode) == 0) { jk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = JSONStringStateError; goto finishedParsing; }
-            else { stringState = JSONStringStateParsing; atStringCharacter -= 2; if(jk_string_add_unicodeCodePoint(parseState, UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; } }
+            if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0) { jk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+            else { stringState = CDVJSONStringStateParsing; atStringCharacter -= 2; if(jk_string_add_unicodeCodePoint(parseState, UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
           }
           break;
 
-        default: jk_error(parseState, @"Internal error: Unknown stringState. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = JSONStringStateError; goto finishedParsing; break;
+        default: jk_error(parseState, @"Internal error: Unknown stringState. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; break;
       }
     }
   }
 
 finishedParsing:
 
-  if(JK_EXPECT_T(stringState == JSONStringStateFinished)) {
+  if(CDVJK_EXPECT_T(stringState == CDVJSONStringStateFinished)) {
     NSCParameterAssert((parseState->stringBuffer.bytes.ptr + tokenStartIndex) < atStringCharacter);
 
     parseState->token.tokenPtrRange.ptr    = parseState->stringBuffer.bytes.ptr + tokenStartIndex;
     parseState->token.tokenPtrRange.length = (atStringCharacter - parseState->token.tokenPtrRange.ptr);
 
-    if(JK_EXPECT_T(onlySimpleString)) {
+    if(CDVJK_EXPECT_T(onlySimpleString)) {
       NSCParameterAssert(((parseState->token.tokenPtrRange.ptr + 1) < endOfBuffer) && (parseState->token.tokenPtrRange.length >= 2UL) && (((parseState->token.tokenPtrRange.ptr + 1) + (parseState->token.tokenPtrRange.length - 2)) < endOfBuffer));
       parseState->token.value.ptrRange.ptr    = parseState->token.tokenPtrRange.ptr    + 1;
       parseState->token.value.ptrRange.length = parseState->token.tokenPtrRange.length - 2UL;
@@ -1619,41 +1619,41 @@ finishedParsing:
     }
     
     parseState->token.value.hash = stringHash;
-    parseState->token.value.type = JKValueTypeString;
+    parseState->token.value.type = CDVJKValueTypeString;
     parseState->atIndex          = (atStringCharacter - parseState->stringBuffer.bytes.ptr);
   }
 
-  if(JK_EXPECT_F(stringState != JSONStringStateFinished)) { jk_error(parseState, @"Invalid string."); }
-  return(JK_EXPECT_T(stringState == JSONStringStateFinished) ? 0 : 1);
+  if(CDVJK_EXPECT_F(stringState != CDVJSONStringStateFinished)) { jk_error(parseState, @"Invalid string."); }
+  return(CDVJK_EXPECT_T(stringState == CDVJSONStringStateFinished) ? 0 : 1);
 }
 
-static int jk_parse_number(JKParseState *parseState) {
-  NSCParameterAssert((parseState != NULL) && (JK_AT_STRING_PTR(parseState) <= JK_END_STRING_PTR(parseState)));
-  const unsigned char *numberStart       = JK_AT_STRING_PTR(parseState);
-  const unsigned char *endOfBuffer       = JK_END_STRING_PTR(parseState);
+static int jk_parse_number(CDVJKParseState *parseState) {
+  NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
+  const unsigned char *numberStart       = CDVJK_AT_STRING_PTR(parseState);
+  const unsigned char *endOfBuffer       = CDVJK_END_STRING_PTR(parseState);
   const unsigned char *atNumberCharacter = NULL;
-  int                  numberState       = JSONNumberStateWholeNumberStart, isFloatingPoint = 0, isNegative = 0, backup = 0;
+  int                  numberState       = CDVJSONNumberStateWholeNumberStart, isFloatingPoint = 0, isNegative = 0, backup = 0;
   size_t               startingIndex     = parseState->atIndex;
   
-  for(atNumberCharacter = numberStart; (JK_EXPECT_T(atNumberCharacter < endOfBuffer)) && (JK_EXPECT_T(!(JK_EXPECT_F(numberState == JSONNumberStateFinished) || JK_EXPECT_F(numberState == JSONNumberStateError)))); atNumberCharacter++) {
+  for(atNumberCharacter = numberStart; (CDVJK_EXPECT_T(atNumberCharacter < endOfBuffer)) && (CDVJK_EXPECT_T(!(CDVJK_EXPECT_F(numberState == CDVJSONNumberStateFinished) || CDVJK_EXPECT_F(numberState == CDVJSONNumberStateError)))); atNumberCharacter++) {
     unsigned long currentChar = (unsigned long)(*atNumberCharacter), lowerCaseCC = currentChar | 0x20UL;
     
     switch(numberState) {
-      case JSONNumberStateWholeNumberStart: if   (currentChar == '-')                                                                              { numberState = JSONNumberStateWholeNumberMinus;      isNegative      = 1; break; }
-      case JSONNumberStateWholeNumberMinus: if   (currentChar == '0')                                                                              { numberState = JSONNumberStateWholeNumberZero;                            break; }
-                                       else if(  (currentChar >= '1') && (currentChar <= '9'))                                                     { numberState = JSONNumberStateWholeNumber;                                break; }
-                                       else                                                     { /* XXX Add error message */                        numberState = JSONNumberStateError;                                      break; }
-      case JSONNumberStateExponentStart:    if(  (currentChar == '+') || (currentChar == '-'))                                                     { numberState = JSONNumberStateExponentPlusMinus;                          break; }
-      case JSONNumberStateFractionalNumberStart:
-      case JSONNumberStateExponentPlusMinus:if(!((currentChar >= '0') && (currentChar <= '9'))) { /* XXX Add error message */                        numberState = JSONNumberStateError;                                      break; }
-                                       else {                                              if(numberState == JSONNumberStateFractionalNumberStart) { numberState = JSONNumberStateFractionalNumber; }
-                                                                                           else                                                    { numberState = JSONNumberStateExponent;         }                         break; }
-      case JSONNumberStateWholeNumberZero:
-      case JSONNumberStateWholeNumber:      if   (currentChar == '.')                                                                              { numberState = JSONNumberStateFractionalNumberStart; isFloatingPoint = 1; break; }
-      case JSONNumberStateFractionalNumber: if   (lowerCaseCC == 'e')                                                                              { numberState = JSONNumberStateExponentStart;         isFloatingPoint = 1; break; }
-      case JSONNumberStateExponent:         if(!((currentChar >= '0') && (currentChar <= '9')) || (numberState == JSONNumberStateWholeNumberZero)) { numberState = JSONNumberStateFinished;              backup          = 1; break; }
+      case CDVJSONNumberStateWholeNumberStart: if   (currentChar == '-')                                                                              { numberState = CDVJSONNumberStateWholeNumberMinus;      isNegative      = 1; break; }
+      case CDVJSONNumberStateWholeNumberMinus: if   (currentChar == '0')                                                                              { numberState = CDVJSONNumberStateWholeNumberZero;                            break; }
+                                       else if(  (currentChar >= '1') && (currentChar <= '9'))                                                     { numberState = CDVJSONNumberStateWholeNumber;                                break; }
+                                       else                                                     { /* XXX Add error message */                        numberState = CDVJSONNumberStateError;                                      break; }
+      case CDVJSONNumberStateExponentStart:    if(  (currentChar == '+') || (currentChar == '-'))                                                     { numberState = CDVJSONNumberStateExponentPlusMinus;                          break; }
+      case CDVJSONNumberStateFractionalNumberStart:
+      case CDVJSONNumberStateExponentPlusMinus:if(!((currentChar >= '0') && (currentChar <= '9'))) { /* XXX Add error message */                        numberState = CDVJSONNumberStateError;                                      break; }
+                                       else {                                              if(numberState == CDVJSONNumberStateFractionalNumberStart) { numberState = CDVJSONNumberStateFractionalNumber; }
+                                                                                           else                                                    { numberState = CDVJSONNumberStateExponent;         }                         break; }
+      case CDVJSONNumberStateWholeNumberZero:
+      case CDVJSONNumberStateWholeNumber:      if   (currentChar == '.')                                                                              { numberState = CDVJSONNumberStateFractionalNumberStart; isFloatingPoint = 1; break; }
+      case CDVJSONNumberStateFractionalNumber: if   (lowerCaseCC == 'e')                                                                              { numberState = CDVJSONNumberStateExponentStart;         isFloatingPoint = 1; break; }
+      case CDVJSONNumberStateExponent:         if(!((currentChar >= '0') && (currentChar <= '9')) || (numberState == CDVJSONNumberStateWholeNumberZero)) { numberState = CDVJSONNumberStateFinished;              backup          = 1; break; }
         break;
-      default:                                                                                    /* XXX Add error message */                        numberState = JSONNumberStateError;                                      break;
+      default:                                                                                    /* XXX Add error message */                        numberState = CDVJSONNumberStateError;                                      break;
     }
   }
   
@@ -1661,7 +1661,7 @@ static int jk_parse_number(JKParseState *parseState) {
   parseState->token.tokenPtrRange.length = (atNumberCharacter - parseState->token.tokenPtrRange.ptr) - backup;
   parseState->atIndex                    = (parseState->token.tokenPtrRange.ptr + parseState->token.tokenPtrRange.length) - parseState->stringBuffer.bytes.ptr;
 
-  if(JK_EXPECT_T(numberState == JSONNumberStateFinished)) {
+  if(CDVJK_EXPECT_T(numberState == CDVJSONNumberStateFinished)) {
     unsigned char  numberTempBuf[parseState->token.tokenPtrRange.length + 4UL];
     unsigned char *endOfNumber = NULL;
 
@@ -1671,99 +1671,99 @@ static int jk_parse_number(JKParseState *parseState) {
     errno = 0;
     
     // Treat "-0" as a floating point number, which is capable of representing negative zeros.
-    if(JK_EXPECT_F(parseState->token.tokenPtrRange.length == 2UL) && JK_EXPECT_F(numberTempBuf[1] == '0') && JK_EXPECT_F(isNegative)) { isFloatingPoint = 1; }
+    if(CDVJK_EXPECT_F(parseState->token.tokenPtrRange.length == 2UL) && CDVJK_EXPECT_F(numberTempBuf[1] == '0') && CDVJK_EXPECT_F(isNegative)) { isFloatingPoint = 1; }
 
     if(isFloatingPoint) {
       parseState->token.value.number.doubleValue = strtod((const char *)numberTempBuf, (char **)&endOfNumber); // strtod is documented to return U+2261 (identical to) 0.0 on an underflow error (along with setting errno to ERANGE).
-      parseState->token.value.type               = JKValueTypeDouble;
+      parseState->token.value.type               = CDVJKValueTypeDouble;
       parseState->token.value.ptrRange.ptr       = (const unsigned char *)&parseState->token.value.number.doubleValue;
       parseState->token.value.ptrRange.length    = sizeof(double);
-      parseState->token.value.hash               = (JK_HASH_INIT + parseState->token.value.type);
+      parseState->token.value.hash               = (CDVJK_HASH_INIT + parseState->token.value.type);
     } else {
       if(isNegative) {
         parseState->token.value.number.longLongValue = strtoll((const char *)numberTempBuf, (char **)&endOfNumber, 10);
-        parseState->token.value.type                 = JKValueTypeLongLong;
+        parseState->token.value.type                 = CDVJKValueTypeLongLong;
         parseState->token.value.ptrRange.ptr         = (const unsigned char *)&parseState->token.value.number.longLongValue;
         parseState->token.value.ptrRange.length      = sizeof(long long);
-        parseState->token.value.hash                 = (JK_HASH_INIT + parseState->token.value.type) + (JKHash)parseState->token.value.number.longLongValue;
+        parseState->token.value.hash                 = (CDVJK_HASH_INIT + parseState->token.value.type) + (CDVJKHash)parseState->token.value.number.longLongValue;
       } else {
         parseState->token.value.number.unsignedLongLongValue = strtoull((const char *)numberTempBuf, (char **)&endOfNumber, 10);
-        parseState->token.value.type                         = JKValueTypeUnsignedLongLong;
+        parseState->token.value.type                         = CDVJKValueTypeUnsignedLongLong;
         parseState->token.value.ptrRange.ptr                 = (const unsigned char *)&parseState->token.value.number.unsignedLongLongValue;
         parseState->token.value.ptrRange.length              = sizeof(unsigned long long);
-        parseState->token.value.hash                         = (JK_HASH_INIT + parseState->token.value.type) + (JKHash)parseState->token.value.number.unsignedLongLongValue;
+        parseState->token.value.hash                         = (CDVJK_HASH_INIT + parseState->token.value.type) + (CDVJKHash)parseState->token.value.number.unsignedLongLongValue;
       }
     }
 
-    if(JK_EXPECT_F(errno != 0)) {
-      numberState = JSONNumberStateError;
+    if(CDVJK_EXPECT_F(errno != 0)) {
+      numberState = CDVJSONNumberStateError;
       if(errno == ERANGE) {
         switch(parseState->token.value.type) {
-          case JKValueTypeDouble:           jk_error(parseState, @"The value '%s' could not be represented as a 'double' due to %s.",           numberTempBuf, (parseState->token.value.number.doubleValue == 0.0) ? "underflow" : "overflow"); break; // see above for == 0.0.
-          case JKValueTypeLongLong:         jk_error(parseState, @"The value '%s' exceeded the minimum value that could be represented: %lld.", numberTempBuf, parseState->token.value.number.longLongValue);                                   break;
-          case JKValueTypeUnsignedLongLong: jk_error(parseState, @"The value '%s' exceeded the maximum value that could be represented: %llu.", numberTempBuf, parseState->token.value.number.unsignedLongLongValue);                           break;
+          case CDVJKValueTypeDouble:           jk_error(parseState, @"The value '%s' could not be represented as a 'double' due to %s.",           numberTempBuf, (parseState->token.value.number.doubleValue == 0.0) ? "underflow" : "overflow"); break; // see above for == 0.0.
+          case CDVJKValueTypeLongLong:         jk_error(parseState, @"The value '%s' exceeded the minimum value that could be represented: %lld.", numberTempBuf, parseState->token.value.number.longLongValue);                                   break;
+          case CDVJKValueTypeUnsignedLongLong: jk_error(parseState, @"The value '%s' exceeded the maximum value that could be represented: %llu.", numberTempBuf, parseState->token.value.number.unsignedLongLongValue);                           break;
           default:                          jk_error(parseState, @"Internal error: Unknown token value type. %@ line #%ld",                     [NSString stringWithUTF8String:__FILE__], (long)__LINE__);                                      break;
         }
       }
     }
-    if(JK_EXPECT_F(endOfNumber != &numberTempBuf[parseState->token.tokenPtrRange.length]) && JK_EXPECT_F(numberState != JSONNumberStateError)) { numberState = JSONNumberStateError; jk_error(parseState, @"The conversion function did not consume all of the number tokens characters."); }
+    if(CDVJK_EXPECT_F(endOfNumber != &numberTempBuf[parseState->token.tokenPtrRange.length]) && CDVJK_EXPECT_F(numberState != CDVJSONNumberStateError)) { numberState = CDVJSONNumberStateError; jk_error(parseState, @"The conversion function did not consume all of the number tokens characters."); }
 
     size_t hashIndex = 0UL;
     for(hashIndex = 0UL; hashIndex < parseState->token.value.ptrRange.length; hashIndex++) { parseState->token.value.hash = calculateHash(parseState->token.value.hash, parseState->token.value.ptrRange.ptr[hashIndex]); }
   }
 
-  if(JK_EXPECT_F(numberState != JSONNumberStateFinished)) { jk_error(parseState, @"Invalid number."); }
-  return(JK_EXPECT_T((numberState == JSONNumberStateFinished)) ? 0 : 1);
+  if(CDVJK_EXPECT_F(numberState != CDVJSONNumberStateFinished)) { jk_error(parseState, @"Invalid number."); }
+  return(CDVJK_EXPECT_T((numberState == CDVJSONNumberStateFinished)) ? 0 : 1);
 }
 
-JK_STATIC_INLINE void jk_set_parsed_token(JKParseState *parseState, const unsigned char *ptr, size_t length, JKTokenType type, size_t advanceBy) {
+CDVJK_STATIC_INLINE void jk_set_parsed_token(CDVJKParseState *parseState, const unsigned char *ptr, size_t length, CDVJKTokenType type, size_t advanceBy) {
   parseState->token.tokenPtrRange.ptr     = ptr;
   parseState->token.tokenPtrRange.length  = length;
   parseState->token.type                  = type;
   parseState->atIndex                    += advanceBy;
 }
 
-static size_t jk_parse_is_newline(JKParseState *parseState, const unsigned char *atCharacterPtr) {
-  NSCParameterAssert((parseState != NULL) && (atCharacterPtr != NULL) && (atCharacterPtr >= parseState->stringBuffer.bytes.ptr) && (atCharacterPtr < JK_END_STRING_PTR(parseState)));
-  const unsigned char *endOfStringPtr = JK_END_STRING_PTR(parseState);
+static size_t jk_parse_is_newline(CDVJKParseState *parseState, const unsigned char *atCharacterPtr) {
+  NSCParameterAssert((parseState != NULL) && (atCharacterPtr != NULL) && (atCharacterPtr >= parseState->stringBuffer.bytes.ptr) && (atCharacterPtr < CDVJK_END_STRING_PTR(parseState)));
+  const unsigned char *endOfStringPtr = CDVJK_END_STRING_PTR(parseState);
 
-  if(JK_EXPECT_F(atCharacterPtr >= endOfStringPtr)) { return(0UL); }
+  if(CDVJK_EXPECT_F(atCharacterPtr >= endOfStringPtr)) { return(0UL); }
 
-  if(JK_EXPECT_F((*(atCharacterPtr + 0)) == '\n')) { return(1UL); }
-  if(JK_EXPECT_F((*(atCharacterPtr + 0)) == '\r')) { if((JK_EXPECT_T((atCharacterPtr + 1) < endOfStringPtr)) && ((*(atCharacterPtr + 1)) == '\n')) { return(2UL); } return(1UL); }
-  if(parseState->parseOptionFlags & JKParseOptionUnicodeNewlines) {
-    if((JK_EXPECT_F((*(atCharacterPtr + 0)) == 0xc2)) && (((atCharacterPtr + 1) < endOfStringPtr) && ((*(atCharacterPtr + 1)) == 0x85))) { return(2UL); }
-    if((JK_EXPECT_F((*(atCharacterPtr + 0)) == 0xe2)) && (((atCharacterPtr + 2) < endOfStringPtr) && ((*(atCharacterPtr + 1)) == 0x80) && (((*(atCharacterPtr + 2)) == 0xa8) || ((*(atCharacterPtr + 2)) == 0xa9)))) { return(3UL); }
+  if(CDVJK_EXPECT_F((*(atCharacterPtr + 0)) == '\n')) { return(1UL); }
+  if(CDVJK_EXPECT_F((*(atCharacterPtr + 0)) == '\r')) { if((CDVJK_EXPECT_T((atCharacterPtr + 1) < endOfStringPtr)) && ((*(atCharacterPtr + 1)) == '\n')) { return(2UL); } return(1UL); }
+  if(parseState->parseOptionFlags & CDVJKParseOptionUnicodeNewlines) {
+    if((CDVJK_EXPECT_F((*(atCharacterPtr + 0)) == 0xc2)) && (((atCharacterPtr + 1) < endOfStringPtr) && ((*(atCharacterPtr + 1)) == 0x85))) { return(2UL); }
+    if((CDVJK_EXPECT_F((*(atCharacterPtr + 0)) == 0xe2)) && (((atCharacterPtr + 2) < endOfStringPtr) && ((*(atCharacterPtr + 1)) == 0x80) && (((*(atCharacterPtr + 2)) == 0xa8) || ((*(atCharacterPtr + 2)) == 0xa9)))) { return(3UL); }
   }
 
   return(0UL);
 }
 
-JK_STATIC_INLINE int jk_parse_skip_newline(JKParseState *parseState) {
+CDVJK_STATIC_INLINE int jk_parse_skip_newline(CDVJKParseState *parseState) {
   size_t newlineAdvanceAtIndex = 0UL;
-  if(JK_EXPECT_F((newlineAdvanceAtIndex = jk_parse_is_newline(parseState, JK_AT_STRING_PTR(parseState))) > 0UL)) { parseState->lineNumber++; parseState->atIndex += (newlineAdvanceAtIndex - 1UL); parseState->lineStartIndex = parseState->atIndex + 1UL; return(1); }
+  if(CDVJK_EXPECT_F((newlineAdvanceAtIndex = jk_parse_is_newline(parseState, CDVJK_AT_STRING_PTR(parseState))) > 0UL)) { parseState->lineNumber++; parseState->atIndex += (newlineAdvanceAtIndex - 1UL); parseState->lineStartIndex = parseState->atIndex + 1UL; return(1); }
   return(0);
 }
 
-JK_STATIC_INLINE void jk_parse_skip_whitespace(JKParseState *parseState) {
+CDVJK_STATIC_INLINE void jk_parse_skip_whitespace(CDVJKParseState *parseState) {
 #ifndef __clang_analyzer__
-  NSCParameterAssert((parseState != NULL) && (JK_AT_STRING_PTR(parseState) <= JK_END_STRING_PTR(parseState)));
+  NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *atCharacterPtr   = NULL;
-  const unsigned char *endOfStringPtr   = JK_END_STRING_PTR(parseState);
+  const unsigned char *endOfStringPtr   = CDVJK_END_STRING_PTR(parseState);
 
-  for(atCharacterPtr = JK_AT_STRING_PTR(parseState); (JK_EXPECT_T((atCharacterPtr = JK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) {
+  for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) {
     if(((*(atCharacterPtr + 0)) == ' ') || ((*(atCharacterPtr + 0)) == '\t')) { continue; }
     if(jk_parse_skip_newline(parseState)) { continue; }
-    if(parseState->parseOptionFlags & JKParseOptionComments) {
-      if((JK_EXPECT_F((*(atCharacterPtr + 0)) == '/')) && (JK_EXPECT_T((atCharacterPtr + 1) < endOfStringPtr))) {
+    if(parseState->parseOptionFlags & CDVJKParseOptionComments) {
+      if((CDVJK_EXPECT_F((*(atCharacterPtr + 0)) == '/')) && (CDVJK_EXPECT_T((atCharacterPtr + 1) < endOfStringPtr))) {
         if((*(atCharacterPtr + 1)) == '/') {
           parseState->atIndex++;
-          for(atCharacterPtr = JK_AT_STRING_PTR(parseState); (JK_EXPECT_T((atCharacterPtr = JK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) { if(jk_parse_skip_newline(parseState)) { break; } }
+          for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) { if(jk_parse_skip_newline(parseState)) { break; } }
           continue;
         }
         if((*(atCharacterPtr + 1)) == '*') {
           parseState->atIndex++;
-          for(atCharacterPtr = JK_AT_STRING_PTR(parseState); (JK_EXPECT_T((atCharacterPtr = JK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) {
+          for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) {
             if(jk_parse_skip_newline(parseState)) { continue; }
             if(((*(atCharacterPtr + 0)) == '*') && (((atCharacterPtr + 1) < endOfStringPtr) && ((*(atCharacterPtr + 1)) == '/'))) { parseState->atIndex++; break; }
           }
@@ -1776,10 +1776,10 @@ JK_STATIC_INLINE void jk_parse_skip_whitespace(JKParseState *parseState) {
 #endif
 }
 
-static int jk_parse_next_token(JKParseState *parseState) {
-  NSCParameterAssert((parseState != NULL) && (JK_AT_STRING_PTR(parseState) <= JK_END_STRING_PTR(parseState)));
+static int jk_parse_next_token(CDVJKParseState *parseState) {
+  NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *atCharacterPtr   = NULL;
-  const unsigned char *endOfStringPtr   = JK_END_STRING_PTR(parseState);
+  const unsigned char *endOfStringPtr   = CDVJK_END_STRING_PTR(parseState);
   unsigned char        currentCharacter = 0U;
   int                  stopParsing      = 0;
 
@@ -1789,74 +1789,74 @@ static int jk_parse_next_token(JKParseState *parseState) {
 
   jk_parse_skip_whitespace(parseState);
 
-  if((JK_AT_STRING_PTR(parseState) == endOfStringPtr)) { stopParsing = 1; }
+  if((CDVJK_AT_STRING_PTR(parseState) == endOfStringPtr)) { stopParsing = 1; }
 
-  if((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T((atCharacterPtr = JK_AT_STRING_PTR(parseState)) < endOfStringPtr))) {
+  if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr))) {
     currentCharacter = *atCharacterPtr;
 
-         if(JK_EXPECT_T(currentCharacter == '"')) { if(JK_EXPECT_T((stopParsing = jk_parse_string(parseState)) == 0)) { jk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, JKTokenTypeString, 0UL); } }
-    else if(JK_EXPECT_T(currentCharacter == ':')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, JKTokenTypeSeparator,   1UL); }
-    else if(JK_EXPECT_T(currentCharacter == ',')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, JKTokenTypeComma,       1UL); }
-    else if((JK_EXPECT_T(currentCharacter >= '0') && JK_EXPECT_T(currentCharacter <= '9')) || JK_EXPECT_T(currentCharacter == '-')) { if(JK_EXPECT_T((stopParsing = jk_parse_number(parseState)) == 0)) { jk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, JKTokenTypeNumber, 0UL); } }
-    else if(JK_EXPECT_T(currentCharacter == '{')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, JKTokenTypeObjectBegin, 1UL); }
-    else if(JK_EXPECT_T(currentCharacter == '}')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, JKTokenTypeObjectEnd,   1UL); }
-    else if(JK_EXPECT_T(currentCharacter == '[')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, JKTokenTypeArrayBegin,  1UL); }
-    else if(JK_EXPECT_T(currentCharacter == ']')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, JKTokenTypeArrayEnd,    1UL); }
+         if(CDVJK_EXPECT_T(currentCharacter == '"')) { if(CDVJK_EXPECT_T((stopParsing = jk_parse_string(parseState)) == 0)) { jk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, CDVJKTokenTypeString, 0UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == ':')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeSeparator,   1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == ',')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeComma,       1UL); }
+    else if((CDVJK_EXPECT_T(currentCharacter >= '0') && CDVJK_EXPECT_T(currentCharacter <= '9')) || CDVJK_EXPECT_T(currentCharacter == '-')) { if(CDVJK_EXPECT_T((stopParsing = jk_parse_number(parseState)) == 0)) { jk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, CDVJKTokenTypeNumber, 0UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == '{')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeObjectBegin, 1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == '}')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeObjectEnd,   1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == '[')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeArrayBegin,  1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == ']')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeArrayEnd,    1UL); }
     
-    else if(JK_EXPECT_T(currentCharacter == 't')) { if(!((JK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (JK_EXPECT_T(atCharacterPtr[1] == 'r')) && (JK_EXPECT_T(atCharacterPtr[2] == 'u')) && (JK_EXPECT_T(atCharacterPtr[3] == 'e'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 4UL, JKTokenTypeTrue,  4UL); } }
-    else if(JK_EXPECT_T(currentCharacter == 'f')) { if(!((JK_EXPECT_T((atCharacterPtr + 5UL) < endOfStringPtr)) && (JK_EXPECT_T(atCharacterPtr[1] == 'a')) && (JK_EXPECT_T(atCharacterPtr[2] == 'l')) && (JK_EXPECT_T(atCharacterPtr[3] == 's')) && (JK_EXPECT_T(atCharacterPtr[4] == 'e')))) { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 5UL, JKTokenTypeFalse, 5UL); } }
-    else if(JK_EXPECT_T(currentCharacter == 'n')) { if(!((JK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (JK_EXPECT_T(atCharacterPtr[1] == 'u')) && (JK_EXPECT_T(atCharacterPtr[2] == 'l')) && (JK_EXPECT_T(atCharacterPtr[3] == 'l'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 4UL, JKTokenTypeNull,  4UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == 't')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'r')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'u')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 'e'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 4UL, CDVJKTokenTypeTrue,  4UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == 'f')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 5UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'a')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'l')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 's')) && (CDVJK_EXPECT_T(atCharacterPtr[4] == 'e')))) { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 5UL, CDVJKTokenTypeFalse, 5UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == 'n')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'u')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'l')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 'l'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 4UL, CDVJKTokenTypeNull,  4UL); } }
     else { stopParsing = 1; /* XXX Add error message */ }    
   }
 
-  if(JK_EXPECT_F(stopParsing)) { jk_error(parseState, @"Unexpected token, wanted '{', '}', '[', ']', ',', ':', 'true', 'false', 'null', '\"STRING\"', 'NUMBER'."); }
+  if(CDVJK_EXPECT_F(stopParsing)) { jk_error(parseState, @"Unexpected token, wanted '{', '}', '[', ']', ',', ':', 'true', 'false', 'null', '\"STRING\"', 'NUMBER'."); }
   return(stopParsing);
 }
 
-static void jk_error_parse_accept_or3(JKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String) {
+static void jk_error_parse_accept_or3(CDVJKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String) {
   NSString *acceptStrings[16];
   int acceptIdx = 0;
-  if(state & JKParseAcceptValue) { acceptStrings[acceptIdx++] = or1String; }
-  if(state & JKParseAcceptComma) { acceptStrings[acceptIdx++] = or2String; }
-  if(state & JKParseAcceptEnd)   { acceptStrings[acceptIdx++] = or3String; }
+  if(state & CDVJKParseAcceptValue) { acceptStrings[acceptIdx++] = or1String; }
+  if(state & CDVJKParseAcceptComma) { acceptStrings[acceptIdx++] = or2String; }
+  if(state & CDVJKParseAcceptEnd)   { acceptStrings[acceptIdx++] = or3String; }
        if(acceptIdx == 1) { jk_error(parseState, @"Expected %@, not '%*.*s'",           acceptStrings[0],                                     (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
   else if(acceptIdx == 2) { jk_error(parseState, @"Expected %@ or %@, not '%*.*s'",     acceptStrings[0], acceptStrings[1],                   (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
   else if(acceptIdx == 3) { jk_error(parseState, @"Expected %@, %@, or %@, not '%*.*s", acceptStrings[0], acceptStrings[1], acceptStrings[2], (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
 }
 
-static void *jk_parse_array(JKParseState *parseState) {
+static void *jk_parse_array(CDVJKParseState *parseState) {
   size_t  startingObjectIndex = parseState->objectStack.index;
-  int     arrayState          = JKParseAcceptValueOrEnd, stopParsing = 0;
+  int     arrayState          = CDVJKParseAcceptValueOrEnd, stopParsing = 0;
   void   *parsedArray         = NULL;
 
-  while(JK_EXPECT_T((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length)))) {
-    if(JK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(jk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { jk_error(parseState, @"Internal error: [array] objectsIndex > %zu, resize failed? %@ line %#ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
+  while(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length)))) {
+    if(CDVJK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(jk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { jk_error(parseState, @"Internal error: [array] objectsIndex > %zu, resize failed? %@ line %#ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
 
-    if(JK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)) {
+    if(CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)) {
       void *object = NULL;
 #ifndef NS_BLOCK_ASSERTIONS
       parseState->objectStack.objects[parseState->objectStack.index] = NULL;
       parseState->objectStack.keys   [parseState->objectStack.index] = NULL;
 #endif
       switch(parseState->token.type) {
-        case JKTokenTypeNumber:
-        case JKTokenTypeString:
-        case JKTokenTypeTrue:
-        case JKTokenTypeFalse:
-        case JKTokenTypeNull:
-        case JKTokenTypeArrayBegin:
-        case JKTokenTypeObjectBegin:
-          if(JK_EXPECT_F((arrayState & JKParseAcceptValue)          == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");              stopParsing = 1; break; }
-          if(JK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL"); stopParsing = 1; break; } else { parseState->objectStack.objects[parseState->objectStack.index++] = object; arrayState = JKParseAcceptCommaOrEnd; }
+        case CDVJKTokenTypeNumber:
+        case CDVJKTokenTypeString:
+        case CDVJKTokenTypeTrue:
+        case CDVJKTokenTypeFalse:
+        case CDVJKTokenTypeNull:
+        case CDVJKTokenTypeArrayBegin:
+        case CDVJKTokenTypeObjectBegin:
+          if(CDVJK_EXPECT_F((arrayState & CDVJKParseAcceptValue)          == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");              stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL"); stopParsing = 1; break; } else { parseState->objectStack.objects[parseState->objectStack.index++] = object; arrayState = CDVJKParseAcceptCommaOrEnd; }
           break;
-        case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_JKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
-        case JKTokenTypeComma:    if(JK_EXPECT_T(arrayState & JKParseAcceptComma)) { arrayState = JKParseAcceptValue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
+        case CDVJKTokenTypeArrayEnd: if(CDVJK_EXPECT_T(arrayState & CDVJKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_CDVJKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
+        case CDVJKTokenTypeComma:    if(CDVJK_EXPECT_T(arrayState & CDVJKParseAcceptComma)) { arrayState = CDVJKParseAcceptValue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
         default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, arrayState, @"a value", @"a comma", @"a ']'"); stopParsing = 1; break;
       }
     }
   }
 
-  if(JK_EXPECT_F(parsedArray == NULL)) { size_t idx = 0UL; for(idx = startingObjectIndex; idx < parseState->objectStack.index; idx++) { if(parseState->objectStack.objects[idx] != NULL) { CFRelease(parseState->objectStack.objects[idx]); parseState->objectStack.objects[idx] = NULL; } } }
+  if(CDVJK_EXPECT_F(parsedArray == NULL)) { size_t idx = 0UL; for(idx = startingObjectIndex; idx < parseState->objectStack.index; idx++) { if(parseState->objectStack.objects[idx] != NULL) { CFRelease(parseState->objectStack.objects[idx]); parseState->objectStack.objects[idx] = NULL; } } }
 #if !defined(NS_BLOCK_ASSERTIONS)
   else { size_t idx = 0UL; for(idx = startingObjectIndex; idx < parseState->objectStack.index; idx++) { parseState->objectStack.objects[idx] = NULL; parseState->objectStack.keys[idx] = NULL; } }
 #endif
@@ -1865,70 +1865,70 @@ static void *jk_parse_array(JKParseState *parseState) {
   return(parsedArray);
 }
 
-static void *jk_create_dictionary(JKParseState *parseState, size_t startingObjectIndex) {
+static void *jk_create_dictionary(CDVJKParseState *parseState, size_t startingObjectIndex) {
   void *parsedDictionary = NULL;
 
   parseState->objectStack.index--;
 
-  parsedDictionary = _JKDictionaryCreate((id *)&parseState->objectStack.keys[startingObjectIndex], (NSUInteger *)&parseState->objectStack.cfHashes[startingObjectIndex], (id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections);
+  parsedDictionary = _CDVJKDictionaryCreate((id *)&parseState->objectStack.keys[startingObjectIndex], (NSUInteger *)&parseState->objectStack.cfHashes[startingObjectIndex], (id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections);
 
   return(parsedDictionary);
 }
 
-static void *jk_parse_dictionary(JKParseState *parseState) {
+static void *jk_parse_dictionary(CDVJKParseState *parseState) {
   size_t  startingObjectIndex = parseState->objectStack.index;
-  int     dictState           = JKParseAcceptValueOrEnd, stopParsing = 0;
+  int     dictState           = CDVJKParseAcceptValueOrEnd, stopParsing = 0;
   void   *parsedDictionary    = NULL;
 
-  while(JK_EXPECT_T((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length)))) {
-    if(JK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(jk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { jk_error(parseState, @"Internal error: [dictionary] objectsIndex > %zu, resize failed? %@ line #%ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
+  while(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length)))) {
+    if(CDVJK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(jk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { jk_error(parseState, @"Internal error: [dictionary] objectsIndex > %zu, resize failed? %@ line #%ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
 
     size_t objectStackIndex = parseState->objectStack.index++;
     parseState->objectStack.keys[objectStackIndex]    = NULL;
     parseState->objectStack.objects[objectStackIndex] = NULL;
     void *key = NULL, *object = NULL;
 
-    if(JK_EXPECT_T((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)))) {
+    if(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)))) {
       switch(parseState->token.type) {
-        case JKTokenTypeString:
-          if(JK_EXPECT_F((dictState & JKParseAcceptValue)        == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected string.");           stopParsing = 1; break; }
-          if(JK_EXPECT_F((key = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Key == NULL."); stopParsing = 1; break; }
+        case CDVJKTokenTypeString:
+          if(CDVJK_EXPECT_F((dictState & CDVJKParseAcceptValue)        == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected string.");           stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((key = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Key == NULL."); stopParsing = 1; break; }
           else {
             parseState->objectStack.keys[objectStackIndex] = key;
-            if(JK_EXPECT_T(parseState->token.value.cacheItem != NULL)) { if(JK_EXPECT_F(parseState->token.value.cacheItem->cfHash == 0UL)) { parseState->token.value.cacheItem->cfHash = CFHash(key); } parseState->objectStack.cfHashes[objectStackIndex] = parseState->token.value.cacheItem->cfHash; }
+            if(CDVJK_EXPECT_T(parseState->token.value.cacheItem != NULL)) { if(CDVJK_EXPECT_F(parseState->token.value.cacheItem->cfHash == 0UL)) { parseState->token.value.cacheItem->cfHash = CFHash(key); } parseState->objectStack.cfHashes[objectStackIndex] = parseState->token.value.cacheItem->cfHash; }
             else { parseState->objectStack.cfHashes[objectStackIndex] = CFHash(key); }
           }
           break;
 
-        case JKTokenTypeObjectEnd: if((JK_EXPECT_T(dictState & JKParseAcceptEnd)))   { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedDictionary = jk_create_dictionary(parseState, startingObjectIndex); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected '}'."); } stopParsing = 1; break;
-        case JKTokenTypeComma:     if((JK_EXPECT_T(dictState & JKParseAcceptComma))) { dictState = JKParseAcceptValue; parseState->objectStack.index--; continue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
+        case CDVJKTokenTypeObjectEnd: if((CDVJK_EXPECT_T(dictState & CDVJKParseAcceptEnd)))   { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedDictionary = jk_create_dictionary(parseState, startingObjectIndex); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected '}'."); } stopParsing = 1; break;
+        case CDVJKTokenTypeComma:     if((CDVJK_EXPECT_T(dictState & CDVJKParseAcceptComma))) { dictState = CDVJKParseAcceptValue; parseState->objectStack.index--; continue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
 
         default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, dictState, @"a \"STRING\"", @"a comma", @"a '}'"); stopParsing = 1; break;
       }
     }
 
-    if(JK_EXPECT_T(stopParsing == 0)) {
-      if(JK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)) { if(JK_EXPECT_F(parseState->token.type != JKTokenTypeSeparator)) { parseState->errorIsPrev = 1; jk_error(parseState, @"Expected ':'."); stopParsing = 1; } }
+    if(CDVJK_EXPECT_T(stopParsing == 0)) {
+      if(CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)) { if(CDVJK_EXPECT_F(parseState->token.type != CDVJKTokenTypeSeparator)) { parseState->errorIsPrev = 1; jk_error(parseState, @"Expected ':'."); stopParsing = 1; } }
     }
 
-    if((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
+    if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
       switch(parseState->token.type) {
-        case JKTokenTypeNumber:
-        case JKTokenTypeString:
-        case JKTokenTypeTrue:
-        case JKTokenTypeFalse:
-        case JKTokenTypeNull:
-        case JKTokenTypeArrayBegin:
-        case JKTokenTypeObjectBegin:
-          if(JK_EXPECT_F((dictState & JKParseAcceptValue)           == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");               stopParsing = 1; break; }
-          if(JK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL."); stopParsing = 1; break; } else { parseState->objectStack.objects[objectStackIndex] = object; dictState = JKParseAcceptCommaOrEnd; }
+        case CDVJKTokenTypeNumber:
+        case CDVJKTokenTypeString:
+        case CDVJKTokenTypeTrue:
+        case CDVJKTokenTypeFalse:
+        case CDVJKTokenTypeNull:
+        case CDVJKTokenTypeArrayBegin:
+        case CDVJKTokenTypeObjectBegin:
+          if(CDVJK_EXPECT_F((dictState & CDVJKParseAcceptValue)           == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");               stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL."); stopParsing = 1; break; } else { parseState->objectStack.objects[objectStackIndex] = object; dictState = CDVJKParseAcceptCommaOrEnd; }
           break;
         default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, dictState, @"a value", @"a comma", @"a '}'"); stopParsing = 1; break;
       }
     }
   }
 
-  if(JK_EXPECT_F(parsedDictionary == NULL)) { size_t idx = 0UL; for(idx = startingObjectIndex; idx < parseState->objectStack.index; idx++) { if(parseState->objectStack.keys[idx] != NULL) { CFRelease(parseState->objectStack.keys[idx]); parseState->objectStack.keys[idx] = NULL; } if(parseState->objectStack.objects[idx] != NULL) { CFRelease(parseState->objectStack.objects[idx]); parseState->objectStack.objects[idx] = NULL; } } }
+  if(CDVJK_EXPECT_F(parsedDictionary == NULL)) { size_t idx = 0UL; for(idx = startingObjectIndex; idx < parseState->objectStack.index; idx++) { if(parseState->objectStack.keys[idx] != NULL) { CFRelease(parseState->objectStack.keys[idx]); parseState->objectStack.keys[idx] = NULL; } if(parseState->objectStack.objects[idx] != NULL) { CFRelease(parseState->objectStack.objects[idx]); parseState->objectStack.objects[idx] = NULL; } } }
 #if !defined(NS_BLOCK_ASSERTIONS)
   else { size_t idx = 0UL; for(idx = startingObjectIndex; idx < parseState->objectStack.index; idx++) { parseState->objectStack.objects[idx] = NULL; parseState->objectStack.keys[idx] = NULL; } }
 #endif
@@ -1937,29 +1937,29 @@ static void *jk_parse_dictionary(JKParseState *parseState) {
   return(parsedDictionary);
 }
 
-static id json_parse_it(JKParseState *parseState) {
+static id json_parse_it(CDVJKParseState *parseState) {
   id  parsedObject = NULL;
   int stopParsing  = 0;
 
-  while((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length))) {
-    if((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
+  while((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length))) {
+    if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
       switch(parseState->token.type) {
-        case JKTokenTypeArrayBegin:
-        case JKTokenTypeObjectBegin: parsedObject = [(id)jk_object_for_token(parseState) autorelease]; stopParsing = 1; break;
+        case CDVJKTokenTypeArrayBegin:
+        case CDVJKTokenTypeObjectBegin: parsedObject = [(id)jk_object_for_token(parseState) autorelease]; stopParsing = 1; break;
         default:                     jk_error(parseState, @"Expected either '[' or '{'.");             stopParsing = 1; break;
       }
     }
   }
 
-  NSCParameterAssert((parseState->objectStack.index == 0) && (JK_AT_STRING_PTR(parseState) <= JK_END_STRING_PTR(parseState)));
+  NSCParameterAssert((parseState->objectStack.index == 0) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
 
-  if((parsedObject == NULL) && (JK_AT_STRING_PTR(parseState) == JK_END_STRING_PTR(parseState))) { jk_error(parseState, @"Reached the end of the buffer."); }
-  if(parsedObject == NULL) { jk_error(parseState, @"Unable to parse JSON."); }
+  if((parsedObject == NULL) && (CDVJK_AT_STRING_PTR(parseState) == CDVJK_END_STRING_PTR(parseState))) { jk_error(parseState, @"Reached the end of the buffer."); }
+  if(parsedObject == NULL) { jk_error(parseState, @"Unable to parse CDVJSON."); }
 
-  if((parsedObject != NULL) && (JK_AT_STRING_PTR(parseState) < JK_END_STRING_PTR(parseState))) {
+  if((parsedObject != NULL) && (CDVJK_AT_STRING_PTR(parseState) < CDVJK_END_STRING_PTR(parseState))) {
     jk_parse_skip_whitespace(parseState);
-    if((parsedObject != NULL) && ((parseState->parseOptionFlags & JKParseOptionPermitTextAfterValidJSON) == 0) && (JK_AT_STRING_PTR(parseState) < JK_END_STRING_PTR(parseState))) {
-      jk_error(parseState, @"A valid JSON object was parsed but there were additional non-white-space characters remaining.");
+    if((parsedObject != NULL) && ((parseState->parseOptionFlags & CDVJKParseOptionPermitTextAfterValidJSON) == 0) && (CDVJK_AT_STRING_PTR(parseState) < CDVJK_END_STRING_PTR(parseState))) {
+      jk_error(parseState, @"A valid CDVJSON object was parsed but there were additional non-white-space characters remaining.");
       parsedObject = NULL;
     }
   }
@@ -1973,15 +1973,15 @@ static id json_parse_it(JKParseState *parseState) {
 
 // This uses a Galois Linear Feedback Shift Register (LFSR) PRNG to pick which item in the cache to age. It has a period of (2^32)-1.
 // NOTE: A LFSR *MUST* be initialized to a non-zero value and must always have a non-zero value.
-JK_STATIC_INLINE void jk_cache_age(JKParseState *parseState) {
+CDVJK_STATIC_INLINE void jk_cache_age(CDVJKParseState *parseState) {
   NSCParameterAssert((parseState != NULL) && (parseState->cache.prng_lfsr != 0U));
   parseState->cache.prng_lfsr = (parseState->cache.prng_lfsr >> 1) ^ ((0U - (parseState->cache.prng_lfsr & 1U)) & 0x80200003U);
   parseState->cache.age[parseState->cache.prng_lfsr & (parseState->cache.count - 1UL)] >>= 1;
 }
 
-// The object cache is nothing more than a hash table with open addressing collision resolution that is bounded by JK_CACHE_PROBES attempts.
+// The object cache is nothing more than a hash table with open addressing collision resolution that is bounded by CDVJK_CACHE_PROBES attempts.
 //
-// The hash table is a linear C array of JKTokenCacheItem.  The terms "item" and "bucket" are synonymous with the index in to the cache array, i.e. cache.items[bucket].
+// The hash table is a linear C array of CDVJKTokenCacheItem.  The terms "item" and "bucket" are synonymous with the index in to the cache array, i.e. cache.items[bucket].
 //
 // Items in the cache have an age associated with them.  The age is the number of rightmost 1 bits, i.e. 0000 = 0, 0001 = 1, 0011 = 2, 0111 = 3, 1111 = 4.
 // This allows us to use left and right shifts to add or subtract from an items age.  Add = (age << 1) | 1.  Subtract = age >> 0.  Subtract is synonymous with "age" (i.e., age an item).
@@ -1995,23 +1995,23 @@ JK_STATIC_INLINE void jk_cache_age(JKParseState *parseState) {
 //
 // If a value is not found in the cache, and no useable bucket has been found, that value is not added to the cache.
 
-static void *jk_cachedObjects(JKParseState *parseState) {
+static void *jk_cachedObjects(CDVJKParseState *parseState) {
   unsigned long  bucket     = parseState->token.value.hash & (parseState->cache.count - 1UL), setBucket = 0UL, useableBucket = 0UL, x = 0UL;
   void          *parsedAtom = NULL;
     
-  if(JK_EXPECT_F(parseState->token.value.ptrRange.length == 0UL) && JK_EXPECT_T(parseState->token.value.type == JKValueTypeString)) { return(@""); }
+  if(CDVJK_EXPECT_F(parseState->token.value.ptrRange.length == 0UL) && CDVJK_EXPECT_T(parseState->token.value.type == CDVJKValueTypeString)) { return(@""); }
   
-  for(x = 0UL; x < JK_CACHE_PROBES; x++) {
-    if(JK_EXPECT_F(parseState->cache.items[bucket].object == NULL)) { setBucket = 1UL; useableBucket = bucket; break; }
+  for(x = 0UL; x < CDVJK_CACHE_PROBES; x++) {
+    if(CDVJK_EXPECT_F(parseState->cache.items[bucket].object == NULL)) { setBucket = 1UL; useableBucket = bucket; break; }
     
-    if((JK_EXPECT_T(parseState->cache.items[bucket].hash == parseState->token.value.hash)) && (JK_EXPECT_T(parseState->cache.items[bucket].size == parseState->token.value.ptrRange.length)) && (JK_EXPECT_T(parseState->cache.items[bucket].type == parseState->token.value.type)) && (JK_EXPECT_T(parseState->cache.items[bucket].bytes != NULL)) && (JK_EXPECT_T(memcmp(parseState->cache.items[bucket].bytes, parseState->token.value.ptrRange.ptr, parseState->token.value.ptrRange.length) == 0U))) {
+    if((CDVJK_EXPECT_T(parseState->cache.items[bucket].hash == parseState->token.value.hash)) && (CDVJK_EXPECT_T(parseState->cache.items[bucket].size == parseState->token.value.ptrRange.length)) && (CDVJK_EXPECT_T(parseState->cache.items[bucket].type == parseState->token.value.type)) && (CDVJK_EXPECT_T(parseState->cache.items[bucket].bytes != NULL)) && (CDVJK_EXPECT_T(memcmp(parseState->cache.items[bucket].bytes, parseState->token.value.ptrRange.ptr, parseState->token.value.ptrRange.length) == 0U))) {
       parseState->cache.age[bucket]     = (parseState->cache.age[bucket] << 1) | 1U;
       parseState->token.value.cacheItem = &parseState->cache.items[bucket];
       NSCParameterAssert(parseState->cache.items[bucket].object != NULL);
       return((void *)CFRetain(parseState->cache.items[bucket].object));
     } else {
-      if(JK_EXPECT_F(setBucket == 0UL) && JK_EXPECT_F(parseState->cache.age[bucket] == 0U)) { setBucket = 1UL; useableBucket = bucket; }
-      if(JK_EXPECT_F(setBucket == 0UL))                                                     { parseState->cache.age[bucket] >>= 1; jk_cache_age(parseState); jk_cache_age(parseState); }
+      if(CDVJK_EXPECT_F(setBucket == 0UL) && CDVJK_EXPECT_F(parseState->cache.age[bucket] == 0U)) { setBucket = 1UL; useableBucket = bucket; }
+      if(CDVJK_EXPECT_F(setBucket == 0UL))                                                     { parseState->cache.age[bucket] >>= 1; jk_cache_age(parseState); jk_cache_age(parseState); }
       // This is the open addressing function.  The values length and type are used as a form of "double hashing" to distribute values with the same effective value hash across different object cache buckets.
       // The values type is a prime number that is relatively coprime to the other primes in the set of value types and the number of hash table buckets.
       bucket = (parseState->token.value.hash + (parseState->token.value.ptrRange.length * (x + 1UL)) + (parseState->token.value.type * (x + 1UL)) + (3UL * (x + 1UL))) & (parseState->cache.count - 1UL);
@@ -2019,21 +2019,21 @@ static void *jk_cachedObjects(JKParseState *parseState) {
   }
   
   switch(parseState->token.value.type) {
-    case JKValueTypeString:           parsedAtom = (void *)CFStringCreateWithBytes(NULL, parseState->token.value.ptrRange.ptr, parseState->token.value.ptrRange.length, kCFStringEncodingUTF8, 0); break;
-    case JKValueTypeLongLong:         parsedAtom = (void *)CFNumberCreate(NULL, kCFNumberLongLongType, &parseState->token.value.number.longLongValue);                                             break;
-    case JKValueTypeUnsignedLongLong:
+    case CDVJKValueTypeString:           parsedAtom = (void *)CFStringCreateWithBytes(NULL, parseState->token.value.ptrRange.ptr, parseState->token.value.ptrRange.length, kCFStringEncodingUTF8, 0); break;
+    case CDVJKValueTypeLongLong:         parsedAtom = (void *)CFNumberCreate(NULL, kCFNumberLongLongType, &parseState->token.value.number.longLongValue);                                             break;
+    case CDVJKValueTypeUnsignedLongLong:
       if(parseState->token.value.number.unsignedLongLongValue <= LLONG_MAX) { parsedAtom = (void *)CFNumberCreate(NULL, kCFNumberLongLongType, &parseState->token.value.number.unsignedLongLongValue); }
       else { parsedAtom = (void *)parseState->objCImpCache.NSNumberInitWithUnsignedLongLong(parseState->objCImpCache.NSNumberAlloc(parseState->objCImpCache.NSNumberClass, @selector(alloc)), @selector(initWithUnsignedLongLong:), parseState->token.value.number.unsignedLongLongValue); }
       break;
-    case JKValueTypeDouble:           parsedAtom = (void *)CFNumberCreate(NULL, kCFNumberDoubleType,   &parseState->token.value.number.doubleValue);                                               break;
+    case CDVJKValueTypeDouble:           parsedAtom = (void *)CFNumberCreate(NULL, kCFNumberDoubleType,   &parseState->token.value.number.doubleValue);                                               break;
     default: jk_error(parseState, @"Internal error: Unknown token value type. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break;
   }
   
-  if(JK_EXPECT_T(setBucket) && (JK_EXPECT_T(parsedAtom != NULL))) {
+  if(CDVJK_EXPECT_T(setBucket) && (CDVJK_EXPECT_T(parsedAtom != NULL))) {
     bucket = useableBucket;
-    if(JK_EXPECT_T((parseState->cache.items[bucket].object != NULL))) { CFRelease(parseState->cache.items[bucket].object); parseState->cache.items[bucket].object = NULL; }
+    if(CDVJK_EXPECT_T((parseState->cache.items[bucket].object != NULL))) { CFRelease(parseState->cache.items[bucket].object); parseState->cache.items[bucket].object = NULL; }
     
-    if(JK_EXPECT_T((parseState->cache.items[bucket].bytes = (unsigned char *)reallocf(parseState->cache.items[bucket].bytes, parseState->token.value.ptrRange.length)) != NULL)) {
+    if(CDVJK_EXPECT_T((parseState->cache.items[bucket].bytes = (unsigned char *)reallocf(parseState->cache.items[bucket].bytes, parseState->token.value.ptrRange.length)) != NULL)) {
       memcpy(parseState->cache.items[bucket].bytes, parseState->token.value.ptrRange.ptr, parseState->token.value.ptrRange.length);
       parseState->cache.items[bucket].object = (void *)CFRetain(parsedAtom);
       parseState->cache.items[bucket].hash   = parseState->token.value.hash;
@@ -2041,7 +2041,7 @@ static void *jk_cachedObjects(JKParseState *parseState) {
       parseState->cache.items[bucket].size   = parseState->token.value.ptrRange.length;
       parseState->cache.items[bucket].type   = parseState->token.value.type;
       parseState->token.value.cacheItem      = &parseState->cache.items[bucket];
-      parseState->cache.age[bucket]          = JK_INIT_CACHE_AGE;
+      parseState->cache.age[bucket]          = CDVJK_INIT_CACHE_AGE;
     } else { // The realloc failed, so clear the appropriate fields.
       parseState->cache.items[bucket].hash   = 0UL;
       parseState->cache.items[bucket].cfHash = 0UL;
@@ -2054,18 +2054,18 @@ static void *jk_cachedObjects(JKParseState *parseState) {
 }
 
 
-static void *jk_object_for_token(JKParseState *parseState) {
+static void *jk_object_for_token(CDVJKParseState *parseState) {
   void *parsedAtom = NULL;
   
   parseState->token.value.cacheItem = NULL;
   switch(parseState->token.type) {
-    case JKTokenTypeString:      parsedAtom = jk_cachedObjects(parseState);    break;
-    case JKTokenTypeNumber:      parsedAtom = jk_cachedObjects(parseState);    break;
-    case JKTokenTypeObjectBegin: parsedAtom = jk_parse_dictionary(parseState); break;
-    case JKTokenTypeArrayBegin:  parsedAtom = jk_parse_array(parseState);      break;
-    case JKTokenTypeTrue:        parsedAtom = (void *)kCFBooleanTrue;          break;
-    case JKTokenTypeFalse:       parsedAtom = (void *)kCFBooleanFalse;         break;
-    case JKTokenTypeNull:        parsedAtom = (void *)kCFNull;                 break;
+    case CDVJKTokenTypeString:      parsedAtom = jk_cachedObjects(parseState);    break;
+    case CDVJKTokenTypeNumber:      parsedAtom = jk_cachedObjects(parseState);    break;
+    case CDVJKTokenTypeObjectBegin: parsedAtom = jk_parse_dictionary(parseState); break;
+    case CDVJKTokenTypeArrayBegin:  parsedAtom = jk_parse_array(parseState);      break;
+    case CDVJKTokenTypeTrue:        parsedAtom = (void *)kCFBooleanTrue;          break;
+    case CDVJKTokenTypeFalse:       parsedAtom = (void *)kCFBooleanFalse;         break;
+    case CDVJKTokenTypeNull:        parsedAtom = (void *)kCFNull;                 break;
     default: jk_error(parseState, @"Internal error: Unknown token type. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break;
   }
   
@@ -2073,43 +2073,43 @@ static void *jk_object_for_token(JKParseState *parseState) {
 }
 
 #pragma mark -
-@implementation JSONDecoder
+@implementation CDVJSONDecoder
 
 + (id)decoder
 {
-  return([self decoderWithParseOptions:JKParseOptionStrict]);
+  return([self decoderWithParseOptions:CDVJKParseOptionStrict]);
 }
 
-+ (id)decoderWithParseOptions:(JKParseOptionFlags)parseOptionFlags
++ (id)decoderWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
   return([[[self alloc] initWithParseOptions:parseOptionFlags] autorelease]);
 }
 
 - (id)init
 {
-  return([self initWithParseOptions:JKParseOptionStrict]);
+  return([self initWithParseOptions:CDVJKParseOptionStrict]);
 }
 
-- (id)initWithParseOptions:(JKParseOptionFlags)parseOptionFlags
+- (id)initWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
   if((self = [super init]) == NULL) { return(NULL); }
 
-  if(parseOptionFlags & ~JKParseOptionValidFlags) { [self autorelease]; [NSException raise:NSInvalidArgumentException format:@"Invalid parse options."]; }
+  if(parseOptionFlags & ~CDVJKParseOptionValidFlags) { [self autorelease]; [NSException raise:NSInvalidArgumentException format:@"Invalid parse options."]; }
 
-  if((parseState = (JKParseState *)calloc(1UL, sizeof(JKParseState))) == NULL) { goto errorExit; }
+  if((parseState = (CDVJKParseState *)calloc(1UL, sizeof(CDVJKParseState))) == NULL) { goto errorExit; }
 
   parseState->parseOptionFlags = parseOptionFlags;
   
   parseState->token.tokenBuffer.roundSizeUpToMultipleOf = 4096UL;
   parseState->objectStack.roundSizeUpToMultipleOf       = 2048UL;
 
-  parseState->objCImpCache.NSNumberClass                    = _jk_NSNumberClass;
-  parseState->objCImpCache.NSNumberAlloc                    = _jk_NSNumberAllocImp;
-  parseState->objCImpCache.NSNumberInitWithUnsignedLongLong = _jk_NSNumberInitWithUnsignedLongLongImp;
+  parseState->objCImpCache.NSNumberClass                    = _CDVjk_NSNumberClass;
+  parseState->objCImpCache.NSNumberAlloc                    = _CDVjk_NSNumberAllocImp;
+  parseState->objCImpCache.NSNumberInitWithUnsignedLongLong = _CDVjk_NSNumberInitWithUnsignedLongLongImp;
   
   parseState->cache.prng_lfsr = 1U;
-  parseState->cache.count     = JK_CACHE_SLOTS;
-  if((parseState->cache.items = (JKTokenCacheItem *)calloc(1UL, sizeof(JKTokenCacheItem) * parseState->cache.count)) == NULL) { goto errorExit; }
+  parseState->cache.count     = CDVJK_CACHE_SLOTS;
+  if((parseState->cache.items = (CDVJKTokenCacheItem *)calloc(1UL, sizeof(CDVJKTokenCacheItem) * parseState->cache.count)) == NULL) { goto errorExit; }
 
   return(self);
 
@@ -2118,8 +2118,8 @@ static void *jk_object_for_token(JKParseState *parseState) {
   return(NULL);
 }
 
-// This is here primarily to support the NSString and NSData convenience functions so the autoreleased JSONDecoder can release most of its resources before the pool pops.
-static void _JSONDecoderCleanup(JSONDecoder *decoder) {
+// This is here primarily to support the NSString and NSData convenience functions so the autoreleased CDVJSONDecoder can release most of its resources before the pool pops.
+static void _JSONDecoderCleanup(CDVJSONDecoder *decoder) {
   if((decoder != NULL) && (decoder->parseState != NULL)) {
     jk_managedBuffer_release(&decoder->parseState->token.tokenBuffer);
     jk_objectStack_release(&decoder->parseState->objectStack);
@@ -2139,13 +2139,13 @@ static void _JSONDecoderCleanup(JSONDecoder *decoder) {
 
 - (void)clearCache
 {
-  if(JK_EXPECT_T(parseState != NULL)) {
-    if(JK_EXPECT_T(parseState->cache.items != NULL)) {
+  if(CDVJK_EXPECT_T(parseState != NULL)) {
+    if(CDVJK_EXPECT_T(parseState->cache.items != NULL)) {
       size_t idx = 0UL;
       for(idx = 0UL; idx < parseState->cache.count; idx++) {
-        if(JK_EXPECT_T(parseState->cache.items[idx].object != NULL)) { CFRelease(parseState->cache.items[idx].object); parseState->cache.items[idx].object = NULL; }
-        if(JK_EXPECT_T(parseState->cache.items[idx].bytes  != NULL)) { free(parseState->cache.items[idx].bytes);       parseState->cache.items[idx].bytes  = NULL; }
-        memset(&parseState->cache.items[idx], 0, sizeof(JKTokenCacheItem));
+        if(CDVJK_EXPECT_T(parseState->cache.items[idx].object != NULL)) { CFRelease(parseState->cache.items[idx].object); parseState->cache.items[idx].object = NULL; }
+        if(CDVJK_EXPECT_T(parseState->cache.items[idx].bytes  != NULL)) { free(parseState->cache.items[idx].bytes);       parseState->cache.items[idx].bytes  = NULL; }
+        memset(&parseState->cache.items[idx], 0, sizeof(CDVJKTokenCacheItem));
         parseState->cache.age[idx] = 0U;
       }
     }
@@ -2153,7 +2153,7 @@ static void _JSONDecoderCleanup(JSONDecoder *decoder) {
 }
 
 // This needs to be completely rewritten.
-static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, const unsigned char *string, size_t length, NSError **error) {
+static id _CDVJKParseUTF8String(CDVJKParseState *parseState, BOOL mutableCollections, const unsigned char *string, size_t length, NSError **error) {
   NSCParameterAssert((parseState != NULL) && (string != NULL) && (parseState->cache.prng_lfsr != 0U));
   parseState->stringBuffer.bytes.ptr    = string;
   parseState->stringBuffer.bytes.length = length;
@@ -2167,13 +2167,13 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
   parseState->errorIsPrev               = 0;
   parseState->mutableCollections        = (mutableCollections == NO) ? NO : YES;
   
-  unsigned char stackTokenBuffer[JK_TOKENBUFFER_SIZE] JK_ALIGNED(64);
+  unsigned char stackTokenBuffer[CDVJK_TOKENBUFFER_SIZE] CDVJK_ALIGNED(64);
   jk_managedBuffer_setToStackBuffer(&parseState->token.tokenBuffer, stackTokenBuffer, sizeof(stackTokenBuffer));
   
-  void       *stackObjects [JK_STACK_OBJS] JK_ALIGNED(64);
-  void       *stackKeys    [JK_STACK_OBJS] JK_ALIGNED(64);
-  CFHashCode  stackCFHashes[JK_STACK_OBJS] JK_ALIGNED(64);
-  jk_objectStack_setToStackBuffer(&parseState->objectStack, stackObjects, stackKeys, stackCFHashes, JK_STACK_OBJS);
+  void       *stackObjects [CDVJK_STACK_OBJS] CDVJK_ALIGNED(64);
+  void       *stackKeys    [CDVJK_STACK_OBJS] CDVJK_ALIGNED(64);
+  CFHashCode  stackCFHashes[CDVJK_STACK_OBJS] CDVJK_ALIGNED(64);
+  jk_objectStack_setToStackBuffer(&parseState->objectStack, stackObjects, stackKeys, stackCFHashes, CDVJK_STACK_OBJS);
   
   id parsedJSON = json_parse_it(parseState);
   
@@ -2201,25 +2201,25 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
 #pragma mark Deprecated as of v1.4
 ////////////
 
-// Deprecated in JSONKit v1.4.  Use objectWithUTF8String:length: instead.
+// Deprecated in CDVJSONKit v1.4.  Use objectWithUTF8String:length: instead.
 - (id)parseUTF8String:(const unsigned char *)string length:(size_t)length
 {
   return([self objectWithUTF8String:string length:length error:NULL]);
 }
 
-// Deprecated in JSONKit v1.4.  Use objectWithUTF8String:length:error: instead.
+// Deprecated in CDVJSONKit v1.4.  Use objectWithUTF8String:length:error: instead.
 - (id)parseUTF8String:(const unsigned char *)string length:(size_t)length error:(NSError **)error
 {
   return([self objectWithUTF8String:string length:length error:error]);
 }
 
-// Deprecated in JSONKit v1.4.  Use objectWithData: instead.
+// Deprecated in CDVJSONKit v1.4.  Use objectWithData: instead.
 - (id)parseJSONData:(NSData *)jsonData
 {
   return([self objectWithData:jsonData error:NULL]);
 }
 
-// Deprecated in JSONKit v1.4.  Use objectWithData:error: instead.
+// Deprecated in CDVJSONKit v1.4.  Use objectWithData:error: instead.
 - (id)parseJSONData:(NSData *)jsonData error:(NSError **)error
 {
   return([self objectWithData:jsonData error:error]);
@@ -2239,7 +2239,7 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
   if(parseState == NULL) { [NSException raise:NSInternalInconsistencyException format:@"parseState is NULL."];          }
   if(string     == NULL) { [NSException raise:NSInvalidArgumentException       format:@"The string argument is NULL."]; }
   
-  return(_JKParseUTF8String(parseState, NO, string, (size_t)length, error));
+  return(_CDVJKParseUTF8String(parseState, NO, string, (size_t)length, error));
 }
 
 - (id)objectWithData:(NSData *)jsonData
@@ -2267,7 +2267,7 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
   if(parseState == NULL) { [NSException raise:NSInternalInconsistencyException format:@"parseState is NULL."];          }
   if(string     == NULL) { [NSException raise:NSInvalidArgumentException       format:@"The string argument is NULL."]; }
   
-  return(_JKParseUTF8String(parseState, YES, string, (size_t)length, error));
+  return(_CDVJKParseUTF8String(parseState, YES, string, (size_t)length, error));
 }
 
 - (id)mutableObjectWithData:(NSData *)jsonData
@@ -2286,7 +2286,7 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
 /*
  The NSString and NSData convenience methods need a little bit of explanation.
  
- Prior to JSONKit v1.4, the NSString -objectFromJSONStringWithParseOptions:error: method looked like
+ Prior to CDVJSONKit v1.4, the NSString -objectFromJSONStringWithParseOptions:error: method looked like
  
  const unsigned char *utf8String = (const unsigned char *)[self UTF8String];
  if(utf8String == NULL) { return(NULL); }
@@ -2296,7 +2296,7 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
  This changed with v1.4 to a more complicated method.  The reason for this is to keep the amount of memory that is
  allocated, but not yet freed because it is dependent on the autorelease pool to pop before it can be reclaimed.
  
- In the simpler v1.3 code, this included all the bytes used to store the -UTF8String along with the JSONDecoder and all its overhead.
+ In the simpler v1.3 code, this included all the bytes used to store the -UTF8String along with the CDVJSONDecoder and all its overhead.
  
  Now we use an autoreleased CFMutableData that is sized to the UTF8 length of the NSString in question and is used to hold the UTF8
  conversion of said string.
@@ -2304,8 +2304,8 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
  Once parsed, the CFMutableData has its length set to 0.  This should, hopefully, allow the CFMutableData to realloc and/or free
  the buffer.
  
- Another change made was a slight modification to JSONDecoder so that most of the cleanup work that was done in -dealloc was moved
- to a private, internal function.  These convenience routines keep the pointer to the autoreleased JSONDecoder and calls
+ Another change made was a slight modification to CDVJSONDecoder so that most of the cleanup work that was done in -dealloc was moved
+ to a private, internal function.  These convenience routines keep the pointer to the autoreleased CDVJSONDecoder and calls
  _JSONDecoderCleanup() to early release the decoders resources since we already know that particular decoder is not going to be used
  again.  
  
@@ -2318,12 +2318,12 @@ static id _JKParseUTF8String(JKParseState *parseState, BOOL mutableCollections, 
  autorelease limbo, but we've done our best to minimize that impact, so it all balances out.
  */
 
-@implementation NSString (JSONKitDeserializing)
+@implementation NSString (CDVJSONKitDeserializing)
 
-static id _NSStringObjectFromJSONString(NSString *jsonString, JKParseOptionFlags parseOptionFlags, NSError **error, BOOL mutableCollection) {
+static id _NSStringObjectFromJSONString(NSString *jsonString, CDVJKParseOptionFlags parseOptionFlags, NSError **error, BOOL mutableCollection) {
   id                returnObject = NULL;
   CFMutableDataRef  mutableData  = NULL;
-  JSONDecoder      *decoder      = NULL;
+  CDVJSONDecoder      *decoder      = NULL;
   
   CFIndex    stringLength     = CFStringGetLength((CFStringRef)jsonString);
   NSUInteger stringUTF8Length = [jsonString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
@@ -2333,10 +2333,10 @@ static id _NSStringObjectFromJSONString(NSString *jsonString, JKParseOptionFlags
     CFIndex  usedBytes  = 0L, convertedCount = 0L;
     
     convertedCount = CFStringGetBytes((CFStringRef)jsonString, CFRangeMake(0L, stringLength), kCFStringEncodingUTF8, '?', NO, utf8String, (NSUInteger)stringUTF8Length, &usedBytes);
-    if(JK_EXPECT_F(convertedCount != stringLength) || JK_EXPECT_F(usedBytes < 0L)) { if(error != NULL) { *error = [NSError errorWithDomain:@"JKErrorDomain" code:-1L userInfo:[NSDictionary dictionaryWithObject:@"An error occurred converting the contents of a NSString to UTF8." forKey:NSLocalizedDescriptionKey]]; } goto exitNow; }
+    if(CDVJK_EXPECT_F(convertedCount != stringLength) || CDVJK_EXPECT_F(usedBytes < 0L)) { if(error != NULL) { *error = [NSError errorWithDomain:@"CDVJKErrorDomain" code:-1L userInfo:[NSDictionary dictionaryWithObject:@"An error occurred converting the contents of a NSString to UTF8." forKey:NSLocalizedDescriptionKey]]; } goto exitNow; }
     
-    if(mutableCollection == NO) { returnObject = [(decoder = [JSONDecoder decoderWithParseOptions:parseOptionFlags])        objectWithUTF8String:(const unsigned char *)utf8String length:(size_t)usedBytes error:error]; }
-    else                        { returnObject = [(decoder = [JSONDecoder decoderWithParseOptions:parseOptionFlags]) mutableObjectWithUTF8String:(const unsigned char *)utf8String length:(size_t)usedBytes error:error]; }
+    if(mutableCollection == NO) { returnObject = [(decoder = [CDVJSONDecoder decoderWithParseOptions:parseOptionFlags])        objectWithUTF8String:(const unsigned char *)utf8String length:(size_t)usedBytes error:error]; }
+    else                        { returnObject = [(decoder = [CDVJSONDecoder decoderWithParseOptions:parseOptionFlags]) mutableObjectWithUTF8String:(const unsigned char *)utf8String length:(size_t)usedBytes error:error]; }
   }
   
 exitNow:
@@ -2347,15 +2347,15 @@ exitNow:
 
 - (id)objectFromJSONString
 {
-  return([self objectFromJSONStringWithParseOptions:JKParseOptionStrict error:NULL]);
+  return([self objectFromJSONStringWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)objectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags
+- (id)objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
   return([self objectFromJSONStringWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)objectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
   return(_NSStringObjectFromJSONString(self, parseOptionFlags, error, NO));
 }
@@ -2363,55 +2363,55 @@ exitNow:
 
 - (id)mutableObjectFromJSONString
 {
-  return([self mutableObjectFromJSONStringWithParseOptions:JKParseOptionStrict error:NULL]);
+  return([self mutableObjectFromJSONStringWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)mutableObjectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags
+- (id)mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
   return([self mutableObjectFromJSONStringWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)mutableObjectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
   return(_NSStringObjectFromJSONString(self, parseOptionFlags, error, YES));
 }
 
 @end
 
-@implementation NSData (JSONKitDeserializing)
+@implementation NSData (CDVJSONKitDeserializing)
 
 - (id)objectFromJSONData
 {
-  return([self objectFromJSONDataWithParseOptions:JKParseOptionStrict error:NULL]);
+  return([self objectFromJSONDataWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)objectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags
+- (id)objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
   return([self objectFromJSONDataWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)objectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
-  JSONDecoder *decoder = NULL;
-  id returnObject = [(decoder = [JSONDecoder decoderWithParseOptions:parseOptionFlags]) objectWithData:self error:error];
+  CDVJSONDecoder *decoder = NULL;
+  id returnObject = [(decoder = [CDVJSONDecoder decoderWithParseOptions:parseOptionFlags]) objectWithData:self error:error];
   if(decoder != NULL) { _JSONDecoderCleanup(decoder); }
   return(returnObject);
 }
 
 - (id)mutableObjectFromJSONData
 {
-  return([self mutableObjectFromJSONDataWithParseOptions:JKParseOptionStrict error:NULL]);
+  return([self mutableObjectFromJSONDataWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)mutableObjectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags
+- (id)mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
   return([self mutableObjectFromJSONDataWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)mutableObjectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
-  JSONDecoder *decoder = NULL;
-  id returnObject = [(decoder = [JSONDecoder decoderWithParseOptions:parseOptionFlags]) mutableObjectWithData:self error:error];
+  CDVJSONDecoder *decoder = NULL;
+  id returnObject = [(decoder = [CDVJSONDecoder decoderWithParseOptions:parseOptionFlags]) mutableObjectWithData:self error:error];
   if(decoder != NULL) { _JSONDecoderCleanup(decoder); }
   return(returnObject);
 }
@@ -2423,7 +2423,7 @@ exitNow:
 #pragma mark -
 #pragma mark Encoding / deserializing functions
 
-static void jk_encode_error(JKEncodeState *encodeState, NSString *format, ...) {
+static void jk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...) {
   NSCParameterAssert((encodeState != NULL) && (format != NULL));
 
   va_list varArgsList;
@@ -2432,16 +2432,16 @@ static void jk_encode_error(JKEncodeState *encodeState, NSString *format, ...) {
   va_end(varArgsList);
 
   if(encodeState->error == NULL) {
-    encodeState->error = [NSError errorWithDomain:@"JKErrorDomain" code:-1L userInfo:
+    encodeState->error = [NSError errorWithDomain:@"CDVJKErrorDomain" code:-1L userInfo:
                                    [NSDictionary dictionaryWithObjectsAndKeys:
                                                                               formatString, NSLocalizedDescriptionKey,
                                                                               NULL]];
   }
 }
 
-JK_STATIC_INLINE void jk_encode_updateCache(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object) {
+CDVJK_STATIC_INLINE void jk_encode_updateCache(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object) {
   NSCParameterAssert(encodeState != NULL);
-  if(JK_EXPECT_T(cacheSlot != NULL)) {
+  if(CDVJK_EXPECT_T(cacheSlot != NULL)) {
     NSCParameterAssert((object != NULL) && (startingAtIndex <= encodeState->atIndex));
     cacheSlot->object = object;
     cacheSlot->offset = startingAtIndex;
@@ -2449,7 +2449,7 @@ JK_STATIC_INLINE void jk_encode_updateCache(JKEncodeState *encodeState, JKEncode
   }
 }
 
-static int jk_encode_printf(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...) {
+static int jk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...) {
   va_list varArgsList, varArgsListCopy;
   va_start(varArgsList, format);
   va_copy(varArgsListCopy, varArgsList);
@@ -2459,22 +2459,22 @@ static int jk_encode_printf(JKEncodeState *encodeState, JKEncodeCache *cacheSlot
   ssize_t  formattedStringLength = 0L;
   int      returnValue           = 0;
 
-  if(JK_EXPECT_T((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsList)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) {
+  if(CDVJK_EXPECT_T((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsList)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) {
     NSCParameterAssert(((encodeState->atIndex + (formattedStringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length));
-    if(JK_EXPECT_F(((encodeState->atIndex + (formattedStringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && JK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (formattedStringLength * 2UL)+ 4096UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); returnValue = 1; goto exitNow; }
-    if(JK_EXPECT_F((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsListCopy)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) { jk_encode_error(encodeState, @"vsnprintf failed unexpectedly."); returnValue = 1; goto exitNow; }
+    if(CDVJK_EXPECT_F(((encodeState->atIndex + (formattedStringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (formattedStringLength * 2UL)+ 4096UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); returnValue = 1; goto exitNow; }
+    if(CDVJK_EXPECT_F((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsListCopy)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) { jk_encode_error(encodeState, @"vsnprintf failed unexpectedly."); returnValue = 1; goto exitNow; }
   }
   
 exitNow:
   va_end(varArgsList);
   va_end(varArgsListCopy);
-  if(JK_EXPECT_T(returnValue == 0)) { encodeState->atIndex += formattedStringLength; jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object); }
+  if(CDVJK_EXPECT_T(returnValue == 0)) { encodeState->atIndex += formattedStringLength; jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object); }
   return(returnValue);
 }
 
-static int jk_encode_write(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format) {
+static int jk_encode_write(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (startingAtIndex <= encodeState->atIndex) && (format != NULL));
-  if(JK_EXPECT_F(((encodeState->atIndex + strlen(format) + 256UL) > encodeState->stringBuffer.bytes.length)) && JK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + strlen(format) + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+  if(CDVJK_EXPECT_F(((encodeState->atIndex + strlen(format) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + strlen(format) + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
 
   size_t formatIdx = 0UL;
   for(formatIdx = 0UL; format[formatIdx] != 0; formatIdx++) { NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length); encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[formatIdx]; }
@@ -2482,67 +2482,67 @@ static int jk_encode_write(JKEncodeState *encodeState, JKEncodeCache *cacheSlot,
   return(0);
 }
 
-static int jk_encode_writePrettyPrintWhiteSpace(JKEncodeState *encodeState) {
-  NSCParameterAssert((encodeState != NULL) && ((encodeState->serializeOptionFlags & JKSerializeOptionPretty) != 0UL));
-  if(JK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && JK_EXPECT_T(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+static int jk_encode_writePrettyPrintWhiteSpace(CDVJKEncodeState *encodeState) {
+  NSCParameterAssert((encodeState != NULL) && ((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) != 0UL));
+  if(CDVJK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_T(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
   encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\n';
   size_t depthWhiteSpace = 0UL;
   for(depthWhiteSpace = 0UL; depthWhiteSpace < (encodeState->depth * 2UL); depthWhiteSpace++) { NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length); encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = ' '; }
   return(0);
 }  
 
-static int jk_encode_write1slow(JKEncodeState *encodeState, ssize_t depthChange, const char *format) {
-  NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (format != NULL) && ((depthChange >= -1L) && (depthChange <= 1L)) && ((encodeState->depth == 0UL) ? (depthChange >= 0L) : 1) && ((encodeState->serializeOptionFlags & JKSerializeOptionPretty) != 0UL));
-  if(JK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && JK_EXPECT_F(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+static int jk_encode_write1slow(CDVJKEncodeState *encodeState, ssize_t depthChange, const char *format) {
+  NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (format != NULL) && ((depthChange >= -1L) && (depthChange <= 1L)) && ((encodeState->depth == 0UL) ? (depthChange >= 0L) : 1) && ((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) != 0UL));
+  if(CDVJK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_F(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
   encodeState->depth += depthChange;
-  if(JK_EXPECT_T(format[0] == ':')) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0]; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = ' '; }
+  if(CDVJK_EXPECT_T(format[0] == ':')) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0]; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = ' '; }
   else {
-    if(JK_EXPECT_F(depthChange == -1L)) { if(JK_EXPECT_F(jk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
+    if(CDVJK_EXPECT_F(depthChange == -1L)) { if(CDVJK_EXPECT_F(jk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
     encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0];
-    if(JK_EXPECT_T(depthChange != -1L)) { if(JK_EXPECT_F(jk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
+    if(CDVJK_EXPECT_T(depthChange != -1L)) { if(CDVJK_EXPECT_F(jk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
   }
   NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length);
   return(0);
 }
 
-static int jk_encode_write1fast(JKEncodeState *encodeState, ssize_t depthChange JK_UNUSED_ARG, const char *format) {
-  NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && ((encodeState->serializeOptionFlags & JKSerializeOptionPretty) == 0UL));
-  if(JK_EXPECT_T((encodeState->atIndex + 4UL) < encodeState->stringBuffer.bytes.length)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0]; }
+static int jk_encode_write1fast(CDVJKEncodeState *encodeState, ssize_t depthChange CDVJK_UNUSED_ARG, const char *format) {
+  NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && ((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) == 0UL));
+  if(CDVJK_EXPECT_T((encodeState->atIndex + 4UL) < encodeState->stringBuffer.bytes.length)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0]; }
   else { return(jk_encode_write(encodeState, NULL, 0UL, NULL, format)); }
   return(0);
 }
 
-static int jk_encode_writen(JKEncodeState *encodeState, JKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length) {
+static int jk_encode_writen(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (startingAtIndex <= encodeState->atIndex));
-  if(JK_EXPECT_F((encodeState->stringBuffer.bytes.length - encodeState->atIndex) < (length + 4UL))) { if(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + 4096UL + length) == NULL) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); } }
+  if(CDVJK_EXPECT_F((encodeState->stringBuffer.bytes.length - encodeState->atIndex) < (length + 4UL))) { if(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + 4096UL + length) == NULL) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); } }
   memcpy(encodeState->stringBuffer.bytes.ptr + encodeState->atIndex, format, length);
   encodeState->atIndex += length;
   jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object);
   return(0);
 }
 
-JK_STATIC_INLINE JKHash jk_encode_object_hash(void *objectPtr) {
-  return( ( (((JKHash)objectPtr) >> 21) ^ (((JKHash)objectPtr) >> 9)   ) + (((JKHash)objectPtr) >> 4) );
+CDVJK_STATIC_INLINE CDVJKHash jk_encode_object_hash(void *objectPtr) {
+  return( ( (((CDVJKHash)objectPtr) >> 21) ^ (((CDVJKHash)objectPtr) >> 9)   ) + (((CDVJKHash)objectPtr) >> 4) );
 }
 
-static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *objectPtr) {
+static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *objectPtr) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (objectPtr != NULL));
 
   id     object          = (id)objectPtr, encodeCacheObject = object;
-  int    isClass         = JKClassUnknown;
+  int    isClass         = CDVJKClassUnknown;
   size_t startingAtIndex = encodeState->atIndex;
 
-  JKHash         objectHash = jk_encode_object_hash(objectPtr);
-  JKEncodeCache *cacheSlot  = &encodeState->cache[objectHash % JK_ENCODE_CACHE_SLOTS];
+  CDVJKHash         objectHash = jk_encode_object_hash(objectPtr);
+  CDVJKEncodeCache *cacheSlot  = &encodeState->cache[objectHash % CDVJK_ENCODE_CACHE_SLOTS];
 
-  if(JK_EXPECT_T(cacheSlot->object == object)) {
+  if(CDVJK_EXPECT_T(cacheSlot->object == object)) {
     NSCParameterAssert((cacheSlot->object != NULL) &&
                        (cacheSlot->offset < encodeState->atIndex)                   && ((cacheSlot->offset + cacheSlot->length) < encodeState->atIndex)                                    &&
                        (cacheSlot->offset < encodeState->stringBuffer.bytes.length) && ((cacheSlot->offset + cacheSlot->length) < encodeState->stringBuffer.bytes.length)                  &&
                        ((encodeState->stringBuffer.bytes.ptr + encodeState->atIndex)                     < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
                        ((encodeState->stringBuffer.bytes.ptr + cacheSlot->offset)                        < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
                        ((encodeState->stringBuffer.bytes.ptr + cacheSlot->offset + cacheSlot->length)    < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)));
-    if(JK_EXPECT_F(((encodeState->atIndex + cacheSlot->length + 256UL) > encodeState->stringBuffer.bytes.length)) && JK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + cacheSlot->length + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+    if(CDVJK_EXPECT_F(((encodeState->atIndex + cacheSlot->length + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + cacheSlot->length + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
     NSCParameterAssert(((encodeState->atIndex + cacheSlot->length) < encodeState->stringBuffer.bytes.length) &&
                        ((encodeState->stringBuffer.bytes.ptr + encodeState->atIndex)                     < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
                        ((encodeState->stringBuffer.bytes.ptr + encodeState->atIndex + cacheSlot->length) < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
@@ -2593,20 +2593,20 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
   // XXX XXX XXX XXX
 
   BOOL workAroundMacOSXABIBreakingBug = NO;
-  if(JK_EXPECT_F(((NSUInteger)object) & 0x1)) { workAroundMacOSXABIBreakingBug = YES; goto slowClassLookup; }
+  if(CDVJK_EXPECT_F(((NSUInteger)object) & 0x1)) { workAroundMacOSXABIBreakingBug = YES; goto slowClassLookup; }
 
-       if(JK_EXPECT_T(object->isa == encodeState->fastClassLookup.stringClass))     { isClass = JKClassString;     }
-  else if(JK_EXPECT_T(object->isa == encodeState->fastClassLookup.numberClass))     { isClass = JKClassNumber;     }
-  else if(JK_EXPECT_T(object->isa == encodeState->fastClassLookup.dictionaryClass)) { isClass = JKClassDictionary; }
-  else if(JK_EXPECT_T(object->isa == encodeState->fastClassLookup.arrayClass))      { isClass = JKClassArray;      }
-  else if(JK_EXPECT_T(object->isa == encodeState->fastClassLookup.nullClass))       { isClass = JKClassNull;       }
+       if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.stringClass))     { isClass = CDVJKClassString;     }
+  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.numberClass))     { isClass = CDVJKClassNumber;     }
+  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.dictionaryClass)) { isClass = CDVJKClassDictionary; }
+  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.arrayClass))      { isClass = CDVJKClassArray;      }
+  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.nullClass))       { isClass = CDVJKClassNull;       }
   else {
   slowClassLookup:
-         if(JK_EXPECT_T([object isKindOfClass:[NSString     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.stringClass     = object->isa; } isClass = JKClassString;     }
-    else if(JK_EXPECT_T([object isKindOfClass:[NSNumber     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.numberClass     = object->isa; } isClass = JKClassNumber;     }
-    else if(JK_EXPECT_T([object isKindOfClass:[NSDictionary class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.dictionaryClass = object->isa; } isClass = JKClassDictionary; }
-    else if(JK_EXPECT_T([object isKindOfClass:[NSArray      class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.arrayClass      = object->isa; } isClass = JKClassArray;      }
-    else if(JK_EXPECT_T([object isKindOfClass:[NSNull       class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.nullClass       = object->isa; } isClass = JKClassNull;       }
+         if(CDVJK_EXPECT_T([object isKindOfClass:[NSString     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.stringClass     = object->isa; } isClass = CDVJKClassString;     }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNumber     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.numberClass     = object->isa; } isClass = CDVJKClassNumber;     }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSDictionary class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.dictionaryClass = object->isa; } isClass = CDVJKClassDictionary; }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSArray      class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.arrayClass      = object->isa; } isClass = CDVJKClassArray;      }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNull       class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.nullClass       = object->isa; } isClass = CDVJKClassNull;       }
     else {
       if((rerunningAfterClassFormatter == NO) && (
 #ifdef __BLOCKS__
@@ -2619,13 +2619,13 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
     }
   }
 
-  // This is here for the benefit of the optimizer.  It allows the optimizer to do loop invariant code motion for the JKClassArray
-  // and JKClassDictionary cases when printing simple, single characters via jk_encode_write(), which is actually a macro:
+  // This is here for the benefit of the optimizer.  It allows the optimizer to do loop invariant code motion for the CDVJKClassArray
+  // and CDVJKClassDictionary cases when printing simple, single characters via jk_encode_write(), which is actually a macro:
   // #define jk_encode_write1(es, dc, f) (_jk_encode_prettyPrint ? jk_encode_write1slow(es, dc, f) : jk_encode_write1fast(es, dc, f))
-  int _jk_encode_prettyPrint = JK_EXPECT_T((encodeState->serializeOptionFlags & JKSerializeOptionPretty) == 0) ? 0 : 1;
+  int _jk_encode_prettyPrint = CDVJK_EXPECT_T((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) == 0) ? 0 : 1;
   
   switch(isClass) {
-    case JKClassString:
+    case CDVJKClassString:
       {
         {
           const unsigned char *cStringPtr = (const unsigned char *)CFStringGetCStringPtr((CFStringRef)object, kCFStringEncodingMacRoman);
@@ -2634,29 +2634,29 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
             size_t               utf8Idx    = 0UL;
 
             CFIndex stringLength = CFStringGetLength((CFStringRef)object);
-            if(JK_EXPECT_F(((encodeState->atIndex + (stringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && JK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (stringLength * 2UL) + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+            if(CDVJK_EXPECT_F(((encodeState->atIndex + (stringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (stringLength * 2UL) + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
 
-            if(JK_EXPECT_T((encodeState->encodeOption & JKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
+            if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
             for(utf8Idx = 0UL; utf8String[utf8Idx] != 0U; utf8Idx++) {
               NSCParameterAssert(((&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex]) - encodeState->stringBuffer.bytes.ptr) < (ssize_t)encodeState->stringBuffer.bytes.length);
               NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length);
-              if(JK_EXPECT_F(utf8String[utf8Idx] >= 0x80U)) { encodeState->atIndex = startingAtIndex; goto slowUTF8Path; }
-              if(JK_EXPECT_F(utf8String[utf8Idx] <  0x20U)) {
+              if(CDVJK_EXPECT_F(utf8String[utf8Idx] >= 0x80U)) { encodeState->atIndex = startingAtIndex; goto slowUTF8Path; }
+              if(CDVJK_EXPECT_F(utf8String[utf8Idx] <  0x20U)) {
                 switch(utf8String[utf8Idx]) {
                   case '\b': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'b'; break;
                   case '\f': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'f'; break;
                   case '\n': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'n'; break;
                   case '\r': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'r'; break;
                   case '\t': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 't'; break;
-                  default: if(JK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
+                  default: if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
                 }
               } else {
-                if(JK_EXPECT_F(utf8String[utf8Idx] == '\"') || JK_EXPECT_F(utf8String[utf8Idx] == '\\') || (JK_EXPECT_F(encodeState->serializeOptionFlags & JKSerializeOptionEscapeForwardSlashes) && JK_EXPECT_F(utf8String[utf8Idx] == '/'))) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; }
+                if(CDVJK_EXPECT_F(utf8String[utf8Idx] == '\"') || CDVJK_EXPECT_F(utf8String[utf8Idx] == '\\') || (CDVJK_EXPECT_F(encodeState->serializeOptionFlags & CDVJKSerializeOptionEscapeForwardSlashes) && CDVJK_EXPECT_F(utf8String[utf8Idx] == '/'))) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; }
                 encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = utf8String[utf8Idx];
               }
             }
             NSCParameterAssert((encodeState->atIndex + 1UL) < encodeState->stringBuffer.bytes.length);
-            if(JK_EXPECT_T((encodeState->encodeOption & JKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
+            if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
             jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, encodeCacheObject);
             return(0);
           }
@@ -2667,58 +2667,58 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
           CFIndex stringLength        = CFStringGetLength((CFStringRef)object);
           CFIndex maxStringUTF8Length = CFStringGetMaximumSizeForEncoding(stringLength, kCFStringEncodingUTF8) + 32L;
         
-          if(JK_EXPECT_F((size_t)maxStringUTF8Length > encodeState->utf8ConversionBuffer.bytes.length) && JK_EXPECT_F(jk_managedBuffer_resize(&encodeState->utf8ConversionBuffer, maxStringUTF8Length + 1024UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+          if(CDVJK_EXPECT_F((size_t)maxStringUTF8Length > encodeState->utf8ConversionBuffer.bytes.length) && CDVJK_EXPECT_F(jk_managedBuffer_resize(&encodeState->utf8ConversionBuffer, maxStringUTF8Length + 1024UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
         
           CFIndex usedBytes = 0L, convertedCount = 0L;
           convertedCount = CFStringGetBytes((CFStringRef)object, CFRangeMake(0L, stringLength), kCFStringEncodingUTF8, '?', NO, encodeState->utf8ConversionBuffer.bytes.ptr, encodeState->utf8ConversionBuffer.bytes.length - 16L, &usedBytes);
-          if(JK_EXPECT_F(convertedCount != stringLength) || JK_EXPECT_F(usedBytes < 0L)) { jk_encode_error(encodeState, @"An error occurred converting the contents of a NSString to UTF8."); return(1); }
+          if(CDVJK_EXPECT_F(convertedCount != stringLength) || CDVJK_EXPECT_F(usedBytes < 0L)) { jk_encode_error(encodeState, @"An error occurred converting the contents of a NSString to UTF8."); return(1); }
         
-          if(JK_EXPECT_F((encodeState->atIndex + (maxStringUTF8Length * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length) && JK_EXPECT_F(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (maxStringUTF8Length * 2UL) + 1024UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+          if(CDVJK_EXPECT_F((encodeState->atIndex + (maxStringUTF8Length * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_F(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (maxStringUTF8Length * 2UL) + 1024UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
         
           const unsigned char *utf8String = encodeState->utf8ConversionBuffer.bytes.ptr;
         
           size_t utf8Idx = 0UL;
-          if(JK_EXPECT_T((encodeState->encodeOption & JKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
+          if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
           for(utf8Idx = 0UL; utf8Idx < (size_t)usedBytes; utf8Idx++) {
             NSCParameterAssert(((&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex]) - encodeState->stringBuffer.bytes.ptr) < (ssize_t)encodeState->stringBuffer.bytes.length);
             NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length);
             NSCParameterAssert((CFIndex)utf8Idx < usedBytes);
-            if(JK_EXPECT_F(utf8String[utf8Idx] < 0x20U)) {
+            if(CDVJK_EXPECT_F(utf8String[utf8Idx] < 0x20U)) {
               switch(utf8String[utf8Idx]) {
                 case '\b': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'b'; break;
                 case '\f': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'f'; break;
                 case '\n': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'n'; break;
                 case '\r': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'r'; break;
                 case '\t': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 't'; break;
-                default: if(JK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
+                default: if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
               }
             } else {
-              if(JK_EXPECT_F(utf8String[utf8Idx] >= 0x80U) && (encodeState->serializeOptionFlags & JKSerializeOptionEscapeUnicode)) {
+              if(CDVJK_EXPECT_F(utf8String[utf8Idx] >= 0x80U) && (encodeState->serializeOptionFlags & CDVJKSerializeOptionEscapeUnicode)) {
                 const unsigned char *nextValidCharacter = NULL;
                 UTF32                u32ch              = 0U;
                 ConversionResult     result;
 
-                if(JK_EXPECT_F((result = ConvertSingleCodePointInUTF8(&utf8String[utf8Idx], &utf8String[usedBytes], (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { jk_encode_error(encodeState, @"Error converting UTF8."); return(1); }
+                if(CDVJK_EXPECT_F((result = ConvertSingleCodePointInUTF8(&utf8String[utf8Idx], &utf8String[usedBytes], (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { jk_encode_error(encodeState, @"Error converting UTF8."); return(1); }
                 else {
                   utf8Idx = (nextValidCharacter - utf8String) - 1UL;
-                  if(JK_EXPECT_T(u32ch <= 0xffffU)) { if(JK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", u32ch)))                                                           { return(1); } }
-                  else                              { if(JK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x\\u%4.4x", (0xd7c0U + (u32ch >> 10)), (0xdc00U + (u32ch & 0x3ffU))))) { return(1); } }
+                  if(CDVJK_EXPECT_T(u32ch <= 0xffffU)) { if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", u32ch)))                                                           { return(1); } }
+                  else                              { if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x\\u%4.4x", (0xd7c0U + (u32ch >> 10)), (0xdc00U + (u32ch & 0x3ffU))))) { return(1); } }
                 }
               } else {
-                if(JK_EXPECT_F(utf8String[utf8Idx] == '\"') || JK_EXPECT_F(utf8String[utf8Idx] == '\\') || (JK_EXPECT_F(encodeState->serializeOptionFlags & JKSerializeOptionEscapeForwardSlashes) && JK_EXPECT_F(utf8String[utf8Idx] == '/'))) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; }
+                if(CDVJK_EXPECT_F(utf8String[utf8Idx] == '\"') || CDVJK_EXPECT_F(utf8String[utf8Idx] == '\\') || (CDVJK_EXPECT_F(encodeState->serializeOptionFlags & CDVJKSerializeOptionEscapeForwardSlashes) && CDVJK_EXPECT_F(utf8String[utf8Idx] == '/'))) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; }
                 encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = utf8String[utf8Idx];
               }
             }
           }
           NSCParameterAssert((encodeState->atIndex + 1UL) < encodeState->stringBuffer.bytes.length);
-          if(JK_EXPECT_T((encodeState->encodeOption & JKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
+          if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
           jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, encodeCacheObject);
           return(0);
         }
       }
       break;
 
-    case JKClassNumber:
+    case CDVJKClassNumber:
       {
              if(object == (id)kCFBooleanTrue)  { return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "true",  4UL)); }
         else if(object == (id)kCFBooleanFalse) { return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "false", 5UL)); }
@@ -2729,19 +2729,19 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
         unsigned long long  ullv;
         long long           llv;
         
-        if(JK_EXPECT_F(objCType == NULL) || JK_EXPECT_F(objCType[0] == 0) || JK_EXPECT_F(objCType[1] != 0)) { jk_encode_error(encodeState, @"NSNumber conversion error, unknown type.  Type: '%s'", (objCType == NULL) ? "<NULL>" : objCType); return(1); }
+        if(CDVJK_EXPECT_F(objCType == NULL) || CDVJK_EXPECT_F(objCType[0] == 0) || CDVJK_EXPECT_F(objCType[1] != 0)) { jk_encode_error(encodeState, @"NSNumber conversion error, unknown type.  Type: '%s'", (objCType == NULL) ? "<NULL>" : objCType); return(1); }
         
         switch(objCType[0]) {
           case 'c': case 'i': case 's': case 'l': case 'q':
-            if(JK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberLongLongType, &llv)))  {
+            if(CDVJK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberLongLongType, &llv)))  {
               if(llv < 0LL)  { ullv = -llv; isNegative = 1; } else { ullv = llv; isNegative = 0; }
               goto convertNumber;
             } else { jk_encode_error(encodeState, @"Unable to get scalar value from number object."); return(1); }
             break;
           case 'C': case 'I': case 'S': case 'L': case 'Q': case 'B':
-            if(JK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberLongLongType, &ullv))) {
+            if(CDVJK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberLongLongType, &ullv))) {
             convertNumber:
-              if(JK_EXPECT_F(ullv < 10ULL)) { *--aptr = ullv + '0'; } else { while(JK_EXPECT_T(ullv > 0ULL)) { *--aptr = (ullv % 10ULL) + '0'; ullv /= 10ULL; NSCParameterAssert(aptr > anum); } }
+              if(CDVJK_EXPECT_F(ullv < 10ULL)) { *--aptr = ullv + '0'; } else { while(CDVJK_EXPECT_T(ullv > 0ULL)) { *--aptr = (ullv % 10ULL) + '0'; ullv /= 10ULL; NSCParameterAssert(aptr > anum); } }
               if(isNegative) { *--aptr = '-'; }
               NSCParameterAssert(aptr > anum);
               return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, aptr, &anum[255] - aptr));
@@ -2750,8 +2750,8 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
           case 'f': case 'd':
             {
               double dv;
-              if(JK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberDoubleType, &dv))) {
-                if(JK_EXPECT_F(!isfinite(dv))) { jk_encode_error(encodeState, @"Floating point values must be finite.  JSON does not support NaN or Infinity."); return(1); }
+              if(CDVJK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberDoubleType, &dv))) {
+                if(CDVJK_EXPECT_F(!isfinite(dv))) { jk_encode_error(encodeState, @"Floating point values must be finite.  CDVJSON does not support NaN or Infinity."); return(1); }
                 return(jk_encode_printf(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "%.17g", dv));
               } else { jk_encode_error(encodeState, @"Unable to get floating point value from number object."); return(1); }
             }
@@ -2761,55 +2761,55 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
       }
       break;
     
-    case JKClassArray:
+    case CDVJKClassArray:
       {
         int     printComma = 0;
         CFIndex arrayCount = CFArrayGetCount((CFArrayRef)object), idx = 0L;
-        if(JK_EXPECT_F(jk_encode_write1(encodeState, 1L, "["))) { return(1); }
-        if(JK_EXPECT_F(arrayCount > 1020L)) {
-          for(id arrayObject in object)          { if(JK_EXPECT_T(printComma)) { if(JK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(JK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, arrayObject)))  { return(1); } }
+        if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 1L, "["))) { return(1); }
+        if(CDVJK_EXPECT_F(arrayCount > 1020L)) {
+          for(id arrayObject in object)          { if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, arrayObject)))  { return(1); } }
         } else {
           void *objects[1024];
           CFArrayGetValues((CFArrayRef)object, CFRangeMake(0L, arrayCount), (const void **)objects);
-          for(idx = 0L; idx < arrayCount; idx++) { if(JK_EXPECT_T(printComma)) { if(JK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(JK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); } }
+          for(idx = 0L; idx < arrayCount; idx++) { if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); } }
         }
         return(jk_encode_write1(encodeState, -1L, "]"));
       }
       break;
 
-    case JKClassDictionary:
+    case CDVJKClassDictionary:
       {
         int     printComma      = 0;
         CFIndex dictionaryCount = CFDictionaryGetCount((CFDictionaryRef)object), idx = 0L;
-        id      enumerateObject = JK_EXPECT_F(_jk_encode_prettyPrint) ? [[object allKeys] sortedArrayUsingSelector:@selector(compare:)] : object;
+        id      enumerateObject = CDVJK_EXPECT_F(_jk_encode_prettyPrint) ? [[object allKeys] sortedArrayUsingSelector:@selector(compare:)] : object;
 
-        if(JK_EXPECT_F(jk_encode_write1(encodeState, 1L, "{"))) { return(1); }
-        if(JK_EXPECT_F(_jk_encode_prettyPrint) || JK_EXPECT_F(dictionaryCount > 1020L)) {
+        if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 1L, "{"))) { return(1); }
+        if(CDVJK_EXPECT_F(_jk_encode_prettyPrint) || CDVJK_EXPECT_F(dictionaryCount > 1020L)) {
           for(id keyObject in enumerateObject) {
-            if(JK_EXPECT_T(printComma)) { if(JK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } }
+            if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(JK_EXPECT_F((keyObject->isa      != encodeState->fastClassLookup.stringClass)) && JK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { jk_encode_error(encodeState, @"Key must be a string object."); return(1); }
-            if(JK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, keyObject)))                                                        { return(1); }
-            if(JK_EXPECT_F(jk_encode_write1(encodeState, 0L, ":")))                                                                      { return(1); }
-            if(JK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, (void *)CFDictionaryGetValue((CFDictionaryRef)object, keyObject)))) { return(1); }
+            if(CDVJK_EXPECT_F((keyObject->isa      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { jk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, keyObject)))                                                        { return(1); }
+            if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ":")))                                                                      { return(1); }
+            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, (void *)CFDictionaryGetValue((CFDictionaryRef)object, keyObject)))) { return(1); }
           }
         } else {
           void *keys[1024], *objects[1024];
           CFDictionaryGetKeysAndValues((CFDictionaryRef)object, (const void **)keys, (const void **)objects);
           for(idx = 0L; idx < dictionaryCount; idx++) {
-            if(JK_EXPECT_T(printComma)) { if(JK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } }
+            if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(JK_EXPECT_F(((id)keys[idx])->isa != encodeState->fastClassLookup.stringClass) && JK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { jk_encode_error(encodeState, @"Key must be a string object."); return(1); }
-            if(JK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, keys[idx])))    { return(1); }
-            if(JK_EXPECT_F(jk_encode_write1(encodeState, 0L, ":")))                  { return(1); }
-            if(JK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); }
+            if(CDVJK_EXPECT_F(((id)keys[idx])->isa != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { jk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, keys[idx])))    { return(1); }
+            if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ":")))                  { return(1); }
+            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); }
           }
         }
         return(jk_encode_write1(encodeState, -1L, "}"));
       }
       break;
 
-    case JKClassNull: return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "null", 4UL)); break;
+    case CDVJKClassNull: return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "null", 4UL)); break;
 
     default: jk_encode_error(encodeState, @"Unable to serialize object class %@.", NSStringFromClass([object class])); return(1); break;
   }
@@ -2818,26 +2818,26 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
 }
 
 
-@implementation JKSerializer
+@implementation CDVJKSerializer
 
-+ (id)serializeObject:(id)object options:(JKSerializeOptionFlags)optionFlags encodeOption:(JKEncodeOptionType)encodeOption block:(JKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error
++ (id)serializeObject:(id)object options:(CDVJKSerializeOptionFlags)optionFlags encodeOption:(CDVJKEncodeOptionType)encodeOption block:(CDVJKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
   return([[[[self alloc] init] autorelease] serializeObject:object options:optionFlags encodeOption:encodeOption block:block delegate:delegate selector:selector error:error]);
 }
 
-- (id)serializeObject:(id)object options:(JKSerializeOptionFlags)optionFlags encodeOption:(JKEncodeOptionType)encodeOption block:(JKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (id)serializeObject:(id)object options:(CDVJKSerializeOptionFlags)optionFlags encodeOption:(CDVJKEncodeOptionType)encodeOption block:(CDVJKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
 #ifndef __BLOCKS__
 #pragma unused(block)
 #endif
   NSParameterAssert((object != NULL) && (encodeState == NULL) && ((delegate != NULL) ? (block == NULL) : 1) && ((block != NULL) ? (delegate == NULL) : 1) &&
-                    (((encodeOption & JKEncodeOptionCollectionObj) != 0UL) ? (((encodeOption & JKEncodeOptionStringObj)     == 0UL) && ((encodeOption & JKEncodeOptionStringObjTrimQuotes) == 0UL)) : 1) &&
-                    (((encodeOption & JKEncodeOptionStringObj)     != 0UL) ?  ((encodeOption & JKEncodeOptionCollectionObj) == 0UL)                                                                 : 1));
+                    (((encodeOption & CDVJKEncodeOptionCollectionObj) != 0UL) ? (((encodeOption & CDVJKEncodeOptionStringObj)     == 0UL) && ((encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) : 1) &&
+                    (((encodeOption & CDVJKEncodeOptionStringObj)     != 0UL) ?  ((encodeOption & CDVJKEncodeOptionCollectionObj) == 0UL)                                                                 : 1));
 
   id returnObject = NULL;
 
   if(encodeState != NULL) { [self releaseState]; }
-  if((encodeState = (struct JKEncodeState *)calloc(1UL, sizeof(JKEncodeState))) == NULL) { [NSException raise:NSMallocException format:@"Unable to allocate state structure."]; return(NULL); }
+  if((encodeState = (struct CDVJKEncodeState *)calloc(1UL, sizeof(CDVJKEncodeState))) == NULL) { [NSException raise:NSMallocException format:@"Unable to allocate state structure."]; return(NULL); }
 
   if((error != NULL) && (*error != NULL)) { *error = NULL; }
 
@@ -2846,7 +2846,7 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
     if([delegate respondsToSelector:selector] == NO)   { [NSException raise:NSInvalidArgumentException format:@"The serializeUnsupportedClassesUsingDelegate: delegate does not respond to the selector argument."]; }
     encodeState->classFormatterDelegate = delegate;
     encodeState->classFormatterSelector = selector;
-    encodeState->classFormatterIMP      = (JKClassFormatterIMP)[delegate methodForSelector:selector];
+    encodeState->classFormatterIMP      = (CDVJKClassFormatterIMP)[delegate methodForSelector:selector];
     NSCParameterAssert(encodeState->classFormatterIMP != NULL);
   }
 
@@ -2858,28 +2858,28 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
   encodeState->stringBuffer.roundSizeUpToMultipleOf         = (1024UL * 32UL);
   encodeState->utf8ConversionBuffer.roundSizeUpToMultipleOf = 4096UL;
     
-  unsigned char stackJSONBuffer[JK_JSONBUFFER_SIZE] JK_ALIGNED(64);
+  unsigned char stackJSONBuffer[CDVJK_JSONBUFFER_SIZE] CDVJK_ALIGNED(64);
   jk_managedBuffer_setToStackBuffer(&encodeState->stringBuffer,         stackJSONBuffer, sizeof(stackJSONBuffer));
 
-  unsigned char stackUTF8Buffer[JK_UTF8BUFFER_SIZE] JK_ALIGNED(64);
+  unsigned char stackUTF8Buffer[CDVJK_UTF8BUFFER_SIZE] CDVJK_ALIGNED(64);
   jk_managedBuffer_setToStackBuffer(&encodeState->utf8ConversionBuffer, stackUTF8Buffer, sizeof(stackUTF8Buffer));
 
-  if(((encodeOption & JKEncodeOptionCollectionObj) != 0UL) && (([object isKindOfClass:[NSArray  class]] == NO) && ([object isKindOfClass:[NSDictionary class]] == NO))) { jk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSArray or NSDictionary.", NSStringFromClass([object class])); goto errorExit; }
-  if(((encodeOption & JKEncodeOptionStringObj)     != 0UL) &&  ([object isKindOfClass:[NSString class]] == NO))                                                         { jk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSString.", NSStringFromClass([object class])); goto errorExit; }
+  if(((encodeOption & CDVJKEncodeOptionCollectionObj) != 0UL) && (([object isKindOfClass:[NSArray  class]] == NO) && ([object isKindOfClass:[NSDictionary class]] == NO))) { jk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSArray or NSDictionary.", NSStringFromClass([object class])); goto errorExit; }
+  if(((encodeOption & CDVJKEncodeOptionStringObj)     != 0UL) &&  ([object isKindOfClass:[NSString class]] == NO))                                                         { jk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSString.", NSStringFromClass([object class])); goto errorExit; }
 
   if(jk_encode_add_atom_to_buffer(encodeState, object) == 0) {
-    BOOL stackBuffer = ((encodeState->stringBuffer.flags & JKManagedBufferMustFree) == 0UL) ? YES : NO;
+    BOOL stackBuffer = ((encodeState->stringBuffer.flags & CDVJKManagedBufferMustFree) == 0UL) ? YES : NO;
     
     if((encodeState->atIndex < 2UL))
     if((stackBuffer == NO) && ((encodeState->stringBuffer.bytes.ptr = (unsigned char *)reallocf(encodeState->stringBuffer.bytes.ptr, encodeState->atIndex + 16UL)) == NULL)) { jk_encode_error(encodeState, @"Unable to realloc buffer"); goto errorExit; }
 
-    switch((encodeOption & JKEncodeOptionAsTypeMask)) {
-      case JKEncodeOptionAsData:
+    switch((encodeOption & CDVJKEncodeOptionAsTypeMask)) {
+      case CDVJKEncodeOptionAsData:
         if(stackBuffer == YES) { if((returnObject = [(id)CFDataCreate(                 NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex)                                  autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
         else                   { if((returnObject = [(id)CFDataCreateWithBytesNoCopy(  NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, NULL)                            autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
         break;
 
-      case JKEncodeOptionAsString:
+      case CDVJKEncodeOptionAsString:
         if(stackBuffer == YES) { if((returnObject = [(id)CFStringCreateWithBytes(      NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO)       autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
         else                   { if((returnObject = [(id)CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO, NULL) autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
         break;
@@ -2887,7 +2887,7 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
       default: jk_encode_error(encodeState, @"Unknown encode as type."); break;
     }
 
-    if((returnObject != NULL) && (stackBuffer == NO)) { encodeState->stringBuffer.flags &= ~JKManagedBufferMustFree; encodeState->stringBuffer.bytes.ptr = NULL; encodeState->stringBuffer.bytes.length = 0UL; }
+    if((returnObject != NULL) && (stackBuffer == NO)) { encodeState->stringBuffer.flags &= ~CDVJKManagedBufferMustFree; encodeState->stringBuffer.bytes.ptr = NULL; encodeState->stringBuffer.bytes.length = 0UL; }
   }
 
 errorExit:
@@ -2914,7 +2914,7 @@ errorExit:
 
 @end
 
-@implementation NSString (JSONKitSerializing)
+@implementation NSString (CDVJSONKitSerializing)
 
 ////////////
 #pragma mark Methods for serializing a single NSString.
@@ -2926,100 +2926,100 @@ errorExit:
 
 - (NSData *)JSONData
 {
-  return([self JSONDataWithOptions:JKSerializeOptionNone includeQuotes:YES error:NULL]);
+  return([self JSONDataWithOptions:CDVJKSerializeOptionNone includeQuotes:YES error:NULL]);
 }
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | ((includeQuotes == NO) ? JKEncodeOptionStringObjTrimQuotes : 0UL) | JKEncodeOptionStringObj) block:NULL delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | ((includeQuotes == NO) ? CDVJKEncodeOptionStringObjTrimQuotes : 0UL) | CDVJKEncodeOptionStringObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
 // NSString returning methods...
 
 - (NSString *)JSONString
 {
-  return([self JSONStringWithOptions:JKSerializeOptionNone includeQuotes:YES error:NULL]);
+  return([self JSONStringWithOptions:CDVJKSerializeOptionNone includeQuotes:YES error:NULL]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | ((includeQuotes == NO) ? JKEncodeOptionStringObjTrimQuotes : 0UL) | JKEncodeOptionStringObj) block:NULL delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | ((includeQuotes == NO) ? CDVJKEncodeOptionStringObjTrimQuotes : 0UL) | CDVJKEncodeOptionStringObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
 @end
 
-@implementation NSArray (JSONKitSerializing)
+@implementation NSArray (CDVJSONKitSerializing)
 
 // NSData returning methods...
 
 - (NSData *)JSONData
 {
-  return([JKSerializer serializeObject:self options:JKSerializeOptionNone encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
+  return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
 
 // NSString returning methods...
 
 - (NSString *)JSONString
 {
-  return([JKSerializer serializeObject:self options:JKSerializeOptionNone encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
+  return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
 
 @end
 
-@implementation NSDictionary (JSONKitSerializing)
+@implementation NSDictionary (CDVJSONKitSerializing)
 
 // NSData returning methods...
 
 - (NSData *)JSONData
 {
-  return([JKSerializer serializeObject:self options:JKSerializeOptionNone encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
+  return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
 
 // NSString returning methods...
 
 - (NSString *)JSONString
 {
-  return([JKSerializer serializeObject:self options:JKSerializeOptionNone encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
+  return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
 
 @end
@@ -3027,30 +3027,30 @@ errorExit:
 
 #ifdef __BLOCKS__
 
-@implementation NSArray (JSONKitSerializingBlockAdditions)
+@implementation NSArray (CDVJSONKitSerializingBlockAdditions)
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
 
 @end
 
-@implementation NSDictionary (JSONKitSerializingBlockAdditions)
+@implementation NSDictionary (CDVJSONKitSerializingBlockAdditions)
 
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsData | JKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
-  return([JKSerializer serializeObject:self options:serializeOptions encodeOption:(JKEncodeOptionAsString | JKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
+  return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
 
 @end
