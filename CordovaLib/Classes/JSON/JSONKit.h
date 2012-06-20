@@ -92,68 +92,68 @@ typedef unsigned int   NSUInteger;
 #endif // NSINTEGER_DEFINED
 
 
-#ifndef _JSONKIT_H_
-#define _JSONKIT_H_
+#ifndef _CDVJSONKIT_H_
+#define _CDVJSONKIT_H_
 
 #if defined(__GNUC__) && (__GNUC__ >= 4) && defined(__APPLE_CC__) && (__APPLE_CC__ >= 5465)
-#define JK_DEPRECATED_ATTRIBUTE __attribute__((deprecated))
+#define CDVJK_DEPRECATED_ATTRIBUTE __attribute__((deprecated))
 #else
-#define JK_DEPRECATED_ATTRIBUTE
+#define CDVJK_DEPRECATED_ATTRIBUTE
 #endif
   
-#define JSONKIT_VERSION_MAJOR 1
-#define JSONKIT_VERSION_MINOR 4
+#define CDVJSONKIT_VERSION_MAJOR 1
+#define CDVJSONKIT_VERSION_MINOR 4
 
-typedef NSUInteger JKFlags;
+typedef NSUInteger CDVJKFlags;
 
 /*
-  JKParseOptionComments        : Allow C style // and /_* ... *_/ (without a _, obviously) comments in JSON.
-  JKParseOptionUnicodeNewlines : Allow Unicode recommended (?:\r\n|[\n\v\f\r\x85\p{Zl}\p{Zp}]) newlines.
-  JKParseOptionLooseUnicode    : Normally the decoder will stop with an error at any malformed Unicode.
+  CDVJKParseOptionComments        : Allow C style // and /_* ... *_/ (without a _, obviously) comments in JSON.
+  CDVJKParseOptionUnicodeNewlines : Allow Unicode recommended (?:\r\n|[\n\v\f\r\x85\p{Zl}\p{Zp}]) newlines.
+  CDVJKParseOptionLooseUnicode    : Normally the decoder will stop with an error at any malformed Unicode.
                                  This option allows JSON with malformed Unicode to be parsed without reporting an error.
                                  Any malformed Unicode is replaced with \uFFFD, or "REPLACEMENT CHARACTER".
  */
 
 enum {
-  JKParseOptionNone                     = 0,
-  JKParseOptionStrict                   = 0,
-  JKParseOptionComments                 = (1 << 0),
-  JKParseOptionUnicodeNewlines          = (1 << 1),
-  JKParseOptionLooseUnicode             = (1 << 2),
-  JKParseOptionPermitTextAfterValidJSON = (1 << 3),
-  JKParseOptionValidFlags               = (JKParseOptionComments | JKParseOptionUnicodeNewlines | JKParseOptionLooseUnicode | JKParseOptionPermitTextAfterValidJSON),
+  CDVJKParseOptionNone                     = 0,
+  CDVJKParseOptionStrict                   = 0,
+  CDVJKParseOptionComments                 = (1 << 0),
+  CDVJKParseOptionUnicodeNewlines          = (1 << 1),
+  CDVJKParseOptionLooseUnicode             = (1 << 2),
+  CDVJKParseOptionPermitTextAfterValidJSON = (1 << 3),
+  CDVJKParseOptionValidFlags               = (CDVJKParseOptionComments | CDVJKParseOptionUnicodeNewlines | CDVJKParseOptionLooseUnicode | CDVJKParseOptionPermitTextAfterValidJSON),
 };
-typedef JKFlags JKParseOptionFlags;
+typedef CDVJKFlags CDVJKParseOptionFlags;
 
 enum {
-  JKSerializeOptionNone                 = 0,
-  JKSerializeOptionPretty               = (1 << 0),
-  JKSerializeOptionEscapeUnicode        = (1 << 1),
-  JKSerializeOptionEscapeForwardSlashes = (1 << 4),
-  JKSerializeOptionValidFlags           = (JKSerializeOptionPretty | JKSerializeOptionEscapeUnicode | JKSerializeOptionEscapeForwardSlashes),
+  CDVJKSerializeOptionNone                 = 0,
+  CDVJKSerializeOptionPretty               = (1 << 0),
+  CDVJKSerializeOptionEscapeUnicode        = (1 << 1),
+  CDVJKSerializeOptionEscapeForwardSlashes = (1 << 4),
+  CDVJKSerializeOptionValidFlags           = (CDVJKSerializeOptionPretty | CDVJKSerializeOptionEscapeUnicode | CDVJKSerializeOptionEscapeForwardSlashes),
 };
-typedef JKFlags JKSerializeOptionFlags;
+typedef CDVJKFlags CDVJKSerializeOptionFlags;
 
 #ifdef    __OBJC__
 
-typedef struct JKParseState JKParseState; // Opaque internal, private type.
+typedef struct CDVJKParseState CDVJKParseState; // Opaque internal, private type.
 
-// As a general rule of thumb, if you use a method that doesn't accept a JKParseOptionFlags argument, it defaults to JKParseOptionStrict
+// As a general rule of thumb, if you use a method that doesn't accept a CDVJKParseOptionFlags argument, it defaults to CDVJKParseOptionStrict
 
-@interface JSONDecoder : NSObject {
-  JKParseState *parseState;
+@interface CDVJSONDecoder : NSObject {
+  CDVJKParseState *parseState;
 }
 + (id)decoder;
-+ (id)decoderWithParseOptions:(JKParseOptionFlags)parseOptionFlags;
-- (id)initWithParseOptions:(JKParseOptionFlags)parseOptionFlags;
++ (id)decoderWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags;
+- (id)initWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags;
 - (void)clearCache;
 
 // The parse... methods were deprecated in v1.4 in favor of the v1.4 objectWith... methods.
-- (id)parseUTF8String:(const unsigned char *)string length:(size_t)length                         JK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithUTF8String:length:        instead.
-- (id)parseUTF8String:(const unsigned char *)string length:(size_t)length error:(NSError **)error JK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithUTF8String:length:error:  instead.
+- (id)parseUTF8String:(const unsigned char *)string length:(size_t)length                         CDVJK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithUTF8String:length:        instead.
+- (id)parseUTF8String:(const unsigned char *)string length:(size_t)length error:(NSError **)error CDVJK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithUTF8String:length:error:  instead.
 // The NSData MUST be UTF8 encoded JSON.
-- (id)parseJSONData:(NSData *)jsonData                                                            JK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithData:                     instead.
-- (id)parseJSONData:(NSData *)jsonData error:(NSError **)error                                    JK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithData:error:               instead.
+- (id)parseJSONData:(NSData *)jsonData                                                            CDVJK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithData:                     instead.
+- (id)parseJSONData:(NSData *)jsonData error:(NSError **)error                                    CDVJK_DEPRECATED_ATTRIBUTE; // Deprecated in JSONKit v1.4.  Use objectWithData:error:               instead.
 
 // Methods that return immutable collection objects.
 - (id)objectWithUTF8String:(const unsigned char *)string length:(NSUInteger)length;
@@ -175,68 +175,68 @@ typedef struct JKParseState JKParseState; // Opaque internal, private type.
 #pragma mark Deserializing methods
 ////////////
 
-@interface NSString (JSONKitDeserializing)
+@interface NSString (CDVJSONKitDeserializing)
 - (id)objectFromJSONString;
-- (id)objectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags;
-- (id)objectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error;
+- (id)objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags;
+- (id)objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error;
 - (id)mutableObjectFromJSONString;
-- (id)mutableObjectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags;
-- (id)mutableObjectFromJSONStringWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error;
+- (id)mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags;
+- (id)mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error;
 @end
 
-@interface NSData (JSONKitDeserializing)
+@interface NSData (CDVJSONKitDeserializing)
 // The NSData MUST be UTF8 encoded JSON.
 - (id)objectFromJSONData;
-- (id)objectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags;
-- (id)objectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error;
+- (id)objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags;
+- (id)objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error;
 - (id)mutableObjectFromJSONData;
-- (id)mutableObjectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags;
-- (id)mutableObjectFromJSONDataWithParseOptions:(JKParseOptionFlags)parseOptionFlags error:(NSError **)error;
+- (id)mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags;
+- (id)mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error;
 @end
 
 ////////////
 #pragma mark Serializing methods
 ////////////
   
-@interface NSString (JSONKitSerializing)
+@interface NSString (CDVJSONKitSerializing)
 // Convenience methods for those that need to serialize the receiving NSString (i.e., instead of having to serialize a NSArray with a single NSString, you can "serialize to JSON" just the NSString).
 // Normally, a string that is serialized to JSON has quotation marks surrounding it, which you may or may not want when serializing a single string, and can be controlled with includeQuotes:
 // includeQuotes:YES `a "test"...` -> `"a \"test\"..."`
 // includeQuotes:NO  `a "test"...` -> `a \"test\"...`
-- (NSData *)JSONData;     // Invokes JSONDataWithOptions:JKSerializeOptionNone   includeQuotes:YES
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error;
-- (NSString *)JSONString; // Invokes JSONStringWithOptions:JKSerializeOptionNone includeQuotes:YES
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error;
+- (NSData *)JSONData;     // Invokes JSONDataWithOptions:CDVJKSerializeOptionNone   includeQuotes:YES
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error;
+- (NSString *)JSONString; // Invokes JSONStringWithOptions:CDVJKSerializeOptionNone includeQuotes:YES
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error;
 @end
 
-@interface NSArray (JSONKitSerializing)
+@interface NSArray (CDVJSONKitSerializing)
 - (NSData *)JSONData;
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error;
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error;
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
 - (NSString *)JSONString;
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error;
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error;
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
 @end
 
-@interface NSDictionary (JSONKitSerializing)
+@interface NSDictionary (CDVJSONKitSerializing)
 - (NSData *)JSONData;
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error;
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error;
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
 - (NSString *)JSONString;
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions error:(NSError **)error;
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error;
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error;
 @end
 
 #ifdef __BLOCKS__
 
-@interface NSArray (JSONKitSerializingBlockAdditions)
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
+@interface NSArray (CDVJSONKitSerializingBlockAdditions)
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
 @end
 
 @interface NSDictionary (JSONKitSerializingBlockAdditions)
-- (NSData *)JSONDataWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
-- (NSString *)JSONStringWithOptions:(JKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
+- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
+- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
 @end
   
 #endif
@@ -244,7 +244,7 @@ typedef struct JKParseState JKParseState; // Opaque internal, private type.
 
 #endif // __OBJC__
 
-#endif // _JSONKIT_H_
+#endif // _CDVJSONKIT_H_
 
 #ifdef __cplusplus
 }  // extern "C"
