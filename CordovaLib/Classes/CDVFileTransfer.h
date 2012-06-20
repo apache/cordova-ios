@@ -40,6 +40,7 @@ typedef int CDVFileTransferDirection;
 
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (NSString*) escapePathComponentForUrlString:(NSString*)urlString;
 
 -(NSMutableDictionary*) createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 

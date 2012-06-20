@@ -21,6 +21,29 @@
 
 @implementation CDVFileTransfer
 
+- (NSString*) escapePathComponentForUrlString:(NSString*)urlString
+{
+    // separate the scheme and location components
+    NSArray* schemeAndLocationComponents = [urlString componentsSeparatedByString:@"://"];
+    if ([schemeAndLocationComponents count] < 2) {
+        return urlString;
+    }
+    
+    // separate the domain and path components
+    NSArray* pathComponents = [[schemeAndLocationComponents lastObject] componentsSeparatedByString:@"/"];
+    if ([pathComponents count] < 2) {
+        return urlString;
+    }
+    
+    NSString* pathComponent = [pathComponents lastObject];
+    NSRange rangeOfSubstring = [urlString rangeOfString:pathComponent];
+    urlString = [urlString substringToIndex:rangeOfSubstring.location];
+    
+    pathComponent = [pathComponent stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    return [urlString stringByAppendingString:pathComponent];
+}
+
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSString* callbackId = [arguments objectAtIndex:0];
     
@@ -51,7 +74,7 @@
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:[server stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:server]];
     
     
     if (!url) {
@@ -196,7 +219,7 @@
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:[sourceUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:sourceUrl]];
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
