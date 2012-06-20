@@ -24,11 +24,24 @@
 
 - (NSString*) uniqueAppInstanceIdentifier
 {
-    // full path to the app folder
-    NSString* bundlePath = [[[NSBundle mainBundle] bundlePath] stringByDeletingLastPathComponent];
+    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    static NSString* UUID_KEY = @"CDVUUID";
     
-    // return only the folder name (a GUID)
-    return [bundlePath lastPathComponent];
+    NSString* app_uuid = [userDefaults stringForKey:UUID_KEY];
+    if (app_uuid == nil)
+    {
+        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+
+        app_uuid = [NSString stringWithString:(NSString*)uuidString];
+        [userDefaults setObject:app_uuid forKey:UUID_KEY];
+        [userDefaults synchronize];
+        
+        CFRelease(uuidString);
+        CFRelease(uuidRef);
+    }
+    
+    return app_uuid;
 }
 
 @end
