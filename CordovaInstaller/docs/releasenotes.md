@@ -22,11 +22,28 @@
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
+
+### 1.9.0rc1 (20120621) ###
+
+* Fixes CB-915 - Pause/resume events get fired twice
+* Fixes CB-877 - Opening a .doc file under iOS causes the file system API to break (and any other plugins that may use NSMutableArray pop)
+* Fixes CB-864 - Failure in writing a large file blocks Cordova
+* Fixes CB-907 - Wrong URL encoding when downloading/uploading files from/to URLs with Unicode characters in the path
+* Fixes CB-906 - Hardware mute button doesn't effect Media API playback
+* Fixes CB-879 - Support to set the volume when playing short sounds
+* Enhanced CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS. Supports new iOS 5.1 iCloud Backup attribute (the old way is deprecated, and only for iOS 5.0.1)
+* Fixed CB-748 - refactored-UUID is broken and changes over time (changed according to Apple's guidelines for this)
+* Fixes CB-647 - Prefix/Namespace common native libraries
+
+<br />
+
 ### 1.8.1 (20120612) ###
 
 * Fixes CB-885 - Crash when sliding the notification tray and/or tel link confirm dialog
 * Fixed CB-506 - images taken via Camera.getPicture do not get deleted
 * Implemented CB-857 - Add deprecation notice if user is running iOS lesser than 4.2
+
+<br />
 
 ### 1.8.0 (20120605) ###
 
