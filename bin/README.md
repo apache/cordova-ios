@@ -36,9 +36,9 @@ Updating the template project
 
 8. Inside the project folder from the project you created above, copy these folders and files to your **bin/templates/project**:
 
-       __TESTING__
-       www
-       __TESTING__.xcodeproj
+        __TESTING__
+        www
+        __TESTING__.xcodeproj
        
 9. Run [Apache Rat](http://incubator.apache.org/rat/index.html) on **/bin/templates/project**, and add the Apache License header on affected files
 10. Check your modified and new project files in to Git, and push it upstream
