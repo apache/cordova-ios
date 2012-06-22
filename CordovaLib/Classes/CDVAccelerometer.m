@@ -30,12 +30,8 @@
 
 @synthesize callbackId, isRunning;
 
-// defaults to 100 msec
-#define kAccelerometerInterval      100 
-// max rate of 40 msec
-#define kMinAccelerometerInterval    40  
-// min rate of 1/sec
-#define kMaxAccelerometerInterval   1000
+// defaults to 10 msec
+#define kAccelerometerInterval      40 
 // g constant: -9.81 m/s^2
 #define kGravitionalConstant        -9.81
 
