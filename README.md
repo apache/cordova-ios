@@ -122,7 +122,7 @@ This can be because of:
 
 1. You did not add the plugin mapping in __Cordova.plist/Plugins__ (contact the plugin creator for the proper mapping). The __key__ is the service name used in the JavaScript interface and the __value__ is the classname used in the Objective-C interface. Often the key and value are the same.
 2. You did _not_ add the plugin code as a "group" (__yellow__ folder) but added it as a "folder reference" (blue folder) 
-3. You are having #import problems - see the "Cordova Upgrade Guide" document included in the distribution's "Guides" folder. 
+3. You are having #import problems - see the [Upgrading Cordova iOS](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document
 
 <br />  
 
