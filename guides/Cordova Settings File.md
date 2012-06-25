@@ -43,3 +43,7 @@ The **Cordova.plist settings file** controls various settings of Cordova. This i
 	h. **AllowInlineMediaPlayback (boolean, defaults to NO)** - set to YES to allow inline HTML5 media playback, also, the video element in the HTML document must also include the webkit-playsinline attribute
 	
 	i. **OpenAllWhitelistURLsInWebView (boolean, defaults to NO)** - set to YES to open all white-listed URLs in the main WebView
+
+	j. **BackupWebStorage (boolean, defaults to YES)** - set to NO to prevent the backup of localStorage and WebSQL databases to the Documents/Backups folder. This was a fix for this [Apple bug](http://phonegap.com/2012/04/18/ios-5-1-and-the-embedded-uiwebview-with-cordova/)
+
+

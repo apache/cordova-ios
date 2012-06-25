@@ -171,7 +171,14 @@
     
     //// Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
 
-    [CDVLocalStorage __verifyAndFixDatabaseLocations];
+    BOOL backupWebStorage = YES;  // default value
+    if ([self.settings objectForKey:@"BackupWebStorage"]) {
+        backupWebStorage = [(NSNumber*)[settings objectForKey:@"BackupWebStorage"] boolValue];
+    }
+    
+    if (backupWebStorage) {
+        [CDVLocalStorage __verifyAndFixDatabaseLocations];
+    }
     
     //// Instantiate the WebView ///////////////
 
@@ -200,7 +207,9 @@
     /*
      * Fire up CDVLocalStorage to work-around iOS 5.1 WebKit storage limitations
      */
-    [self.commandDelegate registerPlugin:[[[CDVLocalStorage alloc] initWithWebView:self.webView] autorelease] withClassName:NSStringFromClass([CDVLocalStorage class])];
+    if (backupWebStorage) {
+        [self.commandDelegate registerPlugin:[[[CDVLocalStorage alloc] initWithWebView:self.webView] autorelease] withClassName:NSStringFromClass([CDVLocalStorage class])];
+    }
     
     /*
      * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
