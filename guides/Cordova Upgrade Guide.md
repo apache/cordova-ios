@@ -23,6 +23,9 @@
 ---
 This document is **deprecated** and will be **removed** in Cordova 2.0. Please go to [http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) for the latest and up to date upgrade instructions.
 ---
+
+Please note that **Xcode 4 is required**. To submit to the Apple App Store, you must use the latest shipped version of the iOS SDK, which is iOS 5.1. The iOS 5.1 SDK requires Xcode 4.
+
 This document is for developers who need to upgrade their Cordova-based projects to a newer Cordova version. Starting with Cordova 1.4.0, Cordova has been re-factored to use Cleaver (Cordova as a Component), and some classes that were used before have been removed - namely PhoneGapDelegate and PhoneGapViewController.
 
 - To upgrade from 1.3.0 to 1.9.0, go through the 1.4.x, 1.5.0, 1.6.0, 1.7.x, 1.8.x then finally the 1.9.0 instructions
