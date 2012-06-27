@@ -103,16 +103,36 @@
     //Content-Type: multipart/form-data; boundary=*****org.apache.cordova.formBoundary
 	[req setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 	NSString* userAgent = [[self.webView request] valueForHTTPHeaderField:@"User-agent"];
-	if(userAgent) {
+	
+    if(userAgent) {
 		[req setValue: userAgent forHTTPHeaderField:@"User-Agent"];
 	}
-
+	
+    NSMutableDictionary* headers = [params objectForKey:@"headers"];
+    NSEnumerator *enumerator = [headers keyEnumerator];
+	id val;
+   	NSString *nkey;
+    
+	while (nkey = [enumerator nextObject]) {
+		val = [headers objectForKey:nkey];
+		if(!val || val == [NSNull null]) {
+			continue;	
+		}
+		// if it responds to stringValue selector (eg NSNumber) get the NSString
+		if ([val respondsToSelector:@selector(stringValue)]) {
+			val = [val stringValue];
+		}
+		// finally, check whether it is a NSString (for dataUsingEncoding selector below)
+		if (![val isKindOfClass:[NSString class]]) {
+			continue;
+		}
+        
+        [req setValue:val forHTTPHeaderField:nkey];	
+    }
     
 	NSMutableData *postBody = [NSMutableData data];
 	
-	NSEnumerator *enumerator = [params keyEnumerator];
 	id key;
-	id val;
 	
 	while ((key = [enumerator nextObject])) {
 		val = [params objectForKey:key];
