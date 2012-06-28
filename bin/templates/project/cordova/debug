@@ -1,5 +1,4 @@
-
-#! /bin/bash
+#!/bin/bash
 
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -22,27 +21,18 @@
 
 #
 # compile and launch a Cordova/iOS project to the simulator
-# 
-# USAGE
-#   ./debug [path name] [project name]
 #
-# EXAMPLE
-#  ./debug ~/Desktop/MyProject MyProject
-#
+
 set -e
 
-function usage(){
-  echo "Usage: $0 [path to project] [name of project]"
-  exit 1
-}
+CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd )
 
-# check arguments
-[ -z "$1" ] && usage
-[ -z "$2" ] && usage
+PROJECT_PATH=$CORDOVA_PATH/..
 
-PROJECT_PATH=${1:-"."}
-PROJECT_NAME=$2
-PRJ=$PROJECT_NAME.xcodeproj
+for file in *.xcodeproj; do
+  PRJ=$file
+done;
+
 APP=build/Release-iphonesimulator/$PROJECT_NAME.app
 SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
 

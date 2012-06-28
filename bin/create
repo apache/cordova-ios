@@ -30,6 +30,12 @@
 #
 set -e
 
+if [ -n "$1" ] && [ "$1" == "-h" ]
+then
+    echo 'usage: create path package name'
+    exit 0
+fi
+
 BINDIR=$( cd "$( dirname "$0" )" && pwd )
 PROJECT_PATH=${1:-"./example"}
 PACKAGE=${2:-"org.apache.cordova.example"}
