@@ -349,7 +349,7 @@
     NSString* callbackId = [arguments objectAtIndex:0];
     // existence of fullPath checked on JS side
     NSString* fullPath = [arguments objectAtIndex:1];
-    // mimeType could be empty/null
+    // mimeType could be null
     NSString* mimeType = nil;
     if ([arguments count] > 2) {
         mimeType = [arguments objectAtIndex:2];
@@ -359,7 +359,7 @@
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
     
-    if (!mimeType){
+    if (!mimeType || [mimeType isKindOfClass: [NSNull class]]){
         // try to determine mime type if not provided
         id command = [self.commandDelegate getCommandInstance: @"File"];
         bError = !([command isKindOfClass:[CDVFile class]]);
