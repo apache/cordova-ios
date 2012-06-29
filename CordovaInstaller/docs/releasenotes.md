@@ -51,7 +51,8 @@ Cordova is a static library and static framework that enables developers to incl
 * Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
 * [CB-765] Header Support iOS FileTransfer upload
 * Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.phonegap.com now
- 
+* [CB-863] Splash screen on iOS not using localized UILaunchImageFile value
+  
 <br />
 
 ### 1.8.1 (20120612) ###
