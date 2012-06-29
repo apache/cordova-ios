@@ -23,7 +23,7 @@
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
 
 
-### 1.9.0rc1 (20120621) ###
+### 1.9.0 (20120629) ###
 
 * Fixes CB-915 - Pause/resume events get fired twice
 * Fixes CB-877 - Opening a .doc file under iOS causes the file system API to break (and any other plugins that may use NSMutableArray pop)
@@ -34,6 +34,22 @@ Cordova is a static library and static framework that enables developers to incl
 * Enhanced CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS. Supports new iOS 5.1 iCloud Backup attribute (the old way is deprecated, and only for iOS 5.0.1)
 * Fixed CB-748 - refactored-UUID is broken and changes over time (changed according to Apple's guidelines for this)
 * Fixes CB-647 - Prefix/Namespace common native libraries
+* Fixes CB-961 - Can not remove contact property values anymore
+* Fixes CB-977 - MediaFile.getFormatData failing
+* [CB-943] decrease accelerometer interval from 100ms to 40ms
+* [CB-982] add usage help to create script, remove unnecessary parameters from debug project-level script
+* Removing component guide; going into the docs
+* Fixes CB-957 - (iOS) iOS Upgrade Guide Migration
+* Updated CB-957 - Include Xcode 4 requirement
+* Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
+* [CB-914] Added BackupWebStorage setting in cli template
+* Enhanced CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS. Supports new iOS 5.1 iCloud Backup attribute (the old way is deprecated, and only for iOS 5.0.1)
+* Fixed CB-748 - refactored-UUID is broken and changes over time (changed according to Apple's guidelines for this)
+* Fixes CB-647 - Prefix/Namespace common native libraries
+* Fixes CB-942 - iOS failing FileTransfer malformed URL tests
+* Updated CB-957 - Include Xcode 4 requirement
+* Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
+* [CB-765] Header Support iOS FileTransfer upload
 
 <br />
 
