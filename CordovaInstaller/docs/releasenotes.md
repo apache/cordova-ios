@@ -50,7 +50,8 @@ Cordova is a static library and static framework that enables developers to incl
 * Updated CB-957 - Include Xcode 4 requirement
 * Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
 * [CB-765] Header Support iOS FileTransfer upload
-
+* Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.phonegap.com now
+ 
 <br />
 
 ### 1.8.1 (20120612) ###

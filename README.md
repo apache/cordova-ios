@@ -84,6 +84,8 @@ Unit Tests
 3. **Modify cordova.js** to point to your correct cordova-X.X.X.js version
 4. **Run** the project
 
+<br />
+
 Installer Notes
 -------------------------------------------------------------
 This installer will only install items under your home folder (signified by ~)
@@ -142,7 +144,7 @@ This includes external http/https/ftp/ftps links in:
 
 **5. How do I effectively upgrade my project?**
 
-Starting with Cordova 1.4, follow the instructions in the **"Cordova Upgrade Guide"** document that is included with the distribution.
+Starting with Cordova 1.4, follow the instructions in the [**"Upgrading Cordova iOS"** document](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html).
 
 <br />
 

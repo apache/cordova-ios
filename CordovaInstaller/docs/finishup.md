@@ -32,7 +32,7 @@
 
 ## Upgraders
 	
-1. Please see the "Cordova Upgrade Guide" included in the .dmg distribution, in the "Guides" sub-folder
+1. Please see the [**"Upgrading Cordova iOS"**](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document on [http://docs.phonegap.com](http://docs.phonegap.com)
 2. See the FAQ in the README.pdf as well
 
 <br />
