@@ -298,6 +298,8 @@
         __block UIBackgroundTaskIdentifier backgroundTaskID = UIBackgroundTaskInvalid;
         
         backgroundTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [[UIApplication sharedApplication] endBackgroundTask: backgroundTaskID];
+            backgroundTaskID = UIBackgroundTaskInvalid;
             NSLog(@"Background task to backup WebSQL/LocalStorage expired.");
         }];
         
