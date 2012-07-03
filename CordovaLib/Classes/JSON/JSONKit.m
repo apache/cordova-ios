@@ -124,8 +124,8 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSObjCRuntime.h>
 
-#ifndef __has_feature
-#define __has_feature(x) 0
+#ifndef __cdv_has_feature
+#define __cdv_has_feature(x) 0
 #endif
 
 #ifdef CDVJK_ENABLE_CF_TRANSFER_OWNERSHIP_CALLBACKS
@@ -515,17 +515,17 @@ typedef enum {
   sourceExhausted,        /* partial character in source, but hit end */
   targetExhausted,        /* insuff. room in target for conversion */
   sourceIllegal           /* source sequence is illegal/malformed */
-} ConversionResult;
+} CDV_ConversionResult;
 
-#define UNI_REPLACEMENT_CHAR (UTF32)0x0000FFFD
-#define UNI_MAX_BMP          (UTF32)0x0000FFFF
-#define UNI_MAX_UTF16        (UTF32)0x0010FFFF
-#define UNI_MAX_UTF32        (UTF32)0x7FFFFFFF
-#define UNI_MAX_LEGAL_UTF32  (UTF32)0x0010FFFF
-#define UNI_SUR_HIGH_START   (UTF32)0xD800
-#define UNI_SUR_HIGH_END     (UTF32)0xDBFF
-#define UNI_SUR_LOW_START    (UTF32)0xDC00
-#define UNI_SUR_LOW_END      (UTF32)0xDFFF
+#define CDV_UNI_REPLACEMENT_CHAR (UTF32)0x0000FFFD
+#define CDV_UNI_MAX_BMP          (UTF32)0x0000FFFF
+#define CDV_UNI_MAX_UTF16        (UTF32)0x0010FFFF
+#define CDV_UNI_MAX_UTF32        (UTF32)0x7FFFFFFF
+#define CDV_UNI_MAX_LEGAL_UTF32  (UTF32)0x0010FFFF
+#define CDV_UNI_SUR_HIGH_START   (UTF32)0xD800
+#define CDV_UNI_SUR_HIGH_END     (UTF32)0xDBFF
+#define CDV_UNI_SUR_LOW_START    (UTF32)0xDC00
+#define CDV_UNI_SUR_LOW_END      (UTF32)0xDFFF
 
 
 #if !defined(CDVJK_FAST_TRAILING_BYTES)
@@ -564,52 +564,52 @@ static void              _CDVJKDictionaryAddObject(CDVJKDictionary *dictionary, 
 static CDVJKHashTableEntry *_CDVJKDictionaryHashTableEntryForKey(CDVJKDictionary *dictionary, id aKey);
 
 
-static void _JSONDecoderCleanup(CDVJSONDecoder *decoder);
+static void _CDVJSONDecoderCleanup(CDVJSONDecoder *decoder);
 
-static id _NSStringObjectFromJSONString(NSString *jsonString, CDVJKParseOptionFlags parseOptionFlags, NSError **error, BOOL mutableCollection);
-
-
-static void jk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer);
-static void jk_managedBuffer_setToStackBuffer(CDVJKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length);
-static unsigned char *jk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer, size_t newSize);
-static void jk_objectStack_release(CDVJKObjectStack *objectStack);
-static void jk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count);
-static int  jk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount);
-
-static void   jk_error(CDVJKParseState *parseState, NSString *format, ...);
-static int    jk_parse_string(CDVJKParseState *parseState);
-static int    jk_parse_number(CDVJKParseState *parseState);
-static size_t jk_parse_is_newline(CDVJKParseState *parseState, const unsigned char *atCharacterPtr);
-CDVJK_STATIC_INLINE int jk_parse_skip_newline(CDVJKParseState *parseState);
-CDVJK_STATIC_INLINE void jk_parse_skip_whitespace(CDVJKParseState *parseState);
-static int    jk_parse_next_token(CDVJKParseState *parseState);
-static void   jk_error_parse_accept_or3(CDVJKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String);
-static void  *jk_create_dictionary(CDVJKParseState *parseState, size_t startingObjectIndex);
-static void  *jk_parse_dictionary(CDVJKParseState *parseState);
-static void  *jk_parse_array(CDVJKParseState *parseState);
-static void  *jk_object_for_token(CDVJKParseState *parseState);
-static void  *jk_cachedObjects(CDVJKParseState *parseState);
-CDVJK_STATIC_INLINE void jk_cache_age(CDVJKParseState *parseState);
-CDVJK_STATIC_INLINE void jk_set_parsed_token(CDVJKParseState *parseState, const unsigned char *ptr, size_t length, CDVJKTokenType type, size_t advanceBy);
+static id _CDVNSStringObjectFromJSONString(NSString *jsonString, CDVJKParseOptionFlags parseOptionFlags, NSError **error, BOOL mutableCollection);
 
 
-static void jk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...);
-static int jk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...);
-static int jk_encode_write(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format);
-static int jk_encode_writePrettyPrintWhiteSpace(CDVJKEncodeState *encodeState);
-static int jk_encode_write1slow(CDVJKEncodeState *encodeState, ssize_t depthChange, const char *format);
-static int jk_encode_write1fast(CDVJKEncodeState *encodeState, ssize_t depthChange CDVJK_UNUSED_ARG, const char *format);
-static int jk_encode_writen(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length);
-CDVJK_STATIC_INLINE CDVJKHash jk_encode_object_hash(void *objectPtr);
-CDVJK_STATIC_INLINE void jk_encode_updateCache(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object);
-static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *objectPtr);
+static void cdvjk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer);
+static void cdvjk_managedBuffer_setToStackBuffer(CDVJKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length);
+static unsigned char *cdvjk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer, size_t newSize);
+static void cdvjk_objectStack_release(CDVJKObjectStack *objectStack);
+static void cdvjk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count);
+static int  cdvjk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount);
 
-#define jk_encode_write1(es, dc, f)  (CDVJK_EXPECT_F(_jk_encode_prettyPrint) ? jk_encode_write1slow(es, dc, f) : jk_encode_write1fast(es, dc, f))
+static void   cdvjk_error(CDVJKParseState *parseState, NSString *format, ...);
+static int    cdvjk_parse_string(CDVJKParseState *parseState);
+static int    cdvjk_parse_number(CDVJKParseState *parseState);
+static size_t cdvjk_parse_is_newline(CDVJKParseState *parseState, const unsigned char *atCharacterPtr);
+CDVJK_STATIC_INLINE int cdvjk_parse_skip_newline(CDVJKParseState *parseState);
+CDVJK_STATIC_INLINE void cdvjk_parse_skip_whitespace(CDVJKParseState *parseState);
+static int    cdvjk_parse_next_token(CDVJKParseState *parseState);
+static void   cdvjk_error_parse_accept_or3(CDVJKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String);
+static void  *cdvjk_create_dictionary(CDVJKParseState *parseState, size_t startingObjectIndex);
+static void  *cdvjk_parse_dictionary(CDVJKParseState *parseState);
+static void  *cdvjk_parse_array(CDVJKParseState *parseState);
+static void  *cdvjk_object_for_token(CDVJKParseState *parseState);
+static void  *cdvjk_cachedObjects(CDVJKParseState *parseState);
+CDVJK_STATIC_INLINE void cdvjk_cache_age(CDVJKParseState *parseState);
+CDVJK_STATIC_INLINE void cdvjk_set_parsed_token(CDVJKParseState *parseState, const unsigned char *ptr, size_t length, CDVJKTokenType type, size_t advanceBy);
 
 
-CDVJK_STATIC_INLINE size_t jk_min(size_t a, size_t b);
-CDVJK_STATIC_INLINE size_t jk_max(size_t a, size_t b);
-CDVJK_STATIC_INLINE CDVJKHash calculateHash(CDVJKHash currentHash, unsigned char c);
+static void cdvjk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...);
+static int cdvjk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...);
+static int cdvjk_encode_write(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format);
+static int cdvjk_encode_writePrettyPrintWhiteSpace(CDVJKEncodeState *encodeState);
+static int cdvjk_encode_write1slow(CDVJKEncodeState *encodeState, ssize_t depthChange, const char *format);
+static int cdvjk_encode_write1fast(CDVJKEncodeState *encodeState, ssize_t depthChange CDVJK_UNUSED_ARG, const char *format);
+static int cdvjk_encode_writen(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length);
+CDVJK_STATIC_INLINE CDVJKHash cdvjk_encode_object_hash(void *objectPtr);
+CDVJK_STATIC_INLINE void cdvjk_encode_updateCache(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object);
+static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *objectPtr);
+
+#define cdvjk_encode_write1(es, dc, f)  (CDVJK_EXPECT_F(_jk_encode_prettyPrint) ? cdvjk_encode_write1slow(es, dc, f) : cdvjk_encode_write1fast(es, dc, f))
+
+
+CDVJK_STATIC_INLINE size_t cdvjk_min(size_t a, size_t b);
+CDVJK_STATIC_INLINE size_t cdvjk_max(size_t a, size_t b);
+CDVJK_STATIC_INLINE CDVJKHash cdvcalculateHash(CDVJKHash currentHash, unsigned char c);
 
 // CDVJSONKit v1.4 used both a CDVJKArray : NSArray and CDVJKMutableArray : NSMutableArray, and the same for the dictionary collection type.
 // However, Louis Gerbarg (via cocoa-dev) pointed out that Cocoa / Core Foundation actually implements only a single class that inherits from the 
@@ -632,16 +632,16 @@ static Class                               _CDVjk_NSNumberClass                 
 static NSNumberAllocImp                    _CDVjk_NSNumberAllocImp                    = NULL;
 static NSNumberInitWithUnsignedLongLongImp _CDVjk_NSNumberInitWithUnsignedLongLongImp = NULL;
 
-extern void jk_collectionClassLoadTimeInitialization(void) __attribute__ ((constructor));
+extern void cdvjk_collectionClassLoadTimeInitialization(void) __attribute__ ((constructor));
 
-void jk_collectionClassLoadTimeInitialization(void) {
+void cdvjk_collectionClassLoadTimeInitialization(void) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at load time initialization may be less than ideal.
   
   _CDVJKArrayClass             = objc_getClass("CDVJKArray");
-  _CDVJKArrayInstanceSize      = jk_max(16UL, class_getInstanceSize(_CDVJKArrayClass));
+  _CDVJKArrayInstanceSize      = cdvjk_max(16UL, class_getInstanceSize(_CDVJKArrayClass));
   
   _CDVJKDictionaryClass        = objc_getClass("CDVJKDictionary");
-  _CDVJKDictionaryInstanceSize = jk_max(16UL, class_getInstanceSize(_CDVJKDictionaryClass));
+  _CDVJKDictionaryInstanceSize = cdvjk_max(16UL, class_getInstanceSize(_CDVJKDictionaryClass));
   
   // For CDVJSONDecoder...
   _CDVjk_NSNumberClass = [NSNumber class];
@@ -887,7 +887,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 }
 
 // These values are taken from Core Foundation CF-550 CFBasicHash.m.  As a bonus, they align very well with our CDVJKHashTableEntry struct too.
-static const NSUInteger jk_dictionaryCapacities[] = {
+static const NSUInteger cdvjk_dictionaryCapacities[] = {
   0UL, 3UL, 7UL, 13UL, 23UL, 41UL, 71UL, 127UL, 191UL, 251UL, 383UL, 631UL, 1087UL, 1723UL,
   2803UL, 4523UL, 7351UL, 11959UL, 19447UL, 31231UL, 50683UL, 81919UL, 132607UL,
   214519UL, 346607UL, 561109UL, 907759UL, 1468927UL, 2376191UL, 3845119UL,
@@ -896,9 +896,9 @@ static const NSUInteger jk_dictionaryCapacities[] = {
 };
 
 static NSUInteger _CDVJKDictionaryCapacityForCount(NSUInteger count) {
-  NSUInteger bottom = 0UL, top = sizeof(jk_dictionaryCapacities) / sizeof(NSUInteger), mid = 0UL, tableSize = lround(floor((count) * 1.33));
-  while(top > bottom) { mid = (top + bottom) / 2UL; if(jk_dictionaryCapacities[mid] < tableSize) { bottom = mid + 1UL; } else { top = mid; } }
-  return(jk_dictionaryCapacities[bottom]);
+  NSUInteger bottom = 0UL, top = sizeof(cdvjk_dictionaryCapacities) / sizeof(NSUInteger), mid = 0UL, tableSize = lround(floor((count) * 1.33));
+  while(top > bottom) { mid = (top + bottom) / 2UL; if(cdvjk_dictionaryCapacities[mid] < tableSize) { bottom = mid + 1UL; } else { top = mid; } }
+  return(cdvjk_dictionaryCapacities[bottom]);
 }
 
 static void _CDVJKDictionaryResizeIfNeccessary(CDVJKDictionary *dictionary) {
@@ -1108,12 +1108,12 @@ static CDVJKHashTableEntry *_CDVJKDictionaryHashTableEntryForKey(CDVJKDictionary
 
 #pragma mark -
 
-CDVJK_STATIC_INLINE size_t jk_min(size_t a, size_t b) { return((a < b) ? a : b); }
-CDVJK_STATIC_INLINE size_t jk_max(size_t a, size_t b) { return((a > b) ? a : b); }
+CDVJK_STATIC_INLINE size_t cdvjk_min(size_t a, size_t b) { return((a < b) ? a : b); }
+CDVJK_STATIC_INLINE size_t cdvjk_max(size_t a, size_t b) { return((a > b) ? a : b); }
 
-CDVJK_STATIC_INLINE CDVJKHash calculateHash(CDVJKHash currentHash, unsigned char c) { return(((currentHash << 5) + currentHash) + c); }
+CDVJK_STATIC_INLINE CDVJKHash cdvcalculateHash(CDVJKHash currentHash, unsigned char c) { return(((currentHash << 5) + currentHash) + c); }
 
-static void jk_error(CDVJKParseState *parseState, NSString *format, ...) {
+static void cdvjk_error(CDVJKParseState *parseState, NSString *format, ...) {
   NSCParameterAssert((parseState != NULL) && (format != NULL));
 
   va_list varArgsList;
@@ -1126,7 +1126,7 @@ static void jk_error(CDVJKParseState *parseState, NSString *format, ...) {
   const unsigned char *lineEnd        = lineStart;
   const unsigned char *atCharacterPtr = NULL;
 
-  for(atCharacterPtr = lineStart; atCharacterPtr < CDVJK_END_STRING_PTR(parseState); atCharacterPtr++) { lineEnd = atCharacterPtr; if(jk_parse_is_newline(parseState, atCharacterPtr)) { break; } }
+  for(atCharacterPtr = lineStart; atCharacterPtr < CDVJK_END_STRING_PTR(parseState); atCharacterPtr++) { lineEnd = atCharacterPtr; if(cdvjk_parse_is_newline(parseState, atCharacterPtr)) { break; } }
 
   NSString *lineString = @"", *carretString = @"";
   if(lineStart < CDVJK_END_STRING_PTR(parseState)) {
@@ -1150,7 +1150,7 @@ static void jk_error(CDVJKParseState *parseState, NSString *format, ...) {
 #pragma mark -
 #pragma mark Buffer and Object Stack management functions
 
-static void jk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer) {
+static void cdvjk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer) {
   if((managedBuffer->flags & CDVJKManagedBufferMustFree)) {
     if(managedBuffer->bytes.ptr != NULL) { free(managedBuffer->bytes.ptr); managedBuffer->bytes.ptr = NULL; }
     managedBuffer->flags &= ~CDVJKManagedBufferMustFree;
@@ -1161,14 +1161,14 @@ static void jk_managedBuffer_release(CDVJKManagedBuffer *managedBuffer) {
   managedBuffer->flags        &= ~CDVJKManagedBufferLocationMask;
 }
 
-static void jk_managedBuffer_setToStackBuffer(CDVJKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length) {
-  jk_managedBuffer_release(managedBuffer);
+static void cdvjk_managedBuffer_setToStackBuffer(CDVJKManagedBuffer *managedBuffer, unsigned char *ptr, size_t length) {
+  cdvjk_managedBuffer_release(managedBuffer);
   managedBuffer->bytes.ptr     = ptr;
   managedBuffer->bytes.length  = length;
   managedBuffer->flags         = (managedBuffer->flags & ~CDVJKManagedBufferLocationMask) | CDVJKManagedBufferOnStack;
 }
 
-static unsigned char *jk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer, size_t newSize) {
+static unsigned char *cdvjk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer, size_t newSize) {
   size_t roundedUpNewSize = newSize;
 
   if(managedBuffer->roundSizeUpToMultipleOf > 0UL) { roundedUpNewSize = newSize + ((managedBuffer->roundSizeUpToMultipleOf - (newSize % managedBuffer->roundSizeUpToMultipleOf)) % managedBuffer->roundSizeUpToMultipleOf); }
@@ -1179,7 +1179,7 @@ static unsigned char *jk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer,
       unsigned char *newBuffer = NULL, *oldBuffer = managedBuffer->bytes.ptr;
       
       if((newBuffer = (unsigned char *)malloc(roundedUpNewSize)) == NULL) { return(NULL); }
-      memcpy(newBuffer, oldBuffer, jk_min(managedBuffer->bytes.length, roundedUpNewSize));
+      memcpy(newBuffer, oldBuffer, cdvjk_min(managedBuffer->bytes.length, roundedUpNewSize));
       managedBuffer->flags        = (managedBuffer->flags & ~CDVJKManagedBufferLocationMask) | (CDVJKManagedBufferOnHeap | CDVJKManagedBufferMustFree);
       managedBuffer->bytes.ptr    = newBuffer;
       managedBuffer->bytes.length = roundedUpNewSize;
@@ -1195,7 +1195,7 @@ static unsigned char *jk_managedBuffer_resize(CDVJKManagedBuffer *managedBuffer,
 
 
 
-static void jk_objectStack_release(CDVJKObjectStack *objectStack) {
+static void cdvjk_objectStack_release(CDVJKObjectStack *objectStack) {
   NSCParameterAssert(objectStack != NULL);
 
   NSCParameterAssert(objectStack->index <= objectStack->count);
@@ -1222,9 +1222,9 @@ static void jk_objectStack_release(CDVJKObjectStack *objectStack) {
   objectStack->flags   &= ~CDVJKObjectStackLocationMask;
 }
 
-static void jk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count) {
+static void cdvjk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void **objects, void **keys, CFHashCode *cfHashes, size_t count) {
   NSCParameterAssert((objectStack != NULL) && (objects != NULL) && (keys != NULL) && (cfHashes != NULL) && (count > 0UL));
-  jk_objectStack_release(objectStack);
+  cdvjk_objectStack_release(objectStack);
   objectStack->objects  = objects;
   objectStack->keys     = keys;
   objectStack->cfHashes = cfHashes;
@@ -1236,7 +1236,7 @@ static void jk_objectStack_setToStackBuffer(CDVJKObjectStack *objectStack, void 
 #endif
 }
 
-static int jk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount) {
+static int cdvjk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount) {
   size_t roundedUpNewCount = newCount;
   int    returnCode = 0;
 
@@ -1250,12 +1250,12 @@ static int jk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount)
       NSCParameterAssert((objectStack->flags & CDVJKObjectStackMustFree) == 0);
 
       if((newObjects  = (void **     )calloc(1UL, roundedUpNewCount * sizeof(void *    ))) == NULL) { returnCode = 1; goto errorExit; }
-      memcpy(newObjects, objectStack->objects,   jk_min(objectStack->count, roundedUpNewCount) * sizeof(void *));
+      memcpy(newObjects, objectStack->objects,   cdvjk_min(objectStack->count, roundedUpNewCount) * sizeof(void *));
       if((newKeys     = (void **     )calloc(1UL, roundedUpNewCount * sizeof(void *    ))) == NULL) { returnCode = 1; goto errorExit; }
-      memcpy(newKeys,     objectStack->keys,     jk_min(objectStack->count, roundedUpNewCount) * sizeof(void *));
+      memcpy(newKeys,     objectStack->keys,     cdvjk_min(objectStack->count, roundedUpNewCount) * sizeof(void *));
 
       if((newCFHashes = (CFHashCode *)calloc(1UL, roundedUpNewCount * sizeof(CFHashCode))) == NULL) { returnCode = 1; goto errorExit; }
-      memcpy(newCFHashes, objectStack->cfHashes, jk_min(objectStack->count, roundedUpNewCount) * sizeof(CFHashCode));
+      memcpy(newCFHashes, objectStack->cfHashes, cdvjk_min(objectStack->count, roundedUpNewCount) * sizeof(CFHashCode));
 
       objectStack->flags    = (objectStack->flags & ~CDVJKObjectStackLocationMask) | (CDVJKObjectStackOnHeap | CDVJKObjectStackMustFree);
       objectStack->objects  = newObjects;  newObjects  = NULL;
@@ -1288,13 +1288,13 @@ static int jk_objectStack_resize(CDVJKObjectStack *objectStack, size_t newCount)
 #pragma mark -
 #pragma mark Unicode related functions
 
-CDVJK_STATIC_INLINE ConversionResult isValidCodePoint(UTF32 *u32CodePoint) {
-  ConversionResult result = conversionOK;
+CDVJK_STATIC_INLINE CDV_ConversionResult cdvisValidCodePoint(UTF32 *u32CodePoint) {
+  CDV_ConversionResult result = conversionOK;
   UTF32            ch     = *u32CodePoint;
 
-  if(CDVJK_EXPECT_F(ch >= UNI_SUR_HIGH_START) && (CDVJK_EXPECT_T(ch <= UNI_SUR_LOW_END)))                                                        { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
-  if(CDVJK_EXPECT_F(ch >= 0xFDD0U) && (CDVJK_EXPECT_F(ch <= 0xFDEFU) || CDVJK_EXPECT_F((ch & 0xFFFEU) == 0xFFFEU)) && CDVJK_EXPECT_T(ch <= 0x10FFFFU)) { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
-  if(CDVJK_EXPECT_F(ch == 0U))                                                                                                                { result = sourceIllegal; ch = UNI_REPLACEMENT_CHAR; goto finished; }
+  if(CDVJK_EXPECT_F(ch >= CDV_UNI_SUR_HIGH_START) && (CDVJK_EXPECT_T(ch <= CDV_UNI_SUR_LOW_END)))                                                        { result = sourceIllegal; ch = CDV_UNI_REPLACEMENT_CHAR; goto finished; }
+  if(CDVJK_EXPECT_F(ch >= 0xFDD0U) && (CDVJK_EXPECT_F(ch <= 0xFDEFU) || CDVJK_EXPECT_F((ch & 0xFFFEU) == 0xFFFEU)) && CDVJK_EXPECT_T(ch <= 0x10FFFFU)) { result = sourceIllegal; ch = CDV_UNI_REPLACEMENT_CHAR; goto finished; }
+  if(CDVJK_EXPECT_F(ch == 0U))                                                                                                                { result = sourceIllegal; ch = CDV_UNI_REPLACEMENT_CHAR; goto finished; }
 
  finished:
   *u32CodePoint = ch;
@@ -1302,7 +1302,7 @@ CDVJK_STATIC_INLINE ConversionResult isValidCodePoint(UTF32 *u32CodePoint) {
 }
 
 
-static int isLegalUTF8(const UTF8 *source, size_t length) {
+static int cdvisLegalUTF8(const UTF8 *source, size_t length) {
   const UTF8 *srcptr = source + length;
   UTF8 a;
 
@@ -1328,8 +1328,8 @@ static int isLegalUTF8(const UTF8 *source, size_t length) {
   return(1);
 }
 
-static ConversionResult ConvertSingleCodePointInUTF8(const UTF8 *sourceStart, const UTF8 *sourceEnd, UTF8 const **nextUTF8, UTF32 *convertedUTF32) {
-  ConversionResult result = conversionOK;
+static CDV_ConversionResult cdvConvertSingleCodePointInUTF8(const UTF8 *sourceStart, const UTF8 *sourceEnd, UTF8 const **nextUTF8, UTF32 *convertedUTF32) {
+  CDV_ConversionResult result = conversionOK;
   const UTF8 *source = sourceStart;
   UTF32 ch = 0UL;
 
@@ -1339,12 +1339,12 @@ static ConversionResult ConvertSingleCodePointInUTF8(const UTF8 *sourceStart, co
   unsigned short extraBytesToRead = __builtin_clz(((*source)^0xff) << 25);
 #endif
 
-  if(CDVJK_EXPECT_F((source + extraBytesToRead + 1) > sourceEnd) || CDVJK_EXPECT_F(!isLegalUTF8(source, extraBytesToRead + 1))) {
+  if(CDVJK_EXPECT_F((source + extraBytesToRead + 1) > sourceEnd) || CDVJK_EXPECT_F(!cdvisLegalUTF8(source, extraBytesToRead + 1))) {
     source++;
     while((source < sourceEnd) && (((*source) & 0xc0) == 0x80) && ((source - sourceStart) < (extraBytesToRead + 1))) { source++; } 
     NSCParameterAssert(source <= sourceEnd);
     result = ((source < sourceEnd) && (((*source) & 0xc0) != 0x80)) ? sourceIllegal : ((sourceStart + extraBytesToRead + 1) > sourceEnd) ? sourceExhausted : sourceIllegal;
-    ch = UNI_REPLACEMENT_CHAR;
+    ch = CDV_UNI_REPLACEMENT_CHAR;
     goto finished;
   }
 
@@ -1358,7 +1358,7 @@ static ConversionResult ConvertSingleCodePointInUTF8(const UTF8 *sourceStart, co
   }
   ch -= offsetsFromUTF8[extraBytesToRead];
 
-  result = isValidCodePoint(&ch);
+  result = cdvisValidCodePoint(&ch);
   
  finished:
   *nextUTF8       = source;
@@ -1368,21 +1368,21 @@ static ConversionResult ConvertSingleCodePointInUTF8(const UTF8 *sourceStart, co
 }
 
 
-static ConversionResult ConvertUTF32toUTF8 (UTF32 u32CodePoint, UTF8 **targetStart, UTF8 *targetEnd) {
+static CDV_ConversionResult cdvConvertUTF32toUTF8 (UTF32 u32CodePoint, UTF8 **targetStart, UTF8 *targetEnd) {
   const UTF32       byteMask     = 0xBF, byteMark = 0x80;
-  ConversionResult  result       = conversionOK;
+  CDV_ConversionResult  result       = conversionOK;
   UTF8             *target       = *targetStart;
   UTF32             ch           = u32CodePoint;
   unsigned short    bytesToWrite = 0;
 
-  result = isValidCodePoint(&ch);
+  result = cdvisValidCodePoint(&ch);
 
   // Figure out how many bytes the result will require. Turn any illegally large UTF32 things (> Plane 17) into replacement chars.
        if(ch < (UTF32)0x80)          { bytesToWrite = 1; }
   else if(ch < (UTF32)0x800)         { bytesToWrite = 2; }
   else if(ch < (UTF32)0x10000)       { bytesToWrite = 3; }
-  else if(ch <= UNI_MAX_LEGAL_UTF32) { bytesToWrite = 4; }
-  else {                               bytesToWrite = 3; ch = UNI_REPLACEMENT_CHAR; result = sourceIllegal; }
+  else if(ch <= CDV_UNI_MAX_LEGAL_UTF32) { bytesToWrite = 4; }
+  else {                               bytesToWrite = 3; ch = CDV_UNI_REPLACEMENT_CHAR; result = sourceIllegal; }
         
   target += bytesToWrite;
   if (target > targetEnd) { target -= bytesToWrite; result = targetExhausted; goto finished; }
@@ -1401,14 +1401,14 @@ static ConversionResult ConvertUTF32toUTF8 (UTF32 u32CodePoint, UTF8 **targetSta
   return(result);
 }
 
-CDVJK_STATIC_INLINE int jk_string_add_unicodeCodePoint(CDVJKParseState *parseState, uint32_t unicodeCodePoint, size_t *tokenBufferIdx, CDVJKHash *stringHash) {
+CDVJK_STATIC_INLINE int cdvjk_string_add_unicodeCodePoint(CDVJKParseState *parseState, uint32_t unicodeCodePoint, size_t *tokenBufferIdx, CDVJKHash *stringHash) {
   UTF8             *u8s = &parseState->token.tokenBuffer.bytes.ptr[*tokenBufferIdx];
-  ConversionResult  result;
+  CDV_ConversionResult  result;
 
-  if((result = ConvertUTF32toUTF8(unicodeCodePoint, &u8s, (parseState->token.tokenBuffer.bytes.ptr + parseState->token.tokenBuffer.bytes.length))) != conversionOK) { if(result == targetExhausted) { return(1); } }
+  if((result = cdvConvertUTF32toUTF8(unicodeCodePoint, &u8s, (parseState->token.tokenBuffer.bytes.ptr + parseState->token.tokenBuffer.bytes.length))) != conversionOK) { if(result == targetExhausted) { return(1); } }
   size_t utf8len = u8s - &parseState->token.tokenBuffer.bytes.ptr[*tokenBufferIdx], nextIdx = (*tokenBufferIdx) + utf8len;
   
-  while(*tokenBufferIdx < nextIdx) { *stringHash = calculateHash(*stringHash, parseState->token.tokenBuffer.bytes.ptr[(*tokenBufferIdx)++]); }
+  while(*tokenBufferIdx < nextIdx) { *stringHash = cdvcalculateHash(*stringHash, parseState->token.tokenBuffer.bytes.ptr[(*tokenBufferIdx)++]); }
 
   return(0);
 }
@@ -1417,7 +1417,7 @@ CDVJK_STATIC_INLINE int jk_string_add_unicodeCodePoint(CDVJKParseState *parseSta
 #pragma mark -
 #pragma mark Decoding / parsing / deserializing functions
 
-static int jk_parse_string(CDVJKParseState *parseState) {
+static int cdvjk_parse_string(CDVJKParseState *parseState) {
   NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *stringStart       = CDVJK_AT_STRING_PTR(parseState) + 1;
   const unsigned char *endOfBuffer       = CDVJK_END_STRING_PTR(parseState);
@@ -1439,11 +1439,11 @@ static int jk_parse_string(CDVJKParseState *parseState) {
     if(CDVJK_EXPECT_F((currentChar = *atStringCharacter++) >= 0x80UL)) {
       const unsigned char *nextValidCharacter = NULL;
       UTF32                u32ch              = 0U;
-      ConversionResult     result;
+      CDV_ConversionResult     result;
 
-      if(CDVJK_EXPECT_F((result = ConvertSingleCodePointInUTF8(atStringCharacter - 1, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { goto switchToSlowPath; }
-      stringHash = calculateHash(stringHash, currentChar);
-      while(atStringCharacter < nextValidCharacter) { NSCParameterAssert(CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)); stringHash = calculateHash(stringHash, *atStringCharacter++); }
+      if(CDVJK_EXPECT_F((result = cdvConvertSingleCodePointInUTF8(atStringCharacter - 1, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { goto switchToSlowPath; }
+      stringHash = cdvcalculateHash(stringHash, currentChar);
+      while(atStringCharacter < nextValidCharacter) { NSCParameterAssert(CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)); stringHash = cdvcalculateHash(stringHash, *atStringCharacter++); }
       continue;
     } else {
       if(CDVJK_EXPECT_F(currentChar == (unsigned long)'"')) { stringState = CDVJSONStringStateFinished; goto finishedParsing; }
@@ -1453,21 +1453,21 @@ static int jk_parse_string(CDVJKParseState *parseState) {
         onlySimpleString = 0;
         stringState      = CDVJSONStringStateParsing;
         tokenBufferIdx   = (atStringCharacter - stringStart) - 1L;
-        if(CDVJK_EXPECT_F((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length)) { if((tokenBuffer = jk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { jk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
+        if(CDVJK_EXPECT_F((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length)) { if((tokenBuffer = cdvjk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { cdvjk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
         memcpy(tokenBuffer, stringStart, tokenBufferIdx);
         goto slowMatch;
       }
 
-      if(CDVJK_EXPECT_F(currentChar < 0x20UL)) { jk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing; }
+      if(CDVJK_EXPECT_F(currentChar < 0x20UL)) { cdvjk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing; }
 
-      stringHash = calculateHash(stringHash, currentChar);
+      stringHash = cdvcalculateHash(stringHash, currentChar);
     }
   }
 
  slowMatch:
 
   for(atStringCharacter = (stringStart + ((atStringCharacter - stringStart) - 1L)); (atStringCharacter < endOfBuffer) && (tokenBufferIdx < parseState->token.tokenBuffer.bytes.length); atStringCharacter++) {
-    if((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length) { if((tokenBuffer = jk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { jk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
+    if((tokenBufferIdx + 16UL) > parseState->token.tokenBuffer.bytes.length) { if((tokenBuffer = cdvjk_managedBuffer_resize(&parseState->token.tokenBuffer, tokenBufferIdx + 1024UL)) == NULL) { cdvjk_error(parseState, @"Internal error: Unable to resize temporary buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
 
     NSCParameterAssert(tokenBufferIdx < parseState->token.tokenBuffer.bytes.length);
 
@@ -1478,28 +1478,28 @@ static int jk_parse_string(CDVJKParseState *parseState) {
         if(CDVJK_EXPECT_T(currentChar < (unsigned long)0x80)) { // Not a UTF8 sequence
           if(CDVJK_EXPECT_F(currentChar == (unsigned long)'"'))  { stringState = CDVJSONStringStateFinished; atStringCharacter++; goto finishedParsing; }
           if(CDVJK_EXPECT_F(currentChar == (unsigned long)'\\')) { stringState = CDVJSONStringStateEscape; continue; }
-          stringHash = calculateHash(stringHash, currentChar);
+          stringHash = cdvcalculateHash(stringHash, currentChar);
           tokenBuffer[tokenBufferIdx++] = currentChar;
           continue;
         } else { // UTF8 sequence
           const unsigned char *nextValidCharacter = NULL;
           UTF32                u32ch              = 0U;
-          ConversionResult     result;
+          CDV_ConversionResult     result;
           
-          if(CDVJK_EXPECT_F((result = ConvertSingleCodePointInUTF8(atStringCharacter, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) {
-            if((result == sourceIllegal) && ((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0)) { jk_error(parseState, @"Illegal UTF8 sequence found in \"\" string.");              stringState = CDVJSONStringStateError; goto finishedParsing; }
-            if(result == sourceExhausted)                                                                      { jk_error(parseState, @"End of buffer reached while parsing UTF8 in \"\" string."); stringState = CDVJSONStringStateError; goto finishedParsing; }
-            if(jk_string_add_unicodeCodePoint(parseState, u32ch, &tokenBufferIdx, &stringHash))                { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; }
+          if(CDVJK_EXPECT_F((result = cdvConvertSingleCodePointInUTF8(atStringCharacter, endOfBuffer, (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) {
+            if((result == sourceIllegal) && ((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0)) { cdvjk_error(parseState, @"Illegal UTF8 sequence found in \"\" string.");              stringState = CDVJSONStringStateError; goto finishedParsing; }
+            if(result == sourceExhausted)                                                                      { cdvjk_error(parseState, @"End of buffer reached while parsing UTF8 in \"\" string."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+            if(cdvjk_string_add_unicodeCodePoint(parseState, u32ch, &tokenBufferIdx, &stringHash))                { cdvjk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; }
             atStringCharacter = nextValidCharacter - 1;
             continue;
           } else {
-            while(atStringCharacter < nextValidCharacter) { tokenBuffer[tokenBufferIdx++] = *atStringCharacter; stringHash = calculateHash(stringHash, *atStringCharacter++); }
+            while(atStringCharacter < nextValidCharacter) { tokenBuffer[tokenBufferIdx++] = *atStringCharacter; stringHash = cdvcalculateHash(stringHash, *atStringCharacter++); }
             atStringCharacter--;
             continue;
           }
         }
       } else { // currentChar < 0x20
-        jk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing;
+        cdvjk_error(parseState, @"Invalid character < 0x20 found in string: 0x%2.2x.", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing;
       }
 
     } else { // stringState != CDVJSONStringStateParsing
@@ -1521,11 +1521,11 @@ static int jk_parse_string(CDVJKParseState *parseState) {
               
             parsedEscapedChar:
               stringState = CDVJSONStringStateParsing;
-              stringHash  = calculateHash(stringHash, escapedChar);
+              stringHash  = cdvcalculateHash(stringHash, escapedChar);
               tokenBuffer[tokenBufferIdx++] = escapedChar;
               break;
               
-            default: jk_error(parseState, @"Invalid escape sequence found in \"\" string."); stringState = CDVJSONStringStateError; goto finishedParsing; break;
+            default: cdvjk_error(parseState, @"Invalid escape sequence found in \"\" string."); stringState = CDVJSONStringStateError; goto finishedParsing; break;
           }
           break;
 
@@ -1552,8 +1552,8 @@ static int jk_parse_string(CDVJKParseState *parseState) {
                 if(((escapedUnicode1 >= 0xD800U) && (escapedUnicode1 < 0xE000U))) {
                   if((escapedUnicode1 >= 0xD800U) && (escapedUnicode1 < 0xDC00U)) { stringState = CDVJSONStringStateEscapedNeedEscapeForSurrogate; }
                   else if((escapedUnicode1 >= 0xDC00U) && (escapedUnicode1 < 0xE000U)) { 
-                    if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = UNI_REPLACEMENT_CHAR; }
-                    else { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+                    if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = CDV_UNI_REPLACEMENT_CHAR; }
+                    else { cdvjk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
                   }
                 }
                 else { escapedUnicodeCodePoint = escapedUnicode1; }
@@ -1561,21 +1561,21 @@ static int jk_parse_string(CDVJKParseState *parseState) {
 
               if(stringState == CDVJSONStringStateEscapedUnicodeSurrogate4) {
                 if((escapedUnicode2 < 0xdc00) || (escapedUnicode2 > 0xdfff)) {
-                  if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = UNI_REPLACEMENT_CHAR; }
-                  else { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+                  if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode)) { escapedUnicodeCodePoint = CDV_UNI_REPLACEMENT_CHAR; }
+                  else { cdvjk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
                 }
                 else { escapedUnicodeCodePoint = ((escapedUnicode1 - 0xd800) * 0x400) + (escapedUnicode2 - 0xdc00) + 0x10000; }
               }
                 
               if((stringState == CDVJSONStringStateEscapedUnicode4) || (stringState == CDVJSONStringStateEscapedUnicodeSurrogate4)) { 
-                if((isValidCodePoint(&escapedUnicodeCodePoint) == sourceIllegal) && ((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0)) { jk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+                if((cdvisValidCodePoint(&escapedUnicodeCodePoint) == sourceIllegal) && ((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0)) { cdvjk_error(parseState, @"Illegal \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
                 stringState = CDVJSONStringStateParsing;
-                if(jk_string_add_unicodeCodePoint(parseState, escapedUnicodeCodePoint, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; }
+                if(cdvjk_string_add_unicodeCodePoint(parseState, escapedUnicodeCodePoint, &tokenBufferIdx, &stringHash)) { cdvjk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; }
               }
               else if((stringState >= CDVJSONStringStateEscapedUnicode1) && (stringState <= CDVJSONStringStateEscapedUnicodeSurrogate4)) { stringState++; }
               break;
 
-              default: jk_error(parseState, @"Unexpected character found in \\u Unicode escape sequence.  Found '%c', expected [0-9a-fA-F].", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing; break;
+              default: cdvjk_error(parseState, @"Unexpected character found in \\u Unicode escape sequence.  Found '%c', expected [0-9a-fA-F].", currentChar); stringState = CDVJSONStringStateError; goto finishedParsing; break;
             }
           }
           break;
@@ -1583,20 +1583,20 @@ static int jk_parse_string(CDVJKParseState *parseState) {
         case CDVJSONStringStateEscapedNeedEscapeForSurrogate:
           if(currentChar == '\\') { stringState = CDVJSONStringStateEscapedNeedEscapedUForSurrogate; }
           else { 
-            if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0) { jk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
-            else { stringState = CDVJSONStringStateParsing; atStringCharacter--;    if(jk_string_add_unicodeCodePoint(parseState, UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
+            if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0) { cdvjk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+            else { stringState = CDVJSONStringStateParsing; atStringCharacter--;    if(cdvjk_string_add_unicodeCodePoint(parseState, CDV_UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { cdvjk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
           }
           break;
 
         case CDVJSONStringStateEscapedNeedEscapedUForSurrogate:
           if(currentChar == 'u') { stringState = CDVJSONStringStateEscapedUnicodeSurrogate1; }
           else { 
-            if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0) { jk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
-            else { stringState = CDVJSONStringStateParsing; atStringCharacter -= 2; if(jk_string_add_unicodeCodePoint(parseState, UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { jk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
+            if((parseState->parseOptionFlags & CDVJKParseOptionLooseUnicode) == 0) { cdvjk_error(parseState, @"Required a second \\u Unicode escape sequence following a surrogate \\u Unicode escape sequence."); stringState = CDVJSONStringStateError; goto finishedParsing; }
+            else { stringState = CDVJSONStringStateParsing; atStringCharacter -= 2; if(cdvjk_string_add_unicodeCodePoint(parseState, CDV_UNI_REPLACEMENT_CHAR, &tokenBufferIdx, &stringHash)) { cdvjk_error(parseState, @"Internal error: Unable to add UTF8 sequence to internal string buffer. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; } }
           }
           break;
 
-        default: jk_error(parseState, @"Internal error: Unknown stringState. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; break;
+        default: cdvjk_error(parseState, @"Internal error: Unknown stringState. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); stringState = CDVJSONStringStateError; goto finishedParsing; break;
       }
     }
   }
@@ -1623,11 +1623,11 @@ finishedParsing:
     parseState->atIndex          = (atStringCharacter - parseState->stringBuffer.bytes.ptr);
   }
 
-  if(CDVJK_EXPECT_F(stringState != CDVJSONStringStateFinished)) { jk_error(parseState, @"Invalid string."); }
+  if(CDVJK_EXPECT_F(stringState != CDVJSONStringStateFinished)) { cdvjk_error(parseState, @"Invalid string."); }
   return(CDVJK_EXPECT_T(stringState == CDVJSONStringStateFinished) ? 0 : 1);
 }
 
-static int jk_parse_number(CDVJKParseState *parseState) {
+static int cdvjk_parse_number(CDVJKParseState *parseState) {
   NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *numberStart       = CDVJK_AT_STRING_PTR(parseState);
   const unsigned char *endOfBuffer       = CDVJK_END_STRING_PTR(parseState);
@@ -1699,31 +1699,31 @@ static int jk_parse_number(CDVJKParseState *parseState) {
       numberState = CDVJSONNumberStateError;
       if(errno == ERANGE) {
         switch(parseState->token.value.type) {
-          case CDVJKValueTypeDouble:           jk_error(parseState, @"The value '%s' could not be represented as a 'double' due to %s.",           numberTempBuf, (parseState->token.value.number.doubleValue == 0.0) ? "underflow" : "overflow"); break; // see above for == 0.0.
-          case CDVJKValueTypeLongLong:         jk_error(parseState, @"The value '%s' exceeded the minimum value that could be represented: %lld.", numberTempBuf, parseState->token.value.number.longLongValue);                                   break;
-          case CDVJKValueTypeUnsignedLongLong: jk_error(parseState, @"The value '%s' exceeded the maximum value that could be represented: %llu.", numberTempBuf, parseState->token.value.number.unsignedLongLongValue);                           break;
-          default:                          jk_error(parseState, @"Internal error: Unknown token value type. %@ line #%ld",                     [NSString stringWithUTF8String:__FILE__], (long)__LINE__);                                      break;
+          case CDVJKValueTypeDouble:           cdvjk_error(parseState, @"The value '%s' could not be represented as a 'double' due to %s.",           numberTempBuf, (parseState->token.value.number.doubleValue == 0.0) ? "underflow" : "overflow"); break; // see above for == 0.0.
+          case CDVJKValueTypeLongLong:         cdvjk_error(parseState, @"The value '%s' exceeded the minimum value that could be represented: %lld.", numberTempBuf, parseState->token.value.number.longLongValue);                                   break;
+          case CDVJKValueTypeUnsignedLongLong: cdvjk_error(parseState, @"The value '%s' exceeded the maximum value that could be represented: %llu.", numberTempBuf, parseState->token.value.number.unsignedLongLongValue);                           break;
+          default:                          cdvjk_error(parseState, @"Internal error: Unknown token value type. %@ line #%ld",                     [NSString stringWithUTF8String:__FILE__], (long)__LINE__);                                      break;
         }
       }
     }
-    if(CDVJK_EXPECT_F(endOfNumber != &numberTempBuf[parseState->token.tokenPtrRange.length]) && CDVJK_EXPECT_F(numberState != CDVJSONNumberStateError)) { numberState = CDVJSONNumberStateError; jk_error(parseState, @"The conversion function did not consume all of the number tokens characters."); }
+    if(CDVJK_EXPECT_F(endOfNumber != &numberTempBuf[parseState->token.tokenPtrRange.length]) && CDVJK_EXPECT_F(numberState != CDVJSONNumberStateError)) { numberState = CDVJSONNumberStateError; cdvjk_error(parseState, @"The conversion function did not consume all of the number tokens characters."); }
 
     size_t hashIndex = 0UL;
-    for(hashIndex = 0UL; hashIndex < parseState->token.value.ptrRange.length; hashIndex++) { parseState->token.value.hash = calculateHash(parseState->token.value.hash, parseState->token.value.ptrRange.ptr[hashIndex]); }
+    for(hashIndex = 0UL; hashIndex < parseState->token.value.ptrRange.length; hashIndex++) { parseState->token.value.hash = cdvcalculateHash(parseState->token.value.hash, parseState->token.value.ptrRange.ptr[hashIndex]); }
   }
 
-  if(CDVJK_EXPECT_F(numberState != CDVJSONNumberStateFinished)) { jk_error(parseState, @"Invalid number."); }
+  if(CDVJK_EXPECT_F(numberState != CDVJSONNumberStateFinished)) { cdvjk_error(parseState, @"Invalid number."); }
   return(CDVJK_EXPECT_T((numberState == CDVJSONNumberStateFinished)) ? 0 : 1);
 }
 
-CDVJK_STATIC_INLINE void jk_set_parsed_token(CDVJKParseState *parseState, const unsigned char *ptr, size_t length, CDVJKTokenType type, size_t advanceBy) {
+CDVJK_STATIC_INLINE void cdvjk_set_parsed_token(CDVJKParseState *parseState, const unsigned char *ptr, size_t length, CDVJKTokenType type, size_t advanceBy) {
   parseState->token.tokenPtrRange.ptr     = ptr;
   parseState->token.tokenPtrRange.length  = length;
   parseState->token.type                  = type;
   parseState->atIndex                    += advanceBy;
 }
 
-static size_t jk_parse_is_newline(CDVJKParseState *parseState, const unsigned char *atCharacterPtr) {
+static size_t cdvjk_parse_is_newline(CDVJKParseState *parseState, const unsigned char *atCharacterPtr) {
   NSCParameterAssert((parseState != NULL) && (atCharacterPtr != NULL) && (atCharacterPtr >= parseState->stringBuffer.bytes.ptr) && (atCharacterPtr < CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *endOfStringPtr = CDVJK_END_STRING_PTR(parseState);
 
@@ -1739,13 +1739,13 @@ static size_t jk_parse_is_newline(CDVJKParseState *parseState, const unsigned ch
   return(0UL);
 }
 
-CDVJK_STATIC_INLINE int jk_parse_skip_newline(CDVJKParseState *parseState) {
+CDVJK_STATIC_INLINE int cdvjk_parse_skip_newline(CDVJKParseState *parseState) {
   size_t newlineAdvanceAtIndex = 0UL;
-  if(CDVJK_EXPECT_F((newlineAdvanceAtIndex = jk_parse_is_newline(parseState, CDVJK_AT_STRING_PTR(parseState))) > 0UL)) { parseState->lineNumber++; parseState->atIndex += (newlineAdvanceAtIndex - 1UL); parseState->lineStartIndex = parseState->atIndex + 1UL; return(1); }
+  if(CDVJK_EXPECT_F((newlineAdvanceAtIndex = cdvjk_parse_is_newline(parseState, CDVJK_AT_STRING_PTR(parseState))) > 0UL)) { parseState->lineNumber++; parseState->atIndex += (newlineAdvanceAtIndex - 1UL); parseState->lineStartIndex = parseState->atIndex + 1UL; return(1); }
   return(0);
 }
 
-CDVJK_STATIC_INLINE void jk_parse_skip_whitespace(CDVJKParseState *parseState) {
+CDVJK_STATIC_INLINE void cdvjk_parse_skip_whitespace(CDVJKParseState *parseState) {
 #ifndef __clang_analyzer__
   NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *atCharacterPtr   = NULL;
@@ -1753,18 +1753,18 @@ CDVJK_STATIC_INLINE void jk_parse_skip_whitespace(CDVJKParseState *parseState) {
 
   for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) {
     if(((*(atCharacterPtr + 0)) == ' ') || ((*(atCharacterPtr + 0)) == '\t')) { continue; }
-    if(jk_parse_skip_newline(parseState)) { continue; }
+    if(cdvjk_parse_skip_newline(parseState)) { continue; }
     if(parseState->parseOptionFlags & CDVJKParseOptionComments) {
       if((CDVJK_EXPECT_F((*(atCharacterPtr + 0)) == '/')) && (CDVJK_EXPECT_T((atCharacterPtr + 1) < endOfStringPtr))) {
         if((*(atCharacterPtr + 1)) == '/') {
           parseState->atIndex++;
-          for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) { if(jk_parse_skip_newline(parseState)) { break; } }
+          for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) { if(cdvjk_parse_skip_newline(parseState)) { break; } }
           continue;
         }
         if((*(atCharacterPtr + 1)) == '*') {
           parseState->atIndex++;
           for(atCharacterPtr = CDVJK_AT_STRING_PTR(parseState); (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr)); parseState->atIndex++) {
-            if(jk_parse_skip_newline(parseState)) { continue; }
+            if(cdvjk_parse_skip_newline(parseState)) { continue; }
             if(((*(atCharacterPtr + 0)) == '*') && (((atCharacterPtr + 1) < endOfStringPtr) && ((*(atCharacterPtr + 1)) == '/'))) { parseState->atIndex++; break; }
           }
           continue;
@@ -1776,7 +1776,7 @@ CDVJK_STATIC_INLINE void jk_parse_skip_whitespace(CDVJKParseState *parseState) {
 #endif
 }
 
-static int jk_parse_next_token(CDVJKParseState *parseState) {
+static int cdvjk_parse_next_token(CDVJKParseState *parseState) {
   NSCParameterAssert((parseState != NULL) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
   const unsigned char *atCharacterPtr   = NULL;
   const unsigned char *endOfStringPtr   = CDVJK_END_STRING_PTR(parseState);
@@ -1787,52 +1787,52 @@ static int jk_parse_next_token(CDVJKParseState *parseState) {
   parseState->prev_lineNumber     = parseState->lineNumber;
   parseState->prev_lineStartIndex = parseState->lineStartIndex;
 
-  jk_parse_skip_whitespace(parseState);
+  cdvjk_parse_skip_whitespace(parseState);
 
   if((CDVJK_AT_STRING_PTR(parseState) == endOfStringPtr)) { stopParsing = 1; }
 
   if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((atCharacterPtr = CDVJK_AT_STRING_PTR(parseState)) < endOfStringPtr))) {
     currentCharacter = *atCharacterPtr;
 
-         if(CDVJK_EXPECT_T(currentCharacter == '"')) { if(CDVJK_EXPECT_T((stopParsing = jk_parse_string(parseState)) == 0)) { jk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, CDVJKTokenTypeString, 0UL); } }
-    else if(CDVJK_EXPECT_T(currentCharacter == ':')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeSeparator,   1UL); }
-    else if(CDVJK_EXPECT_T(currentCharacter == ',')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeComma,       1UL); }
-    else if((CDVJK_EXPECT_T(currentCharacter >= '0') && CDVJK_EXPECT_T(currentCharacter <= '9')) || CDVJK_EXPECT_T(currentCharacter == '-')) { if(CDVJK_EXPECT_T((stopParsing = jk_parse_number(parseState)) == 0)) { jk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, CDVJKTokenTypeNumber, 0UL); } }
-    else if(CDVJK_EXPECT_T(currentCharacter == '{')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeObjectBegin, 1UL); }
-    else if(CDVJK_EXPECT_T(currentCharacter == '}')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeObjectEnd,   1UL); }
-    else if(CDVJK_EXPECT_T(currentCharacter == '[')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeArrayBegin,  1UL); }
-    else if(CDVJK_EXPECT_T(currentCharacter == ']')) { jk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeArrayEnd,    1UL); }
+         if(CDVJK_EXPECT_T(currentCharacter == '"')) { if(CDVJK_EXPECT_T((stopParsing = cdvjk_parse_string(parseState)) == 0)) { cdvjk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, CDVJKTokenTypeString, 0UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == ':')) { cdvjk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeSeparator,   1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == ',')) { cdvjk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeComma,       1UL); }
+    else if((CDVJK_EXPECT_T(currentCharacter >= '0') && CDVJK_EXPECT_T(currentCharacter <= '9')) || CDVJK_EXPECT_T(currentCharacter == '-')) { if(CDVJK_EXPECT_T((stopParsing = cdvjk_parse_number(parseState)) == 0)) { cdvjk_set_parsed_token(parseState, parseState->token.tokenPtrRange.ptr, parseState->token.tokenPtrRange.length, CDVJKTokenTypeNumber, 0UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == '{')) { cdvjk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeObjectBegin, 1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == '}')) { cdvjk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeObjectEnd,   1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == '[')) { cdvjk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeArrayBegin,  1UL); }
+    else if(CDVJK_EXPECT_T(currentCharacter == ']')) { cdvjk_set_parsed_token(parseState, atCharacterPtr, 1UL, CDVJKTokenTypeArrayEnd,    1UL); }
     
-    else if(CDVJK_EXPECT_T(currentCharacter == 't')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'r')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'u')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 'e'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 4UL, CDVJKTokenTypeTrue,  4UL); } }
-    else if(CDVJK_EXPECT_T(currentCharacter == 'f')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 5UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'a')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'l')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 's')) && (CDVJK_EXPECT_T(atCharacterPtr[4] == 'e')))) { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 5UL, CDVJKTokenTypeFalse, 5UL); } }
-    else if(CDVJK_EXPECT_T(currentCharacter == 'n')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'u')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'l')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 'l'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { jk_set_parsed_token(parseState, atCharacterPtr, 4UL, CDVJKTokenTypeNull,  4UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == 't')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'r')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'u')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 'e'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { cdvjk_set_parsed_token(parseState, atCharacterPtr, 4UL, CDVJKTokenTypeTrue,  4UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == 'f')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 5UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'a')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'l')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 's')) && (CDVJK_EXPECT_T(atCharacterPtr[4] == 'e')))) { stopParsing = 1; /* XXX Add error message */ } else { cdvjk_set_parsed_token(parseState, atCharacterPtr, 5UL, CDVJKTokenTypeFalse, 5UL); } }
+    else if(CDVJK_EXPECT_T(currentCharacter == 'n')) { if(!((CDVJK_EXPECT_T((atCharacterPtr + 4UL) < endOfStringPtr)) && (CDVJK_EXPECT_T(atCharacterPtr[1] == 'u')) && (CDVJK_EXPECT_T(atCharacterPtr[2] == 'l')) && (CDVJK_EXPECT_T(atCharacterPtr[3] == 'l'))))                                            { stopParsing = 1; /* XXX Add error message */ } else { cdvjk_set_parsed_token(parseState, atCharacterPtr, 4UL, CDVJKTokenTypeNull,  4UL); } }
     else { stopParsing = 1; /* XXX Add error message */ }    
   }
 
-  if(CDVJK_EXPECT_F(stopParsing)) { jk_error(parseState, @"Unexpected token, wanted '{', '}', '[', ']', ',', ':', 'true', 'false', 'null', '\"STRING\"', 'NUMBER'."); }
+  if(CDVJK_EXPECT_F(stopParsing)) { cdvjk_error(parseState, @"Unexpected token, wanted '{', '}', '[', ']', ',', ':', 'true', 'false', 'null', '\"STRING\"', 'NUMBER'."); }
   return(stopParsing);
 }
 
-static void jk_error_parse_accept_or3(CDVJKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String) {
+static void cdvjk_error_parse_accept_or3(CDVJKParseState *parseState, int state, NSString *or1String, NSString *or2String, NSString *or3String) {
   NSString *acceptStrings[16];
   int acceptIdx = 0;
   if(state & CDVJKParseAcceptValue) { acceptStrings[acceptIdx++] = or1String; }
   if(state & CDVJKParseAcceptComma) { acceptStrings[acceptIdx++] = or2String; }
   if(state & CDVJKParseAcceptEnd)   { acceptStrings[acceptIdx++] = or3String; }
-       if(acceptIdx == 1) { jk_error(parseState, @"Expected %@, not '%*.*s'",           acceptStrings[0],                                     (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
-  else if(acceptIdx == 2) { jk_error(parseState, @"Expected %@ or %@, not '%*.*s'",     acceptStrings[0], acceptStrings[1],                   (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
-  else if(acceptIdx == 3) { jk_error(parseState, @"Expected %@, %@, or %@, not '%*.*s", acceptStrings[0], acceptStrings[1], acceptStrings[2], (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
+       if(acceptIdx == 1) { cdvjk_error(parseState, @"Expected %@, not '%*.*s'",           acceptStrings[0],                                     (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
+  else if(acceptIdx == 2) { cdvjk_error(parseState, @"Expected %@ or %@, not '%*.*s'",     acceptStrings[0], acceptStrings[1],                   (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
+  else if(acceptIdx == 3) { cdvjk_error(parseState, @"Expected %@, %@, or %@, not '%*.*s", acceptStrings[0], acceptStrings[1], acceptStrings[2], (int)parseState->token.tokenPtrRange.length, (int)parseState->token.tokenPtrRange.length, parseState->token.tokenPtrRange.ptr); }
 }
 
-static void *jk_parse_array(CDVJKParseState *parseState) {
+static void *cdvjk_parse_array(CDVJKParseState *parseState) {
   size_t  startingObjectIndex = parseState->objectStack.index;
   int     arrayState          = CDVJKParseAcceptValueOrEnd, stopParsing = 0;
   void   *parsedArray         = NULL;
 
   while(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length)))) {
-    if(CDVJK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(jk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { jk_error(parseState, @"Internal error: [array] objectsIndex > %zu, resize failed? %@ line %#ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
+    if(CDVJK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(cdvjk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { cdvjk_error(parseState, @"Internal error: [array] objectsIndex > %zu, resize failed? %@ line %#ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
 
-    if(CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)) {
+    if(CDVJK_EXPECT_T((stopParsing = cdvjk_parse_next_token(parseState)) == 0)) {
       void *object = NULL;
 #ifndef NS_BLOCK_ASSERTIONS
       parseState->objectStack.objects[parseState->objectStack.index] = NULL;
@@ -1846,12 +1846,12 @@ static void *jk_parse_array(CDVJKParseState *parseState) {
         case CDVJKTokenTypeNull:
         case CDVJKTokenTypeArrayBegin:
         case CDVJKTokenTypeObjectBegin:
-          if(CDVJK_EXPECT_F((arrayState & CDVJKParseAcceptValue)          == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");              stopParsing = 1; break; }
-          if(CDVJK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL"); stopParsing = 1; break; } else { parseState->objectStack.objects[parseState->objectStack.index++] = object; arrayState = CDVJKParseAcceptCommaOrEnd; }
+          if(CDVJK_EXPECT_F((arrayState & CDVJKParseAcceptValue)          == 0))    { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected value.");              stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((object = cdvjk_object_for_token(parseState)) == NULL)) {                              cdvjk_error(parseState, @"Internal error: Object == NULL"); stopParsing = 1; break; } else { parseState->objectStack.objects[parseState->objectStack.index++] = object; arrayState = CDVJKParseAcceptCommaOrEnd; }
           break;
-        case CDVJKTokenTypeArrayEnd: if(CDVJK_EXPECT_T(arrayState & CDVJKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_CDVJKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
-        case CDVJKTokenTypeComma:    if(CDVJK_EXPECT_T(arrayState & CDVJKParseAcceptComma)) { arrayState = CDVJKParseAcceptValue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
-        default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, arrayState, @"a value", @"a comma", @"a ']'"); stopParsing = 1; break;
+        case CDVJKTokenTypeArrayEnd: if(CDVJK_EXPECT_T(arrayState & CDVJKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_CDVJKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
+        case CDVJKTokenTypeComma:    if(CDVJK_EXPECT_T(arrayState & CDVJKParseAcceptComma)) { arrayState = CDVJKParseAcceptValue; } else { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
+        default: parseState->errorIsPrev = 1; cdvjk_error_parse_accept_or3(parseState, arrayState, @"a value", @"a comma", @"a ']'"); stopParsing = 1; break;
       }
     }
   }
@@ -1865,7 +1865,7 @@ static void *jk_parse_array(CDVJKParseState *parseState) {
   return(parsedArray);
 }
 
-static void *jk_create_dictionary(CDVJKParseState *parseState, size_t startingObjectIndex) {
+static void *cdvjk_create_dictionary(CDVJKParseState *parseState, size_t startingObjectIndex) {
   void *parsedDictionary = NULL;
 
   parseState->objectStack.index--;
@@ -1875,24 +1875,24 @@ static void *jk_create_dictionary(CDVJKParseState *parseState, size_t startingOb
   return(parsedDictionary);
 }
 
-static void *jk_parse_dictionary(CDVJKParseState *parseState) {
+static void *cdvjk_parse_dictionary(CDVJKParseState *parseState) {
   size_t  startingObjectIndex = parseState->objectStack.index;
   int     dictState           = CDVJKParseAcceptValueOrEnd, stopParsing = 0;
   void   *parsedDictionary    = NULL;
 
   while(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length)))) {
-    if(CDVJK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(jk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { jk_error(parseState, @"Internal error: [dictionary] objectsIndex > %zu, resize failed? %@ line #%ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
+    if(CDVJK_EXPECT_F(parseState->objectStack.index > (parseState->objectStack.count - 4UL))) { if(cdvjk_objectStack_resize(&parseState->objectStack, parseState->objectStack.count + 128UL)) { cdvjk_error(parseState, @"Internal error: [dictionary] objectsIndex > %zu, resize failed? %@ line #%ld", (parseState->objectStack.count - 4UL), [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break; } }
 
     size_t objectStackIndex = parseState->objectStack.index++;
     parseState->objectStack.keys[objectStackIndex]    = NULL;
     parseState->objectStack.objects[objectStackIndex] = NULL;
     void *key = NULL, *object = NULL;
 
-    if(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)))) {
+    if(CDVJK_EXPECT_T((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = cdvjk_parse_next_token(parseState)) == 0)))) {
       switch(parseState->token.type) {
         case CDVJKTokenTypeString:
-          if(CDVJK_EXPECT_F((dictState & CDVJKParseAcceptValue)        == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected string.");           stopParsing = 1; break; }
-          if(CDVJK_EXPECT_F((key = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Key == NULL."); stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((dictState & CDVJKParseAcceptValue)        == 0))    { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected string.");           stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((key = cdvjk_object_for_token(parseState)) == NULL)) {                              cdvjk_error(parseState, @"Internal error: Key == NULL."); stopParsing = 1; break; }
           else {
             parseState->objectStack.keys[objectStackIndex] = key;
             if(CDVJK_EXPECT_T(parseState->token.value.cacheItem != NULL)) { if(CDVJK_EXPECT_F(parseState->token.value.cacheItem->cfHash == 0UL)) { parseState->token.value.cacheItem->cfHash = CFHash(key); } parseState->objectStack.cfHashes[objectStackIndex] = parseState->token.value.cacheItem->cfHash; }
@@ -1900,18 +1900,18 @@ static void *jk_parse_dictionary(CDVJKParseState *parseState) {
           }
           break;
 
-        case CDVJKTokenTypeObjectEnd: if((CDVJK_EXPECT_T(dictState & CDVJKParseAcceptEnd)))   { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedDictionary = jk_create_dictionary(parseState, startingObjectIndex); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected '}'."); } stopParsing = 1; break;
-        case CDVJKTokenTypeComma:     if((CDVJK_EXPECT_T(dictState & CDVJKParseAcceptComma))) { dictState = CDVJKParseAcceptValue; parseState->objectStack.index--; continue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
+        case CDVJKTokenTypeObjectEnd: if((CDVJK_EXPECT_T(dictState & CDVJKParseAcceptEnd)))   { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedDictionary = cdvjk_create_dictionary(parseState, startingObjectIndex); } else { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected '}'."); } stopParsing = 1; break;
+        case CDVJKTokenTypeComma:     if((CDVJK_EXPECT_T(dictState & CDVJKParseAcceptComma))) { dictState = CDVJKParseAcceptValue; parseState->objectStack.index--; continue; } else { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
 
-        default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, dictState, @"a \"STRING\"", @"a comma", @"a '}'"); stopParsing = 1; break;
+        default: parseState->errorIsPrev = 1; cdvjk_error_parse_accept_or3(parseState, dictState, @"a \"STRING\"", @"a comma", @"a '}'"); stopParsing = 1; break;
       }
     }
 
     if(CDVJK_EXPECT_T(stopParsing == 0)) {
-      if(CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0)) { if(CDVJK_EXPECT_F(parseState->token.type != CDVJKTokenTypeSeparator)) { parseState->errorIsPrev = 1; jk_error(parseState, @"Expected ':'."); stopParsing = 1; } }
+      if(CDVJK_EXPECT_T((stopParsing = cdvjk_parse_next_token(parseState)) == 0)) { if(CDVJK_EXPECT_F(parseState->token.type != CDVJKTokenTypeSeparator)) { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Expected ':'."); stopParsing = 1; } }
     }
 
-    if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
+    if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = cdvjk_parse_next_token(parseState)) == 0))) {
       switch(parseState->token.type) {
         case CDVJKTokenTypeNumber:
         case CDVJKTokenTypeString:
@@ -1920,10 +1920,10 @@ static void *jk_parse_dictionary(CDVJKParseState *parseState) {
         case CDVJKTokenTypeNull:
         case CDVJKTokenTypeArrayBegin:
         case CDVJKTokenTypeObjectBegin:
-          if(CDVJK_EXPECT_F((dictState & CDVJKParseAcceptValue)           == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");               stopParsing = 1; break; }
-          if(CDVJK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL."); stopParsing = 1; break; } else { parseState->objectStack.objects[objectStackIndex] = object; dictState = CDVJKParseAcceptCommaOrEnd; }
+          if(CDVJK_EXPECT_F((dictState & CDVJKParseAcceptValue)           == 0))    { parseState->errorIsPrev = 1; cdvjk_error(parseState, @"Unexpected value.");               stopParsing = 1; break; }
+          if(CDVJK_EXPECT_F((object = cdvjk_object_for_token(parseState)) == NULL)) {                              cdvjk_error(parseState, @"Internal error: Object == NULL."); stopParsing = 1; break; } else { parseState->objectStack.objects[objectStackIndex] = object; dictState = CDVJKParseAcceptCommaOrEnd; }
           break;
-        default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, dictState, @"a value", @"a comma", @"a '}'"); stopParsing = 1; break;
+        default: parseState->errorIsPrev = 1; cdvjk_error_parse_accept_or3(parseState, dictState, @"a value", @"a comma", @"a '}'"); stopParsing = 1; break;
       }
     }
   }
@@ -1942,24 +1942,24 @@ static id json_parse_it(CDVJKParseState *parseState) {
   int stopParsing  = 0;
 
   while((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T(parseState->atIndex < parseState->stringBuffer.bytes.length))) {
-    if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
+    if((CDVJK_EXPECT_T(stopParsing == 0)) && (CDVJK_EXPECT_T((stopParsing = cdvjk_parse_next_token(parseState)) == 0))) {
       switch(parseState->token.type) {
         case CDVJKTokenTypeArrayBegin:
-        case CDVJKTokenTypeObjectBegin: parsedObject = [(id)jk_object_for_token(parseState) autorelease]; stopParsing = 1; break;
-        default:                     jk_error(parseState, @"Expected either '[' or '{'.");             stopParsing = 1; break;
+        case CDVJKTokenTypeObjectBegin: parsedObject = [(id)cdvjk_object_for_token(parseState) autorelease]; stopParsing = 1; break;
+        default:                     cdvjk_error(parseState, @"Expected either '[' or '{'.");             stopParsing = 1; break;
       }
     }
   }
 
   NSCParameterAssert((parseState->objectStack.index == 0) && (CDVJK_AT_STRING_PTR(parseState) <= CDVJK_END_STRING_PTR(parseState)));
 
-  if((parsedObject == NULL) && (CDVJK_AT_STRING_PTR(parseState) == CDVJK_END_STRING_PTR(parseState))) { jk_error(parseState, @"Reached the end of the buffer."); }
-  if(parsedObject == NULL) { jk_error(parseState, @"Unable to parse CDVJSON."); }
+  if((parsedObject == NULL) && (CDVJK_AT_STRING_PTR(parseState) == CDVJK_END_STRING_PTR(parseState))) { cdvjk_error(parseState, @"Reached the end of the buffer."); }
+  if(parsedObject == NULL) { cdvjk_error(parseState, @"Unable to parse CDVJSON."); }
 
   if((parsedObject != NULL) && (CDVJK_AT_STRING_PTR(parseState) < CDVJK_END_STRING_PTR(parseState))) {
-    jk_parse_skip_whitespace(parseState);
+    cdvjk_parse_skip_whitespace(parseState);
     if((parsedObject != NULL) && ((parseState->parseOptionFlags & CDVJKParseOptionPermitTextAfterValidJSON) == 0) && (CDVJK_AT_STRING_PTR(parseState) < CDVJK_END_STRING_PTR(parseState))) {
-      jk_error(parseState, @"A valid CDVJSON object was parsed but there were additional non-white-space characters remaining.");
+      cdvjk_error(parseState, @"A valid CDVJSON object was parsed but there were additional non-white-space characters remaining.");
       parsedObject = NULL;
     }
   }
@@ -1973,7 +1973,7 @@ static id json_parse_it(CDVJKParseState *parseState) {
 
 // This uses a Galois Linear Feedback Shift Register (LFSR) PRNG to pick which item in the cache to age. It has a period of (2^32)-1.
 // NOTE: A LFSR *MUST* be initialized to a non-zero value and must always have a non-zero value.
-CDVJK_STATIC_INLINE void jk_cache_age(CDVJKParseState *parseState) {
+CDVJK_STATIC_INLINE void cdvjk_cache_age(CDVJKParseState *parseState) {
   NSCParameterAssert((parseState != NULL) && (parseState->cache.prng_lfsr != 0U));
   parseState->cache.prng_lfsr = (parseState->cache.prng_lfsr >> 1) ^ ((0U - (parseState->cache.prng_lfsr & 1U)) & 0x80200003U);
   parseState->cache.age[parseState->cache.prng_lfsr & (parseState->cache.count - 1UL)] >>= 1;
@@ -1995,7 +1995,7 @@ CDVJK_STATIC_INLINE void jk_cache_age(CDVJKParseState *parseState) {
 //
 // If a value is not found in the cache, and no useable bucket has been found, that value is not added to the cache.
 
-static void *jk_cachedObjects(CDVJKParseState *parseState) {
+static void *cdvjk_cachedObjects(CDVJKParseState *parseState) {
   unsigned long  bucket     = parseState->token.value.hash & (parseState->cache.count - 1UL), setBucket = 0UL, useableBucket = 0UL, x = 0UL;
   void          *parsedAtom = NULL;
     
@@ -2011,7 +2011,7 @@ static void *jk_cachedObjects(CDVJKParseState *parseState) {
       return((void *)CFRetain(parseState->cache.items[bucket].object));
     } else {
       if(CDVJK_EXPECT_F(setBucket == 0UL) && CDVJK_EXPECT_F(parseState->cache.age[bucket] == 0U)) { setBucket = 1UL; useableBucket = bucket; }
-      if(CDVJK_EXPECT_F(setBucket == 0UL))                                                     { parseState->cache.age[bucket] >>= 1; jk_cache_age(parseState); jk_cache_age(parseState); }
+      if(CDVJK_EXPECT_F(setBucket == 0UL))                                                     { parseState->cache.age[bucket] >>= 1; cdvjk_cache_age(parseState); cdvjk_cache_age(parseState); }
       // This is the open addressing function.  The values length and type are used as a form of "double hashing" to distribute values with the same effective value hash across different object cache buckets.
       // The values type is a prime number that is relatively coprime to the other primes in the set of value types and the number of hash table buckets.
       bucket = (parseState->token.value.hash + (parseState->token.value.ptrRange.length * (x + 1UL)) + (parseState->token.value.type * (x + 1UL)) + (3UL * (x + 1UL))) & (parseState->cache.count - 1UL);
@@ -2026,7 +2026,7 @@ static void *jk_cachedObjects(CDVJKParseState *parseState) {
       else { parsedAtom = (void *)parseState->objCImpCache.NSNumberInitWithUnsignedLongLong(parseState->objCImpCache.NSNumberAlloc(parseState->objCImpCache.NSNumberClass, @selector(alloc)), @selector(initWithUnsignedLongLong:), parseState->token.value.number.unsignedLongLongValue); }
       break;
     case CDVJKValueTypeDouble:           parsedAtom = (void *)CFNumberCreate(NULL, kCFNumberDoubleType,   &parseState->token.value.number.doubleValue);                                               break;
-    default: jk_error(parseState, @"Internal error: Unknown token value type. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break;
+    default: cdvjk_error(parseState, @"Internal error: Unknown token value type. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break;
   }
   
   if(CDVJK_EXPECT_T(setBucket) && (CDVJK_EXPECT_T(parsedAtom != NULL))) {
@@ -2054,19 +2054,19 @@ static void *jk_cachedObjects(CDVJKParseState *parseState) {
 }
 
 
-static void *jk_object_for_token(CDVJKParseState *parseState) {
+static void *cdvjk_object_for_token(CDVJKParseState *parseState) {
   void *parsedAtom = NULL;
   
   parseState->token.value.cacheItem = NULL;
   switch(parseState->token.type) {
-    case CDVJKTokenTypeString:      parsedAtom = jk_cachedObjects(parseState);    break;
-    case CDVJKTokenTypeNumber:      parsedAtom = jk_cachedObjects(parseState);    break;
-    case CDVJKTokenTypeObjectBegin: parsedAtom = jk_parse_dictionary(parseState); break;
-    case CDVJKTokenTypeArrayBegin:  parsedAtom = jk_parse_array(parseState);      break;
+    case CDVJKTokenTypeString:      parsedAtom = cdvjk_cachedObjects(parseState);    break;
+    case CDVJKTokenTypeNumber:      parsedAtom = cdvjk_cachedObjects(parseState);    break;
+    case CDVJKTokenTypeObjectBegin: parsedAtom = cdvjk_parse_dictionary(parseState); break;
+    case CDVJKTokenTypeArrayBegin:  parsedAtom = cdvjk_parse_array(parseState);      break;
     case CDVJKTokenTypeTrue:        parsedAtom = (void *)kCFBooleanTrue;          break;
     case CDVJKTokenTypeFalse:       parsedAtom = (void *)kCFBooleanFalse;         break;
     case CDVJKTokenTypeNull:        parsedAtom = (void *)kCFNull;                 break;
-    default: jk_error(parseState, @"Internal error: Unknown token type. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break;
+    default: cdvjk_error(parseState, @"Internal error: Unknown token type. %@ line #%ld", [NSString stringWithUTF8String:__FILE__], (long)__LINE__); break;
   }
   
   return(parsedAtom);
@@ -2121,8 +2121,8 @@ static void *jk_object_for_token(CDVJKParseState *parseState) {
 // This is here primarily to support the NSString and NSData convenience functions so the autoreleased CDVJSONDecoder can release most of its resources before the pool pops.
 static void _JSONDecoderCleanup(CDVJSONDecoder *decoder) {
   if((decoder != NULL) && (decoder->parseState != NULL)) {
-    jk_managedBuffer_release(&decoder->parseState->token.tokenBuffer);
-    jk_objectStack_release(&decoder->parseState->objectStack);
+    cdvjk_managedBuffer_release(&decoder->parseState->token.tokenBuffer);
+    cdvjk_objectStack_release(&decoder->parseState->objectStack);
     
     [decoder clearCache];
     if(decoder->parseState->cache.items != NULL) { free(decoder->parseState->cache.items); decoder->parseState->cache.items = NULL; }
@@ -2168,19 +2168,19 @@ static id _CDVJKParseUTF8String(CDVJKParseState *parseState, BOOL mutableCollect
   parseState->mutableCollections        = (mutableCollections == NO) ? NO : YES;
   
   unsigned char stackTokenBuffer[CDVJK_TOKENBUFFER_SIZE] CDVJK_ALIGNED(64);
-  jk_managedBuffer_setToStackBuffer(&parseState->token.tokenBuffer, stackTokenBuffer, sizeof(stackTokenBuffer));
+  cdvjk_managedBuffer_setToStackBuffer(&parseState->token.tokenBuffer, stackTokenBuffer, sizeof(stackTokenBuffer));
   
   void       *stackObjects [CDVJK_STACK_OBJS] CDVJK_ALIGNED(64);
   void       *stackKeys    [CDVJK_STACK_OBJS] CDVJK_ALIGNED(64);
   CFHashCode  stackCFHashes[CDVJK_STACK_OBJS] CDVJK_ALIGNED(64);
-  jk_objectStack_setToStackBuffer(&parseState->objectStack, stackObjects, stackKeys, stackCFHashes, CDVJK_STACK_OBJS);
+  cdvjk_objectStack_setToStackBuffer(&parseState->objectStack, stackObjects, stackKeys, stackCFHashes, CDVJK_STACK_OBJS);
   
   id parsedJSON = json_parse_it(parseState);
   
   if((error != NULL) && (parseState->error != NULL)) { *error = parseState->error; }
   
-  jk_managedBuffer_release(&parseState->token.tokenBuffer);
-  jk_objectStack_release(&parseState->objectStack);
+  cdvjk_managedBuffer_release(&parseState->token.tokenBuffer);
+  cdvjk_objectStack_release(&parseState->objectStack);
   
   parseState->stringBuffer.bytes.ptr    = NULL;
   parseState->stringBuffer.bytes.length = 0UL;
@@ -2423,7 +2423,7 @@ exitNow:
 #pragma mark -
 #pragma mark Encoding / deserializing functions
 
-static void jk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...) {
+static void cdvjk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...) {
   NSCParameterAssert((encodeState != NULL) && (format != NULL));
 
   va_list varArgsList;
@@ -2439,7 +2439,7 @@ static void jk_encode_error(CDVJKEncodeState *encodeState, NSString *format, ...
   }
 }
 
-CDVJK_STATIC_INLINE void jk_encode_updateCache(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object) {
+CDVJK_STATIC_INLINE void cdvjk_encode_updateCache(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object) {
   NSCParameterAssert(encodeState != NULL);
   if(CDVJK_EXPECT_T(cacheSlot != NULL)) {
     NSCParameterAssert((object != NULL) && (startingAtIndex <= encodeState->atIndex));
@@ -2449,7 +2449,7 @@ CDVJK_STATIC_INLINE void jk_encode_updateCache(CDVJKEncodeState *encodeState, CD
   }
 }
 
-static int jk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...) {
+static int cdvjk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, ...) {
   va_list varArgsList, varArgsListCopy;
   va_start(varArgsList, format);
   va_copy(varArgsListCopy, varArgsList);
@@ -2461,78 +2461,78 @@ static int jk_encode_printf(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cac
 
   if(CDVJK_EXPECT_T((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsList)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) {
     NSCParameterAssert(((encodeState->atIndex + (formattedStringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length));
-    if(CDVJK_EXPECT_F(((encodeState->atIndex + (formattedStringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (formattedStringLength * 2UL)+ 4096UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); returnValue = 1; goto exitNow; }
-    if(CDVJK_EXPECT_F((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsListCopy)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) { jk_encode_error(encodeState, @"vsnprintf failed unexpectedly."); returnValue = 1; goto exitNow; }
+    if(CDVJK_EXPECT_F(((encodeState->atIndex + (formattedStringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (formattedStringLength * 2UL)+ 4096UL) == NULL))) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); returnValue = 1; goto exitNow; }
+    if(CDVJK_EXPECT_F((formattedStringLength = vsnprintf((char *)&encodeState->stringBuffer.bytes.ptr[encodeState->atIndex], (encodeState->stringBuffer.bytes.length - encodeState->atIndex), format, varArgsListCopy)) >= (ssize_t)(encodeState->stringBuffer.bytes.length - encodeState->atIndex))) { cdvjk_encode_error(encodeState, @"vsnprintf failed unexpectedly."); returnValue = 1; goto exitNow; }
   }
   
 exitNow:
   va_end(varArgsList);
   va_end(varArgsListCopy);
-  if(CDVJK_EXPECT_T(returnValue == 0)) { encodeState->atIndex += formattedStringLength; jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object); }
+  if(CDVJK_EXPECT_T(returnValue == 0)) { encodeState->atIndex += formattedStringLength; cdvjk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object); }
   return(returnValue);
 }
 
-static int jk_encode_write(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format) {
+static int cdvjk_encode_write(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (startingAtIndex <= encodeState->atIndex) && (format != NULL));
-  if(CDVJK_EXPECT_F(((encodeState->atIndex + strlen(format) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + strlen(format) + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+  if(CDVJK_EXPECT_F(((encodeState->atIndex + strlen(format) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + strlen(format) + 1024UL) == NULL))) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
 
   size_t formatIdx = 0UL;
   for(formatIdx = 0UL; format[formatIdx] != 0; formatIdx++) { NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length); encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[formatIdx]; }
-  jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object);
+  cdvjk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object);
   return(0);
 }
 
-static int jk_encode_writePrettyPrintWhiteSpace(CDVJKEncodeState *encodeState) {
+static int cdvjk_encode_writePrettyPrintWhiteSpace(CDVJKEncodeState *encodeState) {
   NSCParameterAssert((encodeState != NULL) && ((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) != 0UL));
-  if(CDVJK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_T(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+  if(CDVJK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_T(cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
   encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\n';
   size_t depthWhiteSpace = 0UL;
   for(depthWhiteSpace = 0UL; depthWhiteSpace < (encodeState->depth * 2UL); depthWhiteSpace++) { NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length); encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = ' '; }
   return(0);
 }  
 
-static int jk_encode_write1slow(CDVJKEncodeState *encodeState, ssize_t depthChange, const char *format) {
+static int cdvjk_encode_write1slow(CDVJKEncodeState *encodeState, ssize_t depthChange, const char *format) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (format != NULL) && ((depthChange >= -1L) && (depthChange <= 1L)) && ((encodeState->depth == 0UL) ? (depthChange >= 0L) : 1) && ((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) != 0UL));
-  if(CDVJK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_F(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+  if(CDVJK_EXPECT_F((encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 16UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_F(cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + ((encodeState->depth + 1UL) * 2UL) + 4096UL) == NULL)) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
   encodeState->depth += depthChange;
   if(CDVJK_EXPECT_T(format[0] == ':')) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0]; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = ' '; }
   else {
-    if(CDVJK_EXPECT_F(depthChange == -1L)) { if(CDVJK_EXPECT_F(jk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
+    if(CDVJK_EXPECT_F(depthChange == -1L)) { if(CDVJK_EXPECT_F(cdvjk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
     encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0];
-    if(CDVJK_EXPECT_T(depthChange != -1L)) { if(CDVJK_EXPECT_F(jk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
+    if(CDVJK_EXPECT_T(depthChange != -1L)) { if(CDVJK_EXPECT_F(cdvjk_encode_writePrettyPrintWhiteSpace(encodeState))) { return(1); } }
   }
   NSCParameterAssert(encodeState->atIndex < encodeState->stringBuffer.bytes.length);
   return(0);
 }
 
-static int jk_encode_write1fast(CDVJKEncodeState *encodeState, ssize_t depthChange CDVJK_UNUSED_ARG, const char *format) {
+static int cdvjk_encode_write1fast(CDVJKEncodeState *encodeState, ssize_t depthChange CDVJK_UNUSED_ARG, const char *format) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && ((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) == 0UL));
   if(CDVJK_EXPECT_T((encodeState->atIndex + 4UL) < encodeState->stringBuffer.bytes.length)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = format[0]; }
-  else { return(jk_encode_write(encodeState, NULL, 0UL, NULL, format)); }
+  else { return(cdvjk_encode_write(encodeState, NULL, 0UL, NULL, format)); }
   return(0);
 }
 
-static int jk_encode_writen(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length) {
+static int cdvjk_encode_writen(CDVJKEncodeState *encodeState, CDVJKEncodeCache *cacheSlot, size_t startingAtIndex, id object, const char *format, size_t length) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (startingAtIndex <= encodeState->atIndex));
-  if(CDVJK_EXPECT_F((encodeState->stringBuffer.bytes.length - encodeState->atIndex) < (length + 4UL))) { if(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + 4096UL + length) == NULL) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); } }
+  if(CDVJK_EXPECT_F((encodeState->stringBuffer.bytes.length - encodeState->atIndex) < (length + 4UL))) { if(cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + 4096UL + length) == NULL) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); } }
   memcpy(encodeState->stringBuffer.bytes.ptr + encodeState->atIndex, format, length);
   encodeState->atIndex += length;
-  jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object);
+  cdvjk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, object);
   return(0);
 }
 
-CDVJK_STATIC_INLINE CDVJKHash jk_encode_object_hash(void *objectPtr) {
+CDVJK_STATIC_INLINE CDVJKHash cdvjk_encode_object_hash(void *objectPtr) {
   return( ( (((CDVJKHash)objectPtr) >> 21) ^ (((CDVJKHash)objectPtr) >> 9)   ) + (((CDVJKHash)objectPtr) >> 4) );
 }
 
-static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *objectPtr) {
+static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *objectPtr) {
   NSCParameterAssert((encodeState != NULL) && (encodeState->atIndex < encodeState->stringBuffer.bytes.length) && (objectPtr != NULL));
 
   id     object          = (id)objectPtr, encodeCacheObject = object;
   int    isClass         = CDVJKClassUnknown;
   size_t startingAtIndex = encodeState->atIndex;
 
-  CDVJKHash         objectHash = jk_encode_object_hash(objectPtr);
+  CDVJKHash         objectHash = cdvjk_encode_object_hash(objectPtr);
   CDVJKEncodeCache *cacheSlot  = &encodeState->cache[objectHash % CDVJK_ENCODE_CACHE_SLOTS];
 
   if(CDVJK_EXPECT_T(cacheSlot->object == object)) {
@@ -2542,7 +2542,7 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
                        ((encodeState->stringBuffer.bytes.ptr + encodeState->atIndex)                     < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
                        ((encodeState->stringBuffer.bytes.ptr + cacheSlot->offset)                        < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
                        ((encodeState->stringBuffer.bytes.ptr + cacheSlot->offset + cacheSlot->length)    < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)));
-    if(CDVJK_EXPECT_F(((encodeState->atIndex + cacheSlot->length + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + cacheSlot->length + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+    if(CDVJK_EXPECT_F(((encodeState->atIndex + cacheSlot->length + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + cacheSlot->length + 1024UL) == NULL))) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
     NSCParameterAssert(((encodeState->atIndex + cacheSlot->length) < encodeState->stringBuffer.bytes.length) &&
                        ((encodeState->stringBuffer.bytes.ptr + encodeState->atIndex)                     < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
                        ((encodeState->stringBuffer.bytes.ptr + encodeState->atIndex + cacheSlot->length) < (encodeState->stringBuffer.bytes.ptr + encodeState->stringBuffer.bytes.length)) &&
@@ -2614,14 +2614,14 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
 #endif
            ((encodeState->classFormatterIMP)   && ((object = encodeState->classFormatterIMP(encodeState->classFormatterDelegate, encodeState->classFormatterSelector, object)) != NULL))    )) { rerunningAfterClassFormatter = YES; goto rerunAfterClassFormatter; }
       
-      if(rerunningAfterClassFormatter == NO) { jk_encode_error(encodeState, @"Unable to serialize object class %@.", NSStringFromClass([encodeCacheObject class])); return(1); }
-      else { jk_encode_error(encodeState, @"Unable to serialize object class %@ that was returned by the unsupported class formatter.  Original object class was %@.", (object == NULL) ? @"NULL" : NSStringFromClass([object class]), NSStringFromClass([encodeCacheObject class])); return(1); }
+      if(rerunningAfterClassFormatter == NO) { cdvjk_encode_error(encodeState, @"Unable to serialize object class %@.", NSStringFromClass([encodeCacheObject class])); return(1); }
+      else { cdvjk_encode_error(encodeState, @"Unable to serialize object class %@ that was returned by the unsupported class formatter.  Original object class was %@.", (object == NULL) ? @"NULL" : NSStringFromClass([object class]), NSStringFromClass([encodeCacheObject class])); return(1); }
     }
   }
 
   // This is here for the benefit of the optimizer.  It allows the optimizer to do loop invariant code motion for the CDVJKClassArray
-  // and CDVJKClassDictionary cases when printing simple, single characters via jk_encode_write(), which is actually a macro:
-  // #define jk_encode_write1(es, dc, f) (_jk_encode_prettyPrint ? jk_encode_write1slow(es, dc, f) : jk_encode_write1fast(es, dc, f))
+  // and CDVJKClassDictionary cases when printing simple, single characters via cdvjk_encode_write(), which is actually a macro:
+  // #define cdvjk_encode_write1(es, dc, f) (_jk_encode_prettyPrint ? cdvjk_encode_write1slow(es, dc, f) : cdvjk_encode_write1fast(es, dc, f))
   int _jk_encode_prettyPrint = CDVJK_EXPECT_T((encodeState->serializeOptionFlags & CDVJKSerializeOptionPretty) == 0) ? 0 : 1;
   
   switch(isClass) {
@@ -2634,7 +2634,7 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
             size_t               utf8Idx    = 0UL;
 
             CFIndex stringLength = CFStringGetLength((CFStringRef)object);
-            if(CDVJK_EXPECT_F(((encodeState->atIndex + (stringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (stringLength * 2UL) + 1024UL) == NULL))) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+            if(CDVJK_EXPECT_F(((encodeState->atIndex + (stringLength * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length)) && CDVJK_EXPECT_F((cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (stringLength * 2UL) + 1024UL) == NULL))) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
 
             if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
             for(utf8Idx = 0UL; utf8String[utf8Idx] != 0U; utf8Idx++) {
@@ -2648,7 +2648,7 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
                   case '\n': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'n'; break;
                   case '\r': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'r'; break;
                   case '\t': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 't'; break;
-                  default: if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
+                  default: if(CDVJK_EXPECT_F(cdvjk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
                 }
               } else {
                 if(CDVJK_EXPECT_F(utf8String[utf8Idx] == '\"') || CDVJK_EXPECT_F(utf8String[utf8Idx] == '\\') || (CDVJK_EXPECT_F(encodeState->serializeOptionFlags & CDVJKSerializeOptionEscapeForwardSlashes) && CDVJK_EXPECT_F(utf8String[utf8Idx] == '/'))) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; }
@@ -2657,7 +2657,7 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
             }
             NSCParameterAssert((encodeState->atIndex + 1UL) < encodeState->stringBuffer.bytes.length);
             if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
-            jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, encodeCacheObject);
+            cdvjk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, encodeCacheObject);
             return(0);
           }
         }
@@ -2667,13 +2667,13 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
           CFIndex stringLength        = CFStringGetLength((CFStringRef)object);
           CFIndex maxStringUTF8Length = CFStringGetMaximumSizeForEncoding(stringLength, kCFStringEncodingUTF8) + 32L;
         
-          if(CDVJK_EXPECT_F((size_t)maxStringUTF8Length > encodeState->utf8ConversionBuffer.bytes.length) && CDVJK_EXPECT_F(jk_managedBuffer_resize(&encodeState->utf8ConversionBuffer, maxStringUTF8Length + 1024UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+          if(CDVJK_EXPECT_F((size_t)maxStringUTF8Length > encodeState->utf8ConversionBuffer.bytes.length) && CDVJK_EXPECT_F(cdvjk_managedBuffer_resize(&encodeState->utf8ConversionBuffer, maxStringUTF8Length + 1024UL) == NULL)) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
         
           CFIndex usedBytes = 0L, convertedCount = 0L;
           convertedCount = CFStringGetBytes((CFStringRef)object, CFRangeMake(0L, stringLength), kCFStringEncodingUTF8, '?', NO, encodeState->utf8ConversionBuffer.bytes.ptr, encodeState->utf8ConversionBuffer.bytes.length - 16L, &usedBytes);
-          if(CDVJK_EXPECT_F(convertedCount != stringLength) || CDVJK_EXPECT_F(usedBytes < 0L)) { jk_encode_error(encodeState, @"An error occurred converting the contents of a NSString to UTF8."); return(1); }
+          if(CDVJK_EXPECT_F(convertedCount != stringLength) || CDVJK_EXPECT_F(usedBytes < 0L)) { cdvjk_encode_error(encodeState, @"An error occurred converting the contents of a NSString to UTF8."); return(1); }
         
-          if(CDVJK_EXPECT_F((encodeState->atIndex + (maxStringUTF8Length * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_F(jk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (maxStringUTF8Length * 2UL) + 1024UL) == NULL)) { jk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
+          if(CDVJK_EXPECT_F((encodeState->atIndex + (maxStringUTF8Length * 2UL) + 256UL) > encodeState->stringBuffer.bytes.length) && CDVJK_EXPECT_F(cdvjk_managedBuffer_resize(&encodeState->stringBuffer, encodeState->atIndex + (maxStringUTF8Length * 2UL) + 1024UL) == NULL)) { cdvjk_encode_error(encodeState, @"Unable to resize temporary buffer."); return(1); }
         
           const unsigned char *utf8String = encodeState->utf8ConversionBuffer.bytes.ptr;
         
@@ -2690,19 +2690,19 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
                 case '\n': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'n'; break;
                 case '\r': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 'r'; break;
                 case '\t': encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = 't'; break;
-                default: if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
+                default: if(CDVJK_EXPECT_F(cdvjk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", utf8String[utf8Idx]))) { return(1); } break;
               }
             } else {
               if(CDVJK_EXPECT_F(utf8String[utf8Idx] >= 0x80U) && (encodeState->serializeOptionFlags & CDVJKSerializeOptionEscapeUnicode)) {
                 const unsigned char *nextValidCharacter = NULL;
                 UTF32                u32ch              = 0U;
-                ConversionResult     result;
+                CDV_ConversionResult     result;
 
-                if(CDVJK_EXPECT_F((result = ConvertSingleCodePointInUTF8(&utf8String[utf8Idx], &utf8String[usedBytes], (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { jk_encode_error(encodeState, @"Error converting UTF8."); return(1); }
+                if(CDVJK_EXPECT_F((result = cdvConvertSingleCodePointInUTF8(&utf8String[utf8Idx], &utf8String[usedBytes], (UTF8 const **)&nextValidCharacter, &u32ch)) != conversionOK)) { cdvjk_encode_error(encodeState, @"Error converting UTF8."); return(1); }
                 else {
                   utf8Idx = (nextValidCharacter - utf8String) - 1UL;
-                  if(CDVJK_EXPECT_T(u32ch <= 0xffffU)) { if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", u32ch)))                                                           { return(1); } }
-                  else                              { if(CDVJK_EXPECT_F(jk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x\\u%4.4x", (0xd7c0U + (u32ch >> 10)), (0xdc00U + (u32ch & 0x3ffU))))) { return(1); } }
+                  if(CDVJK_EXPECT_T(u32ch <= 0xffffU)) { if(CDVJK_EXPECT_F(cdvjk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x", u32ch)))                                                           { return(1); } }
+                  else                              { if(CDVJK_EXPECT_F(cdvjk_encode_printf(encodeState, NULL, 0UL, NULL, "\\u%4.4x\\u%4.4x", (0xd7c0U + (u32ch >> 10)), (0xdc00U + (u32ch & 0x3ffU))))) { return(1); } }
                 }
               } else {
                 if(CDVJK_EXPECT_F(utf8String[utf8Idx] == '\"') || CDVJK_EXPECT_F(utf8String[utf8Idx] == '\\') || (CDVJK_EXPECT_F(encodeState->serializeOptionFlags & CDVJKSerializeOptionEscapeForwardSlashes) && CDVJK_EXPECT_F(utf8String[utf8Idx] == '/'))) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\\'; }
@@ -2712,7 +2712,7 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
           }
           NSCParameterAssert((encodeState->atIndex + 1UL) < encodeState->stringBuffer.bytes.length);
           if(CDVJK_EXPECT_T((encodeState->encodeOption & CDVJKEncodeOptionStringObjTrimQuotes) == 0UL)) { encodeState->stringBuffer.bytes.ptr[encodeState->atIndex++] = '\"'; }
-          jk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, encodeCacheObject);
+          cdvjk_encode_updateCache(encodeState, cacheSlot, startingAtIndex, encodeCacheObject);
           return(0);
         }
       }
@@ -2720,8 +2720,8 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
 
     case CDVJKClassNumber:
       {
-             if(object == (id)kCFBooleanTrue)  { return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "true",  4UL)); }
-        else if(object == (id)kCFBooleanFalse) { return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "false", 5UL)); }
+             if(object == (id)kCFBooleanTrue)  { return(cdvjk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "true",  4UL)); }
+        else if(object == (id)kCFBooleanFalse) { return(cdvjk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "false", 5UL)); }
         
         const char         *objCType = [object objCType];
         char                anum[256], *aptr = &anum[255];
@@ -2729,14 +2729,14 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
         unsigned long long  ullv;
         long long           llv;
         
-        if(CDVJK_EXPECT_F(objCType == NULL) || CDVJK_EXPECT_F(objCType[0] == 0) || CDVJK_EXPECT_F(objCType[1] != 0)) { jk_encode_error(encodeState, @"NSNumber conversion error, unknown type.  Type: '%s'", (objCType == NULL) ? "<NULL>" : objCType); return(1); }
+        if(CDVJK_EXPECT_F(objCType == NULL) || CDVJK_EXPECT_F(objCType[0] == 0) || CDVJK_EXPECT_F(objCType[1] != 0)) { cdvjk_encode_error(encodeState, @"NSNumber conversion error, unknown type.  Type: '%s'", (objCType == NULL) ? "<NULL>" : objCType); return(1); }
         
         switch(objCType[0]) {
           case 'c': case 'i': case 's': case 'l': case 'q':
             if(CDVJK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberLongLongType, &llv)))  {
               if(llv < 0LL)  { ullv = -llv; isNegative = 1; } else { ullv = llv; isNegative = 0; }
               goto convertNumber;
-            } else { jk_encode_error(encodeState, @"Unable to get scalar value from number object."); return(1); }
+            } else { cdvjk_encode_error(encodeState, @"Unable to get scalar value from number object."); return(1); }
             break;
           case 'C': case 'I': case 'S': case 'L': case 'Q': case 'B':
             if(CDVJK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberLongLongType, &ullv))) {
@@ -2744,19 +2744,19 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
               if(CDVJK_EXPECT_F(ullv < 10ULL)) { *--aptr = ullv + '0'; } else { while(CDVJK_EXPECT_T(ullv > 0ULL)) { *--aptr = (ullv % 10ULL) + '0'; ullv /= 10ULL; NSCParameterAssert(aptr > anum); } }
               if(isNegative) { *--aptr = '-'; }
               NSCParameterAssert(aptr > anum);
-              return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, aptr, &anum[255] - aptr));
-            } else { jk_encode_error(encodeState, @"Unable to get scalar value from number object."); return(1); }
+              return(cdvjk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, aptr, &anum[255] - aptr));
+            } else { cdvjk_encode_error(encodeState, @"Unable to get scalar value from number object."); return(1); }
             break;
           case 'f': case 'd':
             {
               double dv;
               if(CDVJK_EXPECT_T(CFNumberGetValue((CFNumberRef)object, kCFNumberDoubleType, &dv))) {
-                if(CDVJK_EXPECT_F(!isfinite(dv))) { jk_encode_error(encodeState, @"Floating point values must be finite.  CDVJSON does not support NaN or Infinity."); return(1); }
-                return(jk_encode_printf(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "%.17g", dv));
-              } else { jk_encode_error(encodeState, @"Unable to get floating point value from number object."); return(1); }
+                if(CDVJK_EXPECT_F(!isfinite(dv))) { cdvjk_encode_error(encodeState, @"Floating point values must be finite.  CDVJSON does not support NaN or Infinity."); return(1); }
+                return(cdvjk_encode_printf(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "%.17g", dv));
+              } else { cdvjk_encode_error(encodeState, @"Unable to get floating point value from number object."); return(1); }
             }
             break;
-          default: jk_encode_error(encodeState, @"NSNumber conversion error, unknown type.  Type: '%c' / 0x%2.2x", objCType[0], objCType[0]); return(1); break;
+          default: cdvjk_encode_error(encodeState, @"NSNumber conversion error, unknown type.  Type: '%c' / 0x%2.2x", objCType[0], objCType[0]); return(1); break;
         }
       }
       break;
@@ -2765,15 +2765,15 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
       {
         int     printComma = 0;
         CFIndex arrayCount = CFArrayGetCount((CFArrayRef)object), idx = 0L;
-        if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 1L, "["))) { return(1); }
+        if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 1L, "["))) { return(1); }
         if(CDVJK_EXPECT_F(arrayCount > 1020L)) {
-          for(id arrayObject in object)          { if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, arrayObject)))  { return(1); } }
+          for(id arrayObject in object)          { if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, arrayObject)))  { return(1); } }
         } else {
           void *objects[1024];
           CFArrayGetValues((CFArrayRef)object, CFRangeMake(0L, arrayCount), (const void **)objects);
-          for(idx = 0L; idx < arrayCount; idx++) { if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); } }
+          for(idx = 0L; idx < arrayCount; idx++) { if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } } printComma = 1; if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); } }
         }
-        return(jk_encode_write1(encodeState, -1L, "]"));
+        return(cdvjk_encode_write1(encodeState, -1L, "]"));
       }
       break;
 
@@ -2783,35 +2783,35 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
         CFIndex dictionaryCount = CFDictionaryGetCount((CFDictionaryRef)object), idx = 0L;
         id      enumerateObject = CDVJK_EXPECT_F(_jk_encode_prettyPrint) ? [[object allKeys] sortedArrayUsingSelector:@selector(compare:)] : object;
 
-        if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 1L, "{"))) { return(1); }
+        if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 1L, "{"))) { return(1); }
         if(CDVJK_EXPECT_F(_jk_encode_prettyPrint) || CDVJK_EXPECT_F(dictionaryCount > 1020L)) {
           for(id keyObject in enumerateObject) {
-            if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } }
+            if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(CDVJK_EXPECT_F((keyObject->isa      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { jk_encode_error(encodeState, @"Key must be a string object."); return(1); }
-            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, keyObject)))                                                        { return(1); }
-            if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ":")))                                                                      { return(1); }
-            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, (void *)CFDictionaryGetValue((CFDictionaryRef)object, keyObject)))) { return(1); }
+            if(CDVJK_EXPECT_F((keyObject->isa      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, keyObject)))                                                        { return(1); }
+            if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ":")))                                                                      { return(1); }
+            if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, (void *)CFDictionaryGetValue((CFDictionaryRef)object, keyObject)))) { return(1); }
           }
         } else {
           void *keys[1024], *objects[1024];
           CFDictionaryGetKeysAndValues((CFDictionaryRef)object, (const void **)keys, (const void **)objects);
           for(idx = 0L; idx < dictionaryCount; idx++) {
-            if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ","))) { return(1); } }
+            if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(CDVJK_EXPECT_F(((id)keys[idx])->isa != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { jk_encode_error(encodeState, @"Key must be a string object."); return(1); }
-            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, keys[idx])))    { return(1); }
-            if(CDVJK_EXPECT_F(jk_encode_write1(encodeState, 0L, ":")))                  { return(1); }
-            if(CDVJK_EXPECT_F(jk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); }
+            if(CDVJK_EXPECT_F(((id)keys[idx])->isa != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, keys[idx])))    { return(1); }
+            if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ":")))                  { return(1); }
+            if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); }
           }
         }
-        return(jk_encode_write1(encodeState, -1L, "}"));
+        return(cdvjk_encode_write1(encodeState, -1L, "}"));
       }
       break;
 
-    case CDVJKClassNull: return(jk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "null", 4UL)); break;
+    case CDVJKClassNull: return(cdvjk_encode_writen(encodeState, cacheSlot, startingAtIndex, encodeCacheObject, "null", 4UL)); break;
 
-    default: jk_encode_error(encodeState, @"Unable to serialize object class %@.", NSStringFromClass([object class])); return(1); break;
+    default: cdvjk_encode_error(encodeState, @"Unable to serialize object class %@.", NSStringFromClass([object class])); return(1); break;
   }
 
   return(0);
@@ -2859,32 +2859,32 @@ static int jk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *obj
   encodeState->utf8ConversionBuffer.roundSizeUpToMultipleOf = 4096UL;
     
   unsigned char stackJSONBuffer[CDVJK_JSONBUFFER_SIZE] CDVJK_ALIGNED(64);
-  jk_managedBuffer_setToStackBuffer(&encodeState->stringBuffer,         stackJSONBuffer, sizeof(stackJSONBuffer));
+  cdvjk_managedBuffer_setToStackBuffer(&encodeState->stringBuffer,         stackJSONBuffer, sizeof(stackJSONBuffer));
 
   unsigned char stackUTF8Buffer[CDVJK_UTF8BUFFER_SIZE] CDVJK_ALIGNED(64);
-  jk_managedBuffer_setToStackBuffer(&encodeState->utf8ConversionBuffer, stackUTF8Buffer, sizeof(stackUTF8Buffer));
+  cdvjk_managedBuffer_setToStackBuffer(&encodeState->utf8ConversionBuffer, stackUTF8Buffer, sizeof(stackUTF8Buffer));
 
-  if(((encodeOption & CDVJKEncodeOptionCollectionObj) != 0UL) && (([object isKindOfClass:[NSArray  class]] == NO) && ([object isKindOfClass:[NSDictionary class]] == NO))) { jk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSArray or NSDictionary.", NSStringFromClass([object class])); goto errorExit; }
-  if(((encodeOption & CDVJKEncodeOptionStringObj)     != 0UL) &&  ([object isKindOfClass:[NSString class]] == NO))                                                         { jk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSString.", NSStringFromClass([object class])); goto errorExit; }
+  if(((encodeOption & CDVJKEncodeOptionCollectionObj) != 0UL) && (([object isKindOfClass:[NSArray  class]] == NO) && ([object isKindOfClass:[NSDictionary class]] == NO))) { cdvjk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSArray or NSDictionary.", NSStringFromClass([object class])); goto errorExit; }
+  if(((encodeOption & CDVJKEncodeOptionStringObj)     != 0UL) &&  ([object isKindOfClass:[NSString class]] == NO))                                                         { cdvjk_encode_error(encodeState, @"Unable to serialize object class %@, expected a NSString.", NSStringFromClass([object class])); goto errorExit; }
 
-  if(jk_encode_add_atom_to_buffer(encodeState, object) == 0) {
+  if(cdvjk_encode_add_atom_to_buffer(encodeState, object) == 0) {
     BOOL stackBuffer = ((encodeState->stringBuffer.flags & CDVJKManagedBufferMustFree) == 0UL) ? YES : NO;
     
     if((encodeState->atIndex < 2UL))
-    if((stackBuffer == NO) && ((encodeState->stringBuffer.bytes.ptr = (unsigned char *)reallocf(encodeState->stringBuffer.bytes.ptr, encodeState->atIndex + 16UL)) == NULL)) { jk_encode_error(encodeState, @"Unable to realloc buffer"); goto errorExit; }
+    if((stackBuffer == NO) && ((encodeState->stringBuffer.bytes.ptr = (unsigned char *)reallocf(encodeState->stringBuffer.bytes.ptr, encodeState->atIndex + 16UL)) == NULL)) { cdvjk_encode_error(encodeState, @"Unable to realloc buffer"); goto errorExit; }
 
     switch((encodeOption & CDVJKEncodeOptionAsTypeMask)) {
       case CDVJKEncodeOptionAsData:
-        if(stackBuffer == YES) { if((returnObject = [(id)CFDataCreate(                 NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex)                                  autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
-        else                   { if((returnObject = [(id)CFDataCreateWithBytesNoCopy(  NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, NULL)                            autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
+        if(stackBuffer == YES) { if((returnObject = [(id)CFDataCreate(                 NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex)                                  autorelease]) == NULL) { cdvjk_encode_error(encodeState, @"Unable to create NSData object"); } }
+        else                   { if((returnObject = [(id)CFDataCreateWithBytesNoCopy(  NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, NULL)                            autorelease]) == NULL) { cdvjk_encode_error(encodeState, @"Unable to create NSData object"); } }
         break;
 
       case CDVJKEncodeOptionAsString:
-        if(stackBuffer == YES) { if((returnObject = [(id)CFStringCreateWithBytes(      NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO)       autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
-        else                   { if((returnObject = [(id)CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO, NULL) autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
+        if(stackBuffer == YES) { if((returnObject = [(id)CFStringCreateWithBytes(      NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO)       autorelease]) == NULL) { cdvjk_encode_error(encodeState, @"Unable to create NSString object"); } }
+        else                   { if((returnObject = [(id)CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO, NULL) autorelease]) == NULL) { cdvjk_encode_error(encodeState, @"Unable to create NSString object"); } }
         break;
 
-      default: jk_encode_error(encodeState, @"Unknown encode as type."); break;
+      default: cdvjk_encode_error(encodeState, @"Unknown encode as type."); break;
     }
 
     if((returnObject != NULL) && (stackBuffer == NO)) { encodeState->stringBuffer.flags &= ~CDVJKManagedBufferMustFree; encodeState->stringBuffer.bytes.ptr = NULL; encodeState->stringBuffer.bytes.length = 0UL; }
@@ -2900,8 +2900,8 @@ errorExit:
 - (void)releaseState
 {
   if(encodeState != NULL) {
-    jk_managedBuffer_release(&encodeState->stringBuffer);
-    jk_managedBuffer_release(&encodeState->utf8ConversionBuffer);
+    cdvjk_managedBuffer_release(&encodeState->stringBuffer);
+    cdvjk_managedBuffer_release(&encodeState->utf8ConversionBuffer);
     free(encodeState); encodeState = NULL;
   }  
 }

@@ -17,7 +17,7 @@
 //
 // Mapping from 6 bit pattern to ASCII character.
 //
-static unsigned char base64EncodeLookup[65] =
+static unsigned char cdvbase64EncodeLookup[65] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 //
@@ -28,7 +28,7 @@ static unsigned char base64EncodeLookup[65] =
 //
 // Mapping from ASCII character to 6 bit pattern.
 //
-static unsigned char base64DecodeLookup[256] =
+static unsigned char cdvbase64DecodeLookup[256] =
 {
     xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
     xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
@@ -51,8 +51,8 @@ static unsigned char base64DecodeLookup[256] =
 //
 // Fundamental sizes of the binary and base64 encode/decode units in bytes
 //
-#define BINARY_UNIT_SIZE 3
-#define BASE64_UNIT_SIZE 4
+#define CDV_BINARY_UNIT_SIZE 3
+#define CDV_BASE64_UNIT_SIZE 4
 
 //
 // NewBase64Decode
@@ -67,7 +67,7 @@ static unsigned char base64DecodeLookup[256] =
 // returns the decoded buffer. Must be free'd by caller. Length is given by
 //	outputLength.
 //
-void *NewBase64Decode(
+void *CDVNewBase64Decode(
 	const char *inputBuffer,
 	size_t length,
 	size_t *outputLength)
@@ -77,7 +77,7 @@ void *NewBase64Decode(
 		length = strlen(inputBuffer);
 	}
 	
-	size_t outputBufferSize = (length / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE;
+	size_t outputBufferSize = (length / CDV_BASE64_UNIT_SIZE) * CDV_BINARY_UNIT_SIZE;
 	unsigned char *outputBuffer = (unsigned char *)malloc(outputBufferSize);
 	
 	size_t i = 0;
@@ -87,18 +87,18 @@ void *NewBase64Decode(
 		//
 		// Accumulate 4 valid characters (ignore everything else)
 		//
-		unsigned char accumulated[BASE64_UNIT_SIZE];
-		bzero(accumulated, sizeof(unsigned char) * BASE64_UNIT_SIZE);
+		unsigned char accumulated[CDV_BASE64_UNIT_SIZE];
+		bzero(accumulated, sizeof(unsigned char) * CDV_BASE64_UNIT_SIZE);
 		size_t accumulateIndex = 0;
 		while (i < length)
 		{
-			unsigned char decode = base64DecodeLookup[inputBuffer[i++]];
+			unsigned char decode = cdvbase64DecodeLookup[inputBuffer[i++]];
 			if (decode != xx)
 			{
 				accumulated[accumulateIndex] = decode;
 				accumulateIndex++;
 				
-				if (accumulateIndex == BASE64_UNIT_SIZE)
+				if (accumulateIndex == CDV_BASE64_UNIT_SIZE)
 				{
 					break;
 				}
@@ -137,7 +137,7 @@ void *NewBase64Decode(
 // returns the encoded buffer. Must be free'd by caller. Length is given by
 //	outputLength.
 //
-char *NewBase64Encode(
+char *CDVNewBase64Encode(
 	const void *buffer,
 	size_t length,
 	bool separateLines,
@@ -147,16 +147,16 @@ char *NewBase64Encode(
 	
 	#define MAX_NUM_PADDING_CHARS 2
 	#define OUTPUT_LINE_LENGTH 64
-	#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE)
+	#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / CDV_BASE64_UNIT_SIZE) * CDV_BINARY_UNIT_SIZE)
 	#define CR_LF_SIZE 0
 	
 	//
 	// Byte accurate calculation of final buffer size
 	//
 	size_t outputBufferSize =
-			((length / BINARY_UNIT_SIZE)
-				+ ((length % BINARY_UNIT_SIZE) ? 1 : 0))
-					* BASE64_UNIT_SIZE;
+			((length / CDV_BINARY_UNIT_SIZE)
+				+ ((length % CDV_BINARY_UNIT_SIZE) ? 1 : 0))
+					* CDV_BASE64_UNIT_SIZE;
 	if (separateLines)
 	{
 		outputBufferSize +=
@@ -189,17 +189,17 @@ char *NewBase64Encode(
 			lineEnd = length;
 		}
 
-		for (; i + BINARY_UNIT_SIZE - 1 < lineEnd; i += BINARY_UNIT_SIZE)
+		for (; i + CDV_BINARY_UNIT_SIZE - 1 < lineEnd; i += CDV_BINARY_UNIT_SIZE)
 		{
 			//
 			// Inner loop: turn 48 bytes into 64 base64 characters
 			//
-			outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-			outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+			outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+			outputBuffer[j++] = cdvbase64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
 				| ((inputBuffer[i + 1] & 0xF0) >> 4)];
-			outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
+			outputBuffer[j++] = cdvbase64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
 				| ((inputBuffer[i + 2] & 0xC0) >> 6)];
-			outputBuffer[j++] = base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
+			outputBuffer[j++] = cdvbase64EncodeLookup[inputBuffer[i + 2] & 0x3F];
 		}
 		
 		if (lineEnd == length)
@@ -220,10 +220,10 @@ char *NewBase64Encode(
 		//
 		// Handle the single '=' case
 		//
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-		outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+		outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+		outputBuffer[j++] = cdvbase64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
 			| ((inputBuffer[i + 1] & 0xF0) >> 4)];
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
+		outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
 		outputBuffer[j++] =	'=';
 	}
 	else if (i < length)
@@ -231,8 +231,8 @@ char *NewBase64Encode(
 		//
 		// Handle the double '=' case
 		//
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
+		outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+		outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
 		outputBuffer[j++] = '=';
 		outputBuffer[j++] = '=';
 	}
@@ -248,7 +248,7 @@ char *NewBase64Encode(
 	return outputBuffer;
 }
 
-@implementation NSData (Base64)
+@implementation NSData (CDVBase64)
 
 //
 // dataFromBase64String:
@@ -265,7 +265,7 @@ char *NewBase64Encode(
 {
 	NSData *data = [aString dataUsingEncoding:NSASCIIStringEncoding];
 	size_t outputLength;
-	void *outputBuffer = NewBase64Decode([data bytes], [data length], &outputLength);
+	void *outputBuffer = CDVNewBase64Decode([data bytes], [data length], &outputLength);
 	NSData *result = [NSData dataWithBytes:outputBuffer length:outputLength];
 	free(outputBuffer);
 	return result;
@@ -284,7 +284,7 @@ char *NewBase64Encode(
 {
 	size_t outputLength;
 	char *outputBuffer =
-		NewBase64Encode([self bytes], [self length], true, &outputLength);
+		CDVNewBase64Encode([self bytes], [self length], true, &outputLength);
 	
 	NSString *result =
 		[[[NSString alloc]
