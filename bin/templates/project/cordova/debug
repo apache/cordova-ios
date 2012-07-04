@@ -31,6 +31,7 @@ PROJECT_PATH=$CORDOVA_PATH/..
 
 for file in *.xcodeproj; do
   PRJ=$file
+  PROJECT_NAME=$(echo $file | awk -F.xcodeproj '{print $1}')
 done;
 
 APP=build/Release-iphonesimulator/$PROJECT_NAME.app
