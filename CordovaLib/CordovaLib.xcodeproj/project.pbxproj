@@ -186,6 +186,7 @@
 		88BA573E109BB46F00FB5E78 /* CDVAccelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* CDVAccelerometer.m */; };
 		C937A4561337599E002C4C79 /* CDVFileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* CDVFileTransfer.h */; };
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
+		EBA3550D15A5E8D100F4DE24 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -790,6 +791,7 @@
 			files = (
 				303A4072152124BB00182201 /* InfoPlist.strings in Resources */,
 				30F8AE13152127CE006625B3 /* Cordova.plist in Resources */,
+				EBA3550D15A5E8D100F4DE24 /* VERSION in Resources */,
 				30F8AE1D152129DA006625B3 /* www in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
