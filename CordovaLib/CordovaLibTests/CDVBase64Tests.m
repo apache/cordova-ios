@@ -17,8 +17,12 @@
  under the License.
  */
 
-#import "CDVBase64Tests.h"
+#import <SenTestingKit/SenTestingKit.h>
+
 #import "NSData+Base64.h"
+
+@interface CDVBase64Tests : SenTestCase
+@end
 
 @implementation CDVBase64Tests
 

@@ -17,8 +17,14 @@
  under the License.
  */
 
-#import "CDVContactsTests.h"
+#import <SenTestingKit/SenTestingKit.h>
+
+#import "CDVWebViewTest.h"
 #import "CDVContacts.h"
+
+@interface CDVContactsTests : CDVWebViewTest
+@property (nonatomic, retain) CDVContacts* contacts;
+@end
 
 @implementation CDVContactsTests
 

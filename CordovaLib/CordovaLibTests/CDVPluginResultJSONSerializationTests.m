@@ -18,9 +18,13 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "CDVPluginResultJSONSerializationTests.h"
+#import <SenTestingKit/SenTestingKit.h>
+
 #import "CDVPluginResult.h"
 #import "JSONKit.h"
+
+@interface CDVPluginResultJSONSerializationTests : SenTestCase
+@end
 
 @implementation CDVPluginResultJSONSerializationTests
 

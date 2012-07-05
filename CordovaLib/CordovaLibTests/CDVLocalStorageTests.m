@@ -17,8 +17,12 @@
  under the License.
  */
 
-#import "CDVLocalStorageTests.h"
+#import <SenTestingKit/SenTestingKit.h>
+
 #import "CDVLocalStorage.h"
+
+@interface CDVLocalStorageTests : SenTestCase
+@end
 
 @implementation CDVLocalStorageTests
 

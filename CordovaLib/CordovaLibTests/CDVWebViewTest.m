@@ -18,27 +18,24 @@
  */
 
 #import "CDVWebViewTest.h"
-#import "CDVViewController.h"
+
+#import "AppDelegate.h"
+#import "ViewController.h"
 
 @implementation CDVWebViewTest
 
-@synthesize webView;
+@synthesize viewController = _viewController;
+@synthesize webView = _webView;
 
 - (void)setUp
 {
     [super setUp];
     
     // setup code here
-    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate respondsToSelector:@selector(viewController)]) {
-        id vc = [delegate performSelector:@selector(viewController)];
-        if ([vc respondsToSelector:@selector(webView)]) {
-            id wv = [vc webView];
-            if ([wv isKindOfClass:[UIWebView class]]) {
-                self.webView = wv;
-            }
-        }
-    }
+    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    self.viewController = delegate.viewController;
+    self.webView = self.viewController.webView;
+    STAssertTrue(self.webView != nil, @"The test application's webView is not accessible. The webView is required by the test.");
 }
 
 - (void)tearDown
@@ -47,11 +44,6 @@
 	
     [super tearDown];
 	self.webView = nil;
-}
-
-- (void) testWebViewAvailable
-{
-	STAssertTrue(self.webView != nil, @"The test application's webView is not accessible. The webView is required by the test.");
 }
 
 @end

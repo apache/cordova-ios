@@ -19,10 +19,13 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 
+@class CDVViewController;
+
 @interface CDVWebViewTest : SenTestCase {
 	
 }
 
+@property (nonatomic, retain) CDVViewController* viewController;
 @property (nonatomic, retain) UIWebView* webView;
 
 @end
