@@ -95,6 +95,22 @@
     return [self __init];
 }
 
+// TODO(agrieve): It's probably better to change these to be weak references.
+- (void) dispose {
+    for (CDVPlugin *plugin in [self.pluginObjects allValues]) {
+        if ([plugin respondsToSelector:@selector(setViewController:)]) { 
+            [plugin setViewController:nil];
+        }
+        
+        if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) { 
+            [plugin setCommandDelegate:nil];
+        }
+    }
+    self.commandDelegate = nil;
+    self.webView.delegate = nil;
+    self.webView = nil;
+}
+
 - (void) printDeprecationNotice
 {
     if (!IsAtLeastiOSVersion(@"4.2")) { // TODO: change WARNING to CRITICAL for 2.0
