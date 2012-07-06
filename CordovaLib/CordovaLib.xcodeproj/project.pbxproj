@@ -187,6 +187,7 @@
 		C937A4561337599E002C4C79 /* CDVFileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* CDVFileTransfer.h */; };
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
 		EBA3550D15A5E8D100F4DE24 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
+		EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -308,6 +309,8 @@
 		C937A4541337599E002C4C79 /* CDVFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVFileTransfer.h; path = Classes/CDVFileTransfer.h; sourceTree = "<group>"; };
 		C937A4551337599E002C4C79 /* CDVFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFileTransfer.m; path = Classes/CDVFileTransfer.m; sourceTree = "<group>"; };
 		EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDVWebViewTest.h; sourceTree = "<group>"; };
+		EBA3554415A731F100F4DE24 /* CDVFakeFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVFakeFileManager.h; sourceTree = "<group>"; };
+		EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVFakeFileManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -455,6 +458,8 @@
 		686357B0141002F100DF4CF2 /* CordovaLibTests */ = {
 			isa = PBXGroup;
 			children = (
+				EBA3554415A731F100F4DE24 /* CDVFakeFileManager.h */,
+				EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */,
 				EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */,
 				30B342F415224B360070E6A5 /* CDVWebViewTest.m */,
 				30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */,
@@ -928,6 +933,7 @@
 				3062D1AE151D4D9D000D9128 /* CDVLocalStorageTests.m in Sources */,
 				30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */,
 				30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */,
+				EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

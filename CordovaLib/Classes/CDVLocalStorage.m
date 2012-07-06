@@ -260,18 +260,29 @@
 
 + (void) __verifyAndFixDatabaseLocations
 {
-    NSString* libraryCaches = @"Library/Caches";
-    NSString* libraryWebKit = @"Library/WebKit";
-    NSString* libraryPreferences = @"Library/Preferences";
-    
-    NSUserDefaults* appPreferences = [NSUserDefaults standardUserDefaults];
     NSBundle* mainBundle = [NSBundle mainBundle];
-
     NSString* bundlePath = [[mainBundle bundlePath] stringByDeletingLastPathComponent];
     NSString* bundleIdentifier = [[mainBundle infoDictionary] objectForKey:@"CFBundleIdentifier"];
-
-    NSString* appPlistPath = [[bundlePath stringByAppendingPathComponent:libraryPreferences] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", bundleIdentifier]];
+    NSString* appPlistPath = [bundlePath stringByAppendingPathComponent:[NSString stringWithFormat:@"Library/Preferences/%@.plist", bundleIdentifier]];
+    
     NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithContentsOfFile:appPlistPath];
+    BOOL modified = [[self class] __verifyAndFixDatabaseLocationsWithAppPlistDict:appPlistDict
+                                                                       bundlePath:bundlePath
+                                                                      fileManager:[NSFileManager defaultManager]];
+
+    if (modified) {
+        BOOL ok = [appPlistDict writeToFile:appPlistPath atomically:YES];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        NSLog(@"Fix applied for database locations?: %@", ok? @"YES":@"NO");    
+    }
+}
+
++ (BOOL) __verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
+                                              bundlePath:(NSString*)bundlePath
+                                             fileManager:(NSFileManager*)fileManager
+{
+    NSString* libraryCaches = @"Library/Caches";
+    NSString* libraryWebKit = @"Library/WebKit";
     
     NSArray* keysToCheck = [NSArray arrayWithObjects:
                             @"WebKitLocalStorageDatabasePathPreferenceKey", 
@@ -289,21 +300,14 @@
             // the pathSuffix to use may be wrong - OTA upgrades from < 5.1 to 5.1 do keep the old path Library/WebKit, 
             // while Xcode synced ones do change the storage location to Library/Caches
             NSString* newBundlePath = [bundlePath stringByAppendingPathComponent:libraryCaches];
-            if (![[NSFileManager defaultManager] fileExistsAtPath:newBundlePath]) {
+            if (![fileManager fileExistsAtPath:newBundlePath]) {
                 newBundlePath = [bundlePath stringByAppendingPathComponent:libraryWebKit];
             }
             [appPlistDict setValue:newBundlePath forKey:key];
             dirty = YES;
         }
     }
-    
-    if (dirty) 
-    {
-        BOOL ok = [appPlistDict writeToFile:appPlistPath atomically:YES];
-        NSLog(@"Fix applied for database locations?: %@", ok? @"YES":@"NO");
-    
-        [appPreferences synchronize];
-    }
+    return dirty;    
 }
 
 #pragma mark -

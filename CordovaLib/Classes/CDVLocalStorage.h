@@ -33,7 +33,10 @@
 - (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 
 + (void) __verifyAndFixDatabaseLocations;
-
+// Visible for testing.
++ (BOOL) __verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
+                                              bundlePath:(NSString*)bundlePath
+                                             fileManager:(NSFileManager*)fileManager;
 @end
 
 @interface CDVBackupInfo : NSObject
