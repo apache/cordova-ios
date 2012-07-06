@@ -20,8 +20,14 @@
 #import <SenTestingKit/SenTestingKit.h>
 
 #import "CDVLocalStorage.h"
+#import "CDVWebViewTest.h"
+#import "ViewController.h"
 
-@interface CDVLocalStorageTests : SenTestCase
+@interface CDVLocalStorageTests : CDVWebViewTest
+// Deletes LocalStorage files from disk.
+- (void)deleteOriginals:(BOOL)originals backups:(BOOL)backups;
+// Returns the CDVLocalStorage instance from the plugins dict.
+- (CDVLocalStorage *)localStorage;
 @end
 
 @implementation CDVLocalStorageTests
@@ -29,30 +35,58 @@
 - (void)setUp
 {
     [super setUp];
-    
-    // setup code here
+    // Clear these on setUp as well in case they were left around.
+    [self deleteOriginals:YES backups:YES];
 }
 
 - (void)tearDown
 {
-    // Tear-down code here.
-
+    // Don't leave any localStorage files around.
+    [self deleteOriginals:YES backups:YES];
     [super tearDown];
 }
 
-- (void) testRestore
-{
-    STAssertTrue(NO, @"TODO: testRestore");
+- (CDVLocalStorage *)localStorage {
+    return [self pluginForClass:[CDVLocalStorage class]];
 }
 
-- (void) testBackup
-{
-    STAssertTrue(NO, @"TODO: testBackup");
+- (void)deleteOriginals:(BOOL)originals backups:(BOOL)backups {
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    for (CDVBackupInfo *info in [self localStorage].backupInfo) {
+        if (originals) {
+            [fileManager removeItemAtPath:info.original error:nil];
+        }
+        if (backups) {
+            [fileManager removeItemAtPath:info.backup error:nil];
+        }
+    }
 }
 
-- (void) testVerifyAndFixDatabaseLocations
+- (void)testBackupAndRestore
 {
-	STAssertTrue(NO, @"TODO: testVerifyAndFixDatabaseLocations");
+    CDVLocalStorage *localStorage = [self localStorage];
+    [self waitForConditionName:@"shouldBackup" block:^{
+        [self evalJs:@"localStorage.setItem('foo', 'bar')"];
+        return [localStorage shouldBackup]; 
+    }];
+    [localStorage backup:nil withDict:nil];
+    STAssertFalse([localStorage shouldBackup], @"Should have backed up.");
+    
+    // It would be nice to be able to test that the restore functionality
+    // alters what localStorage.getItem('foo') returns, but it seems as though
+    // the WebView maintains an in-memory cache of what's in LocalStorage even
+    // after we delete the underlying files and recreate the view.
+    
+    // Instead, we just test the file copying logic.
+    [self deleteOriginals:YES backups:NO];
+    STAssertTrue([localStorage shouldRestore], @"Should restore after deleting originals");
+    [localStorage restore:nil withDict:nil];
+    STAssertFalse([localStorage shouldRestore], @"Restore did not complete successfully");    
+}
+
+- (void)testVerifyAndFixDatabaseLocations
+{
+	  STAssertTrue(NO, @"TODO: testVerifyAndFixDatabaseLocations");
 }
 
 @end

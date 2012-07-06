@@ -167,6 +167,26 @@
     }
 }
 
+- (BOOL) shouldBackup
+{
+    for (CDVBackupInfo* info in self.backupInfo) {
+        if ([info shouldBackup]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (BOOL) shouldRestore
+{
+    for (CDVBackupInfo* info in self.backupInfo) {
+        if ([info shouldRestore]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+                
 /* copy from webkitDbLocation to persistentDbLocation */
 - (void) backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 {
