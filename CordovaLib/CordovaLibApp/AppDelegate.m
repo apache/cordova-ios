@@ -33,13 +33,8 @@
     [super dealloc];
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
-    self.window.autoresizesSubviews = YES;
-    
+- (void)createViewController {
+    NSAssert(!self.viewController, @"ViewController already created.");
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
     self.viewController = [[[ViewController alloc] init] autorelease];
@@ -49,6 +44,27 @@
     self.viewController.view.frame = viewBounds;
 
     self.window.rootViewController = self.viewController;
+}
+
+- (void)destroyViewController {
+    // Clean up circular refs so that the view controller will actully be released.
+    [self.viewController dispose];
+    self.viewController = nil;
+    self.window.rootViewController = nil;
+}
+
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{    
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
+    self.window.autoresizesSubviews = YES;
+    
+    // Create the main view on start-up only when not running unit tests.
+    if (!NSClassFromString(@"CDVWebViewTest")) {
+        [self createViewController];
+    }
+    
     [self.window makeKeyAndVisible];
 
     return YES;
