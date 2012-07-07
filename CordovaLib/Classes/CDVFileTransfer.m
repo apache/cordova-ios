@@ -154,7 +154,7 @@
     }
     
 	NSMutableData *postBody = [NSMutableData data];
-	
+	enumerator = [params keyEnumerator];
 	id key;
 	
 	while ((key = [enumerator nextObject])) {
