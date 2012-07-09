@@ -23,6 +23,7 @@
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"
 #define HTTP_SCHEME_PREFIX			@"http://"
+#define HTTPS_SCHEME_PREFIX			@"https://"
 
 @implementation CDVSound
 
@@ -37,7 +38,7 @@
 	
     // first try to find HTTP:// or Documents:// resources
     
-    if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX]){
+    if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX] || [resourcePath hasPrefix:HTTPS_SCHEME_PREFIX]){
         // if it is a http url, use it
         NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
         resourceURL = [NSURL URLWithString:resourcePath];
@@ -104,7 +105,8 @@
 			errMsg = [NSString stringWithFormat: @"Cannot use audio file from resource '%@'", resourcePath];
 		}
 		if (bError) {
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: errcode message: errMsg]];
+			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, errcode];
+            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,[self createMediaErrorWithCode: errcode message: errMsg]];
 			[super writeJavascript:jsString];
 		} else {
 			audioFile = [[[CDVAudioFile alloc] init] autorelease];
@@ -141,18 +143,62 @@
     return [errorDict JSONString];
     
 }
-
+// DEPRECATED
 - (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+    NSLog(@"play is DEPRECATED!  Use startPlayingAudio.");
+    [self startPlayingAudio:arguments withDict:options];
+}
 
+- (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
 	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-	
 	NSString* mediaId = [arguments objectAtIndex:1];
+    NSString* resourcePath = [arguments objectAtIndex:2];
+    
+    CDVPluginResult* result;
+    CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId: mediaId];
+    
+    if (audioFile == nil) {
+        NSString* errorMessage = [NSString stringWithFormat:@"Failed to initialize Media file with path %@", resourcePath];
+        NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,[self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMessage]];
+        [super writeJavascript:jsString];
+    } else {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [super writeJavascript:[result toSuccessCallbackString:callbackId]];
+    }
+}
+
+- (void) setVolume:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0]; 
+    #pragma unused(callbackId)
+	NSString* mediaId = [arguments objectAtIndex:1];
+    NSNumber* volume = [arguments objectAtIndex:2 withDefault:[NSNumber numberWithFloat:1.0]];
+    
+    CDVAudioFile* audioFile;
+	if ([self soundCache] == nil) {
+		[self setSoundCache: [NSMutableDictionary dictionaryWithCapacity:1]];
+	} else {
+		audioFile = [[self soundCache] objectForKey: mediaId];
+        audioFile.volume = volume;
+        [[self soundCache] setObject:audioFile forKey:mediaId];
+	}
+    
+    // don't care for any callbacks
+}
+
+- (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+	NSString* callbackId = [arguments objectAtIndex:0];
+    #pragma unused(callbackId)
+	NSString* mediaId = [arguments objectAtIndex:1];
+    NSString* resourcePath = [arguments objectAtIndex:2];
+    
 	BOOL bError = NO;
 	NSString* jsString = nil;
 	
-	CDVAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:2] withId: mediaId];
+	CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId: mediaId];
 	
 	if (audioFile != nil) {
 		if (audioFile.player == nil){
@@ -163,7 +209,14 @@
             // get the audioSession and set the category to allow Playing when device is locked or ring/silent switch engaged
             if ([self hasAudioSession]) {
                 NSError* err = nil;
-                [self.avSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+                NSNumber* playAudioWhenScreenIsLocked = [options objectForKey:@"playAudioWhenScreenIsLocked"];
+                BOOL bPlayAudioWhenScreenIsLocked = YES;
+                if (playAudioWhenScreenIsLocked != nil) { 
+                    bPlayAudioWhenScreenIsLocked = [playAudioWhenScreenIsLocked boolValue];
+                }
+                
+                NSString* sessionCategory = bPlayAudioWhenScreenIsLocked? AVAudioSessionCategoryPlayback : AVAudioSessionCategorySoloAmbient;
+                [self.avSession setCategory:sessionCategory error:&err];
                 if (![self.avSession  setActive: YES error: &err]){
                     // other audio with higher priority that does not allow mixing could cause this to fail
                     NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
@@ -178,14 +231,17 @@
                     numberOfLoops = [loopOption intValue] - 1;
                 }
                 audioFile.player.numberOfLoops = numberOfLoops;
-                
                 if(audioFile.player.isPlaying){
                     [audioFile.player stop];
                     audioFile.player.currentTime = 0;
                 }
+                if (audioFile.volume != nil) {
+                    audioFile.player.volume = [audioFile.volume floatValue];
+                }
+                
                 [audioFile.player play];
                 double position = round(audioFile.player.duration * 1000)/1000;
-                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@(\"%@\",%d,%d);", @"Cordova.Media.onStatus", mediaId, MEDIA_DURATION, position, @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
+                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_DURATION, position, @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
                 [super writeJavascript:jsString];
                 
             }
@@ -204,7 +260,8 @@
 				[audioFile.player play];
 			} */
 			// error creating the session or player
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];
+			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR,  MEDIA_ERR_NONE_SUPPORTED];
+            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];
 			[super writeJavascript:jsString];
 		}
 	}
@@ -223,16 +280,26 @@
     } else {
         NSURLRequest *request = [NSURLRequest requestWithURL:resourceURL];
         NSURLResponse *response = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
+        NSData* data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&playerError];
         if (playerError) {
             NSLog(@"Unable to download audio from: %@", [resourceURL absoluteString]);
         } else {
-            audioFile.player = [[[ CDVAudioPlayer alloc ] initWithData:data error:&playerError] autorelease];
+            
+            // bug in AVAudioPlayer when playing downloaded data in NSData - we have to download the file and play from disk
+            CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+            CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+            NSString* filePath = [NSString stringWithFormat:@"%@/%@.mp3", NSTemporaryDirectory(), uuidString];
+            CFRelease(uuidString);
+            CFRelease(uuidRef);
+            
+            [data writeToFile:filePath atomically:YES];            
+            NSURL* fileURL = [NSURL fileURLWithPath:filePath];
+            audioFile.player = [[[ CDVAudioPlayer alloc ] initWithContentsOfURL:fileURL error:&playerError] autorelease];
         }
     }
     
     if (playerError != nil) {
-        NSLog(@"Failed to initialize AVAudioPlayer: %@\n", [playerError localizedFailureReason]);
+        NSLog(@"Failed to initialize AVAudioPlayer: %@\n", [playerError localizedDescription]);
         audioFile.player = nil;
         if (self.avSession) {
             [self.avSession setActive:NO error:nil];
@@ -249,8 +316,11 @@
 // if no errors sets status to starting and calls successCallback with no parameters
 // Calls the success call back immediately as there is no mechanism to determine that the file is loaded
 // other than the return from prepareToPlay.  Thus, IMHO not really worth calling
+
 - (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+    NSLog(@"prepare is DEPRECATED! Recoding will be prepared when startPlayingAudio is called");
+    
 	NSString* callbackId = [arguments objectAtIndex:0]; 
     
     NSString* mediaId = [arguments objectAtIndex:1];
@@ -279,10 +349,10 @@
         
         // NSLog(@"Prepared audio sample '%@' for playback.", audioFile.resourcePath);
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);\n%@", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, state, [result toSuccessCallbackString:callbackId]];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);\n%@", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, state, [result toSuccessCallbackString:callbackId]];
         
 	} else {
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];   
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_NONE_SUPPORTED message: nil]];   
     }
     if (jsString) {
         [super writeJavascript:jsString];
@@ -290,9 +360,14 @@
 	
 }
 
-
-
+// DEPRECATED
 - (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"stop is DEPRECATED!  Use stopPlayingAudio.");
+    [self stopPlayingAudio:arguments withDict:options];
+}
+
+- (void) stopPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 #pragma unused(callbackId)
@@ -304,14 +379,20 @@
         NSLog(@"Stopped playing audio sample '%@'", audioFile.resourcePath);
         [audioFile.player stop];
         audioFile.player.currentTime = 0;
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
 	}  // ignore if no media playing 
     if (jsString){
         [super writeJavascript: jsString];
     }
 }
-
+// DEPRECATED
 - (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"pause is DEPRECATED!  Use pausePlayingAudio.");
+    [self pausePlayingAudio:arguments withDict:options];
+}
+
+- (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 #pragma unused(callbackId)
@@ -322,7 +403,7 @@
 	if (audioFile != nil && audioFile.player != nil) {
             NSLog(@"Paused playing audio sample '%@'", audioFile.resourcePath);
 			[audioFile.player pause];
-            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_PAUSED];
+            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_PAUSED];
 	} 
     // ignore if no media playing
       
@@ -333,7 +414,7 @@
 
 
 }
-- (void) seekTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) seekToAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	//args:
 	// 0 = callbackId
@@ -346,12 +427,12 @@
 	NSString* mediaId = [arguments objectAtIndex:1];
 
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
-    double position = [[arguments objectAtIndex:3 ] doubleValue];
+    double position = [[arguments objectAtIndex:2 ] doubleValue];
 	
     if (audioFile != nil && audioFile.player != nil && position){
         double posInSeconds = position/1000;
         audioFile.player.currentTime = posInSeconds;
-        NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%f);", @"Cordova.Media.onStatus", mediaId, MEDIA_POSITION, posInSeconds];
+        NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%f);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, posInSeconds];
 
         [super writeJavascript: jsString];
         
@@ -385,8 +466,14 @@
 		}
 	}
 }
-
+// DEPRECATED
 - (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"getCurrentPosition is DEPRECATED!  Use getCurrentPositionAudio.");
+    [self getCurrentPositionAudio:arguments withDict:options];
+}
+
+- (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	//args:
 	// 0 = callbackId
@@ -402,14 +489,20 @@
             position = round(audioFile.player.currentTime *1000)/1000;
     }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: position];
-	NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@", @"Cordova.Media.onStatus", mediaId, MEDIA_POSITION, position, [result toSuccessCallbackString:callbackId]];
+	NSString* jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%.3f);\n%@", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, position, [result toSuccessCallbackString:callbackId]];
     [super writeJavascript:jsString];
     
 	return;
 		
 }
-
+// DEPRECATED
 - (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"startAudioRecord is DEPRECATED!  Use startRecordingAudio.");
+    [self startRecordingAudio:arguments withDict:options];
+}
+
+- (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 #pragma unused(callbackId)
@@ -433,7 +526,8 @@
             if (![self.avSession  setActive: YES error: &error]){
                 // other audio with higher priority that does not allow mixing could cause this to fail
                 errorMsg = [NSString stringWithFormat: @"Unable to record audio: %@", [error localizedFailureReason]];
-                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg] ];
+                //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
+                jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg] ];
                 [super writeJavascript:jsString];
                 return;
             }
@@ -448,23 +542,34 @@
             if (self.avSession) {
                 [self.avSession setActive:NO error:nil];
             }
-			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg]];
+			//jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
+			jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: errorMsg]];
 			
 		} else {
 			audioFile.recorder.delegate = self;
 			audioFile.recorder.mediaId = mediaId;
 			[audioFile.recorder record];
 			NSLog(@"Started recording audio sample '%@'", audioFile.resourcePath);
-            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
+            jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
 		}
-	}
+	} else {
+        // file does not exist
+        NSLog(@"Could not start recording audio, file '%@' does not exist.", audioFile.resourcePath);
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_ABORTED message: @"File to record to does not exist"]];
+    }
     if (jsString) {
        [super writeJavascript:jsString]; 
     }
 	return;
 }
-
+// DEPRECATED
 - (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSLog(@"stopAudioRecord is DEPRECATED!  Use stopRecordingAudio.");
+    [self stopRecordingAudio:arguments withDict:options];
+}
+
+- (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
 #pragma unused(callbackId)
@@ -496,9 +601,10 @@
 		NSLog(@"Finished recording audio sample '%@'", audioFile.resourcePath);
     }
     if (flag){
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
     } else {
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
+        //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatuss", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
     }
     if (self.avSession) {
         [self.avSession setActive:NO error:nil];
@@ -518,10 +624,11 @@
 		NSLog(@"Finished playing audio sample '%@'", audioFile.resourcePath);
     }
     if (flag){
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"Cordova.Media.onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
         
     } else {
-        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"Cordova.Media.onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
+        //jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
+        jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode: MEDIA_ERR_DECODE message:nil]];
         
     }
     if (self.avSession) {
@@ -553,10 +660,8 @@
 
 @synthesize resourcePath;
 @synthesize resourceURL;
-@synthesize player;
-#ifdef __IPHONE_3_0
+@synthesize player, volume;
 @synthesize recorder;
-#endif
 
 - (void) dealloc
 {
@@ -564,6 +669,7 @@
     self.resourceURL = nil;
     self.player = nil;
     self.recorder = nil;
+    self.volume = nil;
     
 	[super dealloc];
 }

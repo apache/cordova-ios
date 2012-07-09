@@ -29,6 +29,17 @@
 
 @synthesize connectionType, internetReach;
 
+- (void) getConnectionInfo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+	NSString* callbackId = [arguments objectAtIndex:0];
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
+    jsString = [result toSuccessCallbackString:callbackId];
+    [self writeJavascript:jsString];
+}
+
 - (NSString*) w3cConnectionTypeFor:(CDVReachability*)reachability
 {
 	NetworkStatus networkStatus = [reachability currentReachabilityStatus];
@@ -89,9 +100,9 @@
 	NetworkStatus status = [self.internetReach currentReachabilityStatus];
 	BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
 	if (online) {
-		[super writeJavascript:@"Cordova.fireDocumentEvent('online');"];
+		[super writeJavascript:@"cordova.fireDocumentEvent('online');"];
 	} else {
-		[super writeJavascript:@"Cordova.fireDocumentEvent('offline');"];
+		[super writeJavascript:@"cordova.fireDocumentEvent('offline');"];
 	}
 }
 

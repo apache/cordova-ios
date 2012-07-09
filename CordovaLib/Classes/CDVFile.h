@@ -74,7 +74,11 @@ typedef int CDVFileSystemType;
 - (void) getFileMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) readEntries:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+// DEPRECATED 
+- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED 
+
+- (void) readAsText:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 -(NSString*) getMimeTypeFromPath: (NSString*) fullPath;
 - (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
@@ -84,7 +88,10 @@ typedef int CDVFileSystemType;
 //- (void) deleteDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 //- (void) deleteFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+// DEPRECATED 
+- (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED 
+- (void) truncate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 
 

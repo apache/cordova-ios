@@ -30,43 +30,62 @@ enum CDVHeadingStatus {
 };
 typedef NSUInteger CDVHeadingStatus;
 
+enum CDVLocationStatus {
+    PERMISSIONDENIED = 1,
+    POSITIONUNAVAILABLE,
+    TIMEOUT
+};
+typedef NSUInteger CDVLocationStatus;
+
 // simple object to keep track of heading information
 @interface CDVHeadingData : NSObject {
-    CDVHeadingStatus     headingStatus;
-    BOOL              headingRepeats;
-    CLHeading*        headingInfo;
-    NSMutableArray*   headingCallbacks;
-    NSString*         headingFilter;
-    
 }
 
 @property (nonatomic, assign) CDVHeadingStatus headingStatus;
-@property (nonatomic, assign) BOOL headingRepeats;
 @property (nonatomic, retain) CLHeading* headingInfo;
 @property (nonatomic, retain) NSMutableArray* headingCallbacks;
-@property (nonatomic, retain) NSString* headingFilter;
+@property (nonatomic, copy) NSString* headingFilter;
+@property (nonatomic, retain) NSDate* headingTimestamp;
+@property (assign) NSInteger timeout;
+
+@end
+
+// simple ojbect to keep track of location information
+@interface CDVLocationData : NSObject {
+    CDVLocationStatus locationStatus;
+    NSMutableArray*  locationCallbacks;
+    NSMutableDictionary*  watchCallbacks;
+    CLLocation*      locationInfo;
+}
+
+@property (nonatomic, assign) CDVLocationStatus locationStatus;
+@property (nonatomic, retain) CLLocation* locationInfo;
+@property (nonatomic, retain) NSMutableArray* locationCallbacks;
+@property (nonatomic, retain) NSMutableDictionary* watchCallbacks;
 
 @end
 
 @interface CDVLocation : CDVPlugin <CLLocationManagerDelegate> {
-
-    @private BOOL              __locationStarted;
+    @private BOOL      __locationStarted;
+    @private BOOL      __highAccuracyEnabled;
     CDVHeadingData*    headingData;
+    CDVLocationData*   locationData;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, retain) CDVHeadingData* headingData;
+@property (retain) CDVHeadingData* headingData;
+@property (nonatomic, retain) CDVLocationData* locationData;
 
 
 - (BOOL) hasHeadingSupport;
+- (void) getLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) addWatch:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) clearWatch:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)returnLocationInfo: (NSString*) callbackId andKeepCallback:(BOOL)keepCallback;
+- (void) returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message;
+- (void) startLocation: (BOOL) enableHighAccuracy;
 
-- (void)startLocation:(NSMutableArray*)arguments
-     withDict:(NSMutableDictionary*)options;
-
-- (void)stopLocation:(NSMutableArray*)arguments
-    withDict:(NSMutableDictionary*)options;
-
-- (void)locationManager:(CLLocationManager *)manager
+- (void) locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation;
 
@@ -75,9 +94,9 @@ typedef NSUInteger CDVHeadingStatus;
 
 - (BOOL) isLocationServicesEnabled;
 
-- (void)getCurrentHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)getHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)returnHeadingInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
-
+- (void)watchHeadingFilter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)stopHeading:(NSMutableArray*)arguments
 		   withDict:(NSMutableDictionary*)options;
 - (void) startHeadingWithFilter: (CLLocationDegrees) filter;
@@ -87,5 +106,4 @@ typedef NSUInteger CDVHeadingStatus;
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager;
 
 @end
-
 

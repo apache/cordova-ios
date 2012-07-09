@@ -56,17 +56,18 @@
 
 @implementation CDVHeadingData
 
-@synthesize headingStatus, headingRepeats, headingInfo, headingCallbacks, headingFilter;
+@synthesize headingStatus, headingInfo, headingCallbacks, headingFilter, headingTimestamp, timeout;
 -(CDVHeadingData*) init
 {
     self = (CDVHeadingData*)[super init];
     if (self) 
 	{
-        self.headingRepeats = NO;
         self.headingStatus = HEADINGSTOPPED;
         self.headingInfo = nil;
         self.headingCallbacks = nil;
         self.headingFilter = nil;
+        self.headingTimestamp = nil;
+        self.timeout = 10;
     }
     return self;
 }
@@ -75,6 +76,31 @@
     self.headingInfo = nil;
     self.headingCallbacks = nil;
     self.headingFilter = nil;
+    self.headingTimestamp = nil;
+    [super dealloc];  
+}
+
+@end
+
+@implementation CDVLocationData
+
+@synthesize locationStatus, locationInfo, locationCallbacks, watchCallbacks;
+-(CDVLocationData*) init
+{
+    self = (CDVLocationData*)[super init];
+    if (self) 
+	{
+        self.locationInfo = nil;
+        self.locationCallbacks = nil;
+        self.watchCallbacks = nil;
+    }
+    return self;
+}
+-(void) dealloc 
+{
+    self.locationInfo = nil;
+    self.locationCallbacks = nil;
+    self.watchCallbacks = nil;
     [super dealloc];  
 }
 
@@ -85,7 +111,7 @@
 
 @implementation CDVLocation
 
-@synthesize locationManager, headingData;
+@synthesize locationManager, headingData, locationData;
 
 - (CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
@@ -95,7 +121,9 @@
         self.locationManager = [[[CLLocationManager alloc] init] autorelease];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
         __locationStarted = NO;
-        self.headingData = nil;        
+        __highAccuracyEnabled = NO;
+        self.headingData = nil;   
+        self.locationData = nil;
     }
     return self;
 }
@@ -146,43 +174,28 @@
 	}
 }
 
-- (void) startLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) startLocation:(BOOL) enableHighAccuracy
 {
     if (![self isLocationServicesEnabled])
 	{
-		BOOL forcePrompt = NO;
-		// if forcePrompt is true iPhone will still show the "Location Services not active." Settings | Cancel prompt.
-		if ([options objectForKey:kPGLocationForcePromptKey]) 
-		{
-			forcePrompt = [[options objectForKey:kPGLocationForcePromptKey] boolValue];
-		}
-        
-		if (!forcePrompt)
-		{
-            NSError* error = [NSError errorWithDomain:kPGLocationErrorDomain code:1 userInfo:
-                              [NSDictionary dictionaryWithObject:@"Location services is not enabled" forKey:NSLocalizedDescriptionKey]];
-            NSLog(@"%@", [error JSONRepresentation]);
-            
-			NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]]; 
-			[super writeJavascript:jsCallback];
-            
-			return;
-		}
+        [self returnLocationError:PERMISSIONDENIED withMessage: @"Location services are not enabled."];
+        return;
     }
     if (![self isAuthorized]) 
     {
-        NSUInteger code = -1;
+        NSString* message = nil;
         BOOL authStatusAvailable = [CLLocationManager respondsToSelector:@selector(authorizationStatus)]; // iOS 4.2+
         if (authStatusAvailable) {
-            code = [CLLocationManager authorizationStatus];
+            NSUInteger code = [CLLocationManager authorizationStatus];
+            if (code == kCLAuthorizationStatusNotDetermined) {
+                // could return POSITION_UNAVAILABLE but need to coordinate with other platforms
+                message = @"User undecided on application's use of location services.";
+            } else if (code == kCLAuthorizationStatusRestricted) {
+                message = @"Application's use of location services is restricted.";
+            }
         }
-        
-        NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
-                          [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
-        NSLog(@"%@", [error JSONRepresentation]);
-
-        NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
-        [super writeJavascript:jsCallback];
+        //PERMISSIONDENIED is only PositionError that makes sense when authorization denied
+        [self returnLocationError:PERMISSIONDENIED withMessage: message];
         
         return;
     }
@@ -193,81 +206,203 @@
     [self.locationManager stopUpdatingLocation];
     [self.locationManager startUpdatingLocation];
     __locationStarted = YES;
-
-    if ([options objectForKey:kPGLocationDistanceFilterKey]) 
-	{
-        CLLocationDistance distanceFilter = [(NSString *)[options objectForKey:kPGLocationDistanceFilterKey] doubleValue];
-        self.locationManager.distanceFilter = distanceFilter;
-    }
-    
-    if ([options objectForKey:kPGLocationDesiredAccuracyKey]) 
-    {
-        int desiredAccuracy_num = [(NSString *)[options objectForKey:kPGLocationDesiredAccuracyKey] integerValue];
-        CLLocationAccuracy desiredAccuracy = kCLLocationAccuracyBest;
-        
-        if (desiredAccuracy_num < 10) {
-            desiredAccuracy = kCLLocationAccuracyBest;
-        }
-        else if (desiredAccuracy_num < 100) {
-            desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
-        }
-        else if (desiredAccuracy_num < 1000) {
-            desiredAccuracy = kCLLocationAccuracyHundredMeters;
-        }
-        else if (desiredAccuracy_num < 3000) {
-            desiredAccuracy = kCLLocationAccuracyKilometer;
-        }
-        else {
-            desiredAccuracy = kCLLocationAccuracyThreeKilometers;
-        }
-        
-        self.locationManager.desiredAccuracy = desiredAccuracy;
+    if (enableHighAccuracy) {
+        __highAccuracyEnabled = YES;
+        // Set to distance filter to "none" - which should be the minimum for best results.
+        self.locationManager.distanceFilter = kCLDistanceFilterNone;
+        // Set desired accuracy to Best.
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    } else {
+        __highAccuracyEnabled = NO;
+        // TODO: Set distance filter to 10 meters? and desired accuracy to nearest ten meters? arbitrary.
+        self.locationManager.distanceFilter = 10;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     }
 }
 
-- (void) stopLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) _stopLocation
 {
     if (__locationStarted)
 	{
 		if (![self isLocationServicesEnabled]) {
 			return;
         }
-    
+        
 		[self.locationManager stopUpdatingLocation];
 		__locationStarted = NO;
+        __highAccuracyEnabled = NO;
 	}
 }
 
 - (void) locationManager:(CLLocationManager *)manager
-							didUpdateToLocation:(CLLocation *)newLocation
-							fromLocation:(CLLocation *)oldLocation
+     didUpdateToLocation:(CLLocation *)newLocation
+            fromLocation:(CLLocation *)oldLocation
 {
-	
-    NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setLocation(%@);", [newLocation JSONRepresentation]];
-    [super writeJavascript:jsCallback];
+	CDVLocationData* cData = self.locationData;
+    cData.locationInfo = newLocation;
+    if (self.locationData.locationCallbacks.count > 0) {
+        for (NSString *callbackId in self.locationData.locationCallbacks) {
+            [self returnLocationInfo:callbackId andKeepCallback:NO];
+        }
+        [self.locationData.locationCallbacks removeAllObjects];
+    }
+    if (self.locationData.watchCallbacks.count > 0) {
+        for (NSString *timerId in self.locationData.watchCallbacks) {
+            [self returnLocationInfo:[self.locationData.watchCallbacks objectForKey: timerId ] andKeepCallback:YES];
+        }
+    } else {
+        // No callbacks waiting on us anymore, turn off listening.
+        [self _stopLocation];
+    }
+}
+
+- (void) getLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    NSUInteger argc = [arguments count];
+    NSString* callbackId = (argc > 0)? [arguments objectAtIndex:0] : @"INVALID";
+    BOOL enableHighAccuracy = [[arguments objectAtIndex:1] boolValue];
+
+    if ([self isLocationServicesEnabled] == NO)
+    {
+        NSMutableDictionary* posError = [NSMutableDictionary dictionaryWithCapacity:2];
+        [posError setObject: [NSNumber numberWithInt: PERMISSIONDENIED] forKey:@"code"];
+        [posError setObject: @"Location services are disabled." forKey: @"message"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    } else {
+        if (!self.locationData) {
+            self.locationData = [[[CDVLocationData alloc] init] autorelease];
+        }
+        CDVLocationData* lData = self.locationData;
+        if (!lData.locationCallbacks) {
+            lData.locationCallbacks = [NSMutableArray arrayWithCapacity:1];
+        }
+        
+        if (!__locationStarted || __highAccuracyEnabled != enableHighAccuracy) {
+            // add the callbackId into the array so we can call back when get data
+            [lData.locationCallbacks addObject:callbackId];
+            // Tell the location manager to start notifying us of heading updates
+            [self startLocation: enableHighAccuracy];
+        }
+        else {
+            [self returnLocationInfo: callbackId andKeepCallback:NO]; 
+        }
+    }
+}
+- (void) addWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* timerId = [arguments objectAtIndex:1];
+    BOOL enableHighAccuracy = [[arguments objectAtIndex:2] boolValue];
+    
+    if (!self.locationData) {
+        self.locationData = [[[CDVLocationData alloc] init] autorelease];
+    }
+    CDVLocationData* lData = self.locationData;
+    
+    if (!lData.watchCallbacks) {
+        lData.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
+    }
+    
+    // add the callbackId into the dictionary so we can call back whenever get data
+    [lData.watchCallbacks setObject:callbackId forKey:timerId];
+    
+    if ([self isLocationServicesEnabled] == NO)
+    {
+        NSMutableDictionary* posError = [NSMutableDictionary dictionaryWithCapacity:2];
+        [posError setObject: [NSNumber numberWithInt: PERMISSIONDENIED] forKey:@"code"];
+        [posError setObject: @"Location services are disabled." forKey: @"message"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    } else {
+        if (!__locationStarted || __highAccuracyEnabled != enableHighAccuracy) {
+            // Tell the location manager to start notifying us of location updates
+            [self startLocation: enableHighAccuracy];
+        }
+    }
+}
+- (void) clearWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    //NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* timerId = [arguments objectAtIndex:1];
+    if (self.locationData && self.locationData.watchCallbacks && [self.locationData.watchCallbacks objectForKey:timerId]) {
+        [self.locationData.watchCallbacks removeObjectForKey:timerId];
+    }
+}
+
+- (void) stopLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+{
+    [self _stopLocation];
+}
+
+- (void)returnLocationInfo: (NSString*) callbackId andKeepCallback:(BOOL)keepCallback
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+    CDVLocationData* lData = self.locationData;
+    
+    if (lData && !lData.locationInfo) {
+        // return error
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:POSITIONUNAVAILABLE];
+        jsString = [result toErrorCallbackString:callbackId];
+    } else if (lData && lData.locationInfo) {
+        CLLocation* lInfo = lData.locationInfo;
+        NSMutableDictionary* returnInfo = [NSMutableDictionary dictionaryWithCapacity:8];
+        NSNumber* timestamp = [NSNumber numberWithDouble:([lInfo.timestamp timeIntervalSince1970]*1000)];
+        [returnInfo setObject:timestamp forKey:@"timestamp"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.speed] forKey:@"velocity"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.verticalAccuracy] forKey:@"altitudeAccuracy"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.horizontalAccuracy] forKey:@"accuracy"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.course] forKey:@"heading"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.altitude] forKey:@"altitude"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.coordinate.latitude] forKey:@"latitude"];
+        [returnInfo setObject:[NSNumber numberWithDouble: lInfo.coordinate.longitude] forKey:@"longitude"];
+        
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: returnInfo];
+        [result setKeepCallbackAsBool:keepCallback];
+        
+        jsString = [result toSuccessCallbackString:callbackId];
+    }
+    if (jsString) {
+        [super writeJavascript:jsString];
+    }
+}
+- (void)returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message
+{
+    NSMutableDictionary* posError = [NSMutableDictionary dictionaryWithCapacity:2];
+    [posError setObject: [NSNumber numberWithInt: errorCode] forKey:@"code"];
+    [posError setObject: message ? message : @"" forKey: @"message"];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
+    for (NSString *callbackId in self.locationData.locationCallbacks) {
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    }
+    [self.locationData.locationCallbacks removeAllObjects];
+    for (NSString *callbackId in self.locationData.watchCallbacks) {
+        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+    }
 }
 // called to get the current heading
 // Will call location manager to startUpdatingHeading if necessary
 
-- (void)getCurrentHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)getHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
     NSString* callbackId = [arguments objectAtIndex:0];
-    NSNumber* repeats = [options valueForKey:@"repeats"];  // indicates this call will be repeated at regular intervals
-    
+    NSNumber* filter = [options valueForKey:@"filter"];
+    if (filter) {
+        [self watchHeadingFilter: arguments withDict: options];
+        return;
+    }
     if ([self hasHeadingSupport] == NO) 
     {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:20];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
-       // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
+        // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
             self.headingData = [[[CDVHeadingData alloc] init] autorelease];
         }
         CDVHeadingData* hData = self.headingData;
-        
-        if (repeats != nil) {
-            hData.headingRepeats = YES;
-        }
+
         if (!hData.headingCallbacks) {
             hData.headingCallbacks = [NSMutableArray arrayWithCapacity:1];
         }
@@ -282,8 +417,8 @@
             [self returnHeadingInfo: callbackId keepCallback:NO]; 
         }
     }
-  
-          
+    
+    
 } 
 // called to request heading updates when heading changes by a certain amount (filter)
 - (void)watchHeadingFilter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -292,7 +427,7 @@
     NSNumber* filter = [options valueForKey:@"filter"];
     CDVHeadingData* hData = self.headingData;
     if ([self hasHeadingSupport] == NO) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:20];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {
@@ -323,9 +458,11 @@
     NSString* jsString = nil;
     CDVHeadingData* hData = self.headingData;
     
+    self.headingData.headingTimestamp = [NSDate date];
+    
     if (hData && hData.headingStatus == HEADINGERROR) {
         // return error
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:0];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
         jsString = [result toErrorCallbackString:callbackId];
     } else if (hData && hData.headingStatus == HEADINGRUNNING && hData.headingInfo) {
         // if there is heading info, return it
@@ -340,7 +477,7 @@
         
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: returnInfo];
         [result setKeepCallbackAsBool:bRetain];
-
+        
         jsString = [result toSuccessCallbackString:callbackId];
     }
     if (jsString) {
@@ -352,15 +489,16 @@
 
 - (void) stopHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    CDVHeadingData* hData = self.headingData;
-    if (hData && hData.headingStatus != HEADINGSTOPPED)
+    //CDVHeadingData* hData = self.headingData;
+    if (self.headingData && self.headingData.headingStatus != HEADINGSTOPPED)
 	{
-		if (hData.headingFilter) {
+		if (self.headingData.headingFilter) {
             // callback one last time to clear callback
-            [self returnHeadingInfo:hData.headingFilter keepCallback:NO];
-            hData.headingFilter = nil;
+            [self returnHeadingInfo: self.headingData.headingFilter keepCallback:NO];
+            self.headingData.headingFilter = nil;
         }
-        [self.locationManager stopUpdatingHeading];		
+        [self.locationManager stopUpdatingHeading];	
+        NSLog(@"heading STOPPED");
         self.headingData = nil;
 	}
 }	
@@ -372,9 +510,9 @@
     if ([self.locationManager respondsToSelector: @selector(headingOrientation)]) {
         UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
         if (currentOrientation != UIDeviceOrientationUnknown) {
-            CDVViewController* pgViewController = (CDVViewController*)self.viewController;
+            CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
             
-            if ([pgViewController.supportedOrientations containsObject:
+            if ([cdvViewController.supportedOrientations containsObject:
                  [NSNumber numberWithInt:currentOrientation]]) {
                 
                 self.locationManager.headingOrientation = (CLDeviceOrientation)currentOrientation;
@@ -392,11 +530,23 @@
 }
 
 - (void) locationManager:(CLLocationManager *)manager
-						didUpdateHeading:(CLHeading *)heading
+        didUpdateHeading:(CLHeading *)heading
 {
     CDVHeadingData* hData = self.headingData;
+    
+    // normally we would clear the delegate to stop getting these notifications, but
+    // we are sharing a CLLocationManager to get location data as well, so we do a nil check here
+    // ideally heading and location should use their own CLLocationManager instances
+    if (hData == nil) {
+        return;
+    }
+    
     // save the data for next call into getHeadingData
     hData.headingInfo = heading;
+    BOOL bTimeout = NO;
+    if (!hData.headingFilter && hData.headingTimestamp) {
+        bTimeout = fabs([hData.headingTimestamp timeIntervalSinceNow ]) > hData.timeout;
+    }
     
     if (hData.headingStatus == HEADINGSTARTING) {
         hData.headingStatus = HEADINGRUNNING; // so returnHeading info will work
@@ -405,20 +555,18 @@
             [self returnHeadingInfo:callbackId keepCallback:NO];
         }
         [hData.headingCallbacks removeAllObjects];
-        if (!hData.headingRepeats && !hData.headingFilter) {
-            [self stopHeading:nil withDict:nil];
-        }
     }
     if (hData.headingFilter) {
         [self returnHeadingInfo: hData.headingFilter keepCallback:YES];
+    } else if (bTimeout) {
+        [self stopHeading:nil withDict:nil];
     }
     hData.headingStatus = HEADINGRUNNING;  // to clear any error
-
+    
 }
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     NSLog(@"locationManager::didFailWithError %@", [error localizedFailureReason]);
-	NSString* jsCallback = @"";
 	
     // Compass Error
 	if ([error code] == kCLErrorHeadingFailure)
@@ -428,13 +576,13 @@
             if (hData.headingStatus == HEADINGSTARTING) {
                 // heading error during startup - report error
                 for (NSString* callbackId in hData.headingCallbacks) {
-                    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:0];
+                    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
                     [super writeJavascript: [result toErrorCallbackString:callbackId]];
                 }
                 [hData.headingCallbacks removeAllObjects];
             } // else for frequency watches next call to getCurrentHeading will report error
-            else if (hData.headingFilter) {
-                CDVPluginResult* resultFilter = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:0];
+            if (hData.headingFilter) {
+                CDVPluginResult* resultFilter = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
                 [super writeJavascript: [resultFilter toErrorCallbackString:hData.headingFilter]];
             }
             hData.headingStatus = HEADINGERROR;
@@ -443,22 +591,20 @@
     // Location Error
 	else 
 	{
-		/*
-			W3C PositionError
-			 PositionError.UNKNOWN_ERROR = 0;  // equivalent to kCLErrorLocationUnknown=0
-			 PositionError.PERMISSION_DENIED = 1; // equivalent to kCLErrorDenied=1
-			 PositionError.POSITION_UNAVAILABLE = 2; // equivalent to kCLErrorNetwork=2
-		 
-			(any other errors are translated to PositionError.UNKNOWN_ERROR)
-		 */
-		if (error.code > kCLErrorNetwork) {
-            error = [NSError errorWithDomain:error.domain code:kCLErrorLocationUnknown userInfo:error.userInfo];
-		}
-		
-		jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
+        CDVLocationData* lData = self.locationData;
+        if (lData && __locationStarted) {
+            // TODO: probably have to once over the various error codes and return one of:
+            // PositionError.PERMISSION_DENIED = 1;
+            // PositionError.POSITION_UNAVAILABLE = 2;
+            // PositionError.TIMEOUT = 3;
+            NSUInteger positionError = POSITIONUNAVAILABLE;
+            if (error.code == kCLErrorDenied) {
+                positionError = PERMISSIONDENIED;
+            }
+            [self returnLocationError:positionError withMessage: [error localizedDescription]];
+
+        }
 	}
-	
-    [super writeJavascript:jsCallback];
     
 	[self.locationManager stopUpdatingLocation];
     __locationStarted = NO;
@@ -483,8 +629,8 @@
 {
 	return [NSString stringWithFormat:
             @"{ timestamp: %.00f, \
-                coords: { latitude: %f, longitude: %f, altitude: %.02f, heading: %.02f, speed: %.02f, accuracy: %.02f, altitudeAccuracy: %.02f } \
-              }",
+            coords: { latitude: %f, longitude: %f, altitude: %.02f, heading: %.02f, speed: %.02f, accuracy: %.02f, altitudeAccuracy: %.02f } \
+            }",
             [self.timestamp timeIntervalSince1970] * 1000.0,
             self.coordinate.latitude,
             self.coordinate.longitude,

@@ -17,20 +17,50 @@
  under the License.
  */
 
-#import "CDVFileTransfer.h"
-#import "CDVFile.h"
-
+#import "CDV.h"
 
 @implementation CDVFileTransfer
 
+- (NSString*) escapePathComponentForUrlString:(NSString*)urlString
+{
+    // separate the scheme and location components
+    NSArray* schemeAndLocationComponents = [urlString componentsSeparatedByString:@"://"];
+    if ([schemeAndLocationComponents count] < 2) {
+        return urlString;
+    }
+    
+    // separate the domain and path components
+    NSArray* pathComponents = [[schemeAndLocationComponents lastObject] componentsSeparatedByString:@"/"];
+    if ([pathComponents count] < 2) {
+        return urlString;
+    }
+    
+    NSString* pathComponent = [pathComponents lastObject];
+    NSRange rangeOfSubstring = [urlString rangeOfString:pathComponent];
+    urlString = [urlString substringToIndex:rangeOfSubstring.location];
+    
+    pathComponent = [pathComponent stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    return [urlString stringByAppendingString:pathComponent];
+}
+
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* fileKey = (NSString*)[options objectForKey:@"fileKey"];
-    NSString* fileName = (NSString*)[options objectForKey:@"fileName"];
-    NSString* mimeType = (NSString*)[options objectForKey:@"mimeType"];
-    NSMutableDictionary* params = [NSMutableDictionary dictionaryWithDictionary:(NSDictionary*)[options objectForKey:@"params"]];
-    NSString* filePath = (NSString*)[options objectForKey:@"filePath"];
-    NSString* server = (NSString*)[options objectForKey:@"server"];
+    
+    // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
+    // however, params is a JavaScript object and during marshalling is put into the options dict, 
+    // thus debug and chunkedMode are the 6th and 7th arguments
+    
+    NSString* filePath = (NSString*)[arguments objectAtIndex:1];
+    NSString* server = (NSString*)[arguments objectAtIndex:2];
+    NSString* fileKey = (NSString*)[arguments objectAtIndex:3];
+    NSString* fileName = [arguments objectAtIndex:4 withDefault:@"no-filename"];
+    NSString* mimeType = [arguments objectAtIndex:5 withDefault:nil];
+//  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
+//  NSString* chunkedMode = (NSString*)[arguments objectAtIndex:7]; // currently unused
+    
+    NSMutableDictionary* params = options;
+    
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
@@ -44,15 +74,15 @@
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:server];
+    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:server]];
     
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
-        NSLog(@"File Transfer Error: Invalid server URL");
+        NSLog(@"File Transfer Error: Invalid server URL %@", server);
     } else if(![file isFileURL]) {
         errorCode = FILE_NOT_FOUND_ERR;
-        NSLog(@"File Transfer Error: Invalid file path or URL");
+        NSLog(@"File Transfer Error: Invalid file path or URL %@", filePath);
     } else {
         // check that file is valid
         NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -66,16 +96,14 @@
             
             if(!fileData) {
                 errorCode =  FILE_NOT_FOUND_ERR;
-                NSLog(@"File Transfer Error: Could not read file data");
+                NSLog(@"File Transfer Error: Could not read file data %@", filePath);
             }
         }
         [fileMgr release];
     }
     
     if(errorCode > 0) {
-        //result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
-        
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:[NSString stringWithFormat:@"%d", errorCode] AndSource:filePath AndTarget:server]];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:filePath AndTarget:server]];
         
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
         return;
@@ -98,16 +126,36 @@
     //Content-Type: multipart/form-data; boundary=*****org.apache.cordova.formBoundary
 	[req setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 	NSString* userAgent = [[self.webView request] valueForHTTPHeaderField:@"User-agent"];
-	if(userAgent) {
+	
+    if(userAgent) {
 		[req setValue: userAgent forHTTPHeaderField:@"User-Agent"];
 	}
-
+	
+    NSMutableDictionary* headers = [params objectForKey:@"headers"];
+    NSEnumerator *enumerator = [headers keyEnumerator];
+	id val;
+   	NSString *nkey;
+    
+	while (nkey = [enumerator nextObject]) {
+		val = [headers objectForKey:nkey];
+		if(!val || val == [NSNull null]) {
+			continue;	
+		}
+		// if it responds to stringValue selector (eg NSNumber) get the NSString
+		if ([val respondsToSelector:@selector(stringValue)]) {
+			val = [val stringValue];
+		}
+		// finally, check whether it is a NSString (for dataUsingEncoding selector below)
+		if (![val isKindOfClass:[NSString class]]) {
+			continue;
+		}
+        
+        [req setValue:val forHTTPHeaderField:nkey];	
+    }
     
 	NSMutableData *postBody = [NSMutableData data];
-	
-	NSEnumerator *enumerator = [params keyEnumerator];
+	enumerator = [params keyEnumerator];
 	id key;
-	id val;
 	
 	while ((key = [enumerator nextObject])) {
 		val = [params objectForKey:key];
@@ -131,8 +179,12 @@
     
 	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileKey, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
-    NSLog(@"fileData length: %d", [fileData length]);
+    if (mimeType != nil) {
+        [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    [postBody appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n\r\n", [fileData length]] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    DLog(@"fileData length: %d", [fileData length]);
 	[postBody appendData:fileData];
 	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -142,6 +194,7 @@
 	
 	CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
+    delegate.direction = CDV_TRANSFER_UPLOAD;
     delegate.callbackId = callbackId;
     delegate.source = server;
     delegate.target = filePath;
@@ -151,85 +204,72 @@
 }
 
 - (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"File Transfer downloading file...");
-    
-    [self performSelectorInBackground:@selector(downloadFile:) withObject:arguments];
-}
-
--(void) downloadFile:(NSMutableArray*)arguments {
+    DLog(@"File Transfer downloading file...");
     NSString * callbackId = [arguments objectAtIndex:0];
     NSString * sourceUrl = [arguments objectAtIndex:1];
     NSString * filePath = [arguments objectAtIndex:2];
+    CDVPluginResult *result = nil;
+    CDVFileTransferError errorCode = 0;
+
+    NSURL* file;
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSData* data = [NSData dataWithContentsOfURL: [NSURL URLWithString:sourceUrl] ];
-    NSArray * results = nil;
-    
-    NSLog(@"Write file %@", filePath);
-    NSError *error=[[[NSError alloc]init] autorelease];
-    
-    @try {
-        NSString * parentPath = [ filePath stringByDeletingLastPathComponent ];
-        
-        // check if the path exists => create directories if needed
-        if(![[NSFileManager defaultManager] fileExistsAtPath:parentPath ]) [[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:nil];
-        
-    	BOOL response = [data writeToFile:filePath options:NSDataWritingFileProtectionNone error:&error];
-        
-        if ( response == NO ) {
-        	// send our results back to the main thread
-            results = [NSArray arrayWithObjects: callbackId, [NSString stringWithFormat:@"%d", INVALID_URL_ERR], sourceUrl, filePath, nil];
-        	[self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
-    	} else {
-        	// jump back to main thread
-            results = [NSArray arrayWithObjects: callbackId, filePath, nil];
-        	[self performSelectorOnMainThread:@selector(downloadSuccess:) withObject:results waitUntilDone:YES];
-    	}
-    }
-    @catch (id exception) {
-        // jump back to main thread
-        results = [NSArray arrayWithObjects: callbackId, [NSString stringWithFormat:@"%d", FILE_NOT_FOUND_ERR], sourceUrl, filePath, nil];
-        [self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
+    if ([filePath hasPrefix:@"/"]) {
+        file = [NSURL fileURLWithPath:filePath];
+    } else {
+        file = [NSURL URLWithString:filePath];
     }
     
-    [pool drain];
+    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:sourceUrl]];
+    
+    if (!url) {
+        errorCode = INVALID_URL_ERR;
+        NSLog(@"File Transfer Error: Invalid server URL %@", sourceUrl);
+    } else if(![file isFileURL]) {
+        errorCode = FILE_NOT_FOUND_ERR;
+        NSLog(@"File Transfer Error: Invalid file path or URL %@", filePath);
+    }
+    
+    if(errorCode > 0) {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:sourceUrl AndTarget:filePath]];
+        
+        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        return;
+    }
+    
+    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
+
+    CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
+	delegate.command = self;
+    delegate.direction = CDV_TRANSFER_DOWNLOAD;
+    delegate.callbackId = callbackId;
+    delegate.source = sourceUrl;
+    delegate.target = filePath;
+	
+	[NSURLConnection connectionWithRequest:req delegate:delegate];
 }
 
--(void) downloadSuccess:(NSMutableArray *)arguments 
-{
-    NSString * callbackId = [arguments objectAtIndex:0];
-    NSString * filePath = [arguments objectAtIndex:1];
-
-    BOOL bDirRequest = NO;
-
-    NSLog(@"File Transfert Download success");
-    
-    CDVFile * file = [[[CDVFile alloc] init] autorelease];
-    
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: filePath isDirectory: bDirRequest] cast: @"window.localFileSystem._castEntry"];
-    [self writeJavascript: [result toSuccessCallbackString:callbackId]];
-}
-
--(void) downloadFail:(NSMutableArray *)arguments 
-{
-    NSString * callbackId = [arguments objectAtIndex:0];
-    NSString * code = [arguments objectAtIndex:1];
-    NSString * source = [arguments objectAtIndex:2];
-    NSString * target = [arguments objectAtIndex:3];
-
-    NSLog(@"File Transfer Error: %@", source);
-    
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:code AndSource:source AndTarget:target]];
-                                    
-    [self writeJavascript: [pluginResult toErrorCallbackString:callbackId]];
-}
-
--(NSMutableDictionary*) createFileTransferError:(NSString*)code AndSource:(NSString*)source AndTarget:(NSString*)target
+-(NSMutableDictionary*) createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target
 {
     NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:3];
-    [result setObject: code forKey:@"code"];
+    [result setObject: [NSNumber numberWithInt:code] forKey:@"code"];
 	[result setObject: source forKey:@"source"];
 	[result setObject: target forKey:@"target"];
+    NSLog(@"FileTransferError %@", result);
+    
+    return result;
+}
+
+-(NSMutableDictionary*) createFileTransferError:(int)code 
+                                      AndSource:(NSString*)source 
+                                      AndTarget:(NSString*)target 
+                                      AndHttpStatus:(int)httpStatus 
+{
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:4];
+    [result setObject: [NSNumber numberWithInt:code] forKey:@"code"];
+	[result setObject: source forKey:@"source"];
+	[result setObject: target forKey:@"target"];
+	[result setObject: [NSNumber numberWithInt:httpStatus] forKey:@"http_status"];
+    NSLog(@"FileTransferError %@", result);
     
     return result;
 }
@@ -239,32 +279,105 @@
 
 @implementation CDVFileTransferDelegate
 
-@synthesize callbackId, source, target, responseData, command, bytesWritten;
+@synthesize callbackId, source, target, responseData, command, bytesWritten, direction, responseCode;
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection 
 {
-    NSString* response = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-    // create dictionary to return FileUploadResult object
-    NSMutableDictionary* uploadResult = [NSMutableDictionary dictionaryWithCapacity:3];
-    [uploadResult setObject: [response stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
-    [uploadResult setObject:[NSNumber numberWithInt: self.bytesWritten] forKey:@"bytesSent"];
-    [uploadResult setObject:[NSNull null] forKey: @"responseCode"];
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadResult cast: @"navigator.fileTransfer._castUploadResult"];
-    [command writeJavascript:[result toSuccessCallbackString: callbackId]];
-    [response release];
+    NSString* uploadResponse = nil;
+    BOOL downloadResponse;
+    NSMutableDictionary* uploadResult;
+    CDVPluginResult* result;
+    NSError *error;
+    NSString *parentPath;
+    BOOL bDirRequest = NO;
+    BOOL errored = NO;
+    CDVFile * file;
+    
+    NSLog(@"File Transfer Finished with response code %d", self.responseCode);
+        
+    if(self.direction == CDV_TRANSFER_UPLOAD)
+    {
+        if(self.responseCode >= 200 && self.responseCode < 300)
+        {
+            // create dictionary to return FileUploadResult object
+            uploadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+            uploadResult = [NSMutableDictionary dictionaryWithCapacity:3];
+            if (uploadResponse != nil) {
+                [uploadResult setObject: [uploadResponse stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
+            }
+            [uploadResult setObject:[NSNumber numberWithInt: self.bytesWritten] forKey:@"bytesSent"];
+            [uploadResult setObject:[NSNumber numberWithInt:self.responseCode] forKey: @"responseCode"];
+            result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadResult];            
+        } 
+        else 
+        {                  
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus: self.responseCode]];
+            errored = YES;
+        }
+    }
+    if(self.direction == CDV_TRANSFER_DOWNLOAD)
+    {
+        DLog(@"Write file %@", target);
+        error=[[[NSError alloc]init] autorelease];
+
+        if(self.responseCode >= 200 && self.responseCode < 300)
+        {
+            @try {
+                parentPath = [ self.target stringByDeletingLastPathComponent ];
+                
+                // check if the path exists => create directories if needed
+                if(![[NSFileManager defaultManager] fileExistsAtPath:parentPath ]) [[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:nil];
+                
+                downloadResponse = [self.responseData writeToFile:self.target options:NSDataWritingFileProtectionNone error:&error];
+                
+                if ( downloadResponse == NO ) {
+                    // send our results back
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:INVALID_URL_ERR AndSource:source AndTarget:target AndHttpStatus: self.responseCode ]];
+                    errored = YES;
+                } else {
+                    DLog(@"File Transfer Download success");
+                    
+                    file = [[[CDVFile alloc] init] autorelease];
+                    
+                    result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: target isDirectory: bDirRequest]];
+                }
+            }
+            @catch (id exception) {
+                // jump back to main thread
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:source AndTarget:target AndHttpStatus: self.responseCode ]];
+                errored = YES;
+            }
+        } else {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus: self.responseCode]];
+            errored = YES;
+        }
+    }
+    
+    if(!errored) {
+        [self.command writeJavascript:[result toSuccessCallbackString: callbackId]];
+    } else {
+        [self.command writeJavascript:[result toErrorCallbackString: callbackId]];
+    }    
+    [uploadResponse release];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    self.responseCode = [httpResponse statusCode];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error 
 {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError: [NSString stringWithFormat: @"%d", CONNECTION_ERR] AndSource:source AndTarget:target]];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [command createFileTransferError: CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus: self.responseCode]];
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
-    [command writeJavascript:[result toErrorCallbackString: callbackId]];
+    [self.command writeJavascript:[result toErrorCallbackString: callbackId]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    [responseData appendData:data];
+    [self.responseData appendData:data];
 }
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 {
@@ -307,9 +420,12 @@
 
 - (void) dealloc
 {
-    [callbackId release];
-	[responseData release];
-	[command release];
+    self.callbackId = nil;
+    self.responseData = nil;
+    self.command = nil;
+    self.source = nil;
+    self.target = nil;
+
     [super dealloc];
 }
 

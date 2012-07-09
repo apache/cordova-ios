@@ -28,3 +28,10 @@
 - (void) enqueue:(id)obj;
 
 @end
+
+
+@interface NSMutableArray (Comparisons)
+
+- (id) objectAtIndex:(NSUInteger)index withDefault:(id)aDefault;
+
+@end

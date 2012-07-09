@@ -33,17 +33,12 @@ typedef enum {
 } CDVCommandStatus;
 	
 @interface CDVPluginResult : NSObject {
-	NSNumber* status;
-	id message;
-	NSNumber* keepCallback;
-	NSString* cast;
-	
+
 }
 
 @property (nonatomic, retain, readonly) NSNumber* status;
 @property (nonatomic, retain, readonly) id message;
 @property (nonatomic, retain)			NSNumber* keepCallback;
-@property (nonatomic, retain, readonly) NSString* cast;
 
 -(CDVPluginResult*) init;
 +(void) releaseStatus;
@@ -53,11 +48,6 @@ typedef enum {
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsInt: (int) theMessage;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDouble: (double) theMessage;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDictionary: (NSDictionary*) theMessage;
-+(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsString: (NSString*) theMessage cast: (NSString*) theCast;
-+(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsArray: (NSArray*) theMessage cast: (NSString*) theCast;
-+(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsInt: (int) theMessage cast: (NSString*) theCast;
-+(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDouble: (double) theMessage cast: (NSString*) theCast;
-+(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDictionary: (NSDictionary*) theMessage cast: (NSString*) theCast;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageToErrorObject: (int) errorCode;
 
 

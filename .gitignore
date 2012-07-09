@@ -16,6 +16,9 @@ xcuserdata
 /Markdown_1.0.1/
 Markdown_*.zip
 example
-
+CordovaLib/javascript/cordova-*.js
 wkhtmltopdf.dmg
 wkhtmltopdf/
+
+CordovaLib/CordovaLibApp/www/cordova.ios.js
+console.log

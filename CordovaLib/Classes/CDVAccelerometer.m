@@ -20,74 +20,95 @@
 
 #import "CDVAccelerometer.h"
 
+@interface CDVAccelerometer () {
+}
+@property (readwrite, assign) BOOL isRunning;
+@end
+
+
 @implementation CDVAccelerometer
 
-// defaults to 100 msec
-#define kAccelerometerInterval      100 
-// max rate of 40 msec
-#define kMinAccelerometerInterval    40  
-// min rate of 1/sec
-#define kMaxAccelerometerInterval   1000
+@synthesize callbackId, isRunning;
 
+// defaults to 10 msec
+#define kAccelerometerInterval      40 
+// g constant: -9.81 m/s^2
+#define kGravitionalConstant        -9.81
 
-
-
-- (void)start:(NSMutableArray*)arguments
-	 withDict:(NSMutableDictionary*)options
+- (CDVAccelerometer*) init
 {
-	
+    self = [super init];
+    if (self)
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+        timestamp = 0;
+        self.callbackId = nil;
+        self.isRunning = NO;
+    }
+    return self;
+}
+
+- (void) dealloc {
+    [self stop:nil withDict:nil];
+    [super dealloc]; // pretty important.
+}
+
+- (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString* cbId = [arguments objectAtIndex:0];
 	NSTimeInterval desiredFrequency_num = kAccelerometerInterval;
-	
-	if ([options objectForKey:@"frequency"]) 
-	{
-		int nDesFreq = [(NSString *)[options objectForKey:@"frequency"] intValue];
-		// Special case : returns 0 if int conversion fails
-		if(nDesFreq == 0)
-		{
-			nDesFreq = desiredFrequency_num;
-		}
-		else if(nDesFreq < kMinAccelerometerInterval) 
-		{
-			nDesFreq = kMinAccelerometerInterval;
-		}
-		else if(nDesFreq > kMaxAccelerometerInterval)
-		{
-			nDesFreq = kMaxAccelerometerInterval;
-		}
-		desiredFrequency_num = nDesFreq;
-	}
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
 	pAccel.updateInterval = desiredFrequency_num / 1000;
-	if(!_bIsRunning)
+    self.callbackId = cbId;
+	if(!self.isRunning)
 	{
 		pAccel.delegate = self;
-		_bIsRunning = YES;
+		self.isRunning = YES;
 	}
 }
 
-
-- (void)stop:(NSMutableArray*)arguments
-	withDict:(NSMutableDictionary*)options
+- (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	UIAccelerometer*  theAccelerometer = [UIAccelerometer sharedAccelerometer];
 	theAccelerometer.delegate = nil;
-	_bIsRunning = NO;
+	self.isRunning = NO;
 }
 
-
 /**
- * Sends Accel Data back to the Device.
+ * Picks up accel updates from device and stores them in this class
  */
 - (void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration 
 {
-	if(_bIsRunning)
+	if(self.isRunning)
 	{
-		NSString * jsCallBack = nil;
-		jsCallBack = [[NSString alloc] initWithFormat:@"navigator.accelerometer._onAccelUpdate(%f,%f,%f);", acceleration.x, acceleration.y, acceleration.z];
-		[self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-		[jsCallBack release];
+        x = acceleration.x;
+        y = acceleration.y;
+        z = acceleration.z;
+        timestamp = ([[NSDate date] timeIntervalSince1970] * 1000);
+        [self returnAccelInfo];
+        
 	}
+}
+
+- (void)returnAccelInfo
+{
+    CDVPluginResult* result = nil;
+    NSString* jsString = nil;
+
+    // Create an acceleration object
+    NSMutableDictionary *accelProps = [NSMutableDictionary dictionaryWithCapacity:4];
+    [accelProps setValue:[NSNumber numberWithDouble:x*kGravitionalConstant] forKey:@"x"];
+    [accelProps setValue:[NSNumber numberWithDouble:y*kGravitionalConstant] forKey:@"y"];
+    [accelProps setValue:[NSNumber numberWithDouble:z*kGravitionalConstant] forKey:@"z"];
+    [accelProps setValue:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
+    [result setKeepCallback:[NSNumber numberWithBool:YES]];
+    jsString = [result toSuccessCallbackString:self.callbackId];
+    [self writeJavascript:jsString]; 
 }
 
 // TODO: Consider using filtering to isolate instantaneous data vs. gravity data -jm
@@ -107,7 +128,4 @@
  
 
  */
-
-
-
 @end

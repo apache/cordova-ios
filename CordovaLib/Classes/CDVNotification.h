@@ -26,15 +26,15 @@
 @interface CDVNotification : CDVPlugin <UIAlertViewDelegate>{
 }
 
-- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options; // confirm is just a variant of alert
+- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end
 
 @interface CDVAlertView : UIAlertView {
-	NSString* callBackId;
 }
-@property(nonatomic, retain) NSString* callbackId;
+@property(nonatomic, copy) NSString* callbackId;
 
 -(void) dealloc;
 

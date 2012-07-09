@@ -1,22 +1,201 @@
-## Release Notes for Cordova (1.5.0rc1)  ##
+<!--
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+-->
+## Release Notes for Cordova ({VERSION})  ##
   
 Cordova is a static library and static framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through an Xcode project template.
-### 1.5.0r (20120302) ###
+
+
+### 1.9.0 (20120629) ###
+
+* Fixes CB-915 - Pause/resume events get fired twice
+* Fixes CB-877 - Opening a .doc file under iOS causes the file system API to break (and any other plugins that may use NSMutableArray pop)
+* Fixes CB-864 - Failure in writing a large file blocks Cordova
+* Fixes CB-907 - Wrong URL encoding when downloading/uploading files from/to URLs with Unicode characters in the path
+* Fixes CB-906 - Hardware mute button doesn't effect Media API playback
+* Fixes CB-879 - Support to set the volume when playing short sounds
+* Enhanced CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS. Supports new iOS 5.1 iCloud Backup attribute (the old way is deprecated, and only for iOS 5.0.1)
+* Fixed CB-748 - refactored-UUID is broken and changes over time (changed according to Apple's guidelines for this)
+* Fixes CB-647 - Prefix/Namespace common native libraries
+* Fixes CB-961 - Can not remove contact property values anymore
+* Fixes CB-977 - MediaFile.getFormatData failing
+* [CB-943] decrease accelerometer interval from 100ms to 40ms
+* [CB-982] add usage help to create script, remove unnecessary parameters from debug project-level script
+* Removing component guide; going into the docs
+* Fixes CB-957 - (iOS) iOS Upgrade Guide Migration
+* Updated CB-957 - Include Xcode 4 requirement
+* Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
+* [CB-914] Added BackupWebStorage setting in cli template
+* Enhanced CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS. Supports new iOS 5.1 iCloud Backup attribute (the old way is deprecated, and only for iOS 5.0.1)
+* Fixed CB-748 - refactored-UUID is broken and changes over time (changed according to Apple's guidelines for this)
+* Fixes CB-647 - Prefix/Namespace common native libraries
+* Fixes CB-942 - iOS failing FileTransfer malformed URL tests
+* Updated CB-957 - Include Xcode 4 requirement
+* Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
+* [CB-765] Header Support iOS FileTransfer upload
+* Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.phonegap.com now
+* [CB-863] Splash screen on iOS not using localized UILaunchImageFile value
+  
+<br />
+
+### 1.8.1 (20120612) ###
+
+* Fixes CB-885 - Crash when sliding the notification tray and/or tel link confirm dialog
+* Fixed CB-506 - images taken via Camera.getPicture do not get deleted
+* Implemented CB-857 - Add deprecation notice if user is running iOS lesser than 4.2
+
+<br />
+
+### 1.8.0 (20120605) ###
+
+* Fixes CB-819 fail callback not invoked
+* [CB-794] Add HTTP status code to FileTransferError object for iOS
+* [CB-359] Updates to adhere to W3C spec for geolocation. Changing actions based on changes incorporated into cordova-js
+* [CB-683] pause/resume events now should pass in event object into handlers
+* [CB-464] rewrite of accel plugin, simplified accel to start/stop actions.
+* [CB-623] added Logger plugin
+* Fixed CB-513 - Remove cast functionality from CDVPluginResult, obsolete
+* Fixed CB-594 - Remove checks for retainCount
+* Fixed CB-637 - Add a doc on how to update the template project in the bin subfolder
+* Updated bin folder scripts.
+* Fixed CB-669 - verify.sh file in a new Cordova-based application project should not be included in the .app bundle
+* Fixes CB-471 - LocalFileSystem.PERSISTENT "do not back up" file attribute iOS
+* Fixed typo in File.getMetadata - error callback had OK instead of ERROR status
+* Fixes CB-610 - Capture.bundle missing microphone image resources for retina iPad results in mis-drawn recording interface
+* Fixes CB-751 - Undefined function is called when orientation change
+* Fixes CB-754 - Use of -weak_library in 'other library flags' of generated template XCode app causes crashes in Simulator when Obj-C Blocks are used
+* Fixes CB-628 - Scrub installation process, document artifacts of Xcode 3 support, mention no ARC
+* Fixed CB-628 - Scrub installation process, document artifacts of Xcode 3 support, mention no ARC
+* Fixes CB-684 - Not enough time for background execution of WebSQL/LocalStorage backup (when app goes to the background)
+* Fixes CB-766 - Update bin/debug shell script to point to Homebrew ios-sim 1.4 download
+* Fixes CB-464 - Refactor accelerometer native code in iOS
+* Fixes CB-760 - Camera returns incorrect image size
+* Fixed warning in CDVLocation
+* Fixed EXC_BAD_ACCESS error in CDVAccelerometer
+* Fixes CB-818 - Make CDVViewController also implement initWithNibName
+* Fixes CB-825 - Makefile: remove direct download of Markdown and wkhtmltopdf (uses homebrew to download)
+* Fixes CB-328 - Cordova crashes on iOS 3.x devices
+* Fixes CB-851 - guide for using url schemes in iOS
+
+<br />
+
+### 1.7.0 (20120430) ###
+
+* Fixed CB-183, CB-54 - ios camera targetWidth/Height don't match the documentation Fixes CB-183 and CB-54
+* Fixed CB-511 Changed deviceproperties version to "cordova" property
+* Fixed CB-483 - FileTransfer - unknown property attribute 'atomic' when building from source (Xcode 3 only)
+* Fixed CB-507 - Remove excessive debug logging in execute delegate method in CDVViewController
+* Implemented CB-536 - Add new selector to CDVViewController to create a new CDVCordovaView, so subclasses can override it
+* Workaround for CB-509 - geolocation.clearWatch doesn't shut the GPS down under iOS
+* Fixed CB-537 - media.seekTo fails with NSRangeException
+* Fixed CB-544 - iOS Geolocation fails if Cordova.plist EnableLocation = YES
+* Fixed CB-543 - FileTransfer.upload WebKit discarded an uncaught exception
+* Fixed CB-391 - camera.getPicture crash
+* Implemented CB-535 - Add a way to log JavaScript exceptions, parse errors, and get JS stack frame events (with line numbers, etc)
+* Fixed CB-494 - Move Cordova.plist section from "How to use Cordova as a Component Guide" to its own doc
+* Fixed CB-571 - stubbed out create method to remove error when creating Media objects, also added another check if file does not exist.
+* Fixed CB-386 - added retina iPad splash screens. made sure retina ipad icon files shows up during load.
+* Re-fix CB-347 - localStorage / SQLDatabase Error after App update (timing issue for applying fix)
+* Adjust splash screen position based on orientation and status bar size
+
+<br />
+
+### 1.6.1 (20120416) ###
+
+* Fixed CB-496 - Camera.getPicture - will always return FILE\_URI even though DATA\_URL specified
+* Fixed CB-497 - online and offline events are not being fired in 1.6.0
+* Fixed CB-501 - orientationchange event is not being fired in 1.6.0
+* Fixed CB-302 - orientation change event fired off twice on iOS 5.x
+* Fixed CB-507 - Remove excessive debug logging in execute delegate method in CDVViewController
+
+<br/>
+
+### 1.6.0 (20120409) ###
+* Updates for Media API
+* Contacts updates for Unified JavaScript
+* Fixed Contacts.save return value and Notification.confirm
+* Changed Device initialization to use a require-based pattern
+* Added require syntax for firing events in ios
+* Added a getConnectionInfo method for compatibility
+* Added require in pluginresult helper funcs
+* Updated plist of plugin names -> classes to adhere to common labels in other platforms
+* Rewrite of accelerometer code and removed DeviceInfo old init approach
+* Added warning about changing compiler settings in xcode
+* Changed Accel values to doubles
+* Tweaked battery plugin for cordova-js use
+* Updated interface to get Camera working. 
+* Rewrote Location class to use cordova-js unified approach.
+* Updated refs from require("cordova") to just "cordova", and other require calls to cordova.require
+* Updated sub-project cordovalib steps
+* Fixed Compass, Location for cordova-js integration
+* Added unification of accelerometer values on ios (based on android values)
+* Removed old JS, added cordova-js version
+* Changes to CordovaLib makefile for generating JS
+* Fixed CB-260: Can't install Phonegap with new Xcode 4.3
+* Fixed Xcode app detection (using Spotlight) in Makefile
+* Fixed CB-306 - Remove extra template App delegate methods
+* Fixes CB-255 - iOS: a parameter with value 'null' is not passed to 'arguments' array
+* Fixed CB-236 - Add ContentLength Header in Upload request
+* Fixed CB-300 - CDVFileTransfer crashes with 303 and empty response
+* Fixed CB-148, CB-316: Playing HTTP / HTTPS urls using the Media API is not working
+* Improved Makefile for mixed Xcode 4.2 and Xcode 4.3.1 environment.
+* Fixed CB-329 - Add warning if multi-tasking is not supported on an iOS device (to console log)
+* Fixed CB-317 : Xcode: Shell Script Invocation Error when directory has spaces in name
+* Fixed CB-330 - localStorage / SQLDatabase no longer persistent after iOS 5.01 update
+* Fixed CB-347 - iOS 5.1 localStorage / SQLDatabase error after upgrading an app
+* Fixed shell script error - picks up new location of cordova.js (unified) now
+* Fixed NOTICE file with correct project name
+* Fixed CB-49 - UUID replacement
+* Fixed CB-361 & use timeout to turn off compass sensor
+* Fixed CB-427 - add back iOS only getPicture options
+* Fixed CB-349 - Remove sessionKey usage (unused) in CDVViewController
+* Fixed CB-237 - Updated splash screen assets
+* Fixed CB-387 - try/catch wrapper in native iOS code for cordova-js initialization firing alerts when page without cordova.js is loaded in
+* Fixed CB-425 - Notification buttons and title are not working for confirm and alert
+* Fixed CB-440 - (LLVM-GCC only) Wrong number of arguments specified for 'deprecated' attribute
+* Fixed CB-441 - make fails if PackageMaker.app installed at a path with spaces in a folder name.
+* Fixed CB-444 - Xcode template new project - AppDelegate's self.invokeString usage was removed
+* Fixed CB-380 - Update Cordova Upgrade Guide for 1.6.0
+* Fixed CB-445 - Update "How to use Cordova as Component" Guide for 1.6.0
+* Fixed CB-381 - Update Cordova Plugin Upgrade Guide for 1.6.0
+* Fixed CB-406 - Update README.md
+* Fixed CB-433 - CDVFileTransfer.m methods - convert use of "options" object into "arguments" array
+* Fixed CB-377 - add a check for PM_APP,  XC_APP, and DEVELOPER in the Makefile
+* REMOVED: navigator.splashscreen JavaScript interface (was unofficial) - use **cordova.exec(null, null, "SplashScreen", "hide", [])** OR **cordova.exec(null, null, "SplashScreen", "show", [])**
+
+<br/>
+
+### 1.5.0 (20120302) ###
 
 * Fix NSLog crash in CDVWhitelist.m - parameter order reversed
 * Updated the Upgrade Guide for 1.4.1
-* Added UIWebViewBounce key to PhoneGap.plist (default is YES) (originally from an @alunny pull 
+* Added UIWebViewBounce key to PhoneGap.plist (default is YES) (originally from an @alunny pull request)
 * Updated README.md FAQ item #5 (upgrades)
 * Added the German and Swedish resources to the Xcode templates
 * Fixes CB-149 - Black Bar visible after landscape video
 * Fixes CB-221 - On an orientation change, the orientationchange event not fired on iOS 3 and 4 
 * Rename PhoneGap to Cordova.
-* Fixed typo, added missing step.
-* Cordova rename fixes.
 * Completed Cordova Guides for 1.5.0
 * Fixed CB-253 - Xcode 4 Cordova-based Application - DEBUG macro not defined
 * Default GCC_VERSION is com.apple.compilers.llvm.clang.1_0 now
-* Removed Xcode and iOS SDK checks in the installer (for Xcode 4.3 installs which go under /Appl
+* Removed Xcode and iOS SDK checks in the installer (for the Xcode 4.3 install which goes under the /Applications folder)
 
 <br/>
 

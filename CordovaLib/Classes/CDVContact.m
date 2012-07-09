@@ -211,27 +211,23 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	// ugly but it works
 	if (org_apache_cordova_contacts_ABtoW3C != nil) {
 		[org_apache_cordova_contacts_ABtoW3C release];
-		if ([org_apache_cordova_contacts_ABtoW3C retainCount] == 1)
-			org_apache_cordova_contacts_ABtoW3C = nil;
+        org_apache_cordova_contacts_ABtoW3C = nil;
 	}
 	if (org_apache_cordova_contacts_W3CtoAB != nil) {
 		[org_apache_cordova_contacts_W3CtoAB release];
-		if ([org_apache_cordova_contacts_W3CtoAB retainCount] == 1)
-			org_apache_cordova_contacts_W3CtoAB = nil;
+        org_apache_cordova_contacts_W3CtoAB = nil;
 	}
 	if (org_apache_cordova_contacts_W3CtoNull != nil) {
 		[org_apache_cordova_contacts_W3CtoNull release];
-		if ([org_apache_cordova_contacts_W3CtoNull retainCount] == 1)
-			org_apache_cordova_contacts_W3CtoNull = nil;
-	}if (org_apache_cordova_contacts_objectAndProperties != nil) {
+        org_apache_cordova_contacts_W3CtoNull = nil;
+	}
+    if (org_apache_cordova_contacts_objectAndProperties != nil) {
 		[org_apache_cordova_contacts_objectAndProperties release];
-		if ([org_apache_cordova_contacts_objectAndProperties retainCount] == 1)
-			org_apache_cordova_contacts_objectAndProperties = nil;
+        org_apache_cordova_contacts_objectAndProperties = nil;
 	}
 	if (org_apache_cordova_contacts_defaultFields != nil) {
 		[org_apache_cordova_contacts_defaultFields release];
-		if ([org_apache_cordova_contacts_defaultFields retainCount] == 1)
-			org_apache_cordova_contacts_defaultFields = nil;
+        org_apache_cordova_contacts_defaultFields = nil;
 	}
 }
 
@@ -320,14 +316,22 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	// W3C ContactOrganization has pref, type, name, title, department
 	// iOS only supports name, title, department
 	//NSLog(@"setting organizations");
+    // TODO this may need work - should Organization information be removed when array is empty??
 	array = [aContact valueForKey:kW3ContactOrganizations];  // iOS only supports one organization - use first one
 	if ([array isKindOfClass:[NSArray class]]){
-		NSDictionary* dict = [array objectAtIndex:0];
-		if ([dict isKindOfClass:[NSDictionary class]]){
-			[self setValue: [dict valueForKey:@"name"] forProperty: kABPersonOrganizationProperty inRecord: person asUpdate: bUpdate];
-			[self setValue: [dict valueForKey:kW3ContactTitle] forProperty:  kABPersonJobTitleProperty inRecord: person asUpdate: bUpdate];
-			[self setValue: [dict valueForKey:kW3ContactDepartment] forProperty: kABPersonDepartmentProperty inRecord: person asUpdate: bUpdate];
-		}
+        BOOL bRemove = NO;
+        NSDictionary* dict = nil;
+        if ([array count] > 0) {
+            dict = [array objectAtIndex:0];  
+        } else {
+            // remove the organization info entirely
+            bRemove = YES;     
+        }
+        if ([dict isKindOfClass:[NSDictionary class]] || bRemove == YES){
+            [self setValue: (bRemove ? @"" : [dict valueForKey:@"name"]) forProperty: kABPersonOrganizationProperty inRecord: person asUpdate: bUpdate];
+            [self setValue: (bRemove ? @"" :[dict valueForKey:kW3ContactTitle]) forProperty:  kABPersonJobTitleProperty inRecord: person asUpdate: bUpdate];
+            [self setValue: (bRemove ? @"" :[dict valueForKey:kW3ContactDepartment]) forProperty: kABPersonDepartmentProperty inRecord: person asUpdate: bUpdate];
+        }
 	}
 	// add dates
 	// Dates come in as milliseconds in NSNumber Object

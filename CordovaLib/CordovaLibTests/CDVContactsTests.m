@@ -18,7 +18,6 @@
  */
 
 #import "CDVContactsTests.h"
-#import "CDVMockUIWebview.h"
 #import "CDVContacts.h"
 
 @implementation CDVContactsTests
@@ -28,11 +27,8 @@
 - (void)setUp
 {
     [super setUp];
-    
-    // setup code here
-    //CGRect webViewBounds = CGRectMake(0, 0, 320.0, 480.0);
-	self.webView = [[[CDVMockUIWebview alloc] init] autorelease];
-	self.contacts = (CDVContacts*)[[CDVContacts alloc] initWithWebView:(UIWebView*)self.webView];
+
+    self.contacts = (CDVContacts*)[[CDVContacts alloc] initWithWebView:self.webView];
 }
 
 - (void)tearDown
@@ -40,7 +36,6 @@
     // Tear-down code here.
 	
     [super tearDown];
-	self.webView = nil;
 	self.contacts = nil;
 }
 

@@ -1,7 +1,0 @@
-#! /bin/sh 
-# 
-# USAGE
-#
-#  ./log [path]
-#
-tail -f ${1:-"."}/console.log

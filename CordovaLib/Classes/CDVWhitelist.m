@@ -84,7 +84,7 @@
 - (void) processWhitelist
 {
     if (self.whitelist == nil) {
-        NSLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
+        NSLog(@"ERROR: CDVWhitelist was not initialized properly, all urls will be disallowed.");
         return;
     }
     
@@ -144,7 +144,7 @@
 - (BOOL) URLIsAllowed:(NSURL*)url
 {
     if (self.expandedWhitelist == nil) {
-        NSLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
+        NSLog(@"ERROR: CDVWhitelist was not initialized properly, all urls will be disallowed.");
         return NO;
     }
     

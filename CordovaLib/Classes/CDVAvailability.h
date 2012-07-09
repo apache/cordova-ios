@@ -25,16 +25,32 @@
 #define __CORDOVA_1_4_0  10400
 #define __CORDOVA_1_4_1  10401
 #define __CORDOVA_1_5_0  10500
+#define __CORDOVA_1_6_0  10600
+#define __CORDOVA_1_6_1  10601
+#define __CORDOVA_1_7_0  10700
+#define __CORDOVA_1_8_0  10800
+#define __CORDOVA_1_8_1  10801
+#define __CORDOVA_1_9_0  10900
 #define __CORDOVA_NA     99999  /* not available */
 
 
 /*
- #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_1_5_0
-    // do something when its at least 1.5.0
+ #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_1_7_0
+    // do something when its at least 1.7.0
  #else
-    // do something else (non 1.5.0)
+    // do something else (non 1.7.0)
  #endif
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_5_0
+    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_1_9_0
 #endif
+
+/* 
+ Returns YES if it is at least version specified as NSString(X)
+ Usage: 
+     if (IsAtLeastiOSVersion(@"5.1")) {
+         // do something for iOS 5.1 or greater
+     }
+ */
+#define IsAtLeastiOSVersion(X) ([[[UIDevice currentDevice] systemVersion] compare:X options:NSNumericSearch] != NSOrderedAscending)
+

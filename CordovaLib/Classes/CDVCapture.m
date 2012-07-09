@@ -140,7 +140,7 @@
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }*/
-        // PGImagePicker specific property
+        // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         pickerController.mimeType = mode;
 	
@@ -199,7 +199,7 @@
         NSDictionary* fileDict = [self getMediaDictionaryFromPath:filePath ofType: mimeType];
         NSArray* fileArray = [NSArray arrayWithObject:fileDict];
         
-        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray: fileArray cast:@"navigator.device.capture._castMediaFile"];
+        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray: fileArray];
         jsString = [result toSuccessCallbackString:callbackId];
         
     }
@@ -260,7 +260,7 @@
             //pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             //pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
-        // PGImagePicker specific property
+        // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
@@ -288,7 +288,7 @@
     NSDictionary* fileDict = [self getMediaDictionaryFromPath:moviePath ofType:nil];
     NSArray* fileArray = [NSArray arrayWithObject:fileDict];
     
-    result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray: fileArray cast:@"navigator.device.capture._castMediaFile"];
+    result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray: fileArray];
     jsString = [result toSuccessCallbackString:callbackId];
     
     // 
@@ -349,7 +349,7 @@
     NSString* callbackId = [arguments objectAtIndex:0];
     // existence of fullPath checked on JS side
     NSString* fullPath = [arguments objectAtIndex:1];
-    // mimeType could be empty/null
+    // mimeType could be null
     NSString* mimeType = nil;
     if ([arguments count] > 2) {
         mimeType = [arguments objectAtIndex:2];
@@ -359,13 +359,13 @@
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
     
-    if (!mimeType){
+    if (!mimeType || [mimeType isKindOfClass: [NSNull class]]){
         // try to determine mime type if not provided
-        id command = [self.commandDelegate getCommandInstance: @"org.apache.cordova.file"];
+        id command = [self.commandDelegate getCommandInstance: @"File"];
         bError = !([command isKindOfClass:[CDVFile class]]);
         if (!bError) {
-            CDVFile* pgFile = (CDVFile*)command;
-            mimeType = [pgFile getMimeTypeFromPath:fullPath];
+            CDVFile* cdvFile = (CDVFile*)command;
+            mimeType = [cdvFile getMimeTypeFromPath:fullPath];
             if (!mimeType) {
                 // can't do much without mimeType, return error
                 bError = YES;
@@ -448,10 +448,10 @@
     [fileDict setObject: fullPath forKey:@"fullPath"];
     // determine type
     if(!type) {
-        id command = [self.commandDelegate getCommandInstance: @"org.apache.cordova.file"];
+        id command = [self.commandDelegate getCommandInstance: @"File"];
         if([command isKindOfClass:[CDVFile class]]) {
-            CDVFile* pgFile = (CDVFile*)command;
-            NSString* mimeType = [pgFile getMimeTypeFromPath:fullPath];
+            CDVFile* cdvFile = (CDVFile*)command;
+            NSString* mimeType = [cdvFile getMimeTypeFromPath:fullPath];
             [fileDict setObject: (mimeType != nil ? (NSObject*)mimeType : [NSNull null]) forKey:@"type"];
         }
     }
@@ -843,7 +843,7 @@
         NSDictionary* fileDict = [captureCommand getMediaDictionaryFromPath:filePath ofType: @"audio/wav"];
         NSArray* fileArray = [NSArray arrayWithObject:fileDict];
         
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray: fileArray cast:@"navigator.device.capture._castMediaFile"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray: fileArray];
         self.resultString = [result toSuccessCallbackString:callbackId];
     } else {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_INTERNAL_ERR];

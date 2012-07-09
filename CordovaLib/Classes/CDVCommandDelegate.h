@@ -19,10 +19,13 @@
 
 #import "CDVInvokedUrlCommand.h"
 
+@class CDVPlugin;
+
 @protocol CDVCommandDelegate <NSObject>
 
 - (NSString*) pathForResource:(NSString*)resourcepath;
 - (id) getCommandInstance:(NSString*)pluginName;
+- (void) registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (BOOL) execute:(CDVInvokedUrlCommand*)command;
 
 @end

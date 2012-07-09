@@ -28,35 +28,40 @@ enum CDVFileTransferError {
 };
 typedef int CDVFileTransferError;
 
+enum CDVFileTransferDirection {
+	CDV_TRANSFER_UPLOAD = 1,
+    CDV_TRANSFER_DOWNLOAD = 2,
+};
+typedef int CDVFileTransferDirection;
+
 @interface CDVFileTransfer : CDVPlugin {
     
 }
 
 - (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (NSString*) escapePathComponentForUrlString:(NSString*)urlString;
 
--(void) downloadFile:(NSMutableArray*)arguments;
--(void) downloadSuccess:(NSMutableArray*)arguments; 
--(void) downloadFail:(NSMutableArray*)arguments; 
+-(NSMutableDictionary*) createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 
--(NSMutableDictionary*) createFileTransferError:(NSString*)code AndSource:(NSString*)source AndTarget:(NSString*)target;
+-(NSMutableDictionary*) createFileTransferError:(int)code 
+                                  AndSource:(NSString*)source 
+                                  AndTarget:(NSString*)target 
+                                  AndHttpStatus:(int)httpStatus;
 @end
 
 
 @interface CDVFileTransferDelegate : NSObject {
-	CDVFileTransfer* command;
-	NSString* callbackId;
-	NSString* source;
-	NSString* target;
-    NSInteger bytesWritten;
 }
 
-@property (nonatomic, retain) NSMutableData* responseData;
+@property (retain) NSMutableData* responseData; // atomic
 @property (nonatomic, retain) CDVFileTransfer* command;
-@property (nonatomic, retain) NSString* callbackId;
-@property (nonatomic, retain) NSString* source;
-@property (nonatomic, retain) NSString* target;
-@property NSInteger bytesWritten;
+@property (nonatomic, assign) CDVFileTransferDirection direction;
+@property (nonatomic, copy) NSString* callbackId;
+@property (nonatomic, copy) NSString* source;
+@property (nonatomic, copy) NSString* target;
+@property (assign) int responseCode; // atomic
+@property (nonatomic, assign) NSInteger bytesWritten;
 
 
 @end;

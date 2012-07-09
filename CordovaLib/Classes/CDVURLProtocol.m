@@ -25,8 +25,12 @@ static CDVWhitelist* gWhitelist = nil;
 
 @implementation CDVURLProtocol
 
-// Called before any use of the protocol, ensure it is only called once
 + (void) registerPGHttpURLProtocol {
+    return [[self class] registerURLProtocol];
+}
+
+// Called before any use of the protocol, ensure it is only called once
++ (void) registerURLProtocol {
     static BOOL registered = NO;
     if (!registered) {
         [NSURLProtocol registerClass:[CDVURLProtocol class]];

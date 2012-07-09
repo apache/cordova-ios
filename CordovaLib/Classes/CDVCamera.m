@@ -22,21 +22,51 @@
 #import "NSDictionary+Extensions.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
+#define CDV_PHOTO_PREFIX    @"cdv_photo_"
+
+static NSSet* org_apache_cordova_validArrowDirections;
+
+@interface CDVCamera ()
+
+@property (readwrite, assign) BOOL hasPendingOperation;
+
+@end
+
 @implementation CDVCamera
 
-@synthesize pickerController;
++ (void) initialize
+{
+    org_apache_cordova_validArrowDirections = [[NSSet alloc] initWithObjects: [NSNumber numberWithInt:UIPopoverArrowDirectionUp], [NSNumber numberWithInt:UIPopoverArrowDirectionDown],[NSNumber numberWithInt:UIPopoverArrowDirectionLeft], [NSNumber numberWithInt:UIPopoverArrowDirectionRight], [NSNumber numberWithInt:UIPopoverArrowDirectionAny], nil];
+}
 
--(BOOL)popoverSupported
+@synthesize hasPendingOperation, pickerController;
+
+- (BOOL) popoverSupported
 {
 	return ( NSClassFromString(@"UIPopoverController") != nil) && 
 	(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
-- (void) getPicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+/*  takePicture arguments:
+ * INDEX   ARGUMENT
+ *  0       callbackId
+ *  1       quality
+ *  2       destination type
+ *  3       source type
+ *  4       targetWidth
+ *  5       targetHeight
+ *  6       encodingType
+ *  7       mediaType
+ *  8       allowsEdit
+ *  9       correctOrientation
+ *  10      saveToPhotoAlbum
+ */
+- (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
 	NSString* callbackId = [arguments objectAtIndex:0];
-	
-	NSString* sourceTypeString = [options valueForKey:@"sourceType"];
+    self.hasPendingOperation = NO;
+
+	NSString* sourceTypeString = [arguments objectAtIndex:3];
 	UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeCamera; // default
 	if (sourceTypeString != nil) 
 	{
@@ -48,210 +78,304 @@
 		NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
 		CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: @"no camera available"];
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        return;
         
-	} else {
-        bool allowEdit = [[options valueForKey:@"allowEdit"] boolValue];
-        NSNumber* targetWidth = [options valueForKey:@"targetWidth"];
-        NSNumber* targetHeight = [options valueForKey:@"targetHeight"];
-        NSNumber* mediaValue = [options valueForKey:@"mediaType"];
-        CDVMediaType mediaType = (mediaValue) ? [mediaValue intValue] : MediaTypePicture;
-        
-        CGSize targetSize = CGSizeMake(0, 0);
-        if (targetWidth != nil && targetHeight != nil) {
-            targetSize = CGSizeMake([targetWidth floatValue], [targetHeight floatValue]);
-        }
-        
-        
-        if (self.pickerController == nil) 
-        {
-            self.pickerController = [[[CDVCameraPicker alloc] init] autorelease];
-        }
-        
-        self.pickerController.delegate = self;
-        self.pickerController.sourceType = sourceType;
-        self.pickerController.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
-        self.pickerController.callbackId = callbackId;
-        self.pickerController.targetSize = targetSize;
-        self.pickerController.correctOrientation = [[options valueForKey:@"correctOrientation"] boolValue];
-        self.pickerController.saveToPhotoAlbum = [[options valueForKey:@"saveToPhotoAlbum"] boolValue];
-        self.pickerController.encodingType = [[options valueForKey:@"encodingType"] intValue] || EncodingTypeJPEG;
-        
-        self.pickerController.quality = [options integerValueForKey:@"quality" defaultValue:100 withRange:NSMakeRange(0, 100)];
-        self.pickerController.returnType = (CDVDestinationType)[options integerValueForKey:@"destinationType" defaultValue:1 withRange:NSMakeRange(0, 2)];
-       
-        if (sourceType == UIImagePickerControllerSourceTypeCamera) {
-            // we only allow taking pictures (no video) in this api
-            self.pickerController.mediaTypes = [NSArray arrayWithObjects: (NSString*) kUTTypeImage, nil];
-        } else if (mediaType == MediaTypeAll) {
-            self.pickerController.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType: sourceType];
-        } else {
-            NSArray* mediaArray = [NSArray arrayWithObjects: (NSString*) (mediaType == MediaTypeVideo ? kUTTypeMovie : kUTTypeImage), nil];
-            self.pickerController.mediaTypes = mediaArray;
-            
-        }
-        
-        if([self popoverSupported] && sourceType != UIImagePickerControllerSourceTypeCamera)
-        {
-            if (self.pickerController.popoverController == nil) 
-            { 
-                self.pickerController.popoverController = [[[NSClassFromString(@"UIPopoverController") alloc] 
-                                                           initWithContentViewController:self.pickerController] autorelease]; 
-            } 
-            self.pickerController.popoverController.delegate = self;
-            [ self.pickerController.popoverController presentPopoverFromRect:CGRectMake(0,32,320,480)
-                                                                      inView:[self.webView superview]
-                                                    permittedArrowDirections:UIPopoverArrowDirectionAny 
-                                                                    animated:YES]; 
-        }
-        else 
+	} 
+
+    bool allowEdit = [[arguments objectAtIndex:8] boolValue];
+    NSNumber* targetWidth = [arguments objectAtIndex:4];
+    NSNumber* targetHeight = [arguments objectAtIndex:5];
+    NSNumber* mediaValue = [arguments objectAtIndex:7];
+    CDVMediaType mediaType = (mediaValue) ? [mediaValue intValue] : MediaTypePicture;
+    
+    CGSize targetSize = CGSizeMake(0, 0);
+    if (targetWidth != nil && targetHeight != nil) {
+        targetSize = CGSizeMake([targetWidth floatValue], [targetHeight floatValue]);
+    }
+    
+    CDVCameraPicker* cameraPicker = [[CDVCameraPicker alloc] init];
+    self.pickerController = cameraPicker;
+    
+    cameraPicker.delegate = self;
+    cameraPicker.sourceType = sourceType;
+    cameraPicker.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
+    cameraPicker.callbackId = callbackId;
+    cameraPicker.targetSize = targetSize;
+    cameraPicker.cropToSize = NO;
+    // we need to capture this state for memory warnings that dealloc this object
+    cameraPicker.webView = self.webView;
+    cameraPicker.popoverSupported = [self popoverSupported];
+    
+    cameraPicker.correctOrientation = [[arguments objectAtIndex:9] boolValue];
+    cameraPicker.saveToPhotoAlbum = [[arguments objectAtIndex:10] boolValue];
+    
+    cameraPicker.encodingType = ([arguments objectAtIndex:6]) ? [[arguments objectAtIndex:6] intValue] : EncodingTypeJPEG;
+    
+    cameraPicker.quality = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : 50;
+    cameraPicker.returnType = ([arguments objectAtIndex:2]) ? [[arguments objectAtIndex:2] intValue] : DestinationTypeFileUri;
+   
+    if (sourceType == UIImagePickerControllerSourceTypeCamera) {
+        // we only allow taking pictures (no video) in this api
+        cameraPicker.mediaTypes = [NSArray arrayWithObjects: (NSString*) kUTTypeImage, nil];
+    } else if (mediaType == MediaTypeAll) {
+        cameraPicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType: sourceType];
+    } else {
+        NSArray* mediaArray = [NSArray arrayWithObjects: (NSString*) (mediaType == MediaTypeVideo ? kUTTypeMovie : kUTTypeImage), nil];
+        cameraPicker.mediaTypes = mediaArray;
+    }
+    
+    if ([self popoverSupported] && sourceType != UIImagePickerControllerSourceTypeCamera)
+    {
+        if (cameraPicker.popoverController == nil) 
         { 
-            if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
-                [self.viewController presentViewController:self.pickerController animated:YES completion:nil];        
-            } else {
-                [self.viewController presentModalViewController:self.pickerController animated:YES ];
-            }              
+            cameraPicker.popoverController = [[[NSClassFromString(@"UIPopoverController") alloc] 
+                                                       initWithContentViewController:cameraPicker] autorelease]; 
         }
+        int x = 0;
+        int y = 32;
+        int width = 320;
+        int height = 480;
+        UIPopoverArrowDirection arrowDirection = UIPopoverArrowDirectionAny;
+        if (options) {
+            x = [options integerValueForKey:@"x" defaultValue:0];
+            y = [options integerValueForKey:@"y" defaultValue:32];
+            width = [options integerValueForKey:@"width" defaultValue:320];
+            height = [options integerValueForKey:@"height" defaultValue:480];
+            arrowDirection = [options integerValueForKey: @"arrowDir" defaultValue:UIPopoverArrowDirectionAny];
+            if(![org_apache_cordova_validArrowDirections containsObject:[NSNumber numberWithInt:arrowDirection]]){
+                arrowDirection = UIPopoverArrowDirectionAny;
+            }
+        }
+        
+        cameraPicker.popoverController.delegate = self;
+        [cameraPicker.popoverController presentPopoverFromRect:CGRectMake(x,y,width,height)
+                                                                  inView:[self.webView superview]
+                                                permittedArrowDirections:arrowDirection 
+                                                                animated:YES]; 
+    }
+    else 
+    { 
+        
+        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+            [self.viewController presentViewController:cameraPicker animated:YES completion:nil];        
+        } else {
+            [self.viewController presentModalViewController:cameraPicker animated:YES ];
+        }              
+    }
+    self.hasPendingOperation = YES;
+    [cameraPicker release];
+}
+
+- (void) cleanup:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString* callbackId = [arguments objectAtIndex:0];
+    
+    // empty the tmp directory
+    NSFileManager* fileMgr = [[NSFileManager alloc] init];
+    NSError* err = nil;
+    BOOL hasErrors = NO;
+    
+    // clear contents of NSTemporaryDirectory 
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];    
+    NSString* fileName = nil;
+    BOOL result;
+    
+    while ((fileName = [directoryEnumerator nextObject])) {
+        // only delete the files we created
+        if (![fileName hasPrefix:CDV_PHOTO_PREFIX]) {
+            continue;
+        }
+        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        result = [fileMgr removeItemAtPath:filePath error:&err];
+        if (!result && err) {
+            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+            hasErrors = YES;
+        }
+    }    
+    [fileMgr release];
+    
+    if (hasErrors) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"One or more files failed to be deleted."];
+        [super writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
+    } else {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [super writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
     }
 }
 
-
-- (void)popoverControllerDidDismissPopover:(id)popoverController
+- (void) popoverControllerDidDismissPopover:(id)popoverController
 {
-    [ self imagePickerControllerDidCancel:self.pickerController ];	
+    //[ self imagePickerControllerDidCancel:self.pickerController ];	'
+    UIPopoverController* pc = (UIPopoverController*)popoverController;
+    [pc dismissPopoverAnimated:YES]; 
+    pc.delegate = nil;
+    if (self.pickerController && self.pickerController.callbackId && self.pickerController.popoverController) {
+        self.pickerController.popoverController = nil;
+        NSString* callbackId = self.pickerController.callbackId;
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
+        // this "delay hack" is in case the callback contains a JavaScript alert. Without this delay or a
+        // setTimeout("alert('fail');", 0) on the JS side, the app will hang when the alert is displayed.
+        [self.webView performSelector:@selector(stringByEvaluatingJavaScriptFromString:) withObject:[result toErrorCallbackString: callbackId] afterDelay:0.5];
+    } 
+    self.hasPendingOperation = NO;
 }
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
 {
+    CDVCameraPicker* cameraPicker = (CDVCameraPicker*)picker;
 
-	NSString* callbackId =  self.pickerController.callbackId;
+	NSString* callbackId =  cameraPicker.callbackId;
 	
-	if([self popoverSupported] && self.pickerController.popoverController != nil)
+	if(cameraPicker.popoverSupported && cameraPicker.popoverController != nil)
 	{
-		[self.pickerController.popoverController dismissPopoverAnimated:YES]; 
-		self.pickerController.popoverController.delegate = nil;
-		self.pickerController.popoverController = nil;
+		[cameraPicker.popoverController dismissPopoverAnimated:YES]; 
+		cameraPicker.popoverController.delegate = nil;
+		cameraPicker.popoverController = nil;
 	}
 	else 
 	{
-        if ([self.pickerController respondsToSelector:@selector(presentingViewController)]) { 
-            [[self.pickerController presentingViewController] dismissModalViewControllerAnimated:YES];
+        if ([cameraPicker respondsToSelector:@selector(presentingViewController)]) { 
+            [[cameraPicker presentingViewController] dismissModalViewControllerAnimated:YES];
         } else {
-            [[self.pickerController parentViewController] dismissModalViewControllerAnimated:YES];
+            [[cameraPicker parentViewController] dismissModalViewControllerAnimated:YES];
         }        
 	}
+     
 	NSString* jsString = nil;
     CDVPluginResult* result = nil;
     
 	NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
+    // IMAGE TYPE
 	if ([mediaType isEqualToString:(NSString*)kUTTypeImage])
 	{
-		
-		
-		
 		// get the image
 		UIImage* image = nil;
-		if (self.pickerController.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
+		if (cameraPicker.allowsEditing && [info objectForKey:UIImagePickerControllerEditedImage]){
 			image = [info objectForKey:UIImagePickerControllerEditedImage];
-		}else {
+		} else {
 			image = [info objectForKey:UIImagePickerControllerOriginalImage];
 		}
-    if (self.pickerController.saveToPhotoAlbum) {
-      UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
-    }
+        
+        if (cameraPicker.saveToPhotoAlbum) {
+          UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+        }
+        
+        if (cameraPicker.correctOrientation) {
+          image = [self imageCorrectedForCaptureOrientation:image];
+        }
     
-    if (self.pickerController.correctOrientation) {
-      image = [self imageCorrectedForCaptureOrientation:image];
-    }
-    
-    UIImage *scaledImage = nil;
-    
-    if (self.pickerController.targetSize.width > 0 && self.pickerController.targetSize.height > 0) {
-        scaledImage = [self imageByScalingAndCroppingForSize:image toSize:self.pickerController.targetSize];
-    }
-    NSData* data = nil;
-		if (self.pickerController.encodingType == EncodingTypePNG) {
+        UIImage *scaledImage = nil;
+        
+        if (cameraPicker.targetSize.width > 0 && cameraPicker.targetSize.height > 0) {
+            // if cropToSize, resize image and crop to target size, otherwise resize to fit target without cropping
+            if(cameraPicker.cropToSize) {
+                scaledImage = [self imageByScalingAndCroppingForSize:image toSize:cameraPicker.targetSize];
+            } else {
+                scaledImage = [self imageByScalingNotCroppingForSize:image toSize:cameraPicker.targetSize];
+            }
+        }
+            
+        NSData* data = nil;
+
+        if (cameraPicker.encodingType == EncodingTypePNG) {
             data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
         }
         else {
-            data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, self.pickerController.quality / 100.0f);
-		}
-        if (self.pickerController.returnType == DestinationTypeFileUri){
-			
-			// write to temp directory and reutrn URI
-			// get the temp directory path
-			NSString* docsPath = [NSTemporaryDirectory() stringByStandardizingPath];
-			NSError* err = nil;
-			NSFileManager* fileMgr = [[NSFileManager alloc] init]; //recommended by apple (vs [NSFileManager defaultManager]) to be theadsafe
-			
-			// generate unique file name
-			NSString* filePath;
-			int i=1;
-			do {
-				filePath = [NSString stringWithFormat:@"%@/photo_%03d.%@", docsPath, i++, self.pickerController.encodingType == EncodingTypePNG ? @"png" : @"jpg"];
-			} while([fileMgr fileExistsAtPath: filePath]);
-			// save file
-			if (![data writeToFile: filePath options: NSAtomicWrite error: &err]){
-				result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [err localizedDescription]];
-				jsString = [result toErrorCallbackString:callbackId];
-			}else{
-				result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [[NSURL fileURLWithPath: filePath] absoluteString]];
-				jsString = [result toSuccessCallbackString:callbackId];
-			}
-			[fileMgr release];
-			
-		}else{
-			result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [data base64EncodedString]];
-			jsString = [result toSuccessCallbackString:callbackId];
-		}
-		
-		
-	} else {
-        // was movie type
+            data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
+        }
+            
+        if (cameraPicker.returnType == DestinationTypeFileUri) {
+        
+            // write to temp directory and reutrn URI
+            // get the temp directory path
+            NSString* docsPath = [NSTemporaryDirectory() stringByStandardizingPath];
+            NSError* err = nil;
+            NSFileManager* fileMgr = [[NSFileManager alloc] init]; //recommended by apple (vs [NSFileManager defaultManager]) to be theadsafe
+            
+            // generate unique file name
+            NSString* filePath;
+            
+            int i = 1;
+            do 
+            {
+                filePath = [NSString stringWithFormat:@"%@/%@%03d.%@", docsPath, CDV_PHOTO_PREFIX, i++, cameraPicker.encodingType == EncodingTypePNG ? @"png" : @"jpg"];
+            } 
+            while ([fileMgr fileExistsAtPath: filePath]);
+            
+            // save file
+            if (![data writeToFile: filePath options: NSAtomicWrite error: &err]) {
+                result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [err localizedDescription]];
+                jsString = [result toErrorCallbackString:callbackId];
+            } else {
+                result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [[NSURL fileURLWithPath: filePath] absoluteString]];
+                jsString = [result toSuccessCallbackString:callbackId];
+            }
+            [fileMgr release];
+        
+        } else {
+            result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [data base64EncodedString]];
+            jsString = [result toSuccessCallbackString:callbackId];
+        }
+	} 
+    // NOT IMAGE TYPE (MOVIE)
+    else 
+    {
          NSString *moviePath = [[info objectForKey: UIImagePickerControllerMediaURL] absoluteString];
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: moviePath];
         jsString = [result toSuccessCallbackString:callbackId];
-        
     }
+
+    
     if (jsString) {
         [self.webView stringByEvaluatingJavaScriptFromString:jsString];
     }
-	
-	self.pickerController.delegate = nil;
-	self.pickerController = nil;
+
+        self.hasPendingOperation = NO;
 }
 
 // older api calls newer didFinishPickingMediaWithInfo
-- (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo
+- (void) imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo
 {
 	NSDictionary* imageInfo = [NSDictionary dictionaryWithObject:image forKey:UIImagePickerControllerOriginalImage];
 	[self imagePickerController:picker didFinishPickingMediaWithInfo: imageInfo];
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
-{	
-	NSString* callbackId = self.pickerController.callbackId;
-	
-    if ([picker respondsToSelector:@selector(presentingViewController)]) { 
-        [[picker presentingViewController] dismissModalViewControllerAnimated:YES];
+- (void) closePicker:(CDVCameraPicker*)cameraPicker
+{
+    NSLog(@"closePicker is DEPRECATED and will be removed in 2.0!");
+    if ([cameraPicker respondsToSelector:@selector(presentingViewController)]) { 
+        [[cameraPicker presentingViewController] dismissModalViewControllerAnimated:YES];
     } else {
-        [[picker parentViewController] dismissModalViewControllerAnimated:YES];
+        [[cameraPicker parentViewController] dismissModalViewControllerAnimated:YES];
     }        
-	
-	CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
-
-	[self.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
-	
-	if([self popoverSupported] && self.pickerController.popoverController != nil)
-	{
-		self.pickerController.popoverController.delegate = nil;
-		self.pickerController.popoverController = nil;
-	}
-	
-	self.pickerController.delegate = nil;
-	self.pickerController = nil;
-	
+    
+    if (cameraPicker.popoverSupported && cameraPicker.popoverController != nil)
+    {
+        cameraPicker.popoverController.delegate = nil;
+        cameraPicker.popoverController = nil;
+    }
 }
-- (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize
+
+- (void) imagePickerControllerDidCancel:(UIImagePickerController*)picker
+{	
+    CDVCameraPicker* cameraPicker = (CDVCameraPicker*)picker;
+	NSString* callbackId = cameraPicker.callbackId;
+    
+    if ([cameraPicker respondsToSelector:@selector(presentingViewController)]) { 
+        [[cameraPicker presentingViewController] dismissModalViewControllerAnimated:YES];
+    } else {
+        [[cameraPicker parentViewController] dismissModalViewControllerAnimated:YES];
+    }        
+    //popoverControllerDidDismissPopover:(id)popoverController is called if popover is cancelled
+        
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: @"no image selected"]; // error callback expects string ATM
+    [cameraPicker.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: callbackId]];
+    
+    self.hasPendingOperation = NO;
+}
+
+- (UIImage*) imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize
 {
     UIImage *sourceImage = anImage;
     UIImage *newImage = nil;        
@@ -282,11 +406,10 @@
         {
             thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5; 
         }
-        else 
-            if (widthFactor < heightFactor)
-            {
-                thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
-            }
+        else if (widthFactor < heightFactor)
+        {
+            thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
+        }
     }       
     
     UIGraphicsBeginImageContext(targetSize); // this will crop
@@ -299,18 +422,20 @@
     [sourceImage drawInRect:thumbnailRect];
     
     newImage = UIGraphicsGetImageFromCurrentImageContext();
-    if(newImage == nil) 
+    if(newImage == nil) {
         NSLog(@"could not scale image");
+    }
     
     //pop the context to get back to the default
     UIGraphicsEndImageContext();
     return newImage;
 }
 
-- (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage
+- (UIImage*) imageCorrectedForCaptureOrientation:(UIImage*)anImage
 {   
    float rotation_radians = 0;
    bool perpendicular = false;
+
    switch ([anImage imageOrientation]) {
     case UIImageOrientationUp:
       rotation_radians = 0.0;
@@ -352,8 +477,50 @@
    return newImage;
 }
 
+- (UIImage*) imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize
+{
+    UIImage *sourceImage = anImage;
+    UIImage *newImage = nil;        
+    CGSize	imageSize = sourceImage.size;
+    CGFloat width = imageSize.width;
+    CGFloat height = imageSize.height;
+    CGFloat targetWidth = frameSize.width;
+    CGFloat targetHeight = frameSize.height;
+    CGFloat scaleFactor = 0.0;
+    CGSize	scaledSize = frameSize;
+    
+    if (CGSizeEqualToSize(imageSize, frameSize) == NO) 
+    {
+        CGFloat widthFactor = targetWidth / width;
+        CGFloat heightFactor = targetHeight / height;
+        
+        // opposite comparison to imageByScalingAndCroppingForSize in order to contain the image within the given bounds
+        if (widthFactor > heightFactor) {
+            scaleFactor = heightFactor; // scale to fit height
+        } else {
+            scaleFactor = widthFactor; // scale to fit width
+        }
+        scaledSize = CGSizeMake(MIN(width * scaleFactor, targetWidth), MIN(height * scaleFactor, targetHeight));
+    }
+    
+    UIGraphicsBeginImageContext(scaledSize); // this will resize
+    
+    [sourceImage drawInRect:CGRectMake(0, 0, scaledSize.width, scaledSize.height)];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    if(newImage == nil) {
+        NSLog(@"could not scale image");
+    }
+    
+    //pop the context to get back to the default
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url 
 {
+    self.hasPendingOperation = YES;
+    
 	NSString *boundary = @"----BOUNDARY_IS_I";
 
 	NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
@@ -387,16 +554,13 @@
 
 //  NSData* result = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
 //	NSString * resultStr =  [[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding] autorelease];
+    
+    self.hasPendingOperation = NO;
 }
 
 
 - (void) dealloc
 {
-	if (self.pickerController) 
-	{
-		self.pickerController.delegate = nil;
-	}
-	self.pickerController = nil;
 	[super dealloc];
 }
 
@@ -413,15 +577,12 @@
 @synthesize correctOrientation;
 @synthesize saveToPhotoAlbum;
 @synthesize encodingType;
-
+@synthesize cropToSize;
+@synthesize webView;
+@synthesize popoverSupported;
 
 - (void) dealloc
 {
-	if (callbackId) {
-		[callbackId release];
-	}
-	
-	
 	[super dealloc];
 }
 

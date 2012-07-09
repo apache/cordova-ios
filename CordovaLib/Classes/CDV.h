@@ -45,10 +45,12 @@
 #import "CDVSound.h"
 #import "CDVSplashScreen.h"
 #import "CDVWhitelist.h"
+#import "CDVLocalStorage.h"
 
 #import "NSData+Base64.h"
 #import "NSDictionary+Extensions.h"
 #import "NSMutableArray+QueueAdditions.h"
+#import "UIDevice+Extensions.h"
 
 #import "JSONKit.h"
 

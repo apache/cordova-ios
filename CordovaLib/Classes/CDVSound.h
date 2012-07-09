@@ -59,32 +59,28 @@ typedef NSUInteger CDVMediaMsg;
 @property (nonatomic,copy) NSString* mediaId;
 @end
 
-#ifdef __IPHONE_3_0
 @interface CDVAudioRecorder : AVAudioRecorder
 {
 	NSString* mediaId;
 }
 @property (nonatomic,copy) NSString* mediaId;
 @end
-#endif
 	
 @interface CDVAudioFile : NSObject
 {
 	NSString* resourcePath;
 	NSURL* resourceURL;
 	CDVAudioPlayer* player;
-#ifdef __IPHONE_3_0
 	CDVAudioRecorder* recorder;
-#endif
+    NSNumber* volume;
 }
 
 @property (nonatomic, retain) NSString* resourcePath;
 @property (nonatomic, retain) NSURL* resourceURL;
 @property (nonatomic, retain) CDVAudioPlayer* player;
+@property (nonatomic, retain) NSNumber* volume;
 
-#ifdef __IPHONE_3_0
 @property (nonatomic, retain) CDVAudioRecorder* recorder;
-#endif
 
 @end
 
@@ -95,13 +91,24 @@ typedef NSUInteger CDVMediaMsg;
 }
 @property (nonatomic, retain) NSMutableDictionary* soundCache;
 @property (nonatomic, retain) AVAudioSession* avSession;
+//DEPRECATED
+- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));	  	
+- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED
 
-- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) stopPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) seekToAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) release:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+// DEPRECATED
+- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED
+
 - (BOOL) hasAudioSession;
 
 // helper methods
@@ -109,7 +116,14 @@ typedef NSUInteger CDVMediaMsg;
 - (BOOL) prepareToPlay: (CDVAudioFile*) audioFile withId: (NSString*)mediaId;
 - (NSString*) createMediaErrorWithCode: (CDVMediaError) code message: (NSString*) message;
 
-- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+// DEPRECATED
+- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+// DEPRECATED
+
+- (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void) setVolume:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

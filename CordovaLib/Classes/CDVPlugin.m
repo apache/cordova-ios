@@ -20,9 +20,14 @@
 
 #import "CDVPlugin.h"
 
+@interface CDVPlugin ()
+
+@property (readwrite, assign) BOOL hasPendingOperation;
+
+@end
 
 @implementation CDVPlugin
-@synthesize webView, settings, viewController, commandDelegate;
+@synthesize webView, settings, viewController, commandDelegate, hasPendingOperation;
 
 
 - (CDVPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
@@ -30,6 +35,7 @@
     self = [self initWithWebView:theWebView];
     if (self) {
         self.settings = classSettings;
+        self.hasPendingOperation = NO;
 	}
     return self;
 }
