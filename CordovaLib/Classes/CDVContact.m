@@ -472,7 +472,7 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	CFErrorRef error;
 	bool bSuccess = ABRecordSetValue(person, prop,  value, &error);
 	if (!bSuccess) {
-		NSLog(@"Error setting value for property: %@", prop);
+		NSLog(@"Error setting value for property: %d", prop);
 	}
 	return bSuccess;
 }
