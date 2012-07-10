@@ -42,6 +42,8 @@ typedef int CDVFileTransferDirection;
 - (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (NSString*) escapePathComponentForUrlString:(NSString*)urlString;
 
+// Visible for testing.
+- (NSURLRequest*) requestForUpload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 -(NSMutableDictionary*) createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 
 -(NSMutableDictionary*) createFileTransferError:(int)code 
