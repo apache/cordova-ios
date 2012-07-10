@@ -20,6 +20,7 @@
 
 #import "CDVSound.h"
 #import "CDVViewController.h"
+#import "NSArray+Comparisons.h"
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"
 #define HTTP_SCHEME_PREFIX			@"http://"

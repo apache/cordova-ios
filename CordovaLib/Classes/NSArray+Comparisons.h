@@ -17,42 +17,11 @@
  under the License.
  */
 
-#import "NSMutableArray+QueueAdditions.h"
+#import <Foundation/Foundation.h>
 
-@implementation NSMutableArray (QueueAdditions)
 
-- (id) queueHead
-{
-    if ([self count] == 0) {
-		return nil;
-	}
-	
-    return [self objectAtIndex:0];
-}
+@interface NSArray (Comparisons)
 
-- (id) dequeue 
-{
-    if ([self count] == 0) {
-		return nil;
-	}
-	
-    id head = [self objectAtIndex:0];
-    if (head != nil) {
-        [[head retain] autorelease];
-        [self removeObjectAtIndex:0];
-    }
-	
-    return head;
-}
-
-- (id) pop
-{
-	return [self dequeue];
-}
-
-- (void) enqueue:(id)object 
-{
-    [self addObject:object];
-}
+- (id) objectAtIndex:(NSUInteger)index withDefault:(id)aDefault;
 
 @end

@@ -188,6 +188,11 @@
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
 		EBA3550D15A5E8D100F4DE24 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 30325A0B136B343700982B63 /* VERSION */; };
 		EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */; };
+		EBA3556F15ABD0C900F4DE24 /* CDVFileTransferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3556E15ABD0C900F4DE24 /* CDVFileTransferTests.m */; };
+		EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */; };
+		EBA3557415ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */; };
+		EBA3557615ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -311,6 +316,9 @@
 		EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDVWebViewTest.h; sourceTree = "<group>"; };
 		EBA3554415A731F100F4DE24 /* CDVFakeFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVFakeFileManager.h; sourceTree = "<group>"; };
 		EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVFakeFileManager.m; sourceTree = "<group>"; };
+		EBA3556E15ABD0C900F4DE24 /* CDVFileTransferTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVFileTransferTests.m; sourceTree = "<group>"; };
+		EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Comparisons.h"; path = "Classes/NSArray+Comparisons.h"; sourceTree = "<group>"; };
+		EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Comparisons.m"; path = "Classes/NSArray+Comparisons.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -463,6 +471,7 @@
 				EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */,
 				30B342F415224B360070E6A5 /* CDVWebViewTest.m */,
 				30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */,
+				EBA3556E15ABD0C900F4DE24 /* CDVFileTransferTests.m */,
 				3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */,
 				686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */,
 				30356213141049E1006C2D43 /* CDVWhitelistTests.m */,
@@ -543,6 +552,8 @@
 			children = (
 				3062D11E151D0EDB000D9128 /* UIDevice+Extensions.h */,
 				3062D11F151D0EDB000D9128 /* UIDevice+Extensions.m */,
+				EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */,
+				EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */,
 				8887FD281090FBE7009987E8 /* NSDictionary+Extensions.h */,
 				8887FD291090FBE7009987E8 /* NSDictionary+Extensions.m */,
 				302965BB13A94E9D007046C5 /* CDVDebug.h */,
@@ -616,6 +627,7 @@
 				3062D121151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
 				3034979D1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 				3E768770156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
+				EBA3557415ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,6 +669,7 @@
 				3034979C1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 				3062D120151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
 				3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
+				EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -910,6 +923,7 @@
 				3034979F1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				3062D123151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
 				3E76876E156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
+				EBA3557615ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -934,6 +948,7 @@
 				30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */,
 				30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */,
 				EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */,
+				EBA3556F15ABD0C900F4DE24 /* CDVFileTransferTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -971,6 +986,7 @@
 				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
 				3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
+				EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

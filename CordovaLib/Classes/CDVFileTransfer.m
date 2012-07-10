@@ -22,11 +22,13 @@
 #include <CFNetwork/CFNetwork.h>
 
 @interface CDVFileTransfer ()
-- (CDVFileTransferDelegate*) delegateForUpload:(NSMutableArray*)arguments;
+- (CDVFileTransferDelegate*) delegateForUpload:(NSArray*)arguments;
 @end
 
 // Buffer size to use for streaming uploads.
 static const NSUInteger kStreamBufferSize = 32768;
+// Magic value within the options dict used to set a cookie.
+static NSString* kOptionsKeyCookie = @"__cookie";
 
 // Writes the given data to the stream in a blocking way.
 // If successful, returns bytesToWrite.
@@ -77,7 +79,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     return [urlString stringByAppendingString:pathComponent];
 }
 
-- (NSURLRequest*) requestForUpload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options {
     NSString* callbackId = [arguments objectAtIndex:0];
     
     // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
@@ -98,7 +100,6 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
         // http://developer.apple.com/library/ios/#samplecode/SimpleURLConnections/Listings/PostController_m.html
         chunkedMode = NO;
     }
-    NSMutableDictionary* params = options;
 
     // Extract the path part out of a file: URL.
     NSString* filePath = [target hasPrefix:@"/"] ? [[target copy] autorelease] : [[NSURL URLWithString:target] path];
@@ -127,16 +128,15 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:target AndTarget:server]];
         
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
-        return;
+        return nil;
     }
     
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
 	[req setHTTPMethod:@"POST"];
 	
 //    Magic value to set a cookie
-	if([params objectForKey:@"__cookie"]) {
-		[req setValue:[params objectForKey:@"__cookie"] forHTTPHeaderField:@"Cookie"];
-		[params removeObjectForKey:@"__cookie"];
+	if([options objectForKey:kOptionsKeyCookie]) {
+		[req setValue:[options objectForKey:kOptionsKeyCookie] forHTTPHeaderField:@"Cookie"];
 		[req setHTTPShouldHandleCookies:NO];
 	}
 	
@@ -152,7 +152,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 		[req setValue: userAgent forHTTPHeaderField:@"User-Agent"];
 	}
 	
-    NSMutableDictionary* headers = [params objectForKey:@"headers"];
+    NSDictionary* headers = [options objectForKey:@"headers"];
     NSEnumerator *enumerator = [headers keyEnumerator];
 	id val;
    	NSString *nkey;
@@ -175,12 +175,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     }
     
 	NSMutableData *postBodyBeforeFile = [NSMutableData data];
-	enumerator = [params keyEnumerator];
+	enumerator = [options keyEnumerator];
 	
 	id key;
 	while ((key = [enumerator nextObject])) {
-		val = [params objectForKey:key];
-		if(!val || val == [NSNull null]) {
+		val = [options objectForKey:key];
+		if(!val || val == [NSNull null] || [key isEqualToString:kOptionsKeyCookie]) {
 			continue;	
 		}
 		// if it responds to stringValue selector (eg NSNumber) get the NSString
@@ -244,7 +244,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 	return req;
 }
 
-- (CDVFileTransferDelegate*) delegateForUpload:(NSMutableArray*)arguments {
+- (CDVFileTransferDelegate*) delegateForUpload:(NSArray*)arguments {
     NSString* callbackId = [arguments objectAtIndex:0];
     NSString* target = (NSString*)[arguments objectAtIndex:1];
     NSString* server = (NSString*)[arguments objectAtIndex:2];
@@ -258,13 +258,13 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     return delegate;
 }
 
-- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void) upload:(NSArray*)arguments withDict:(NSDictionary*)options {
     NSURLRequest* req = [self requestForUpload:arguments withDict:options];
     CDVFileTransferDelegate* delegate = [self delegateForUpload:arguments];
 	[NSURLConnection connectionWithRequest:req delegate:delegate];
 }
 
-- (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void) download:(NSArray*)arguments withDict:(NSDictionary*)options {
     DLog(@"File Transfer downloading file...");
     NSString * callbackId = [arguments objectAtIndex:0];
     NSString * sourceUrl = [arguments objectAtIndex:1];
