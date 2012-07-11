@@ -187,19 +187,32 @@ In your project, there should be a _CordovaBuildSettings.xcconfig_ file. Modify 
 
 **10. In Xcode 4, I want to have a project-specific copy of Cordova.framework for my project, not a global one. How do I do this?** 
 
-A. Remove the existing Cordova.framework from your project, and drag and drop your own Cordova.framework in, that's all there is to it. To compile your own version of Cordova.framework, go to _~/Documents/CordovaLib_ and run the Xcode project with the _UniversalFramework_ target. You might need to modify the _USER_FRAMEWORK_SEARCH_PATHS_ in your project as well.
+Remove the existing Cordova.framework from your project, and drag and drop your own Cordova.framework in, that's all there is to it. To compile your own version of Cordova.framework, go to _~/Documents/CordovaLib_ and run the Xcode project with the _UniversalFramework_ target. You might need to modify the _USER_FRAMEWORK_SEARCH_PATHS_ in your project as well.
 
 **11. I've got other Cordova-specific issues not covered here?**
 
-A. Do a search in the Apache JIRA Issue Tracker [Apache JIRA](https://issues.apache.org/jira/browse/CB) or the [Wiki](http://wiki.apache.org/cordova/).      
+Do a search in the Apache JIRA Issue Tracker [Apache JIRA](https://issues.apache.org/jira/browse/CB) or the [Wiki](http://wiki.apache.org/cordova/).      
 
 **12. On an iOS 3.2 iPad, and launching an iPhone only app, when I use the Media Capture API, the user interface shown is iPad sized, not iPhone sized?**
 
-A. You must delete the *~ipad.png images from **Capture.bundle** if they want to build an iPhone only app and have captureAudio() display properly on an iPad. This additional fix is just for iPad running iOS 3.2 - if the requested *~ipad.png is not available it returns the iPhone sized image.  
+You must delete the *~ipad.png images from **Capture.bundle** if they want to build an iPhone only app and have captureAudio() display properly on an iPad. This additional fix is just for iPad running iOS 3.2 - if the requested *~ipad.png is not available it returns the iPhone sized image.  
 
 **13. I get this linker error: "ld: warning: ignoring file libCordova.a, file was built for archive which is not the architecture being linked (armv7)"** 
 
-A. In your project's Build Settings, set **"Build for Active Architecture Only"** to **NO**. This has been fixed in Cordova 1.2 for newly created projects. This is usually because Xcode 4 will only build for armv7 by default, and not armv6.
+In your project's Build Settings, set **"Build for Active Architecture Only"** to **NO**. This has been fixed in Cordova 1.2 for newly created projects. This is usually because Xcode 4 will only build for armv7 by default, and not armv6.
+
+**14. I get this runtime error/crash: "dyld: Symbol not found: _NSURLIsExcludedFromBackupKey"** 
+
+ A. Older iOS versions than 5.1 do not have this symbol defined. You need to add weak link the constant value and weak link the CoreFoundation framework:
+
+ 1. Add this line to your AppDelegate.m: 
+
+        extern NSString * const NSURLIsExcludedFromBackupKey _attribute_((weak_import));
+        
+ 2. Add a new value for "Other Linker Flags" in your project's Build Settings:
+ 
+         -weak_framework CoreFoundation
+
 
 
 BUGS?
