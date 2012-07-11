@@ -346,7 +346,7 @@
 			<key>GCC_VERSION</key>
 			<string>com.apple.compilers.llvm.clang.1_0</string>
 			<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-			<string>3.0</string>
+			<string>4.2</string>
 		</dict>
 	</dict>
 	<key>Targets</key>
