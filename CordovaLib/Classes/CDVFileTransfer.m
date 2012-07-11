@@ -22,13 +22,16 @@
 #include <CFNetwork/CFNetwork.h>
 
 @interface CDVFileTransfer ()
-- (CDVFileTransferDelegate*) delegateForUpload:(NSArray*)arguments;
+// Creates a delegate to handle an upload.
+- (CDVFileTransferDelegate*)delegateForUpload:(NSArray*)arguments;
+// Creates an NSData* for the file for the given upload arguments.
+- (NSData*)fileDataForUploadArguments:(NSArray*)arguments;
 @end
 
 // Buffer size to use for streaming uploads.
 static const NSUInteger kStreamBufferSize = 32768;
 // Magic value within the options dict used to set a cookie.
-static NSString* kOptionsKeyCookie = @"__cookie";
+NSString* const kOptionsKeyCookie = @"__cookie";
 
 // Writes the given data to the stream in a blocking way.
 // If successful, returns bytesToWrite.
@@ -79,7 +82,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     return [urlString stringByAppendingString:pathComponent];
 }
 
-- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options {
+- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options fileData:(NSData*)fileData {
     NSString* callbackId = [arguments objectAtIndex:0];
     
     // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
@@ -101,27 +104,17 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
         chunkedMode = NO;
     }
 
-    // Extract the path part out of a file: URL.
-    NSString* filePath = [target hasPrefix:@"/"] ? [[target copy] autorelease] : [[NSURL URLWithString:target] path];
-    
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
     
     NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:server]];
-    NSData *fileData = nil;
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
         NSLog(@"File Transfer Error: Invalid server URL %@", server);
-    } else {
-        NSError *err = nil;
-        // Memory map the file so that it can be read efficiently even if it is large.
-        fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
-        if (!fileData) {
-            errorCode = FILE_NOT_FOUND_ERR;
-            NSLog(@"File Transfer Error: Could not read file data %@", filePath);
-        }
+    } else if (!fileData) {
+        errorCode = FILE_NOT_FOUND_ERR;
     }
     
     if(errorCode > 0) {
@@ -208,10 +201,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     DLog(@"fileData length: %d", [fileData length]);
  	NSData *postBodyAfterFile = [[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding];
 
-    
     NSUInteger totalPayloadLength = [postBodyBeforeFile length] + [fileData length] + [postBodyAfterFile length];
     [req setValue:[[NSNumber numberWithInteger:totalPayloadLength] stringValue] forHTTPHeaderField:@"Content-Length"];
-
 	
     
     if (chunkedMode) {
@@ -258,8 +249,24 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     return delegate;
 }
 
+- (NSData*) fileDataForUploadArguments:(NSArray*)arguments {
+    NSString* target = (NSString*)[arguments objectAtIndex:1];
+    NSError *err = nil;
+    // Extract the path part out of a file: URL.
+    NSString* filePath = [target hasPrefix:@"/"] ? [[target copy] autorelease] : [[NSURL URLWithString:target] path];
+
+    // Memory map the file so that it can be read efficiently even if it is large.
+    NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
+    if (err != nil) {
+        NSLog(@"Error opening file %@: %@", target, err);
+    }
+    return fileData;
+}
+
 - (void) upload:(NSArray*)arguments withDict:(NSDictionary*)options {
-    NSURLRequest* req = [self requestForUpload:arguments withDict:options];
+    // fileData and req are split into helper functions to ease the unit testing of delegateForUpload.
+    NSData* fileData = [self fileDataForUploadArguments:arguments];
+    NSURLRequest* req = [self requestForUpload:arguments withDict:options fileData:fileData];
     CDVFileTransferDelegate* delegate = [self delegateForUpload:arguments];
 	[NSURLConnection connectionWithRequest:req delegate:delegate];
 }
