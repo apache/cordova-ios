@@ -48,7 +48,6 @@
 @property (nonatomic, readwrite, copy) NSString* startPage;
 
 + (NSDictionary*) getBundlePlist:(NSString*)plistName;
-+ (NSString*) cordovaVersion;
 + (NSString*) applicationDocumentsDirectory;
 
 - (void) dispose;

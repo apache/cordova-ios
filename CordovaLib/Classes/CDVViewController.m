@@ -114,8 +114,7 @@
 - (void) printDeprecationNotice
 {
     if (!IsAtLeastiOSVersion(@"4.2")) { // TODO: change WARNING to CRITICAL for 2.0
-        NSLog(@"WARNING: For Cordova 2.0 (you are using Cordova %@), you will need to upgrade to at least iOS 4.2 or greater. Your current version of iOS is %@.", 
-              [CDVViewController cordovaVersion], 
+        NSLog(@"WARNING: For Cordova 2.0, you will need to upgrade to at least iOS 4.2 or greater. Your current version of iOS is %@.", 
               [[UIDevice currentDevice] systemVersion]
               );
     } 
@@ -452,36 +451,6 @@
  */
 - (void) webViewDidFinishLoad:(UIWebView*)theWebView 
 {
-    NSDictionary *deviceProperties = [ self deviceProperties];
-    NSMutableString* result = [[NSMutableString alloc] initWithFormat:
-                               @"(function() { \
-                                    try { \
-                                        cordova.require('cordova/plugin/ios/device').setInfo(%@); \
-                                    } catch (e) { \
-                                        return \"Error: executing module function 'setInfo' in module 'cordova/plugin/ios/device'. Have you included the iOS version of the cordova-%@.js file?\"; \
-                                    } \
-                               })()", 
-                               [deviceProperties JSONString], [CDVViewController cordovaVersion]];
-    
-    /* Settings.plist
-     * Read the optional Settings.plist file and push these user-defined settings down into the web application.
-     * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
-     * such as specifying Full / Lite version, or localization (English vs German, for instance).
-     */
-    // TODO: turn this into an iOS only plugin
-    NSDictionary *temp = [[self class] getBundlePlist:@"Settings"];
-    if ([temp respondsToSelector:@selector(JSONString)]) {
-        [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONString]];
-    }
-    
-    NSString* jsResult = [theWebView stringByEvaluatingJavaScriptFromString:result];
-    // if jsResult is not nil nor empty, an error
-    if (jsResult != nil && [jsResult length] > 0) {
-        NSLog(@"%@", jsResult);
-    }
-    
-    [result release];
-    
     /*
      * Hide the Top Activity THROBBER in the Battery Bar
      */
@@ -921,20 +890,6 @@ BOOL gSplashScreenShown = NO;
 
 #pragma mark -
 
-- (NSDictionary*) deviceProperties
-{
-    UIDevice *device = [UIDevice currentDevice];
-    NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
-    [devProps setObject:[device model] forKey:@"platform"];
-    [devProps setObject:[device systemVersion] forKey:@"version"];
-    [devProps setObject:[device uniqueAppInstanceIdentifier] forKey:@"uuid"];
-    [devProps setObject:[device name] forKey:@"name"];
-    [devProps setObject:[CDVViewController cordovaVersion] forKey:@"cordova"];
-    
-    NSDictionary *devReturn = [NSDictionary dictionaryWithDictionary:devProps];
-    return devReturn;
-}
-
 - (NSString*) appURLScheme
 {
     NSString* URLScheme = nil;
@@ -968,33 +923,6 @@ BOOL gSplashScreenShown = NO;
                                           format:&format errorDescription:&errorDesc];
     return temp;
 }
-
-/**
- Returns the current version of Cordova as read from the VERSION file
- This only touches the filesystem once and stores the result in the class variable gapVersion
- */
-static NSString* cdvVersion;
-+ (NSString*) cordovaVersion
-{
-#ifdef CDV_VERSION
-    cdvVersion = SYMBOL_TO_NSSTRING(CDV_VERSION);
-#else
-	
-    if (cdvVersion == nil) {
-        NSBundle *mainBundle = [NSBundle mainBundle];
-        NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
-        // read from the filesystem and save in the variable
-        // first, separate by new line
-        NSString* fileContents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
-        NSArray* all_lines = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-        NSString* first_line = [all_lines objectAtIndex:0];        
-        
-        cdvVersion = [first_line retain];
-    }
-#endif
-    return cdvVersion;
-}
-
 
 #pragma mark -
 #pragma mark UIApplicationDelegate impl

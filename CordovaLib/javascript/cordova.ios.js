@@ -1,6 +1,6 @@
-// commit 5647225e12e18e15aefc33b151430d9a3804d9ea
+// commit 2496c766b568d4de4d38ec6dd8432045cb476010
 
-// File generated at :: Fri Jun 29 2012 09:38:36 GMT-0700 (PDT)
+// File generated at :: Wed Jul 11 2012 16:04:31 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -713,7 +713,6 @@ channel.create('onDestroy');
 
 // Channels that must fire before "deviceready" is fired.
 channel.waitForInitialization('onCordovaReady');
-channel.waitForInitialization('onCordovaInfoReady');
 channel.waitForInitialization('onCordovaConnectionReady');
 
 module.exports = channel;
@@ -848,6 +847,9 @@ module.exports = {
         Coordinates: {
             path: 'cordova/plugin/Coordinates'
         },
+        device: {
+            path: 'cordova/plugin/device'
+        },
         DirectoryEntry: {
             path: 'cordova/plugin/DirectoryEntry'
         },
@@ -940,6 +942,7 @@ var cordova = require('cordova'),
     utils = require('cordova/utils'),
     gapBridge,
     createGapBridge = function() {
+
         gapBridge = document.createElement("iframe");
         gapBridge.setAttribute("style", "display:none;");
         gapBridge.setAttribute("height","0px");
@@ -950,7 +953,7 @@ var cordova = require('cordova'),
     channel = require('cordova/channel');
 
 module.exports = function() {
-    if (!channel.onCordovaInfoReady.fired) {
+    if (!channel.onCordovaReady.fired) {
         utils.alert("ERROR: Attempting to call cordova.exec()" +
               " before 'deviceready'. Ignoring.");
         return;
@@ -1046,9 +1049,6 @@ module.exports = {
         },
         MediaError: { // exists natively, override
             path: "cordova/plugin/MediaError"
-        },
-        device: {
-            path: 'cordova/plugin/ios/device'
         },
         console: {
             path: 'cordova/plugin/ios/console'
@@ -1792,7 +1792,7 @@ var utils = require('cordova/utils'),
  * {boolean} isDirectory always true (readonly)
  * {DOMString} name of the directory, excluding the path leading to it (readonly)
  * {DOMString} fullPath the absolute full path to the directory (readonly)
- * {FileSystem} filesystem on which the directory resides (readonly)
+ * TODO: implement this!!! {FileSystem} filesystem on which the directory resides (readonly)
  */
 var DirectoryEntry = function(name, fullPath) {
      DirectoryEntry.__super__.constructor.apply(this, [false, true, name, fullPath]);
@@ -2517,13 +2517,12 @@ var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
 var FileSystem = function(name, root) {
     this.name = name || null;
     if (root) {
-        console.log('root.name ' + name);
-        console.log('root.root ' + root);
         this.root = new DirectoryEntry(root.name, root.fullPath);
     }
 };
 
 module.exports = FileSystem;
+
 });
 
 // file: lib/common/plugin/FileTransfer.js
@@ -4026,6 +4025,74 @@ module.exports = contacts;
 
 });
 
+// file: lib/common/plugin/device.js
+define("cordova/plugin/device", function(require, exports, module) {
+var channel = require('cordova/channel'),
+    utils = require('cordova/utils'),
+    exec = require('cordova/exec');
+
+// Tell cordova channel to wait on the CordovaInfoReady event
+channel.waitForInitialization('onCordovaInfoReady');
+
+/**
+ * This represents the mobile device, and provides properties for inspecting the model, version, UUID of the
+ * phone, etc.
+ * @constructor
+ */
+function Device() {
+    this.available = false;
+    this.platform = null;
+    this.version = null;
+    this.name = null;
+    this.uuid = null;
+    this.cordova = null;
+
+    var me = this;
+
+    channel.onCordovaReady.subscribeOnce(function() {
+        me.getInfo(function(info) {
+            me.available = true;
+            me.platform = info.platform;
+            me.version = info.version;
+            me.name = info.name;
+            me.uuid = info.uuid;
+            me.cordova = info.cordova;
+            channel.onCordovaInfoReady.fire();
+        },function(e) {
+            me.available = false;
+            utils.alert("[ERROR] Error initializing Cordova: " + e);
+        });
+    });
+}
+
+/**
+ * Get device info
+ *
+ * @param {Function} successCallback The function to call when the heading data is available
+ * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
+ */
+Device.prototype.getInfo = function(successCallback, errorCallback) {
+
+    // successCallback required
+    if (typeof successCallback !== "function") {
+        console.log("Device Error: successCallback is not a function");
+        return;
+    }
+
+    // errorCallback optional
+    if (errorCallback && (typeof errorCallback !== "function")) {
+        console.log("Device Error: errorCallback is not a function");
+        return;
+    }
+
+    // Get info
+    exec(successCallback, errorCallback, "Device", "getDeviceInfo", []);
+};
+
+module.exports = new Device();
+
+});
+
 // file: lib/common/plugin/geolocation.js
 define("cordova/plugin/geolocation", function(require, exports, module) {
 var utils = require('cordova/utils'),
@@ -4480,42 +4547,6 @@ module.exports = {
         exec(successCallback, null, "Contacts","chooseContact", [options]);
     }
 };
-});
-
-// file: lib/ios/plugin/ios/device.js
-define("cordova/plugin/ios/device", function(require, exports, module) {
-/**
- * this represents the mobile device, and provides properties for inspecting the model, version, UUID of the
- * phone, etc.
- * @constructor
- */
-var exec = require('cordova/exec'),
-    utils = require('cordova/utils'),
-    channel = require('cordova/channel');
-
-var Device = function() {
-    this.platform = null;
-    this.version  = null;
-    this.name     = null;
-    this.cordova  = null;
-    this.uuid     = null;
-};
-
-Device.prototype.setInfo = function(info) {
-    try {
-        this.platform = info.platform;
-        this.version = info.version;
-        this.name = info.name;
-        this.cordova = info.cordova;
-        this.uuid = info.uuid;
-        channel.onCordovaInfoReady.fire();
-    } catch(e) {
-        utils.alert('Error during device info setting in cordova/plugin/ios/device!');
-    }
-};
-
-module.exports = new Device();
-
 });
 
 // file: lib/ios/plugin/ios/nativecomm.js
