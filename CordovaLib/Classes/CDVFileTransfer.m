@@ -61,25 +61,17 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 
 - (NSString*) escapePathComponentForUrlString:(NSString*)urlString
 {
-    // separate the scheme and location components
-    NSArray* schemeAndLocationComponents = [urlString componentsSeparatedByString:@"://"];
-    if ([schemeAndLocationComponents count] < 2) {
+    NSRange schemeAndHostRange = [urlString rangeOfString:@"://.*?/" options:NSRegularExpressionSearch];
+    if (schemeAndHostRange.length == 0) {
         return urlString;
     }
-    
-    // separate the domain and path components
-    NSArray* pathComponents = [[schemeAndLocationComponents lastObject] componentsSeparatedByString:@"/"];
-    if ([pathComponents count] < 2) {
-        return urlString;
-    }
-    
-    NSString* pathComponent = [pathComponents lastObject];
-    NSRange rangeOfSubstring = [urlString rangeOfString:pathComponent];
-    urlString = [urlString substringToIndex:rangeOfSubstring.location];
-    
+
+    NSInteger schemeAndHostEndIndex = NSMaxRange(schemeAndHostRange);
+    NSString* schemeAndHost = [urlString substringToIndex:schemeAndHostEndIndex];
+    NSString* pathComponent = [urlString substringFromIndex:schemeAndHostEndIndex];
     pathComponent = [pathComponent stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    return [urlString stringByAppendingString:pathComponent];
+    return [schemeAndHost stringByAppendingString:pathComponent];
 }
 
 - (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options fileData:(NSData*)fileData {
@@ -107,7 +99,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
-    
+    // NSURL does not accepts URLs with spaces in the path. We escape the path in order
+    // to be more lenient.
     NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:server]];
     
     if (!url) {

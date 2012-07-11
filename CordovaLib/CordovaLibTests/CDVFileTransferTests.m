@@ -110,6 +110,19 @@ static NSData* readStream(NSInputStream* stream) {
     STAssertEquals([payloadData length], contentLength, nil);
 }
 
+- (void)testEscapePathComponentForUrlString {
+    STAssertTrue([@"" isEqualToString:
+        [_fileTransfer escapePathComponentForUrlString:@""]], nil);
+    STAssertTrue([@"foo" isEqualToString:
+        [_fileTransfer escapePathComponentForUrlString:@"foo"]], nil);
+    STAssertTrue([@"http://a.org/spa%20ce%25" isEqualToString:
+        [_fileTransfer escapePathComponentForUrlString:@"http://a.org/spa ce%"]], nil);
+    STAssertTrue([@"http://a.org/spa%20ce%25/" isEqualToString:
+        [_fileTransfer escapePathComponentForUrlString:@"http://a.org/spa ce%/"]], nil);
+    STAssertTrue([@"http://a.org/%25/%25/" isEqualToString:
+        [_fileTransfer escapePathComponentForUrlString:@"http://a.org/%/%/"]], nil);
+}
+
 - (void)testUpload_invalidServerUrl
 {
     [self setServerUrlArg:@"invalid url"];
