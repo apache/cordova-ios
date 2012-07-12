@@ -21,8 +21,8 @@
 //  AppDelegate.h
 //  __TESTING__
 //
-//  Created by Shazron Abdullah on 12-06-20.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by ___FULLUSERNAME___ on ___DATE___.
+//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
