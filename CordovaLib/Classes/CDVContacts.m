@@ -29,6 +29,7 @@
 
 @synthesize allowsEditing;
 @synthesize callbackId;
+@synthesize options;
 @synthesize selectedId;
 
 @end
@@ -177,6 +178,7 @@
 	CDVContactsPicker* pickerController = [[CDVContactsPicker alloc] init];
 	pickerController.peoplePickerDelegate = self;
 	pickerController.callbackId = callbackId;
+	pickerController.options = options;
 	pickerController.selectedId = kABRecordInvalidID;
 	pickerController.allowsEditing = (BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
 	
@@ -195,6 +197,11 @@
 	ABRecordID contactId = ABRecordGetRecordID(person);
 	picker.selectedId = contactId; // save so can return when dismiss
 
+	// Retreive pickedContact information
+	CDVContact* pickedContact = [[[CDVContact alloc] initFromABRecord:(ABRecordRef)person] autorelease];
+	NSArray *fields = [picker.options objectForKey:@"fields"] ?: [NSArray arrayWithObjects:@"id", nil];
+	NSDictionary *returnFields = [[CDVContact class] calcReturnFields: fields];
+	NSDictionary *pickedContactDictionary = [pickedContact toDictionary:returnFields];
 	
 	if (picker.allowsEditing) {
 		
@@ -206,8 +213,8 @@
 		
 		[peoplePicker pushViewController:personController animated:YES];
 	} else {
-		// return the contact Id
-		CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsInt: contactId];
+		// return the pickedContact information
+		CDVPluginResult *result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: pickedContactDictionary];
 		[self writeJavascript:[result toSuccessCallbackString: picker.callbackId]];
 		
         if ([picker respondsToSelector:@selector(presentingViewController)]) { 
