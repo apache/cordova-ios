@@ -32,7 +32,7 @@ set -e
 
 if [ -n "$1" ] && [ "$1" == "-h" ]
 then
-    echo 'usage: create path package name'
+    echo 'usage: create path package_name project_name'
     exit 0
 fi
 
@@ -63,7 +63,7 @@ cp -r $BINDIR/templates/project $PROJECT_PATH
 # - ./__TESTING__/__TESTING__-Prefix.plist
 mv $PROJECT_PATH/__TESTING__.xcodeproj $PROJECT_PATH/$ACTIVITY.xcodeproj
 mv $PROJECT_PATH/__TESTING__ $PROJECT_PATH/$ACTIVITY
-mv $PROJECT_PATH/$ACTIVITY/__TESTING__-info.plist $PROJECT_PATH/$ACTIVITY/$ACTIVITY-info.plist
+mv $PROJECT_PATH/$ACTIVITY/__TESTING__-Info.plist $PROJECT_PATH/$ACTIVITY/$ACTIVITY-Info.plist
 mv $PROJECT_PATH/$ACTIVITY/__TESTING__-Prefix.pch $PROJECT_PATH/$ACTIVITY/$ACTIVITY-Prefix.pch
 
 # lets store a reference to the root
@@ -84,7 +84,7 @@ $BINDIR/replaces $R/Classes/AppDelegate.m     __TESTING__ $ACTIVITY
 $BINDIR/replaces $R/Classes/MainViewController.h     __TESTING__ $ACTIVITY
 $BINDIR/replaces $R/Classes/MainViewController.m     __TESTING__ $ACTIVITY
 $BINDIR/replaces $R/main.m                    __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/$ACTIVITY-info.plist      __TESTING__ $ACTIVITY
+$BINDIR/replaces $R/$ACTIVITY-Info.plist      __TESTING__ $ACTIVITY
 $BINDIR/replaces $R/$ACTIVITY-Prefix.pch      __TESTING__ $ACTIVITY
 
-$BINDIR/replaces $R/$ACTIVITY-info.plist --ID-- $PACKAGE
+$BINDIR/replaces $R/$ACTIVITY-Info.plist --ID-- $PACKAGE
