@@ -108,13 +108,13 @@
 	BOOL allowsEditing;
 	NSString* callbackId;
 	NSMutableDictionary *options;
-	ABRecordID selectedId;
+	NSDictionary *pickedContactDictionary;
 }
 
 @property BOOL allowsEditing;
 @property (copy) NSString* callbackId;
 @property (nonatomic, retain) NSMutableDictionary *options;
-@property ABRecordID selectedId;
+@property (nonatomic, retain) NSDictionary *pickedContactDictionary;
 
 @end
 
