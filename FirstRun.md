@@ -32,31 +32,17 @@
 
 ## Upgraders
 	
-1. Please see the [**"Upgrading Cordova iOS"**](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document on [http://docs.phonegap.com](http://docs.phonegap.com)
+1. Please see the [**Upgrading Cordova iOS**](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document on [http://docs.phonegap.com](http://docs.phonegap.com)
 2. See the FAQ in the README.pdf as well
 
 <br />
 
-## Xcode 4
+## Creating a new Cordova-based project
 
-1. Launch Xcode 4
-2. Select "New Project..." then under the File menu
-3. Select "Application", under the "iOS" section
-4. Select "Cordova-based Application" then in the right pane
-5. Select the "Next" button
-6. Name your project and bundle identifier
-7. Select the "Next" button
-8. Choose the location where you want the new project to be
+Follow the instructions in the [**Command-Line Usage** section](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.phonegap.com](http://docs.phonegap.com)
 
-<br />
+The docs should also have been included in the distribution.
 
-**IMPORTANT:** On first run, it will create a sample "www" folder for you inside your project. After that, you MUST drag and drop the "www" folder into your project in Xcode, to create a **folder reference** for it (**BLUE** folder).
-<br />
-
-**IMPORTANT:** For the "CoreMedia", "UIKit" and "AVFoundation" frameworks, you MUST set the linkage as "Optional", if not iOS 3.x devices will crash. The linkage type could not be set in the template itself (undocumented).
-<br />
-
-**NOTE:** In post-1.0.0 releases, new project templates have these 3 frameworks specified above weak linked through linker flags during compile time, and you will not have to do this manually anymore.
 <br />
 
 That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
