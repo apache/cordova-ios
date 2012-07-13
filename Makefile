@@ -71,6 +71,8 @@ clean-markdown:
 
 clean-installer:
 	@$(RM_F) CordovaInstaller/docs/*.rtf
+	@$(RM_F) CordovaInstaller/docs/*.html
+	@$(RM_F) CordovaInstaller/docs/*.md
 	@$(RM_F) CordovaInstaller/docs/*.pdf
 	@$(RM_F) CordovaInstaller/docs/*.html
 
@@ -117,24 +119,22 @@ installer: check-utils clean check-wkhtmltopdf md-to-html
 		$(RM_RF) dist; \
 	fi		
 	@# backup markdown files for version replace
-	@$(MV) -f RELEASENOTES.md RELEASENOTES.md.bak 
-	@$(MV) -f CordovaInstaller/docs/finishup.md CordovaInstaller/docs/finishup.md.bak 
-	@$(CAT) CordovaInstaller/docs/finishup.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/finishup.md
-	@$(CAT) RELEASENOTES.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/RELEASENOTES.md
+	@$(CAT) FirstRun.md | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/FirstRun.md
+	@$(CAT) RELEASENOTES.md | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/RELEASENOTES.md
 	@# generate releasenotes html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/releasenotes.html
 	@$(MARKDOWN) CordovaInstaller/docs/RELEASENOTES.md >> CordovaInstaller/docs/releasenotes.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/releasenotes.html
-	@# generate finishup html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/finishup.html
-	@$(MARKDOWN) CordovaInstaller/docs/finishup.md >> CordovaInstaller/docs/finishup.html
-	@echo '</body></html>'  >> CordovaInstaller/docs/finishup.html
+	@# generate firstrun html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/firstrun.html
+	@$(MARKDOWN) CordovaInstaller/docs/FirstRun.md >> CordovaInstaller/docs/firstrun.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/firstrun.html
 	@# convert all the html files to rtf (for PackageMaker)
 	@textutil -convert rtf -font 'Helvetica' CordovaInstaller/docs/*.html
 	@# build the .pkg file
 	@echo -n "Building Cordova-${CDV_VER}.pkg..."	
 	@$(MKPATH) dist/files/Guides
-	@'$(PACKAGEMAKER)' -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@'$(PACKAGEMAKER)' -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg  > /dev/null 2> $(PKG_ERROR_LOG)
 	@# create the applescript uninstaller
 	@osacompile -o ./dist/files/Uninstall\ Cordova.app Uninstall\ Cordova.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
 	@# convert the html docs to pdf, concatenate readme and license
@@ -144,12 +144,9 @@ installer: check-utils clean check-wkhtmltopdf md-to-html
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} JavaScript Exception Logging" CordovaInstaller/docs/exception_logging.html 'dist/files/Guides/Cordova JavaScript Exception Logging.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Custom URL Scheme Handling" CordovaInstaller/docs/custom_url_scheme.html 'dist/files/Guides/Cordova Custom URL Scheme Handling.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@textutil -convert html -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.html > /dev/null 2>> $(PKG_ERROR_LOG)
-	@textutil -cat html CordovaInstaller/docs/finishup.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
+	@textutil -cat html CordovaInstaller/docs/firstrun.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(RM_F) dist/files/Readme.html
-	@# restore backed-up markdown files
-	@$(MV) -f RELEASENOTES.md.bak RELEASENOTES.md 
-	@$(MV) -f CordovaInstaller/docs/finishup.md.bak CordovaInstaller/docs/finishup.md
 	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
@@ -224,6 +221,7 @@ install-markdown: check-brew
 	@brew install markdown
 
 md-to-html: check-markdown
+	@mkdir -p CordovaInstaller/docs
 	@# generate readme html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/readme.html
 	@$(MARKDOWN) README.md >> CordovaInstaller/docs/readme.html
