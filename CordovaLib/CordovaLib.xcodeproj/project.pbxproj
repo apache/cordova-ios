@@ -107,6 +107,10 @@
 		30B39EBF13D0268B0009682A /* CDVSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* CDVSplashScreen.m */; };
 		30B39EC013D0268B0009682A /* CDVSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* CDVSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30B39EC113D0268B0009682A /* CDVSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B39EBD13D0268B0009682A /* CDVSplashScreen.m */; };
+		30C5F1DF15AF9E950052A00D /* CDVDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C5F1DD15AF9E950052A00D /* CDVDevice.h */; };
+		30C5F1E015AF9E950052A00D /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C5F1DE15AF9E950052A00D /* CDVDevice.m */; };
+		30C5F1E215AF9EAF0052A00D /* CDVDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C5F1DD15AF9E950052A00D /* CDVDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30C5F1E315AF9ED20052A00D /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C5F1DE15AF9E950052A00D /* CDVDevice.m */; };
 		30C684801406CB38004C1A8E /* CDVWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C6847E1406CB38004C1A8E /* CDVWhitelist.h */; };
 		30C684811406CB38004C1A8E /* CDVWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C6847E1406CB38004C1A8E /* CDVWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30C684821406CB38004C1A8E /* CDVWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C6847F1406CB38004C1A8E /* CDVWhitelist.m */; };
@@ -138,7 +142,7 @@
 		3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E76876B156A90EE00EB6FA3 /* CDVLogger.m */; };
 		3E76876E156A90EE00EB6FA3 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E76876B156A90EE00EB6FA3 /* CDVLogger.m */; };
 		3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; };
-		3E768770156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; };
+		3E768770156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
 		686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */; };
 		68A32D7514103017006B237C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68A32D7414103017006B237C /* AddressBook.framework */; };
@@ -251,6 +255,8 @@
 		30B342F415224B360070E6A5 /* CDVWebViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewTest.m; sourceTree = "<group>"; };
 		30B39EBC13D0268B0009682A /* CDVSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVSplashScreen.h; path = Classes/CDVSplashScreen.h; sourceTree = "<group>"; };
 		30B39EBD13D0268B0009682A /* CDVSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVSplashScreen.m; path = Classes/CDVSplashScreen.m; sourceTree = "<group>"; };
+		30C5F1DD15AF9E950052A00D /* CDVDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVDevice.h; path = Classes/CDVDevice.h; sourceTree = "<group>"; };
+		30C5F1DE15AF9E950052A00D /* CDVDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVDevice.m; path = Classes/CDVDevice.m; sourceTree = "<group>"; };
 		30C6847E1406CB38004C1A8E /* CDVWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVWhitelist.h; path = Classes/CDVWhitelist.h; sourceTree = "<group>"; };
 		30C6847F1406CB38004C1A8E /* CDVWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVWhitelist.m; path = Classes/CDVWhitelist.m; sourceTree = "<group>"; };
 		30C684921407044A004C1A8E /* CDVURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVURLProtocol.h; path = Classes/CDVURLProtocol.h; sourceTree = "<group>"; };
@@ -494,6 +500,8 @@
 		888700D710922F56009987E8 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				30C5F1DD15AF9E950052A00D /* CDVDevice.h */,
+				30C5F1DE15AF9E950052A00D /* CDVDevice.m */,
 				301F2F2914F3C9CA003FE9FC /* CDV.h */,
 				3034979A1513D56A0090E688 /* CDVLocalStorage.h */,
 				3034979B1513D56A0090E688 /* CDVLocalStorage.m */,
@@ -613,6 +621,7 @@
 				30956FFC138F317200FC3563 /* CDVMotion.h in Headers */,
 				1F5AC3C51396F75000EC7B95 /* CDVCapture.h in Headers */,
 				30A9DFE913A7EB9F009AA950 /* CDVPlugin.h in Headers */,
+				30C5F1E215AF9EAF0052A00D /* CDVDevice.h in Headers */,
 				302965BD13A94E9D007046C5 /* CDVDebug.h in Headers */,
 				30C684951407044B004C1A8E /* CDVURLProtocol.h in Headers */,
 				30A90B9214588697006178D3 /* JSONKit.h in Headers */,
@@ -625,8 +634,8 @@
 				30392E5014F502C200B9E0B8 /* CDVAvailability.h in Headers */,
 				301F2F2B14F3C9CA003FE9FC /* CDV.h in Headers */,
 				3062D121151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
-				3034979D1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 				3E768770156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
+				3034979D1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 				EBA3557415ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -670,6 +679,7 @@
 				3062D120151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
 				3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
 				EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */,
+				30C5F1DF15AF9E950052A00D /* CDVDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,6 +927,7 @@
 				30956FFD138F317200FC3563 /* CDVMotion.m in Sources */,
 				30B39EC113D0268B0009682A /* CDVSplashScreen.m in Sources */,
 				30E563D213E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
+				30C5F1E315AF9ED20052A00D /* CDVDevice.m in Sources */,
 				30C684831406CB38004C1A8E /* CDVWhitelist.m in Sources */,
 				30C684971407044B004C1A8E /* CDVURLProtocol.m in Sources */,
 				30A90B9414588697006178D3 /* JSONKit.m in Sources */,
@@ -987,6 +998,7 @@
 				3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
 				3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
 				EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */,
+				30C5F1E015AF9E950052A00D /* CDVDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
