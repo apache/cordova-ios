@@ -23,28 +23,37 @@
 # create a Cordova/iOS project
 # 
 # USAGE
-#   ./create [path package name]
+#   ./create <path_to_new_project> <package_name> <project_name>
 #
 # EXAMPLE
 #  ./create ~/Desktop/radness org.apache.cordova.radness Radness
 #
 set -e
 
-if [ -n "$1" ] && [ "$1" == "-h" ]
-then
-    echo 'usage: create path package_name project_name'
-    exit 0
+function usage() {
+  echo "Usage: $0 <path_to_new_project> <package_name> <project_name>"
+  echo "	<path_to_new_project>: Path to your new Cordova iOS project"
+  echo "	<package_name>: Package name, following reverse-domain style convention"
+  echo "	<project_name>: Project name"
+  exit 1
+}
+
+# check whether it is a proper create command (at least 3 arguments)
+if [ $# -lt 3 ]; then
+	usage
 fi
 
 BINDIR=$( cd "$( dirname "$0" )" && pwd )
-PROJECT_PATH=${1:-"./example"}
-PACKAGE=${2:-"org.apache.cordova.example"}
-ACTIVITY=${3:-"CordovaExample"}
+PROJECT_PATH=$1
+PACKAGE=$2
+PROJECT_NAME=$3
 
-# clobber any existing example
-if [ $# -eq 0 ]
-then
-    rm -rf $PROJECT_PATH
+# check whether the project path exists and is not empty
+if [ -d "$PROJECT_PATH" ]; then
+	if [ "$(ls -1A "$PROJECT_PATH")" ]; then
+		echo "\033[31mError: $PROJECT_PATH is not empty. Please specify an empty folder.\033[m"
+		exit 1
+	fi
 fi
 
 # copy the files in; then modify them
@@ -61,13 +70,13 @@ cp -r $BINDIR/templates/project $PROJECT_PATH
 # - ./__TESTING__/
 # - ./__TESTING__/__TESTING__-info.plist
 # - ./__TESTING__/__TESTING__-Prefix.plist
-mv $PROJECT_PATH/__TESTING__.xcodeproj $PROJECT_PATH/$ACTIVITY.xcodeproj
-mv $PROJECT_PATH/__TESTING__ $PROJECT_PATH/$ACTIVITY
-mv $PROJECT_PATH/$ACTIVITY/__TESTING__-Info.plist $PROJECT_PATH/$ACTIVITY/$ACTIVITY-Info.plist
-mv $PROJECT_PATH/$ACTIVITY/__TESTING__-Prefix.pch $PROJECT_PATH/$ACTIVITY/$ACTIVITY-Prefix.pch
+mv $PROJECT_PATH/__TESTING__.xcodeproj $PROJECT_PATH/$PROJECT_NAME.xcodeproj
+mv $PROJECT_PATH/__TESTING__ $PROJECT_PATH/$PROJECT_NAME
+mv $PROJECT_PATH/$PROJECT_NAME/__TESTING__-Info.plist $PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist
+mv $PROJECT_PATH/$PROJECT_NAME/__TESTING__-Prefix.pch $PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Prefix.pch
 
 # lets store a reference to the root
-R=$PROJECT_PATH/$ACTIVITY
+R=$PROJECT_PATH/$PROJECT_NAME
 
 # replace __TESTING__ and --ID-- with ACTIVITY and ID strings, respectively, in:
 #
@@ -78,13 +87,13 @@ R=$PROJECT_PATH/$ACTIVITY
 # - ./__TESTING__/Resources/__TESTING__-info.plist
 # - ./__TESTING__/Resources/__TESTING__-Prefix.plist
 
-$BINDIR/replaces $R.xcodeproj/project.pbxproj __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/Classes/AppDelegate.h     __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/Classes/AppDelegate.m     __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/Classes/MainViewController.h     __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/Classes/MainViewController.m     __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/main.m                    __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/$ACTIVITY-Info.plist      __TESTING__ $ACTIVITY
-$BINDIR/replaces $R/$ACTIVITY-Prefix.pch      __TESTING__ $ACTIVITY
+$BINDIR/replaces $R.xcodeproj/project.pbxproj __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/Classes/AppDelegate.h     __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/Classes/AppDelegate.m     __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/Classes/MainViewController.h     __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/Classes/MainViewController.m     __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/main.m                    __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/$PROJECT_NAME-Info.plist      __TESTING__ $PROJECT_NAME
+$BINDIR/replaces $R/$PROJECT_NAME-Prefix.pch      __TESTING__ $PROJECT_NAME
 
-$BINDIR/replaces $R/$ACTIVITY-Info.plist --ID-- $PACKAGE
+$BINDIR/replaces $R/$PROJECT_NAME-Info.plist --ID-- $PACKAGE
