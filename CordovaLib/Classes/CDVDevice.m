@@ -20,6 +20,7 @@
 
 #import "CDVDevice.h"
 #import "CDVViewController.h"
+#import "UIDevice+Extensions.h"
 
 @interface CDVDevice () {
 }

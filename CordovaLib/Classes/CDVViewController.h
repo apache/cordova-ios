@@ -60,7 +60,6 @@
 
 - (void) javascriptAlert:(NSString*)text;
 - (NSString*) appURLScheme;
-- (NSDictionary*) deviceProperties;
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
 
