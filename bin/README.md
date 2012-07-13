@@ -22,23 +22,7 @@
 Updating the template project
 -----------------------------
 
-1. In Xcode 4, create a new "Cordova-based Application"
-2. For **Product Name**, set it to **"\_\_TESTING\_\_"** (two underscores on each side)
-3. For **Company Identifier**, set it to **"--ID--"** (two dashes on each side)
-4. Create the project
-5. Run it once, find the **"www"** folder and add it as a **Folder Reference** to the project
-6. Close the project
-7. Delete these folders and files:
-
-        bin/templates/project/__TESTING__
-        bin/templates/project/www
-        bin/templates/project/__TESTING__.xcodeproj
-
-8. Inside the project folder from the project you created above, copy these folders and files to your **bin/templates/project**:
-
-        __TESTING__
-        www
-        __TESTING__.xcodeproj
-       
-9. Run [Apache Rat](http://incubator.apache.org/rat/index.html) on **/bin/templates/project**, and add the Apache License header on affected files
-10. Check your modified and new project files in to Git, and push it upstream
+1. Generate the tagged JavaScript file from the **cordova-js** repo
+2. Delete the **cordova-X.X.X.js** file in **templates/project/www**
+3. Copy the file from (1) into **templates/project/www**
+4. Rename the file in (3) to **cordova-X.X.X.js** where X.X.X is the current Cordova version
