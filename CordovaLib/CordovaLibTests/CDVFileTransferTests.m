@@ -63,7 +63,7 @@ static NSData* readStream(NSInputStream* stream) {
     
     _arguments = [[NSMutableArray alloc] initWithObjects:
         kDummyArgTarget, kDummyArgServer, kDummyArgFileKey, [NSNull null],
-        [NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
+        [NSNull null], [NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
     _dummyFileData = [[kDummyFileContents dataUsingEncoding:NSUTF8StringEncoding] retain];
     _fileTransfer = [[CDVFileTransfer alloc] init];
 }
@@ -95,6 +95,10 @@ static NSData* readStream(NSInputStream* stream) {
     [_arguments replaceObjectAtIndex:5 withObject:params];
 }
 
+- (void)setHeaders:(NSDictionary*)headers {
+    [_arguments replaceObjectAtIndex:8 withObject:headers];
+}
+
 - (NSURLRequest*)requestForUpload {
     CDVInvokedUrlCommand* command = [[[CDVInvokedUrlCommand alloc] initWithArguments:_arguments
                                                                           callbackId:kDummyArgCallbackId
@@ -115,6 +119,7 @@ static NSData* readStream(NSInputStream* stream) {
         STAssertNil([request HTTPBodyStream], nil);
         payloadData = [request HTTPBody];
     }
+    STAssertNotNil([request valueForHTTPHeaderField:@"X-Requested-With"], nil);
     NSUInteger contentLength = [[request valueForHTTPHeaderField:@"Content-Length"] intValue];
     STAssertEquals([payloadData length], contentLength, nil);
 }
@@ -170,25 +175,31 @@ static NSData* readStream(NSInputStream* stream) {
     [self checkUploadRequest:request chunked:YES];
 }
 
-- (void)testUpload_withOptions
+- (void)testUpload_withParams
 {
     [self setChunkedModeArg:NO];
-    NSDictionary* headers = [NSDictionary dictionaryWithObjectsAndKeys:@"val1", @"key1",
-        @"val2", @"key2", nil];
     NSDictionary* params = [NSDictionary dictionaryWithObjectsAndKeys:@"cookieval", kOptionsKeyCookie,
-        headers, @"headers", @"val3", @"key3", nil];
+        @"val3", @"key3", nil];
     [self setParams:params];
     NSURLRequest* request = [self requestForUpload];
     NSString* payload = [[[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding] autorelease];
-    // Check that headers are properly set.
-    STAssertTrue([@"val1" isEqualToString:[request valueForHTTPHeaderField:@"key1"]], nil);
-    STAssertTrue([@"val2" isEqualToString:[request valueForHTTPHeaderField:@"key2"]], nil);
     // Check that the cookie is set, and that it is not in the payload like others in the options dict.
     STAssertTrue([@"cookieval" isEqualToString:[request valueForHTTPHeaderField:@"Cookie"]], nil);
     STAssertEquals([payload rangeOfString:@"cookieval"].length, 0U, nil);
     // Check that key3 is in the payload.
     STAssertTrue([payload rangeOfString:@"key3"].length > 0, nil);
     STAssertTrue([payload rangeOfString:@"val3"].length > 0, nil);
+}
+
+- (void)testUpload_withHeaders
+{
+    [self setChunkedModeArg:NO];
+    [self setHeaders:[NSDictionary dictionaryWithObjectsAndKeys:@"val1", @"key1",
+        [NSArray arrayWithObjects:@"val2a", @"val2b", nil], @"key2", [NSNull null], @"X-Requested-With", nil]];
+    NSURLRequest* request = [self requestForUpload];
+    STAssertTrue([@"val1" isEqualToString:[request valueForHTTPHeaderField:@"key1"]], nil);
+    STAssertTrue([@"val2a,val2b" isEqualToString:[request valueForHTTPHeaderField:@"key2"]], nil);
+    STAssertTrue([@"null" isEqualToString:[request valueForHTTPHeaderField:@"X-Requested-With"]], nil);
 }
 
 @end
