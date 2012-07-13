@@ -39,7 +39,7 @@ SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
 
 cd $PROJECT_PATH
 
-xcodebuild -project $PRJ -sdk $SDK clean build
+xcodebuild -project $PRJ -sdk $SDK clean build VALID_ARCHS="i386"
 
 # launch using ios-sim
 
