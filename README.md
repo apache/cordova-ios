@@ -20,12 +20,12 @@
 -->
 Cordova iOS
 =============================================================
-CordovaLib is a static library that enables users to include Cordova in their iOS application projects easily, and also create new Cordova based iOS application projects through a Xcode project template.
+CordovaLib is a static library that enables users to include Cordova in their iOS application projects easily, and also create new Cordova based iOS application projects.
 <br />
 
 Pre-requisites
 -------------------------------------------------------------
-Make sure you have installed the latest iOS SDK. Download it at [http://developer.apple.com/ios](http://developer.apple.com/ios)
+Make sure you have installed the latest released iOS SDK which comes with Xcode 4. Download it at [http://developer.apple.com/ios](http://developer.apple.com/ios).
 <br />
 
 Build and install the Installer Package
@@ -44,26 +44,24 @@ The installer should build "CordovaInstaller.dmg" into the **dist** folder, moun
 1. Quit Xcode
 2. Launch "CordovaInstaller.pkg" from the mounted .dmg, to install CordovaLib, the Cordova framework and the Cordova Xcode Templates.
 
+**NOTE:** For 2.0.0, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first.
+
 <br />
 
-Create a Cordova project (Xcode 4)
+Create a Cordova project
 -------------------------------------------------------------
 
-1. Launch Xcode, then under the File menu, select "New Project...".
-2. Navigate to the "iOS" section, under "Applications" - then in the right pane, select "Cordova-based Application"
-3. Select the "Next" button, name your project and company idenfifier, then select the "Next" button again.
-4. Choose the location where you want the new project to be.
-5. Run the project at least once to create the "www" folder in your project folder.
-  - If you get compilation errors complaining about "NSAutoreleasePool",
-    make sure to change project's Build Settings in Xcode for the
-    "Compiler for C/C++/Objective-C" to "Apple LLVM Compiler 3.0"
-6. Drag and drop this "www" folder into your project in Xcode, and add it as a **folder reference** (**BLUE** folder).
-7. Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
+1. Copy the **bin** subfolder (included in the distribution) to a location on your hard drive.
+2. Follow the instructions in the [**Command-Line Usage** section](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.phonegap.com](http://docs.phonegap.com)
+
+The docs should also have been included in the distribution.
 
 <br />
 
 Uninstalling CordovaLib, Cordova.framework and the Xcode Templates
 --------------------------------------------------------------------
+
+**NOTE:** For 2.0.0, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first.
 
 Use the "Uninstall Cordova" app included in the Cordova iOS DMG file, OR:
 
@@ -94,10 +92,6 @@ Items that will be installed:
 
 1. Xcode global var in _~/Library/Preferences/com.apple.Xcode.plist _ (which will be listed under Xcode Preferences -> Source Trees)
 2. CordovaLib Xcode static library project under _~/Documents/CordovaLib_
-3. Xcode project template in _~/Library/Application Support/Developer/Shared/Xcode/Project Templates/Cordova_
-4. Xcode 4 project template in _~/Library/Developer/Xcode/Templates/Project Templates/Application_
-5. Cordova Xcode static framework under _/Users/Shared/Cordova/Frameworks/Cordova.framework_ (may change in future updates)
-6. Symlink to the framework in (5) under _~/Library/Frameworks_
 
 <br />
 
@@ -108,7 +102,7 @@ Delete the files listed above, or use the "Uninstall Cordova" app included in th
 FAQ
 ---
 
-**1. In Xcode 4, I get an error that "The Start Page 'www/index.html' was not found."?**
+**1. In Xcode 4 (for Cordova versions lesser than 2.0.0) , I get an error that "The Start Page 'www/index.html' was not found."?**
 
 This is a known issue with the Xcode 4 Template - we can't specify a folder reference. You need to build the project at least once, then go to the folder where your project is in, and drag and drop in the __www__ folder, then add it as a __folder reference__ (will end up as a __blue__ folder, not yellow), then run the project again. Check your project warnings as well for clues.
 
@@ -169,23 +163,19 @@ Modify these lines appropriately:
 
 **8. What's the difference between the two templates?**
 
+Note that Xcode template support has  been removed in 2.0.0.
+
 The CordovaLib static library is only used by the older subproject-based template. The Xcode 4 template uses Cordova.framework (a static framework) because of Xcode 4's template limitations. Both are based off the same code, just packaged differently.
 
-You can still create projects using the command line if you want to use sub-project based Template in Xcode 4. This is particularly useful for developers debugging the Cordova core.
-
-Link:
-
-1. [https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh](https://raw.github.com/apache/incubator-cordova-ios/1.0.0/create_project.sh)
-
-Next, you will have to **replace all references of "PhoneGap" to "Cordova"** from [this line](https://github.com/apache/incubator-cordova-ios/blob/1.0.0/create_project.sh#L41).
+Staring with 2.0.0, you must create projects [using the command line](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage):
 
 <br />
 
-**9. In the sub-project based template, I want to have a project-specific copy of CordovaLib for my project, not a global one. How do I do this?** 
+**9. In the sub-project based Cordova project, I want to have a project-specific copy of CordovaLib for my project, not a global one. How do I do this?** 
 
 In your project, there should be a _CordovaBuildSettings.xcconfig_ file. Modify the _CORDOVALIB_ variable in the file to point to your project specific CordovaLib folder. You can use relative paths, off $(PROJECT_DIR).
 
-**10. In Xcode 4, I want to have a project-specific copy of Cordova.framework for my project, not a global one. How do I do this?** 
+**10. In a .framework based Cordova project (only supported in Cordova versions lesser than 2.0.0), I want to have a project-specific copy of Cordova.framework for my project, not a global one. How do I do this?** 
 
 Remove the existing Cordova.framework from your project, and drag and drop your own Cordova.framework in, that's all there is to it. To compile your own version of Cordova.framework, go to _~/Documents/CordovaLib_ and run the Xcode project with the _UniversalFramework_ target. You might need to modify the _USER_FRAMEWORK_SEARCH_PATHS_ in your project as well.
 
@@ -203,7 +193,7 @@ In your project's Build Settings, set **"Build for Active Architecture Only"** t
 
 **14. I get this runtime error/crash: "dyld: Symbol not found: _NSURLIsExcludedFromBackupKey"** 
 
- A. Older iOS versions than 5.1 do not have this symbol defined. You need to add weak link the constant value and weak link the CoreFoundation framework:
+ A. Older iOS versions than 5.1 do not have this symbol defined. You need to add the constant value and weak link the CoreFoundation framework:
 
  1. Add this line to your AppDelegate.m: 
 
