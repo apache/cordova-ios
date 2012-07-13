@@ -2,7 +2,7 @@
 <pkmkdoc spec="1.12">
     <properties>
         <title>Cordova</title>
-        <build>/Users/shazron/Desktop/Cordova.pkg</build>
+        <build></build>
         <organization>org.apache.cordovalibinstaller</organization>
         <userSees ui="easy"/>
         <min-target os="3"/>

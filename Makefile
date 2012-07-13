@@ -117,13 +117,13 @@ installer: check-utils clean check-wkhtmltopdf md-to-html
 		$(RM_RF) dist; \
 	fi		
 	@# backup markdown files for version replace
-	@$(MV) -f CordovaInstaller/docs/releasenotes.md CordovaInstaller/docs/releasenotes.md.bak 
+	@$(MV) -f RELEASENOTES.md RELEASENOTES.md.bak 
 	@$(MV) -f CordovaInstaller/docs/finishup.md CordovaInstaller/docs/finishup.md.bak 
 	@$(CAT) CordovaInstaller/docs/finishup.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/finishup.md
-	@$(CAT) CordovaInstaller/docs/releasenotes.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/releasenotes.md
+	@$(CAT) RELEASENOTES.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/RELEASENOTES.md
 	@# generate releasenotes html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/releasenotes.html
-	@$(MARKDOWN) CordovaInstaller/docs/releasenotes.md >> CordovaInstaller/docs/releasenotes.html
+	@$(MARKDOWN) CordovaInstaller/docs/RELEASENOTES.md >> CordovaInstaller/docs/releasenotes.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/releasenotes.html
 	@# generate finishup html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/finishup.html
@@ -148,7 +148,7 @@ installer: check-utils clean check-wkhtmltopdf md-to-html
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(RM_F) dist/files/Readme.html
 	@# restore backed-up markdown files
-	@$(MV) -f CordovaInstaller/docs/releasenotes.md.bak CordovaInstaller/docs/releasenotes.md 
+	@$(MV) -f RELEASENOTES.md.bak RELEASENOTES.md 
 	@$(MV) -f CordovaInstaller/docs/finishup.md.bak CordovaInstaller/docs/finishup.md
 	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
