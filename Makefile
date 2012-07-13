@@ -65,9 +65,7 @@ MARKDOWN = markdown
 all :: installer
 
 clean-markdown:
-	@$(RM_RF) CordovaInstaller/docs/readme.html
-	@$(RM_RF) CordovaInstaller/docs/cleaver.html
-	@$(RM_RF) CordovaInstaller/docs/upgrade.html
+	@$(RM_RF) CordovaInstaller/docs/*.html
 
 clean-installer:
 	@$(RM_F) CordovaInstaller/docs/*.rtf
@@ -88,7 +86,14 @@ clean-cordova-lib:
 	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.pbxuser
 	@$(RM_F) CordovaLib/javascript/cordova-*.js
 
-clean: clean-installer clean-markdown
+clean-bin:
+	@$(RM_RF) bin/templates/project/build/
+	@$(RM_RF) bin/templates/project/__TESTING__.xcodeproj/*.xcworkspace
+	@$(RM_RF) bin/templates/project/__TESTING__.xcodeproj/xcuserdata
+	@$(RM_F) bin/templates/project/__TESTING__.xcodeproj/*.perspectivev3
+	@$(RM_F) bin/templates/project/__TESTING__.xcodeproj/*.pbxuser
+
+clean: clean-installer clean-markdown clean-cordova-lib clean-bin
 	@if [ -e "$(PKG_ERROR_LOG)" ]; then \
 		$(MV) $(PKG_ERROR_LOG) ~/.Trash; \
 		$(RM_F) $(PKG_ERROR_LOG); \
