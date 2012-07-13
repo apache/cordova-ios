@@ -152,6 +152,8 @@ installer: check-utils clean check-wkhtmltopdf md-to-html
 	@textutil -cat html CordovaInstaller/docs/firstrun.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(RM_F) dist/files/Readme.html
+	@# copy the bin folder
+	@$(CP) -Rf bin dist/files/bin
 	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
