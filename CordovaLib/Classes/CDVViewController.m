@@ -113,8 +113,8 @@
 
 - (void) printDeprecationNotice
 {
-    if (!IsAtLeastiOSVersion(@"4.2")) { // TODO: change WARNING to CRITICAL for 2.0
-        NSLog(@"WARNING: For Cordova 2.0, you will need to upgrade to at least iOS 4.2 or greater. Your current version of iOS is %@.", 
+    if (!IsAtLeastiOSVersion(@"4.2")) {
+        NSLog(@"CRITICAL: For Cordova 2.0, you will need to upgrade to at least iOS 4.2 or greater. Your current version of iOS is %@.", 
               [[UIDevice currentDevice] systemVersion]
               );
     } 
