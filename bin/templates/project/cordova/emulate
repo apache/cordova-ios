@@ -18,4 +18,41 @@
 # under the License.
 #
 
-open `xcode-select -print-path`/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app
+set -e
+
+CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd )
+PROJECT_PATH=$CORDOVA_PATH/..
+
+function getAppPath() {
+	for file in $PROJECT_PATH/*.xcodeproj; do
+	  PROJECT_NAME=$(basename "$file" .xcodeproj)
+	done;
+	APP=build/Release-iphonesimulator/$PROJECT_NAME.app
+	APP_PATH=$PROJECT_PATH/$APP
+}
+
+APP_PATH=$1
+
+if [ $# -lt 1 ]; then
+	getAppPath
+fi
+
+if [ ! -d "$APP_PATH" ]; then
+	read -p "Project '$APP_PATH' is not built. Build? [y/n]: " REPLY 
+	if [ "$REPLY" == "y" ]; then 
+		$CORDOVA_PATH/debug
+		exit 0
+	else 
+		echo "$APP_PATH not found to emulate."
+		exit 1
+	fi	
+fi
+
+# launch using ios-sim
+
+if which ios-sim >/dev/null; then
+    ios-sim launch $APP_PATH --stderr console.log --stdout console.log &
+else
+    echo -e '\033[31mError: ios-sim was not found. Please download, build and install version 1.4 or greater from https://github.com/phonegap/ios-sim into your path. Or "brew install ios-sim" using homebrew: http://mxcl.github.com/homebrew/\033[m'; exit 1;
+fi
+
