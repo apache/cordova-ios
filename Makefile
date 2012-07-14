@@ -117,7 +117,12 @@ check-utils:
 		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
 		@echo -e "Using PackageMaker app: \033[33m$(PM_APP)\033[m";
 
-installer: check-utils clean check-wkhtmltopdf md-to-html
+update-template:
+	@$(RM_F) bin/templates/project/www/cordova-*.js		
+	@$(CP) -f CordovaLib/javascript/cordova.ios.js bin/templates/project/www/cordova-$(CDV_VER).js		
+	@find "bin/templates/project/www/index.html" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
+
+installer: check-utils clean check-wkhtmltopdf md-to-html update-template
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
