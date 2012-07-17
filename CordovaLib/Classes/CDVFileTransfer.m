@@ -101,7 +101,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 
     // NSURL does not accepts URLs with spaces in the path. We escape the path in order
     // to be more lenient.
-    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:server]];
+    NSURL *url = [NSURL URLWithString:server];
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
@@ -280,7 +280,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:sourceUrl]];
+    NSURL *url = [NSURL URLWithString:sourceUrl];
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
