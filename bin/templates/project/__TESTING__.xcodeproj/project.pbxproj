@@ -92,13 +92,6 @@
 			remoteGlobalIDString = 303A4068152124BB00182201;
 			remoteInfo = CordovaLibApp;
 		};
-		30E47BC2136F595F00DBB853 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 303258D8136B2C9400982B63;
-			remoteInfo = Cordova;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -278,7 +271,6 @@
 			isa = PBXGroup;
 			children = (
 				301BF535109A57CC0062928A /* libCordova.a */,
-				30E47BC3136F595F00DBB853 /* Cordova.framework */,
 				302D95EC14D23909003F00A1 /* CordovaLibTests.octest */,
 				3088BBB5154F38EF009F9C59 /* CordovaLibApp.app */,
 			);
@@ -411,13 +403,6 @@
 			fileType = wrapper.application;
 			path = CordovaLibApp.app;
 			remoteRef = 3088BBB4154F38EF009F9C59 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		30E47BC3136F595F00DBB853 /* Cordova.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = Cordova.framework;
-			remoteRef = 30E47BC2136F595F00DBB853 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -566,6 +551,11 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
+					"\"$(OBJROOT)/UninstalledProducts/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -582,7 +572,7 @@
 				);
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
-				USER_HEADER_SEARCH_PATHS = "\"$(CORDOVALIB)/Classes/JSON\" \"$(CORDOVALIB)/Classes\"";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -596,6 +586,11 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
+					"\"$(OBJROOT)/UninstalledProducts/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -612,7 +607,7 @@
 				);
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
-				USER_HEADER_SEARCH_PATHS = "\"$(CORDOVALIB)/Classes/JSON\" \"$(CORDOVALIB)/Classes\"";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
