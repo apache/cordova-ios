@@ -27,7 +27,7 @@ function getAppPath() {
 	for file in $PROJECT_PATH/*.xcodeproj; do
 	  PROJECT_NAME=$(basename "$file" .xcodeproj)
 	done;
-	APP=build/Release-iphonesimulator/$PROJECT_NAME.app
+	APP=build/$PROJECT_NAME.app
 	APP_PATH=$PROJECT_PATH/$APP
 }
 

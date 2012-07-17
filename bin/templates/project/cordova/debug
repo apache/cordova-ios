@@ -34,10 +34,10 @@ done;
 
 cd $PROJECT_PATH
 
-APP=build/Release-iphonesimulator/$PROJECT_NAME.app
+APP=build/$PROJECT_NAME.app
 SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
 
-xcodebuild -project $PROJECT_NAME.xcodeproj -sdk $SDK clean build VALID_ARCHS="i386"
+xcodebuild -project $PROJECT_NAME.xcodeproj -arch i386 -scheme $PROJECT_NAME -sdk $SDK clean build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR=$PROJECT_PATH/build
 
 # launch using emulate
 
