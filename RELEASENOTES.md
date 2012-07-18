@@ -22,13 +22,16 @@
   
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
-### 2.0.0rc1 (20120713) ###
+### 2.0.0 (20120720) ###
 
 * [CB-38] Add support for chunked uploads to FileTransfer plugin.
 * [CB-93]  Only support iOS 4.2 and greater
 * [CB-382] Added unit tests for CDVLocalStorage
 * [CB-758] Updated bin/create template to use sub-project based Xcode project template.
 * [CB-758] Removed folders "Cordova-based Application" and "Cordova-based Application.xctemplate" - the Xcode 3/4 templates
+* [CB-853] Deprecate window.invokeString - use window.handleOpenURL(url) instead
+* [CB-886] Change Xcode CordovaLib (sub)project format to support easy header inclusion
+* [CB-907] Reverted for cross-platform consistency (and backwards compatibility). A doc issue should suffice [CB-1083]
 * [CB-997] [CB-976] remove Organization
 * [CB-989] dyld: Symbol not found: _NSURLIsExcludedFromBackupKey
 * [CB-1000] Namespace issue of JSONKit and other external libraries
@@ -45,7 +48,10 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-1036] Updated cordova-js to latest to support new common device module.
 * [CB-1036] Updating plist to include new device plugin.
 * Added bin subfolder (command line scripts) to .dmg distribution package
+* [CB-1075] - Cordova 2.0 installer - rename old Xcode project templates to minimize confusion
+* [CB-1082] Add url shortcut in .dmg for "Create a New Project"
 
+<br />
 
 ### 1.9.0 (20120629) ###
 
