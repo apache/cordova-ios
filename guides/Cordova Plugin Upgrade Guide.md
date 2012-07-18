@@ -22,6 +22,22 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+## Upgrading older Cordova plugins to 2.0.0 ##
+
+1. **Install** Cordova 2.0.0
+2. Follow the **"Upgrading older Cordova plugins to 1.9.0"** section, if necessary
+3. No changes in plugin structure from 1.9.x
+4. Change in import header use: in 2.0.0, Cordova projects use the CordovaLib project as a subproject, it now uses the CORDOVA_FRAMEWORK styled import like this:
+
+        #import <Cordova/CDV.h>
+        
+   instead of like this:
+   
+        #import "CDV.h"
+        
+    So now in 2.0.0, Cordova import headers are unified.
+        
+
 ## Upgrading older Cordova plugins to 1.9.0 ##
 
 1. **Install** Cordova 1.9.0
