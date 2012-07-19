@@ -36,7 +36,8 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
         #import "CDV.h"
         
     So now in 2.0.0, Cordova import headers are unified.
-        
+    
+**NOTE:** The deprecated for 2.0.0 CDVPlugin methods **verifyArguments** and **appViewController** have been removed.
 
 ## Upgrading older Cordova plugins to 1.9.0 ##
 
