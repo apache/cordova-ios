@@ -138,7 +138,7 @@ static NSData* readStream(NSInputStream* stream) {
 
 - (void)testUpload_serverUrlPathEscaping
 {
-    [self setServerUrlArg:@"http://apache.org/spa ce%"];
+    [self setServerUrlArg:[_fileTransfer escapePathComponentForUrlString:@"http://apache.org/spa ce%"]]; // uri encode first now
     NSURLRequest* request = [self requestForUpload];
     STAssertTrue([[[request URL] absoluteString] isEqualToString:@"http://apache.org/spa%20ce%25"], nil);
 }
