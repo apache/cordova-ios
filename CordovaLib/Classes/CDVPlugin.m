@@ -63,34 +63,6 @@
     return self;
 }
 
-/* 
-	The arguments passed in should not included the callbackId. 
-	If argument count is not as expected, it will call the error callback using PluginResult (if callbackId is available),
-	or it will write to stderr using NSLog.
- 
-	Usage is through the VERIFY_ARGUMENTS macro.
- */
-- (BOOL) verifyArguments:(NSMutableArray*)arguments withExpectedCount:(NSUInteger)expectedCount andCallbackId:(NSString*)callbackId 
-		  callerFileName:(const char*)callerFileName callerFunctionName:(const char*)callerFunctionName 
-{
-	NSUInteger argc = [arguments count];
-	BOOL ok = (argc >= expectedCount); // allow for optional arguments
-	
-	if (!ok) {
-		NSString* errorString = [NSString stringWithFormat:@"Incorrect no. of arguments for plugin: was %d, expected %d", argc, expectedCount];
-		if (callbackId) {
-			NSString* callbackId = [arguments objectAtIndex:0];
-			CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorString];
-			[self writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
-		} else {
-			NSString* fileName = [[[[NSString alloc] initWithBytes:callerFileName length:strlen(callerFileName) encoding:NSUTF8StringEncoding] autorelease] lastPathComponent];
-			NSLog(@"%@::%s - Error: %@", fileName, callerFunctionName, errorString);
-		}
-	}
-	
-	return ok;
-}
-
 /*
 // NOTE: for onPause and onResume, calls into JavaScript must not call or trigger any blocking UI, like alerts 
 - (void) onPause {}
@@ -141,12 +113,6 @@
 - (id) appDelegate
 {
 	return [[UIApplication sharedApplication] delegate];
-}
-
-/* deprecated - just use the viewController property */
-- (UIViewController*) appViewController
-{
-	return self.viewController;
 }
 
 - (NSString*) writeJavascript:(NSString*)javascript
