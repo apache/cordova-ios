@@ -50,6 +50,8 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Added bin subfolder (command line scripts) to .dmg distribution package
 * [CB-1075] - Cordova 2.0 installer - rename old Xcode project templates to minimize confusion
 * [CB-1082] Add url shortcut in .dmg for "Create a New Project"
+* [CB-1095] Added "Hello Cordova" sample app as default
+* [CB-1099] Remove deprecated functions in CDVPlugin (verifyArguments, appViewController)
 
 <br />
 
