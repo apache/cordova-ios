@@ -44,7 +44,7 @@
     // TODO: turn this into an iOS only plugin
     NSDictionary *temp = [CDVViewController getBundlePlist:@"Settings"];
     if ([temp respondsToSelector:@selector(JSONString)]) {
-        [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONString]];
+        [result appendFormat:@"\nwindow.Settings = %@;", [temp cdvjk_JSONString]];
     }
     
     NSString* jsResult = [self.webView stringByEvaluatingJavaScriptFromString:result];

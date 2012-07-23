@@ -339,7 +339,7 @@
                           movieArray ? (NSObject*)movieArray : [NSNull null], @"video",
                           audioArray ? (NSObject*)audioArray : [NSNull null], @"audio",
                           nil];
-    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes JSONString]];
+    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes cdvjk_JSONString]];
     [self writeJavascript:jsString];
     
     

@@ -141,7 +141,7 @@
     NSMutableDictionary* errorDict = [NSMutableDictionary dictionaryWithCapacity:2];
     [errorDict setObject: [NSNumber numberWithUnsignedInt: code] forKey:@"code"];
     [errorDict setObject: message ? message : @"" forKey: @"message"];
-    return [errorDict JSONString];
+    return [errorDict cdvjk_JSONString];
     
 }
 // DEPRECATED

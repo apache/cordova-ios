@@ -768,14 +768,14 @@ BOOL gSplashScreenShown = NO;
 	
     // Parse the returned JSON array.
     NSArray* queuedCommands =
-	[queuedCommandsJSON objectFromJSONString];
+	[queuedCommandsJSON cdvjk_objectFromJSONString];
 	
     // Iterate over and execute all of the commands.
     for (NSString* commandJson in queuedCommands) {
 		
         if(![self.commandDelegate execute:
 		 [CDVInvokedUrlCommand commandFromObject:
-		  [commandJson mutableObjectFromJSONString]]])
+		  [commandJson cdvjk_mutableObjectFromJSONString]]])
 		{
             static NSUInteger maxLogLength = 1024;
             NSString* commandString = ([commandJson length] > maxLogLength) ? 

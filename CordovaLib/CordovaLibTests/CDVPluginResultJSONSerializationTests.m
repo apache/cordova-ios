@@ -30,14 +30,14 @@
 
 - (void)testSerializingMessageAsInt {
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:5];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSNumber *message = [dic objectForKey:@"message"];
     STAssertTrue([[NSNumber numberWithInt:5] isEqual:message], nil);
 }
 
 - (void)testSerializingMessageAsDouble {
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:5.5];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSNumber *message = [dic objectForKey:@"message"];
     STAssertTrue([[NSNumber numberWithDouble:5.5] isEqual:message], nil);
 }
@@ -52,7 +52,7 @@
                            nil];
     
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:testValues];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSArray *message = [dic objectForKey:@"message"];
 
     STAssertTrue([message isKindOfClass:[NSArray class]], nil);
@@ -98,7 +98,7 @@
     [testValues setValue:nestedDict forKey:@"nestedDict"];
     
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:testValues];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSDictionary *message = [dic objectForKey:@"message"];
     
     [self __testDictionary:testValues withDictionary:message];
@@ -111,7 +111,7 @@
                                        nil];
     
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:1];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSDictionary *message = [dic objectForKey:@"message"];
     
     [self __testDictionary:testValues withDictionary:message];
@@ -120,7 +120,7 @@
 - (void)testSerializingMessageAsStringContainingQuotes {
     NSString *quotedString = @"\"quoted\"";
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:quotedString];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSString *message = [dic objectForKey:@"message"];
     STAssertTrue([quotedString isEqual:message], nil);
 }
@@ -128,7 +128,7 @@
 - (void)testSerializingMessageAsStringThatIsNil {
     NSString *nilString = nil;
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nilString];
-    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
     NSString *message = [dic objectForKey:@"message"];
     STAssertTrue([[NSNull null] isEqual:message], nil);    
 }
