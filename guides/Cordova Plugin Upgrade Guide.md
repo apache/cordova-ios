@@ -22,6 +22,22 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+## Upgrading older Cordova plugins to 2.1.0 ##
+
+1. **Install** Cordova 2.1.0
+2. Follow the **"Upgrading older Cordova plugins to 2.0.0"** section, if necessary
+3. No changes in plugin structure from 1.9.x
+4. Change in the method signature of the CordovaLib's JSONKit method categories, they are prefixed with "cdvjk_" now:
+
+    e.g.
+    
+        [myDict cdvjk_JSONString];
+        
+   instead of:
+   
+        [myDict JSONString];
+
+
 ## Upgrading older Cordova plugins to 2.0.0 ##
 
 1. **Install** Cordova 2.0.0
