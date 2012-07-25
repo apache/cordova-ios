@@ -91,6 +91,9 @@ check-utils:
 		fi
 		@echo -e "Xcode.app: \t\t\033[33m$(XC_APP)\033[m";
 		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
+		@if [ -n "$(shell ps aux | grep -i "Xcode.app/Contents/MacOS/Xcode" | grep -v grep)" ]; then \
+			  echo -e "\033[31mError: Xcode is running! Please close Xcode and try again.\033[m" ; exit 1; \
+		fi
 
 install: check-utils clean update-template
 		@defaults write org.apache.cordovalib InstallLocation "$(CORDOVA_LIB)"
