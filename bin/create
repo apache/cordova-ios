@@ -44,8 +44,13 @@ if [ $# -lt 3 ]; then
 fi
 
 # the two lines below are to get the current folder, and resolve symlinks
-SCRIPT=`readlink $0`
-BINDIR=`dirname $SCRIPT`
+SCRIPT="$0"
+# need this for relative symlinks
+while [ -h "$SCRIPT" ] ; do
+   SCRIPT=`readlink "$SCRIPT"`
+done
+
+BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
 
 PROJECT_PATH=$1
 PACKAGE=$2
