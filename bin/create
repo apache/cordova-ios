@@ -43,7 +43,10 @@ if [ $# -lt 3 ]; then
 	usage
 fi
 
-BINDIR=$( cd "$( dirname "$0" )" && pwd )
+# the two lines below are to get the current folder, and resolve symlinks
+SCRIPT=`readlink $0`
+BINDIR=`dirname $SCRIPT`
+
 PROJECT_PATH=$1
 PACKAGE=$2
 PROJECT_NAME=$3
