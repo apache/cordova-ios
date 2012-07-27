@@ -60,8 +60,9 @@ static NSData* readStream(NSInputStream* stream) {
 - (void)setUp
 {
     [super setUp];
+    
     _arguments = [[NSMutableArray alloc] initWithObjects:
-        kDummyArgCallbackId, kDummyArgTarget, kDummyArgServer, kDummyArgFileKey,
+        kDummyArgTarget, kDummyArgServer, kDummyArgFileKey, [NSNull null],
         [NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
     _dummyFileData = [[kDummyFileContents dataUsingEncoding:NSUTF8StringEncoding] retain];
     _fileTransfer = [[CDVFileTransfer alloc] init];
@@ -79,19 +80,27 @@ static NSData* readStream(NSInputStream* stream) {
 }
 
 - (void)setFilePathArg:(NSString*)filePath {
-    [_arguments replaceObjectAtIndex:1 withObject:filePath];
+    [_arguments replaceObjectAtIndex:0 withObject:filePath];
 }
 
 - (void)setServerUrlArg:(NSString*)serverUrl {
-    [_arguments replaceObjectAtIndex:2 withObject:serverUrl];
+    [_arguments replaceObjectAtIndex:1 withObject:serverUrl];
 }
 
 - (void)setChunkedModeArg:(BOOL)chunk {
     [_arguments replaceObjectAtIndex:7 withObject:[NSNumber numberWithBool:chunk]];
 }
 
+- (void)setParams:(NSDictionary*)params {
+    [_arguments replaceObjectAtIndex:5 withObject:params];
+}
+
 - (NSURLRequest*)requestForUpload {
-    return [_fileTransfer requestForUpload:_arguments withDict:nil fileData:_dummyFileData];
+    CDVInvokedUrlCommand* command = [[[CDVInvokedUrlCommand alloc] initWithArguments:_arguments
+                                                                          callbackId:kDummyArgCallbackId
+                                                                           className:@"FileTransfer"
+                                                                          methodName:@"upload"] autorelease];
+    return [_fileTransfer requestForUploadCommand:command fileData:_dummyFileData];
 }
 
 - (void)checkUploadRequest:(NSURLRequest*)request chunked:(BOOL)chunked {
@@ -166,9 +175,10 @@ static NSData* readStream(NSInputStream* stream) {
     [self setChunkedModeArg:NO];
     NSDictionary* headers = [NSDictionary dictionaryWithObjectsAndKeys:@"val1", @"key1",
         @"val2", @"key2", nil];
-    NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:@"cookieval", kOptionsKeyCookie,
+    NSDictionary* params = [NSDictionary dictionaryWithObjectsAndKeys:@"cookieval", kOptionsKeyCookie,
         headers, @"headers", @"val3", @"key3", nil];
-    NSURLRequest* request = [_fileTransfer requestForUpload:_arguments withDict:options fileData:_dummyFileData];
+    [self setParams:params];
+    NSURLRequest* request = [self requestForUpload];
     NSString* payload = [[[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding] autorelease];
     // Check that headers are properly set.
     STAssertTrue([@"val1" isEqualToString:[request valueForHTTPHeaderField:@"key1"]], nil);

@@ -41,12 +41,12 @@ extern NSString* const kOptionsKeyCookie;
     
 }
 
-- (void) upload:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void) download:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void) upload:(CDVInvokedUrlCommand*)command;
+- (void) download:(CDVInvokedUrlCommand*)command;
 - (NSString*) escapePathComponentForUrlString:(NSString*)urlString;
 
 // Visible for testing.
-- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options fileData:(NSData*)fileData;
+- (NSURLRequest*) requestForUploadCommand:(CDVInvokedUrlCommand*)command fileData:(NSData*)fileData;
 -(NSMutableDictionary*) createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 
 -(NSMutableDictionary*) createFileTransferError:(int)code 
