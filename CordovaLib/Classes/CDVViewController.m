@@ -767,21 +767,21 @@ BOOL gSplashScreenShown = NO;
 	
 	
     // Parse the returned JSON array.
-    NSArray* queuedCommands =
-	[queuedCommandsJSON cdvjk_objectFromJSONString];
+    NSArray* queuedCommands = [queuedCommandsJSON cdvjk_mutableObjectFromJSONString];
 	
     // Iterate over and execute all of the commands.
-    for (NSString* commandJson in queuedCommands) {
-		
-        if(![self.commandDelegate execute:
-		 [CDVInvokedUrlCommand commandFromObject:
-		  [commandJson cdvjk_mutableObjectFromJSONString]]])
-		{
+    for (NSArray* jsonEntry in queuedCommands) {
+        CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+        if(![self.commandDelegate execute:command]) {
+#ifdef DEBUG
+            NSString* commandJson = [jsonEntry cdvjk_JSONString];
             static NSUInteger maxLogLength = 1024;
             NSString* commandString = ([commandJson length] > maxLogLength) ? 
                 [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] : 
                 commandJson;
+
 			DLog(@"FAILED pluginJSON = %@", commandString);
+#endif
 		}
     }
 	
@@ -824,16 +824,24 @@ BOOL gSplashScreenShown = NO;
     }
     BOOL retVal = YES;
     
-    // construct the fill method name to ammend the second argument.
-    NSString* fullMethodName = [[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName];
-    if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)]) {
-        [obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
+    // Find the proper selector to call.
+    NSString* methodName = [NSString stringWithFormat:@"%@:", command.methodName];
+    NSString* methodNameWithDict = [NSString stringWithFormat:@"%@:withDict:", command.methodName];
+    SEL normalSelector = NSSelectorFromString(methodName);
+    SEL legacySelector = NSSelectorFromString(methodNameWithDict);
+    // Test for the legacy selector first in case they both exist.
+    if ([obj respondsToSelector:legacySelector]) {
+        NSMutableArray* arguments = nil;
+        NSMutableDictionary* dict = nil;
+        [command legacyArguments:&arguments andDict:&dict];
+        [obj performSelector:legacySelector withObject:arguments withObject:dict];
+    } else if ([obj respondsToSelector:normalSelector]) {
+        [obj performSelector:normalSelector withObject:command];
     } else {
         // There's no method to call, so throw an error.
-        NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
+        NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", methodName, command.className);
         retVal = NO;
     }
-    [fullMethodName release];
     
     return retVal;
 }

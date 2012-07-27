@@ -23,9 +23,9 @@
 
 @interface CDVFileTransfer ()
 // Creates a delegate to handle an upload.
-- (CDVFileTransferDelegate*)delegateForUpload:(NSArray*)arguments;
+- (CDVFileTransferDelegate*)delegateForUploadCommand:(CDVInvokedUrlCommand*)command;
 // Creates an NSData* for the file for the given upload arguments.
-- (NSData*)fileDataForUploadArguments:(NSArray*)arguments;
+- (NSData*)fileDataForUploadCommand:(CDVInvokedUrlCommand*)command;
 @end
 
 // Buffer size to use for streaming uploads.
@@ -74,18 +74,17 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     return [schemeAndHost stringByAppendingString:pathComponent];
 }
 
-- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options fileData:(NSData*)fileData {
-    NSString* callbackId = [arguments objectAtIndex:0];
-    
+- (NSURLRequest*) requestForUploadCommand:(CDVInvokedUrlCommand *)command fileData:(NSData *)fileData {
     // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
     // however, params is a JavaScript object and during marshalling is put into the options dict, 
     // thus debug and chunkedMode are the 6th and 7th arguments
-    
-    NSString* target = (NSString*)[arguments objectAtIndex:1];
-    NSString* server = (NSString*)[arguments objectAtIndex:2];
-    NSString* fileKey = (NSString*)[arguments objectAtIndex:3];
-    NSString* fileName = [arguments objectAtIndex:4 withDefault:@"no-filename"];
-    NSString* mimeType = [arguments objectAtIndex:5 withDefault:nil];
+    NSArray* arguments = command.arguments;
+    NSString* target = (NSString*)[arguments objectAtIndex:0];
+    NSString* server = (NSString*)[arguments objectAtIndex:1];
+    NSString* fileKey = (NSString*)[arguments objectAtIndex:2];
+    NSString* fileName = [arguments objectAtIndex:3 withDefault:@"no-filename"];
+    NSString* mimeType = [arguments objectAtIndex:4 withDefault:nil];
+    NSDictionary* options = [arguments objectAtIndex:5 withDefault:nil];
 //  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
     BOOL chunkedMode = [[arguments objectAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
 
@@ -113,7 +112,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     if(errorCode > 0) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:target AndTarget:server]];
         
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
         return nil;
     }
     
@@ -228,22 +227,21 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 	return req;
 }
 
-- (CDVFileTransferDelegate*) delegateForUpload:(NSArray*)arguments {
-    NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* target = (NSString*)[arguments objectAtIndex:1];
-    NSString* server = (NSString*)[arguments objectAtIndex:2];
+- (CDVFileTransferDelegate*) delegateForUploadCommand:(CDVInvokedUrlCommand *)command {
+    NSString* target = [command.arguments objectAtIndex:0];
+    NSString* server = [command.arguments objectAtIndex:1];
 
 	CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
     delegate.direction = CDV_TRANSFER_UPLOAD;
-    delegate.callbackId = callbackId;
+    delegate.callbackId = command.callbackId;
     delegate.source = server;
     delegate.target = target;
     return delegate;
 }
 
-- (NSData*) fileDataForUploadArguments:(NSArray*)arguments {
-    NSString* target = (NSString*)[arguments objectAtIndex:1];
+- (NSData*) fileDataForUploadCommand:(CDVInvokedUrlCommand*)command {
+    NSString* target = (NSString*)[command.arguments objectAtIndex:0];
     NSError *err = nil;
     // Extract the path part out of a file: URL.
     NSString* filePath = [target hasPrefix:@"/"] ? [[target copy] autorelease] : [[NSURL URLWithString:target] path];
@@ -256,19 +254,18 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     return fileData;
 }
 
-- (void) upload:(NSArray*)arguments withDict:(NSDictionary*)options {
+- (void) upload:(CDVInvokedUrlCommand*)command {
     // fileData and req are split into helper functions to ease the unit testing of delegateForUpload.
-    NSData* fileData = [self fileDataForUploadArguments:arguments];
-    NSURLRequest* req = [self requestForUpload:arguments withDict:options fileData:fileData];
-    CDVFileTransferDelegate* delegate = [self delegateForUpload:arguments];
+    NSData* fileData = [self fileDataForUploadCommand:command];
+    NSURLRequest* req = [self requestForUploadCommand:command fileData:fileData];
+    CDVFileTransferDelegate* delegate = [self delegateForUploadCommand:command];
 	[NSURLConnection connectionWithRequest:req delegate:delegate];
 }
 
-- (void) download:(NSArray*)arguments withDict:(NSDictionary*)options {
+- (void) download:(CDVInvokedUrlCommand*)command {
     DLog(@"File Transfer downloading file...");
-    NSString * callbackId = [arguments objectAtIndex:0];
-    NSString * sourceUrl = [arguments objectAtIndex:1];
-    NSString * filePath = [arguments objectAtIndex:2];
+    NSString * sourceUrl = [command.arguments objectAtIndex:0];
+    NSString * filePath = [command.arguments objectAtIndex:1];
     CDVPluginResult *result = nil;
     CDVFileTransferError errorCode = 0;
 
@@ -293,7 +290,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     if(errorCode > 0) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:sourceUrl AndTarget:filePath]];
         
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
         return;
     }
     
@@ -302,7 +299,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
     delegate.direction = CDV_TRANSFER_DOWNLOAD;
-    delegate.callbackId = callbackId;
+    delegate.callbackId = command.callbackId;
     delegate.source = sourceUrl;
     delegate.target = filePath;
 	
