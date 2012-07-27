@@ -17,8 +17,12 @@
  under the License.
  */
 
-#import "CDVWhitelistTests.h"
+#import <SenTestingKit/SenTestingKit.h>
+
 #import "CDVWhitelist.h"
+
+@interface CDVWhitelistTests : SenTestCase
+@end
 
 @implementation CDVWhitelistTests
 

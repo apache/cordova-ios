@@ -27,4 +27,7 @@
 
 @property (strong, nonatomic) ViewController *viewController;
 
+- (void)createViewController;
+- (void)destroyViewController;
+
 @end

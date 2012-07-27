@@ -117,7 +117,7 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
                                self.status, @"status",
                                self.message ? self.message : [NSNull null], @"message",
                                self.keepCallback, @"keepCallback",
-                               nil] JSONString];
+                               nil] cdvjk_JSONString];
     
 	DLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;

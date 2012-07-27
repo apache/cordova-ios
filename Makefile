@@ -64,68 +64,13 @@ MARKDOWN = markdown
 
 all :: installer
 
-cordova-lib: clean-cordova-lib
-	@echo -n "Packaging Cordova Javascript..."
-	@$(MKPATH) $(BUILD_BAK)
-	@$(CP) -f CordovaLib/VERSION $(BUILD_BAK)
-	@$(MAKE) -C CordovaLib > /dev/null
-	@if [ -e "$(GIT)" ]; then \
-		echo -e '\n$(COMMIT_HASH)' >> CordovaLib/VERSION; \
-	fi	
-	@echo -e "\t\033[32mok.\033[m"
-
-xcode3-template: clean-xcode3-template
-	@$(MKPATH) $(BUILD_BAK)
-	@$(CP) -Rf Cordova-based\ Application/www $(BUILD_BAK)
-	@cd Cordova-based\ Application/www; find . | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
-	@cd ..
-	@cp CordovaLib/javascript/cordova-*.js Cordova-based\ Application/www
-
-xcode4-template: clean-xcode4-template
-	@$(CP) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns Cordova-based\ Application.xctemplate
-	@$(CP) -R Cordova-based\ Application/Classes Cordova-based\ Application.xctemplate
-	@$(CP) -R Cordova-based\ Application/Plugins Cordova-based\ Application.xctemplate
-	@$(CP) -R Cordova-based\ Application/Resources Cordova-based\ Application.xctemplate
-	@$(CP) Cordova-based\ Application/___PROJECTNAMEASIDENTIFIER___-Info.plist Cordova-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
-	@$(CP) Cordova-based\ Application/___PROJECTNAMEASIDENTIFIER___-Prefix.pch Cordova-based\ Application.xctemplate/___PACKAGENAME___-Prefix.pch
-	@$(CP) Cordova-based\ Application/main.m Cordova-based\ Application.xctemplate
-	@$(CP) Cordova-based\ Application/Cordova.plist Cordova-based\ Application.xctemplate
-	@$(CP) Cordova-based\ Application/verify.sh Cordova-based\ Application.xctemplate
-	@sed -i "" 's/com\.yourcompany\.___PROJECTNAMEASIDENTIFIER___/___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___\.___PROJECTNAMEASIDENTIFIER___/g' Cordova-based\ Application.xctemplate/___PACKAGENAME___-Info.plist
-
-clean-xcode4-template: clean-xcode3-template
-	@$(RM_RF) _tmp
-	@$(MKPATH) _tmp
-	@$(CP) Cordova-based\ Application.xctemplate/TemplateInfo.plist _tmp
-	@$(CP) Cordova-based\ Application.xctemplate/README _tmp
-	@$(CP) -Rf Cordova-based\ Application.xctemplate ~/.Trash
-	@$(RM_RF) Cordova-based\ Application.xctemplate
-	@$(MV) _tmp Cordova-based\ Application.xctemplate 
-
-clean-xcode3-template:
-	@if [ -d "$(BUILD_BAK)/www" ]; then \
-		$(CP) -Rf "Cordova-based Application/www" ~/.Trash; \
-		$(RM_RF) "Cordova-based Application/www"; \
-		$(MV) $(BUILD_BAK)/www/ "Cordova-based Application/www"; \
-	fi	
-	@$(RM_RF) Cordova-based\ Application/build/
-	@$(RM_RF) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/xcuserdata
-	@$(RM_RF) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/project.xcworkspace
-	@$(RM_F) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/*.mode1v3
-	@$(RM_F) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/*.perspectivev3
-	@$(RM_F) Cordova-based\ Application/___PROJECTNAME___.xcodeproj/*.pbxuser
-	@$(RM_F) Cordova-based\ Application/www/cordova-*.js
-
-clean-cordova-framework:
-	@$(RM_RF) Cordova.framework
-
 clean-markdown:
-	@$(RM_RF) CordovaInstaller/docs/readme.html
-	@$(RM_RF) CordovaInstaller/docs/cleaver.html
-	@$(RM_RF) CordovaInstaller/docs/upgrade.html
+	@$(RM_RF) CordovaInstaller/docs/*.html
 
 clean-installer:
 	@$(RM_F) CordovaInstaller/docs/*.rtf
+	@$(RM_F) CordovaInstaller/docs/*.html
+	@$(RM_F) CordovaInstaller/docs/*.md
 	@$(RM_F) CordovaInstaller/docs/*.pdf
 	@$(RM_F) CordovaInstaller/docs/*.html
 
@@ -141,20 +86,14 @@ clean-cordova-lib:
 	@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.pbxuser
 	@$(RM_F) CordovaLib/javascript/cordova-*.js
 
-cordova-framework: cordova-lib clean-cordova-framework
-	@echo -n "Building Cordova.framework..."
-	@cd CordovaLib;$(XC) -target UniversalFramework > /dev/null;
-	@cd ..
-	@echo -e "\t\033[32mok.\033[m"
-	@$(CP) -R CordovaLib/build/Release-universal/Cordova.framework .
-	@$(CP) -R Cordova-based\ Application/www/index.html Cordova.framework/www
-	@find "Cordova.framework/www" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
-	@if [ -e "$(GIT)" ]; then \
-	echo -e '\n$(COMMIT_HASH)' >> Cordova.framework/VERSION; \
-	fi	
-	@$(CP) -R Cordova-based\ Application/Resources/Capture.bundle/ Cordova.framework/Capture.bundle
+clean-bin:
+	@$(RM_RF) bin/templates/project/build/
+	@$(RM_RF) bin/templates/project/__TESTING__.xcodeproj/*.xcworkspace
+	@$(RM_RF) bin/templates/project/__TESTING__.xcodeproj/xcuserdata
+	@$(RM_F) bin/templates/project/__TESTING__.xcodeproj/*.perspectivev3
+	@$(RM_F) bin/templates/project/__TESTING__.xcodeproj/*.pbxuser
 
-clean: clean-installer clean-cordova-lib clean-xcode3-template clean-xcode4-template clean-cordova-framework clean-markdown
+clean: clean-installer clean-markdown clean-cordova-lib clean-bin
 	@if [ -e "$(PKG_ERROR_LOG)" ]; then \
 		$(MV) $(PKG_ERROR_LOG) ~/.Trash; \
 		$(RM_F) $(PKG_ERROR_LOG); \
@@ -178,31 +117,34 @@ check-utils:
 		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
 		@echo -e "Using PackageMaker app: \033[33m$(PM_APP)\033[m";
 
-installer: check-utils clean check-wkhtmltopdf md-to-html cordova-lib xcode3-template xcode4-template cordova-framework
+update-template:
+	@$(RM_F) bin/templates/project/www/cordova-*.js		
+	@$(CP) -f CordovaLib/javascript/cordova.ios.js bin/templates/project/www/cordova-$(CDV_VER).js		
+	@find "bin/templates/project/www/index.html" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
+
+installer: check-utils clean check-wkhtmltopdf md-to-html update-template
 	@# remove the dist folder
 	@if [ -d "dist" ]; then \
 		$(CP) -Rf dist ~/.Trash; \
 		$(RM_RF) dist; \
 	fi		
 	@# backup markdown files for version replace
-	@$(MV) -f CordovaInstaller/docs/releasenotes.md CordovaInstaller/docs/releasenotes.md.bak 
-	@$(MV) -f CordovaInstaller/docs/finishup.md CordovaInstaller/docs/finishup.md.bak 
-	@$(CAT) CordovaInstaller/docs/finishup.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/finishup.md
-	@$(CAT) CordovaInstaller/docs/releasenotes.md.bak | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/releasenotes.md
+	@$(CAT) FirstRun.md | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/FirstRun.md
+	@$(CAT) RELEASENOTES.md | sed 's/{VERSION}/${CDV_VER}/' > CordovaInstaller/docs/RELEASENOTES.md
 	@# generate releasenotes html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/releasenotes.html
-	@$(MARKDOWN) CordovaInstaller/docs/releasenotes.md >> CordovaInstaller/docs/releasenotes.html
+	@$(MARKDOWN) CordovaInstaller/docs/RELEASENOTES.md >> CordovaInstaller/docs/releasenotes.html
 	@echo '</body></html>'  >> CordovaInstaller/docs/releasenotes.html
-	@# generate finishup html from markdown
-	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/finishup.html
-	@$(MARKDOWN) CordovaInstaller/docs/finishup.md >> CordovaInstaller/docs/finishup.html
-	@echo '</body></html>'  >> CordovaInstaller/docs/finishup.html
+	@# generate firstrun html from markdown
+	@echo '<html><body style="font-family: Helvetica Neue;">' >	 CordovaInstaller/docs/firstrun.html
+	@$(MARKDOWN) CordovaInstaller/docs/FirstRun.md >> CordovaInstaller/docs/firstrun.html
+	@echo '</body></html>'  >> CordovaInstaller/docs/firstrun.html
 	@# convert all the html files to rtf (for PackageMaker)
 	@textutil -convert rtf -font 'Helvetica' CordovaInstaller/docs/*.html
 	@# build the .pkg file
 	@echo -n "Building Cordova-${CDV_VER}.pkg..."	
 	@$(MKPATH) dist/files/Guides
-	@'$(PACKAGEMAKER)' -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg > /dev/null 2> $(PKG_ERROR_LOG)
+	@'$(PACKAGEMAKER)' -d CordovaInstaller/CordovaInstaller.pmdoc -o dist/files/Cordova-${CDV_VER}.pkg  > /dev/null 2> $(PKG_ERROR_LOG)
 	@# create the applescript uninstaller
 	@osacompile -o ./dist/files/Uninstall\ Cordova.app Uninstall\ Cordova.applescript > /dev/null 2>> $(PKG_ERROR_LOG)
 	@# convert the html docs to pdf, concatenate readme and license
@@ -212,12 +154,13 @@ installer: check-utils clean check-wkhtmltopdf md-to-html cordova-lib xcode3-tem
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} JavaScript Exception Logging" CordovaInstaller/docs/exception_logging.html 'dist/files/Guides/Cordova JavaScript Exception Logging.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Custom URL Scheme Handling" CordovaInstaller/docs/custom_url_scheme.html 'dist/files/Guides/Cordova Custom URL Scheme Handling.pdf' > /dev/null 2>> $(PKG_ERROR_LOG)
 	@textutil -convert html -font 'Courier New' LICENSE -output CordovaInstaller/docs/LICENSE.html > /dev/null 2>> $(PKG_ERROR_LOG)
-	@textutil -cat html CordovaInstaller/docs/finishup.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
+	@textutil -cat html CordovaInstaller/docs/firstrun.html CordovaInstaller/docs/readme.html CordovaInstaller/docs/LICENSE.html -output dist/files/Readme.html > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(WKHTMLTOPDF) --footer-center "Cordova ${CDV_VER} Readme" dist/files/Readme.html dist/files/Readme.pdf > /dev/null 2>> $(PKG_ERROR_LOG)
 	@$(RM_F) dist/files/Readme.html
-	@# restore backed-up markdown files
-	@$(MV) -f CordovaInstaller/docs/releasenotes.md.bak CordovaInstaller/docs/releasenotes.md 
-	@$(MV) -f CordovaInstaller/docs/finishup.md.bak CordovaInstaller/docs/finishup.md
+	@# copy the url shortcut
+	@$(CP) -f "guides/Create a New Project.webloc" ./dist/files
+	@# copy the bin folder
+	@$(CP) -Rf bin dist/files/bin
 	@# sign the .pkg : must be run under one line to get return code
 	@-security find-certificate -c $(CERTIFICATE) > /dev/null 2>> $(PKG_ERROR_LOG); \
 	if [ $$? -eq 0 ] ; then \
@@ -227,7 +170,7 @@ installer: check-utils clean check-wkhtmltopdf md-to-html cordova-lib xcode3-tem
 	@hdiutil create ./dist/Cordova-${CDV_VER}_temp.dmg -srcfolder ./dist/files/ -ov -volname Cordova-${CDV_VER} -format UDRW > /dev/null 2>> $(PKG_ERROR_LOG)
 	@# set the volume icon
 	@hdiutil attach -readwrite -noverify -noautoopen ./dist/Cordova-${CDV_VER}_temp.dmg > /dev/null 2>> $(PKG_ERROR_LOG)
-	@cp "Cordova-based Application/___PROJECTNAME___.xcodeproj/TemplateIcon.icns" /Volumes/Cordova-${CDV_VER}/.VolumeIcon.icns
+	@cp "bin/templates/project/__TESTING__.xcodeproj/TemplateIcon.icns" /Volumes/Cordova-${CDV_VER}/.VolumeIcon.icns
 	@SetFile -c icnC /Volumes/Cordova-${CDV_VER}/.VolumeIcon.icns > /dev/null 2>> $(PKG_ERROR_LOG)
 	@SetFile -a C /Volumes/Cordova-${CDV_VER}/ > /dev/null 2>> $(PKG_ERROR_LOG)
 	@hdiutil detach /Volumes/Cordova-${CDV_VER}/ > /dev/null 2>> $(PKG_ERROR_LOG)
@@ -292,6 +235,7 @@ install-markdown: check-brew
 	@brew install markdown
 
 md-to-html: check-markdown
+	@mkdir -p CordovaInstaller/docs
 	@# generate readme html from markdown
 	@echo '<html><body style="font-family: Helvetica Neue; font-size:10pt;">' >	 CordovaInstaller/docs/readme.html
 	@$(MARKDOWN) README.md >> CordovaInstaller/docs/readme.html

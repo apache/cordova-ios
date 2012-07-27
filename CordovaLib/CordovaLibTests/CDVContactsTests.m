@@ -17,26 +17,24 @@
  under the License.
  */
 
-#import "CDVContactsTests.h"
+#import <SenTestingKit/SenTestingKit.h>
+
+#import "CDVWebViewTest.h"
 #import "CDVContacts.h"
 
-@implementation CDVContactsTests
+@interface CDVContactsTests : CDVWebViewTest
+@end
 
-@synthesize webView, contacts;
+@implementation CDVContactsTests
 
 - (void)setUp
 {
     [super setUp];
-
-    self.contacts = (CDVContacts*)[[CDVContacts alloc] initWithWebView:self.webView];
 }
 
 - (void)tearDown
 {
-    // Tear-down code here.
-	
     [super tearDown];
-	self.contacts = nil;
 }
 
 - (void) testSearchContacts

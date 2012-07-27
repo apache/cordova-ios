@@ -21,8 +21,8 @@
 //  MainViewController.h
 //  __TESTING__
 //
-//  Created by Shazron Abdullah on 12-06-20.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by ___FULLUSERNAME___ on ___DATE___.
+//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 
 #import "MainViewController.h"
@@ -108,6 +108,7 @@
      if (self.invokeString)
      {
         // this is passed before the deviceready event is fired, so you can access it in js when you receive deviceready
+		NSLog(@"DEPRECATED: window.invokeString - use the window.handleOpenURL(url) function instead, which is always called when the app is launched through a custom scheme url.");
         NSString* jsString = [NSString stringWithFormat:@"var invokeString = \"%@\";", self.invokeString];
         [theWebView stringByEvaluatingJavaScriptFromString:jsString];
      }

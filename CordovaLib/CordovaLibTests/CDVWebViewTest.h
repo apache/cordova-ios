@@ -19,10 +19,22 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 
-@interface CDVWebViewTest : SenTestCase {
-	
-}
+@class AppDelegate;
+@class CDVViewController;
 
-@property (nonatomic, retain) UIWebView* webView;
+@interface CDVWebViewTest : SenTestCase
 
+- (AppDelegate *)appDelegate;
+- (CDVViewController *)viewController;
+- (UIWebView *)webView;
+
+// Returns the already registered plugin object for the given class.
+- (id)pluginForClass:(Class)cls;
+// Destroys the existing webview and creates a new one.
+- (void)reloadWebView;
+// Runs the run loop until the given block returns true, or until a timeout
+// occurs.
+- (void)waitForConditionName:(NSString *)conditionName block:(BOOL (^)())block;
+// Convenince function for stringByEvaluatingJavaScriptFromString.
+- (NSString *)evalJs:(NSString *)code;
 @end

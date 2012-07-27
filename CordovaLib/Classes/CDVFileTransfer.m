@@ -19,103 +19,110 @@
 
 #import "CDV.h"
 
+#include <CFNetwork/CFNetwork.h>
+
+@interface CDVFileTransfer ()
+// Creates a delegate to handle an upload.
+- (CDVFileTransferDelegate*)delegateForUpload:(NSArray*)arguments;
+// Creates an NSData* for the file for the given upload arguments.
+- (NSData*)fileDataForUploadArguments:(NSArray*)arguments;
+@end
+
+// Buffer size to use for streaming uploads.
+static const NSUInteger kStreamBufferSize = 32768;
+// Magic value within the options dict used to set a cookie.
+NSString* const kOptionsKeyCookie = @"__cookie";
+
+// Writes the given data to the stream in a blocking way.
+// If successful, returns bytesToWrite.
+// If the stream was closed on the other end, returns 0.
+// If there was an error, returns -1.
+static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
+    UInt8* bytes = (UInt8*)[data bytes];
+    NSUInteger bytesToWrite = [data length];
+    NSUInteger totalBytesWritten = 0;
+    while (totalBytesWritten < bytesToWrite) {
+        CFIndex result = CFWriteStreamWrite(stream,
+              bytes + totalBytesWritten,
+              bytesToWrite - totalBytesWritten);
+        if (result < 0) {
+            CFStreamError error = CFWriteStreamGetError(stream);
+            NSLog(@"WriteStreamError domain: %ld error: %ld", error.domain, error.error);
+            return result;
+        } else if (result == 0) {
+            return result;
+        }
+        totalBytesWritten += result;
+    }
+    return totalBytesWritten;
+}
+
 @implementation CDVFileTransfer
 
 - (NSString*) escapePathComponentForUrlString:(NSString*)urlString
 {
-    // separate the scheme and location components
-    NSArray* schemeAndLocationComponents = [urlString componentsSeparatedByString:@"://"];
-    if ([schemeAndLocationComponents count] < 2) {
+    NSRange schemeAndHostRange = [urlString rangeOfString:@"://.*?/" options:NSRegularExpressionSearch];
+    if (schemeAndHostRange.length == 0) {
         return urlString;
     }
-    
-    // separate the domain and path components
-    NSArray* pathComponents = [[schemeAndLocationComponents lastObject] componentsSeparatedByString:@"/"];
-    if ([pathComponents count] < 2) {
-        return urlString;
-    }
-    
-    NSString* pathComponent = [pathComponents lastObject];
-    NSRange rangeOfSubstring = [urlString rangeOfString:pathComponent];
-    urlString = [urlString substringToIndex:rangeOfSubstring.location];
-    
+
+    NSInteger schemeAndHostEndIndex = NSMaxRange(schemeAndHostRange);
+    NSString* schemeAndHost = [urlString substringToIndex:schemeAndHostEndIndex];
+    NSString* pathComponent = [urlString substringFromIndex:schemeAndHostEndIndex];
     pathComponent = [pathComponent stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    return [urlString stringByAppendingString:pathComponent];
+    return [schemeAndHost stringByAppendingString:pathComponent];
 }
 
-- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options fileData:(NSData*)fileData {
     NSString* callbackId = [arguments objectAtIndex:0];
     
     // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
     // however, params is a JavaScript object and during marshalling is put into the options dict, 
     // thus debug and chunkedMode are the 6th and 7th arguments
     
-    NSString* filePath = (NSString*)[arguments objectAtIndex:1];
+    NSString* target = (NSString*)[arguments objectAtIndex:1];
     NSString* server = (NSString*)[arguments objectAtIndex:2];
     NSString* fileKey = (NSString*)[arguments objectAtIndex:3];
     NSString* fileName = [arguments objectAtIndex:4 withDefault:@"no-filename"];
     NSString* mimeType = [arguments objectAtIndex:5 withDefault:nil];
 //  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
-//  NSString* chunkedMode = (NSString*)[arguments objectAtIndex:7]; // currently unused
-    
-    NSMutableDictionary* params = options;
-    
+    BOOL chunkedMode = [[arguments objectAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
+
+    // CFStreamCreateBoundPair crashes on iOS < 5.
+    if (!IsAtLeastiOSVersion(@"5")) {
+        // TODO(agrieve): See if it's okay license-wise to include the work-around code from:
+        // http://developer.apple.com/library/ios/#samplecode/SimpleURLConnections/Listings/PostController_m.html
+        chunkedMode = NO;
+    }
+
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
-    
-    NSURL* file;
-    NSData *fileData = nil;
-    
-    if ([filePath hasPrefix:@"/"]) {
-        file = [NSURL fileURLWithPath:filePath];
-    } else {
-        file = [NSURL URLWithString:filePath];
-    }
-    
-    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:server]];
-    
+    // NSURL does not accepts URLs with spaces in the path. We escape the path in order
+    // to be more lenient.
+    NSURL *url = [NSURL URLWithString:server];
     
     if (!url) {
         errorCode = INVALID_URL_ERR;
         NSLog(@"File Transfer Error: Invalid server URL %@", server);
-    } else if(![file isFileURL]) {
+    } else if (!fileData) {
         errorCode = FILE_NOT_FOUND_ERR;
-        NSLog(@"File Transfer Error: Invalid file path or URL %@", filePath);
-    } else {
-        // check that file is valid
-        NSFileManager* fileMgr = [[NSFileManager alloc] init];
-        BOOL bIsDirectory = NO;
-        BOOL bExists = [fileMgr fileExistsAtPath:[file path] isDirectory:&bIsDirectory];
-        if (!bExists || bIsDirectory) {
-            errorCode = FILE_NOT_FOUND_ERR;
-        } else {
-            // file exists, make sure we can get the data
-            fileData = [NSData dataWithContentsOfURL:file];
-            
-            if(!fileData) {
-                errorCode =  FILE_NOT_FOUND_ERR;
-                NSLog(@"File Transfer Error: Could not read file data %@", filePath);
-            }
-        }
-        [fileMgr release];
     }
     
     if(errorCode > 0) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:filePath AndTarget:server]];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:errorCode AndSource:target AndTarget:server]];
         
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
-        return;
+        return nil;
     }
     
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
 	[req setHTTPMethod:@"POST"];
 	
 //    Magic value to set a cookie
-	if([params objectForKey:@"__cookie"]) {
-		[req setValue:[params objectForKey:@"__cookie"] forHTTPHeaderField:@"Cookie"];
-		[params removeObjectForKey:@"__cookie"];
+	if([options objectForKey:kOptionsKeyCookie]) {
+		[req setValue:[options objectForKey:kOptionsKeyCookie] forHTTPHeaderField:@"Cookie"];
 		[req setHTTPShouldHandleCookies:NO];
 	}
 	
@@ -131,7 +138,7 @@
 		[req setValue: userAgent forHTTPHeaderField:@"User-Agent"];
 	}
 	
-    NSMutableDictionary* headers = [params objectForKey:@"headers"];
+    NSDictionary* headers = [options objectForKey:@"headers"];
     NSEnumerator *enumerator = [headers keyEnumerator];
 	id val;
    	NSString *nkey;
@@ -153,13 +160,13 @@
         [req setValue:val forHTTPHeaderField:nkey];	
     }
     
-	NSMutableData *postBody = [NSMutableData data];
-	enumerator = [params keyEnumerator];
-	id key;
+	NSMutableData *postBodyBeforeFile = [NSMutableData data];
+	enumerator = [options keyEnumerator];
 	
+	id key;
 	while ((key = [enumerator nextObject])) {
-		val = [params objectForKey:key];
-		if(!val || val == [NSNull null]) {
+		val = [options objectForKey:key];
+		if(!val || val == [NSNull null] || [key isEqualToString:kOptionsKeyCookie]) {
 			continue;	
 		}
 		// if it responds to stringValue selector (eg NSNumber) get the NSString
@@ -171,39 +178,93 @@
 			continue;
 		}
 		
-		[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-		[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", key] dataUsingEncoding:NSUTF8StringEncoding]];
-		[postBody appendData:[val dataUsingEncoding:NSUTF8StringEncoding]];
-		[postBody appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+		[postBodyBeforeFile appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+		[postBodyBeforeFile appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", key] dataUsingEncoding:NSUTF8StringEncoding]];
+		[postBodyBeforeFile appendData:[val dataUsingEncoding:NSUTF8StringEncoding]];
+		[postBodyBeforeFile appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
 	}
     
-	[postBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileKey, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
+	[postBodyBeforeFile appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+	[postBodyBeforeFile appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileKey, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
     if (mimeType != nil) {
-        [postBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
+        [postBodyBeforeFile appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
     }
-    [postBody appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n\r\n", [fileData length]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBodyBeforeFile appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n\r\n", [fileData length]] dataUsingEncoding:NSUTF8StringEncoding]];
 
     DLog(@"fileData length: %d", [fileData length]);
-	[postBody appendData:fileData];
-	[postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    //[req setValue:[[NSNumber numberWithInteger:[postBody length]] stringValue] forHTTPHeaderField:@"Content-Length"];
-	[req setHTTPBody:postBody];
-    
+ 	NSData *postBodyAfterFile = [[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSUInteger totalPayloadLength = [postBodyBeforeFile length] + [fileData length] + [postBodyAfterFile length];
+    [req setValue:[[NSNumber numberWithInteger:totalPayloadLength] stringValue] forHTTPHeaderField:@"Content-Length"];
 	
+    
+    if (chunkedMode) {
+        CFReadStreamRef readStream = NULL;
+        CFWriteStreamRef writeStream = NULL;
+        CFStreamCreateBoundPair(NULL, &readStream, &writeStream, kStreamBufferSize);
+        [req setHTTPBodyStream:CFBridgingRelease(readStream)];
+
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if (CFWriteStreamOpen(writeStream)) {
+                NSData* chunks[] = { postBodyBeforeFile, fileData, postBodyAfterFile };
+                int numChunks = sizeof(chunks) / sizeof(chunks[0]);
+                for (int i = 0; i < numChunks; ++i) {
+                    CFIndex result = WriteDataToStream(chunks[i], writeStream);
+                    if (result <= 0) {
+                        break;
+                    }
+                }
+            } else {
+                NSLog(@"FileTransfer: Failed to open writeStream");
+            }
+            CFWriteStreamClose(writeStream);
+            CFRelease(writeStream);
+        });
+    } else {
+        [postBodyBeforeFile appendData:fileData];
+        [postBodyBeforeFile appendData:postBodyAfterFile];
+    	[req setHTTPBody:postBodyBeforeFile];
+    }    
+	return req;
+}
+
+- (CDVFileTransferDelegate*) delegateForUpload:(NSArray*)arguments {
+    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* target = (NSString*)[arguments objectAtIndex:1];
+    NSString* server = (NSString*)[arguments objectAtIndex:2];
+
 	CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
     delegate.direction = CDV_TRANSFER_UPLOAD;
     delegate.callbackId = callbackId;
     delegate.source = server;
-    delegate.target = filePath;
-	
-	[NSURLConnection connectionWithRequest:req delegate:delegate];
-    
+    delegate.target = target;
+    return delegate;
 }
 
-- (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (NSData*) fileDataForUploadArguments:(NSArray*)arguments {
+    NSString* target = (NSString*)[arguments objectAtIndex:1];
+    NSError *err = nil;
+    // Extract the path part out of a file: URL.
+    NSString* filePath = [target hasPrefix:@"/"] ? [[target copy] autorelease] : [[NSURL URLWithString:target] path];
+
+    // Memory map the file so that it can be read efficiently even if it is large.
+    NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
+    if (err != nil) {
+        NSLog(@"Error opening file %@: %@", target, err);
+    }
+    return fileData;
+}
+
+- (void) upload:(NSArray*)arguments withDict:(NSDictionary*)options {
+    // fileData and req are split into helper functions to ease the unit testing of delegateForUpload.
+    NSData* fileData = [self fileDataForUploadArguments:arguments];
+    NSURLRequest* req = [self requestForUpload:arguments withDict:options fileData:fileData];
+    CDVFileTransferDelegate* delegate = [self delegateForUpload:arguments];
+	[NSURLConnection connectionWithRequest:req delegate:delegate];
+}
+
+- (void) download:(NSArray*)arguments withDict:(NSDictionary*)options {
     DLog(@"File Transfer downloading file...");
     NSString * callbackId = [arguments objectAtIndex:0];
     NSString * sourceUrl = [arguments objectAtIndex:1];
@@ -219,7 +280,7 @@
         file = [NSURL URLWithString:filePath];
     }
     
-    NSURL *url = [NSURL URLWithString:[self escapePathComponentForUrlString:sourceUrl]];
+    NSURL *url = [NSURL URLWithString:sourceUrl];
     
     if (!url) {
         errorCode = INVALID_URL_ERR;

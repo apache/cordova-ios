@@ -26,12 +26,17 @@
 
 @property (nonatomic, readonly, retain) NSMutableArray* backupInfo;
 
-- (void)  backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (BOOL) shouldBackup;
+- (BOOL) shouldRestore;
+- (void) backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) restore:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
 
 + (void) __verifyAndFixDatabaseLocations;
-
+// Visible for testing.
++ (BOOL) __verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
+                                              bundlePath:(NSString*)bundlePath
+                                             fileManager:(NSFileManager*)fileManager;
 @end
 
 @interface CDVBackupInfo : NSObject

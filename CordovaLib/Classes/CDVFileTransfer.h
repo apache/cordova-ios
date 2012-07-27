@@ -34,14 +34,19 @@ enum CDVFileTransferDirection {
 };
 typedef int CDVFileTransferDirection;
 
+// Magic value within the options dict used to set a cookie.
+extern NSString* const kOptionsKeyCookie;
+
 @interface CDVFileTransfer : CDVPlugin {
     
 }
 
-- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) upload:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void) download:(NSArray*)arguments withDict:(NSDictionary*)options;
 - (NSString*) escapePathComponentForUrlString:(NSString*)urlString;
 
+// Visible for testing.
+- (NSURLRequest*) requestForUpload:(NSArray*)arguments withDict:(NSDictionary*)options fileData:(NSData*)fileData;
 -(NSMutableDictionary*) createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 
 -(NSMutableDictionary*) createFileTransferError:(int)code 

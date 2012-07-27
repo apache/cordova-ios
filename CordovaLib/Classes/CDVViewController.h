@@ -37,7 +37,7 @@
 @property (nonatomic, readonly, retain) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, retain) NSArray* supportedOrientations;
 @property (nonatomic, readonly, assign) BOOL loadFromString;
-@property (nonatomic, readwrite, copy) NSString* invokeString;
+@property (nonatomic, readwrite, copy) NSString* invokeString __attribute__ ((deprecated));
 
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
 @property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView* activityView;
@@ -48,9 +48,9 @@
 @property (nonatomic, readwrite, copy) NSString* startPage;
 
 + (NSDictionary*) getBundlePlist:(NSString*)plistName;
-+ (NSString*) cordovaVersion;
 + (NSString*) applicationDocumentsDirectory;
 
+- (void) dispose;
 - (void) printMultitaskingInfo;
 - (void) createGapView;
 - (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds;
@@ -60,7 +60,6 @@
 
 - (void) javascriptAlert:(NSString*)text;
 - (NSString*) appURLScheme;
-- (NSDictionary*) deviceProperties;
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
 

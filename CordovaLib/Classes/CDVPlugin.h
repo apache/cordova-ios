@@ -25,10 +25,6 @@
 
 #define CDVPluginHandleOpenURLNotification	@"CDVPluginHandleOpenURLNotification"
 
-#define VERIFY_ARGUMENTS(args, expectedCount, callbackId) if (![self verifyArguments:args withExpectedCount:expectedCount andCallbackId:callbackId \
-callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
-
-
 @interface CDVPlugin : NSObject {
 }
 
@@ -55,24 +51,9 @@ callerFileName:__FILE__ callerFunctionName:__PRETTY_FUNCTION__]) { return; }
  */
 
 - (id) appDelegate;
-- (UIViewController*) appViewController 
-#ifdef __clang__
-__attribute__ ((deprecated("Use the viewController property instead. This will be removed in Cordova 2.0.0")));
-#else
-__attribute__ ((deprecated()));
-#endif
 
 - (NSString*) writeJavascript:(NSString*)javascript;
 - (NSString*) success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
 - (NSString*) error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
-
-
-- (BOOL) verifyArguments:(NSMutableArray*)arguments withExpectedCount:(NSUInteger)expectedCount andCallbackId:(NSString*)callbackId 
-		  callerFileName:(const char*)callerFileName callerFunctionName:(const char*)callerFunctionName
-#ifdef __clang__
-__attribute__ ((deprecated("This will be removed in Cordova 2.0.0")));
-#else
-__attribute__ ((deprecated()));
-#endif
 
 @end

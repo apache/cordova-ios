@@ -20,25 +20,34 @@
 #
 
 
-set -e
 
-VERSION=$(cat ./VERSION)
+# the two lines below are to get the current folder, and resolve symlinks
+SCRIPT="$0"
+# need this for relative symlinks
+while [ -h "$SCRIPT" ] ; do
+   SCRIPT=`readlink "$SCRIPT"`
+done
+
+BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
+TESTDIR=$BINDIR/mobile-spec-test
+
+echo "TESTDIR" $SCRIPT
 
 # get the latest mobile-spec
-git clone git://github.com/apache/incubator-cordova-mobile-spec.git
+git clone git://github.com/apache/incubator-cordova-mobile-spec.git $BINDIR/mobile-spec
 
 # clobber test if it exists
-if [ -e ./test ]
+if [ -e $TESTDIR ]
 then
-    rm -rf ./test
+    rm -rf $TESTDIR
 fi
 
 # generate a working proj
-./bin/create ./test org.apache.cordova.test CordovaTest
+$BINDIR/create $TESTDIR org.apache.cordova.test CordovaTest
 
 # kill the default app and replace it w/ mobile-spec
-rm -rf ./test/assets/www
-mv ./mobile-spec ./test/assets/www
+rm -rf $TESTDIR/www
+mv $BINDIR/mobile-spec $TESTDIR/www
 
 # build it, launch it and start logging on stdout
-cd ./test && ./cordova/debug && ./cordova/log
+$TESTDIR/cordova/debug && $TESTDIR/cordova/log

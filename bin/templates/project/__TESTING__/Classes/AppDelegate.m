@@ -21,20 +21,15 @@
 //  AppDelegate.m
 //  __TESTING__
 //
-//  Created by Shazron Abdullah on 12-06-20.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by ___FULLUSERNAME___ on ___DATE___.
+//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
 
-#ifdef CORDOVA_FRAMEWORK
-    #import <Cordova/CDVPlugin.h>
-    #import <Cordova/CDVURLProtocol.h>
-#else
-    #import "CDVPlugin.h"
-    #import "CDVURLProtocol.h"
-#endif
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVURLProtocol.h>
 
 
 @implementation AppDelegate

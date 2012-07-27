@@ -26,29 +26,22 @@
 set -e
 
 CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd )
-
 PROJECT_PATH=$CORDOVA_PATH/..
 
-for file in *.xcodeproj; do
-  PRJ=$file
-  PROJECT_NAME=$(echo $file | awk -F.xcodeproj '{print $1}')
+for file in $PROJECT_PATH/*.xcodeproj; do
+  PROJECT_NAME=$(basename "$file" .xcodeproj)
 done;
-
-APP=build/Release-iphonesimulator/$PROJECT_NAME.app
-SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
 
 cd $PROJECT_PATH
 
-xcodebuild -project $PRJ -sdk $SDK clean build
+APP=build/$PROJECT_NAME.app
+SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
 
-# launch using ios-sim
+xcodebuild -project $PROJECT_NAME.xcodeproj -arch i386 -target $PROJECT_NAME -configuration Debug -sdk $SDK clean build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR=$PROJECT_PATH/build
 
-if which ios-sim >/dev/null; then
-    ios-sim launch $APP --stderr console.log --stdout console.log &
-else
-    echo -e '\033[31mError: ios-sim was not found. Please download, build and install version 1.4 or greater from https://github.com/phonegap/ios-sim into your path. Or "brew install ios-sim" using homebrew: http://mxcl.github.com/homebrew/\033[m'; exit 1;
-fi
+# launch using emulate
 
+$CORDOVA_PATH/emulate $PROJECT_PATH/$APP
 
 
 
