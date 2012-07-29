@@ -66,6 +66,7 @@ fi
 
 # copy the files in; then modify them
 cp -r $BINDIR/templates/project/ $PROJECT_PATH
+cp $BINDIR/../CordovaLib/javascript/cordova.ios.js $PROJECT_PATH/www/cordova-*.js
 
 # I've tried to be thorough in my documentation of the manual actions below...
 # on first brush it would seem that the right solution would be to brute force
