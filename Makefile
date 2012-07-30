@@ -21,39 +21,18 @@
 ##         XC_APP (path to your Xcode.app)
 ##         DEVELOPER (path to your Developer folder)
 ##              - don't need to set this if  you use 'xcode-select'
-##              - in Xcode 4.3, this is within your app bundle: Xcode.app/Contents/Developer
+##              - in Xcode 4.3+, this is within your app bundle: Xcode.app/Contents/Developer
 
 SHELL = /bin/bash
-CHMOD = chmod
 CP = cp
-MV = mv
-NOOP = $(SHELL) -c true
 RM_F = rm -f
-RM_IR = rm -iR
 RM_RF = rm -rf
-TEST_F = test -f
-TOUCH = touch
-UMASK_NULL = umask 0
-DEV_NULL = > /dev/null 2>&1
-MKPATH = mkdir -p
-CAT = cat
-MAKE = make
-OPEN = open
-ECHO = echo
-ECHO_N = echo -n
-JAVA = java
 PWD = `pwd`
 CORDOVA_LIB = $(PWD)/CordovaLib
-DOXYGEN = 
-IPHONE_DOCSET_TMPDIR = docs/iphone/tmp
 DEVELOPER ?= '$(shell xcode-select -print-path)'
 XC_APP ?= '$(shell mdfind "kMDItemFSName=='Xcode.app' && kMDItemKind=='Application'" | head -1)'
 XC = $(DEVELOPER)/usr/bin/xcodebuild
 CDV_VER = $(shell head -1 CordovaLib/VERSION)
-GIT = $(shell which git)
-COMMIT_HASH=$(shell git describe --tags)	
-BUILD_BAK=_build.bak
-CERTIFICATE = 'Cordova Support'
 XCODE4_TEMPLATE_FOLDER=$(HOME)/Library/Developer/Xcode/Templates/Project\ Templates/Application
 EXISTING_XCODE4_TEMPLATE=$(XCODE4_TEMPLATE_FOLDER)/Cordova-based\ Application.xctemplate
 RENAMED_XCODE4_TEMPLATE=$(XCODE4_TEMPLATE_FOLDER)/Cordova-based\ \(pre\ 2.0\)\ Application.xctemplate
@@ -61,11 +40,6 @@ RENAMED_XCODE4_TEMPLATE=$(XCODE4_TEMPLATE_FOLDER)/Cordova-based\ \(pre\ 2.0\)\ A
 all :: install
 
 clean-cordova-lib:
-		@if [ -e "$(BUILD_BAK)/VERSION" ]; then \
-				@$(CP) -Rf "CordovaLib/VERSION" ~/.Trash; \
-				@$(RM_RF) "CordovaLib/VERSION"; \
-				@$(MV) $(BUILD_BAK)/VERSION "CordovaLib/VERSION"; \
-		fi	
 		@$(RM_RF) CordovaLib/build/
 		@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.mode1v3
 		@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.perspectivev3
@@ -80,7 +54,6 @@ clean-bin:
 		@$(RM_F) bin/templates/project/__TESTING__.xcodeproj/*.pbxuser
 
 clean: clean-cordova-lib clean-bin
-		@$(RM_RF) $(BUILD_BAK)
 
 check-utils:
 		@if [[ ! -e $(XC_APP) ]]; then \
@@ -91,38 +64,32 @@ check-utils:
 		fi
 		@echo -e "Xcode.app: \t\t\033[33m$(XC_APP)\033[m";
 		@echo -e "Using Developer folder: \033[33m$(DEVELOPER)\033[m";
-		@if [ -n "$(shell ps aux | grep -i "Xcode.app/Contents/MacOS/Xcode" | grep -v grep)" ]; then \
+		@if [ -n "$(shell ps aux | grep -i "Xcode.*.app/Contents/MacOS/Xcode" | grep -v grep)" ]; then \
 			  echo -e "\033[31mError: Xcode is running! Please close Xcode and try again.\033[m" ; exit 1; \
 		fi
 
 install: check-utils clean update-template
 		@defaults write org.apache.cordovalib InstallLocation "$(CORDOVA_LIB)"
-		@# Xcode 4
 		@defaults write com.apple.dt.Xcode IDEApplicationwideBuildSettings -dict-add CORDOVALIB "$(CORDOVA_LIB)"
 		@defaults write com.apple.dt.Xcode IDESourceTreeDisplayNames -dict-add CORDOVALIB ""
-		@# Xcode 3
-		@defaults write com.apple.Xcode PBXApplicationwideBuildSettings -dict-add CORDOVALIB "$(CORDOVA_LIB)"
-		@defaults write com.apple.Xcode PBXSourceTreeDisplayNames -dict-add CORDOVALIB ""
 		@# rename the existing Xcode 4 template
 		@if [ -d $(EXISTING_XCODE4_TEMPLATE) ]; then \
 				@mv $(EXISTING_XCODE4_TEMPLATE) $(RENAMED_XCODE4_TEMPLATE) ; \
 		fi
 		@make clean
+		@echo -e "CordovaLib installed at: \033[33m$(CORDOVA_LIB)\033[m";
 
 uninstall:
+		@# uninstall previous Cordova versions < 2.0.0
 		@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/Cordova
 		@$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/Cordova-based\ Application.xctemplate
 		@read -p "Delete all files in ~/Documents/CordovaLib/?: " ; \
 		@if [ "$$REPLY" == "y" ]; then \
-				$(RM_RF) ~/Documents/CordovaLib/ ; \
-		else \
-				echo "" ; \
+			$(RM_RF) ~/Documents/CordovaLib/ ; \
 		fi	
 		@read -p "Delete the Cordova framework /Users/Shared/Cordova/Frameworks/Cordova.framework?: " ; \
 		if [ "$$REPLY" == "y" ]; then \
 				$(RM_RF) /Users/Shared/Cordova/Frameworks/Cordova.framework/ ; $(RM_RF) ~/Library/Frameworks/Cordova.framework ; \
-		else \
-				echo "" ; \
 		fi	
 
 update-template:
