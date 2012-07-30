@@ -742,14 +742,16 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 - (void)getObjects:(id *)objectsPtr range:(NSRange)range
 {
   NSParameterAssert((objects != NULL) && (count <= capacity));
-  if((objectsPtr     == NULL)  && (NSMaxRange(range) > 0UL))   { [NSException raise:NSRangeException format:@"*** -[%@ %@]: pointer to objects array is NULL but range length is %lu", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range)];        }
-  if((range.location >  count) || (NSMaxRange(range) > count)) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",                          NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range), count]; }
-  memcpy(objectsPtr, objects + range.location, range.length * sizeof(id));
+  if((objectsPtr     == NULL)  && (NSMaxRange(range) > 0UL))   { [NSException raise:NSRangeException format:@"*** -[%@ %@]: pointer to objects array is NULL but range length is %u", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range)];        }
+  if((range.location >  count) || (NSMaxRange(range) > count)) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)",                          NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range), count]; }
+  if (objectsPtr != NULL) {
+      memcpy(objectsPtr, objects + range.location, range.length * sizeof(id));
+  }
 }
 
 - (id)objectAtIndex:(NSUInteger)objectIndex
 {
-  if(objectIndex >= count) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)", NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+  if(objectIndex >= count) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)", NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
   NSParameterAssert((objects != NULL) && (count <= capacity) && (objects[objectIndex] != NULL));
   return(objects[objectIndex]);
 }
@@ -770,7 +772,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  if(objectIndex >  count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count + 1UL]; }
+  if(objectIndex >  count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%u) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count + 1UL]; }
 #ifdef __clang_analyzer__
   [anObject retain]; // Stupid clang analyzer...  Issue #19.
 #else
@@ -783,7 +785,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 - (void)removeObjectAtIndex:(NSUInteger)objectIndex
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
   _CDVJKArrayRemoveObjectAtIndex(self, objectIndex);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
@@ -792,7 +794,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
 #ifdef __clang_analyzer__
   [anObject retain]; // Stupid clang analyzer...  Issue #19.
 #else
@@ -2595,18 +2597,18 @@ static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *
   BOOL workAroundMacOSXABIBreakingBug = NO;
   if(CDVJK_EXPECT_F(((NSUInteger)object) & 0x1)) { workAroundMacOSXABIBreakingBug = YES; goto slowClassLookup; }
 
-       if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.stringClass))     { isClass = CDVJKClassString;     }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.numberClass))     { isClass = CDVJKClassNumber;     }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.dictionaryClass)) { isClass = CDVJKClassDictionary; }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.arrayClass))      { isClass = CDVJKClassArray;      }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.nullClass))       { isClass = CDVJKClassNull;       }
+       if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.stringClass))     { isClass = CDVJKClassString;     }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.numberClass))     { isClass = CDVJKClassNumber;     }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.dictionaryClass)) { isClass = CDVJKClassDictionary; }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.arrayClass))      { isClass = CDVJKClassArray;      }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.nullClass))       { isClass = CDVJKClassNull;       }
   else {
   slowClassLookup:
-         if(CDVJK_EXPECT_T([object isKindOfClass:[NSString     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.stringClass     = object->isa; } isClass = CDVJKClassString;     }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNumber     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.numberClass     = object->isa; } isClass = CDVJKClassNumber;     }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSDictionary class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.dictionaryClass = object->isa; } isClass = CDVJKClassDictionary; }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSArray      class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.arrayClass      = object->isa; } isClass = CDVJKClassArray;      }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNull       class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.nullClass       = object->isa; } isClass = CDVJKClassNull;       }
+         if(CDVJK_EXPECT_T([object isKindOfClass:[NSString     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.stringClass     = object_getClass(object); } isClass = CDVJKClassString;     }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNumber     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.numberClass     = object_getClass(object); } isClass = CDVJKClassNumber;     }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSDictionary class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.dictionaryClass = object_getClass(object); } isClass = CDVJKClassDictionary; }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSArray      class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.arrayClass      = object_getClass(object); } isClass = CDVJKClassArray;      }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNull       class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.nullClass       = object_getClass(object); } isClass = CDVJKClassNull;       }
     else {
       if((rerunningAfterClassFormatter == NO) && (
 #ifdef __BLOCKS__
@@ -2788,7 +2790,7 @@ static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *
           for(id keyObject in enumerateObject) {
             if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(CDVJK_EXPECT_F((keyObject->isa      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F((object_getClass(keyObject)      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, keyObject)))                                                        { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ":")))                                                                      { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, (void *)CFDictionaryGetValue((CFDictionaryRef)object, keyObject)))) { return(1); }
@@ -2799,7 +2801,7 @@ static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *
           for(idx = 0L; idx < dictionaryCount; idx++) {
             if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(CDVJK_EXPECT_F(((id)keys[idx])->isa != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F(object_getClass(((id)keys[idx])) != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, keys[idx])))    { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ":")))                  { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); }
