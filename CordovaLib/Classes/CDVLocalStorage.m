@@ -316,8 +316,18 @@
 - (void) onResignActive
 {
     UIDevice* device = [UIDevice currentDevice];
+    NSNumber* exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
+
+    BOOL isMultitaskingSupported = [device respondsToSelector:@selector(isMultitaskingSupported)] && [device isMultitaskingSupported];
+    if (exitsOnSuspend == nil) { // if it's missing, it should be NO (i.e. multi-tasking on by default)
+        exitsOnSuspend = [NSNumber numberWithBool:NO];
+    }
     
-    if ([device respondsToSelector:@selector(isMultitaskingSupported)] && [device isMultitaskingSupported]) 
+    if (exitsOnSuspend)
+    {
+        [self backup:nil withDict:nil];
+    } 
+    else if (isMultitaskingSupported) 
     {
         __block UIBackgroundTaskIdentifier backgroundTaskID = UIBackgroundTaskInvalid;
         
