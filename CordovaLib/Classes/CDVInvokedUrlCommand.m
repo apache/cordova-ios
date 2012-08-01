@@ -22,28 +22,68 @@
 
 @implementation CDVInvokedUrlCommand
 
-@synthesize arguments;
-@synthesize options;
-@synthesize className;
-@synthesize methodName;
+@synthesize arguments = _arguments;
+@synthesize callbackId = _callbackId;
+@synthesize className = _className;
+@synthesize methodName = _methodName;
 
-+ (CDVInvokedUrlCommand*) commandFromObject:(NSDictionary*)object
++ (CDVInvokedUrlCommand*) commandFromJson:(NSArray*)jsonEntry
 {
-    CDVInvokedUrlCommand* iuc = [[[CDVInvokedUrlCommand alloc] init] autorelease];
-    iuc.className = [object objectForKey:@"className"];
-    iuc.methodName = [object objectForKey:@"methodName"];
-    iuc.arguments = [object objectForKey:@"arguments"];
-    iuc.options = [object objectForKey:@"options"];
-
-    return iuc;
+    return [[[CDVInvokedUrlCommand alloc] initFromJson:jsonEntry] autorelease];
 }
+              
+- (id) initFromJson:(NSArray*)jsonEntry
+{
+    NSString* callbackId = [jsonEntry objectAtIndex:0];
+    NSString* className = [jsonEntry objectAtIndex:1];
+    NSString* methodName = [jsonEntry objectAtIndex:2];
+    NSMutableArray* arguments = [jsonEntry objectAtIndex:3];
+    
+    return [self initWithArguments:arguments
+                        callbackId:callbackId
+                         className:className
+                        methodName:methodName];
+}
+
+- (id) initWithArguments:(NSArray*)arguments
+              callbackId:(NSString*)callbackId
+               className:(NSString*)className
+              methodName:(NSString*)methodName
+{
+    self = [super init];
+    if (self != nil) {
+        _arguments = [arguments retain];
+        _callbackId = [callbackId retain];
+        _className = [className retain];
+        _methodName = [methodName retain];
+    }
+    return self;
+}
+
+- (void) legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict {
+    NSMutableArray* newArguments = [NSMutableArray arrayWithArray:_arguments];
+    for (NSUInteger i = 0; i < [newArguments count]; ++i) {
+        if ([[newArguments objectAtIndex:i] isKindOfClass:[NSDictionary class]]) {
+            if (legacyDict != NULL) {
+                *legacyDict = [newArguments objectAtIndex:i];
+            }
+            [newArguments removeObjectAtIndex:i];
+            break;
+        }
+    }
+    [newArguments insertObject:_callbackId atIndex:0];
+    if (legacyArguments != NULL) {
+        *legacyArguments = newArguments;
+    }
+}
+
 
 - (void) dealloc
 {
-    [arguments release];
-    [options release];
-    [className release];
-    [methodName release];
+    [_arguments release];
+    [_callbackId release];
+    [_className release];
+    [_methodName release];
     
     [super dealloc];
 }

@@ -20,4 +20,4 @@
 
 CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd )
 
-tail -f $CORDOVA_PATH/console.log
+tail -f "$CORDOVA_PATH/console.log"

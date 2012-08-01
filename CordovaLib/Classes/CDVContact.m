@@ -440,7 +440,7 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	bool bSuccess = ABRecordRemoveValue(aRecord, aProperty, &err);
 	if(!bSuccess){
 		CFStringRef errDescription = CFErrorCopyDescription(err);
-		NSLog(@"Unable to remove property %@: %@", aProperty, errDescription );
+		NSLog(@"Unable to remove property %d: %@", aProperty, errDescription );
 		CFRelease(errDescription);
 	}
 	return bSuccess;

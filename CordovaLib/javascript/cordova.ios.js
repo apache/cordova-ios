@@ -1,6 +1,6 @@
-// commit 114cf5304a74ff8f7c9ff1d21cf5652298af04b0
+// commit 8c46a970a0719d0f16a225b75421ecf6f12dcc02
 
-// File generated at :: Wed Jul 18 2012 16:47:25 GMT-0700 (PDT)
+// File generated at :: Sun Jul 29 2012 14:26:58 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -926,13 +926,6 @@ module.exports = function() {
         actionArgs = Array.prototype.splice.call(arguments, 1);
     }
 
-    // Start building the command object.
-    var command = {
-        className: service,
-        methodName: action,
-        "arguments": []
-    };
-
     // Register the callbacks and add the callbackId to the positional
     // arguments if given.
     if (successCallback || failCallback) {
@@ -940,20 +933,8 @@ module.exports = function() {
         cordova.callbacks[callbackId] =
             {success:successCallback, fail:failCallback};
     }
-    if (callbackId !== null) {
-        command["arguments"].push(callbackId);
-    }
 
-    for (var i = 0; i < actionArgs.length; ++i) {
-        var arg = actionArgs[i];
-        if (arg === undefined || arg === null) { // nulls are pushed to the args now (becomes NSNull)
-            command["arguments"].push(arg);
-        } else if (typeof(arg) == 'object' && !(utils.isArray(arg))) {
-            command.options = arg;
-        } else {
-            command["arguments"].push(arg);
-        }
-    }
+    var command = [callbackId, service, action, actionArgs];
 
     // Stringify and queue the command. We stringify to command now to
     // effectively clone the command arguments in case they are mutated before
@@ -2502,10 +2483,12 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
     var mimeType = null;
     var params = null;
     var chunkedMode = true;
+    var headers = null;
     if (options) {
         fileKey = options.fileKey;
         fileName = options.fileName;
         mimeType = options.mimeType;
+        headers = options.headers;
         if (options.chunkedMode !== null || typeof options.chunkedMode != "undefined") {
             chunkedMode = options.chunkedMode;
         }
@@ -2522,7 +2505,7 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
         errorCallback(error);
     };
 
-    exec(successCallback, fail, 'FileTransfer', 'upload', [filePath, server, fileKey, fileName, mimeType, params, trustAllHosts, chunkedMode]);
+    exec(successCallback, fail, 'FileTransfer', 'upload', [filePath, server, fileKey, fileName, mimeType, params, trustAllHosts, chunkedMode, headers]);
 };
 
 /**
@@ -2592,15 +2575,19 @@ define("cordova/plugin/FileUploadOptions", function(require, exports, module) {
  * @param fileName {String}  Filename to be used by the server. Defaults to image.jpg.
  * @param mimeType {String}  Mimetype of the uploaded file. Defaults to image/jpeg.
  * @param params {Object}    Object with key: value params to send to the server.
+ * @param headers {Object}   Keys are header names, values are header values. Multiple
+ *                           headers of the same name are not supported.
  */
-var FileUploadOptions = function(fileKey, fileName, mimeType, params) {
+var FileUploadOptions = function(fileKey, fileName, mimeType, params, headers) {
     this.fileKey = fileKey || null;
     this.fileName = fileName || null;
     this.mimeType = mimeType || null;
     this.params = params || null;
+    this.headers = headers || null;
 };
 
 module.exports = FileUploadOptions;
+
 });
 
 // file: lib/common/plugin/FileUploadResult.js
@@ -4507,10 +4494,12 @@ var cordova = require('cordova');
  * Called by native code to retrieve all queued commands and clear the queue.
  */
 module.exports = function() {
-  var json = JSON.stringify(cordova.commandQueue);
-  cordova.commandQueue = [];
+  // Each entry in commandQueue is a JSON string already.
+  var json = '[' + cordova.commandQueue.join(',') + ']';
+  cordova.commandQueue.length = 0;
   return json;
 };
+
 });
 
 // file: lib/ios/plugin/ios/notification.js

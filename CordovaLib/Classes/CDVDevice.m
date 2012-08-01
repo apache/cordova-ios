@@ -18,9 +18,7 @@
  */
 
 
-#import "CDVDevice.h"
-#import "CDVViewController.h"
-#import "UIDevice+Extensions.h"
+#import "CDV.h"
 
 @interface CDVDevice () {
 }
@@ -73,30 +71,9 @@
     return devReturn;
 }
 
-/**
- Returns the current version of Cordova as read from the VERSION file
- This only touches the filesystem once and stores the result in the class variable cdvVersion
- */
-static NSString* cdvVersion;
 + (NSString*) cordovaVersion
 {
-#ifdef CDV_VERSION
-    cdvVersion = SYMBOL_TO_NSSTRING(CDV_VERSION);
-#else
-	
-    if (cdvVersion == nil) {
-        NSBundle *mainBundle = [NSBundle mainBundle];
-        NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
-        // read from the filesystem and save in the variable
-        // first, separate by new line
-        NSString* fileContents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
-        NSArray* all_lines = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-        NSString* first_line = [all_lines objectAtIndex:0];        
-        
-        cdvVersion = [first_line retain];
-    }
-#endif
-    return cdvVersion;
+    return CDV_VERSION;
 }
 
 
