@@ -19,8 +19,6 @@
 
 #import "CDV.h"
 
-#define SYMBOL_TO_NSSTRING_HELPER(x) @#x
-#define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController ()
