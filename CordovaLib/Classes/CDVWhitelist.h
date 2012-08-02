@@ -21,8 +21,8 @@
 
 @interface CDVWhitelist : NSObject
 
-@property (nonatomic, readonly, retain) NSArray* whitelist;
-@property (nonatomic, readonly, retain) NSArray* expandedWhitelist;
+@property (nonatomic, readonly, strong) NSArray* whitelist;
+@property (nonatomic, readonly, strong) NSArray* expandedWhitelist;
 @property (nonatomic, readonly, assign) BOOL allowAll;
 
 - (id) initWithArray:(NSArray*)array;

@@ -29,20 +29,20 @@
 	
 }
 
-@property (nonatomic, retain) IBOutlet CDVCordovaView* webView;
+@property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
 
-@property (nonatomic, readonly, retain) NSMutableDictionary* pluginObjects;
-@property (nonatomic, readonly, retain) NSDictionary* pluginsMap;
-@property (nonatomic, readonly, retain) NSDictionary* settings;
-@property (nonatomic, readonly, retain) CDVWhitelist* whitelist; // readonly for public
-@property (nonatomic, readonly, retain) NSArray* supportedOrientations;
+@property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
+@property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
+@property (nonatomic, readonly, strong) NSDictionary* settings;
+@property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
+@property (nonatomic, readonly, strong) NSArray* supportedOrientations;
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 @property (nonatomic, readwrite, copy) NSString* invokeString __attribute__ ((deprecated));
 
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
-@property (nonatomic, readonly, retain) IBOutlet UIActivityIndicatorView* activityView;
-@property (nonatomic, readonly, retain) UIImageView *imageView;
-@property (nonatomic, readwrite, retain) id<CDVCommandDelegate> commandDelegate;
+@property (nonatomic, readonly, strong) IBOutlet UIActivityIndicatorView* activityView;
+@property (nonatomic, readonly, strong) UIImageView *imageView;
+@property (nonatomic, readwrite, strong) id<CDVCommandDelegate> commandDelegate;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;

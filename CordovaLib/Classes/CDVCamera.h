@@ -49,15 +49,14 @@ typedef NSUInteger CDVMediaType;
 @property (copy)   NSString* postUrl;
 @property (nonatomic) enum CDVDestinationType returnType;
 @property (nonatomic) enum CDVEncodingType encodingType;
-@property (retain) UIPopoverController* popoverController; 
+@property (strong) UIPopoverController* popoverController;
 @property (assign) CGSize targetSize;
 @property (assign) bool correctOrientation;
 @property (assign) bool saveToPhotoAlbum;
 @property (assign) bool cropToSize;
-@property (retain) UIWebView* webView;
+@property (strong) UIWebView* webView;
 @property (assign) BOOL popoverSupported;
 
-- (void) dealloc;
 
 @end
 
@@ -69,7 +68,7 @@ typedef NSUInteger CDVMediaType;
 {
 }
 
-@property (retain) CDVCameraPicker* pickerController;
+@property (strong) CDVCameraPicker* pickerController;
 
 /*
  * getPicture
@@ -93,7 +92,6 @@ typedef NSUInteger CDVMediaType;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 
 - (void) closePicker:(CDVCameraPicker*)picker __attribute__((deprecated));
-- (void) dealloc;
 
 @end
 

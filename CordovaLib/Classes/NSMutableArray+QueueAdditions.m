@@ -30,7 +30,7 @@
     return [self objectAtIndex:0];
 }
 
-- (id) dequeue 
+- (__autoreleasing id) dequeue
 {
     if ([self count] == 0) {
 		return nil;
@@ -38,7 +38,7 @@
 	
     id head = [self objectAtIndex:0];
     if (head != nil) {
-        [[head retain] autorelease];
+       // [[head retain] autorelease]; ARC - the __autoreleasing on the return value should so the same thing
         [self removeObjectAtIndex:0];
     }
 	

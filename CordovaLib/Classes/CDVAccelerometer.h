@@ -31,7 +31,7 @@
 }
 
 @property (readonly, assign) BOOL isRunning;
-@property (nonatomic, retain) NSString* callbackId;
+@property (nonatomic, strong) NSString* callbackId;
 
 - (CDVAccelerometer*) init;
 

@@ -94,7 +94,7 @@
                            [NSNumber numberWithBool:true],  @"boolItem",
                            nil];
 
-    NSDictionary *nestedDict = [[testValues copy] autorelease];    
+    NSDictionary *nestedDict = [testValues copy];
     [testValues setValue:nestedDict forKey:@"nestedDict"];
     
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:testValues];

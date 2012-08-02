@@ -53,8 +53,6 @@
     STAssertTrue([whitelist schemeIsAllowed:@"ftp"], nil);
     STAssertTrue([whitelist schemeIsAllowed:@"ftps"], nil);
     STAssertFalse([whitelist schemeIsAllowed:@"gopher"], nil);
-    
-    [whitelist release];
 
 }
 
@@ -70,8 +68,6 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://sub1.sub0.build.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org.ca"]], nil);
-    
-    [whitelist release];
 }
 
 - (void) testWildcardInTLD
@@ -87,8 +83,7 @@
     
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.ogg"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.foo"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testTLDWildcard
@@ -149,8 +144,7 @@
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://unknownhostname.faketld"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://unknownhostname.com"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testCatchallWildcardOnly
@@ -165,8 +159,7 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://build.apache.prg"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://MyDangerousSite.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org.SuspiciousSite.com"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testWildcardInHostname
@@ -182,8 +175,7 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.MACapache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.MACapacMAChe.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testExactMatch
@@ -197,8 +189,7 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://build.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testWildcardMix
@@ -214,8 +205,7 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apacMAChe.ca"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apacMAChe.museum"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://blahMAChe.museum"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testIpExactMatch
@@ -231,8 +221,7 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.3.1"]], nil);
-    
-    [whitelist release];
+
 }
 
 - (void) testIpWildcardMatch
@@ -250,8 +239,7 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.2"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.3.1"]], nil);
-    
-    [whitelist release];
+
 }
 
 

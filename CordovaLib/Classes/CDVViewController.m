@@ -18,20 +18,21 @@
  */
 
 #import "CDV.h"
+#import <objc/message.h>
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController ()
 
-@property (nonatomic, readwrite, retain) NSDictionary* settings;
-@property (nonatomic, readwrite, retain) CDVWhitelist* whitelist; 
-@property (nonatomic, readwrite, retain) NSMutableDictionary* pluginObjects;
-@property (nonatomic, readwrite, retain) NSDictionary* pluginsMap;
-@property (nonatomic, readwrite, retain) NSArray* supportedOrientations;
+@property (nonatomic, readwrite, strong) NSDictionary* settings;
+@property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
+@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
+@property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
+@property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
 
-@property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView* activityView;
-@property (nonatomic, readwrite, retain) UIImageView* imageView;
+@property (nonatomic, readwrite, strong) IBOutlet UIActivityIndicatorView* activityView;
+@property (nonatomic, readwrite, strong) UIImageView* imageView;
 @property (readwrite, assign) BOOL initialized;
 
 @end
@@ -139,7 +140,7 @@
 {
     [super viewDidLoad];
 	
-    self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
+    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
     
 	// read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
     self.supportedOrientations = [self parseInterfaceOrientations:
@@ -152,7 +153,7 @@
         NSLog(@"WARNING: %@.plist is missing.", appPlistName);
 		return;
     }
-    self.settings = [[[NSDictionary alloc] initWithDictionary:cordovaPlist] autorelease];
+    self.settings = [[NSDictionary alloc] initWithDictionary:cordovaPlist];
 	
     // read from Plugins dict in Cordova.plist in the app bundle
     NSString* pluginsKey = @"Plugins";
@@ -163,7 +164,7 @@
     }
     
     // set the whitelist
-    self.whitelist = [[[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]] autorelease];
+    self.whitelist = [[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]];
 	
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
     
@@ -220,8 +221,9 @@
     /*
      * Fire up CDVLocalStorage to work-around iOS 5.1 WebKit storage limitations
      */
+
     if (backupWebStorage) {
-        [self.commandDelegate registerPlugin:[[[CDVLocalStorage alloc] initWithWebView:self.webView] autorelease] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        [self.commandDelegate registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
     
     /*
@@ -263,7 +265,7 @@
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations
 {
-    NSMutableArray* result = [[[NSMutableArray alloc] init] autorelease];
+    NSMutableArray* result = [[NSMutableArray alloc] init];
 	
     if (orientations != nil) 
     {
@@ -389,7 +391,7 @@
 	
     if (!self.webView) 
 	{
-        self.webView = [[self newCordovaViewWithFrame:webViewBounds] autorelease];
+        self.webView = [self newCordovaViewWithFrame:webViewBounds];
 		self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		
 		[self.view addSubview:self.webView];
@@ -694,7 +696,7 @@
         NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
     }
     
-    self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];    
+    self.imageView = [[UIImageView alloc] initWithImage:launchImage];
     self.imageView.tag = 1;
     self.imageView.center = center;
     
@@ -722,7 +724,7 @@
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
     
-    self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] autorelease];
+    self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
     self.activityView.tag = 2;
     
     id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
@@ -822,6 +824,7 @@ BOOL gSplashScreenShown = NO;
     }
     BOOL retVal = YES;
     
+
     // Find the proper selector to call.
     NSString* methodName = [NSString stringWithFormat:@"%@:", command.methodName];
     NSString* methodNameWithDict = [NSString stringWithFormat:@"%@:withDict:", command.methodName];
@@ -832,9 +835,12 @@ BOOL gSplashScreenShown = NO;
         NSMutableArray* arguments = nil;
         NSMutableDictionary* dict = nil;
         [command legacyArguments:&arguments andDict:&dict];
-        [obj performSelector:legacySelector withObject:arguments withObject:dict];
+        //[obj performSelector:legacySelector withObject:arguments withObject:dict];
+        objc_msgSend(obj,legacySelector,arguments,dict);
     } else if ([obj respondsToSelector:normalSelector]) {
-        [obj performSelector:normalSelector withObject:command];
+        //[obj performSelector:normalSelector withObject:command];
+        objc_msgSend(obj,normalSelector,command);
+
     } else {
         // There's no method to call, so throw an error.
         NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", methodName, command.className);
@@ -879,9 +885,9 @@ BOOL gSplashScreenShown = NO;
         NSDictionary* classSettings = [self.settings objectForKey:className];
 		
         if (classSettings) {
-            obj = [[[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings] autorelease];
+            obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
         } else {
-            obj = [[[NSClassFromString(className) alloc] initWithWebView:webView] autorelease];
+            obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
         }
         
         if (obj != nil && [obj isKindOfClass:[CDVPlugin class]]) {
@@ -919,7 +925,7 @@ BOOL gSplashScreenShown = NO;
  */
 + (NSDictionary*) getBundlePlist:(NSString*)plistName
 {
-    NSString *errorDesc = nil;
+    NSString * errorDesc = nil;
     NSPropertyListFormat format;
     NSString *plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
     NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
@@ -941,7 +947,7 @@ BOOL gSplashScreenShown = NO;
     
     // empty the tmp directory
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
-    NSError* err = nil;    
+    NSError* __autoreleasing err = nil;
     
     // clear contents of NSTemporaryDirectory 
     NSString* tempDirectoryPath = NSTemporaryDirectory();
@@ -956,7 +962,6 @@ BOOL gSplashScreenShown = NO;
             NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
         }
     }    
-    [fileMgr release];
 }
 
 /*
@@ -1008,7 +1013,6 @@ BOOL gSplashScreenShown = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     
-    [super dealloc];
 }
 
 @end

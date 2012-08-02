@@ -44,7 +44,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
 - (BOOL) popoverSupported
 {
 	return ( NSClassFromString(@"UIPopoverController") != nil) && 
-	(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+        (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
 /*  takePicture arguments:
@@ -128,8 +128,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     {
         if (cameraPicker.popoverController == nil) 
         { 
-            cameraPicker.popoverController = [[[NSClassFromString(@"UIPopoverController") alloc] 
-                                                       initWithContentViewController:cameraPicker] autorelease]; 
+            cameraPicker.popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:cameraPicker];
         }
         int x = 0;
         int y = 32;
@@ -163,7 +162,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
         }              
     }
     self.hasPendingOperation = YES;
-    [cameraPicker release];
 }
 
 - (void) cleanup:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -192,8 +190,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
             NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
             hasErrors = YES;
         }
-    }    
-    [fileMgr release];
+    }
     
     if (hasErrors) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"One or more files failed to be deleted."];
@@ -311,7 +308,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [[NSURL fileURLWithPath: filePath] absoluteString]];
                 jsString = [result toSuccessCallbackString:callbackId];
             }
-            [fileMgr release];
         
         } else {
             result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: [data base64EncodedString]];
@@ -559,10 +555,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 }
 
 
-- (void) dealloc
-{
-	[super dealloc];
-}
 
 @end
 
@@ -580,10 +572,5 @@ static NSSet* org_apache_cordova_validArrowDirections;
 @synthesize cropToSize;
 @synthesize webView;
 @synthesize popoverSupported;
-
-- (void) dealloc
-{
-	[super dealloc];
-}
 
 @end

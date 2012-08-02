@@ -31,7 +31,7 @@
 @property (nonatomic) UIDeviceBatteryState state;
 @property (nonatomic) float level;
 @property (nonatomic) bool isPlugged;
-@property (retain) NSString* callbackId;
+@property (strong) NSString* callbackId;
 
 - (void) updateBatteryStatus:(NSNotification*)notification;
 - (NSDictionary*) getBatteryStatus;

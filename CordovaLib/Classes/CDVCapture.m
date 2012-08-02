@@ -45,19 +45,6 @@
 	return UIAccessibilityTraitNone;
 }
 
-- (void) dealloc
-{
-	if (callbackId) {
-		[callbackId release];
-	}
-    if (mimeType) {
-        [mimeType release];
-    }
-	
-	
-	[super dealloc];
-}
-
 @end
 
 @implementation CDVCapture
@@ -89,10 +76,10 @@
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject: CAPTURE_APPLICATION_BUSY];
     } else {
         // all the work occurs here
-        CDVAudioRecorderViewController* audioViewController = [[[CDVAudioRecorderViewController alloc] initWithCommand:  self duration: duration callbackId: callbackId] autorelease];
+        CDVAudioRecorderViewController* audioViewController = [[CDVAudioRecorderViewController alloc] initWithCommand:  self duration: duration callbackId: callbackId];
         
         // Now create a nav controller and display the view...
-        UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:audioViewController] autorelease];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:audioViewController];
         self.inUse = YES;
         
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
@@ -203,7 +190,6 @@
         jsString = [result toSuccessCallbackString:callbackId];
         
     }
-    [fileMgr release];
     
     return jsString;
 }
@@ -217,9 +203,6 @@
     
 	if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         // there is a camera, it is available, make sure it can do movies
-        if (pickerController != nil) {
-            [pickerController release]; // create a new one for each instance to initialize all variables
-        }
         pickerController = [[CDVImagePicker alloc] init];
 
         NSArray* types = nil;
@@ -400,7 +383,6 @@
             // not sure how to get codecs or bitrate???
             //AVMetadataItem
             //AudioFile
-            [movieAsset release];
             
         } else if ([mimeType rangeOfString: @"audio/"].location != NSNotFound) {
             if (NSClassFromString(@"AVAudioPlayer") != nil) {
@@ -419,9 +401,6 @@
                         }
                     }
                 } // else leave data init'ed to 0
-                if (avPlayer) {
-                    [avPlayer release];
-                }
             }
             
             
@@ -461,7 +440,6 @@
     NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970]*1000];
     [fileDict setObject:msDate forKey:@"lastModifiedDate"];
     
-    [fileMgr release];
     return fileDict;
 }
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo
@@ -547,14 +525,6 @@
  
 }
 
-- (void) dealloc
-{
-    if (pickerController) {
-        [pickerController release];
-    }
-    [super dealloc];
-}
-
 @end
 
 @implementation CDVAudioRecorderViewController
@@ -608,12 +578,12 @@
 {
     // create view and display
     CGRect viewRect = [[UIScreen mainScreen] applicationFrame];
-	UIView *tmp = [[[UIView alloc] initWithFrame:viewRect] autorelease];
+	UIView *tmp = [[UIView alloc] initWithFrame:viewRect];
 
     // make backgrounds
     
     UIImage* microphone = [UIImage imageNamed:[self resolveImageResource:@"Capture.bundle/microphone"]];
-    UIView* microphoneView = [[[UIView alloc] initWithFrame: CGRectMake(0,0,viewRect.size.width, microphone.size.height)] autorelease];
+    UIView* microphoneView = [[UIView alloc] initWithFrame: CGRectMake(0,0,viewRect.size.width, microphone.size.height)];
     [microphoneView setBackgroundColor:[UIColor colorWithPatternImage:microphone]];
     [microphoneView setUserInteractionEnabled: NO];
     [microphoneView setIsAccessibilityElement:NO];
@@ -621,7 +591,7 @@
 
     // add bottom bar view
     UIImage* grayBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/controls_bg"]];
-    UIView* controls = [[[UIView alloc] initWithFrame:CGRectMake(0, microphone.size.height, viewRect.size.width,grayBkg.size.height )] autorelease];
+    UIView* controls = [[UIView alloc] initWithFrame:CGRectMake(0, microphone.size.height, viewRect.size.width,grayBkg.size.height )];
     [controls setBackgroundColor:[UIColor colorWithPatternImage: grayBkg]];
     [controls setUserInteractionEnabled: NO];
     [controls setIsAccessibilityElement:NO];
@@ -630,7 +600,7 @@
     // make red recording background view
     UIImage* recordingBkg = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/recording_bg"]];
     UIColor *background = [UIColor colorWithPatternImage:recordingBkg];
-    self.recordingView = [[[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)] autorelease];
+    self.recordingView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
     [self.recordingView setBackgroundColor:background];
     [self.recordingView setHidden:YES];
     [self.recordingView setUserInteractionEnabled: NO];
@@ -638,7 +608,7 @@
     [tmp addSubview:self.recordingView];
     
     // add label
-    self.timerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width,recordingBkg.size.height)] autorelease];
+    self.timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width,recordingBkg.size.height)];
     //timerLabel.autoresizingMask = reSizeMask;
     [self.timerLabel setBackgroundColor:[UIColor clearColor]];
     [self.timerLabel setTextColor:[UIColor whiteColor]];
@@ -654,14 +624,14 @@
     self.recordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/record_button"]];
     self.stopRecordImage = [UIImage imageNamed: [self resolveImageResource:@"Capture.bundle/stop_button"]];
 	self.recordButton.accessibilityTraits |= [self accessibilityTraits];
-    self.recordButton = [[[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)] autorelease];
+    self.recordButton = [[UIButton alloc  ] initWithFrame: CGRectMake((viewRect.size.width - recordImage.size.width)/2 , (microphone.size.height + (grayBkg.size.height - recordImage.size.height)/2), recordImage.size.width, recordImage.size.height)];
     [self.recordButton setAccessibilityLabel:  NSLocalizedString(@"toggle audio recording", nil)];
     [self.recordButton setImage: recordImage forState:UIControlStateNormal];
     [self.recordButton addTarget: self action:@selector(processButton:) forControlEvents:UIControlEventTouchUpInside];
     [tmp addSubview:recordButton];
     
     // make and add done button to navigation bar
-    self.doneButton = [[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)] autorelease];
+    self.doneButton = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)];
 	[self.doneButton setStyle:UIBarButtonItemStyleDone];
 	self.navigationItem.rightBarButtonItem = self.doneButton;
 
@@ -700,10 +670,9 @@
     } while([fileMgr fileExistsAtPath: filePath]);
     
     NSURL* fileURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
-    [fileMgr release];
     
     // create AVAudioPlayer
-    self.avRecorder = [[[AVAudioRecorder alloc] initWithURL:fileURL settings:nil error:&err] autorelease];
+    self.avRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:nil error:&err];
     if (err) {
 		NSLog(@"Failed to initialize AVAudioRecorder: %@\n", [err localizedDescription]);
 		self.avRecorder = nil;
@@ -861,22 +830,4 @@
     [self dismissAudioView: nil];
 }
 
-- (void) dealloc
-{
-    self.callbackId = nil;
-    self.duration = nil;
-    self.captureCommand = nil;
-    self.doneButton = nil;
-    self.recordingView = nil;
-    self.recordButton = nil;
-    self.recordImage = nil;
-    self.stopRecordImage =nil;
-    self.timerLabel = nil;
-    self.avRecorder = nil;
-    self.avSession = nil;
-    self.resultString = nil;
-    self.timer = nil;
-    
-    [super dealloc];
-}
 @end

@@ -59,7 +59,6 @@
 	}
 	
 	[alertView show];
-	[alertView release];
 }
 
 - (void) confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -105,10 +104,5 @@
 
 @synthesize callbackId;
 
-- (void) dealloc
-{
-	self.callbackId = nil;
-	[super dealloc];
-}
 
 @end

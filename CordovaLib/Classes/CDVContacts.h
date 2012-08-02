@@ -99,7 +99,7 @@
  */
 - (void) remove: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (void) dealloc;
+//- (void) dealloc;
 
 @end
 
@@ -132,7 +132,7 @@
 {
     
 }
-@property (nonatomic,retain) CDVPlugin* contactsPlugin;
+@property (nonatomic,strong) CDVPlugin* contactsPlugin;
 
 
 

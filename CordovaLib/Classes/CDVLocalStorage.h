@@ -24,7 +24,7 @@
 
 @interface CDVLocalStorage : CDVPlugin < UIWebViewDelegate >
 
-@property (nonatomic, readonly, retain) NSMutableArray* backupInfo;
+@property (nonatomic, readonly, strong) NSMutableArray* backupInfo;
 
 - (BOOL) shouldBackup;
 - (BOOL) shouldRestore;

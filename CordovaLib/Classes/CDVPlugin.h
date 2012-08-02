@@ -28,10 +28,10 @@
 @interface CDVPlugin : NSObject {
 }
 
-@property (nonatomic, retain) UIWebView* webView;
-@property (nonatomic, retain) NSDictionary* settings;
-@property (nonatomic, retain) UIViewController* viewController;
-@property (nonatomic, retain) id<CDVCommandDelegate> commandDelegate;
+@property (nonatomic, strong) UIWebView* webView;
+@property (nonatomic, strong) NSDictionary* settings;
+@property (nonatomic, strong) UIViewController* viewController;
+@property (nonatomic, strong) id<CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 

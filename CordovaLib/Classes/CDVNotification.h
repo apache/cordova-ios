@@ -36,6 +36,4 @@
 }
 @property(nonatomic, copy) NSString* callbackId;
 
--(void) dealloc;
-
 @end

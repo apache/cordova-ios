@@ -101,7 +101,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
             value = [NSArray arrayWithObject:value];
         }
         // Then, append all header values.
-        for (id subValue in value) {
+        for (id __strong subValue in value) {
             // Convert from an NSNumber -> NSString.
             if ([subValue respondsToSelector:@selector(stringValue)]) {
                 subValue = [subValue stringValue];
@@ -240,7 +240,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     NSString* target = [command.arguments objectAtIndex:0];
     NSString* server = [command.arguments objectAtIndex:1];
 
-	CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
+    CDVFileTransferDelegate* delegate = [[CDVFileTransferDelegate alloc] init];
 	delegate.command = self;
     delegate.direction = CDV_TRANSFER_UPLOAD;
     delegate.callbackId = command.callbackId;
@@ -251,9 +251,9 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 
 - (NSData*) fileDataForUploadCommand:(CDVInvokedUrlCommand*)command {
     NSString* target = (NSString*)[command.arguments objectAtIndex:0];
-    NSError *err = nil;
+    NSError* __autoreleasing err = nil;
     // Extract the path part out of a file: URL.
-    NSString* filePath = [target hasPrefix:@"/"] ? [[target copy] autorelease] : [[NSURL URLWithString:target] path];
+    NSString* filePath = [target hasPrefix:@"/"] ? [target copy] : [[NSURL URLWithString:target] path];
 
     // Memory map the file so that it can be read efficiently even if it is large.
     NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
@@ -306,7 +306,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
     [self applyRequestHeaders:nil toRequest:req];
 
-    CDVFileTransferDelegate* delegate = [[[CDVFileTransferDelegate alloc] init] autorelease];
+    CDVFileTransferDelegate* delegate = [[CDVFileTransferDelegate alloc] init];
 	delegate.command = self;
     delegate.direction = CDV_TRANSFER_DOWNLOAD;
     delegate.callbackId = command.callbackId;
@@ -356,7 +356,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     BOOL downloadResponse;
     NSMutableDictionary* uploadResult;
     CDVPluginResult* result;
-    NSError *error;
+    NSError* __autoreleasing error = nil;
     NSString *parentPath;
     BOOL bDirRequest = NO;
     BOOL errored = NO;
@@ -387,7 +387,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     if(self.direction == CDV_TRANSFER_DOWNLOAD)
     {
         DLog(@"Write file %@", target);
-        error=[[[NSError alloc]init] autorelease];
+        //error=[[NSError alloc]init];
 
         if(self.responseCode >= 200 && self.responseCode < 300)
         {
@@ -406,7 +406,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
                 } else {
                     DLog(@"File Transfer Download success");
                     
-                    file = [[[CDVFile alloc] init] autorelease];
+                    file = [[CDVFile alloc] init];
                     
                     result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: target isDirectory: bDirRequest]];
                 }
@@ -426,8 +426,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
         [self.command writeJavascript:[result toSuccessCallbackString: callbackId]];
     } else {
         [self.command writeJavascript:[result toErrorCallbackString: callbackId]];
-    }    
-    [uploadResponse release];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
@@ -485,18 +484,6 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     }
     return self;
 }
-
-- (void) dealloc
-{
-    self.callbackId = nil;
-    self.responseData = nil;
-    self.command = nil;
-    self.source = nil;
-    self.target = nil;
-
-    [super dealloc];
-}
-
 
 @end;
 

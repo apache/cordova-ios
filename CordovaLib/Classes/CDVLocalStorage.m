@@ -22,8 +22,8 @@
 
 @interface CDVLocalStorage ()
 
-@property (nonatomic, readwrite, retain) NSMutableArray* backupInfo;  // array of CDVBackupInfo objects
-@property (nonatomic, readwrite, assign) id<UIWebViewDelegate> webviewDelegate;
+@property (nonatomic, readwrite, strong) NSMutableArray* backupInfo;  // array of CDVBackupInfo objects
+@property (nonatomic, readwrite, unsafe_unretained) id<UIWebViewDelegate> webviewDelegate;
 
 @end
 
@@ -60,7 +60,7 @@
                                    
         backup = [backupsFolder stringByAppendingPathComponent:@"localstorage.appdata.db"];
         
-        CDVBackupInfo* backupItem = [[[CDVBackupInfo alloc] init] autorelease];
+        CDVBackupInfo* backupItem = [[CDVBackupInfo alloc] init];
         backupItem.backup = backup;
         backupItem.original = original;
         backupItem.label = @"localStorage database";
@@ -75,7 +75,7 @@
         
         backup = [backupsFolder stringByAppendingPathComponent:@"websqlmain.appdata.db"];
         
-        backupItem = [[[CDVBackupInfo alloc] init] autorelease];
+        backupItem = [[CDVBackupInfo alloc] init];
         backupItem.backup = backup;
         backupItem.original = original;
         backupItem.label = @"websql main database";
@@ -90,7 +90,7 @@
         
         backup = [backupsFolder stringByAppendingPathComponent:@"websqldbs.appdata.db"];
         
-        backupItem = [[[CDVBackupInfo alloc] init] autorelease];
+        backupItem = [[CDVBackupInfo alloc] init];
         backupItem.backup = backup;
         backupItem.original = original;
         backupItem.label = @"websql databases";
@@ -113,7 +113,7 @@
 #pragma mark -
 #pragma mark Plugin interface methods
 
-- (BOOL) copyFrom:(NSString*)src to:(NSString*)dest error:(NSError**)error
+- (BOOL) copyFrom:(NSString*)src to:(NSString*)dest error:(NSError* __autoreleasing*)error
 {
     NSFileManager* fileManager = [NSFileManager defaultManager];
     
@@ -132,7 +132,7 @@
     // generate unique filepath in temp directory
     CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-    NSString* tempBackup = [[NSTemporaryDirectory() stringByAppendingPathComponent:(NSString*)uuidString] stringByAppendingPathExtension:@"bak"];
+    NSString* tempBackup = [[NSTemporaryDirectory() stringByAppendingPathComponent:(__bridge NSString*)uuidString]stringByAppendingPathExtension:@"bak"];
     CFRelease(uuidString);
     CFRelease(uuidRef);
     
@@ -192,7 +192,7 @@
 {
     NSString* callbackId = [arguments objectAtIndex:0];
 
-    NSError* error = nil;
+    NSError* __autoreleasing error = nil;
     CDVPluginResult* result = nil;
     NSString* message = nil;
     
@@ -202,19 +202,21 @@
         {
             [self copyFrom:info.original to:info.backup error:&error];
             
-            if (error == nil) {
-                message = [NSString stringWithFormat:@"Backed up: %@", info.label];
-                NSLog(@"%@", message);
-                
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
-                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toSuccessCallbackString:callbackId] waitUntilDone:NO];
-                
-            } else {
-                message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) backup: %@", info.label, [error localizedDescription]];
-                NSLog(@"%@", message);
-                
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
-                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toErrorCallbackString:callbackId] waitUntilDone:NO];
+            if (callbackId) {
+                if (error == nil) {
+                    message = [NSString stringWithFormat:@"Backed up: %@", info.label];
+                    NSLog(@"%@", message);
+
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
+                    [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toSuccessCallbackString:callbackId] waitUntilDone:NO];
+
+                } else {
+                    message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) backup: %@", info.label, [error localizedDescription]];
+                    NSLog(@"%@", message);
+
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
+                    [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toErrorCallbackString:callbackId] waitUntilDone:NO];
+                }
             }
         }
     }
@@ -225,7 +227,7 @@
 {
     NSString* callbackId = [arguments objectAtIndex:0];
     
-    NSError* error = nil;
+    NSError* __autoreleasing error = nil;
     CDVPluginResult* result = nil;
     NSString* message = nil;
     
@@ -336,10 +338,10 @@
             backgroundTaskID = UIBackgroundTaskInvalid;
             NSLog(@"Background task to backup WebSQL/LocalStorage expired.");
         }];
-        
+        CDVLocalStorage __unsafe_unretained *weakSelf = self;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            [self backup:nil withDict:nil];
+            [weakSelf backup:nil withDict:nil];
             
             [[UIApplication sharedApplication] endBackgroundTask: backgroundTaskID];
             backgroundTaskID = UIBackgroundTaskInvalid;
@@ -380,12 +382,6 @@
 #pragma mark -
 #pragma mark Over-rides
 
-- (void) dealloc
-{
-    self.backupInfo = nil;
-    
-    [super dealloc];
-}
 
 @end
 
@@ -400,7 +396,7 @@
 - (BOOL) file:(NSString*)aPath isNewerThanFile:(NSString*)bPath
 {
     NSFileManager* fileManager = [NSFileManager defaultManager];
-    NSError* error = nil;
+    NSError* __autoreleasing error = nil;
 
     NSDictionary* aPathAttribs = [fileManager attributesOfItemAtPath:aPath error:&error];
     NSDictionary* bPathAttribs = [fileManager attributesOfItemAtPath:bPath error:&error];
