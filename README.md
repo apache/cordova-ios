@@ -28,23 +28,18 @@ Pre-requisites
 Make sure you have installed the latest released iOS SDK which comes with Xcode 4. Download it at [http://developer.apple.com/ios](http://developer.apple.com/ios).
 <br />
 
-Build and install the Installer Package
+Install CordovaLib
 -------------------------------------------------------------
-You don't need to do this if you downloaded the installer from [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/), this is only for developers that need to compile the source.
 
 1. Launch **"Terminal.app"**
-2. Navigate to the folder where the Makefile is
+2. Navigate to the folder where you downloaded the source 
 3. Type in **"make"** then press Enter
-4. **make** will require you to install [Homebrew](http://mxcl.github.com/homebrew/), [wkhtmltopdf](http://code.google.com/p/wkhtmltopdf/) and [Markdown](http://daringfireball.net/projects/markdown/), in that order - you will have to agree to install them manually, we don't install them automatically. Note for **wkhtmltopdf**, follow the instructions exactly - you'll have to install version **0.9.9** through **make install-wkhtmltopdf**, NOT **brew install wkhtmltopdf**
 
 <br />
 
-The installer should build "CordovaInstaller.dmg" into the **dist** folder, mount the .dmg, then:
+This sets the $(CORDOVALIB) variable to the CordovaLib folder of the downloaded source - and is used by Cordova projects to locate the CordovaLib project. If you move this folder, you will need to run **"make"** again to update the location.  
 
-1. Quit Xcode
-2. Launch "CordovaInstaller.pkg" from the mounted .dmg, to install CordovaLib, the Cordova framework and the Cordova Xcode Templates.
-
-**NOTE:** For 2.0.0, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first.
+**NOTE:** For 2.0.0, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first - **"make uninstall"**.
 
 <br />
 
@@ -86,18 +81,16 @@ Unit Tests
 
 Installer Notes
 -------------------------------------------------------------
-This installer will only install items under your home folder (signified by ~)
 
 Items that will be installed:
 
-1. Xcode global var in _~/Library/Preferences/com.apple.Xcode.plist _ (which will be listed under Xcode Preferences -> Source Trees)
-2. CordovaLib Xcode static library project under _~/Documents/CordovaLib_
+1. Xcode global variable in _~/Library/Preferences/com.apple.dt.Xcode.plist _ (which will be listed under Xcode Preferences -> Source Trees)
 
 <br />
 
 To uninstall:
 
-Delete the files listed above, or use the "Uninstall Cordova" app included in the Cordova iOS DMG file.
+Delete the **CORDOVALIB** variable in **Xcode Preferences ->Source Trees**.
 
 FAQ
 ---
