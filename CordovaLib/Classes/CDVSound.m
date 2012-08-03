@@ -144,17 +144,17 @@
     
 }
 // DEPRECATED
-- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) play:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"play is DEPRECATED!  Use startPlayingAudio.");
-    [self startPlayingAudio:arguments withDict:options];
+    [self startPlayingAudio:command];
 }
 
-- (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) create:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* mediaId = [arguments objectAtIndex:1];
-    NSString* resourcePath = [arguments objectAtIndex:2];
+	NSString* callbackId = command.callbackId;
+	NSString* mediaId = [command.arguments objectAtIndex:0];
+    NSString* resourcePath = [command.arguments objectAtIndex:1];
     
     CDVPluginResult* result;
     CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId: mediaId];
@@ -169,12 +169,12 @@
     }
 }
 
-- (void) setVolume:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) setVolume:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0]; 
+    NSString* callbackId = command.callbackId; 
     #pragma unused(callbackId)
-	NSString* mediaId = [arguments objectAtIndex:1];
-    NSNumber* volume = [arguments objectAtIndex:2 withDefault:[NSNumber numberWithFloat:1.0]];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
+    NSNumber* volume = [command.arguments objectAtIndex:1 withDefault:[NSNumber numberWithFloat:1.0]];
     
     CDVAudioFile* audioFile;
 	if ([self soundCache] == nil) {
@@ -188,12 +188,13 @@
     // don't care for any callbacks
 }
 
-- (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) startPlayingAudio:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = command.callbackId;
     #pragma unused(callbackId)
-	NSString* mediaId = [arguments objectAtIndex:1];
-    NSString* resourcePath = [arguments objectAtIndex:2];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
+    NSString* resourcePath = [command.arguments objectAtIndex:1];
+    NSDictionary* options = [command.arguments objectAtIndex:2 withDefault:nil];
     
 	BOOL bError = NO;
 	NSString* jsString = nil;
@@ -317,13 +318,13 @@
 // Calls the success call back immediately as there is no mechanism to determine that the file is loaded
 // other than the return from prepareToPlay.  Thus, IMHO not really worth calling
 
-- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) prepare:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"prepare is DEPRECATED! Recoding will be prepared when startPlayingAudio is called");
     
-	NSString* callbackId = [arguments objectAtIndex:0]; 
+	NSString* callbackId = command.callbackId; 
     
-    NSString* mediaId = [arguments objectAtIndex:1];
+    NSString* mediaId = [command.arguments objectAtIndex:0];
     BOOL bError = NO;
     CDVMediaStates state = MEDIA_STARTING;
     NSString* jsString = nil;
@@ -331,7 +332,7 @@
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     if (audioFile == nil) {
         // did not already exist, try to create
-        audioFile = [self audioFileForResource:[arguments objectAtIndex:2] withId: mediaId];
+        audioFile = [self audioFileForResource:[command.arguments objectAtIndex:1] withId: mediaId];
         if (audioFile == nil) {
             // create failed
             bError = YES;
@@ -361,17 +362,15 @@
 }
 
 // DEPRECATED
-- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stop:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"stop is DEPRECATED!  Use stopPlayingAudio.");
-    [self stopPlayingAudio:arguments withDict:options];
+    [self stopPlayingAudio:command];
 }
 
-- (void) stopPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stopPlayingAudio:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-	NSString* mediaId = [arguments objectAtIndex:1];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
     CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
 	NSString* jsString = nil;
 
@@ -386,17 +385,15 @@
     }
 }
 // DEPRECATED
-- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) pause:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"pause is DEPRECATED!  Use pausePlayingAudio.");
-    [self pausePlayingAudio:arguments withDict:options];
+    [self pausePlayingAudio:command];
 }
 
-- (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) pausePlayingAudio:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-	NSString* mediaId = [arguments objectAtIndex:1];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
     NSString* jsString = nil;
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
 	
@@ -414,20 +411,17 @@
 
 
 }
-- (void) seekToAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) seekToAudio:(CDVInvokedUrlCommand*)command
 {
 	//args:
-	// 0 = callbackId
-    // 1 = Media id
-    // 2 = path to resource
-    // 3 = seek to location in milliseconds
+    // 0 = Media id
+    // 1 = path to resource
+    // 2 = seek to location in milliseconds
 	
-	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-	NSString* mediaId = [arguments objectAtIndex:1];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
 
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
-    double position = [[arguments objectAtIndex:2 ] doubleValue];
+    double position = [[command.arguments objectAtIndex:1] doubleValue];
 	
     if (audioFile != nil && audioFile.player != nil && position){
         double posInSeconds = position/1000;
@@ -442,11 +436,9 @@
     
 }
 
-- (void) release:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) release:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-    NSString* mediaId = [arguments objectAtIndex:1];
+    NSString* mediaId = [command.arguments objectAtIndex:0];
 
 	if (mediaId != nil){
 		CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
@@ -467,20 +459,16 @@
 	}
 }
 // DEPRECATED
-- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getCurrentPosition:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"getCurrentPosition is DEPRECATED!  Use getCurrentPositionAudio.");
-    [self getCurrentPositionAudio:arguments withDict:options];
+    [self getCurrentPositionAudio:command];
 }
 
-- (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getCurrentPositionAudio:(CDVInvokedUrlCommand*)command
 {
-	//args:
-	// 0 = callbackId
-    // 1 = Media id
-	
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* mediaId = [arguments objectAtIndex:1];
+	NSString* callbackId = command.callbackId;
+	NSString* mediaId = [command.arguments objectAtIndex:0];
 #pragma unused(mediaId)
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     double position = -1;
@@ -496,19 +484,19 @@
 		
 }
 // DEPRECATED
-- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) startAudioRecord:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"startAudioRecord is DEPRECATED!  Use startRecordingAudio.");
-    [self startRecordingAudio:arguments withDict:options];
+    [self startRecordingAudio:command];
 }
 
-- (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) startRecordingAudio:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = command.callbackId;
 #pragma unused(callbackId)
 	
-	NSString* mediaId = [arguments objectAtIndex:1];
-	CDVAudioFile* audioFile = [self audioFileForResource:[arguments objectAtIndex:2] withId: mediaId];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
+	CDVAudioFile* audioFile = [self audioFileForResource:[command.arguments objectAtIndex:1] withId: mediaId];
     NSString* jsString = nil;
     NSString* errorMsg = @"";
     
@@ -563,17 +551,15 @@
 	return;
 }
 // DEPRECATED
-- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stopAudioRecord:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"stopAudioRecord is DEPRECATED!  Use stopRecordingAudio.");
-    [self stopRecordingAudio:arguments withDict:options];
+    [self stopRecordingAudio:command];
 }
 
-- (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stopRecordingAudio:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-	NSString* mediaId = [arguments objectAtIndex:1];
+	NSString* mediaId = [command.arguments objectAtIndex:0];
 
 	CDVAudioFile* audioFile = [[self soundCache] objectForKey: mediaId];
     NSString* jsString = nil;

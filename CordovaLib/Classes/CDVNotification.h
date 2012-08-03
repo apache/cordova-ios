@@ -26,9 +26,9 @@
 @interface CDVNotification : CDVPlugin <UIAlertViewDelegate>{
 }
 
-- (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)alert:(CDVInvokedUrlCommand*)command;
+- (void)confirm:(CDVInvokedUrlCommand*)command;
+- (void)vibrate:(CDVInvokedUrlCommand*)command;
 
 @end
 

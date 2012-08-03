@@ -24,23 +24,8 @@
 
 @implementation CDVNotification
 
-
-- (void) alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) showDialogWithMessage:(NSString*)message title:(NSString*)title buttons:(NSString*)buttons callbackId:(NSString*)callbackId
 {
-    int argc = [arguments count];
-
-	NSString* callbackId = argc > 0? [arguments objectAtIndex:0] : nil;
-	NSString* message = argc > 1? [arguments objectAtIndex:1] : nil;
-	NSString* title   = argc > 2? [arguments objectAtIndex:2] : nil;
-	NSString* buttons = argc > 3? [arguments objectAtIndex:3] : nil;
-	
-	if (!title) {
-        title = NSLocalizedString(@"Alert", @"Alert");
-    }
-	if (!buttons) {
-        buttons = NSLocalizedString(@"OK", @"OK");
-    }
-	
 	CDVAlertView *alertView = [[CDVAlertView alloc]
 							  initWithTitle:title
 							  message:message 
@@ -61,14 +46,35 @@
 	[alertView show];
 }
 
-- (void) confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{   
+- (void) alert:(CDVInvokedUrlCommand*)command
+{
+	NSString* callbackId = command.callbackId;
+    NSArray* arguments = command.arguments;
     int argc = [arguments count];
 
-	NSString* callbackId = argc > 0? [arguments objectAtIndex:0] : nil;
-	NSString* message = argc > 1? [arguments objectAtIndex:1] : nil;
-	NSString* title   = argc > 2? [arguments objectAtIndex:2] : nil;
-	NSString* buttons = argc > 3? [arguments objectAtIndex:3] : nil;
+	NSString* message = argc > 0 ? [arguments objectAtIndex:0] : nil;
+	NSString* title   = argc > 1 ? [arguments objectAtIndex:1] : nil;
+	NSString* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
+
+	if (!title) {
+        title = NSLocalizedString(@"Alert", @"Alert");
+    }
+	if (!buttons) {
+        buttons = NSLocalizedString(@"OK", @"OK");
+    }
+		
+    [self showDialogWithMessage:message title:title buttons:buttons callbackId:callbackId];
+}
+
+- (void) confirm:(CDVInvokedUrlCommand*)command
+{   
+	NSString* callbackId = command.callbackId;
+    NSArray* arguments = command.arguments;
+    int argc = [arguments count];
+
+	NSString* message = argc > 0 ? [arguments objectAtIndex:0] : nil;
+	NSString* title   = argc > 1 ? [arguments objectAtIndex:1] : nil;
+	NSString* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
 	
 	if (!title) {
         title = NSLocalizedString(@"Confirm", @"Confirm");
@@ -77,8 +83,7 @@
         buttons = NSLocalizedString(@"OK,Cancel", @"OK,Cancel");
     }
     
-    NSMutableArray* newArguments = [NSMutableArray arrayWithObjects:callbackId, message, title, buttons, nil];
-    [self alert: newArguments withDict:options];
+    [self showDialogWithMessage:message title:title buttons:buttons callbackId:callbackId];
 }
 
 /**
