@@ -27,9 +27,9 @@
 
 @implementation CDVDevice
 
-- (void)getDeviceInfo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)getDeviceInfo:(CDVInvokedUrlCommand*)command
 {
-    NSString* cbId = [arguments objectAtIndex:0];
+    NSString* cbId = command.callbackId;
 	NSDictionary *deviceProperties = [self deviceProperties];
     NSMutableString* result = [[NSMutableString alloc] initWithFormat:@""];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:deviceProperties];

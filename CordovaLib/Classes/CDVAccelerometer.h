@@ -35,8 +35,8 @@
 
 - (CDVAccelerometer*) init;
 
-- (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)start:(CDVInvokedUrlCommand*)command;
+- (void)stop:(CDVInvokedUrlCommand*)command;
 
 @end
 

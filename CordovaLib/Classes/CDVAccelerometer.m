@@ -51,12 +51,12 @@
 }
 
 - (void) dealloc {
-    [self stop:nil withDict:nil];
+    [self stop:nil];
 }
 
-- (void)start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)start:(CDVInvokedUrlCommand*)command
 {
-    NSString* cbId = [arguments objectAtIndex:0];
+    NSString* cbId = command.callbackId;
 	NSTimeInterval desiredFrequency_num = kAccelerometerInterval;
 	UIAccelerometer* pAccel = [UIAccelerometer sharedAccelerometer];
 	// accelerometer expects fractional seconds, but we have msecs
@@ -69,7 +69,7 @@
 	}
 }
 
-- (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)stop:(CDVInvokedUrlCommand*)command
 {
 	UIAccelerometer*  theAccelerometer = [UIAccelerometer sharedAccelerometer];
 	theAccelerometer.delegate = nil;

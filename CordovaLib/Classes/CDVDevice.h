@@ -26,7 +26,7 @@
 
 + (NSString*) cordovaVersion;
 
-- (void)getDeviceInfo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)getDeviceInfo:(CDVInvokedUrlCommand*)command;
 
 @end
 

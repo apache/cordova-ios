@@ -105,9 +105,9 @@
 }
 
 /* turn on battery monitoring*/
-- (void) start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) start:(CDVInvokedUrlCommand*)command
 {
-    self.callbackId = [arguments objectAtIndex:0];
+    self.callbackId = command.callbackId;
     
     if ( [UIDevice currentDevice].batteryMonitoringEnabled == NO) {
         [[UIDevice currentDevice] setBatteryMonitoringEnabled:YES];
@@ -119,7 +119,7 @@
 	
 }
 /* turn off battery monitoring */
-- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stop:(CDVInvokedUrlCommand*)command
 {
     // callback one last time to clear the callback function on JS side
     if (self.callbackId) {
@@ -148,7 +148,7 @@
 
 - (void)dealloc
 {
-	[self stop: NULL withDict:NULL]; 
+	[self stop:nil];
 }
 
 @end

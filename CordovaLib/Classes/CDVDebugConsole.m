@@ -21,11 +21,10 @@
 
 @implementation CDVDebugConsole
 
-- (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)log:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-#pragma unused(callbackId)
-    NSString* message = [arguments objectAtIndex:1];
+    NSString* message = [command.arguments objectAtIndex:0];
+    NSDictionary* options = [command.arguments objectAtIndex:1];
     NSString* log_level = @"INFO";
     if ([options objectForKey:@"logLevel"])
         log_level = [options objectForKey:@"logLevel"];

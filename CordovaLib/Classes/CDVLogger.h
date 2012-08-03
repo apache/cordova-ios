@@ -21,6 +21,6 @@
 
 @interface CDVLogger : CDVPlugin
 
-- (void) logLevel:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) logLevel:(CDVInvokedUrlCommand*)command;
 
 @end

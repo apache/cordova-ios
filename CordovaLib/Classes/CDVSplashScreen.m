@@ -38,12 +38,12 @@
     }
 }
 
-- (void) show:(NSArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) show:(CDVInvokedUrlCommand*)command
 {
 	[self __show:YES];
 }
 
-- (void) hide:(NSArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) hide:(CDVInvokedUrlCommand*)command
 {
 	[self __show:NO];
 }
