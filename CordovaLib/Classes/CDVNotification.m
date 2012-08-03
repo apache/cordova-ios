@@ -98,7 +98,7 @@
 	[self writeJavascript:[result toSuccessCallbackString:cdvAlertView.callbackId]];
 }
  
-- (void) vibrate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) vibrate:(CDVInvokedUrlCommand*)command
 {
 	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 }
