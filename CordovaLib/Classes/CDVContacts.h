@@ -39,7 +39,7 @@
  * arguments:
  *	1: successCallback: this is the javascript function that will be called with the newly created contactId 
  */
-- (void) newContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) newContact:(CDVInvokedUrlCommand*)command;
 
 /*
  * displayContact  - IN PROGRESS
@@ -51,7 +51,7 @@
  * options:
  *	allowsEditing: set to true to allow the user to edit the contact - currently not supported
  */
-- (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) displayContact:(CDVInvokedUrlCommand*)command;
 
 /*
  * chooseContact
@@ -61,7 +61,7 @@
  * options:
  *	allowsEditing: set to true to not choose the contact, but to edit it in the iPhone contact editor
  */
-- (void) chooseContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) chooseContact:(CDVInvokedUrlCommand*)command;
 
 - (void) newPersonViewController:(ABNewPersonViewController *)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person;
 - (BOOL) personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
@@ -78,7 +78,7 @@
  *  findOptions - ContactFindOptions object as dictionary
  *
  */
-- (void) search:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) search:(CDVInvokedUrlCommand*)command;
 /* 
  * save - saves a new contact or updates and existing contact
  *
@@ -87,7 +87,7 @@
  *		search calls a fixed navigator.service.contacts._findCallback which then calls the succes callback stored before making the call into obj. c
  *  
  */
-- (void) save:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) save:(CDVInvokedUrlCommand*)command;
 /*
  * remove - removes a contact from the address book
  * 
@@ -97,7 +97,7 @@
  * options:  dictionary containing Contact object to remove
  *	contact - Contact object as dictionary
  */
-- (void) remove: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) remove:(CDVInvokedUrlCommand*)command;
 
 //- (void) dealloc;
 

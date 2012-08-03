@@ -20,6 +20,7 @@
 
 #import "CDVContacts.h"
 #import <UIKit/UIKit.h>
+#import "NSArray+Comparisons.h"
 #import "NSDictionary+Extensions.h"
 #import "CDVNotification.h"
 
@@ -70,9 +71,9 @@
 
 
 // iPhone only method to create a new contact through the GUI
-- (void) newContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) newContact:(CDVInvokedUrlCommand*)command
 {	
-	NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
 
 	CDVNewContactsController* npController = [[CDVNewContactsController alloc] init];
 	
@@ -116,14 +117,11 @@
 	
 }
 
-- (void) displayContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) displayContact:(CDVInvokedUrlCommand*)command
 {
-	ABRecordID recordID = kABRecordInvalidID;
-	NSString* callbackId = [arguments objectAtIndex:0];
-	
-	recordID = [[arguments objectAtIndex:1] intValue];
-
-		
+    NSString* callbackId = command.callbackId;
+	ABRecordID recordID = [[command.arguments objectAtIndex:0] intValue];
+    NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
 	
 	bool bEdit = [options isKindOfClass:[NSNull class]] ? false : [options existsValue:@"true" forKey:@"allowsEditing"];
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
@@ -171,9 +169,10 @@
 	return YES;
 }
 	
-- (void) chooseContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) chooseContact:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0 withDefault:[NSNull null]];
 	
 	CDVContactsPicker* pickerController = [[CDVContactsPicker alloc] init];
 	pickerController.peoplePickerDelegate = self;
@@ -240,15 +239,13 @@
     }        
 }
 
-- (void) search:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) search:(CDVInvokedUrlCommand*)command
 {
 	NSString* jsString = nil;
-	NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSArray* fields = [command.arguments objectAtIndex:0];
+    NSDictionary* findOptions = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
 	
-	
-	//NSArray* fields = [options valueForKey:@"fields"];
-    NSArray* fields = [arguments objectAtIndex:1];
-	NSDictionary* findOptions = options;
 	ABAddressBookRef  addrBook = nil;
 	NSArray* foundRecords = nil;
 
@@ -334,17 +331,16 @@
 	
 	
 }
-- (void) save:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) save:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* contactDict = [command.arguments objectAtIndex:0];
 	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	BOOL bUpdate = NO;
 	CDVContactError errCode = UNKNOWN_ERROR;
 	CFErrorRef error;
 	CDVPluginResult* result = nil;	
-	
-	NSMutableDictionary* contactDict = options; //[options valueForKey:@"contact"];
 	
 	ABAddressBookRef addrBook = ABAddressBookCreate();	
 	NSNumber* cId = [contactDict valueForKey:kW3ContactId];
@@ -400,10 +396,10 @@
 	
 	
 }	
-- (void) remove: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) remove:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-    NSNumber* cId = [arguments objectAtIndex:1];
+    NSString* callbackId = command.callbackId;
+    NSNumber* cId = [command.arguments objectAtIndex:0];
 	NSString* jsString = nil;
 	bool bIsError = FALSE, bSuccess = FALSE;
 	CDVContactError errCode = UNKNOWN_ERROR;

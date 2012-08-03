@@ -52,7 +52,7 @@ typedef NSUInteger CDVContactError;
 +(NSDictionary*) calcReturnFields: (NSArray*)fields;
 -(id)init;
 -(id)initFromABRecord: (ABRecordRef) aRecord;
--(bool) setFromContactDict:(NSMutableDictionary*) aContact asUpdate: (BOOL)bUpdate;
+-(bool) setFromContactDict:(NSDictionary*) aContact asUpdate: (BOOL)bUpdate;
 
 +(BOOL) needsConversion: (NSString*)W3Label;
 +(CFStringRef) convertContactTypeToPropertyLabel:(NSString*)label;

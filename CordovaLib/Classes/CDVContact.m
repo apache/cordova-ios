@@ -207,7 +207,7 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
  *	may not exist.
  *  bUpdate = YES indicates this is a save of an existing record
  */
--(bool) setFromContactDict:(NSMutableDictionary*) aContact asUpdate: (BOOL) bUpdate
+-(bool) setFromContactDict:(NSDictionary*) aContact asUpdate: (BOOL) bUpdate
 {
 	
 	if (![aContact isKindOfClass:[NSDictionary class]]){
@@ -221,7 +221,7 @@ static NSDictionary*	org_apache_cordova_contacts_defaultFields = nil;
 	// set name info
 	// iOS doesn't have displayName - might have to pull parts from it to create name
 	bool bName = false;
-	NSMutableDictionary* dict = [aContact valueForKey:kW3ContactName];
+	NSDictionary* dict = [aContact valueForKey:kW3ContactName];
 	if ([dict isKindOfClass:[NSDictionary class]]){
 		bName = true;
 		NSArray* propArray = [[CDVContact defaultObjectAndProperties] objectForKey: kW3ContactName];
