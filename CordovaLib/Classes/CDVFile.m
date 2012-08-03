@@ -304,15 +304,21 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 {
     NSMutableArray* arguments = [NSMutableArray arrayWithArray:command.arguments];
     NSMutableDictionary* options = nil;
-	// add getDir to options and call getFile()
     if ([arguments count] >= 3) {
-        options = [NSMutableDictionary dictionaryWithDictionary:[arguments objectAtIndex:2]];
-        [arguments setObject:options atIndexedSubscript:2];
+        options = [arguments objectAtIndex:2 withDefault:nil];
+    }
+	// add getDir to options and call getFile()
+    if (options != nil) {
+        options = [NSMutableDictionary dictionaryWithDictionary:options];
     } else {
 		options = [NSMutableDictionary dictionaryWithCapacity:1];
-        [arguments addObject:options];
     }
 	[options setObject:[NSNumber numberWithInt:1] forKey:@"getDir"];
+    if ([arguments count] >= 3) {
+        [arguments replaceObjectAtIndex:2 withObject:options];
+    } else {
+        [arguments addObject:options];
+    }
     CDVInvokedUrlCommand* subCommand =
         [[CDVInvokedUrlCommand alloc] initWithArguments:arguments
                                              callbackId:command.callbackId
