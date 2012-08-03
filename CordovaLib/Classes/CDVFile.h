@@ -56,42 +56,42 @@ typedef int CDVFileSystemType;
 - (NSNumber*) checkFreeDiskSpace: (NSString*) appPath;
 -(NSString*) getAppPath: (NSString*)pathFragment;
 //-(NSString*) getFullPath: (NSString*)pathFragment;
-- (void) requestFileSystem:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) requestFileSystem:(CDVInvokedUrlCommand*)command;
 -(NSDictionary*) getDirectoryEntry: (NSString*) fullPath isDirectory: (BOOL) isDir;
-- (void) resolveLocalFileSystemURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getParent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) removeRecursively:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) remove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) resolveLocalFileSystemURI:(CDVInvokedUrlCommand*)command;
+- (void) getDirectory:(CDVInvokedUrlCommand*)command;
+- (void) getFile:(CDVInvokedUrlCommand*)command;
+- (void) getParent:(CDVInvokedUrlCommand*)command;
+- (void) getMetadata:(CDVInvokedUrlCommand*)command;
+- (void) removeRecursively:(CDVInvokedUrlCommand*)command;
+- (void) remove:(CDVInvokedUrlCommand*)command;
 - (NSString*) doRemove:(NSString*)fullPath callback: (NSString*)callbackId;
-- (void) copyTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) moveTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) copyTo:(CDVInvokedUrlCommand*)command;
+- (void) moveTo:(CDVInvokedUrlCommand*)command;
 -(BOOL) canCopyMoveSrc: (NSString*) src ToDestination: (NSString*) dest;
-- (void) doCopyMove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options  isCopy:(BOOL)bCopy;
-//- (void) toURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getFileMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) readEntries:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) doCopyMove:(CDVInvokedUrlCommand*)command isCopy:(BOOL)bCopy;
+//- (void) toURI:(CDVInvokedUrlCommand*)command;
+- (void) getFileMetadata:(CDVInvokedUrlCommand*)command;
+- (void) readEntries:(CDVInvokedUrlCommand*)command;
 
 // DEPRECATED 
-- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) readFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
 // DEPRECATED 
 
-- (void) readAsText:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) readAsText:(CDVInvokedUrlCommand*)command;
+- (void) readAsDataURL:(CDVInvokedUrlCommand*)command;
 -(NSString*) getMimeTypeFromPath: (NSString*) fullPath;
-- (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) testFileExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) testDirectoryExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-//- (void) createDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-//- (void) deleteDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-//- (void) deleteFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) write:(CDVInvokedUrlCommand*)command;
+- (void) testFileExists:(CDVInvokedUrlCommand*)command;
+- (void) testDirectoryExists:(CDVInvokedUrlCommand*)command;
+//- (void) createDirectory:(CDVInvokedUrlCommand*)command;
+//- (void) deleteDirectory:(CDVInvokedUrlCommand*)command;
+//- (void) deleteFile:(CDVInvokedUrlCommand*)command;
+- (void) getFreeDiskSpace:(CDVInvokedUrlCommand*)command;
 // DEPRECATED 
-- (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
+- (void) truncateFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
 // DEPRECATED 
-- (void) truncate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) truncate:(CDVInvokedUrlCommand*)command;
 
 
 

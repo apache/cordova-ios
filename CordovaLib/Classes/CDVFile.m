@@ -19,6 +19,7 @@
 
 
 #import "CDVFile.h"
+#import "NSArray+Comparisons.h"
 #import "NSDictionary+Extensions.h"
 #import "JSONKit.h"
 #import "NSData+Base64.h"
@@ -134,13 +135,14 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  *			fileSystem = FileSystem object - !! ignored because creates circular reference !!
  */
 
-- (void) requestFileSystem:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) requestFileSystem:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
+    NSArray* arguments = command.arguments;
     
     // arguments
-	NSString* strType = [arguments objectAtIndex: 1];
-	unsigned long long size = [[arguments objectAtIndex:2] longLongValue];
+	NSString* strType = [arguments objectAtIndex: 0];
+	unsigned long long size = [[arguments objectAtIndex:1] longLongValue];
 
 	int type = [strType intValue];
 	CDVPluginResult* result = nil;
@@ -219,12 +221,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  *		string fullPath
  *		fileSystem = FileSystem object - !! ignored because creates circular reference FileSystem contains DirectoryEntry which contains FileSystem.....!!
  */
-- (void) resolveLocalFileSystemURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) resolveLocalFileSystemURI:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-    NSString* inputUri = [arguments objectAtIndex:1];
+    NSString* inputUri = [command.arguments objectAtIndex:0];
     
 	NSString* jsString = nil;
     
@@ -298,17 +300,26 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  *			
  *			
  */
-- (void) getDirectory:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getDirectory:(CDVInvokedUrlCommand*)command
 {
+    NSMutableArray* arguments = [NSMutableArray arrayWithArray:command.arguments];
+    NSMutableDictionary* options = nil;
 	// add getDir to options and call getFile()
-	if (!options){
+    if ([arguments count] >= 3) {
+        options = [NSMutableDictionary dictionaryWithDictionary:[arguments objectAtIndex:2]];
+        [arguments setObject:options atIndexedSubscript:2];
+    } else {
 		options = [NSMutableDictionary dictionaryWithCapacity:1];
-	}
+        [arguments addObject:options];
+    }
 	[options setObject:[NSNumber numberWithInt:1] forKey:@"getDir"];
+    CDVInvokedUrlCommand* subCommand =
+        [[CDVInvokedUrlCommand alloc] initWithArguments:arguments
+                                             callbackId:command.callbackId
+                                              className:command.className
+                                             methodName:command.methodName];
 	
-	[self getFile: arguments withDict: options];
-
-
+	[self getFile:subCommand];
 }
 /* Part of DirectoryEntry interface,  creates or returns the specified file
  * IN:
@@ -325,13 +336,14 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  *			
  *			
  */
-- (void) getFile: (NSMutableArray*) arguments withDict:(NSMutableDictionary*)options
+- (void) getFile:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
 	// arguments are URL encoded
-	NSString* fullPath = [arguments objectAtIndex:1];
-	NSString* requestedPath = [arguments objectAtIndex:2];
+	NSString* fullPath = [command.arguments objectAtIndex:0];
+	NSString* requestedPath = [command.arguments objectAtIndex:1];
+    NSDictionary* options = [command.arguments objectAtIndex:2 withDefault:nil];
     
 	NSString* jsString = nil;
 	CDVPluginResult* result = nil;
@@ -426,17 +438,16 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  * If this Entry is the root of its filesystem, its parent is itself.
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath
+ *	0 - NSString* fullPath
  * NSMutableDictionary* options
  *	empty
  */
-- (void) getParent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getParent:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
 	// arguments are URL encoded
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* fullPath = [command.arguments objectAtIndex:0];
     
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -475,12 +486,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  * get MetaData of entry
  * Currently MetaData only includes modificationTime.
  */
-- (void) getMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getMetadata:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* argPath = [command.arguments objectAtIndex:0];
 	NSString* testPath = argPath; //[self getFullPath: argPath];
 	
 	NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -516,12 +527,14 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  * set MetaData of entry
  * Currently we only support "com.apple.MobileBackup" (boolean)
  */
-- (void) setMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) setMetadata:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* filePath = [arguments objectAtIndex:1];
+	NSString* filePath = [command.arguments objectAtIndex:0];
+    NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:nil];
+
     CDVPluginResult* result = nil;
     BOOL ok = NO;
     
@@ -563,21 +576,18 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 /* removes the directory or file entry
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath
- * NSMutableDictionary* options
- *	empty
+ *	0 - NSString* fullPath
  *
  * returns NO_MODIFICATION_ALLOWED_ERR  if is top level directory or no permission to delete dir
  * returns INVALID_MODIFICATION_ERR if is dir and is not empty
  * returns NOT_FOUND_ERR if file or dir is not found
 */
-- (void) remove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) remove:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* fullPath = [command.arguments objectAtIndex:0];
 	
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -611,20 +621,17 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 /* recurvsively removes the directory 
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath
- * NSMutableDictionary* options
- *	empty
+ *	0 - NSString* fullPath
  *
  * returns NO_MODIFICATION_ALLOWED_ERR  if is top level directory or no permission to delete dir
  * returns NOT_FOUND_ERR if file or dir is not found
  */
-- (void) removeRecursively:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) removeRecursively:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* fullPath = [arguments objectAtIndex:1];
+	NSString* fullPath = [command.arguments objectAtIndex:0];
 	
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -681,13 +688,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 		return jsString;
 	}
 }
-- (void) copyTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) copyTo:(CDVInvokedUrlCommand*)command
 {
-	[self doCopyMove:arguments withDict:options isCopy:YES];
+	[self doCopyMove:command isCopy:YES];
 }
-- (void) moveTo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) moveTo:(CDVInvokedUrlCommand*)command
 {
-	[self doCopyMove:arguments withDict:options isCopy:NO];
+	[self doCopyMove:command isCopy:NO];
 }
 /**
  * Helpfer function to check to see if the user attempted to copy an entry into its parent without changing its name, 
@@ -721,22 +728,22 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 /* Copy/move a file or directory to a new location
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath of entry
- *  2 - NSString* newName the new name of the entry, defaults to the current name
+ *	0 - NSString* fullPath of entry
+ *  1 - NSString* newName the new name of the entry, defaults to the current name
  *	NSMutableDictionary* options - DirectoryEntry to which to copy the entry
  *	BOOL - bCopy YES if copy, NO if move
  * 
  */
-- (void) doCopyMove:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options  isCopy:(BOOL)bCopy
+- (void) doCopyMove:(CDVInvokedUrlCommand*)command isCopy:(BOOL)bCopy
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
+    NSArray* arguments = command.arguments;
     
 	// arguments
-    NSString* srcFullPath = [arguments objectAtIndex:1];
-    NSString* destRootPath = [arguments objectAtIndex:2];
+    NSString* srcFullPath = [arguments objectAtIndex:0];
+    NSString* destRootPath = [arguments objectAtIndex:1];
     // optional argument
-    NSString* newName = ([arguments count] > 3) ? [arguments objectAtIndex:3] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
+    NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent]; 		// use last component from appPath if new name not provided
 
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -855,15 +862,14 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 /* return the URI to the entry
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath of entry
- *	2 - desired mime type of entry - ignored - always returns file://
+ *	0 - NSString* fullPath of entry
+ *	1 - desired mime type of entry - ignored - always returns file://
  */
 /*  Not needed since W3C toURI is synchronous.  Leaving code here for now in case W3C spec changes.....
-- (void) toURI:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) toURI:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
-	NSString* argPath = [arguments objectAtIndex:1];
+    NSString* callbackId = command.callbackId;
+	NSString* argPath = [command.arguments objectAtIndex:0];
 	PluginResult* result = nil;
 	NSString* jsString = nil;
 	
@@ -886,12 +892,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	
 	[self writeJavascript:jsString];
 }*/
-- (void) getFileMetadata:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getFileMetadata:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* argPath = [command.arguments objectAtIndex:0];
     
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -925,12 +931,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	[self writeJavascript:jsString];
 }
 
-- (void) readEntries:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) readEntries:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
 
 	// arguments
-    NSString* fullPath = [arguments objectAtIndex:1];
+    NSString* fullPath = [command.arguments objectAtIndex:0];
 	
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
@@ -963,29 +969,25 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	
 }
 // DEPRECATED
-- (void) readFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) readFile:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"readFile is DEPRECATED!  Use readAsText");
-    [self readAsText: arguments withDict: options];
+    [self readAsText:command];
 }
 
-/* read and return file data 
+/* read and return file data
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath
- *	2 - NSString* encoding - NOT USED,  iOS reads and writes using UTF8!
- * NSMutableDictionary* options
- *	empty
+ *	0 - NSString* fullPath
+ *	1 - NSString* encoding - NOT USED,  iOS reads and writes using UTF8!
  */
-- (void) readAsText:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) readAsText:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
-    
-	//NSString* encoding = [arguments objectAtIndex:2];   // not currently used
+	NSString* argPath = [command.arguments objectAtIndex:0];
+	//NSString* encoding = [command.arguments objectAtIndex:2];   // not currently used
 	CDVPluginResult* result = nil;
 	NSString* jsString = nil;
 	
@@ -1020,20 +1022,17 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 /* Read content of text file and return as base64 encoded data url.
  * IN: 
  * NSArray* arguments
- *	0 - NSString* callbackId
- *	1 - NSString* fullPath
- * NSMutableDictionary* options
- *	empty
- * 
+ *	0 - NSString* fullPath
+ *
  * Determines the mime type from the file extension, returns ENCODING_ERR if mimetype can not be determined. 
  */
  
-- (void) readAsDataURL:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) readAsDataURL:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* argPath = [command.arguments objectAtIndex:0];
     
 	CDVFileError errCode = ABORT_ERR; 
 	CDVPluginResult* result = nil;
@@ -1096,18 +1095,18 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	return mimeType;
 }
 // DEPRECATED
-- (void) truncateFile:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) truncateFile:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"truncateFile is DEPRECATED!  Use truncate");
-    [self truncate: arguments withDict: options];
+    [self truncate:command];
 }
-- (void) truncate:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) truncate:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
-	unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:2 ] longLongValue];
+	NSString* argPath = [command.arguments objectAtIndex:0];
+	unsigned long long pos = (unsigned long long)[[command.arguments objectAtIndex:1] longLongValue];
 	
 	NSString *appFile = argPath; //[self getFullPath:argPath];
 	
@@ -1136,19 +1135,19 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 /* write
  * IN:
  * NSArray* arguments
- *  0 - NSString* callbackId
- *  1 - NSString* file path to write to
- *  2 - NSString* data to write
- *  3 - NSNumber* position to begin writing 
+ *  0 - NSString* file path to write to
+ *  1 - NSString* data to write
+ *  2 - NSNumber* position to begin writing
  */
-- (void) write:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) write:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
+    NSArray* arguments = command.arguments;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
-	NSString* argData = [arguments objectAtIndex:2];
-	unsigned long long pos = (unsigned long long)[[ arguments objectAtIndex:3] longLongValue];
+	NSString* argPath = [arguments objectAtIndex:0];
+	NSString* argData = [arguments objectAtIndex:1];
+	unsigned long long pos = (unsigned long long)[[ arguments objectAtIndex:2] longLongValue];
 	
 	NSString* fullPath = argPath; //[self getFullPath:argPath];
 	
@@ -1194,12 +1193,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	
 }
 
-- (void) testFileExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) testFileExists:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* argPath = [command.arguments objectAtIndex:0];
     
 	NSString* jsString = nil;
 	// Get the file manager
@@ -1215,12 +1214,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 	[self writeJavascript: jsString];
 }
 
-- (void) testDirectoryExists:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) testDirectoryExists:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // arguments
-	NSString* argPath = [arguments objectAtIndex:1];
+	NSString* argPath = [command.arguments objectAtIndex:0];
 	
 	NSString* jsString = nil;
 	// Get the file manager
@@ -1237,9 +1236,9 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 }
 
 // Returns number of bytes available via callback
-- (void) getFreeDiskSpace:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getFreeDiskSpace:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex: 0];
+	NSString* callbackId = command.callbackId;
     
     // no arguments
     
