@@ -80,9 +80,9 @@ typedef NSUInteger CDVMediaType;
  * options:
  *	quality: integer between 1 and 100
  */
-- (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) takePicture:(CDVInvokedUrlCommand*)command;
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
-- (void) cleanup:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) cleanup:(CDVInvokedUrlCommand*)command;
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;

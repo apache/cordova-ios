@@ -59,9 +59,10 @@
     }
     return self;
 }
-- (void) captureAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) captureAudio:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0];
     NSNumber* duration = [options objectForKey:@"duration"];
     // the default value of duration is 0 so use nil (no duration) if default value
     if (duration) {
@@ -94,9 +95,10 @@
     }
 }
 
-- (void) captureImage:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) captureImage:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0];
     NSString* mode = [options objectForKey:@"mode"];
     
 	//options could contain limit and mode neither of which are supported at this time
@@ -193,9 +195,9 @@
     
     return jsString;
 }
-- (void) captureVideo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) captureVideo:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
 	//options could contain limit, duration and mode, only duration is supported (but is not due to apple bug)
     // taking more than one video (limit) is only supported if provide own controls via cameraOverlayView property
     //NSNumber* duration = [options objectForKey:@"duration"];
@@ -278,7 +280,7 @@
     return jsString;
     
 }
-- (void) getMediaModes: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getMediaModes:(CDVInvokedUrlCommand*)command
 {
    // NSString* callbackId = [arguments objectAtIndex:0];
     //NSMutableDictionary* imageModes = nil;
@@ -327,15 +329,15 @@
     
     
 }
-- (void) getFormatData: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getFormatData:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
     // existence of fullPath checked on JS side
-    NSString* fullPath = [arguments objectAtIndex:1];
+    NSString* fullPath = [command.arguments objectAtIndex:0];
     // mimeType could be null
     NSString* mimeType = nil;
-    if ([arguments count] > 2) {
-        mimeType = [arguments objectAtIndex:2];
+    if ([command.arguments count] > 1) {
+        mimeType = [command.arguments objectAtIndex:1];
     }
     BOOL bError = NO;
     CDVCaptureError errorCode = CAPTURE_INTERNAL_ERR;

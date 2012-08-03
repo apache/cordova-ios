@@ -18,6 +18,7 @@
  */
 
 #import "CDVCamera.h"
+#import "NSArray+Comparisons.h"
 #import "NSData+Base64.h"
 #import "NSDictionary+Extensions.h"
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -49,24 +50,25 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
 /*  takePicture arguments:
  * INDEX   ARGUMENT
- *  0       callbackId
- *  1       quality
- *  2       destination type
- *  3       source type
- *  4       targetWidth
- *  5       targetHeight
- *  6       encodingType
- *  7       mediaType
- *  8       allowsEdit
- *  9       correctOrientation
- *  10      saveToPhotoAlbum
+ *  0       quality
+ *  1       destination type
+ *  2       source type
+ *  3       targetWidth
+ *  4       targetHeight
+ *  5       encodingType
+ *  6       mediaType
+ *  7       allowsEdit
+ *  8       correctOrientation
+ *  9       saveToPhotoAlbum
  */
-- (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) takePicture:(CDVInvokedUrlCommand*)command
 {
-	NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0 withDefault:nil];
+    NSArray* arguments = command.arguments;
     self.hasPendingOperation = NO;
 
-	NSString* sourceTypeString = [arguments objectAtIndex:3];
+	NSString* sourceTypeString = [arguments objectAtIndex:2];
 	UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeCamera; // default
 	if (sourceTypeString != nil) 
 	{
@@ -82,10 +84,10 @@ static NSSet* org_apache_cordova_validArrowDirections;
         
 	} 
 
-    bool allowEdit = [[arguments objectAtIndex:8] boolValue];
-    NSNumber* targetWidth = [arguments objectAtIndex:4];
-    NSNumber* targetHeight = [arguments objectAtIndex:5];
-    NSNumber* mediaValue = [arguments objectAtIndex:7];
+    bool allowEdit = [[arguments objectAtIndex:7] boolValue];
+    NSNumber* targetWidth = [arguments objectAtIndex:3];
+    NSNumber* targetHeight = [arguments objectAtIndex:4];
+    NSNumber* mediaValue = [arguments objectAtIndex:6];
     CDVMediaType mediaType = (mediaValue) ? [mediaValue intValue] : MediaTypePicture;
     
     CGSize targetSize = CGSizeMake(0, 0);
@@ -106,13 +108,13 @@ static NSSet* org_apache_cordova_validArrowDirections;
     cameraPicker.webView = self.webView;
     cameraPicker.popoverSupported = [self popoverSupported];
     
-    cameraPicker.correctOrientation = [[arguments objectAtIndex:9] boolValue];
-    cameraPicker.saveToPhotoAlbum = [[arguments objectAtIndex:10] boolValue];
+    cameraPicker.correctOrientation = [[arguments objectAtIndex:8] boolValue];
+    cameraPicker.saveToPhotoAlbum = [[arguments objectAtIndex:9] boolValue];
     
-    cameraPicker.encodingType = ([arguments objectAtIndex:6]) ? [[arguments objectAtIndex:6] intValue] : EncodingTypeJPEG;
+    cameraPicker.encodingType = ([arguments objectAtIndex:5]) ? [[arguments objectAtIndex:5] intValue] : EncodingTypeJPEG;
     
-    cameraPicker.quality = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : 50;
-    cameraPicker.returnType = ([arguments objectAtIndex:2]) ? [[arguments objectAtIndex:2] intValue] : DestinationTypeFileUri;
+    cameraPicker.quality = ([arguments objectAtIndex:0]) ? [[arguments objectAtIndex:0] intValue] : 50;
+    cameraPicker.returnType = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : DestinationTypeFileUri;
    
     if (sourceType == UIImagePickerControllerSourceTypeCamera) {
         // we only allow taking pictures (no video) in this api
@@ -164,9 +166,9 @@ static NSSet* org_apache_cordova_validArrowDirections;
     self.hasPendingOperation = YES;
 }
 
-- (void) cleanup:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) cleanup:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
     
     // empty the tmp directory
     NSFileManager* fileMgr = [[NSFileManager alloc] init];

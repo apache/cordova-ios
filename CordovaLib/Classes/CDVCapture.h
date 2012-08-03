@@ -51,13 +51,13 @@ typedef NSUInteger CDVCaptureError;
     BOOL inUse;
 }
 @property BOOL inUse;
-- (void) captureAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) captureImage:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) captureAudio:(CDVInvokedUrlCommand*)command;
+- (void) captureImage:(CDVInvokedUrlCommand*)command;
 -(NSString*) processImage: (UIImage*) image type: (NSString*) mimeType forCallbackId: (NSString*)callbackId;
-- (void) captureVideo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) captureVideo:(CDVInvokedUrlCommand*)command;
 -(NSString*) processVideo: (NSString*) moviePath forCallbackId: (NSString*) callbackId;
-- (void) getMediaModes: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getFormatData: (NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) getMediaModes:(CDVInvokedUrlCommand*)command;
+- (void) getFormatData:(CDVInvokedUrlCommand*)command;
 -(NSDictionary*) getMediaDictionaryFromPath: (NSString*) fullPath ofType: (NSString*) type;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
