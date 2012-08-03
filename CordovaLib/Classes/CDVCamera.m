@@ -64,7 +64,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 - (void) takePicture:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = command.callbackId;
-    NSDictionary* options = [command.arguments objectAtIndex:0 withDefault:nil];
     NSArray* arguments = command.arguments;
     self.hasPendingOperation = NO;
 
@@ -137,6 +136,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
         int width = 320;
         int height = 480;
         UIPopoverArrowDirection arrowDirection = UIPopoverArrowDirectionAny;
+        NSDictionary* options = [command.arguments objectAtIndex:10 withDefault:nil];
         if (options) {
             x = [options integerValueForKey:@"x" defaultValue:0];
             y = [options integerValueForKey:@"y" defaultValue:32];

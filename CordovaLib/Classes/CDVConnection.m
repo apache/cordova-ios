@@ -29,11 +29,11 @@
 
 @synthesize connectionType, internetReach;
 
-- (void) getConnectionInfo:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) getConnectionInfo:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
-	NSString* callbackId = [arguments objectAtIndex:0];
+	NSString* callbackId = command.callbackId;
     
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
     jsString = [result toSuccessCallbackString:callbackId];
