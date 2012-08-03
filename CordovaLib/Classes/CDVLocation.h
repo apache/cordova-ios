@@ -78,9 +78,9 @@ typedef NSUInteger CDVLocationStatus;
 
 
 - (BOOL) hasHeadingSupport;
-- (void) getLocation:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) addWatch:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) clearWatch:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) getLocation:(CDVInvokedUrlCommand*)command;
+- (void) addWatch:(CDVInvokedUrlCommand*)command;
+- (void) clearWatch:(CDVInvokedUrlCommand*)command;
 - (void)returnLocationInfo: (NSString*) callbackId andKeepCallback:(BOOL)keepCallback;
 - (void) returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message;
 - (void) startLocation: (BOOL) enableHighAccuracy;
@@ -94,11 +94,10 @@ typedef NSUInteger CDVLocationStatus;
 
 - (BOOL) isLocationServicesEnabled;
 
-- (void)getHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)getHeading:(CDVInvokedUrlCommand*)command;
 - (void)returnHeadingInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
-- (void)watchHeadingFilter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)stopHeading:(NSMutableArray*)arguments
-		   withDict:(NSMutableDictionary*)options;
+- (void)watchHeadingFilter:(CDVInvokedUrlCommand*)command;
+- (void)stopHeading:(CDVInvokedUrlCommand*)command;
 - (void) startHeadingWithFilter: (CLLocationDegrees) filter;
 - (void)locationManager:(CLLocationManager *)manager
 	   didUpdateHeading:(CLHeading *)heading;
