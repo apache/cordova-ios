@@ -26,8 +26,7 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 
 1. **Install** Cordova 2.1.0
 2. Follow the **"Upgrading older Cordova plugins to 2.0.0"** section, if necessary
-3. No changes in plugin structure from 1.9.x
-4. Change in the method signature of the CordovaLib's JSONKit method categories, they are prefixed with "cdvjk_" now:
+3. **Change** in the method signature of the **CordovaLib's JSONKit method categories**, they are prefixed with "cdvjk_" now:
 
     e.g.
     
@@ -36,8 +35,19 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
    instead of:
    
         [myDict JSONString];
+        
+4. **Support** a new plugin method signature (old signature is deprecated):
 
+    The **new** signature is:
 
+        - (void) myMethod:(CDVInvokedUrlCommand*)command;
+
+    The **old (deprecated**) signature is:
+
+        - (void) myMethod:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+    Basically, the options dictionary has been removed for the new signature, and the callbackId is not the 0th index item for the arguments array, but it is now in a separate property. View [CDVInvokedUrlCommand.h](https://github.com/apache/incubator-cordova-ios/blob/master/CordovaLib/Classes/CDVInvokedUrlCommand.h)
+    
 ## Upgrading older Cordova plugins to 2.0.0 ##
 
 1. **Install** Cordova 2.0.0
