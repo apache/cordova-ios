@@ -104,7 +104,7 @@
         theWebView.delegate = self;
         
         // verify the and fix the iOS 5.1 database locations once
-        [self verifyAndFixDatabaseLocations:nil withDict:nil];
+        [self verifyAndFixDatabaseLocations:nil];
     }
     
     return self;
@@ -188,9 +188,9 @@
 }
                 
 /* copy from webkitDbLocation to persistentDbLocation */
-- (void) backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) backup:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
 
     NSError* __autoreleasing error = nil;
     CDVPluginResult* result = nil;
@@ -223,9 +223,9 @@
 }
 
 /* copy from persistentDbLocation to webkitDbLocation */
-- (void) restore:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) restore:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
     
     NSError* __autoreleasing error = nil;
     CDVPluginResult* result = nil;
@@ -255,7 +255,7 @@
     }
 }
 
-- (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) verifyAndFixDatabaseLocations:(CDVInvokedUrlCommand*)command
 {
     [[self class] __verifyAndFixDatabaseLocations];
 }
@@ -327,7 +327,7 @@
     
     if (exitsOnSuspend)
     {
-        [self backup:nil withDict:nil];
+        [self backup:nil];
     } 
     else if (isMultitaskingSupported) 
     {
@@ -341,7 +341,7 @@
         CDVLocalStorage __unsafe_unretained *weakSelf = self;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            [weakSelf backup:nil withDict:nil];
+            [weakSelf backup:nil];
             
             [[UIApplication sharedApplication] endBackgroundTask: backgroundTaskID];
             backgroundTaskID = UIBackgroundTaskInvalid;
@@ -359,7 +359,7 @@
 
 - (void) webViewDidStartLoad:(UIWebView*)theWebView
 {
-    [self restore:nil withDict:nil];
+    [self restore:nil];
     
     return [self.webviewDelegate webViewDidStartLoad:theWebView];
 }

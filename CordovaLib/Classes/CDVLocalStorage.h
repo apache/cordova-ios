@@ -28,9 +28,9 @@
 
 - (BOOL) shouldBackup;
 - (BOOL) shouldRestore;
-- (void) backup:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) restore:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) verifyAndFixDatabaseLocations:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) backup:(CDVInvokedUrlCommand*)command;
+- (void) restore:(CDVInvokedUrlCommand*)command;
+- (void) verifyAndFixDatabaseLocations:(CDVInvokedUrlCommand*)command;
 
 + (void) __verifyAndFixDatabaseLocations;
 // Visible for testing.
