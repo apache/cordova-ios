@@ -1012,7 +1012,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             pNStrBuff = [[NSString alloc] initWithBytes: [readData bytes] length: [readData length] encoding: NSUTF8StringEncoding];
         } else {
             // return empty string if no data
-            pNStrBuff = [[NSString alloc] initWithString: @""];
+            pNStrBuff = @"";
         }
         
         
