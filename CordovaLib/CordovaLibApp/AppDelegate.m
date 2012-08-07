@@ -40,14 +40,14 @@
 
 - (void)createViewController {
     NSAssert(!self.viewController, @"ViewController already created.");
-    CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
     self.viewController = [[ViewController alloc] init];
     self.viewController.useSplashScreen = YES;
     self.viewController.wwwFolderName = @"www";
     self.viewController.startPage = @"index.html";
-    self.viewController.view.frame = viewBounds;
-
+    
+    // NOTE: To control the view's frame size, override [self.viewController viewWillAppear:] in your view controller.
+    
     self.window.rootViewController = self.viewController;
 }
 
