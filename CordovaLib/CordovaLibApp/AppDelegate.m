@@ -26,18 +26,11 @@
 @synthesize window = _window;
 @synthesize viewController = _viewController;
 
-- (void)dealloc
-{
-    [_window release];
-    [_viewController release];
-    [super dealloc];
-}
-
 - (void)createViewController {
     NSAssert(!self.viewController, @"ViewController already created.");
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
-    self.viewController = [[[ViewController alloc] init] autorelease];
+    self.viewController = [[ViewController alloc] init];
     self.viewController.useSplashScreen = YES;
     self.viewController.wwwFolderName = @"www";
     self.viewController.startPage = @"index.html";
@@ -57,7 +50,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {    
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
+    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
     self.window.autoresizesSubviews = YES;
     
     // Create the main view on start-up only when not running unit tests.
