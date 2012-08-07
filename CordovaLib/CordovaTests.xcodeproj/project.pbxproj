@@ -261,8 +261,8 @@
 			buildPhases = (
 				303A4064152124BB00182201 /* Sources */,
 				303A4065152124BB00182201 /* Frameworks */,
+				30F8AE1615212883006625B3 /* Copy cordova.ios.js into www directory */,
 				303A4066152124BB00182201 /* Resources */,
-				30F8AE1615212883006625B3 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -361,7 +361,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		30F8AE1615212883006625B3 /* ShellScript */ = {
+		30F8AE1615212883006625B3 /* Copy cordova.ios.js into www directory */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -369,6 +369,7 @@
 			inputPaths = (
 				"",
 			);
+			name = "Copy cordova.ios.js into www directory";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
