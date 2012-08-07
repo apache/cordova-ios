@@ -242,6 +242,21 @@
 
 }
 
+- (void) testHostnameExtraction
+{    
+    NSArray* allowedHosts = [NSArray arrayWithObjects: 
+                             @"http://apache.org/",
+                             @"http://apache.org/foo/bar?x=y",
+                             @"ftp://apache.org/foo/bar?x=y",
+                             @"ftps://apache.org/foo/bar?x=y",
+                             @"http://apache.*/foo/bar?x=y",
+                             nil];
+    
+    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://google.com"]], nil);
+}
 
 
 @end

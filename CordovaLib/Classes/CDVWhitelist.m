@@ -81,6 +81,16 @@
     return YES;
 }
 
+- (NSString*) extractHostFromUrlString:(NSString*)url
+{
+    NSURL* aUrl = [NSURL URLWithString:url];
+    if (aUrl != nil && [aUrl scheme] != nil) { // found scheme
+        return [aUrl host];
+    } else {
+        return url;
+    }
+}
+
 - (void) processWhitelist
 {
     if (self.whitelist == nil) {
@@ -100,7 +110,7 @@
     
     while (externalHost = [enumerator nextObject])
     {
-        NSString* regex = [externalHost copy];
+        NSString* regex = [self extractHostFromUrlString:externalHost];
         BOOL is_ip = [self isIPv4Address:regex];
         
         // check for single wildcard '*', if found set allowAll to YES
