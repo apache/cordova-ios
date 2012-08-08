@@ -43,6 +43,7 @@
 		68A32D7E141030EB006B237C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AA141002F100DF4CF2 /* UIKit.framework */; };
 		68A32D7F141030F3006B237C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AC141002F100DF4CF2 /* Foundation.framework */; };
 		EB37019415D18B9A00BEBC43 /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB37018C15D18B2E00BEBC43 /* libCordova.a */; };
+		EB68E0BA15D2BCF400885F79 /* EchoPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = EB68E0B915D2BCF400885F79 /* EchoPlugin.m */; };
 		EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */; };
 		EBA3556F15ABD0C900F4DE24 /* CDVFileTransferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3556E15ABD0C900F4DE24 /* CDVFileTransferTests.m */; };
 /* End PBXBuildFile section */
@@ -105,6 +106,8 @@
 		686357DC14100B1600DF4CF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		68A32D7414103017006B237C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		EB37018115D18B2D00BEBC43 /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CordovaLib.xcodeproj; sourceTree = "<group>"; };
+		EB68E0B815D2BCF400885F79 /* EchoPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EchoPlugin.h; sourceTree = "<group>"; };
+		EB68E0B915D2BCF400885F79 /* EchoPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EchoPlugin.m; sourceTree = "<group>"; };
 		EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDVWebViewTest.h; sourceTree = "<group>"; };
 		EBA3554415A731F100F4DE24 /* CDVFakeFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVFakeFileManager.h; sourceTree = "<group>"; };
 		EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVFakeFileManager.m; sourceTree = "<group>"; };
@@ -197,6 +200,8 @@
 				30F8AE1C152129DA006625B3 /* www */,
 				303A4076152124BB00182201 /* AppDelegate.h */,
 				303A4077152124BB00182201 /* AppDelegate.m */,
+				EB68E0B815D2BCF400885F79 /* EchoPlugin.h */,
+				EB68E0B915D2BCF400885F79 /* EchoPlugin.m */,
 				303A4079152124BB00182201 /* ViewController.h */,
 				303A407A152124BB00182201 /* ViewController.m */,
 				303A406E152124BB00182201 /* Supporting Files */,
@@ -400,6 +405,7 @@
 				303A4074152124BB00182201 /* main.m in Sources */,
 				303A4078152124BB00182201 /* AppDelegate.m in Sources */,
 				303A407B152124BB00182201 /* ViewController.m in Sources */,
+				EB68E0BA15D2BCF400885F79 /* EchoPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

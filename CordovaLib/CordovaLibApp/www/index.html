@@ -69,8 +69,66 @@
     // Used by unit tests to tell when the page is loaded.
     window.pageIsLoaded = true;
 		// do your thing!
-		navigator.notification.alert("Cordova is working")
+		navigator.notification.alert("Cordova is working")        
 	}
+    
+    var appLogElem;
+    function appLog(message) {
+        if (!appLogElem) {
+            appLogElem = document.getElementById('app-logs');
+        }
+        appLogElem.innerText += message + '\n';
+    }
+    
+    function benchExec()
+    {
+        appLog('Started exec benchmark');
+        var exec = cordova.require('cordova/exec'),
+            BENCH_DURATION_MS = 2000,
+            BENCH_PAYLOAD = 'This is a small test message.',
+            startTime = +new Date,
+            callCount = 0;
+        
+        function win(result) {
+            callCount++;
+            if (result != BENCH_PAYLOAD) {
+                appLog('Wrong echo data!');
+            }
+            var elapsedMs = new Date - startTime;
+            if (elapsedMs < BENCH_DURATION_MS) {
+                setTimeout(echoMessage, 0);
+            } else {
+                var callsPerSecond = callCount * 1000 / elapsedMs;
+                appLog('Calls per second: ' + callsPerSecond);
+            }
+        }
+        function fail() {
+            appLog('Call failed!');
+        }
+        function echoMessage() {
+            exec(win, fail, "EchoPlugin", "echo", [BENCH_PAYLOAD]);
+        }
+        echoMessage();
+        setTimeout(function() {
+            if (!callCount) {
+                alert('Echo plugin did not respond');
+            }
+        }, 500);
+        
+        // Benchmark results on agrieve's iPad 3:
+        // webView:shouldStartLoadWithRequest:navigationType:
+        // ~350 Echos per second.
+        // NSURLProtocol with XHR to gap:///gapready, not handling response:
+        // ~160 Echos per second.
+        // NSURLProtocol with XHR to http:///gapready, not handling response:
+        // ~215 Echos per second.
+        // NSURLProtocol with XHR to file:///gapready, not handling response:
+        // ~215 Echos per second.
+        // NSURLProtocol with XHR to about:/gapready, not handling response:
+        // ~160 Echos per second.
+        // NSURLProtocol with XHR to http:///gapready, *with* handling response:
+        // ~160 Echos per second.
+    }
     
     </script>
   </head>
@@ -80,5 +138,7 @@
 		<li>Check your console log for any white-list rejection errors.</li>
 		<li>Add your allowed <strong>hosts</strong> in Cordova.plist/ExternalHosts (wildcards OK, don't enter the URL scheme)</li>
 	</ol>
+    <button onclick="benchExec()">Benchmark exec</button>
+    <pre id="app-logs"></pre>
   </body>
 </html>
