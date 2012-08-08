@@ -69,6 +69,10 @@
                                                          name:UIApplicationDidEnterBackgroundNotification object:nil];
         }
         
+        // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
+        self.supportedOrientations = [self parseInterfaceOrientations:
+									  [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
+        
         self.commandDelegate = self;
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
@@ -141,10 +145,6 @@
     [super viewDidLoad];
 	
     self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
-    
-	// read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-    self.supportedOrientations = [self parseInterfaceOrientations:
-									  [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
     
     // read from Cordova.plist in the app bundle
     NSString* appPlistName = @"Cordova";
