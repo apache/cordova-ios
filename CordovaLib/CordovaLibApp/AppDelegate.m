@@ -19,12 +19,24 @@
 
 #import "AppDelegate.h"
 
+#import <Cordova/CDVURLProtocol.h>
 #import "ViewController.h"
 
 @implementation AppDelegate
 
 @synthesize window = _window;
 @synthesize viewController = _viewController;
+
+- (id) init
+{ 
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
+    [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+        
+    [CDVURLProtocol registerURLProtocol];
+    
+    self = [super init];
+    return self;
+}
 
 - (void)createViewController {
     NSAssert(!self.viewController, @"ViewController already created.");
