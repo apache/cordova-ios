@@ -84,7 +84,7 @@ uninstall:
 		@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/Cordova
 		@$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/Cordova-based\ Application.xctemplate
 		@read -p "Delete all files in ~/Documents/CordovaLib/?: " ; \
-		@if [ "$$REPLY" == "y" ]; then \
+		if [ "$$REPLY" == "y" ]; then \
 			$(RM_RF) ~/Documents/CordovaLib/ ; \
 		fi	
 		@read -p "Delete the Cordova framework /Users/Shared/Cordova/Frameworks/Cordova.framework?: " ; \
