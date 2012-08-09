@@ -111,7 +111,9 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
                                self.keepCallback, @"keepCallback",
                                nil] cdvjk_JSONString];
     
-	DLog(@"PluginResult:toJSONString - %@", resultString);
+    if ([[self class] isVerbose]) {
+        NSLog(@"PluginResult:toJSONString - %@", resultString);
+    }
 	return resultString;
 }
 
@@ -119,7 +121,9 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 {
 	NSString* successCB = [NSString stringWithFormat:@"cordova.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];			
 	
-	DLog(@"PluginResult toSuccessCallbackString: %@", successCB);
+    if ([[self class] isVerbose]) {
+        NSLog(@"PluginResult toSuccessCallbackString: %@", successCB);
+    }
 	return successCB;
 }
 
@@ -127,9 +131,22 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 {
 	NSString* errorCB = [NSString stringWithFormat:@"cordova.callbackError('%@',%@);", callbackId, [self toJSONString]];
 	
-
-	DLog(@"PluginResult toErrorCallbackString: %@", errorCB);
+    if ([[self class] isVerbose]) {
+        NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
+    }
 	return errorCB;
-}	
+}
+
+static BOOL gIsVerbose = NO;
++(void) setVerbose:(BOOL)verbose
+{
+    gIsVerbose = verbose;
+}
+
++(BOOL) isVerbose
+{
+    return gIsVerbose;
+}
+
 
 @end

@@ -49,7 +49,8 @@ typedef enum {
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDictionary: (NSDictionary*) theMessage;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageToErrorObject: (int) errorCode;
 
-
++(void) setVerbose:(BOOL)verbose;
++(BOOL) isVerbose;
  
 -(void) setKeepCallbackAsBool: (BOOL) bKeepCallback;
 
