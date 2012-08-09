@@ -478,6 +478,17 @@ static NSMutableArray* _abortTriggered = nil;
         [_abortTriggered removeObject:self.objectId];
         return;
     }
+    
+    NSMutableDictionary* uploadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
+    CDVPluginResult* result;
+    
+    [uploadProgress setObject:[NSNumber numberWithBool: true] forKey:@"lengthComputable"];
+    [uploadProgress setObject:[NSNumber numberWithInt: totalBytesWritten] forKey:@"loaded"];
+    [uploadProgress setObject:[NSNumber numberWithInt: totalBytesExpectedToWrite] forKey:@"total"];
+    result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadProgress ];
+    [result setKeepCallbackAsBool:true]; 
+    [self.command writeJavascript:[result toSuccessCallbackString: callbackId ]];
+    
     self.bytesWritten = totalBytesWritten;
 }
 /* TESTING ONLY CODE
