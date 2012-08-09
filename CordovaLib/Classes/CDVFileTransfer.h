@@ -63,6 +63,7 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, strong) CDVFileTransfer* command;
 @property (nonatomic, assign) CDVFileTransferDirection direction;
 @property (nonatomic, copy) NSString* callbackId;
+@property (nonatomic, copy) NSString* objectId;
 @property (nonatomic, copy) NSString* source;
 @property (nonatomic, copy) NSString* target;
 @property (assign) int responseCode; // atomic
