@@ -36,7 +36,7 @@ NOTE: when you include these files, it will **always pop up a warning dialog at 
 4. Don't forget to add the import at the top of your **MainViewController.m** file as well:
 
         #import "CDVDebugWebView.h"
-
+5. For newer versions you may also need to add **-fno-objc-arc** to **CDVDebugWebView.m** build flags (in xcode, select the CordovaLib project, CordovaLib target, build phases tab, compile sources list, find CDVDebugWebView.m and add the flag).
 
  
 
