@@ -179,7 +179,7 @@
 	pickerController.peoplePickerDelegate = self;
 	pickerController.callbackId = callbackId;
 	pickerController.options = options;
-	pickerController.pickedContactDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:kABRecordInvalidID], @"id", nil];
+	pickerController.pickedContactDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:kABRecordInvalidID], kW3ContactId, nil];
 	pickerController.allowsEditing = (BOOL)[options existsValue:@"true" forKey:@"allowsEditing"];
 	
     if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
@@ -194,24 +194,25 @@
 {
 	
 	CDVContactsPicker* picker = (CDVContactsPicker*)peoplePicker;
+    NSNumber* pickedId =  [NSNumber numberWithInt: ABRecordGetRecordID(person)];
 
-	// Retreive pickedContact information
-	CDVContact* pickedContact = [[[CDVContact alloc] initFromABRecord:(ABRecordRef)person] autorelease];
-	NSArray *fields = [picker.options objectForKey:@"fields"] ?: [NSArray arrayWithObjects:@"id", nil];
-	NSDictionary *returnFields = [[CDVContact class] calcReturnFields: fields];
-	picker.pickedContactDictionary = [pickedContact toDictionary:returnFields];
-	
 	if (picker.allowsEditing) {
 		
 		ABPersonViewController* personController = [[ABPersonViewController alloc] init];
 		personController.displayedPerson = person;
 		personController.personViewDelegate = self;
 		personController.allowsEditing = picker.allowsEditing;
-		
+        // store id so can get info in peoplePickerNavigationControllerDidCancel
+        picker.pickedContactDictionary = [NSDictionary dictionaryWithObjectsAndKeys:pickedId, kW3ContactId, nil];
 		
 		[peoplePicker pushViewController:personController animated:YES];
 	} else {
-		// return the pickedContact information
+        // Retreive and return pickedContact information
+        CDVContact* pickedContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)person];
+        NSArray *fields = [picker.options objectForKey:@"fields"];
+        NSDictionary *returnFields = [[CDVContact class] calcReturnFields: fields];
+        picker.pickedContactDictionary = [pickedContact toDictionary:returnFields];
+
 		CDVPluginResult *result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: picker.pickedContactDictionary];
 		[self writeJavascript:[result toSuccessCallbackString: picker.callbackId]];
 		
@@ -234,6 +235,17 @@
 {
 	// return contactId or invalid if none picked
 	CDVContactsPicker* picker = (CDVContactsPicker*)peoplePicker;
+    if (picker.allowsEditing) {
+        // get the info after possible edit
+        ABAddressBookRef addrBook = ABAddressBookCreate();
+        ABRecordRef person = ABAddressBookGetPersonWithRecordID(addrBook, [[picker.pickedContactDictionary objectForKey:kW3ContactId] integerValue]);
+        CDVContact* pickedContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)person];
+        NSArray *fields = [picker.options objectForKey:@"fields"];
+        NSDictionary *returnFields = [[CDVContact class] calcReturnFields: fields];
+        picker.pickedContactDictionary = [pickedContact toDictionary:returnFields];
+        CFRelease(addrBook);
+
+    }
 	CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
 	[self writeJavascript:[result toSuccessCallbackString:picker.callbackId]];
 	
