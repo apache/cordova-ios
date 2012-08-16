@@ -1,6 +1,6 @@
-// commit 8c46a970a0719d0f16a225b75421ecf6f12dcc02
+// commit 33d1ef23eeabde0936351db8bda7fee27a85377d
 
-// File generated at :: Sun Jul 29 2012 14:26:58 GMT-0400 (EDT)
+// File generated at :: Thu Aug 16 2012 11:33:56 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -971,6 +971,9 @@ module.exports = {
     objects: {
         File: { // exists natively, override
             path: "cordova/plugin/File"
+        },
+        FileReader: { // exists natively, override
+            path: "cordova/plugin/FileReader"
         },
         MediaError: { // exists natively, override
             path: "cordova/plugin/MediaError"
@@ -3028,14 +3031,14 @@ Media.prototype.getCurrentPosition = function(success, fail) {
  * Start recording audio file.
  */
 Media.prototype.startRecord = function() {
-    exec(this.successCallback, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
+    exec(null, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
 };
 
 /**
  * Stop recording audio file.
  */
 Media.prototype.stopRecord = function() {
-    exec(this.successCallback, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
+    exec(null, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
 };
 
 /**
@@ -3064,13 +3067,13 @@ Media.onStatus = function(id, msg, value) {
     var media = mediaObjects[id];
     // If state update
     if (msg === Media.MEDIA_STATE) {
+        if (media.statusCallback) {
+            media.statusCallback(value);
+        }
         if (value === Media.MEDIA_STOPPED) {
             if (media.successCallback) {
                 media.successCallback();
             }
-        }
-        if (media.statusCallback) {
-            media.statusCallback(value);
         }
     }
     else if (msg === Media.MEDIA_DURATION) {
@@ -4478,10 +4481,20 @@ module.exports = {
          *    allowsEditing: boolean AS STRING
          *        "true" to allow editing the contact
          *        "false" (default) display contact
+         *      fields: array of fields to return in contact object (see ContactOptions.fields)
          *
-         * returns:  the id of the selected contact as param to successCallback
+         *    @returns
+         *        id of contact selected
+         *        ContactObject
+         *            if no fields provided contact contains just id information
+         *            if fields provided contact object contains information for the specified fields
+         *
          */
-        exec(successCallback, null, "Contacts","chooseContact", [options]);
+         var win = function(result) {
+             var fullContact = require('cordova/plugin/contacts').create(result);
+            successCallback(fullContact.id, fullContact);
+       };
+        exec(win, null, "Contacts","chooseContact", [options]);
     }
 };
 });
