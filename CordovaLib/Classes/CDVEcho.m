@@ -17,7 +17,16 @@
  under the License.
  */
 
-#import "CDVPlugin.h"
 
-@interface EchoPlugin : CDVPlugin
+#import "CDVEcho.h"
+#import "CDV.h"
+
+@implementation CDVEcho
+
+- (void)echo:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[command.arguments objectAtIndex:0]];
+    [self success:pluginResult callbackId:command.callbackId];
+}
+
 @end

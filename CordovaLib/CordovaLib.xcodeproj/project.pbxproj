@@ -73,6 +73,8 @@
 		88BA573E109BB46F00FB5E78 /* CDVAccelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* CDVAccelerometer.m */; };
 		C937A4561337599E002C4C79 /* CDVFileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* CDVFileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
+		EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */ = {isa = PBXBuildFile; fileRef = EB80C2AA15DEA63D004D9E7B /* CDVEcho.h */; };
+		EB80C2AD15DEA63D004D9E7B /* CDVEcho.m in Sources */ = {isa = PBXBuildFile; fileRef = EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */; };
 		EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */; };
 /* End PBXBuildFile section */
@@ -158,6 +160,8 @@
 		AA747D9E0F9514B9006C5449 /* CordovaLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CordovaLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		C937A4541337599E002C4C79 /* CDVFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVFileTransfer.h; path = Classes/CDVFileTransfer.h; sourceTree = "<group>"; };
 		C937A4551337599E002C4C79 /* CDVFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFileTransfer.m; path = Classes/CDVFileTransfer.m; sourceTree = "<group>"; };
+		EB80C2AA15DEA63D004D9E7B /* CDVEcho.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVEcho.h; path = Classes/CDVEcho.h; sourceTree = "<group>"; };
+		EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVEcho.m; path = Classes/CDVEcho.m; sourceTree = "<group>"; };
 		EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Comparisons.h"; path = "Classes/NSArray+Comparisons.h"; sourceTree = "<group>"; };
 		EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Comparisons.m"; path = "Classes/NSArray+Comparisons.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -268,6 +272,8 @@
 				8887FD2B1090FBE7009987E8 /* CDVContacts.m */,
 				8887FD2C1090FBE7009987E8 /* CDVDebugConsole.h */,
 				8887FD2D1090FBE7009987E8 /* CDVDebugConsole.m */,
+				EB80C2AA15DEA63D004D9E7B /* CDVEcho.h */,
+				EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */,
 				8887FD301090FBE7009987E8 /* CDVFile.h */,
 				8887FD311090FBE7009987E8 /* CDVFile.m */,
 				8887FD341090FBE7009987E8 /* CDVInvokedUrlCommand.h */,
@@ -370,6 +376,7 @@
 				3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
 				EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */,
 				30C5F1DF15AF9E950052A00D /* CDVDevice.h in Headers */,
+				EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +485,7 @@
 				3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
 				EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */,
 				30C5F1E015AF9E950052A00D /* CDVDevice.m in Sources */,
+				EB80C2AD15DEA63D004D9E7B /* CDVEcho.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

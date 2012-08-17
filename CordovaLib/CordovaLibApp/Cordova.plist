@@ -56,8 +56,8 @@
 		<string>CDVCapture</string>
 		<key>SplashScreen</key>
 		<string>CDVSplashScreen</string>
-		<key>EchoPlugin</key>
-		<string>EchoPlugin</string>
+		<key>Echo</key>
+		<string>CDVEcho</string>
 		<key>Battery</key>
 		<string>CDVBattery</string>
 	</dict>
