@@ -81,6 +81,7 @@
         [self printMultitaskingInfo];
         [self printDeprecationNotice];
         self.initialized = YES;
+        [CDVURLProtocol registerViewController:self];
     }
     
     return self; 
@@ -467,7 +468,7 @@
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
     
     // Tell the webview that native is ready.
-    NSString* nativeReady = @"try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
+    NSString* nativeReady = [NSString stringWithFormat:@"cordova.iOSVCAddr='%lld';try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}", (long long)self];
     [theWebView stringByEvaluatingJavaScriptFromString:nativeReady];
 }
 
@@ -759,13 +760,8 @@ BOOL gSplashScreenShown = NO;
  *
  * Returns the number of executed commands.
  */
-- (int) executeQueuedCommands
+- (int) executeCommandsFromJson:(NSString*)queuedCommandsJSON
 {
-    // Grab all the queued commands from the JS side.
-    NSString* queuedCommandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:
-									@"cordova.require('cordova/plugin/ios/nativecomm')()"];
-	
-	
     // Parse the returned JSON array.
     NSArray* queuedCommands = [queuedCommandsJSON cdvjk_mutableObjectFromJSONString];
 	
@@ -801,7 +797,10 @@ BOOL gSplashScreenShown = NO;
     // commands are executed as well.
     int numExecutedCommands = 0;
     do {
-        numExecutedCommands = [self executeQueuedCommands];
+        // Grab all the queued commands from the JS side.
+        NSString* queuedCommandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:
+                                        @"cordova.require('cordova/plugin/ios/nativecomm')()"];
+        numExecutedCommands = [self executeCommandsFromJson:queuedCommandsJSON];
     } while (numExecutedCommands != 0);
 	
     [self.webView stringByEvaluatingJavaScriptFromString:
@@ -1007,12 +1006,12 @@ BOOL gSplashScreenShown = NO;
 
 - (void)dealloc 
 {
+    [CDVURLProtocol unregisterViewController:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-    
 }
 
 @end

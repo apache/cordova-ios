@@ -55,7 +55,7 @@
 - (void) createGapView;
 - (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds;
 
-- (int) executeQueuedCommands;
+- (int) executeCommandsFromJson:(NSString*)queuedCommandsJSON;
 - (void) flushCommandQueue;
 
 - (void) javascriptAlert:(NSString*)text;

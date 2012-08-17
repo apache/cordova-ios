@@ -29,7 +29,6 @@
 #import "MainViewController.h"
 
 #import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVURLProtocol.h>
 
 
 @implementation AppDelegate
@@ -44,8 +43,6 @@
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage]; 
     [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
         
-    [CDVURLProtocol registerURLProtocol];
-    
     self = [super init];
     return self;
 }
