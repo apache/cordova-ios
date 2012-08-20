@@ -220,11 +220,14 @@
     }
     
     /*
-     * Fire up CDVLocalStorage to work-around iOS 5.1 WebKit storage limitations
+     * Fire up CDVLocalStorage on iOS 5.1 to work-around WebKit storage limitations, or adjust set user defaults on iOS 6.0+
      */
-
     if (backupWebStorage) {
-        [self.commandDelegate registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        if (IsAtLeastiOSVersion(@"6.0")) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitStoreWebDataForBackup"];
+        } else {
+            [self.commandDelegate registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        }
     }
     
     /*
