@@ -41,6 +41,8 @@
 
 @implementation CDVContacts
 
+dispatch_queue_t workQueue = nil;
+
 // no longer used since code gets AddressBook for each operation. 
 // If address book changes during save or remove operation, may get error but not much we can do about it
 // If address book changes during UI creation, display or edit, we don't control any saves so no need for callback
@@ -51,6 +53,12 @@
 	Contacts* contacts = (Contacts*)context;
 	[contacts addressBookDirty];
 }*/
++(void) initialize {
+    workQueue = dispatch_queue_create("contacts work queue", DISPATCH_QUEUE_SERIAL);
+}
++(dispatch_queue_t) getWorkQueue {
+    return workQueue;
+}
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
@@ -67,9 +75,12 @@
 // overridden to clean up Contact statics
 -(void)onAppTerminate
 {
-	//NSLog(@"Contacts::onAppTerminate");
+    //NSLog(@"Contacts::onAppTerminate");
 }
-
+-(void) dealloc
+{
+    dispatch_release(workQueue);
+}
 
 // iPhone only method to create a new contact through the GUI
 - (void) newContact:(CDVInvokedUrlCommand*)command
@@ -258,92 +269,99 @@
 
 - (void) search:(CDVInvokedUrlCommand*)command
 {
-	NSString* jsString = nil;
+
     NSString* callbackId = command.callbackId;
     NSArray* fields = [command.arguments objectAtIndex:0];
     NSDictionary* findOptions = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
 	
-	ABAddressBookRef  addrBook = nil;
-	NSArray* foundRecords = nil;
-
-	addrBook = ABAddressBookCreate();
-	// get the findOptions values
-	BOOL multiple = NO; // default is false
-	NSString* filter = nil;
-	if (![findOptions isKindOfClass:[NSNull class]]){
-		id value = nil;
-		filter = (NSString*)[findOptions objectForKey:@"filter"];
-		value = [findOptions objectForKey:@"multiple"];
-		if ([value isKindOfClass:[NSNumber class]]){
-			// multiple is a boolean that will come through as an NSNumber
-			multiple = [(NSNumber*)value boolValue];
-			//NSLog(@"multiple is: %d", multiple);
-		}
-	}
-
-	NSDictionary* returnFields = [[CDVContact class] calcReturnFields: fields];
-	
-	NSMutableArray* matches = nil;
-	if (!filter || [filter isEqualToString:@""]){ 
-		// get all records 
-		foundRecords = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
-		if (foundRecords && [foundRecords count] > 0){
-			// create Contacts and put into matches array
-            // doesn't make sense to ask for all records when multiple == NO but better check
-			int xferCount = multiple == YES ? [foundRecords count] : 1;
-			matches = [NSMutableArray arrayWithCapacity:xferCount];
-			for(int k = 0; k<xferCount; k++){
-				CDVContact* xferContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]];
-				[matches addObject:xferContact];
-				xferContact = nil;
-				
-			}
-		}
-	} else {
-		foundRecords = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
-		matches = [NSMutableArray arrayWithCapacity:1];
-		BOOL bFound = NO;
-		int testCount = [foundRecords count];
-		for(int j=0; j<testCount; j++){
-			CDVContact* testContact = [[CDVContact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]];
-			if (testContact){
-				bFound = [testContact foundValue:filter inFields:returnFields];
-				if(bFound){
-					[matches addObject:testContact];
-				}
-				testContact = nil;
-			}
-		}
-	}
-
-	NSMutableArray* returnContacts = [NSMutableArray arrayWithCapacity:1];
-	
-	if (matches != nil && [matches count] > 0){
-		// convert to JS Contacts format and return in callback
-        // - returnFields  determines what properties to return
-        @autoreleasepool {
-            int count = multiple == YES ? [matches count] : 1;
-            for(int i = 0; i<count; i++){
-                CDVContact* newContact = [matches objectAtIndex:i];
-                NSDictionary* aContact = [newContact toDictionary: returnFields];
-                [returnContacts addObject:aContact];
+    dispatch_async([CDVContacts getWorkQueue],^{
+        
+        // from Apple:  Important You must ensure that an instance of ABAddressBookRef is used by only one thread.
+        // which is why ABAddressBookCreate() is done within the dispatch queue.
+        // more details here: http: //blog.byadrian.net/2012/05/05/ios-addressbook-framework-and-gcd/
+        ABAddressBookRef  addrBook = ABAddressBookCreate();
+        
+        NSString* jsString = nil;
+        NSArray*  foundRecords = nil;
+        // get the findOptions values
+        BOOL multiple = NO; // default is false
+        NSString* filter = nil;
+        if (![findOptions isKindOfClass:[NSNull class]]){
+            id value = nil;
+            filter = (NSString*)[findOptions objectForKey:@"filter"];
+            value = [findOptions objectForKey:@"multiple"];
+            if ([value isKindOfClass:[NSNumber class]]){
+                // multiple is a boolean that will come through as an NSNumber
+                multiple = [(NSNumber*)value boolValue];
+                //NSLog(@"multiple is: %d", multiple);
             }
-		}
-	}
-	CDVPluginResult* result = nil;
-    // return found contacts (array is empty if no contacts found)
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: returnContacts];
-    jsString = [result toSuccessCallbackString:callbackId];
-    //NSLog(@"findCallback string: %@", jsString);
-	
+        }
+        
+        NSDictionary* returnFields = [[CDVContact class] calcReturnFields: fields];
+        
+        
+        NSMutableArray* matches = nil;
+        if (!filter || [filter isEqualToString:@""]){
+            // get all records
+            foundRecords = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
+            if (foundRecords && [foundRecords count] > 0){
+                // create Contacts and put into matches array
+                // doesn't make sense to ask for all records when multiple == NO but better check
+                int xferCount = multiple == YES ? [foundRecords count] : 1;
+                matches = [NSMutableArray arrayWithCapacity:xferCount];
+                for(int k = 0; k<xferCount; k++){
+                    CDVContact* xferContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]];
+                    [matches addObject:xferContact];
+                    xferContact = nil;
 
-	if(addrBook){
-		CFRelease(addrBook);
-	}
-	
-	if(jsString){
-		[self writeJavascript:jsString];
-    }
+                }
+            }
+        } else {
+            foundRecords = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addrBook);
+            matches = [NSMutableArray arrayWithCapacity:1];
+            BOOL bFound = NO;
+            int testCount = [foundRecords count];
+            for(int j=0; j<testCount; j++){
+                CDVContact* testContact = [[CDVContact alloc] initFromABRecord: (ABRecordRef)[foundRecords objectAtIndex:j]];
+                if (testContact){
+                    bFound = [testContact foundValue:filter inFields:returnFields];
+                    if(bFound){
+                        [matches addObject:testContact];
+                    }
+                    testContact = nil;
+                }
+            }
+        }
+        NSMutableArray* returnContacts = [NSMutableArray arrayWithCapacity:1];
+    
+        if (matches != nil && [matches count] > 0){
+            // convert to JS Contacts format and return in callback
+            // - returnFields  determines what properties to return
+            @autoreleasepool {
+                int count = multiple == YES ? [matches count] : 1;
+                for(int i = 0; i<count; i++){
+                    CDVContact* newContact = [matches objectAtIndex:i];
+                    NSDictionary* aContact = [newContact toDictionary: returnFields];
+                    [returnContacts addObject:aContact];
+                }
+            }
+        }
+        CDVPluginResult* result = nil;
+        // return found contacts (array is empty if no contacts found)
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: returnContacts];
+        jsString = [result toSuccessCallbackString:callbackId];
+        //NSLog(@"findCallback string: %@", jsString);
+
+        if(jsString){
+            dispatch_async(dispatch_get_main_queue(),^{
+                [self writeJavascript:jsString];
+            });
+        }
+        if(addrBook){
+            CFRelease(addrBook);
+        }
+    }); // end of workQueue block
+    
 	return;
 	
 	
@@ -352,65 +370,70 @@
 {
     NSString* callbackId = command.callbackId;
     NSDictionary* contactDict = [command.arguments objectAtIndex:0];
-	NSString* jsString = nil;
-	bool bIsError = FALSE, bSuccess = FALSE;
-	BOOL bUpdate = NO;
-	CDVContactError errCode = UNKNOWN_ERROR;
-	CFErrorRef error;
-	CDVPluginResult* result = nil;	
-	
-	ABAddressBookRef addrBook = ABAddressBookCreate();	
-	NSNumber* cId = [contactDict valueForKey:kW3ContactId];
-	CDVContact* aContact = nil; 
-	ABRecordRef rec = nil;
-	if (cId && ![cId isKindOfClass:[NSNull class]]){
-		rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
-		if (rec){
-			aContact = [[CDVContact alloc] initFromABRecord: rec ];
-			bUpdate = YES;
-		}
-	}
-	if (!aContact){
-		aContact = [[CDVContact alloc] init]; 			
-	}
-	
-	bSuccess = [aContact setFromContactDict: contactDict asUpdate: bUpdate];
-	if (bSuccess){
-		if (!bUpdate){
-			bSuccess = ABAddressBookAddRecord(addrBook, [aContact record], &error);
-		}
-		if (bSuccess) {
-			bSuccess = ABAddressBookSave(addrBook, &error);
-		}
-		if (!bSuccess){  // need to provide error codes
-			bIsError = TRUE;
-			errCode = IO_ERROR; 
-		} else {
-			
-			// give original dictionary back?  If generate dictionary from saved contact, have no returnFields specified
-			// so would give back all fields (which W3C spec. indicates is not desired)
-			// for now (while testing) give back saved, full contact
-			NSDictionary* newContact = [aContact toDictionary: [CDVContact defaultFields]];
-			//NSString* contactStr = [newContact JSONRepresentation];
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: newContact];
-			jsString = [result toSuccessCallbackString:callbackId];
-		}
-	} else {
-		bIsError = TRUE;
-		errCode = IO_ERROR; 
-	}
-	CFRelease(addrBook);
+
+    dispatch_async([CDVContacts getWorkQueue],^{
+        NSString* jsString = nil;
+        bool bIsError = FALSE, bSuccess = FALSE;
+        BOOL bUpdate = NO;
+        CDVContactError errCode = UNKNOWN_ERROR;
+        CFErrorRef error;
+        CDVPluginResult* result = nil;
+
+        ABAddressBookRef addrBook = ABAddressBookCreate();
+        NSNumber* cId = [contactDict valueForKey:kW3ContactId];
+        CDVContact* aContact = nil;
+        ABRecordRef rec = nil;
+        if (cId && ![cId isKindOfClass:[NSNull class]]){
+            rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
+            if (rec){
+                aContact = [[CDVContact alloc] initFromABRecord: rec ];
+                bUpdate = YES;
+            }
+        }
+        if (!aContact){
+            aContact = [[CDVContact alloc] init];
+        }
+
+        bSuccess = [aContact setFromContactDict: contactDict asUpdate: bUpdate];
+        if (bSuccess){
+            if (!bUpdate){
+                bSuccess = ABAddressBookAddRecord(addrBook, [aContact record], &error);
+            }
+            if (bSuccess) {
+                bSuccess = ABAddressBookSave(addrBook, &error);
+            }
+            if (!bSuccess){  // need to provide error codes
+                bIsError = TRUE;
+                errCode = IO_ERROR;
+            } else {
+
+                // give original dictionary back?  If generate dictionary from saved contact, have no returnFields specified
+                // so would give back all fields (which W3C spec. indicates is not desired)
+                // for now (while testing) give back saved, full contact
+                NSDictionary* newContact = [aContact toDictionary: [CDVContact defaultFields]];
+                //NSString* contactStr = [newContact JSONRepresentation];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: newContact];
+                jsString = [result toSuccessCallbackString:callbackId];
+            }
+        } else {
+            bIsError = TRUE;
+            errCode = IO_ERROR;
+        }
+        CFRelease(addrBook);
 		
-	if (bIsError){
-		result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt: errCode];
-		jsString = [result toErrorCallbackString:callbackId];
-	}
-	
-	if(jsString){
-		[self writeJavascript: jsString];
-		//[webView stringByEvaluatingJavaScriptFromString:jsString];
-	}
-	
+        if (bIsError){
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt: errCode];
+            jsString = [result toErrorCallbackString:callbackId];
+        }
+
+        if(jsString){
+            dispatch_async(dispatch_get_main_queue(),^{
+                [self writeJavascript:jsString];
+            });
+
+        }
+	});// end of  queue
+
 	
 }	
 - (void) remove:(CDVInvokedUrlCommand*)command
