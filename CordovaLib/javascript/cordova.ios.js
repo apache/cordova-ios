@@ -1,6 +1,6 @@
-// commit 3cd1e8438d90f1fb72ae6eac45d0dac3b0f6c6f6
+// commit 7b33b31a909a156f7d59db40c6a04fce1a476c46
 
-// File generated at :: Fri Aug 17 2012 12:30:31 GMT-0700 (PDT)
+// File generated at :: Mon Aug 20 2012 21:31:08 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -29,6 +29,10 @@ var require,
 
 (function () {
     var modules = {};
+    // Stack of moduleIds currently being built.
+    var requireStack = [];
+    // Map of module ID -> index into requireStack of modules currently being built.
+    var inProgressModules = {};
 
     function build(module) {
         var factory = module.factory;
@@ -41,8 +45,21 @@ var require,
     require = function (id) {
         if (!modules[id]) {
             throw "module " + id + " not found";
+        } else if (id in inProgressModules) {
+            var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
+            throw "Cycle in require graph: " + cycle;
         }
-        return modules[id].factory ? build(modules[id]) : modules[id].exports;
+        if (modules[id].factory) {
+            try {
+                inProgressModules[id] = requireStack.length;
+                requireStack.push(id);
+                return build(modules[id]);
+            } finally {
+                delete inProgressModules[id];
+                requireStack.pop();
+            }
+        }
+        return modules[id].exports;
     };
 
     define = function (id, factory) {
@@ -67,6 +84,7 @@ if (typeof module === "object" && typeof require === "function") {
     module.exports.require = require;
     module.exports.define = define;
 }
+
 // file: lib/cordova.js
 define("cordova", function(require, exports, module) {
 var channel = require('cordova/channel');
@@ -988,10 +1006,6 @@ iOSExec.setJsToNativeBridgeMode = function(mode) {
     if (execIframe) {
         execIframe.parentNode.removeChild(execIframe);
         execIframe = null;
-    }
-    if (mode && !cordova.iOSVCAddr) {
-        alert('ViewController not correctly initialized for XHR mode.');
-        mode = 0;
     }
     bridgeMode = mode;
 };
