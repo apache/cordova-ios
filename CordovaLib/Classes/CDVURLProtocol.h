@@ -19,18 +19,27 @@
 
 #import <Foundation/Foundation.h>
 
+@class CDVViewController;
+
 @interface CDVURLProtocol : NSURLProtocol {
 }
 
 + (void) registerPGHttpURLProtocol 
 #ifdef __clang__
-    __attribute__ ((deprecated("Renamed - use registerUrlProtocol instead.")));
+    __attribute__ ((deprecated("No longer required.")));
 #else
     __attribute__ ((deprecated()));
 #endif
 
-+ (void) registerURLProtocol;
++ (void) registerURLProtocol
+#ifdef __clang__
+    __attribute__ ((deprecated("No longer required.")));
+#else
+    __attribute__ ((deprecated()));
+#endif
 
++ (void)registerViewController:(CDVViewController*)viewController;
++ (void)unregisterViewController:(CDVViewController*)viewController;
 @end
 
 @interface CDVHTTPURLResponse : NSHTTPURLResponse {

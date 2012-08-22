@@ -18,7 +18,7 @@
 # under the License.
 #
 -->
-## Release Notes for Cordova ({VERSION})  ##
+## Release Notes for Cordova  ##
   
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 

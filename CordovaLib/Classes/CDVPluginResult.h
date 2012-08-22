@@ -36,12 +36,11 @@ typedef enum {
 
 }
 
-@property (nonatomic, retain, readonly) NSNumber* status;
-@property (nonatomic, retain, readonly) id message;
-@property (nonatomic, retain)			NSNumber* keepCallback;
+@property (nonatomic, strong, readonly) NSNumber* status;
+@property (nonatomic, strong, readonly) id message;
+@property (nonatomic, strong)			NSNumber* keepCallback;
 
 -(CDVPluginResult*) init;
-+(void) releaseStatus;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsString: (NSString*) theMessage;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsArray: (NSArray*) theMessage;
@@ -50,7 +49,8 @@ typedef enum {
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDictionary: (NSDictionary*) theMessage;
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageToErrorObject: (int) errorCode;
 
-
++(void) setVerbose:(BOOL)verbose;
++(BOOL) isVerbose;
  
 -(void) setKeepCallbackAsBool: (BOOL) bKeepCallback;
 
@@ -59,5 +59,4 @@ typedef enum {
 -(NSString*) toSuccessCallbackString: (NSString*) callbackId;
 -(NSString*) toErrorCallbackString: (NSString*) callbackId;
 
--(void) dealloc;
 @end

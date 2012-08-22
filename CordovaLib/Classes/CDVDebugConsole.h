@@ -25,6 +25,6 @@
 @interface CDVDebugConsole : CDVPlugin {
 }
 
-- (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)log:(CDVInvokedUrlCommand*)command;
 
 @end

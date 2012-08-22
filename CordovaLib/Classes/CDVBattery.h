@@ -31,11 +31,11 @@
 @property (nonatomic) UIDeviceBatteryState state;
 @property (nonatomic) float level;
 @property (nonatomic) bool isPlugged;
-@property (retain) NSString* callbackId;
+@property (strong) NSString* callbackId;
 
 - (void) updateBatteryStatus:(NSNotification*)notification;
 - (NSDictionary*) getBatteryStatus;
-- (void) start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) start:(CDVInvokedUrlCommand*)command;
+- (void) stop:(CDVInvokedUrlCommand*)command;
 - (void)dealloc;
 @end

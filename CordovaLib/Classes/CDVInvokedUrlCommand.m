@@ -29,7 +29,7 @@
 
 + (CDVInvokedUrlCommand*) commandFromJson:(NSArray*)jsonEntry
 {
-    return [[[CDVInvokedUrlCommand alloc] initFromJson:jsonEntry] autorelease];
+    return [[CDVInvokedUrlCommand alloc] initFromJson:jsonEntry];
 }
               
 - (id) initFromJson:(NSArray*)jsonEntry
@@ -52,10 +52,10 @@
 {
     self = [super init];
     if (self != nil) {
-        _arguments = [arguments retain];
-        _callbackId = [callbackId retain];
-        _className = [className retain];
-        _methodName = [methodName retain];
+        _arguments = arguments;
+        _callbackId = callbackId;
+        _className = className;
+        _methodName = methodName;
     }
     return self;
 }
@@ -77,15 +77,5 @@
     }
 }
 
-
-- (void) dealloc
-{
-    [_arguments release];
-    [_callbackId release];
-    [_className release];
-    [_methodName release];
-    
-    [super dealloc];
-}
 
 @end

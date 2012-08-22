@@ -33,7 +33,7 @@
         CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
         CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
 
-        app_uuid = [NSString stringWithString:(NSString*)uuidString];
+        app_uuid = [NSString stringWithString:(__bridge NSString*)uuidString];
         [userDefaults setObject:app_uuid forKey:UUID_KEY];
         [userDefaults synchronize];
         

@@ -1,6 +1,6 @@
-// commit 8c46a970a0719d0f16a225b75421ecf6f12dcc02
+// commit 7b33b31a909a156f7d59db40c6a04fce1a476c46
 
-// File generated at :: Sun Jul 29 2012 14:26:58 GMT-0400 (EDT)
+// File generated at :: Mon Aug 20 2012 21:31:08 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -29,6 +29,10 @@ var require,
 
 (function () {
     var modules = {};
+    // Stack of moduleIds currently being built.
+    var requireStack = [];
+    // Map of module ID -> index into requireStack of modules currently being built.
+    var inProgressModules = {};
 
     function build(module) {
         var factory = module.factory;
@@ -41,8 +45,21 @@ var require,
     require = function (id) {
         if (!modules[id]) {
             throw "module " + id + " not found";
+        } else if (id in inProgressModules) {
+            var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
+            throw "Cycle in require graph: " + cycle;
         }
-        return modules[id].factory ? build(modules[id]) : modules[id].exports;
+        if (modules[id].factory) {
+            try {
+                inProgressModules[id] = requireStack.length;
+                requireStack.push(id);
+                return build(modules[id]);
+            } finally {
+                delete inProgressModules[id];
+                requireStack.pop();
+            }
+        }
+        return modules[id].exports;
     };
 
     define = function (id, factory) {
@@ -67,6 +84,7 @@ if (typeof module === "object" && typeof require === "function") {
     module.exports.require = require;
     module.exports.define = define;
 }
+
 // file: lib/cordova.js
 define("cordova", function(require, exports, module) {
 var channel = require('cordova/channel');
@@ -207,10 +225,6 @@ var cordova = {
             window.dispatchEvent(evt);
         }
     },
-    // TODO: this is Android only; think about how to do this better
-    shuttingDown:false,
-    UsePolling:false,
-    // END TODO
 
     // TODO: iOS only
     // This queue holds the currently executing command and all pending
@@ -883,20 +897,42 @@ define("cordova/exec", function(require, exports, module) {
      * @private
      */
 var cordova = require('cordova'),
+    channel = require('cordova/channel'),
+    nativecomm = require('cordova/plugin/ios/nativecomm'),
     utils = require('cordova/utils'),
-    gapBridge,
-    createGapBridge = function() {
-
-        gapBridge = document.createElement("iframe");
-        gapBridge.setAttribute("style", "display:none;");
-        gapBridge.setAttribute("height","0px");
-        gapBridge.setAttribute("width","0px");
-        gapBridge.setAttribute("frameborder","0");
-        document.documentElement.appendChild(gapBridge);
+    jsToNativeModes = {
+        IFRAME_NAV: 0,
+        XHR_NO_PAYLOAD: 1,
+        XHR_WITH_PAYLOAD: 2,
+        XHR_OPTIONAL_PAYLOAD: 3
     },
-    channel = require('cordova/channel');
+    bridgeMode = jsToNativeModes.IFRAME_NAV,
+    execIframe,
+    execXhr;
 
-module.exports = function() {
+function createExecIframe() {
+    var iframe = document.createElement("iframe");
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    return iframe;
+}
+
+function shouldBundleCommandJson() {
+    if (bridgeMode == 2) {
+        return true;
+    }
+    if (bridgeMode == 3) {
+        var payloadLength = 0;
+        for (var i = 0; i < cordova.commandQueue.length; ++i) {
+            payloadLength += cordova.commandQueue[i].length;
+        }
+        // The value here was determined using the benchmark within CordovaLibApp on an iPad 3.
+        return payloadLength < 4500;
+    }
+    return false;
+}
+
+function iOSExec() {
     if (!channel.onCordovaReady.fired) {
         utils.alert("ERROR: Attempting to call cordova.exec()" +
               " before 'deviceready'. Ignoring.");
@@ -946,12 +982,35 @@ module.exports = function() {
     // commands to execute, unless the queue is currently being flushed, in
     // which case the command will be picked up without notification.
     if (cordova.commandQueue.length == 1 && !cordova.commandQueueFlushing) {
-        if (!gapBridge) {
-            createGapBridge();
+        if (bridgeMode) {
+            execXhr = execXhr || new XMLHttpRequest();
+            execXhr.open('HEAD', "file:///!gap_exec", true);
+            execXhr.setRequestHeader('vc', cordova.iOSVCAddr);
+            if (shouldBundleCommandJson()) {
+                execXhr.setRequestHeader('cmds', nativecomm());
+            }
+            execXhr.send(null);
+        } else {
+            execIframe = execIframe || createExecIframe();
+            execIframe.src = "gap://ready";
         }
-        gapBridge.src = "gap://ready";
     }
+}
+
+iOSExec.jsToNativeModes = jsToNativeModes;
+
+iOSExec.setJsToNativeBridgeMode = function(mode) {
+    // Remove the iFrame since it may be no longer required, and its existence
+    // can trigger browser bugs.
+    // https://issues.apache.org/jira/browse/CB-593
+    if (execIframe) {
+        execIframe.parentNode.removeChild(execIframe);
+        execIframe = null;
+    }
+    bridgeMode = mode;
 };
+
+module.exports = iOSExec;
 
 });
 
@@ -971,6 +1030,9 @@ module.exports = {
     objects: {
         File: { // exists natively, override
             path: "cordova/plugin/File"
+        },
+        FileReader: { // exists natively, override
+            path: "cordova/plugin/FileReader"
         },
         MediaError: { // exists natively, override
             path: "cordova/plugin/MediaError"
@@ -2982,7 +3044,6 @@ Media.prototype.stop = function() {
     var me = this;
     exec(function() {
         me._position = 0;
-        me.successCallback();
     }, this.errorCallback, "Media", "stopPlayingAudio", [this.id]);
 };
 
@@ -3028,14 +3089,14 @@ Media.prototype.getCurrentPosition = function(success, fail) {
  * Start recording audio file.
  */
 Media.prototype.startRecord = function() {
-    exec(this.successCallback, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
+    exec(null, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
 };
 
 /**
  * Stop recording audio file.
  */
 Media.prototype.stopRecord = function() {
-    exec(this.successCallback, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
+    exec(null, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
 };
 
 /**
@@ -3064,13 +3125,13 @@ Media.onStatus = function(id, msg, value) {
     var media = mediaObjects[id];
     // If state update
     if (msg === Media.MEDIA_STATE) {
+        if (media.statusCallback) {
+            media.statusCallback(value);
+        }
         if (value === Media.MEDIA_STOPPED) {
             if (media.successCallback) {
                 media.successCallback();
             }
-        }
-        if (media.statusCallback) {
-            media.statusCallback(value);
         }
     }
     else if (msg === Media.MEDIA_DURATION) {
@@ -4030,6 +4091,25 @@ module.exports = new Device();
 
 });
 
+// file: lib/common/plugin/echo.js
+define("cordova/plugin/echo", function(require, exports, module) {
+var exec = require('cordova/exec');
+
+/**
+ * Sends the given message through exec() to the Echo plugink, which sends it back to the successCallback.
+ * @param successCallback  invoked with a FileSystem object
+ * @param errorCallback  invoked if error occurs retrieving file system
+ * @param message  The string to be echoed.
+ * @param forceAsync  Whether to force an async return value (for testing native->js bridge).
+ */
+module.exports = function(successCallback, errorCallback, message, forceAsync) {
+    var action = forceAsync ? 'echoAsync' : 'echo';
+    exec(successCallback, errorCallback, "Echo", action, [message]);
+};
+
+
+});
+
 // file: lib/common/plugin/geolocation.js
 define("cordova/plugin/geolocation", function(require, exports, module) {
 var utils = require('cordova/utils'),
@@ -4478,10 +4558,20 @@ module.exports = {
          *    allowsEditing: boolean AS STRING
          *        "true" to allow editing the contact
          *        "false" (default) display contact
+         *      fields: array of fields to return in contact object (see ContactOptions.fields)
          *
-         * returns:  the id of the selected contact as param to successCallback
+         *    @returns
+         *        id of contact selected
+         *        ContactObject
+         *            if no fields provided contact contains just id information
+         *            if fields provided contact object contains information for the specified fields
+         *
          */
-        exec(successCallback, null, "Contacts","chooseContact", [options]);
+         var win = function(result) {
+             var fullContact = require('cordova/plugin/contacts').create(result);
+            successCallback(fullContact.id, fullContact);
+       };
+        exec(win, null, "Contacts","chooseContact", [options]);
     }
 };
 });

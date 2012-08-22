@@ -17,17 +17,7 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#import "CDVPlugin.h"
 
-@interface CDVWhitelist : NSObject
-
-@property (nonatomic, readonly, strong) NSArray* whitelist;
-@property (nonatomic, readonly, strong) NSArray* expandedWhitelist;
-@property (nonatomic, readonly, assign) BOOL allowAll;
-
-- (id) initWithArray:(NSArray*)array;
-- (BOOL) URLIsAllowed:(NSURL*)url;
-- (BOOL) schemeIsAllowed:(NSString*)scheme;
-- (NSString*) errorStringForURL:(NSURL*)url;
-
+@interface CDVEcho : CDVPlugin
 @end

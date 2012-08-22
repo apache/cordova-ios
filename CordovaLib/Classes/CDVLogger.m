@@ -23,10 +23,10 @@
 @implementation CDVLogger
 
 /* log a message */
-- (void) logLevel:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) logLevel:(CDVInvokedUrlCommand*)command
 {
-    id level   = [arguments objectAtIndex:1];
-    id message = [arguments objectAtIndex:2];
+    id level   = [command.arguments objectAtIndex:0];
+    id message = [command.arguments objectAtIndex:1];
 
     if ([level isEqualToString:@"LOG"]) {
         NSLog(@"%@", message);

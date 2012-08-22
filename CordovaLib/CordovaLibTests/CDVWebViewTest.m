@@ -29,6 +29,8 @@
 
 @implementation CDVWebViewTest
 
+@synthesize webView;
+
 - (void)setUp
 {
     [super setUp];

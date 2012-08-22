@@ -47,14 +47,6 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 									  @"Error",
 									  nil];
 }
-
-+(void) releaseStatus
-{
-	if (org_apache_cordova_CommandStatusMsgs != nil){
-		[org_apache_cordova_CommandStatusMsgs release];
-		org_apache_cordova_CommandStatusMsgs = nil;
-	}
-}
 		
 -(CDVPluginResult*) init
 {
@@ -73,38 +65,38 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 	
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal
 {
-	return [[[self alloc] initWithStatus: statusOrdinal message: [org_apache_cordova_CommandStatusMsgs objectAtIndex: statusOrdinal]] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: [org_apache_cordova_CommandStatusMsgs objectAtIndex: statusOrdinal]];
 }
 
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsString: (NSString*) theMessage
 {
-	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: theMessage];
 }
 
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsArray: (NSArray*) theMessage
 {
-	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: theMessage];
 }
 
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsInt: (int) theMessage
 {
-	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithInt: theMessage]] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithInt: theMessage]];
 }
 
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDouble: (double) theMessage
 {
-	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithDouble: theMessage]] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithDouble: theMessage]];
 }
 
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageAsDictionary: (NSDictionary*) theMessage
 {
-	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: theMessage];
 }
 
 +(CDVPluginResult*) resultWithStatus: (CDVCommandStatus) statusOrdinal messageToErrorObject: (int) errorCode 
 {
     NSDictionary* errDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errorCode] forKey:@"code"];
-	return [[[self alloc] initWithStatus: statusOrdinal message: errDict] autorelease];
+	return [[self alloc] initWithStatus: statusOrdinal message: errDict];
 }
 
 -(void) setKeepCallbackAsBool:(BOOL)bKeepCallback
@@ -119,7 +111,9 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
                                self.keepCallback, @"keepCallback",
                                nil] cdvjk_JSONString];
     
-	DLog(@"PluginResult:toJSONString - %@", resultString);
+    if ([[self class] isVerbose]) {
+        NSLog(@"PluginResult:toJSONString - %@", resultString);
+    }
 	return resultString;
 }
 
@@ -127,7 +121,9 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 {
 	NSString* successCB = [NSString stringWithFormat:@"cordova.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];			
 	
-	DLog(@"PluginResult toSuccessCallbackString: %@", successCB);
+    if ([[self class] isVerbose]) {
+        NSLog(@"PluginResult toSuccessCallbackString: %@", successCB);
+    }
 	return successCB;
 }
 
@@ -135,17 +131,22 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
 {
 	NSString* errorCB = [NSString stringWithFormat:@"cordova.callbackError('%@',%@);", callbackId, [self toJSONString]];
 	
-
-	DLog(@"PluginResult toErrorCallbackString: %@", errorCB);
+    if ([[self class] isVerbose]) {
+        NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
+    }
 	return errorCB;
-}	
-										 
--(void) dealloc
-{
-	status = nil;
-	message = nil;
-	keepCallback = nil;
-	
-	[super dealloc];
 }
+
+static BOOL gIsVerbose = NO;
++(void) setVerbose:(BOOL)verbose
+{
+    gIsVerbose = verbose;
+}
+
++(BOOL) isVerbose
+{
+    return gIsVerbose;
+}
+
+
 @end

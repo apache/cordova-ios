@@ -74,7 +74,7 @@ install: check-utils clean update-template
 		@defaults write com.apple.dt.Xcode IDESourceTreeDisplayNames -dict-add CORDOVALIB ""
 		@# rename the existing Xcode 4 template
 		@if [ -d $(EXISTING_XCODE4_TEMPLATE) ]; then \
-				@mv $(EXISTING_XCODE4_TEMPLATE) $(RENAMED_XCODE4_TEMPLATE) ; \
+				mv $(EXISTING_XCODE4_TEMPLATE) $(RENAMED_XCODE4_TEMPLATE) ; \
 		fi
 		@make clean
 		@echo -e "CordovaLib installed at: \033[33m$(CORDOVA_LIB)\033[m";
@@ -84,7 +84,7 @@ uninstall:
 		@$(RM_RF) ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/Cordova
 		@$(RM_RF) ~/Library/Developer/Xcode/Templates/Project\ Templates/Application/Cordova-based\ Application.xctemplate
 		@read -p "Delete all files in ~/Documents/CordovaLib/?: " ; \
-		@if [ "$$REPLY" == "y" ]; then \
+		if [ "$$REPLY" == "y" ]; then \
 			$(RM_RF) ~/Documents/CordovaLib/ ; \
 		fi	
 		@read -p "Delete the Cordova framework /Users/Shared/Cordova/Frameworks/Cordova.framework?: " ; \

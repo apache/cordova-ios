@@ -21,8 +21,8 @@
 
 @interface CDVWhitelist ()
 
-@property (nonatomic, readwrite, retain) NSArray* whitelist;
-@property (nonatomic, readwrite, retain) NSArray* expandedWhitelist;
+@property (nonatomic, readwrite, strong) NSArray* whitelist;
+@property (nonatomic, readwrite, strong) NSArray* expandedWhitelist;
 @property (nonatomic, readwrite, assign) BOOL allowAll;
 
 - (void) processWhitelist;
@@ -62,7 +62,7 @@
     }
     
     // restrict number parsing to 0-255
-    NSNumberFormatter* numberFormatter = [[[NSNumberFormatter alloc] init] autorelease];
+    NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setMinimum:[NSNumber numberWithUnsignedInteger:0]];
     [numberFormatter setMaximum:[NSNumber numberWithUnsignedInteger:255]];
     
@@ -79,6 +79,16 @@
     }
     
     return YES;
+}
+
+- (NSString*) extractHostFromUrlString:(NSString*)url
+{
+    NSURL* aUrl = [NSURL URLWithString:url];
+    if (aUrl != nil && [aUrl scheme] != nil) { // found scheme
+        return [aUrl host];
+    } else {
+        return url;
+    }
 }
 
 - (void) processWhitelist
@@ -100,7 +110,7 @@
     
     while (externalHost = [enumerator nextObject])
     {
-        NSString* regex = [[externalHost copy] autorelease];
+        NSString* regex = [self extractHostFromUrlString:externalHost];
         BOOL is_ip = [self isIPv4Address:regex];
         
         // check for single wildcard '*', if found set allowAll to YES

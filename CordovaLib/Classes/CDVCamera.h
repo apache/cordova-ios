@@ -49,15 +49,14 @@ typedef NSUInteger CDVMediaType;
 @property (copy)   NSString* postUrl;
 @property (nonatomic) enum CDVDestinationType returnType;
 @property (nonatomic) enum CDVEncodingType encodingType;
-@property (retain) UIPopoverController* popoverController; 
+@property (strong) UIPopoverController* popoverController;
 @property (assign) CGSize targetSize;
 @property (assign) bool correctOrientation;
 @property (assign) bool saveToPhotoAlbum;
 @property (assign) bool cropToSize;
-@property (retain) UIWebView* webView;
+@property (strong) UIWebView* webView;
 @property (assign) BOOL popoverSupported;
 
-- (void) dealloc;
 
 @end
 
@@ -69,7 +68,7 @@ typedef NSUInteger CDVMediaType;
 {
 }
 
-@property (retain) CDVCameraPicker* pickerController;
+@property (strong) CDVCameraPicker* pickerController;
 
 /*
  * getPicture
@@ -81,9 +80,9 @@ typedef NSUInteger CDVMediaType;
  * options:
  *	quality: integer between 1 and 100
  */
-- (void) takePicture:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) takePicture:(CDVInvokedUrlCommand*)command;
 - (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
-- (void) cleanup:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) cleanup:(CDVInvokedUrlCommand*)command;
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
@@ -93,7 +92,6 @@ typedef NSUInteger CDVMediaType;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 
 - (void) closePicker:(CDVCameraPicker*)picker __attribute__((deprecated));
-- (void) dealloc;
 
 @end
 

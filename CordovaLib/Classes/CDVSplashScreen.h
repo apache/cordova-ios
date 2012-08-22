@@ -24,7 +24,7 @@
 @interface CDVSplashScreen : CDVPlugin {
 }
 
-- (void) show:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) hide:(NSArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) show:(CDVInvokedUrlCommand*)command;
+- (void) hide:(CDVInvokedUrlCommand*)command;
 
 @end

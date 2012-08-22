@@ -70,7 +70,7 @@
         [self evalJs:@"localStorage.setItem('foo', 'bar')"];
         return [localStorage shouldBackup]; 
     }];
-    [localStorage backup:nil withDict:nil];
+    [localStorage backup:[CDVInvokedUrlCommand new]];
     STAssertFalse([localStorage shouldBackup], @"Should have backed up.");
     
     // It would be nice to be able to test that the restore functionality
@@ -81,7 +81,7 @@
     // Instead, we just test the file copying logic.
     [self deleteOriginals:YES backups:NO];
     STAssertTrue([localStorage shouldRestore], @"Should restore after deleting originals");
-    [localStorage restore:nil withDict:nil];
+    [localStorage restore:[CDVInvokedUrlCommand new]];
     STAssertFalse([localStorage shouldRestore], @"Restore did not complete successfully");    
 }
 

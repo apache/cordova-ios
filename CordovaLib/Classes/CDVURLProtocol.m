@@ -22,37 +22,66 @@
 #import "CDVViewController.h"
 
 static CDVWhitelist* gWhitelist = nil;
+// Contains a set of NSNumbers of addresses of controllers. It doesn't store
+// the actual pointer to avoid retaining.
+static NSMutableSet* gRegisteredControllers = nil;
 
 @implementation CDVURLProtocol
 
 + (void) registerPGHttpURLProtocol {
-    return [[self class] registerURLProtocol];
 }
 
-// Called before any use of the protocol, ensure it is only called once
 + (void) registerURLProtocol {
-    static BOOL registered = NO;
-    if (!registered) {
+}
+
+// Called to register the URLProtocol, and to make it away of an instance of
+// a ViewController.
++ (void)registerViewController:(CDVViewController*)viewController {
+    if (gRegisteredControllers == nil) {
         [NSURLProtocol registerClass:[CDVURLProtocol class]];
-        registered = YES;
+        gRegisteredControllers = [[NSMutableSet alloc] initWithCapacity:8];
+        // The whitelist doesn't change, so grab the first one and store it.
+        gWhitelist = viewController.whitelist;
+    }
+    @synchronized (gRegisteredControllers) {
+        [gRegisteredControllers addObject:[NSNumber numberWithLongLong:(long long)viewController]];
     }
 }
+
++ (void)unregisterViewController:(CDVViewController*)viewController {
+    [gRegisteredControllers removeObject:viewController];
+}
+
 
 + (BOOL) canInitWithRequest:(NSURLRequest *)theRequest
 {
     NSURL* theUrl = [theRequest URL];
     NSString* theScheme = [theUrl scheme];
     
-    if (gWhitelist == nil) {
-        id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
-        
-        if ([delegate respondsToSelector:@selector(viewController)]) {
-            id vc = [delegate performSelector:@selector(viewController)];
-            if ([vc isKindOfClass:[CDVViewController class]]) {
-                gWhitelist = [((CDVViewController*)vc).whitelist retain];
+    if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
+        NSString* viewControllerAddressStr = [theRequest valueForHTTPHeaderField:@"vc"];
+        if (viewControllerAddressStr == nil) {
+            NSLog(@"!cordova request missing vc header");
+            return NO;
+        }
+        long long viewControllerAddress = [viewControllerAddressStr longLongValue];
+        // Ensure that the CDVViewController has not been dealloc'ed.
+        @synchronized (gRegisteredControllers) {
+            if (![gRegisteredControllers containsObject:[NSNumber numberWithLongLong:viewControllerAddress]]) {
+                return NO;
+            }
+            CDVViewController* viewController = (__bridge CDVViewController*)(void *)viewControllerAddress;
+            
+            NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
+            if ([queuedCommandsJSON length] > 0) {
+                [viewController performSelectorOnMainThread:@selector(executeCommandsFromJson:) withObject:queuedCommandsJSON waitUntilDone:NO];
+            } else {
+                [viewController performSelectorOnMainThread:@selector(flushCommandQueue) withObject:nil waitUntilDone:NO];
             }
         }
-    }
+        return NO;
+	}
+    
     
     // we only care about http and https connections
 	if ([gWhitelist schemeIsAllowed:theScheme])
@@ -83,8 +112,7 @@ static CDVWhitelist* gWhitelist = nil;
     [[self client] URLProtocol:self didLoadData:[body dataUsingEncoding:NSASCIIStringEncoding]];
 
     [[self client] URLProtocolDidFinishLoading:self];                
-    
-    [response release];    
+
 }
 
 - (void) stopLoading
@@ -103,10 +131,10 @@ static CDVWhitelist* gWhitelist = nil;
 
 @implementation CDVHTTPURLResponse
 
-- (id) initWithUnauthorizedURL:(NSURL*)url
+- (id) initWithUnauthorizedURL:(__unsafe_unretained NSURL*)url
 {
     NSInteger statusCode = 401;
-    NSDictionary* headerFields = [NSDictionary dictionaryWithObject:@"Digest realm = \"Cordova.plist/ExternalHosts\"" forKey:@"WWW-Authenticate"];
+    NSDictionary* __unsafe_unretained headerFields = [NSDictionary dictionaryWithObject:@"Digest realm = \"Cordova.plist/ExternalHosts\"" forKey:@"WWW-Authenticate"];
     double requestTime = 1;
     
     SEL selector = NSSelectorFromString(@"initWithURL:statusCode:headerFields:requestTime:");

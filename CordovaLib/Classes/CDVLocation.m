@@ -20,6 +20,7 @@
 
 #import "CDVLocation.h"
 #import "CDVViewController.h"
+#import "NSArray+Comparisons.h"
 
 #pragma mark Constants
 
@@ -71,14 +72,6 @@
     }
     return self;
 }
--(void) dealloc 
-{
-    self.headingInfo = nil;
-    self.headingCallbacks = nil;
-    self.headingFilter = nil;
-    self.headingTimestamp = nil;
-    [super dealloc];  
-}
 
 @end
 
@@ -96,13 +89,6 @@
     }
     return self;
 }
--(void) dealloc 
-{
-    self.locationInfo = nil;
-    self.locationCallbacks = nil;
-    self.watchCallbacks = nil;
-    [super dealloc];  
-}
 
 @end
 
@@ -118,7 +104,7 @@
     self = (CDVLocation*)[super initWithWebView:(UIWebView*)theWebView];
     if (self) 
 	{
-        self.locationManager = [[[CLLocationManager alloc] init] autorelease];
+        self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self; // Tells the location manager to send updates to this object
         __locationStarted = NO;
         __highAccuracyEnabled = NO;
@@ -256,11 +242,11 @@
     }
 }
 
-- (void) getLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+- (void) getLocation:(CDVInvokedUrlCommand*)command
 {
-    NSUInteger argc = [arguments count];
-    NSString* callbackId = (argc > 0)? [arguments objectAtIndex:0] : @"INVALID";
-    BOOL enableHighAccuracy = [[arguments objectAtIndex:1] boolValue];
+
+    NSString* callbackId = command.callbackId;
+    BOOL enableHighAccuracy = [[command.arguments objectAtIndex:0] boolValue];
 
     if ([self isLocationServicesEnabled] == NO)
     {
@@ -271,7 +257,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!self.locationData) {
-            self.locationData = [[[CDVLocationData alloc] init] autorelease];
+            self.locationData = [[CDVLocationData alloc] init];
         }
         CDVLocationData* lData = self.locationData;
         if (!lData.locationCallbacks) {
@@ -289,14 +275,14 @@
         }
     }
 }
-- (void) addWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+- (void) addWatch:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* timerId = [arguments objectAtIndex:1];
-    BOOL enableHighAccuracy = [[arguments objectAtIndex:2] boolValue];
+    NSString* callbackId = command.callbackId;
+    NSString* timerId = [command.arguments objectAtIndex:0];
+    BOOL enableHighAccuracy = [[command.arguments objectAtIndex:1] boolValue];
     
     if (!self.locationData) {
-        self.locationData = [[[CDVLocationData alloc] init] autorelease];
+        self.locationData = [[CDVLocationData alloc] init];
     }
     CDVLocationData* lData = self.locationData;
     
@@ -321,16 +307,15 @@
         }
     }
 }
-- (void) clearWatch:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+- (void) clearWatch:(CDVInvokedUrlCommand*)command
 {
-    //NSString* callbackId = [arguments objectAtIndex:0];
-    NSString* timerId = [arguments objectAtIndex:1];
+    NSString* timerId = [command.arguments objectAtIndex:0];
     if (self.locationData && self.locationData.watchCallbacks && [self.locationData.watchCallbacks objectForKey:timerId]) {
         [self.locationData.watchCallbacks removeObjectForKey:timerId];
     }
 }
 
-- (void) stopLocation:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
+- (void) stopLocation:(CDVInvokedUrlCommand*)command
 {
     [self _stopLocation];
 }
@@ -384,12 +369,13 @@
 // called to get the current heading
 // Will call location manager to startUpdatingHeading if necessary
 
-- (void)getHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)getHeading:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0 withDefault:nil];
     NSNumber* filter = [options valueForKey:@"filter"];
     if (filter) {
-        [self watchHeadingFilter: arguments withDict: options];
+        [self watchHeadingFilter:command];
         return;
     }
     if ([self hasHeadingSupport] == NO) 
@@ -399,7 +385,7 @@
     } else {
         // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
-            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
+            self.headingData = [[CDVHeadingData alloc] init];
         }
         CDVHeadingData* hData = self.headingData;
 
@@ -421,9 +407,10 @@
     
 } 
 // called to request heading updates when heading changes by a certain amount (filter)
-- (void)watchHeadingFilter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)watchHeadingFilter:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = [arguments objectAtIndex:0];
+    NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0 withDefault:nil];
     NSNumber* filter = [options valueForKey:@"filter"];
     CDVHeadingData* hData = self.headingData;
     if ([self hasHeadingSupport] == NO) {
@@ -431,7 +418,7 @@
         [super writeJavascript:[result toErrorCallbackString:callbackId]];
     } else {
         if (!hData) {
-            self.headingData = [[[CDVHeadingData alloc] init] autorelease];
+            self.headingData = [[CDVHeadingData alloc] init];
             hData = self.headingData;
         }
         if (hData.headingStatus != HEADINGRUNNING) {
@@ -487,7 +474,7 @@
     
 }
 
-- (void) stopHeading:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void) stopHeading:(CDVInvokedUrlCommand*)command
 {
     //CDVHeadingData* hData = self.headingData;
     if (self.headingData && self.headingData.headingStatus != HEADINGSTOPPED)
@@ -559,7 +546,7 @@
     if (hData.headingFilter) {
         [self returnHeadingInfo: hData.headingFilter keepCallback:YES];
     } else if (bTimeout) {
-        [self stopHeading:nil withDict:nil];
+        [self stopHeading:nil];
     }
     hData.headingStatus = HEADINGRUNNING;  // to clear any error
     
@@ -613,9 +600,6 @@
 - (void) dealloc 
 {
 	self.locationManager.delegate = nil;
-	self.locationManager = nil;
-    self.headingData = nil;
-	[super dealloc];
 }
 
 @end

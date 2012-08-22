@@ -17,17 +17,16 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
 
-@interface CDVWhitelist : NSObject
+#import "CDVEcho.h"
+#import "CDV.h"
 
-@property (nonatomic, readonly, strong) NSArray* whitelist;
-@property (nonatomic, readonly, strong) NSArray* expandedWhitelist;
-@property (nonatomic, readonly, assign) BOOL allowAll;
+@implementation CDVEcho
 
-- (id) initWithArray:(NSArray*)array;
-- (BOOL) URLIsAllowed:(NSURL*)url;
-- (BOOL) schemeIsAllowed:(NSString*)scheme;
-- (NSString*) errorStringForURL:(NSURL*)url;
+- (void)echo:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[command.arguments objectAtIndex:0]];
+    [self success:pluginResult callbackId:command.callbackId];
+}
 
 @end
