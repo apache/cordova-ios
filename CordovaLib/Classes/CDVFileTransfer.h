@@ -53,6 +53,7 @@ extern NSString* const kOptionsKeyCookie;
                                   AndSource:(NSString*)source 
                                   AndTarget:(NSString*)target 
                                   AndHttpStatus:(int)httpStatus;
+@property (nonatomic, copy) NSMutableDictionary* activeTransfers;
 @end
 
 
@@ -62,6 +63,7 @@ extern NSString* const kOptionsKeyCookie;
 @property (strong) NSMutableData* responseData; // atomic
 @property (nonatomic, strong) CDVFileTransfer* command;
 @property (nonatomic, assign) CDVFileTransferDirection direction;
+@property (nonatomic, strong) NSURLConnection* connection;
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, copy) NSString* objectId;
 @property (nonatomic, copy) NSString* source;
