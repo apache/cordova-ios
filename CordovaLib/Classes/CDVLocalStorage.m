@@ -54,6 +54,9 @@
     return self;
 }
 
+#pragma mark -
+#pragma mark Plugin interface methods
+
 + (NSMutableArray*) createBackupInfo
 {
     NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:3];
@@ -113,9 +116,6 @@
     
     return backupInfo;
 }
-
-#pragma mark -
-#pragma mark Plugin interface methods
 
 + (BOOL) copyFrom:(NSString*)src to:(NSString*)dest error:(NSError* __autoreleasing*)error
 {
