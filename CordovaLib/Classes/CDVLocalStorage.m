@@ -41,79 +41,83 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResignActive) 
                                                      name:UIApplicationWillResignActiveNotification object:nil];
         
-        NSString *original, *backup;
-        self.backupInfo = [NSMutableArray arrayWithCapacity:3];
-        
-        // set up common folders
-        NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)objectAtIndex:0];
-        NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString* backupsFolder = [appDocumentsFolder stringByAppendingPathComponent:@"Backups"];
-        
-        // create the backups folder
-        [[NSFileManager defaultManager] createDirectoryAtPath:backupsFolder withIntermediateDirectories:YES attributes:nil error:nil];
-
-        //////////// LOCALSTORAGE
-        
-        original = [[appLibraryFolder stringByAppendingPathComponent:
-                                 (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/LocalStorage"]
-                                 stringByAppendingPathComponent:@"file__0.localstorage"]; 
-                                   
-        backup = [backupsFolder stringByAppendingPathComponent:@"localstorage.appdata.db"];
-        
-        CDVBackupInfo* backupItem = [[CDVBackupInfo alloc] init];
-        backupItem.backup = backup;
-        backupItem.original = original;
-        backupItem.label = @"localStorage database";
-        
-        [self.backupInfo addObject:backupItem];
-        
-        //////////// WEBSQL MAIN DB
-
-        original = [[appLibraryFolder stringByAppendingPathComponent:
-                     (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
-                    stringByAppendingPathComponent:@"Databases.db"]; 
-        
-        backup = [backupsFolder stringByAppendingPathComponent:@"websqlmain.appdata.db"];
-        
-        backupItem = [[CDVBackupInfo alloc] init];
-        backupItem.backup = backup;
-        backupItem.original = original;
-        backupItem.label = @"websql main database";
-        
-        [self.backupInfo addObject:backupItem];
-        
-        //////////// WEBSQL DATABASES
-        
-        original = [[appLibraryFolder stringByAppendingPathComponent:
-                     (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
-                    stringByAppendingPathComponent:@"file__0"]; 
-        
-        backup = [backupsFolder stringByAppendingPathComponent:@"websqldbs.appdata.db"];
-        
-        backupItem = [[CDVBackupInfo alloc] init];
-        backupItem.backup = backup;
-        backupItem.original = original;
-        backupItem.label = @"websql databases";
-        
-        [self.backupInfo addObject:backupItem];
-
-        ////////////
+        self.backupInfo = [[self class] createBackupInfo];
         
         // over-ride current webview delegate (for restore reasons)
         self.webviewDelegate = theWebView.delegate;
         theWebView.delegate = self;
         
         // verify the and fix the iOS 5.1 database locations once
-        [self verifyAndFixDatabaseLocations:nil];
+        [[self class] __verifyAndFixDatabaseLocations];
     }
     
     return self;
 }
 
++ (NSMutableArray*) createBackupInfo
+{
+    NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:3];
+    
+    // set up common folders
+    NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)objectAtIndex:0];
+    NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString* backupsFolder = [appDocumentsFolder stringByAppendingPathComponent:@"Backups"];
+    
+    // create the backups folder
+    [[NSFileManager defaultManager] createDirectoryAtPath:backupsFolder withIntermediateDirectories:YES attributes:nil error:nil];
+    
+    //////////// LOCALSTORAGE
+    
+    NSString *original = [[appLibraryFolder stringByAppendingPathComponent:
+                           (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/LocalStorage"]
+                          stringByAppendingPathComponent:@"file__0.localstorage"];
+    
+    NSString *backup = [backupsFolder stringByAppendingPathComponent:@"localstorage.appdata.db"];
+    
+    CDVBackupInfo* backupItem = [[CDVBackupInfo alloc] init];
+    backupItem.backup = backup;
+    backupItem.original = original;
+    backupItem.label = @"localStorage database";
+    
+    [backupInfo addObject:backupItem];
+    
+    //////////// WEBSQL MAIN DB
+    
+    original = [[appLibraryFolder stringByAppendingPathComponent:
+                 (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
+                stringByAppendingPathComponent:@"Databases.db"];
+    
+    backup = [backupsFolder stringByAppendingPathComponent:@"websqlmain.appdata.db"];
+    
+    backupItem = [[CDVBackupInfo alloc] init];
+    backupItem.backup = backup;
+    backupItem.original = original;
+    backupItem.label = @"websql main database";
+    
+    [backupInfo addObject:backupItem];
+    
+    //////////// WEBSQL DATABASES
+    
+    original = [[appLibraryFolder stringByAppendingPathComponent:
+                 (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
+                stringByAppendingPathComponent:@"file__0"];
+    
+    backup = [backupsFolder stringByAppendingPathComponent:@"websqldbs.appdata.db"];
+    
+    backupItem = [[CDVBackupInfo alloc] init];
+    backupItem.backup = backup;
+    backupItem.original = original;
+    backupItem.label = @"websql databases";
+    
+    [backupInfo addObject:backupItem];
+    
+    return backupInfo;
+}
+
 #pragma mark -
 #pragma mark Plugin interface methods
 
-- (BOOL) copyFrom:(NSString*)src to:(NSString*)dest error:(NSError* __autoreleasing*)error
++ (BOOL) copyFrom:(NSString*)src to:(NSString*)dest error:(NSError* __autoreleasing*)error
 {
     NSFileManager* fileManager = [NSFileManager defaultManager];
     
@@ -200,7 +204,7 @@
     {
         if ([info shouldBackup])
         {
-            [self copyFrom:info.original to:info.backup error:&error];
+            [[self class] copyFrom:info.original to:info.backup error:&error];
             
             if (callbackId) {
                 if (error == nil) {
@@ -235,7 +239,7 @@
     {
         if ([info shouldRestore])
         {
-            [self copyFrom:info.backup to:info.original error:&error];
+            [[self class] copyFrom:info.backup to:info.original error:&error];
             
             if (error == nil) {
                 message = [NSString stringWithFormat:@"Restored: %@", info.label];
@@ -253,11 +257,6 @@
             }
         }
     }
-}
-
-- (void) verifyAndFixDatabaseLocations:(CDVInvokedUrlCommand*)command
-{
-    [[self class] __verifyAndFixDatabaseLocations];
 }
 
 + (void) __verifyAndFixDatabaseLocations
@@ -310,6 +309,21 @@
         }
     }
     return dirty;    
+}
+
++ (void) __restoreThenRemoveBackupLocations
+{
+    NSMutableArray* backupInfo = [CDVLocalStorage createBackupInfo];
+    NSFileManager* manager = [NSFileManager defaultManager];
+    
+    for (CDVBackupInfo* info in backupInfo)
+    {
+        if ([manager fileExistsAtPath:info.backup]) {
+            [self copyFrom:info.backup to:info.original error:nil];
+            [manager removeItemAtPath:info.backup error:nil];
+            NSLog(@"Removing old webstorage backup locations: %@", info.backup);
+        }
+    }
 }
 
 #pragma mark -

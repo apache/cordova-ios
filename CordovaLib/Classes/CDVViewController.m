@@ -222,11 +222,15 @@
     /*
      * Fire up CDVLocalStorage on iOS 5.1 to work-around WebKit storage limitations, or adjust set user defaults on iOS 6.0+
      */
-    if (backupWebStorage) {
-        if (IsAtLeastiOSVersion(@"6.0")) {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitStoreWebDataForBackup"];
-        } else {
+    if (IsAtLeastiOSVersion(@"6.0")) {
+        [[NSUserDefaults standardUserDefaults] setBool:backupWebStorage forKey:@"WebKitStoreWebDataForBackup"];
+        // We don't manually back anything up in 6.0 and so we should remove any old backups.
+        [CDVLocalStorage __restoreThenRemoveBackupLocations];
+    } else {
+        if (backupWebStorage) {
             [self.commandDelegate registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        } else {
+            [CDVLocalStorage __restoreThenRemoveBackupLocations];
         }
     }
     

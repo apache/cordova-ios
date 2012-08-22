@@ -30,13 +30,13 @@
 - (BOOL) shouldRestore;
 - (void) backup:(CDVInvokedUrlCommand*)command;
 - (void) restore:(CDVInvokedUrlCommand*)command;
-- (void) verifyAndFixDatabaseLocations:(CDVInvokedUrlCommand*)command;
 
 + (void) __verifyAndFixDatabaseLocations;
 // Visible for testing.
 + (BOOL) __verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
                                               bundlePath:(NSString*)bundlePath
                                              fileManager:(NSFileManager*)fileManager;
++ (void) __restoreThenRemoveBackupLocations;
 @end
 
 @interface CDVBackupInfo : NSObject
