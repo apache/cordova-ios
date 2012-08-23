@@ -72,7 +72,7 @@
     //////////// LOCALSTORAGE
     
     NSString *original = [[appLibraryFolder stringByAppendingPathComponent:
-                           (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/LocalStorage"]
+                           (IsAtLeastiOSVersion(@"5.1") && !IsAtLeastiOSVersion(@"6.0")) ? @"Caches" : @"WebKit/LocalStorage"]
                           stringByAppendingPathComponent:@"file__0.localstorage"];
     
     NSString *backup = [backupsFolder stringByAppendingPathComponent:@"localstorage.appdata.db"];
@@ -87,7 +87,7 @@
     //////////// WEBSQL MAIN DB
     
     original = [[appLibraryFolder stringByAppendingPathComponent:
-                 (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
+                 (IsAtLeastiOSVersion(@"5.1") && !IsAtLeastiOSVersion(@"6.0")) ? @"Caches" : @"WebKit/Databases"]
                 stringByAppendingPathComponent:@"Databases.db"];
     
     backup = [backupsFolder stringByAppendingPathComponent:@"websqlmain.appdata.db"];
@@ -102,7 +102,7 @@
     //////////// WEBSQL DATABASES
     
     original = [[appLibraryFolder stringByAppendingPathComponent:
-                 (IsAtLeastiOSVersion(@"5.1")) ? @"Caches" : @"WebKit/Databases"]
+                 (IsAtLeastiOSVersion(@"5.1") && !IsAtLeastiOSVersion(@"6.0")) ? @"Caches" : @"WebKit/Databases"]
                 stringByAppendingPathComponent:@"file__0"];
     
     backup = [backupsFolder stringByAppendingPathComponent:@"websqldbs.appdata.db"];
@@ -150,7 +150,12 @@
     // remove the dest
     if (destExists && ![fileManager removeItemAtPath:dest error:error]) { 
         return NO;
-    } 
+    }
+    
+    // create path to dest
+    if (!destExists && ![fileManager createDirectoryAtPath:[dest stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:error]) {
+        return NO;
+    }
     
     // copy src to dest
     if ([fileManager copyItemAtPath:src toPath:dest error:error]) {
@@ -321,7 +326,7 @@
         if ([manager fileExistsAtPath:info.backup]) {
             [self copyFrom:info.backup to:info.original error:nil];
             [manager removeItemAtPath:info.backup error:nil];
-            NSLog(@"Removing old webstorage backup locations: %@", info.backup);
+            NSLog(@"Restoring, then removing old webstorage backup. From: '%@' To: '%@'.", info.backup, info.original);
         }
     }
 }
