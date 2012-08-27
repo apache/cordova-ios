@@ -289,6 +289,11 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     CDVFileTransferDelegate *delegate = [activeTransfers objectForKey:objectId];
     [delegate.connection cancel];
     [activeTransfers removeObjectForKey:objectId];
+    
+    CDVPlugin Result *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
+    
+    [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
+
 }
 
 - (void) download:(CDVInvokedUrlCommand*)command {
@@ -336,7 +341,6 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     delegate.target = filePath;
 	
     delegate.connection = [NSURLConnection connectionWithRequest:req delegate:delegate];
-    [activeTransfers setObject: delegate forKey:delegate.objectId];
     
     if (activeTransfers == nil) {
         activeTransfers = [[NSMutableDictionary alloc] init];

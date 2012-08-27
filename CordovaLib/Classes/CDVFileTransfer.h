@@ -24,7 +24,8 @@
 enum CDVFileTransferError {
 	FILE_NOT_FOUND_ERR = 1,
     INVALID_URL_ERR = 2,
-    CONNECTION_ERR = 3
+    CONNECTION_ERR = 3,
+    CONNECTION_ABORTED = 4
 };
 typedef int CDVFileTransferError;
 
@@ -53,7 +54,7 @@ extern NSString* const kOptionsKeyCookie;
                                   AndSource:(NSString*)source 
                                   AndTarget:(NSString*)target 
                                   AndHttpStatus:(int)httpStatus;
-@property (nonatomic, copy) NSMutableDictionary* activeTransfers;
+@property (readonly) NSMutableDictionary* activeTransfers;
 @end
 
 
