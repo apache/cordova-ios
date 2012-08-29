@@ -19,6 +19,7 @@
 
 #import "CDVCapture.h"
 #import "JSONKit.h"
+#import "CDVAvailability.h"
 #import "CDVViewController.h"
 
 #define kW3CMediaFormatHeight @"height"
@@ -532,15 +533,6 @@
 @implementation CDVAudioRecorderViewController
 @synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer, isTimed;
 
-- (BOOL) isIPad 
-{
-#ifdef UI_USER_INTERFACE_IDIOM
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
-#else
-    return NO;
-#endif
-}
-
 - (NSString*) resolveImageResource:(NSString*)resource
 {
 	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
@@ -551,7 +543,7 @@
 	if (isLessThaniOS4)
 	{
 		NSString* iPadResource = [NSString stringWithFormat:@"%@~ipad.png", resource];
-        if ([self isIPad] && [UIImage imageNamed:iPadResource]) {
+        if (IsIPad() && [UIImage imageNamed:iPadResource]) {
             return iPadResource;
 		} else {
 			return [NSString stringWithFormat:@"%@.png", resource];

@@ -35,7 +35,6 @@
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSDictionary* settings;
 @property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
-@property (nonatomic, readonly, strong) NSArray* supportedOrientations;
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 @property (nonatomic, readwrite, copy) NSString* invokeString __attribute__ ((deprecated));
 
@@ -62,5 +61,6 @@
 - (NSString*) appURLScheme;
 
 - (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
+- (BOOL) supportsOrientation:(UIInterfaceOrientation)orientation;
 
 @end
