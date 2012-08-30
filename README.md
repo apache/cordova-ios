@@ -46,7 +46,7 @@ Create a Cordova project
 
 1. Launch **Terminal.app**
 2. Go to the location where you installed Cordova, in the **bin** sub-folder
-3. Follow the instructions in the [**Command-Line Usage** section](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.phonegap.com](http://docs.phonegap.com)
+3. Follow the instructions in the [**Command-Line Usage** section](http://docs.cordova.io/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.cordova.io](http://docs.cordova.io)
 
 The docs should also have been included in the distribution.
 
@@ -116,7 +116,7 @@ This can be because of:
 
 1. You did not add the plugin mapping in __Cordova.plist/Plugins__ (contact the plugin creator for the proper mapping). The __key__ is the service name used in the JavaScript interface and the __value__ is the classname used in the Objective-C interface. Often the key and value are the same.
 2. You did _not_ add the plugin code as a "group" (__yellow__ folder) but added it as a "folder reference" (blue folder) 
-3. You are having #import problems - see the [Upgrading Cordova iOS](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document
+3. You are having #import problems - see the [Upgrading Cordova iOS](http://docs.cordova.io/en/edge/guide_upgrading_index.md.html) document
 
 <br />  
 
@@ -136,7 +136,7 @@ This includes external http/https/ftp/ftps links in:
 
 **5. How do I effectively upgrade my project?**
 
-Starting with Cordova 1.4, follow the instructions in the [**"Upgrading Cordova iOS"** document](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html).
+Starting with Cordova 1.4, follow the instructions in the [**"Upgrading Cordova iOS"** document](http://docs.cordova.io/en/edge/guide_upgrading_index.md.html).
 
 <br />
 
@@ -165,7 +165,7 @@ Note that Xcode template support has  been removed in 2.0.0.
 
 The CordovaLib static library is only used by the older subproject-based template. The Xcode 4 template uses Cordova.framework (a static framework) because of Xcode 4's template limitations. Both are based off the same code, just packaged differently.
 
-Staring with 2.0.0, you must create projects [using the command line](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage):
+Staring with 2.0.0, you must create projects [using the command line](http://docs.cordova.io/en/edge/guide_command-line_index.md.html#Command-Line%20Usage):
 
 <br />
 

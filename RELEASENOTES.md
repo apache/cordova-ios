@@ -125,7 +125,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Updated CB-957 - Include Xcode 4 requirement
 * Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
 * [CB-765] Header Support iOS FileTransfer upload
-* Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.phonegap.com now
+* Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.cordova.io now
 * [CB-863] Splash screen on iOS not using localized UILaunchImageFile value
   
 <br />

@@ -23,7 +23,7 @@
 ## Plugins
 
 * Plugins **MUST** add their plugin mapping to their app's Cordova.plist Plugins key, if not they will not work (see your plugin's README)
-* Plugins **MUST** add any external hosts they connect to to the white-list in Cordova.plist/ExternalHosts (add hostnames **only**, NO protocols nor paths) - see the [**Domain Whitelist Guide**](http://docs.phonegap.com/en/edge/guide_whitelist_index.md.html#Domain%20Whitelist%20Guide)
+* Plugins **MUST** add any external hosts they connect to to the white-list in Cordova.plist/ExternalHosts (add hostnames **only**, NO protocols nor paths) - see the [**Domain Whitelist Guide**](http://docs.cordova.io/en/edge/guide_whitelist_index.md.html#Domain%20Whitelist%20Guide)
 * A plugin's Objective-C code **MUST** be added to the project properly in a "group" (**YELLOW** folder), if you incorrectly added it as a folder reference it would be a blue folder (just delete the reference, and re-add)
 * A lot of plugins have changed their mapping names in **Cordova.plist**, you might have to copy and use the new **Cordova.plist** in your app.
 
@@ -37,7 +37,7 @@ Please see the **Cordova Plugin Upgrade Guide.md** document included in the **gu
 
 ## Project Upgrades
 	
-1. Please see the [**Upgrading Cordova iOS**](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document on [http://docs.phonegap.com](http://docs.phonegap.com)
+1. Please see the [**Upgrading Cordova iOS**](http://docs.cordova.io/en/edge/guide_upgrading_index.md.html) document on [http://docs.cordova.io](http://docs.cordova.io)
 2. See the FAQ in the README.md as well included in the source distribution
 
 <br />
@@ -48,7 +48,7 @@ Please see the instructions in the **README.md** document included in the source
 
 ## Creating a new Cordova-based project
 
-Follow the instructions in the [**Command-Line Usage** section](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.phonegap.com](http://docs.phonegap.com)
+Follow the instructions in the [**Command-Line Usage** section](http://docs.cordova.io/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.cordova.io](http://docs.cordova.io)
 
 <br />
 
