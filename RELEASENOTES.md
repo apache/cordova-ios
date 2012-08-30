@@ -22,6 +22,49 @@
   
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 2.1.0rc1 (20120824) ###
+
+* [CB-45] Add support for full urls in white-list, extract hostname
+* [CB-274] iOS Cordova Template Project is not compilable with default Apple's ARC compiler 3.0
+* [CB-593] Click and touch events do not fire after using scroll CSS
+* [CB-675] Allow multiple versions of PhoneGap to be installed in Xcode (added bin/update_cordova_subproject script)
+* [CB-828] iOS contact.save() stucks the UI from updating on heavy load & has memory leaks.
+* [CB-903] iOS 6 - add setting to set WebKitStoreWebDataForBackup for user defaults from Cordova.plist/config.xml
+* [CB-904] iOS 6 - turn off CDVLocalStorage core plugin when on iOS 6
+* [CB-994] CDVLocalStorage core plugin does not fully backup when app setting "Application does not run in background" is YES
+* [CB-1000] Namespace issue of JSONKit and other external libraries
+* [CB-1091] Removed installer and related dependencies. Moved original post-install script into makefile under "install" target (which is default target).
+* [CB-1091] Added check for if xcode is running, and throw error if it is.
+* [CB-1105] Add JSONKit doc issue for iOS Plugin Upgrade Guide
+* [CB-1106] Deprecate old plugin signature
+* [CB-1136] symlink to bin/create script fails
+* [CB-1137] emulate and log script failure when launched from external working directory
+* [CB-1138] Default logging level for file access should not log file contents.
+* [CB-1149] hello-world sample web app is missing lib folder, in a newly created app
+* [CB-1124] "create" script (and possibly others) provided in bin directory do not escape arguments
+* [CB-1164] Fix warnings and analyzer issues reported with the newer LLVM in Xcode 4.4
+* [CB-1166] Remove dependency on VERSION file
+* [CB-1173] Clean up default project template
+* [CB-1186] Update README.md, FirstRun.md for new install method
+* [CB-1187] Move the Objective-C unit-tests out of CordovaLib.xcodeproj, into its own .xcodeproj
+* [CB-1188] Update Plugin Upgrade Guide for new iOS plugin signature (old one still supported, but deprecated)
+* [CB-1190] Crash when contacts are edited (mass edit)
+* [CB-1192] Update template to set GCC_THUMB_SUPPORT=NO in Build Settings
+* [CB-1209] CDVViewController.supportedOrientations not set in a timely fashion
+* [CB-1223] CORDOVALIB Xcode variable - allow this to be read in from xcodebuild cli
+* [GH-PR 34] Refactor chooseContact() to retrieve contact information instead of just a contactId.
+* [GH-PR 35] Enhances iOS FileTransfer's support for upload headers
+* Change default wire format of exec handler (was iframe, now xhr) see [CB-593].
+* Update all core plugins to new exec format (new plugin signature, old one deprecated per deprecation policy)
+* Split out CordovaLibApp and CordovaTests into a separate Xcode project.
+* Add a benchmark into CordovaLibApp for measuring exec() speed.
+* Added Echo plugin (for benchmarking) into CordovaLib
+* Support JS->Native messages via an XHR & URL Protocol see [CB-593]
+* Refactor peoplePickerNavigationControllerDidCancel, always return dictionnary with id kABRecordInvalidID.
+* Deployment target for CordovaLib was not updated to 4.2 (we changed it in the template, but not the lib)
+
+<br />
+
 ### 2.0.0 (20120720) ###
 
 * [CB-38] Add support for chunked uploads to FileTransfer plugin.
