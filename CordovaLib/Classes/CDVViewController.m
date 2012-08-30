@@ -51,9 +51,8 @@
     if (self != nil && !self.initialized) 
     {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange)
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillTerminate:) 
                                                      name:UIApplicationWillTerminateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillResignActive:) 
@@ -302,58 +301,67 @@
     return result;
 }
 
+- (NSInteger) mapIosOrientationToJsOrientation:(UIInterfaceOrientation)orientation
+{
+    switch (orientation) {
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return 180;
+        case UIInterfaceOrientationLandscapeLeft:
+            return -90;
+        case UIInterfaceOrientationLandscapeRight:
+            return 90;
+        case UIInterfaceOrientationPortrait:
+            return 0;
+        default:
+            return 0;
+    }
+}
+
 - (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
-	// First ask the webview via JS if it wants to support the new orientation -jm
-	int i = 0;
-	
-	switch (interfaceOrientation){
-            
-		case UIInterfaceOrientationPortraitUpsideDown:
-			i = 180;
-			break;
-		case UIInterfaceOrientationLandscapeLeft:
-			i = -90;
-			break;
-		case UIInterfaceOrientationLandscapeRight:
-			i = 90;
-			break;
-		default:
-		case UIInterfaceOrientationPortrait:
-			// noop
-			break;
-	}
-	
+	// First, ask the webview via JS if it supports the new orientation
 	NSString* jsCall = [NSString stringWithFormat:
                         @"(function(){ \
                                 if('shouldRotateToOrientation' in window) { \
                                     return window.shouldRotateToOrientation(%d); \
                                 } \
                             })()"
-                        , i];
+                        , [self mapIosOrientationToJsOrientation:interfaceOrientation]];
 	NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
 	
-	if([res length] > 0)
-	{
+	if([res length] > 0) {
 		return [res boolValue];
 	}
 	
-	// if js did not handle the new orientation ( no return value ) we will look it up in the plist -jm
-	
-	BOOL autoRotate = [self.supportedOrientations count] > 0; // autorotate if only more than 1 orientation supported
-	if (autoRotate)
-	{
-		if ([self.supportedOrientations containsObject:
-			 [NSNumber numberWithInt:interfaceOrientation]]) {
-			return YES;
-		}
-    }
-	
-	// default return value is NO! -jm
-	
-	return NO;
+	// if js did not handle the new orientation (no return value), use values from the plist (via supportedOrientations)
+	return [self supportsOrientation:interfaceOrientation];
 }
 
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    NSUInteger ret = 0;
+    
+    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationPortrait])
+        ret = ret | (1 << UIInterfaceOrientationPortrait);
+    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown])
+        ret = ret | (1 << UIInterfaceOrientationPortraitUpsideDown);
+    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight])
+        ret = ret | (1 << UIInterfaceOrientationLandscapeRight);
+    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft])
+        ret = ret | (1 << UIInterfaceOrientationLandscapeLeft);
+    
+    return ret;
+}
+
+- (BOOL) supportsOrientation:(UIInterfaceOrientation)orientation
+{
+    return [self.supportedOrientations containsObject:[NSNumber numberWithInt:orientation]];
+}
 
 /**
  Called by UIKit when the device starts to rotate to a new orientation.  This fires the \c setOrientation
@@ -361,28 +369,11 @@
  */
 - (void)didRotateFromInterfaceOrientation: (UIInterfaceOrientation)fromInterfaceOrientation
 {
-	int i = 0;
-	
-	switch (self.interfaceOrientation){
-		case UIInterfaceOrientationPortrait:
-			i = 0;
-			break;
-		case UIInterfaceOrientationPortraitUpsideDown:
-			i = 180;
-			break;
-		case UIInterfaceOrientationLandscapeLeft:
-			i = -90;
-			break;
-		case UIInterfaceOrientationLandscapeRight:
-			i = 90;
-			break;
-	}
-    
     if (!IsAtLeastiOSVersion(@"5.0")) {
         NSString* jsCallback = [NSString stringWithFormat:
                                 @"window.__defineGetter__('orientation',function(){ return %d; }); \
                                   cordova.fireWindowEvent('orientationchange');"
-                                , i];
+                                , [self mapIosOrientationToJsOrientation:fromInterfaceOrientation]];
         [self.webView stringByEvaluatingJavaScriptFromString:jsCallback];    
     }
 }
@@ -471,7 +462,6 @@
         self.activityView.hidden = YES;    
         [self.view.superview bringSubviewToFront:self.webView];
     }
-    
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
     
     // Tell the webview that native is ready.
@@ -585,15 +575,6 @@
     [webView stringByEvaluatingJavaScriptFromString:jsString];
 }
 
-+ (BOOL) isIPad 
-{
-#ifdef UI_USER_INTERFACE_IDIOM
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
-#else
-    return NO;
-#endif
-}
-
 + (NSString*) resolveImageResource:(NSString*)resource
 {
     NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
@@ -602,7 +583,7 @@
     // the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
     if (isLessThaniOS4)
     {
-        if ([[self class] isIPad]) {
+        if (IsIPad()) {
             return [NSString stringWithFormat:@"%@~ipad.png", resource];
         } else {
             return [NSString stringWithFormat:@"%@.png", resource];
@@ -649,13 +630,12 @@
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
     UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-    BOOL isIPad = [[self class] isIPad];
     UIImage* launchImage = nil;
     
     // default to center of screen as in the original implementation. This will produce the 20px jump
     CGPoint center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
-    
-    if (isIPad)
+
+    if (IsIPad())
     {
         if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
             deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
@@ -701,7 +681,7 @@
     
     launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
     if (launchImage == nil) {
-        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
+        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, IsIPad());
     }
     
     self.imageView = [[UIImageView alloc] initWithImage:launchImage];

@@ -61,3 +61,9 @@
                         (CORDOVA_VERSION_MIN_REQUIRED / 10000), \
                         (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100, \
                         (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100 ]
+
+#ifdef UI_USER_INTERFACE_IDIOM
+#define IsIPad() (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+#else
+#define IsIPad() NO
+#endif
