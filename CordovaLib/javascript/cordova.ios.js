@@ -1,6 +1,6 @@
-// commit 69d652e9dcaaaf4bdaa55ec37329636dd5b20fbe
+// commit 660a77244d145fc28ebda5fbd5ada63e49246e49
 
-// File generated at :: Fri Aug 24 2012 16:42:37 GMT-0700 (PDT)
+// File generated at :: Thu Aug 30 2012 10:02:33 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -907,7 +907,10 @@ var cordova = require('cordova'),
         XHR_WITH_PAYLOAD: 2,
         XHR_OPTIONAL_PAYLOAD: 3
     },
-    bridgeMode = jsToNativeModes.XHR_OPTIONAL_PAYLOAD,
+    // XHR mode does not work on iOS 4.2, so default to IFRAME_NAV for such devices.
+    // XHR mode's main advantage is working around a bug in -webkit-scroll, which 
+    // doesn't exist in 4.X devices anyways.
+    bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_OPTIONAL_PAYLOAD : jsToNativeModes.IFRAME_NAV,
     execIframe,
     execXhr;
 
@@ -985,6 +988,8 @@ function iOSExec() {
     if (cordova.commandQueue.length == 1 && !cordova.commandQueueFlushing) {
         if (bridgeMode) {
             execXhr = execXhr || new XMLHttpRequest();
+            // Changeing this to a GET will make the XHR reach the URIProtocol on 4.2.
+            // For some reason it still doesn't work though...
             execXhr.open('HEAD', "file:///!gap_exec", true);
             execXhr.setRequestHeader('vc', cordova.iOSVCAddr);
             if (shouldBundleCommandJson()) {
