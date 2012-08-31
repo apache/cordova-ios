@@ -1,6 +1,6 @@
-// commit 69d652e9dcaaaf4bdaa55ec37329636dd5b20fbe
+// commit 2aa46aa0eef2ba641cf91793735152d7fb5b6998
 
-// File generated at :: Fri Aug 24 2012 16:42:37 GMT-0700 (PDT)
+// File generated at :: Fri Aug 31 2012 14:28:26 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -29,10 +29,6 @@ var require,
 
 (function () {
     var modules = {};
-    // Stack of moduleIds currently being built.
-    var requireStack = [];
-    // Map of module ID -> index into requireStack of modules currently being built.
-    var inProgressModules = {};
 
     function build(module) {
         var factory = module.factory;
@@ -45,21 +41,8 @@ var require,
     require = function (id) {
         if (!modules[id]) {
             throw "module " + id + " not found";
-        } else if (id in inProgressModules) {
-            var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
-            throw "Cycle in require graph: " + cycle;
         }
-        if (modules[id].factory) {
-            try {
-                inProgressModules[id] = requireStack.length;
-                requireStack.push(id);
-                return build(modules[id]);
-            } finally {
-                delete inProgressModules[id];
-                requireStack.pop();
-            }
-        }
-        return modules[id].exports;
+        return modules[id].factory ? build(modules[id]) : modules[id].exports;
     };
 
     define = function (id, factory) {
@@ -84,7 +67,6 @@ if (typeof module === "object" && typeof require === "function") {
     module.exports.require = require;
     module.exports.define = define;
 }
-
 // file: lib/cordova.js
 define("cordova", function(require, exports, module) {
 var channel = require('cordova/channel');
@@ -907,7 +889,10 @@ var cordova = require('cordova'),
         XHR_WITH_PAYLOAD: 2,
         XHR_OPTIONAL_PAYLOAD: 3
     },
-    bridgeMode = jsToNativeModes.XHR_OPTIONAL_PAYLOAD,
+    // XHR mode does not work on iOS 4.2, so default to IFRAME_NAV for such devices.
+    // XHR mode's main advantage is working around a bug in -webkit-scroll, which 
+    // doesn't exist in 4.X devices anyways.
+    bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_OPTIONAL_PAYLOAD : jsToNativeModes.IFRAME_NAV,
     execIframe,
     execXhr;
 
@@ -985,6 +970,8 @@ function iOSExec() {
     if (cordova.commandQueue.length == 1 && !cordova.commandQueueFlushing) {
         if (bridgeMode) {
             execXhr = execXhr || new XMLHttpRequest();
+            // Changeing this to a GET will make the XHR reach the URIProtocol on 4.2.
+            // For some reason it still doesn't work though...
             execXhr.open('HEAD', "file:///!gap_exec", true);
             execXhr.setRequestHeader('vc', cordova.iOSVCAddr);
             if (shouldBundleCommandJson()) {
