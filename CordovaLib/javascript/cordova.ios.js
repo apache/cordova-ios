@@ -1,6 +1,6 @@
-// commit 660a77244d145fc28ebda5fbd5ada63e49246e49
+// commit 2aa46aa0eef2ba641cf91793735152d7fb5b6998
 
-// File generated at :: Thu Aug 30 2012 10:02:33 GMT-0400 (EDT)
+// File generated at :: Fri Aug 31 2012 14:28:26 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -29,10 +29,6 @@ var require,
 
 (function () {
     var modules = {};
-    // Stack of moduleIds currently being built.
-    var requireStack = [];
-    // Map of module ID -> index into requireStack of modules currently being built.
-    var inProgressModules = {};
 
     function build(module) {
         var factory = module.factory;
@@ -45,21 +41,8 @@ var require,
     require = function (id) {
         if (!modules[id]) {
             throw "module " + id + " not found";
-        } else if (id in inProgressModules) {
-            var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
-            throw "Cycle in require graph: " + cycle;
         }
-        if (modules[id].factory) {
-            try {
-                inProgressModules[id] = requireStack.length;
-                requireStack.push(id);
-                return build(modules[id]);
-            } finally {
-                delete inProgressModules[id];
-                requireStack.pop();
-            }
-        }
-        return modules[id].exports;
+        return modules[id].factory ? build(modules[id]) : modules[id].exports;
     };
 
     define = function (id, factory) {
@@ -84,7 +67,6 @@ if (typeof module === "object" && typeof require === "function") {
     module.exports.require = require;
     module.exports.define = define;
 }
-
 // file: lib/cordova.js
 define("cordova", function(require, exports, module) {
 var channel = require('cordova/channel');
