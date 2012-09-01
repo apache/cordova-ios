@@ -22,6 +22,16 @@
   
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 2.1.0rc2 (20120831) ###
+
+* [CB-1296] Update .js with fix for broken bridge on 4.2
+* [CB-1315] Setting the view controller's view size in viewWillAppear, use rootViewController
+* [CB-1182] Fixing IOS6 screen orientation/rotation without breaking ios5.1 or xcode 4.4 build.
+* [CB-1258] Add documentation for the new logic to toggle between different exec() techniques on iOS.
+* Fixed headers for CDVDebugView
+
+<br />
+
 ### 2.1.0rc1 (20120824) ###
 
 * [CB-45] Add support for full urls in white-list, extract hostname
