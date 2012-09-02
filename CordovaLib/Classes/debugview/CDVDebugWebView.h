@@ -17,11 +17,7 @@
  under the License.
  */
 
-#ifdef CORDOVA_FRAMEWORK
 #import <Cordova/CDVCordovaView.h>
-#else
-#import "CDVCordovaView.h"
-#endif
 
 // http://opensource.apple.com/source/WebKit/WebKit-6531.9/mac/WebView/WebScriptDebugDelegate.h
 #import "WebScriptDebugDelegate.h"
