@@ -290,7 +290,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     [delegate.connection cancel];
     [activeTransfers removeObjectForKey:objectId];
     
-    CDVPlugin Result *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
     
     [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
 
@@ -380,7 +380,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 
 @implementation CDVFileTransferDelegate
 
-@synthesize callbackId, connection, source, target, responseData, command, bytesWritten, direction, responseCode, objectId;
+@synthesize callbackId, connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId;
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection 
@@ -407,7 +407,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
             if (uploadResponse != nil) {
                 [uploadResult setObject: [uploadResponse stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey: @"response"];
             }
-            [uploadResult setObject:[NSNumber numberWithInt: self.bytesWritten] forKey:@"bytesSent"];
+            [uploadResult setObject:[NSNumber numberWithInt: self.bytesTransfered] forKey:@"bytesSent"];
             [uploadResult setObject:[NSNumber numberWithInt:self.responseCode] forKey: @"responseCode"];
             result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: uploadResult];            
         } 
@@ -469,6 +469,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 {
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     self.responseCode = [httpResponse statusCode];
+    self.bytesExpected = [response expectedContentLength];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error 
@@ -484,7 +485,20 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-        [self.responseData appendData:data];
+    self.bytesTransfered += data.length;
+    [self.responseData appendData:data];
+    
+    BOOL lengthComputable = (self.bytesExpected != NSURLResponseUnknownLength);
+    NSMutableDictionary* downloadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
+    [downloadProgress setObject:[NSNumber numberWithBool: lengthComputable] forKey:@"lengthComputable"];
+    [downloadProgress setObject:[NSNumber numberWithInt: self.bytesTransfered] forKey:@"loaded"];
+    [downloadProgress setObject:[NSNumber numberWithInt: self.bytesExpected] forKey:@"total"];
+    
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary: downloadProgress ];
+    [result setKeepCallbackAsBool:true];
+    [self.command writeJavascript:[result toSuccessCallbackString: callbackId ]];
+
+    
 }
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 {
@@ -497,7 +511,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     [result setKeepCallbackAsBool:true]; 
     [self.command writeJavascript:[result toSuccessCallbackString: callbackId ]];
     
-    self.bytesWritten = totalBytesWritten;
+    self.bytesTransfered = totalBytesWritten;
 }
 /* TESTING ONLY CODE
 // use ONLY for testing with self signed certificates

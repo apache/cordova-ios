@@ -70,7 +70,8 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, copy) NSString* source;
 @property (nonatomic, copy) NSString* target;
 @property (assign) int responseCode; // atomic
-@property (nonatomic, assign) NSInteger bytesWritten;
+@property (nonatomic, assign) NSInteger bytesTransfered;
+@property (nonatomic, assign) NSInteger bytesExpected;
 
 
 @end;
