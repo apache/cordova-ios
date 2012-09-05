@@ -267,8 +267,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     // fileData and req are split into helper functions to ease the unit testing of delegateForUpload.
     NSData* fileData = [self fileDataForUploadCommand:command];
     NSURLRequest* req = [self requestForUploadCommand:command fileData:fileData];
-    CDVFileTransferDelegate* delegate = [self delegateForUploadCommand:command];
-	[NSURLConnection connectionWithRequest:req delegate:delegate];
+    if (req != nil) {
+        CDVFileTransferDelegate* delegate = [self delegateForUploadCommand:command];
+        [NSURLConnection connectionWithRequest:req delegate:delegate];
+    }
 }
 
 - (void) download:(CDVInvokedUrlCommand*)command {
