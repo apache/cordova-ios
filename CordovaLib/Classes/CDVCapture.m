@@ -173,7 +173,7 @@
         data = UIImageJPEGRepresentation(image, 0.5);
     }
 
-    // write to temp directory and reutrn URI
+    // write to temp directory and return URI
     NSString* docsPath = [NSTemporaryDirectory ()stringByStandardizingPath];  // use file system temporary directory
     NSError* err = nil;
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -467,7 +467,7 @@
 
 /* Called when image/movie is finished recording.
  * Calls success or error code as appropriate
- * if successful, result  contains an array (with just one entry since can only get one image unless build own camera UI) of MediaFile object representating the image
+ * if successful, result  contains an array (with just one entry since can only get one image unless build own camera UI) of MediaFile object representing the image
  *      name
  *      fullPath
  *      type
@@ -808,7 +808,7 @@
 
 - (void)updateTime
 {
-    // update the label with the ellapsed time
+    // update the label with the elapsed time
     [self.timerLabel setText:[self formatTime:self.avRecorder.currentTime]];
 }
 

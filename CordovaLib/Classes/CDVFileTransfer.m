@@ -539,7 +539,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 /* TESTING ONLY CODE
 // use ONLY for testing with self signed certificates
-// uncomment and modify server name in connectiondidReceiveAuthenticationChallenge
+// uncomment and modify server name in connection didReceiveAuthenticationChallenge
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {
     return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];

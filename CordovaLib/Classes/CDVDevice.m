@@ -33,7 +33,7 @@
 
     /* Settings.plist
      * Read the optional Settings.plist file and push these user-defined settings down into the web application.
-     * This can be useful for supplying build-time configuration variables down to the app to change its behaviour,
+     * This can be useful for supplying build-time configuration variables down to the app to change its behavior,
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
      */
     // TODO: turn this into an iOS only plugin

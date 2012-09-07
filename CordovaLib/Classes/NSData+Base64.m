@@ -64,7 +64,7 @@ static unsigned char cdvbase64DecodeLookup[256] =
 //	length - the length of the string or -1 (to specify strlen should be used)
 //	outputLength - if not-NULL, on output will contain the decoded length
 //
-// returns the decoded buffer. Must be free'd by caller. Length is given by
+// returns the decoded buffer. Must be freed by caller. Length is given by
 //	outputLength.
 //
 void *CDVNewBase64Decode(
@@ -130,7 +130,7 @@ void *CDVNewBase64Decode(
 //	outputLength - if not-NULL, on output will contain the encoded length
 //		(not including terminating 0 char)
 //
-// returns the encoded buffer. Must be free'd by caller. Length is given by
+// returns the encoded buffer. Must be freed by caller. Length is given by
 //	outputLength.
 //
 char *CDVNewBase64Encode(

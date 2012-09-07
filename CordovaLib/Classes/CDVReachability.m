@@ -1,8 +1,7 @@
 /*
 
  File: Reachability.m
- Abstract: Basic demonstration of how to use the SystemConfiguration Reachablity APIs.
-
+ Abstract: Basic demonstration of how to use the SystemConfiguration Reachability APIs.
  Version: 2.2
 
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple Inc.
@@ -97,7 +96,7 @@ static void CDVReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRe
     }
 
     // We're on the main RunLoop, so an NSAutoreleasePool is not necessary, but is added defensively
-    // in case someon uses the Reachablity object in a different thread.
+    // in case someon uses the Reachability object in a different thread.
     @autoreleasepool {
         CDVReachability* noteObject = (__bridge CDVReachability*)info;
         // Post a notification to notify the client that the network reachability changed.

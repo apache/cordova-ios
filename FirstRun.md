@@ -52,7 +52,7 @@ Follow the instructions in the [**Command-Line Usage** section](http://docs.cord
 
 <br />
 
-That's it! Modify the contents of the "www" directory to add your HTML, CSS and Javascript.
+That's it! Modify the contents of the "www" directory to add your HTML, CSS and JavaScript.
 <br />
 
 ## Links

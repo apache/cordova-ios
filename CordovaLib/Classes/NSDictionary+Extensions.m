@@ -69,7 +69,7 @@
  *	(BOOL*) bString - if exists will be set to YES if object is an NSString, NO if not
  *	(BOOL*) bNull - if exists will be set to YES if object is an NSNull, NO if not
  *	(BOOL*) bArray - if exists will be set to YES if object is an NSArray, NO if not
- *	(BOOL*) bNumber - if exsists will be set to YES if object is an NSNumber, NO if not
+ *	(BOOL*) bNumber - if exists will be set to YES if object is an NSNumber, NO if not
  *
  *	OUT:
  *	YES if key exists

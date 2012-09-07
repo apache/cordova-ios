@@ -217,7 +217,7 @@ dispatch_queue_t workQueue = nil;
 
         [peoplePicker pushViewController:personController animated:YES];
     } else {
-        // Retreive and return pickedContact information
+        // Retrieve and return pickedContact information
         CDVContact* pickedContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)person];
         NSArray* fields = [picker.options objectForKey:@"fields"];
         NSDictionary* returnFields = [[CDVContact class] calcReturnFields:fields];

@@ -142,7 +142,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
             [NSNull null], kW3ContactFieldValue,
             [NSNull null], kW3ContactFieldPrimary,
             [NSNull null], kW3ContactFieldId,
-            [NSNumber numberWithInt:kABPersonOrganizationProperty], kW3ContactOrganizationName,      /* careful, name is used mulitple times*/
+            [NSNumber numberWithInt:kABPersonOrganizationProperty], kW3ContactOrganizationName,      /* careful, name is used multiple times*/
             nil];
     }
     return org_apache_cordova_contacts_W3CtoAB;
@@ -316,7 +316,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         [self setValue:aDate != nil ? aDate:ms forProperty:kABPersonBirthdayProperty inRecord:person asUpdate:bUpdate];
     }
     // don't update creation date
-    // modifiction date will get updated when save
+    // modification date will get updated when save
     // anniversary is removed from W3C Contact api Dec 9, 2010 spec - don't waste time on it yet
 
     // kABPersonDateProperty
@@ -377,7 +377,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
  * aValue - the value to set into the address book (code checks for null or [NSNull null]
  * aProperty - AddressBook property ID
  * aRecord - the record to update
- * bUpdate - whether this is a possible update vs a new enry
+ * bUpdate - whether this is a possible update vs a new entry
  * RETURN
  *	true - property was set (or input value as null)
  *	false - property was not set
@@ -390,7 +390,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     if (aValue && ![aValue isKindOfClass:[NSNull class]]) {
         if (bUpdate && ([aValue isKindOfClass:[NSString class]] && ([aValue length] == 0))) { // if updating, empty string means to delete
             aValue = NULL;
-        } // really only need to set if different - more efficient to just update value or compare and only set if necessay???
+        } // really only need to set if different - more efficient to just update value or compare and only set if necessary???
         bSuccess = ABRecordSetValue(aRecord, aProperty, (__bridge CFTypeRef)aValue, &error);
         if (!bSuccess) {
             NSLog(@"error setting %d property", aProperty);
@@ -456,7 +456,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
  * ABRecordRef  person - the record to set values into
  * BOOL bUpdate - whether or not to update date or set as new.
  *	When updating:
- *	  emtpy array indicates to remove entire property
+ *	  empty array indicates to remove entire property
  *	  empty string indicates to remove
  *    [NSNull null] do not modify (keep existing record value)
  * RETURNS
@@ -590,7 +590,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
  * ABRecordRef person - the record to set the values into
  * BOOL bUpdate - YES if this is an update to an existing record
  *	When updating:
- *	  emtpy array indicates to remove entire property
+ *	  empty array indicates to remove entire property
  *	  value/label == "" indicates to remove
  *    value/label == [NSNull null] do not modify (keep existing record value)
  * RETURN
@@ -758,8 +758,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 + (NSString*)convertPropertyLabelToContactType:(NSString*)label
 {
     NSString* type = nil;
-
-    if (label != nil) { // improve effieciency......
+    if (label != nil) { // improve efficiency......
         if ([label isEqualToString:(NSString*)kABPersonPhoneMobileLabel]) {
             type = kW3ContactPhoneMobileLabel;
         } else if ([label isEqualToString:(NSString*)kABPersonPhoneHomeFAXLabel] ||
@@ -877,7 +876,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         return nc;
     }
     if ([self.returnFields objectForKey:kW3ContactDisplayName]) {
-        // diplayname requested -  iOS doesn't have so return null
+        // displayname requested -  iOS doesn't have so return null
         [nc setObject:[NSNull null] forKey:kW3ContactDisplayName];
         // may overwrite below if requested ContactName and there are no values
     }
@@ -1061,7 +1060,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
             value = (__bridge_transfer NSString*)ABRecordCopyCompositeName(self.record);
             [newName setObject:(value != nil) ? value:[NSNull null] forKey:kW3ContactFormattedName];
         } else {
-            // W3CtoAB returns NSNumber for AB name properies, get intValue and cast to ABPropertyID)
+            // W3CtoAB returns NSNumber for AB name properties, get intValue and cast to ABPropertyID)
             value = (__bridge_transfer NSString*)ABRecordCopyValue(self.record, (ABPropertyID)[[[CDVContact defaultW3CtoAB] valueForKey:i] intValue]);
             [newName setObject:(value != nil) ? value:[NSNull null] forKey:(NSString*)i];
         }
@@ -1070,7 +1069,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     return newName;
 }
 
-/* Create array of Dictionaris to match JavaScript ContactField object for simple multiValue properties phoneNumbers, emails
+/* Create array of Dictionaries to match JavaScript ContactField object for simple multiValue properties phoneNumbers, emails
  * Input: (NSString*) W3Contact Property name
  * type
  *		for phoneNumbers type is one of (work,home,other, mobile, fax, pager)
@@ -1126,7 +1125,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     return valuesArray;
 }
 
-/* Create array of Dictionaris to match JavaScript ContactAddress object for addresses
+/* Create array of Dictionaries to match JavaScript ContactAddress object for addresses
  *  pref - not supported
  *  type - address type
  *	formatted  - formatted for mailing label (what about localization?)
@@ -1249,7 +1248,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     return imArray;
 }
 
-/* Create array of Dictionaris to match JavaScript ContactOrganization object
+/* Create array of Dictionaries to match JavaScript ContactOrganization object
  *	pref - not supported in iOS
  *  type - not supported in iOS
  *  name
@@ -1676,7 +1675,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 /* search for values within MultiValue Dictionary properties Address or IM property
  * IN:
  * (NSArray*) fields - the array of W3C field names to search within
- * (ABPropertyID) propId - the AddressBook property that returns a multivalue dictionaty
+ * (ABPropertyID) propId - the AddressBook property that returns a multivalue dictionary
  * (NSString*) testValue - the string to search for within the specified fields
  *
  */

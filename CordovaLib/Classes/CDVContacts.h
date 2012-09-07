@@ -66,11 +66,11 @@
    property                 :(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue;
 
 /*
- * search - searchs for contacts.  Only person records are currently supported.
+ * search - searches for contacts.  Only person records are currently supported.
  *
  * arguments:
  *  1: successcallback - this is the javascript function that will be called with the array of found contacts
- *  2:  errorCallback - optional javascript functiont to be called in the event of an error with an error code.
+ *  2:  errorCallback - optional javascript function to be called in the event of an error with an error code.
  * options:  dictionary containing ContactFields and ContactFindOptions
  *	fields - ContactFields array
  *  findOptions - ContactFindOptions object as dictionary
@@ -83,8 +83,7 @@
  *
  * arguments:
  *  1: success callback - this is the javascript function that will be called with the JSON representation of the saved contact
- *		search calls a fixed navigator.service.contacts._findCallback which then calls the succes callback stored before making the call into obj. c
- *
+ *		search calls a fixed navigator.service.contacts._findCallback which then calls the success callback stored before making the call into obj-c
  */
 - (void)save:(CDVInvokedUrlCommand*)command;
 
@@ -125,7 +124,7 @@
 @property (copy) NSString* callbackId;
 @end
 
-/* ABPersonViewController does not have any UI to dismiss.  Adding navigationItems to it does not work properly,  thenavigationItems are lost when the app goes into the background.
+/* ABPersonViewController does not have any UI to dismiss.  Adding navigationItems to it does not work properly,  the navigationItems are lost when the app goes into the background.
     The solution was to create an empty NavController in front of the ABPersonViewController. This
     causes the ABPersonViewController to have a back button. By subclassing the ABPersonViewController,
     we can override viewWillDisappear and take down the entire NavigationController at that time.

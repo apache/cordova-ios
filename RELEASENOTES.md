@@ -28,7 +28,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-274] iOS Cordova Template Project is not compilable with default Apple's ARC compiler 3.0
 * [CB-593] Click and touch events do not fire after using scroll CSS
 * [CB-675] Allow multiple versions of PhoneGap to be installed in Xcode (added bin/update_cordova_subproject script)
-* [CB-828] iOS contact.save() stucks the UI from updating on heavy load & has memory leaks.
+* [CB-828] iOS contact.save() stops the UI from updating on heavy load & has memory leaks.
 * [CB-903] iOS 6 - add setting to set WebKitStoreWebDataForBackup for user defaults from Cordova.plist/config.xml
 * [CB-904] iOS 6 - turn off CDVLocalStorage core plugin when on iOS 6
 * [CB-994] CDVLocalStorage core plugin does not fully backup when app setting "Application does not run in background" is YES
@@ -75,7 +75,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Add a benchmark into CordovaLibApp for measuring exec() speed.
 * Added Echo plugin (for benchmarking) into CordovaLib
 * Support JS->Native messages via an XHR & URL Protocol see [CB-593]
-* Refactor peoplePickerNavigationControllerDidCancel, always return dictionnary with id kABRecordInvalidID.
+* Refactor peoplePickerNavigationControllerDidCancel, always return dictionary with id kABRecordInvalidID.
 * Deployment target for CordovaLib was not updated to 4.2 (we changed it in the template, but not the lib)
 * Fixed null dereference in FileTransfer upload when URL is invalid.
 
@@ -239,7 +239,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Added unification of accelerometer values on ios (based on android values)
 * Removed old JS, added cordova-js version
 * Changes to CordovaLib makefile for generating JS
-* Fixed CB-260: Can't install Phonegap with new Xcode 4.3
+* Fixed CB-260: Can't install PhoneGap with new Xcode 4.3
 * Fixed Xcode app detection (using Spotlight) in Makefile
 * Fixed CB-306 - Remove extra template App delegate methods
 * Fixes CB-255 - iOS: a parameter with value 'null' is not passed to 'arguments' array
@@ -394,7 +394,7 @@ Removed GetFunctionName.js (unused)
 * usage of VERIFY_ARGUMENTS macro in File plugin - related to #244
 * fixed #259: PluginResult toJSONString does not quote strings in arrays
 * added ability so that unhanded URLs (i.e. custom schemes in a web-page) will notify PhoneGap plugins of this custom url so that the plugins can handle it themselves. This would give the ability to handle callbacks for OAuth logins (Twitter/Facebook) in the main PhoneGap UIWebview, and not require the ChildBrowser plugin.
-* fixes #263 Phone call - tel: scheme handling hides default behaviour
+* fixes #263 Phone call - tel: scheme handling hides default behavior
 * fixes #269 - Add Obj-C unit-tests for whitelist implementation
 * fixed #256 PhoneGapDelegate (UIApplicationDelegate) property hides new property in iOS 5
 * fixed #254 Prefix the SBJSON classes included in PhoneGap with 'PG'
@@ -508,7 +508,7 @@ Removed GetFunctionName.js (unused)
   
 * phonegap.js is minified using the YUI compressor, and also renamed to phonegap.{ver}.min.js where {ver} is the version number of PhoneGapLib from the VERSION file 
 * the PhoneGap template is changed as well, at build time it will replace any references to 'src="phonegap.js"' to the new versioned js file (and copy the new phonegap.{ver}.min.js file). This replacement will look in all files in the 'www' folder. 
-* note that with the new PhoneGapLib phonegap.{ver}.min.js renaming, existing PhoneGap templates must copy the new "Copy PhoneGap Javascript" post-build script from the new template (in Xcode, under Targets/[ProjectName]) 
+* note that with the new PhoneGapLib phonegap.{ver}.min.js renaming, existing PhoneGap templates must copy the new "Copy PhoneGap JavaScript" post-build script from the new template (in Xcode, under Targets/[ProjectName]) 
 
 <br />
 

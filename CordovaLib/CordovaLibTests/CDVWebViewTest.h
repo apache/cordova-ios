@@ -37,6 +37,6 @@
 // Runs the run loop until the given block returns true, or until a timeout
 // occurs.
 - (void)waitForConditionName:(NSString*)conditionName block:(BOOL (^)())block;
-// Convenince function for stringByEvaluatingJavaScriptFromString.
+// Convenience function for stringByEvaluatingJavaScriptFromString.
 - (NSString*)evalJs:(NSString*)code;
 @end

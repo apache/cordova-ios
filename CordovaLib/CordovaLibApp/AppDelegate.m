@@ -55,7 +55,7 @@
 
 - (void)destroyViewController
 {
-    // Clean up circular refs so that the view controller will actully be released.
+    // Clean up circular refs so that the view controller will actually be released.
     [self.viewController dispose];
     self.viewController = nil;
     self.window.rootViewController = nil;

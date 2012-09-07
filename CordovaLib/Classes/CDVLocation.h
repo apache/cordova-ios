@@ -48,7 +48,7 @@ typedef NSUInteger CDVLocationStatus;
 
 @end
 
-// simple ojbect to keep track of location information
+// simple object to keep track of location information
 @interface CDVLocationData : NSObject {
     CDVLocationStatus locationStatus;
     NSMutableArray* locationCallbacks;

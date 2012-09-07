@@ -576,7 +576,7 @@
     }
 
     /*
-     * all tel: scheme urls we let the UIWebview handle it using the default behaviour
+     * all tel: scheme urls we let the UIWebview handle it using the default behavior
      */
     else if ([[url scheme] isEqualToString:@"tel"]) {
         return YES;
