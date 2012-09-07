@@ -543,7 +543,7 @@
 	if (isLessThaniOS4)
 	{
 		NSString* iPadResource = [NSString stringWithFormat:@"%@~ipad.png", resource];
-        if (IsIPad() && [UIImage imageNamed:iPadResource]) {
+        if (CDV_IsIPad() && [UIImage imageNamed:iPadResource]) {
             return iPadResource;
 		} else {
 			return [NSString stringWithFormat:@"%@.png", resource];

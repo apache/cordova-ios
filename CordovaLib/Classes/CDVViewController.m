@@ -590,7 +590,7 @@
     // the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
     if (isLessThaniOS4)
     {
-        if (IsIPad()) {
+        if (CDV_IsIPad()) {
             return [NSString stringWithFormat:@"%@~ipad.png", resource];
         } else {
             return [NSString stringWithFormat:@"%@.png", resource];
@@ -642,7 +642,7 @@
     // default to center of screen as in the original implementation. This will produce the 20px jump
     CGPoint center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
 
-    if (IsIPad())
+    if (CDV_IsIPad())
     {
         if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
             deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
@@ -688,7 +688,7 @@
     
     launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
     if (launchImage == nil) {
-        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, IsIPad());
+        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, CDV_IsIPad());
     }
     
     self.imageView = [[UIImageView alloc] initWithImage:launchImage];

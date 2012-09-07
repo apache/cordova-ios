@@ -56,10 +56,10 @@
  */
 #define IsAtLeastiOSVersion(X) ([[[UIDevice currentDevice] systemVersion] compare:X options:NSNumericSearch] != NSOrderedAscending)
 
+#define CDV_IsIPad() ([[UIDevice currentDevice] respondsToSelector:@selector(userInterfaceIdiom)] && ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad))
+
 /* Return the string version of the decimal version */
 #define CDV_VERSION  [NSString stringWithFormat:@"%d.%d.%d", \
                         (CORDOVA_VERSION_MIN_REQUIRED / 10000), \
                         (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100, \
                         (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100 ]
-
-#define IsIPad() ([[UIDevice currentDevice] respondsToSelector:@selector(userInterfaceIdiom)] && ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad))
