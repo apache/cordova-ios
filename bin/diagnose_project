@@ -20,13 +20,6 @@ def Usage():
 def AbsParentPath(path):
   return os.path.abspath(os.path.join(path, os.path.pardir))
 
-def AbsFrameworkPath(argv0):
-  script_path = argv0
-  # This can happen if the script's dir is in the user's PATH
-  if not os.path.exists(script_path):
-    raise Exception('Could not locale framework directory.')
-  return AbsParentPath(AbsParentPath(script_path))
-
 def AbsProjectPath(relative_path):
   # Do an extra abspath here to strip off trailing / if present.
   project_path = os.path.abspath(relative_path)
@@ -65,12 +58,8 @@ def main(argv):
 	if len(argv) != 2:
 		Usage()
 
-	framework_path = AbsFrameworkPath(argv[0])
 	project_path = AbsProjectPath(argv[1])
-
 	parent_project_path = AbsParentPath(project_path)
-	cordova_lib_xcode_path = os.path.join(framework_path, 'CordovaLib', 'CordovaLib.xcodeproj')
-	subproject_path = os.path.relpath(cordova_lib_xcode_path, parent_project_path)
 
 	projPbx = os.path.join(project_path, 'project.pbxproj')
 
@@ -123,7 +112,6 @@ def main(argv):
 	print "\n\n--------------------------------------------------------------------------------"
 	print "Inspecting your CordovaLib's Build Settings...\n"
 
-	usesXcodeVariable = False
 	cdvlibPath = None
 	cdvlibProjName = 'CordovaLib.xcodeproj'
 	
