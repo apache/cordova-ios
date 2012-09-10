@@ -34,7 +34,8 @@
               
 - (id) initFromJson:(NSArray*)jsonEntry
 {
-    NSString* callbackId = [jsonEntry objectAtIndex:0];
+    id tmp = [jsonEntry objectAtIndex:0];
+    NSString* callbackId = tmp == [NSNull null] ? nil : tmp;
     NSString* className = [jsonEntry objectAtIndex:1];
     NSString* methodName = [jsonEntry objectAtIndex:2];
     NSMutableArray* arguments = [jsonEntry objectAtIndex:3];
@@ -71,7 +72,10 @@
             break;
         }
     }
-    [newArguments insertObject:_callbackId atIndex:0];
+    // Legacy (two versions back) has no callbackId.
+    if (_callbackId != nil) {
+        [newArguments insertObject:_callbackId atIndex:0];
+    }
     if (legacyArguments != NULL) {
         *legacyArguments = newArguments;
     }
