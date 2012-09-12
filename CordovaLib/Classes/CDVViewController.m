@@ -80,6 +80,12 @@
         [self printMultitaskingInfo];
         [self printDeprecationNotice];
         self.initialized = YES;
+        
+        // load Cordova.plist settings
+        [self loadSettings];
+        // set the whitelist
+        self.whitelist = [[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]];
+        // register this viewcontroller with the NSURLProtocol
         [CDVURLProtocol registerViewController:self];
     }
     
@@ -139,11 +145,8 @@
     NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported? @"YES" : @"NO"), (![exitsOnSuspend intValue])? @"YES" : @"NO");
 }
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void) viewDidLoad 
+- (void) loadSettings
 {
-    [super viewDidLoad];
-	
     self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
     
     // read from Cordova.plist in the app bundle
@@ -163,12 +166,13 @@
         return;
     }
     
-    // set the whitelist
-    self.whitelist = [[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]];
-	
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
-    
-    ///////////////////
+}
+
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void) viewDidLoad 
+{
+    [super viewDidLoad];
     
 	NSString* startFilePath = [self pathForResource:self.startPage];
 	NSURL* appURL  = nil;

@@ -154,7 +154,6 @@
 - (BOOL) URLIsAllowed:(NSURL*)url
 {
     if (self.expandedWhitelist == nil) {
-        NSLog(@"ERROR: CDVWhitelist was not initialized properly, all urls will be disallowed.");
         return NO;
     }
     
