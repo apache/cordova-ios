@@ -24,8 +24,6 @@
 		3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3062D11F151D0EDB000D9128 /* UIDevice+Extensions.m */; };
 		307A8F9E1385A2EC00E43782 /* CDVConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 307A8F9C1385A2EC00E43782 /* CDVConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		307A8F9F1385A2EC00E43782 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 307A8F9D1385A2EC00E43782 /* CDVConnection.m */; };
-		30956FD2138F1F5600FC3563 /* CDVMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 30956FD0138F1F5600FC3563 /* CDVMotion.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		30956FD3138F1F5600FC3563 /* CDVMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = 30956FD1138F1F5600FC3563 /* CDVMotion.m */; };
 		30A90B9114588697006178D3 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 30A90B8F14588697006178D3 /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30A90B9314588697006178D3 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A90B9014588697006178D3 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		30B39EBE13D0268B0009682A /* CDVSplashScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B39EBC13D0268B0009682A /* CDVSplashScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -98,8 +96,6 @@
 		3062D11F151D0EDB000D9128 /* UIDevice+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIDevice+Extensions.m"; path = "Classes/UIDevice+Extensions.m"; sourceTree = "<group>"; };
 		307A8F9C1385A2EC00E43782 /* CDVConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVConnection.h; path = Classes/CDVConnection.h; sourceTree = "<group>"; };
 		307A8F9D1385A2EC00E43782 /* CDVConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVConnection.m; path = Classes/CDVConnection.m; sourceTree = "<group>"; };
-		30956FD0138F1F5600FC3563 /* CDVMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVMotion.h; path = Classes/CDVMotion.h; sourceTree = "<group>"; };
-		30956FD1138F1F5600FC3563 /* CDVMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVMotion.m; path = Classes/CDVMotion.m; sourceTree = "<group>"; };
 		30A90B8F14588697006178D3 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		30A90B9014588697006178D3 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		30B39EBC13D0268B0009682A /* CDVSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVSplashScreen.h; path = Classes/CDVSplashScreen.h; sourceTree = "<group>"; };
@@ -254,8 +250,6 @@
 				30B39EBD13D0268B0009682A /* CDVSplashScreen.m */,
 				30E33AF013A7E24B00594D64 /* CDVPlugin.h */,
 				30E33AF113A7E24B00594D64 /* CDVPlugin.m */,
-				30956FD0138F1F5600FC3563 /* CDVMotion.h */,
-				30956FD1138F1F5600FC3563 /* CDVMotion.m */,
 				307A8F9C1385A2EC00E43782 /* CDVConnection.h */,
 				307A8F9D1385A2EC00E43782 /* CDVConnection.m */,
 				1F92F49E1314023E0046367C /* CDVPluginResult.h */,
@@ -356,7 +350,6 @@
 				1F92F4A01314023E0046367C /* CDVPluginResult.h in Headers */,
 				C937A4561337599E002C4C79 /* CDVFileTransfer.h in Headers */,
 				307A8F9E1385A2EC00E43782 /* CDVConnection.h in Headers */,
-				30956FD2138F1F5600FC3563 /* CDVMotion.h in Headers */,
 				1F584B9B1385A28A00ED25E8 /* CDVCapture.h in Headers */,
 				30E33AF213A7E24B00594D64 /* CDVPlugin.h in Headers */,
 				302965BC13A94E9D007046C5 /* CDVDebug.h in Headers */,
@@ -469,7 +462,6 @@
 				1F92F4A11314023E0046367C /* CDVPluginResult.m in Sources */,
 				C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */,
 				307A8F9F1385A2EC00E43782 /* CDVConnection.m in Sources */,
-				30956FD3138F1F5600FC3563 /* CDVMotion.m in Sources */,
 				1F584B9C1385A28A00ED25E8 /* CDVCapture.m in Sources */,
 				30E33AF313A7E24B00594D64 /* CDVPlugin.m in Sources */,
 				30B39EBF13D0268B0009682A /* CDVSplashScreen.m in Sources */,

@@ -39,7 +39,6 @@
 #import "CDVFile.h"
 #import "CDVFileTransfer.h"
 #import "CDVLocation.h"
-#import "CDVMotion.h"
 #import "CDVNotification.h"
 #import "CDVPluginResult.h"
 #import "CDVReachability.h"
