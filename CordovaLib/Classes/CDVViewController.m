@@ -263,6 +263,20 @@
         }
     }
     
+    /*
+     * iOS 6.0 UIWebView properties
+     */
+    if (IsAtLeastiOSVersion(@"6.0")) {
+        BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
+        if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"]) {
+            keyboardDisplayRequiresUserAction = [(NSNumber*)[self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
+        }        
+        BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
+        if ([self.settings objectForKey:@"SuppressesIncrementalRendering"]) {
+            suppressesIncrementalRendering = [(NSNumber*)[self.settings objectForKey:@"SuppressesIncrementalRendering"] boolValue];
+        }
+    }
+    
     ///////////////////
     
     if (!loadErr) {

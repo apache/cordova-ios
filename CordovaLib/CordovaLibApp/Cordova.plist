@@ -4,7 +4,7 @@
 <dict>
     <key>KeyboardDisplayRequiresUserAction</key>
     <true/>
-    <key>SuppressIncrementalRendering</key>
+    <key>SuppressesIncrementalRendering</key>
     <false/>
 	<key>UIWebViewBounce</key>
 	<true/>
