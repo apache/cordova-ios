@@ -660,15 +660,20 @@
 
 - (void) showSplashScreen
 {
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
     NSString* launchImageFile = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchImageFile"];
     if (launchImageFile == nil) { // fallback if no launch image was specified
-        launchImageFile = @"Default"; 
+        if (screenBounds.size.height == 568) {
+            // iPhone 5 or iPod Touch 6th-gen
+            launchImageFile = @"Default-568h";
+        } else {
+            launchImageFile = @"Default"; 
+        }
     }
     
     NSString* orientedLaunchImageFile = nil;    
     CGAffineTransform startupImageTransform = CGAffineTransformIdentity;
     UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
     CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
     UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
     UIImage* launchImage = nil;
