@@ -47,7 +47,6 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-1166] Remove dependency on VERSION file
 * [CB-1173] Clean up default project template
 * [CB-1182] Fixing IOS6 screen orientation/rotation without breaking ios5.1 or xcode 4.4 build.
-iOS.
 * [CB-1186] Update README.md, FirstRun.md for new install method
 * [CB-1187] Move the Objective-C unit-tests out of CordovaLib.xcodeproj, into its own .xcodeproj
 * [CB-1188] Update Plugin Upgrade Guide for new iOS plugin signature (old one still supported, but deprecated)
@@ -61,9 +60,13 @@ iOS.
 * [CB-1296] Update .js with fix for broken bridge on 4.2
 * [CB-1315] Setting the view controller's view size in viewWillAppear, use rootViewController
 * [CB-1385] Fix executing legacy plugins when callbackId is null.
-* [CB-1380] Fix data URIlgith from being blocked
+* [CB-1380] Fix data uri from being blocked
 * [CB-1384] Online .wav files cannot be played, but ones local to www can
+* [CB-1385] 2.1.0rc2 - breaks certain plugins on iOS due to added "null" argument using FORMAT TWO in iOSExec
 * [CB-1402] Media API - wrong JavaScript callback is called for onStatus (typo)
+* [CB-1412] 2.1.0rc2 - iOS Whitelist is never used, all urls will pass the whitelist
+* [CB-1453] Namespace issue of JSONKit (JSONKitSerializingBlockAdditions)
+* [CB-1457] Remove unused CDVMotion core plugin - causes Apple App Store upload rejection
 * [GH-PR 34] Refactor chooseContact() to retrieve contact information instead of just a contactId.
 * [GH-PR 35] Enhances iOS FileTransfer's support for upload headers
 * Change default wire format of exec handler (was iframe, now xhr) see [CB-593].
