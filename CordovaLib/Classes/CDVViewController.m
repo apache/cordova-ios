@@ -268,13 +268,22 @@
      */
     if (IsAtLeastiOSVersion(@"6.0")) {
         BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
-        if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"]) {
-            keyboardDisplayRequiresUserAction = [(NSNumber*)[self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
-        }        
-        BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
-        if ([self.settings objectForKey:@"SuppressesIncrementalRendering"]) {
-            suppressesIncrementalRendering = [(NSNumber*)[self.settings objectForKey:@"SuppressesIncrementalRendering"] boolValue];
+        if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
+            if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"]) {
+                keyboardDisplayRequiresUserAction = [(NSNumber*)[self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
+            }
         }
+
+        self.webView.keyboardDisplayRequiresUserAction = keyboardDisplayRequiresUserAction;
+        
+        BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
+        if ([self.settings objectForKey:@"SuppressesIncrementalRendering"] != nil) {
+            if ([self.settings objectForKey:@"SuppressesIncrementalRendering"]) {
+                suppressesIncrementalRendering = [(NSNumber*)[self.settings objectForKey:@"SuppressesIncrementalRendering"] boolValue];
+            }
+        }
+        
+        self.webView.suppressesIncrementalRendering = suppressesIncrementalRendering;
     }
     
     ///////////////////
