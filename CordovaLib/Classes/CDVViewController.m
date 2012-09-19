@@ -267,14 +267,18 @@
      * iOS 6.0 UIWebView properties
      */
     if (IsAtLeastiOSVersion(@"6.0")) {
+        
         BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
         if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
             if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"]) {
                 keyboardDisplayRequiresUserAction = [(NSNumber*)[self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
             }
         }
-
-        self.webView.keyboardDisplayRequiresUserAction = keyboardDisplayRequiresUserAction;
+        
+        // property check for compiling under iOS < 6
+        if ([self.webView respondsToSelector:@selector(setKeyboardDisplayRequiresUserAction:)]) {
+            [self.webView setValue:[NSNumber numberWithBool:keyboardDisplayRequiresUserAction] forKey:@"keyboardDisplayRequiresUserAction"];
+        }
         
         BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
         if ([self.settings objectForKey:@"SuppressesIncrementalRendering"] != nil) {
@@ -282,8 +286,11 @@
                 suppressesIncrementalRendering = [(NSNumber*)[self.settings objectForKey:@"SuppressesIncrementalRendering"] boolValue];
             }
         }
-        
-        self.webView.suppressesIncrementalRendering = suppressesIncrementalRendering;
+
+        // property check for compiling under iOS < 6
+        if ([self.webView respondsToSelector:@selector(setSuppressesIncrementalRendering:)]) {
+            [self.webView setValue:[NSNumber numberWithBool:suppressesIncrementalRendering] forKey:@"suppressesIncrementalRendering"];
+        }
     }
     
     ///////////////////
