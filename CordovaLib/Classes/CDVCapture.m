@@ -594,9 +594,6 @@
     }
     
     UIImage* microphone = [UIImage imageNamed:[self resolveImageResource:microphoneResource]];
-    if (CDV_IsIPhone5()) { // need to set it to 2.0x if not it will be 1.0 scale but too big for the screen
-        microphone = [UIImage imageWithCGImage:microphone.CGImage scale:2.0f orientation:UIImageOrientationUp];
-    }
     UIView* microphoneView = [[UIView alloc] initWithFrame: CGRectMake(0,0,viewRect.size.width, microphone.size.height)];
     [microphoneView setBackgroundColor:[UIColor colorWithPatternImage:microphone]];
     [microphoneView setUserInteractionEnabled: NO];
