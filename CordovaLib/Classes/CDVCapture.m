@@ -64,6 +64,10 @@
 {
     NSString* callbackId = command.callbackId;
     NSDictionary* options = [command.arguments objectAtIndex:0];
+    if ([options isKindOfClass:[NSNull class]]) {
+        options = [NSDictionary dictionary];
+    }
+    
     NSNumber* duration = [options objectForKey:@"duration"];
     // the default value of duration is 0 so use nil (no duration) if default value
     if (duration) {
@@ -100,6 +104,9 @@
 {
     NSString* callbackId = command.callbackId;
     NSDictionary* options = [command.arguments objectAtIndex:0];
+    if ([options isKindOfClass:[NSNull class]]) {
+        options = [NSDictionary dictionary];
+    }
     NSString* mode = [options objectForKey:@"mode"];
     
 	//options could contain limit and mode neither of which are supported at this time
@@ -199,6 +206,11 @@
 - (void) captureVideo:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = command.callbackId;
+    NSDictionary* options = [command.arguments objectAtIndex:0];
+    if ([options isKindOfClass:[NSNull class]]) {
+        options = [NSDictionary dictionary];
+    }
+    
 	//options could contain limit, duration and mode, only duration is supported (but is not due to apple bug)
     // taking more than one video (limit) is only supported if provide own controls via cameraOverlayView property
     //NSNumber* duration = [options objectForKey:@"duration"];
