@@ -58,6 +58,8 @@
 
 #define CDV_IsIPad() ([[UIDevice currentDevice] respondsToSelector:@selector(userInterfaceIdiom)] && ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad))
 
+#define CDV_IsIPhone5() ([[UIScreen mainScreen] bounds].size.height == 568 && [[UIScreen mainScreen] bounds].size.width == 320)
+
 /* Return the string version of the decimal version */
 #define CDV_VERSION  [NSString stringWithFormat:@"%d.%d.%d", \
                         (CORDOVA_VERSION_MIN_REQUIRED / 10000), \
