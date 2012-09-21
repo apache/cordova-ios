@@ -287,20 +287,22 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream) {
     NSString* objectId = [command.arguments objectAtIndex:0];
     
     CDVFileTransferDelegate *delegate = [activeTransfers objectForKey:objectId];
-    [delegate.connection cancel];
-    [activeTransfers removeObjectForKey:objectId];
-    
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
-    
-    [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
-
+    if (delegate != nil) {
+        [delegate.connection cancel];
+        [activeTransfers removeObjectForKey:objectId];
+        
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: [self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
+        
+        [self writeJavascript:[result toErrorCallbackString:delegate.callbackId]];
+    }
 }
 
 - (void) download:(CDVInvokedUrlCommand*)command {
     DLog(@"File Transfer downloading file...");
     NSString * sourceUrl = [command.arguments objectAtIndex:0];
     NSString * filePath = [command.arguments objectAtIndex:1];
-    NSString * objectId = [command.arguments objectAtIndex:2];
+//  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
+    NSString * objectId = [command.arguments objectAtIndex:3];
     CDVPluginResult *result = nil;
     CDVFileTransferError errorCode = 0;
 
