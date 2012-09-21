@@ -45,7 +45,7 @@
 @synthesize imageView, activityView, useSplashScreen, commandDelegate;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
 
-- (id)__init
+- (void)__init
 {
     if ((self != nil) && !self.initialized) {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -85,20 +85,20 @@
         // register this viewcontroller with the NSURLProtocol
         [CDVURLProtocol registerViewController:self];
     }
-
-    return self;
 }
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    return [self __init];
+    [self __init];
+    return self;
 }
 
 - (id)init
 {
     self = [super init];
-    return [self __init];
+    [self __init];
+    return self;
 }
 
 // TODO(agrieve): It's probably better to change these to be weak references.
