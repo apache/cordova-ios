@@ -253,7 +253,9 @@
 
         if (!__locationStarted || (__highAccuracyEnabled != enableHighAccuracy)) {
             // add the callbackId into the array so we can call back when get data
-            [lData.locationCallbacks addObject:callbackId];
+            if (callbackId != nil) {
+                [lData.locationCallbacks addObject:callbackId];
+            }
             // Tell the location manager to start notifying us of heading updates
             [self startLocation:enableHighAccuracy];
         } else {

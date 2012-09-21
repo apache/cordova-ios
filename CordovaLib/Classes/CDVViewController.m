@@ -219,7 +219,7 @@
      */
 
     if ([enableLocation boolValue]) {
-        [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:nil];
+        [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
     }
 
     /*
