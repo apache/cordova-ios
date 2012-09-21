@@ -477,6 +477,7 @@
  */
 - (void) webViewDidStartLoad:(UIWebView*)theWebView 
 {
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
 }
 
 /**

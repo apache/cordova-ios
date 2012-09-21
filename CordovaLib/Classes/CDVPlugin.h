@@ -24,6 +24,7 @@
 #import "CDVCommandDelegate.h"
 
 #define CDVPluginHandleOpenURLNotification	@"CDVPluginHandleOpenURLNotification"
+#define CDVPluginResetNotification @"CDVPluginResetNotification"
 
 @interface CDVPlugin : NSObject {
 }
@@ -41,6 +42,7 @@
 - (void) handleOpenURL:(NSNotification*)notification;
 - (void) onAppTerminate;
 - (void) onMemoryWarning;
+- (void) onReset;
 
 /*
  // see initWithWebView implementation

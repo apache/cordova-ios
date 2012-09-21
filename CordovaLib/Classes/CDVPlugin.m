@@ -47,7 +47,9 @@
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppTerminate) name:UIApplicationWillTerminateNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:CDVPluginHandleOpenURLNotification object:nil];
-        
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onReset) name:CDVPluginResetNotification object:nil];
+
+		NSLog(@"Plugin loaded");
 		self.webView = theWebView;
 		
 		// You can listen to more app notifications, see:
@@ -74,6 +76,7 @@
 /* NOTE: calls into JavaScript must not call or trigger any blocking UI, like alerts */
 - (void) handleOpenURL:(NSNotification*)notification
 {
+	NSLog(@"handleOpenURL");
 	// override to handle urls sent to your app
 	// register your url schemes in your App-Info.plist
 	
@@ -94,11 +97,18 @@
 	// override to remove caches, etc
 }
 
+- (void) onReset
+{
+	// Override to cancel any long-running requests when the WebView navigates or refreshes.
+}
+
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPluginHandleOpenURLNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPluginResetNotification object:nil];
+
 	/*
 	 [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 	 [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
