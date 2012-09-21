@@ -35,7 +35,7 @@ static const NSUInteger kStreamBufferSize = 32768;
 // Magic value within the options dict used to set a cookie.
 NSString* const kOptionsKeyCookie = @"__cookie";
 // Form boundary for multi-part requests.
-NSString* const kFormBoundary = @"*****org.apache.cordova.formBoundary";
+NSString* const kFormBoundary = @"+++++org.apache.cordova.formBoundary";
 
 // Writes the given data to the stream in a blocking way.
 // If successful, returns bytesToWrite.
