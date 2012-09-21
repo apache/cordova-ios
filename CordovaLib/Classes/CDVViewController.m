@@ -503,7 +503,9 @@
     }
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 
-    // Tell the webview that native is ready.
+    // The iOSVCAddr is used to identify the WebView instance when using one of the XHR js->native bridge modes.
+    // The .onNativeReady().fire() will work when cordova.js is already loaded.
+    // The _nativeReady = true; is used when this is run before cordova.js is loaded.
     NSString* nativeReady = [NSString stringWithFormat:@"cordova.iOSVCAddr='%lld';try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}", (long long)self];
     [theWebView stringByEvaluatingJavaScriptFromString:nativeReady];
 }
