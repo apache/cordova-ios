@@ -85,7 +85,8 @@
         CDVAudioRecorderViewController* audioViewController = [[CDVAudioRecorderViewController alloc] initWithCommand:self duration:duration callbackId:callbackId];
 
         // Now create a nav controller and display the view...
-        UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:audioViewController];
+        CDVAudioNavigationController* navController = [[CDVAudioNavigationController alloc] initWithRootViewController:audioViewController];
+
         self.inUse = YES;
 
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
@@ -537,6 +538,16 @@
 
 @end
 
+@implementation CDVAudioNavigationController
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    // delegate to CVDAudioRecorderViewController
+    return [self.topViewController supportedInterfaceOrientations];
+}
+
+@end
+
 @implementation CDVAudioRecorderViewController
 @synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer, isTimed;
 
@@ -689,6 +700,15 @@
         self.recordButton.enabled = YES;
         self.doneButton.enabled = YES;
     }
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    NSUInteger orientation = UIInterfaceOrientationMaskPortrait; // must support portrait
+    NSUInteger supported = [captureCommand.viewController supportedInterfaceOrientations];
+
+    orientation = orientation | (supported & UIInterfaceOrientationMaskPortraitUpsideDown);
+    return orientation;
 }
 
 - (void)viewDidUnload

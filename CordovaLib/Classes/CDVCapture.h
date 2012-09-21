@@ -64,6 +64,10 @@ typedef NSUInteger CDVCaptureError;
 
 @end
 
+@interface CDVAudioNavigationController : UINavigationController
+
+@end
+
 /* AudioRecorderViewController is used to create a simple view for audio recording.
  *  It is created from [Capture captureAudio].  It creates a very simple interface for
  *  recording by presenting just a record/stop button and a Done button to close the view.
