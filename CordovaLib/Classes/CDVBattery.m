@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,18 +17,15 @@
  under the License.
  */
 
-
 #import "CDVBattery.h"
 
-
-@interface CDVBattery(PrivateMethods)
-- (void) updateOnlineStatus;
+@interface CDVBattery (PrivateMethods)
+- (void)updateOnlineStatus;
 @end
 
 @implementation CDVBattery
 
 @synthesize state, level, callbackId, isPlugged;
-
 
 /*  determining type of event occurs on JavaScript side
 - (void) updateBatteryLevel:(NSNotification*)notification
@@ -60,66 +57,65 @@
 }
  */
 
-- (void) updateBatteryStatus: (NSNotification*)notification
+- (void)updateBatteryStatus:(NSNotification*)notification
 {
     NSDictionary* batteryData = [self getBatteryStatus];
+
     if (self.callbackId) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:batteryData];
         [result setKeepCallbackAsBool:YES];
         [super writeJavascript:[result toSuccessCallbackString:self.callbackId]];
     }
-       
 }
-/* Get the current battery status and level.  Status will be unknown and level will be -1.0 if 
+
+/* Get the current battery status and level.  Status will be unknown and level will be -1.0 if
  * monitoring is turned off.
  */
-- (NSDictionary*) getBatteryStatus
+- (NSDictionary*)getBatteryStatus
 {
     UIDevice* currentDevice = [UIDevice currentDevice];
     UIDeviceBatteryState currentState = [currentDevice batteryState];
-    
+
     isPlugged = FALSE; // UIDeviceBatteryStateUnknown or UIDeviceBatteryStateUnplugged
-    if (currentState == UIDeviceBatteryStateCharging || currentState == UIDeviceBatteryStateFull) {
+    if ((currentState == UIDeviceBatteryStateCharging) || (currentState == UIDeviceBatteryStateFull)) {
         isPlugged = TRUE;
     }
     float currentLevel = [currentDevice batteryLevel];
-    
-    if (currentLevel != self.level || currentState != self.state) {
-        
+
+    if ((currentLevel != self.level) || (currentState != self.state)) {
         self.level = currentLevel;
         self.state = currentState;
     }
-    
+
     // W3C spec says level must be null if it is unknown
     NSObject* w3cLevel = nil;
-    if (currentState == UIDeviceBatteryStateUnknown || currentLevel == -1.0) {
+    if ((currentState == UIDeviceBatteryStateUnknown) || (currentLevel == -1.0)) {
         w3cLevel = [NSNull null];
-    }
-    else {
-        w3cLevel = [NSNumber numberWithFloat:(currentLevel*100)];
+    } else {
+        w3cLevel = [NSNumber numberWithFloat:(currentLevel * 100)];
     }
     NSMutableDictionary* batteryData = [NSMutableDictionary dictionaryWithCapacity:2];
-    [batteryData setObject: [NSNumber numberWithBool: isPlugged] forKey:@"isPlugged"];
-    [batteryData setObject: w3cLevel forKey:@"level"];
+    [batteryData setObject:[NSNumber numberWithBool:isPlugged] forKey:@"isPlugged"];
+    [batteryData setObject:w3cLevel forKey:@"level"];
     return batteryData;
 }
 
 /* turn on battery monitoring*/
-- (void) start:(CDVInvokedUrlCommand*)command
+- (void)start:(CDVInvokedUrlCommand*)command
 {
     self.callbackId = command.callbackId;
-    
-    if ( [UIDevice currentDevice].batteryMonitoringEnabled == NO) {
+
+    if ([UIDevice currentDevice].batteryMonitoringEnabled == NO) {
         [[UIDevice currentDevice] setBatteryMonitoringEnabled:YES];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBatteryStatus:) 
-												 name:UIDeviceBatteryStateDidChangeNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBatteryStatus:) 
-												 name:UIDeviceBatteryLevelDidChangeNotification object:nil];
-	}
-	
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBatteryStatus:)
+                                                     name:UIDeviceBatteryStateDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBatteryStatus:)
+                                                     name:UIDeviceBatteryLevelDidChangeNotification object:nil];
+    }
 }
+
 /* turn off battery monitoring */
-- (void) stop:(CDVInvokedUrlCommand*)command
+- (void)stop:(CDVInvokedUrlCommand*)command
 {
     // callback one last time to clear the callback function on JS side
     if (self.callbackId) {
@@ -131,24 +127,21 @@
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:NO];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceBatteryStateDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceBatteryLevelDidChangeNotification object:nil];
-    
-	
 }
 
-- (CDVPlugin*) initWithWebView:(UIWebView*)theWebView
+- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
 {
     self = (CDVBattery*)[super initWithWebView:theWebView];
     if (self) {
-		self.state = UIDeviceBatteryStateUnknown;
+        self.state = UIDeviceBatteryStateUnknown;
         self.level = -1.0;
-
     }
     return self;
 }
 
 - (void)dealloc
 {
-	[self stop:nil];
+    [self stop:nil];
 }
 
 @end

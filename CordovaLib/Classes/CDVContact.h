@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,67 +21,64 @@
 #import <AddressBook/ABAddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
 
-
-
 enum CDVContactError {
-	UNKNOWN_ERROR = 0,
-	INVALID_ARGUMENT_ERROR = 1,
-	TIMEOUT_ERROR = 2,
-	PENDING_OPERATION_ERROR = 3,
-	IO_ERROR = 4,
-	NOT_SUPPORTED_ERROR = 5,
-	PERMISSION_DENIED_ERROR = 20
+    UNKNOWN_ERROR = 0,
+    INVALID_ARGUMENT_ERROR = 1,
+    TIMEOUT_ERROR = 2,
+    PENDING_OPERATION_ERROR = 3,
+    IO_ERROR = 4,
+    NOT_SUPPORTED_ERROR = 5,
+    PERMISSION_DENIED_ERROR = 20
 };
 typedef NSUInteger CDVContactError;
 
 @interface CDVContact : NSObject {
-	
-	ABRecordRef record;			// the ABRecord associated with this contact
-	NSDictionary* returnFields;	// dictionary of fields to return when performing search
-} 
+    ABRecordRef record;         // the ABRecord associated with this contact
+    NSDictionary* returnFields; // dictionary of fields to return when performing search
+}
 
 @property (nonatomic, assign) ABRecordRef record;
 @property (nonatomic, strong) NSDictionary* returnFields;
 
-+(NSDictionary*) defaultABtoW3C;
-+(NSDictionary*) defaultW3CtoAB;
-+(NSSet*) defaultW3CtoNull;
-+(NSDictionary*) defaultObjectAndProperties;
-+(NSDictionary*) defaultFields;
++ (NSDictionary*)defaultABtoW3C;
++ (NSDictionary*)defaultW3CtoAB;
++ (NSSet*)defaultW3CtoNull;
++ (NSDictionary*)defaultObjectAndProperties;
++ (NSDictionary*)defaultFields;
 
-+(NSDictionary*) calcReturnFields: (NSArray*)fields;
--(id)init;
--(id)initFromABRecord: (ABRecordRef) aRecord;
--(bool) setFromContactDict:(NSDictionary*) aContact asUpdate: (BOOL)bUpdate;
++ (NSDictionary*)calcReturnFields:(NSArray*)fields;
+- (id)init;
+- (id)initFromABRecord:(ABRecordRef)aRecord;
+- (bool)setFromContactDict:(NSDictionary*)aContact asUpdate:(BOOL)bUpdate;
 
-+(BOOL) needsConversion: (NSString*)W3Label;
-+(CFStringRef) convertContactTypeToPropertyLabel:(NSString*)label;
-+(NSString*) convertPropertyLabelToContactType: (NSString*)label;
-+(BOOL) isValidW3ContactType: (NSString*) label;
--(bool) setValue: (id)aValue forProperty: (ABPropertyID) aProperty inRecord: (ABRecordRef) aRecord asUpdate: (BOOL)bUpdate;
++ (BOOL)needsConversion:(NSString*)W3Label;
++ (CFStringRef)convertContactTypeToPropertyLabel:(NSString*)label;
++ (NSString*)convertPropertyLabelToContactType:(NSString*)label;
++ (BOOL)isValidW3ContactType:(NSString*)label;
+- (bool)setValue:(id)aValue forProperty:(ABPropertyID)aProperty inRecord:(ABRecordRef)aRecord asUpdate:(BOOL)bUpdate;
 
--(NSDictionary*) toDictionary: (NSDictionary*) withFields;
--(NSNumber*)getDateAsNumber: (ABPropertyID) datePropId;	
--(NSObject*) extractName;
--(NSObject*) extractMultiValue: (NSString*)propertyId;
--(NSObject*) extractAddresses;
--(NSObject*) extractIms;
--(NSObject*) extractOrganizations;
--(NSObject*) extractPhotos;
+- (NSDictionary*)toDictionary:(NSDictionary*)withFields;
+- (NSNumber*)getDateAsNumber:(ABPropertyID)datePropId;
+- (NSObject*)extractName;
+- (NSObject*)extractMultiValue:(NSString*)propertyId;
+- (NSObject*)extractAddresses;
+- (NSObject*)extractIms;
+- (NSObject*)extractOrganizations;
+- (NSObject*)extractPhotos;
 
--(NSMutableDictionary*) translateW3Dict: (NSDictionary*) dict forProperty: (ABPropertyID) prop;	
--(bool) setMultiValueStrings: (NSArray*)fieldArray forProperty: (ABPropertyID) prop inRecord: (ABRecordRef)person asUpdate: (BOOL)bUpdate;
--(bool) setMultiValueDictionary: (NSArray*)array forProperty: (ABPropertyID) prop inRecord: (ABRecordRef)person asUpdate: (BOOL)bUpdate;
--(ABMultiValueRef) allocStringMultiValueFromArray: array;
--(ABMultiValueRef) allocDictMultiValueFromArray: array forProperty: (ABPropertyID) prop;
--(BOOL) foundValue: (NSString*)testValue inFields: (NSDictionary*) searchFields;
--(BOOL) testStringValue: (NSString*) testValue forW3CProperty:(NSString*) property;
--(BOOL) testDateValue: (NSString*)testValue forW3CProperty: (NSString*) property;
--(BOOL) searchContactFields: (NSArray*) fields forMVStringProperty: (ABPropertyID) propId withValue: testValue;
-- (BOOL) testMultiValueStrings: (NSString*) testValue forProperty: (ABPropertyID) propId ofType: (NSString*) type;
-- (NSArray *) valuesForProperty: (ABPropertyID) propId inRecord: (ABRecordRef) aRecord;
-- (NSArray *) labelsForProperty: (ABPropertyID) propId inRecord: (ABRecordRef)aRecord;
--(BOOL) searchContactFields: (NSArray*) fields forMVDictionaryProperty: (ABPropertyID) propId withValue: (NSString*)testValue;
+- (NSMutableDictionary*)translateW3Dict:(NSDictionary*)dict forProperty:(ABPropertyID)prop;
+- (bool)setMultiValueStrings:(NSArray*)fieldArray forProperty:(ABPropertyID)prop inRecord:(ABRecordRef)person asUpdate:(BOOL)bUpdate;
+- (bool)setMultiValueDictionary:(NSArray*)array forProperty:(ABPropertyID)prop inRecord:(ABRecordRef)person asUpdate:(BOOL)bUpdate;
+- (ABMultiValueRef)allocStringMultiValueFromArray:array;
+- (ABMultiValueRef)allocDictMultiValueFromArray:array forProperty:(ABPropertyID)prop;
+- (BOOL)foundValue:(NSString*)testValue inFields:(NSDictionary*)searchFields;
+- (BOOL)testStringValue:(NSString*)testValue forW3CProperty:(NSString*)property;
+- (BOOL)testDateValue:(NSString*)testValue forW3CProperty:(NSString*)property;
+- (BOOL)searchContactFields:(NSArray*)fields forMVStringProperty:(ABPropertyID)propId withValue:testValue;
+- (BOOL)testMultiValueStrings:(NSString*)testValue forProperty:(ABPropertyID)propId ofType:(NSString*)type;
+- (NSArray*)valuesForProperty:(ABPropertyID)propId inRecord:(ABRecordRef)aRecord;
+- (NSArray*)labelsForProperty:(ABPropertyID)propId inRecord:(ABRecordRef)aRecord;
+- (BOOL)searchContactFields:(NSArray*)fields forMVDictionaryProperty:(ABPropertyID)propId withValue:(NSString*)testValue;
 
 @end
 
@@ -137,5 +134,3 @@ typedef NSUInteger CDVContactError;
 #define kW3ContactPhotos @"photos"
 #define kW3ContactCategories @"categories"
 #define kW3ContactUrls @"urls"
-
-

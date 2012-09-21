@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,14 +28,16 @@ static NSString* const kDummyArgServer = @"http://apache.org";
 static NSString* const kDummyFileContents = @"0123456789";
 
 // Reads the given stream and returns the contents as an NSData.
-static NSData* readStream(NSInputStream* stream) {
+static NSData *readStream(NSInputStream* stream)
+{
     static const NSUInteger kBufferSize = 1024;
-        
+
     UInt8* buffer = malloc(kBufferSize);
     NSMutableData* streamData = [NSMutableData data];
-    
+
     [stream open];
-    for (;;) {
+
+    for (;; ) {
         NSInteger read = [stream read:buffer maxLength:kBufferSize];
         if (read > 0) {
             [streamData appendBytes:buffer length:read];
@@ -43,6 +45,7 @@ static NSData* readStream(NSInputStream* stream) {
             break;
         }
     }
+
     free(buffer);
     [stream close];
     return streamData;
@@ -60,7 +63,7 @@ static NSData* readStream(NSInputStream* stream) {
 - (void)setUp
 {
     [super setUp];
-    
+
     _arguments = [[NSMutableArray alloc] initWithObjects:
         kDummyArgTarget, kDummyArgServer, kDummyArgFileKey, [NSNull null],
         [NSNull null], [NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
@@ -79,35 +82,43 @@ static NSData* readStream(NSInputStream* stream) {
     [super tearDown];
 }
 
-- (void)setFilePathArg:(NSString*)filePath {
+- (void)setFilePathArg:(NSString*)filePath
+{
     [_arguments replaceObjectAtIndex:0 withObject:filePath];
 }
 
-- (void)setServerUrlArg:(NSString*)serverUrl {
+- (void)setServerUrlArg:(NSString*)serverUrl
+{
     [_arguments replaceObjectAtIndex:1 withObject:serverUrl];
 }
 
-- (void)setChunkedModeArg:(BOOL)chunk {
+- (void)setChunkedModeArg:(BOOL)chunk
+{
     [_arguments replaceObjectAtIndex:7 withObject:[NSNumber numberWithBool:chunk]];
 }
 
-- (void)setParams:(NSDictionary*)params {
+- (void)setParams:(NSDictionary*)params
+{
     [_arguments replaceObjectAtIndex:5 withObject:params];
 }
 
-- (void)setHeaders:(NSDictionary*)headers {
+- (void)setHeaders:(NSDictionary*)headers
+{
     [_arguments replaceObjectAtIndex:8 withObject:headers];
 }
 
-- (NSURLRequest*)requestForUpload {
+- (NSURLRequest*)requestForUpload
+{
     CDVInvokedUrlCommand* command = [[[CDVInvokedUrlCommand alloc] initWithArguments:_arguments
                                                                           callbackId:kDummyArgCallbackId
                                                                            className:@"FileTransfer"
                                                                           methodName:@"upload"] autorelease];
+
     return [_fileTransfer requestForUploadCommand:command fileData:_dummyFileData];
 }
 
-- (void)checkUploadRequest:(NSURLRequest*)request chunked:(BOOL)chunked {
+- (void)checkUploadRequest:(NSURLRequest*)request chunked:(BOOL)chunked
+{
     STAssertTrue([@"POST" isEqualToString:[request HTTPMethod]], nil);
     NSData* payloadData = nil;
     if (chunked) {
@@ -124,17 +135,18 @@ static NSData* readStream(NSInputStream* stream) {
     STAssertEquals([payloadData length], contentLength, nil);
 }
 
-- (void)testEscapePathComponentForUrlString {
+- (void)testEscapePathComponentForUrlString
+{
     STAssertTrue([@"" isEqualToString:
-        [_fileTransfer escapePathComponentForUrlString:@""]], nil);
+            [_fileTransfer escapePathComponentForUrlString:@""]], nil);
     STAssertTrue([@"foo" isEqualToString:
-        [_fileTransfer escapePathComponentForUrlString:@"foo"]], nil);
+            [_fileTransfer escapePathComponentForUrlString:@"foo"]], nil);
     STAssertTrue([@"http://a.org/spa%20ce%25" isEqualToString:
-        [_fileTransfer escapePathComponentForUrlString:@"http://a.org/spa ce%"]], nil);
+            [_fileTransfer escapePathComponentForUrlString:@"http://a.org/spa ce%"]], nil);
     STAssertTrue([@"http://a.org/spa%20ce%25/" isEqualToString:
-        [_fileTransfer escapePathComponentForUrlString:@"http://a.org/spa ce%/"]], nil);
+            [_fileTransfer escapePathComponentForUrlString:@"http://a.org/spa ce%/"]], nil);
     STAssertTrue([@"http://a.org/%25/%25/" isEqualToString:
-        [_fileTransfer escapePathComponentForUrlString:@"http://a.org/%/%/"]], nil);
+            [_fileTransfer escapePathComponentForUrlString:@"http://a.org/%/%/"]], nil);
 }
 
 - (void)testUpload_invalidServerUrl
@@ -195,7 +207,7 @@ static NSData* readStream(NSInputStream* stream) {
 {
     [self setChunkedModeArg:NO];
     [self setHeaders:[NSDictionary dictionaryWithObjectsAndKeys:@"val1", @"key1",
-        [NSArray arrayWithObjects:@"val2a", @"val2b", nil], @"key2", [NSNull null], @"X-Requested-With", nil]];
+            [NSArray arrayWithObjects:@"val2a", @"val2b", nil], @"key2", [NSNull null], @"X-Requested-With", nil]];
     NSURLRequest* request = [self requestForUpload];
     STAssertTrue([@"val1" isEqualToString:[request valueForHTTPHeaderField:@"key1"]], nil);
     STAssertTrue([@"val2a,val2b" isEqualToString:[request valueForHTTPHeaderField:@"key2"]], nil);

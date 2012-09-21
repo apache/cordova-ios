@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,15 +19,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UIDevice(org_apache_cordova_UIDevice_Extension)
+@interface UIDevice (org_apache_cordova_UIDevice_Extension)
 
 /*
     Get the unique identifier from the app bundle's folder, which is already a GUID
     Upgrading and/or deleting the app and re-installing will get you a new GUID, so
     this is only unique per install per device.
  */
-- (NSString*) uniqueAppInstanceIdentifier;
+- (NSString*)uniqueAppInstanceIdentifier;
 
 @end
-
-

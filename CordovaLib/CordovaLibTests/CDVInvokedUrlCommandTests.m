@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,36 +26,38 @@
 
 @implementation CDVInvokedUrlCommandTests
 
-- (void) testInitWithNoArgs
+- (void)testInitWithNoArgs
 {
     NSArray* jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", [NSArray array], nil];
     CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+
     STAssertEquals(@"callbackId", command.callbackId, nil);
     STAssertEquals(@"className", command.className, nil);
     STAssertEquals(@"methodName", command.methodName, nil);
     STAssertEquals([NSArray array], command.arguments, nil);
 }
 
-- (void) testLegacyArgsNoDict
+- (void)testLegacyArgsNoDict
 {
     NSArray* args = [NSArray arrayWithObjects:@"a", @"b", nil];
     NSArray* jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", args, nil];
     CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
     NSMutableArray* legacyArgs = nil;
     NSMutableDictionary* dict = nil;
+
     [command legacyArguments:&legacyArgs andDict:&dict];
     // Ensure properties don't change.
     STAssertEquals(@"callbackId", command.callbackId, nil);
     STAssertEquals(@"className", command.className, nil);
     STAssertEquals(@"methodName", command.methodName, nil);
     STAssertEquals(args, command.arguments, nil);
-    
+
     NSArray* expected = [NSArray arrayWithObjects:@"callbackId", @"a", @"b", nil];
     STAssertEqualObjects(expected, legacyArgs, nil);
     STAssertNil(dict, nil);
 }
 
-- (void) testLegacyArgsWithDicts
+- (void)testLegacyArgsWithDicts
 {
     NSDictionary* dummyDict1 = [NSDictionary dictionaryWithObjectsAndKeys:@"val", @"key", nil];
     NSDictionary* dummyDict2 = [NSDictionary dictionaryWithObjectsAndKeys:@"val", @"key", nil];
@@ -64,30 +66,31 @@
     CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
     NSMutableArray* legacyArgs = nil;
     NSMutableDictionary* dict = nil;
+
     [command legacyArguments:&legacyArgs andDict:&dict];
     // Ensure properties don't change.
     STAssertEquals(@"callbackId", command.callbackId, nil);
     STAssertEquals(@"className", command.className, nil);
     STAssertEquals(@"methodName", command.methodName, nil);
     STAssertEquals(args, command.arguments, nil);
-    
+
     NSArray* expected = [NSArray arrayWithObjects:@"callbackId", @"a", dummyDict2, @"b", nil];
     STAssertEqualObjects(expected, legacyArgs, nil);
     STAssertEqualObjects(dict, dummyDict1, nil);
 }
 
-- (void) testLegacyArgsNoCallbackId
+- (void)testLegacyArgsNoCallbackId
 {
     NSArray* args = [NSArray arrayWithObjects:@"a", @"b", nil];
     NSArray* jsonArr = [NSArray arrayWithObjects:[NSNull null], @"className", @"methodName", args, nil];
     CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
     NSMutableArray* legacyArgs = nil;
     NSMutableDictionary* dict = nil;
+
     [command legacyArguments:&legacyArgs andDict:&dict];
-    
+
     NSArray* expected = [NSArray arrayWithObjects:@"a", @"b", nil];
     STAssertEqualObjects(expected, legacyArgs, nil);
 }
-
 
 @end
