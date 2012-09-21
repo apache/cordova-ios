@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -37,9 +37,9 @@ typedef int WebSourceId;
 @class WebScriptCallFramePrivate;
 @class WebScriptObject;
 
-extern NSString * const WebScriptErrorDomain;
-extern NSString * const WebScriptErrorDescriptionKey;
-extern NSString * const WebScriptErrorLineNumberKey;
+extern NSString* const WebScriptErrorDomain;
+extern NSString* const WebScriptErrorDescriptionKey;
+extern NSString* const WebScriptErrorLineNumberKey;
 
 enum {
     WebScriptGeneralErrorCode = -100
@@ -51,51 +51,49 @@ enum {
 
 // some source was parsed, establishing a "source ID" (>= 0) for future reference
 // this delegate method is deprecated, please switch to the new version below
-- (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                                fromURL:(NSString *)url
-                                               sourceId:(WebSourceId)sid
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView:(WebView*)webView didParseSource:(NSString*)source
+       fromURL     :(NSString*)url
+      sourceId    :(WebSourceId)sid
+   forWebFrame :(WebFrame*)webFrame;
 
 // some source was parsed, establishing a "source ID" (>= 0) for future reference
-- (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                         baseLineNumber:(WebNSUInteger)lineNumber
-                                                fromURL:(NSURL *)url
-                                               sourceId:(WebSourceId)sid
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView  :(WebView*)webView didParseSource:(NSString*)source
+   baseLineNumber:(WebNSUInteger)lineNumber
+          fromURL       :(NSURL*)url
+         sourceId      :(WebSourceId)sid
+      forWebFrame   :(WebFrame*)webFrame;
 
 // some source failed to parse
-- (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
-                                         baseLineNumber:(WebNSUInteger)lineNumber
-                                                fromURL:(NSURL *)url
-                                              withError:(NSError *)error
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView  :(WebView*)webView failedToParseSource:(NSString*)source
+   baseLineNumber:(WebNSUInteger)lineNumber
+          fromURL       :(NSURL*)url
+        withError     :(NSError*)error
+      forWebFrame   :(WebFrame*)webFrame;
 
 // just entered a stack frame (i.e. called a function, or started global scope)
-- (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView:(WebView*)webView didEnterCallFrame:(WebScriptCallFrame*)frame
+      sourceId    :(WebSourceId)sid
+          line        :(int)lineno
+   forWebFrame :(WebFrame*)webFrame;
 
 // about to execute some code
-- (void)webView:(WebView *)webView willExecuteStatement:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView:(WebView*)webView willExecuteStatement:(WebScriptCallFrame*)frame
+      sourceId    :(WebSourceId)sid
+          line        :(int)lineno
+   forWebFrame :(WebFrame*)webFrame;
 
 // about to leave a stack frame (i.e. return from a function)
-- (void)webView:(WebView *)webView   willLeaveCallFrame:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView:(WebView*)webView willLeaveCallFrame:(WebScriptCallFrame*)frame
+      sourceId    :(WebSourceId)sid
+          line        :(int)lineno
+   forWebFrame :(WebFrame*)webFrame;
 
 // exception is being thrown
-- (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
+- (void)webView:(WebView*)webView exceptionWasRaised:(WebScriptCallFrame*)frame
+      sourceId    :(WebSourceId)sid
+          line        :(int)lineno
+   forWebFrame :(WebFrame*)webFrame;
 @end
-
-
 
 // WebScriptCallFrame interface
 //
@@ -103,9 +101,9 @@ enum {
 
 @interface WebScriptCallFrame : NSObject
 {
-@private
+    @private
     WebScriptCallFramePrivate* _private;
-    id                         _userInfo;
+    id _userInfo;
 }
 
 // associate user info with frame
@@ -115,21 +113,20 @@ enum {
 - (id)userInfo;
 
 // get next frame on call stack (or nil if this is already the "global" frame)
-- (WebScriptCallFrame *)caller;
+- (WebScriptCallFrame*)caller;
 
 // get array of WebScriptObjects for each scope (innermost first, last is always global object)
-- (NSArray *)scopeChain;
+- (NSArray*)scopeChain;
 
 // get name of function (if available) or nil
-- (NSString *)functionName;
+- (NSString*)functionName;
 
 // get pending exception (if any) or nil
 - (id)exception;
 
 // evaluate a script (as if by "eval") in the context of this frame
-- (id)evaluateWebScript:(NSString *)script;
+- (id)evaluateWebScript:(NSString*)script;
 
 @end
 
 #undef WebNSUInteger
-

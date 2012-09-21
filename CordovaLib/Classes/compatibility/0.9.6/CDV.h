@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,12 +20,11 @@
 //  Bridge implementation file for using Cordova plugins in PhoneGap 0.9.6.
 //
 
-/* 
+/*
  Returns YES if it is at least version specified as NSString(X)
- Usage: 
+ Usage:
  if (IsAtLeastiOSVersion(@"5.1")) {
  // do something for iOS 5.1 or greater
  }
  */
 #define IsAtLeastiOSVersion(X) ([[[UIDevice currentDevice] systemVersion] compare:X options:NSNumericSearch] != NSOrderedAscending)
-

@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,8 +21,8 @@
 #import "CDVPlugin.h"
 
 enum CDVDestinationType {
-	DestinationTypeDataUrl = 0,
-	DestinationTypeFileUri
+    DestinationTypeDataUrl = 0,
+    DestinationTypeFileUri
 };
 typedef NSUInteger CDVDestinationType;
 
@@ -40,9 +40,7 @@ enum CDVMediaType {
 typedef NSUInteger CDVMediaType;
 
 @interface CDVCameraPicker : UIImagePickerController
-{
-}
-
+{}
 
 @property (assign) NSInteger quality;
 @property (copy)   NSString* callbackId;
@@ -57,16 +55,14 @@ typedef NSUInteger CDVMediaType;
 @property (strong) UIWebView* webView;
 @property (assign) BOOL popoverSupported;
 
-
 @end
 
 // ======================================================================= //
 
-@interface CDVCamera : CDVPlugin<UIImagePickerControllerDelegate, 
-									UINavigationControllerDelegate,
-									UIPopoverControllerDelegate>
-{
-}
+@interface CDVCamera : CDVPlugin <UIImagePickerControllerDelegate,
+    UINavigationControllerDelegate,
+    UIPopoverControllerDelegate>
+{}
 
 @property (strong) CDVCameraPicker* pickerController;
 
@@ -80,9 +76,9 @@ typedef NSUInteger CDVMediaType;
  * options:
  *	quality: integer between 1 and 100
  */
-- (void) takePicture:(CDVInvokedUrlCommand*)command;
-- (void) postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
-- (void) cleanup:(CDVInvokedUrlCommand*)command;
+- (void)takePicture:(CDVInvokedUrlCommand*)command;
+- (void)postImage:(UIImage*)anImage withFilename:(NSString*)filename toUrl:(NSURL*)url;
+- (void)cleanup:(CDVInvokedUrlCommand*)command;
 
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingImage:(UIImage*)image editingInfo:(NSDictionary*)editingInfo;
@@ -91,9 +87,6 @@ typedef NSUInteger CDVMediaType;
 - (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
 
-- (void) closePicker:(CDVCameraPicker*)picker __attribute__((deprecated));
+- (void)closePicker:(CDVCameraPicker*)picker __attribute__((deprecated));
 
 @end
-
-
-

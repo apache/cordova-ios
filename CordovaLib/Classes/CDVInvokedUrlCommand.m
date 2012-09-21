@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,29 +27,29 @@
 @synthesize className = _className;
 @synthesize methodName = _methodName;
 
-+ (CDVInvokedUrlCommand*) commandFromJson:(NSArray*)jsonEntry
++ (CDVInvokedUrlCommand*)commandFromJson:(NSArray*)jsonEntry
 {
     return [[CDVInvokedUrlCommand alloc] initFromJson:jsonEntry];
 }
-              
-- (id) initFromJson:(NSArray*)jsonEntry
+
+- (id)initFromJson:(NSArray*)jsonEntry
 {
     id tmp = [jsonEntry objectAtIndex:0];
     NSString* callbackId = tmp == [NSNull null] ? nil : tmp;
     NSString* className = [jsonEntry objectAtIndex:1];
     NSString* methodName = [jsonEntry objectAtIndex:2];
     NSMutableArray* arguments = [jsonEntry objectAtIndex:3];
-    
+
     return [self initWithArguments:arguments
                         callbackId:callbackId
                          className:className
                         methodName:methodName];
 }
 
-- (id) initWithArguments:(NSArray*)arguments
-              callbackId:(NSString*)callbackId
-               className:(NSString*)className
-              methodName:(NSString*)methodName
+- (id)initWithArguments:(NSArray*)arguments
+             callbackId:(NSString*)callbackId
+              className:(NSString*)className
+             methodName:(NSString*)methodName
 {
     self = [super init];
     if (self != nil) {
@@ -61,8 +61,10 @@
     return self;
 }
 
-- (void) legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict {
+- (void)legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict
+{
     NSMutableArray* newArguments = [NSMutableArray arrayWithArray:_arguments];
+
     for (NSUInteger i = 0; i < [newArguments count]; ++i) {
         if ([[newArguments objectAtIndex:i] isKindOfClass:[NSDictionary class]]) {
             if (legacyDict != NULL) {
@@ -72,6 +74,7 @@
             break;
         }
     }
+
     // Legacy (two versions back) has no callbackId.
     if (_callbackId != nil) {
         [newArguments insertObject:_callbackId atIndex:0];
@@ -80,6 +83,5 @@
         *legacyArguments = newArguments;
     }
 }
-
 
 @end
