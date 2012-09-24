@@ -502,28 +502,30 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     self.bytesTransfered += data.length;
     [self.responseData appendData:data];
 
-    BOOL lengthComputable = (self.bytesExpected != NSURLResponseUnknownLength);
-    NSMutableDictionary* downloadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
-    [downloadProgress setObject:[NSNumber numberWithBool:lengthComputable] forKey:@"lengthComputable"];
-    [downloadProgress setObject:[NSNumber numberWithInt:self.bytesTransfered] forKey:@"loaded"];
-    [downloadProgress setObject:[NSNumber numberWithInt:self.bytesExpected] forKey:@"total"];
-
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:downloadProgress];
-    [result setKeepCallbackAsBool:true];
-    [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
+    if (self.direction == CDV_TRANSFER_DOWNLOAD) {
+        BOOL lengthComputable = (self.bytesExpected != NSURLResponseUnknownLength);
+        NSMutableDictionary* downloadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
+        [downloadProgress setObject:[NSNumber numberWithBool:lengthComputable] forKey:@"lengthComputable"];
+        [downloadProgress setObject:[NSNumber numberWithInt:self.bytesTransfered] forKey:@"loaded"];
+        [downloadProgress setObject:[NSNumber numberWithInt:self.bytesExpected] forKey:@"total"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:downloadProgress];
+        [result setKeepCallbackAsBool:true];
+        [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
+    }
 }
 
 - (void)connection:(NSURLConnection*)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 {
-    NSMutableDictionary* uploadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
+    if (self.direction == CDV_TRANSFER_UPLOAD) {
+        NSMutableDictionary* uploadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
 
-    [uploadProgress setObject:[NSNumber numberWithBool:true] forKey:@"lengthComputable"];
-    [uploadProgress setObject:[NSNumber numberWithInt:totalBytesWritten] forKey:@"loaded"];
-    [uploadProgress setObject:[NSNumber numberWithInt:totalBytesExpectedToWrite] forKey:@"total"];
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uploadProgress];
-    [result setKeepCallbackAsBool:true];
-    [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
-
+        [uploadProgress setObject:[NSNumber numberWithBool:true] forKey:@"lengthComputable"];
+        [uploadProgress setObject:[NSNumber numberWithInt:totalBytesWritten] forKey:@"loaded"];
+        [uploadProgress setObject:[NSNumber numberWithInt:totalBytesExpectedToWrite] forKey:@"total"];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uploadProgress];
+        [result setKeepCallbackAsBool:true];
+        [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
+    }
     self.bytesTransfered = totalBytesWritten;
 }
 
