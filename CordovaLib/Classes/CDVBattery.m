@@ -144,4 +144,9 @@
     [self stop:nil];
 }
 
+- (void)onReset
+{
+    [self stop:nil];
+}
+
 @end
