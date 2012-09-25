@@ -632,6 +632,22 @@
     [[self soundCache] removeAllObjects];
 }
 
+- (void)onReset
+{
+    for (CDVAudioFile* audioFile in [[self soundCache] allValues]) {
+        if (audioFile != nil) {
+            if (audioFile.player != nil) {
+                [audioFile.player stop];
+                audioFile.player.currentTime = 0;
+            }
+            if (audioFile.recorder != nil) {
+                [audioFile.recorder stop];
+            }
+        }
+    }
+    [[self soundCache] removeAllObjects];
+}
+
 @end
 
 @implementation CDVAudioFile
