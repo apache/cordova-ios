@@ -1,6 +1,6 @@
-// commit a9db8e3d85a08cab6ccf86f29cc476c1178d2d57
+// commit 05cffae81404b6b79b48ce55f1047474ac21e25b
 
-// File generated at :: Thu Sep 20 2012 23:13:39 GMT-0400 (EDT)
+// File generated at :: Tue Sep 25 2012 13:12:51 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -245,7 +245,9 @@ var cordova = {
     /**
      * Plugin callback mechanism.
      */
-    callbackId: 0,
+    // Randomize the starting callbackId to avoid collisions after refreshing or navigating.
+    // This way, it's very unlikely that any new callback would get the same callbackId as an old callback.
+    callbackId: Math.floor(Math.random() * 2000000000),
     callbacks:  {},
     callbackStatus: {
         NO_RESULT: 0,
@@ -910,7 +912,7 @@ var cordova = require('cordova'),
     // XHR mode does not work on iOS 4.2, so default to IFRAME_NAV for such devices.
     // XHR mode's main advantage is working around a bug in -webkit-scroll, which 
     // doesn't exist in 4.X devices anyways.
-    bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_NO_PAYLOAD : jsToNativeModes.IFRAME_NAV,
+    bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_OPTIONAL_PAYLOAD : jsToNativeModes.IFRAME_NAV,
     execIframe,
     execXhr;
 
@@ -987,10 +989,18 @@ function iOSExec() {
     // which case the command will be picked up without notification.
     if (cordova.commandQueue.length == 1 && !cordova.commandQueueFlushing) {
         if (bridgeMode) {
+            // Re-using the XHR improves exec() performance by about 10%.
+            // It is possible for a native stringByEvaluatingJavascriptFromString call
+            // to cause us to reach this point when a request is already in progress,
+            // so we check the readyState to guard agains re-using an inprogress XHR.
+            // Refer to CB-1404.
+            if (execXhr && execXhr.readyState != 4) {
+                execXhr = null;
+            }
             execXhr = execXhr || new XMLHttpRequest();
-            // Changeing this to a GET will make the XHR reach the URIProtocol on 4.2.
+            // Changing this to a GET will make the XHR reach the URIProtocol on 4.2.
             // For some reason it still doesn't work though...
-            execXhr.open('HEAD', "file:///!gap_exec", true);
+            execXhr.open('HEAD', "/!gap_exec", true);
             execXhr.setRequestHeader('vc', cordova.iOSVCAddr);
             if (shouldBundleCommandJson()) {
                 execXhr.setRequestHeader('cmds', nativecomm());
@@ -4466,6 +4476,23 @@ var exec = require('cordova/exec'),
 
 var globalization = {
 
+/**
+* Returns the string identifier for the client's current language.
+* It returns the language identifier string to the successCB callback with a
+* properties object as a parameter. If there is an error getting the language,
+* then the errorCB callback is invoked.
+*
+* @param {Function} successCB
+* @param {Function} errorCB
+*
+* @return Object.value {String}: The language identifier
+*
+* @error GlobalizationError.UNKNOWN_ERROR
+*
+* Example
+*    globalization.getPreferredLanguage(function (language) {alert('language:' + language.value + '\n');},
+*                                function () {});
+*/
 getPreferredLanguage:function(successCB, failureCB) {
     // successCallback required
     if (typeof successCB != "function") {
