@@ -66,6 +66,11 @@
     }
 }
 
+- (void)onReset
+{
+    [self stop:nil];
+}
+
 - (void)stop:(CDVInvokedUrlCommand*)command
 {
     UIAccelerometer* theAccelerometer = [UIAccelerometer sharedAccelerometer];
