@@ -396,9 +396,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 - (void)onReset
 {
     for (CDVFileTransferDelegate* delegate in [activeTransfers allValues]) {
-        if (delegate != nil) {
-            [delegate.connection cancel];
-        }
+        [delegate.connection cancel];
     }
     [activeTransfers removeAllObjects];
 }

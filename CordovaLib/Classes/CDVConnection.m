@@ -152,8 +152,8 @@
 
 - (void)onReset
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:kReachabilityChangedNotification object:nil];
+    // Update the value cached in Javascript after a reset, because it would have been lost on navigation.
+    [self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
 @end
