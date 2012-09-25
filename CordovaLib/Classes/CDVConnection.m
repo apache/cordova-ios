@@ -147,6 +147,11 @@
 
 - (void)dealloc
 {
+    [self onReset];
+}
+
+- (void)onReset
+{
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:kReachabilityChangedNotification object:nil];
 }
