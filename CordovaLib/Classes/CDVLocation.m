@@ -592,6 +592,14 @@
     self.locationManager.delegate = nil;
 }
 
+- (void)onReset
+{
+    [self _stopLocation];
+    [self.locationManager stopUpdatingHeading];
+    self.headingData = nil;
+}
+
+
 @end
 
 #pragma mark -
