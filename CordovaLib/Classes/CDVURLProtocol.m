@@ -86,7 +86,9 @@ static NSMutableSet* gRegisteredControllers = nil;
                 [viewController performSelectorOnMainThread:@selector(flushCommandQueue) withObject:nil waitUntilDone:NO];
             }
         }
-        return NO;
+        // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.
+        // If JS->Native bridge speed is really important for an app, they should use the iframe bridge.
+        return YES;
     }
 
     // we only care about http and https connections
@@ -108,6 +110,12 @@ static NSMutableSet* gRegisteredControllers = nil;
 {
     // NSLog(@"%@ received %@ - start", self, NSStringFromSelector(_cmd));
     NSURL* url = [[self request] URL];
+
+    if ([[url path] isEqualToString:@"/!gap_exec"]) {
+        [[self client] URLProtocolDidFinishLoading:self];
+        return;
+    }
+
     NSString* body = [gWhitelist errorStringForURL:url];
 
     CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
