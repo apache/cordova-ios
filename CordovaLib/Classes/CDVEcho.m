@@ -29,4 +29,16 @@
     [self success:pluginResult callbackId:command.callbackId];
 }
 
+- (void)echoAsyncHelper:(NSArray*)args
+{
+    [self success:[args objectAtIndex:0] callbackId:[args objectAtIndex:1]];
+}
+
+- (void)echoAsync:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[command.arguments objectAtIndex:0]];
+
+    [self performSelector:@selector(echoAsyncHelper:) withObject:[NSArray arrayWithObjects:pluginResult, command.callbackId, nil] afterDelay:0];
+}
+
 @end
