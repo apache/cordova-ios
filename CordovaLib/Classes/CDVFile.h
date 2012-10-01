@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,7 +21,7 @@
 #import "CDVPlugin.h"
 
 enum CDVFileError {
-	NOT_FOUND_ERR = 1,
+    NOT_FOUND_ERR = 1,
     SECURITY_ERR = 2,
     ABORT_ERR = 3,
     NOT_READABLE_ERR = 4,
@@ -37,75 +37,72 @@ enum CDVFileError {
 typedef int CDVFileError;
 
 enum CDVFileSystemType {
-	TEMPORARY = 0,
-	PERSISTENT = 1
+    TEMPORARY = 0,
+    PERSISTENT = 1
 };
 typedef int CDVFileSystemType;
 
 @interface CDVFile : CDVPlugin {
-	
-	NSString *appDocsPath;	
-	NSString *appLibraryPath;	
-	NSString *appTempPath;
-	NSString *persistentPath;
-	NSString *temporaryPath;
-	
-	BOOL userHasAllowed;
+    NSString* appDocsPath;
+    NSString* appLibraryPath;
+    NSString* appTempPath;
+    NSString* persistentPath;
+    NSString* temporaryPath;
 
+    BOOL userHasAllowed;
 }
-- (NSNumber*) checkFreeDiskSpace: (NSString*) appPath;
--(NSString*) getAppPath: (NSString*)pathFragment;
-//-(NSString*) getFullPath: (NSString*)pathFragment;
-- (void) requestFileSystem:(CDVInvokedUrlCommand*)command;
--(NSDictionary*) getDirectoryEntry: (NSString*) fullPath isDirectory: (BOOL) isDir;
-- (void) resolveLocalFileSystemURI:(CDVInvokedUrlCommand*)command;
-- (void) getDirectory:(CDVInvokedUrlCommand*)command;
-- (void) getFile:(CDVInvokedUrlCommand*)command;
-- (void) getParent:(CDVInvokedUrlCommand*)command;
-- (void) getMetadata:(CDVInvokedUrlCommand*)command;
-- (void) removeRecursively:(CDVInvokedUrlCommand*)command;
-- (void) remove:(CDVInvokedUrlCommand*)command;
-- (NSString*) doRemove:(NSString*)fullPath callback: (NSString*)callbackId;
-- (void) copyTo:(CDVInvokedUrlCommand*)command;
-- (void) moveTo:(CDVInvokedUrlCommand*)command;
--(BOOL) canCopyMoveSrc: (NSString*) src ToDestination: (NSString*) dest;
-- (void) doCopyMove:(CDVInvokedUrlCommand*)command isCopy:(BOOL)bCopy;
-//- (void) toURI:(CDVInvokedUrlCommand*)command;
-- (void) getFileMetadata:(CDVInvokedUrlCommand*)command;
-- (void) readEntries:(CDVInvokedUrlCommand*)command;
+- (NSNumber*)checkFreeDiskSpace:(NSString*)appPath;
+- (NSString*)getAppPath:(NSString*)pathFragment;
+// -(NSString*) getFullPath: (NSString*)pathFragment;
+- (void)requestFileSystem:(CDVInvokedUrlCommand*)command;
+- (NSDictionary*)getDirectoryEntry:(NSString*)fullPath isDirectory:(BOOL)isDir;
+- (void)resolveLocalFileSystemURI:(CDVInvokedUrlCommand*)command;
+- (void)getDirectory:(CDVInvokedUrlCommand*)command;
+- (void)getFile:(CDVInvokedUrlCommand*)command;
+- (void)getParent:(CDVInvokedUrlCommand*)command;
+- (void)getMetadata:(CDVInvokedUrlCommand*)command;
+- (void)removeRecursively:(CDVInvokedUrlCommand*)command;
+- (void)remove:(CDVInvokedUrlCommand*)command;
+- (NSString*)doRemove:(NSString*)fullPath callback:(NSString*)callbackId;
+- (void)copyTo:(CDVInvokedUrlCommand*)command;
+- (void)moveTo:(CDVInvokedUrlCommand*)command;
+- (BOOL)canCopyMoveSrc:(NSString*)src ToDestination:(NSString*)dest;
+- (void)doCopyMove:(CDVInvokedUrlCommand*)command isCopy:(BOOL)bCopy;
+// - (void) toURI:(CDVInvokedUrlCommand*)command;
+- (void)getFileMetadata:(CDVInvokedUrlCommand*)command;
+- (void)readEntries:(CDVInvokedUrlCommand*)command;
 
-// DEPRECATED 
-- (void) readFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-// DEPRECATED 
+// DEPRECATED
+- (void)readFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
 
-- (void) readAsText:(CDVInvokedUrlCommand*)command;
-- (void) readAsDataURL:(CDVInvokedUrlCommand*)command;
--(NSString*) getMimeTypeFromPath: (NSString*) fullPath;
-- (void) write:(CDVInvokedUrlCommand*)command;
-- (void) testFileExists:(CDVInvokedUrlCommand*)command;
-- (void) testDirectoryExists:(CDVInvokedUrlCommand*)command;
-//- (void) createDirectory:(CDVInvokedUrlCommand*)command;
-//- (void) deleteDirectory:(CDVInvokedUrlCommand*)command;
-//- (void) deleteFile:(CDVInvokedUrlCommand*)command;
-- (void) getFreeDiskSpace:(CDVInvokedUrlCommand*)command;
-// DEPRECATED 
-- (void) truncateFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-// DEPRECATED 
-- (void) truncate:(CDVInvokedUrlCommand*)command;
+// DEPRECATED
 
+- (void)readAsText:(CDVInvokedUrlCommand*)command;
+- (void)readAsDataURL:(CDVInvokedUrlCommand*)command;
+- (NSString*)getMimeTypeFromPath:(NSString*)fullPath;
+- (void)write:(CDVInvokedUrlCommand*)command;
+- (void)testFileExists:(CDVInvokedUrlCommand*)command;
+- (void)testDirectoryExists:(CDVInvokedUrlCommand*)command;
+// - (void) createDirectory:(CDVInvokedUrlCommand*)command;
+// - (void) deleteDirectory:(CDVInvokedUrlCommand*)command;
+// - (void) deleteFile:(CDVInvokedUrlCommand*)command;
+- (void)getFreeDiskSpace:(CDVInvokedUrlCommand*)command;
+// DEPRECATED
+- (void)truncateFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
 
+// DEPRECATED
+- (void)truncate:(CDVInvokedUrlCommand*)command;
 
-//- (BOOL) fileExists:(NSString*)fileName;
-//- (BOOL) directoryExists:(NSString*)dirName;
-- (void) writeToFile:(NSString*)fileName withData:(NSString*)data append:(BOOL)shouldAppend callback: (NSString*) callbackId;
-- (unsigned long long) truncateFile:(NSString*)filePath atPosition:(unsigned long long)pos;
+// - (BOOL) fileExists:(NSString*)fileName;
+// - (BOOL) directoryExists:(NSString*)dirName;
+- (void)writeToFile:(NSString*)fileName withData:(NSString*)data append:(BOOL)shouldAppend callback:(NSString*)callbackId;
+- (unsigned long long)truncateFile:(NSString*)filePath atPosition:(unsigned long long)pos;
 
-
-@property (nonatomic, strong)NSString *appDocsPath;
-@property (nonatomic, strong)NSString *appLibraryPath;
-@property (nonatomic, strong)NSString *appTempPath;
-@property (nonatomic, strong)NSString *persistentPath;
-@property (nonatomic, strong)NSString *temporaryPath;
+@property (nonatomic, strong) NSString* appDocsPath;
+@property (nonatomic, strong) NSString* appLibraryPath;
+@property (nonatomic, strong) NSString* appTempPath;
+@property (nonatomic, strong) NSString* persistentPath;
+@property (nonatomic, strong) NSString* temporaryPath;
 @property BOOL userHasAllowed;
 
 @end

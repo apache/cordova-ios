@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,32 +19,30 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface CDVInvokedUrlCommand : NSObject {
-	NSString* _callbackId;
-	NSString* _className;
-	NSString* _methodName;
-	NSArray* _arguments;
+    NSString* _callbackId;
+    NSString* _className;
+    NSString* _methodName;
+    NSArray* _arguments;
 }
 
-@property(nonatomic, readonly) NSArray* arguments;
-@property(nonatomic, readonly) NSString* callbackId;
-@property(nonatomic, readonly) NSString* className;
-@property(nonatomic, readonly) NSString* methodName;
+@property (nonatomic, readonly) NSArray* arguments;
+@property (nonatomic, readonly) NSString* callbackId;
+@property (nonatomic, readonly) NSString* className;
+@property (nonatomic, readonly) NSString* methodName;
 
-+ (CDVInvokedUrlCommand*) commandFromJson:(NSArray*)jsonEntry;
++ (CDVInvokedUrlCommand*)commandFromJson:(NSArray*)jsonEntry;
 
-- (id) initWithArguments:(NSArray*)arguments
-              callbackId:(NSString*)callbackId
-               className:(NSString*)className
-              methodName:(NSString*)methodName;
-              
-- (id) initFromJson:(NSArray*)jsonEntry;
+- (id)initWithArguments:(NSArray*)arguments
+   callbackId          :(NSString*)callbackId
+    className           :(NSString*)className
+   methodName          :(NSString*)methodName;
+
+- (id)initFromJson:(NSArray*)jsonEntry;
 
 // The first NSDictionary found in the arguments will be returned in legacyDict.
 // The arguments array with be prepended with the callbackId and have the first
 // dict removed from it.
-- (void) legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict;
-
+- (void)legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict;
 
 @end

@@ -25,40 +25,51 @@ CordovaLib is a static library that enables users to include Cordova in their iO
 
 Pre-requisites
 -------------------------------------------------------------
-Make sure you have installed the latest released iOS SDK which comes with Xcode 4. Download it at [http://developer.apple.com/ios](http://developer.apple.com/ios).
+Make sure you have installed the latest released iOS SDK which comes with Xcode 4. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
 <br />
 
 Install CordovaLib
 -------------------------------------------------------------
 
-1. Launch **"Terminal.app"**
-2. Navigate to the folder where you downloaded the source 
-3. Type in **"make"** then press Enter
+1. Download the source
+2. Extract to their final location
+3. There is no step 3
 
 <br />
 
-This sets the $(CORDOVALIB) variable to the CordovaLib folder of the downloaded source - and is used by Cordova projects to locate the CordovaLib project. If you move this folder, you will need to run **"make"** again to update the location.  
-
-**NOTE:** For 2.0.0, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first - **"make uninstall"**.
+**NOTE:** For 2.x and greater, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first - **"make uninstall"**.
 
 <br />
 
 Create a Cordova project
 -------------------------------------------------------------
 
-1. Copy the **bin** subfolder (included in the distribution) to a location on your hard drive.
-2. Follow the instructions in the [**Command-Line Usage** section](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.phonegap.com](http://docs.phonegap.com)
+1. Launch **Terminal.app**
+2. Go to the location where you installed Cordova, in the **bin** sub-folder
+3. Follow the instructions in the [**Command-Line Usage** section](http://docs.cordova.io/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.cordova.io](http://docs.cordova.io)
 
 The docs should also have been included in the distribution.
 
 <br />
 
+Updating a CordovaLib subproject reference in your project
+-------------------------------------------------------------
+
+Beginning with Cordova 2.1.0, we are not using the CORDOVALIB Xcode variable anymore when referencing where CordovaLib resides, the reference is an absolute file reference now. 
+
+When you update to a new Cordova version, you may need to update the CordovaLib reference in an existing project. Cordova comes with a script that will help you to do this. 
+
+1. Launch **Terminal.app**
+2. Go to the location where you installed Cordova, in the **bin** sub-folder
+3. Run **"update_cordova_subproject [path/to/your/project/xcodeproj]"**  where the first parameter is the path to your project's .xcodeproj file
+
+<br />
+
+
 Uninstalling CordovaLib, Cordova.framework and the Xcode Templates
 --------------------------------------------------------------------
 
-**NOTE:** For 2.0.0, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first.
-
-Use the "Uninstall Cordova" app included in the Cordova iOS DMG file, OR:
+**NOTE:** For 2.x, the use of Xcode Templates has been removed. If you don't plan on using older Cordova versions, you should run the uninstaller first.
 
 1. Launch "Terminal.app"
 2. Navigate to the folder where Makefile is (this folder)
@@ -81,12 +92,6 @@ Unit Tests
 
 Installer Notes
 -------------------------------------------------------------
-
-Items that will be installed:
-
-1. Xcode global variable in _~/Library/Preferences/com.apple.dt.Xcode.plist _ (which will be listed under Xcode Preferences -> Source Trees)
-
-<br />
 
 To uninstall:
 
@@ -111,7 +116,7 @@ This can be because of:
 
 1. You did not add the plugin mapping in __Cordova.plist/Plugins__ (contact the plugin creator for the proper mapping). The __key__ is the service name used in the JavaScript interface and the __value__ is the classname used in the Objective-C interface. Often the key and value are the same.
 2. You did _not_ add the plugin code as a "group" (__yellow__ folder) but added it as a "folder reference" (blue folder) 
-3. You are having #import problems - see the [Upgrading Cordova iOS](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html) document
+3. You are having #import problems - see the [Upgrading Cordova iOS](http://docs.cordova.io/en/edge/guide_upgrading_index.md.html) document
 
 <br />  
 
@@ -131,7 +136,7 @@ This includes external http/https/ftp/ftps links in:
 
 **5. How do I effectively upgrade my project?**
 
-Starting with Cordova 1.4, follow the instructions in the [**"Upgrading Cordova iOS"** document](http://docs.phonegap.com/en/edge/guide_upgrading_index.md.html).
+Starting with Cordova 1.4, follow the instructions in the [**"Upgrading Cordova iOS"** document](http://docs.cordova.io/en/edge/guide_upgrading_index.md.html).
 
 <br />
 
@@ -160,13 +165,13 @@ Note that Xcode template support has  been removed in 2.0.0.
 
 The CordovaLib static library is only used by the older subproject-based template. The Xcode 4 template uses Cordova.framework (a static framework) because of Xcode 4's template limitations. Both are based off the same code, just packaged differently.
 
-Staring with 2.0.0, you must create projects [using the command line](http://docs.phonegap.com/en/edge/guide_command-line_index.md.html#Command-Line%20Usage):
+Staring with 2.0.0, you must create projects [using the command line](http://docs.cordova.io/en/edge/guide_command-line_index.md.html#Command-Line%20Usage):
 
 <br />
 
 **9. In the sub-project based Cordova project, I want to have a project-specific copy of CordovaLib for my project, not a global one. How do I do this?** 
 
-In your project, there should be a _CordovaBuildSettings.xcconfig_ file. Modify the _CORDOVALIB_ variable in the file to point to your project specific CordovaLib folder. You can use relative paths, off $(PROJECT_DIR).
+Select the CordovaLib subproject in your Project Navigator, and in the File Inspector, choose the new location of the subproject, or see the "**Updating a CordovaLib subproject reference in your project**" section above.
 
 **10. In a .framework based Cordova project (only supported in Cordova versions lesser than 2.0.0), I want to have a project-specific copy of Cordova.framework for my project, not a global one. How do I do this?** 
 

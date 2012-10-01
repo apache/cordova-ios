@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -24,10 +24,7 @@
 #import "CDVCommandDelegate.h"
 #import "CDVWhitelist.h"
 
-
-@interface CDVViewController : UIViewController<UIWebViewDelegate, CDVCommandDelegate> {
-	
-}
+@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVCommandDelegate>{}
 
 @property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
 
@@ -35,32 +32,32 @@
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSDictionary* settings;
 @property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
-@property (nonatomic, readonly, strong) NSArray* supportedOrientations;
 @property (nonatomic, readonly, assign) BOOL loadFromString;
-@property (nonatomic, readwrite, copy) NSString* invokeString __attribute__ ((deprecated));
+@property (nonatomic, readwrite, copy)NSString * invokeString __attribute__((deprecated));
 
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
 @property (nonatomic, readonly, strong) IBOutlet UIActivityIndicatorView* activityView;
-@property (nonatomic, readonly, strong) UIImageView *imageView;
-@property (nonatomic, readwrite, strong) id<CDVCommandDelegate> commandDelegate;
+@property (nonatomic, readonly, strong) UIImageView* imageView;
+@property (nonatomic, readwrite, strong) id <CDVCommandDelegate> commandDelegate;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
 
-+ (NSDictionary*) getBundlePlist:(NSString*)plistName;
-+ (NSString*) applicationDocumentsDirectory;
++ (NSDictionary*)getBundlePlist:(NSString*)plistName;
++ (NSString*)applicationDocumentsDirectory;
 
-- (void) dispose;
-- (void) printMultitaskingInfo;
-- (void) createGapView;
-- (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds;
+- (void)dispose;
+- (void)printMultitaskingInfo;
+- (void)createGapView;
+- (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (int) executeCommandsFromJson:(NSString*)queuedCommandsJSON;
-- (void) flushCommandQueue;
+- (int)executeCommandsFromJson:(NSString*)queuedCommandsJSON;
+- (void)flushCommandQueue;
 
-- (void) javascriptAlert:(NSString*)text;
-- (NSString*) appURLScheme;
+- (void)javascriptAlert:(NSString*)text;
+- (NSString*)appURLScheme;
 
-- (NSArray*) parseInterfaceOrientations:(NSArray*)orientations;
+- (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
+- (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 
 @end

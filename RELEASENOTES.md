@@ -22,6 +22,65 @@
   
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 2.1.0 (20120913) ###
+
+* [CB-45] Add support for full urls in white-list, extract hostname
+* [CB-274] iOS Cordova Template Project is not compilable with default Apple's ARC compiler 3.0
+* [CB-593] Click and touch events do not fire after using scroll CSS
+* [CB-675] Allow multiple versions of PhoneGap to be installed in Xcode (added bin/update_cordova_subproject script)
+* [CB-828] iOS contact.save() stops the UI from updating on heavy load & has memory leaks.
+* [CB-903] iOS 6 - add setting to set WebKitStoreWebDataForBackup for user defaults from Cordova.plist/config.xml
+* [CB-904] iOS 6 - turn off CDVLocalStorage core plugin when on iOS 6
+* [CB-994] CDVLocalStorage core plugin does not fully backup when app setting "Application does not run in background" is YES
+* [CB-1000] Namespace issue of JSONKit and other external libraries
+* [CB-1091] Removed installer and related dependencies. Moved original post-install script into makefile under "install" target (which is default target).
+* [CB-1091] Added check for if xcode is running, and throw error if it is.
+* [CB-1105] Add JSONKit doc issue for iOS Plugin Upgrade Guide
+* [CB-1106] Deprecate old plugin signature
+* [CB-1122] Diagnostic tool for Cordova iOS Xcode projects
+* [CB-1124] "create" script (and possibly others) provided in bin directory do not escape arguments
+* [CB-1136] symlink to bin/create script fails
+* [CB-1137] emulate and log script failure when launched from external working directory
+* [CB-1138] Default logging level for file access should not log file contents.
+* [CB-1149] hello-world sample web app is missing lib folder, in a newly created app
+* [CB-1164] Fix warnings and analyzer issues reported with the newer LLVM in Xcode 4.4
+* [CB-1166] Remove dependency on VERSION file
+* [CB-1173] Clean up default project template
+* [CB-1182] Fixing IOS6 screen orientation/rotation without breaking ios5.1 or xcode 4.4 build.
+* [CB-1186] Update README.md, FirstRun.md for new install method
+* [CB-1187] Move the Objective-C unit-tests out of CordovaLib.xcodeproj, into its own .xcodeproj
+* [CB-1188] Update Plugin Upgrade Guide for new iOS plugin signature (old one still supported, but deprecated)
+* [CB-1190] Crash when contacts are edited (mass edit)
+* [CB-1192] Update template to set GCC_THUMB_SUPPORT=NO in Build Settings
+* [CB-1204] CDVViewController-loaded view doesn't respect applicationFrame
+* [CB-1209] CDVViewController.supportedOrientations not set in a timely fashion
+* [CB-1223] CORDOVALIB Xcode variable - allow this to be read in from xcodebuild cli
+* [CB-1237] CDVDebugWebView no longer works since the ARC changes.
+* [CB-1258] Add documentation for the new logic to toggle between different exec() techniques on 
+* [CB-1296] Update .js with fix for broken bridge on 4.2
+* [CB-1315] Setting the view controller's view size in viewWillAppear, use rootViewController
+* [CB-1385] Fix executing legacy plugins when callbackId is null.
+* [CB-1380] Fix data uri from being blocked
+* [CB-1384] Online .wav files cannot be played, but ones local to www can
+* [CB-1385] 2.1.0rc2 - breaks certain plugins on iOS due to added "null" argument using FORMAT TWO in iOSExec
+* [CB-1402] Media API - wrong JavaScript callback is called for onStatus (typo)
+* [CB-1412] 2.1.0rc2 - iOS Whitelist is never used, all urls will pass the whitelist
+* [CB-1453] Namespace issue of JSONKit (JSONKitSerializingBlockAdditions)
+* [CB-1457] Remove unused CDVMotion core plugin - causes Apple App Store upload rejection
+* [GH-PR 34] Refactor chooseContact() to retrieve contact information instead of just a contactId.
+* [GH-PR 35] Enhances iOS FileTransfer's support for upload headers
+* Change default wire format of exec handler (was iframe, now xhr) see [CB-593].
+* Update all core plugins to new exec format (new plugin signature, old one deprecated per deprecation policy)
+* Split out CordovaLibApp and CordovaTests into a separate Xcode project.
+* Add a benchmark into CordovaLibApp for measuring exec() speed.
+* Added Echo plugin (for benchmarking) into CordovaLib
+* Support JS->Native messages via an XHR & URL Protocol see [CB-593]
+* Refactor peoplePickerNavigationControllerDidCancel, always return dictionary with id kABRecordInvalidID.
+* Deployment target for CordovaLib was not updated to 4.2 (we changed it in the template, but not the lib)
+* Fixed null dereference in FileTransfer upload when URL is invalid.
+
+<br />
+
 ### 2.0.0 (20120720) ###
 
 * [CB-38] Add support for chunked uploads to FileTransfer plugin.
@@ -82,7 +141,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Updated CB-957 - Include Xcode 4 requirement
 * Fixes CB-914 - Deactivate CDVLocalStorage (Backup/Restore, safari web preferences update)
 * [CB-765] Header Support iOS FileTransfer upload
-* Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.phonegap.com now
+* Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.cordova.io now
 * [CB-863] Splash screen on iOS not using localized UILaunchImageFile value
   
 <br />
@@ -180,7 +239,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Added unification of accelerometer values on ios (based on android values)
 * Removed old JS, added cordova-js version
 * Changes to CordovaLib makefile for generating JS
-* Fixed CB-260: Can't install Phonegap with new Xcode 4.3
+* Fixed CB-260: Can't install PhoneGap with new Xcode 4.3
 * Fixed Xcode app detection (using Spotlight) in Makefile
 * Fixed CB-306 - Remove extra template App delegate methods
 * Fixes CB-255 - iOS: a parameter with value 'null' is not passed to 'arguments' array
@@ -335,7 +394,7 @@ Removed GetFunctionName.js (unused)
 * usage of VERIFY_ARGUMENTS macro in File plugin - related to #244
 * fixed #259: PluginResult toJSONString does not quote strings in arrays
 * added ability so that unhanded URLs (i.e. custom schemes in a web-page) will notify PhoneGap plugins of this custom url so that the plugins can handle it themselves. This would give the ability to handle callbacks for OAuth logins (Twitter/Facebook) in the main PhoneGap UIWebview, and not require the ChildBrowser plugin.
-* fixes #263 Phone call - tel: scheme handling hides default behaviour
+* fixes #263 Phone call - tel: scheme handling hides default behavior
 * fixes #269 - Add Obj-C unit-tests for whitelist implementation
 * fixed #256 PhoneGapDelegate (UIApplicationDelegate) property hides new property in iOS 5
 * fixed #254 Prefix the SBJSON classes included in PhoneGap with 'PG'
@@ -449,7 +508,7 @@ Removed GetFunctionName.js (unused)
   
 * phonegap.js is minified using the YUI compressor, and also renamed to phonegap.{ver}.min.js where {ver} is the version number of PhoneGapLib from the VERSION file 
 * the PhoneGap template is changed as well, at build time it will replace any references to 'src="phonegap.js"' to the new versioned js file (and copy the new phonegap.{ver}.min.js file). This replacement will look in all files in the 'www' folder. 
-* note that with the new PhoneGapLib phonegap.{ver}.min.js renaming, existing PhoneGap templates must copy the new "Copy PhoneGap Javascript" post-build script from the new template (in Xcode, under Targets/[ProjectName]) 
+* note that with the new PhoneGapLib phonegap.{ver}.min.js renaming, existing PhoneGap templates must copy the new "Copy PhoneGap JavaScript" post-build script from the new template (in Xcode, under Targets/[ProjectName]) 
 
 <br />
 

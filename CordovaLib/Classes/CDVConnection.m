@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,55 +17,57 @@
  under the License.
  */
 
-
 #import "CDVConnection.h"
 #import "CDVReachability.h"
 
-@interface CDVConnection(PrivateMethods)
-- (void) updateOnlineStatus;
+@interface CDVConnection (PrivateMethods)
+- (void)updateOnlineStatus;
 @end
 
 @implementation CDVConnection
 
 @synthesize connectionType, internetReach;
 
-- (void) getConnectionInfo:(CDVInvokedUrlCommand*)command
+- (void)getConnectionInfo:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* result = nil;
     NSString* jsString = nil;
-	NSString* callbackId = command.callbackId;
-    
+    NSString* callbackId = command.callbackId;
+
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
     jsString = [result toSuccessCallbackString:callbackId];
     [self writeJavascript:jsString];
 }
 
-- (NSString*) w3cConnectionTypeFor:(CDVReachability*)reachability
+- (NSString*)w3cConnectionTypeFor:(CDVReachability*)reachability
 {
-	NetworkStatus networkStatus = [reachability currentReachabilityStatus];
-	switch(networkStatus)
-	{
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+
+    switch (networkStatus) {
         case NotReachable:
-			return @"unknown";
+            return @"unknown";
+
         case ReachableViaWWAN:
-			return @"2g"; // no generic default, so we use the lowest common denominator
+            return @"2g"; // no generic default, so we use the lowest common denominator
+
         case ReachableViaWiFi:
-			return @"wifi";
-		default:
-			return @"none";
+            return @"wifi";
+
+        default:
+            return @"none";
     }
 }
 
-- (BOOL) isCellularConnection:(NSString*)theConnectionType
+- (BOOL)isCellularConnection:(NSString*)theConnectionType
 {
-	return	[theConnectionType isEqualToString:@"2g"] ||
-			[theConnectionType isEqualToString:@"3g"] ||
-			[theConnectionType isEqualToString:@"4g"];
+    return [theConnectionType isEqualToString:@"2g"] ||
+           [theConnectionType isEqualToString:@"3g"] ||
+           [theConnectionType isEqualToString:@"4g"];
 }
 
-- (void) updateReachability:(CDVReachability*)reachability
+- (void)updateReachability:(CDVReachability*)reachability
 {
-	if (reachability) {
+    if (reachability) {
         // check whether the connection type has changed
         NSString* newConnectionType = [self w3cConnectionTypeFor:reachability];
         if ([newConnectionType isEqualToString:self.connectionType]) { // the same as before, remove dupes
@@ -73,63 +75,63 @@
         } else {
             self.connectionType = [self w3cConnectionTypeFor:reachability];
         }
-	}
-	
-	NSString* js = nil;
-	// write the connection type
-	js = [NSString stringWithFormat:@"navigator.network.connection.type = '%@';", self.connectionType];
-	[super writeJavascript:js];
-	
-	// send "online"/"offline" event
-	[self updateOnlineStatus];
+    }
+
+    NSString* js = nil;
+    // write the connection type
+    js = [NSString stringWithFormat:@"navigator.network.connection.type = '%@';", self.connectionType];
+    [super writeJavascript:js];
+
+    // send "online"/"offline" event
+    [self updateOnlineStatus];
 }
 
-- (void) updateConnectionType:(NSNotification*)note
+- (void)updateConnectionType:(NSNotification*)note
 {
-	CDVReachability* curReach = [note object];
+    CDVReachability* curReach = [note object];
 
-	if (curReach != nil && [curReach isKindOfClass:[CDVReachability class]])
-	{
-		[self updateReachability:curReach];
-	}
+    if ((curReach != nil) && [curReach isKindOfClass:[CDVReachability class]]) {
+        [self updateReachability:curReach];
+    }
 }
 
-- (void) updateOnlineStatus
+- (void)updateOnlineStatus
 {
-	// send "online"/"offline" event
-	NetworkStatus status = [self.internetReach currentReachabilityStatus];
-	BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
-	if (online) {
-		[super writeJavascript:@"cordova.fireDocumentEvent('online');"];
-	} else {
-		[super writeJavascript:@"cordova.fireDocumentEvent('offline');"];
-	}
+    // send "online"/"offline" event
+    NetworkStatus status = [self.internetReach currentReachabilityStatus];
+    BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
+
+    if (online) {
+        [super writeJavascript:@"cordova.fireDocumentEvent('online');"];
+    } else {
+        [super writeJavascript:@"cordova.fireDocumentEvent('offline');"];
+    }
 }
 
-- (void) prepare
+- (void)prepare
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConnectionType:) 
-												 name:kReachabilityChangedNotification object:nil];
-	
-	self.internetReach = [CDVReachability reachabilityForInternetConnection];
-	[self.internetReach startNotifier];
-	self.connectionType = [self w3cConnectionTypeFor:self.internetReach];
-	
-	[self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConnectionType:)
+                                                 name:kReachabilityChangedNotification object:nil];
+
+    self.internetReach = [CDVReachability reachabilityForInternetConnection];
+    [self.internetReach startNotifier];
+    self.connectionType = [self w3cConnectionTypeFor:self.internetReach];
+
+    [self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
-- (void) onPause 
+- (void)onPause
 {
-	[self.internetReach stopNotifier];
+    [self.internetReach stopNotifier];
 }
 
-- (void) onResume 
+- (void)onResume
 {
     [self.internetReach startNotifier];
     [self updateReachability:self.internetReach];
 }
 
-- (CDVPlugin*) initWithWebView:(UIWebView*)theWebView
+- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
 {
     self = (CDVConnection*)[super initWithWebView:theWebView];
     if (self) {
@@ -145,9 +147,13 @@
 
 - (void)dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self 
-													name:kReachabilityChangedNotification object:nil];
+    [self onReset];
+}
 
+- (void)onReset
+{
+    // Update the value cached in Javascript after a reset, because it would have been lost on navigation.
+    [self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
 @end

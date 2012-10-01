@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,24 +23,25 @@
 #import "NSMutableArray+QueueAdditions.h"
 #import "CDVCommandDelegate.h"
 
-#define CDVPluginHandleOpenURLNotification	@"CDVPluginHandleOpenURLNotification"
+#define CDVPluginHandleOpenURLNotification @"CDVPluginHandleOpenURLNotification"
+#define CDVPluginResetNotification @"CDVPluginResetNotification"
 
-@interface CDVPlugin : NSObject {
-}
+@interface CDVPlugin : NSObject {}
 
 @property (nonatomic, strong) UIWebView* webView;
 @property (nonatomic, strong) NSDictionary* settings;
 @property (nonatomic, strong) UIViewController* viewController;
-@property (nonatomic, strong) id<CDVCommandDelegate> commandDelegate;
+@property (nonatomic, strong) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 
-- (CDVPlugin*) initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
-- (CDVPlugin*) initWithWebView:(UIWebView*)theWebView;
+- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
+- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView;
 
-- (void) handleOpenURL:(NSNotification*)notification;
-- (void) onAppTerminate;
-- (void) onMemoryWarning;
+- (void)handleOpenURL:(NSNotification*)notification;
+- (void)onAppTerminate;
+- (void)onMemoryWarning;
+- (void) onReset;
 
 /*
  // see initWithWebView implementation
@@ -50,10 +51,10 @@
  - (void) onOrientationDidChange {}
  */
 
-- (id) appDelegate;
+- (id)appDelegate;
 
-- (NSString*) writeJavascript:(NSString*)javascript;
-- (NSString*) success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
-- (NSString*) error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
+- (NSString*)writeJavascript:(NSString*)javascript;
+- (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
+- (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
 
 @end

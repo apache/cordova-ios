@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,15 +17,14 @@
  under the License.
  */
 
-
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "CDVPlugin.h"
 
 enum CDVHeadingStatus {
-	HEADINGSTOPPED = 0,
+    HEADINGSTOPPED = 0,
     HEADINGSTARTING,
-	HEADINGRUNNING,
+    HEADINGRUNNING,
     HEADINGERROR
 };
 typedef NSUInteger CDVHeadingStatus;
@@ -38,8 +37,7 @@ enum CDVLocationStatus {
 typedef NSUInteger CDVLocationStatus;
 
 // simple object to keep track of heading information
-@interface CDVHeadingData : NSObject {
-}
+@interface CDVHeadingData : NSObject {}
 
 @property (nonatomic, assign) CDVHeadingStatus headingStatus;
 @property (nonatomic, strong) CLHeading* headingInfo;
@@ -50,12 +48,12 @@ typedef NSUInteger CDVLocationStatus;
 
 @end
 
-// simple ojbect to keep track of location information
+// simple object to keep track of location information
 @interface CDVLocationData : NSObject {
     CDVLocationStatus locationStatus;
-    NSMutableArray*  locationCallbacks;
-    NSMutableDictionary*  watchCallbacks;
-    CLLocation*      locationInfo;
+    NSMutableArray* locationCallbacks;
+    NSMutableDictionary* watchCallbacks;
+    CLLocation* locationInfo;
 }
 
 @property (nonatomic, assign) CDVLocationStatus locationStatus;
@@ -65,44 +63,42 @@ typedef NSUInteger CDVLocationStatus;
 
 @end
 
-@interface CDVLocation : CDVPlugin <CLLocationManagerDelegate> {
-    @private BOOL      __locationStarted;
-    @private BOOL      __highAccuracyEnabled;
-    CDVHeadingData*    headingData;
-    CDVLocationData*   locationData;
+@interface CDVLocation : CDVPlugin <CLLocationManagerDelegate>{
+    @private BOOL __locationStarted;
+    @private BOOL __highAccuracyEnabled;
+    CDVHeadingData* headingData;
+    CDVLocationData* locationData;
 }
 
-@property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) CLLocationManager* locationManager;
 @property (strong) CDVHeadingData* headingData;
 @property (nonatomic, strong) CDVLocationData* locationData;
 
+- (BOOL)hasHeadingSupport;
+- (void)getLocation:(CDVInvokedUrlCommand*)command;
+- (void)addWatch:(CDVInvokedUrlCommand*)command;
+- (void)clearWatch:(CDVInvokedUrlCommand*)command;
+- (void)returnLocationInfo:(NSString*)callbackId andKeepCallback:(BOOL)keepCallback;
+- (void)returnLocationError:(NSUInteger)errorCode withMessage:(NSString*)message;
+- (void)startLocation:(BOOL)enableHighAccuracy;
 
-- (BOOL) hasHeadingSupport;
-- (void) getLocation:(CDVInvokedUrlCommand*)command;
-- (void) addWatch:(CDVInvokedUrlCommand*)command;
-- (void) clearWatch:(CDVInvokedUrlCommand*)command;
-- (void)returnLocationInfo: (NSString*) callbackId andKeepCallback:(BOOL)keepCallback;
-- (void) returnLocationError: (NSUInteger) errorCode withMessage: (NSString*) message;
-- (void) startLocation: (BOOL) enableHighAccuracy;
+- (void)locationManager:(CLLocationManager*)manager
+   didUpdateToLocation :(CLLocation*)newLocation
+          fromLocation        :(CLLocation*)oldLocation;
 
-- (void) locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation;
+- (void)locationManager:(CLLocationManager*)manager
+   didFailWithError    :(NSError*)error;
 
-- (void)locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error;
-
-- (BOOL) isLocationServicesEnabled;
+- (BOOL)isLocationServicesEnabled;
 
 - (void)getHeading:(CDVInvokedUrlCommand*)command;
-- (void)returnHeadingInfo: (NSString*) callbackId keepCallback: (BOOL) bRetain;
+- (void)returnHeadingInfo:(NSString*)callbackId keepCallback:(BOOL)bRetain;
 - (void)watchHeadingFilter:(CDVInvokedUrlCommand*)command;
 - (void)stopHeading:(CDVInvokedUrlCommand*)command;
-- (void) startHeadingWithFilter: (CLLocationDegrees) filter;
-- (void)locationManager:(CLLocationManager *)manager
-	   didUpdateHeading:(CLHeading *)heading;
+- (void)startHeadingWithFilter:(CLLocationDegrees)filter;
+- (void)locationManager:(CLLocationManager*)manager
+   didUpdateHeading    :(CLHeading*)heading;
 
-- (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager;
+- (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager*)manager;
 
 @end
-

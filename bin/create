@@ -105,3 +105,6 @@ R=$PROJECT_PATH/$PROJECT_NAME
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __TESTING__ "$PROJECT_NAME"
 
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
+
+# Make the sub-project reference to Cordova have the correct path.
+"$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" > /dev/null

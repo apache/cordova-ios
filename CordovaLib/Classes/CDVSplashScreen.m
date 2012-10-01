@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,18 +17,16 @@
  under the License.
  */
 
-
 #import "CDVSplashScreen.h"
 #import "CDVViewController.h"
 
 @implementation CDVSplashScreen
 
-
-- (void) __show:(BOOL)show
+- (void)__show:(BOOL)show
 {
     // Legacy support - once deprecated classes removed, clean this up
-    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
-    
+    id <UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+
     if ([delegate respondsToSelector:@selector(viewController)]) {
         id vc = [delegate performSelector:@selector(viewController)];
         if ([vc isKindOfClass:[CDVViewController class]]) {
@@ -38,14 +36,14 @@
     }
 }
 
-- (void) show:(CDVInvokedUrlCommand*)command
+- (void)show:(CDVInvokedUrlCommand*)command
 {
-	[self __show:YES];
+    [self __show:YES];
 }
 
-- (void) hide:(CDVInvokedUrlCommand*)command
+- (void)hide:(CDVInvokedUrlCommand*)command
 {
-	[self __show:NO];
+    [self __show:NO];
 }
 
 @end

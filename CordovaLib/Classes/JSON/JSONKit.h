@@ -234,9 +234,9 @@ typedef struct CDVJKParseState CDVJKParseState; // Opaque internal, private type
 - (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
 @end
 
-@interface NSDictionary (JSONKitSerializingBlockAdditions)
-- (NSData *)cdv_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
-- (NSString *)cdv_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
+@interface NSDictionary (CDVJSONKitSerializingBlockAdditions)
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error;
 @end
   
 #endif
