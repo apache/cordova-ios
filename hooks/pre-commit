@@ -25,7 +25,8 @@ RET=0
 files=$(bin/uncrustify.sh --filter $(git diff --cached --name-only))
 for file in $files; do
     if ! bin/uncrustify.sh --check-file $file; then
-        echo "Style fix-ups required: $file. Please run: $PWD/bin/uncrustify.sh $PWD/$file && git add $PWD/$file"
+        echo "Style fix-ups required: $file. Please run:"
+        echo "    bin/uncrustify.sh \"$file\" && git add \"$file\""
         RET=1
     fi
 done
