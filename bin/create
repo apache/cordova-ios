@@ -106,5 +106,12 @@ R=$PROJECT_PATH/$PROJECT_NAME
 
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
 
+# Copy in the CordovaLib directory.
+mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
+cp -r "$BINDIR/../CordovaLib/Classes" "$PROJECT_PATH/CordovaLib"
+cp "$BINDIR/../CordovaLib/VERSION" "$PROJECT_PATH/CordovaLib"
+cp "$BINDIR/../CordovaLib/CordovaLib_Prefix.pch" "$PROJECT_PATH/CordovaLib"
+cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
+
 # Make the sub-project reference to Cordova have the correct path.
-"$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" > /dev/null
+"$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj/project.pbxproj" > /dev/null
