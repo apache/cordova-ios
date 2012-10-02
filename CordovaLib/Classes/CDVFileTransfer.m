@@ -398,6 +398,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     for (CDVFileTransferDelegate* delegate in [activeTransfers allValues]) {
         [delegate.connection cancel];
     }
+
     [activeTransfers removeAllObjects];
 }
 
@@ -427,7 +428,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
             uploadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
             uploadResult = [NSMutableDictionary dictionaryWithCapacity:3];
             if (uploadResponse != nil) {
-                [uploadResult setObject:[uploadResponse stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:@"response"];
+                [uploadResult setObject:uploadResponse forKey:@"response"];
             }
             [uploadResult setObject:[NSNumber numberWithInt:self.bytesTransfered] forKey:@"bytesSent"];
             [uploadResult setObject:[NSNumber numberWithInt:self.responseCode] forKey:@"responseCode"];
