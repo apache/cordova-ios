@@ -49,7 +49,7 @@
 
 - (CDVLocalStorage*)localStorage
 {
-    return [self pluginForClass:[CDVLocalStorage class]];
+    return [self pluginInstance:@"LocalStorage"];
 }
 
 - (void)deleteOriginals:(BOOL)originals backups:(BOOL)backups

@@ -583,6 +583,7 @@
 					armv7,
 				);
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CordovaLibApp.app/CordovaLibApp";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
@@ -617,6 +618,7 @@
 					armv7,
 				);
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CordovaLibApp.app/CordovaLibApp";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",

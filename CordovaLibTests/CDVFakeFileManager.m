@@ -30,15 +30,9 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [_fileExistsBlock release];
-    [super dealloc];
-}
-
 + (id)managerWithFileExistsBlock:(CDVFileExistsBlock)fileExistsBlock
 {
-    return [[[CDVFakeFileManager alloc] initWithFileExistsBlock:fileExistsBlock] autorelease];
+    return [[CDVFakeFileManager alloc] initWithFileExistsBlock:fileExistsBlock];
 }
 
 - (BOOL)fileExistsAtPath:(NSString*)path

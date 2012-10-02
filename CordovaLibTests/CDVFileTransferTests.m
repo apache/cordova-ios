@@ -67,17 +67,14 @@ static NSData *readStream(NSInputStream* stream)
     _arguments = [[NSMutableArray alloc] initWithObjects:
         kDummyArgTarget, kDummyArgServer, kDummyArgFileKey, [NSNull null],
         [NSNull null], [NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
-    _dummyFileData = [[kDummyFileContents dataUsingEncoding:NSUTF8StringEncoding] retain];
+    _dummyFileData = [kDummyFileContents dataUsingEncoding:NSUTF8StringEncoding];
     _fileTransfer = [[CDVFileTransfer alloc] init];
 }
 
 - (void)tearDown
 {
-    [_arguments release];
     _arguments = nil;
-    [_dummyFileData release];
     _dummyFileData = nil;
-    [_fileTransfer release];
     _fileTransfer = nil;
     [super tearDown];
 }
@@ -109,10 +106,10 @@ static NSData *readStream(NSInputStream* stream)
 
 - (NSURLRequest*)requestForUpload
 {
-    CDVInvokedUrlCommand* command = [[[CDVInvokedUrlCommand alloc] initWithArguments:_arguments
-                                                                          callbackId:kDummyArgCallbackId
-                                                                           className:@"FileTransfer"
-                                                                          methodName:@"upload"] autorelease];
+    CDVInvokedUrlCommand* command = [[CDVInvokedUrlCommand alloc] initWithArguments:_arguments
+                                                                         callbackId:kDummyArgCallbackId
+                                                                          className:@"FileTransfer"
+                                                                         methodName:@"upload"];
 
     return [_fileTransfer requestForUploadCommand:command fileData:_dummyFileData];
 }
@@ -157,7 +154,6 @@ static NSData *readStream(NSInputStream* stream)
 
 - (void)testUpload_missingFileData
 {
-    [_dummyFileData release];
     _dummyFileData = nil;
     STAssertNil([self requestForUpload], nil);
 }
@@ -194,7 +190,7 @@ static NSData *readStream(NSInputStream* stream)
         @"val3", @"key3", nil];
     [self setParams:params];
     NSURLRequest* request = [self requestForUpload];
-    NSString* payload = [[[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding] autorelease];
+    NSString* payload = [[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding];
     // Check that the cookie is set, and that it is not in the payload like others in the options dict.
     STAssertTrue([@"cookieval" isEqualToString:[request valueForHTTPHeaderField:@"Cookie"]], nil);
     STAssertEquals([payload rangeOfString:@"cookieval"].length, 0U, nil);

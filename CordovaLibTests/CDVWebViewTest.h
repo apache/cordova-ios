@@ -32,7 +32,7 @@
 - (UIWebView*)webView;
 
 // Returns the already registered plugin object for the given class.
-- (id)pluginForClass:(Class)cls;
+- (id)pluginInstance:(NSString*)pluginName;
 // Destroys the existing webview and creates a new one.
 - (void)reloadWebView;
 // Runs the run loop until the given block returns true, or until a timeout

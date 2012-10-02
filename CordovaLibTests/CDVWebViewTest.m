@@ -74,12 +74,11 @@
     return self.viewController.webView;
 }
 
-- (id)pluginForClass:(Class)cls
+- (id)pluginInstance:(NSString*)pluginName
 {
-    NSString* className = NSStringFromClass(cls);
-    id ret = [self.viewController.pluginObjects objectForKey:className];
+    id ret = [self.viewController getCommandInstance:pluginName];
 
-    STAssertNotNil(ret, @"Missing plugin %@", className);
+    STAssertNotNil(ret, @"Missing plugin %@", pluginName);
     return ret;
 }
 
