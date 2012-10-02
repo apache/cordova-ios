@@ -20,7 +20,7 @@ under the License.
 """
 Updates the subproject path of the CordovaLib entry to point to this script's version of Cordova.
 
-Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj
+Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]
 """
 
 import fileinput
@@ -54,14 +54,17 @@ def AbsProjectPath(relative_path):
   return project_path
 
 def main(argv):
-  if len(argv) != 2:
+  if len(argv) < 2 or len(argv) > 3:
     Usage()
 
-  framework_path = AbsFrameworkPath(argv[0])
   project_path = AbsProjectPath(argv[1])
+  if len(argv) < 3:
+    framework_path = AbsFrameworkPath(argv[0])
+    cordova_lib_xcode_path = os.path.join(framework_path, 'CordovaLib', 'CordovaLib.xcodeproj')
+  else:
+    cordova_lib_xcode_path = AbsProjectPath(argv[2])
 
   parent_project_path = AbsParentPath(project_path)
-  cordova_lib_xcode_path = os.path.join(framework_path, 'CordovaLib', 'CordovaLib.xcodeproj')
   subproject_path = os.path.relpath(cordova_lib_xcode_path, parent_project_path)
 
   # /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CordovaLib.xcodeproj; sourceTree = "<group>"; };

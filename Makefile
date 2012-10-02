@@ -44,7 +44,6 @@ clean-cordova-lib:
 		@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.mode1v3
 		@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.perspectivev3
 		@$(RM_F) CordovaLib/CordovaLib.xcodeproj/*.pbxuser
-		@$(RM_F) CordovaLib/javascript/cordova-*.js
 
 clean-bin:
 		@$(RM_RF) bin/templates/project/build/
@@ -89,6 +88,5 @@ uninstall:
 		fi	
 
 update-template:
-		@$(RM_F) bin/templates/project/www/cordova-*.js		
-		@$(CP) -f CordovaLib/javascript/cordova.ios.js bin/templates/project/www/cordova-$(CDV_VER).js		
+		@mv bin/templates/project/www/cordova-*.js bin/templates/project/www/cordova-$(CDV_VER).js
 		@find "bin/templates/project/www/index.html" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"

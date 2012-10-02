@@ -19,7 +19,6 @@
 
 #import "AppDelegate.h"
 
-#import <Cordova/CDVURLProtocol.h>
 #import "ViewController.h"
 
 @implementation AppDelegate
@@ -32,8 +31,6 @@
     NSHTTPCookieStorage* cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
     [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
-
-    [CDVURLProtocol registerURLProtocol];
 
     self = [super init];
     return self;
@@ -58,7 +55,6 @@
     // Clean up circular refs so that the view controller will actually be released.
     [self.viewController dispose];
     self.viewController = nil;
-    self.window.rootViewController = nil;
 }
 
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
