@@ -24,10 +24,8 @@
 #import "CDVCommandDelegate.h"
 #import "CDVWhitelist.h"
 
-@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVCommandDelegate>{
-    @private
-    NSInteger _lastCommandQueueFlushRequestId;
-}
+@class CDVCommandQueue;
+@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVCommandDelegate>
 
 @property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
 
@@ -44,6 +42,7 @@
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
+@property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;
@@ -52,10 +51,6 @@
 - (void)printMultitaskingInfo;
 - (void)createGapView;
 - (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds;
-
-- (void)maybeFlushCommandQueue:(NSNumber*)requestId;
-- (int)executeCommandsFromJson:(NSString*)queuedCommandsJSON;
-- (void)flushCommandQueue;
 
 - (void)javascriptAlert:(NSString*)text;
 - (NSString*)appURLScheme;

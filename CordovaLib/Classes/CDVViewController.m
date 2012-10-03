@@ -17,8 +17,9 @@
  under the License.
  */
 
-#import "CDV.h"
 #import <objc/message.h>
+#import "CDV.h"
+#import "CDVCommandQueue.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
@@ -48,6 +49,7 @@
 - (void)__init
 {
     if ((self != nil) && !self.initialized) {
+        _commandQueue = [[CDVCommandQueue alloc] initWithViewController:self];
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange)
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -483,7 +485,7 @@
  */
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
-    _lastCommandQueueFlushRequestId = 0;
+    [_commandQueue resetRequestId];
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
 }
 
@@ -532,7 +534,7 @@
      * The part of the URL after gap:// is irrelevant.
      */
     if ([[url scheme] isEqualToString:@"gap"]) {
-        [self flushCommandQueue];
+        [_commandQueue fetchCommandsFromJs];
         return NO;
     }
 
@@ -793,109 +795,9 @@ BOOL gSplashScreenShown = NO;
 
 #pragma mark CordovaCommands
 
-/**
- * Fetches the command queue and executes each command. It is possible that the
- * queue will not be empty after this function has completed since the executed
- * commands may have run callbacks which queued more commands.
- *
- * Returns the number of executed commands.
- */
-- (int)executeCommandsFromJson:(NSString*)queuedCommandsJSON
-{
-    // Parse the returned JSON array.
-    NSArray* queuedCommands = [queuedCommandsJSON cdvjk_mutableObjectFromJSONString];
-
-    // Iterate over and execute all of the commands.
-    for (NSArray* jsonEntry in queuedCommands) {
-        CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
-        if (![self execute:command]) {
-#ifdef DEBUG
-                NSString* commandJson = [jsonEntry cdvjk_JSONString];
-                static NSUInteger maxLogLength = 1024;
-                NSString* commandString = ([commandJson length] > maxLogLength) ?
-                [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
-                commandJson;
-
-                DLog(@"FAILED pluginJSON = %@", commandString);
-#endif
-        }
-    }
-
-    return [queuedCommands count];
-}
-
-- (void)maybeFlushCommandQueue:(NSNumber*)requestId
-{
-    // Use the request ID to determine if we've already flushed for this request.
-    // This is required only because the NSURLProtocol enqueues the same request
-    // multiple times.
-    if ([requestId integerValue] > _lastCommandQueueFlushRequestId) {
-        _lastCommandQueueFlushRequestId = [requestId integerValue];
-        [self flushCommandQueue];
-    }
-}
-
-/**
- * Repeatedly fetches and executes the command queue until it is empty.
- */
-- (void)flushCommandQueue
-{
-    [self.webView stringByEvaluatingJavaScriptFromString:
-        @"cordova.commandQueueFlushing = true"];
-
-    // Keep executing the command queue until no commands get executed.
-    // This ensures that commands that are queued while executing other
-    // commands are executed as well.
-    int numExecutedCommands = 0;
-    do {
-        // Grab all the queued commands from the JS side.
-        NSString* queuedCommandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:
-            @"cordova.require('cordova/plugin/ios/nativecomm')()"];
-        numExecutedCommands = [self executeCommandsFromJson:queuedCommandsJSON];
-    } while (numExecutedCommands != 0);
-
-    [self.webView stringByEvaluatingJavaScriptFromString:
-        @"cordova.commandQueueFlushing = false"];
-}
-
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
-    if ((command.className == nil) || (command.methodName == nil)) {
-        NSLog(@"ERROR: Classname and/or methodName not found for command.");
-        return NO;
-    }
-
-    // Fetch an instance of this class
-    CDVPlugin* obj = [self getCommandInstance:command.className];
-
-    if (!([obj isKindOfClass:[CDVPlugin class]])) { // still allow deprecated class, until 1.0 release
-        NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in Cordova.plist.", command.className);
-        return NO;
-    }
-    BOOL retVal = YES;
-
-    // Find the proper selector to call.
-    NSString* methodName = [NSString stringWithFormat:@"%@:", command.methodName];
-    NSString* methodNameWithDict = [NSString stringWithFormat:@"%@:withDict:", command.methodName];
-    SEL normalSelector = NSSelectorFromString(methodName);
-    SEL legacySelector = NSSelectorFromString(methodNameWithDict);
-    // Test for the legacy selector first in case they both exist.
-    if ([obj respondsToSelector:legacySelector]) {
-        NSMutableArray* arguments = nil;
-        NSMutableDictionary* dict = nil;
-        [command legacyArguments:&arguments andDict:&dict];
-        // [obj performSelector:legacySelector withObject:arguments withObject:dict];
-        objc_msgSend(obj, legacySelector, arguments, dict);
-    } else if ([obj respondsToSelector:normalSelector]) {
-        // [obj performSelector:normalSelector withObject:command];
-        objc_msgSend(obj, normalSelector, command);
-    } else {
-        // There's no method to call, so throw an error.
-        NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", methodName, command.className);
-        retVal = NO;
-    }
-
-    return retVal;
+    return [_commandQueue execute:command];
 }
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className

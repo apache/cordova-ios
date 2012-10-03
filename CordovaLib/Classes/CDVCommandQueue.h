@@ -17,19 +17,27 @@
  under the License.
  */
 
-#import "CDVInvokedUrlCommand.h"
+#import <Foundation/Foundation.h>
 
-@class CDVPlugin;
+@class CDVInvokedUrlCommand;
+@class CDVViewController;
 
-@protocol CDVCommandDelegate <NSObject>
+@interface CDVCommandQueue : NSObject {
+    @private
+    NSInteger _lastCommandQueueFlushRequestId;
+    CDVViewController* _viewController;
+    NSMutableArray* _queue;
+    BOOL _currentlyExecuting;
+}
 
-- (NSString*)pathForResource:(NSString*)resourcepath;
-- (id)getCommandInstance:(NSString*)pluginName;
-- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
-// TODO(agrieve): Deprecate this method. Plugins should not be using this
-// interface to call other plugins, since it will result in bogus callbacks
-// being made. Instead, they should use getCommandInstance and call methods
-// directly.
+- (id)initWithViewController:(CDVViewController*)viewController;
+- (void)resetRequestId;
+- (void)enqueCommandBatch:(NSString*)batchJSON;
+
+- (void)maybeFetchCommandsFromJs:(NSNumber*)requestId;
+- (void)executeCommandsFromJson:(NSString*)queuedCommandsJSON;
+- (void)fetchCommandsFromJs;
+- (void)executePending;
 - (BOOL)execute:(CDVInvokedUrlCommand*)command;
 
 @end

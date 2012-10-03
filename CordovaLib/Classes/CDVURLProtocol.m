@@ -18,6 +18,7 @@
  */
 
 #import "CDVURLProtocol.h"
+#import "CDVCommandQueue.h"
 #import "CDVWhitelist.h"
 #import "CDVViewController.h"
 
@@ -96,10 +97,10 @@ static NSMutableSet* gRegisteredControllers = nil;
         BOOL hasCmds = [queuedCommandsJSON length] > 0;
         if (hasCmds) {
             SEL sel = @selector(executeCommandsFromJson:);
-            [viewController performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
+            [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
         } else {
-            SEL sel = @selector(maybeFlushCommandQueue:);
-            [viewController performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
+            SEL sel = @selector(maybeFetchCommandsFromJs:);
+            [viewController.commandQueue performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
         }
         // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.
         // If JS->Native bridge speed is really important for an app, they should use the iframe bridge.
