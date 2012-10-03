@@ -40,9 +40,3 @@
    + (void)registerViewController:(CDVViewController*)viewController;
 + (void)unregisterViewController:(CDVViewController*)viewController;
 @end
-
-@interface CDVHTTPURLResponse : NSHTTPURLResponse {}
-
-- (CDVHTTPURLResponse*)initWithUnauthorizedURL:(NSURL*)url;
-
-@end

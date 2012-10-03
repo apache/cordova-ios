@@ -485,6 +485,7 @@
  */
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
+    _lastCommandQueueFlushRequestId = 0;
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
 }
 
@@ -823,6 +824,17 @@ BOOL gSplashScreenShown = NO;
     }
 
     return [queuedCommands count];
+}
+
+- (void)maybeFlushCommandQueue:(NSNumber*)requestId
+{
+    // Use the request ID to determine if we've already flushed for this request.
+    // This is required only because the NSURLProtocol enqueues the same request
+    // multiple times.
+    if ([requestId integerValue] > _lastCommandQueueFlushRequestId) {
+        _lastCommandQueueFlushRequestId = [requestId integerValue];
+        [self flushCommandQueue];
+    }
 }
 
 /**

@@ -21,7 +21,13 @@
 #import "CDVWhitelist.h"
 #import "CDVViewController.h"
 
-static CDVWhitelist* gWhitelist = nil;
+@interface CDVHTTPURLResponse : NSHTTPURLResponse
+- (id)initWithUnauthorizedURL:(NSURL*)url;
+- (id)initWithBlankResponse:(NSURL*)url;
+@property (nonatomic) NSInteger statusCode;
+@end
+
+static CDVWhitelist * gWhitelist = nil;
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
 static NSMutableSet* gRegisteredControllers = nil;
@@ -73,22 +79,33 @@ static NSMutableSet* gRegisteredControllers = nil;
         }
         long long viewControllerAddress = [viewControllerAddressStr longLongValue];
         // Ensure that the CDVViewController has not been dealloc'ed.
+        CDVViewController* viewController = nil;
         @synchronized(gRegisteredControllers) {
             if (![gRegisteredControllers containsObject:[NSNumber numberWithLongLong:viewControllerAddress]]) {
                 return NO;
             }
-            CDVViewController* viewController = (__bridge CDVViewController*)(void*)viewControllerAddress;
+            viewController = (__bridge CDVViewController*)(void*)viewControllerAddress;
+        }
 
-            NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
-            if ([queuedCommandsJSON length] > 0) {
-                [viewController performSelectorOnMainThread:@selector(executeCommandsFromJson:) withObject:queuedCommandsJSON waitUntilDone:NO];
-            } else {
-                [viewController performSelectorOnMainThread:@selector(flushCommandQueue) withObject:nil waitUntilDone:NO];
-            }
+        NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
+        NSString* requestId = [theRequest valueForHTTPHeaderField:@"rc"];
+        if (requestId == nil) {
+            NSLog(@"!cordova request missing rc header");
+            return NO;
+        }
+        BOOL hasCmds = [queuedCommandsJSON length] > 0;
+        if (hasCmds) {
+            SEL sel = @selector(executeCommandsFromJson:);
+            [viewController performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
+        } else {
+            SEL sel = @selector(maybeFlushCommandQueue:);
+            [viewController performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
         }
         // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.
         // If JS->Native bridge speed is really important for an app, they should use the iframe bridge.
-        return YES;
+        // Returning YES here causes the request to come through canInitWithRequest two more times.
+        // For this reason, we return NO when cmds exist.
+        return !hasCmds;
     }
 
     // we only care about http and https connections
@@ -112,6 +129,8 @@ static NSMutableSet* gRegisteredControllers = nil;
     NSURL* url = [[self request] URL];
 
     if ([[url path] isEqualToString:@"/!gap_exec"]) {
+        CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithBlankResponse:url];
+        [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
         [[self client] URLProtocolDidFinishLoading:self];
         return;
     }
@@ -140,28 +159,29 @@ static NSMutableSet* gRegisteredControllers = nil;
 @end
 
 @implementation CDVHTTPURLResponse
+@synthesize statusCode;
 
-- (id)initWithUnauthorizedURL:(__unsafe_unretained NSURL*)url
+- (id)initWithUnauthorizedURL:(NSURL*)url
 {
-    NSInteger statusCode = 401;
-    NSDictionary* __unsafe_unretained headerFields = [NSDictionary dictionaryWithObject:@"Digest realm = \"Cordova.plist/ExternalHosts\"" forKey:@"WWW-Authenticate"];
-    double requestTime = 1;
-
-    SEL selector = NSSelectorFromString(@"initWithURL:statusCode:headerFields:requestTime:");
-    NSMethodSignature* signature = [self methodSignatureForSelector:selector];
-
-    NSInvocation* inv = [NSInvocation invocationWithMethodSignature:signature];
-
-    [inv setTarget:self];
-    [inv setSelector:selector];
-    [inv setArgument:&url atIndex:2];
-    [inv setArgument:&statusCode atIndex:3];
-    [inv setArgument:&headerFields atIndex:4];
-    [inv setArgument:&requestTime atIndex:5];
-
-    [inv invoke];
-
+    self = [super initWithURL:url MIMEType:@"text/plain" expectedContentLength:-1 textEncodingName:@"UTF-8"];
+    if (self) {
+        self.statusCode = 401;
+    }
     return self;
+}
+
+- (id)initWithBlankResponse:(NSURL*)url
+{
+    self = [super initWithURL:url MIMEType:@"text/plain" expectedContentLength:-1 textEncodingName:@"UTF-8"];
+    if (self) {
+        self.statusCode = 200;
+    }
+    return self;
+}
+
+- (NSDictionary*)allHeaderFields
+{
+    return nil;
 }
 
 @end

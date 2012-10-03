@@ -24,7 +24,10 @@
 #import "CDVCommandDelegate.h"
 #import "CDVWhitelist.h"
 
-@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVCommandDelegate>{}
+@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVCommandDelegate>{
+    @private
+    NSInteger _lastCommandQueueFlushRequestId;
+}
 
 @property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
 
@@ -51,6 +54,7 @@
 - (void)createGapView;
 - (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds;
 
+- (void)maybeFlushCommandQueue:(NSNumber*)requestId;
 - (int)executeCommandsFromJson:(NSString*)queuedCommandsJSON;
 - (void)flushCommandQueue;
 
