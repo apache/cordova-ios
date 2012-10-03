@@ -31,12 +31,19 @@
 set -e
 
 function usage() {
-  echo "Usage: $0 <path_to_new_project> <package_name> <project_name>"
+  echo "Usage: $0 [--shared] <path_to_new_project> <package_name> <project_name>"
+  echo "	--shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it."
   echo "	<path_to_new_project>: Path to your new Cordova iOS project"
   echo "	<package_name>: Package name, following reverse-domain style convention"
   echo "	<project_name>: Project name"
   exit 1
 }
+
+USE_SHARED=0
+if [[ $1 == "--shared" ]]; then
+    USE_SHARED=1
+    shift;
+fi
 
 # check whether it is a proper create command (at least 3 arguments)
 if [ $# -lt 3 ]; then
@@ -106,12 +113,17 @@ R=$PROJECT_PATH/$PROJECT_NAME
 
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
 
-# Copy in the CordovaLib directory.
-mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
-cp -r "$BINDIR/../CordovaLib/Classes" "$PROJECT_PATH/CordovaLib"
-cp "$BINDIR/../CordovaLib/VERSION" "$PROJECT_PATH/CordovaLib"
-cp "$BINDIR/../CordovaLib/CordovaLib_Prefix.pch" "$PROJECT_PATH/CordovaLib"
-cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
+if [[ $USE_SHARED = 1 ]]; then
+    # Make the sub-project reference to Cordova have the correct path.
+    "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" > /dev/null
+else
+    # Copy in the CordovaLib directory.
+    mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
+    cp -r "$BINDIR/../CordovaLib/Classes" "$PROJECT_PATH/CordovaLib"
+    cp "$BINDIR/../CordovaLib/VERSION" "$PROJECT_PATH/CordovaLib"
+    cp "$BINDIR/../CordovaLib/CordovaLib_Prefix.pch" "$PROJECT_PATH/CordovaLib"
+    cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
+    # Make the sub-project reference to Cordova have the correct path.
+    "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj/project.pbxproj" > /dev/null
+fi
 
-# Make the sub-project reference to Cordova have the correct path.
-"$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj/project.pbxproj" > /dev/null
