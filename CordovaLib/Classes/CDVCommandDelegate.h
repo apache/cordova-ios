@@ -32,8 +32,9 @@
 // being made. Instead, they should use getCommandInstance and call methods
 // directly.
 - (BOOL)execute:(CDVInvokedUrlCommand*)command;
-// Sends a plugin result to the JS. The success/failure is inferred from the
-// plugin's status.
+// Sends a plugin result to the JS.
 - (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId;
+// Evaluates the given JS.
+- (void)evalJs:(NSString*)js;
 
 @end

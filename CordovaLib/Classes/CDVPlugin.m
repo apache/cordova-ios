@@ -127,12 +127,14 @@
 
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId
 {
-    return [self writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
+    [self.commandDelegate evalJs:[pluginResult toSuccessCallbackString:callbackId]];
+    return @"";
 }
 
 - (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId
 {
-    return [self writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
+    [self.commandDelegate evalJs:[pluginResult toErrorCallbackString:callbackId]];
+    return @"";
 }
 
 @end

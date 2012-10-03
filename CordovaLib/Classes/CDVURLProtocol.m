@@ -96,7 +96,7 @@ static NSMutableSet* gRegisteredControllers = nil;
         }
         BOOL hasCmds = [queuedCommandsJSON length] > 0;
         if (hasCmds) {
-            SEL sel = @selector(executeCommandsFromJson:);
+            SEL sel = @selector(enqueCommandBatch:);
             [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
         } else {
             SEL sel = @selector(maybeFetchCommandsFromJs:);

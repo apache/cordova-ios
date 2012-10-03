@@ -663,7 +663,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = ([paths count] > 0) ?[paths objectAtIndex:0] : nil;
+    NSString* basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 
     return basePath;
 }
@@ -794,23 +794,46 @@ BOOL gSplashScreenShown = NO;
 }
 
 #pragma mark CordovaCommands
+- (void)evalJsHelper:(NSString*)js
+{
+    void (^doIt)() = ^{
+        NSString* commandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:js];
+        [_commandQueue enqueCommandBatch:commandsJSON];
+    };
+
+    // Cycle the run-loop before executing the JS.
+    // This works around a bug where sometimes alerts() within callbacks can cause
+    // dead-lock.
+    // If the commandQueue is currently executing, then we know that it is safe to
+    // execute the callback immediately.
+    if (![NSThread isMainThread] || !_commandQueue.currentlyExecuting) {
+        dispatch_async (dispatch_get_main_queue (), doIt);
+    } else {
+        doIt ();
+    }
+}
 
 - (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId
 {
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
-    id message = result.message == nil ?[NSNull null] : result.message;
+    id message = result.message == nil ? [NSNull null] : result.message;
 
     // Use an array to encode the message as JSON.
     message = [NSArray arrayWithObject:message];
     NSString* encodedMessage = [message cdvjk_JSONString];
     // And then strip off the outer []s.
-    encodedMessage = [encodedMessage substringWithRange:NSMakeRange(1, [encodedMessage length] - 2)];
+    encodedMessage = [encodedMessage substringWithRange:NSMakeRange (1, [encodedMessage length] - 2)];
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
         callbackId, status, encodedMessage, keepCallback];
 
-    NSString* commandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:js];
-    [_commandQueue enqueCommandBatch:commandsJSON];
+    [self evalJsHelper:js];
+}
+
+- (void)evalJs:(NSString*)js
+{
+    js = [js stringByAppendingString:@";cordova.require('cordova/exec').nativeFetchMessages()"];
+    [self evalJsHelper:js];
 }
 
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
@@ -861,7 +884,7 @@ BOOL gSplashScreenShown = NO;
         if ((obj != nil) && [obj isKindOfClass:[CDVPlugin class]]) {
             [self registerPlugin:obj withClassName:className];
         } else {
-            NSLog(@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
+            NSLog (@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
         }
     }
     return obj;
@@ -898,9 +921,9 @@ BOOL gSplashScreenShown = NO;
     NSString* plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
     NSData* plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
     NSDictionary* temp = (NSDictionary*)[NSPropertyListSerialization
-        propertyListFromData:plistXML
-            mutabilityOption:NSPropertyListMutableContainersAndLeaves
-                      format:&format errorDescription:&errorDesc];
+propertyListFromData: plistXML
+mutabilityOption: NSPropertyListMutableContainersAndLeaves
+format: &format errorDescription : &errorDesc];
 
     return temp;
 }

@@ -17,11 +17,14 @@
  under the License.
  */
 
+#include <objc/message.h>
 #import "CDV.h"
 #import "CDVCommandQueue.h"
 #import "CDVViewController.h"
 
 @implementation CDVCommandQueue
+
+@synthesize currentlyExecuting = _currentlyExecuting;
 
 - (id)initWithViewController:(CDVViewController*)viewController
 {
@@ -40,20 +43,10 @@
 
 - (void)enqueCommandBatch:(NSString*)batchJSON
 {
-    [_queue addObject:batchJSON];
-}
-
-/**
- * Fetches the command queue and executes each command. It is possible that the
- * queue will not be empty after this function has completed since the executed
- * commands may have run callbacks which queued more commands.
- *
- * Returns the number of executed commands.
- */
-- (void)executeCommandsFromJson:(NSString*)queuedCommandsJSON
-{
-    [self enqueCommandBatch:queuedCommandsJSON];
-    [self executePending];
+    if ([batchJSON length] > 0) {
+        [_queue addObject:batchJSON];
+        [self executePending];
+    }
 }
 
 - (void)maybeFetchCommandsFromJs:(NSNumber*)requestId
@@ -81,12 +74,12 @@
     for (;; ) {
         // Grab all the queued commands from the JS side.
         NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
-            @"cordova.require('cordova/plugin/ios/nativecomm')()"];
+            @"cordova.require('cordova/exec').nativeFetchMessages()"];
 
-        if ([@"[]" isEqualToString:queuedCommandsJSON]) {
+        if ([queuedCommandsJSON length] == 0) {
             break;
         }
-        [self executeCommandsFromJson:queuedCommandsJSON];
+        [self enqueCommandBatch:queuedCommandsJSON];
     }
 
     [_viewController.webView stringByEvaluatingJavaScriptFromString:

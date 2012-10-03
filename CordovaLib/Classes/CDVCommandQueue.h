@@ -30,12 +30,13 @@
     BOOL _currentlyExecuting;
 }
 
+@property (nonatomic, readonly) BOOL currentlyExecuting;
+
 - (id)initWithViewController:(CDVViewController*)viewController;
 - (void)resetRequestId;
 - (void)enqueCommandBatch:(NSString*)batchJSON;
 
 - (void)maybeFetchCommandsFromJs:(NSNumber*)requestId;
-- (void)executeCommandsFromJson:(NSString*)queuedCommandsJSON;
 - (void)fetchCommandsFromJs;
 - (void)executePending;
 - (BOOL)execute:(CDVInvokedUrlCommand*)command;
