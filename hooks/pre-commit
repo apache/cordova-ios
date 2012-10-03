@@ -23,18 +23,18 @@ exec 1>&2
 
 RET=0
 files=$(bin/uncrustify.sh --filter $(git diff --cached --name-only))
+MSGS=
 for file in $files; do
     if ! bin/uncrustify.sh --check-file $file; then
-        echo "Style fix-ups required: $file. Please run:"
-        echo "    bin/uncrustify.sh \"$file\" && git add \"$file\""
+        MSGS="$MSGS
+    bin/uncrustify.sh \"$file\" && git add \"$file\""
         RET=1
     fi
 done
 
 if [[ $RET = 1 ]]; then
-    echo
-    echo "Commit aborted!"
-    echo "Run the commands above to fix your files before committing."
+    echo "Commit aborted because style fix-ups are required."
+    echo "Please run:$MSGS"
     echo "Alternatively, run \"$PWD/bin/uncrustify.sh --staged\" and then re-stage affected files."
 fi
 
