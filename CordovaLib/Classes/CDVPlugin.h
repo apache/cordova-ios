@@ -41,7 +41,7 @@
 - (void)handleOpenURL:(NSNotification*)notification;
 - (void)onAppTerminate;
 - (void)onMemoryWarning;
-- (void) onReset;
+- (void)onReset;
 
 /*
  // see initWithWebView implementation
@@ -53,6 +53,7 @@
 
 - (id)appDelegate;
 
+// TODO(agrieve): Deprecate these in favour of using CDVCommandDelegate directly.
 - (NSString*)writeJavascript:(NSString*)javascript;
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
 - (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;

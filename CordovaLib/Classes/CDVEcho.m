@@ -26,12 +26,12 @@
 {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[command.arguments objectAtIndex:0]];
 
-    [self success:pluginResult callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)echoAsyncHelper:(NSArray*)args
 {
-    [self success:[args objectAtIndex:0] callbackId:[args objectAtIndex:1]];
+    [self.commandDelegate sendPluginResult:[args objectAtIndex:0] callbackId:[args objectAtIndex:1]];
 }
 
 - (void)echoAsync:(CDVInvokedUrlCommand*)command

@@ -795,6 +795,24 @@ BOOL gSplashScreenShown = NO;
 
 #pragma mark CordovaCommands
 
+- (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId
+{
+    int status = [result.status intValue];
+    BOOL keepCallback = [result.keepCallback boolValue];
+    id message = result.message == nil ?[NSNull null] : result.message;
+
+    // Use an array to encode the message as JSON.
+    message = [NSArray arrayWithObject:message];
+    NSString* encodedMessage = [message cdvjk_JSONString];
+    // And then strip off the outer []s.
+    encodedMessage = [encodedMessage substringWithRange:NSMakeRange(1, [encodedMessage length] - 2)];
+    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
+        callbackId, status, encodedMessage, keepCallback];
+
+    NSString* commandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:js];
+    [_commandQueue enqueCommandBatch:commandsJSON];
+}
+
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
     return [_commandQueue execute:command];

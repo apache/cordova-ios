@@ -20,6 +20,7 @@
 #import "CDVInvokedUrlCommand.h"
 
 @class CDVPlugin;
+@class CDVPluginResult;
 
 @protocol CDVCommandDelegate <NSObject>
 
@@ -31,5 +32,8 @@
 // being made. Instead, they should use getCommandInstance and call methods
 // directly.
 - (BOOL)execute:(CDVInvokedUrlCommand*)command;
+// Sends a plugin result to the JS. The success/failure is inferred from the
+// plugin's status.
+- (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId;
 
 @end
