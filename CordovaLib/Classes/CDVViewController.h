@@ -41,7 +41,6 @@
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
 @property (nonatomic, readonly, strong) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readonly, strong) UIImageView* imageView;
-@property (nonatomic, readwrite, strong) id <CDVCommandDelegate> commandDelegate;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;

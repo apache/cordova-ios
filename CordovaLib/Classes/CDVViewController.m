@@ -42,7 +42,7 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize settings, loadFromString;
-@synthesize imageView, activityView, useSplashScreen, commandDelegate;
+@synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
 
 - (void)__init
@@ -69,7 +69,6 @@
         self.supportedOrientations = [self parseInterfaceOrientations:
             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 
-        self.commandDelegate = self;
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
         [self setWantsFullScreenLayout:YES];
@@ -114,7 +113,6 @@
         }
     }
 
-    self.commandDelegate = nil;
     self.webView.delegate = nil;
     self.webView = nil;
 }
@@ -225,7 +223,7 @@
      */
 
     if ([enableLocation boolValue]) {
-        [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
+        [[self getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
     }
 
     /*
@@ -233,7 +231,7 @@
      */
     if (!IsAtLeastiOSVersion(@"6.0")) {
         if (backupWebStorage) {
-            [self.commandDelegate registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+            [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
         } else {
             [CDVLocalStorage __restoreThenRemoveBackupLocations];
         }
@@ -810,7 +808,7 @@ BOOL gSplashScreenShown = NO;
     // Iterate over and execute all of the commands.
     for (NSArray* jsonEntry in queuedCommands) {
         CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
-        if (![self.commandDelegate execute:command]) {
+        if (![self execute:command]) {
 #ifdef DEBUG
                 NSString* commandJson = [jsonEntry cdvjk_JSONString];
                 static NSUInteger maxLogLength = 1024;
@@ -868,7 +866,7 @@ BOOL gSplashScreenShown = NO;
     }
 
     // Fetch an instance of this class
-    CDVPlugin* obj = [self.commandDelegate getCommandInstance:command.className];
+    CDVPlugin* obj = [self getCommandInstance:command.className];
 
     if (!([obj isKindOfClass:[CDVPlugin class]])) { // still allow deprecated class, until 1.0 release
         NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in Cordova.plist.", command.className);
@@ -907,7 +905,7 @@ BOOL gSplashScreenShown = NO;
     }
 
     if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
-        [plugin setCommandDelegate:self.commandDelegate];
+        [plugin setCommandDelegate:self];
     }
 
     [self.pluginObjects setObject:plugin forKey:className];
