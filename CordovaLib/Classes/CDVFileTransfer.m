@@ -156,9 +156,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     }
 
     if (errorCode > 0) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self createFileTransferError:errorCode AndSource:target AndTarget:server]];
-
-        [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self createFileTransferError:errorCode AndSource:target AndTarget:server]];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return nil;
     }
 
@@ -264,7 +263,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* target = (NSString*)[command.arguments objectAtIndex:0];
     NSError* __autoreleasing err = nil;
     // Extract the path part out of a file: URL.
-    NSString* filePath = [target hasPrefix:@"/"] ?[target copy] :[[NSURL URLWithString:target] path];
+    NSString* filePath = [target hasPrefix:@"/"] ? [target copy] : [[NSURL URLWithString:target] path];
 
     // Memory map the file so that it can be read efficiently even if it is large.
     NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
@@ -304,9 +303,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         [delegate.connection cancel];
         [activeTransfers removeObjectForKey:objectId];
 
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
-
-        [self writeJavascript:[result toErrorCallbackString:delegate.callbackId]];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
+        [self.commandDelegate sendPluginResult:result callbackId:delegate.callbackId];
     }
 }
 
@@ -339,9 +337,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     }
 
     if (errorCode > 0) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self createFileTransferError:errorCode AndSource:sourceUrl AndTarget:filePath]];
-
-        [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self createFileTransferError:errorCode AndSource:sourceUrl AndTarget:filePath]];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
     }
 
@@ -413,11 +410,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* uploadResponse = nil;
     BOOL downloadResponse;
     NSMutableDictionary* uploadResult;
-    CDVPluginResult* result;
+    CDVPluginResult* result = nil;
     NSError* __autoreleasing error = nil;
     NSString* parentPath;
     BOOL bDirRequest = NO;
-    BOOL errored = NO;
     CDVFile* file;
 
     NSLog(@"File Transfer Finished with response code %d", self.responseCode);
@@ -434,8 +430,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
             [uploadResult setObject:[NSNumber numberWithInt:self.responseCode] forKey:@"responseCode"];
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uploadResult];
         } else {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
-            errored = YES;
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
         }
     }
     if (self.direction == CDV_TRANSFER_DOWNLOAD) {
@@ -455,8 +450,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
                 if (downloadResponse == NO) {
                     // send our results back
-                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[command createFileTransferError:INVALID_URL_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
-                    errored = YES;
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:INVALID_URL_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
                 } else {
                     DLog(@"File Transfer Download success");
 
@@ -467,20 +461,14 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
             }
             @catch(id exception) {
                 // jump back to main thread
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
-                errored = YES;
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
             }
         } else {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
-            errored = YES;
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
         }
     }
 
-    if (!errored) {
-        [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
-    } else {
-        [self.command writeJavascript:[result toErrorCallbackString:callbackId]];
-    }
+    [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
 
     // remove connection for activeTransfers
     [command.activeTransfers removeObjectForKey:objectId];
@@ -496,14 +484,13 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
 {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
 
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
 
     // remove connection for activeTransfers
     [command.activeTransfers removeObjectForKey:objectId];
-
-    [self.command writeJavascript:[result toErrorCallbackString:callbackId]];
+    [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
@@ -519,7 +506,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         [downloadProgress setObject:[NSNumber numberWithInt:self.bytesExpected] forKey:@"total"];
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:downloadProgress];
         [result setKeepCallbackAsBool:true];
-        [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
+        [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
@@ -533,7 +520,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         [uploadProgress setObject:[NSNumber numberWithInt:totalBytesExpectedToWrite] forKey:@"total"];
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uploadProgress];
         [result setKeepCallbackAsBool:true];
-        [self.command writeJavascript:[result toSuccessCallbackString:callbackId]];
+        [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
     self.bytesTransfered = totalBytesWritten;
 }

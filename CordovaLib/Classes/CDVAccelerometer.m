@@ -95,9 +95,6 @@
 
 - (void)returnAccelInfo
 {
-    CDVPluginResult* result = nil;
-    NSString* jsString = nil;
-
     // Create an acceleration object
     NSMutableDictionary* accelProps = [NSMutableDictionary dictionaryWithCapacity:4];
 
@@ -106,10 +103,9 @@
     [accelProps setValue:[NSNumber numberWithDouble:z * kGravitationalConstant] forKey:@"z"];
     [accelProps setValue:[NSNumber numberWithDouble:timestamp] forKey:@"timestamp"];
 
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:accelProps];
     [result setKeepCallback:[NSNumber numberWithBool:YES]];
-    jsString = [result toSuccessCallbackString:self.callbackId];
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 }
 
 // TODO: Consider using filtering to isolate instantaneous data vs. gravity data -jm

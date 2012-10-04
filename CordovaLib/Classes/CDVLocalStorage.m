@@ -212,13 +212,13 @@
                     NSLog(@"%@", message);
 
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
-                    [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toSuccessCallbackString:callbackId] waitUntilDone:NO];
+                    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
                 } else {
                     message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) backup: %@", info.label, [error localizedDescription]];
                     NSLog(@"%@", message);
 
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
-                    [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toErrorCallbackString:callbackId] waitUntilDone:NO];
+                    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
                 }
             }
         }
@@ -228,8 +228,6 @@
 /* copy from persistentDbLocation to webkitDbLocation */
 - (void)restore:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     NSError* __autoreleasing error = nil;
     CDVPluginResult* result = nil;
     NSString* message = nil;
@@ -243,13 +241,13 @@
                 NSLog(@"%@", message);
 
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
-                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toSuccessCallbackString:callbackId] waitUntilDone:NO];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
             } else {
                 message = [NSString stringWithFormat:@"Error in CDVLocalStorage (%@) restore: %@", info.label, [error localizedDescription]];
                 NSLog(@"%@", message);
 
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
-                [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[result toErrorCallbackString:callbackId] waitUntilDone:NO];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
             }
         }
     }

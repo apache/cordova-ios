@@ -77,8 +77,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
     bool hasCamera = [UIImagePickerController isSourceTypeAvailable:sourceType];
     if (!hasCamera) {
         NSLog(@"Camera.getPicture: source type %d not available.", sourceType);
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"no camera available"];
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no camera available"];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
         return;
     }
 
@@ -162,8 +162,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
 - (void)cleanup:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // empty the tmp directory
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
     NSError* err = nil;
@@ -188,13 +186,13 @@ static NSSet* org_apache_cordova_validArrowDirections;
         }
     }
 
+    CDVPluginResult* pluginResult;
     if (hasErrors) {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"One or more files failed to be deleted."];
-        [super writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"One or more files failed to be deleted."];
     } else {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [super writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)popoverControllerDidDismissPopover:(id)popoverController
@@ -207,10 +205,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
     if (self.pickerController && self.pickerController.callbackId && self.pickerController.popoverController) {
         self.pickerController.popoverController = nil;
         NSString* callbackId = self.pickerController.callbackId;
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"no image selected"];   // error callback expects string ATM
-        // this "delay hack" is in case the callback contains a JavaScript alert. Without this delay or a
-        // setTimeout("alert('fail');", 0) on the JS side, the app will hang when the alert is displayed.
-        [self.webView performSelector:@selector(stringByEvaluatingJavaScriptFromString:) withObject:[result toErrorCallbackString:callbackId] afterDelay:0.5];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no image selected"];   // error callback expects string ATM
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
     self.hasPendingOperation = NO;
 }
@@ -218,8 +214,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
 {
     CDVCameraPicker* cameraPicker = (CDVCameraPicker*)picker;
-
-    NSString* callbackId = cameraPicker.callbackId;
 
     if (cameraPicker.popoverSupported && (cameraPicker.popoverController != nil)) {
         [cameraPicker.popoverController dismissPopoverAnimated:YES];
@@ -233,7 +227,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
         }
     }
 
-    NSString* jsString = nil;
     CDVPluginResult* result = nil;
 
     NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
@@ -290,26 +283,22 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
             // save file
             if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[err localizedDescription]];
-                jsString = [result toErrorCallbackString:callbackId];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
             } else {
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[NSURL fileURLWithPath:filePath] absoluteString]];
-                jsString = [result toSuccessCallbackString:callbackId];
             }
         } else {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[data base64EncodedString]];
-            jsString = [result toSuccessCallbackString:callbackId];
         }
     }
     // NOT IMAGE TYPE (MOVIE)
     else {
         NSString* moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] absoluteString];
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:moviePath];
-        jsString = [result toSuccessCallbackString:callbackId];
     }
 
-    if (jsString) {
-        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
     }
 
     self.hasPendingOperation = NO;
@@ -341,7 +330,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
 {
     CDVCameraPicker* cameraPicker = (CDVCameraPicker*)picker;
-    NSString* callbackId = cameraPicker.callbackId;
 
     if ([cameraPicker respondsToSelector:@selector(presentingViewController)]) {
         [[cameraPicker presentingViewController] dismissModalViewControllerAnimated:YES];
@@ -350,8 +338,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
     }
     // popoverControllerDidDismissPopover:(id)popoverController is called if popover is cancelled
 
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"no image selected"];   // error callback expects string ATM
-    [cameraPicker.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString:callbackId]];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no image selected"];   // error callback expects string ATM
+    [self.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
 
     self.hasPendingOperation = NO;
 }

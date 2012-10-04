@@ -63,7 +63,7 @@ typedef int CDVFileSystemType;
 - (void)getMetadata:(CDVInvokedUrlCommand*)command;
 - (void)removeRecursively:(CDVInvokedUrlCommand*)command;
 - (void)remove:(CDVInvokedUrlCommand*)command;
-- (NSString*)doRemove:(NSString*)fullPath callback:(NSString*)callbackId;
+- (CDVPluginResult*)doRemove:(NSString*)fullPath;
 - (void)copyTo:(CDVInvokedUrlCommand*)command;
 - (void)moveTo:(CDVInvokedUrlCommand*)command;
 - (BOOL)canCopyMoveSrc:(NSString*)src ToDestination:(NSString*)dest;

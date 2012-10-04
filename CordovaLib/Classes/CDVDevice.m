@@ -26,7 +26,6 @@
 
 - (void)getDeviceInfo:(CDVInvokedUrlCommand*)command
 {
-    NSString* cbId = command.callbackId;
     NSDictionary* deviceProperties = [self deviceProperties];
     NSMutableString* result = [[NSMutableString alloc] initWithFormat:@""];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:deviceProperties];
@@ -49,7 +48,7 @@
         NSLog(@"%@", jsResult);
     }
 
-    [self success:pluginResult callbackId:cbId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (NSDictionary*)deviceProperties

@@ -77,9 +77,9 @@
     CDVPluginResult* result = nil;
 
     if (NSClassFromString(@"AVAudioRecorder") == nil) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_NOT_SUPPORTED];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_NOT_SUPPORTED];
     } else if (self.inUse == YES) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_APPLICATION_BUSY];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_APPLICATION_BUSY];
     } else {
         // all the work occurs here
         CDVAudioRecorderViewController* audioViewController = [[CDVAudioRecorderViewController alloc] initWithCommand:self duration:duration callbackId:callbackId];
@@ -97,7 +97,7 @@
     }
 
     if (result) {
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
@@ -117,8 +117,8 @@
 
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         NSLog(@"Capture.imageCapture: camera not available.");
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_NOT_SUPPORTED];
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_NOT_SUPPORTED];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     } else {
         if (pickerController == nil) {
             pickerController = [[CDVImagePicker alloc] init];
@@ -154,14 +154,10 @@
  * IN:
  *  UIImage* image - the UIImage data returned from the camera
  *  NSString* callbackId
- * OUT:
- *  NSString* jsString - the error or success JavaScript string to execute
- *
  */
-- (NSString*)processImage:(UIImage*)image type:(NSString*)mimeType forCallbackId:(NSString*)callbackId
+- (CDVPluginResult*)processImage:(UIImage*)image type:(NSString*)mimeType forCallbackId:(NSString*)callbackId
 {
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     // save the image to photo album
     UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
@@ -186,8 +182,7 @@
     } while ([fileMgr fileExistsAtPath:filePath]);
 
     if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_INTERNAL_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageToErrorObject:CAPTURE_INTERNAL_ERR];
         if (err) {
             NSLog(@"Error saving image: %@", [err localizedDescription]);
         }
@@ -198,10 +193,9 @@
         NSArray* fileArray = [NSArray arrayWithObject:fileDict];
 
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:fileArray];
-        jsString = [result toSuccessCallbackString:callbackId];
     }
 
-    return jsString;
+    return result;
 }
 
 - (void)captureVideo:(CDVInvokedUrlCommand*)command
@@ -237,8 +231,8 @@
     if (!mediaType) {
         // don't have video camera return error
         NSLog(@"Capture.captureVideo: video mode not available.");
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_NOT_SUPPORTED];
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_NOT_SUPPORTED];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     } else {
         pickerController.delegate = self;
         pickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -271,11 +265,8 @@
     }
 }
 
-- (NSString*)processVideo:(NSString*)moviePath forCallbackId:(NSString*)callbackId
+- (CDVPluginResult*)processVideo:(NSString*)moviePath forCallbackId:(NSString*)callbackId
 {
-    CDVPluginResult* result = nil;
-    NSString* jsString = nil;
-
     // save the movie to photo album (only avail as of iOS 3.1)
 
     /* don't need, it should automatically get saved
@@ -289,11 +280,7 @@
     NSDictionary* fileDict = [self getMediaDictionaryFromPath:moviePath ofType:nil];
     NSArray* fileArray = [NSArray arrayWithObject:fileDict];
 
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:fileArray];
-    jsString = [result toSuccessCallbackString:callbackId];
-
-    //
-    return jsString;
+    return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:fileArray];
 }
 
 - (void)getMediaModes:(CDVInvokedUrlCommand*)command
@@ -342,7 +329,7 @@
         audioArray ? (NSObject*)                          audioArray:[NSNull null], @"audio",
         nil];
     NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes cdvjk_JSONString]];
-    [self writeJavascript:jsString];
+    [self.commandDelegate evalJs:jsString];
 }
 
 - (void)getFormatData:(CDVInvokedUrlCommand*)command
@@ -359,7 +346,6 @@
     BOOL bError = NO;
     CDVCaptureError errorCode = CAPTURE_INTERNAL_ERR;
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     if (!mimeType || [mimeType isKindOfClass:[NSNull class]]) {
         // try to determine mime type if not provided
@@ -422,15 +408,13 @@
             }
         }
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:formatData];
-        jsString = [result toSuccessCallbackString:callbackId];
         // NSLog(@"getFormatData: %@", [formatData description]);
     }
     if (bError) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:errorCode];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:errorCode];
     }
-    if (jsString) {
-        [self writeJavascript:jsString];
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
@@ -485,7 +469,6 @@
         [[picker parentViewController] dismissModalViewControllerAnimated:YES];
     }
 
-    NSString* jsString = nil;
     CDVPluginResult* result = nil;
 
     UIImage* image = nil;
@@ -501,20 +484,18 @@
     }
     if (image != nil) {
         // mediaType was image
-        jsString = [self processImage:image type:cameraPicker.mimeType forCallbackId:callbackId];
+        result = [self processImage:image type:cameraPicker.mimeType forCallbackId:callbackId];
     } else if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
         // process video
         NSString* moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
         if (moviePath) {
-            jsString = [self processVideo:moviePath forCallbackId:callbackId];
+            result = [self processVideo:moviePath forCallbackId:callbackId];
         }
     }
-    if (!jsString) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_INTERNAL_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+    if (!result) {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_INTERNAL_ERR];
     }
-
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
@@ -528,12 +509,8 @@
         [[picker parentViewController] dismissModalViewControllerAnimated:YES];
     }
 
-    NSString* jsString = nil;
-    CDVPluginResult* result = nil;
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_NO_MEDIA_FILES];
-    jsString = [result toErrorCallbackString:callbackId];
-
-    [self writeJavascript:jsString];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_NO_MEDIA_FILES];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 @end
@@ -549,7 +526,7 @@
 @end
 
 @implementation CDVAudioRecorderViewController
-@synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, resultString, timer, isTimed;
+@synthesize errorCode, callbackId, duration, captureCommand, doneButton, recordingView, recordButton, recordImage, stopRecordImage, timerLabel, avRecorder, avSession, pluginResult, timer, isTimed;
 
 - (NSString*)resolveImageResource:(NSString*)resource
 {
@@ -791,10 +768,9 @@
         [[self.captureCommand.viewController.modalViewController parentViewController] dismissModalViewControllerAnimated:YES];
     }
 
-    if (!self.resultString) {
+    if (!self.pluginResult) {
         // return error
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:self.errorCode];
-        self.resultString = [result toErrorCallbackString:callbackId];
+        self.pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:self.errorCode];
     }
 
     self.avRecorder = nil;
@@ -803,7 +779,7 @@
     [self.captureCommand setInUse:NO];
     UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
     // return result
-    [self.captureCommand writeJavascript:resultString];
+    [self.captureCommand.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
 - (void)updateTime
@@ -838,11 +814,9 @@
         NSDictionary* fileDict = [captureCommand getMediaDictionaryFromPath:filePath ofType:@"audio/wav"];
         NSArray* fileArray = [NSArray arrayWithObject:fileDict];
 
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:fileArray];
-        self.resultString = [result toSuccessCallbackString:callbackId];
+        self.pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:fileArray];
     } else {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_INTERNAL_ERR];
-        self.resultString = [result toErrorCallbackString:callbackId];
+        self.pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageToErrorObject:CAPTURE_INTERNAL_ERR];
     }
 }
 
@@ -852,8 +826,7 @@
     [self stopRecordingCleanup];
 
     NSLog(@"error recording audio");
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:CAPTURE_INTERNAL_ERR];
-    self.resultString = [result toErrorCallbackString:callbackId];
+    self.pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageToErrorObject:CAPTURE_INTERNAL_ERR];
     [self dismissAudioView:nil];
 }
 

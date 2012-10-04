@@ -241,7 +241,7 @@
         [posError setObject:[NSNumber numberWithInt:PERMISSIONDENIED] forKey:@"code"];
         [posError setObject:@"Location services are disabled." forKey:@"message"];
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
-        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     } else {
         if (!self.locationData) {
             self.locationData = [[CDVLocationData alloc] init];
@@ -287,7 +287,7 @@
         [posError setObject:[NSNumber numberWithInt:PERMISSIONDENIED] forKey:@"code"];
         [posError setObject:@"Location services are disabled." forKey:@"message"];
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
-        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     } else {
         if (!__locationStarted || (__highAccuracyEnabled != enableHighAccuracy)) {
             // Tell the location manager to start notifying us of location updates
@@ -313,13 +313,11 @@
 - (void)returnLocationInfo:(NSString*)callbackId andKeepCallback:(BOOL)keepCallback
 {
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     CDVLocationData* lData = self.locationData;
 
     if (lData && !lData.locationInfo) {
         // return error
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:POSITIONUNAVAILABLE];
-        jsString = [result toErrorCallbackString:callbackId];
     } else if (lData && lData.locationInfo) {
         CLLocation* lInfo = lData.locationInfo;
         NSMutableDictionary* returnInfo = [NSMutableDictionary dictionaryWithCapacity:8];
@@ -335,11 +333,9 @@
 
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
         [result setKeepCallbackAsBool:keepCallback];
-
-        jsString = [result toSuccessCallbackString:callbackId];
     }
-    if (jsString) {
-        [super writeJavascript:jsString];
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
@@ -352,13 +348,13 @@
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:posError];
 
     for (NSString* callbackId in self.locationData.locationCallbacks) {
-        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 
     [self.locationData.locationCallbacks removeAllObjects];
 
     for (NSString* callbackId in self.locationData.watchCallbacks) {
-        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
@@ -377,7 +373,7 @@
     }
     if ([self hasHeadingSupport] == NO) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
-        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     } else {
         // heading retrieval does is not affected by disabling locationServices and authorization of app for location services
         if (!self.headingData) {
@@ -410,7 +406,7 @@
 
     if ([self hasHeadingSupport] == NO) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:20];
-        [super writeJavascript:[result toErrorCallbackString:callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     } else {
         if (!hData) {
             self.headingData = [[CDVHeadingData alloc] init];
@@ -437,7 +433,6 @@
 - (void)returnHeadingInfo:(NSString*)callbackId keepCallback:(BOOL)bRetain
 {
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     CDVHeadingData* hData = self.headingData;
 
     self.headingData.headingTimestamp = [NSDate date];
@@ -445,7 +440,6 @@
     if (hData && (hData.headingStatus == HEADINGERROR)) {
         // return error
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
-        jsString = [result toErrorCallbackString:callbackId];
     } else if (hData && (hData.headingStatus == HEADINGRUNNING) && hData.headingInfo) {
         // if there is heading info, return it
         CLHeading* hInfo = hData.headingInfo;
@@ -459,11 +453,9 @@
 
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
         [result setKeepCallbackAsBool:bRetain];
-
-        jsString = [result toSuccessCallbackString:callbackId];
     }
-    if (jsString) {
-        [super writeJavascript:jsString];
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
@@ -555,14 +547,14 @@
                 // heading error during startup - report error
                 for (NSString* callbackId in hData.headingCallbacks) {
                     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
-                    [super writeJavascript:[result toErrorCallbackString:callbackId]];
+                    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
                 }
 
                 [hData.headingCallbacks removeAllObjects];
             } // else for frequency watches next call to getCurrentHeading will report error
             if (hData.headingFilter) {
                 CDVPluginResult* resultFilter = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
-                [super writeJavascript:[resultFilter toErrorCallbackString:hData.headingFilter]];
+                [self.commandDelegate sendPluginResult:resultFilter callbackId:hData.headingFilter];
             }
             hData.headingStatus = HEADINGERROR;
         }
@@ -599,7 +591,6 @@
     self.headingData = nil;
 }
 
-
 @end
 
 #pragma mark -
@@ -612,7 +603,7 @@
     return [NSString stringWithFormat:
         @"{ timestamp: %.00f, \
             coords: { latitude: %f, longitude: %f, altitude: %.02f, heading: %.02f, speed: %.02f, accuracy: %.02f, altitudeAccuracy: %.02f } \
-            }"                                                                                                                                                                               ,
+            }",
         [self.timestamp timeIntervalSince1970] * 1000.0,
         self.coordinate.latitude,
         self.coordinate.longitude,

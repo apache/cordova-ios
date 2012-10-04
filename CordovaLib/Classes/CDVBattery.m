@@ -64,7 +64,7 @@
     if (self.callbackId) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:batteryData];
         [result setKeepCallbackAsBool:YES];
-        [super writeJavascript:[result toSuccessCallbackString:self.callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
     }
 }
 
@@ -121,7 +121,7 @@
     if (self.callbackId) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getBatteryStatus]];
         [result setKeepCallbackAsBool:NO];
-        [super writeJavascript:[result toSuccessCallbackString:self.callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
     }
     self.callbackId = nil;
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:NO];

@@ -137,7 +137,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
 - (void)requestFileSystem:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
     NSArray* arguments = command.arguments;
 
     // arguments
@@ -146,11 +145,9 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
     int type = [strType intValue];
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     if (type > 1) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NOT_FOUND_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:NOT_FOUND_ERR];
         NSLog(@"iOS only supports TEMPORARY and PERSISTENT file systems");
     } else {
         // NSString* fullPath = [NSString stringWithFormat:@"/%@", (type == 0 ? [self.appTempPath lastPathComponent] : [self.appDocsPath lastPathComponent])];
@@ -159,18 +156,16 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         NSNumber* pNumAvail = [self checkFreeDiskSpace:fullPath];
         // NSLog(@"Free space: %@", [NSString stringWithFormat:@"%qu", [ pNumAvail unsignedLongLongValue ]]);
         if (pNumAvail && ([pNumAvail unsignedLongLongValue] < size)) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:QUOTA_EXCEEDED_ERR];
-            jsString = [result toErrorCallbackString:callbackId];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:QUOTA_EXCEEDED_ERR];
         } else {
             NSMutableDictionary* fileSystem = [NSMutableDictionary dictionaryWithCapacity:2];
             [fileSystem setObject:(type == TEMPORARY ? kW3FileTemporary:kW3FilePersistent) forKey:@"name"];
             NSDictionary* dirEntry = [self getDirectoryEntry:fullPath isDirectory:YES];
             [fileSystem setObject:dirEntry forKey:@"root"];
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileSystem];
-            jsString = [result toSuccessCallbackString:callbackId];
         }
     }
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* Creates a dictionary representing an Entry Object
@@ -217,12 +212,8 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)resolveLocalFileSystemURI:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* inputUri = [command.arguments objectAtIndex:0];
-
-    NSString* jsString = nil;
 
     // don't know if string is encoded or not so unescape
     NSString* cleanUri = [inputUri stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -233,8 +224,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
     if (!testUri || ![testUri isFileURL]) {
         // issue ENCODING_ERR
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:ENCODING_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:ENCODING_ERR];
     } else {
         NSFileManager* fileMgr = [[NSFileManager alloc] init];
         NSString* path = [testUri path];
@@ -258,21 +248,18 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             }
             if (foundFullPath == nil) {
                 // error SECURITY_ERR - not one of the two paths types supported
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:SECURITY_ERR];
-                jsString = [result toErrorCallbackString:callbackId];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:SECURITY_ERR];
             } else {
                 NSDictionary* fileSystem = [self getDirectoryEntry:path isDirectory:isDir];
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileSystem];
-                jsString = [result toSuccessCallbackString:callbackId];
             }
         } else {
             // return NOT_FOUND_ERR
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NOT_FOUND_ERR];
-            jsString = [result toErrorCallbackString:callbackId];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
         }
     }
-    if (jsString != nil) {
-        [self writeJavascript:jsString];
+    if (result != nil) {
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }
 }
 
@@ -337,14 +324,11 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)getFile:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments are URL encoded
     NSString* fullPath = [command.arguments objectAtIndex:0];
     NSString* requestedPath = [command.arguments objectAtIndex:1];
     NSDictionary* options = [command.arguments objectAtIndex:2 withDefault:nil];
 
-    NSString* jsString = nil;
     CDVPluginResult* result = nil;
     BOOL bDirRequest = NO;
     BOOL create = NO;
@@ -415,18 +399,16 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
                 // NSLog(@"newly created file/dir (%@) exists: %d", reqFullPath, [fileMgr fileExistsAtPath:reqFullPath]);
                 // file existed or was created
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getDirectoryEntry:reqFullPath isDirectory:bDirRequest]];
-                jsString = [result toSuccessCallbackString:callbackId];
             }
         } // are all possible conditions met?
     }
 
     if (errorCode > 0) {
         // create error callback
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:errorCode];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
     }
 
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /*
@@ -440,13 +422,10 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)getParent:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments are URL encoded
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     NSString* newPath = nil;
 
     if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]) {
@@ -465,15 +444,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         BOOL bExists = [fileMgr fileExistsAtPath:newPath isDirectory:&bIsDir];
         if (bExists) {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getDirectoryEntry:newPath isDirectory:bIsDir]];
-            jsString = [result toSuccessCallbackString:callbackId];
         }
     }
-    if (!jsString) {
+    if (!result) {
         // invalid path or file does not exist
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NOT_FOUND_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
     }
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /*
@@ -482,8 +459,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)getMetadata:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
     NSString* testPath = argPath; // [self getFullPath: argPath];
@@ -491,7 +466,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
     NSError* __autoreleasing error = nil;
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     NSDictionary* fileAttribs = [fileMgr attributesOfItemAtPath:testPath error:&error];
 
@@ -499,7 +473,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         NSDate* modDate = [fileAttribs fileModificationDate];
         if (modDate) {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[modDate timeIntervalSince1970] * 1000];
-            jsString = [result toSuccessCallbackString:callbackId];
         }
     } else {
         // didn't get fileAttribs
@@ -510,11 +483,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         }
         // log [NSNumber numberWithDouble: theMessage] objCtype to see what it returns
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errorCode];
-        jsString = [result toErrorCallbackString:callbackId];
     }
-    if (jsString) {
-        [self writeJavascript:jsString];
+    if (!result) {
+        // invalid path or file does not exist
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION];
     }
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /*
@@ -523,8 +497,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)setMetadata:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* filePath = [command.arguments objectAtIndex:0];
     NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:nil];
@@ -555,11 +527,10 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
     if (ok) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self writeJavascript:[result toSuccessCallbackString:callbackId]];
     } else {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
     }
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* removes the directory or file entry
@@ -573,13 +544,10 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 */
 - (void)remove:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     CDVFileError errorCode = 0;  // !! 0 not currently defined
 
     // error if try to remove top level (documents or tmp) dir
@@ -598,13 +566,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         }
     }
     if (errorCode > 0) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:errorCode];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
     } else {
         // perform actual remove
-        jsString = [self doRemove:fullPath callback:callbackId];
+        result = [self doRemove:fullPath];
     }
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* recursively removes the directory
@@ -617,23 +584,18 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)removeRecursively:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     // error if try to remove top level (documents or tmp) dir
     if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NO_MODIFICATION_ALLOWED_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NO_MODIFICATION_ALLOWED_ERR];
     } else {
-        jsString = [self doRemove:fullPath callback:callbackId];
+        result = [self doRemove:fullPath];
     }
-
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* remove the file or directory (recursively)
@@ -643,10 +605,9 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  * called from remove and removeRecursively - check all pubic api specific error conditions (dir not empty, etc) before calling
  */
 
-- (NSString*)doRemove:(NSString*)fullPath callback:(NSString*)callbackId
+- (CDVPluginResult*)doRemove:(NSString*)fullPath
 {
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     BOOL bSuccess = NO;
     NSError* __autoreleasing pError = nil;
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -654,8 +615,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     @try {
         bSuccess = [fileMgr removeItemAtPath:fullPath error:&pError];
         if (bSuccess) {
-            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            jsString = [result toSuccessCallbackString:callbackId];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
             // see if we can give a useful error
             CDVFileError errorCode = ABORT_ERR;
@@ -666,17 +626,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
                 errorCode = NO_MODIFICATION_ALLOWED_ERR;
             }
 
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:errorCode];
-            jsString = [result toErrorCallbackString:callbackId];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
         }
     } @catch(NSException* e) {  // NSInvalidArgumentException if path is . or ..
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:SYNTAX_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:SYNTAX_ERR];
     }
 
-    @finally {
-        return jsString;
-    }
+    return result;
 }
 
 - (void)copyTo:(CDVInvokedUrlCommand*)command
@@ -729,17 +685,15 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)doCopyMove:(CDVInvokedUrlCommand*)command isCopy:(BOOL)bCopy
 {
-    NSString* callbackId = command.callbackId;
     NSArray* arguments = command.arguments;
 
     // arguments
     NSString* srcFullPath = [arguments objectAtIndex:0];
     NSString* destRootPath = [arguments objectAtIndex:1];
     // optional argument
-    NSString* newName = ([arguments count] > 2) ?[arguments objectAtIndex:2] :[srcFullPath lastPathComponent];          // use last component from appPath if new name not provided
+    NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent];          // use last component from appPath if new name not provided
 
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     CDVFileError errCode = 0;  // !! Currently 0 is not defined, use this to signal error !!
 
     /*NSString* destRootPath = nil;
@@ -824,7 +778,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
                     // should verify it is there and of the correct type???
                     NSDictionary* newEntry = [self getDirectoryEntry:newFullPath isDirectory:bSrcIsDir];  // should be the same type as source
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:newEntry];
-                    jsString = [result toSuccessCallbackString:callbackId];
                 } else {
                     errCode = INVALID_MODIFICATION_ERR; // catch all
                     if (error) {
@@ -841,13 +794,9 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         }
     }
     if (errCode > 0) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:errCode];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errCode];
     }
-
-    if (jsString) {
-        [self writeJavascript:jsString];
-    }
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* return the URI to the entry
@@ -886,13 +835,10 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 }*/
 - (void)getFileMetadata:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
 
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     NSString* fullPath = argPath; // [self getFullPath: argPath];
 
@@ -902,8 +848,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         // make sure it exists and is not a directory
         BOOL bExists = [fileMgr fileExistsAtPath:fullPath isDirectory:&bIsDir];
         if (!bExists || bIsDir) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NOT_FOUND_ERR];
-            jsString = [result toErrorCallbackString:callbackId];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
         } else {
             // create dictionary of file info
             NSError* __autoreleasing error = nil;
@@ -917,22 +862,20 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970] * 1000];
             [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
-            jsString = [result toSuccessCallbackString:callbackId];
         }
     }
-
-    [self writeJavascript:jsString];
+    if (!result) {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_INSTANTIATION_EXCEPTION];
+    }
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void)readEntries:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
     NSError* __autoreleasing error = nil;
@@ -952,14 +895,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             }
         }
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:entries];
-        jsString = [result toSuccessCallbackString:callbackId];
     } else {
         // assume not found but could check error for more specific error conditions
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NOT_FOUND_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
     }
 
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 // DEPRECATED
@@ -977,20 +918,16 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  */
 - (void)readAsText:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
     // NSString* encoding = [command.arguments objectAtIndex:2];   // not currently used
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:argPath];
 
     if (!file) {
         // invalid path entry
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:NOT_FOUND_ERR];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
     } else {
         NSData* readData = [file readDataToEndOfFile];
 
@@ -1004,11 +941,8 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         }
 
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-        jsString = [result toSuccessCallbackString:callbackId];
     }
-    if (jsString) {
-        [self writeJavascript:jsString];
-    }
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* Read content of text file and return as base64 encoded data url.
@@ -1021,14 +955,11 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
 - (void)readAsDataURL:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
 
     CDVFileError errCode = ABORT_ERR;
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
 
     if (!argPath) {
         errCode = SYNTAX_ERR;
@@ -1044,18 +975,16 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             if (readData) {
                 NSString* output = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, [readData base64EncodedString]];
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:output];
-                jsString = [result toSuccessCallbackString:callbackId];
             } else {
                 errCode = NOT_FOUND_ERR;
             }
         }
     }
-    if (!jsString) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:errCode];
-        jsString = [result toErrorCallbackString:callbackId];
+    if (!result) {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
     }
     // NSLog(@"readAsDataURL return: %@", jsString);
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 /* helper function to get the mimeType from the file extension
@@ -1095,8 +1024,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
 - (void)truncate:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
     unsigned long long pos = (unsigned long long)[[command.arguments objectAtIndex:1] longLongValue];
@@ -1106,7 +1033,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     unsigned long long newPos = [self truncateFile:appFile atPosition:pos];
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:newPos];
 
-    [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (unsigned long long)truncateFile:(NSString*)filePath atPosition:(unsigned long long)pos
@@ -1151,7 +1078,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 - (void)writeToFile:(NSString*)filePath withData:(NSString*)data append:(BOOL)shouldAppend callback:(NSString*)callbackId
 {
     CDVPluginResult* result = nil;
-    NSString* jsString = nil;
     CDVFileError errCode = INVALID_MODIFICATION_ERR;
     int bytesWritten = 0;
     NSData* encData = [data dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
@@ -1167,7 +1093,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             [fileStream close];
             if (bytesWritten > 0) {
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:bytesWritten];
-                jsString = [result toSuccessCallbackString:callbackId];
                 // } else {
                 // can probably get more detailed error info via [fileStream streamError]
                 // errCode already set to INVALID_MODIFICATION_ERR;
@@ -1178,22 +1103,18 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         // invalid filePath
         errCode = NOT_FOUND_ERR;
     }
-    if (!jsString) {
+    if (!result) {
         // was an error
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:errCode];
-        jsString = [result toErrorCallbackString:callbackId];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
     }
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)testFileExists:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
 
-    NSString* jsString = nil;
     // Get the file manager
     NSFileManager* fMgr = [NSFileManager defaultManager];
     NSString* appFile = argPath; // [ self getFullPath: argPath];
@@ -1201,20 +1122,14 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     BOOL bExists = [fMgr fileExistsAtPath:appFile];
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(bExists ? 1:0)];
 
-    // keep original format of returning 0 or 1 to success  callback
-    jsString = [result toSuccessCallbackString:callbackId];
-
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void)testDirectoryExists:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
 
-    NSString* jsString = nil;
     // Get the file manager
     NSFileManager* fMgr = [[NSFileManager alloc] init];
     NSString* appFile = argPath; // [self getFullPath: argPath];
@@ -1223,16 +1138,12 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:((bExists && bIsDir) ? 1:0)];
 
-    // keep original format of returning 0 or 1 to success callback
-    jsString = [result toSuccessCallbackString:callbackId];
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 // Returns number of bytes available via callback
 - (void)getFreeDiskSpace:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
-
     // no arguments
 
     NSNumber* pNumAvail = [self checkFreeDiskSpace:self.appDocsPath];
@@ -1242,7 +1153,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:strFreeSpace];
 
-    [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 @end

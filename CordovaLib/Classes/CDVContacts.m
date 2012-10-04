@@ -127,8 +127,7 @@ dispatch_queue_t workQueue = nil;
     }
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:recordId];
-    // jsString = [NSString stringWithFormat: @"%@(%d);", newCP.jsCallback, recordId];
-    [self writeJavascript:[result toSuccessCallbackString:callbackId]];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)displayContact:(CDVInvokedUrlCommand*)command
@@ -137,7 +136,7 @@ dispatch_queue_t workQueue = nil;
     ABRecordID recordID = [[command.arguments objectAtIndex:0] intValue];
     NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
 
-    bool bEdit = [options isKindOfClass:[NSNull class]] ? false :[options existsValue:@"true" forKey:@"allowsEditing"];
+    bool bEdit = [options isKindOfClass:[NSNull class]] ? false : [options existsValue:@"true" forKey:@"allowsEditing"];
     ABAddressBookRef addrBook = ABAddressBookCreate();
     ABRecordRef rec = ABAddressBookGetPersonWithRecordID(addrBook, recordID);
 
@@ -169,8 +168,8 @@ dispatch_queue_t workQueue = nil;
         }
     } else {
         // no record, return error
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:UNKNOWN_ERROR];
-        [self writeJavascript:[result toErrorCallbackString:callbackId]];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:UNKNOWN_ERROR];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
     CFRelease(addrBook);
 }
@@ -224,7 +223,7 @@ dispatch_queue_t workQueue = nil;
         picker.pickedContactDictionary = [pickedContact toDictionary:returnFields];
 
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
-        [self writeJavascript:[result toSuccessCallbackString:picker.callbackId]];
+        [self.commandDelegate sendPluginResult:result callbackId:picker.callbackId];
 
         if ([picker respondsToSelector:@selector(presentingViewController)]) {
             [[picker presentingViewController] dismissViewControllerAnimated:YES completion:nil];
@@ -257,7 +256,7 @@ dispatch_queue_t workQueue = nil;
         CFRelease(addrBook);
     }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
-    [self writeJavascript:[result toSuccessCallbackString:picker.callbackId]];
+    [self.commandDelegate sendPluginResult:result callbackId:picker.callbackId];
 
     if ([peoplePicker respondsToSelector:@selector(presentingViewController)]) {
         [[peoplePicker presentingViewController] dismissViewControllerAnimated:YES completion:nil];
@@ -278,7 +277,6 @@ dispatch_queue_t workQueue = nil;
             // more details here: http: //blog.byadrian.net/2012/05/05/ios-addressbook-framework-and-gcd/
             ABAddressBookRef addrBook = ABAddressBookCreate ();
 
-            NSString* jsString = nil;
             NSArray* foundRecords = nil;
             // get the findOptions values
             BOOL multiple = NO; // default is false
@@ -303,7 +301,7 @@ dispatch_queue_t workQueue = nil;
                 if (foundRecords && [foundRecords count] > 0) {
                     // create Contacts and put into matches array
                     // doesn't make sense to ask for all records when multiple == NO but better check
-                    int xferCount = multiple == YES ?[foundRecords count] : 1;
+                    int xferCount = multiple == YES ? [foundRecords count] : 1;
                     matches = [NSMutableArray arrayWithCapacity:xferCount];
 
                     for (int k = 0; k < xferCount; k++) {
@@ -335,7 +333,7 @@ dispatch_queue_t workQueue = nil;
                 // convert to JS Contacts format and return in callback
                 // - returnFields  determines what properties to return
                 @autoreleasepool {
-                    int count = multiple == YES ?[matches count] : 1;
+                    int count = multiple == YES ? [matches count] : 1;
 
                     for (int i = 0; i < count; i++) {
                         CDVContact* newContact = [matches objectAtIndex:i];
@@ -344,17 +342,11 @@ dispatch_queue_t workQueue = nil;
                     }
                 }
             }
-            CDVPluginResult* result = nil;
             // return found contacts (array is empty if no contacts found)
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:returnContacts];
-            jsString = [result toSuccessCallbackString:callbackId];
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:returnContacts];
+            [self.commandDelegate sendPluginResult:result callbackId:callbackId];
             // NSLog(@"findCallback string: %@", jsString);
 
-            if (jsString) {
-                dispatch_async (dispatch_get_main_queue (), ^{
-                        [self writeJavascript:jsString];
-                    });
-            }
             if (addrBook) {
                 CFRelease (addrBook);
             }
@@ -369,7 +361,6 @@ dispatch_queue_t workQueue = nil;
     NSDictionary* contactDict = [command.arguments objectAtIndex:0];
 
     dispatch_async([CDVContacts getWorkQueue], ^{
-            NSString* jsString = nil;
             bool bIsError = FALSE, bSuccess = FALSE;
             BOOL bUpdate = NO;
             CDVContactError errCode = UNKNOWN_ERROR;
@@ -409,7 +400,6 @@ dispatch_queue_t workQueue = nil;
                     NSDictionary* newContact = [aContact toDictionary:[CDVContact defaultFields]];
                     // NSString* contactStr = [newContact JSONRepresentation];
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:newContact];
-                    jsString = [result toSuccessCallbackString:callbackId];
                 }
             } else {
                 bIsError = TRUE;
@@ -419,13 +409,10 @@ dispatch_queue_t workQueue = nil;
 
             if (bIsError) {
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
-                jsString = [result toErrorCallbackString:callbackId];
             }
 
-            if (jsString) {
-                dispatch_async (dispatch_get_main_queue (), ^{
-                        [self writeJavascript:jsString];
-                    });
+            if (result) {
+                [self.commandDelegate sendPluginResult:result callbackId:callbackId];
             }
         }); // end of  queue
 }
@@ -434,7 +421,6 @@ dispatch_queue_t workQueue = nil;
 {
     NSString* callbackId = command.callbackId;
     NSNumber* cId = [command.arguments objectAtIndex:0];
-    NSString* jsString = nil;
     bool bIsError = FALSE, bSuccess = FALSE;
     CDVContactError errCode = UNKNOWN_ERROR;
     CFErrorRef error;
@@ -462,7 +448,6 @@ dispatch_queue_t workQueue = nil;
                     // [contactDict setObject:[NSNull null] forKey:kW3ContactId];
                     // result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: contactDict];
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                    jsString = [result toSuccessCallbackString:callbackId];
                     // NSString* contactStr = [contactDict JSONRepresentation];
                 }
             }
@@ -482,10 +467,9 @@ dispatch_queue_t workQueue = nil;
     }
     if (bIsError) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
-        jsString = [result toErrorCallbackString:callbackId];
     }
-    if (jsString) {
-        [self writeJavascript:jsString];
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 
     return;

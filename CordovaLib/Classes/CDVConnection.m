@@ -30,13 +30,9 @@
 
 - (void)getConnectionInfo:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* result = nil;
-    NSString* jsString = nil;
-    NSString* callbackId = command.callbackId;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
 
-    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
-    jsString = [result toSuccessCallbackString:callbackId];
-    [self writeJavascript:jsString];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (NSString*)w3cConnectionTypeFor:(CDVReachability*)reachability
@@ -80,7 +76,7 @@
     NSString* js = nil;
     // write the connection type
     js = [NSString stringWithFormat:@"navigator.network.connection.type = '%@';", self.connectionType];
-    [super writeJavascript:js];
+    [self.commandDelegate evalJs:js];
 
     // send "online"/"offline" event
     [self updateOnlineStatus];
@@ -102,9 +98,9 @@
     BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
 
     if (online) {
-        [super writeJavascript:@"cordova.fireDocumentEvent('online');"];
+        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('online');"];
     } else {
-        [super writeJavascript:@"cordova.fireDocumentEvent('offline');"];
+        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('offline');"];
     }
 }
 
