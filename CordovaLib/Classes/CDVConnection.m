@@ -144,6 +144,7 @@
 - (void)dealloc
 {
     [self onReset];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];   // this will remove all notifications unless added using addObserverForName:object:queue:usingBlock:
 }
 
 - (void)onReset
