@@ -95,9 +95,9 @@
     // override to remove caches, etc
 }
 
-- (void) onReset
+- (void)onReset
 {
-	// Override to cancel any long-running requests when the WebView navigates or refreshes.
+    // Override to cancel any long-running requests when the WebView navigates or refreshes.
 }
 
 - (void)dealloc
@@ -127,12 +127,12 @@
 
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId
 {
-    return [self writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toSuccessCallbackString:callbackId]]];
+    return [self writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
 }
 
 - (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId
 {
-    return [self writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", [pluginResult toErrorCallbackString:callbackId]]];
+    return [self writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
 }
 
 @end
