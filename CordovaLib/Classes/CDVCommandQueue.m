@@ -60,30 +60,13 @@
     }
 }
 
-/**
- * Repeatedly fetches and executes the command queue until it is empty.
- */
 - (void)fetchCommandsFromJs
 {
-    [_viewController.webView stringByEvaluatingJavaScriptFromString:
-        @"cordova.commandQueueFlushing = true"];
+    // Grab all the queued commands from the JS side.
+    NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
+        @"cordova.require('cordova/exec').nativeFetchMessages()"];
 
-    // Keep executing the command queue until no commands get executed.
-    // This ensures that commands that are queued while executing other
-    // commands are executed as well.
-    for (;; ) {
-        // Grab all the queued commands from the JS side.
-        NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
-            @"cordova.require('cordova/exec').nativeFetchMessages()"];
-
-        if ([queuedCommandsJSON length] == 0) {
-            break;
-        }
-        [self enqueCommandBatch:queuedCommandsJSON];
-    }
-
-    [_viewController.webView stringByEvaluatingJavaScriptFromString:
-        @"cordova.commandQueueFlushing = false"];
+    [self enqueCommandBatch:queuedCommandsJSON];
 }
 
 - (void)executePending
