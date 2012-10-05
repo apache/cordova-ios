@@ -25,7 +25,7 @@
 @interface CDVCommandQueue : NSObject {
     @private
     NSInteger _lastCommandQueueFlushRequestId;
-    CDVViewController* _viewController;
+    __unsafe_unretained CDVViewController* _viewController;
     NSMutableArray* _queue;
     BOOL _currentlyExecuting;
 }
@@ -33,6 +33,8 @@
 @property (nonatomic, readonly) BOOL currentlyExecuting;
 
 - (id)initWithViewController:(CDVViewController*)viewController;
+- (void)dispose;
+
 - (void)resetRequestId;
 - (void)enqueCommandBatch:(NSString*)batchJSON;
 

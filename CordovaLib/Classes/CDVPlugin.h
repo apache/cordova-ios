@@ -28,10 +28,11 @@
 
 @interface CDVPlugin : NSObject {}
 
-@property (nonatomic, strong) UIWebView* webView;
+// TODO(agrieve): Make these zeroing weak refs once we drop support for 4.3.
+@property (nonatomic, unsafe_unretained) UIWebView* webView;
 @property (nonatomic, strong) NSDictionary* settings;
-@property (nonatomic, strong) UIViewController* viewController;
-@property (nonatomic, strong) id <CDVCommandDelegate> commandDelegate;
+@property (nonatomic, unsafe_unretained) UIViewController* viewController;
+@property (nonatomic, unsafe_unretained) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 
@@ -42,6 +43,7 @@
 - (void)onAppTerminate;
 - (void)onMemoryWarning;
 - (void)onReset;
+- (void)dispose;
 
 /*
  // see initWithWebView implementation

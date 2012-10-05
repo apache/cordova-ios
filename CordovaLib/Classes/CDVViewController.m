@@ -102,23 +102,6 @@
     return self;
 }
 
-// TODO(agrieve): It's probably better to change these to be weak references.
-- (void)dispose
-{
-    for (CDVPlugin* plugin in [self.pluginObjects allValues]) {
-        if ([plugin respondsToSelector:@selector(setViewController:)]) {
-            [plugin setViewController:nil];
-        }
-
-        if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
-            [plugin setCommandDelegate:nil];
-        }
-    }
-
-    self.webView.delegate = nil;
-    self.webView = nil;
-}
-
 - (void)printDeprecationNotice
 {
     if (!IsAtLeastiOSVersion(@"4.2")) {
@@ -789,7 +772,7 @@ BOOL gSplashScreenShown = NO;
 - (void)evalJsHelper:(NSString*)js
 {
     void (^doIt)() = ^{
-        NSString* commandsJSON = [self.webView stringByEvaluatingJavaScriptFromString:js];
+        NSString* commandsJSON = [webView stringByEvaluatingJavaScriptFromString:js];
         [_commandQueue enqueCommandBatch:commandsJSON];
     };
 
@@ -995,6 +978,11 @@ format: &format errorDescription : &errorDesc];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+
+    self.webView.delegate = nil;
+    self.webView = nil;
+    [_commandQueue dispose];
+    [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
 }
 
 @end

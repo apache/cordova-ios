@@ -36,6 +36,12 @@
     return self;
 }
 
+- (void)dispose
+{
+    // TODO(agrieve): Make this a zeroing weak ref once we drop support for 4.3.
+    _viewController = nil;
+}
+
 - (void)resetRequestId
 {
     _lastCommandQueueFlushRequestId = 0;

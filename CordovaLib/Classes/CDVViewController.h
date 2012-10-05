@@ -47,7 +47,6 @@
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;
 
-- (void)dispose;
 - (void)printMultitaskingInfo;
 - (void)createGapView;
 - (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds;

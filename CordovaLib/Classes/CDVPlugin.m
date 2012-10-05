@@ -63,6 +63,13 @@
     return self;
 }
 
+- (void)dispose
+{
+    viewController = nil;
+    commandDelegate = nil;
+    webView = nil;
+}
+
 /*
 // NOTE: for onPause and onResume, calls into JavaScript must not call or trigger any blocking UI, like alerts
 - (void) onPause {}
