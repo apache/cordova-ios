@@ -18,25 +18,15 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "CDVAvailability.h"
 
 @class CDVViewController;
 
 @interface CDVURLProtocol : NSURLProtocol {}
 
-+ (void)registerPGHttpURLProtocol
-#ifdef __clang__
-       __attribute__ ((deprecated ("No longer required.")));
-#else
-       __attribute__((deprecated()));
-#endif
++ (void)registerPGHttpURLProtocol CDV_DEPRECATED (2.0, "This is now a no-op and should be removed.");
++ (void)registerURLProtocol CDV_DEPRECATED (2.0, "This is now a no-op and should be removed.");
 
-   + (void)registerURLProtocol
-#ifdef __clang__
-       __attribute__ ((deprecated ("No longer required.")));
-#else
-       __attribute__((deprecated()));
-#endif
-
-   + (void)registerViewController:(CDVViewController*)viewController;
++ (void)registerViewController:(CDVViewController*)viewController;
 + (void)unregisterViewController:(CDVViewController*)viewController;
 @end

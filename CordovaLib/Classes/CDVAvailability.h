@@ -64,3 +64,9 @@
         (CORDOVA_VERSION_MIN_REQUIRED / 10000),             \
         (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100,       \
         (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100]
+
+#ifdef __clang__
+    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#else
+    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
+#endif
