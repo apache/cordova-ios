@@ -198,11 +198,7 @@
         [CDVLocalStorage __verifyAndFixDatabaseLocations];
     }
 
-    if (IsAtLeastiOSVersion(@"6.0")) {
-        // We don't manually back anything up in 6.0 and so we should remove any old backups.
-        [CDVLocalStorage __restoreThenRemoveBackupLocations];
-        [[NSUserDefaults standardUserDefaults] setBool:backupWebStorage forKey:@"WebKitStoreWebDataForBackup"];
-    }
+    [CDVLocalStorage __fixLegacyDatabaseLocationIssues];
 
     // // Instantiate the WebView ///////////////
 
@@ -229,14 +225,10 @@
     }
 
     /*
-     * Fire up CDVLocalStorage on iOS 5.1 to work-around WebKit storage limitations
+     * Fire up CDVLocalStorage on iOS 5.1+ to work-around WebKit storage limitations
      */
-    if (!IsAtLeastiOSVersion(@"6.0")) {
-        if (backupWebStorage) {
-            [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
-        } else {
-            [CDVLocalStorage __restoreThenRemoveBackupLocations];
-        }
+    if (IsAtLeastiOSVersion(@"5.1") && backupWebStorage) {
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
     /*

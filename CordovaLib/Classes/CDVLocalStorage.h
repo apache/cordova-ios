@@ -36,7 +36,7 @@
 + (BOOL)__verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
     bundlePath                                          :(NSString*)bundlePath
    fileManager                                         :(NSFileManager*)fileManager;
-+ (void)__restoreThenRemoveBackupLocations;
++ (void)__fixLegacyDatabaseLocationIssues;
 @end
 
 @interface CDVBackupInfo : NSObject

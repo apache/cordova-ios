@@ -54,27 +54,20 @@
 #pragma mark -
 #pragma mark Plugin interface methods
 
-+ (NSMutableArray*)createBackupInfo
++ (NSMutableArray*)createBackupInfoWithTargetDir:(NSString*)targetDir backupDir:(NSString*)backupDir rename:(BOOL)rename
 {
     NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:3];
 
-    // set up common folders
-    NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains (NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString* backupsFolder = [appDocumentsFolder stringByAppendingPathComponent:@"Backups"];
-
-    // create the backups folder
-    [[NSFileManager defaultManager] createDirectoryAtPath:backupsFolder withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString* original;
+    NSString* backup;
+    CDVBackupInfo* backupItem;
 
     // ////////// LOCALSTORAGE
 
-    NSString* original = [[appLibraryFolder stringByAppendingPathComponent           :
-            (IsAtLeastiOSVersion(@"5.1") && !IsAtLeastiOSVersion(@"6.0")) ? @"Caches":@"WebKit/LocalStorage"]
-        stringByAppendingPathComponent:@"file__0.localstorage"];
+    original = [targetDir stringByAppendingPathComponent:@"file__0.localstorage"];
+    backup = [backupDir stringByAppendingPathComponent:rename ? @"localstorage.appdata.db":@"file__0.localstorage"];
 
-    NSString* backup = [backupsFolder stringByAppendingPathComponent:@"localstorage.appdata.db"];
-
-    CDVBackupInfo* backupItem = [[CDVBackupInfo alloc] init];
+    backupItem = [[CDVBackupInfo alloc] init];
     backupItem.backup = backup;
     backupItem.original = original;
     backupItem.label = @"localStorage database";
@@ -83,11 +76,8 @@
 
     // ////////// WEBSQL MAIN DB
 
-    original = [[appLibraryFolder stringByAppendingPathComponent                     :
-            (IsAtLeastiOSVersion(@"5.1") && !IsAtLeastiOSVersion(@"6.0")) ? @"Caches":@"WebKit/Databases"]
-        stringByAppendingPathComponent:@"Databases.db"];
-
-    backup = [backupsFolder stringByAppendingPathComponent:@"websqlmain.appdata.db"];
+    original = [targetDir stringByAppendingPathComponent:@"Databases.db"];
+    backup = [backupDir stringByAppendingPathComponent:rename ? @"websqlmain.appdata.db":@"Databases.db"];
 
     backupItem = [[CDVBackupInfo alloc] init];
     backupItem.backup = backup;
@@ -98,11 +88,8 @@
 
     // ////////// WEBSQL DATABASES
 
-    original = [[appLibraryFolder stringByAppendingPathComponent                     :
-            (IsAtLeastiOSVersion(@"5.1") && !IsAtLeastiOSVersion(@"6.0")) ? @"Caches":@"WebKit/Databases"]
-        stringByAppendingPathComponent:@"file__0"];
-
-    backup = [backupsFolder stringByAppendingPathComponent:@"websqldbs.appdata.db"];
+    original = [targetDir stringByAppendingPathComponent:@"file__0"];
+    backup = [backupDir stringByAppendingPathComponent:rename ? @"websqldbs.appdata.db":@"file__0"];
 
     backupItem = [[CDVBackupInfo alloc] init];
     backupItem.backup = backup;
@@ -112,6 +99,18 @@
     [backupInfo addObject:backupItem];
 
     return backupInfo;
+}
+
++ (NSMutableArray*)createBackupInfo
+{
+    NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains (NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString* cacheFolder = [appLibraryFolder stringByAppendingPathComponent:@"Caches"];
+    NSString* backupsFolder = [appLibraryFolder stringByAppendingPathComponent:@"Backups"];
+
+    // create the backups folder
+    [[NSFileManager defaultManager] createDirectoryAtPath:backupsFolder withIntermediateDirectories:YES attributes:nil error:nil];
+
+    return [self createBackupInfoWithTargetDir:cacheFolder backupDir:backupsFolder rename:YES];
 }
 
 + (BOOL)copyFrom:(NSString*)src to:(NSString*)dest error:(NSError * __autoreleasing*)error
@@ -304,16 +303,42 @@
     return dirty;
 }
 
-+ (void)__restoreThenRemoveBackupLocations
++ (void)__fixLegacyDatabaseLocationIssues
 {
-    NSMutableArray* backupInfo = [CDVLocalStorage createBackupInfo];
+    if (IsAtLeastiOSVersion(@"6.0")) {
+        // Ensure that the webview does not backup the databases to iCloud (We set to this true in 2.1, so need to reset it for upgraders).
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitStoreWebDataForBackup"];
+    }
+
+    /*
+     * There are currently two legacy storage locations:
+     *   {Lib}/WebKit/LocalStorage which was used for store database (without backup renaming) in ios <5.1 and briefly for ios6, and
+     *   {Doc}/Backups which was used to store database backups (with backup renaming) with ios5.1+ until Apple started rejecting apps
+     *      for using the {Doc} folder to save non user generated content.
+     */
+    NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains (NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+
+    // targetDir is where we want our databases to end up
+    NSString* targetDir = [appLibraryFolder stringByAppendingPathComponent:@"Caches"];
+
+    // backupDir's are the places where we may find old legacy backups
+    NSString* backupDir = [appDocumentsFolder stringByAppendingPathComponent:@"Backups"];
+    NSString* backupDir2 = [appLibraryFolder stringByAppendingPathComponent:@"WebKit/LocalStorage"];
+
+    NSMutableArray* backupInfo = [self createBackupInfoWithTargetDir:targetDir backupDir:backupDir rename:YES];
+    [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:targetDir backupDir:backupDir2 rename:NO]];
+
     NSFileManager* manager = [NSFileManager defaultManager];
 
     for (CDVBackupInfo* info in backupInfo) {
-        if ([manager fileExistsAtPath:info.backup]) {
+        if ([info shouldRestore]) {
+            NSLog(@"Restoring old webstorage backup. From: '%@' To: '%@'.", info.backup, info.original);
             [self copyFrom:info.backup to:info.original error:nil];
+        }
+        if ([manager fileExistsAtPath:info.backup]) {
+            NSLog(@"Removing old webstorage backup: '%@'.", info.backup);
             [manager removeItemAtPath:info.backup error:nil];
-            NSLog(@"Restoring, then removing old webstorage backup. From: '%@' To: '%@'.", info.backup, info.original);
         }
     }
 }
