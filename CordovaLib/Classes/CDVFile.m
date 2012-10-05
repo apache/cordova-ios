@@ -903,13 +903,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
-// DEPRECATED
-- (void)readFile:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"readFile is DEPRECATED!  Use readAsText");
-    [self readAsText:command];
-}
-
 /* read and return file data
  * IN:
  * NSArray* arguments
@@ -1013,13 +1006,6 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         }
     }
     return mimeType;
-}
-
-// DEPRECATED
-- (void)truncateFile:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"truncateFile is DEPRECATED!  Use truncate");
-    [self truncate:command];
 }
 
 - (void)truncate:(CDVInvokedUrlCommand*)command

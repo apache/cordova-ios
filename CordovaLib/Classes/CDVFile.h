@@ -72,11 +72,6 @@ typedef int CDVFileSystemType;
 - (void)getFileMetadata:(CDVInvokedUrlCommand*)command;
 - (void)readEntries:(CDVInvokedUrlCommand*)command;
 
-// DEPRECATED
-- (void)readFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-// DEPRECATED
-
 - (void)readAsText:(CDVInvokedUrlCommand*)command;
 - (void)readAsDataURL:(CDVInvokedUrlCommand*)command;
 - (NSString*)getMimeTypeFromPath:(NSString*)fullPath;
@@ -87,10 +82,6 @@ typedef int CDVFileSystemType;
 // - (void) deleteDirectory:(CDVInvokedUrlCommand*)command;
 // - (void) deleteFile:(CDVInvokedUrlCommand*)command;
 - (void)getFreeDiskSpace:(CDVInvokedUrlCommand*)command;
-// DEPRECATED
-- (void)truncateFile:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-// DEPRECATED
 - (void)truncate:(CDVInvokedUrlCommand*)command;
 
 // - (BOOL) fileExists:(NSString*)fileName;
