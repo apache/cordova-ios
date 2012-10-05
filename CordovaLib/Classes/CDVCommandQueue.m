@@ -122,7 +122,7 @@
     // Fetch an instance of this class
     CDVPlugin* obj = [_viewController getCommandInstance:command.className];
 
-    if (!([obj isKindOfClass:[CDVPlugin class]])) { // still allow deprecated class, until 1.0 release
+    if (!([obj isKindOfClass:[CDVPlugin class]])) {
         NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in Cordova.plist.", command.className);
         return NO;
     }
