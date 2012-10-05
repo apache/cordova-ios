@@ -144,13 +144,6 @@
     return [errorDict cdvjk_JSONString];
 }
 
-// DEPRECATED
-- (void)play:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"play is DEPRECATED!  Use startPlayingAudio.");
-    [self startPlayingAudio:command];
-}
-
 - (void)create:(CDVInvokedUrlCommand*)command
 {
     NSString* mediaId = [command.arguments objectAtIndex:0];
@@ -315,57 +308,6 @@
     return bError;
 }
 
-// if no errors sets status to starting and calls successCallback with no parameters
-// Calls the success call back immediately as there is no mechanism to determine that the file is loaded
-// other than the return from prepareToPlay.  Thus, IMHO not really worth calling
-
-- (void)prepare:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"prepare is DEPRECATED! Recoding will be prepared when startPlayingAudio is called");
-
-    NSString* callbackId = command.callbackId;
-
-    NSString* mediaId = [command.arguments objectAtIndex:0];
-    BOOL bError = NO;
-    CDVMediaStates state = MEDIA_STARTING;
-    NSString* jsString = nil;
-
-    CDVAudioFile* audioFile = [[self soundCache] objectForKey:mediaId];
-    if (audioFile == nil) {
-        // did not already exist, try to create
-        audioFile = [self audioFileForResource:[command.arguments objectAtIndex:1] withId:mediaId];
-        if (audioFile == nil) {
-            // create failed
-            bError = YES;
-        } else {
-            bError = [self prepareToPlay:audioFile withId:mediaId];
-        }
-    } else {
-        // audioFile already existed in the cache no need to prepare it again, indicate state
-        if (audioFile.player && [audioFile.player isPlaying]) {
-            state = MEDIA_RUNNING;
-        }
-    }
-
-    if (!bError) {
-        // NSLog(@"Prepared audio sample '%@' for playback.", audioFile.resourcePath);
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%d);\n%@", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, state, [result toSuccessCallbackString:callbackId]];
-    } else {
-        jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:MEDIA_ERR_NONE_SUPPORTED message:nil]];
-    }
-    if (jsString) {
-        [self.commandDelegate evalJs:jsString];
-    }
-}
-
-// DEPRECATED
-- (void)stop:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"stop is DEPRECATED!  Use stopPlayingAudio.");
-    [self stopPlayingAudio:command];
-}
-
 - (void)stopPlayingAudio:(CDVInvokedUrlCommand*)command
 {
     NSString* mediaId = [command.arguments objectAtIndex:0];
@@ -381,13 +323,6 @@
     if (jsString) {
         [self.commandDelegate evalJs:jsString];
     }
-}
-
-// DEPRECATED
-- (void)pause:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"pause is DEPRECATED!  Use pausePlayingAudio.");
-    [self pausePlayingAudio:command];
 }
 
 - (void)pausePlayingAudio:(CDVInvokedUrlCommand*)command
@@ -454,13 +389,6 @@
     }
 }
 
-// DEPRECATED
-- (void)getCurrentPosition:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"getCurrentPosition is DEPRECATED!  Use getCurrentPositionAudio.");
-    [self getCurrentPositionAudio:command];
-}
-
 - (void)getCurrentPositionAudio:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = command.callbackId;
@@ -476,13 +404,6 @@
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:position];
     NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%.3f);\n%@", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, position, [result toSuccessCallbackString:callbackId]];
     [self.commandDelegate evalJs:jsString];
-}
-
-// DEPRECATED
-- (void)startAudioRecord:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"startAudioRecord is DEPRECATED!  Use startRecordingAudio.");
-    [self startRecordingAudio:command];
 }
 
 - (void)startRecordingAudio:(CDVInvokedUrlCommand*)command
@@ -543,13 +464,6 @@
         [self.commandDelegate evalJs:jsString];
     }
     return;
-}
-
-// DEPRECATED
-- (void)stopAudioRecord:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"stopAudioRecord is DEPRECATED!  Use stopRecordingAudio.");
-    [self stopRecordingAudio:command];
 }
 
 - (void)stopRecordingAudio:(CDVInvokedUrlCommand*)command

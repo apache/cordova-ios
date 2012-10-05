@@ -87,14 +87,6 @@ typedef NSUInteger CDVMediaMsg;
 }
 @property (nonatomic, strong) NSMutableDictionary* soundCache;
 @property (nonatomic, strong) AVAudioSession* avSession;
-// DEPRECATED
-- (void)play:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-- (void)pause:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-- (void)stop:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-// DEPRECATED
 
 - (void)startPlayingAudio:(CDVInvokedUrlCommand*)command;
 - (void)pausePlayingAudio:(CDVInvokedUrlCommand*)command;
@@ -103,26 +95,12 @@ typedef NSUInteger CDVMediaMsg;
 - (void)release:(CDVInvokedUrlCommand*)command;
 - (void)getCurrentPositionAudio:(CDVInvokedUrlCommand*)command;
 
-// DEPRECATED
-- (void)getCurrentPosition:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-- (void)prepare:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-// DEPRECATED
-
 - (BOOL)hasAudioSession;
 
 // helper methods
 - (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId;
 - (BOOL)prepareToPlay:(CDVAudioFile*)audioFile withId:(NSString*)mediaId;
 - (NSString*)createMediaErrorWithCode:(CDVMediaError)code message:(NSString*)message;
-
-// DEPRECATED
-- (void)startAudioRecord:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-- (void)stopAudioRecord:(CDVInvokedUrlCommand*)command __attribute__((deprecated));
-
-// DEPRECATED
 
 - (void)startRecordingAudio:(CDVInvokedUrlCommand*)command;
 - (void)stopRecordingAudio:(CDVInvokedUrlCommand*)command;
