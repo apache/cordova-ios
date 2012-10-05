@@ -91,7 +91,7 @@
             // Iterate over and execute all of the commands.
             for (NSArray* jsonEntry in commandBatch) {
                 CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
-                if (![_viewController execute:command]) {
+                if (![self execute:command]) {
 #ifdef DEBUG
                         NSString* commandJson = [jsonEntry cdvjk_JSONString];
                         static NSUInteger maxLogLength = 1024;

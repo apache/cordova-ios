@@ -20,6 +20,7 @@
 #import <objc/message.h>
 #import "CDV.h"
 #import "CDVCommandQueue.h"
+#import "CDVCommandDelegateImpl.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
@@ -45,11 +46,13 @@
 @synthesize settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
+@synthesize commandDelegate = _commandDelegate;
 
 - (void)__init
 {
     if ((self != nil) && !self.initialized) {
         _commandQueue = [[CDVCommandQueue alloc] initWithViewController:self];
+        _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithViewController:self];
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange)
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -157,7 +160,7 @@
 {
     [super viewDidLoad];
 
-    NSString* startFilePath = [self pathForResource:self.startPage];
+    NSString* startFilePath = [_commandDelegate pathForResource:self.startPage];
     NSURL* appURL = nil;
     NSString* loadErr = nil;
 
@@ -617,24 +620,6 @@
     return resource;
 }
 
-- (NSString*)pathForResource:(NSString*)resourcepath
-{
-    NSBundle* mainBundle = [NSBundle mainBundle];
-    NSMutableArray* directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
-    NSString* filename = [directoryParts lastObject];
-
-    [directoryParts removeLastObject];
-
-    NSString* directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
-    NSString* directoryStr = self.wwwFolderName;
-
-    if ([directoryPartsJoined length] > 0) {
-        directoryStr = [NSString stringWithFormat:@"%@/%@", self.wwwFolderName, [directoryParts componentsJoinedByString:@"/"]];
-    }
-
-    return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];
-}
-
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -769,52 +754,6 @@ BOOL gSplashScreenShown = NO;
 }
 
 #pragma mark CordovaCommands
-- (void)evalJsHelper:(NSString*)js
-{
-    void (^doIt)() = ^{
-        NSString* commandsJSON = [webView stringByEvaluatingJavaScriptFromString:js];
-        [_commandQueue enqueCommandBatch:commandsJSON];
-    };
-
-    // Cycle the run-loop before executing the JS.
-    // This works around a bug where sometimes alerts() within callbacks can cause
-    // dead-lock.
-    // If the commandQueue is currently executing, then we know that it is safe to
-    // execute the callback immediately.
-    if (![NSThread isMainThread] || !_commandQueue.currentlyExecuting) {
-        dispatch_async (dispatch_get_main_queue (), doIt);
-    } else {
-        doIt ();
-    }
-}
-
-- (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId
-{
-    int status = [result.status intValue];
-    BOOL keepCallback = [result.keepCallback boolValue];
-    id message = result.message == nil ? [NSNull null] : result.message;
-
-    // Use an array to encode the message as JSON.
-    message = [NSArray arrayWithObject:message];
-    NSString* encodedMessage = [message cdvjk_JSONString];
-    // And then strip off the outer []s.
-    encodedMessage = [encodedMessage substringWithRange:NSMakeRange (1, [encodedMessage length] - 2)];
-    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
-        callbackId, status, encodedMessage, keepCallback];
-
-    [self evalJsHelper:js];
-}
-
-- (void)evalJs:(NSString*)js
-{
-    js = [js stringByAppendingString:@";cordova.require('cordova/exec').nativeFetchMessages()"];
-    [self evalJsHelper:js];
-}
-
-- (BOOL)execute:(CDVInvokedUrlCommand*)command
-{
-    return [_commandQueue execute:command];
-}
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
 {
@@ -823,7 +762,7 @@ BOOL gSplashScreenShown = NO;
     }
 
     if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
-        [plugin setCommandDelegate:self];
+        [plugin setCommandDelegate:_commandDelegate];
     }
 
     [self.pluginObjects setObject:plugin forKey:className];
@@ -859,7 +798,7 @@ BOOL gSplashScreenShown = NO;
         if ((obj != nil) && [obj isKindOfClass:[CDVPlugin class]]) {
             [self registerPlugin:obj withClassName:className];
         } else {
-            NSLog (@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
+            NSLog(@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
         }
     }
     return obj;
@@ -896,9 +835,9 @@ BOOL gSplashScreenShown = NO;
     NSString* plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
     NSData* plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
     NSDictionary* temp = (NSDictionary*)[NSPropertyListSerialization
-propertyListFromData: plistXML
-mutabilityOption: NSPropertyListMutableContainersAndLeaves
-format: &format errorDescription : &errorDesc];
+        propertyListFromData:plistXML
+            mutabilityOption:NSPropertyListMutableContainersAndLeaves
+                      format:&format errorDescription:&errorDesc];
 
     return temp;
 }

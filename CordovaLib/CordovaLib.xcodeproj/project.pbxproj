@@ -73,6 +73,8 @@
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
 		EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */; };
 		EB3B3548161CB44D003DBE7D /* CDVCommandQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = EB3B3546161CB44D003DBE7D /* CDVCommandQueue.m */; };
+		EB3B357C161F2A45003DBE7D /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3B357A161F2A44003DBE7D /* CDVCommandDelegateImpl.h */; };
+		EB3B357D161F2A45003DBE7D /* CDVCommandDelegateImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = EB3B357B161F2A45003DBE7D /* CDVCommandDelegateImpl.m */; };
 		EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */ = {isa = PBXBuildFile; fileRef = EB80C2AA15DEA63D004D9E7B /* CDVEcho.h */; };
 		EB80C2AD15DEA63D004D9E7B /* CDVEcho.m in Sources */ = {isa = PBXBuildFile; fileRef = EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */; };
 		EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -160,6 +162,8 @@
 		C937A4551337599E002C4C79 /* CDVFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFileTransfer.m; path = Classes/CDVFileTransfer.m; sourceTree = "<group>"; };
 		EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCommandQueue.h; path = Classes/CDVCommandQueue.h; sourceTree = "<group>"; };
 		EB3B3546161CB44D003DBE7D /* CDVCommandQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVCommandQueue.m; path = Classes/CDVCommandQueue.m; sourceTree = "<group>"; };
+		EB3B357A161F2A44003DBE7D /* CDVCommandDelegateImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVCommandDelegateImpl.h; sourceTree = "<group>"; };
+		EB3B357B161F2A45003DBE7D /* CDVCommandDelegateImpl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVCommandDelegateImpl.m; sourceTree = "<group>"; };
 		EB80C2AA15DEA63D004D9E7B /* CDVEcho.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVEcho.h; path = Classes/CDVEcho.h; sourceTree = "<group>"; };
 		EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVEcho.m; path = Classes/CDVEcho.m; sourceTree = "<group>"; };
 		EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Comparisons.h"; path = "Classes/NSArray+Comparisons.h"; sourceTree = "<group>"; };
@@ -246,6 +250,8 @@
 				3034979B1513D56A0090E688 /* CDVLocalStorage.m */,
 				30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */,
 				30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */,
+				EB3B357A161F2A44003DBE7D /* CDVCommandDelegateImpl.h */,
+				EB3B357B161F2A45003DBE7D /* CDVCommandDelegateImpl.m */,
 				30C684921407044A004C1A8E /* CDVURLProtocol.h */,
 				30C684931407044A004C1A8E /* CDVURLProtocol.m */,
 				30C6847E1406CB38004C1A8E /* CDVWhitelist.h */,
@@ -377,6 +383,7 @@
 				30C5F1DF15AF9E950052A00D /* CDVDevice.h in Headers */,
 				EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */,
 				EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */,
+				EB3B357C161F2A45003DBE7D /* CDVCommandDelegateImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +474,7 @@
 				30C5F1E015AF9E950052A00D /* CDVDevice.m in Sources */,
 				EB80C2AD15DEA63D004D9E7B /* CDVEcho.m in Sources */,
 				EB3B3548161CB44D003DBE7D /* CDVCommandQueue.m in Sources */,
+				EB3B357D161F2A45003DBE7D /* CDVCommandDelegateImpl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

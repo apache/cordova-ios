@@ -25,7 +25,12 @@
 #import "CDVWhitelist.h"
 
 @class CDVCommandQueue;
-@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVCommandDelegate>
+@class CDVCommandDelegateImpl;
+
+@interface CDVViewController : UIViewController <UIWebViewDelegate>{
+    @private
+    CDVCommandDelegateImpl* _commandDelegate;
+}
 
 @property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
 
@@ -43,6 +48,7 @@
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
 @property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
+@property (nonatomic, readonly, strong) CDVCommandDelegateImpl* commandDelegate;
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;
@@ -56,5 +62,8 @@
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
+
+- (id)getCommandInstance:(NSString*)pluginName;
+- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 
 @end
