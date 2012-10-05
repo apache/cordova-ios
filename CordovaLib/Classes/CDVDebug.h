@@ -18,8 +18,8 @@
  */
 
 #ifdef DEBUG
-    #define DLog(...) NSLog(__VA_ARGS__)
+    #define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
-    #define DLog(...) /* */
+    #define DLog(...)
 #endif
-#define ALog(...) NSLog(__VA_ARGS__)
+#define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
