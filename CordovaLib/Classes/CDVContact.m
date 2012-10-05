@@ -358,7 +358,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                             bSuccess = ABPersonSetImageData(person, (__bridge CFDataRef)data, &error);
                         }
                         if (!data || !bSuccess) {
-                            NSLog(@"error setting contact image: %@", (err != nil ?[err localizedDescription] : @""));
+                            NSLog(@"error setting contact image: %@", (err != nil ? [err localizedDescription] : @""));
                         }
                     }
                 }
@@ -489,7 +489,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                 if (IS_VALID_VALUE(val)) {
                     // is an update,  find index of entry with matching id, if values are different, update.
                     id idValue = [dict valueForKey:kW3ContactFieldId];
-                    int identifier = [idValue isKindOfClass:[NSNumber class]] ?[idValue intValue] : -1;
+                    int identifier = [idValue isKindOfClass:[NSNumber class]] ? [idValue intValue] : -1;
                     CFIndex i = identifier >= 0 ? ABMultiValueGetIndexForIdentifier(multi, identifier) : kCFNotFound;
                     if (i != kCFNotFound) {
                         if ([val length] == 0) {
@@ -627,7 +627,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                 NSMutableDictionary* dict;
                 // find the index for the current property
                 id idValue = [field valueForKey:kW3ContactFieldId];
-                int identifier = [idValue isKindOfClass:[NSNumber class]] ?[idValue intValue] : -1;
+                int identifier = [idValue isKindOfClass:[NSNumber class]] ? [idValue intValue] : -1;
                 CFIndex idx = identifier >= 0 ? ABMultiValueGetIndexForIdentifier(multi, identifier) : kCFNotFound;
                 BOOL bUpdateLabel = NO;
                 if (idx != kCFNotFound) {
@@ -681,7 +681,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                         NSMutableDictionary* addDict = [NSMutableDictionary dictionaryWithCapacity:2];
                         // get the type out of the original dictionary for address
                         NSObject* typeValue = ((prop == kABPersonInstantMessageProperty) ? (NSObject*)kABOtherLabel : (NSString*)[field valueForKey:kW3ContactFieldType]);
-                        NSLog(@"typeValue: %@", typeValue);
+                        // NSLog(@"typeValue: %@", typeValue);
                         [addDict setObject:typeValue forKey:kW3ContactFieldType];        //  im labels will be set as Other and address labels as type from dictionary
                         [addDict setObject:dict forKey:kW3ContactFieldValue];
                         [self addToMultiValue:multi fromDictionary:addDict];
@@ -758,6 +758,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 + (NSString*)convertPropertyLabelToContactType:(NSString*)label
 {
     NSString* type = nil;
+
     if (label != nil) { // improve efficiency......
         if ([label isEqualToString:(NSString*)kABPersonPhoneMobileLabel]) {
             type = kW3ContactPhoneMobileLabel;
