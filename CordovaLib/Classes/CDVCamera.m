@@ -86,7 +86,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     NSNumber* targetWidth = [arguments objectAtIndex:3];
     NSNumber* targetHeight = [arguments objectAtIndex:4];
     NSNumber* mediaValue = [arguments objectAtIndex:6];
-    CDVMediaType mediaType = (mediaValue) ?[mediaValue intValue] : MediaTypePicture;
+    CDVMediaType mediaType = (mediaValue) ? [mediaValue intValue] : MediaTypePicture;
 
     CGSize targetSize = CGSizeMake(0, 0);
     if ((targetWidth != nil) && (targetHeight != nil)) {
@@ -109,10 +109,10 @@ static NSSet* org_apache_cordova_validArrowDirections;
     cameraPicker.correctOrientation = [[arguments objectAtIndex:8] boolValue];
     cameraPicker.saveToPhotoAlbum = [[arguments objectAtIndex:9] boolValue];
 
-    cameraPicker.encodingType = ([arguments objectAtIndex:5]) ?[[arguments objectAtIndex:5] intValue] : EncodingTypeJPEG;
+    cameraPicker.encodingType = ([arguments objectAtIndex:5]) ? [[arguments objectAtIndex:5] intValue] : EncodingTypeJPEG;
 
-    cameraPicker.quality = ([arguments objectAtIndex:0]) ?[[arguments objectAtIndex:0] intValue] : 50;
-    cameraPicker.returnType = ([arguments objectAtIndex:1]) ?[[arguments objectAtIndex:1] intValue] : DestinationTypeFileUri;
+    cameraPicker.quality = ([arguments objectAtIndex:0]) ? [[arguments objectAtIndex:0] intValue] : 50;
+    cameraPicker.returnType = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : DestinationTypeFileUri;
 
     if (sourceType == UIImagePickerControllerSourceTypeCamera) {
         // we only allow taking pictures (no video) in this api
@@ -310,21 +310,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
     NSDictionary* imageInfo = [NSDictionary dictionaryWithObject:image forKey:UIImagePickerControllerOriginalImage];
 
     [self imagePickerController:picker didFinishPickingMediaWithInfo:imageInfo];
-}
-
-- (void)closePicker:(CDVCameraPicker*)cameraPicker
-{
-    NSLog(@"closePicker is DEPRECATED and will be removed in 2.0!");
-    if ([cameraPicker respondsToSelector:@selector(presentingViewController)]) {
-        [[cameraPicker presentingViewController] dismissModalViewControllerAnimated:YES];
-    } else {
-        [[cameraPicker parentViewController] dismissModalViewControllerAnimated:YES];
-    }
-
-    if (cameraPicker.popoverSupported && (cameraPicker.popoverController != nil)) {
-        cameraPicker.popoverController.delegate = nil;
-        cameraPicker.popoverController = nil;
-    }
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
