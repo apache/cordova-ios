@@ -17,6 +17,7 @@
  under the License.
  */
 
+#import "CDVAvailability.h"
 #import "CDVInvokedUrlCommand.h"
 
 @class CDVPlugin;
@@ -26,12 +27,12 @@
 
 - (NSString*)pathForResource:(NSString*)resourcepath;
 - (id)getCommandInstance:(NSString*)pluginName;
-- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
-// TODO(agrieve): Deprecate this method. Plugins should not be using this
-// interface to call other plugins, since it will result in bogus callbacks
-// being made. Instead, they should use getCommandInstance and call methods
-// directly.
-- (BOOL)execute:(CDVInvokedUrlCommand*)command;
+- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className CDV_DEPRECATED(2.2, "Use CDVViewController to register plugins, or use Cordova.plist.");
+
+// Plugins should not be using this interface to call other plugins since it
+// will result in bogus callbacks being made.
+- (BOOL)execute:(CDVInvokedUrlCommand*)command CDV_DEPRECATED(2.2, "Use direct method calls instead.");
+
 // Sends a plugin result to the JS.
 - (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId;
 // Evaluates the given JS.
