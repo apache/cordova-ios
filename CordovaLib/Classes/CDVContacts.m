@@ -39,8 +39,6 @@
 
 @implementation CDVContacts
 
-dispatch_queue_t workQueue = nil;
-
 // no longer used since code gets AddressBook for each operation.
 // If address book changes during save or remove operation, may get error but not much we can do about it
 // If address book changes during UI creation, display or edit, we don't control any saves so no need for callback
@@ -52,15 +50,6 @@ dispatch_queue_t workQueue = nil;
     Contacts* contacts = (Contacts*)context;
     [contacts addressBookDirty];
 }*/
-+ (void)initialize
-{
-    workQueue = dispatch_queue_create("contacts work queue", DISPATCH_QUEUE_SERIAL);
-}
-
-+ (dispatch_queue_t)getWorkQueue
-{
-    return workQueue;
-}
 
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
 {
@@ -78,11 +67,6 @@ dispatch_queue_t workQueue = nil;
 - (void)onAppTerminate
 {
     // NSLog(@"Contacts::onAppTerminate");
-}
-
-- (void)dealloc
-{
-    dispatch_release(workQueue);
 }
 
 // iPhone only method to create a new contact through the GUI
@@ -296,7 +280,7 @@ dispatch_queue_t workQueue = nil;
     NSArray* fields = [command.arguments objectAtIndex:0];
     NSDictionary* findOptions = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
 
-    dispatch_async([CDVContacts getWorkQueue], ^{
+    [self.commandDelegate runInBackground:^{
             // from Apple:  Important You must ensure that an instance of ABAddressBookRef is used by only one thread.
             // which is why address book is created within the dispatch queue.
             // more details here: http: //blog.byadrian.net/2012/05/05/ios-addressbook-framework-and-gcd/
@@ -385,7 +369,7 @@ dispatch_queue_t workQueue = nil;
                         CFRelease (addrBook);
                     }
                 }];
-        }); // end of workQueue block
+        }]; // end of workQueue block
 
     return;
 }
@@ -395,7 +379,7 @@ dispatch_queue_t workQueue = nil;
     NSString* callbackId = command.callbackId;
     NSDictionary* contactDict = [command.arguments objectAtIndex:0];
 
-    dispatch_async([CDVContacts getWorkQueue], ^{
+    [self.commandDelegate runInBackground:^{
             CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
             CDVContacts* __unsafe_unretained weakSelf = self; // play it safe to avoid retain cycles
 
@@ -459,7 +443,7 @@ dispatch_queue_t workQueue = nil;
                         [weakSelf.commandDelegate sendPluginResult:result callbackId:callbackId];
                     }
                 }];
-        }); // end of  queue
+        }]; // end of  queue
 }
 
 - (void)remove:(CDVInvokedUrlCommand*)command

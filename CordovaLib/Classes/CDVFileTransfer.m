@@ -216,7 +216,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         CFStreamCreateBoundPair(NULL, &readStream, &writeStream, kStreamBufferSize);
         [req setHTTPBodyStream:CFBridgingRelease(readStream)];
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.commandDelegate runInBackground:^{
                 if (CFWriteStreamOpen (writeStream)) {
                     NSData* chunks[] = {postBodyBeforeFile, fileData, postBodyAfterFile};
                     int numChunks = sizeof (chunks) / sizeof (chunks[0]);
@@ -232,7 +232,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
                 }
                 CFWriteStreamClose (writeStream);
                 CFRelease (writeStream);
-            });
+            }];
     } else {
         [postBodyBeforeFile appendData:fileData];
         [postBodyBeforeFile appendData:postBodyAfterFile];

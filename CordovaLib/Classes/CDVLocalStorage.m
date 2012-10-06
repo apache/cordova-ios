@@ -368,12 +368,12 @@
                 NSLog (@"Background task to backup WebSQL/LocalStorage expired.");
             }];
         CDVLocalStorage __unsafe_unretained* weakSelf = self;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.commandDelegate runInBackground:^{
                 [weakSelf backup:nil];
 
                 [[UIApplication sharedApplication] endBackgroundTask:backgroundTaskID];
                 backgroundTaskID = UIBackgroundTaskInvalid;
-            });
+            }];
     }
 }
 

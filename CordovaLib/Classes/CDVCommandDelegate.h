@@ -37,5 +37,7 @@
 - (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId;
 // Evaluates the given JS.
 - (void)evalJs:(NSString*)js;
+// Runs the given block on a background thread.
+- (void)runInBackground:(void (^)())block;
 
 @end
