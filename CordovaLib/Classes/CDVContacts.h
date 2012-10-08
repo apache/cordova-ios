@@ -134,3 +134,18 @@
 @property (nonatomic, strong) CDVPlugin* contactsPlugin;
 
 @end
+@interface CDVAddressBookAccessError : NSObject
+{}
+@property (assign) CDVContactError errorCode;
+- (CDVAddressBookAccessError*)initWithCode:(CDVContactError)code;
+@end
+
+typedef void (^CDVAddressBookWorkerBlock)(
+    ABAddressBookRef addressBook,
+    CDVAddressBookAccessError * error
+    );
+@interface CDVAddressBookHelper : NSObject
+{}
+
+- (void)createAddressBook:(CDVAddressBookWorkerBlock)workerBlock;
+@end
