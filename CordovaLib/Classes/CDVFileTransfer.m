@@ -476,6 +476,14 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
 {
+    // required for iOS 4.3, for some reason; response is
+    // a plain NSURLResponse, not the HTTP subclass
+    if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
+        self.responseCode = 403;
+        self.bytesExpected = [response expectedContentLength];
+        return;
+    }
+
     NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
 
     self.responseCode = [httpResponse statusCode];
