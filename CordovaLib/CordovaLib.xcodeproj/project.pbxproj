@@ -69,6 +69,8 @@
 		8887FDA01090FBE7009987E8 /* CDVSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD611090FBE7009987E8 /* CDVSound.m */; };
 		88BA573D109BB46F00FB5E78 /* CDVAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* CDVAccelerometer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		88BA573E109BB46F00FB5E78 /* CDVAccelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* CDVAccelerometer.m */; };
+		9D76CF3C1625A4C50008A0F6 /* CDVGlobalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D76CF3A1625A4C50008A0F6 /* CDVGlobalization.h */; };
+		9D76CF3D1625A4C50008A0F6 /* CDVGlobalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D76CF3B1625A4C50008A0F6 /* CDVGlobalization.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C937A4561337599E002C4C79 /* CDVFileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* CDVFileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
 		EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */; };
@@ -157,6 +159,8 @@
 		8887FD611090FBE7009987E8 /* CDVSound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVSound.m; path = Classes/CDVSound.m; sourceTree = "<group>"; };
 		88BA573B109BB46F00FB5E78 /* CDVAccelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAccelerometer.h; path = Classes/CDVAccelerometer.h; sourceTree = "<group>"; };
 		88BA573C109BB46F00FB5E78 /* CDVAccelerometer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVAccelerometer.m; path = Classes/CDVAccelerometer.m; sourceTree = "<group>"; };
+		9D76CF3A1625A4C50008A0F6 /* CDVGlobalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVGlobalization.h; path = Classes/CDVGlobalization.h; sourceTree = "<group>"; };
+		9D76CF3B1625A4C50008A0F6 /* CDVGlobalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVGlobalization.m; path = Classes/CDVGlobalization.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* CordovaLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CordovaLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		C937A4541337599E002C4C79 /* CDVFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVFileTransfer.h; path = Classes/CDVFileTransfer.h; sourceTree = "<group>"; };
 		C937A4551337599E002C4C79 /* CDVFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFileTransfer.m; path = Classes/CDVFileTransfer.m; sourceTree = "<group>"; };
@@ -296,6 +300,8 @@
 				8887FD611090FBE7009987E8 /* CDVSound.m */,
 				3E76876B156A90EE00EB6FA3 /* CDVLogger.m */,
 				3E76876C156A90EE00EB6FA3 /* CDVLogger.h */,
+				9D76CF3A1625A4C50008A0F6 /* CDVGlobalization.h */,
+				9D76CF3B1625A4C50008A0F6 /* CDVGlobalization.m */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -384,6 +390,7 @@
 				EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */,
 				EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */,
 				EB3B357C161F2A45003DBE7D /* CDVCommandDelegateImpl.h in Headers */,
+				9D76CF3C1625A4C50008A0F6 /* CDVGlobalization.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,6 +482,7 @@
 				EB80C2AD15DEA63D004D9E7B /* CDVEcho.m in Sources */,
 				EB3B3548161CB44D003DBE7D /* CDVCommandQueue.m in Sources */,
 				EB3B357D161F2A45003DBE7D /* CDVCommandDelegateImpl.m in Sources */,
+				9D76CF3D1625A4C50008A0F6 /* CDVGlobalization.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

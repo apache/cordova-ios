@@ -84,6 +84,8 @@
 		<string>CDVSplashScreen</string>
 		<key>Battery</key>
 		<string>CDVBattery</string>
+		<key>Globalization</key>
+		<string>CDVGlobalization</string>
 	</dict>
 </dict>
 </plist>
