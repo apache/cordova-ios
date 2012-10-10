@@ -22,6 +22,7 @@
 
 @interface CDVConnection (PrivateMethods)
 - (void)updateOnlineStatus;
+- (void)sendPluginResult;
 @end
 
 @implementation CDVConnection
@@ -30,9 +31,16 @@
 
 - (void)getConnectionInfo:(CDVInvokedUrlCommand*)command
 {
+    _callbackId = command.callbackId;
+    [self sendPluginResult];
+}
+
+- (void)sendPluginResult
+{
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.connectionType];
 
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    [result setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:result callbackId:_callbackId];
 }
 
 - (NSString*)w3cConnectionTypeFor:(CDVReachability*)reachability
@@ -41,7 +49,7 @@
 
     switch (networkStatus) {
         case NotReachable:
-            return @"unknown";
+            return @"none";
 
         case ReachableViaWWAN:
             return @"2g"; // no generic default, so we use the lowest common denominator
@@ -50,7 +58,7 @@
             return @"wifi";
 
         default:
-            return @"none";
+            return @"unknown";
     }
 }
 
@@ -72,14 +80,7 @@
             self.connectionType = [self w3cConnectionTypeFor:reachability];
         }
     }
-
-    NSString* js = nil;
-    // write the connection type
-    js = [NSString stringWithFormat:@"navigator.network.connection.type = '%@';", self.connectionType];
-    [self.commandDelegate evalJs:js];
-
-    // send "online"/"offline" event
-    [self updateOnlineStatus];
+    [self sendPluginResult];
 }
 
 - (void)updateConnectionType:(NSNotification*)note
@@ -89,31 +90,6 @@
     if ((curReach != nil) && [curReach isKindOfClass:[CDVReachability class]]) {
         [self updateReachability:curReach];
     }
-}
-
-- (void)updateOnlineStatus
-{
-    // send "online"/"offline" event
-    NetworkStatus status = [self.internetReach currentReachabilityStatus];
-    BOOL online = (status == ReachableViaWiFi) || (status == ReachableViaWWAN);
-
-    if (online) {
-        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('online');"];
-    } else {
-        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('offline');"];
-    }
-}
-
-- (void)prepare
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConnectionType:)
-                                                 name:kReachabilityChangedNotification object:nil];
-
-    self.internetReach = [CDVReachability reachabilityForInternetConnection];
-    [self.internetReach startNotifier];
-    self.connectionType = [self w3cConnectionTypeFor:self.internetReach];
-
-    [self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
 - (void)onPause
@@ -129,28 +105,20 @@
 
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
 {
-    self = (CDVConnection*)[super initWithWebView:theWebView];
+    self = [super initWithWebView:theWebView];
     if (self) {
         self.connectionType = @"none";
-        [self prepare];
+        self.internetReach = [CDVReachability reachabilityForInternetConnection];
+        self.connectionType = [self w3cConnectionTypeFor:self.internetReach];
+        [self.internetReach startNotifier];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConnectionType:)
+                                                     name:kReachabilityChangedNotification object:nil];
         if (&UIApplicationDidEnterBackgroundNotification && &UIApplicationWillEnterForegroundNotification) {
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
         }
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [self onReset];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];   // this will remove all notifications unless added using addObserverForName:object:queue:usingBlock:
-}
-
-- (void)onReset
-{
-    // Update the value cached in Javascript after a reset, because it would have been lost on navigation.
-    [self performSelector:@selector(updateOnlineStatus) withObject:nil afterDelay:1.0];
 }
 
 @end

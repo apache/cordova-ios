@@ -23,6 +23,7 @@
 
 @interface CDVConnection : CDVPlugin {
     NSString* type;
+    NSString* _callbackId;
 
     CDVReachability* internetReach;
 }
