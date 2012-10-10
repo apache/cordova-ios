@@ -338,11 +338,7 @@
 {
     // First, ask the webview via JS if it supports the new orientation
     NSString* jsCall = [NSString stringWithFormat:
-        @"(function(){ \
-                                if('shouldRotateToOrientation' in window) { \
-                                    return window.shouldRotateToOrientation(%d); \
-                                } \
-                            })()"
+        @"window.shouldRotateToOrientation && window.shouldRotateToOrientation(%d);"
         , [self mapIosOrientationToJsOrientation:interfaceOrientation]];
     NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
 
@@ -395,7 +391,7 @@
             @"window.__defineGetter__('orientation',function(){ return %d; }); \
                                   cordova.fireWindowEvent('orientationchange');"
             , [self mapIosOrientationToJsOrientation:fromInterfaceOrientation]];
-        [self.webView stringByEvaluatingJavaScriptFromString:jsCallback];
+        [self.commandDelegate evalJs:jsCallback];
     }
 }
 
@@ -490,7 +486,7 @@
     // The .onNativeReady().fire() will work when cordova.js is already loaded.
     // The _nativeReady = true; is used when this is run before cordova.js is loaded.
     NSString* nativeReady = [NSString stringWithFormat:@"cordova.iOSVCAddr='%lld';try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}", (long long)self];
-    [theWebView stringByEvaluatingJavaScriptFromString:nativeReady];
+    [self.commandDelegate evalJs:nativeReady];
 }
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
@@ -600,7 +596,7 @@
 {
     NSString* jsString = [NSString stringWithFormat:@"alert('%@');", text];
 
-    [webView stringByEvaluatingJavaScriptFromString:jsString];
+    [self.commandDelegate evalJs:jsString];
 }
 
 + (NSString*)resolveImageResource:(NSString*)resource
@@ -876,7 +872,7 @@ BOOL gSplashScreenShown = NO;
 - (void)onAppWillResignActive:(NSNotification*)notification
 {
     // NSLog(@"%@",@"applicationWillResignActive");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resign');"];
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');"];
 }
 
 /*
@@ -887,14 +883,14 @@ BOOL gSplashScreenShown = NO;
 - (void)onAppWillEnterForeground:(NSNotification*)notification
 {
     // NSLog(@"%@",@"applicationWillEnterForeground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('resume');"];
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state.
 - (void)onAppDidBecomeActive:(NSNotification*)notification
 {
     // NSLog(@"%@",@"applicationDidBecomeActive");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('active');"];
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('active');"];
 }
 
 /*
@@ -904,7 +900,7 @@ BOOL gSplashScreenShown = NO;
 - (void)onAppDidEnterBackground:(NSNotification*)notification
 {
     // NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.webView stringByEvaluatingJavaScriptFromString:@"cordova.fireDocumentEvent('pause');"];
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause');"];
 }
 
 // ///////////////////////

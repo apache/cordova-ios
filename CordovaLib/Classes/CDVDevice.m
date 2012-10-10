@@ -27,7 +27,6 @@
 - (void)getDeviceInfo:(CDVInvokedUrlCommand*)command
 {
     NSDictionary* deviceProperties = [self deviceProperties];
-    NSMutableString* result = [[NSMutableString alloc] initWithFormat:@""];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:deviceProperties];
 
     /* Settings.plist
@@ -39,13 +38,8 @@
     NSDictionary* temp = [CDVViewController getBundlePlist:@"Settings"];
 
     if ([temp respondsToSelector:@selector(JSONString)]) {
-        [result appendFormat:@"\nwindow.Settings = %@;", [temp cdvjk_JSONString]];
-    }
-
-    NSString* jsResult = [self.webView stringByEvaluatingJavaScriptFromString:result];
-    // if jsResult is not nil nor empty, an error
-    if ((jsResult != nil) && ([jsResult length] > 0)) {
-        NSLog(@"%@", jsResult);
+        NSString* js = [NSString stringWithFormat:@"window.Settings = %@;", [temp cdvjk_JSONString]];
+        [self.commandDelegate evalJs:js];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
