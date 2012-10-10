@@ -67,7 +67,7 @@
     // dead-lock.
     // If the commandQueue is currently executing, then we know that it is safe to
     // execute the callback immediately.
-    // Using dispatch_async(dispatch_get_main_queue()) does *not* fix deadlocks for some reaon,
+    // Using    (dispatch_get_main_queue()) does *not* fix deadlocks for some reaon,
     // but performSelectorOnMainThread: does.
     if (![NSThread isMainThread] || !_commandQueue.currentlyExecuting) {
         [self performSelectorOnMainThread:@selector(evalJsHelper2:) withObject:js waitUntilDone:NO];
@@ -95,7 +95,7 @@
 
 - (void)evalJs:(NSString*)js
 {
-    js = [js stringByAppendingString:@";cordova.require('cordova/exec').nativeFetchMessages()"];
+    js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeEvalAndFetch(function(){%@})", js];
     [self evalJsHelper:js];
 }
 
