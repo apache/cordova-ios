@@ -53,22 +53,26 @@
     return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];
 }
 
+- (void)evalJsHelper2:(NSString*)js
+{
+    NSString* commandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:js];
+
+    [_commandQueue enqueCommandBatch:commandsJSON];
+}
+
 - (void)evalJsHelper:(NSString*)js
 {
-    void (^doIt)() = ^{
-        NSString* commandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:js];
-        [_commandQueue enqueCommandBatch:commandsJSON];
-    };
-
     // Cycle the run-loop before executing the JS.
     // This works around a bug where sometimes alerts() within callbacks can cause
     // dead-lock.
     // If the commandQueue is currently executing, then we know that it is safe to
     // execute the callback immediately.
+    // Using dispatch_async(dispatch_get_main_queue()) does *not* fix deadlocks for some reaon,
+    // but performSelectorOnMainThread: does.
     if (![NSThread isMainThread] || !_commandQueue.currentlyExecuting) {
-        dispatch_async (dispatch_get_main_queue (), doIt);
+        [self performSelectorOnMainThread:@selector(evalJsHelper2:) withObject:js waitUntilDone:NO];
     } else {
-        doIt ();
+        [self evalJsHelper2:js];
     }
 }
 
@@ -82,7 +86,7 @@
     message = [NSArray arrayWithObject:message];
     NSString* encodedMessage = [message cdvjk_JSONString];
     // And then strip off the outer []s.
-    encodedMessage = [encodedMessage substringWithRange:NSMakeRange (1, [encodedMessage length] - 2)];
+    encodedMessage = [encodedMessage substringWithRange:NSMakeRange(1, [encodedMessage length] - 2)];
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
         callbackId, status, encodedMessage, keepCallback];
 
@@ -110,8 +114,9 @@
     [_viewController registerPlugin:plugin withClassName:className];
 }
 
-- (void)runInBackground:(void (^) ())block {
-    dispatch_async (dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
+- (void)runInBackground:(void (^)())block
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
 }
 
 @end
