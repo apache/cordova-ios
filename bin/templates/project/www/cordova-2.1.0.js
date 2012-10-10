@@ -1,6 +1,6 @@
-// commit 5df805075ca294e35b86b9a3dd30171a186e6ac8
+// commit 788b2a80e3f9595985dbaa874af389fa4b120f43
 
-// File generated at :: Thu Oct 04 2012 13:52:03 GMT-0400 (EDT)
+// File generated at :: Wed Oct 10 2012 13:58:28 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -206,7 +206,7 @@ var cordova = {
     },
     /**
      * Method to fire event from native code
-     * bNoDetach is required for events which cause an exception which needs to be caught in native code     
+     * bNoDetach is required for events which cause an exception which needs to be caught in native code
      */
     fireDocumentEvent: function(type, data, bNoDetach) {
         var evt = createEvent(type, data);
@@ -494,8 +494,8 @@ var Channel = function(type, sticky) {
                     if (!(--i)) h();
                 };
             for (var j=0; j<len; j++) {
-                if (c[j].state == 0) {
-                    throw Error('Can only use join with sticky channels.')
+                if (c[j].state === 0) {
+                    throw Error('Can only use join with sticky channels.');
                 }
                 c[j].subscribe(f);
             }
@@ -594,7 +594,7 @@ Channel.prototype.unsubscribe = function(f) {
     if (handler) {
         delete this.handlers[guid];
         this.numHandlers--;
-        if (this.numHandlers == 0) {
+        if (this.numHandlers === 0) {
             this.onHasSubscribersChange && this.onHasSubscribersChange();
         }
     }
@@ -664,6 +664,37 @@ channel.waitForInitialization('onCordovaReady');
 channel.waitForInitialization('onCordovaConnectionReady');
 
 module.exports = channel;
+
+});
+
+// file: lib/common/commandProxy.js
+define("cordova/commandProxy", function(require, exports, module) {
+
+
+// internal map of proxy function
+var CommandProxyMap = {};
+
+module.exports = {
+
+    // example: cordova.commandProxy.add("Accelerometer",{getCurrentAcceleration: function(successCallback, errorCallback, options) {...},...);
+    add:function(id,proxyObj) {
+        console.log("adding proxy for " + id);
+        CommandProxyMap[id] = proxyObj;
+        return proxyObj;
+    },
+
+    // cordova.commandProxy.remove("Accelerometer");
+    remove:function(id) {
+        var proxy = CommandProxyMap[id];
+        delete CommandProxyMap[id];
+        CommandProxyMap[id] = null;
+        return proxy;
+    },
+
+    get:function(service,action) {
+        return ( CommandProxyMap[service] ? CommandProxyMap[service][action] : null );
+    }
+};
 
 });
 
@@ -901,7 +932,7 @@ var cordova = require('cordova'),
         XHR_OPTIONAL_PAYLOAD: 3
     },
     // XHR mode does not work on iOS 4.2, so default to IFRAME_NAV for such devices.
-    // XHR mode's main advantage is working around a bug in -webkit-scroll, which 
+    // XHR mode's main advantage is working around a bug in -webkit-scroll, which
     // doesn't exist in 4.X devices anyways.
     bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_NO_PAYLOAD : jsToNativeModes.IFRAME_NAV,
     execIframe,
@@ -1028,11 +1059,17 @@ iOSExec.nativeFetchMessages = function() {
 };
 
 iOSExec.nativeCallback = function(callbackId, status, payload, keepCallback) {
+    return iOSExec.nativeEvalAndFetch(function() {
+        var success = status == 0 || status == 1;
+        cordova.callbackFromNative(callbackId, success, status, payload, keepCallback);
+    });
+};
+
+iOSExec.nativeEvalAndFetch = function(func) {
     // This shouldn't be nested, but better to be safe.
     isInContextOfEvalJs++;
     try {
-        var success = status == 0 || status == 1;
-        cordova.callbackFromNative(callbackId, success, status, payload, keepCallback);
+        func();
         return iOSExec.nativeFetchMessages();
     } finally {
         isInContextOfEvalJs--;
@@ -2724,7 +2761,7 @@ FileTransfer.prototype.download = function(source, target, successCallback, erro
  */
 FileTransfer.prototype.abort = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, 'FileTransfer', 'abort', [this._id]);
-}
+};
 
 module.exports = FileTransfer;
 
@@ -3297,13 +3334,13 @@ Media.onStatus = function(id, msgType, value) {
                 media._duration = value;
                 break;
             case Media.MEDIA_ERROR :
-                media.errorCallback && media.errorCallback(value); 
+                media.errorCallback && media.errorCallback(value);
                 break;
             case Media.MEDIA_POSITION :
                 media._position = Number(value);
                 break;
             default :
-                console && console.error && console.error("Unhandled Media.onStatus :: " + msgType); 
+                console && console.error && console.error("Unhandled Media.onStatus :: " + msgType);
                 break;
         }
     }
@@ -3334,23 +3371,26 @@ we should simply use a literal :
     errorCallbackFunction( {'code':3} );
  */
 
-if(!MediaError) {
-    var MediaError = function(code, msg) {
+ var _MediaError = window.MediaError;
+
+
+if(!_MediaError) {
+    window.MediaError = _MediaError = function(code, msg) {
         this.code = (typeof code != 'undefined') ? code : null;
         this.message = msg || ""; // message is NON-standard! do not use!
     };
 }
 
-MediaError.MEDIA_ERR_NONE_ACTIVE    = MediaError.MEDIA_ERR_NONE_ACTIVE    || 0;
-MediaError.MEDIA_ERR_ABORTED        = MediaError.MEDIA_ERR_ABORTED        || 1;
-MediaError.MEDIA_ERR_NETWORK        = MediaError.MEDIA_ERR_NETWORK        || 2;
-MediaError.MEDIA_ERR_DECODE         = MediaError.MEDIA_ERR_DECODE         || 3;
-MediaError.MEDIA_ERR_NONE_SUPPORTED = MediaError.MEDIA_ERR_NONE_SUPPORTED || 4;
-// TODO: MediaError.MEDIA_ERR_NONE_SUPPORTED is legacy, the W3 spec now defines it as below. 
+_MediaError.MEDIA_ERR_NONE_ACTIVE    = _MediaError.MEDIA_ERR_NONE_ACTIVE    || 0;
+_MediaError.MEDIA_ERR_ABORTED        = _MediaError.MEDIA_ERR_ABORTED        || 1;
+_MediaError.MEDIA_ERR_NETWORK        = _MediaError.MEDIA_ERR_NETWORK        || 2;
+_MediaError.MEDIA_ERR_DECODE         = _MediaError.MEDIA_ERR_DECODE         || 3;
+_MediaError.MEDIA_ERR_NONE_SUPPORTED = _MediaError.MEDIA_ERR_NONE_SUPPORTED || 4;
+// TODO: MediaError.MEDIA_ERR_NONE_SUPPORTED is legacy, the W3 spec now defines it as below.
 // as defined by http://dev.w3.org/html5/spec-author-view/video.html#error-codes
-MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED = MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || 4;
+_MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED = _MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || 4;
 
-module.exports = MediaError;
+module.exports = _MediaError;
 
 });
 
@@ -3716,7 +3756,6 @@ var Battery = function() {
     for (var key in this.channels) {
         this.channels[key].onHasSubscribersChange = Battery.onHasSubscribersChange;
     }
-
 };
 /**
  * Event handlers for when callbacks get registered for the battery.
@@ -5173,25 +5212,6 @@ define("cordova/plugin/ios/console", function(require, exports, module) {
 var exec = require('cordova/exec');
 
 /**
- * This class provides access to the debugging console.
- * @constructor
- */
-var DebugConsole = function() {
-    this.logLevel = DebugConsole.INFO_LEVEL;
-};
-
-// from most verbose, to least verbose
-DebugConsole.ALL_LEVEL    = 1; // same as first level
-DebugConsole.INFO_LEVEL   = 1;
-DebugConsole.WARN_LEVEL   = 2;
-DebugConsole.ERROR_LEVEL  = 4;
-DebugConsole.NONE_LEVEL   = 8;
-
-DebugConsole.prototype.setLevel = function(level) {
-    this.logLevel = level;
-};
-
-/**
  * create a nice string for an object
  */
 function stringify(message) {
@@ -5209,55 +5229,48 @@ function stringify(message) {
     } catch (e) {
         return e.toString();
     }
-};
+}
 
 /**
- * remember the original console and it's methods
+ * Wrapper one of the console logging methods, so that
+ * the Cordova logging native is called, then the original.
  */
-var origConsole = window.console || {}
+function wrappedMethod(console, method) {
+    var origMethod = console[method];
 
-var origConsole_log   = origConsole.log   || function(){}
-var origConsole_warn  = origConsole.warn  || function(){}
-var origConsole_error = origConsole.error || function(){}
+    return function(message) {
+        exec(null, null,
+            'Debug Console', 'log',
+            [ stringify(message), { logLevel: method.toUpperCase() } ]
+        );
 
+        if (!origMethod) return;
 
-/**
- * Print a normal log message to the console
- * @param {Object|String} message Message or object to print to the console
- */
-DebugConsole.prototype.log = function(message) {
-    origConsole_log.apply(origConsole, arguments)
-    
-    if (this.logLevel <= DebugConsole.INFO_LEVEL) {
-        exec(null, null, 'Debug Console', 'log', [ stringify(message), { logLevel: 'INFO' } ]);
-    }
-};
+        origMethod.apply(console, arguments);
+    };
+}
 
-/**
- * Print a warning message to the console
- * @param {Object|String} message Message or object to print to the console
- */
-DebugConsole.prototype.warn = function(message) {
-    origConsole_warn.apply(origConsole, arguments)
-    
-    if (this.logLevel <= DebugConsole.WARN_LEVEL) {
-        exec(null, null, 'Debug Console', 'log', [ stringify(message), { logLevel: 'WARN' } ]);
-    }
-};
+var console = window.console || {};
 
-/**
- * Print an error message to the console
- * @param {Object|String} message Message or object to print to the console
- */
-DebugConsole.prototype.error = function(message) {
-    origConsole_error.apply(origConsole, arguments)
-    
-    if (this.logLevel <= DebugConsole.ERROR_LEVEL) {
-        exec(null, null, 'Debug Console', 'log', [ stringify(message), { logLevel: 'ERROR' } ]);
-    }
-};
+// 2012-10-06 pmuellr - marking setLevel() method and logLevel property
+// on console as deprecated;
+// it didn't do anything useful, since the level constants weren't accessible
+// to anyone
 
-module.exports = new DebugConsole();
+console.setLevel = function() {};
+console.logLevel = 0;
+
+// wrapper the logging messages
+
+var methods = ["log", "debug", "info", "warn", "error"];
+
+for (var i=0; i<methods.length; i++) {
+    var method = methods[i];
+
+    console[method] = wrappedMethod(console, method);
+}
+
+module.exports = console;
 
 });
 
@@ -6017,7 +6030,7 @@ window.cordova = require('cordova');
     // Replace navigator before any modules are required(), to ensure it happens as soon as possible.
     // We replace it so that properties that can't be clobbered can instead be overridden.
     if (typeof navigator != 'undefined') {
-        function CordovaNavigator() {}
+        var CordovaNavigator = function () {};
         CordovaNavigator.prototype = navigator;
         navigator = new CordovaNavigator();
     }
