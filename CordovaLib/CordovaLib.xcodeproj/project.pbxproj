@@ -70,7 +70,7 @@
 		88BA573D109BB46F00FB5E78 /* CDVAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 88BA573B109BB46F00FB5E78 /* CDVAccelerometer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		88BA573E109BB46F00FB5E78 /* CDVAccelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* CDVAccelerometer.m */; };
 		9D76CF3C1625A4C50008A0F6 /* CDVGlobalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D76CF3A1625A4C50008A0F6 /* CDVGlobalization.h */; };
-		9D76CF3D1625A4C50008A0F6 /* CDVGlobalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D76CF3B1625A4C50008A0F6 /* CDVGlobalization.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9D76CF3D1625A4C50008A0F6 /* CDVGlobalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D76CF3B1625A4C50008A0F6 /* CDVGlobalization.m */; };
 		C937A4561337599E002C4C79 /* CDVFileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* CDVFileTransfer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C937A4571337599E002C4C79 /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* CDVFileTransfer.m */; };
 		EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */; };
