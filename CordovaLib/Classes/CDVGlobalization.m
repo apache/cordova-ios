@@ -143,9 +143,9 @@
         timeStyle);
     // if we have a valid date object then call the formatter
     if (date) {
-        dateString = (NSString*)CFBridgingRelease(CFDateFormatterCreateStringWithDate(kCFAllocatorDefault,
-                formatter,
-                (__bridge CFDateRef)date));
+        dateString = (__bridge_transfer NSString*)CFDateFormatterCreateStringWithDate(kCFAllocatorDefault,
+            formatter,
+            (__bridge CFDateRef)date);
     }
 
     // if the date was converted to a string successfully then return the result
