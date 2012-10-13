@@ -126,7 +126,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSArray* arguments = command.arguments;
     NSString* target = (NSString*)[arguments objectAtIndex:0];
     NSString* server = (NSString*)[arguments objectAtIndex:1];
-    NSString* fileKey = (NSString*)[arguments objectAtIndex:2];
+    NSString* fileKey = [arguments objectAtIndex:2 withDefault:@"file"];
     NSString* fileName = [arguments objectAtIndex:3 withDefault:@"no-filename"];
     NSString* mimeType = [arguments objectAtIndex:4 withDefault:nil];
     NSDictionary* options = [arguments objectAtIndex:5 withDefault:nil];
@@ -243,7 +243,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (CDVFileTransferDelegate*)delegateForUploadCommand:(CDVInvokedUrlCommand*)command
 {
-    NSString* target = [command.arguments objectAtIndex:0];
+    NSString* source = [command.arguments objectAtIndex:0];
     NSString* server = [command.arguments objectAtIndex:1];
     NSString* objectId = [command.arguments objectAtIndex:9];
 
@@ -253,8 +253,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     delegate.callbackId = command.callbackId;
     delegate.direction = CDV_TRANSFER_UPLOAD;
     delegate.objectId = objectId;
-    delegate.source = server;
-    delegate.target = target;
+    delegate.source = source;
+    delegate.target = server;
     return delegate;
 }
 
