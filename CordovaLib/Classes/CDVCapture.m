@@ -233,6 +233,7 @@
         NSLog(@"Capture.captureVideo: video mode not available.");
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_NOT_SUPPORTED];
         [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+        pickerController = nil;
     } else {
         pickerController.delegate = self;
         pickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -496,6 +497,7 @@
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_INTERNAL_ERR];
     }
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+    pickerController = nil;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController*)picker
@@ -511,6 +513,7 @@
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:CAPTURE_NO_MEDIA_FILES];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+    pickerController = nil;
 }
 
 @end
