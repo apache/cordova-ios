@@ -38,18 +38,16 @@ if [ $# -lt 1 ]; then
 fi
 
 if [ ! -d "$APP_PATH" ]; then
-	read -p "Project '$APP_PATH' is not built. Build? [y/n]: " REPLY 
-	if [ "$REPLY" == "y" ]; then 
-		$CORDOVA_PATH/debug
-		exit 0
-	else 
+	echo "Project '$APP_PATH' is not built. Building."
+  $CORDOVA_PATH/debug || exit $?
+fi
+
+if [ ! -d "$APP_PATH" ]; then
 		echo "$APP_PATH not found to emulate."
 		exit 1
-	fi	
 fi
 
 # launch using ios-sim
-
 if which ios-sim >/dev/null; then
     ios-sim launch "$APP_PATH" --stderr "$CORDOVA_PATH/console.log" --stdout "$CORDOVA_PATH/console.log" &
 else
