@@ -19,8 +19,79 @@
 #
 -->
 ## Release Notes for Cordova  ##
-  
-Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+ 
+ Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+ ### 2.2.0rc1 (20121016) ###
+
+* [CB-622] FileTransfer interface should provide progress monitoring
+* [CB-622] Progress events for downloads
+* [CB-625] bin/uncrustify.sh --all
+* [CB-836] Abort functionality added to FileTransfer
+* [CB-836] Storing connection delegates for aborting connections quicker
+* [CB-836] Readonly property, duplicate activeTransfer, send pluginResult on abort
+* [CB-902] iOS 6 - deal with new Privacy functionality in Contacts (ABAddressBook:: ABAddressBookCreateWithOptions)
+* [CB-1360] Conditionally add architectures based on iOS version in CordovaLib
+* [CB-1390] Add onReset() to plugins on iOS.
+* [CB-1404] EXC\_BAD\_ACCESS when using XHR\_WITH\_PAYLOAD bridge mode
+* [CB-1456] bin/diagnose\_project script prints Build Settings from the project settings, not the target settings
+* [CB-1461] Add the two new iOS 6 UIWebView properties as Cordova.plist settings
+* [CB-1465] WebView too small after closing of a ChildBrowser in landscape orientation
+* [CB-1470] add iOS implementation for globalization
+* [CB-1476] Failed to load resource: file:///!gap_exec (Change XHR bridge mode to succeed instead of fail)
+* [CB-1479] Cordova 2.1 Capture Problem if no options provided
+* [CB-1482] Add splash screen image for iPhone 5's 4" display.
+* [CB-1486] Added missing apache source headers
+* [CB-1499] use of Camera in Cordova video mode results in field of view different than in native video mode
+* [CB-1502] Update Capture Audio images for iPhone 5
+* [CB-1511] Cordova 2.1/2.2 Audio Capture iOS6 CDVAudioRecorderViewController wrong orientation
+* [CB-1512] Change FileTransfer's form boundary from *** to +++
+* [CB-1514] Xcode 4.5 - Static Analyzer Issues in CordovaLib and default template
+* [CB-1515] Update Cordova.plist docs for new iOS 6 settings (KeyboardDisplayRequiresUserAction, SuppressesIncrementalRendering)
+* [CB-1520] InvalidArgumentException when EnableLocation is Yes on Cordova.plist
+* [CB-1524] No such a file or directory libCordova.a error when running app on device
+* [CB-1526] Putting CordovaLib in source control requires bin/update\_cordova\_subproject (Change create script to copy CordovaLib into new projects)
+* [CB-1558] LocalStorage is lost after upgrade to cordova 2.1 and ios6 up from from ios5
+* [CB-1561] Using Storage API - rejected by Apple
+* [CB-1569] Fatal crash after upgraded from 2.0 to 2.1
+* [CB-1571] FileTransfer escapes callback arguments on iOS
+* [CB-1578] App crash (while stopping) caused by an unregistered notification handler in CDVConnection
+* [CB-1579] Optimize exec() calls made from plugin callbacks on iOS
+* [CB-1587] Wrong splash screen shown on iPhone 5
+* [CB-1595] Do not prompt user about whether to build from the emulate script.
+* [CB-1600] crash in MobileSpec under 4.3 during file transfer (check class before casting URLResponse)
+* [CB-1604] navigator.connection not implemented correctly on iOS
+* [CB-1617] update CDVGlobalization for ARC, remove iOS5 only api
+* [CB-1619] Camera shutter remains closed when returning to app
+* [GH-PR-54]Update CDVDebug.h with better logging tools (https://github.com/apache/incubator-cordova-ios/pull/54 )
+* [GH-PR-55] Removing useless NSLog (https://github.com/apache/incubator-cordova-ios/pull/55)
+* [GH-PR-59] Fixed two bugs in CDVFileTransfer concerning file uploads (https://github.com/apache/incubator-cordova-ios/pull/59)
+* Added CDV\_IsIPhone5 macro
+* Add uncrustify config and script for auto-formatting code.
+* Add git hook that runs uncrustify before commits.
+* Add a comment explaining what the statements in the nativeReady eval do.
+* Updating JS with default bridge now XHR\_OPTIONAL\_PAYLOAD.
+* Delete unused CordovaBuildSettings.xcconfig from project template.
+* Move test lib and test app out of CordovaLib.
+* Tweak pre-commit message to make command more copy&paste-able.
+* Convert unit tests to ARC.
+* Add --shared optional parameter to bin/create script
+* Update uncrustify rules for ternary operators.
+* Refactor most of the command queue logic into a separate class.
+* Add a method to CDVCommandDelegate for executing JS.
+* Make plugins and CommandQueue use weak refs for CDVViewController.
+* Adds CDVCommandDelegateImpl.
+* Remove deprecated methods in CDVSound
+* Delete deprecated method "closePicker" from CDVCamera.
+* Remove deprecated methods in CDVFile.
+* Remove CDVDeprecated.h. 7 months old.
+* Add a macro for deprecating symbols and use it in a couple of places.
+* Deprecate CDVCommandDelegate's execute and registerPlugin methods.
+* Add a method to CDVCommandDelegate for executing on a background thread.
+* Fix alert dead-lock in contacts mobile-spec test.
+* Fix commandDelegate.evalJs to actually bundle exec() calls.
+
+<br />
 
 ### 2.1.0 (20120913) ###
 
