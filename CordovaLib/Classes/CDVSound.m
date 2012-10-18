@@ -438,20 +438,28 @@
         // create a new recorder for each start record
         audioFile.recorder = [[CDVAudioRecorder alloc] initWithURL:audioFile.resourceURL settings:nil error:&error];
 
-        if (error != nil) {
-            errorMsg = [NSString stringWithFormat:@"Failed to initialize AVAudioRecorder: %@\n", [error  localizedFailureReason]];
+        bool recordingSuccess = NO;
+        if (error == nil) {
+            audioFile.recorder.delegate = self;
+            audioFile.recorder.mediaId = mediaId;
+            recordingSuccess = [audioFile.recorder record];
+            if (recordingSuccess) {
+                NSLog(@"Started recording audio sample '%@'", audioFile.resourcePath);
+                jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
+            }
+        }
+
+        if (error != nil || recordingSuccess == NO) {
+            if (error != nil) {
+                errorMsg = [NSString stringWithFormat:@"Failed to initialize AVAudioRecorder: %@\n", [error localizedFailureReason]];
+            } else {
+                errorMsg = @"Failed to start recording using AVAudioRecorder";
+            }
             audioFile.recorder = nil;
             if (self.avSession) {
                 [self.avSession setActive:NO error:nil];
             }
-            // jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_ABORTED];
             jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:MEDIA_ERR_ABORTED message:errorMsg]];
-        } else {
-            audioFile.recorder.delegate = self;
-            audioFile.recorder.mediaId = mediaId;
-            [audioFile.recorder record];
-            NSLog(@"Started recording audio sample '%@'", audioFile.resourcePath);
-            jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_RUNNING];
         }
     } else {
         // file does not exist
