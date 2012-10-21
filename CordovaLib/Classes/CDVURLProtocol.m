@@ -64,7 +64,7 @@ static NSMutableSet* gRegisteredControllers = nil;
 
 + (void)unregisterViewController:(CDVViewController*)viewController
 {
-    [gRegisteredControllers removeObject:viewController];
+    [gRegisteredControllers removeObject:[NSNumber numberWithLongLong:(long long)viewController]];
 }
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
