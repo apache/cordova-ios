@@ -38,7 +38,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResignActive)
                                                      name:UIApplicationWillResignActiveNotification object:nil];
 
-        self.backupInfo = [[self class] createBackupInfoWithCloudBackup:((NSString*)[classSettings objectForKey:@"backupType"] == @"cloud")];
+        self.backupInfo = [[self class] createBackupInfoWithCloudBackup:[(NSString*)[classSettings objectForKey:@"backupType"] isEqualToString:@"cloud"]];
 
         // over-ride current webview delegate (for restore reasons)
         self.webviewDelegate = theWebView.delegate;
@@ -53,6 +53,16 @@
 
 + (NSMutableArray*)createBackupInfoWithTargetDir:(NSString*)targetDir backupDir:(NSString*)backupDir targetDirNests:(BOOL)targetDirNests backupDirNests:(BOOL)backupDirNests rename:(BOOL)rename
 {
+    /*
+     This "helper" does so much work and has so many options it would probably be clearer to refactor the whole thing.
+     Basically, there are three database locations:
+
+     1. "Normal" dir -- LIB/<nested dires WebKit/LocalStorage etc>/<normal filenames>
+     2. "Caches" dir -- LIB/Caches/<normal filenames>
+     3. "Backup" dir -- DOC/Backups/<renamed filenames>
+
+     And between these three, there are various migration paths, most of which only consider 2 of the 3, which is why this helper is based on 2 locations and has a notion of "direction".
+     */
     NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:3];
 
     NSString* original;
@@ -63,7 +73,7 @@
 
     original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/LocalStorage/file__0.localstorage":@"file__0.localstorage"];
     backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/LocalStorage":@"")];
-    backup = [backupDir stringByAppendingPathComponent:(rename ? @"localstorage.appdata.db":@"file__0.localstorage")];
+    backup = [backup stringByAppendingPathComponent:(rename ? @"localstorage.appdata.db":@"file__0.localstorage")];
 
     backupItem = [[CDVBackupInfo alloc] init];
     backupItem.backup = backup;
@@ -76,7 +86,7 @@
 
     original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/Databases/Databases.db":@"Databases.db"];
     backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/Databases":@"")];
-    backup = [backupDir stringByAppendingPathComponent:(rename ? @"websqlmain.appdata.db":@"Databases.db")];
+    backup = [backup stringByAppendingPathComponent:(rename ? @"websqlmain.appdata.db":@"Databases.db")];
 
     backupItem = [[CDVBackupInfo alloc] init];
     backupItem.backup = backup;
@@ -89,7 +99,7 @@
 
     original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/Databases/file__0":@"file__0"];
     backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/Databases":@"")];
-    backup = [backupDir stringByAppendingPathComponent:(rename ? @"websqldbs.appdata.db":@"file__0")];
+    backup = [backup stringByAppendingPathComponent:(rename ? @"websqldbs.appdata.db":@"file__0")];
 
     backupItem = [[CDVBackupInfo alloc] init];
     backupItem.backup = backup;
@@ -111,15 +121,15 @@
 
     // create the backups folder, if needed
     [[NSFileManager defaultManager] createDirectoryAtPath:backupsFolder withIntermediateDirectories:YES attributes:nil error:nil];
-    [self addSkipBackupAttributeToItemAtURL:[NSURL fileURLWithPath:backupsFolder] skip:cloudBackup];
+
+    [self addSkipBackupAttributeToItemAtURL:[NSURL fileURLWithPath:backupsFolder] skip:!cloudBackup];
 
     return [self createBackupInfoWithTargetDir:cacheFolder backupDir:backupsFolder targetDirNests:NO backupDirNests:NO rename:YES];
 }
 
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL*)URL skip:(BOOL)skip
 {
-    assert(IsAtLeastiOSVersion(@"5.1"));
-    assert([[NSFileManager defaultManager] fileExistsAtPath:[URL path]]);
+    NSAssert(IsAtLeastiOSVersion(@"5.1"), @"Cannot mark files for NSURLIsExcludedFromBackupKey on iOS less than 5.1");
 
     NSError* error = nil;
     BOOL success = [URL setResourceValue:[NSNumber numberWithBool:skip] forKey:NSURLIsExcludedFromBackupKey error:&error];
@@ -335,31 +345,31 @@
     NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains (NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 
-    NSMutableArray* backupInfo = nil;
+    NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:0];
 
     if ([backupType isEqualToString:@"cloud"]) {
         // We would like to restore old backups/caches databases to the new destination (nested in lib folder)
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:appLibraryFolder backupDir:[appDocumentsFolder stringByAppendingPathComponent:@"Backups"] targetDirNests:YES backupDirNests:NO rename:YES]];
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:appLibraryFolder backupDir:[appLibraryFolder stringByAppendingPathComponent:@"Caches"] targetDirNests:YES backupDirNests:NO rename:NO]];
     } else {
-        assert([backupType isEqualToString:@"local"]);
+        // For ios6 local backups we also want to restore from Backups dir -- but we don't need to do that here, since the plugin will do that itself.
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:[appLibraryFolder stringByAppendingPathComponent:@"Caches"] backupDir:appLibraryFolder targetDirNests:NO backupDirNests:YES rename:NO]];
     }
 
     NSFileManager* manager = [NSFileManager defaultManager];
 
     for (CDVBackupInfo* info in backupInfo) {
-        if ([info shouldRestore]) {
-            NSLog(@"Restoring old webstorage backup. From: '%@' To: '%@'.", info.backup, info.original);
-            [self copyFrom:info.backup to:info.original error:nil];
-        }
         if ([manager fileExistsAtPath:info.backup]) {
+            if ([info shouldRestore]) {
+                NSLog(@"Restoring old webstorage backup. From: '%@' To: '%@'.", info.backup, info.original);
+                [self copyFrom:info.backup to:info.original error:nil];
+            }
             NSLog(@"Removing old webstorage backup: '%@'.", info.backup);
             [manager removeItemAtPath:info.backup error:nil];
         }
     }
 
-    [[NSUserDefaults standardUserDefaults] setBool:(backupType == @"cloud") forKey:@"WebKitStoreWebDataForBackup"];
+    [[NSUserDefaults standardUserDefaults] setBool:[backupType isEqualToString:@"cloud"] forKey:@"WebKitStoreWebDataForBackup"];
 }
 
 #pragma mark -

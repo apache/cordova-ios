@@ -183,7 +183,6 @@
     } else if ([backupWebStorage isKindOfClass:[NSNumber class]]) {
         backupWebStorageType = [(NSNumber*) backupWebStorage boolValue] ? @"cloud" : @"none";
     }
-    NSLog(@"BackupType: %@", backupWebStorageType);
 
     if (IsAtLeastiOSVersion(@"5.1")) {
         [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
