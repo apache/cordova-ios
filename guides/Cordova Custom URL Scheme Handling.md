@@ -29,8 +29,6 @@ For an iOS app, you can add a URL Scheme handler in your app's Info.plist so tha
             // TODO: parse the url, and do something 
         }
 
-3. In your JavaScript, the global variable **invokeString** will be set with the URL that your app was launched with **if it was first launched with a URL (from a terminated state)**, not from resuming from the background (multi-tasking).
-
         
 **IMPORTANT NOTE:** 
         
