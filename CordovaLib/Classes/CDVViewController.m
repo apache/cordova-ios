@@ -175,16 +175,19 @@
 
     // // Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
 
-    BOOL backupWebStorage = YES;  // default value
-    if ([self.settings objectForKey:@"BackupWebStorage"]) {
-        backupWebStorage = [(NSNumber*)[settings objectForKey:@"BackupWebStorage"] boolValue];
-    }
+    NSString* backupWebStorageType = @"cloud"; // default value
 
-    if (backupWebStorage) {
-        [CDVLocalStorage __verifyAndFixDatabaseLocations];
+    id backupWebStorage = [self.settings objectForKey:@"BackupWebStorage"];
+    if ([backupWebStorage isKindOfClass:[NSString class]]) {
+        backupWebStorageType = backupWebStorage;
+    } else if ([backupWebStorage isKindOfClass:[NSNumber class]]) {
+        backupWebStorageType = [(NSNumber*) backupWebStorage boolValue] ? @"cloud" : @"none";
     }
+    NSLog(@"BackupType: %@", backupWebStorageType);
 
-    [CDVLocalStorage __fixLegacyDatabaseLocationIssues];
+    if (IsAtLeastiOSVersion(@"5.1")) {
+        [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
+    }
 
     // // Instantiate the WebView ///////////////
 
@@ -211,10 +214,12 @@
     }
 
     /*
-     * Fire up CDVLocalStorage on iOS 5.1+ to work-around WebKit storage limitations
+     * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
      */
-    if (IsAtLeastiOSVersion(@"5.1") && backupWebStorage) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+    if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorage isEqualToString:@"local"]) ||
+            ([backupWebStorage isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView settings:[NSDictionary dictionaryWithObjectsAndKeys:
+                    @"backupType", backupWebStorageType, nil]] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
     /*

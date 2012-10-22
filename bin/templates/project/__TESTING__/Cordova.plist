@@ -45,7 +45,7 @@
 	<key>OpenAllWhitelistURLsInWebView</key>
 	<false/>
 	<key>BackupWebStorage</key>
-	<true/>
+	<string>gray</string>
 	<key>ExternalHosts</key>
 	<array/>
 	<key>Plugins</key>

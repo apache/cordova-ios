@@ -31,12 +31,11 @@
 - (void)backup:(CDVInvokedUrlCommand*)command;
 - (void)restore:(CDVInvokedUrlCommand*)command;
 
-+ (void)__verifyAndFixDatabaseLocations;
++ (void)__fixupDatabaseLocationsWithBackupType:(NSString*)backupType;
 // Visible for testing.
 + (BOOL)__verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
     bundlePath                                          :(NSString*)bundlePath
    fileManager                                         :(NSFileManager*)fileManager;
-+ (void)__fixLegacyDatabaseLocationIssues;
 @end
 
 @interface CDVBackupInfo : NSObject
