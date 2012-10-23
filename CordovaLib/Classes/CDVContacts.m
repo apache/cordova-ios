@@ -327,7 +327,7 @@
                             matches = [NSMutableArray arrayWithCapacity:xferCount];
 
                             for (int k = 0; k < xferCount; k++) {
-                                CDVContact* xferContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:k]];
+                                CDVContact* xferContact = [[CDVContact alloc] initFromABRecord:(__bridge ABRecordRef)[foundRecords objectAtIndex:k]];
                                 [matches addObject:xferContact];
                                 xferContact = nil;
                             }
@@ -339,7 +339,7 @@
                         int testCount = [foundRecords count];
 
                         for (int j = 0; j < testCount; j++) {
-                            CDVContact* testContact = [[CDVContact alloc] initFromABRecord:(ABRecordRef)[foundRecords objectAtIndex:j]];
+                            CDVContact* testContact = [[CDVContact alloc] initFromABRecord:(__bridge ABRecordRef)[foundRecords objectAtIndex:j]];
                             if (testContact) {
                                 bFound = [testContact foundValue:filter inFields:returnFields];
                                 if (bFound) {
