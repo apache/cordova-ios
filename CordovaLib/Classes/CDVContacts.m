@@ -553,9 +553,14 @@
 
 @implementation CDVAddressBookHelper
 
+/**
+ * NOTE: workerBlock is responsible for releasing the addressBook that is passed to it
+ */
 - (void)createAddressBook:(CDVAddressBookWorkerBlock)workerBlock
 {
-    // !! caller is responsible for releasing AddressBook!!
+    // TODO: this probably should be reworked - seems like the workerBlock can just create and release its own AddressBook,
+    // and also this important warning from (http://developer.apple.com/library/ios/#documentation/ContactData/Conceptual/AddressBookProgrammingGuideforiPhone/Chapters/BasicObjects.html):
+    // "Important: Instances of ABAddressBookRef cannot be used by multiple threads. Each thread must make its own instance."
     ABAddressBookRef addressBook;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
