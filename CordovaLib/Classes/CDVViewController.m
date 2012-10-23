@@ -181,6 +181,7 @@
     if ([backupWebStorage isKindOfClass:[NSString class]]) {
         backupWebStorageType = backupWebStorage;
     } else if ([backupWebStorage isKindOfClass:[NSNumber class]]) {
+        NSLog(@"Deprecated: BackupWebStorage boolean property is a string property now (none, local, cloud). A boolean value of 'true' will be mapped to 'cloud'. Consult the docs: http://docs.cordova.io/en/edge/guide_project-settings_ios_index.md.html#Project%%20Settings%%20for%%20iOS");
         backupWebStorageType = [(NSNumber*) backupWebStorage boolValue] ? @"cloud" : @"none";
     }
 
