@@ -249,9 +249,13 @@
         // get the info after possible edit
         // if we got this far, user has already approved/ disapproved addressBook access
         ABAddressBookRef addrBook = nil;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
         if (&ABAddressBookCreateWithOptions != NULL) {
             addrBook = ABAddressBookCreateWithOptions(NULL, NULL);
-        } else {
+        }
+        else
+#endif
+        {
             // iOS 4 & 5
             addrBook = ABAddressBookCreate();
         }
@@ -554,6 +558,7 @@
     // !! caller is responsible for releasing AddressBook!!
     ABAddressBookRef addressBook;
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
     if (&ABAddressBookCreateWithOptions != NULL) {
         CFErrorRef error = nil;
         // CFIndex status = ABAddressBookGetAuthorizationStatus();
@@ -572,7 +577,10 @@
                         }
                     });
             });
-    } else {
+    }
+    else
+#endif
+    {
         // iOS 4 or 5 no checks needed
         addressBook = ABAddressBookCreate ();
         workerBlock (addressBook, NULL);

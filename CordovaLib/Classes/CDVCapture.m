@@ -520,11 +520,13 @@
 
 @implementation CDVAudioNavigationController
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
 - (NSUInteger)supportedInterfaceOrientations
 {
     // delegate to CVDAudioRecorderViewController
     return [self.topViewController supportedInterfaceOrientations];
 }
+#endif
 
 @end
 
@@ -682,6 +684,7 @@
     }
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
 - (NSUInteger)supportedInterfaceOrientations
 {
     NSUInteger orientation = UIInterfaceOrientationMaskPortrait; // must support portrait
@@ -690,6 +693,7 @@
     orientation = orientation | (supported & UIInterfaceOrientationMaskPortraitUpsideDown);
     return orientation;
 }
+#endif
 
 - (void)viewDidUnload
 {
