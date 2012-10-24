@@ -50,6 +50,10 @@ Create a Cordova project
 
 The docs should also have been included in the distribution.
 
+**Note** that in version 2.2.0, by default when you create a new project, the CordovaLib sub-project is copied into your project folder, it is not shared. 
+
+To use a **shared CordovaLib**, add as the first parameter "**--shared**" to the **bin/create** command.
+
 <br />
 
 Updating a CordovaLib subproject reference in your project
@@ -62,6 +66,8 @@ When you update to a new Cordova version, you may need to update the CordovaLib 
 1. Launch **Terminal.app**
 2. Go to the location where you installed Cordova, in the **bin** sub-folder
 3. Run **"update_cordova_subproject [path/to/your/project/xcodeproj]"**  where the first parameter is the path to your project's .xcodeproj file
+
+**Note** that in version 2.2.0, by default when you create a new project, the CordovaLib sub-project is copied into your project folder, it is not shared.
 
 <br />
 
