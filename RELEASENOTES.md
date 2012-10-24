@@ -22,7 +22,7 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
- ### 2.2.0rc1 (20121016) ###
+ ### 2.2.0rc2 (20121025) ###
 
 * [CB-622] FileTransfer interface should provide progress monitoring
 * [CB-622] Progress events for downloads
@@ -31,6 +31,7 @@
 * [CB-836] Storing connection delegates for aborting connections quicker
 * [CB-836] Readonly property, duplicate activeTransfer, send pluginResult on abort
 * [CB-902] iOS 6 - deal with new Privacy functionality in Contacts (ABAddressBook:: ABAddressBookCreateWithOptions)
+* [CB-1145] Require minimum Xcode 4.5 thus iOS 4.3 (Lion and Mountain Lion only - LLVM Compiler 4.0)
 * [CB-1360] Conditionally add architectures based on iOS version in CordovaLib
 * [CB-1390] Add onReset() to plugins on iOS.
 * [CB-1404] EXC\_BAD\_ACCESS when using XHR\_WITH\_PAYLOAD bridge mode
@@ -59,10 +60,13 @@
 * [CB-1579] Optimize exec() calls made from plugin callbacks on iOS
 * [CB-1587] Wrong splash screen shown on iPhone 5
 * [CB-1595] Do not prompt user about whether to build from the emulate script.
+* [CB-1597] Running ./cordova/debug / cordova/emulate causes errors
 * [CB-1600] crash in MobileSpec under 4.3 during file transfer (check class before casting URLResponse)
 * [CB-1604] navigator.connection not implemented correctly on iOS
 * [CB-1617] update CDVGlobalization for ARC, remove iOS5 only api
 * [CB-1619] Camera shutter remains closed when returning to app
+* [CB-1694] View controller not properly unregistered in CDVURLProtocol
+* [CB-1698] Remove WebScriptDebugDelegate.h
 * [GH-PR-54]Update CDVDebug.h with better logging tools (https://github.com/apache/incubator-cordova-ios/pull/54 )
 * [GH-PR-55] Removing useless NSLog (https://github.com/apache/incubator-cordova-ios/pull/55)
 * [GH-PR-59] Fixed two bugs in CDVFileTransfer concerning file uploads (https://github.com/apache/incubator-cordova-ios/pull/59)
@@ -90,7 +94,9 @@
 * Add a method to CDVCommandDelegate for executing on a background thread.
 * Fix alert dead-lock in contacts mobile-spec test.
 * Fix commandDelegate.evalJs to actually bundle exec() calls.
-
+* Removed Cordova Settings File guide, added web shortcut to online doc.
+* Changed Cordova.plist BackupWebStorage setting from boolean to string (cloud, local, none)
+* 
 <br />
 
 ### 2.1.0 (20120913) ###
