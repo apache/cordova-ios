@@ -84,8 +84,8 @@
 
     // ////////// WEBSQL MAIN DB
 
-    original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/Databases/Databases.db":@"Databases.db"];
-    backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/Databases":@"")];
+    original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/LocalStorage/Databases.db":@"Databases.db"];
+    backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/LocalStorage":@"")];
     backup = [backup stringByAppendingPathComponent:(rename ? @"websqlmain.appdata.db":@"Databases.db")];
 
     backupItem = [[CDVBackupInfo alloc] init];
@@ -97,8 +97,8 @@
 
     // ////////// WEBSQL DATABASES
 
-    original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/Databases/file__0":@"file__0"];
-    backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/Databases":@"")];
+    original = [targetDir stringByAppendingPathComponent:targetDirNests ? @"WebKit/LocalStorage/file__0":@"file__0"];
+    backup = [backupDir stringByAppendingPathComponent:(backupDirNests ? @"WebKit/LocalStorage":@"")];
     backup = [backup stringByAppendingPathComponent:(rename ? @"websqldbs.appdata.db":@"file__0")];
 
     backupItem = [[CDVBackupInfo alloc] init];
