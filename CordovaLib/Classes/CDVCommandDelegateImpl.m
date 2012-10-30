@@ -95,8 +95,17 @@
 
 - (void)evalJs:(NSString*)js
 {
+    [self evalJs:js scheduledOnRunLoop:YES];
+}
+
+- (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop
+{
     js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeEvalAndFetch(function(){%@})", js];
-    [self evalJsHelper:js];
+    if (scheduledOnRunLoop) {
+        [self evalJsHelper:js];
+    } else {
+        [self evalJsHelper2:js];
+    }
 }
 
 - (BOOL)execute:(CDVInvokedUrlCommand*)command

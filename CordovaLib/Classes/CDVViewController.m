@@ -877,7 +877,7 @@ BOOL gSplashScreenShown = NO;
 - (void)onAppWillResignActive:(NSNotification*)notification
 {
     // NSLog(@"%@",@"applicationWillResignActive");
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');"];
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');" scheduledOnRunLoop:NO];
 }
 
 /*
@@ -905,7 +905,7 @@ BOOL gSplashScreenShown = NO;
 - (void)onAppDidEnterBackground:(NSNotification*)notification
 {
     // NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause');"];
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
 }
 
 // ///////////////////////
