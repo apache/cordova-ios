@@ -19,11 +19,14 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kCDVDefaultWhitelistRejectionString;
+
 @interface CDVWhitelist : NSObject
 
 @property (nonatomic, readonly, strong) NSArray* whitelist;
 @property (nonatomic, readonly, strong) NSArray* expandedWhitelist;
 @property (nonatomic, readonly, assign) BOOL allowAll;
+@property (nonatomic, copy) NSString *whitelistRejectionFormatString;
 
 - (id)initWithArray:(NSArray*)array;
 - (BOOL)URLIsAllowed:(NSURL*)url;

@@ -19,6 +19,8 @@
 
 #import "CDVWhitelist.h"
 
+NSString * const kCDVDefaultWhitelistRejectionString = @"ERROR whitelist rejection: url='%@'";
+
 @interface CDVWhitelist ()
 
 @property (nonatomic, readwrite, strong) NSArray* whitelist;
@@ -31,7 +33,7 @@
 
 @implementation CDVWhitelist
 
-@synthesize whitelist, expandedWhitelist, allowAll;
+@synthesize whitelist, expandedWhitelist, allowAll, whitelistRejectionFormatString;
 
 - (id)initWithArray:(NSArray*)array
 {
@@ -40,6 +42,7 @@
         self.whitelist = array;
         self.expandedWhitelist = nil;
         self.allowAll = NO;
+        self.whitelistRejectionFormatString = kCDVDefaultWhitelistRejectionString;
         [self processWhitelist];
     }
 
@@ -183,7 +186,7 @@
 
 - (NSString*)errorStringForURL:(NSURL*)url
 {
-    return [NSString stringWithFormat:@"ERROR whitelist rejection: url='%@'", [url absoluteString]];
+    return [NSString stringWithFormat:self.whitelistRejectionFormatString, [url absoluteString]];
 }
 
 @end
