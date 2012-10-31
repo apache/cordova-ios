@@ -22,7 +22,7 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
- ### 2.2.0rc2 (20121025) ###
+ ### 2.2.0 (20121031) ###
 
 * [CB-622] FileTransfer interface should provide progress monitoring
 * [CB-622] Progress events for downloads
@@ -67,6 +67,7 @@
 * [CB-1619] Camera shutter remains closed when returning to app
 * [CB-1694] View controller not properly unregistered in CDVURLProtocol
 * [CB-1698] Remove WebScriptDebugDelegate.h
+* [CB-1746] IOS events onAppWillResignActive and onAppDidEnterBackground do not execute JS until after app is launched again.
 * [GH-PR-54]Update CDVDebug.h with better logging tools (https://github.com/apache/incubator-cordova-ios/pull/54 )
 * [GH-PR-55] Removing useless NSLog (https://github.com/apache/incubator-cordova-ios/pull/55)
 * [GH-PR-59] Fixed two bugs in CDVFileTransfer concerning file uploads (https://github.com/apache/incubator-cordova-ios/pull/59)
