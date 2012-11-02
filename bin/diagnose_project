@@ -181,7 +181,7 @@ def main(argv):
 	print "Path is:", cdvlibNormalizedPath, "\n"
 
 	cdvPlist = getXcodePlist(cdvlibPbx)
-	cdvBuildSettingsKeys = ['PUBLIC_HEADERS_FOLDER_PATH', 'ARCHS', 'USER_HEADER_SEARCH_PATHS', 'IPHONEOS_DEPLOYMENT_TARGET', 'OTHER_LDFLAGS', 'GCC_VERSION']
+	cdvBuildSettingsKeys = ['PUBLIC_HEADERS_FOLDER_PATH', 'ARCHS', 'ARCHS[sdk=iphoneos*]', 'ARCHS[sdk=iphoneos6.*]', 'ARCHS[sdk=iphonesimulator*]', 'USER_HEADER_SEARCH_PATHS', 'IPHONEOS_DEPLOYMENT_TARGET', 'OTHER_LDFLAGS', 'GCC_VERSION']
 
 	cdvBuildSettings = getXcodeBuildSettings(cdvBuildSettingsKeys, cdvPlist)
 	pp.pprint( cdvBuildSettings )
