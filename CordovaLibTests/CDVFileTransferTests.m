@@ -20,6 +20,7 @@
 #import <SenTestingKit/SenTestingKit.h>
 
 #import "CDV.h"
+#import "CDVCommandDelegateImpl.h"
 
 static NSString* const kDummyArgCallbackId = @"cid0";
 static NSString* const kDummyArgFileKey = @"image.jpg";
@@ -55,6 +56,7 @@ static NSData *readStream(NSInputStream* stream)
     NSMutableArray* _arguments;
     CDVFileTransfer* _fileTransfer;
     NSData* _dummyFileData;
+    CDVCommandDelegateImpl* _commandDelegate;
 }
 @end
 
@@ -68,7 +70,9 @@ static NSData *readStream(NSInputStream* stream)
         kDummyArgTarget, kDummyArgServer, kDummyArgFileKey, [NSNull null],
         [NSNull null], [NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
     _dummyFileData = [kDummyFileContents dataUsingEncoding:NSUTF8StringEncoding];
+    _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithViewController:nil];
     _fileTransfer = [[CDVFileTransfer alloc] init];
+    _fileTransfer.commandDelegate = _commandDelegate;
 }
 
 - (void)tearDown
@@ -76,6 +80,7 @@ static NSData *readStream(NSInputStream* stream)
     _arguments = nil;
     _dummyFileData = nil;
     _fileTransfer = nil;
+    _commandDelegate = nil;
     [super tearDown];
 }
 
