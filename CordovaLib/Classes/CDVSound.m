@@ -355,15 +355,13 @@
     CDVAudioFile* audioFile = [[self soundCache] objectForKey:mediaId];
     double position = [[command.arguments objectAtIndex:1] doubleValue];
 
-    if ((audioFile != nil) && (audioFile.player != nil) && position) {
+    if ((audioFile != nil) && (audioFile.player != nil)) {
         double posInSeconds = position / 1000;
         audioFile.player.currentTime = posInSeconds;
         NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%f);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, posInSeconds];
 
         [self.commandDelegate evalJs:jsString];
     }
-
-    return;
 }
 
 - (void)release:(CDVInvokedUrlCommand*)command
