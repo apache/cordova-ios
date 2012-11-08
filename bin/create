@@ -59,6 +59,7 @@ done
 
 BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
 CORDOVALIB_DIR="$BINDIR/../CordovaLib"
+CDV_VER=$(cat $CORDOVALIB_DIR/VERSION)
 
 PROJECT_PATH=$1
 PACKAGE=$2
@@ -76,7 +77,9 @@ fi
 cp -r "$BINDIR/templates/project/" "$PROJECT_PATH"
 
 # Copy in the JS.
-cp "$CORDOVALIB_DIR/cordova.ios.js" "$PROJECT_PATH/www"
+cp "$CORDOVALIB_DIR/cordova.ios.js" "$PROJECT_PATH/www/cordova-$CDV_VER.js"
+# Change the filename reference in the html from cordova.ios.js -> cordova-VERSION.js.
+sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova.ios.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g" "$PROJECT_PATH/www/index.html"
 
 # I've tried to be thorough in my documentation of the manual actions below...
 # on first brush it would seem that the right solution would be to brute force
