@@ -260,8 +260,8 @@
 			buildPhases = (
 				303A4064152124BB00182201 /* Sources */,
 				303A4065152124BB00182201 /* Frameworks */,
-				30F8AE1615212883006625B3 /* Copy cordova.ios.js into www directory */,
 				303A4066152124BB00182201 /* Resources */,
+				30F8AE1615212883006625B3 /* Copy cordova.ios.js into www directory */,
 			);
 			buildRules = (
 			);
@@ -373,7 +373,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"${PROJECT_DIR}\"/../bin/templates/project/www/cordova*.js \"${PROJECT_DIR}\"/CordovaLibApp/www/cordova.ios.js";
+			shellScript = "cp ../CordovaLib/cordova.ios.js \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www/cordova.ios.js\"";
 			showEnvVarsInLog = 0;
 		};
 		686357A7141002F100DF4CF2 /* ShellScript */ = {

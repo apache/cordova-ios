@@ -58,6 +58,7 @@ while [ -h "$SCRIPT" ] ; do
 done
 
 BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
+CORDOVALIB_DIR="$BINDIR/../CordovaLib"
 
 PROJECT_PATH=$1
 PACKAGE=$2
@@ -73,6 +74,9 @@ fi
 
 # copy the files in; then modify them
 cp -r "$BINDIR/templates/project/" "$PROJECT_PATH"
+
+# Copy in the JS.
+cp "$CORDOVALIB_DIR/cordova.ios.js" "$PROJECT_PATH/www"
 
 # I've tried to be thorough in my documentation of the manual actions below...
 # on first brush it would seem that the right solution would be to brute force

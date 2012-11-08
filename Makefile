@@ -32,7 +32,6 @@ CORDOVA_LIB = $(PWD)/CordovaLib
 DEVELOPER ?= '$(shell xcode-select -print-path)'
 XC_APP ?= '$(shell mdfind "kMDItemFSName=='Xcode.app' && kMDItemKind=='Application'" | head -1)'
 XC = $(DEVELOPER)/usr/bin/xcodebuild
-CDV_VER = $(shell head -1 CordovaLib/VERSION)
 XCODE4_TEMPLATE_FOLDER=$(HOME)/Library/Developer/Xcode/Templates/Project\ Templates/Application
 EXISTING_XCODE4_TEMPLATE=$(XCODE4_TEMPLATE_FOLDER)/Cordova-based\ Application.xctemplate
 RENAMED_XCODE4_TEMPLATE=$(XCODE4_TEMPLATE_FOLDER)/Cordova-based\ \(pre\ 2.0\)\ Application.xctemplate
@@ -67,7 +66,7 @@ check-utils:
 			  echo -e "\033[31mError: Xcode is running! Please close Xcode and try again.\033[m" ; exit 1; \
 		fi
 
-install: check-utils clean update-template
+install: check-utils clean
 		@# rename the existing Xcode 4 template
 		@if [ -d $(EXISTING_XCODE4_TEMPLATE) ]; then \
 				mv $(EXISTING_XCODE4_TEMPLATE) $(RENAMED_XCODE4_TEMPLATE) ; \
@@ -86,7 +85,3 @@ uninstall:
 		if [ "$$REPLY" == "y" ]; then \
 				$(RM_RF) /Users/Shared/Cordova/Frameworks/Cordova.framework/ ; $(RM_RF) ~/Library/Frameworks/Cordova.framework ; \
 		fi	
-
-update-template:
-		@mv bin/templates/project/www/cordova-*.js bin/templates/project/www/cordova-$(CDV_VER).js
-		@find "bin/templates/project/www/index.html" | xargs grep 'src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]' -sl | xargs -L1 sed -i "" "s/src[ 	]*=[ 	]*[\\'\"]cordova-*.*.js[\\'\"]/src=\"cordova-${CDV_VER}.js\"/g"
