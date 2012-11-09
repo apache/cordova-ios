@@ -704,7 +704,7 @@
     self.imageView.tag = 1;
     self.imageView.center = center;
 
-    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);
+    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
     [self.imageView setTransform:startupImageTransform];
     [self.view.superview addSubview:self.imageView];
 
