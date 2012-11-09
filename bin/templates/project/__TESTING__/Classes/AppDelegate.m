@@ -75,37 +75,6 @@
     // NOTE: To customize the view's frame size (which defaults to full screen), override
     // [self.viewController viewWillAppear:] in your view controller.
 
-    // check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation
-    BOOL forceStartupRotation = YES;
-    UIDeviceOrientation curDevOrientation = [[UIDevice currentDevice] orientation];
-
-    if (UIDeviceOrientationUnknown == curDevOrientation) {
-        // UIDevice isn't firing orientation notifications yet… go look at the status bar
-        curDevOrientation = (UIDeviceOrientation)[[UIApplication sharedApplication] statusBarOrientation];
-    }
-
-    if (UIDeviceOrientationIsValidInterfaceOrientation(curDevOrientation)) {
-        if ([self.viewController supportsOrientation:curDevOrientation]) {
-            forceStartupRotation = NO;
-        }
-    }
-
-    if (forceStartupRotation) {
-        UIInterfaceOrientation newOrient;
-        if ([self.viewController supportsOrientation:UIInterfaceOrientationPortrait]) {
-            newOrient = UIInterfaceOrientationPortrait;
-        } else if ([self.viewController supportsOrientation:UIInterfaceOrientationLandscapeLeft]) {
-            newOrient = UIInterfaceOrientationLandscapeLeft;
-        } else if ([self.viewController supportsOrientation:UIInterfaceOrientationLandscapeRight]) {
-            newOrient = UIInterfaceOrientationLandscapeRight;
-        } else {
-            newOrient = UIInterfaceOrientationPortraitUpsideDown;
-        }
-
-        NSLog(@"AppDelegate forcing status bar to: %d from: %d", newOrient, curDevOrientation);
-        [[UIApplication sharedApplication] setStatusBarOrientation:newOrient];
-    }
-
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
 
