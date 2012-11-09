@@ -76,7 +76,6 @@
 
         self.wwwFolderName = @"www";
         self.startPage = @"index.html";
-        [self setWantsFullScreenLayout:YES];
 
         [self printMultitaskingInfo];
         [self printDeprecationNotice];
