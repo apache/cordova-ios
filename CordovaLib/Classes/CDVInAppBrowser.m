@@ -62,7 +62,7 @@
         NSString* options = (argc > 2) ? [arguments objectAtIndex:2] : @"";
 
         if ([target isEqualToString:kInAppBrowserTargetSelf]) {
-            [self openInCordovaWebView:url];
+            [self openInCordovaWebView:url withOptions:options];
         } else if ([target isEqualToString:kInAppBrowserTargetSystem]) {
             [self openInSystem:url];
         } else { // _blank or anything else
@@ -95,7 +95,7 @@
     [self.inAppBrowserViewController navigateTo:url];
 }
 
-- (void)openInCordovaWebView:(NSString*)url
+- (void)openInCordovaWebView:(NSString*)url withOptions:(NSString*)options
 {
     NSURL* urlObj = [NSURL URLWithString:url];
     BOOL passesWhitelist = YES;
@@ -113,7 +113,7 @@
         NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
         [self.webView loadRequest:request];
     } else { // TODO: this assumes the InAppBrowser can be excepted from the white-list
-        [self openInInAppBrowser:url withOptions:@""];
+        [self openInInAppBrowser:url withOptions:options];
     }
 }
 
