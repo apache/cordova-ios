@@ -86,6 +86,8 @@
 		<string>CDVBattery</string>
 		<key>Globalization</key>
 		<string>CDVGlobalization</string>
+		<key>InAppBrowser</key>
+		<string>CDVInAppBrowser</string>
 	</dict>
 </dict>
 </plist>
