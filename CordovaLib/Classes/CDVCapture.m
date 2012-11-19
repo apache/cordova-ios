@@ -383,12 +383,20 @@
             AVURLAsset* movieAsset = [[AVURLAsset alloc] initWithURL:movieURL options:nil];
             CMTime duration = [movieAsset duration];
             [formatData setObject:[NSNumber numberWithFloat:CMTimeGetSeconds(duration)]  forKey:kW3CMediaFormatDuration];
-            CGSize size = [movieAsset naturalSize];
-            [formatData setObject:[NSNumber numberWithFloat:size.height] forKey:kW3CMediaFormatHeight];
-            [formatData setObject:[NSNumber numberWithFloat:size.width] forKey:kW3CMediaFormatWidth];
-            // not sure how to get codecs or bitrate???
-            // AVMetadataItem
-            // AudioFile
+
+            NSArray* allVideoTracks = [movieAsset tracksWithMediaType:AVMediaTypeVideo];
+            if ([allVideoTracks count] > 0) {
+                AVAssetTrack* track = [[movieAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+                CGSize size = [track naturalSize];
+
+                [formatData setObject:[NSNumber numberWithFloat:size.height] forKey:kW3CMediaFormatHeight];
+                [formatData setObject:[NSNumber numberWithFloat:size.width] forKey:kW3CMediaFormatWidth];
+                // not sure how to get codecs or bitrate???
+                // AVMetadataItem
+                // AudioFile
+            } else {
+                NSLog(@"No video tracks found for %@", fullPath);
+            }
         } else if ([mimeType rangeOfString:@"audio/"].location != NSNotFound) {
             if (NSClassFromString(@"AVAudioPlayer") != nil) {
                 NSURL* fileURL = [NSURL fileURLWithPath:fullPath];
@@ -521,11 +529,12 @@
 @implementation CDVAudioNavigationController
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-- (NSUInteger)supportedInterfaceOrientations
-{
-    // delegate to CVDAudioRecorderViewController
-    return [self.topViewController supportedInterfaceOrientations];
-}
+    - (NSUInteger)supportedInterfaceOrientations
+    {
+        // delegate to CVDAudioRecorderViewController
+        return [self.topViewController supportedInterfaceOrientations];
+    }
+
 #endif
 
 @end
@@ -685,14 +694,15 @@
 }
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-- (NSUInteger)supportedInterfaceOrientations
-{
-    NSUInteger orientation = UIInterfaceOrientationMaskPortrait; // must support portrait
-    NSUInteger supported = [captureCommand.viewController supportedInterfaceOrientations];
+    - (NSUInteger)supportedInterfaceOrientations
+    {
+        NSUInteger orientation = UIInterfaceOrientationMaskPortrait; // must support portrait
+        NSUInteger supported = [captureCommand.viewController supportedInterfaceOrientations];
 
-    orientation = orientation | (supported & UIInterfaceOrientationMaskPortraitUpsideDown);
-    return orientation;
-}
+        orientation = orientation | (supported & UIInterfaceOrientationMaskPortraitUpsideDown);
+        return orientation;
+    }
+
 #endif
 
 - (void)viewDidUnload
