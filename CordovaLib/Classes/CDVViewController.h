@@ -24,11 +24,12 @@
 #import "CDVInvokedUrlCommand.h"
 #import "CDVCommandDelegate.h"
 #import "CDVWhitelist.h"
+#import "CDVScreenOrientationDelegate.h"
 
 @class CDVCommandQueue;
 @class CDVCommandDelegateImpl;
 
-@interface CDVViewController : UIViewController <UIWebViewDelegate>{
+@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
     @private
     CDVCommandDelegateImpl* _commandDelegate;
 }

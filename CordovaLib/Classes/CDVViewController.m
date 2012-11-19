@@ -522,30 +522,32 @@
      */
     else if ([url isFileURL]) {
         return YES;
-    } else if ([self.whitelist schemeIsAllowed:[url scheme]]) {
-        if ([self.whitelist URLIsAllowed:url] == YES) {
-            NSNumber* openAllInWhitelistSetting = [self.settings objectForKey:@"OpenAllWhitelistURLsInWebView"];
-            if ((nil != openAllInWhitelistSetting) && [openAllInWhitelistSetting boolValue]) {
-                NSLog(@"OpenAllWhitelistURLsInWebView set: opening in webview");
-                return YES;
-            }
-
-            // mainDocument will be nil for an iFrame
-            NSString* mainDocument = [theWebView.request.mainDocumentURL absoluteString];
-
-            // anchor target="_blank" - load in Mobile Safari
-            if ((navigationType == UIWebViewNavigationTypeOther) && (mainDocument != nil)) {
-                [[UIApplication sharedApplication] openURL:url];
-                return NO;
-            }
-            // other anchor target - load in Cordova webView
-            else {
-                return YES;
-            }
-        }
-
-        return NO;
     }
+    //    else if ([self.whitelist schemeIsAllowed:[url scheme]]) {
+    //        if ([self.whitelist URLIsAllowed:url] == YES) {
+    //            NSNumber* openAllInWhitelistSetting = [self.settings objectForKey:@"OpenAllWhitelistURLsInWebView"];
+    //            if ((nil != openAllInWhitelistSetting) && [openAllInWhitelistSetting boolValue]) {
+    //                NSLog(@"OpenAllWhitelistURLsInWebView set: opening in webview");
+    //                return YES;
+    //            }
+    //
+    //            // mainDocument will be nil for an iFrame
+    //            NSString* mainDocument = [theWebView.request.mainDocumentURL absoluteString];
+    //
+    //            // anchor target="_blank" - load in Mobile Safari
+    //            if ((navigationType == UIWebViewNavigationTypeOther) && (mainDocument != nil)) {
+    //                [[UIApplication sharedApplication] openURL:url];
+    //                return NO;
+    //            }
+    //            // other anchor target - load in Cordova webView
+    //            else {
+    //                return YES;
+    //            }
+    //        }
+    //
+    //        return NO;
+    //    }
+    //
 
     /*
      *    If we loaded the HTML from a string, we let the app handle it
@@ -577,16 +579,20 @@
     }
 
     /*
-     * We don't have a Cordova or web/local request, load it in the main Safari browser.
-     * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555
+     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
      */
     else {
-        NSLog(@"AppDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
+        // BOOL isIFrame = ([theWebView.request.mainDocumentURL absoluteString] == nil);
 
-        if ([[UIApplication sharedApplication] canOpenURL:url]) {
-            [[UIApplication sharedApplication] openURL:url];
-        } else { // handle any custom schemes to plugins
-            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+        if ([self.whitelist schemeIsAllowed:[url scheme]] &&
+            [self.whitelist URLIsAllowed:url]) {
+            return YES;
+        } else {
+            if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url];
+            } else { // handle any custom schemes to plugins
+                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+            }
         }
 
         return NO;
