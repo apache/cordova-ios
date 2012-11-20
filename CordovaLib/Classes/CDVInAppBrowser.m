@@ -80,7 +80,15 @@
 - (void)openInInAppBrowser:(NSString*)url withOptions:(NSString*)options
 {
     if (self.inAppBrowserViewController == nil) {
-        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] init];
+        NSString* originalUA = [self.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+
+        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+        NSString* modifiedUA = [NSString stringWithFormat:@"%@ (%@)", originalUA, uuidString];
+        CFRelease(uuidString);
+        CFRelease(uuidRef);
+
+        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:modifiedUA];
         if ([self.viewController conformsToProtocol:@protocol(CDVScreenOrientationDelegate)]) {
             self.inAppBrowserViewController.orientationDelegate = (UIViewController <CDVScreenOrientationDelegate>*)self.viewController;
         }
@@ -134,11 +142,11 @@
 
 @implementation CDVInAppBrowserViewController
 
-- (id)init
+- (id)initWithUserAgent:(NSString*)userAgent
 {
     self = [super init];
     if (self != nil) {
-        // your initialization here
+        self.userAgent = userAgent;
         [self createViews];
     }
 
@@ -154,6 +162,11 @@
     webViewBounds.size.height -= FOOTER_HEIGHT;
 
     if (!self.webView) {
+        // setting the UserAgent must occur before the UIWebView is instantiated.
+        // This is read per instantiation, so it does not affect the main Cordova UIWebView
+        NSDictionary* dict = [[NSDictionary alloc] initWithObjectsAndKeys:self.userAgent, @"UserAgent", nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+
         self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
         self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 

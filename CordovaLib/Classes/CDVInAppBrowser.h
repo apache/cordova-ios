@@ -43,10 +43,13 @@
 @property (nonatomic, strong) IBOutlet UIToolbar* toolbar;
 
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
+@property (nonatomic, strong) NSString* userAgent;
 
 - (void)close;
 - (void)navigateTo:(NSString*)url;
 - (void)showLocationBar:(BOOL)show;
+
+- (id)initWithUserAgent:(NSString*)userAgent;
 
 @end
 
