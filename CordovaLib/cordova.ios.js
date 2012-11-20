@@ -1,6 +1,6 @@
-// commit 02b91c5313ff37d74a58f71775170afd360f4a1f
+// commit 7203d335b59902a72a374a170b1edb04438b6a47
 
-// File generated at :: Wed Oct 31 2012 14:34:26 GMT-0700 (PDT)
+// File generated at :: Tue Nov 20 2012 15:37:13 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -329,14 +329,24 @@ function each(objects, func, context) {
     }
 }
 
+function clobber(obj, key, value) {
+    obj[key] = value;
+    // Getters can only be overridden by getters.
+    if (obj[key] !== value) {
+        utils.defineGetter(obj, key, function() {
+            return value;
+        });
+    }
+}
+
 function assignOrWrapInDeprecateGetter(obj, key, value, message) {
     if (message) {
         utils.defineGetter(obj, key, function() {
-            window.console && console.log(message);
+            console.log(message);
             return value;
         });
     } else {
-        obj[key] = value;
+        clobber(obj, key, value);
     }
 }
 
@@ -395,8 +405,11 @@ function recursiveMerge(target, src) {
                 // If the target object is a constructor override off prototype.
                 target.prototype[prop] = src[prop];
             } else {
-                target[prop] = typeof src[prop] === 'object' ? recursiveMerge(
-                        target[prop], src[prop]) : src[prop];
+                if (typeof src[prop] === 'object') {
+                    target[prop] = recursiveMerge(target[prop], src[prop]);
+                } else {
+                    clobber(target, prop, src[prop]);
+                }
             }
         }
     }
@@ -404,18 +417,14 @@ function recursiveMerge(target, src) {
 }
 
 module.exports = {
-    build: function (objects) {
-        return {
-            intoButDoNotClobber: function (target) {
-                include(target, objects, false, false);
-            },
-            intoAndClobber: function(target) {
-                include(target, objects, true, false);
-            },
-            intoAndMerge: function(target) {
-                include(target, objects, true, true);
-            }
-        };
+    buildIntoButDoNotClobber: function(objects, target) {
+        include(target, objects, false, false);
+    },
+    buildIntoAndClobber: function(objects, target) {
+        include(target, objects, true, false);
+    },
+    buildIntoAndMerge: function(objects, target) {
+        include(target, objects, true, true);
     }
 };
 
@@ -701,7 +710,7 @@ module.exports = {
 define("cordova/common", function(require, exports, module) {
 
 module.exports = {
-    objects: {
+    defaults: {
         cordova: {
             path: 'cordova',
             children: {
@@ -720,6 +729,9 @@ module.exports = {
                 }
             }
         },
+        open : {
+            path: 'cordova/plugin/InAppBrowser'
+        },
         navigator: {
             children: {
                 notification: {
@@ -736,9 +748,6 @@ module.exports = {
                 },
                 compass:{
                     path: 'cordova/plugin/compass'
-                },
-                connection: {
-                    path: 'cordova/plugin/network'
                 },
                 contacts: {
                     path: 'cordova/plugin/contacts'
@@ -907,6 +916,15 @@ module.exports = {
         resolveLocalFileSystemURI:{
             path: 'cordova/plugin/resolveLocalFileSystemURI'
         }
+    },
+    clobbers: {
+        navigator: {
+            children: {
+                connection: {
+                    path: 'cordova/plugin/network'
+                }
+            }
+        }
     }
 };
 
@@ -915,12 +933,12 @@ module.exports = {
 // file: lib/ios/exec.js
 define("cordova/exec", function(require, exports, module) {
 
-    /**
-     * Creates a gap bridge iframe used to notify the native code about queued
-     * commands.
-     *
-     * @private
-     */
+/**
+ * Creates a gap bridge iframe used to notify the native code about queued
+ * commands.
+ *
+ * @private
+ */
 var cordova = require('cordova'),
     channel = require('cordova/channel'),
     utils = require('cordova/utils'),
@@ -930,10 +948,7 @@ var cordova = require('cordova'),
         XHR_WITH_PAYLOAD: 2,
         XHR_OPTIONAL_PAYLOAD: 3
     },
-    // XHR mode does not work on iOS 4.2, so default to IFRAME_NAV for such devices.
-    // XHR mode's main advantage is working around a bug in -webkit-scroll, which
-    // doesn't exist in 4.X devices anyways.
-    bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_NO_PAYLOAD : jsToNativeModes.IFRAME_NAV,
+    bridgeMode,
     execIframe,
     execXhr,
     requestCount = 0,
@@ -963,10 +978,11 @@ function shouldBundleCommandJson() {
 }
 
 function iOSExec() {
-    if (channel.onCordovaReady.state != 2) {
-        utils.alert("ERROR: Attempting to call cordova.exec()" +
-              " before 'deviceready'. Ignoring.");
-        return;
+    // XHR mode does not work on iOS 4.2, so default to IFRAME_NAV for such devices.
+    // XHR mode's main advantage is working around a bug in -webkit-scroll, which
+    // doesn't exist in 4.X devices anyways.
+    if (bridgeMode === undefined) {
+        bridgeMode = navigator.userAgent.indexOf(' 4_') == -1 ? jsToNativeModes.XHR_NO_PAYLOAD : jsToNativeModes.IFRAME_NAV;
     }
 
     var successCallback, failCallback, service, action, actionArgs, splitCommand;
@@ -1007,16 +1023,18 @@ function iOSExec() {
     // the command is executed.
     commandQueue.push(JSON.stringify(command));
 
-    if (!isInContextOfEvalJs) {
+    // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
+    // then the queue will be flushed when it returns; no need for a poke.
+    // Also, if there is already a command in the queue, then we've already
+    // poked the native side, so there is no reason to do so again.
+    if (!isInContextOfEvalJs && commandQueue.length == 1) {
         if (bridgeMode != jsToNativeModes.IFRAME_NAV) {
-            // Re-using the XHR improves exec() performance by about 10%.
-            // It is possible for a native stringByEvaluatingJavascriptFromString call
-            // to cause us to reach this point when a request is already in progress,
-            // so we check the readyState to guard agains re-using an inprogress XHR.
-            // Refer to CB-1404.
+            // This prevents sending an XHR when there is already one being sent.
+            // This should happen only in rare circumstances (refer to unit tests).
             if (execXhr && execXhr.readyState != 4) {
                 execXhr = null;
             }
+            // Re-using the XHR improves exec() performance by about 10%.
             execXhr = execXhr || new XMLHttpRequest();
             // Changing this to a GET will make the XHR reach the URIProtocol on 4.2.
             // For some reason it still doesn't work though...
@@ -1059,7 +1077,7 @@ iOSExec.nativeFetchMessages = function() {
 
 iOSExec.nativeCallback = function(callbackId, status, payload, keepCallback) {
     return iOSExec.nativeEvalAndFetch(function() {
-        var success = status == 0 || status == 1;
+        var success = status === 0 || status === 1;
         cordova.callbackFromNative(callbackId, success, status, payload, keepCallback);
     });
 };
@@ -1093,7 +1111,7 @@ module.exports = {
         navigator.geolocation.watchPosition = geo.watchPosition;
         navigator.geolocation.clearWatch = geo.clearWatch;
     },
-    objects: {
+    clobbers: {
         File: { // exists natively, override
             path: "cordova/plugin/File"
         },
@@ -1105,6 +1123,9 @@ module.exports = {
         },
         console: {
             path: 'cordova/plugin/ios/console'
+        },
+        open : {
+            path: 'cordova/plugin/InAppBrowser'
         }
     },
     merges:{
@@ -3137,6 +3158,25 @@ module.exports = GlobalizationError;
 
 });
 
+// file: lib/common/plugin/InAppBrowser.js
+define("cordova/plugin/InAppBrowser", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+var InAppBrowser = {
+    open : function(strUrl, strWindowName, strWindowFeatures) {
+        exec(null, null, "InAppBrowser", "open", [strUrl, strWindowName, strWindowFeatures]);
+        return InAppBrowser;
+    },
+    close : function() {
+        exec(null, null, "InAppBrowser", "close", []);
+    }
+};
+
+module.exports = InAppBrowser.open;
+
+});
+
 // file: lib/common/plugin/LocalFileSystem.js
 define("cordova/plugin/LocalFileSystem", function(require, exports, module) {
 
@@ -4254,6 +4294,7 @@ function Device() {
     this.name = null;
     this.uuid = null;
     this.cordova = null;
+    this.model = null;
 
     var me = this;
 
@@ -4265,6 +4306,7 @@ function Device() {
             me.name = info.name;
             me.uuid = info.uuid;
             me.cordova = info.cordova;
+            me.model = info.model;
             channel.onCordovaInfoReady.fire();
         },function(e) {
             me.available = false;
@@ -5578,49 +5620,9 @@ if (typeof navigator != 'undefined') {
     });
 }
 
-var NetworkConnection = function () {
-    this.type = null;
-    this._firstRun = true;
-    this._timer = null;
-    this.timeout = 500;
-
-    var me = this;
-
-    channel.onCordovaReady.subscribe(function() {
-        me.getInfo(function (info) {
-            me.type = info;
-            if (info === "none") {
-                // set a timer if still offline at the end of timer send the offline event
-                me._timer = setTimeout(function(){
-                    cordova.fireDocumentEvent("offline");
-                    me._timer = null;
-                    }, me.timeout);
-            } else {
-                // If there is a current offline event pending clear it
-                if (me._timer !== null) {
-                    clearTimeout(me._timer);
-                    me._timer = null;
-                }
-                cordova.fireDocumentEvent("online");
-            }
-
-            // should only fire this once
-            if (me._firstRun) {
-                me._firstRun = false;
-                channel.onCordovaConnectionReady.fire();
-            }
-        },
-        function (e) {
-            // If we can't get the network info we should still tell Cordova
-            // to fire the deviceready event.
-            if (me._firstRun) {
-                me._firstRun = false;
-                channel.onCordovaConnectionReady.fire();
-            }
-            console.log("Error initializing Network Connection: " + e);
-        });
-    });
-};
+function NetworkConnection() {
+    this.type = 'unknown';
+}
 
 /**
  * Get connection info
@@ -5628,12 +5630,48 @@ var NetworkConnection = function () {
  * @param {Function} successCallback The function to call when the Connection data is available
  * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
  */
-NetworkConnection.prototype.getInfo = function (successCallback, errorCallback) {
-    // Get info
+NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, "NetworkStatus", "getConnectionInfo", []);
 };
 
-module.exports = new NetworkConnection();
+var me = new NetworkConnection();
+var timerId = null;
+var timeout = 500;
+
+channel.onCordovaReady.subscribe(function() {
+    me.getInfo(function(info) {
+        me.type = info;
+        if (info === "none") {
+            // set a timer if still offline at the end of timer send the offline event
+            timerId = setTimeout(function(){
+                cordova.fireDocumentEvent("offline");
+                timerId = null;
+            }, timeout);
+        } else {
+            // If there is a current offline event pending clear it
+            if (timerId !== null) {
+                clearTimeout(timerId);
+                timerId = null;
+            }
+            cordova.fireDocumentEvent("online");
+        }
+
+        // should only fire this once
+        if (channel.onCordovaConnectionReady.state !== 2) {
+            channel.onCordovaConnectionReady.fire();
+        }
+    },
+    function (e) {
+        // If we can't get the network info we should still tell Cordova
+        // to fire the deviceready event.
+        if (channel.onCordovaConnectionReady.state !== 2) {
+            channel.onCordovaConnectionReady.fire();
+        }
+        console.log("Error initializing Network Connection: " + e);
+    });
+});
+
+module.exports = me;
 
 });
 
@@ -5833,6 +5871,30 @@ utils.defineGetter = function(obj, key, func) {
     }
 };
 
+utils.arrayIndexOf = function(a, item) {
+    if (a.indexOf) {
+        return a.indexOf(item);
+    }
+    var len = a.length;
+    for (var i = 0; i < len; ++i) {
+        if (a[i] == item) {
+            return i;
+        }
+    }
+    return -1;
+};
+
+/**
+ * Returns whether the item was found in the array.
+ */
+utils.arrayRemove = function(a, item) {
+    var index = utils.arrayIndexOf(a, item);
+    if (index != -1) {
+        a.splice(index, 1);
+    }
+    return index != -1;
+};
+
 /**
  * Returns an indication of whether the argument is an array or not
  */
@@ -6028,10 +6090,10 @@ window.cordova = require('cordova');
 (function (context) {
     // Replace navigator before any modules are required(), to ensure it happens as soon as possible.
     // We replace it so that properties that can't be clobbered can instead be overridden.
-    if (typeof navigator != 'undefined') {
-        var CordovaNavigator = function () {};
-        CordovaNavigator.prototype = navigator;
-        navigator = new CordovaNavigator();
+    if (context.navigator) {
+        function CordovaNavigator() {}
+        CordovaNavigator.prototype = context.navigator;
+        context.navigator = new CordovaNavigator();
     }
 
     var channel = require("cordova/channel"),
@@ -6046,17 +6108,13 @@ window.cordova = require('cordova');
                         platform = require('cordova/platform');
 
                     // Drop the common globals into the window object, but be nice and don't overwrite anything.
-                    builder.build(base.objects).intoButDoNotClobber(window);
+                    builder.buildIntoButDoNotClobber(base.defaults, context);
+                    builder.buildIntoAndMerge(base.merges, context);
+                    builder.buildIntoAndClobber(base.clobbers, context);
 
-                    // Drop the platform-specific globals into the window object
-                    // and clobber any existing object.
-                    builder.build(platform.objects).intoAndClobber(window);
-
-                    // Merge the platform-specific overrides/enhancements into
-                    // the window object.
-                    if (typeof platform.merges !== 'undefined') {
-                        builder.build(platform.merges).intoAndMerge(window);
-                    }
+                    builder.buildIntoButDoNotClobber(platform.defaults, context);
+                    builder.buildIntoAndMerge(platform.merges, context);
+                    builder.buildIntoAndClobber(platform.clobbers, context);
 
                     // Call the platform-specific initialization
                     platform.initialize();
