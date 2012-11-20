@@ -86,8 +86,6 @@
         [self loadSettings];
         // set the whitelist
         self.whitelist = [[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]];
-        // register this viewcontroller with the NSURLProtocol
-        [CDVURLProtocol registerViewController:self];
     }
 }
 
@@ -419,6 +417,9 @@
         [self.view sendSubviewToBack:self.webView];
 
         self.webView.delegate = self;
+
+        // register this viewcontroller with the NSURLProtocol
+        [CDVURLProtocol registerViewController:self];
     }
 }
 
@@ -523,31 +524,6 @@
     else if ([url isFileURL]) {
         return YES;
     }
-    //    else if ([self.whitelist schemeIsAllowed:[url scheme]]) {
-    //        if ([self.whitelist URLIsAllowed:url] == YES) {
-    //            NSNumber* openAllInWhitelistSetting = [self.settings objectForKey:@"OpenAllWhitelistURLsInWebView"];
-    //            if ((nil != openAllInWhitelistSetting) && [openAllInWhitelistSetting boolValue]) {
-    //                NSLog(@"OpenAllWhitelistURLsInWebView set: opening in webview");
-    //                return YES;
-    //            }
-    //
-    //            // mainDocument will be nil for an iFrame
-    //            NSString* mainDocument = [theWebView.request.mainDocumentURL absoluteString];
-    //
-    //            // anchor target="_blank" - load in Mobile Safari
-    //            if ((navigationType == UIWebViewNavigationTypeOther) && (mainDocument != nil)) {
-    //                [[UIApplication sharedApplication] openURL:url];
-    //                return NO;
-    //            }
-    //            // other anchor target - load in Cordova webView
-    //            else {
-    //                return YES;
-    //            }
-    //        }
-    //
-    //        return NO;
-    //    }
-    //
 
     /*
      *    If we loaded the HTML from a string, we let the app handle it
@@ -584,9 +560,8 @@
     else {
         // BOOL isIFrame = ([theWebView.request.mainDocumentURL absoluteString] == nil);
 
-        if ([self.whitelist schemeIsAllowed:[url scheme]] &&
-            [self.whitelist URLIsAllowed:url]) {
-            return YES;
+        if ([self.whitelist schemeIsAllowed:[url scheme]]) {
+            return [self.whitelist URLIsAllowed:url];
         } else {
             if ([[UIApplication sharedApplication] canOpenURL:url]) {
                 [[UIApplication sharedApplication] openURL:url];

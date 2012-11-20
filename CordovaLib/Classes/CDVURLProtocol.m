@@ -32,6 +32,8 @@ static CDVWhitelist * gWhitelist = nil;
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
 static NSMutableSet* gRegisteredControllers = nil;
+// Contains a set of NSStrings of User Agents
+static NSMutableSet* gRegisteredUserAgents = nil;
 
 @implementation CDVURLProtocol
 
@@ -46,6 +48,7 @@ static NSMutableSet* gRegisteredControllers = nil;
     if (gRegisteredControllers == nil) {
         [NSURLProtocol registerClass:[CDVURLProtocol class]];
         gRegisteredControllers = [[NSMutableSet alloc] initWithCapacity:8];
+        gRegisteredUserAgents = [[NSMutableSet alloc] initWithCapacity:8];
         // The whitelist doesn't change, so grab the first one and store it.
         gWhitelist = viewController.whitelist;
 
@@ -57,20 +60,26 @@ static NSMutableSet* gRegisteredControllers = nil;
             NSLog(@"WARNING: NO whitelist has been set in CDVURLProtocol.");
         }
     }
+
     @synchronized(gRegisteredControllers) {
         [gRegisteredControllers addObject:[NSNumber numberWithLongLong:(long long)viewController]];
+        NSString* userAgent = [viewController.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        [gRegisteredUserAgents addObject:userAgent];
     }
 }
 
 + (void)unregisterViewController:(CDVViewController*)viewController
 {
     [gRegisteredControllers removeObject:[NSNumber numberWithLongLong:(long long)viewController]];
+    NSString* userAgent = [viewController.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    [gRegisteredUserAgents removeObject:userAgent];
 }
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
 {
     NSURL* theUrl = [theRequest URL];
     NSString* theScheme = [theUrl scheme];
+    NSString* theUserAgent = [theRequest valueForHTTPHeaderField:@"User-Agent"];
 
     if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
         NSString* viewControllerAddressStr = [theRequest valueForHTTPHeaderField:@"vc"];
@@ -109,8 +118,8 @@ static NSMutableSet* gRegisteredControllers = nil;
         return !hasCmds;
     }
 
-    // we only care about http and https connections
-    if ([gWhitelist schemeIsAllowed:theScheme]) {
+    // we only care about http and https connections, and registered user-agents
+    if ([gWhitelist schemeIsAllowed:theScheme] && [gRegisteredUserAgents containsObject:theUserAgent]) {
         // if it FAILS the whitelist, we return TRUE, so we can fail the connection later
         return ![gWhitelist URLIsAllowed:theUrl];
     }

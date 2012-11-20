@@ -120,7 +120,7 @@
     if (passesWhitelist) {
         NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
         [self.webView loadRequest:request];
-    } else { // TODO: this assumes the InAppBrowser can be excepted from the white-list
+    } else { // this assumes the InAppBrowser can be excepted from the white-list
         [self openInInAppBrowser:url withOptions:options];
     }
 }
