@@ -403,6 +403,13 @@
     return [[CDVCordovaView alloc] initWithFrame:bounds];
 }
 
+- (NSString*)originalUserAgent
+{
+    UIWebView* testWebView = [[UIWebView alloc] initWithFrame:CGRectZero];
+
+    return [testWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+}
+
 - (void)createGapView
 {
     CGRect webViewBounds = self.view.bounds;
@@ -410,6 +417,18 @@
     webViewBounds.origin = self.view.bounds.origin;
 
     if (!self.webView) {
+        // generate a GUID to append to the User-Agent
+        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+        NSString* modifiedUA = [NSString stringWithFormat:@"%@ (%@)", [self originalUserAgent], uuidString];
+        CFRelease(uuidString);
+        CFRelease(uuidRef);
+
+        // setting the UserAgent must occur before the UIWebView is instantiated.
+        // This is read per instantiation, so it does not affect the main Cordova UIWebView
+        NSDictionary* dict = [[NSDictionary alloc] initWithObjectsAndKeys:modifiedUA, @"UserAgent", nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+
         self.webView = [self newCordovaViewWithFrame:webViewBounds];
         self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 
@@ -418,7 +437,7 @@
 
         self.webView.delegate = self;
 
-        // register this viewcontroller with the NSURLProtocol
+        // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
         [CDVURLProtocol registerViewController:self];
     }
 }
