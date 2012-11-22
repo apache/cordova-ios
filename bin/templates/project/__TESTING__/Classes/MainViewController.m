@@ -50,15 +50,8 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    // Set the main view to utilize the entire application frame space of the device.
-    // Change this to suit your view's UI footprint needs in your application.
-
-    UIView* rootView = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
-    CGRect webViewFrame = [[[rootView subviews] objectAtIndex:0] frame];  // first subview is the UIWebView
-
-    if (CGRectEqualToRect(webViewFrame, CGRectZero)) { // UIWebView is sized according to its parent, here it hasn't been sized yet
-        self.view.frame = [[UIScreen mainScreen] applicationFrame]; // size UIWebView's parent according to application frame, which will in turn resize the UIWebView
-    }
+    // View defaults to full size.  If you want to customize the view's size, or its subviews (e.g. webView),
+    // you can do so here.
 
     [super viewWillAppear:animated];
 }
