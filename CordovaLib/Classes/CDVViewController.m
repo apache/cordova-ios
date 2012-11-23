@@ -148,13 +148,11 @@
     NSURL *url = [NSURL fileURLWithPath:path];
 
     configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
-    NSLog(@"configParser = %@", configParser);
     if (configParser == nil) {
-        NSLog(@"Failed to load config.xml.");
+        NSLog(@"Failed to initialize XML parser.");
         return;
     }
     [configParser setDelegate:((id<NSXMLParserDelegate>)self)];
-    NSLog(@"About to start parsing: %@", url);
     [configParser parse];
 }
 
@@ -168,28 +166,18 @@
 
 - (void)parser:(NSXMLParser*)parser didStartElement:(NSString*)elementName namespaceURI:(NSString*)namespaceURI qualifiedName:(NSString*)qualifiedName attributes:(NSDictionary*)attributeDict
 {
-    NSLog(@"start of element %@", elementName);
     if ([elementName isEqualToString:@"preference"]) {
-        NSString* key = [attributeDict objectForKey:@"name"];
-        NSString* value = [attributeDict objectForKey:@"value"];
-        NSLog(@"setting %@ = %@", key, value);
-        [settings setObject:value forKey:key];
+        [settings setObject:[attributeDict objectForKey:@"value"] forKey:[attributeDict objectForKey:@"name"]];
     } else if ([elementName isEqualToString:@"plugin"]) {
-        NSString* key = [attributeDict objectForKey:@"name"];
-        NSString* value = [attributeDict objectForKey:@"value"];
-        NSLog(@"plugin %@ = %@", key, value);
-        [pluginsDict setObject:value forKey:key];
+        [pluginsDict setObject:[attributeDict objectForKey:@"value"] forKey:[attributeDict objectForKey:@"name"]];
     } else if ([elementName isEqualToString:@"access"]) {
-        NSString* origin = [attributeDict objectForKey:@"origin"];
-        NSLog(@"whitelisting %@", origin);
-        [whitelistHosts addObject:origin];
+        [whitelistHosts addObject:[attributeDict objectForKey:@"origin"]];
     }
 }
 
 - (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
 {
-    NSLog(@"Parser error");
-    NSAssert(NO, @"config.xml loading error line %d col %d: %@", [parser lineNumber], [parser columnNumber], [parseError localizedDescription]);
+    NSAssert(NO, @"config.xml parse error line %d col %d", [parser lineNumber], [parser columnNumber]);
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
