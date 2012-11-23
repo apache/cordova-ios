@@ -26,6 +26,8 @@
 #define CDV_USER_AGENT_KEY @"Cordova-User-Agent"
 #define CDV_USER_AGENT_VERSION_KEY @"Cordova-User-Agent-Version"
 
+static NSString* gOriginalUserAgent = nil;
+
 @interface CDVViewController ()
 
 @property (nonatomic, readwrite, strong) NSDictionary* settings;
@@ -408,27 +410,27 @@
 
 + (NSString*)originalUserAgent
 {
-    static NSString* originalUserAgent = nil;
-
-    if (originalUserAgent == nil) {
+    if (gOriginalUserAgent == nil) {
         NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
         NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+        NSString* localeStr = [[NSLocale currentLocale] localeIdentifier];
+        NSString* systemAndLocale = [NSString stringWithFormat:@"%@ %@", systemVersion, localeStr];
 
         NSString* cordovaUserAgentVersion = [userDefaults stringForKey:CDV_USER_AGENT_VERSION_KEY];
-        originalUserAgent = [userDefaults stringForKey:CDV_USER_AGENT_KEY];
-        BOOL systemVersionChanged = ![systemVersion isEqualToString:cordovaUserAgentVersion];
+        gOriginalUserAgent = [userDefaults stringForKey:CDV_USER_AGENT_KEY];
+        BOOL cachedValueIsOld = ![systemAndLocale isEqualToString:cordovaUserAgentVersion];
 
-        if ((originalUserAgent == nil) || systemVersionChanged) {
+        if ((gOriginalUserAgent == nil) || cachedValueIsOld) {
             UIWebView* sampleWebView = [[UIWebView alloc] initWithFrame:CGRectZero];
-            originalUserAgent = [sampleWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+            gOriginalUserAgent = [sampleWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
 
-            [userDefaults setObject:originalUserAgent forKey:CDV_USER_AGENT_KEY];
-            [userDefaults setObject:systemVersion forKey:CDV_USER_AGENT_VERSION_KEY];
+            [userDefaults setObject:gOriginalUserAgent forKey:CDV_USER_AGENT_KEY];
+            [userDefaults setObject:systemAndLocale forKey:CDV_USER_AGENT_VERSION_KEY];
 
             [userDefaults synchronize];
         }
     }
-    return originalUserAgent;
+    return gOriginalUserAgent;
 }
 
 - (NSString*)userAgent
@@ -933,13 +935,7 @@ BOOL gSplashScreenShown = NO;
 
 - (void)onAppLocaleDidChange:(NSNotification*)notification
 {
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-
-    // invalidate the cached User-Agent when the locale changes
-    [userDefaults removeObjectForKey:CDV_USER_AGENT_KEY];
-    [userDefaults removeObjectForKey:CDV_USER_AGENT_VERSION_KEY];
-
-    [userDefaults synchronize];
+    gOriginalUserAgent = nil;
 }
 
 // ///////////////////////
