@@ -81,14 +81,8 @@
 {
     if (self.inAppBrowserViewController == nil) {
         NSString* originalUA = [CDVViewController originalUserAgent];
+        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:originalUA];
 
-        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-        CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-        NSString* modifiedUA = [NSString stringWithFormat:@"%@ (%@)", originalUA, uuidString];
-        CFRelease(uuidString);
-        CFRelease(uuidRef);
-
-        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:modifiedUA];
         if ([self.viewController conformsToProtocol:@protocol(CDVScreenOrientationDelegate)]) {
             self.inAppBrowserViewController.orientationDelegate = (UIViewController <CDVScreenOrientationDelegate>*)self.viewController;
         }
