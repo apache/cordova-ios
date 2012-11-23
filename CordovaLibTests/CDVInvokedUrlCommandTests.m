@@ -93,4 +93,15 @@
     STAssertEqualObjects(expected, legacyArgs, nil);
 }
 
+- (void)testArgumentAtIndex
+{
+    NSArray* jsonArr = [NSArray arrayWithObjects:[NSNull null], @"className", @"methodName", [NSArray array], nil];
+    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+    STAssertNil([command argumentAtIndex:0], @"NSNull to nil");
+    STAssertNil([command argumentAtIndex:100], @"Invalid index to nil");
+    STAssertEquals(@"default", [command argumentAtIndex:0 withDefault:@"default"], @"NSNull to default");
+    STAssertEquals(@"default", [command argumentAtIndex:100 withDefault:@"default"], @"Invalid index to default");
+}
+
+
 @end
