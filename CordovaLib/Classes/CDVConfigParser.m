@@ -34,9 +34,11 @@
 - (id)init
 {
     self = [super init];
-    self.pluginsDict = [[NSMutableDictionary alloc] initWithCapacity:4];
-    self.settings = [[NSMutableDictionary alloc] initWithCapacity:4];
-    self.whitelistHosts = [[NSMutableArray alloc] initWithCapacity:1];
+    if (self != nil) {
+        self.pluginsDict = [[NSMutableDictionary alloc] initWithCapacity:4];
+        self.settings = [[NSMutableDictionary alloc] initWithCapacity:4];
+        self.whitelistHosts = [[NSMutableArray alloc] initWithCapacity:1];
+    }
     return self;
 }
 
