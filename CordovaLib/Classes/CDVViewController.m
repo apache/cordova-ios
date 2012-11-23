@@ -21,6 +21,7 @@
 #import "CDV.h"
 #import "CDVCommandQueue.h"
 #import "CDVCommandDelegateImpl.h"
+#import "CDVConfigParser.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 #define CDV_USER_AGENT_KEY @"Cordova-User-Agent"
@@ -29,10 +30,9 @@
 @interface CDVViewController ()
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
+@property (nonatomic, readwrite, strong) NSDictionary* settings;
 @property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
-@property (nonatomic, readwrite, strong) NSMutableArray* whitelistHosts;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginsDict;
+@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
@@ -46,7 +46,7 @@
 @implementation CDVViewController
 
 @synthesize webView, supportedOrientations;
-@synthesize pluginsDict, pluginsMap, whitelist, whitelistHosts;
+@synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
@@ -134,9 +134,7 @@
 
 - (void)loadSettings
 {
-    self.pluginsDict = [[NSMutableDictionary alloc] initWithCapacity:4];
-    self.settings = [[NSMutableDictionary alloc] initWithCapacity:4];
-    self.whitelistHosts = [[NSMutableArray alloc] initWithCapacity:1];
+    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
 
     // read from Cordova.plist in the app bundle
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
@@ -152,32 +150,16 @@
         NSLog(@"Failed to initialize XML parser.");
         return;
     }
-    [configParser setDelegate:((id<NSXMLParserDelegate>)self)];
+    [configParser setDelegate:((id<NSXMLParserDelegate>) delegate)];
     [configParser parse];
-}
 
-- (void)parserDidEndDocument:(NSXMLParser*)parser
-{
-    // Clone the plugin name dictionary.
-    self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
-    // Build the whitelist from the list of hosts.
-    self.whitelist = [[CDVWhitelist alloc] initWithArray:self.whitelistHosts];
-}
+    // Get the plugin dictionary, whitelist and settings from the delegate.
+    self.pluginsMap = [delegate.pluginsDict dictionaryWithLowercaseKeys];
+    self.whitelist = [[CDVWhitelist alloc] initWithArray:delegate.whitelistHosts];
+    self.settings = delegate.settings;
 
-- (void)parser:(NSXMLParser*)parser didStartElement:(NSString*)elementName namespaceURI:(NSString*)namespaceURI qualifiedName:(NSString*)qualifiedName attributes:(NSDictionary*)attributeDict
-{
-    if ([elementName isEqualToString:@"preference"]) {
-        [settings setObject:[attributeDict objectForKey:@"value"] forKey:[attributeDict objectForKey:@"name"]];
-    } else if ([elementName isEqualToString:@"plugin"]) {
-        [pluginsDict setObject:[attributeDict objectForKey:@"value"] forKey:[attributeDict objectForKey:@"name"]];
-    } else if ([elementName isEqualToString:@"access"]) {
-        [whitelistHosts addObject:[attributeDict objectForKey:@"origin"]];
-    }
-}
-
-- (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
-{
-    NSAssert(NO, @"config.xml parse error line %d col %d", [parser lineNumber], [parser columnNumber]);
+    // Initialize the plugin objects dict.
+    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -489,7 +471,7 @@
     // iterate through all the plugin objects, and call hasPendingOperation
     // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
 
-    NSEnumerator* enumerator = [self.pluginsDict objectEnumerator];
+    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
     CDVPlugin* plugin;
 
     BOOL doPurge = YES;
@@ -808,7 +790,7 @@ BOOL gSplashScreenShown = NO;
         [plugin setCommandDelegate:_commandDelegate];
     }
 
-    [self.pluginsDict setObject:plugin forKey:className];
+    [self.pluginObjects setObject:plugin forKey:className];
 }
 
 /**
@@ -827,7 +809,7 @@ BOOL gSplashScreenShown = NO;
         return nil;
     }
 
-    id obj = [self.pluginsDict objectForKey:className];
+    id obj = [self.pluginObjects objectForKey:className];
     if (!obj) {
         // attempt to load the settings for this command class
         NSDictionary* classSettings = [self.settings objectForKey:className];
@@ -976,7 +958,7 @@ BOOL gSplashScreenShown = NO;
     self.webView.delegate = nil;
     self.webView = nil;
     [_commandQueue dispose];
-    [[self.pluginsDict allValues] makeObjectsPerformSelector:@selector(dispose)];
+    [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
 }
 
 @end
