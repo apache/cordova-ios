@@ -21,6 +21,7 @@
 #import "CDV.h"
 #import "CDVCommandQueue.h"
 #import "CDVCommandDelegateImpl.h"
+#import "CDVConfigParser.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 #define CDV_USER_AGENT_KEY @"Cordova-User-Agent"
@@ -30,6 +31,7 @@ static NSString* gOriginalUserAgent = nil;
 
 @interface CDVViewController ()
 
+@property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSDictionary* settings;
 @property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
@@ -47,7 +49,7 @@ static NSString* gOriginalUserAgent = nil;
 
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist;
-@synthesize settings, loadFromString;
+@synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
 @synthesize commandDelegate = _commandDelegate;
@@ -89,8 +91,6 @@ static NSString* gOriginalUserAgent = nil;
 
         // load Cordova.plist settings
         [self loadSettings];
-        // set the whitelist
-        self.whitelist = [[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]];
     }
 }
 
@@ -136,26 +136,32 @@ static NSString* gOriginalUserAgent = nil;
 
 - (void)loadSettings
 {
-    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
 
     // read from Cordova.plist in the app bundle
-    NSString* appPlistName = @"Cordova";
-    NSDictionary* cordovaPlist = [[self class] getBundlePlist:appPlistName];
-    if (cordovaPlist == nil) {
-        NSLog(@"WARNING: %@.plist is missing.", appPlistName);
-        return;
-    }
-    self.settings = [[NSDictionary alloc] initWithDictionary:cordovaPlist];
-
-    // read from Plugins dict in Cordova.plist in the app bundle
-    NSString* pluginsKey = @"Plugins";
-    NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
-    if (pluginsDict == nil) {
-        NSLog(@"WARNING: %@ key in %@.plist is missing! Cordova will not work, you need to have this key.", pluginsKey, appPlistName);
+    NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        NSAssert(NO, @"ERROR: config.xml does not exist");
         return;
     }
 
-    self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
+    NSURL *url = [NSURL fileURLWithPath:path];
+
+    configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
+    if (configParser == nil) {
+        NSLog(@"Failed to initialize XML parser.");
+        return;
+    }
+    [configParser setDelegate:((id<NSXMLParserDelegate>) delegate)];
+    [configParser parse];
+
+    // Get the plugin dictionary, whitelist and settings from the delegate.
+    self.pluginsMap = [delegate.pluginsDict dictionaryWithLowercaseKeys];
+    self.whitelist = [[CDVWhitelist alloc] initWithArray:delegate.whitelistHosts];
+    self.settings = delegate.settings;
+
+    // Initialize the plugin objects dict.
+    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.

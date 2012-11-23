@@ -27,7 +27,6 @@
 		30F8AE0A15212587006625B3 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357DC14100B1600DF4CF2 /* CoreMedia.framework */; };
 		30F8AE0B15212587006625B3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357D414100AF200DF4CF2 /* SystemConfiguration.framework */; };
 		30F8AE0C152125B6006625B3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357D214100AE700DF4CF2 /* MobileCoreServices.framework */; };
-		30F8AE13152127CE006625B3 /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE12152127CE006625B3 /* Cordova.plist */; };
 		30F8AE1D152129DA006625B3 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE1C152129DA006625B3 /* www */; };
 		686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
 		686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */; };
@@ -46,6 +45,7 @@
 		EB89634A15FE66EA00E12277 /* CDVInvokedUrlCommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB89634915FE66EA00E12277 /* CDVInvokedUrlCommandTests.m */; };
 		EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */; };
 		EBA3556F15ABD0C900F4DE24 /* CDVFileTransferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3556E15ABD0C900F4DE24 /* CDVFileTransferTests.m */; };
+		F8EB14D1165FFD3200616F39 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8EB14D0165FFD3200616F39 /* config.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +109,7 @@
 		EBA3554415A731F100F4DE24 /* CDVFakeFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVFakeFileManager.h; sourceTree = "<group>"; };
 		EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVFakeFileManager.m; sourceTree = "<group>"; };
 		EBA3556E15ABD0C900F4DE24 /* CDVFileTransferTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVFileTransferTests.m; sourceTree = "<group>"; };
+		F8EB14D0165FFD3200616F39 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = CordovaLibApp/config.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +165,7 @@
 		0867D691FE84028FC02AAC07 /* CordovaLib */ = {
 			isa = PBXGroup;
 			children = (
+				F8EB14D0165FFD3200616F39 /* config.xml */,
 				EB37018115D18B2D00BEBC43 /* CordovaLib.xcodeproj */,
 				EB3B34F4161B585D003DBE7D /* CordovaLibTests */,
 				303A406D152124BB00182201 /* CordovaLibApp */,
@@ -343,8 +345,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8EB14D1165FFD3200616F39 /* config.xml in Resources */,
 				303A4072152124BB00182201 /* InfoPlist.strings in Resources */,
-				30F8AE13152127CE006625B3 /* Cordova.plist in Resources */,
 				30F8AE1D152129DA006625B3 /* www in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
