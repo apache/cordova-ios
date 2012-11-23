@@ -141,7 +141,7 @@
     // read from Cordova.plist in the app bundle
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        NSLog(@"ERROR: config.xml does not exist");
+        NSAssert(NO, @"ERROR: config.xml does not exist");
         return;
     }
 

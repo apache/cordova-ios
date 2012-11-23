@@ -24,12 +24,12 @@
 #import "CDVInvokedUrlCommand.h"
 #import "CDVCommandDelegate.h"
 #import "CDVWhitelist.h"
-//#import "CDVScreenOrientationDelegate.h"
+#import "CDVScreenOrientationDelegate.h"
 
 @class CDVCommandQueue;
 @class CDVCommandDelegateImpl;
 
-@interface CDVViewController : UIViewController <UIWebViewDelegate>{
+@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
     @private
     CDVCommandDelegateImpl* _commandDelegate;
 }
@@ -40,6 +40,7 @@
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
+@property (nonatomic, readonly, strong) NSMutableArray* whitelistHosts;
 @property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 @property (nonatomic, readwrite, copy)NSString * invokeString CDV_DEPRECATED(2.0, "Use window.handleOpenURL(url instead. It is called when the app is launched through a custom scheme url.");
