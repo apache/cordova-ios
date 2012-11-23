@@ -28,9 +28,11 @@
 
 @interface CDVViewController ()
 
-@property (nonatomic, readwrite, strong) NSDictionary* settings;
+@property (nonatomic, readwrite, strong) NSXMLParser* configParser;
+@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
 @property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
+@property (nonatomic, readwrite, strong) NSMutableArray* whitelistHosts;
+@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginsDict;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
@@ -44,8 +46,8 @@
 @implementation CDVViewController
 
 @synthesize webView, supportedOrientations;
-@synthesize pluginObjects, pluginsMap, whitelist;
-@synthesize settings, loadFromString;
+@synthesize pluginsDict, pluginsMap, whitelist, whitelistHosts;
+@synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
 @synthesize commandDelegate = _commandDelegate;
@@ -87,8 +89,6 @@
 
         // load Cordova.plist settings
         [self loadSettings];
-        // set the whitelist
-        self.whitelist = [[CDVWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]];
     }
 }
 
@@ -134,26 +134,62 @@
 
 - (void)loadSettings
 {
-    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+    self.pluginsDict = [[NSMutableDictionary alloc] initWithCapacity:4];
+    self.settings = [[NSMutableDictionary alloc] initWithCapacity:4];
+    self.whitelistHosts = [[NSMutableArray alloc] initWithCapacity:1];
 
     // read from Cordova.plist in the app bundle
-    NSString* appPlistName = @"Cordova";
-    NSDictionary* cordovaPlist = [[self class] getBundlePlist:appPlistName];
-    if (cordovaPlist == nil) {
-        NSLog(@"WARNING: %@.plist is missing.", appPlistName);
-        return;
-    }
-    self.settings = [[NSDictionary alloc] initWithDictionary:cordovaPlist];
-
-    // read from Plugins dict in Cordova.plist in the app bundle
-    NSString* pluginsKey = @"Plugins";
-    NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
-    if (pluginsDict == nil) {
-        NSLog(@"WARNING: %@ key in %@.plist is missing! Cordova will not work, you need to have this key.", pluginsKey, appPlistName);
+    NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        NSLog(@"ERROR: config.xml does not exist");
         return;
     }
 
+    NSURL *url = [NSURL fileURLWithPath:path];
+
+    configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
+    NSLog(@"configParser = %@", configParser);
+    if (configParser == nil) {
+        NSLog(@"Failed to load config.xml.");
+        return;
+    }
+    [configParser setDelegate:((id<NSXMLParserDelegate>)self)];
+    NSLog(@"About to start parsing: %@", url);
+    [configParser parse];
+}
+
+- (void)parserDidEndDocument:(NSXMLParser*)parser
+{
+    // Clone the plugin name dictionary.
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
+    // Build the whitelist from the list of hosts.
+    self.whitelist = [[CDVWhitelist alloc] initWithArray:self.whitelistHosts];
+}
+
+- (void)parser:(NSXMLParser*)parser didStartElement:(NSString*)elementName namespaceURI:(NSString*)namespaceURI qualifiedName:(NSString*)qualifiedName attributes:(NSDictionary*)attributeDict
+{
+    NSLog(@"start of element %@", elementName);
+    if ([elementName isEqualToString:@"preference"]) {
+        NSString* key = [attributeDict objectForKey:@"name"];
+        NSString* value = [attributeDict objectForKey:@"value"];
+        NSLog(@"setting %@ = %@", key, value);
+        [settings setObject:value forKey:key];
+    } else if ([elementName isEqualToString:@"plugin"]) {
+        NSString* key = [attributeDict objectForKey:@"name"];
+        NSString* value = [attributeDict objectForKey:@"value"];
+        NSLog(@"plugin %@ = %@", key, value);
+        [pluginsDict setObject:value forKey:key];
+    } else if ([elementName isEqualToString:@"access"]) {
+        NSString* origin = [attributeDict objectForKey:@"origin"];
+        NSLog(@"whitelisting %@", origin);
+        [whitelistHosts addObject:origin];
+    }
+}
+
+- (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
+{
+    NSLog(@"Parser error");
+    NSAssert(NO, @"config.xml loading error line %d col %d: %@", [parser lineNumber], [parser columnNumber], [parseError localizedDescription]);
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -465,7 +501,7 @@
     // iterate through all the plugin objects, and call hasPendingOperation
     // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
 
-    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
+    NSEnumerator* enumerator = [self.pluginsDict objectEnumerator];
     CDVPlugin* plugin;
 
     BOOL doPurge = YES;
@@ -784,7 +820,7 @@ BOOL gSplashScreenShown = NO;
         [plugin setCommandDelegate:_commandDelegate];
     }
 
-    [self.pluginObjects setObject:plugin forKey:className];
+    [self.pluginsDict setObject:plugin forKey:className];
 }
 
 /**
@@ -803,7 +839,7 @@ BOOL gSplashScreenShown = NO;
         return nil;
     }
 
-    id obj = [self.pluginObjects objectForKey:className];
+    id obj = [self.pluginsDict objectForKey:className];
     if (!obj) {
         // attempt to load the settings for this command class
         NSDictionary* classSettings = [self.settings objectForKey:className];
@@ -952,7 +988,7 @@ BOOL gSplashScreenShown = NO;
     self.webView.delegate = nil;
     self.webView = nil;
     [_commandQueue dispose];
-    [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
+    [[self.pluginsDict allValues] makeObjectsPerformSelector:@selector(dispose)];
 }
 
 @end
