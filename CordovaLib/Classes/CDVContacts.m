@@ -250,10 +250,9 @@
         // if we got this far, user has already approved/ disapproved addressBook access
         ABAddressBookRef addrBook = nil;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-        if (&ABAddressBookCreateWithOptions != NULL) {
-            addrBook = ABAddressBookCreateWithOptions(NULL, NULL);
-        }
-        else
+            if (&ABAddressBookCreateWithOptions != NULL) {
+                addrBook = ABAddressBookCreateWithOptions(NULL, NULL);
+            } else
 #endif
         {
             // iOS 4 & 5
@@ -564,12 +563,12 @@
     ABAddressBookRef addressBook;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-    if (&ABAddressBookCreateWithOptions != NULL) {
-        CFErrorRef error = nil;
-        // CFIndex status = ABAddressBookGetAuthorizationStatus();
-        addressBook = ABAddressBookCreateWithOptions(NULL, &error);
-        // NSLog(@"addressBook access: %lu", status);
-        ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+        if (&ABAddressBookCreateWithOptions != NULL) {
+            CFErrorRef error = nil;
+            // CFIndex status = ABAddressBookGetAuthorizationStatus();
+            addressBook = ABAddressBookCreateWithOptions(NULL, &error);
+            // NSLog(@"addressBook access: %lu", status);
+            ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
                 // callback can occur in background, address book must be accessed on thread it was created on
                 dispatch_sync (dispatch_get_main_queue (), ^{
                         if (error) {
@@ -582,8 +581,7 @@
                         }
                     });
             });
-    }
-    else
+        } else
 #endif
     {
         // iOS 4 or 5 no checks needed

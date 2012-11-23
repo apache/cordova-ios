@@ -19,7 +19,7 @@
 
 #import "CDVWhitelist.h"
 
-NSString * const kCDVDefaultWhitelistRejectionString = @"ERROR whitelist rejection: url='%@'";
+NSString* const kCDVDefaultWhitelistRejectionString = @"ERROR whitelist rejection: url='%@'";
 
 @interface CDVWhitelist ()
 

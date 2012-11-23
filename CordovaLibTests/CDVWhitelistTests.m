@@ -247,14 +247,15 @@
 
 - (void)testWhitelistRejectionString
 {
-    NSArray *allowedHosts = [NSArray arrayWithObject:@"http://www.yahoo.com/"];  // Doesn't matter in this test.
-    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
-    
-    NSURL *testUrl = [NSURL URLWithString:@"http://www/google.com"];
-    NSString *errorString = [whitelist errorStringForURL:testUrl];
-    NSString *expectedErrorString = [NSString stringWithFormat:kCDVDefaultWhitelistRejectionString, [testUrl absoluteString]];
+    NSArray* allowedHosts = [NSArray arrayWithObject:@"http://www.yahoo.com/"];  // Doesn't matter in this test.
+    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+
+    NSURL* testUrl = [NSURL URLWithString:@"http://www/google.com"];
+    NSString* errorString = [whitelist errorStringForURL:testUrl];
+    NSString* expectedErrorString = [NSString stringWithFormat:kCDVDefaultWhitelistRejectionString, [testUrl absoluteString]];
+
     STAssertTrue([expectedErrorString isEqualToString:errorString], @"Default error string has an unexpected value.");
-    
+
     whitelist.whitelistRejectionFormatString = @"Hey, '%@' is, like, bogus man!";
     errorString = [whitelist errorStringForURL:testUrl];
     expectedErrorString = [NSString stringWithFormat:whitelist.whitelistRejectionFormatString, [testUrl absoluteString]];

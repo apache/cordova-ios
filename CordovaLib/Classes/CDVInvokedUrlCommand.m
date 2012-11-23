@@ -84,11 +84,13 @@
     }
 }
 
-- (id)argumentAtIndex:(NSUInteger)index {
+- (id)argumentAtIndex:(NSUInteger)index
+{
     return [self argumentAtIndex:index withDefault:nil];
 }
 
-- (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue {
+- (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue
+{
     if (index >= [_arguments count]) {
         return defaultValue;
     }
@@ -98,4 +100,5 @@
     }
     return ret;
 }
+
 @end
