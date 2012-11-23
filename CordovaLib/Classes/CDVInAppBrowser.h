@@ -46,7 +46,7 @@
 @property (nonatomic, strong) NSString* userAgent;
 
 - (void)close;
-- (void)navigateTo:(NSString*)url;
+- (void)navigateTo:(NSURL*)url;
 - (void)showLocationBar:(BOOL)show;
 
 - (id)initWithUserAgent:(NSString*)userAgent;

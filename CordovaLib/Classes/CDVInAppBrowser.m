@@ -52,21 +52,21 @@
 
 - (void)open:(CDVInvokedUrlCommand*)command
 {
-    NSArray* arguments = command.arguments;
-    int argc = [arguments count];
     CDVPluginResult* pluginResult;
 
-    if (argc > 0) {
-        NSString* url = [arguments objectAtIndex:0];
-        NSString* target = (argc > 1) ? [arguments objectAtIndex:1] : kInAppBrowserTargetSelf;
-        NSString* options = (argc > 2) ? [arguments objectAtIndex:2] : @"";
+    NSString* url = [command argumentAtIndex:0];
+    NSString* target = [command argumentAtIndex:1 withDefault:kInAppBrowserTargetSelf];
+    NSString* options = [command argumentAtIndex:2 withDefault:@""];
 
+    if (url != nil) {
+        NSURL* baseUrl = [self.webView.request URL];
+        NSURL* absoluteUrl = [[NSURL URLWithString:url relativeToURL:baseUrl] absoluteURL];
         if ([target isEqualToString:kInAppBrowserTargetSelf]) {
-            [self openInCordovaWebView:url withOptions:options];
+            [self openInCordovaWebView:absoluteUrl withOptions:options];
         } else if ([target isEqualToString:kInAppBrowserTargetSystem]) {
-            [self openInSystem:url];
+            [self openInSystem:absoluteUrl];
         } else { // _blank or anything else
-            [self openInInAppBrowser:url withOptions:options];
+            [self openInInAppBrowser:absoluteUrl withOptions:options];
         }
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -77,7 +77,7 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)openInInAppBrowser:(NSString*)url withOptions:(NSString*)options
+- (void)openInInAppBrowser:(NSURL*)url withOptions:(NSString*)options
 {
     if (self.inAppBrowserViewController == nil) {
         NSString* originalUA = [self.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
@@ -103,36 +103,33 @@
     [self.inAppBrowserViewController navigateTo:url];
 }
 
-- (void)openInCordovaWebView:(NSString*)url withOptions:(NSString*)options
+- (void)openInCordovaWebView:(NSURL*)url withOptions:(NSString*)options
 {
-    NSURL* urlObj = [NSURL URLWithString:url];
     BOOL passesWhitelist = YES;
 
     if ([self.viewController isKindOfClass:[CDVViewController class]]) {
         CDVViewController* vc = (CDVViewController*)self.viewController;
-        if ([vc.whitelist schemeIsAllowed:[urlObj scheme]]) {
-            passesWhitelist = [vc.whitelist URLIsAllowed:urlObj];
+        if ([vc.whitelist schemeIsAllowed:[url scheme]]) {
+            passesWhitelist = [vc.whitelist URLIsAllowed:url];
         }
     } else { // something went wrong, we can't get the whitelist
         passesWhitelist = NO;
     }
 
     if (passesWhitelist) {
-        NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+        NSURLRequest* request = [NSURLRequest requestWithURL:url];
         [self.webView loadRequest:request];
     } else { // this assumes the InAppBrowser can be excepted from the white-list
         [self openInInAppBrowser:url withOptions:options];
     }
 }
 
-- (void)openInSystem:(NSString*)url
+- (void)openInSystem:(NSURL*)url
 {
-    NSURL* urlObj = [NSURL URLWithString:url];
-
-    if ([[UIApplication sharedApplication] canOpenURL:urlObj]) {
-        [[UIApplication sharedApplication] openURL:urlObj];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url];
     } else { // handle any custom schemes to plugins
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:urlObj]];
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
     }
 }
 
@@ -314,9 +311,9 @@
     }
 }
 
-- (void)navigateTo:(NSString*)url
+- (void)navigateTo:(NSURL*)url
 {
-    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSURLRequest* request = [NSURLRequest requestWithURL:url];
 
     [self.webView loadRequest:request];
 }
