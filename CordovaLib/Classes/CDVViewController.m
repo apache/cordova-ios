@@ -406,33 +406,39 @@
     return [[CDVCordovaView alloc] initWithFrame:bounds];
 }
 
++ (NSString*)originalUserAgent
+{
+    static NSString* originalUserAgent = nil;
+
+    if (originalUserAgent == nil) {
+        NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+        NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+
+        NSString* cordovaUserAgentVersion = [userDefaults stringForKey:CDV_USER_AGENT_VERSION_KEY];
+        originalUserAgent = [userDefaults stringForKey:CDV_USER_AGENT_KEY];
+        BOOL systemVersionChanged = ![systemVersion isEqualToString:cordovaUserAgentVersion];
+
+        if ((originalUserAgent == nil) || systemVersionChanged) {
+            UIWebView* sampleWebView = [[UIWebView alloc] initWithFrame:CGRectZero];
+            originalUserAgent = [sampleWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+
+            [userDefaults setObject:originalUserAgent forKey:CDV_USER_AGENT_KEY];
+            [userDefaults setObject:systemVersion forKey:CDV_USER_AGENT_VERSION_KEY];
+
+            [userDefaults synchronize];
+        }
+    }
+    return originalUserAgent;
+}
+
 - (NSString*)userAgent
 {
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
-
-    NSString* cordovaUserAgentVersion = [userDefaults stringForKey:CDV_USER_AGENT_VERSION_KEY];
-    NSString* cordovaUserAgent = [userDefaults stringForKey:CDV_USER_AGENT_KEY];
-    BOOL systemVersionChanged = ![systemVersion isEqualToString:cordovaUserAgentVersion];
-
-    if ((cordovaUserAgent == nil) || (cordovaUserAgentVersion == nil) || systemVersionChanged) {
-        UIWebView* sampleWebView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        NSString* originalUserAgent = [sampleWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-
-        // generate a GUID to append to the User-Agent
-        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-        CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-        cordovaUserAgent = [NSString stringWithFormat:@"%@ (%@)", originalUserAgent, uuidString];
-        CFRelease(uuidString);
-        CFRelease(uuidRef);
-
-        [userDefaults setObject:cordovaUserAgent forKey:CDV_USER_AGENT_KEY];
-        [userDefaults setObject:systemVersion forKey:CDV_USER_AGENT_VERSION_KEY];
-
-        [userDefaults synchronize];
+    if (_userAgent == nil) {
+        NSString* originalUserAgent = [[self class] originalUserAgent];
+        // Use our address as a unique number to append to the User-Agent.
+        _userAgent = [NSString stringWithFormat:@"%@ (%lld)", originalUserAgent, (long long)self];
     }
-
-    return cordovaUserAgent;
+    return _userAgent;
 }
 
 - (void)createGapView
@@ -525,10 +531,9 @@
     }
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 
-    // The iOSVCAddr is used to identify the WebView instance when using one of the XHR js->native bridge modes.
     // The .onNativeReady().fire() will work when cordova.js is already loaded.
     // The _nativeReady = true; is used when this is run before cordova.js is loaded.
-    NSString* nativeReady = [NSString stringWithFormat:@"cordova.iOSVCAddr='%lld';try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}", (long long)self];
+    NSString* nativeReady = @"try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
     [self.commandDelegate evalJs:nativeReady];
 }
 

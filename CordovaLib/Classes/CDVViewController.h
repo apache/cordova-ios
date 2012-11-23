@@ -32,6 +32,7 @@
 @interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
     @private
     CDVCommandDelegateImpl* _commandDelegate;
+    NSString* _userAgent;
 }
 
 @property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
@@ -51,10 +52,11 @@
 @property (nonatomic, readwrite, copy) NSString* startPage;
 @property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
 @property (nonatomic, readonly, strong) CDVCommandDelegateImpl* commandDelegate;
-@property (nonatomic, readonly, copy) NSString* userAgent;
+@property (nonatomic, readonly) NSString* userAgent;
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;
++ (NSString*)originalUserAgent;
 
 - (void)printMultitaskingInfo;
 - (void)createGapView;

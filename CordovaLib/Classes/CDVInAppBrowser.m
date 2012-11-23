@@ -80,7 +80,7 @@
 - (void)openInInAppBrowser:(NSURL*)url withOptions:(NSString*)options
 {
     if (self.inAppBrowserViewController == nil) {
-        NSString* originalUA = [self.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        NSString* originalUA = [CDVViewController originalUserAgent];
 
         CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
         CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
