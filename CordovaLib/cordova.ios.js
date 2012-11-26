@@ -1,6 +1,6 @@
-// commit 05d4fd03768ee60c0491dc1a908ca5c9e4bc1281
+// commit 05bd1a469fd7964a7eb8363e55a949594afe9353
 
-// File generated at :: Thu Nov 22 2012 21:37:25 GMT-0500 (EST)
+// File generated at :: Mon Nov 26 2012 12:17:55 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
