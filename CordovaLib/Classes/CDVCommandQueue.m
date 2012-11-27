@@ -123,7 +123,7 @@
     CDVPlugin* obj = [_viewController getCommandInstance:command.className];
 
     if (!([obj isKindOfClass:[CDVPlugin class]])) {
-        NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in Cordova.plist.", command.className);
+        NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in config.xml.", command.className);
         return NO;
     }
     BOOL retVal = YES;

@@ -89,7 +89,7 @@ static NSString* gOriginalUserAgent = nil;
         [self printDeprecationNotice];
         self.initialized = YES;
 
-        // load Cordova.plist settings
+        // load config.xml settings
         [self loadSettings];
     }
 }
@@ -138,21 +138,22 @@ static NSString* gOriginalUserAgent = nil;
 {
     CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
 
-    // read from Cordova.plist in the app bundle
+    // read from config.xml in the app bundle
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
+
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSAssert(NO, @"ERROR: config.xml does not exist");
         return;
     }
 
-    NSURL *url = [NSURL fileURLWithPath:path];
+    NSURL* url = [NSURL fileURLWithPath:path];
 
     configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
     if (configParser == nil) {
         NSLog(@"Failed to initialize XML parser.");
         return;
     }
-    [configParser setDelegate:((id<NSXMLParserDelegate>) delegate)];
+    [configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
     [configParser parse];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
@@ -246,7 +247,7 @@ static NSString* gOriginalUserAgent = nil;
     BOOL bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
 
     // prevent webView from bouncing
-    // based on UIWebViewBounce key in Cordova.plist
+    // based on UIWebViewBounce key in config.xml
     if (!bounceAllowed) {
         if ([self.webView respondsToSelector:@selector(scrollView)]) {
             ((UIScrollView*)[self.webView scrollView]).bounces = NO;
