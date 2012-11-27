@@ -51,5 +51,7 @@
 - (id)argumentAtIndex:(NSUInteger)index;
 // Same as above, but returns defaultValue instead of nil.
 - (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue;
+// Same as above, but returns defaultValue instead of nil, and if the argument is not of the expected class, returns defaultValue
+- (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue andClass:(Class)aClass;
 
 @end

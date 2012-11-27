@@ -91,11 +91,19 @@
 
 - (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue
 {
+    return [self argumentAtIndex:index withDefault:defaultValue andClass:nil];
+}
+
+- (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue andClass:(Class)aClass
+{
     if (index >= [_arguments count]) {
         return defaultValue;
     }
     id ret = [_arguments objectAtIndex:index];
     if (ret == [NSNull null]) {
+        ret = defaultValue;
+    }
+    if ((aClass != nil) && ![ret isKindOfClass:aClass]) {
         ret = defaultValue;
     }
     return ret;
