@@ -53,7 +53,7 @@
     [devProps setObject:@"iOS" forKey:@"platform"];
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueAppInstanceIdentifier] forKey:@"uuid"];
-    [devProps setObject:[device name] forKey:@"name"];
+    [devProps setObject:[device model] forKey:@"name"];
     [devProps setObject:[[self class] cordovaVersion] forKey:@"cordova"];
 
     NSDictionary* devReturn = [NSDictionary dictionaryWithDictionary:devProps];
