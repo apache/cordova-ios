@@ -75,7 +75,7 @@
     NSString* callbackId = command.callbackId;
 
     CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
-    CDVContacts* __unsafe_unretained weakSelf = self;  // play it safe to avoid retain cycles
+    CDVContacts* __weak weakSelf = self;  // play it safe to avoid retain cycles
 
     [abHelper createAddressBook: ^(ABAddressBookRef addrBook, CDVAddressBookAccessError * errCode) {
             if (addrBook == NULL) {
@@ -128,7 +128,7 @@
     bool bEdit = [options isKindOfClass:[NSNull class]] ? false : [options existsValue:@"true" forKey:@"allowsEditing"];
 
     CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
-    CDVContacts* __unsafe_unretained weakSelf = self;  // play it safe to avoid retain cycles
+    CDVContacts* __weak weakSelf = self;  // play it safe to avoid retain cycles
 
     [abHelper createAddressBook: ^(ABAddressBookRef addrBook, CDVAddressBookAccessError * errCode) {
             if (addrBook == NULL) {
@@ -288,8 +288,8 @@
             // which is why address book is created within the dispatch queue.
             // more details here: http: //blog.byadrian.net/2012/05/05/ios-addressbook-framework-and-gcd/
             CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
-            CDVContacts* __unsafe_unretained weakSelf = self; // play it safe to avoid retain cycles
-                                                              // it gets uglier, block within block.....
+            CDVContacts* __weak weakSelf = self; // play it safe to avoid retain cycles
+            // it gets uglier, block within block.....
             [abHelper createAddressBook: ^(ABAddressBookRef addrBook, CDVAddressBookAccessError * errCode) {
                     if (addrBook == NULL) {
                         // permission was denied or other error - return error
@@ -384,7 +384,7 @@
 
     [self.commandDelegate runInBackground:^{
             CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
-            CDVContacts* __unsafe_unretained weakSelf = self; // play it safe to avoid retain cycles
+            CDVContacts* __weak weakSelf = self; // play it safe to avoid retain cycles
 
             [abHelper createAddressBook: ^(ABAddressBookRef addrBook, CDVAddressBookAccessError * errorCode) {
                     CDVPluginResult* result = nil;
@@ -455,7 +455,7 @@
     NSNumber* cId = [command.arguments objectAtIndex:0];
 
     CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
-    CDVContacts* __unsafe_unretained weakSelf = self;  // play it safe to avoid retain cycles
+    CDVContacts* __weak weakSelf = self;  // play it safe to avoid retain cycles
 
     [abHelper createAddressBook: ^(ABAddressBookRef addrBook, CDVAddressBookAccessError * errorCode) {
             CDVPluginResult* result = nil;

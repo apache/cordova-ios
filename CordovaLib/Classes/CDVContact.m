@@ -1146,7 +1146,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     if (fields == nil) { // no name fields requested
         return nil;
     }
-    id __unsafe_unretained value;
+    id __weak value;
     NSObject* addresses;
     ABMultiValueRef multi = ABRecordCopyValue(self.record, kABPersonAddressProperty);
     CFIndex count = multi ? ABMultiValueGetCount(multi) : 0;
@@ -1221,7 +1221,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
             NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity:3];
             // iOS has label property (work, home, other) for each IM but W3C contact API doesn't use
             CFDictionaryRef dict = (CFDictionaryRef)ABMultiValueCopyValueAtIndex(multi, i);
-            NSString* __unsafe_unretained value;  // all values should be CFStringRefs / NSString*
+            NSString* __weak value;  // all values should be CFStringRefs / NSString*
             bool bFound;
             if ([fields containsObject:kW3ContactFieldValue]) {
                 // value = user name
@@ -1694,7 +1694,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 
         for (NSString* member in fields) {
             NSString* abKey = [[CDVContact defaultW3CtoAB] valueForKey:member]; // im and address fields are all strings
-            NSString* __unsafe_unretained abValue = nil;
+            NSString* __weak abValue = nil;
             if (abKey) {
                 NSString* testString = nil;
                 if ([member isEqualToString:kW3ContactImType]) {

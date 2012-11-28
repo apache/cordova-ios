@@ -25,7 +25,7 @@
 @interface CDVCommandQueue : NSObject {
     @private
     NSInteger _lastCommandQueueFlushRequestId;
-    __unsafe_unretained CDVViewController* _viewController;
+    __weak CDVViewController* _viewController;
     NSMutableArray* _queue;
     BOOL _currentlyExecuting;
 }
