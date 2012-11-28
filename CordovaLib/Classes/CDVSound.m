@@ -283,7 +283,7 @@
             // bug in AVAudioPlayer when playing downloaded data in NSData - we have to download the file and play from disk
             CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
             CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-            NSString* filePath = [NSString stringWithFormat:@"%@/%@.mp3", [NSTemporaryDirectory ()stringByStandardizingPath], uuidString];
+            NSString* filePath = [NSString stringWithFormat:@"%@/%@", [NSTemporaryDirectory ()stringByStandardizingPath], uuidString];
             CFRelease(uuidString);
             CFRelease(uuidRef);
 
@@ -449,7 +449,7 @@
             }
         }
 
-        if (error != nil || recordingSuccess == NO) {
+        if ((error != nil) || (recordingSuccess == NO)) {
             if (error != nil) {
                 errorMsg = [NSString stringWithFormat:@"Failed to initialize AVAudioRecorder: %@\n", [error localizedFailureReason]];
             } else {
