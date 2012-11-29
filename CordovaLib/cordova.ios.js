@@ -1,6 +1,6 @@
-// commit c46b14085ce80cda5f72d6af22bc22afe4c2151d
+// commit f29591f869db25f7fa52766e4ac5b60ced38a59f
 
-// File generated at :: Mon Nov 26 2012 18:05:56 GMT-0800 (PST)
+// File generated at :: Wed Nov 28 2012 17:33:26 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -3221,18 +3221,55 @@ module.exports = GlobalizationError;
 define("cordova/plugin/InAppBrowser", function(require, exports, module) {
 
 var exec = require('cordova/exec');
+       
+function InAppBrowser()
+{
+   var _channel = require('cordova/channel');
+   this.channels = {
+        'loadstart': _channel.create('loadstart'),
+        'loadstop' : _channel.create('loadstop'),
+        'exit' : _channel.create('exit')
+   };
+}
 
-var InAppBrowser = {
-    open : function(strUrl, strWindowName, strWindowFeatures) {
-        exec(null, null, "InAppBrowser", "open", [strUrl, strWindowName, strWindowFeatures]);
-        return InAppBrowser;
-    },
-    close : function() {
-        exec(null, null, "InAppBrowser", "close", []);
+InAppBrowser.prototype._eventHandler = function(event)
+{
+    if (event.type in this.channels) {
+        this.channels[event.type].fire(event);
     }
-};
+}
+       
+InAppBrowser.open = function(strUrl, strWindowName, strWindowFeatures)
+{
+    var iab = new InAppBrowser();
+    var cb = function(eventname) {
+       iab._eventHandler(eventname);
+    }
+    exec(cb, null, "InAppBrowser", "open", [strUrl, strWindowName, strWindowFeatures]);
+    return iab;
+}
+
+InAppBrowser.prototype.close = function(eventname, f)
+{
+    exec(null, null, "InAppBrowser", "close", []);
+}
+
+InAppBrowser.prototype.addEventListener = function(eventname, f)
+{
+	if (eventname in this.channels) {
+	    this.channels[eventname].subscribe(f);
+	}
+}
+
+InAppBrowser.prototype.removeEventListener = function(eventname, f)
+{
+	if (eventname in this.channels) {
+	    this.channels[eventname].unsubscribe(f);
+	}
+}
 
 module.exports = InAppBrowser.open;
+
 
 });
 
