@@ -23,9 +23,18 @@
 
 @class CDVInAppBrowserViewController;
 
-@interface CDVInAppBrowser : CDVPlugin {}
+@protocol CDVInAppBrowserNavigationDelegate <NSObject>
+
+- (void)browserLoadStart:(NSURL*)url;
+- (void)browserLoadStop:(NSURL*)url;
+- (void)browserExit;
+
+@end
+
+@interface CDVInAppBrowser : CDVPlugin <CDVInAppBrowserNavigationDelegate>{}
 
 @property (nonatomic, retain) CDVInAppBrowserViewController* inAppBrowserViewController;
+@property (nonatomic, copy) NSString* callbackId;
 
 - (void)open:(CDVInvokedUrlCommand*)command;
 - (void)close:(CDVInvokedUrlCommand*)command;
@@ -43,6 +52,7 @@
 @property (nonatomic, strong) IBOutlet UIToolbar* toolbar;
 
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
+@property (nonatomic, weak) id <CDVInAppBrowserNavigationDelegate> navigationDelegate;
 @property (nonatomic, strong) NSString* userAgent;
 
 - (void)close;
