@@ -43,10 +43,16 @@
     return self;
 }
 
+- (void)onReset
+{
+    [self close:nil];
+}
+
 - (void)close:(CDVInvokedUrlCommand*)command
 {
     if (self.inAppBrowserViewController != nil) {
         [self.inAppBrowserViewController close];
+        self.inAppBrowserViewController = nil;
     }
 
     self.callbackId = nil;
@@ -335,6 +341,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.webView loadHTMLString:nil baseURL:nil];
 }
 
 - (void)close
