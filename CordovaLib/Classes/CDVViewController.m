@@ -173,9 +173,9 @@ static NSString* gOriginalUserAgent = nil;
     NSURL* appURL = nil;
     NSString* loadErr = nil;
 
-    if ([self.startPage hasPrefix:@"http://"]) {
+    if ([self.startPage hasPrefix:@"http://"] || [self.startPage hasPrefix:@"https://"]) {
         appURL = [NSURL URLWithString:self.startPage];
-    } else if ([self.wwwFolderName hasPrefix:@"http://"]) {
+    } else if ([self.wwwFolderName hasPrefix:@"http://"] || [self.wwwFolderName hasPrefix:@"https://"]) {
         appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
     } else {
         NSString* startFilePath = [_commandDelegate pathForResource:self.startPage];
