@@ -120,7 +120,7 @@ Check your Xcode Console Log for clues.
 
 This can be because of:
 
-1. You did not add the plugin mapping in __Cordova.plist/Plugins__ (contact the plugin creator for the proper mapping). The __key__ is the service name used in the JavaScript interface and the __value__ is the classname used in the Objective-C interface. Often the key and value are the same.
+1. You did not add the plugin mapping in __config.xml/&lt;plugins&gt;__ (contact the plugin creator for the proper mapping). Add a new child __&lt;plugin&gt;__ tag. The __name__ attribute is the service name used in the JavaScript interface and the __value__ attribute is the classname used in the Objective-C interface. Often the name and value are the same.
 2. You did _not_ add the plugin code as a "group" (__yellow__ folder) but added it as a "folder reference" (blue folder) 
 3. You are having #import problems - see the [Upgrading Cordova iOS](http://docs.cordova.io/en/edge/guide_upgrading_index.md.html) document
 
@@ -130,13 +130,12 @@ This can be because of:
 
 This error occurs because of the new white-list feature in version 1.1.
 
-You will have to add any hosts your app uses or connects to (hostnames/IP addresses only, **without** the protocol nor the path) in __Cordova.plist/ExternalHosts__. Wildcards are supported.
+You will have to add any hosts your app uses or connects to in __config.xml__ as an __&lt;access&gt;__ tag, and set the __origin___ attribute. Wildcards are supported.
 
 This includes external http/https/ftp/ftps links in:
 
 1. HTML anchor tags
 2. connections in JavaScript (i.e through XMLHttpRequest)
-3. connections through Objective-C plugins 
   
 <br />
 
