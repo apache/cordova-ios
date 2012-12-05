@@ -142,7 +142,7 @@ static NSString* gOriginalUserAgent = nil;
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        NSAssert(NO, @"ERROR: config.xml does not exist");
+        NSAssert(NO, @"ERROR: config.xml does not exist. Please run cordova-ios/bin/cordova_plist_to_config_xml path/to/project.");
         return;
     }
 
