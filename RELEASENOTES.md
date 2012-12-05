@@ -68,9 +68,9 @@
 * [CB-1694] View controller not properly unregistered in CDVURLProtocol
 * [CB-1698] Remove WebScriptDebugDelegate.h
 * [CB-1746] IOS events onAppWillResignActive and onAppDidEnterBackground do not execute JS until after app is launched again.
-* [GH-PR-54]Update CDVDebug.h with better logging tools (https://github.com/apache/incubator-cordova-ios/pull/54 )
-* [GH-PR-55] Removing useless NSLog (https://github.com/apache/incubator-cordova-ios/pull/55)
-* [GH-PR-59] Fixed two bugs in CDVFileTransfer concerning file uploads (https://github.com/apache/incubator-cordova-ios/pull/59)
+* [GH-PR-54]Update CDVDebug.h with better logging tools (https://github.com/apache/cordova-ios/pull/54 )
+* [GH-PR-55] Removing useless NSLog (https://github.com/apache/cordova-ios/pull/55)
+* [GH-PR-59] Fixed two bugs in CDVFileTransfer concerning file uploads (https://github.com/apache/cordova-ios/pull/59)
 * Added CDV\_IsIPhone5 macro
 * Add uncrustify config and script for auto-formatting code.
 * Add git hook that runs uncrustify before commits.

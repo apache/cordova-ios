@@ -90,7 +90,7 @@ It will ask you to confirm whether you want to delete the installed CordovaLib d
 Unit Tests
 --------------------------------------------------------------------
 1. **Create** a new Cordova-based Application project
-2. **Download** the code from the **[mobile-spec](https://github.com/apache/incubator-cordova-mobile-spec)** and put all of it in the root of your **www** folder
+2. **Download** the code from the **[mobile-spec](https://github.com/apache/cordova-mobile-spec)** and put all of it in the root of your **www** folder
 3. **Modify cordova.js** to point to your correct cordova-X.X.X.js version
 4. **Run** the project
 

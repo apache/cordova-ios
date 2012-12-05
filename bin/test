@@ -34,7 +34,7 @@ TESTDIR=$BINDIR/mobile-spec-test
 echo "TESTDIR" $SCRIPT
 
 # get the latest mobile-spec
-git clone git://github.com/apache/incubator-cordova-mobile-spec.git $BINDIR/mobile-spec
+git clone git://github.com/apache/cordova-mobile-spec.git $BINDIR/mobile-spec
 
 # clobber test if it exists
 if [ -e $TESTDIR ]

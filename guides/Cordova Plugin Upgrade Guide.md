@@ -46,7 +46,7 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 
         - (void) myMethod:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-    Basically, the options dictionary has been removed for the new signature, and the callbackId is not the 0th index item for the arguments array, but it is now in a separate property. View [CDVInvokedUrlCommand.h](https://github.com/apache/incubator-cordova-ios/blob/master/CordovaLib/Classes/CDVInvokedUrlCommand.h)
+    Basically, the options dictionary has been removed for the new signature, and the callbackId is not the 0th index item for the arguments array, but it is now in a separate property. View [CDVInvokedUrlCommand.h](https://github.com/apache/cordova-ios/blob/master/CordovaLib/Classes/CDVInvokedUrlCommand.h)
     
 ## Upgrading older Cordova plugins to 2.0.0 ##
 
@@ -135,7 +135,7 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 
 1. The UIViewController returned from the **viewController property** will be a CDVViewController subclass.
 2. The **appDelegate method** basically returns an (id) now, and is the same as calling **[[UIApplication sharedApplication] delegate]**. In the past it returned a PhoneGapDelegate class.
-3. There is a new **commandDelegate property** now, which gives access to the [CDVCommandDelegate protocol](https://github.com/apache/incubator-cordova-ios/blob/master/CordovaLib/Classes/CDVCommandDelegate.h) used by the app
+3. There is a new **commandDelegate property** now, which gives access to the [CDVCommandDelegate protocol](https://github.com/apache/cordova-ios/blob/master/CordovaLib/Classes/CDVCommandDelegate.h) used by the app
 4. There is a new header file **CDVAvailability.h** that defines Cordova versions during compile time - to check for the current version during run-time, call **[CDVViewController cordovaVersion]**
 
 
