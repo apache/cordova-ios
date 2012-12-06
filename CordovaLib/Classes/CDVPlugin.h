@@ -25,6 +25,7 @@
 
 #define CDVPluginHandleOpenURLNotification @"CDVPluginHandleOpenURLNotification"
 #define CDVPluginResetNotification @"CDVPluginResetNotification"
+#define CDVLocalNotification @"CDVLocalNotification"
 
 @interface CDVPlugin : NSObject {}
 
@@ -50,6 +51,7 @@
  - (void) onResume {}
  - (void) onOrientationWillChange {}
  - (void) onOrientationDidChange {}
+ - (void)didReceiveLocalNotification:(NSNotification *)notification;
  */
 
 - (id)appDelegate;
