@@ -251,7 +251,7 @@
         // iOS 4.0
         if ([pickerController respondsToSelector:@selector(cameraCaptureMode)]) {
             pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
-            pickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+            // pickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
