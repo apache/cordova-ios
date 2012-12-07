@@ -33,7 +33,22 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        // Uncomment to override the CDVCommandDelegateImpl used
+        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // Uncomment to override the CDVCommandQueue used
+        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+    }
+    return self;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        // Uncomment to override the CDVCommandDelegateImpl used
+        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // Uncomment to override the CDVCommandQueue used
+        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -84,32 +99,6 @@
 }
 */
 
-/* Comment out the block below to over-ride */
-
-/*
-#pragma CDVCommandDelegate implementation
-
-- (id) getCommandInstance:(NSString*)className
-{
-    return [super getCommandInstance:className];
-}
-
-- (BOOL) execute:(CDVInvokedUrlCommand*)command
-{
-    return [super execute:command];
-}
-
-- (NSString*) pathForResource:(NSString*)resourcepath;
-{
-    return [super pathForResource:resourcepath];
-}
-
-- (void) registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
-{
-    return [super registerPlugin:plugin withClassName:className];
-}
-*/
-
 #pragma UIWebDelegate implementation
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
@@ -139,5 +128,47 @@
     return [super webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 */
+
+@end
+
+@implementation MainCommandDelegate
+
+/* To override the methods, uncomment the line in the init function(s)
+   in MainViewController.m
+ */
+
+#pragma CDVCommandDelegate implementation
+
+- (id)getCommandInstance:(NSString*)className
+{
+    return [super getCommandInstance:className];
+}
+
+/*
+   NOTE: this will only inspect execute calls coming explicitly from native plugins,
+   not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
+   MainCommandQueue below
+*/
+- (BOOL)execute:(CDVInvokedUrlCommand*)command
+{
+    return [super execute:command];
+}
+
+- (NSString*)pathForResource:(NSString*)resourcepath;
+{
+    return [super pathForResource:resourcepath];
+}
+
+@end
+
+@implementation MainCommandQueue
+
+/* To override, uncomment the line in the init function(s)
+   in MainViewController.m
+ */
+- (BOOL)execute:(CDVInvokedUrlCommand*)command
+{
+    return [super execute:command];
+}
 
 @end

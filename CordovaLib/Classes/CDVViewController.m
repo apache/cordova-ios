@@ -53,6 +53,7 @@ static NSString* gOriginalUserAgent = nil;
 @synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, invokeString, initialized;
 @synthesize commandDelegate = _commandDelegate;
+@synthesize commandQueue = _commandQueue;
 
 - (void)__init
 {
@@ -178,7 +179,7 @@ static NSString* gOriginalUserAgent = nil;
     } else if ([self.wwwFolderName rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
     } else {
-        NSString* startFilePath = [_commandDelegate pathForResource:self.startPage];
+        NSString* startFilePath = [self.commandDelegate pathForResource:self.startPage];
         if (startFilePath == nil) {
             loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
@@ -226,7 +227,7 @@ static NSString* gOriginalUserAgent = nil;
      */
 
     if ([enableLocation boolValue]) {
-        [[self getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
+        [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
     }
 
     /*

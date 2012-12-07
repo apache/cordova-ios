@@ -21,6 +21,7 @@
 #import "CDV.h"
 #import "CDVCommandQueue.h"
 #import "CDVViewController.h"
+#import "CDVCommandDelegateImpl.h"
 
 @implementation CDVCommandQueue
 
@@ -120,7 +121,7 @@
     }
 
     // Fetch an instance of this class
-    CDVPlugin* obj = [_viewController getCommandInstance:command.className];
+    CDVPlugin* obj = [_viewController.commandDelegate getCommandInstance:command.className];
 
     if (!([obj isKindOfClass:[CDVPlugin class]])) {
         NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in config.xml.", command.className);
