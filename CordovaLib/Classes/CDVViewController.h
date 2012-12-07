@@ -74,4 +74,6 @@
 - (id)getCommandInstance:(NSString*)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 
+- (BOOL)URLisAllowed:(NSURL*)url;
+
 @end

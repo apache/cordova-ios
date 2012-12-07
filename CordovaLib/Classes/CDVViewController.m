@@ -135,6 +135,15 @@ static NSString* gOriginalUserAgent = nil;
     NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported ? @"YES" : @"NO"), (![exitsOnSuspend intValue]) ? @"YES" : @"NO");
 }
 
+- (BOOL)URLisAllowed:(NSURL*)url
+{
+    if (self.whitelist == nil) {
+        return YES;
+    }
+
+    return [self.whitelist URLIsAllowed:url];
+}
+
 - (void)loadSettings
 {
     CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
