@@ -215,6 +215,6 @@ File them at the [Cordova Issue Tracker](https://issues.apache.org/jira/browse/C
 
 MORE INFO
 ----------
-* [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/)
+* [http://cordova.apache.org/](http://cordova.apache.org/)
 
 <br />

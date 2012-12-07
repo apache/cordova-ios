@@ -58,7 +58,7 @@ That's it! Modify the contents of the "www" directory to add your HTML, CSS and 
 
 ## Links
 
-* [http://incubator.apache.org/cordova/](http://incubator.apache.org/cordova/)
+* [http://cordova.apache.org/](http://cordova.apache.org/)
 
 
 <br />
