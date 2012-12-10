@@ -22,6 +22,67 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+ ### 2.3.0 (201212XX) ###
+
+* [CB-1550] iOS build, debug, emulate scripts should check xcode version
+* [CB-1669] Issue an error when media.startRecord() is failing.
+* [CB-1695] CDVURLProtocol should not apply whitelist to non-Cordova view controllers/requests
+* [CB-1802] ./cordova set of CLI tools need audit to work with paths with spaces
+* [CB-1824] SIGABRT when view loads - reason: -[NSCFBoolean isEqualToString:]: unrecognized selector
+* [CB-1836] Device core plugin - device.platform should return "iOS"
+* [CB-1837] Device core plugin - device.name should return the actual device string (eg iPod Touch, iPhone)
+* [CB-1850] Add device.model to the Device API
+* [CB-1889] Added userAgent property to CDVViewController (systemVersion and locale dependent, cached)
+* [CB-1890] InAppBrowser: location bar url text needs indentation
+* [CB-1949][iOS] InAppBrowser - support events (loadstart, loadstop, exit)
+* [CB-1957] InAppBrowser - video/audio does not stop playing when browser is closed
+* [CB-1962] Video Capture not compressing video after capture - partial revert of CB-1499
+* [CB-1970] MainViewController cannot override pathForResource
+* Fix unit tests not working due to lack of a command delegate.
+* Fix not being able to seek to position 0.
+* Move cordova-VERSION.js from bin/templates to CordovaLib.
+* Add version number to cordova.ios.js in create script.
+* Add argument fetching helpers to CDVInvokedUrlCommand.
+* Fix InAppBrowser handling of NSNull relative URLS.
+* Use the VC's address in the User-Agent instead of a GUID.
+* Have the InAppBrowser not use a GUID in its UA.
+* Update cordova.ios.js with change to not require cordove.iOSVCAddr
+* Fix invalidating of cached UA when Locale changes with the app closed.
+* Add a helper script to convert Cordova.plist to config.xml.
+* Rename plist2xml.py -> cordova_plist_to_config_xml.
+* Mention cordova_plist_to_config_xml in the NSAssert for config.xml
+* Allow any scheme when specifying start page as a URL.
+* Rename cordova commands, added 'release' command for iOS
+* Remove template Cordova.plist, add config.xml.
+* Remove Cordova.plist from resources, add config.xml
+* Migrate unit tests to use config.xml.
+* Make whitelist rejection string configurable
+* Remove setWantsFullScreenLayout from CDVViewController, simplified viewWillAppear in template app.
+* Remove forced status bar rotation logic
+* Fix autoresizingMask of imageView
+* Support startPage as URL.
+* Update __bin/diagnose_project__ to print out conditional ARCHs build settings.
+* Update deprecation notice for our minimum iOS 5.0 support
+* Fix deprecated [AVAsset naturalSize] usage in Capture API (getFormatData)
+* Add CDVInAppBrowser implementation.
+* InAppBrowser - pass on window options for \_self if url is not in the whitelist (which is kicked out to the InAppBrowser)
+* CordovaLibAppTest -- Added Globalization, InAppBrowser plugins to Cordova.plist
+* Default project template -- Added InAppBrowser plugin to Cordova.plist
+* InAppBrowser - append GUID to the UIWebView UserAgent to differentiate the different instances (for the white-list)
+* Update fix to CB-1695 - the main Cordova UIWebView has a unique User-Agent now.
+* Update default project template to include config.xml, removed Cordova.plist
+* Rename references of Cordova.plist to config.xml (plus uncrustify)
+* Add new CDVInvokedUrlCommand argumentAtIndex method to ensure proper object type returned (if not, default is returned)
+* Fix non-mp3 files not being able to be played using the Media API
+* Remove usage of deprecated CDVViewController.invokeString in the default project template files.
+* Change unsafe_unretained to weak since we are supporting iOS 5.0 and up only now
+* Update doc references to Cordova.plist, use new config.xml
+* Remove incubator website links to TLP http://cordova.apache.org/
+* Add URLisAllowed method abstraction for Plugins to query (easier if we decide to make the whitelist a singleton in the future)
+* Add local notification #define, and stubbed method in AppDelegate.m
+* Add appdelegate method didReceiveLocalNotification and repost to NSNotification defaultCenter
+
+
  ### 2.2.0 (20121031) ###
 
 * [CB-622] FileTransfer interface should provide progress monitoring
