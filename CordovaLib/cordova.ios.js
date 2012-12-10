@@ -1,6 +1,6 @@
-// commit f29591f869db25f7fa52766e4ac5b60ced38a59f
+// commit 861ff3d507fd5c64ed789d8abe360690e588252e
 
-// File generated at :: Wed Nov 28 2012 17:33:26 GMT-0800 (PST)
+// File generated at :: Mon Dec 10 2012 15:38:02 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -3221,7 +3221,7 @@ module.exports = GlobalizationError;
 define("cordova/plugin/InAppBrowser", function(require, exports, module) {
 
 var exec = require('cordova/exec');
-       
+
 function InAppBrowser()
 {
    var _channel = require('cordova/channel');
@@ -3238,7 +3238,7 @@ InAppBrowser.prototype._eventHandler = function(event)
         this.channels[event.type].fire(event);
     }
 }
-       
+
 InAppBrowser.open = function(strUrl, strWindowName, strWindowFeatures)
 {
     var iab = new InAppBrowser();
@@ -3256,16 +3256,16 @@ InAppBrowser.prototype.close = function(eventname, f)
 
 InAppBrowser.prototype.addEventListener = function(eventname, f)
 {
-	if (eventname in this.channels) {
-	    this.channels[eventname].subscribe(f);
-	}
+    if (eventname in this.channels) {
+        this.channels[eventname].subscribe(f);
+    }
 }
 
 InAppBrowser.prototype.removeEventListener = function(eventname, f)
 {
-	if (eventname in this.channels) {
-	    this.channels[eventname].unsubscribe(f);
-	}
+    if (eventname in this.channels) {
+        this.channels[eventname].unsubscribe(f);
+    }
 }
 
 module.exports = InAppBrowser.open;
