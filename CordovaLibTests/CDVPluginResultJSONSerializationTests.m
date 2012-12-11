@@ -46,6 +46,15 @@
     STAssertTrue([[NSNumber numberWithDouble:5.5] isEqual:message], nil);
 }
 
+- (void)testSerializingMessageAsBool
+{
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES];
+    NSDictionary *dic = [[result toJSONString] cdvjk_objectFromJSONString];
+    NSNumber *message = [dic objectForKey:@"message"];
+    
+    STAssertTrue([[NSNumber numberWithBool:YES] isEqual:message], nil);
+}
+
 - (void)testSerializingMessageAsArray
 {
     NSArray* testValues = [NSArray arrayWithObjects:
