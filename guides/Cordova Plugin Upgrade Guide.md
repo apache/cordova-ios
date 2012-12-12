@@ -22,6 +22,29 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+## Upgrading older Cordova plugins to 2.3.0 ##
+
+1. **Install** Cordova 2.3.0
+2. Follow the **"Upgrading older Cordova plugins to 2.2.0"** section, if necessary
+3. Network connections by plugins are **no longer checked** by the whitelist. To use the whitelist for your plugin network connections, you have to set the "User-Agent" header of your connection to the user-agent of the viewController.
+
+        CDVViewController* vc = ((CDVViewController*)self.viewController);
+        NSString* userAgent = vc.userAgent;
+        // then set the User-Agent header of your network connection...
+        
+4. After that, you can **query the whitelist** to see if your URL will pass it:
+
+        CDVViewController* vc = ((CDVViewController*)self.viewController);
+        BOOL passesWhitelist = [vc URLisAllowed:[NSURL URLWithString:@"http://apache.org"]];
+
+## Upgrading older Cordova plugins to 2.2.0 ##
+
+1. **Install** Cordova 2.2.0
+2. Follow the **"Upgrading older Cordova plugins to 2.1.0"** section, if necessary
+3. You don't need to create and write the javascript anymore. At the end of your plugin method, just send the CDVPluginResult and callbackId to your commandDelegate:
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
 ## Upgrading older Cordova plugins to 2.1.0 ##
 
 1. **Install** Cordova 2.1.0
