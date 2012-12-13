@@ -24,13 +24,13 @@ In Cordova 2.1.0 for iOS, we changed the default bridge mode from using an **ifr
 
 In iOS 4.2.1 however, Cordova defaults back to **iframe** mode because of [a bug](https://issues.apache.org/jira/browse/CB-1296)
 
-To change the bridge mode back to the **iframe** method, do this in your **deviceready** hander:
+To change the bridge mode back to the **xhr** method, do this in your **deviceready** hander:
 
         var exec = cordova.require('cordova/exec');
         exec.setJsToNativeBridgeMode(exec.jsToNativeModes.XHR_OPTIONAL_PAYLOAD);
 
 
-To change the bridge mode back to the **xhr** method:
+To change the bridge mode back to the **iframe** method:
 
         var exec = cordova.require('cordova/exec');
         exec.setJsToNativeBridgeMode(exec.jsToNativeModes.IFRAME_NAV);
