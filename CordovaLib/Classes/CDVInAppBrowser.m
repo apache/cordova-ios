@@ -103,6 +103,28 @@
     CDVInAppBrowserOptions* browserOptions = [CDVInAppBrowserOptions parseOptions:options];
     [self.inAppBrowserViewController showLocationBar:browserOptions.location];
 
+    // Set Presentation Style
+    UIModalPresentationStyle presentationStyle = UIModalPresentationFullScreen; // default
+    if (browserOptions.presentationstyle != nil) {
+        if ([browserOptions.presentationstyle isEqualToString:@"pagesheet"]) {
+            presentationStyle = UIModalPresentationPageSheet;
+        } else if ([browserOptions.presentationstyle isEqualToString:@"formsheet"]) {
+            presentationStyle = UIModalPresentationFormSheet;
+        }
+    }
+    self.inAppBrowserViewController.modalPresentationStyle = presentationStyle;
+
+    // Set Transition Style
+    UIModalTransitionStyle transitionStyle = UIModalTransitionStyleCoverVertical; // default
+    if (browserOptions.transitionstyle != nil) {
+        if ([browserOptions.transitionstyle isEqualToString:@"fliphorizontal"]) {
+            transitionStyle = UIModalTransitionStyleFlipHorizontal;
+        } else if ([browserOptions.transitionstyle isEqualToString:@"crossdissolve"]) {
+            transitionStyle = UIModalTransitionStyleCrossDissolve;
+        }
+    }
+    self.inAppBrowserViewController.modalTransitionStyle = transitionStyle;
+
     if (self.viewController.modalViewController != self.inAppBrowserViewController) {
         [self.viewController presentModalViewController:self.inAppBrowserViewController animated:YES];
     }
@@ -477,12 +499,22 @@
 
         if ([keyvalue count] == 2) {
             NSString* key = [[keyvalue objectAtIndex:0] lowercaseString];
-            NSString* value = [keyvalue objectAtIndex:1];
-            BOOL valueBool = [[value lowercaseString] isEqualToString:@"yes"];
+            NSString* value = [[keyvalue objectAtIndex:1] lowercaseString];
+
+            BOOL isBoolean = [value isEqualToString:@"yes"] || [value isEqualToString:@"no"];
+            NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
+            [numberFormatter setAllowsFloats:YES];
+            BOOL isNumber = [numberFormatter numberFromString:value] != nil;
 
             // set the property according to the key name
             if ([obj respondsToSelector:NSSelectorFromString(key)]) {
-                [obj setValue:[NSNumber numberWithBool:valueBool] forKey:key];
+                if (isNumber) {
+                    [obj setValue:[numberFormatter numberFromString:value] forKey:key];
+                } else if (isBoolean) {
+                    [obj setValue:[NSNumber numberWithBool:[value isEqualToString:@"yes"]] forKey:key];
+                } else {
+                    [obj setValue:value forKey:key];
+                }
             }
         }
     }
