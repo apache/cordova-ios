@@ -61,7 +61,7 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - View lifecycle
+#pragma mark View lifecycle
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -99,7 +99,7 @@
 }
 */
 
-#pragma UIWebDelegate implementation
+#pragma mark UIWebDelegate implementation
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
@@ -137,7 +137,7 @@
    in MainViewController.m
  */
 
-#pragma CDVCommandDelegate implementation
+#pragma mark CDVCommandDelegate implementation
 
 - (id)getCommandInstance:(NSString*)className
 {

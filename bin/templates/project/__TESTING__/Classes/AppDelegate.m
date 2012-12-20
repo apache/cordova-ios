@@ -47,7 +47,7 @@
     return self;
 }
 
-#pragma UIApplicationDelegate implementation
+#pragma mark UIApplicationDelegate implementation
 
 /**
  * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
@@ -92,8 +92,8 @@
 }
 
 // repost the localnotification using the default NSNotificationCenter so multiple plugins may respond
-- (void)application:(UIApplication *)application
-didReceiveLocalNotification:(UILocalNotification *)notification
+- (void)           application:(UIApplication*)application
+   didReceiveLocalNotification:(UILocalNotification*)notification
 {
     // re-post ( broadcast )
     [[NSNotificationCenter defaultCenter] postNotificationName:CDVLocalNotification object:notification];
