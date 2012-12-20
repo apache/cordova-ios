@@ -1,6 +1,6 @@
-// commit 861ff3d507fd5c64ed789d8abe360690e588252e
+// commit 2226b097a5249be30da3f98789860296b2326c65
 
-// File generated at :: Mon Dec 10 2012 15:38:02 GMT-0800 (PST)
+// File generated at :: Thu Dec 20 2012 15:06:05 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -5993,12 +5993,12 @@ window.cordova = require('cordova');
 
                     // Drop the common globals into the window object, but be nice and don't overwrite anything.
                     builder.buildIntoButDoNotClobber(base.defaults, context);
-                    builder.buildIntoAndMerge(base.merges, context);
                     builder.buildIntoAndClobber(base.clobbers, context);
+                    builder.buildIntoAndMerge(base.merges, context);
 
                     builder.buildIntoButDoNotClobber(platform.defaults, context);
-                    builder.buildIntoAndMerge(platform.merges, context);
                     builder.buildIntoAndClobber(platform.clobbers, context);
+                    builder.buildIntoAndMerge(platform.merges, context);
 
                     // Call the platform-specific initialization
                     platform.initialize();
