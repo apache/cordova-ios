@@ -302,6 +302,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     if (delegate != nil) {
         [delegate.connection cancel];
         [activeTransfers removeObjectForKey:objectId];
+        
+        //delete uncomplete file    
+        NSFileManager *fileMgr = [NSFileManager defaultManager];
+        [fileMgr removeItemAtPath:delegate.target error:nil];
 
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
         [self.commandDelegate sendPluginResult:result callbackId:delegate.callbackId];
