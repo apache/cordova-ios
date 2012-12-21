@@ -187,6 +187,17 @@ static NSSet* org_apache_cordova_validArrowDirections;
                                                                animated:YES];
 }
 
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    if([navigationController isKindOfClass:[UIImagePickerController class]]){
+        UIImagePickerController * cameraPicker = (UIImagePickerController*)navigationController;
+        
+        if(![cameraPicker.mediaTypes containsObject:(NSString*) kUTTypeImage]){
+            [viewController.navigationItem setTitle:@"Videos"];
+        }
+    }
+}
+
 - (void)cleanup:(CDVInvokedUrlCommand*)command
 {
     // empty the tmp directory
