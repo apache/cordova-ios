@@ -343,9 +343,10 @@
     [super viewDidLoad];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
+- (void)viewDidUnload
 {
     [self.webView loadHTMLString:nil baseURL:nil];
+    [super viewDidUnload];
 }
 
 - (void)close
