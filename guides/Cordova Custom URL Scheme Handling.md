@@ -34,7 +34,7 @@ For an iOS app, you can add a URL Scheme handler in your app's Info.plist so tha
         
 You **cannot** launch any interactive features like alerts in the **handleOpenURL** code, if you do, your app will hang. Similarly, you should not call any Cordova APIs in there, unless you wrap it first in a setTimeout call, with a timeout value of zero:
 
-        function handleOpenUrl(url) {
+        function handleOpenURL(url) {
              // TODO: parse the url, and do something 
              setTimeout(function() {
                  // TODO: call some Cordova API here
