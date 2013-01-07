@@ -921,7 +921,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         start = [[command.arguments objectAtIndex:2] integerValue];
     }
     if ([command.arguments count] >= 4) {
-        end = [[command.argument objectAtIndex:3] integerValue];
+        end = [[command.arguments objectAtIndex:3] integerValue];
     }
 
     // NSString* encoding = [command.arguments objectAtIndex:2];   // not currently used
@@ -970,6 +970,14 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 {
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
+    NSInteger start = 0;
+    NSInteger end = -1;
+    if ([command.arguments count] >= 2) {
+        start = [[command.arguments objectAtIndex:1] integerValue];
+    }
+    if ([command.arguments count] >= 3) {
+        end = [[command.arguments objectAtIndex:2] integerValue];
+    }
 
     CDVFileError errCode = ABORT_ERR;
     CDVPluginResult* result = nil;
@@ -983,7 +991,17 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             errCode = ENCODING_ERR;
         } else {
             NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:argPath];
-            NSData* readData = [file readDataToEndOfFile];
+            if (start > 0) {
+                [file seekToFileOffset:start];
+            }
+
+            NSData* readData;
+            if (end < 0) {
+                readData = [file readDataToEndOfFile];
+            } else {
+                readData = [file readDataOfLength:(end - start)];
+            }
+
             [file closeFile];
             if (readData) {
                 NSString* output = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, [readData base64EncodedString]];
