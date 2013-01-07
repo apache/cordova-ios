@@ -908,11 +908,22 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  * NSArray* arguments
  *	0 - NSString* fullPath
  *	1 - NSString* encoding - NOT USED,  iOS reads and writes using UTF8!
+ *	2 - NSString* start - OPTIONAL, only provided when not == 0.
+ *	3 - NSString* end - OPTIONAL, only provided when not == length.
  */
 - (void)readAsText:(CDVInvokedUrlCommand*)command
 {
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
+    NSInteger start = 0;
+    NSInteger end = -1;
+    if ([command.arguments count] >= 3) {
+        start = [[command.arguments objectAtIndex:2] integerValue];
+    }
+    if ([command.arguments count] >= 4) {
+        end = [[command.argument objectAtIndex:3] integerValue];
+    }
+
     // NSString* encoding = [command.arguments objectAtIndex:2];   // not currently used
     CDVPluginResult* result = nil;
 
@@ -922,7 +933,16 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         // invalid path entry
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
     } else {
-        NSData* readData = [file readDataToEndOfFile];
+        if (start > 0) {
+            [file seekToFileOffset:start];
+        }
+
+        NSData* readData;
+        if (end < 0) {
+            readData = [file readDataToEndOfFile];
+        } else {
+            readData = [file readDataOfLength:(end - start)];
+        }
 
         [file closeFile];
         NSString* pNStrBuff = nil;
