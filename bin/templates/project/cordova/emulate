@@ -41,7 +41,7 @@ fi
 
 if [ ! -d "$APP_PATH" ]; then
 	echo "Project '$APP_PATH' is not built. Building."
-    $CORDOVA_PATH/debug || exit $?
+    $CORDOVA_PATH/build || exit $?
 fi
 
 if [ ! -d "$APP_PATH" ]; then
