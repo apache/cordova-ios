@@ -73,6 +73,8 @@ def FindPlistFile(search_path):
 
 
 def ConvertPlist(src_path, dst_path):
+  # Run it through plutil to ensure it's not a binary plist.
+  os.system("plutil -convert xml1 '%s'" % src_path)
   plist = plistlib.readPlist(src_path)
   root = ElementTree.Element('cordova')
 
