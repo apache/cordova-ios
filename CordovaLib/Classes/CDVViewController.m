@@ -72,12 +72,10 @@ static NSString* gOriginalUserAgent = nil;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppLocaleDidChange:)
                                                      name:NSCurrentLocaleDidChangeNotification object:nil];
 
-        if (IsAtLeastiOSVersion(@"4.0")) {
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:)
-                                                         name:UIApplicationWillEnterForegroundNotification object:nil];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
-                                                         name:UIApplicationDidEnterBackgroundNotification object:nil];
-        }
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:)
+                                                     name:UIApplicationWillEnterForegroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
+                                                     name:UIApplicationDidEnterBackgroundNotification object:nil];
 
         // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
         self.supportedOrientations = [self parseInterfaceOrientations:
@@ -409,21 +407,6 @@ static NSString* gOriginalUserAgent = nil;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation
 {
     return [self.supportedOrientations containsObject:[NSNumber numberWithInt:orientation]];
-}
-
-/**
- Called by UIKit when the device starts to rotate to a new orientation.  This fires the \c setOrientation
- method on the Orientation object in JavaScript.  Look at the JavaScript documentation for more information.
- */
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    if (!IsAtLeastiOSVersion(@"5.0")) {
-        NSString* jsCallback = [NSString stringWithFormat:
-            @"window.__defineGetter__('orientation',function(){ return %d; }); \
-                                  cordova.fireWindowEvent('orientationchange');"
-            , [self mapIosOrientationToJsOrientation:fromInterfaceOrientation]];
-        [self.commandDelegate evalJs:jsCallback];
-    }
 }
 
 - (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds

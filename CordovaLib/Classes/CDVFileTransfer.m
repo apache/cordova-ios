@@ -134,13 +134,6 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     BOOL chunkedMode = [[arguments objectAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
     NSDictionary* headers = [arguments objectAtIndex:8 withDefault:nil];
 
-    // CFStreamCreateBoundPair crashes on iOS < 5.
-    if (!IsAtLeastiOSVersion(@"5")) {
-        // TODO(agrieve): See if it's okay license-wise to include the work-around code from:
-        // http://developer.apple.com/library/ios/#samplecode/SimpleURLConnections/Listings/PostController_m.html
-        chunkedMode = NO;
-    }
-
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
@@ -302,9 +295,9 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     if (delegate != nil) {
         [delegate.connection cancel];
         [activeTransfers removeObjectForKey:objectId];
-        
-        //delete uncomplete file    
-        NSFileManager *fileMgr = [NSFileManager defaultManager];
+
+        // delete uncomplete file
+        NSFileManager* fileMgr = [NSFileManager defaultManager];
         [fileMgr removeItemAtPath:delegate.target error:nil];
 
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
