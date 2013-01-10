@@ -17,8 +17,7 @@
  under the License.
  */
 
-#import "CDVCordovaView.h"
-
+#import <UIKit/UIKit.h>
 #import "JSONKit.h"
 #import "CDVAvailability.h"
 #import "CDVInvokedUrlCommand.h"
@@ -37,7 +36,7 @@
     NSString* _userAgent;
 }
 
-@property (nonatomic, strong) IBOutlet CDVCordovaView* webView;
+@property (nonatomic, strong) IBOutlet UIWebView* webView;
 
 @property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
@@ -62,7 +61,7 @@
 
 - (void)printMultitaskingInfo;
 - (void)createGapView;
-- (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds;
+- (UIWebView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 - (void)javascriptAlert:(NSString*)text;
 - (NSString*)appURLScheme;

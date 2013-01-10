@@ -409,9 +409,9 @@ static NSString* gOriginalUserAgent = nil;
     return [self.supportedOrientations containsObject:[NSNumber numberWithInt:orientation]];
 }
 
-- (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds
+- (UIWebView*)newCordovaViewWithFrame:(CGRect)bounds
 {
-    return [[CDVCordovaView alloc] initWithFrame:bounds];
+    return [[UIWebView alloc] initWithFrame:bounds];
 }
 
 + (NSString*)originalUserAgent

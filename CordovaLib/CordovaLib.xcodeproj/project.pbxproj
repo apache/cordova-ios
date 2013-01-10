@@ -46,8 +46,6 @@
 		3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8852C43A14B65FD800F0E735 /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852C43614B65FD800F0E735 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8852C43714B65FD800F0E735 /* CDVViewController.m */; };
-		8852C43F14B65FD800F0E735 /* CDVCordovaView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852C43814B65FD800F0E735 /* CDVCordovaView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8852C44114B65FD800F0E735 /* CDVCordovaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8852C43914B65FD800F0E735 /* CDVCordovaView.m */; };
 		8887FD661090FBE7009987E8 /* CDVCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* CDVCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8887FD671090FBE7009987E8 /* CDVCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* CDVCamera.m */; };
 		8887FD681090FBE7009987E8 /* NSDictionary+Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD281090FBE7009987E8 /* NSDictionary+Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -141,8 +139,6 @@
 		68A32D7414103017006B237C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		8852C43614B65FD800F0E735 /* CDVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVViewController.h; path = Classes/CDVViewController.h; sourceTree = "<group>"; };
 		8852C43714B65FD800F0E735 /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVViewController.m; path = Classes/CDVViewController.m; sourceTree = "<group>"; };
-		8852C43814B65FD800F0E735 /* CDVCordovaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCordovaView.h; path = Classes/CDVCordovaView.h; sourceTree = "<group>"; };
-		8852C43914B65FD800F0E735 /* CDVCordovaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVCordovaView.m; path = Classes/CDVCordovaView.m; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* CDVCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCamera.h; path = Classes/CDVCamera.h; sourceTree = "<group>"; };
 		8887FD271090FBE7009987E8 /* CDVCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVCamera.m; path = Classes/CDVCamera.m; sourceTree = "<group>"; };
 		8887FD281090FBE7009987E8 /* NSDictionary+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Extensions.h"; path = "Classes/NSDictionary+Extensions.h"; sourceTree = "<group>"; };
@@ -240,8 +236,6 @@
 				F858FBC5166009A8007DA594 /* CDVConfigParser.m */,
 				8852C43614B65FD800F0E735 /* CDVViewController.h */,
 				8852C43714B65FD800F0E735 /* CDVViewController.m */,
-				8852C43814B65FD800F0E735 /* CDVCordovaView.h */,
-				8852C43914B65FD800F0E735 /* CDVCordovaView.m */,
 				EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */,
 				EB3B3546161CB44D003DBE7D /* CDVCommandQueue.m */,
 			);
@@ -393,7 +387,6 @@
 				30C684941407044B004C1A8E /* CDVURLProtocol.h in Headers */,
 				30A90B9114588697006178D3 /* JSONKit.h in Headers */,
 				8852C43A14B65FD800F0E735 /* CDVViewController.h in Headers */,
-				8852C43F14B65FD800F0E735 /* CDVCordovaView.h in Headers */,
 				30F5EBAB14CA26E700987760 /* CDVCommandDelegate.h in Headers */,
 				301F2F2A14F3C9CA003FE9FC /* CDV.h in Headers */,
 				30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */,
@@ -491,7 +484,6 @@
 				30C684961407044B004C1A8E /* CDVURLProtocol.m in Sources */,
 				30A90B9314588697006178D3 /* JSONKit.m in Sources */,
 				8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */,
-				8852C44114B65FD800F0E735 /* CDVCordovaView.m in Sources */,
 				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
 				3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
