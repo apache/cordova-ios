@@ -54,4 +54,4 @@
 #import "NSMutableArray+QueueAdditions.h"
 #import "UIDevice+Extensions.h"
 
-#import "JSONKit.h"
+#import "CDVJSON.h"

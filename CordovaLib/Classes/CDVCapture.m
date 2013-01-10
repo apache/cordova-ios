@@ -18,7 +18,7 @@
  */
 
 #import "CDVCapture.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
 #import "CDVAvailability.h"
 #import "CDVViewController.h"
 
@@ -329,7 +329,7 @@
         movieArray ? (NSObject*)                          movieArray:[NSNull null], @"video",
         audioArray ? (NSObject*)                          audioArray:[NSNull null], @"audio",
         nil];
-    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes cdvjk_JSONString]];
+    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes JSONString]];
     [self.commandDelegate evalJs:jsString];
 }
 

@@ -18,7 +18,7 @@
  */
 
 #import "CDVCommandDelegateImpl.h"
-
+#import "CDVJSON.h"
 #import "CDVCommandQueue.h"
 #import "CDVPluginResult.h"
 #import "CDVViewController.h"
@@ -84,7 +84,7 @@
 
     // Use an array to encode the message as JSON.
     message = [NSArray arrayWithObject:message];
-    NSString* encodedMessage = [message cdvjk_JSONString];
+    NSString* encodedMessage = [message JSONString];
     // And then strip off the outer []s.
     encodedMessage = [encodedMessage substringWithRange:NSMakeRange(1, [encodedMessage length] - 2)];
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",

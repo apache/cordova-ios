@@ -18,7 +18,7 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "JSONKit.h"
+#import <Foundation/NSJSONSerialization.h>
 #import "CDVAvailability.h"
 #import "CDVInvokedUrlCommand.h"
 #import "CDVCommandDelegate.h"
