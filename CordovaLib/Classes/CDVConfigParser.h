@@ -18,10 +18,14 @@
  */
 
 @interface CDVConfigParser : NSObject <NSXMLParserDelegate> {
+    @private
+    NSString* startPage;
 }
 
 @property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSMutableArray* whitelistHosts;
+
+- (NSString*)getStartPage;
 
 @end

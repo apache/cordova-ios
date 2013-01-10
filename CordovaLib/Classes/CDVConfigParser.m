@@ -24,6 +24,7 @@
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginsDict;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
 @property (nonatomic, readwrite, strong) NSMutableArray* whitelistHosts;
+@property (nonatomic, readwrite, strong) NSString* startPage;
 
 @end
 
@@ -50,12 +51,23 @@
         [pluginsDict setObject:[attributeDict objectForKey:@"value"] forKey:[attributeDict objectForKey:@"name"]];
     } else if ([elementName isEqualToString:@"access"]) {
         [whitelistHosts addObject:[attributeDict objectForKey:@"origin"]];
+    } else if ([elementName isEqualToString:@"content"]) {
+        self.startPage = [attributeDict objectForKey:@"src"];
     }
 }
 
 - (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
 {
     NSAssert(NO, @"config.xml parse error line %d col %d", [parser lineNumber], [parser columnNumber]);
+}
+
+- (NSString*) getStartPage
+{
+    if (self.startPage != nil) {
+        return self.startPage;
+    } else {
+        return @"index.html";
+    }
 }
 
 @end

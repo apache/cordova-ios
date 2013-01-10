@@ -81,9 +81,6 @@ static NSString* gOriginalUserAgent = nil;
         self.supportedOrientations = [self parseInterfaceOrientations:
             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 
-        self.wwwFolderName = @"www";
-        self.startPage = @"index.html";
-
         [self printMultitaskingInfo];
         [self printDeprecationNotice];
         self.initialized = YES;
@@ -168,6 +165,10 @@ static NSString* gOriginalUserAgent = nil;
     self.pluginsMap = [delegate.pluginsDict dictionaryWithLowercaseKeys];
     self.whitelist = [[CDVWhitelist alloc] initWithArray:delegate.whitelistHosts];
     self.settings = delegate.settings;
+
+    // And the start folder/page.
+    self.wwwFolderName = @"www";
+    self.startPage = [delegate getStartPage];
 
     // Initialize the plugin objects dict.
     self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
