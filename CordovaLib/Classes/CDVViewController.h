@@ -45,7 +45,6 @@
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
 @property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
-@property (nonatomic, readwrite, copy)NSString * invokeString CDV_DEPRECATED(2.0, "Use window.handleOpenURL(url instead. It is called when the app is launched through a custom scheme url.");
 
 @property (nonatomic, readwrite, assign) BOOL useSplashScreen;
 @property (nonatomic, readonly, strong) IBOutlet UIActivityIndicatorView* activityView;

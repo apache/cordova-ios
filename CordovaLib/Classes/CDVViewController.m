@@ -51,7 +51,7 @@ static NSString* gOriginalUserAgent = nil;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
-@synthesize wwwFolderName, startPage, invokeString, initialized;
+@synthesize wwwFolderName, startPage, initialized;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 
