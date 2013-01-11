@@ -65,6 +65,8 @@
 
 - (void)massageArguments
 {
+    NSMutableArray* newArgs = nil;
+
     for (NSUInteger i = 0, count = [_arguments count]; i < count; ++i) {
         id arg = [_arguments objectAtIndex:i];
         if (![arg isKindOfClass:[NSDictionary class]]) {
@@ -79,7 +81,11 @@
         if (!data) {
             continue;
         }
-        [(NSMutableArray*) _arguments replaceObjectAtIndex:i withObject:[NSData dataFromBase64String:data]];
+        if (newArgs == nil) {
+            newArgs = [NSMutableArray arrayWithArray:_arguments];
+            _arguments = newArgs;
+        }
+        [newArgs replaceObjectAtIndex:i withObject:[NSData dataFromBase64String:data]];
     }
 }
 
