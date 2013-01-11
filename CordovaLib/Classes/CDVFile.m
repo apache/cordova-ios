@@ -954,7 +954,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             pNStrBuff = @"";
         }
 
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:pNStrBuff];
     }
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
