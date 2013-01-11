@@ -1146,7 +1146,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     if (fields == nil) { // no name fields requested
         return nil;
     }
-    id __weak value;
+    CFStringRef value;
     NSObject* addresses;
     ABMultiValueRef multi = ABRecordCopyValue(self.record, kABPersonAddressProperty);
     CFIndex count = multi ? ABMultiValueGetCount(multi) : 0;
@@ -1174,7 +1174,9 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                 id key = [[CDVContact defaultW3CtoAB] valueForKey:k];
                 if (key && ![k isKindOfClass:[NSNull class]]) {
                     bFound = CFDictionaryGetValueIfPresent(dict, (__bridge const void*)key, (void*)&value);
-                    [newAddress setObject:(bFound && value != NULL) ?  (id) value:[NSNull null] forKey:k];
+                    CFRetain(value);
+                    [newAddress setObject:(bFound && value != NULL) ?  (__bridge id)value:[NSNull null] forKey:k];
+                    CFRelease(value);
                 } else {
                     // was a property that iPhone doesn't support
                     [newAddress setObject:[NSNull null] forKey:k];
@@ -1221,16 +1223,20 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
             NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity:3];
             // iOS has label property (work, home, other) for each IM but W3C contact API doesn't use
             CFDictionaryRef dict = (CFDictionaryRef)ABMultiValueCopyValueAtIndex(multi, i);
-            NSString* __weak value;  // all values should be CFStringRefs / NSString*
+            CFStringRef value;  // all values should be CFStringRefs / NSString*
             bool bFound;
             if ([fields containsObject:kW3ContactFieldValue]) {
                 // value = user name
                 bFound = CFDictionaryGetValueIfPresent(dict, kABPersonInstantMessageUsernameKey, (void*)&value);
-                [newDict setObject:(bFound && value != NULL) ?  (id) value:[NSNull null] forKey:kW3ContactFieldValue];
+                CFRetain(value);
+                [newDict setObject:(bFound && value != NULL) ?  (__bridge id)value:[NSNull null] forKey:kW3ContactFieldValue];
+                CFRelease(value);
             }
             if ([fields containsObject:kW3ContactFieldType]) {
                 bFound = CFDictionaryGetValueIfPresent(dict, kABPersonInstantMessageServiceKey, (void*)&value);
-                [newDict setObject:(bFound && value != NULL) ? (id)[[CDVContact class] convertPropertyLabelToContactType:value]:[NSNull null] forKey:kW3ContactFieldType];
+                CFRetain(value);
+                [newDict setObject:(bFound && value != NULL) ? (id)[[CDVContact class] convertPropertyLabelToContactType:(__bridge NSString*)value]:[NSNull null] forKey:kW3ContactFieldType];
+                CFRelease(value);
             }
             // always set ID
             id identifier = [NSNumber numberWithUnsignedInt:ABMultiValueGetIdentifierAtIndex(multi, i)];
@@ -1693,7 +1699,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 
         for (NSString* member in fields) {
             NSString* abKey = [[CDVContact defaultW3CtoAB] valueForKey:member]; // im and address fields are all strings
-            NSString* __weak abValue = nil;
+            CFStringRef abValue = nil;
             if (abKey) {
                 NSString* testString = nil;
                 if ([member isEqualToString:kW3ContactImType]) {
@@ -1707,8 +1713,10 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                 if (testString != nil) {
                     BOOL bExists = CFDictionaryGetValueIfPresent(dict, (__bridge const void*)abKey, (void*)&abValue);
                     if (bExists) {
+                        CFRetain(abValue);
                         NSPredicate* containPred = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", testString];
-                        bFound = [containPred evaluateWithObject:abValue];
+                        bFound = [containPred evaluateWithObject:(__bridge id)abValue];
+                        CFRelease(abValue);
                     }
                 }
             }
