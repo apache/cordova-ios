@@ -18,7 +18,8 @@
  */
 
 #import "CDVInvokedUrlCommand.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
+#import "NSData+Base64.h"
 
 @implementation CDVInvokedUrlCommand
 
@@ -58,7 +59,28 @@
         _className = className;
         _methodName = methodName;
     }
+    [self massageArguments];
     return self;
+}
+
+- (void)massageArguments
+{
+    for (NSUInteger i = 0, count = [_arguments count]; i < count; ++i) {
+        id arg = [_arguments objectAtIndex:i];
+        if (![arg isKindOfClass:[NSDictionary class]]) {
+            continue;
+        }
+        NSDictionary* dict = arg;
+        NSString* type = [dict objectForKey:@"CDVType"];
+        if (!type || ![type isEqualToString:@"ArrayBuffer"]) {
+            continue;
+        }
+        NSString* data = [dict objectForKey:@"data"];
+        if (!data) {
+            continue;
+        }
+        [(NSMutableArray*) _arguments replaceObjectAtIndex:i withObject:[NSData dataFromBase64String:data]];
+    }
 }
 
 - (void)legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict

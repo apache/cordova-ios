@@ -93,7 +93,7 @@
 /* Comment out the block below to over-ride */
 
 /*
-- (CDVCordovaView*) newCordovaViewWithFrame:(CGRect)bounds
+- (UIWebView*) newCordovaViewWithFrame:(CGRect)bounds
 {
     return[super newCordovaViewWithFrame:bounds];
 }

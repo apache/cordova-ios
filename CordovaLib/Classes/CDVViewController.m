@@ -51,7 +51,7 @@ static NSString* gOriginalUserAgent = nil;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
-@synthesize wwwFolderName, startPage, invokeString, initialized;
+@synthesize wwwFolderName, startPage, initialized;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 
@@ -410,9 +410,9 @@ static NSString* gOriginalUserAgent = nil;
     return [self.supportedOrientations containsObject:[NSNumber numberWithInt:orientation]];
 }
 
-- (CDVCordovaView*)newCordovaViewWithFrame:(CGRect)bounds
+- (UIWebView*)newCordovaViewWithFrame:(CGRect)bounds
 {
-    return [[CDVCordovaView alloc] initWithFrame:bounds];
+    return [[UIWebView alloc] initWithFrame:bounds];
 }
 
 + (NSString*)originalUserAgent

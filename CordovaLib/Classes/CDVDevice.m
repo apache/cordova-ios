@@ -58,7 +58,7 @@
     NSDictionary* temp = [CDVViewController getBundlePlist:@"Settings"];
 
     if ([temp respondsToSelector:@selector(JSONString)]) {
-        NSString* js = [NSString stringWithFormat:@"window.Settings = %@;", [temp cdvjk_JSONString]];
+        NSString* js = [NSString stringWithFormat:@"window.Settings = %@;", [temp JSONString]];
         [self.commandDelegate evalJs:js];
     }
 

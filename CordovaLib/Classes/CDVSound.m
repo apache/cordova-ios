@@ -20,6 +20,7 @@
 #import "CDVSound.h"
 #import "CDVViewController.h"
 #import "NSArray+Comparisons.h"
+#import "CDVJSON.h"
 
 #define DOCUMENTS_SCHEME_PREFIX @"documents://"
 #define HTTP_SCHEME_PREFIX @"http://"
@@ -141,7 +142,7 @@
 
     [errorDict setObject:[NSNumber numberWithUnsignedInt:code] forKey:@"code"];
     [errorDict setObject:message ? message:@"" forKey:@"message"];
-    return [errorDict cdvjk_JSONString];
+    return [errorDict JSONString];
 }
 
 - (void)create:(CDVInvokedUrlCommand*)command

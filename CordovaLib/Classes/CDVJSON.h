@@ -17,21 +17,14 @@
  under the License.
  */
 
-#import "CDVCordovaView.h"
+@interface NSArray (CDVJSONSerializing)
+- (NSString*)JSONString;
+@end
 
-@implementation CDVCordovaView
+@interface NSDictionary (CDVJSONSerializing)
+- (NSString*)JSONString;
+@end
 
-- (void)loadRequest:(NSURLRequest*)request
-{
-    [super loadRequest:request];
-}
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code.
-}
-*/
-
+@interface NSString (CDVJSONSerializing)
+- (id)JSONObject;
 @end

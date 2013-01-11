@@ -24,9 +24,6 @@
 
 @interface CDVURLProtocol : NSURLProtocol {}
 
-+ (void)registerPGHttpURLProtocol CDV_DEPRECATED (2.0, "This is now a no-op and should be removed.");
-+ (void)registerURLProtocol CDV_DEPRECATED (2.0, "This is now a no-op and should be removed.");
-
 + (void)registerViewController:(CDVViewController*)viewController;
 + (void)unregisterViewController:(CDVViewController*)viewController;
 @end

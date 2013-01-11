@@ -20,7 +20,7 @@
 #import "CDVFile.h"
 #import "NSArray+Comparisons.h"
 #import "NSDictionary+Extensions.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
 #import "NSData+Base64.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVAvailability.h"
@@ -917,6 +917,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSString* argPath = [command.arguments objectAtIndex:0];
     NSInteger start = 0;
     NSInteger end = -1;
+
     if ([command.arguments count] >= 3) {
         start = [[command.arguments objectAtIndex:2] integerValue];
     }
@@ -972,6 +973,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSString* argPath = [command.arguments objectAtIndex:0];
     NSInteger start = 0;
     NSInteger end = -1;
+
     if ([command.arguments count] >= 2) {
         start = [[command.arguments objectAtIndex:1] integerValue];
     }
