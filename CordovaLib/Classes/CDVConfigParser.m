@@ -30,7 +30,7 @@
 
 @implementation CDVConfigParser
 
-@synthesize pluginsDict, settings, whitelistHosts;
+@synthesize pluginsDict, settings, whitelistHosts, startPage;
 
 - (id)init
 {
@@ -61,7 +61,7 @@
     NSAssert(NO, @"config.xml parse error line %d col %d", [parser lineNumber], [parser columnNumber]);
 }
 
-- (NSString*) getStartPage
+- (NSString*)getStartPage
 {
     if (self.startPage != nil) {
         return self.startPage;
