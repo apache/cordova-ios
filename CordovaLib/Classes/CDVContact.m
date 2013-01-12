@@ -1314,8 +1314,10 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         NSString* filePath = [NSString stringWithFormat:@"%@/photo_XXXXX", docsPath];
         char template[filePath.length + 1];
         strcpy(template, [filePath cStringUsingEncoding:NSASCIIStringEncoding]);
-        char* filename = mktemp(template);
-        filePath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+        mkstemp(template);
+        filePath = [[NSFileManager defaultManager]
+            stringWithFileSystemRepresentation:template
+                                        length:strlen(template)];
 
         // save file
         if ([data writeToFile:filePath options:NSAtomicWrite error:&err]) {
