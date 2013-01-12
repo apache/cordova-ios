@@ -43,6 +43,8 @@ static NSString* gOriginalUserAgent = nil;
 @property (nonatomic, readwrite, strong) UIImageView* imageView;
 @property (readwrite, assign) BOOL initialized;
 
+@property (atomic, strong) NSURL* openURL;
+
 @end
 
 @implementation CDVViewController
@@ -51,7 +53,7 @@ static NSString* gOriginalUserAgent = nil;
 @synthesize pluginObjects, pluginsMap, whitelist;
 @synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
-@synthesize wwwFolderName, startPage, initialized;
+@synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 
@@ -76,6 +78,7 @@ static NSString* gOriginalUserAgent = nil;
                                                      name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
                                                      name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:CDVPluginHandleOpenURLNotification object:nil];
 
         // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
         self.supportedOrientations = [self parseInterfaceOrientations:
@@ -544,6 +547,8 @@ static NSString* gOriginalUserAgent = nil;
     // The _nativeReady = true; is used when this is run before cordova.js is loaded.
     NSString* nativeReady = @"try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
     [self.commandDelegate evalJs:nativeReady];
+
+    [self processOpenUrl];
 }
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
@@ -947,6 +952,23 @@ BOOL gSplashScreenShown = NO;
 
 // ///////////////////////
 
+- (void)handleOpenURL:(NSNotification*)notification
+{
+    self.openURL = notification.object;
+}
+
+- (void)processOpenUrl
+{
+    if (self.openURL) {
+        // calls into javascript global function 'handleOpenURL'
+        NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", [self.openURL description]];
+        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+        self.openURL = nil;
+    }
+}
+
+// ///////////////////////
+
 - (void)dealloc
 {
     [CDVURLProtocol unregisterViewController:self];
@@ -956,6 +978,7 @@ BOOL gSplashScreenShown = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSCurrentLocaleDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPluginHandleOpenURLNotification object:nil];
 
     self.webView.delegate = nil;
     self.webView = nil;
