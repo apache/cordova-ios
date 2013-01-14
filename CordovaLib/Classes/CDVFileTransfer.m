@@ -272,7 +272,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* argPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"upload not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -323,7 +323,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* objectId = [command.arguments objectAtIndex:3];
 
     // return unsupported result for assets-library URLs
-    if ([filePath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"download not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;

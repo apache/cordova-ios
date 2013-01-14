@@ -32,7 +32,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSString* const NSURLIsExcludedFromBackupKey = @"NSURLIsExcludedFromBackupKey";
 #endif
 
-NSString* const kAssetsLibraryPrefix = @"assets-library://";
+NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
 
 @implementation CDVFile
 
@@ -332,7 +332,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSDictionary* options = [command.arguments objectAtIndex:2 withDefault:nil];
 
     // return unsupported result for assets-library URLs
-    if ([fullPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"getFile not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -435,7 +435,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([fullPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"remove not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -479,7 +479,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* argPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"getMetadata not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -526,7 +526,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:nil];
 
     // return unsupported result for assets-library URLs
-    if ([filePath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"setMetadata not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -579,7 +579,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([fullPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"remove not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -626,7 +626,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([fullPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"removeRecursively not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -739,7 +739,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent];          // use last component from appPath if new name not provided
 
     // return unsupported result for assets-library URLs
-    if ([srcFullPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([srcFullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"moveTo/copyTo not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -891,7 +891,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* argPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"getFileMetadata not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -935,7 +935,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
     // return unsupported result for assets-library URLs
-    if ([fullPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"readEntries not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -992,7 +992,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     }
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"readAsText not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -1055,7 +1055,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     }
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"readAsDataURL not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -1135,7 +1135,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     unsigned long long pos = (unsigned long long)[[command.arguments objectAtIndex:1] longLongValue];
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"truncate not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
@@ -1182,7 +1182,7 @@ NSString* const kAssetsLibraryPrefix = @"assets-library://";
     unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:2] longLongValue];
 
     // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"write not supported for assets-library URLs."];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
