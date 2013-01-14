@@ -66,6 +66,8 @@
 @interface CDVInAppBrowserOptions : NSObject {}
 
 @property (nonatomic, assign) BOOL location;
+@property (nonatomic, copy) NSString* presentationstyle;
+@property (nonatomic, copy) NSString* transitionstyle;
 
 + (CDVInAppBrowserOptions*)parseOptions:(NSString*)options;
 
