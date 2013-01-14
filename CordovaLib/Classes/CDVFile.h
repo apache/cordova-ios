@@ -42,6 +42,8 @@ enum CDVFileSystemType {
 };
 typedef int CDVFileSystemType;
 
+extern NSString* const kAssetsLibraryPrefix;
+
 @interface CDVFile : CDVPlugin {
     NSString* appDocsPath;
     NSString* appLibraryPath;

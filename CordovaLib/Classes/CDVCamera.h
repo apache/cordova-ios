@@ -22,7 +22,8 @@
 
 enum CDVDestinationType {
     DestinationTypeDataUrl = 0,
-    DestinationTypeFileUri
+    DestinationTypeFileUri,
+    DestinationTypeNativeUri
 };
 typedef NSUInteger CDVDestinationType;
 

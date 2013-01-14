@@ -269,6 +269,15 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (void)upload:(CDVInvokedUrlCommand*)command
 {
+    NSString* argPath = [command.arguments objectAtIndex:0];
+
+    // return unsupported result for assets-library URLs
+    if ([argPath hasPrefix:kAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"upload not supported for assets-library URLs."];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
+
     // fileData and req are split into helper functions to ease the unit testing of delegateForUpload.
     NSData* fileData = [self fileDataForUploadCommand:command];
     NSURLRequest* req = [self requestForUploadCommand:command fileData:fileData];
@@ -312,6 +321,14 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* filePath = [command.arguments objectAtIndex:1];
     //  NSString* trustAllHosts = (NSString*)[arguments objectAtIndex:6]; // allow self-signed certs
     NSString* objectId = [command.arguments objectAtIndex:3];
+
+    // return unsupported result for assets-library URLs
+    if ([filePath hasPrefix:kAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"download not supported for assets-library URLs."];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
+
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 

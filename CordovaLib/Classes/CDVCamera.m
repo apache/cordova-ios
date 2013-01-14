@@ -287,6 +287,9 @@ static NSSet* org_apache_cordova_validArrowDirections;
             } else {
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[NSURL fileURLWithPath:filePath] absoluteString]];
             }
+        } else if (cameraPicker.returnType == DestinationTypeNativeUri) {
+            NSString* nativeUri = [(NSURL*)[info objectForKey:UIImagePickerControllerReferenceURL] absoluteString];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nativeUri];
         } else {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[data base64EncodedString]];
         }
