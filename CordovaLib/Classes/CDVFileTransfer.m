@@ -492,16 +492,19 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 {
     // required for iOS 4.3, for some reason; response is
     // a plain NSURLResponse, not the HTTP subclass
-    if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
-        self.responseCode = 403;
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+
+        self.responseCode = [httpResponse statusCode];
         self.bytesExpected = [response expectedContentLength];
-        return;
+    } else if ([response.URL isFileURL]) {
+        NSDictionary* attr = [[NSFileManager defaultManager] attributesOfItemAtPath:[response.URL path] error:nil];
+        self.responseCode = 200;
+        self.bytesExpected = [attr[NSFileSize] longLongValue];
+    } else {
+        self.responseCode = 200;
+        self.bytesExpected = NSURLResponseUnknownLength;
     }
-
-    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
-
-    self.responseCode = [httpResponse statusCode];
-    self.bytesExpected = [response expectedContentLength];
 }
 
 - (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
