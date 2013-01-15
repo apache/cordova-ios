@@ -67,5 +67,6 @@ extern NSString* const kOptionsKeyCookie;
 @property (assign) int responseCode; // atomic
 @property (nonatomic, assign) NSInteger bytesTransfered;
 @property (nonatomic, assign) NSInteger bytesExpected;
+@property (nonatomic, assign) BOOL trustAllHosts;
 
 @end;
