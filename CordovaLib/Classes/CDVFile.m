@@ -548,34 +548,29 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
     // arguments
     NSString* filePath = [command.arguments objectAtIndex:0];
     NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:nil];
-
-    // return unsupported result for assets-library URLs
-    if ([filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"setMetadata not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
     CDVPluginResult* result = nil;
     BOOL ok = NO;
 
-    // we only care about this iCloud key for now.
-    // set to 1/true to skip backup, set to 0/false to back it up (effectively removing the attribute)
-    NSString* iCloudBackupExtendedAttributeKey = @"com.apple.MobileBackup";
-    id iCloudBackupExtendedAttributeValue = [options objectForKey:iCloudBackupExtendedAttributeKey];
+    // setMetadata doesn't make sense for asset library files
+    if (![filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // we only care about this iCloud key for now.
+        // set to 1/true to skip backup, set to 0/false to back it up (effectively removing the attribute)
+        NSString* iCloudBackupExtendedAttributeKey = @"com.apple.MobileBackup";
+        id iCloudBackupExtendedAttributeValue = [options objectForKey:iCloudBackupExtendedAttributeKey];
 
-    if ((iCloudBackupExtendedAttributeValue != nil) && [iCloudBackupExtendedAttributeValue isKindOfClass:[NSNumber class]]) {
-        if (IsAtLeastiOSVersion(@"5.1")) {
-            NSURL* url = [NSURL fileURLWithPath:filePath];
-            NSError* __autoreleasing error = nil;
+        if ((iCloudBackupExtendedAttributeValue != nil) && [iCloudBackupExtendedAttributeValue isKindOfClass:[NSNumber class]]) {
+            if (IsAtLeastiOSVersion(@"5.1")) {
+                NSURL* url = [NSURL fileURLWithPath:filePath];
+                NSError* __autoreleasing error = nil;
 
-            ok = [url setResourceValue:[NSNumber numberWithBool:[iCloudBackupExtendedAttributeValue boolValue]] forKey:NSURLIsExcludedFromBackupKey error:&error];
-        } else { // below 5.1 (deprecated - only really supported in 5.01)
-            u_int8_t value = [iCloudBackupExtendedAttributeValue intValue];
-            if (value == 0) { // remove the attribute (allow backup, the default)
-                ok = (removexattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], 0) == 0);
-            } else { // set the attribute (skip backup)
-                ok = (setxattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], &value, sizeof(value), 0, 0) == 0);
+                ok = [url setResourceValue:[NSNumber numberWithBool:[iCloudBackupExtendedAttributeValue boolValue]] forKey:NSURLIsExcludedFromBackupKey error:&error];
+            } else { // below 5.1 (deprecated - only really supported in 5.01)
+                u_int8_t value = [iCloudBackupExtendedAttributeValue intValue];
+                if (value == 0) { // remove the attribute (allow backup, the default)
+                    ok = (removexattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], 0) == 0);
+                } else { // set the attribute (skip backup)
+                    ok = (setxattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], &value, sizeof(value), 0, 0) == 0);
+                }
             }
         }
     }
@@ -594,26 +589,21 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
  *	0 - NSString* fullPath
  *
  * returns NO_MODIFICATION_ALLOWED_ERR  if is top level directory or no permission to delete dir
- * returns INVALID_MODIFICATION_ERR if is dir and is not empty
+ * returns INVALID_MODIFICATION_ERR if is non-empty dir or asset library file
  * returns NOT_FOUND_ERR if file or dir is not found
 */
 - (void)remove:(CDVInvokedUrlCommand*)command
 {
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
-
-    // return unsupported result for assets-library URLs
-    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"remove not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
     CDVPluginResult* result = nil;
     CDVFileError errorCode = 0;  // !! 0 not currently defined
 
-    // error if try to remove top level (documents or tmp) dir
-    if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]) {
+    // return error for assets-library URLs
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        errorCode = INVALID_MODIFICATION_ERR;
+    } else if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]) {
+        // error if try to remove top level (documents or tmp) dir
         errorCode = NO_MODIFICATION_ALLOWED_ERR;
     } else {
         NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -1045,19 +1035,15 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         end = [[command.arguments objectAtIndex:3] integerValue];
     }
 
-    // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"readAsText not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
     // NSString* encoding = [command.arguments objectAtIndex:2];   // not currently used
     CDVPluginResult* result = nil;
 
     NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:argPath];
 
-    if (!file) {
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // can't read assets-library URLs as text
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_READABLE_ERR];
+    } else if (!file) {
         // invalid path entry
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
     } else {
