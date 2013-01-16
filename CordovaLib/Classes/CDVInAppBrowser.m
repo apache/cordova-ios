@@ -125,6 +125,13 @@
     }
     self.inAppBrowserViewController.modalTransitionStyle = transitionStyle;
 
+    // UIWebView options
+    self.inAppBrowserViewController.webView.scalesPageToFit = browserOptions.enableviewportscale;
+    self.inAppBrowserViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
+    self.inAppBrowserViewController.webView.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
+    self.inAppBrowserViewController.webView.keyboardDisplayRequiresUserAction = browserOptions.keyboarddisplayrequiresuseraction;
+    self.inAppBrowserViewController.webView.suppressesIncrementalRendering = browserOptions.suppressesincrementalrendering;
+
     if (self.viewController.modalViewController != self.inAppBrowserViewController) {
         [self.viewController presentModalViewController:self.inAppBrowserViewController animated:YES];
     }
@@ -234,7 +241,6 @@
         [self.view sendSubviewToBack:self.webView];
 
         self.webView.delegate = self;
-        self.webView.scalesPageToFit = TRUE;
         self.webView.backgroundColor = [UIColor whiteColor];
 
         self.webView.clearsContextBeforeDrawing = YES;
@@ -482,6 +488,12 @@
     if (self = [super init]) {
         // default values
         self.location = YES;
+
+        self.enableviewportscale = NO;
+        self.mediaplaybackrequiresuseraction = NO;
+        self.allowinlinemediaplayback = NO;
+        self.keyboarddisplayrequiresuseraction = YES;
+        self.suppressesincrementalrendering = NO;
     }
 
     return self;

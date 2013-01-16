@@ -69,6 +69,12 @@
 @property (nonatomic, copy) NSString* presentationstyle;
 @property (nonatomic, copy) NSString* transitionstyle;
 
+@property (nonatomic, assign) BOOL enableviewportscale;
+@property (nonatomic, assign) BOOL mediaplaybackrequiresuseraction;
+@property (nonatomic, assign) BOOL allowinlinemediaplayback;
+@property (nonatomic, assign) BOOL keyboarddisplayrequiresuseraction;
+@property (nonatomic, assign) BOOL suppressesincrementalrendering;
+
 + (CDVInAppBrowserOptions*)parseOptions:(NSString*)options;
 
 @end
