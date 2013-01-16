@@ -911,14 +911,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
                     [fileInfo setObject:argPath forKey:@"fullPath"];
                     NSString* filename = [assetRepresentation filename];
                     [fileInfo setObject:filename forKey:@"name"];
-                    filename = [filename lowercaseString];
-                    if ([filename hasSuffix:@".png"]) {
-                        [fileInfo setObject:@"image/png" forKey:@"type"];
-                    } else if ([filename hasSuffix:@".jpg"] || [filename hasSuffix:@".jpeg"]) {
-                        [fileInfo setObject:@"image/jpeg" forKey:@"type"];
-                    } else {
-                        [fileInfo setObject:@"" forKey:@"type"];
-                    }
+                    [fileInfo setObject:[self getMimeTypeFromPath:filename] forKey:@"type"];
                     NSDate* creationDate = [asset valueForProperty:ALAssetPropertyDate];
                     NSNumber* msDate = [NSNumber numberWithDouble:[creationDate timeIntervalSince1970] * 1000];
                     [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
@@ -1094,18 +1087,41 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         end = [[command.arguments objectAtIndex:2] integerValue];
     }
 
-    // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"readAsDataURL not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
     CDVFileError errCode = ABORT_ERR;
-    CDVPluginResult* result = nil;
+    __block CDVPluginResult* result = nil;
 
     if (!argPath) {
         errCode = SYNTAX_ERR;
+    } else if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // In this case, we need to use an asynchronous method to retrieve the file.
+        // Because of this, we can't just assign to `result` and send it at the end of the method.
+        // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+            if (asset) {
+                // We have the asset!  Get the data and send it off.
+                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                NSString* mimeType = [self getMimeTypeFromPath:[assetRepresentation filename]];
+                NSString* dataString = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, [data base64EncodedString]];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:dataString];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            } else {
+                // We couldn't find the asset.  Send the appropriate error.
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            }
+        };
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+            // Retrieving the asset failed for some reason.  Send the appropriate error.
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        };
+
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:[NSURL URLWithString:argPath] resultBlock:resultBlock failureBlock:failureBlock];
+        return;
     } else {
         NSString* mimeType = [self getMimeTypeFromPath:argPath];
         if (!mimeType) {
