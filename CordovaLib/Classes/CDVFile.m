@@ -22,6 +22,9 @@
 #import "NSDictionary+Extensions.h"
 #import "CDVJSON.h"
 #import "NSData+Base64.h"
+#import <AssetsLibrary/ALAsset.h>
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import <AssetsLibrary/ALAssetsLibrary.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVAvailability.h"
 #import "sys/xattr.h"
@@ -890,37 +893,74 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
 
-    // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"getFileMetadata not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
-    CDVPluginResult* result = nil;
+    __block CDVPluginResult* result = nil;
 
     NSString* fullPath = argPath; // [self getFullPath: argPath];
 
     if (fullPath) {
-        NSFileManager* fileMgr = [[NSFileManager alloc] init];
-        BOOL bIsDir = NO;
-        // make sure it exists and is not a directory
-        BOOL bExists = [fileMgr fileExistsAtPath:fullPath isDirectory:&bIsDir];
-        if (!bExists || bIsDir) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+        if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+            // In this case, we need to use an asynchronous method to retrieve the file.
+            // Because of this, we can't just assign to `result` and send it at the end of the method.
+            // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+                if (asset) {
+                    // We have the asset!  Populate the dictionary and send it off.
+                    NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
+                    ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                    [fileInfo setObject:[NSNumber numberWithUnsignedLongLong:[assetRepresentation size]] forKey:@"size"];
+                    [fileInfo setObject:argPath forKey:@"fullPath"];
+                    NSString* filename = [assetRepresentation filename];
+                    [fileInfo setObject:filename forKey:@"name"];
+                    filename = [filename lowercaseString];
+                    if ([filename hasSuffix:@".png"]) {
+                        [fileInfo setObject:@"image/png" forKey:@"type"];
+                    } else if ([filename hasSuffix:@".jpg"] || [filename hasSuffix:@".jpeg"]) {
+                        [fileInfo setObject:@"image/jpeg" forKey:@"type"];
+                    } else {
+                        [fileInfo setObject:@"" forKey:@"type"];
+                    }
+                    NSDate* creationDate = [asset valueForProperty:ALAssetPropertyDate];
+                    NSNumber* msDate = [NSNumber numberWithDouble:[creationDate timeIntervalSince1970] * 1000];
+                    [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
+
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
+                    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                } else {
+                    // We couldn't find the asset.  Send the appropriate error.
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                }
+            };
+            ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+                // Retrieving the asset failed for some reason.  Send the appropriate error.
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            };
+
+            ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+            [assetsLibrary assetForURL:[NSURL URLWithString:argPath] resultBlock:resultBlock failureBlock:failureBlock];
+            return;
         } else {
-            // create dictionary of file info
-            NSError* __autoreleasing error = nil;
-            NSDictionary* fileAttrs = [fileMgr attributesOfItemAtPath:fullPath error:&error];
-            NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
-            [fileInfo setObject:[NSNumber numberWithUnsignedLongLong:[fileAttrs fileSize]] forKey:@"size"];
-            [fileInfo setObject:argPath forKey:@"fullPath"];
-            [fileInfo setObject:@"" forKey:@"type"];  // can't easily get the mimetype unless create URL, send request and read response so skipping
-            [fileInfo setObject:[argPath lastPathComponent] forKey:@"name"];
-            NSDate* modDate = [fileAttrs fileModificationDate];
-            NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970] * 1000];
-            [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
+            NSFileManager* fileMgr = [[NSFileManager alloc] init];
+            BOOL bIsDir = NO;
+            // make sure it exists and is not a directory
+            BOOL bExists = [fileMgr fileExistsAtPath:fullPath isDirectory:&bIsDir];
+            if (!bExists || bIsDir) {
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+            } else {
+                // create dictionary of file info
+                NSError* __autoreleasing error = nil;
+                NSDictionary* fileAttrs = [fileMgr attributesOfItemAtPath:fullPath error:&error];
+                NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
+                [fileInfo setObject:[NSNumber numberWithUnsignedLongLong:[fileAttrs fileSize]] forKey:@"size"];
+                [fileInfo setObject:argPath forKey:@"fullPath"];
+                [fileInfo setObject:@"" forKey:@"type"];  // can't easily get the mimetype unless create URL, send request and read response so skipping
+                [fileInfo setObject:[argPath lastPathComponent] forKey:@"name"];
+                NSDate* modDate = [fileAttrs fileModificationDate];
+                NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970] * 1000];
+                [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
+            }
         }
     }
     if (!result) {
