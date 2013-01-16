@@ -480,11 +480,33 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
 {
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
+    __block CDVPluginResult* result = nil;
 
-    // return unsupported result for assets-library URLs
     if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"getMetadata not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        // In this case, we need to use an asynchronous method to retrieve the file.
+        // Because of this, we can't just assign to `result` and send it at the end of the method.
+        // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+            if (asset) {
+                // We have the asset!  Retrieve the metadata and send it off.
+                NSDate* date = [asset valueForProperty:ALAssetPropertyDate];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[date timeIntervalSince1970] * 1000];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            } else {
+                // We couldn't find the asset.  Send the appropriate error.
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            }
+        };
+        // TODO(maxw): Consider making this a class variable since it's the same every time.
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+            // Retrieving the asset failed for some reason.  Send the appropriate error.
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        };
+
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:[NSURL URLWithString:argPath] resultBlock:resultBlock failureBlock:failureBlock];
         return;
     }
 
@@ -492,7 +514,6 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
 
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
     NSError* __autoreleasing error = nil;
-    CDVPluginResult* result = nil;
 
     NSDictionary* fileAttribs = [fileMgr attributesOfItemAtPath:testPath error:&error];
 
