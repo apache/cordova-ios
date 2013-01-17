@@ -26,6 +26,11 @@
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
+#define kSplashScreenStateShow 0
+#define kSplashScreenStateHide 1
+
+#define kSplashScreenDurationDefault 2.0f
+
 @interface CDVViewController ()
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
@@ -504,8 +509,7 @@
     id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
     // if value is missing, default to yes
     if ((autoHideSplashScreenValue == nil) || [autoHideSplashScreenValue boolValue]) {
-        self.imageView.hidden = YES;
-        self.activityView.hidden = YES;
+        [self hideSplashScreen];
         [self.view.superview bringSubviewToFront:self.webView];
     }
     [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
@@ -634,7 +638,7 @@
     return basePath;
 }
 
-- (void)showSplashScreen
+- (void)setupSplashScreen
 {
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     NSString* launchImageFile = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchImageFile"];
@@ -748,13 +752,70 @@
     [self.view.superview layoutSubviews];
 }
 
+- (void)showSplashScreen
+{
+    [self updateSplashScreenWithState:kSplashScreenStateShow];
+}
+
+- (void)hideSplashScreen
+{
+    [self updateSplashScreenWithState:kSplashScreenStateHide];
+}
+
+- (void)updateSplashScreenWithState:(int)state
+{
+    float toAlpha = state == kSplashScreenStateShow ? 1.0f : 0.0f;
+    BOOL hidden = state == kSplashScreenStateShow ? NO : YES;
+    
+    id fadeSplashScreenValue = [self.settings objectForKey:@"FadeSplashScreen"];
+    id fadeSplashScreenDuration = [self.settings objectForKey:@"FadeSplashScreenDuration"];
+    
+    // if value is missing, default to 2.0f
+    float fadeDuration = fadeSplashScreenDuration == nil ? kSplashScreenDurationDefault : [fadeSplashScreenDuration floatValue];
+    
+    // if value is missing, default to no fade
+    if ((fadeSplashScreenValue == nil) || ![fadeSplashScreenValue boolValue]) {
+        [self.imageView setHidden:hidden];
+        [self.activityView setHidden:hidden];
+    }
+    else
+    {
+        if(state == kSplashScreenStateShow)
+        {
+            //reset states
+            [self.imageView setHidden:NO];
+            [self.activityView setHidden:NO];
+            [self.imageView setAlpha:0.0f];
+            [self.activityView setAlpha:0.0f];
+        }
+        
+        [UIView transitionWithView:self.view
+                          duration: fadeDuration
+                           options:UIViewAnimationOptionTransitionNone
+                        animations:^(void){
+                            [self.imageView setAlpha:toAlpha];
+                            [self.activityView setAlpha:toAlpha];
+                        }
+                        completion:^(BOOL finished){
+                            if(state == kSplashScreenStateHide)
+                            {
+                                //reset states
+                                [self.imageView setHidden:YES];
+                                [self.activityView setHidden:YES];
+                                [self.imageView setAlpha:1.0f];
+                                [self.activityView setAlpha:1.0f];
+                            }
+                        }];
+    }
+}
+
 BOOL gSplashScreenShown = NO;
 - (void)receivedOrientationChange
 {
     if (self.imageView == nil) {
         gSplashScreenShown = YES;
         if (self.useSplashScreen) {
-            [self showSplashScreen];
+            [self setupSplashScreen];
         }
     }
 }
