@@ -30,8 +30,7 @@
     if ([delegate respondsToSelector:@selector(viewController)]) {
         id vc = [delegate performSelector:@selector(viewController)];
         if ([vc isKindOfClass:[CDVViewController class]]) {
-            ((CDVViewController*)vc).imageView.hidden = !show;
-            ((CDVViewController*)vc).activityView.hidden = !show;
+            show ? [((CDVViewController*)vc)showSplashScreen] : [((CDVViewController*)vc)hideSplashScreen];
         }
     }
 }
