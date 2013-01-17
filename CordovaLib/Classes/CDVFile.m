@@ -752,14 +752,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
     // optional argument
     NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent];          // use last component from appPath if new name not provided
 
-    // return unsupported result for assets-library URLs
-    if ([srcFullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"moveTo/copyTo not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
-    CDVPluginResult* result = nil;
+    __block CDVPluginResult* result = nil;
     CDVFileError errCode = 0;  // !! Currently 0 is not defined, use this to signal error !!
 
     /*NSString* destRootPath = nil;
@@ -776,12 +769,59 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         errCode = ENCODING_ERR;
     } else {
         NSString* newFullPath = [destRootPath stringByAppendingPathComponent:newName];
+        NSFileManager* fileMgr = [[NSFileManager alloc] init];
         if ([newFullPath isEqualToString:srcFullPath]) {
             // source and destination can not be the same
             errCode = INVALID_MODIFICATION_ERR;
-        } else {
-            NSFileManager* fileMgr = [[NSFileManager alloc] init];
+        } else if ([srcFullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+            if (bCopy) {
+                // Copying (as opposed to moving) an assets library file is okay.
+                // In this case, we need to use an asynchronous method to retrieve the file.
+                // Because of this, we can't just assign to `result` and send it at the end of the method.
+                // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+                ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+                    if (asset) {
+                        // We have the asset!  Get the data and try to copy it over.
+                        if (![fileMgr fileExistsAtPath:destRootPath]) {
+                            // The destination directory doesn't exist.
+                            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                            return;
+                        } else if ([fileMgr fileExistsAtPath:newFullPath]) {
+                            // A file already exists at the destination path.
+                            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:PATH_EXISTS_ERR];
+                            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                            return;
+                        }
 
+                        // We're good to go!  Write the file to the new destination.
+                        ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                        Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                        NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                        NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                        [data writeToFile:newFullPath atomically:YES];
+                        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getDirectoryEntry:newFullPath isDirectory:NO]];
+                        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                    } else {
+                        // We couldn't find the asset.  Send the appropriate error.
+                        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                    }
+                };
+                ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+                    // Retrieving the asset failed for some reason.  Send the appropriate error.
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+                    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                };
+
+                ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+                [assetsLibrary assetForURL:[NSURL URLWithString:srcFullPath] resultBlock:resultBlock failureBlock:failureBlock];
+                return;
+            } else {
+                // Moving an assets library file is not doable, since we can't remove it.
+                errCode = INVALID_MODIFICATION_ERR;
+            }
+        } else {
             BOOL bSrcIsDir = NO;
             BOOL bDestIsDir = NO;
             BOOL bNewIsDir = NO;
