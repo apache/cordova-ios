@@ -41,7 +41,10 @@
 
 @end
 
-@interface CDVInAppBrowserViewController : UIViewController <UIWebViewDelegate>{}
+@interface CDVInAppBrowserViewController : UIViewController <UIWebViewDelegate>{
+    @private
+    NSURL* _requestedURL;
+}
 
 @property (nonatomic, strong) IBOutlet UIWebView* webView;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem* closeButton;

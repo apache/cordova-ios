@@ -420,7 +420,12 @@
     [self.spinner startAnimating];
 
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStart:)]) {
-        [self.navigationDelegate browserLoadStart:theWebView.request.URL];
+        NSURL* url = theWebView.request.URL;
+        // URL is nil when opening PDFs.
+        if (url == nil) {
+            url = _requestedURL;
+        }
+        [self.navigationDelegate browserLoadStart:url];
     }
 }
 
@@ -435,7 +440,12 @@
     [self.spinner stopAnimating];
 
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStop:)]) {
-        [self.navigationDelegate browserLoadStop:theWebView.request.URL];
+        NSURL* url = theWebView.request.URL;
+        // URL is nil when opening PDFs.
+        if (url == nil) {
+            url = _requestedURL;
+        }
+        [self.navigationDelegate browserLoadStop:url];
     }
 }
 
