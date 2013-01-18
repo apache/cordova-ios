@@ -22,12 +22,9 @@
 #import "CDVCommandQueue.h"
 #import "CDVCommandDelegateImpl.h"
 #import "CDVConfigParser.h"
+#import "CDVUserAgentUtil.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
-#define CDV_USER_AGENT_KEY @"Cordova-User-Agent"
-#define CDV_USER_AGENT_VERSION_KEY @"Cordova-User-Agent-Version"
-
-static NSString* gOriginalUserAgent = nil;
 
 @interface CDVViewController ()
 
@@ -71,8 +68,6 @@ static NSString* gOriginalUserAgent = nil;
                                                      name:UIApplicationWillResignActiveNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidBecomeActive:)
                                                      name:UIApplicationDidBecomeActiveNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppLocaleDidChange:)
-                                                     name:NSCurrentLocaleDidChangeNotification object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:)
                                                      name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -418,35 +413,10 @@ static NSString* gOriginalUserAgent = nil;
     return [[UIWebView alloc] initWithFrame:bounds];
 }
 
-+ (NSString*)originalUserAgent
-{
-    if (gOriginalUserAgent == nil) {
-        NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-        NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
-        NSString* localeStr = [[NSLocale currentLocale] localeIdentifier];
-        NSString* systemAndLocale = [NSString stringWithFormat:@"%@ %@", systemVersion, localeStr];
-
-        NSString* cordovaUserAgentVersion = [userDefaults stringForKey:CDV_USER_AGENT_VERSION_KEY];
-        gOriginalUserAgent = [userDefaults stringForKey:CDV_USER_AGENT_KEY];
-        BOOL cachedValueIsOld = ![systemAndLocale isEqualToString:cordovaUserAgentVersion];
-
-        if ((gOriginalUserAgent == nil) || cachedValueIsOld) {
-            UIWebView* sampleWebView = [[UIWebView alloc] initWithFrame:CGRectZero];
-            gOriginalUserAgent = [sampleWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-
-            [userDefaults setObject:gOriginalUserAgent forKey:CDV_USER_AGENT_KEY];
-            [userDefaults setObject:systemAndLocale forKey:CDV_USER_AGENT_VERSION_KEY];
-
-            [userDefaults synchronize];
-        }
-    }
-    return gOriginalUserAgent;
-}
-
 - (NSString*)userAgent
 {
     if (_userAgent == nil) {
-        NSString* originalUserAgent = [[self class] originalUserAgent];
+        NSString* originalUserAgent = [CDVUserAgentUtil originalUserAgent];
         // Use our address as a unique number to append to the User-Agent.
         _userAgent = [NSString stringWithFormat:@"%@ (%lld)", originalUserAgent, (long long)self];
     }
@@ -460,10 +430,7 @@ static NSString* gOriginalUserAgent = nil;
     webViewBounds.origin = self.view.bounds.origin;
 
     if (!self.webView) {
-        // setting the UserAgent must occur before the UIWebView is instantiated.
-        // This is read per instantiation, so it does not affect the main Cordova UIWebView
-        NSDictionary* dict = [[NSDictionary alloc] initWithObjectsAndKeys:self.userAgent, @"UserAgent", nil];
-        [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+        [CDVUserAgentUtil setUserAgent:self.userAgent];
 
         self.webView = [self newCordovaViewWithFrame:webViewBounds];
         self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
@@ -944,11 +911,6 @@ BOOL gSplashScreenShown = NO;
 {
     // NSLog(@"%@",@"applicationDidEnterBackground");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
-}
-
-- (void)onAppLocaleDidChange:(NSNotification*)notification
-{
-    gOriginalUserAgent = nil;
 }
 
 // ///////////////////////

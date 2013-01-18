@@ -57,7 +57,6 @@
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;
-+ (NSString*)originalUserAgent;
 
 - (void)printMultitaskingInfo;
 - (void)createGapView;

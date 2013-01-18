@@ -20,6 +20,7 @@
 #import "CDVInAppBrowser.h"
 #import "CDVPluginResult.h"
 #import "CDVViewController.h"
+#import "CDVUserAgentUtil.h"
 
 #define    kInAppBrowserTargetSelf @"_self"
 #define    kInAppBrowserTargetSystem @"_system"
@@ -91,7 +92,7 @@
 - (void)openInInAppBrowser:(NSURL*)url withOptions:(NSString*)options
 {
     if (self.inAppBrowserViewController == nil) {
-        NSString* originalUA = [CDVViewController originalUserAgent];
+        NSString* originalUA = [CDVUserAgentUtil originalUserAgent];
         self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:originalUA];
         self.inAppBrowserViewController.navigationDelegate = self;
 
@@ -229,10 +230,7 @@
     webViewBounds.size.height -= FOOTER_HEIGHT;
 
     if (!self.webView) {
-        // setting the UserAgent must occur before the UIWebView is instantiated.
-        // This is read per instantiation, so it does not affect the main Cordova UIWebView
-        NSDictionary* dict = [[NSDictionary alloc] initWithObjectsAndKeys:self.userAgent, @"UserAgent", nil];
-        [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+        [CDVUserAgentUtil setUserAgent:self.userAgent];
 
         self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
         self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
