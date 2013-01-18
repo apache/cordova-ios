@@ -57,12 +57,12 @@ static NSString* kCdvUserAgentVersionKey = @"Cordova-User-Agent-Version";
 
 + (void)setUserAgent:(NSString*)newValue
 {
-    NSLog(@"Set UA to %@", newValue);
     // Setting the UserAgent must occur before a UIWebView is instantiated.
     // It is read per instantiation, so it does not affect previously created views.
     // Except! When a PDF is loaded, all currently active UIWebViews reload their
     // User-Agent from the NSUserDefaults some time after the DidFinishLoad of the PDF bah!
     NSDictionary* dict = [[NSDictionary alloc] initWithObjectsAndKeys:newValue, @"UserAgent", nil];
+
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
 }
 
