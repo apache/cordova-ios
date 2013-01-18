@@ -437,9 +437,9 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
     // arguments are URL encoded
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
-    // return unsupported result for assets-library URLs
+    // we don't (yet?) support getting the parent of an asset
     if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"remove not supported for assets-library URLs."];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_READABLE_ERR];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return;
     }
