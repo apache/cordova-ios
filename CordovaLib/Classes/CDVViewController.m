@@ -68,7 +68,7 @@ static NSString* gOriginalUserAgent = nil;
         _commandQueue = [[CDVCommandQueue alloc] initWithViewController:self];
         _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithViewController:self];
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange:)
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillTerminate:)
                                                      name:UIApplicationWillTerminateNotification object:nil];
@@ -671,86 +671,8 @@ static NSString* gOriginalUserAgent = nil;
     return basePath;
 }
 
-- (void)setupSplashScreen
+- (void)updateSplashScreenSpinner
 {
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    NSString* launchImageFile = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchImageFile"];
-
-    if (launchImageFile == nil) { // fallback if no launch image was specified
-        if (CDV_IsIPhone5()) {
-            // iPhone 5 or iPod Touch 6th-gen
-            launchImageFile = @"Default-568h";
-        } else {
-            launchImageFile = @"Default";
-        }
-    }
-
-    NSString* orientedLaunchImageFile = nil;
-    CGAffineTransform startupImageTransform = CGAffineTransformIdentity;
-    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
-    UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-    UIImage* launchImage = nil;
-
-    // default to center of screen as in the original implementation. This will produce the 20px jump
-    CGPoint center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));
-
-    if (CDV_IsIPad()) {
-        if (!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation)) {
-            deviceOrientation = (UIDeviceOrientation)statusBarOrientation;
-        }
-
-        switch (deviceOrientation) {
-            case UIDeviceOrientationLandscapeLeft: // this is where the home button is on the right (yeah, I know, confusing)
-                {
-                    orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
-                    startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(90));
-                    center.x -= MIN(statusBarFrame.size.width, statusBarFrame.size.height) / 2;
-                }
-                break;
-
-            case UIDeviceOrientationLandscapeRight: // this is where the home button is on the left (yeah, I know, confusing)
-                {
-                    orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Landscape", launchImageFile];
-                    startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(-90));
-                    center.x += MIN(statusBarFrame.size.width, statusBarFrame.size.height) / 2;
-                }
-                break;
-
-            case UIDeviceOrientationPortraitUpsideDown:
-                {
-                    orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
-                    startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
-                    center.y -= MIN(statusBarFrame.size.width, statusBarFrame.size.height) / 2;
-                }
-                break;
-
-            case UIDeviceOrientationPortrait:
-            default:
-                {
-                    orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
-                    startupImageTransform = CGAffineTransformIdentity;
-                    center.y += MIN(statusBarFrame.size.width, statusBarFrame.size.height) / 2;
-                }
-                break;
-        }
-    } else { // not iPad
-        orientedLaunchImageFile = launchImageFile;
-    }
-
-    launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
-    if (launchImage == nil) {
-        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, CDV_IsIPad());
-    }
-
-    self.imageView = [[UIImageView alloc] initWithImage:launchImage];
-    self.imageView.tag = 1;
-    self.imageView.center = center;
-
-    self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-    [self.imageView setTransform:startupImageTransform];
-    [self.view.superview addSubview:self.imageView];
-
     /*
      * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
      *
@@ -761,7 +683,7 @@ static NSString* gOriginalUserAgent = nil;
      */
     NSString* topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
     UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-
+    
     if ([topActivityIndicator isEqualToString:@"whiteLarge"]) {
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
     } else if ([topActivityIndicator isEqualToString:@"white"]) {
@@ -769,20 +691,54 @@ static NSString* gOriginalUserAgent = nil;
     } else if ([topActivityIndicator isEqualToString:@"gray"]) {
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
-
+    
     self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
     self.activityView.tag = 2;
-
+    
     id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
     // backwards compatibility - if key is missing, default to true
     if ((showSplashScreenSpinnerValue == nil) || [showSplashScreenSpinnerValue boolValue]) {
         [self.view.superview addSubview:self.activityView];
     }
-
+    
     self.activityView.center = self.view.center;
     [self.activityView startAnimating];
-
+    
     [self.view.superview layoutSubviews];
+}
+
+- (void)updateSplashImageForOrientation:(UIInterfaceOrientation)orientation
+{
+    if(self.imageView==nil)
+    {
+        self.imageView = [[UIImageView alloc] init];
+        [self.view addSubview:self.imageView];
+    }
+    
+    //IPHONE (default)
+    NSString *imageName = @"Default";
+    
+    if (CDV_IsIPhone5())
+    {
+        imageName = [imageName stringByAppendingString:@"-568h"];
+    }
+    else if(CDV_IsIPad())
+    {
+        // set default to portrait upside down
+        imageName = @"Default-Portrait"; //@"Default-PortraitUpsideDown.png";
+        
+        if ( orientation == UIInterfaceOrientationLandscapeLeft )
+        {
+            imageName = @"Default-Landscape.png";//@"Default-LandscapeLeft.png";
+        }
+        else if ( orientation == UIInterfaceOrientationLandscapeRight )
+        {
+            imageName = @"Default-Landscape.png";//@"Default-LandscapeRight.png";
+        }
+    }
+    
+    self.imageView.image = [UIImage imageNamed:imageName];
+    self.imageView.frame = CGRectMake(0, 0, self.imageView.image.size.width, self.imageView.image.size.height);
 }
 
 - (void)showSplashScreen
@@ -842,14 +798,29 @@ static NSString* gOriginalUserAgent = nil;
     }
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    if (self.useSplashScreen && self.imageView != nil ) {
+        [self updateSplashImageForOrientation:toInterfaceOrientation];
+    }
+}
+
+
 BOOL gSplashScreenShown = NO;
-- (void)receivedOrientationChange
+- (void)receivedOrientationChange:(NSNotification*)notification
 {
     if (self.imageView == nil) {
         gSplashScreenShown = YES;
         if (self.useSplashScreen) {
-            [self setupSplashScreen];
+            [self updateSplashImageForOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
         }
+    }
+    
+    if(self.activityView == nil)
+    {
+        [self updateSplashScreenSpinner];
     }
 }
 
