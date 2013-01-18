@@ -93,7 +93,7 @@
 {
     if (self.inAppBrowserViewController == nil) {
         NSString* originalUA = [CDVUserAgentUtil originalUserAgent];
-        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:originalUA];
+        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:originalUA prevUserAgent:[self.commandDelegate userAgent]];
         self.inAppBrowserViewController.navigationDelegate = self;
 
         if ([self.viewController conformsToProtocol:@protocol(CDVScreenOrientationDelegate)]) {
@@ -202,6 +202,9 @@
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
+    // Don't recycle the ViewController since it may be consuming a lot of memory.
+    // Also - this is required for the PDF/User-Agent bug work-around.
+    self.inAppBrowserViewController = nil;
 }
 
 @end
@@ -210,11 +213,12 @@
 
 @implementation CDVInAppBrowserViewController
 
-- (id)initWithUserAgent:(NSString*)userAgent
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent
 {
     self = [super init];
     if (self != nil) {
-        self.userAgent = userAgent;
+        _userAgent = userAgent;
+        _prevUserAgent = prevUserAgent;
         [self createViews];
     }
 
@@ -230,7 +234,7 @@
     webViewBounds.size.height -= FOOTER_HEIGHT;
 
     if (!self.webView) {
-        [CDVUserAgentUtil setUserAgent:self.userAgent];
+        [CDVUserAgentUtil setUserAgent:_userAgent];
 
         self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
         self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
@@ -417,9 +421,12 @@
 
     [self.spinner startAnimating];
 
+    NSURL* url = theWebView.request.URL;
+    // This is probably a bug, but it works on iOS 5 and 6 to know when a PDF
+    // is being loaded.
+    _isPDF = [[url absoluteString] length] == 0;
+
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStart:)]) {
-        NSURL* url = theWebView.request.URL;
-        // URL is nil when opening PDFs.
         if (url == nil) {
             url = _requestedURL;
         }
@@ -437,12 +444,21 @@
 
     [self.spinner stopAnimating];
 
+    // Work around a bug where the first time a PDF is opened, all UIWebViews
+    // reload their User-Agent from NSUserDefaults.
+    // This work-around makes the following assumptions:
+    // 1. The app has only a single Cordova Webview. If not, then the app should
+    //    take it upon themselves to load a PDF in the background as a part of
+    //    their start-up flow.
+    // 2. That the PDF does not require any additional network requests. We change
+    //    the user-agent here back to that of the CDVViewController, so requests
+    //    from it must pass through its white-list.
+    if (_isPDF) {
+        [CDVUserAgentUtil setUserAgent:_prevUserAgent];
+    }
+
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStop:)]) {
         NSURL* url = theWebView.request.URL;
-        // URL is nil when opening PDFs.
-        if (url == nil) {
-            url = _requestedURL;
-        }
         [self.navigationDelegate browserLoadStop:url];
     }
 }

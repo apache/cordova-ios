@@ -44,6 +44,9 @@
 @interface CDVInAppBrowserViewController : UIViewController <UIWebViewDelegate>{
     @private
     NSURL* _requestedURL;
+    NSString* _userAgent;
+    NSString* _prevUserAgent;
+    BOOL _isPDF;
 }
 
 @property (nonatomic, strong) IBOutlet UIWebView* webView;
@@ -56,13 +59,12 @@
 
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
 @property (nonatomic, weak) id <CDVInAppBrowserNavigationDelegate> navigationDelegate;
-@property (nonatomic, strong) NSString* userAgent;
 
 - (void)close;
 - (void)navigateTo:(NSURL*)url;
 - (void)showLocationBar:(BOOL)show;
 
-- (id)initWithUserAgent:(NSString*)userAgent;
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent;
 
 @end
 
