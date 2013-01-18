@@ -22,23 +22,10 @@
 
 @implementation CDVEcho
 
-- (CDVPluginResult*)createEchoPluginResult:(CDVInvokedUrlCommand*)command
-{
-    id message = [command.arguments objectAtIndex:0];
-    CDVPluginResult* pluginResult = nil;
-
-    if ([message isKindOfClass:[NSData class]]) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:message];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
-    }
-
-    return pluginResult;
-}
-
 - (void)echo:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* pluginResult = [self createEchoPluginResult:command];
+    id message = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -50,9 +37,18 @@
 
 - (void)echoAsync:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* pluginResult = [self createEchoPluginResult:command];
+    id message = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
 
     [self performSelector:@selector(echoAsyncHelper:) withObject:[NSArray arrayWithObjects:pluginResult, command.callbackId, nil] afterDelay:0];
+}
+
+- (void)echoArrayBuffer:(CDVInvokedUrlCommand*)command
+{
+    id message = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:message];
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end
