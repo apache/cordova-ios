@@ -19,7 +19,10 @@
 
 #import "CDV.h"
 
-#include <CFNetwork/CFNetwork.h>
+#import <AssetsLibrary/ALAsset.h>
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import <AssetsLibrary/ALAssetsLibrary.h>
+#import <CFNetwork/CFNetwork.h>
 
 @interface CDVFileTransfer ()
 // Sets the requests headers for the request.
@@ -27,7 +30,7 @@
 // Creates a delegate to handle an upload.
 - (CDVFileTransferDelegate*)delegateForUploadCommand:(CDVInvokedUrlCommand*)command;
 // Creates an NSData* for the file for the given upload arguments.
-- (NSData*)fileDataForUploadCommand:(CDVInvokedUrlCommand*)command;
+- (void)fileDataForUploadCommand:(CDVInvokedUrlCommand*)command;
 @end
 
 // Buffer size to use for streaming uploads.
@@ -254,35 +257,59 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     return delegate;
 }
 
-- (NSData*)fileDataForUploadCommand:(CDVInvokedUrlCommand*)command
+- (void)fileDataForUploadCommand:(CDVInvokedUrlCommand*)command
 {
     NSString* target = (NSString*)[command.arguments objectAtIndex:0];
     NSError* __autoreleasing err = nil;
-    // Extract the path part out of a file: URL.
-    NSString* filePath = [target hasPrefix:@"/"] ? [target copy] : [[NSURL URLWithString:target] path];
 
-    // Memory map the file so that it can be read efficiently even if it is large.
-    NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
+    // return unsupported result for assets-library URLs
+    if ([target hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+            if (asset) {
+                // We have the asset!  Get the data and send it off.
+                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                NSData* fileData = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                [self uploadData:fileData command:command];
+            } else {
+                // We couldn't find the asset.  Send the appropriate error.
+                CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            }
+        };
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+            // Retrieving the asset failed for some reason.  Send the appropriate error.
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        };
 
-    if (err != nil) {
-        NSLog(@"Error opening file %@: %@", target, err);
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:[NSURL URLWithString:target] resultBlock:resultBlock failureBlock:failureBlock];
+        return;
+    } else {
+        // Extract the path part out of a file: URL.
+        NSString* filePath = [target hasPrefix:@"/"] ? [target copy] : [[NSURL URLWithString:target] path];
+
+        // Memory map the file so that it can be read efficiently even if it is large.
+        NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
+
+        if (err != nil) {
+            NSLog(@"Error opening file %@: %@", target, err);
+        }
+        [self uploadData:fileData command:command];
     }
-    return fileData;
 }
 
 - (void)upload:(CDVInvokedUrlCommand*)command
 {
-    NSString* argPath = [command.arguments objectAtIndex:0];
-
-    // return unsupported result for assets-library URLs
-    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"upload not supported for assets-library URLs."];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        return;
-    }
-
     // fileData and req are split into helper functions to ease the unit testing of delegateForUpload.
-    NSData* fileData = [self fileDataForUploadCommand:command];
+    // First, get the file data.  This method will call `uploadData:command`.
+    [self fileDataForUploadCommand:command];
+}
+
+- (void)uploadData:(NSData*)fileData command:(CDVInvokedUrlCommand*)command {
     NSURLRequest* req = [self requestForUploadCommand:command fileData:fileData];
 
     if (req == nil) {
