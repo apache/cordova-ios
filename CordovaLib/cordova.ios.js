@@ -1,6 +1,6 @@
-// commit 1aa3643deaa9f14970806277d5f651f3cd78caa9
+// commit 7d5552049e33254eca3bda227af8a4892a7ce7c3
 
-// File generated at :: Mon Jan 21 2013 12:56:50 GMT-0800 (PST)
+// File generated at :: Mon Jan 21 2013 14:46:55 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -78,7 +78,6 @@ var require,
         delete modules[id];
     };
 
-    define.moduleMap = modules;
 })();
 
 //Export for use in node
@@ -410,8 +409,6 @@ function assignOrWrapInDeprecateGetter(obj, key, value, message) {
     if (message) {
         utils.defineGetter(obj, key, function() {
             console.log(message);
-            delete obj[key];
-            clobber(obj, key, value);
             return value;
         });
     } else {
@@ -441,6 +438,10 @@ function include(parent, objects, clobber, merge) {
             // Overwrite if not currently defined.
             if (typeof parent[key] == 'undefined') {
               assignOrWrapInDeprecateGetter(parent, key, result, obj.deprecated);
+            } else if (merge && typeof obj.path !== 'undefined') {
+              // If merging, merge parent onto result
+              recursiveMerge(result, parent[key]);
+              parent[key] = result;
             } else {
               // Set result to what already exists, so we can build children into it if they exist.
               result = parent[key];
@@ -466,18 +467,19 @@ function include(parent, objects, clobber, merge) {
 function recursiveMerge(target, src) {
     for (var prop in src) {
         if (src.hasOwnProperty(prop)) {
-            if (target.prototype && target.prototype.constructor === target) {
+            if (typeof target.prototype !== 'undefined' && target.prototype.constructor === target) {
                 // If the target object is a constructor override off prototype.
-                clobber(target.prototype, prop, src[prop]);
+                target.prototype[prop] = src[prop];
             } else {
-                if (typeof src[prop] === 'object' && typeof target[prop] === 'object') {
-                    recursiveMerge(target[prop], src[prop]);
+                if (typeof src[prop] === 'object') {
+                    target[prop] = recursiveMerge(target[prop], src[prop]);
                 } else {
                     clobber(target, prop, src[prop]);
                 }
             }
         }
     }
+    return target;
 }
 
 module.exports = {
@@ -489,9 +491,7 @@ module.exports = {
     },
     buildIntoAndMerge: function(objects, target) {
         include(target, objects, true, true);
-    },
-    recursiveMerge: recursiveMerge,
-    assignOrWrapInDeprecateGetter: assignOrWrapInDeprecateGetter
+    }
 };
 
 });
@@ -904,8 +904,53 @@ module.exports = {
         device: {
             path: 'cordova/plugin/device'
         },
+        DirectoryEntry: {
+            path: 'cordova/plugin/DirectoryEntry'
+        },
+        DirectoryReader: {
+            path: 'cordova/plugin/DirectoryReader'
+        },
+        Entry: {
+            path: 'cordova/plugin/Entry'
+        },
+        File: {
+            path: 'cordova/plugin/File'
+        },
+        FileEntry: {
+            path: 'cordova/plugin/FileEntry'
+        },
+        FileError: {
+            path: 'cordova/plugin/FileError'
+        },
+        FileReader: {
+            path: 'cordova/plugin/FileReader'
+        },
+        FileSystem: {
+            path: 'cordova/plugin/FileSystem'
+        },
+        FileTransfer: {
+            path: 'cordova/plugin/FileTransfer'
+        },
+        FileTransferError: {
+            path: 'cordova/plugin/FileTransferError'
+        },
+        FileUploadOptions: {
+            path: 'cordova/plugin/FileUploadOptions'
+        },
+        FileUploadResult: {
+            path: 'cordova/plugin/FileUploadResult'
+        },
+        FileWriter: {
+            path: 'cordova/plugin/FileWriter'
+        },
+        Flags: {
+            path: 'cordova/plugin/Flags'
+        },
         GlobalizationError: {
             path: 'cordova/plugin/GlobalizationError'
+        },
+        LocalFileSystem: {
+            path: 'cordova/plugin/LocalFileSystem'
         },
         Media: {
             path: 'cordova/plugin/Media'
@@ -919,6 +964,9 @@ module.exports = {
         MediaFileData:{
             path: 'cordova/plugin/MediaFileData'
         },
+        Metadata:{
+            path: 'cordova/plugin/Metadata'
+        },
         Position: {
             path: 'cordova/plugin/Position'
         },
@@ -927,6 +975,12 @@ module.exports = {
         },
         ProgressEvent: {
             path: 'cordova/plugin/ProgressEvent'
+        },
+        requestFileSystem:{
+            path: 'cordova/plugin/requestFileSystem'
+        },
+        resolveLocalFileSystemURI:{
+            path: 'cordova/plugin/resolveLocalFileSystemURI'
         }
     },
     clobbers: {
@@ -998,7 +1052,7 @@ function massageArgsJsToNative(args) {
         return window.btoa(encodeArrayBufferAs8bitString(ab));
     };
     args.forEach(function(arg, i) {
-        if (utils.typeName(arg) == 'ArrayBuffer') {
+        if (Object.prototype.toString.call(arg).slice(8, -1) == 'ArrayBuffer') {
             args[i] = {
                 'CDVType': 'ArrayBuffer',
                 'data': encodeArrayBufferAsBase64(arg)
@@ -1152,110 +1206,20 @@ module.exports = iOSExec;
 
 });
 
-// file: lib/common/modulemapper.js
-define("cordova/modulemapper", function(require, exports, module) {
-
-var builder = require('cordova/builder'),
-    moduleMap = define.moduleMap,
-    symbolList,
-    deprecationMap;
-
-exports.reset = function() {
-    symbolList = [];
-    deprecationMap = {};
-};
-
-function addEntry(strategy, moduleName, symbolPath, opt_deprecationMessage) {
-    if (!(moduleName in moduleMap)) {
-        throw new Error('Module ' + moduleName + ' does not exist.');
-    }
-    symbolList.push(strategy, moduleName, symbolPath);
-    if (opt_deprecationMessage) {
-        deprecationMap[symbolPath] = opt_deprecationMessage;
-    }
-}
-
-exports.clobbers = addEntry.bind(null, 'c');
-exports.merges = addEntry.bind(null, 'm');
-exports.defaults = addEntry.bind(null, 'd');
-
-function prepareNamespace(symbolPath, context) {
-    if (!symbolPath) {
-        return context;
-    }
-    var parts = symbolPath.split('.');
-    var cur = context;
-    for (var i = 0, part; part = parts[i]; ++i) {
-        cur[part] = cur[part] || {};
-    }
-    return cur[parts[i-1]];
-}
-
-exports.mapModules = function(context) {
-    var origSymbols = {};
-    context.CDV_origSymbols = origSymbols;
-    for (var i = 0, len = symbolList.length; i < len; i += 3) {
-        var strategy = symbolList[i];
-        var moduleName = symbolList[i + 1];
-        var symbolPath = symbolList[i + 2];
-        var lastDot = symbolPath.lastIndexOf('.');
-        var namespace = symbolPath.substr(0, lastDot);
-        var lastName = symbolPath.substr(lastDot + 1);
-
-        var module = require(moduleName);
-        var deprecationMsg = symbolPath in deprecationMap ? 'Access made to deprecated symbol: ' + symbolPath + '. ' + deprecationMsg : null;
-        var parentObj = prepareNamespace(namespace, context);
-        var target = parentObj[lastName];
-
-        if (strategy == 'm' && target) {
-            builder.recursiveMerge(target, module);
-        } else if ((strategy == 'd' && !target) || (strategy != 'd')) {
-            if (target) {
-                origSymbols[symbolPath] = target;
-            }
-            builder.assignOrWrapInDeprecateGetter(parentObj, lastName, module, deprecationMsg);
-        }
-    }
-};
-
-exports.getOriginalSymbol = function(context, symbolPath) {
-    var origSymbols = context.CDV_origSymbols;
-    if (origSymbols && (symbolPath in origSymbols)) {
-        return origSymbols[symbolPath];
-    }
-    var parts = symbolPath.split('.');
-    var obj = context;
-    for (var i = 0; i < parts.length; ++i) {
-        obj = obj && obj[parts[i]];
-    }
-    return obj;
-};
-
-exports.loadMatchingModules = function(matchingRegExp) {
-    for (var k in moduleMap) {
-        if (matchingRegExp.exec(k)) {
-            require(k);
-        }
-    }
-};
-
-exports.reset();
-
-
-});
-
 // file: lib/ios/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
     id: "ios",
     initialize:function() {
-        var modulemapper = require('cordova/modulemapper');
-
-        modulemapper.loadMatchingModules(/cordova.*\/symbols$/);
-        modulemapper.mapModules(window);
     },
     clobbers: {
+        File: { // exists natively, override
+            path: "cordova/plugin/File"
+        },
+        FileReader: { // exists natively, override
+            path: "cordova/plugin/FileReader"
+        },
         MediaError: { // exists natively, override
             path: "cordova/plugin/MediaError"
         },
@@ -1269,6 +1233,9 @@ module.exports = {
     merges:{
         Contact:{
             path: "cordova/plugin/ios/Contact"
+        },
+        Entry:{
+            path: "cordova/plugin/ios/Entry"
         },
         navigator:{
             children:{
@@ -2445,12 +2412,11 @@ module.exports = FileError;
 define("cordova/plugin/FileReader", function(require, exports, module) {
 
 var exec = require('cordova/exec'),
-    modulemapper = require('cordova/modulemapper'),
     utils = require('cordova/utils'),
     File = require('cordova/plugin/File'),
     FileError = require('cordova/plugin/FileError'),
     ProgressEvent = require('cordova/plugin/ProgressEvent'),
-    origFileReader = modulemapper.getOriginalSymbol(this, 'FileReader');
+    origFileReader = this.FileReader;
 
 /**
  * This class reads the mobile device file system.
@@ -4438,44 +4404,6 @@ module.exports = function(successCallback, errorCallback, message, forceAsync) {
 
 });
 
-// file: lib/ios/plugin/file/symbols.js
-define("cordova/plugin/file/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper'),
-    symbolshelper = require('cordova/plugin/file/symbolshelper');
-
-symbolshelper(modulemapper.clobbers);
-modulemapper.merges('cordova/plugin/ios/Entry', 'Entry');
-
-});
-
-// file: lib/common/plugin/file/symbolshelper.js
-define("cordova/plugin/file/symbolshelper", function(require, exports, module) {
-
-module.exports = function(exportFunc) {
-    exportFunc('cordova/plugin/DirectoryEntry', 'DirectoryEntry');
-    exportFunc('cordova/plugin/DirectoryReader', 'DirectoryReader');
-    exportFunc('cordova/plugin/Entry', 'Entry');
-    exportFunc('cordova/plugin/File', 'File');
-    exportFunc('cordova/plugin/FileEntry', 'FileEntry');
-    exportFunc('cordova/plugin/FileError', 'FileError');
-    exportFunc('cordova/plugin/FileReader', 'FileReader');
-    exportFunc('cordova/plugin/FileSystem', 'FileSystem');
-    exportFunc('cordova/plugin/FileTransfer', 'FileTransfer');
-    exportFunc('cordova/plugin/FileTransferError', 'FileTransferError');
-    exportFunc('cordova/plugin/FileUploadOptions', 'FileUploadOptions');
-    exportFunc('cordova/plugin/FileUploadResult', 'FileUploadResult');
-    exportFunc('cordova/plugin/FileWriter', 'FileWriter');
-    exportFunc('cordova/plugin/Flags', 'Flags');
-    exportFunc('cordova/plugin/LocalFileSystem', 'LocalFileSystem');
-    exportFunc('cordova/plugin/Metadata', 'Metadata');
-    exportFunc('cordova/plugin/requestFileSystem', 'requestFileSystem');
-    exportFunc('cordova/plugin/resolveLocalFileSystemURI', 'resolveLocalFileSystemURI');
-};
-
-});
-
 // file: lib/common/plugin/geolocation.js
 define("cordova/plugin/geolocation", function(require, exports, module) {
 
@@ -5714,10 +5642,7 @@ var utils = exports;
  */
 utils.defineGetterSetter = function(obj, key, getFunc, opt_setFunc) {
     if (Object.defineProperty) {
-        var desc = {
-            get: getFunc,
-            configurable: true
-        };
+        var desc = {get:getFunc};
         if (opt_setFunc) {
             desc.set = opt_setFunc;
         }
