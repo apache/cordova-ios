@@ -182,6 +182,18 @@
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
 }
 
+- (void)testNoMatchInQueryParam
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"www.apache.org",
+        nil];
+
+    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=http://www.apache.org"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=www.apache.org"]], nil);
+}
+
 - (void)testWildcardMix
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
