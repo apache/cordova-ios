@@ -31,6 +31,7 @@
 
 #define kSplashScreenDurationDefault 2.0f
 
+
 @interface CDVViewController ()
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
