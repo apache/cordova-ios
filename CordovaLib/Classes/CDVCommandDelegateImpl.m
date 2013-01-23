@@ -78,6 +78,10 @@
 
 - (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId
 {
+    // This occurs when there is are no win/fail callbacks for the call.
+    if ([@"INVALID" isEqualToString:callbackId]) {
+        return;
+    }
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
     id message = result.message == nil ? [NSNull null] : result.message;
