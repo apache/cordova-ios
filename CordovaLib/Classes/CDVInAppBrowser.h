@@ -46,7 +46,6 @@
     NSURL* _requestedURL;
     NSString* _userAgent;
     NSString* _prevUserAgent;
-    BOOL _isPDF;
 }
 
 @property (nonatomic, strong) IBOutlet UIWebView* webView;

@@ -399,6 +399,7 @@
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
 
     [self.webView loadRequest:request];
+    _requestedURL = url;
 }
 
 - (void)goBack:(id)sender
@@ -423,12 +424,8 @@
 
     [self.spinner startAnimating];
 
-    NSURL* url = theWebView.request.URL;
-    // This is probably a bug, but it works on iOS 5 and 6 to know when a PDF
-    // is being loaded.
-    _isPDF = [[url absoluteString] length] == 0;
-
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStart:)]) {
+        NSURL* url = theWebView.request.URL;
         if (url == nil) {
             url = _requestedURL;
         }
@@ -457,7 +454,8 @@
     //    from it must pass through its white-list. This *does* break PDFs that
     //    contain links to other remote PDF/websites.
     // More info at https://issues.apache.org/jira/browse/CB-2225
-    if (_isPDF) {
+    BOOL isPDF = [@"true" isEqualToString:[theWebView stringByEvaluatingJavaScriptFromString:@"document.body==null"]];
+    if (isPDF) {
         [CDVUserAgentUtil setUserAgent:_prevUserAgent];
     }
 
