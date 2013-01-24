@@ -73,4 +73,7 @@
 
 - (BOOL)URLisAllowed:(NSURL*)url;
 
+- (void)showSplashScreen;
+- (void)hideSplashScreen;
+
 @end
