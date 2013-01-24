@@ -26,7 +26,9 @@
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
-@interface CDVViewController ()
+@interface CDVViewController () {
+    NSInteger _userAgentLockToken;
+}
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSDictionary* settings;
@@ -303,14 +305,17 @@
     }
 
     // /////////////////
-
-    if (!loadErr) {
-        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-        [self.webView loadRequest:appReq];
-    } else {
-        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-        [self.webView loadHTMLString:html baseURL:nil];
-    }
+    [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
+            _userAgentLockToken = lockToken;
+            [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
+            if (!loadErr) {
+                NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+                [self.webView loadRequest:appReq];
+            } else {
+                NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+                [self.webView loadHTMLString:html baseURL:nil];
+            }
+        }];
 }
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
@@ -430,8 +435,6 @@
     webViewBounds.origin = self.view.bounds.origin;
 
     if (!self.webView) {
-        [CDVUserAgentUtil setUserAgent:self.userAgent];
-
         self.webView = [self newCordovaViewWithFrame:webViewBounds];
         self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 
@@ -496,6 +499,11 @@
  */
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
+    if (_userAgentLockToken != 0) {
+        [CDVUserAgentUtil releaseLock:_userAgentLockToken];
+        _userAgentLockToken = 0;
+    }
+
     /*
      * Hide the Top Activity THROBBER in the Battery Bar
      */
@@ -521,6 +529,11 @@
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
 {
+    if (_userAgentLockToken != 0) {
+        [CDVUserAgentUtil releaseLock:_userAgentLockToken];
+        _userAgentLockToken = 0;
+    }
+
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
 
     /*

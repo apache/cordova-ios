@@ -21,5 +21,7 @@
 
 @interface CDVUserAgentUtil : NSObject
 + (NSString*)originalUserAgent;
-+ (void)setUserAgent:(NSString*)newValue;
++ (void)acquireLock:(void (^)(NSInteger lockToken))block;
++ (void)releaseLock:(NSInteger)lockToken;
++ (void)setUserAgent:(NSString*)value lockToken:(NSInteger)lockToken;
 @end
