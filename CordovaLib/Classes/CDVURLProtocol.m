@@ -17,10 +17,14 @@
  under the License.
  */
 
+#import <AssetsLibrary/ALAsset.h>
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import <AssetsLibrary/ALAssetsLibrary.h>
 #import "CDVURLProtocol.h"
 #import "CDVCommandQueue.h"
 #import "CDVWhitelist.h"
 #import "CDVViewController.h"
+#import "CDVFile.h"
 
 @interface CDVHTTPURLResponse : NSHTTPURLResponse
 - (id)initWithUnauthorizedURL:(NSURL*)url;
@@ -106,7 +110,9 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     NSURL* theUrl = [theRequest URL];
     CDVViewController* viewController = viewControllerForRequest(theRequest);
 
-    if (viewController != nil) {
+    if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefix]) {
+        return YES;
+    } else if (viewController != nil) {
         if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
             NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
             NSString* requestId = [theRequest valueForHTTPHeaderField:@"rc"];
@@ -155,16 +161,41 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
         [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
         [[self client] URLProtocolDidFinishLoading:self];
         return;
+    } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefix]) {
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
+            if (asset) {
+                // We have the asset!  Get the data and send it along.
+                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                Byte* buffer = (Byte*)malloc ([assetRepresentation size]);
+                NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithBlankResponse:url];
+                [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+                [[self client] URLProtocol:self didLoadData:data];
+                [[self client] URLProtocolDidFinishLoading:self];
+            } else {
+                // We couldn't find the asset.  Send an error.
+                CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
+                [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+                [[self client] URLProtocolDidFinishLoading:self];
+            }
+        };
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
+            // Retrieving the asset failed for some reason.  Send an error.
+            CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
+            [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+            [[self client] URLProtocolDidFinishLoading:self];
+        };
+
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:url resultBlock:resultBlock failureBlock:failureBlock];
+        return;
     }
 
     NSString* body = [gWhitelist errorStringForURL:url];
-
     CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
-
     [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-
     [[self client] URLProtocol:self didLoadData:[body dataUsingEncoding:NSASCIIStringEncoding]];
-
     [[self client] URLProtocolDidFinishLoading:self];
 }
 
