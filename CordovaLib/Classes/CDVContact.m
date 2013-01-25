@@ -1174,9 +1174,13 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
                 id key = [[CDVContact defaultW3CtoAB] valueForKey:k];
                 if (key && ![k isKindOfClass:[NSNull class]]) {
                     bFound = CFDictionaryGetValueIfPresent(dict, (__bridge const void*)key, (void*)&value);
-                    CFRetain(value);
-                    [newAddress setObject:(bFound && value != NULL) ?  (__bridge id)value:[NSNull null] forKey:k];
-                    CFRelease(value);
+                    if (bFound && (value != NULL)) {
+                        CFRetain(value);
+                        [newAddress setObject:(__bridge id)value forKey:k];
+                        CFRelease(value);
+                    } else {
+                        [newAddress setObject:[NSNull null] forKey:k];
+                    }
                 } else {
                     // was a property that iPhone doesn't support
                     [newAddress setObject:[NSNull null] forKey:k];
@@ -1228,15 +1232,23 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
             if ([fields containsObject:kW3ContactFieldValue]) {
                 // value = user name
                 bFound = CFDictionaryGetValueIfPresent(dict, kABPersonInstantMessageUsernameKey, (void*)&value);
-                CFRetain(value);
-                [newDict setObject:(bFound && value != NULL) ?  (__bridge id)value:[NSNull null] forKey:kW3ContactFieldValue];
-                CFRelease(value);
+                if (bFound && (value != NULL)) {
+                    CFRetain(value);
+                    [newDict setObject:(__bridge id)value forKey:kW3ContactFieldValue];
+                    CFRelease(value);
+                } else {
+                    [newDict setObject:[NSNull null] forKey:kW3ContactFieldValue];
+                }
             }
             if ([fields containsObject:kW3ContactFieldType]) {
                 bFound = CFDictionaryGetValueIfPresent(dict, kABPersonInstantMessageServiceKey, (void*)&value);
-                CFRetain(value);
-                [newDict setObject:(bFound && value != NULL) ? (id)[[CDVContact class] convertPropertyLabelToContactType:(__bridge NSString*)value]:[NSNull null] forKey:kW3ContactFieldType];
-                CFRelease(value);
+                if (bFound && (value != NULL)) {
+                    CFRetain(value);
+                    [newDict setObject:(id)[[CDVContact class] convertPropertyLabelToContactType:(__bridge NSString*)value] forKey:kW3ContactFieldType];
+                    CFRelease(value);
+                } else {
+                    [newDict setObject:[NSNull null] forKey:kW3ContactFieldType];
+                }
             }
             // always set ID
             id identifier = [NSNumber numberWithUnsignedInt:ABMultiValueGetIdentifierAtIndex(multi, i)];
