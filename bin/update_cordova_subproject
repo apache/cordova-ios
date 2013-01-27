@@ -27,6 +27,7 @@ import fileinput
 import os
 import re
 import sys
+from posixpath import curdir, sep, pardir, join, abspath, commonprefix
 
 def Usage():
   print __doc__
@@ -53,6 +54,21 @@ def AbsProjectPath(relative_path):
     raise Exception('The following is not a valid path to an XCode project: %s' % project_path)
   return project_path
 
+def relpath(path, start=curdir):
+  # it would be nice to use os.path.relpath, 
+  # but that leaves out those with python < v2.6
+  if not path:
+    raise ValueError("no path specified")
+  start_list = abspath(start).split(sep)
+  path_list = abspath(path).split(sep)
+  # Work out how much of the filepath is shared by start and path.
+  i = len(commonprefix([start_list, path_list]))
+  rel_list = [pardir] * (len(start_list)-i) + path_list[i:]
+  if not rel_list:
+    return curdir
+  return join(*rel_list)
+
+
 def main(argv):
   if len(argv) < 2 or len(argv) > 3:
     Usage()
@@ -65,7 +81,7 @@ def main(argv):
     cordova_lib_xcode_path = AbsProjectPath(argv[2])
 
   parent_project_path = AbsParentPath(project_path)
-  subproject_path = os.path.relpath(cordova_lib_xcode_path, parent_project_path)
+  subproject_path = relpath(cordova_lib_xcode_path, parent_project_path)
 
   # /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CordovaLib.xcodeproj; sourceTree = "<group>"; };
   REGEX = re.compile(r'(.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)')
