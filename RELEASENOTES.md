@@ -22,6 +22,28 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+ ### 2.4.0 (201302XX) ###
+
+* Fix FileTransfer.download failing for file: URLs.
+* Fix setting of _nativeReady when cordova.js is lazy-loaded.
+* Fix for CB-2225
+* Fix CB-2271 - Multiple Cordova Views.
+* Fixes CB-2209 Contact ARC issues
+* Add slice() support to readAsDataURL & readAsText
+* Move start page to be specified in <content> tag.
+* IOS fix slow contact access due to photos temp file generation
+* [CB-2235] Fixed file transfer whitelisting.
+* [ios]CB-2189: support ArrayBuffer over exec bridge
+* cordova/run and cordova/emulate refer to old 'debug' script which has been renamed to 'build'
+* [CB-2193] Remove deprecated - iOS - CDVViewController invokeString property
+* Fixed CB-2191 and CB-2192 (removal of deprecated methods)
+* [CB-1832] iOS: CDVCordovaView should not inherit from UIWebView
+* [CB-1946] iOS: Switch JSON serialization to NSJSONSerialization
+* [CB-2159] handleOpenURL not called on iOS
+* [CB-2063] InAppBrowser - support iPad presentation style, iOS transition styles
+* [CB-478] FileTransfer upload - handle "trustAllHosts" parameter
+* [CB-2071] InAppBrowser: allow UIWebView settings like main CordovaWebView
+
  ### 2.3.0 (201212XX) ###
 
 * [CB-1550] iOS build, debug, emulate scripts should check xcode version
