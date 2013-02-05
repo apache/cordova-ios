@@ -68,9 +68,7 @@
 * Interim js patch for [CB-2094] issue
 * [CB-2071] InAppBrowser: allow UIWebView settings like main CordovaWebView
 * Added interim js for latest changes.
-* Added cordova-js 2.4.0rc1
 * Added whitelist unit test to check for query param matches
-* Updated version to 2.4.0rc1
 * [CB-2290] iOS: 'CDVJSON.h' file not found when adding a plugin
 * Added a native uri option to DestinationType.
 * Added a namespace prefix to a constant.

@@ -22,6 +22,14 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+## Upgrading older Cordova plugins to 2.4.0 ##
+
+1. **Install** Cordova 2.4.0
+2. Follow the **"Upgrading older Cordova plugins to 2.3.0"** section, if necessary
+
+JSONKit usage has been removed, and replaced by AppKit's NSJSONSerialization. If you are using CordovaLib's JSONKit, either use your own JSONKit or use NSJSONSerialization instead.
+
+
 ## Upgrading older Cordova plugins to 2.3.0 ##
 
 1. **Install** Cordova 2.3.0
