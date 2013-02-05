@@ -1,8 +1,8 @@
 // Platform: ios
 
-// commit e784eee3ce02dbd475e3c3f70031668f1706f2ec
+// commit ac725f6ae0bd655789771e2a40b8d60cb4c8c221
 
-// File generated at :: Wed Jan 30 2013 09:20:09 GMT-0500 (EST)
+// File generated at :: Tue Feb 05 2013 05:30:42 GMT+0100 (CET)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -1575,6 +1575,7 @@ module.exports = {
         CELL_2G: "2g",
         CELL_3G: "3g",
         CELL_4G: "4g",
+        CELL:"cellular",
         NONE: "none"
 };
 
