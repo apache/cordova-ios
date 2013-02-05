@@ -22,29 +22,62 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
- ### 2.4.0 (201302XX) ###
+ ### 2.4.0 (20130205) ###
 
+* Make cordova_plist_to_config_xml able to handle binary plist files
+* Ran splashscreen images through ImageOptim.
+* [ios] Remove %-escaping version of FileReader.readAsText()
+* Fix trying to mutate an immutable NSArray in CDVInvokedUrlCommand.
 * Fix FileTransfer.download failing for file: URLs.
 * Fix setting of _nativeReady when cordova.js is lazy-loaded.
+* Fix NPE when PDF is opened in InAppBrowser.
+* Refactor User-Agent logic into a helper class.
 * Fix for CB-2225
+* Remove a debugging log statement.
+* Add a code comment that points to the PDF/User-Agent JIRA issue.
+* Disable broken test.
+* Don't send callbacks when there are no listeners.
+* Fix InAppBrowser on iOS 5.
 * Fix CB-2271 - Multiple Cordova Views.
+* Fix usage message of update_cordova_subproject.
+* Delete obsolete instructions in bin/README.md
 * Fixes CB-2209 Contact ARC issues
-* Add slice() support to readAsDataURL & readAsText
+* including a manual relpath function
+* Add slice() support to readAsText.
+* Add slice() support to readAsDataURL.
 * Move start page to be specified in <content> tag.
-* IOS fix slow contact access due to photos temp file generation
+* Separate the echoArrayBuffer call from normal echo
+* Adding bool plugin result message, tests
+* iOS fix slow contact access due to photos temp file generation
 * [CB-2235] Fixed file transfer whitelisting.
 * [ios]CB-2189: support ArrayBuffer over exec bridge
+* [ios] CB-2215 - Implement ArrayBuffer native->js.
+* [ios] CB-2215 - Implement ArrayBuffer native->js.
+* CordovaLibTests - update project file for iOS 5 support.
 * cordova/run and cordova/emulate refer to old 'debug' script which has been renamed to 'build'
+* [CB-1495] iOS default splash screen images take up several megabytes
+* [CB-1849] Remove iOS 4/5 conditional code block, put in main block
 * [CB-2193] Remove deprecated - iOS - CDVViewController invokeString property
 * Fixed CB-2191 and CB-2192 (removal of deprecated methods)
 * [CB-1832] iOS: CDVCordovaView should not inherit from UIWebView
 * [CB-1946] iOS: Switch JSON serialization to NSJSONSerialization
+* Fixes static analyzer error for using mktemp (substituted with mkstemp)
 * [CB-2159] handleOpenURL not called on iOS
 * [CB-2063] InAppBrowser - support iPad presentation style, iOS transition styles
 * [CB-478] FileTransfer upload - handle "trustAllHosts" parameter
+* Interim js patch for [CB-2094] issue
 * [CB-2071] InAppBrowser: allow UIWebView settings like main CordovaWebView
+* Added interim js for latest changes.
+* Added cordova-js 2.4.0rc1
+* Added whitelist unit test to check for query param matches
+* Updated version to 2.4.0rc1
+* [CB-2290] iOS: 'CDVJSON.h' file not found when adding a plugin
+* Added a native uri option to DestinationType.
+* Added a namespace prefix to a constant.
 
- ### 2.3.0 (201212XX) ###
+<br />
+
+ ### 2.3.0 (20130107) ###
 
 * [CB-1550] iOS build, debug, emulate scripts should check xcode version
 * [CB-1669] Issue an error when media.startRecord() is failing.
@@ -104,6 +137,7 @@
 * Add local notification #define, and stubbed method in AppDelegate.m
 * Add appdelegate method didReceiveLocalNotification and repost to NSNotification defaultCenter
 
+<br />
 
  ### 2.2.0 (20121031) ###
 
@@ -180,7 +214,7 @@
 * Fix commandDelegate.evalJs to actually bundle exec() calls.
 * Removed Cordova Settings File guide, added web shortcut to online doc.
 * Changed Cordova.plist BackupWebStorage setting from boolean to string (cloud, local, none)
-* 
+
 <br />
 
 ### 2.1.0 (20120913) ###
