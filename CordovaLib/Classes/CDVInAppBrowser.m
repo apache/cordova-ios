@@ -374,15 +374,13 @@
 - (void)viewDidUnload
 {
     [self.webView loadHTMLString:nil baseURL:nil];
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [super viewDidUnload];
 }
 
 - (void)close
 {
-    if (_userAgentLockToken != 0) {
-        [CDVUserAgentUtil releaseLock:_userAgentLockToken];
-        _userAgentLockToken = 0;
-    }
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     if ([self respondsToSelector:@selector(presentingViewController)]) {
         [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
@@ -398,6 +396,7 @@
 - (void)navigateTo:(NSURL*)url
 {
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
+
     _requestedURL = url;
 
     if (_userAgentLockToken != 0) {

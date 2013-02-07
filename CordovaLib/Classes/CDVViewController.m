@@ -480,6 +480,7 @@
 
     self.webView.delegate = nil;
     self.webView = nil;
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 }
 
 #pragma mark UIWebViewDelegate
@@ -499,10 +500,7 @@
  */
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
-    if (_userAgentLockToken != 0) {
-        [CDVUserAgentUtil releaseLock:_userAgentLockToken];
-        _userAgentLockToken = 0;
-    }
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     /*
      * Hide the Top Activity THROBBER in the Battery Bar
@@ -529,10 +527,7 @@
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
 {
-    if (_userAgentLockToken != 0) {
-        [CDVUserAgentUtil releaseLock:_userAgentLockToken];
-        _userAgentLockToken = 0;
-    }
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
 
@@ -958,6 +953,7 @@ BOOL gSplashScreenShown = NO;
 
     self.webView.delegate = nil;
     self.webView = nil;
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
 }
