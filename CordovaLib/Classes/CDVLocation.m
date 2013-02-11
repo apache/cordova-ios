@@ -482,7 +482,7 @@
         if (currentOrientation != UIDeviceOrientationUnknown) {
             CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
 
-            if ([cdvViewController supportsOrientation:currentOrientation]) {
+            if ([cdvViewController supportsOrientation:(UIInterfaceOrientation)currentOrientation]) {
                 self.locationManager.headingOrientation = (CLDeviceOrientation)currentOrientation;
                 // FYI UIDeviceOrientation and CLDeviceOrientation enums are currently the same
             }
