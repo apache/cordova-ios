@@ -20,6 +20,7 @@
 #import <AssetsLibrary/ALAsset.h>
 #import <AssetsLibrary/ALAssetRepresentation.h>
 #import <AssetsLibrary/ALAssetsLibrary.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVURLProtocol.h"
 #import "CDVCommandQueue.h"
 #import "CDVWhitelist.h"
@@ -27,8 +28,6 @@
 #import "CDVFile.h"
 
 @interface CDVHTTPURLResponse : NSHTTPURLResponse
-- (id)initWithUnauthorizedURL:(NSURL*)url;
-- (id)initWithBlankResponse:(NSURL*)url;
 @property (nonatomic) NSInteger statusCode;
 @end
 
@@ -157,34 +156,26 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     NSURL* url = [[self request] URL];
 
     if ([[url path] isEqualToString:@"/!gap_exec"]) {
-        CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithBlankResponse:url];
-        [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-        [[self client] URLProtocolDidFinishLoading:self];
+        [self sendResponseWithResponseCode:200 data:nil mimeType:nil];
         return;
     } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefix]) {
         ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
             if (asset) {
                 // We have the asset!  Get the data and send it along.
                 ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                NSString* MIMEType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass ((__bridge CFStringRef)[assetRepresentation UTI], kUTTagClassMIMEType);
                 Byte* buffer = (Byte*)malloc ([assetRepresentation size]);
                 NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
                 NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
-                CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithBlankResponse:url];
-                [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-                [[self client] URLProtocol:self didLoadData:data];
-                [[self client] URLProtocolDidFinishLoading:self];
+                [self sendResponseWithResponseCode:200 data:data mimeType:MIMEType];
             } else {
-                // We couldn't find the asset.  Send an error.
-                CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
-                [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-                [[self client] URLProtocolDidFinishLoading:self];
+                // Retrieving the asset failed for some reason.  Send an error.
+                [self sendResponseWithResponseCode:404 data:nil mimeType:nil];
             }
         };
         ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
             // Retrieving the asset failed for some reason.  Send an error.
-            CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
-            [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-            [[self client] URLProtocolDidFinishLoading:self];
+            [self sendResponseWithResponseCode:401 data:nil mimeType:nil];
         };
 
         ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
@@ -193,10 +184,7 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     }
 
     NSString* body = [gWhitelist errorStringForURL:url];
-    CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
-    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-    [[self client] URLProtocol:self didLoadData:[body dataUsingEncoding:NSASCIIStringEncoding]];
-    [[self client] URLProtocolDidFinishLoading:self];
+    [self sendResponseWithResponseCode:401 data:[body dataUsingEncoding:NSASCIIStringEncoding] mimeType:nil];
 }
 
 - (void)stopLoading
@@ -209,28 +197,30 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     return NO;
 }
 
+- (void)sendResponseWithResponseCode:(NSInteger)statusCode data:(NSData*)data mimeType:(NSString*)mimeType
+{
+    if (mimeType == nil) {
+        mimeType = @"text/plain";
+    }
+    NSString* encodingName = [@"text/plain" isEqualToString:mimeType] ? @"UTF-8" : nil;
+    CDVHTTPURLResponse* response =
+        [[CDVHTTPURLResponse alloc] initWithURL:[[self request] URL]
+                                       MIMEType:mimeType
+                          expectedContentLength:[data length]
+                               textEncodingName:encodingName];
+    response.statusCode = statusCode;
+
+    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+    if (data != nil) {
+        [[self client] URLProtocol:self didLoadData:data];
+    }
+    [[self client] URLProtocolDidFinishLoading:self];
+}
+
 @end
 
 @implementation CDVHTTPURLResponse
 @synthesize statusCode;
-
-- (id)initWithUnauthorizedURL:(NSURL*)url
-{
-    self = [super initWithURL:url MIMEType:@"text/plain" expectedContentLength:-1 textEncodingName:@"UTF-8"];
-    if (self) {
-        self.statusCode = 401;
-    }
-    return self;
-}
-
-- (id)initWithBlankResponse:(NSURL*)url
-{
-    self = [super initWithURL:url MIMEType:@"text/plain" expectedContentLength:-1 textEncodingName:@"UTF-8"];
-    if (self) {
-        self.statusCode = 200;
-    }
-    return self;
-}
 
 - (NSDictionary*)allHeaderFields
 {
