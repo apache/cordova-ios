@@ -396,13 +396,15 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
                                       AndSource:(NSString*)source
                                       AndTarget:(NSString*)target
                                   AndHttpStatus:(int)httpStatus
+                                        AndBody:(NSString*)body
 {
-    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:4];
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:5];
 
     [result setObject:[NSNumber numberWithInt:code] forKey:@"code"];
     [result setObject:source forKey:@"source"];
     [result setObject:target forKey:@"target"];
     [result setObject:[NSNumber numberWithInt:httpStatus] forKey:@"http_status"];
+    [result setObject:body forKey:@"body"];
     NSLog(@"FileTransferError %@", result);
 
     return result;
@@ -426,7 +428,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
     NSString* uploadResponse = nil;
-    BOOL downloadResponse;
+    NSString* downloadResponse = nil;
+    BOOL downloadWriteOK = NO;
     NSMutableDictionary* uploadResult;
     CDVPluginResult* result = nil;
     NSError* __autoreleasing error = nil;
@@ -437,9 +440,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSLog(@"File Transfer Finished with response code %d", self.responseCode);
 
     if (self.direction == CDV_TRANSFER_UPLOAD) {
+        uploadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+
         if ((self.responseCode >= 200) && (self.responseCode < 300)) {
             // create dictionary to return FileUploadResult object
-            uploadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
             uploadResult = [NSMutableDictionary dictionaryWithCapacity:3];
             if (uploadResponse != nil) {
                 [uploadResult setObject:uploadResponse forKey:@"response"];
@@ -448,7 +452,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
             [uploadResult setObject:[NSNumber numberWithInt:self.responseCode] forKey:@"responseCode"];
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uploadResult];
         } else {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:uploadResponse]];
         }
     }
     if (self.direction == CDV_TRANSFER_DOWNLOAD) {
@@ -464,11 +468,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
                     [[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:nil];
                 }
 
-                downloadResponse = [self.responseData writeToFile:self.target options:NSDataWritingFileProtectionNone error:&error];
+                downloadWriteOK = [self.responseData writeToFile:self.target options:NSDataWritingFileProtectionNone error:&error];
 
-                if (downloadResponse == NO) {
+                if (downloadWriteOK == NO) {
                     // send our results back
-                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:INVALID_URL_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
+                    downloadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:INVALID_URL_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:downloadResponse]];
                 } else {
                     DLog(@"File Transfer Download success");
 
@@ -479,10 +484,13 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
             }
             @catch(id exception) {
                 // jump back to main thread
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
+                downloadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:downloadResponse]];
             }
         } else {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
+            downloadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:downloadResponse]];
         }
     }
 
@@ -494,6 +502,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
 {
+    self.mimeType = [response MIMEType];
+
     // required for iOS 4.3, for some reason; response is
     // a plain NSURLResponse, not the HTTP subclass
     if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -513,7 +523,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
 {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode]];
+    NSString* body = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:body]];
 
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
 

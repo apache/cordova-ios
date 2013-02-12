@@ -50,7 +50,8 @@ extern NSString* const kOptionsKeyCookie;
 - (NSMutableDictionary*)createFileTransferError:(int)code
        AndSource                                   :(NSString*)source
        AndTarget                                   :(NSString*)target
-   AndHttpStatus                               :(int)httpStatus;
+   AndHttpStatus                               :(int)httpStatus
+         AndBody                                     :(NSString*)body;
 @property (readonly) NSMutableDictionary* activeTransfers;
 @end
 
@@ -64,6 +65,7 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, copy) NSString* objectId;
 @property (nonatomic, copy) NSString* source;
 @property (nonatomic, copy) NSString* target;
+@property (nonatomic, copy) NSString* mimeType;
 @property (assign) int responseCode; // atomic
 @property (nonatomic, assign) NSInteger bytesTransfered;
 @property (nonatomic, assign) NSInteger bytesExpected;
