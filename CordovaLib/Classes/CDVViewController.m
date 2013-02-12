@@ -46,6 +46,7 @@
 @property (nonatomic, readwrite, strong) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readwrite, strong) UIImageView* imageView;
 @property (readwrite, assign) BOOL initialized;
+@property (nonatomic, readwrite, assign) BOOL isTopLevelNavigation;
 
 @property (atomic, strong) NSURL* openURL;
 
@@ -60,6 +61,7 @@
 @synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
+@synthesize isTopLevelNavigation;
 
 - (void)__init
 {
@@ -497,7 +499,10 @@
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
     [_commandQueue resetRequestId];
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
+    // Only send the reset message for top-level navigation.
+    if (self.isTopLevelNavigation) {
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
+    }
 }
 
 /**
@@ -544,6 +549,9 @@
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = [request URL];
+
+    // Set a flag on iframe navigation, which will not trigger a reset of plugins.
+    self.isTopLevelNavigation = [[[request URL] absoluteString] isEqualToString:[[request mainDocumentURL] absoluteString]];
 
     /*
      * Execute any commands queued with cordova.exec() on the JS side.
@@ -594,8 +602,6 @@
      * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
      */
     else {
-        // BOOL isIFrame = ([theWebView.request.mainDocumentURL absoluteString] == nil);
-
         if ([self.whitelist schemeIsAllowed:[url scheme]]) {
             return [self.whitelist URLIsAllowed:url];
         } else {
