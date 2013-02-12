@@ -98,7 +98,13 @@ typedef NSUInteger CDVMediaMsg;
 - (BOOL)hasAudioSession;
 
 // helper methods
-- (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId;
+- (NSURL*)urlForRecording:(NSString*)resourcePath;
+- (NSURL*)urlForPlaying:(NSString*)resourcePath;
+- (NSURL*)urlForResource:(NSString*)resourcePath CDV_DEPRECATED(2.5, "Use specific api for playing or recording");
+
+- (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId CDV_DEPRECATED(2.5, "Use updated audioFileForResource api");
+
+- (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId doValidation:(BOOL)bValidate forRecording:(BOOL)bRecord;
 - (BOOL)prepareToPlay:(CDVAudioFile*)audioFile withId:(NSString*)mediaId;
 - (NSString*)createMediaErrorWithCode:(CDVMediaError)code message:(NSString*)message;
 
