@@ -486,7 +486,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         // In this case, we need to use an asynchronous method to retrieve the file.
         // Because of this, we can't just assign to `result` and send it at the end of the method.
         // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
-        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
             if (asset) {
                 // We have the asset!  Retrieve the metadata and send it off.
                 NSDate* date = [asset valueForProperty:ALAssetPropertyDate];
@@ -499,7 +499,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
             }
         };
         // TODO(maxw): Consider making this a class variable since it's the same every time.
-        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
             // Retrieving the asset failed for some reason.  Send the appropriate error.
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -525,7 +525,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
     } else {
         // didn't get fileAttribs
         CDVFileError errorCode = ABORT_ERR;
-        NSLog(@"error getting metadata: %@", [error localizedDescription]);
+        NSLog (@"error getting metadata: %@", [error localizedDescription]);
         if ([error code] == NSFileNoSuchFileError) {
             errorCode = NOT_FOUND_ERR;
         }
@@ -779,7 +779,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
                 // In this case, we need to use an asynchronous method to retrieve the file.
                 // Because of this, we can't just assign to `result` and send it at the end of the method.
                 // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
-                ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+                ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
                     if (asset) {
                         // We have the asset!  Get the data and try to copy it over.
                         if (![fileMgr fileExistsAtPath:destRootPath]) {
@@ -796,7 +796,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
 
                         // We're good to go!  Write the file to the new destination.
                         ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
-                        Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                        Byte* buffer = (Byte*)malloc ([assetRepresentation size]);
                         NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
                         NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
                         [data writeToFile:newFullPath atomically:YES];
@@ -808,7 +808,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
                         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
                     }
                 };
-                ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+                ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
                     // Retrieving the asset failed for some reason.  Send the appropriate error.
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
                     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -953,7 +953,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
             // In this case, we need to use an asynchronous method to retrieve the file.
             // Because of this, we can't just assign to `result` and send it at the end of the method.
             // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
-            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
                 if (asset) {
                     // We have the asset!  Populate the dictionary and send it off.
                     NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
@@ -975,7 +975,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
                     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
                 }
             };
-            ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+            ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
                 // Retrieving the asset failed for some reason.  Send the appropriate error.
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
                 [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -1143,11 +1143,11 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         // In this case, we need to use an asynchronous method to retrieve the file.
         // Because of this, we can't just assign to `result` and send it at the end of the method.
         // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
-        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
             if (asset) {
                 // We have the asset!  Get the data and send it off.
                 ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
-                Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                Byte* buffer = (Byte*)malloc ([assetRepresentation size]);
                 NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
                 NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
                 NSString* mimeType = [self getMimeTypeFromPath:[assetRepresentation filename]];
@@ -1160,7 +1160,7 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
                 [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
             }
         };
-        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
             // Retrieving the asset failed for some reason.  Send the appropriate error.
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
