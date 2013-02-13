@@ -18,7 +18,6 @@
  */
 
 #import "CDVLocation.h"
-#import "CDVViewController.h"
 #import "NSArray+Comparisons.h"
 
 #pragma mark Constants
@@ -477,17 +476,8 @@
 // helper method to check the orientation and start updating headings
 - (void)startHeadingWithFilter:(CLLocationDegrees)filter
 {
-    if ([self.locationManager respondsToSelector:@selector(headingOrientation)]) {
-        UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
-        if (currentOrientation != UIDeviceOrientationUnknown) {
-            CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
-
-            if ([cdvViewController supportsOrientation:(UIInterfaceOrientation)currentOrientation]) {
-                self.locationManager.headingOrientation = (CLDeviceOrientation)currentOrientation;
-                // FYI UIDeviceOrientation and CLDeviceOrientation enums are currently the same
-            }
-        }
-    }
+    // FYI UIDeviceOrientation and CLDeviceOrientation enums are currently the same
+    self.locationManager.headingOrientation = (CLDeviceOrientation)self.viewController.interfaceOrientation;
     self.locationManager.headingFilter = filter;
     [self.locationManager startUpdatingHeading];
     self.headingData.headingStatus = HEADINGSTARTING;
