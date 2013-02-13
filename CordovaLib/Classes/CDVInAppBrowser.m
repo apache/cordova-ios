@@ -19,7 +19,6 @@
 
 #import "CDVInAppBrowser.h"
 #import "CDVPluginResult.h"
-#import "CDVViewController.h"
 #import "CDVUserAgentUtil.h"
 
 #define    kInAppBrowserTargetSelf @"_self"
@@ -143,18 +142,7 @@
 
 - (void)openInCordovaWebView:(NSURL*)url withOptions:(NSString*)options
 {
-    BOOL passesWhitelist = YES;
-
-    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        CDVViewController* vc = (CDVViewController*)self.viewController;
-        if ([vc.whitelist schemeIsAllowed:[url scheme]]) {
-            passesWhitelist = [vc.whitelist URLIsAllowed:url];
-        }
-    } else { // something went wrong, we can't get the whitelist
-        passesWhitelist = NO;
-    }
-
-    if (passesWhitelist) {
+    if ([self.commandDelegate URLIsWhitelisted:url]) {
         NSURLRequest* request = [NSURLRequest requestWithURL:url];
         [self.webView loadRequest:request];
     } else { // this assumes the InAppBrowser can be excepted from the white-list
