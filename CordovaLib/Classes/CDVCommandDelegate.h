@@ -26,6 +26,8 @@
 
 @protocol CDVCommandDelegate <NSObject>
 
+@property (nonatomic, readonly) NSDictionary* settings;
+
 - (NSString*)pathForResource:(NSString*)resourcepath;
 - (id)getCommandInstance:(NSString*)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className CDV_DEPRECATED(2.2, "Use CDVViewController to register plugins, or use config.xml.");

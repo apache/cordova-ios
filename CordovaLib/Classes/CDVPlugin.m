@@ -26,16 +26,12 @@
 @end
 
 @implementation CDVPlugin
-@synthesize webView, settings, viewController, commandDelegate, hasPendingOperation;
+@synthesize webView, viewController, commandDelegate, hasPendingOperation;
 
 // Do not override these methods. Use pluginInitialize instead.
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
 {
-    self = [self initWithWebView:theWebView];
-    if (self) {
-        self.settings = classSettings;
-    }
-    return self;
+    return [self initWithWebView:theWebView];
 }
 
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView

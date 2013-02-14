@@ -31,21 +31,18 @@
 
 @synthesize backupInfo, webviewDelegate;
 
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
+- (void)pluginInitialize
 {
-    self = (CDVLocalStorage*)[super initWithWebView:theWebView settings:classSettings];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResignActive)
-                                                     name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResignActive)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    BOOL cloudBackup = [@"cloud" isEqualToString:self.commandDelegate.settings[@"BackupWebStorage"]];
 
-        self.backupInfo = [[self class] createBackupInfoWithCloudBackup:[(NSString*)[classSettings objectForKey:@"backupType"] isEqualToString:@"cloud"]];
+    self.backupInfo = [[self class] createBackupInfoWithCloudBackup:cloudBackup];
 
-        // over-ride current webview delegate (for restore reasons)
-        self.webviewDelegate = theWebView.delegate;
-        theWebView.delegate = self;
-    }
-
-    return self;
+    // over-ride current webview delegate (for restore reasons)
+    UIWebView* theWebView = self.webView;
+    self.webviewDelegate = theWebView.delegate;
+    theWebView.delegate = self;
 }
 
 #pragma mark -

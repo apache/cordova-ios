@@ -143,4 +143,9 @@
            [_viewController.whitelist URLIsAllowed:url];
 }
 
+- (NSDictionary*)settings
+{
+    return _viewController.settings;
+}
+
 @end

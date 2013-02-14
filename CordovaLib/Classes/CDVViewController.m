@@ -39,7 +39,7 @@
 }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
-@property (nonatomic, readwrite, strong) NSDictionary* settings;
+@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
 @property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
@@ -210,13 +210,14 @@
 
     NSString* backupWebStorageType = @"cloud"; // default value
 
-    id backupWebStorage = [self.settings objectForKey:@"BackupWebStorage"];
+    id backupWebStorage = self.settings[@"BackupWebStorage"];
     if ([backupWebStorage isKindOfClass:[NSString class]]) {
         backupWebStorageType = backupWebStorage;
     } else if ([backupWebStorage isKindOfClass:[NSNumber class]]) {
         NSLog(@"Deprecated: BackupWebStorage boolean property is a string property now (none, local, cloud). A boolean value of 'true' will be mapped to 'cloud'. Consult the docs: http://docs.cordova.io/en/edge/guide_project-settings_ios_index.md.html#Project%%20Settings%%20for%%20iOS");
         backupWebStorageType = [(NSNumber*) backupWebStorage boolValue] ? @"cloud" : @"none";
     }
+    self.settings[@"BackupWebStorage"] = backupWebStorageType;
 
     if (IsAtLeastiOSVersion(@"5.1")) {
         [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
@@ -251,8 +252,7 @@
      */
     if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
             ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView settings:[NSDictionary dictionaryWithObjectsAndKeys:
-                    @"backupType", backupWebStorageType, nil]] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
     /*
@@ -839,10 +839,7 @@ BOOL gSplashScreenShown = NO;
 
     id obj = [self.pluginObjects objectForKey:className];
     if (!obj) {
-        // attempt to load the settings for this command class
-        NSDictionary* classSettings = [self.settings objectForKey:className];
-
-        obj = [[NSClassFromString (className)alloc] initWithWebView:webView settings:classSettings];
+        obj = [[NSClassFromString (className)alloc] initWithWebView:webView];
 
         if (obj != nil) {
             [self registerPlugin:obj withClassName:className];
