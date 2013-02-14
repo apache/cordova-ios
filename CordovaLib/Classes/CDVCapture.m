@@ -20,7 +20,6 @@
 #import "CDVCapture.h"
 #import "CDVJSON.h"
 #import "CDVAvailability.h"
-#import "CDVViewController.h"
 
 #define kW3CMediaFormatHeight @"height"
 #define kW3CMediaFormatWidth @"width"
