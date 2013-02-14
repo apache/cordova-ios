@@ -18,7 +18,6 @@
  */
 
 #import "CDVSound.h"
-#import "CDVViewController.h"
 #import "NSArray+Comparisons.h"
 #import "CDVJSON.h"
 
@@ -44,7 +43,8 @@
         NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
         resourceURL = [NSURL URLWithString:resourcePath];
     } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
-        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", [CDVViewController applicationDocumentsDirectory]]];
+        NSString* docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", docsPath]];
         NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
     } else {
         // attempt to find file path in www directory
