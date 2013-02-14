@@ -42,6 +42,7 @@
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
 @property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
+@property (nonatomic, readwrite, strong) NSArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
@@ -57,7 +58,7 @@
 @implementation CDVViewController
 
 @synthesize webView, supportedOrientations;
-@synthesize pluginObjects, pluginsMap, whitelist;
+@synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
 @synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, initialized, openURL;
@@ -170,16 +171,20 @@
     [configParser parse];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
-    self.pluginsMap = [delegate.pluginsDict dictionaryWithLowercaseKeys];
+    self.pluginsMap = delegate.pluginsDict;
+    self.startupPluginNames = delegate.startupPluginNames;
     self.whitelist = [[CDVWhitelist alloc] initWithArray:delegate.whitelistHosts];
     self.settings = delegate.settings;
 
     // And the start folder/page.
     self.wwwFolderName = @"www";
-    self.startPage = [delegate getStartPage];
+    self.startPage = delegate.startPage;
+    if (self.startPage == nil) {
+        self.startPage = @"index.html";
+    }
 
     // Initialize the plugin objects dict.
-    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:4];
+    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -310,6 +315,10 @@
         if ([self.webView respondsToSelector:@selector(setSuppressesIncrementalRendering:)]) {
             [self.webView setValue:[NSNumber numberWithBool:suppressesIncrementalRendering] forKey:@"suppressesIncrementalRendering"];
         }
+    }
+
+    for (NSString* pluginName in self.startupPluginNames) {
+        [self getCommandInstance:pluginName];
     }
 
     // /////////////////
