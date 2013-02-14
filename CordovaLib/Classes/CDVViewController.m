@@ -818,6 +818,7 @@ BOOL gSplashScreenShown = NO;
     }
 
     [self.pluginObjects setObject:plugin forKey:className];
+    [plugin pluginInitialize];
 }
 
 /**
@@ -841,13 +842,9 @@ BOOL gSplashScreenShown = NO;
         // attempt to load the settings for this command class
         NSDictionary* classSettings = [self.settings objectForKey:className];
 
-        if (classSettings) {
-            obj = [[NSClassFromString (className)alloc] initWithWebView:webView settings:classSettings];
-        } else {
-            obj = [[NSClassFromString (className)alloc] initWithWebView:webView];
-        }
+        obj = [[NSClassFromString (className)alloc] initWithWebView:webView settings:classSettings];
 
-        if ((obj != nil) && [obj isKindOfClass:[CDVPlugin class]]) {
+        if (obj != nil) {
             [self registerPlugin:obj withClassName:className];
         } else {
             NSLog(@"CDVPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);

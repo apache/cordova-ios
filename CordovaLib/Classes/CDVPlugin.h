@@ -38,6 +38,7 @@
 
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView;
+- (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;
 - (void)onAppTerminate;
