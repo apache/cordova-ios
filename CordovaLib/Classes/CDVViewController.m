@@ -33,6 +33,9 @@
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
+    // Used to distinguish an iframe navigation from a top-level one.
+    NSURL* _topLevelNavigationURL;
+    BOOL _topLevelNavigationHasStartedLoad;
 }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
@@ -46,7 +49,6 @@
 @property (nonatomic, readwrite, strong) IBOutlet UIActivityIndicatorView* activityView;
 @property (nonatomic, readwrite, strong) UIImageView* imageView;
 @property (readwrite, assign) BOOL initialized;
-@property (nonatomic, readwrite, assign) BOOL isTopLevelNavigation;
 
 @property (atomic, strong) NSURL* openURL;
 
@@ -61,7 +63,6 @@
 @synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
-@synthesize isTopLevelNavigation;
 
 - (void)__init
 {
@@ -498,11 +499,13 @@
  */
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
-    if (!self.isTopLevelNavigation) {
-        return;
+    // The request of theWebView is not yet set to the new one at this point.
+    if (!_topLevelNavigationHasStartedLoad) {
+        _topLevelNavigationHasStartedLoad = YES;
+        NSLog(@"Started load of %@", _topLevelNavigationURL);
+        [_commandQueue resetRequestId];
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
     }
-    [_commandQueue resetRequestId];
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
 }
 
 /**
@@ -510,11 +513,14 @@
  */
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
-    if (!self.isTopLevelNavigation) {
+    // It's safe to release the lock even if this is just a sub-frame that's finished loading.
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
+
+    if (![_topLevelNavigationURL isEqual:theWebView.request.URL]) {
         return;
     }
-
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
+    NSLog(@"Finished load of %@", _topLevelNavigationURL);
+    _topLevelNavigationURL = nil;
 
     /*
      * Hide the Top Activity THROBBER in the Battery Bar
@@ -538,27 +544,27 @@
     [self processOpenUrl];
 }
 
-- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
+- (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
 {
-    if (!self.isTopLevelNavigation) {
-        return;
-    }
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
-
-    /*
-     if ([error code] != NSURLErrorCancelled)
-     alert([error localizedDescription]);
-     */
 }
 
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = [request URL];
 
-    // Set a flag on iframe navigation, which will not trigger a reset of plugins.
-    self.isTopLevelNavigation = [[[request URL] absoluteString] isEqualToString:[[request mainDocumentURL] absoluteString]];
+    // Check if this is just a sub-frame navigation.
+    BOOL isTopLevelNavigation = [url isEqual:[request mainDocumentURL]];
+
+    if (isTopLevelNavigation) {
+        if (_topLevelNavigationURL != nil) {
+            NSLog(@"Warning: _topLevelNavigationURL was not set to nil in shouldStartLoadWithRequest");
+        }
+        _topLevelNavigationHasStartedLoad = NO;
+        _topLevelNavigationURL = url;
+    }
 
     /*
      * Execute any commands queued with cordova.exec() on the JS side.
