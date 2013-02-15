@@ -93,6 +93,13 @@ static NSSet* org_apache_cordova_validArrowDirections;
         targetSize = CGSizeMake([targetWidth floatValue], [targetHeight floatValue]);
     }
 
+    // If a popover is already open, close it; we only want one at a time.
+    if (([[self pickerController] popoverController] != nil) && [[[self pickerController] popoverController] isPopoverVisible]) {
+        [[[self pickerController] popoverController] dismissPopoverAnimated:YES];
+        [[[self pickerController] popoverController] setDelegate:nil];
+        [[self pickerController] setPopoverController:nil];
+    }
+
     CDVCameraPicker* cameraPicker = [[CDVCameraPicker alloc] init];
     self.pickerController = cameraPicker;
 
@@ -128,28 +135,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
         if (cameraPicker.popoverController == nil) {
             cameraPicker.popoverController = [[NSClassFromString (@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
         }
-        int x = 0;
-        int y = 32;
-        int width = 320;
-        int height = 480;
-        UIPopoverArrowDirection arrowDirection = UIPopoverArrowDirectionAny;
         NSDictionary* options = [command.arguments objectAtIndex:10 withDefault:nil];
-        if (options) {
-            x = [options integerValueForKey:@"x" defaultValue:0];
-            y = [options integerValueForKey:@"y" defaultValue:32];
-            width = [options integerValueForKey:@"width" defaultValue:320];
-            height = [options integerValueForKey:@"height" defaultValue:480];
-            arrowDirection = [options integerValueForKey:@"arrowDir" defaultValue:UIPopoverArrowDirectionAny];
-            if (![org_apache_cordova_validArrowDirections containsObject:[NSNumber numberWithInt:arrowDirection]]) {
-                arrowDirection = UIPopoverArrowDirectionAny;
-            }
-        }
-
-        cameraPicker.popoverController.delegate = self;
-        [cameraPicker.popoverController presentPopoverFromRect:CGRectMake(x, y, width, height)
-                                                        inView:[self.webView superview]
-                                      permittedArrowDirections:arrowDirection
-                                                      animated:YES];
+        [self displayPopover:options];
     } else {
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
             [self.viewController presentViewController:cameraPicker animated:YES completion:nil];
@@ -158,6 +145,39 @@ static NSSet* org_apache_cordova_validArrowDirections;
         }
     }
     self.hasPendingOperation = YES;
+}
+
+- (void)repositionPopover:(CDVInvokedUrlCommand*)command
+{
+    NSDictionary* options = [command.arguments objectAtIndex:0 withDefault:nil];
+
+    [self displayPopover:options];
+}
+
+- (void)displayPopover:(NSDictionary*)options
+{
+    int x = 0;
+    int y = 32;
+    int width = 320;
+    int height = 480;
+    UIPopoverArrowDirection arrowDirection = UIPopoverArrowDirectionAny;
+
+    if (options) {
+        x = [options integerValueForKey:@"x" defaultValue:0];
+        y = [options integerValueForKey:@"y" defaultValue:32];
+        width = [options integerValueForKey:@"width" defaultValue:320];
+        height = [options integerValueForKey:@"height" defaultValue:480];
+        arrowDirection = [options integerValueForKey:@"arrowDir" defaultValue:UIPopoverArrowDirectionAny];
+        if (![org_apache_cordova_validArrowDirections containsObject:[NSNumber numberWithInt:arrowDirection]]) {
+            arrowDirection = UIPopoverArrowDirectionAny;
+        }
+    }
+
+    [[[self pickerController] popoverController] setDelegate:self];
+    [[[self pickerController] popoverController] presentPopoverFromRect:CGRectMake(x, y, width, height)
+                                                                 inView:[self.webView superview]
+                                               permittedArrowDirections:arrowDirection
+                                                               animated:YES];
 }
 
 - (void)cleanup:(CDVInvokedUrlCommand*)command
