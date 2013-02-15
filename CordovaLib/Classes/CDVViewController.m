@@ -498,11 +498,11 @@
  */
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
-    [_commandQueue resetRequestId];
-    // Only send the reset message for top-level navigation.
-    if (self.isTopLevelNavigation) {
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
+    if (!self.isTopLevelNavigation) {
+        return;
     }
+    [_commandQueue resetRequestId];
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
 }
 
 /**
@@ -510,6 +510,10 @@
  */
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
+    if (!self.isTopLevelNavigation) {
+        return;
+    }
+
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     /*
@@ -536,6 +540,9 @@
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
 {
+    if (!self.isTopLevelNavigation) {
+        return;
+    }
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
