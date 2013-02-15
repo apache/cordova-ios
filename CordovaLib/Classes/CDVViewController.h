@@ -45,9 +45,7 @@
 @property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 
-@property (nonatomic, readwrite, assign) BOOL useSplashScreen;
-@property (nonatomic, readonly, strong) IBOutlet UIActivityIndicatorView* activityView;
-@property (nonatomic, readonly, strong) UIImageView* imageView;
+@property (nonatomic, readwrite, assign) BOOL useSplashScreen CDV_DEPRECATED(2.5, "Replaced with ShowSplashScreen setting (or remove the SplashScreen plugin).");
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
@@ -72,8 +70,5 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 
 - (BOOL)URLisAllowed:(NSURL*)url;
-
-- (void)showSplashScreen;
-- (void)hideSplashScreen;
 
 @end

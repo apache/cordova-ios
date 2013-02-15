@@ -26,11 +26,6 @@
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
-#define kSplashScreenStateShow 0
-#define kSplashScreenStateHide 1
-
-#define kSplashScreenDurationDefault 2.0f
-
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
     // Used to distinguish an iframe navigation from a top-level one.
@@ -47,8 +42,6 @@
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
 
-@property (nonatomic, readwrite, strong) IBOutlet UIActivityIndicatorView* activityView;
-@property (nonatomic, readwrite, strong) UIImageView* imageView;
 @property (readwrite, assign) BOOL initialized;
 
 @property (atomic, strong) NSURL* openURL;
@@ -60,7 +53,6 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
-@synthesize imageView, activityView, useSplashScreen;
 @synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
@@ -70,9 +62,6 @@
     if ((self != nil) && !self.initialized) {
         _commandQueue = [[CDVCommandQueue alloc] initWithViewController:self];
         _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithViewController:self];
-        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedOrientationChange:)
-                                                     name:UIDeviceOrientationDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillTerminate:)
                                                      name:UIApplicationWillTerminateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillResignActive:)
@@ -185,6 +174,19 @@
 
     // Initialize the plugin objects dict.
     self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
+}
+
+- (BOOL)useSplashScreen
+{
+    id ret = self.settings[@"ShowSplashScreen"];
+
+    // if value is missing, default to yes
+    return (ret == nil) || [ret boolValue];
+}
+
+- (void)setUseSplashScreen:(BOOL)value
+{
+    self.settings[@"ShowSplashScreen"] = [NSNumber numberWithBool:value];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -320,6 +322,9 @@
     for (NSString* pluginName in self.startupPluginNames) {
         [self getCommandInstance:pluginName];
     }
+
+    // TODO: Remove this explicit instantiation once we move to cordova-CLI.
+    [self getCommandInstance:@"splashscreen"];
 
     // /////////////////
     [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
@@ -518,7 +523,7 @@
 }
 
 /**
- Called when the webview finishes loading.  This stops the activity view and closes the imageview
+ Called when the webview finishes loading.  This stops the activity view.
  */
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
@@ -535,14 +540,6 @@
      * Hide the Top Activity THROBBER in the Battery Bar
      */
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-
-    id autoHideSplashScreenValue = [self.settings objectForKey:@"AutoHideSplashScreen"];
-    // if value is missing, default to yes
-    if ((autoHideSplashScreenValue == nil) || [autoHideSplashScreenValue boolValue]) {
-        [self hideSplashScreen];
-        [self.view.superview bringSubviewToFront:self.webView];
-    }
-    [self didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 
     // The .onNativeReady().fire() will work when cordova.js is already loaded.
     // The _nativeReady = true; is used when this is run before cordova.js is loaded.
@@ -674,146 +671,6 @@
     NSString* basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 
     return basePath;
-}
-
-- (void)updateSplashScreenSpinner
-{
-    /*
-     * The Activity View is the top spinning throbber in the status/battery bar. We init it with the default Grey Style.
-     *
-     *     whiteLarge = UIActivityIndicatorViewStyleWhiteLarge
-     *     white      = UIActivityIndicatorViewStyleWhite
-     *     gray       = UIActivityIndicatorViewStyleGray
-     *
-     */
-    NSString* topActivityIndicator = [self.settings objectForKey:@"TopActivityIndicator"];
-    UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-
-    if ([topActivityIndicator isEqualToString:@"whiteLarge"]) {
-        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    } else if ([topActivityIndicator isEqualToString:@"white"]) {
-        topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
-    } else if ([topActivityIndicator isEqualToString:@"gray"]) {
-        topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-    }
-
-    self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
-    self.activityView.tag = 2;
-
-    id showSplashScreenSpinnerValue = [self.settings objectForKey:@"ShowSplashScreenSpinner"];
-    // backwards compatibility - if key is missing, default to true
-    if ((showSplashScreenSpinnerValue == nil) || [showSplashScreenSpinnerValue boolValue]) {
-        [self.view.superview addSubview:self.activityView];
-    }
-
-    self.activityView.center = self.view.center;
-    [self.activityView startAnimating];
-
-    [self.view.superview layoutSubviews];
-}
-
-- (void)updateSplashImageForOrientation:(UIInterfaceOrientation)orientation
-{
-    if (self.imageView == nil) {
-        self.imageView = [[UIImageView alloc] init];
-        [self.view addSubview:self.imageView];
-    }
-
-    // IPHONE (default)
-    NSString* imageName = @"Default";
-
-    if (CDV_IsIPhone5()) {
-        imageName = [imageName stringByAppendingString:@"-568h"];
-    } else if (CDV_IsIPad()) {
-        // set default to portrait upside down
-        imageName = @"Default-Portrait"; // @"Default-PortraitUpsideDown.png";
-
-        if (orientation == UIInterfaceOrientationLandscapeLeft) {
-            imageName = @"Default-Landscape.png"; // @"Default-LandscapeLeft.png";
-        } else if (orientation == UIInterfaceOrientationLandscapeRight) {
-            imageName = @"Default-Landscape.png"; // @"Default-LandscapeRight.png";
-        }
-    }
-
-    self.imageView.image = [UIImage imageNamed:imageName];
-    self.imageView.frame = CGRectMake(0, 0, self.imageView.image.size.width, self.imageView.image.size.height);
-}
-
-- (void)showSplashScreen
-{
-    [self updateSplashScreenWithState:kSplashScreenStateShow];
-}
-
-- (void)hideSplashScreen
-{
-    [self updateSplashScreenWithState:kSplashScreenStateHide];
-}
-
-- (void)updateSplashScreenWithState:(int)state
-{
-    float toAlpha = state == kSplashScreenStateShow ? 1.0f : 0.0f;
-    BOOL hidden = state == kSplashScreenStateShow ? NO : YES;
-
-    id fadeSplashScreenValue = [self.settings objectForKey:@"FadeSplashScreen"];
-    id fadeSplashScreenDuration = [self.settings objectForKey:@"FadeSplashScreenDuration"];
-
-    // if value is missing, default to 2.0f
-    float fadeDuration = fadeSplashScreenDuration == nil ? kSplashScreenDurationDefault : [fadeSplashScreenDuration floatValue];
-
-    // if value is missing, default to no fade
-    if ((fadeSplashScreenValue == nil) || ![fadeSplashScreenValue boolValue]) {
-        [self.imageView setHidden:hidden];
-        [self.activityView setHidden:hidden];
-    } else {
-        if (state == kSplashScreenStateShow) {
-            // reset states
-            [self.imageView setHidden:NO];
-            [self.activityView setHidden:NO];
-            [self.imageView setAlpha:0.0f];
-            [self.activityView setAlpha:0.0f];
-        }
-
-        [UIView transitionWithView:self.view
-                          duration:fadeDuration
-                           options:UIViewAnimationOptionTransitionNone
-                        animations:^(void) {
-                [self.imageView setAlpha:toAlpha];
-                [self.activityView setAlpha:toAlpha];
-            }
-                        completion:^(BOOL finished) {
-                if (state == kSplashScreenStateHide) {
-                    // reset states
-                    [self.imageView setHidden:YES];
-                    [self.activityView setHidden:YES];
-                    [self.imageView setAlpha:1.0f];
-                    [self.activityView setAlpha:1.0f];
-                }
-            }];
-    }
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-
-    if (self.useSplashScreen && (self.imageView != nil)) {
-        [self updateSplashImageForOrientation:toInterfaceOrientation];
-    }
-}
-
-BOOL gSplashScreenShown = NO;
-- (void)receivedOrientationChange:(NSNotification*)notification
-{
-    if (self.imageView == nil) {
-        gSplashScreenShown = YES;
-        if (self.useSplashScreen) {
-            [self updateSplashImageForOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
-        }
-    }
-
-    if (self.activityView == nil) {
-        [self updateSplashScreenSpinner];
-    }
 }
 
 #pragma mark CordovaCommands
