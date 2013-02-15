@@ -62,6 +62,9 @@
 
     // Added in 2.3.0
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
+
+    // Added in 2.5.0
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad:) name:CDVPageDidLoadNotification object:nil];
 }
 
 - (void)dispose

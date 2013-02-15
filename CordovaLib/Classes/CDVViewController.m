@@ -551,6 +551,8 @@
     [self.webView stringByEvaluatingJavaScriptFromString:nativeReady];
 
     [self processOpenUrl];
+
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:nil]];
 }
 
 - (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
