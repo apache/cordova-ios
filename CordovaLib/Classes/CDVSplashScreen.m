@@ -22,7 +22,7 @@
 #define kSplashScreenStateShow 0
 #define kSplashScreenStateHide 1
 
-#define kSplashScreenDurationDefault 2.0f
+#define kSplashScreenDurationDefault 0.25f
 
 @implementation CDVSplashScreen
 
