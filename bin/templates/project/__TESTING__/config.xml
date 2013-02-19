@@ -19,7 +19,7 @@
 # under the License.
 #
 -->
-<cordova>
+<widget>
     <preference name="KeyboardDisplayRequiresUserAction" value="true" />
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="UIWebViewBounce" value="true" />
@@ -59,4 +59,4 @@
     </plugins>
 
     <access origin="*" />
-</cordova>
+</widget>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cordova>
+<widget>
     <preference name="KeyboardDisplayRequiresUserAction" value="true" />
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="UIWebViewBounce" value="true" />
@@ -36,4 +36,4 @@
         <plugin name="Globalization" value="CDVGlobalization" />
         <plugin name="InAppBrowser" value="CDVInAppBrowser" />
     </plugins>
-</cordova>
+</widget>
