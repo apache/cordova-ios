@@ -1,8 +1,8 @@
 // Platform: ios
 
-// commit ac725f6ae0bd655789771e2a40b8d60cb4c8c221
+// commit 04e4ceafdcd59cdd937e873cc9006766c1e5940a
 
-// File generated at :: Tue Feb 05 2013 05:30:42 GMT+0100 (CET)
+// File generated at :: Tue Feb 19 2013 23:34:05 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -399,6 +399,7 @@ function each(objects, func, context) {
 }
 
 function clobber(obj, key, value) {
+    exports.replaceHookForTesting(obj, key);
     obj[key] = value;
     // Getters can only be overridden by getters.
     if (obj[key] !== value) {
@@ -482,19 +483,18 @@ function recursiveMerge(target, src) {
     }
 }
 
-module.exports = {
-    buildIntoButDoNotClobber: function(objects, target) {
-        include(target, objects, false, false);
-    },
-    buildIntoAndClobber: function(objects, target) {
-        include(target, objects, true, false);
-    },
-    buildIntoAndMerge: function(objects, target) {
-        include(target, objects, true, true);
-    },
-    recursiveMerge: recursiveMerge,
-    assignOrWrapInDeprecateGetter: assignOrWrapInDeprecateGetter
+exports.buildIntoButDoNotClobber = function(objects, target) {
+    include(target, objects, false, false);
 };
+exports.buildIntoAndClobber = function(objects, target) {
+    include(target, objects, true, false);
+};
+exports.buildIntoAndMerge = function(objects, target) {
+    include(target, objects, true, true);
+};
+exports.recursiveMerge = recursiveMerge;
+exports.assignOrWrapInDeprecateGetter = assignOrWrapInDeprecateGetter;
+exports.replaceHookForTesting = function() {};
 
 });
 
@@ -774,176 +774,6 @@ module.exports = {
 };
 });
 
-// file: lib/common/common.js
-define("cordova/common", function(require, exports, module) {
-
-module.exports = {
-    defaults: {
-        cordova: {
-            path: 'cordova',
-            children: {
-                exec: {
-                    path: 'cordova/exec'
-                },
-                logger: {
-                    path: 'cordova/plugin/logger'
-                }
-            }
-        },
-        Cordova: {
-            children: {
-                exec: {
-                    path: 'cordova/exec'
-                }
-            }
-        },
-        open : {
-            path: 'cordova/plugin/InAppBrowser'
-        },
-        navigator: {
-            children: {
-                notification: {
-                    path: 'cordova/plugin/notification'
-                },
-                accelerometer: {
-                    path: 'cordova/plugin/accelerometer'
-                },
-                battery: {
-                    path: 'cordova/plugin/battery'
-                },
-                camera:{
-                    path: 'cordova/plugin/Camera'
-                },
-                compass:{
-                    path: 'cordova/plugin/compass'
-                },
-                contacts: {
-                    path: 'cordova/plugin/contacts'
-                },
-                device:{
-                    children:{
-                        capture: {
-                            path: 'cordova/plugin/capture'
-                        }
-                    }
-                },
-                geolocation: {
-                    path: 'cordova/plugin/geolocation'
-                },
-                globalization: {
-                    path: 'cordova/plugin/globalization'
-                },
-                network: {
-                    children: {
-                        connection: {
-                            path: 'cordova/plugin/network',
-                            deprecated: 'navigator.network.connection is deprecated. Use navigator.connection instead.'
-                        }
-                    }
-                },
-                splashscreen: {
-                    path: 'cordova/plugin/splashscreen'
-                }
-            }
-        },
-        Acceleration: {
-            path: 'cordova/plugin/Acceleration'
-        },
-        Camera:{
-            path: 'cordova/plugin/CameraConstants'
-        },
-        CameraPopoverOptions: {
-            path: 'cordova/plugin/CameraPopoverOptions'
-        },
-        CaptureError: {
-            path: 'cordova/plugin/CaptureError'
-        },
-        CaptureAudioOptions:{
-            path: 'cordova/plugin/CaptureAudioOptions'
-        },
-        CaptureImageOptions: {
-            path: 'cordova/plugin/CaptureImageOptions'
-        },
-        CaptureVideoOptions: {
-            path: 'cordova/plugin/CaptureVideoOptions'
-        },
-        CompassHeading:{
-            path: 'cordova/plugin/CompassHeading'
-        },
-        CompassError:{
-            path: 'cordova/plugin/CompassError'
-        },
-        ConfigurationData: {
-            path: 'cordova/plugin/ConfigurationData'
-        },
-        Connection: {
-            path: 'cordova/plugin/Connection'
-        },
-        Contact: {
-            path: 'cordova/plugin/Contact'
-        },
-        ContactAddress: {
-            path: 'cordova/plugin/ContactAddress'
-        },
-        ContactError: {
-            path: 'cordova/plugin/ContactError'
-        },
-        ContactField: {
-            path: 'cordova/plugin/ContactField'
-        },
-        ContactFindOptions: {
-            path: 'cordova/plugin/ContactFindOptions'
-        },
-        ContactName: {
-            path: 'cordova/plugin/ContactName'
-        },
-        ContactOrganization: {
-            path: 'cordova/plugin/ContactOrganization'
-        },
-        Coordinates: {
-            path: 'cordova/plugin/Coordinates'
-        },
-        device: {
-            path: 'cordova/plugin/device'
-        },
-        GlobalizationError: {
-            path: 'cordova/plugin/GlobalizationError'
-        },
-        Media: {
-            path: 'cordova/plugin/Media'
-        },
-        MediaError: {
-            path: 'cordova/plugin/MediaError'
-        },
-        MediaFile: {
-            path: 'cordova/plugin/MediaFile'
-        },
-        MediaFileData:{
-            path: 'cordova/plugin/MediaFileData'
-        },
-        Position: {
-            path: 'cordova/plugin/Position'
-        },
-        PositionError: {
-            path: 'cordova/plugin/PositionError'
-        },
-        ProgressEvent: {
-            path: 'cordova/plugin/ProgressEvent'
-        }
-    },
-    clobbers: {
-        navigator: {
-            children: {
-                connection: {
-                    path: 'cordova/plugin/network'
-                }
-            }
-        }
-    }
-};
-
-});
-
 // file: lib/ios/exec.js
 define("cordova/exec", function(require, exports, module) {
 
@@ -1197,9 +1027,9 @@ function prepareNamespace(symbolPath, context) {
     var parts = symbolPath.split('.');
     var cur = context;
     for (var i = 0, part; part = parts[i]; ++i) {
-        cur[part] = cur[part] || {};
+        cur = cur[part] = cur[part] || {};
     }
-    return cur[parts[i-1]];
+    return cur;
 }
 
 exports.mapModules = function(context) {
@@ -1221,7 +1051,7 @@ exports.mapModules = function(context) {
         if (strategy == 'm' && target) {
             builder.recursiveMerge(target, module);
         } else if ((strategy == 'd' && !target) || (strategy != 'd')) {
-            if (target) {
+            if (!(symbolPath in origSymbols)) {
                 origSymbols[symbolPath] = target;
             }
             builder.assignOrWrapInDeprecateGetter(parentObj, lastName, module, deprecationMsg);
@@ -1263,43 +1093,13 @@ module.exports = {
     initialize:function() {
         var modulemapper = require('cordova/modulemapper');
 
+        modulemapper.loadMatchingModules(/cordova.*\/plugininit$/);
+
         modulemapper.loadMatchingModules(/cordova.*\/symbols$/);
         modulemapper.mapModules(window);
-    },
-    clobbers: {
-        MediaError: { // exists natively, override
-            path: "cordova/plugin/MediaError"
-        },
-        console: {
-            path: 'cordova/plugin/ios/console'
-        },
-        open : {
-            path: 'cordova/plugin/InAppBrowser'
-        }
-    },
-    merges:{
-        Contact:{
-            path: "cordova/plugin/ios/Contact"
-        },
-        navigator:{
-            children:{
-                notification:{
-                    path:"cordova/plugin/ios/notification"
-                },
-                contacts:{
-                    path:"cordova/plugin/ios/contacts"
-                },
-                geolocation: {
-                    path: 'cordova/plugin/geolocation'
-                }
-            }
-        }
     }
 };
 
-// use the native logger
-var logger = require("cordova/plugin/logger");
-logger.useConsole(false);
 
 });
 
@@ -1531,9 +1331,9 @@ module.exports = CompassError;
 define("cordova/plugin/CompassHeading", function(require, exports, module) {
 
 var CompassHeading = function(magneticHeading, trueHeading, headingAccuracy, timestamp) {
-  this.magneticHeading = magneticHeading || null;
-  this.trueHeading = trueHeading || null;
-  this.headingAccuracy = headingAccuracy || null;
+  this.magneticHeading = magneticHeading;
+  this.trueHeading = trueHeading;
+  this.headingAccuracy = headingAccuracy;
   this.timestamp = timestamp || new Date().getTime();
 };
 
@@ -2906,11 +2706,12 @@ define("cordova/plugin/FileTransferError", function(require, exports, module) {
  * FileTransferError
  * @constructor
  */
-var FileTransferError = function(code, source, target, status) {
+var FileTransferError = function(code, source, target, status, body) {
     this.code = code || null;
     this.source = source || null;
     this.target = target || null;
     this.http_status = status || null;
+    this.body = body || null;
 };
 
 FileTransferError.FILE_NOT_FOUND_ERR = 1;
@@ -3314,8 +3115,6 @@ module.exports = function(strUrl, strWindowName, strWindowFeatures) {
     return iab;
 };
 
-//Export the original open so it can be used if needed
-module.exports._orig = window.open;
 
 });
 
@@ -3886,6 +3685,17 @@ module.exports = accelerometer;
 
 });
 
+// file: lib/common/plugin/accelerometer/symbols.js
+define("cordova/plugin/accelerometer/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.defaults('cordova/plugin/Acceleration', 'Acceleration');
+modulemapper.defaults('cordova/plugin/accelerometer', 'navigator.accelerometer');
+
+});
+
 // file: lib/common/plugin/battery.js
 define("cordova/plugin/battery", function(require, exports, module) {
 
@@ -3970,6 +3780,28 @@ module.exports = battery;
 
 });
 
+// file: lib/common/plugin/battery/symbols.js
+define("cordova/plugin/battery/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.defaults('cordova/plugin/battery', 'navigator.battery');
+
+});
+
+// file: lib/common/plugin/camera/symbols.js
+define("cordova/plugin/camera/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.defaults('cordova/plugin/Camera', 'navigator.camera');
+modulemapper.defaults('cordova/plugin/CameraConstants', 'Camera');
+modulemapper.defaults('cordova/plugin/CameraPopoverOptions', 'CameraPopoverOptions');
+
+});
+
 // file: lib/common/plugin/capture.js
 define("cordova/plugin/capture", function(require, exports, module) {
 
@@ -4045,6 +3877,22 @@ Capture.prototype.captureVideo = function(successCallback, errorCallback, option
 
 
 module.exports = new Capture();
+
+});
+
+// file: lib/common/plugin/capture/symbols.js
+define("cordova/plugin/capture/symbols", function(require, exports, module) {
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/CaptureError', 'CaptureError');
+modulemapper.clobbers('cordova/plugin/CaptureAudioOptions', 'CaptureAudioOptions');
+modulemapper.clobbers('cordova/plugin/CaptureImageOptions', 'CaptureImageOptions');
+modulemapper.clobbers('cordova/plugin/CaptureVideoOptions', 'CaptureVideoOptions');
+modulemapper.clobbers('cordova/plugin/ConfigurationData', 'ConfigurationData');
+modulemapper.clobbers('cordova/plugin/MediaFile', 'MediaFile');
+modulemapper.clobbers('cordova/plugin/MediaFileData', 'MediaFileData');
+modulemapper.clobbers('cordova/plugin/capture', 'navigator.device.capture');
 
 });
 
@@ -4132,6 +3980,18 @@ var argscheck = require('cordova/argscheck'),
     };
 
 module.exports = compass;
+
+});
+
+// file: lib/common/plugin/compass/symbols.js
+define("cordova/plugin/compass/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/CompassHeading', 'CompassHeading');
+modulemapper.clobbers('cordova/plugin/CompassError', 'CompassError');
+modulemapper.clobbers('cordova/plugin/compass', 'navigator.compass');
 
 });
 
@@ -4368,6 +4228,23 @@ module.exports = contacts;
 
 });
 
+// file: lib/common/plugin/contacts/symbols.js
+define("cordova/plugin/contacts/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/contacts', 'navigator.contacts');
+modulemapper.clobbers('cordova/plugin/Contact', 'Contact');
+modulemapper.clobbers('cordova/plugin/ContactAddress', 'ContactAddress');
+modulemapper.clobbers('cordova/plugin/ContactError', 'ContactError');
+modulemapper.clobbers('cordova/plugin/ContactField', 'ContactField');
+modulemapper.clobbers('cordova/plugin/ContactFindOptions', 'ContactFindOptions');
+modulemapper.clobbers('cordova/plugin/ContactName', 'ContactName');
+modulemapper.clobbers('cordova/plugin/ContactOrganization', 'ContactOrganization');
+
+});
+
 // file: lib/common/plugin/device.js
 define("cordova/plugin/device", function(require, exports, module) {
 
@@ -4427,6 +4304,16 @@ module.exports = new Device();
 
 });
 
+// file: lib/common/plugin/device/symbols.js
+define("cordova/plugin/device/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/device', 'device');
+
+});
+
 // file: lib/common/plugin/echo.js
 define("cordova/plugin/echo", function(require, exports, module) {
 
@@ -4474,14 +4361,13 @@ module.exports = function(exportFunc) {
     exportFunc('cordova/plugin/FileError', 'FileError');
     exportFunc('cordova/plugin/FileReader', 'FileReader');
     exportFunc('cordova/plugin/FileSystem', 'FileSystem');
-    exportFunc('cordova/plugin/FileTransfer', 'FileTransfer');
-    exportFunc('cordova/plugin/FileTransferError', 'FileTransferError');
     exportFunc('cordova/plugin/FileUploadOptions', 'FileUploadOptions');
     exportFunc('cordova/plugin/FileUploadResult', 'FileUploadResult');
     exportFunc('cordova/plugin/FileWriter', 'FileWriter');
     exportFunc('cordova/plugin/Flags', 'Flags');
     exportFunc('cordova/plugin/LocalFileSystem', 'LocalFileSystem');
     exportFunc('cordova/plugin/Metadata', 'Metadata');
+    exportFunc('cordova/plugin/ProgressEvent', 'ProgressEvent');
     exportFunc('cordova/plugin/requestFileSystem', 'requestFileSystem');
     exportFunc('cordova/plugin/resolveLocalFileSystemURI', 'resolveLocalFileSystemURI');
 };
@@ -4681,6 +4567,19 @@ var geolocation = {
 };
 
 module.exports = geolocation;
+
+});
+
+// file: lib/common/plugin/geolocation/symbols.js
+define("cordova/plugin/geolocation/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.defaults('cordova/plugin/geolocation', 'navigator.geolocation');
+modulemapper.clobbers('cordova/plugin/PositionError', 'PositionError');
+modulemapper.clobbers('cordova/plugin/Position', 'Position');
+modulemapper.clobbers('cordova/plugin/Coordinates', 'Coordinates');
 
 });
 
@@ -5060,6 +4959,27 @@ module.exports = globalization;
 
 });
 
+// file: lib/common/plugin/globalization/symbols.js
+define("cordova/plugin/globalization/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/globalization', 'navigator.globalization');
+modulemapper.clobbers('cordova/plugin/GlobalizationError', 'GlobalizationError');
+
+});
+
+// file: lib/ios/plugin/inappbrowser/symbols.js
+define("cordova/plugin/inappbrowser/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/InAppBrowser', 'open');
+
+});
+
 // file: lib/ios/plugin/ios/Contact.js
 define("cordova/plugin/ios/Contact", function(require, exports, module) {
 
@@ -5181,6 +5101,15 @@ module.exports = console;
 
 });
 
+// file: lib/ios/plugin/ios/console/symbols.js
+define("cordova/plugin/ios/console/symbols", function(require, exports, module) {
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/ios/console', 'console');
+
+});
+
 // file: lib/ios/plugin/ios/contacts.js
 define("cordova/plugin/ios/contacts", function(require, exports, module) {
 
@@ -5225,6 +5154,36 @@ module.exports = {
         exec(win, null, "Contacts","chooseContact", [options]);
     }
 };
+
+});
+
+// file: lib/ios/plugin/ios/contacts/symbols.js
+define("cordova/plugin/ios/contacts/symbols", function(require, exports, module) {
+
+require('cordova/plugin/contacts/symbols');
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.merges('cordova/plugin/ios/contacts', 'navigator.contacts');
+modulemapper.merges('cordova/plugin/ios/Contact', 'Contact');
+
+});
+
+// file: lib/ios/plugin/ios/geolocation/symbols.js
+define("cordova/plugin/ios/geolocation/symbols", function(require, exports, module) {
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.merges('cordova/plugin/geolocation', 'navigator.geolocation');
+
+});
+
+// file: lib/ios/plugin/ios/logger/plugininit.js
+define("cordova/plugin/ios/logger/plugininit", function(require, exports, module) {
+
+// use the native logger
+var logger = require("cordova/plugin/logger");
+logger.useConsole(false);
 
 });
 
@@ -5469,6 +5428,27 @@ document.addEventListener("deviceready", logger.__onDeviceReady, false);
 
 });
 
+// file: lib/common/plugin/logger/symbols.js
+define("cordova/plugin/logger/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/logger', 'cordova.logger');
+
+});
+
+// file: lib/ios/plugin/media/symbols.js
+define("cordova/plugin/media/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.defaults('cordova/plugin/Media', 'Media');
+modulemapper.clobbers('cordova/plugin/MediaError', 'MediaError');
+
+});
+
 // file: lib/common/plugin/network.js
 define("cordova/plugin/network", function(require, exports, module) {
 
@@ -5541,6 +5521,18 @@ module.exports = me;
 
 });
 
+// file: lib/common/plugin/networkstatus/symbols.js
+define("cordova/plugin/networkstatus/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/network', 'navigator.network.connection', 'navigator.network.connection is deprecated. Use navigator.connection instead.');
+modulemapper.clobbers('cordova/plugin/network', 'navigator.connection');
+modulemapper.defaults('cordova/plugin/Connection', 'Connection');
+
+});
+
 // file: lib/common/plugin/notification.js
 define("cordova/plugin/notification", function(require, exports, module) {
 
@@ -5600,6 +5592,17 @@ module.exports = {
         exec(null, null, "Notification", "beep", [count]);
     }
 };
+
+});
+
+// file: lib/ios/plugin/notification/symbols.js
+define("cordova/plugin/notification/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/notification', 'navigator.notification');
+modulemapper.merges('cordova/plugin/ios/notification', 'navigator.notification');
 
 });
 
@@ -5713,6 +5716,29 @@ var splashscreen = {
 };
 
 module.exports = splashscreen;
+
+});
+
+// file: lib/common/plugin/splashscreen/symbols.js
+define("cordova/plugin/splashscreen/symbols", function(require, exports, module) {
+
+
+var modulemapper = require('cordova/modulemapper');
+
+modulemapper.clobbers('cordova/plugin/splashscreen', 'navigator.splashscreen');
+
+});
+
+// file: lib/common/symbols.js
+define("cordova/symbols", function(require, exports, module) {
+
+var modulemapper = require('cordova/modulemapper');
+
+// Use merges here in case others symbols files depend on this running first,
+// but fail to declare the dependency with a require().
+modulemapper.merges('cordova', 'cordova');
+modulemapper.clobbers('cordova/exec', 'cordova.exec');
+modulemapper.clobbers('cordova/exec', 'Cordova.exec');
 
 });
 
@@ -5984,13 +6010,7 @@ window.cordova = require('cordova');
                  */
                 channel.join(function() {
                     var builder = require('cordova/builder'),
-                        base = require('cordova/common'),
                         platform = require('cordova/platform');
-
-                    // Drop the common globals into the window object, but be nice and don't overwrite anything.
-                    builder.buildIntoButDoNotClobber(base.defaults, context);
-                    builder.buildIntoAndClobber(base.clobbers, context);
-                    builder.buildIntoAndMerge(base.merges, context);
 
                     builder.buildIntoButDoNotClobber(platform.defaults, context);
                     builder.buildIntoAndClobber(platform.clobbers, context);
