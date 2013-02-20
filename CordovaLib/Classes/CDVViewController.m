@@ -23,14 +23,13 @@
 #import "CDVCommandDelegateImpl.h"
 #import "CDVConfigParser.h"
 #import "CDVUserAgentUtil.h"
+#import "CDVWebViewDelegate.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
-    // Used to distinguish an iframe navigation from a top-level one.
-    NSURL* _topLevelNavigationURL;
-    BOOL _topLevelNavigationHasStartedLoad;
+    CDVWebViewDelegate* _webViewDelegate;
 }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
@@ -463,7 +462,8 @@
         [self.view addSubview:self.webView];
         [self.view sendSubviewToBack:self.webView];
 
-        self.webView.delegate = self;
+        _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
+        self.webView.delegate = _webViewDelegate;
 
         // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
         [CDVURLProtocol registerViewController:self];
@@ -513,13 +513,9 @@
  */
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
-    // The request of theWebView is not yet set to the new one at this point.
-    if (!_topLevelNavigationHasStartedLoad) {
-        _topLevelNavigationHasStartedLoad = YES;
-        NSLog(@"Started load of %@", _topLevelNavigationURL);
-        [_commandQueue resetRequestId];
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:nil]];
-    }
+    NSLog(@"Resetting plugins due to page load.");
+    [_commandQueue resetRequestId];
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:self.webView]];
 }
 
 /**
@@ -527,25 +523,20 @@
  */
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
+    NSLog(@"Finished load of: %@", theWebView.request.URL);
     // It's safe to release the lock even if this is just a sub-frame that's finished loading.
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
-
-    if (![_topLevelNavigationURL isEqual:theWebView.request.URL]) {
-        return;
-    }
-    NSLog(@"Finished load of %@", _topLevelNavigationURL);
-    _topLevelNavigationURL = nil;
-
-    /*
-     * Hide the Top Activity THROBBER in the Battery Bar
-     */
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 
     // The .onNativeReady().fire() will work when cordova.js is already loaded.
     // The _nativeReady = true; is used when this is run before cordova.js is loaded.
     NSString* nativeReady = @"try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
     // Don't use [commandDelegate evalJs] here since it relies on cordova.js being loaded already.
     [self.webView stringByEvaluatingJavaScriptFromString:nativeReady];
+
+    /*
+     * Hide the Top Activity THROBBER in the Battery Bar
+     */
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 
     [self processOpenUrl];
 
@@ -562,17 +553,6 @@
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = [request URL];
-
-    // Check if this is just a sub-frame navigation.
-    BOOL isTopLevelNavigation = [url isEqual:[request mainDocumentURL]];
-
-    if (isTopLevelNavigation) {
-        if (_topLevelNavigationURL != nil) {
-            NSLog(@"Warning: _topLevelNavigationURL was not set to nil in shouldStartLoadWithRequest");
-        }
-        _topLevelNavigationHasStartedLoad = NO;
-        _topLevelNavigationURL = url;
-    }
 
     /*
      * Execute any commands queued with cordova.exec() on the JS side.
@@ -850,7 +830,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSCurrentLocaleDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPluginHandleOpenURLNotification object:nil];
-
     self.webView.delegate = nil;
     self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
