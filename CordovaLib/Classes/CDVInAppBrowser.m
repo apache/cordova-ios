@@ -209,6 +209,7 @@
     if (self != nil) {
         _userAgent = userAgent;
         _prevUserAgent = prevUserAgent;
+        _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
         [self createViews];
     }
 
@@ -229,7 +230,7 @@
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
 
-    self.webView.delegate = self;
+    self.webView.delegate = _webViewDelegate;
     self.webView.backgroundColor = [UIColor whiteColor];
 
     self.webView.clearsContextBeforeDrawing = YES;
