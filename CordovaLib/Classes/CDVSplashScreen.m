@@ -31,9 +31,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad) name:CDVPageDidLoadNotification object:self.webView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationWillChange:) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
 
-    if (self.useSplashScreen) {
-        [self show:nil];
-    }
+    [self show:nil];
 }
 
 - (void)show:(CDVInvokedUrlCommand*)command
@@ -44,14 +42,6 @@
 - (void)hide:(CDVInvokedUrlCommand*)command
 {
     [self updateSplashScreenWithState:kSplashScreenStateHide];
-}
-
-- (BOOL)useSplashScreen
-{
-    id ret = self.commandDelegate.settings[@"ShowSplashScreen"];
-
-    // if value is missing, default to yes
-    return (ret == nil) || [ret boolValue];
 }
 
 - (void)pageDidLoad

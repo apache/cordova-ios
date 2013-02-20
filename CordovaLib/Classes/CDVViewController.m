@@ -52,6 +52,7 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
+@synthesize useSplashScreen;
 @synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
@@ -84,6 +85,7 @@
 
         // load config.xml settings
         [self loadSettings];
+        useSplashScreen = YES;
     }
 }
 
@@ -173,19 +175,6 @@
 
     // Initialize the plugin objects dict.
     self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
-}
-
-- (BOOL)useSplashScreen
-{
-    id ret = self.settings[@"ShowSplashScreen"];
-
-    // if value is missing, default to yes
-    return (ret == nil) || [ret boolValue];
-}
-
-- (void)setUseSplashScreen:(BOOL)value
-{
-    self.settings[@"ShowSplashScreen"] = [NSNumber numberWithBool:value];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -323,7 +312,9 @@
     }
 
     // TODO: Remove this explicit instantiation once we move to cordova-CLI.
-    [self getCommandInstance:@"splashscreen"];
+    if (useSplashScreen) {
+        [self getCommandInstance:@"splashscreen"];
+    }
 
     // /////////////////
     [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
