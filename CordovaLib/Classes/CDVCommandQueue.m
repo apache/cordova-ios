@@ -23,6 +23,14 @@
 #import "CDVViewController.h"
 #import "CDVCommandDelegateImpl.h"
 
+@interface CDVCommandQueue () {
+    NSInteger _lastCommandQueueFlushRequestId;
+    __weak CDVViewController* _viewController;
+    NSMutableArray* _queue;
+    BOOL _currentlyExecuting;
+}
+@end
+
 @implementation CDVCommandQueue
 
 @synthesize currentlyExecuting = _currentlyExecuting;

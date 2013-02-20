@@ -141,6 +141,7 @@
 		686357DC14100B1600DF4CF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		68A32D7114102E1C006B237C /* libCordova.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCordova.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		68A32D7414103017006B237C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		8220B5C316D5427E00EC3921 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8852C43614B65FD800F0E735 /* CDVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVViewController.h; path = Classes/CDVViewController.h; sourceTree = "<group>"; };
 		8852C43714B65FD800F0E735 /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVViewController.m; path = Classes/CDVViewController.m; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* CDVCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCamera.h; path = Classes/CDVCamera.h; sourceTree = "<group>"; };
@@ -223,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				68A32D7414103017006B237C /* AddressBook.framework */,
+				8220B5C316D5427E00EC3921 /* AssetsLibrary.framework */,
 				686357DC14100B1600DF4CF2 /* CoreMedia.framework */,
 				686357CE14100ADA00DF4CF2 /* AudioToolbox.framework */,
 				686357CF14100ADB00DF4CF2 /* AVFoundation.framework */,

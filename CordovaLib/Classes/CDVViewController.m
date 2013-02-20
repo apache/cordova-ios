@@ -19,7 +19,6 @@
 
 #import <objc/message.h>
 #import "CDV.h"
-#import "CDVCommandQueue.h"
 #import "CDVCommandDelegateImpl.h"
 #import "CDVConfigParser.h"
 #import "CDVUserAgentUtil.h"
