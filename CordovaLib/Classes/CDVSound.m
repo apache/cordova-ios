@@ -24,13 +24,12 @@
 #define DOCUMENTS_SCHEME_PREFIX @"documents://"
 #define HTTP_SCHEME_PREFIX @"http://"
 #define HTTPS_SCHEME_PREFIX @"https://"
+#define RECORDING_WAV @"wav"
 
 @implementation CDVSound
 
 @synthesize soundCache, avSession;
 
-// Maps a url for a resource path
-// "Naked" resource paths are assumed to be from the www folder as its base
 - (NSURL*)urlForResource:(NSString*)resourcePath
 {
     NSURL* resourceURL = nil;
@@ -71,8 +70,100 @@
     return resourceURL;
 }
 
-// Creates or gets the cached audio file resource object
+// Maps a url for a resource path for recording
+- (NSURL*)urlForRecording:(NSString*)resourcePath
+{
+    NSURL* resourceURL = nil;
+    NSString* filePath = nil;
+    NSString* docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+
+    // first check for correct extension
+    if ([[resourcePath pathExtension] caseInsensitiveCompare:RECORDING_WAV] != NSOrderedSame) {
+        resourceURL = nil;
+        NSLog(@"Resource for recording must have %@ extension", RECORDING_WAV);
+    } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
+        // try to find Documents:// resources
+        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", docsPath]];
+        NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
+    } else {
+        // if resourcePath is not from FileSystem put in tmp dir, else attempt to use provided resource path
+        NSString* tmpPath = [NSTemporaryDirectory ()stringByStandardizingPath];
+        BOOL isTmp = [resourcePath rangeOfString:tmpPath].location != NSNotFound;
+        BOOL isDoc = [resourcePath rangeOfString:docsPath].location != NSNotFound;
+        if (!isTmp && !isDoc) {
+            // put in temp dir
+            filePath = [NSString stringWithFormat:@"%@/%@", tmpPath, resourcePath];
+        } else {
+            filePath = resourcePath;
+        }
+    }
+
+    if (filePath != nil) {
+        // create resourceURL
+        resourceURL = [NSURL fileURLWithPath:filePath];
+    }
+    return resourceURL;
+}
+
+// Maps a url for a resource path for playing
+// "Naked" resource paths are assumed to be from the www folder as its base
+- (NSURL*)urlForPlaying:(NSString*)resourcePath
+{
+    NSURL* resourceURL = nil;
+    NSString* filePath = nil;
+
+    // first try to find HTTP:// or Documents:// resources
+
+    if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX] || [resourcePath hasPrefix:HTTPS_SCHEME_PREFIX]) {
+        // if it is a http url, use it
+        NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
+        resourceURL = [NSURL URLWithString:resourcePath];
+    } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
+        NSString* docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", docsPath]];
+        NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
+    } else {
+        // attempt to find file path in www directory or LocalFileSystem.TEMPORARY directory
+        filePath = [self.commandDelegate pathForResource:resourcePath];
+        if (filePath == nil) {
+            // see if this exists in the documents/temp directory from a previous recording
+            NSString* testPath = [NSString stringWithFormat:@"%@/%@", [NSTemporaryDirectory ()stringByStandardizingPath], resourcePath];
+            if ([[NSFileManager defaultManager] fileExistsAtPath:testPath]) {
+                // inefficient as existence will be checked again below but only way to determine if file exists from previous recording
+                filePath = testPath;
+                NSLog(@"Will attempt to use file resource from LocalFileSystem.TEMPORARY directory");
+            } else {
+                // attempt to use path provided
+                filePath = resourcePath;
+                NSLog(@"Will attempt to use file resource '%@'", filePath);
+            }
+        } else {
+            NSLog(@"Found resource '%@' in the web folder.", filePath);
+        }
+    }
+    // check that file exists for all but HTTP_SHEME_PREFIX
+    if (filePath != nil) {
+        // create resourceURL
+        resourceURL = [NSURL fileURLWithPath:filePath];
+        // try to access file
+        NSFileManager* fMgr = [NSFileManager defaultManager];
+        if (![fMgr fileExistsAtPath:filePath]) {
+            resourceURL = nil;
+            NSLog(@"Unknown resource '%@'", resourcePath);
+        }
+    }
+
+    return resourceURL;
+}
+
 - (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId
+{
+    // will maintain backwards compatibility with original implementation
+    return [self audioFileForResource:resourcePath withId:mediaId doValidation:YES forRecording:NO];
+}
+
+// Creates or gets the cached audio file resource object
+- (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId doValidation:(BOOL)bValidate forRecording:(BOOL)bRecord
 {
     BOOL bError = NO;
     CDVMediaError errcode = MEDIA_ERR_NONE_SUPPORTED;
@@ -88,31 +179,37 @@
     }
     if (audioFile == nil) {
         // validate resourcePath and create
-
         if ((resourcePath == nil) || ![resourcePath isKindOfClass:[NSString class]] || [resourcePath isEqualToString:@""]) {
             bError = YES;
             errcode = MEDIA_ERR_ABORTED;
             errMsg = @"invalid media src argument";
         } else {
-            resourceURL = [self urlForResource:resourcePath];
+            audioFile = [[CDVAudioFile alloc] init];
+            audioFile.resourcePath = resourcePath;
+            audioFile.resourceURL = nil;  // validate resourceURL when actually play or record
+            [[self soundCache] setObject:audioFile forKey:mediaId];
         }
-
+    }
+    if (bValidate && (audioFile.resourceURL == nil)) {
+        if (bRecord) {
+            resourceURL = [self urlForRecording:resourcePath];
+        } else {
+            resourceURL = [self urlForPlaying:resourcePath];
+        }
         if (resourceURL == nil) {
             bError = YES;
             errcode = MEDIA_ERR_ABORTED;
             errMsg = [NSString stringWithFormat:@"Cannot use audio file from resource '%@'", resourcePath];
-        }
-        if (bError) {
-            // jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, errcode];
-            jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:errcode message:errMsg]];
-            [self.commandDelegate evalJs:jsString];
         } else {
-            audioFile = [[CDVAudioFile alloc] init];
-            audioFile.resourcePath = resourcePath;
             audioFile.resourceURL = resourceURL;
-            [[self soundCache] setObject:audioFile forKey:mediaId];
         }
     }
+
+    if (bError) {
+        jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:errcode message:errMsg]];
+        [self.commandDelegate evalJs:jsString];
+    }
+
     return audioFile;
 }
 
@@ -150,7 +247,7 @@
     NSString* mediaId = [command.arguments objectAtIndex:0];
     NSString* resourcePath = [command.arguments objectAtIndex:1];
 
-    CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId];
+    CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId doValidation:NO forRecording:NO];
 
     if (audioFile == nil) {
         NSString* errorMessage = [NSString stringWithFormat:@"Failed to initialize Media file with path %@", resourcePath];
@@ -194,9 +291,8 @@
     BOOL bError = NO;
     NSString* jsString = nil;
 
-    CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId];
-
-    if (audioFile != nil) {
+    CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId doValidation:YES forRecording:NO];
+    if ((audioFile != nil) && (audioFile.resourceURL != nil)) {
         if (audioFile.player == nil) {
             bError = [self prepareToPlay:audioFile withId:mediaId];
         }
@@ -417,11 +513,11 @@
 #pragma unused(callbackId)
 
     NSString* mediaId = [command.arguments objectAtIndex:0];
-    CDVAudioFile* audioFile = [self audioFileForResource:[command.arguments objectAtIndex:1] withId:mediaId];
+    CDVAudioFile* audioFile = [self audioFileForResource:[command.arguments objectAtIndex:1] withId:mediaId doValidation:YES forRecording:YES];
     NSString* jsString = nil;
     NSString* errorMsg = @"";
 
-    if (audioFile != nil) {
+    if ((audioFile != nil) && (audioFile.resourceURL != nil)) {
         NSError* __autoreleasing error = nil;
 
         if (audioFile.recorder != nil) {
@@ -468,9 +564,9 @@
             jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:MEDIA_ERR_ABORTED message:errorMsg]];
         }
     } else {
-        // file does not exist
-        NSLog(@"Could not start recording audio, file '%@' does not exist.", audioFile.resourcePath);
-        jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:MEDIA_ERR_ABORTED message:@"File to record to does not exist"]];
+        // file did not validate
+        NSString* errorMsg = [NSString stringWithFormat:@"Could not record audio at '%@'", audioFile.resourcePath];
+        jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%@);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, [self createMediaErrorWithCode:MEDIA_ERR_ABORTED message:errorMsg]];
     }
     if (jsString) {
         [self.commandDelegate evalJs:jsString];
