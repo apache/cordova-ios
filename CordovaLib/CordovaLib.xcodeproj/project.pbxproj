@@ -85,7 +85,7 @@
 		EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA3557115ABD38C00F4DE24 /* NSArray+Comparisons.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA3557215ABD38C00F4DE24 /* NSArray+Comparisons.m */; };
 		EBFF4DBC16D3FE2E008F452B /* CDVWebViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EBFF4DBA16D3FE2E008F452B /* CDVWebViewDelegate.m */; };
-		EBFF4DBD16D3FE2E008F452B /* CDVWebViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = EBFF4DBB16D3FE2E008F452B /* CDVWebViewDelegate.h */; };
+		EBFF4DBD16D3FE2E008F452B /* CDVWebViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = EBFF4DBB16D3FE2E008F452B /* CDVWebViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F858FBC6166009A8007DA594 /* CDVConfigParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F858FBC4166009A8007DA594 /* CDVConfigParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F858FBC7166009A8007DA594 /* CDVConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F858FBC5166009A8007DA594 /* CDVConfigParser.m */; };
 /* End PBXBuildFile section */
@@ -405,8 +405,8 @@
 				3073E9ED1656D51200957977 /* CDVScreenOrientationDelegate.h in Headers */,
 				F858FBC6166009A8007DA594 /* CDVConfigParser.h in Headers */,
 				30F3930B169F839700B22307 /* CDVJSON.h in Headers */,
-				EB96673B16A8970A00D86CDF /* CDVUserAgentUtil.h in Headers */,
 				EBFF4DBD16D3FE2E008F452B /* CDVWebViewDelegate.h in Headers */,
+				EB96673B16A8970A00D86CDF /* CDVUserAgentUtil.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
