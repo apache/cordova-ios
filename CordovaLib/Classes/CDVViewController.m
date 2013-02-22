@@ -102,6 +102,48 @@
     return self;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self
+           selector:@selector(keyboardWillShowOrHide:)
+               name:UIKeyboardWillShowNotification
+             object:nil];
+    [nc addObserver:self
+           selector:@selector(keyboardWillShowOrHide:)
+               name:UIKeyboardWillHideNotification
+             object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [nc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)keyboardWillShowOrHide:(NSNotification*)notif
+{
+    if (![@"true" isEqualToString:self.settings[@"KeyboardShrinksView"]]) {
+        return;
+    }
+    BOOL showEvent = [notif.name isEqualToString:UIKeyboardWillShowNotification];
+
+    CGRect keyboardFrame = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    keyboardFrame = [self.view convertRect:keyboardFrame fromView:nil];
+
+    CGRect newFrame = self.view.bounds;
+    if (showEvent) {
+        newFrame.size.height -= keyboardFrame.size.height;
+    }
+    self.webView.frame = newFrame;
+    self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -keyboardFrame.size.height, 0);
+}
+
 - (void)printDeprecationNotice
 {
     if (!IsAtLeastiOSVersion(@"5.0")) {
