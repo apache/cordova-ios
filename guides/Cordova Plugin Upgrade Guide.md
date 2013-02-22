@@ -22,6 +22,43 @@
 
 This document is for developers who need to upgrade their Cordova  plugins to a newer Cordova version. Starting with Cordova 1.5.0, some classes have been renamed, which will require the plugin to be upgraded. Make sure your project itself has been upgraded using the "Cordova Upgrade Guide" document.
 
+## Upgrading older Cordova plugins to 2.5.0 ##
+
+1. **Install** Cordova 2.5.0
+2. Follow the **"Upgrading older Cordova plugins to 2.4.0"** section, if necessary
+3. Note the changes in the **CDVPlugin** class in the section below
+
+### Changes in the CDVPlugin class ###
+
+**REMOVED:**
+
+    - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
+
+**ADDED:**
+
+    - (void)pluginInitialize;
+
+Thus, a plugin will be initialized in a two-step process:
+
+    - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView;
+    - (void)pluginInitialize;
+
+**ADDED:** 
+
+A plugin can listen for the **"CDVPageDidLoadNotification"** NSNotification, which is sent whenever a new web-page has finished loading in the CordovaWebView. The **"CDVPageDidLoadNotification""** NSNotification is passed the CordovaWebView, which is set as the **object* property of the NSNotification.
+
+**CHANGED:** 
+
+The **"CDVPluginResetNotification""** NSNotification is now passed the CordovaWebView, which is set as the **object* property of the NSNotification. A plugin can receive this notification when it overrides the CDVPlugin **onReset** selector:
+    
+    - (void) onReset:(NSNotification*)notification;
+
+**ADDED:** 
+
+The plugin's **commandDelegate** property has a new **settings** property that represents the application's settings (preferences from the config.xml file). e.g.
+
+    NSString* mySetting = self.commandDelegate.settings[@"MySetting"];
+
 ## Upgrading older Cordova plugins to 2.4.0 ##
 
 1. **Install** Cordova 2.4.0
@@ -29,6 +66,19 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 
 JSONKit usage has been removed, and replaced by AppKit's NSJSONSerialization. If you are using CordovaLib's JSONKit, either use your own JSONKit or use NSJSONSerialization instead.
 
+Because of NSJSONSerialization use in Cordova 2.4.0, all the objects in a CDVInvokedUrlCommand.arguments NSArray are immutable. Here is a mutable example: e.g.
+	 
+	 // command is a CDVInvokedUrlCommand object. Here we create a mutable copy of the object
+    NSMutableDictionary* dict = [[command.arguments objectAtIndex:0] mutableCopy];
+    
+    // do things with the dict object, then at the end release it if non-ARC
+    #if __has_feature(objc_arc)
+        // do nothing for ARC
+    #else
+    	 // release it if non-ARC
+    	 [dict release];
+    #endif
+    
 
 ## Upgrading older Cordova plugins to 2.3.0 ##
 
