@@ -29,6 +29,19 @@ This document is for developers who need to upgrade their Cordova  plugins to a 
 
 JSONKit usage has been removed, and replaced by AppKit's NSJSONSerialization. If you are using CordovaLib's JSONKit, either use your own JSONKit or use NSJSONSerialization instead.
 
+Because of NSJSONSerialization use in Cordova 2.4.0, all the objects in a CDVInvokedUrlCommand.arguments NSArray are immutable. Here is a mutable example: e.g.
+	 
+	 // command is a CDVInvokedUrlCommand object. Here we create a mutable copy of the object
+    NSMutableDictionary* dict = [[command.arguments objectAtIndex:0] mutableCopy];
+    
+    // do things with the dict object, then at the end release it if non-ARC
+    #if __has_feature(objc_arc)
+        // do nothing for ARC
+    #else
+    	 // release it if non-ARC
+    	 [dict release];
+    #endif
+    
 
 ## Upgrading older Cordova plugins to 2.3.0 ##
 
