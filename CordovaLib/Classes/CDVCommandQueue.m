@@ -82,6 +82,9 @@
         @"cordova.require('cordova/exec').nativeFetchMessages()"];
 
     [self enqueCommandBatch:queuedCommandsJSON];
+    if ([queuedCommandsJSON length] > 0) {
+        CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by request.");
+    }
 }
 
 - (void)executePending
@@ -100,6 +103,8 @@
             // Iterate over and execute all of the commands.
             for (NSArray* jsonEntry in commandBatch) {
                 CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+                CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
+
                 if (![self execute:command]) {
 #ifdef DEBUG
                         NSString* commandJson = [jsonEntry JSONString];

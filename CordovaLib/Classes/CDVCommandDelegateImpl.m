@@ -55,7 +55,11 @@
 
 - (void)evalJsHelper2:(NSString*)js
 {
+    CDV_EXEC_LOG(@"Exec: evalling: %@", [js substringToIndex:MIN([js length], 160)]);
     NSString* commandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:js];
+    if ([commandsJSON length] > 0) {
+        CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
+    }
 
     [_commandQueue enqueCommandBatch:commandsJSON];
 }
@@ -78,6 +82,7 @@
 
 - (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId
 {
+    CDV_EXEC_LOG(@"Exec(%@): Sending result. Status=%@", callbackId, result.status);
     // This occurs when there is are no win/fail callbacks for the call.
     if ([@"INVALID" isEqualToString:callbackId]) {
         return;
@@ -94,7 +99,7 @@
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
         callbackId, status, encodedMessage, keepCallback];
 
-    [self evalJsHelper:js];
+    [self evalJsHelper2:js];
 }
 
 - (void)evalJs:(NSString*)js

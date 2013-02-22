@@ -74,3 +74,11 @@
 #else
     #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
 #endif
+
+// Enable this to log all exec() calls.
+#define CDV_ENABLE_EXEC_LOGGING 0
+#if CDV_ENABLE_EXEC_LOGGING
+    #define CDV_EXEC_LOG NSLog
+#else
+    #define CDV_EXEC_LOG(...) do {} while (NO)
+#endif
