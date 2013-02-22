@@ -99,7 +99,7 @@
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
         callbackId, status, encodedMessage, keepCallback];
 
-    [self evalJsHelper2:js];
+    [self evalJsHelper:js];
 }
 
 - (void)evalJs:(NSString*)js
