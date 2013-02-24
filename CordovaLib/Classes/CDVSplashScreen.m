@@ -114,6 +114,17 @@
 
     _imageView.image = [UIImage imageNamed:imageName];
     _imageView.frame = CGRectMake(0, 0, _imageView.image.size.width, _imageView.image.size.height);
+    
+    if (!CDV_IsIPad()){
+        BOOL isStatusBarHidden = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIStatusBarHidden"] boolValue];
+
+        // For iPhones, adjust center of frame if status bar is not hidden
+        if (!isStatusBarHidden){
+            CGFloat offset = [UIApplication sharedApplication].statusBarFrame.size.height;
+            CGRect screenBounds = [[UIScreen mainScreen] bounds];
+            _imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2)-offset);
+        }
+    }
 }
 
 - (void)updateSplashScreenWithState:(int)state
