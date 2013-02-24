@@ -352,6 +352,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* filePath = [command.arguments objectAtIndex:1];
     BOOL trustAllHosts = [[command.arguments objectAtIndex:2 withDefault:[NSNumber numberWithBool:YES]] boolValue]; // allow self-signed certs
     NSString* objectId = [command.arguments objectAtIndex:3];
+    NSDictionary* headers = [command.arguments objectAtIndex:4 withDefault:nil];
 
     // return unsupported result for assets-library URLs
     if ([filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
@@ -388,7 +389,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     }
 
     NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:url];
-    [self applyRequestHeaders:nil toRequest:req];
+    [self applyRequestHeaders:headers toRequest:req];
 
     CDVFileTransferDelegate* delegate = [[CDVFileTransferDelegate alloc] init];
     delegate.command = self;
