@@ -89,15 +89,9 @@
     }
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
-    id message = result.message == nil ? [NSNull null] : result.message;
+    NSString* argumentsAsJSON = [result argumentsAsJSON];
 
-    // Use an array to encode the message as JSON.
-    message = [NSArray arrayWithObject:message];
-    NSString* encodedMessage = [message JSONString];
-    // And then strip off the outer []s.
-    encodedMessage = [encodedMessage substringWithRange:NSMakeRange(1, [encodedMessage length] - 2)];
-    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)",
-        callbackId, status, encodedMessage, keepCallback];
+    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)", callbackId, status, argumentsAsJSON, keepCallback];
 
     [self evalJsHelper:js];
 }

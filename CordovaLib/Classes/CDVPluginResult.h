@@ -47,6 +47,7 @@ typedef enum {
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage;
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary*)theMessage;
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData*)theMessage;
++ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray*)theMessages;
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
 
 + (void)setVerbose:(BOOL)verbose;
@@ -54,6 +55,9 @@ typedef enum {
 
 - (void)setKeepCallbackAsBool:(BOOL)bKeepCallback;
 
+- (NSString*)argumentsAsJSON;
+
+// These methods are used by the legacy plugin return result method
 - (NSString*)toJSONString;
 - (NSString*)toSuccessCallbackString:(NSString*)callbackId;
 - (NSString*)toErrorCallbackString:(NSString*)callbackId;

@@ -20,6 +20,7 @@
 
 # Redirect output to stderr.
 exec 1>&2
+test $SKIP_UNCRUSTIFY && exit 0
 
 RET=0
 files=$(bin/uncrustify.sh --filter $(git diff --cached --name-only))
