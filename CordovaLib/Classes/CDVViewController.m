@@ -317,12 +317,19 @@
         self.webView.mediaPlaybackRequiresUserAction = NO;
     }
 
-    // UIWebViewBounce property - defaults to true
-    NSNumber* bouncePreference = [self.settings objectForKey:@"UIWebViewBounce"];
-    BOOL bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
+    // By default, overscroll bouncing is allowed.
+    // UIWebViewBounce has been renamed to DisallowOverscroll, but both are checked.
+    BOOL bounceAllowed = YES;
+    NSNumber* disallowOverscroll = [self.settings objectForKey:@"DisallowOverscroll"];
+    if (disallowOverscroll == nil) {
+        NSNumber* bouncePreference = [self.settings objectForKey:@"UIWebViewBounce"];
+        bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
+    } else {
+        bounceAllowed = ![disallowOverscroll boolValue];
+    }
 
     // prevent webView from bouncing
-    // based on UIWebViewBounce key in config.xml
+    // based on the DisallowOverscroll/UIWebViewBounce key in config.xml
     if (!bounceAllowed) {
         if ([self.webView respondsToSelector:@selector(scrollView)]) {
             ((UIScrollView*)[self.webView scrollView]).bounces = NO;
