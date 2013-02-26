@@ -1,8 +1,8 @@
 // Platform: ios
 
-// commit 521bbd64ed729ca76b6646d25bb01b76ee8a54b5
+// commit f50d20a87431c79a54572263729461883f611a53
 
-// File generated at :: Wed Feb 20 2013 12:24:41 GMT-0800 (PST)
+// File generated at :: Tue Feb 26 2013 14:26:19 GMT-0800 (PST)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -823,6 +823,9 @@ function shouldBundleCommandJson() {
 }
 
 function massageArgsJsToNative(args) {
+    if (!args || utils.typeName(args) != 'Array') {
+       return args;
+    }
     var encodeArrayBufferAs8bitString = function(ab) {
         return String.fromCharCode.apply(null, new Uint8Array(ab));
     };
@@ -1122,7 +1125,8 @@ define("cordova/plugin/Camera", function(require, exports, module) {
 
 var argscheck = require('cordova/argscheck'),
     exec = require('cordova/exec'),
-    Camera = require('cordova/plugin/CameraConstants');
+    Camera = require('cordova/plugin/CameraConstants'),
+    CameraPopoverHandle = require('cordova/plugin/CameraPopoverHandle');
 
 var cameraExport = {};
 
@@ -1162,6 +1166,7 @@ cameraExport.getPicture = function(successCallback, errorCallback, options) {
                 mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions];
 
     exec(successCallback, errorCallback, "Camera", "takePicture", args);
+    return new CameraPopoverHandle();
 };
 
 cameraExport.cleanup = function(successCallback, errorCallback) {
@@ -1203,6 +1208,25 @@ module.exports = {
       ARROW_ANY : 15
   }
 };
+
+});
+
+// file: lib/ios/plugin/CameraPopoverHandle.js
+define("cordova/plugin/CameraPopoverHandle", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+/**
+ * A handle to an image picker popover.
+ */
+var CameraPopoverHandle = function() {
+    this.setPosition = function(popoverOptions) {
+        var args = [ popoverOptions ];
+        exec(null, null, "Camera", "repositionPopover", args);
+    };
+};
+
+module.exports = CameraPopoverHandle;
 
 });
 
