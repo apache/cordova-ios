@@ -18,9 +18,63 @@
 # under the License.
 #
 -->
-## Release Notes for Cordova  ##
+## Release Notes for Cordova (iOS) ##
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+ ### 2.5.0 (20130301) ###
+
+* [CB-2395] Fix CDVViewController UserAgent lock
+* [CB-2207] Use a custom script for www/ copying.
+* [CB-2275] Add NSURLCache to app template.
+* [CB-2433] Deprecation notice for window.Settings
+* [CB-2276] Add whitelist method to CommandDelegate
+* [CB-2276] Remove CDVViewController from CDVLocation
+* [CB-2276] Remove CDVViewController from CDVSound
+* [CB-2276] Remove CDVViewController CDVCapture
+* [CB-1547] Ignore iframe navigations in webview delegate methods
+* [CB-1547] Take two: Ignore iframe navigations in webview delegate methods
+* [CB-2443] Add pluginInitialize method to CDVPlugin.
+* [CB-2443] Removed classSettings initializer from CDVPlugin
+* [CB-1693] Allow plugins to be loaded on start-up.
+* [CB-2276] Move Splashscreen logic out of CDVViewController
+* [CB-2389] Distinguish top-level from sub-frame navigations.
+* [CB-571] Media updates
+* [CB-2213] Added NATIVE_URI to getFileMetadata.
+* [CB-2213] Added NATIVE_URI to readAsDataURL.
+* [CB-2213] Added NATIVE_URI to getMetadata.
+* [CB-2213] Added NATIVE_URI to three methods.
+* [CB-2213] Added the AssetsLibrary framework.
+* [CB-2213] Added NATIVE_URI to copyTo and moveTo.
+* [CB-2213] Updated errors for write and truncate.
+* [CB-2213] Updated a NATIVE_URI error (getParent).
+* [CB-2213] Added NATIVE_URI to FileTransfer.upload.
+* [CB-2213] Skipped image scaling when possible.
+* [CB-2213] Added native URI request handling.
+* [CB-2411] Added camera popover repositioning.
+* [CB-2379] Update CordovaLib Project Settings according to Xcode 4.6 recommendations
+* [CB-2334] Add "body" property to FileTransferError object on iOS
+* [CB-2342] Media API allows non-whitelisted audio to be played
+* [CB-2324] iOS config.xml document should use <widget> instead of <cordova>
+* [CB-2469] Update JavaScript for iOS (2.5.0rc1)
+* CDVWebViewDelegate header was not public.
+* [CB-2516] Additional Plugin Note on Upgrading from 2.3.0 to 2.4.0
+* [CB-2510] [1/2] Updated Plugin Upgrade Guide for 2.4.0 -> 2.5.0
+* [CB-2544] Document "onload" attribute of <plugin> element in Plugin Upgrade Guide
+* [CB-2280, CB-2281] SplashScreen fade and rotation
+* Run uncrustify on CDVPlugin.m
+* Uncrustify CDVFile and CDVFileTransfer
+* Use correct MIME-type for asset-library responses.
+* Add option for ipad/iphone in cordova/emulate
+* Make CDVLocalStorage use onReset
+* Add a notification so plugins will know when page loads occur.
+* Change default value of splash screen fade to be quicker.
+* Implement useSplashScreen without using a setting
+* Don't call onReset for iframe navigation
+* function name was wrong (case sensitive)
+* Fix /bin/create script to work with GNU sed in path
+
+<br />
 
  ### 2.4.0 (20130205) ###
 
