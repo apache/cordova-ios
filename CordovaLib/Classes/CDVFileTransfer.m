@@ -351,8 +351,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSString* sourceUrl = [command.arguments objectAtIndex:0];
     NSString* filePath = [command.arguments objectAtIndex:1];
     BOOL trustAllHosts = [[command.arguments objectAtIndex:2 withDefault:[NSNumber numberWithBool:YES]] boolValue]; // allow self-signed certs
-    NSDictionary* headers = [command.arguments objectAtIndex:3 withDefault:nil];
-    NSString* objectId = [command.arguments objectAtIndex:4];
+    NSString* objectId = [command.arguments objectAtIndex:3];
+    NSDictionary* headers = [command.arguments objectAtIndex:4 withDefault:nil];
 
     // return unsupported result for assets-library URLs
     if ([filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
@@ -398,7 +398,6 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     delegate.objectId = objectId;
     delegate.source = sourceUrl;
     delegate.target = filePath;
-//    delegate.headers = headers;
     delegate.trustAllHosts = trustAllHosts;
 
     delegate.connection = [NSURLConnection connectionWithRequest:req delegate:delegate];
