@@ -100,7 +100,6 @@ typedef enum {
 
     if (shouldLoad) {
         BOOL isTopLevelNavigation = [request.URL isEqual:[request mainDocumentURL]];
-        NSLog(@"should (tl=%d): %@", isTopLevelNavigation, request.URL);
         if (isTopLevelNavigation) {
             _loadCount = 0;
             _state = STATE_NORMAL;
@@ -111,7 +110,6 @@ typedef enum {
 
 - (void)webViewDidStartLoad:(UIWebView*)webView
 {
-    NSLog(@"start %d", _loadCount);
     if (_state == STATE_NORMAL) {
         if (_loadCount == 0) {
             if ([_delegate respondsToSelector:@selector(webViewDidStartLoad:)]) {
@@ -138,7 +136,6 @@ typedef enum {
 
 - (void)webViewDidFinishLoad:(UIWebView*)webView
 {
-    NSLog(@"finish %d", _loadCount);
     if (_state == STATE_NORMAL) {
         if (_loadCount == 1) {
             if ([_delegate respondsToSelector:@selector(webViewDidFinishLoad:)]) {
