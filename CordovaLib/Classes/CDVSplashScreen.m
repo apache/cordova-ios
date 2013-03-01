@@ -140,19 +140,25 @@
 - (void)updateBounds
 {
     UIImage* img = _imageView.image;
-    CGRect viewBounds = self.viewController.view.bounds;
     CGRect imgBounds = CGRectMake(0, 0, img.size.width, img.size.height);
 
-    CGFloat imgAspect = imgBounds.size.width / imgBounds.size.height;
-    CGFloat viewAspect = viewBounds.size.width / viewBounds.size.height;
+    CGSize screenSize = [self.viewController.view convertRect:[UIScreen mainScreen].bounds fromView:nil].size;
 
-    // This matches the behaviour of the native splash screen.
-    if (viewAspect > imgAspect) {
-        CGFloat ratio = viewBounds.size.width / imgBounds.size.width;
-        imgBounds.size.height *= ratio;
-        imgBounds.size.width *= ratio;
+    // There's a special case when the image is the size of the screen.
+    if (CGSizeEqualToSize(screenSize, imgBounds.size)) {
+        CGRect statusFrame = [self.viewController.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView:nil];
+        imgBounds.origin.y -= statusFrame.size.height;
     } else {
-        CGFloat ratio = viewBounds.size.height / imgBounds.size.height;
+        CGRect viewBounds = self.viewController.view.bounds;
+        CGFloat imgAspect = imgBounds.size.width / imgBounds.size.height;
+        CGFloat viewAspect = viewBounds.size.width / viewBounds.size.height;
+        // This matches the behaviour of the native splash screen.
+        CGFloat ratio;
+        if (viewAspect > imgAspect) {
+            ratio = viewBounds.size.width / imgBounds.size.width;
+        } else {
+            ratio = viewBounds.size.height / imgBounds.size.height;
+        }
         imgBounds.size.height *= ratio;
         imgBounds.size.width *= ratio;
     }
