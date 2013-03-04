@@ -1116,6 +1116,8 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
  * IN:
  * NSArray* arguments
  *	0 - NSString* fullPath
+ *	1 - NSString* start - OPTIONAL, only provided when not == 0.
+ *	2 - NSString* end - OPTIONAL, only provided when not == length.
  *
  * Determines the mime type from the file extension, returns ENCODING_ERR if mimetype can not be determined.
  */
@@ -1200,6 +1202,88 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
     }
     // NSLog(@"readAsDataURL return: %@", jsString);
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+}
+
+/* Read content of text file and return as an arraybuffer
+ * IN:
+ * NSArray* arguments
+ *	0 - NSString* fullPath
+ *	1 - NSString* start - OPTIONAL, only provided when not == 0.
+ *	2 - NSString* end - OPTIONAL, only provided when not == length.
+ */
+
+- (void)readAsArrayBuffer:(CDVInvokedUrlCommand*)command
+{
+    // arguments
+    NSString* argPath = [command.arguments objectAtIndex:0];
+    NSInteger start = 0;
+    NSInteger end = -1;
+
+    if ([command.arguments count] >= 2) {
+        start = [[command.arguments objectAtIndex:1] integerValue];
+    }
+    if ([command.arguments count] >= 3) {
+        end = [[command.arguments objectAtIndex:2] integerValue];
+    }
+
+    CDVFileError errCode = ABORT_ERR;
+    __block CDVPluginResult* result = nil;
+
+    if (!argPath) {
+        errCode = SYNTAX_ERR;
+    } else if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // In this case, we need to use an asynchronous method to retrieve the file.
+        // Because of this, we can't just assign to `result` and send it at the end of the method.
+        // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
+            if (asset) {
+                // We have the asset!  Get the data and send it off.
+                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                Byte* buffer = (Byte*)malloc ([assetRepresentation size]);
+                NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            } else {
+                // We couldn't find the asset.  Send the appropriate error.
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            }
+        };
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
+            // Retrieving the asset failed for some reason.  Send the appropriate error.
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        };
+
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:[NSURL URLWithString:argPath] resultBlock:resultBlock failureBlock:failureBlock];
+        return;
+    } else {
+        NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:argPath];
+        if (start > 0) {
+            [file seekToFileOffset:start];
+        }
+
+        NSData* readData;
+        if (end < 0) {
+            readData = [file readDataToEndOfFile];
+        } else {
+            readData = [file readDataOfLength:(end - start)];
+        }
+
+        [file closeFile];
+        if (readData) {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:readData];
+        } else {
+            errCode = NOT_FOUND_ERR;
+        }
+    }
+    if (!result) {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
+    }
+
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 

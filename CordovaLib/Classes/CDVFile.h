@@ -76,6 +76,7 @@ extern NSString* const kCDVAssetsLibraryPrefix;
 
 - (void)readAsText:(CDVInvokedUrlCommand*)command;
 - (void)readAsDataURL:(CDVInvokedUrlCommand*)command;
+- (void)readAsArrayBuffer:(CDVInvokedUrlCommand*)command;
 - (NSString*)getMimeTypeFromPath:(NSString*)fullPath;
 - (void)write:(CDVInvokedUrlCommand*)command;
 - (void)testFileExists:(CDVInvokedUrlCommand*)command;
