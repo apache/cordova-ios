@@ -5086,7 +5086,7 @@ function stringify(message) {
                 return "error JSON.stringify()ing argument: " + e;
             }
         } else {
-            return message.toString();
+            return (typeof message === "undefined") ? "undefined" : message.toString();
         }
     } catch (e) {
         return e.toString();
@@ -5101,9 +5101,19 @@ function wrappedMethod(console, method) {
     var origMethod = console[method];
 
     return function(message) {
+
+        var args = [].slice.call(arguments),
+            len = args.length,
+            i = 0,
+            res = [];
+
+        for ( ; i < len; i++) {
+            res.push(stringify(args[i]));
+        }
+
         exec(null, null,
             'Debug Console', 'log',
-            [ stringify(message), { logLevel: method.toUpperCase() } ]
+            [ res.join(' '), { logLevel: method.toUpperCase() } ]
         );
 
         if (!origMethod) return;
