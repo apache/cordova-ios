@@ -112,19 +112,28 @@
 - (void)updateImage
 {
     UIInterfaceOrientation orientation = self.viewController.interfaceOrientation;
-    // IPHONE (default)
-    NSString* imageName = @"Default";
+
+    // Use UILaunchImageFile if specified in plist.  Otherwise, use Default.
+    NSString* imageName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchImageFile"];
+    if (imageName){
+        imageName = [imageName stringByDeletingPathExtension];
+    } else {
+        imageName = @"Default";
+    }
 
     if (CDV_IsIPhone5()) {
         imageName = [imageName stringByAppendingString:@"-568h"];
     } else if (CDV_IsIPad()) {
-        // set default to portrait upside down
-        imageName = @"Default-Portrait"; // @"Default-PortraitUpsideDown.png";
-
-        if (orientation == UIInterfaceOrientationLandscapeLeft) {
-            imageName = @"Default-Landscape.png"; // @"Default-LandscapeLeft.png";
-        } else if (orientation == UIInterfaceOrientationLandscapeRight) {
-            imageName = @"Default-Landscape.png"; // @"Default-LandscapeRight.png";
+        switch (orientation){
+            case UIInterfaceOrientationLandscapeLeft:
+            case UIInterfaceOrientationLandscapeRight:
+                imageName = [imageName stringByAppendingString:@"-Landscape"];
+                break;
+            case UIInterfaceOrientationPortrait:
+            case UIInterfaceOrientationPortraitUpsideDown:
+            default:
+                imageName = [imageName stringByAppendingString:@"-Portrait"];
+                break;
         }
     }
 
