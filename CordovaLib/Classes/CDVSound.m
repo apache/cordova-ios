@@ -458,9 +458,19 @@
     double position = [[command.arguments objectAtIndex:1] doubleValue];
 
     if ((audioFile != nil) && (audioFile.player != nil)) {
+        NSString* jsString;
         double posInSeconds = position / 1000;
-        audioFile.player.currentTime = posInSeconds;
-        NSString* jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%f);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, posInSeconds];
+        if (posInSeconds >= audioFile.player.duration) {
+            // The seek is past the end of file.  Stop media and reset to beginning instead of seeking past the end.
+            [audioFile.player stop];
+            audioFile.player.currentTime = 0;
+            jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%.3f);\n%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, 0.0, @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
+            // NSLog(@"seekToEndJsString=%@",jsString);
+        } else {
+            audioFile.player.currentTime = posInSeconds;
+            jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%f);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_POSITION, posInSeconds];
+            // NSLog(@"seekJsString=%@",jsString);
+        }
 
         [self.commandDelegate evalJs:jsString];
     }
@@ -625,6 +635,7 @@
         NSLog(@"Finished playing audio sample '%@'", audioFile.resourcePath);
     }
     if (flag) {
+        audioFile.player.currentTime = 0;
         jsString = [NSString stringWithFormat:@"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_STATE, MEDIA_STOPPED];
     } else {
         // jsString = [NSString stringWithFormat: @"%@(\"%@\",%d,%d);", @"cordova.require('cordova/plugin/Media').onStatus", mediaId, MEDIA_ERROR, MEDIA_ERR_DECODE];
