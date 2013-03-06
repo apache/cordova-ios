@@ -291,6 +291,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     } else {
         // Extract the path part out of a file: URL.
         NSString* filePath = [target hasPrefix:@"/"] ? [target copy] : [[NSURL URLWithString:target] path];
+        if (filePath == nil) {
+            // We couldn't find the asset.  Send the appropriate error.
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            return;
+        }
 
         // Memory map the file so that it can be read efficiently even if it is large.
         NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
