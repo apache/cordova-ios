@@ -289,12 +289,13 @@
     }
 
     if (hideKeyboardFormAccessoryBar) {
+        __weak CDVViewController* weakSelf = self;
         [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification
                                                           object:nil
                                                            queue:[NSOperationQueue mainQueue]
                                                       usingBlock:^(NSNotification * notification) {
                 // we can't hide it here because the accessory bar hasn't been created yet, so we delay on the queue
-                [self performSelector:@selector(hideKeyboardFormAccessoryBar) withObject:nil afterDelay:0];
+                [weakSelf performSelector:@selector(hideKeyboardFormAccessoryBar) withObject:nil afterDelay:0];
             }];
     }
 
