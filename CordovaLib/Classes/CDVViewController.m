@@ -272,6 +272,10 @@
     if ([self.settings objectForKey:@"MediaPlaybackRequiresUserAction"]) {
         mediaPlaybackRequiresUserAction = [(NSNumber*)[settings objectForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
     }
+    BOOL hideKeyboardFormAccessoryBar = NO;  // default value
+    if ([self.settings objectForKey:@"HideKeyboardFormAccessoryBar"]) {
+        hideKeyboardFormAccessoryBar = [(NSNumber*)[settings objectForKey:@"HideKeyboardFormAccessoryBar"] boolValue];
+    }
 
     self.webView.scalesPageToFit = [enableViewportScale boolValue];
 
@@ -284,12 +288,22 @@
         [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
     }
 
+    if (hideKeyboardFormAccessoryBar) {
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification
+                                                          object:nil
+                                                           queue:[NSOperationQueue mainQueue]
+                                                      usingBlock:^(NSNotification * notification) {
+                // we can't hide it here because the accessory bar hasn't been created yet, so we delay on the queue
+                [self performSelector:@selector(hideKeyboardFormAccessoryBar) withObject:nil afterDelay:0];
+            }];
+    }
+
     /*
      * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
      */
-    if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
-            ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+    if (IsAtLeastiOSVersion (@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
+            ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion (@"6.0")))) {
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass ([CDVLocalStorage class])];
     }
 
     /*
@@ -323,7 +337,7 @@
     /*
      * iOS 6.0 UIWebView properties
      */
-    if (IsAtLeastiOSVersion(@"6.0")) {
+    if (IsAtLeastiOSVersion (@"6.0")) {
         BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
         if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
             if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"]) {
@@ -370,6 +384,28 @@
                 [self.webView loadHTMLString:html baseURL:nil];
             }
         }];
+}
+
+- (void)hideKeyboardFormAccessoryBar
+{
+    NSArray* windows = [[UIApplication sharedApplication] windows];
+
+    for (UIWindow* window in windows) {
+        for (UIView* view in window.subviews) {
+            if ([[view description] hasPrefix:@"<UIPeripheralHostView"]) {
+                for (UIView* peripheralView in view.subviews) {
+                    // hides the accessory bar
+                    if ([[peripheralView description] hasPrefix:@"<UIWebFormAccessory"]) {
+                        [peripheralView setHidden:YES];
+                    }
+                    // hides the thin grey line used to adorn the bar (iOS 6)
+                    if ([[peripheralView description] hasPrefix:@"<UIImageView"]) {
+                        [[peripheralView layer] setOpacity:0.0];
+                    }
+                }
+            }
+        }
+    }
 }
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations

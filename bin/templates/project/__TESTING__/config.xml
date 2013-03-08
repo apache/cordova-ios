@@ -34,6 +34,7 @@
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="TopActivityIndicator" value="gray" />
     <preference name="UIWebViewBounce" value="true" />
+    <preference name="HideKeyboardFormAccessoryBar" value="false" />
 
     <content src="index.html" />
 
