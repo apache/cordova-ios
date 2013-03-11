@@ -22,7 +22,7 @@
 
 @implementation CDVNotification
 
-- (void)showDialogWithMessage:(NSString*)message title:(NSString*)title buttons:(NSString*)buttons callbackId:(NSString*)callbackId
+- (void)showDialogWithMessage:(NSString*)message title:(NSString*)title buttons:(NSArray*)buttons callbackId:(NSString*)callbackId
 {
     CDVAlertView* alertView = [[CDVAlertView alloc]
             initWithTitle:title
@@ -33,11 +33,10 @@
 
     alertView.callbackId = callbackId;
 
-    NSArray* labels = [buttons componentsSeparatedByString:@","];
-    int count = [labels count];
+    int count = [buttons count];
 
     for (int n = 0; n < count; n++) {
-        [alertView addButtonWithTitle:[labels objectAtIndex:n]];
+        [alertView addButtonWithTitle:[buttons objectAtIndex:n]];
     }
 
     [alertView show];
@@ -60,7 +59,7 @@
         buttons = NSLocalizedString(@"OK", @"OK");
     }
 
-    [self showDialogWithMessage:message title:title buttons:buttons callbackId:callbackId];
+    [self showDialogWithMessage:message title:title buttons:@[buttons] callbackId:callbackId];
 }
 
 - (void)confirm:(CDVInvokedUrlCommand*)command
@@ -71,13 +70,13 @@
 
     NSString* message = argc > 0 ? [arguments objectAtIndex:0] : nil;
     NSString* title = argc > 1 ? [arguments objectAtIndex:1] : nil;
-    NSString* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
+    NSArray* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
 
     if (!title) {
         title = NSLocalizedString(@"Confirm", @"Confirm");
     }
     if (!buttons) {
-        buttons = NSLocalizedString(@"OK,Cancel", @"OK,Cancel");
+        buttons = @[NSLocalizedString(@"OK", @"OK"), NSLocalizedString(@"Cancel", @"Cancel")];
     }
 
     [self showDialogWithMessage:message title:title buttons:buttons callbackId:callbackId];
