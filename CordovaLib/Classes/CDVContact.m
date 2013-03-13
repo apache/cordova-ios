@@ -38,7 +38,9 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     if ((self = [super init]) != nil) {
         ABRecordRef rec = ABPersonCreate();
         self.record = rec;
-        CFRelease(rec);
+        if (rec) {
+            CFRelease(rec);
+        }
     }
     return self;
 }
