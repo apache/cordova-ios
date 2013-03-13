@@ -420,14 +420,18 @@
     self.forwardButton.enabled = theWebView.canGoForward;
 
     [self.spinner startAnimating];
+}
 
+- (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStart:)]) {
-        NSURL* url = theWebView.request.URL;
+        NSURL* url = request.URL;
         if (url == nil) {
             url = _requestedURL;
         }
         [self.navigationDelegate browserLoadStart:url];
     }
+    return YES;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
