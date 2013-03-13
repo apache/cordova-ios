@@ -60,6 +60,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
  *  7       allowsEdit
  *  8       correctOrientation
  *  9       saveToPhotoAlbum
+ *  10      popoverOptions
+ *  11      cameraDirection
  */
 - (void)takePicture:(CDVInvokedUrlCommand*)command
 {
@@ -80,6 +82,12 @@ static NSSet* org_apache_cordova_validArrowDirections;
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no camera available"];
         [self.commandDelegate sendPluginResult:result callbackId:callbackId];
         return;
+    }
+
+    NSNumber* cameraDirection = [arguments objectAtIndex:11];
+    UIImagePickerControllerCameraDevice cameraDevice = UIImagePickerControllerCameraDeviceRear; // default
+    if (cameraDirection != nil) {
+        cameraDevice = (UIImagePickerControllerSourceType)[cameraDirection intValue];
     }
 
     bool allowEdit = [[arguments objectAtIndex:7] boolValue];
@@ -105,6 +113,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
     cameraPicker.delegate = self;
     cameraPicker.sourceType = sourceType;
+    cameraPicker.cameraDevice = cameraDevice;
     cameraPicker.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
     cameraPicker.callbackId = callbackId;
     cameraPicker.targetSize = targetSize;
