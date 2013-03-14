@@ -165,7 +165,7 @@
 {
     if (self.callbackId != nil) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:@ {@"type":@"loadstart", @"url":[url absoluteString]}];
+                                                      messageAsDictionary:@{@"type":@"loadstart", @"url":[url absoluteString]}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
@@ -176,7 +176,7 @@
 {
     if (self.callbackId != nil) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:@ {@"type":@"loadstop", @"url":[url absoluteString]}];
+                                                      messageAsDictionary:@{@"type":@"loadstop", @"url":[url absoluteString]}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
@@ -187,7 +187,7 @@
 {
     if (self.callbackId != nil) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:@ {@"type":@"exit"}];
+                                                      messageAsDictionary:@{@"type":@"exit"}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
@@ -392,10 +392,10 @@
         [self.webView loadRequest:request];
     } else {
         [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
-                _userAgentLockToken = lockToken;
-                [CDVUserAgentUtil setUserAgent:_userAgent lockToken:lockToken];
-                [self.webView loadRequest:request];
-            }];
+            _userAgentLockToken = lockToken;
+            [CDVUserAgentUtil setUserAgent:_userAgent lockToken:lockToken];
+            [self.webView loadRequest:request];
+        }];
     }
 }
 
@@ -451,7 +451,7 @@
     //    from it must pass through its white-list. This *does* break PDFs that
     //    contain links to other remote PDF/websites.
     // More info at https://issues.apache.org/jira/browse/CB-2225
-    BOOL isPDF = [@"true" isEqualToString:[theWebView stringByEvaluatingJavaScriptFromString:@"document.body==null"]];
+    BOOL isPDF = [@"true" isEqualToString :[theWebView stringByEvaluatingJavaScriptFromString:@"document.body==null"]];
     if (isPDF) {
         [CDVUserAgentUtil setUserAgent:_prevUserAgent lockToken:_userAgentLockToken];
     }
