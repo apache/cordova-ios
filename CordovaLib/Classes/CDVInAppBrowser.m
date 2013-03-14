@@ -183,6 +183,17 @@
     }
 }
 
+- (void)browserLoadError:(NSError*)error forUrl:(NSURL*)url
+{
+    if (self.callbackId != nil) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsDictionary:@{@"type":@"loaderror", @"url":[url absoluteString], @"code": [NSNumber numberWithInt:error.code], @"message": error.localizedDescription}];
+        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    }
+}
+
 - (void)browserExit
 {
     if (self.callbackId != nil) {
@@ -476,6 +487,11 @@
     [self.spinner stopAnimating];
 
     self.addressLabel.text = @"Load Error";
+
+    if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadError:forUrl:)]) {
+        NSURL* url = theWebView.request.URL;
+        [self.navigationDelegate browserLoadError:error forUrl:url];
+    }
 }
 
 #pragma mark CDVScreenOrientationDelegate
