@@ -121,11 +121,6 @@
     return [_viewController getCommandInstance:pluginName];
 }
 
-- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
-{
-    [_viewController registerPlugin:plugin withClassName:className];
-}
-
 - (void)runInBackground:(void (^)())block
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
