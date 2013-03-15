@@ -25,14 +25,20 @@
 //
 //
 
+/**
+ * creates an IFD field
+ * Bytes 0-1 Tag code
+ * Bytes 2-3 Data type
+ * Bytes 4-7 Count, number of elements of the given data type
+ * Bytes 8-11 Value/Offset
+ */
+
+
 #import "CDVJpegHeaderWriter.h"
 #include "CDVExif.h"
 
-#define IntWrap(x) [NSNumber numberWithInt:x]
-
 // tag info shorthand, tagno: tag number, typecode: data type:, components: number of components
 #define TAGINF(tagno, typecode, components) [NSArray arrayWithObjects: tagno, typecode, components, nil]
-
 
 const uint mJpegId = 0xffd8; // JPEG format marker
 const uint mExifMarker = 0xffe1; // APP1 jpeg header marker
@@ -109,7 +115,7 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
  *
  *   the following constructs a hex string to Exif specifications, and is therefore brittle
  *   altering the order of arguments to the string constructors, modifying field sizes or formats,
-  *  and any other minor change will likely prevent the exif data from being read
+ *   and any other minor change will likely prevent the exif data from being read
  */
 - (NSString*) createExifAPP1 : (NSDictionary*) datadict {
     NSMutableString * app1; // holds finalized product
@@ -131,74 +137,39 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 
     //data labeled as EXIF in UIImagePickerControllerMediaMetaData is part of the EXIF Sub IFD portion of APP1
     subExifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{Exif}"] withFormatDict: SubIFDTagFormatDict isIFD0:NO];
-  /*  app1 = [[NSString alloc] initWithFormat:@"%@%04x%@%@%@%@",
-                app1marker,
-                ([exif length]/2)+16,
-                exifmarker,
-                tiffheader,
-                ifd0offset,
-                exif];
-    
-    NSLog(@"%@",app1);*/
-    
-    /*
-     * constructing app1 segment:
-     * 2 byte marker: ffe1
-     * 2 byte size  : app1 size
-     * 6 byte exif marker : ascii string 'exif' followed by two bytes of zeroes
-     */
-    /*
-    app1 = [[[NSMutableString alloc] initWithFormat: @"%@%04x%@%@%@%@%@",
-            app1marker,
-            16+[exifIFD length]/2+[subExifIFD length]/2,
-            exifmarker,
-            tiffheader,
-            ifd0offset,
-            exifIFD,
-            subExifIFD];
-*/
-    NSLog(@"%@ \n %d",subExifIFD,[subExifIFD length]);
-    
 
+    // construct the complete app1 data block
     app1 = [[NSMutableString alloc] initWithFormat: @"%@%04x%@%@%@%@",
             app1marker,
-            16+[exifIFD length]/2 /*+[subExifIFD length]/2*/,
+            16+[exifIFD length]/2,
             exifmarker,
             tiffheader,
             ifd0offset,
             exifIFD];
-    
-    NSLog(@"%@",app1);
-    
+     
     return app1;
 }
 
-/**
- * returns hex string representing a valid exif information file directory constructed from the datadict and formatdict
- * datadict exif data entries encode into ifd
- * formatdict specifies format of data entries and allowed entries in this ifd
- */
+// returns hex string representing a valid exif information file directory constructed from the datadict and formatdict
 - (NSString*) createExifIFDFromDict : (NSDictionary*) datadict withFormatDict : (NSDictionary*) formatdict isIFD0 : (BOOL) ifd0flag {
-    NSArray * datakeys = [datadict allKeys];
+    NSArray * datakeys = [datadict allKeys]; // all known data keys 
     NSArray * knownkeys = [formatdict  allKeys]; // only keys in knowkeys are considered for entry in this IFD
-    NSMutableArray * ifdblock = [[NSMutableArray alloc] initWithCapacity: [datadict count]];
-    NSMutableArray * ifddatablock = [[NSMutableArray alloc] initWithCapacity: [datadict count]];
-    ifd0flag = NO;
+    NSMutableArray * ifdblock = [[NSMutableArray alloc] initWithCapacity: [datadict count]]; // all ifd entries
+    NSMutableArray * ifddatablock = [[NSMutableArray alloc] initWithCapacity: [datadict count]]; // data block entries
+    ifd0flag = NO; // ifd0 requires a special flag and has offset to next ifd appended to end
     
-    NSLog(@"%@",[datadict description]);
-
-    
+    // iterate through known provided data keys
     for (int i = 0; i < [datakeys count]; i++) {
         NSString * key = [datakeys objectAtIndex:i];
+        // don't muck about with unknown keys
         if ([knownkeys indexOfObject: key] != NSNotFound) {
             // create new IFD entry
             NSString * entry = [self  createIFDElement: key
                                       withFormatDict: formatdict
                                       withElementData: [datadict objectForKey:key]];
-            
+            // create the IFD entry's data block
             NSString * data = [self createIFDElementDataWithFormat: [formatdict objectForKey:key]
                                                    withData: [datadict objectForKey:key]];
-            NSLog(@"%@ %@",entry, data);
             if (entry) {
                 [ifdblock addObject:entry];
                 if(!data) {
@@ -209,30 +180,26 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
             }
         }
     }
-    //[ifdblock addObject: [[NSString alloc] initWithFormat:@"8769%@%@", @"0004",@"00000001"]];
+    
     NSMutableString * exifstr = [[NSMutableString alloc] initWithCapacity: [ifdblock count] * 24];
     NSMutableString * dbstr = [[NSMutableString alloc] initWithCapacity: 100];
     
-    // calculate the starting address of the idf data block based on number 
-    int addr=0;
+    int addr=0; // current offset/address in datablock
     if (ifd0flag) {
-        // +1 for tag 0x8769, exifsubifd offset
-        addr = 14+(12*([ifddatablock count]+1));
+        // calculate offset to datablock based on ifd file entry count
+        addr = 14+(12*([ifddatablock count]+1)); // +1 for tag 0x8769, exifsubifd offset
     } else {
+        // same calculation as above, but no exifsubifd offset
         addr = 14+12*[ifddatablock count];
     }
     
     for (int i = 0; i < [ifdblock count]; i++) {
-
         NSString * entry = [ifdblock objectAtIndex:i];
         NSString * data = [ifddatablock objectAtIndex:i];
         
-        NSLog(@"entry: %@ entry:%@", entry, data);
-        NSLog(@"%d",addr);
         // check if the data fits into 4 bytes
         if( [data length] <= 8) {
             // concatenate the entry and the (4byte) data entry into the final IFD entry and append to exif ifd string
-            NSLog(@"%@   %@", entry, data);
             [exifstr appendFormat : @"%@%@", entry, data];
         } else {
             [exifstr appendFormat : @"%@%08x", entry, addr];
@@ -253,14 +220,11 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     return [[NSString alloc] initWithFormat: @"%04x%@%@%@",
             entrycount,
             exifstr,
-            @"00000000",
-            dbstr];
+            @"00000000", // offset to next IFD, 0 since there is none
+            dbstr]; // lastly, the datablock
 }
 
-
-/**
- * Creates an exif formatted exif information file directory entry
- */
+// Creates an exif formatted exif information file directory entry
 - (NSString*) createIFDElement: (NSString*) elementName withFormatDict : (NSDictionary*) formatdict withElementData : (NSString*) data  {
     NSArray * fielddata = [formatdict objectForKey: elementName];// format data of desired field
     NSLog(@"%@", [data description]);
@@ -274,7 +238,7 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 
         return [[NSString alloc] initWithFormat: @"%@%@%08x",
                                                 [fielddata objectAtIndex:0], // the field code
-                                                [self formatWithLeadingZeroes: @4 :dataformat], // the data type code
+                                                [self formatNumberWithLeadingZeroes: dataformat withPlaces: @4], // the data type code
                                                 [components intValue]]; // number of components
     }
     return NULL;
@@ -297,25 +261,10 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     [str appendFormat:@"%@%@", entry, data];
 }
 
-/*
-
-- (void) createTagDataHelper: (NSString *) tagname withTagCode: (NSInteger) tagcode {
-    NSMutableString * datastr = [NSMutableString alloc];
-    [datastr appendFormat: @"%@, tagcode", tagname];
-}
-*/
-
-
-
-/**
- * formatIFHElementData
- * formats the Information File Directory Data to exif format
- * @return formatted data string
- */
+// formats the Information File Directory Data to exif format
 - (NSString*) createIFDElementDataWithFormat: (NSArray*) dataformat withData: (NSString*) data {
     NSMutableString * datastr = nil;
-    NSNumber * numerator = nil;
-    NSNumber * denominator = nil;
+    NSNumber * tmp = nil;
     NSNumber * formatcode = [dataformat objectAtIndex:1];
     
     switch ([formatcode intValue]) {
@@ -336,13 +285,11 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
                     [self formattedHexStringFromDecimalNumber: [NSNumber numberWithInt: [data intValue]] withPlaces: @4],
                     @"00000000"];
         case EDT_ULONG:
-            numerator = [NSNumber numberWithUnsignedLong:[data intValue]];
+            tmp = [NSNumber numberWithUnsignedLong:[data intValue]];
             return [NSString stringWithFormat : @"%@",
-                    [self formattedHexStringFromDecimalNumber: numerator withPlaces: @8]];
+                    [self formattedHexStringFromDecimalNumber: tmp withPlaces: @8]];
         case EDT_URATIONAL:
-            return [self decimalToUnsignedRational: [NSNumber numberWithDouble:[data doubleValue]]
-                            outputNumerator: numerator
-                          outputDenominator: denominator];
+            return [self decimalToUnsignedRational: [NSNumber numberWithDouble:[data doubleValue]]];
         case EDT_SBYTE:
             break;
         case EDT_UNDEFINED:
@@ -361,14 +308,11 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     return datastr;
 }
 
-
+//======================================================================================================================
+// Utility Methods
 //======================================================================================================================
 
-//======================================================================================================================
-
-/**
- * creates a formatted little endian hex string from a number and width specifier
- */
+// creates a formatted little endian hex string from a number and width specifier
 - (NSString*) formattedHexStringFromDecimalNumber: (NSNumber*) numb withPlaces: (NSNumber*) width {
     NSMutableString * str = [[NSMutableString alloc] initWithCapacity:[width intValue]];
     NSString * formatstr = [[NSString alloc] initWithFormat: @"%%%@%dx", @"0", [width intValue]];
@@ -376,39 +320,32 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     return str;
 }
 
-- (NSString*) formatWithLeadingZeroes: (NSNumber *) places: (NSNumber *) numb {
-    
+// format number as string with leading 0's
+- (NSString*) formatNumberWithLeadingZeroes: (NSNumber *) numb withPlaces: (NSNumber *) places { 
     NSNumberFormatter * formatter = [[NSNumberFormatter alloc] init];
-   // NSString * formatstr = [@"" stringByPaddingToLength:places withsString: @"0" ];
     NSString *formatstr = [@"" stringByPaddingToLength:[places unsignedIntegerValue] withString:@"0" startingAtIndex:0];
     [formatter setPositiveFormat:formatstr];
-    
     return [formatter stringFromNumber:numb];
 }
 
 // approximate a decimal with a rational by method of continued fraction
+/*
 - (void) decimalToRational: (NSNumber *) numb: (NSNumber *) numerator: (NSNumber*) denominator {
     numerator = [NSNumber numberWithLong: 1];
     denominator = [NSNumber numberWithLong: 1];
 }
+*/
 
 // approximate a decimal with an unsigned rational by method of continued fraction
-- (NSString*) decimalToUnsignedRational: (NSNumber *) numb outputNumerator: (NSNumber *) num outputDenominator: (NSNumber*) deno {
-    num = [NSNumber numberWithUnsignedLong: 1];
-    deno = [NSNumber numberWithUnsignedLong: 1];
-
-    //calculate initial values
-    int term = [numb intValue];
-    double error = [numb doubleValue] - term;
-
+- (NSString*) decimalToUnsignedRational: (NSNumber *) numb {
     NSMutableArray * fractionlist = [[NSMutableArray alloc] initWithCapacity:8];
-    [self continuedFraction: [numb doubleValue] withFractionList:fractionlist];
+    [self continuedFraction: [numb doubleValue] withFractionList:fractionlist withHorizon:8];
     [self expandContinuedFraction: fractionlist];
     return [self formatFractionList: fractionlist];
 }
 
-
-- (void) continuedFraction: (double) val withFractionList:(NSMutableArray*) fractionlist {
+// recursive implementation of decimal approximation by continued fraction
+- (void) continuedFraction: (double) val withFractionList: (NSMutableArray*) fractionlist withHorizon: (int) horizon {
     int whole;
     double remainder;
     // 1. split term
@@ -420,25 +357,16 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     double recip = 1 / remainder;
 
     // 3. exit condition
-    if ([fractionlist count] > 8) {
+    if ([fractionlist count] > horizon) {
         return;
     }
     
     // 4. recurse
-    [self continuedFraction:recip withFractionList: fractionlist];
+    [self continuedFraction:recip withFractionList: fractionlist withHorizon: horizon];
     
 }
 
-
--(void) simplifyPartialQuotients: (NSArray*) arr {
-    int denominator = [[arr lastObject] intValue];
-    int numerator = 1;
-    for (int i = [arr count]; i > 0; i--) {
-       // [self op1: [arr objectAtIndex:i] withNumerator:]
-    }
-    
-}
-
+// expand continued fraction list, creating a single level rational approximation
 -(void) expandContinuedFraction: (NSArray*) fractionlist {
     int i = 0;
     int den = 0;
@@ -465,11 +393,7 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     NSLog(@"%d %d",den,num);
 }
 
-- (void) op1: (int) n withNumerator: (NSNumber*) num withDenominator: (NSNumber*) denom {
-    num = [NSNumber numberWithInt:[denom intValue]*n+[num intValue]];
-}
-
-
+// formats expanded fraction list to string matching exif specification
 - (NSString*) formatFractionList: (NSArray *) fractionlist {
     NSMutableString * str = [[NSMutableString alloc] initWithCapacity:16];
     
@@ -483,28 +407,6 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 - (void) splitDouble: (double) val withIntComponent: (int*) rightside withFloatRemainder: (double*) leftside {
     *rightside = val; // convert numb to int representation, which truncates the decimal portion
     *leftside = val - *rightside;
-//    int digits = [[NSString stringWithFormat:@"%f", de] length] - 2;
-//    *leftside =  de * pow(10,digits);;
-}
-
-
-//
-- (NSString*) hexStringFromData : (NSData*) data {
-    //overflow detection
-    const unsigned char *dataBuffer = [data bytes];
-    return [[NSString alloc] initWithFormat: @"%02x%02x",
-                                        (unsigned char)dataBuffer[0],
-                                        (unsigned char)dataBuffer[1]];
-}
-
-// convert a hex string to a number
-- (NSNumber*) numericFromHexString : (NSString *) hexstring {
-    NSScanner * scan = NULL;
-    unsigned int numbuf= 0;
-    
-    scan = [NSScanner scannerWithString:hexstring];
-    [scan scanHexInt:&numbuf];
-    return [NSNumber numberWithInt:numbuf];
 }
 
 @end

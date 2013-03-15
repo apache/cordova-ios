@@ -32,32 +32,32 @@
     NSDictionary * IFD0TagFormatDict;
 }
 
+
+- (NSString*) formattedHexStringFromDecimalNumber: (NSNumber*) numb 
+                                       withPlaces: (NSNumber*) width;
+- (NSString*) formatNumberWithLeadingZeroes: (NSNumber*) numb 
+                                 withPlaces: (NSNumber*) places;
+
+- (NSString*) decimalToUnsignedRational: (NSNumber*) numb;
+
+- (void) continuedFraction: (double) val 
+          withFractionList: (NSMutableArray*) fractionlist 
+               withHorizon: (int) horizon;
+- (void) expandContinuedFraction: (NSArray*) fractionlist;
+- (void) splitDouble: (double) val 
+         withIntComponent: (int*) rightside 
+         withFloatRemainder: (double*) leftside;
+
+/*
 - (void) readExifMetaData : (NSData*) imgdata;
-- (void) insertExifMetaData : (NSData*) imgdata: (NSDictionary*) exifdata;
+- (void) spliceImageData : (NSData*) imgdata withExifData: (NSDictionary*) exifdata;
 - (void) locateExifMetaData : (NSData*) imgdata;
-/**
- * creates an IFD field
- * Bytes 0-1 Tag code
- * Bytes 2-3 Data type
- * Bytes 4-7 Count, number of elements of the given data type
- * Bytes 8-11 Value/Offset
- */
-
 - (NSString*) createExifAPP1 : (NSDictionary*) datadict;
-
 - (void) createExifDataString : (NSDictionary*) datadict;
-
 - (NSString*) createDataElement : (NSString*) element
               withElementData: (NSString*) data
               withExternalDataBlock: (NSDictionary*) memblock;
-
-- (NSString*) decimalToUnsignedRational: (NSNumber *) numb
-         outputNumerator: (NSNumber *) num
-         outputDenominator: (NSNumber*) deno;
-
-
 - (NSString*) hexStringFromData : (NSData*) data;
-
 - (NSNumber*) numericFromHexString : (NSString *) hexstring;
-
+*/
 @end
