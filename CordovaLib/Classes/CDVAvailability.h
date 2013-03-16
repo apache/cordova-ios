@@ -65,9 +65,9 @@
 
 /* Return the string version of the decimal version */
 #define CDV_VERSION [NSString stringWithFormat:@"%d.%d.%d", \
-        (CORDOVA_VERSION_MIN_REQUIRED / 10000),             \
-        (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100,       \
-        (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100]
+    (CORDOVA_VERSION_MIN_REQUIRED / 10000),                 \
+    (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100,           \
+    (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100]
 
 #ifdef __clang__
     #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
