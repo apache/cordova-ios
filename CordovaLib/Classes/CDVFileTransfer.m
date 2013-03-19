@@ -216,6 +216,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         CFStreamCreateBoundPair(NULL, &readStream, &writeStream, kStreamBufferSize);
         [req setHTTPBodyStream:CFBridgingRelease(readStream)];
 
+        self.backgroundTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTaskID];
+                self.backgroundTaskID = UIBackgroundTaskInvalid;
+                NSLog(@"Background task to upload media finished.");
+            }];
+
         [self.commandDelegate runInBackground:^{
             if (CFWriteStreamOpen(writeStream)) {
                 NSData* chunks[] = {postBodyBeforeFile, fileData, postBodyAfterFile};
@@ -509,6 +515,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
     // remove connection for activeTransfers
     [command.activeTransfers removeObjectForKey:objectId];
+
+    // remove background id task in case our upload was done in the background
+    [[UIApplication sharedApplication] endBackgroundTask:self.command.backgroundTaskID];
+    self.command.backgroundTaskID = UIBackgroundTaskInvalid;
 }
 
 - (void)cancelTransferWithError:(NSURLConnection*)connection errorMessage:(NSString*)errorMessage

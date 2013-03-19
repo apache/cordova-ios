@@ -53,6 +53,7 @@ extern NSString* const kOptionsKeyCookie;
                                   AndHttpStatus:(int)httpStatus
                                         AndBody:(NSString*)body;
 @property (readonly) NSMutableDictionary* activeTransfers;
+@property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskID;
 @end
 
 @interface CDVFileTransferDelegate : NSObject {}
