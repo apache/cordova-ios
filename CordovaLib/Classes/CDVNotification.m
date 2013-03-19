@@ -25,7 +25,7 @@
 - (void)showDialogWithMessage:(NSString*)message title:(NSString*)title buttons:(NSArray*)buttons callbackId:(NSString*)callbackId
 {
     CDVAlertView* alertView = [[CDVAlertView alloc]
-            initWithTitle:title
+        initWithTitle:title
                   message:message
                  delegate:self
         cancelButtonTitle:nil

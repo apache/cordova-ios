@@ -205,12 +205,13 @@
                           duration:fadeDuration
                            options:UIViewAnimationOptionTransitionNone
                         animations:^(void) {
-                [_imageView setAlpha:0];
-                [_activityView setAlpha:0];
-            }
+            [_imageView setAlpha:0];
+            [_activityView setAlpha:0];
+        }
+
                         completion:^(BOOL finished) {
-                [self destroyViews];
-            }];
+            [self destroyViews];
+        }];
     }
 }
 

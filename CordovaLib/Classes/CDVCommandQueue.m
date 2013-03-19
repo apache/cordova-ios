@@ -110,8 +110,8 @@
                         NSString* commandJson = [jsonEntry JSONString];
                         static NSUInteger maxLogLength = 1024;
                         NSString* commandString = ([commandJson length] > maxLogLength) ?
-                        [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
-                        commandJson;
+                            [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
+                            commandJson;
 
                         DLog(@"FAILED pluginJSON = %@", commandString);
 #endif

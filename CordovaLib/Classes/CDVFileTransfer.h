@@ -48,10 +48,10 @@ extern NSString* const kOptionsKeyCookie;
 - (NSMutableDictionary*)createFileTransferError:(int)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 
 - (NSMutableDictionary*)createFileTransferError:(int)code
-       AndSource                                   :(NSString*)source
-       AndTarget                                   :(NSString*)target
-   AndHttpStatus                               :(int)httpStatus
-         AndBody                                     :(NSString*)body;
+                                      AndSource:(NSString*)source
+                                      AndTarget:(NSString*)target
+                                  AndHttpStatus:(int)httpStatus
+                                        AndBody:(NSString*)body;
 @property (readonly) NSMutableDictionary* activeTransfers;
 @end
 

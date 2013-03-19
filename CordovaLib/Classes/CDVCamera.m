@@ -136,13 +136,13 @@ static NSSet* org_apache_cordova_validArrowDirections;
     } else if (mediaType == MediaTypeAll) {
         cameraPicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     } else {
-        NSArray* mediaArray = [NSArray arrayWithObjects:(NSString*)(mediaType == MediaTypeVideo ? kUTTypeMovie:kUTTypeImage), nil];
+        NSArray* mediaArray = [NSArray arrayWithObjects:(NSString*)(mediaType == MediaTypeVideo ? kUTTypeMovie : kUTTypeImage), nil];
         cameraPicker.mediaTypes = mediaArray;
     }
 
     if ([self popoverSupported] && (sourceType != UIImagePickerControllerSourceTypeCamera)) {
         if (cameraPicker.popoverController == nil) {
-            cameraPicker.popoverController = [[NSClassFromString (@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
+            cameraPicker.popoverController = [[NSClassFromString(@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
         }
         NSDictionary* options = [command.arguments objectAtIndex:10 withDefault:nil];
         [self displayPopover:options];
@@ -303,7 +303,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
             if (cameraPicker.returnType == DestinationTypeFileUri) {
                 // write to temp directory and return URI
                 // get the temp directory path
-                NSString* docsPath = [NSTemporaryDirectory ()stringByStandardizingPath];
+                NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];
                 NSError* err = nil;
                 NSFileManager* fileMgr = [[NSFileManager alloc] init]; // recommended by apple (vs [NSFileManager defaultManager]) to be threadsafe
                 // generate unique file name
@@ -428,7 +428,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
             rotation_radians = 0.0;
             break;
 
-        case UIImageOrientationDown :
+        case UIImageOrientationDown:
             rotation_radians = M_PI; // don't be scared of radians, if you're reading this, you're good at math
             break;
 
@@ -527,7 +527,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     // first parameter an image
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding : NSUTF8StringEncoding]];
     [postBody appendData:imageData];
 
     //	// second parameter information
