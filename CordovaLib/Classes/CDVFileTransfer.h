@@ -56,7 +56,11 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskID;
 @end
 
+@class CDVFileTransferEntityLengthRequest;
+
 @interface CDVFileTransferDelegate : NSObject {}
+
+- (void)updateBytesExpected:(NSInteger)newBytesExpected;
 
 @property (strong) NSMutableData* responseData; // atomic
 @property (nonatomic, strong) CDVFileTransfer* command;
@@ -72,5 +76,6 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, assign) NSInteger bytesExpected;
 @property (nonatomic, assign) BOOL trustAllHosts;
 @property (strong) NSFileHandle* targetFileHandle;
+@property (nonatomic, strong) CDVFileTransferEntityLengthRequest* entityLengthRequest;
 
 @end;

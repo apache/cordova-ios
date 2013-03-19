@@ -162,7 +162,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
     NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:url];
 
-    [req setHTTPMethod: httpMethod];
+    [req setHTTPMethod:httpMethod];
 
     //    Magic value to set a cookie
     if ([options objectForKey:kOptionsKeyCookie]) {
@@ -466,6 +466,46 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 @end
 
+@interface CDVFileTransferEntityLengthRequest : NSObject {
+    NSURLConnection* _connection;
+    CDVFileTransferDelegate* __weak _originalDelegate;
+}
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate;
+
+@end;
+
+@implementation CDVFileTransferEntityLengthRequest;
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate
+{
+    if (self) {
+        DLog(@"Requesting entity length for GZIPped content...");
+
+        NSMutableURLRequest* req = [originalRequest mutableCopy];
+        [req setHTTPMethod:@"HEAD"];
+        [req setValue:@"identity" forHTTPHeaderField:@"Accept-Encoding"];
+
+        _originalDelegate = originalDelegate;
+        _connection = [NSURLConnection connectionWithRequest:req delegate:self];
+    }
+    return self;
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
+{
+    DLog(@"HEAD request returned; content-length is %lld", [response expectedContentLength]);
+    [_originalDelegate updateBytesExpected:[response expectedContentLength]];
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
+{}
+
+- (void)connectionDidFinishLoading:(NSURLConnection*)connection
+{}
+
+@end
+
 @implementation CDVFileTransferDelegate
 
 @synthesize callbackId, connection = _connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId, targetFileHandle;
@@ -545,6 +585,11 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
         self.responseCode = [httpResponse statusCode];
         self.bytesExpected = [response expectedContentLength];
+        if ((self.direction == CDV_TRANSFER_DOWNLOAD) && (self.responseCode == 200) && (self.bytesExpected == NSURLResponseUnknownLength)) {
+            // Kick off HEAD request to server to get real length
+            // bytesExpected will be updated when that response is returned
+            self.entityLengthRequest = [[CDVFileTransferEntityLengthRequest alloc] initWithOriginalRequest:connection.currentRequest andDelegate:self];
+        }
     } else if ([response.URL isFileURL]) {
         NSDictionary* attr = [[NSFileManager defaultManager] attributesOfItemAtPath:[response.URL path] error:nil];
         self.responseCode = 200;
@@ -600,9 +645,25 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     } else {
         [self.responseData appendData:data];
     }
+    [self updateProgress];
+}
 
+- (void)updateBytesExpected:(NSInteger)newBytesExpected
+{
+    DLog(@"Updating bytesExpected to %d", newBytesExpected);
+    self.bytesExpected = newBytesExpected;
+    [self updateProgress];
+}
+
+- (void)updateProgress
+{
     if (self.direction == CDV_TRANSFER_DOWNLOAD) {
         BOOL lengthComputable = (self.bytesExpected != NSURLResponseUnknownLength);
+        // If the response is GZipped, and we have an outstanding HEAD request to get
+        // the length, then hold off on sending progress events.
+        if (!lengthComputable && (self.entityLengthRequest != nil)) {
+            return;
+        }
         NSMutableDictionary* downloadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
         [downloadProgress setObject:[NSNumber numberWithBool:lengthComputable] forKey:@"lengthComputable"];
         [downloadProgress setObject:[NSNumber numberWithInt:self.bytesTransfered] forKey:@"loaded"];
