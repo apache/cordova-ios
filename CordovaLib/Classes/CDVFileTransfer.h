@@ -55,7 +55,11 @@ extern NSString* const kOptionsKeyCookie;
 @property (readonly) NSMutableDictionary* activeTransfers;
 @end
 
+@class CDVFileTransferEntityLengthRequest;
+
 @interface CDVFileTransferDelegate : NSObject {}
+
+- (void)updateBytesExpected:(NSInteger)newBytesExpected;
 
 @property (strong) NSMutableData* responseData; // atomic
 @property (nonatomic, strong) CDVFileTransfer* command;
@@ -70,5 +74,15 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, assign) NSInteger bytesTransfered;
 @property (nonatomic, assign) NSInteger bytesExpected;
 @property (nonatomic, assign) BOOL trustAllHosts;
+@property (nonatomic, strong) CDVFileTransferEntityLengthRequest* entityLengthRequest;
+
+@end;
+
+@interface CDVFileTransferEntityLengthRequest : NSObject {}
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate;
+
+@property (nonatomic, strong) NSURLConnection* connection;
+@property (weak) CDVFileTransferDelegate* originalDelegate;
 
 @end;
