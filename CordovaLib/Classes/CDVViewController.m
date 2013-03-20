@@ -743,6 +743,22 @@
     [plugin pluginInitialize];
 }
 
+- (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName
+{
+    if ([plugin respondsToSelector:@selector(setViewController:)]) {
+        [plugin setViewController:self];
+    }
+    
+    if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
+        [plugin setCommandDelegate:_commandDelegate];
+    }
+    
+    NSString* className = NSStringFromClass([plugin class]);
+    [self.pluginObjects setObject:plugin forKey:className];
+    [self.pluginsMap setValue:className forKey:[pluginName lowercaseString]];
+    [plugin pluginInitialize];
+}
+
 /**
  Returns an instance of a CordovaCommand object, based on its name.  If one exists already, it is returned.
  */
