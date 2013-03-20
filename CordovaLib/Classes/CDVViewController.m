@@ -128,7 +128,7 @@
 
 - (void)keyboardWillShowOrHide:(NSNotification*)notif
 {
-    if (![@"true" isEqualToString : self.settings[@"KeyboardShrinksView"]]) {
+    if (![@"true" isEqualToString:self.settings[@"KeyboardShrinksView"]]) {
         return;
     }
     BOOL showEvent = [notif.name isEqualToString:UIKeyboardWillShowNotification];
@@ -290,18 +290,18 @@
         [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification
                                                           object:nil
                                                            queue:[NSOperationQueue mainQueue]
-                                                      usingBlock:^(NSNotification* notification) {
-            // we can't hide it here because the accessory bar hasn't been created yet, so we delay on the queue
-            [weakSelf performSelector:@selector(hideKeyboardFormAccessoryBar) withObject:nil afterDelay:0];
-        }];
+                                                      usingBlock:^(NSNotification * notification) {
+                // we can't hide it here because the accessory bar hasn't been created yet, so we delay on the queue
+                [weakSelf performSelector:@selector(hideKeyboardFormAccessoryBar) withObject:nil afterDelay:0];
+            }];
     }
 
     /*
      * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
      */
-    if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
-        ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+    if (IsAtLeastiOSVersion (@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
+            ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion (@"6.0")))) {
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass ([CDVLocalStorage class])];
     }
 
     /*
@@ -342,7 +342,7 @@
     /*
      * iOS 6.0 UIWebView properties
      */
-    if (IsAtLeastiOSVersion(@"6.0")) {
+    if (IsAtLeastiOSVersion (@"6.0")) {
         BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
         if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
             if ([self.settings objectForKey:@"KeyboardDisplayRequiresUserAction"]) {
@@ -379,16 +379,16 @@
 
     // /////////////////
     [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
-        _userAgentLockToken = lockToken;
-        [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
-        if (!loadErr) {
-            NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [self.webView loadRequest:appReq];
-        } else {
-            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-            [self.webView loadHTMLString:html baseURL:nil];
-        }
-    }];
+            _userAgentLockToken = lockToken;
+            [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
+            if (!loadErr) {
+                NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+                [self.webView loadRequest:appReq];
+            } else {
+                NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+                [self.webView loadHTMLString:html baseURL:nil];
+            }
+        }];
 }
 
 - (void)hideKeyboardFormAccessoryBar
@@ -401,7 +401,13 @@
                 for (UIView* peripheralView in view.subviews) {
                     // hides the accessory bar
                     if ([[peripheralView description] hasPrefix:@"<UIWebFormAccessory"]) {
-                        [peripheralView setHidden:YES];
+                        // remove the extra scroll space for the form accessory bar
+                        CGRect newFrame = self.webView.scrollView.frame;
+                        newFrame.size.height += peripheralView.frame.size.height;
+                        self.webView.scrollView.frame = newFrame;
+
+                        // remove the form accessory bar
+                        [peripheralView removeFromSuperview];
                     }
                     // hides the thin grey line used to adorn the bar (iOS 6)
                     if ([[peripheralView description] hasPrefix:@"<UIImageView"]) {
@@ -748,11 +754,11 @@
     if ([plugin respondsToSelector:@selector(setViewController:)]) {
         [plugin setViewController:self];
     }
-    
+
     if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
         [plugin setCommandDelegate:_commandDelegate];
     }
-    
+
     NSString* className = NSStringFromClass([plugin class]);
     [self.pluginObjects setObject:plugin forKey:className];
     [self.pluginsMap setValue:className forKey:[pluginName lowercaseString]];
@@ -777,7 +783,7 @@
 
     id obj = [self.pluginObjects objectForKey:className];
     if (!obj) {
-        obj = [[NSClassFromString(className)alloc] initWithWebView:webView];
+        obj = [[NSClassFromString (className)alloc] initWithWebView:webView];
 
         if (obj != nil) {
             [self registerPlugin:obj withClassName:className];
