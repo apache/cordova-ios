@@ -84,12 +84,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
         return;
     }
 
-    NSNumber* cameraDirection = [arguments objectAtIndex:11];
-    UIImagePickerControllerCameraDevice cameraDevice = UIImagePickerControllerCameraDeviceRear; // default
-    if (cameraDirection != nil) {
-        cameraDevice = (UIImagePickerControllerSourceType)[cameraDirection intValue];
-    }
-
     bool allowEdit = [[arguments objectAtIndex:7] boolValue];
     NSNumber* targetWidth = [arguments objectAtIndex:3];
     NSNumber* targetHeight = [arguments objectAtIndex:4];
@@ -113,7 +107,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
     cameraPicker.delegate = self;
     cameraPicker.sourceType = sourceType;
-    cameraPicker.cameraDevice = cameraDevice;
     cameraPicker.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
     cameraPicker.callbackId = callbackId;
     cameraPicker.targetSize = targetSize;
@@ -131,8 +124,16 @@ static NSSet* org_apache_cordova_validArrowDirections;
     cameraPicker.returnType = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : DestinationTypeFileUri;
 
     if (sourceType == UIImagePickerControllerSourceTypeCamera) {
-        // we only allow taking pictures (no video) in this api
+        // We only allow taking pictures (no video) in this API.
         cameraPicker.mediaTypes = [NSArray arrayWithObjects:(NSString*)kUTTypeImage, nil];
+
+        // We can only set the camera device if we're actually using the camera.
+        NSNumber* cameraDirection = [arguments objectAtIndex:11];
+        UIImagePickerControllerCameraDevice cameraDevice = UIImagePickerControllerCameraDeviceRear; // default
+        if (cameraDirection != nil) {
+            cameraDevice = (UIImagePickerControllerSourceType)[cameraDirection intValue];
+        }
+        cameraPicker.cameraDevice = cameraDevice;
     } else if (mediaType == MediaTypeAll) {
         cameraPicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     } else {
