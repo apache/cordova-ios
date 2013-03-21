@@ -159,6 +159,17 @@
     }
 }
 
+- (void)injectScriptCode:(CDVInvokedUrlCommand*)command
+{
+    NSString* source = [command argumentAtIndex:0];
+    CDVPluginResult* pluginResult;
+
+    [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:source];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+}
+
 #pragma mark CDVInAppBrowserNavigationDelegate
 
 - (void)browserLoadStart:(NSURL*)url
