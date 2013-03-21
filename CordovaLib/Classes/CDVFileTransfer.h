@@ -70,5 +70,6 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, assign) NSInteger bytesTransfered;
 @property (nonatomic, assign) NSInteger bytesExpected;
 @property (nonatomic, assign) BOOL trustAllHosts;
+@property (strong) NSFileHandle* targetFileHandle;
 
 @end;
