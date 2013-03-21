@@ -29,15 +29,15 @@
 @end
 
 @implementation CDVPluginResult
-@synthesize status, message, keepCallback;
+@synthesize status, message, keepCallback, associatedObject;
 
 static NSArray* org_apache_cordova_CommandStatusMsgs;
 
 id messageFromArrayBuffer(NSData* data)
 {
     return @{
-        @"CDVType" : @"ArrayBuffer",
-        @"data" :[data base64EncodedString]
+               @"CDVType" : @"ArrayBuffer",
+               @"data" :[data base64EncodedString]
     };
 }
 
@@ -58,8 +58,8 @@ id messageFromMultipart(NSArray* theMessages)
     }
 
     return @{
-        @"CDVType" : @"MultiPart",
-        @"messages" : messages
+               @"CDVType" : @"MultiPart",
+               @"messages" : messages
     };
 }
 
@@ -141,7 +141,7 @@ id messageFromMultipart(NSArray* theMessages)
 
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode
 {
-    NSDictionary* errDict = @{@"code": [NSNumber numberWithInt:errorCode]};
+    NSDictionary* errDict = @{@"code" :[NSNumber numberWithInt:errorCode]};
 
     return [[self alloc] initWithStatus:statusOrdinal message:errDict];
 }

@@ -84,7 +84,7 @@
 {
     CDV_EXEC_LOG(@"Exec(%@): Sending result. Status=%@", callbackId, result.status);
     // This occurs when there is are no win/fail callbacks for the call.
-    if ([@"INVALID" isEqualToString:callbackId]) {
+    if ([@"INVALID" isEqualToString : callbackId]) {
         return;
     }
     int status = [result.status intValue];

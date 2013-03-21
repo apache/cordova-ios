@@ -28,6 +28,7 @@
 
 - (void)browserLoadStart:(NSURL*)url;
 - (void)browserLoadStop:(NSURL*)url;
+- (void)browserLoadError:(NSError*)error forUrl:(NSURL*)url;
 - (void)browserExit;
 
 @end

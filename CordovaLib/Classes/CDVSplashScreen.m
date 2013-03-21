@@ -77,6 +77,7 @@
     }
 
     UIView* parentView = self.viewController.view;
+    parentView.userInteractionEnabled = NO;  // disable user interaction while splashscreen is shown
     _activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle];
     _activityView.center = CGPointMake(parentView.bounds.size.width / 2, parentView.bounds.size.height / 2);
     _activityView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin
@@ -104,6 +105,7 @@
     _activityView = nil;
     _curImageName = nil;
 
+    self.viewController.view.userInteractionEnabled = YES;  // re-enable user interaction upon completion
     [self.viewController.view removeObserver:self forKeyPath:@"frame"];
     [self.viewController.view removeObserver:self forKeyPath:@"bounds"];
 }
@@ -205,12 +207,13 @@
                           duration:fadeDuration
                            options:UIViewAnimationOptionTransitionNone
                         animations:^(void) {
-                [_imageView setAlpha:0];
-                [_activityView setAlpha:0];
-            }
+            [_imageView setAlpha:0];
+            [_activityView setAlpha:0];
+        }
+
                         completion:^(BOOL finished) {
-                [self destroyViews];
-            }];
+            [self destroyViews];
+        }];
     }
 }
 

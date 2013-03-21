@@ -52,8 +52,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
     while (totalBytesWritten < bytesToWrite) {
         CFIndex result = CFWriteStreamWrite(stream,
-            bytes + totalBytesWritten,
-            bytesToWrite - totalBytesWritten);
+                bytes + totalBytesWritten,
+                bytesToWrite - totalBytesWritten);
         if (result < 0) {
             CFStreamError error = CFWriteStreamGetError(stream);
             NSLog(@"WriteStreamError domain: %ld error: %ld", error.domain, error.error);
@@ -190,7 +190,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         [postBodyBeforeFile appendData:formBoundaryData];
         [postBodyBeforeFile appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", key] dataUsingEncoding:NSUTF8StringEncoding]];
         [postBodyBeforeFile appendData:[val dataUsingEncoding:NSUTF8StringEncoding]];
-        [postBodyBeforeFile appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [postBodyBeforeFile appendData:[@"\r\n" dataUsingEncoding : NSUTF8StringEncoding]];
     }
 
     [postBodyBeforeFile appendData:formBoundaryData];
@@ -213,22 +213,22 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         [req setHTTPBodyStream:CFBridgingRelease(readStream)];
 
         [self.commandDelegate runInBackground:^{
-                if (CFWriteStreamOpen (writeStream)) {
-                    NSData* chunks[] = {postBodyBeforeFile, fileData, postBodyAfterFile};
-                    int numChunks = sizeof (chunks) / sizeof (chunks[0]);
+            if (CFWriteStreamOpen(writeStream)) {
+                NSData* chunks[] = {postBodyBeforeFile, fileData, postBodyAfterFile};
+                int numChunks = sizeof(chunks) / sizeof(chunks[0]);
 
-                    for (int i = 0; i < numChunks; ++i) {
-                        CFIndex result = WriteDataToStream (chunks[i], writeStream);
-                        if (result <= 0) {
-                            break;
-                        }
+                for (int i = 0; i < numChunks; ++i) {
+                    CFIndex result = WriteDataToStream(chunks[i], writeStream);
+                    if (result <= 0) {
+                        break;
                     }
-                } else {
-                    NSLog (@"FileTransfer: Failed to open writeStream");
                 }
-                CFWriteStreamClose (writeStream);
-                CFRelease (writeStream);
-            }];
+            } else {
+                NSLog(@"FileTransfer: Failed to open writeStream");
+            }
+            CFWriteStreamClose(writeStream);
+            CFRelease(writeStream);
+        }];
     } else {
         [postBodyBeforeFile appendData:fileData];
         [postBodyBeforeFile appendData:postBodyAfterFile];
@@ -265,11 +265,11 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     // return unsupported result for assets-library URLs
     if ([target hasPrefix:kCDVAssetsLibraryPrefix]) {
         // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
-        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset * asset) {
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
             if (asset) {
                 // We have the asset!  Get the data and send it off.
                 ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
-                Byte* buffer = (Byte*)malloc ([assetRepresentation size]);
+                Byte* buffer = (Byte*)malloc([assetRepresentation size]);
                 NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
                 NSData* fileData = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
                 [self uploadData:fileData command:command];
@@ -279,7 +279,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
                 [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
             }
         };
-        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError * error) {
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
             // Retrieving the asset failed for some reason.  Send the appropriate error.
             CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -302,7 +302,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         NSData* fileData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
 
         if (err != nil) {
-            NSLog (@"Error opening file %@: %@", target, err);
+            NSLog(@"Error opening file %@: %@", target, err);
         }
         [self uploadData:fileData command:command];
     }

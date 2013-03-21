@@ -87,7 +87,7 @@
         NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
     } else {
         // if resourcePath is not from FileSystem put in tmp dir, else attempt to use provided resource path
-        NSString* tmpPath = [NSTemporaryDirectory ()stringByStandardizingPath];
+        NSString* tmpPath = [NSTemporaryDirectory()stringByStandardizingPath];
         BOOL isTmp = [resourcePath rangeOfString:tmpPath].location != NSNotFound;
         BOOL isDoc = [resourcePath rangeOfString:docsPath].location != NSNotFound;
         if (!isTmp && !isDoc) {
@@ -127,7 +127,7 @@
         filePath = [self.commandDelegate pathForResource:resourcePath];
         if (filePath == nil) {
             // see if this exists in the documents/temp directory from a previous recording
-            NSString* testPath = [NSString stringWithFormat:@"%@/%@", [NSTemporaryDirectory ()stringByStandardizingPath], resourcePath];
+            NSString* testPath = [NSString stringWithFormat:@"%@/%@", [NSTemporaryDirectory()stringByStandardizingPath], resourcePath];
             if ([[NSFileManager defaultManager] fileExistsAtPath:testPath]) {
                 // inefficient as existence will be checked again below but only way to determine if file exists from previous recording
                 filePath = testPath;
@@ -385,7 +385,7 @@
             // bug in AVAudioPlayer when playing downloaded data in NSData - we have to download the file and play from disk
             CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
             CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-            NSString* filePath = [NSString stringWithFormat:@"%@/%@", [NSTemporaryDirectory ()stringByStandardizingPath], uuidString];
+            NSString* filePath = [NSString stringWithFormat:@"%@/%@", [NSTemporaryDirectory()stringByStandardizingPath], uuidString];
             CFRelease(uuidString);
             CFRelease(uuidRef);
 

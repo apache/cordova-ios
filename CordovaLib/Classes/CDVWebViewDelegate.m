@@ -155,7 +155,7 @@ typedef enum {
 {
     if (_state == STATE_NORMAL) {
         if (_loadCount == 1) {
-            if ([_delegate respondsToSelector:@selector(didFailLoadWithError:)]) {
+            if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
                 [_delegate webView:webView didFailLoadWithError:error];
             }
             _loadCount = -1;

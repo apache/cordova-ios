@@ -401,7 +401,13 @@
                 for (UIView* peripheralView in view.subviews) {
                     // hides the accessory bar
                     if ([[peripheralView description] hasPrefix:@"<UIWebFormAccessory"]) {
-                        [peripheralView setHidden:YES];
+                        // remove the extra scroll space for the form accessory bar
+                        CGRect newFrame = self.webView.scrollView.frame;
+                        newFrame.size.height += peripheralView.frame.size.height;
+                        self.webView.scrollView.frame = newFrame;
+
+                        // remove the form accessory bar
+                        [peripheralView removeFromSuperview];
                     }
                     // hides the thin grey line used to adorn the bar (iOS 6)
                     if ([[peripheralView description] hasPrefix:@"<UIImageView"]) {
@@ -740,6 +746,22 @@
     }
 
     [self.pluginObjects setObject:plugin forKey:className];
+    [plugin pluginInitialize];
+}
+
+- (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName
+{
+    if ([plugin respondsToSelector:@selector(setViewController:)]) {
+        [plugin setViewController:self];
+    }
+
+    if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
+        [plugin setCommandDelegate:_commandDelegate];
+    }
+
+    NSString* className = NSStringFromClass([plugin class]);
+    [self.pluginObjects setObject:plugin forKey:className];
+    [self.pluginsMap setValue:className forKey:[pluginName lowercaseString]];
     [plugin pluginInitialize];
 }
 

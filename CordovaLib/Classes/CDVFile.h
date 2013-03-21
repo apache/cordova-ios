@@ -21,6 +21,7 @@
 #import "CDVPlugin.h"
 
 enum CDVFileError {
+    NO_ERROR = 0,
     NOT_FOUND_ERR = 1,
     SECURITY_ERR = 2,
     ABORT_ERR = 3,
