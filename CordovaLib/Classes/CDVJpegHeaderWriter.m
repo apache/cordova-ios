@@ -79,28 +79,34 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 
     // supported tages for exif subIFD
     SubIFDTagFormatDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                        TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
-                        TAGINF(@"829d", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FNumber",
-                        TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
-                        TAGINF(@"8827", [NSNumber numberWithInt:EDT_USHORT], @2), @"ISOSpeedRatings",
                           // TAGINF(@"9000", [NSNumber numberWithInt:], @), @"ExifVersion",
-                          TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
-                          TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
-                          TAGINF(@"9207", [NSNumber numberWithInt:EDT_USHORT], @1), @"MeteringMode",
-                          TAGINF(@"9209", [NSNumber numberWithInt:EDT_USHORT], @1), @"Flash",
-                          TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
-                          TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
-                //      TAGINF(@"9202",[NSNumber numberWithInt:EDT_URATIONAL],@1), @"ApertureValue",
-                //      TAGINF(@"9203",[NSNumber numberWithInt:EDT_SRATIONAL],@1), @"BrightnessValue",
-                         TAGINF(@"a001",[NSNumber numberWithInt:EDT_USHORT],@1), @"ColorSpace",
-                         TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
-        //              @"PixelXDimension", [[NSDictionary alloc] initWithObjectsAndKeys: @"code", @"a002", nil],
-        //              @"PixelYDimension", [[NSDictionary alloc] initWithObjectsAndKeys: @"code", @"a003", nil],
-        //              @"SceneType", [[NSDictionary alloc] initWithObjectsAndKeys: @"code", @"a301", nil],
-        //              @"SensingMethod", [[NSDictionary alloc] initWithObjectsAndKeys: @"code", @"a217", nil],
-        //              @"Sharpness", [[NSDictionary alloc] initWithObjectsAndKeys: @"code", @"a40A", nil],
+                           // TAGINF(@"9202",[NSNumber numberWithInt:EDT_URATIONAL],@1), @"ApertureValue",
+                           // TAGINF(@"9203",[NSNumber numberWithInt:EDT_SRATIONAL],@1), @"BrightnessValue",
+                           TAGINF(@"a001",[NSNumber numberWithInt:EDT_USHORT],@1), @"ColorSpace",
+                           TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
+                           TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
+                           TAGINF(@"a402", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureMode",
+                           TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
+                           TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
+                           TAGINF(@"829d", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FNumber",
+                           TAGINF(@"9209", [NSNumber numberWithInt:EDT_USHORT], @1), @"Flash",
+                           // FocalLengthIn35mmFilm
+                           TAGINF(@"a405", [NSNumber numberWithInt:EDT_USHORT], @1), @"FocalLenIn35mmFilm",
+                           TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
+
+                           //TAGINF(@"8827", [NSNumber numberWithInt:EDT_USHORT], @2), @"ISOSpeedRatings",
+
+                           TAGINF(@"9207",[NSNumber numberWithInt:EDT_USHORT],@1), @"MeteringMode",
+                           // specific to compressed data
+                           TAGINF(@"a002", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelXDimension",
+                           TAGINF(@"a003", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelYDimension",
+                           // data type undefined, but this is a DSC camera, so value is always 1, treat as ushort
+                           TAGINF(@"a301", [NSNumber numberWithInt:EDT_USHORT],@1), @"SceneType",
+                           TAGINF(@"a217",[NSNumber numberWithInt:EDT_USHORT],@1), @"SensingMethod",
                     // TAGINF(@"9201", [NSNumber numberWithInt:EDT_SRATIONAL], @1), @"ShutterSpeedValue",
-        //              @"WhiteBalance", [[NSDictionary alloc] initWithObjectsAndKeys: @"code", @"a403", nil],
+                           // specifies location of main subject in scene (x,y,wdith,height) expressed before rotation processing
+                           // TAGINF(@"9214", [NSNumber numberWithInt:EDT_USHORT], @4), @"SubjectArea",
+                           TAGINF(@"a403", [NSNumber numberWithInt:EDT_USHORT], @1), @"WhiteBalance",
                       nil];
     return self;
 }
@@ -266,6 +272,8 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     NSMutableString * datastr = nil;
     NSNumber * tmp = nil;
     NSNumber * formatcode = [dataformat objectAtIndex:1];
+    NSNumber * num = @0;
+    NSNumber * denom = @0;
     
     switch ([formatcode intValue]) {
         case EDT_UBYTE:
@@ -289,12 +297,16 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
             return [NSString stringWithFormat : @"%@",
                     [self formattedHexStringFromDecimalNumber: tmp withPlaces: @8]];
         case EDT_URATIONAL:
-            return [self decimalToUnsignedRational: [NSNumber numberWithDouble:[data doubleValue]]];
+            return [self decimalToUnsignedRational: [NSNumber numberWithDouble:[data doubleValue]]
+                               withResultNumerator: &num
+                             withResultDenominator: &denom];
         case EDT_SBYTE:
+            
             break;
         case EDT_UNDEFINED:
             break;     // 8 bits
         case EDT_SSHORT:
+            
             break;
         case EDT_SLONG:
             break;          // 32bit signed integer (2's complement)
@@ -329,23 +341,47 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 }
 
 // approximate a decimal with a rational by method of continued fraction
-/*
-- (void) decimalToRational: (NSNumber *) numb: (NSNumber *) numerator: (NSNumber*) denominator {
-    numerator = [NSNumber numberWithLong: 1];
-    denominator = [NSNumber numberWithLong: 1];
+// can be collasped into decimalToUnsignedRational after testing
+- (void) decimalToRational: (NSNumber *) numb
+       withResultNumerator: (NSNumber**) numerator
+     withResultDenominator: (NSNumber**) denominator {
+    NSMutableArray * fractionlist = [[NSMutableArray alloc] initWithCapacity:8];
+    
+    [self continuedFraction: [numb doubleValue]
+           withFractionList: fractionlist
+                withHorizon: 8];
+    
+    // simplify complex fraction represented by partial fraction list
+    [self expandContinuedFraction: fractionlist
+              withResultNumerator: numerator
+            withResultDenominator: denominator];
+
 }
-*/
 
 // approximate a decimal with an unsigned rational by method of continued fraction
-- (NSString*) decimalToUnsignedRational: (NSNumber *) numb {
+- (NSString*) decimalToUnsignedRational: (NSNumber *) numb
+                          withResultNumerator: (NSNumber**) numerator
+                        withResultDenominator: (NSNumber**) denominator {
     NSMutableArray * fractionlist = [[NSMutableArray alloc] initWithCapacity:8];
-    [self continuedFraction: [numb doubleValue] withFractionList:fractionlist withHorizon:8];
-    [self expandContinuedFraction: fractionlist];
+    
+    // generate partial fraction list
+    [self continuedFraction: [numb doubleValue]
+           withFractionList: fractionlist
+                withHorizon: 8];
+    
+    // simplify complex fraction represented by partial fraction list
+    [self expandContinuedFraction: fractionlist
+              withResultNumerator: numerator
+            withResultDenominator: denominator];
+    
+    NSLog(@"%@ %d %d %@", @"Hi Int values", [*numerator intValue], [*denominator intValue],[fractionlist description]);
     return [self formatFractionList: fractionlist];
 }
 
 // recursive implementation of decimal approximation by continued fraction
-- (void) continuedFraction: (double) val withFractionList: (NSMutableArray*) fractionlist withHorizon: (int) horizon {
+- (void) continuedFraction: (double) val
+          withFractionList: (NSMutableArray*) fractionlist
+               withHorizon: (int) horizon {
     int whole;
     double remainder;
     // 1. split term
@@ -367,18 +403,26 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 }
 
 // expand continued fraction list, creating a single level rational approximation
--(void) expandContinuedFraction: (NSArray*) fractionlist {
+-(void) expandContinuedFraction: (NSArray*) fractionlist
+                  withResultNumerator: (NSNumber**) numerator
+                withResultDenominator: (NSNumber**) denominator {
     int i = 0;
     int den = 0;
     int num = 0;
-
+    NSLog(@"%@",[fractionlist description]);
+    if ([fractionlist count] == 1) {
+        *numerator = [NSNumber numberWithInt:[[fractionlist objectAtIndex:0] intValue]];
+        *denominator = @1;
+        return;
+    }
+    
     //begin at the end of the list
     i = [fractionlist count] - 1;
     num = 1;
-    den = [fractionlist objectAtIndex:i];
+    den = [[fractionlist objectAtIndex:i] intValue];
     
     while (i > 0) {
-        int t = [fractionlist objectAtIndex: i-1];
+        int t = [[fractionlist objectAtIndex: i-1] intValue];
         num = t * den + num;
         if (i==1) {
             break;
@@ -389,8 +433,9 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
         }
         i--;
     }
-    
-    NSLog(@"%d %d",den,num);
+    // set result parameters values
+    *numerator = [NSNumber numberWithInt: num];
+    *denominator = [NSNumber numberWithInt: den];
 }
 
 // formats expanded fraction list to string matching exif specification
@@ -399,6 +444,20 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     
     if ([fractionlist count] == 1){
         [str appendFormat: @"%08x00000001", [[fractionlist objectAtIndex:0] intValue]];
+    }
+    return str;
+}
+
+// format rational as
+- (NSString*) formatRationalWithNumerator: (NSNumber*) numerator withDenominator: (NSNumber*) denominator asSigned: (Boolean) signedFlag {
+    NSMutableString * str = [[NSMutableString alloc] initWithCapacity:16];
+    if (signedFlag) {
+        NSLog(@"Formatting as SIGNED rational");
+        long num = [numerator longValue];
+        long den = [denominator longValue];
+        [str appendFormat: @"%08lx%08lx", num >= 0 ? num : ~ABS(num) + 1, num >= 0 ? den : ~ABS(den) + 1];
+    } else {
+        [str appendFormat: @"%08lx%08lx", [numerator unsignedLongValue], [denominator unsignedLongValue]];
     }
     return str;
 }

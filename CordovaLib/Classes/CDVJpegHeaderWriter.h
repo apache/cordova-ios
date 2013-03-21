@@ -37,16 +37,21 @@
                                        withPlaces: (NSNumber*) width;
 - (NSString*) formatNumberWithLeadingZeroes: (NSNumber*) numb 
                                  withPlaces: (NSNumber*) places;
+- (NSString*) decimalToUnsignedRational: (NSNumber*) numb
+                    withResultNumerator: (NSNumber**) numerator
+                  withResultDenominator: (NSNumber**) denominator;
 
-- (NSString*) decimalToUnsignedRational: (NSNumber*) numb;
-
-- (void) continuedFraction: (double) val 
+- (void) continuedFraction: (double) val
           withFractionList: (NSMutableArray*) fractionlist 
                withHorizon: (int) horizon;
 - (void) expandContinuedFraction: (NSArray*) fractionlist;
 - (void) splitDouble: (double) val 
          withIntComponent: (int*) rightside 
          withFloatRemainder: (double*) leftside;
+
+- (NSString*) formatRationalWithNumerator: (NSNumber*) numerator
+                          withDenominator: (NSNumber*) denominator
+                               asSigned: (Boolean) signedFlag;
 
 /*
 - (void) readExifMetaData : (NSData*) imgdata;
