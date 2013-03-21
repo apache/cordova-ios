@@ -61,19 +61,9 @@
 - (void)alert:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = command.callbackId;
-    NSArray* arguments = command.arguments;
-    int argc = [arguments count];
-
-    NSString* message = argc > 0 ? [arguments objectAtIndex:0] : nil;
-    NSString* title = argc > 1 ? [arguments objectAtIndex:1] : nil;
-    NSString* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
-
-    if (!title) {
-        title = NSLocalizedString(@"Alert", @"Alert");
-    }
-    if (!buttons) {
-        buttons = NSLocalizedString(@"OK", @"OK");
-    }
+    NSString* message = [command argumentAtIndex:0];
+    NSString* title = [command argumentAtIndex:1];
+    NSString* buttons = [command argumentAtIndex:2];
 
     [self showDialogWithMessage:message title:title buttons:@[buttons] callbackId:callbackId dialogType:DIALOG_TYPE_ALERT];
 }
@@ -81,19 +71,9 @@
 - (void)confirm:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = command.callbackId;
-    NSArray* arguments = command.arguments;
-    int argc = [arguments count];
-
-    NSString* message = argc > 0 ? [arguments objectAtIndex:0] : nil;
-    NSString* title = argc > 1 ? [arguments objectAtIndex:1] : nil;
-    NSArray* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
-
-    if (!title) {
-        title = NSLocalizedString(@"Confirm", @"Confirm");
-    }
-    if (!buttons) {
-        buttons = @[NSLocalizedString(@"OK", @"OK"), NSLocalizedString(@"Cancel", @"Cancel")];
-    }
+    NSString* message = [command argumentAtIndex:0];
+    NSString* title = [command argumentAtIndex:1];
+    NSArray* buttons = [command argumentAtIndex:2];
 
     [self showDialogWithMessage:message title:title buttons:buttons callbackId:callbackId dialogType:DIALOG_TYPE_ALERT];
 }
@@ -101,22 +81,10 @@
 - (void)prompt:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = command.callbackId;
-    NSArray* arguments = command.arguments;
-    int argc = [arguments count];
+    NSString* message = [command argumentAtIndex:0];
+    NSString* title = [command argumentAtIndex:1];
+    NSArray* buttons = [command argumentAtIndex:2];
 
-    NSString* message = argc > 0 ? [arguments objectAtIndex:0] : nil;
-    NSString* title = argc > 1 ? [arguments objectAtIndex:1] : nil;
-    NSArray* buttons = argc > 2 ? [arguments objectAtIndex:2] : nil;
-
-    if (!message) {
-        title = NSLocalizedString(@"Prompt message", @"Prompt message");
-    }
-    if (!title) {
-        title = NSLocalizedString(@"Prompt", @"Prompt");
-    }
-    if (!buttons) {
-        buttons = @[NSLocalizedString(@"OK", @"OK"), NSLocalizedString(@"Cancel", @"Cancel")];
-    }
     [self showDialogWithMessage:message title:title buttons:buttons callbackId:callbackId dialogType:DIALOG_TYPE_PROMPT];
 }
 
@@ -131,13 +99,14 @@
     // Determine what gets returned to JS based on the alert view type.
     if (alertView.alertViewStyle == UIAlertViewStyleDefault) {
         // For alert and confirm, return button index as int back to JS.
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:++buttonIndex];
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:buttonIndex + 1];
     } else {
         // For prompt, return button index and input text back to JS.
         NSString* value0 = [[alertView textFieldAtIndex:0] text];
-        NSMutableDictionary* info = [NSMutableDictionary dictionaryWithCapacity:3];
-        [info setValue:[NSNumber numberWithInt:++buttonIndex] forKey:@"buttonIndex"];
-        [info setValue:value0 ? value0:[NSNull null] forKey:@"input1"];
+        NSDictionary* info = @{
+            @"buttonIndex":@(buttonIndex + 1),
+            @"input1":(value0 ? value0 : [NSNull null])
+        };
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
     }
     [self.commandDelegate sendPluginResult:result callbackId:cdvAlertView.callbackId];
