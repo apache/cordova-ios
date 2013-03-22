@@ -17,14 +17,6 @@
  under the License.
  */
 
-//
-//  CDVImageHeaderWriter.h
-//  CordovaLib
-//
-//  Created by Lorin Beer on 2012-10-02.
-//
-//
-
 #import <Foundation/Foundation.h>
 
 @interface CDVJpegHeaderWriter : NSObject {
@@ -32,7 +24,7 @@
     NSDictionary * IFD0TagFormatDict;
 }
 
-
+- (NSString*) createExifAPP1 : (NSDictionary*) datadict;
 - (NSString*) formattedHexStringFromDecimalNumber: (NSNumber*) numb 
                                        withPlaces: (NSNumber*) width;
 - (NSString*) formatNumberWithLeadingZeroes: (NSNumber*) numb 
@@ -40,7 +32,6 @@
 - (NSString*) decimalToUnsignedRational: (NSNumber*) numb
                     withResultNumerator: (NSNumber**) numerator
                   withResultDenominator: (NSNumber**) denominator;
-
 - (void) continuedFraction: (double) val
           withFractionList: (NSMutableArray*) fractionlist 
                withHorizon: (int) horizon;
@@ -48,10 +39,11 @@
 - (void) splitDouble: (double) val 
          withIntComponent: (int*) rightside 
          withFloatRemainder: (double*) leftside;
-
 - (NSString*) formatRationalWithNumerator: (NSNumber*) numerator
                           withDenominator: (NSNumber*) denominator
                                asSigned: (Boolean) signedFlag;
+- (NSString*) hexStringFromData : (NSData*) data;
+- (NSNumber*) numericFromHexString : (NSString *) hexstring;
 
 /*
 - (void) readExifMetaData : (NSData*) imgdata;

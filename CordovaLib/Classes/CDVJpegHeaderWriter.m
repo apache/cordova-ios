@@ -17,14 +17,6 @@
  under the License.
  */
 
-//
-//  CDVImageHeaderWriter.m
-//  CordovaLib
-//
-//  Created by Lorin Beer on 2012-10-02.
-//
-//
-
 /**
  * creates an IFD field
  * Bytes 0-1 Tag code
@@ -466,6 +458,26 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 - (void) splitDouble: (double) val withIntComponent: (int*) rightside withFloatRemainder: (double*) leftside {
     *rightside = val; // convert numb to int representation, which truncates the decimal portion
     *leftside = val - *rightside;
+}
+
+
+//
+- (NSString*) hexStringFromData : (NSData*) data {
+    //overflow detection
+    const unsigned char *dataBuffer = [data bytes];
+    return [[NSString alloc] initWithFormat: @"%02x%02x",
+            (unsigned char)dataBuffer[0],
+            (unsigned char)dataBuffer[1]];
+}
+
+// convert a hex string to a number
+- (NSNumber*) numericFromHexString : (NSString *) hexstring {
+    NSScanner * scan = NULL;
+    unsigned int numbuf= 0;
+    
+    scan = [NSScanner scannerWithString:hexstring];
+    [scan scanHexInt:&numbuf];
+    return [NSNumber numberWithInt:numbuf];
 }
 
 @end
