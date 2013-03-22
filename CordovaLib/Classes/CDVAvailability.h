@@ -17,6 +17,8 @@
  under the License.
  */
 
+#define __CORDOVA_IOS__
+
 #define __CORDOVA_0_9_6 906
 #define __CORDOVA_1_0_0 10000
 #define __CORDOVA_1_1_0 10100
