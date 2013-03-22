@@ -22,7 +22,65 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
- ### 2.5.0 (20130301) ###
+### 2.6.0 (20130401) ###
+
+* [CB-1547] Scope notifications to WebViews
+* [CB-2461] Distinguish sub-frame from top-level loads in InAppBrowser.
+* [CB-2523] Add setting to shrink webview when keyboard pops up
+* [CB-2220] Fix splashscreen origin when status bar is present
+* [CB-2220] Size the splash screen in the same way as the launch image
+* [CB-2389] Fix page load detection for late-loaded iframes
+* [CB-2220] Fix splash screen positioning when image is the size of device
+* [CB-2631] Fix crash when bad url given to FT.upload
+* [CB-2652] Make FileReader.readAs*() functions run on a background thread
+* [CB-2633] Add FileReader.readAsBinaryString()
+* [CB-2308] Correctly delegate to CDVInAppBrowser webView:didFailLoadWithError
+* [CB-2308] [ios] Report errors when InAppBrowser fails to load page
+* [CB-2527] Update iPad splash images to correct sizes
+* [CB-1452] Media position incorrect after being set beyond duration
+* [CB-2436] Wrong splashscreen is displayed when UILaunchImageFile is set
+* [CB-2634] Copy www fails w spaces in filenames
+* [CB-2618] xcode build from Network Drive Fails
+* [CB-2638] Fix iOS project warnings on Retina imgs
+* [CB-2491] Deprecate current Connection cell setting
+* [CB-2674] Add prompt to Notification API for iOS
+* [CB-2691] Splashscreen should block user interaction
+* [CB-2502] Fixing CDVViewController.commandDelegate property declaration
+* [CB-1933] Changed button labels to an array.
+* [CB-1688] Added a camera direction option.
+* [CB-2732] Only set camera device when allowed.
+* [CB-2530] [CB-2239] Multipart plugin result
+* [CB-2605] icon-72@2x.png not included in xcode project template
+* [CB-2545] Deprecate "EnableLocation" Project Setting - use the "onload" attribute of the <plugin> element
+* [CB-2384] Add new iOS Project Setting to suppress the form accessory bar above the keyboard
+* [CB-2195] Remove deprecated - iOS - BackupWebStorage Cordova.plist property change from boolean to string
+* [CB-2194] Remove deprecated - iOS - CDVCommandDelegate registerPlugin method
+* [CB-2699] Bug in dynamic loading of a plugin at CDVViewController's registerPlugin method
+* [CB-2384] Re-fix - Add new iOS Project Setting to suppress the form accessory bar above the keyboard
+* [CB-2759] Update www/ Application for iOS
+* [CB-2672] InAppBrowserBug fixed (not reporting actual URL after redirect)
+* [CB-861] Header support for FileTransfer download
+* Add a define that turns on logging of exec() bridge
+* Sort preferences in project template.
+* Add KeyboardShrinksView preference to project template
+* Revert accidentaly change in PluginResult that broke threading.
+* Remove NSLogs accidentally checked in.
+* Use noCopy versions of NSString init in Base64 code.
+* Add an associatedObject field to CDVPluginResult.
+* Uncrustified with v0.60 of the tool (up from 0.59).
+* Make sure version of uncrustify is correct in the pre-commit hook
+* Remove some unnecessary argument checks in CDVNotification
+* Implement readAsArrayBuffer
+* Changed UIWebViewBounce to DisallowOverscroll.
+* Retain cycle fix
+* Fixed static analyzer issues.
+* Interim .js for [CB-52] FileTransfer Basic Auth
+* Added KeyboardShrinksView preference to CordovaLibTest config.xml
+* Added \__CORDOVA_IOS\__ macro
+
+< br />
+
+### 2.5.0 (20130301) ###
 
 * [CB-2395] Fix CDVViewController UserAgent lock
 * [CB-2207] Use a custom script for www/ copying.
@@ -76,7 +134,7 @@
 
 <br />
 
- ### 2.4.0 (20130205) ###
+### 2.4.0 (20130205) ###
 
 * Make cordova_plist_to_config_xml able to handle binary plist files
 * Ran splashscreen images through ImageOptim.
@@ -129,7 +187,7 @@
 
 <br />
 
- ### 2.3.0 (20130107) ###
+### 2.3.0 (20130107) ###
 
 * [CB-1550] iOS build, debug, emulate scripts should check xcode version
 * [CB-1669] Issue an error when media.startRecord() is failing.
@@ -191,7 +249,7 @@
 
 <br />
 
- ### 2.2.0 (20121031) ###
+### 2.2.0 (20121031) ###
 
 * [CB-622] FileTransfer interface should provide progress monitoring
 * [CB-622] Progress events for downloads
