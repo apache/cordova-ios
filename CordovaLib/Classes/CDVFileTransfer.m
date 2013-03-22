@@ -136,7 +136,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     //    BOOL trustAllHosts = [[arguments objectAtIndex:6 withDefault:[NSNumber numberWithBool:YES]] boolValue]; // allow self-signed certs
     BOOL chunkedMode = [[arguments objectAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
     NSDictionary* headers = [arguments objectAtIndex:8 withDefault:nil];
-
+    // Allow alternative http method, default to POST. JS side checks
+    // for allowed methods, currently PUT or POST (forces POST for
+    // unrecognised values)
+    NSString* httpMethod = [arguments objectAtIndex:10 withDefault:@"POST"];
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
@@ -158,7 +161,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     }
 
     NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:url];
-    [req setHTTPMethod:@"POST"];
+
+    [req setHTTPMethod: httpMethod];
 
     //    Magic value to set a cookie
     if ([options objectForKey:kOptionsKeyCookie]) {
