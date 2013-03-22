@@ -44,6 +44,9 @@
 		30F5EBAB14CA26E700987760 /* CDVCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E76876B156A90EE00EB6FA3 /* CDVLogger.m */; };
 		3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		68B7516E16FD18190076A8B4 /* CDVJpegHeaderWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B7516B16FD18190076A8B4 /* CDVJpegHeaderWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		68B7516F16FD18190076A8B4 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B7516C16FD18190076A8B4 /* CDVJpegHeaderWriter.m */; };
+		68B7517016FD19F80076A8B4 /* CDVExif.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B7516A16FD18190076A8B4 /* CDVExif.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8852C43A14B65FD800F0E735 /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852C43614B65FD800F0E735 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8852C43714B65FD800F0E735 /* CDVViewController.m */; };
 		8887FD661090FBE7009987E8 /* CDVCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* CDVCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -141,6 +144,9 @@
 		686357DC14100B1600DF4CF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		68A32D7114102E1C006B237C /* libCordova.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCordova.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		68A32D7414103017006B237C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		68B7516A16FD18190076A8B4 /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = Classes/CDVExif.h; sourceTree = "<group>"; };
+		68B7516B16FD18190076A8B4 /* CDVJpegHeaderWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVJpegHeaderWriter.h; path = Classes/CDVJpegHeaderWriter.h; sourceTree = "<group>"; };
+		68B7516C16FD18190076A8B4 /* CDVJpegHeaderWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVJpegHeaderWriter.m; path = Classes/CDVJpegHeaderWriter.m; sourceTree = "<group>"; };
 		8220B5C316D5427E00EC3921 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8852C43614B65FD800F0E735 /* CDVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVViewController.h; path = Classes/CDVViewController.h; sourceTree = "<group>"; };
 		8852C43714B65FD800F0E735 /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVViewController.m; path = Classes/CDVViewController.m; sourceTree = "<group>"; };
@@ -294,6 +300,9 @@
 				8887FD271090FBE7009987E8 /* CDVCamera.m */,
 				1F584B991385A28900ED25E8 /* CDVCapture.h */,
 				1F584B9A1385A28900ED25E8 /* CDVCapture.m */,
+				68B7516A16FD18190076A8B4 /* CDVExif.h */,
+				68B7516B16FD18190076A8B4 /* CDVJpegHeaderWriter.h */,
+				68B7516C16FD18190076A8B4 /* CDVJpegHeaderWriter.m */,
 				1F3C04CC12BC247D004F9E10 /* CDVContact.h */,
 				1F3C04CD12BC247D004F9E10 /* CDVContact.m */,
 				8887FD2A1090FBE7009987E8 /* CDVContacts.h */,
@@ -366,6 +375,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68B7517016FD19F80076A8B4 /* CDVExif.h in Headers */,
+				68B7516E16FD18190076A8B4 /* CDVJpegHeaderWriter.h in Headers */,
 				8887FD661090FBE7009987E8 /* CDVCamera.h in Headers */,
 				8887FD681090FBE7009987E8 /* NSDictionary+Extensions.h in Headers */,
 				8887FD6A1090FBE7009987E8 /* CDVContacts.h in Headers */,
@@ -504,6 +515,7 @@
 				30F3930C169F839700B22307 /* CDVJSON.m in Sources */,
 				EB96673C16A8970A00D86CDF /* CDVUserAgentUtil.m in Sources */,
 				EBFF4DBC16D3FE2E008F452B /* CDVWebViewDelegate.m in Sources */,
+				68B7516F16FD18190076A8B4 /* CDVJpegHeaderWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
