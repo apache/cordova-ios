@@ -51,6 +51,7 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 @implementation CDVJpegHeaderWriter
 
 - (id) init {    
+    self = [super init];
     // supported tags for exif IFD
     IFD0TagFormatDict = [[NSDictionary alloc] initWithObjectsAndKeys:
                   //      TAGINF(@"010e", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"ImageDescription",
