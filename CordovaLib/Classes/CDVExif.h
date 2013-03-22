@@ -17,14 +17,6 @@
  under the License.
  */
 
-//
-//  ExifData.h
-//  Declares exif format codes and static data
-//
-//  Created by Lorin Beer on 2012-10-04.
-//
-//
-
 #ifndef CordovaLib_ExifData_h
 #define CordovaLib_ExifData_h
 
@@ -47,4 +39,5 @@ typedef enum exifDataTypes {
 // maps integer code for exif data types to width in bytes
 static const int DataTypeToWidth[] = {1,1,2,4,8,1,1,2,4,8,4,8};
 
+static const int RECURSE_HORIZON = 8;
 #endif

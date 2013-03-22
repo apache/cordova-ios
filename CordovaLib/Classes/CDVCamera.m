@@ -18,6 +18,7 @@
  */
 
 #import "CDVCamera.h"
+#import "CDVJpegHeaderWriter.h"
 #import "NSArray+Comparisons.h"
 #import "NSData+Base64.h"
 #import "NSDictionary+Extensions.h"
@@ -84,6 +85,12 @@ static NSSet* org_apache_cordova_validArrowDirections;
         return;
     }
 
+    NSNumber* cameraDirection = [arguments objectAtIndex:11];
+    UIImagePickerControllerCameraDevice cameraDevice = UIImagePickerControllerCameraDeviceRear; // default
+    if (cameraDirection != nil) {
+        cameraDevice = (UIImagePickerControllerSourceType)[cameraDirection intValue];
+    }
+
     bool allowEdit = [[arguments objectAtIndex:7] boolValue];
     NSNumber* targetWidth = [arguments objectAtIndex:3];
     NSNumber* targetHeight = [arguments objectAtIndex:4];
@@ -107,6 +114,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
     cameraPicker.delegate = self;
     cameraPicker.sourceType = sourceType;
+    cameraPicker.cameraDevice = cameraDevice;
     cameraPicker.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
     cameraPicker.callbackId = callbackId;
     cameraPicker.targetSize = targetSize;
@@ -124,26 +132,18 @@ static NSSet* org_apache_cordova_validArrowDirections;
     cameraPicker.returnType = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : DestinationTypeFileUri;
 
     if (sourceType == UIImagePickerControllerSourceTypeCamera) {
-        // We only allow taking pictures (no video) in this API.
+        // we only allow taking pictures (no video) in this api
         cameraPicker.mediaTypes = [NSArray arrayWithObjects:(NSString*)kUTTypeImage, nil];
-
-        // We can only set the camera device if we're actually using the camera.
-        NSNumber* cameraDirection = [arguments objectAtIndex:11];
-        UIImagePickerControllerCameraDevice cameraDevice = UIImagePickerControllerCameraDeviceRear; // default
-        if (cameraDirection != nil) {
-            cameraDevice = (UIImagePickerControllerSourceType)[cameraDirection intValue];
-        }
-        cameraPicker.cameraDevice = cameraDevice;
     } else if (mediaType == MediaTypeAll) {
         cameraPicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     } else {
-        NSArray* mediaArray = [NSArray arrayWithObjects:(NSString*)(mediaType == MediaTypeVideo ? kUTTypeMovie : kUTTypeImage), nil];
+        NSArray* mediaArray = [NSArray arrayWithObjects:(NSString*)(mediaType == MediaTypeVideo ? kUTTypeMovie:kUTTypeImage), nil];
         cameraPicker.mediaTypes = mediaArray;
     }
 
     if ([self popoverSupported] && (sourceType != UIImagePickerControllerSourceTypeCamera)) {
         if (cameraPicker.popoverController == nil) {
-            cameraPicker.popoverController = [[NSClassFromString(@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
+            cameraPicker.popoverController = [[NSClassFromString (@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
         }
         NSDictionary* options = [command.arguments objectAtIndex:10 withDefault:nil];
         [self displayPopover:options];
@@ -299,12 +299,52 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
             } else {
                 data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
+                
+                CDVJpegHeaderWriter * exifWriter = [[CDVJpegHeaderWriter alloc] init];
+                
+                NSString * headerstring = [exifWriter createExifAPP1: [info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
+                NSMutableData * exifdata = [NSMutableData dataWithCapacity: [headerstring length]/2];
+                int idx;
+                for (idx = 0; idx+1 < [headerstring length]; idx+=2) {
+                    NSRange range = NSMakeRange(idx, 2);
+                    NSString* hexStr = [headerstring substringWithRange:range];
+                    NSScanner* scanner = [NSScanner scannerWithString:hexStr];
+                    unsigned int intValue;
+                    [scanner scanHexInt:&intValue];
+                    [exifdata appendBytes:&intValue length:1];
+                }
+               
+                NSMutableData * buffer = [NSMutableData dataWithLength: 4];
+                NSMutableData * ddata = [NSMutableData dataWithCapacity: [data length]];
+                NSMakeRange(0,4);
+                int loc = 0;
+                //         CDVImageHeaderWriter * me = [[CDVImageHeaderWriter alloc] init];
+                
+                // read the jpeg data until we encounter the app1==0xFFE1 marker
+                while (loc+1 < [data length]) {
+                    NSData * blag = [data subdataWithRange: NSMakeRange(loc,2)];
+                    if( [[blag description] isEqualToString : @"<ffe1>"]) {
+                        // read the next
+                        NSString * the = [exifWriter hexStringFromData:[data subdataWithRange: NSMakeRange(loc+2,2)]];
+                        NSNumber * app1width = [exifWriter numericFromHexString:the];
+                        
+                        NSData * blag = [data subdataWithRange: NSMakeRange(loc,[app1width intValue])];
+                        [ddata appendData:exifdata];
+                        // advance our loc marker past app1
+                        loc += [app1width intValue] + 2;
+                        
+                    } else {
+                        [ddata appendData:blag];
+                        loc += 2;
+                    }
+                }
+                data = ddata;
             }
 
             if (cameraPicker.returnType == DestinationTypeFileUri) {
                 // write to temp directory and return URI
                 // get the temp directory path
-                NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];
+                NSString* docsPath = [NSTemporaryDirectory ()stringByStandardizingPath];
                 NSError* err = nil;
                 NSFileManager* fileMgr = [[NSFileManager alloc] init]; // recommended by apple (vs [NSFileManager defaultManager]) to be threadsafe
                 // generate unique file name
@@ -429,7 +469,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
             rotation_radians = 0.0;
             break;
 
-        case UIImageOrientationDown:
+        case UIImageOrientationDown :
             rotation_radians = M_PI; // don't be scared of radians, if you're reading this, you're good at math
             break;
 
@@ -528,7 +568,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     // first parameter an image
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding : NSUTF8StringEncoding]];
+    [postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:imageData];
 
     //	// second parameter information
