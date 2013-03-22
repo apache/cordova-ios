@@ -17,6 +17,14 @@
  under the License.
  */
 
+//
+//  CDVImageHeaderWriter.m
+//  CordovaLib
+//
+//  Created by Lorin Beer on 2012-10-02.
+//
+//
+
 /**
  * creates an IFD field
  * Bytes 0-1 Tag code
@@ -137,13 +145,14 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     subExifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{Exif}"] withFormatDict: SubIFDTagFormatDict isIFD0:NO];
 
     // construct the complete app1 data block
-    app1 = [[NSMutableString alloc] initWithFormat: @"%@%04x%@%@%@%@",
+    app1 = [[NSMutableString alloc] initWithFormat: @"%@%04x%@%@%@%@%@",
             app1marker,
-            16+[exifIFD length]/2,
+            16+[exifIFD length]/2+[subExifIFD length]/2/*16+[exifIFD length]/2*/,
             exifmarker,
             tiffheader,
             ifd0offset,
-            exifIFD];
+            exifIFD,
+            subExifIFD];
      
     return app1;
 }
@@ -225,7 +234,6 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 // Creates an exif formatted exif information file directory entry
 - (NSString*) createIFDElement: (NSString*) elementName withFormatDict : (NSDictionary*) formatdict withElementData : (NSString*) data  {
     NSArray * fielddata = [formatdict objectForKey: elementName];// format data of desired field
-    NSLog(@"%@", [data description]);
     if (fielddata) {
         // format string @"%@%@%@%@", tag number, data format, components, value
         NSNumber * dataformat = [fielddata objectAtIndex:1];
@@ -366,7 +374,6 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
               withResultNumerator: numerator
             withResultDenominator: denominator];
     
-    NSLog(@"%@ %d %d %@", @"Hi Int values", [*numerator intValue], [*denominator intValue],[fractionlist description]);
     return [self formatFractionList: fractionlist];
 }
 
@@ -401,7 +408,6 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     int i = 0;
     int den = 0;
     int num = 0;
-    NSLog(@"%@",[fractionlist description]);
     if ([fractionlist count] == 1) {
         *numerator = [NSNumber numberWithInt:[[fractionlist objectAtIndex:0] intValue]];
         *denominator = @1;
@@ -444,7 +450,6 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 - (NSString*) formatRationalWithNumerator: (NSNumber*) numerator withDenominator: (NSNumber*) denominator asSigned: (Boolean) signedFlag {
     NSMutableString * str = [[NSMutableString alloc] initWithCapacity:16];
     if (signedFlag) {
-        NSLog(@"Formatting as SIGNED rational");
         long num = [numerator longValue];
         long den = [denominator longValue];
         [str appendFormat: @"%08lx%08lx", num >= 0 ? num : ~ABS(num) + 1, num >= 0 ? den : ~ABS(den) + 1];

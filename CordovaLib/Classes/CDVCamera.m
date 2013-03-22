@@ -318,26 +318,31 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 NSMutableData * ddata = [NSMutableData dataWithCapacity: [data length]];
                 NSMakeRange(0,4);
                 int loc = 0;
-                //         CDVImageHeaderWriter * me = [[CDVImageHeaderWriter alloc] init];
-                
+                bool done = false;
                 // read the jpeg data until we encounter the app1==0xFFE1 marker
                 while (loc+1 < [data length]) {
                     NSData * blag = [data subdataWithRange: NSMakeRange(loc,2)];
                     if( [[blag description] isEqualToString : @"<ffe1>"]) {
-                        // read the next
+                        // read the APP1 block size bits
                         NSString * the = [exifWriter hexStringFromData:[data subdataWithRange: NSMakeRange(loc+2,2)]];
                         NSNumber * app1width = [exifWriter numericFromHexString:the];
-                        
+                        //consume the original app1 block
                         NSData * blag = [data subdataWithRange: NSMakeRange(loc,[app1width intValue])];
                         [ddata appendData:exifdata];
                         // advance our loc marker past app1
                         loc += [app1width intValue] + 2;
-                        
+                        done = true;
                     } else {
-                        [ddata appendData:blag];
-                        loc += 2;
+                        if(!done) {
+                            [ddata appendData:blag];
+                            loc += 2;
+                        } else {
+                            break;
+                        }
                     }
                 }
+                // copy the remaining data
+                [ddata appendData:[data subdataWithRange: NSMakeRange(loc,[data length]-loc)]];
                 data = ddata;
             }
 
