@@ -35,7 +35,7 @@
 - (void) continuedFraction: (double) val
           withFractionList: (NSMutableArray*) fractionlist 
                withHorizon: (int) horizon;
-- (void) expandContinuedFraction: (NSArray*) fractionlist;
+//- (void) expandContinuedFraction: (NSArray*) fractionlist;
 - (void) splitDouble: (double) val 
          withIntComponent: (int*) rightside 
          withFloatRemainder: (double*) leftside;

@@ -314,7 +314,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
                     [exifdata appendBytes:&intValue length:1];
                 }
                
-                NSMutableData * buffer = [NSMutableData dataWithLength: 4];
                 NSMutableData * ddata = [NSMutableData dataWithCapacity: [data length]];
                 NSMakeRange(0,4);
                 int loc = 0;
@@ -327,7 +326,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
                         NSString * the = [exifWriter hexStringFromData:[data subdataWithRange: NSMakeRange(loc+2,2)]];
                         NSNumber * app1width = [exifWriter numericFromHexString:the];
                         //consume the original app1 block
-                        NSData * blag = [data subdataWithRange: NSMakeRange(loc,[app1width intValue])];
                         [ddata appendData:exifdata];
                         // advance our loc marker past app1
                         loc += [app1width intValue] + 2;
