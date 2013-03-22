@@ -17,23 +17,6 @@
  under the License.
  */
 
-//
-//  CDVImageHeaderWriter.m
-//  CordovaLib
-//
-//  Created by Lorin Beer on 2012-10-02.
-//
-//
-
-/**
- * creates an IFD field
- * Bytes 0-1 Tag code
- * Bytes 2-3 Data type
- * Bytes 4-7 Count, number of elements of the given data type
- * Bytes 8-11 Value/Offset
- */
-
-
 #import "CDVJpegHeaderWriter.h"
 #include "CDVExif.h"
 
