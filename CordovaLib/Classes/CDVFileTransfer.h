@@ -77,12 +77,3 @@ extern NSString* const kOptionsKeyCookie;
 @property (nonatomic, strong) CDVFileTransferEntityLengthRequest* entityLengthRequest;
 
 @end;
-
-@interface CDVFileTransferEntityLengthRequest : NSObject {}
-
-- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate;
-
-@property (nonatomic, strong) NSURLConnection* connection;
-@property (weak) CDVFileTransferDelegate* originalDelegate;
-
-@end;

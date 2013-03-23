@@ -456,6 +456,46 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 @end
 
+@interface CDVFileTransferEntityLengthRequest : NSObject {
+    NSURLConnection* _connection;
+    CDVFileTransferDelegate* __weak _originalDelegate;
+}
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate;
+
+@end;
+
+@implementation CDVFileTransferEntityLengthRequest;
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate
+{
+    if (self) {
+        DLog(@"Requesting entity length for GZIPped content...");
+
+        NSMutableURLRequest* req = [originalRequest mutableCopy];
+        [req setHTTPMethod:@"HEAD"];
+        [req setValue:@"identity" forHTTPHeaderField:@"Accept-Encoding"];
+
+        _originalDelegate = originalDelegate;
+        _connection = [NSURLConnection connectionWithRequest:req delegate:self];
+    }
+    return self;
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
+{
+    DLog(@"HEAD request returned; content-length is %lld", [response expectedContentLength]);
+    [_originalDelegate updateBytesExpected:[response expectedContentLength]];
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
+{}
+
+- (void)connectionDidFinishLoading:(NSURLConnection*)connection
+{}
+
+@end
+
 @implementation CDVFileTransferDelegate
 
 @synthesize callbackId, connection = _connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId;
@@ -639,41 +679,3 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 }
 
 @end;
-
-@implementation CDVFileTransferEntityLengthRequest;
-
-@synthesize connection = _connection;
-@synthesize originalDelegate = _originalDelegate;
-
-- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate
-{
-    if (self) {
-        DLog(@"Requesting entity length for GZIPped content...");
-
-        NSMutableURLRequest* req = [originalRequest mutableCopy];
-        [req setHTTPMethod:@"HEAD"];
-        [req setValue:@"identity" forHTTPHeaderField:@"Accept-Encoding"];
-
-        self.originalDelegate = originalDelegate;
-        self.connection = [NSURLConnection connectionWithRequest:req delegate:self];
-    }
-    return self;
-}
-
-- (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
-{
-    DLog(@"HEAD request returned; content-length is %lld", [response expectedContentLength]);
-    // required for iOS 4.3, for some reason; response is
-    // a plain NSURLResponse, not the HTTP subclass
-    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-        [self.originalDelegate updateBytesExpected:[response expectedContentLength]];
-    }
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection*)connection
-{
-    // Break reference cycle
-    self.originalDelegate.entityLengthRequest = nil;
-}
-
-@end
