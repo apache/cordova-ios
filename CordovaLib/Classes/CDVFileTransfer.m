@@ -458,7 +458,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 @implementation CDVFileTransferDelegate
 
-@synthesize callbackId, connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId;
+@synthesize callbackId, connection = _connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId, targetFileHandle;
 
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
@@ -507,8 +507,20 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     [command.activeTransfers removeObjectForKey:objectId];
 }
 
+- (void)cancelTransferWithError:(NSURLConnection*)connection errorMessage:(NSString*)errorMessage
+{
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[self.command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:self.source AndTarget:self.target AndHttpStatus:self.responseCode AndBody:errorMessage]];
+
+    NSLog(@"File Transfer Error: %@", errorMessage);
+    [connection cancel];
+    [self.command.activeTransfers removeObjectForKey:self.objectId];
+    [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
 {
+    NSError* error = nil;
+
     self.mimeType = [response MIMEType];
     self.targetFileHandle = nil;
 
@@ -531,39 +543,26 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         // Download response is okay; begin streaming output to file
         NSString* parentPath = [self.target stringByDeletingLastPathComponent];
 
-        NSString* errorMessage = nil;
-        NSError* error = nil;
-
         // create parent directories if needed
         if ([[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:&error] == NO) {
             if (error) {
-                errorMessage = [NSString stringWithFormat:@"Could not create path to save downloaded file: %@", [error localizedDescription]];
+                [self cancelTransferWithError:connection errorMessage:[NSString stringWithFormat:@"Could not create path to save downloaded file: %@", [error localizedDescription]]];
             } else {
-                errorMessage = @"Could not create path to save downloaded file";
+                [self cancelTransferWithError:connection errorMessage:@"Could not create path to save downloaded file"];
             }
+            return;
         }
         // create target file
-        if (errorMessage == nil) {
-            if ([[NSFileManager defaultManager] createFileAtPath:self.target contents:nil attributes:nil] == NO) {
-                errorMessage = @"Could not create target file";
-            }
+        if ([[NSFileManager defaultManager] createFileAtPath:self.target contents:nil attributes:nil] == NO) {
+            [self cancelTransferWithError:connection errorMessage:@"Could not create target file"];
+            return;
         }
         // open target file for writing
-        if (errorMessage == nil) {
-            self.targetFileHandle = [NSFileHandle fileHandleForWritingAtPath:self.target];
-            if (self.targetFileHandle == nil) {
-                errorMessage = @"Could not open target file for writing";
-            }
+        self.targetFileHandle = [NSFileHandle fileHandleForWritingAtPath:self.target];
+        if (self.targetFileHandle == nil) {
+            [self cancelTransferWithError:connection errorMessage:@"Could not open target file for writing"];
         }
-        if (errorMessage) {
-            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[self.command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:self.source AndTarget:self.target AndHttpStatus:self.responseCode AndBody:errorMessage]];
-            NSLog(@"File Transfer Error: %@", errorMessage);
-            [connection cancel];
-            [self.command.activeTransfers removeObjectForKey:self.objectId];
-            [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
-        } else {
-            DLog(@"Streaming to file %@", target);
-        }
+        DLog(@"Streaming to file %@", target);
     }
 }
 
