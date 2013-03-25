@@ -162,25 +162,11 @@
 - (void)injectScriptCode:(CDVInvokedUrlCommand*)command
 {
     NSString* source = [command argumentAtIndex:0];
-    // NSString* position = [command argumentAtIndex:1];
     CDVPluginResult* pluginResult;
 
-    self.callbackId = command.callbackId;
+    [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:source];
 
-    NSError* jsonErr;
-    NSData* jsonEsc = [NSJSONSerialization dataWithJSONObject:@[source] options:0 error:&jsonErr];
-
-    if (jsonErr == nil) {
-        NSString* jsonRepr = [[NSString alloc] initWithData:jsonEsc encoding:NSUTF8StringEncoding];
-        NSString* jsonSourceString = [jsonRepr substringWithRange:(NSRange) {1, [jsonRepr length] - 2}];
-        NSString* scriptEnclosure = [NSString stringWithFormat:@"(function(d) { var c = d.createElement('script'); c.type='text/javascript'; c.innerText = %@; d.getElementsByTagName('head')[0].appendChild(c); })(document)", jsonSourceString];
-        [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:scriptEnclosure];
-
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"unable to serialize script code"];
-    }
-    [pluginResult setKeepCallback:[NSNumber numberWithBool:NO]];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 }
 
