@@ -24,6 +24,8 @@
     NSDictionary * IFD0TagFormatDict;
 }
 
+- (NSData*) spliceExifBlockIntoJpeg: (NSData*) jpegdata
+                      withExifBlock: (NSString*) exifstr;
 - (NSString*) createExifAPP1 : (NSDictionary*) datadict;
 - (NSString*) formattedHexStringFromDecimalNumber: (NSNumber*) numb 
                                        withPlaces: (NSNumber*) width;
