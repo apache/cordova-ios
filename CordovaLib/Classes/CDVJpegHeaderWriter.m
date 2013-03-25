@@ -95,6 +95,53 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     return self;
 }
 
+- (NSData*) spliceExifBlockIntoJpeg: (NSData*) jpegdata withExifBlock: (NSString*) exifstr {
+    
+    CDVJpegHeaderWriter * exifWriter = [[CDVJpegHeaderWriter alloc] init];
+    
+    NSMutableData * exifdata = [NSMutableData dataWithCapacity: [exifstr length]/2];
+    int idx;
+    for (idx = 0; idx+1 < [exifstr length]; idx+=2) {
+        NSRange range = NSMakeRange(idx, 2);
+        NSString* hexStr = [exifstr substringWithRange:range];
+        NSScanner* scanner = [NSScanner scannerWithString:hexStr];
+        unsigned int intValue;
+        [scanner scanHexInt:&intValue];
+        [exifdata appendBytes:&intValue length:1];
+    }
+    
+    NSMutableData * ddata = [NSMutableData dataWithCapacity: [jpegdata length]];
+    NSMakeRange(0,4);
+    int loc = 0;
+    bool done = false;
+    // read the jpeg data until we encounter the app1==0xFFE1 marker
+    while (loc+1 < [jpegdata length]) {
+        NSData * blag = [jpegdata subdataWithRange: NSMakeRange(loc,2)];
+        if( [[blag description] isEqualToString : @"<ffe1>"]) {
+            // read the APP1 block size bits
+            NSString * the = [exifWriter hexStringFromData:[jpegdata subdataWithRange: NSMakeRange(loc+2,2)]];
+            NSNumber * app1width = [exifWriter numericFromHexString:the];
+            //consume the original app1 block
+            [ddata appendData:exifdata];
+            // advance our loc marker past app1
+            loc += [app1width intValue] + 2;
+            done = true;
+        } else {
+            if(!done) {
+                [ddata appendData:blag];
+                loc += 2;
+            } else {
+                break;
+            }
+        }
+    }
+    // copy the remaining data
+    [ddata appendData:[jpegdata subdataWithRange: NSMakeRange(loc,[jpegdata length]-loc)]];
+    return ddata;
+}
+
+
+
 /**
  * Create the Exif data block as a hex string
  *   jpeg uses Application Markers (APP's) as markers for application data
