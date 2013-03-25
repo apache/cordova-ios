@@ -300,48 +300,11 @@ static NSSet* org_apache_cordova_validArrowDirections;
             } else {
                 data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
                 
+                /* splice loc */
                 CDVJpegHeaderWriter * exifWriter = [[CDVJpegHeaderWriter alloc] init];
-                
                 NSString * headerstring = [exifWriter createExifAPP1: [info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
-                NSMutableData * exifdata = [NSMutableData dataWithCapacity: [headerstring length]/2];
-                int idx;
-                for (idx = 0; idx+1 < [headerstring length]; idx+=2) {
-                    NSRange range = NSMakeRange(idx, 2);
-                    NSString* hexStr = [headerstring substringWithRange:range];
-                    NSScanner* scanner = [NSScanner scannerWithString:hexStr];
-                    unsigned int intValue;
-                    [scanner scanHexInt:&intValue];
-                    [exifdata appendBytes:&intValue length:1];
-                }
-               
-                NSMutableData * ddata = [NSMutableData dataWithCapacity: [data length]];
-                NSMakeRange(0,4);
-                int loc = 0;
-                bool done = false;
-                // read the jpeg data until we encounter the app1==0xFFE1 marker
-                while (loc+1 < [data length]) {
-                    NSData * blag = [data subdataWithRange: NSMakeRange(loc,2)];
-                    if( [[blag description] isEqualToString : @"<ffe1>"]) {
-                        // read the APP1 block size bits
-                        NSString * the = [exifWriter hexStringFromData:[data subdataWithRange: NSMakeRange(loc+2,2)]];
-                        NSNumber * app1width = [exifWriter numericFromHexString:the];
-                        //consume the original app1 block
-                        [ddata appendData:exifdata];
-                        // advance our loc marker past app1
-                        loc += [app1width intValue] + 2;
-                        done = true;
-                    } else {
-                        if(!done) {
-                            [ddata appendData:blag];
-                            loc += 2;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                // copy the remaining data
-                [ddata appendData:[data subdataWithRange: NSMakeRange(loc,[data length]-loc)]];
-                data = ddata;
+                data = [exifWriter spliceExifBlockIntoJpeg:data withExifBlock:headerstring];
+                
             }
 
             if (cameraPicker.returnType == DestinationTypeFileUri) {
