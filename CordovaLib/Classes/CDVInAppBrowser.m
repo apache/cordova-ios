@@ -458,7 +458,7 @@
     [self.spinner startAnimating];
 }
 
-- (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+- (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStart:)]) {
         NSURL* url = request.URL;
@@ -497,8 +497,7 @@
     }
 
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStop:)]) {
-        NSURL* url = theWebView.request.URL;
-        [self.navigationDelegate browserLoadStop:url];
+        [self.navigationDelegate browserLoadStop:_requestedURL];
     }
 }
 
@@ -514,8 +513,7 @@
     self.addressLabel.text = @"Load Error";
 
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadError:forUrl:)]) {
-        NSURL* url = theWebView.request.URL;
-        [self.navigationDelegate browserLoadError:error forUrl:url];
+        [self.navigationDelegate browserLoadError:error forUrl:_requestedURL];
     }
 }
 
