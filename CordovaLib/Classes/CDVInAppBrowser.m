@@ -222,11 +222,27 @@
 
 #pragma mark CDVInAppBrowserNavigationDelegate
 
+/**
+ * The iframe bridge provided for the InAppBrowser is capable of executing any oustanding callback belonging
+ * to the InAppBrowser plugin. Care has been taken that other callbacks cannot be triggered, and that no
+ * other code execution is possible.
+ *
+ * To trigger the bridge, the iframe (or any other resource) should attempt to load a url of the form:
+ *
+ * gap-iab://<callbackId>/<arguments>
+ *
+ * where <callbackId> is the string id of the callback to trigger (something like "InAppBrowser0123456789")
+ *
+ * If present, the path component of the special gap-iab:// url is expected to be a URL-escaped JSON-encoded
+ * value to pass to the callback. [NSURL path] should take care of the URL-unescaping, and a JSON_EXCEPTION
+ * is returned if the JSON is invalid.
+ */
 - (void)browserLoadStart:(NSURL*)url
 {
     CDVPluginResult* pluginResult;
 
-    // See if the url uses the 'gap-iab' protocol. If so, the remainder should be the id of a callback to execute.
+    // See if the url uses the 'gap-iab' protocol. If so, the host should be the id of a callback to execute,
+    // and the path, if present, should be a JSON-encoded value to pass to the callback.
     if ([[url scheme] isEqualToString:@"gap-iab"]) {
         NSString* scriptCallbackId = [url host];
 
