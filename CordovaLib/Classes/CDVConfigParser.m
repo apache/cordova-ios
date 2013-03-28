@@ -41,6 +41,7 @@
         self.settings = [[NSMutableDictionary alloc] initWithCapacity:30];
         self.whitelistHosts = [[NSMutableArray alloc] initWithCapacity:30];
         self.startupPluginNames = [[NSMutableArray alloc] initWithCapacity:8];
+        featureName = nil;
     }
     return self;
 }
@@ -55,12 +56,32 @@
         if ([@"true" isEqualToString : attributeDict[@"onload"]]) {
             [self.startupPluginNames addObject:name];
         }
+    }else if ([elementName isEqualToString:@"feature"]){ // store feature name to use with correct parameter set
+        featureName = [attributeDict[@"name"] lowercaseString];
+    }else if(featureName != nil && [elementName isEqualToString:@"param"])
+    {
+        NSString* paramName = [attributeDict[@"name"] lowercaseString];
+        if ([paramName isEqualToString:@"ios-package"]) {
+            pluginsDict[featureName] = attributeDict[@"value"];
+        }
+        if ([paramName isEqualToString:@"onload"]) {
+            [self.startupPluginNames addObject:featureName];
+        }
     } else if ([elementName isEqualToString:@"access"]) {
         [whitelistHosts addObject:attributeDict[@"origin"]];
     } else if ([elementName isEqualToString:@"content"]) {
         self.startPage = attributeDict[@"src"];
     }
 }
+
+- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName
+{
+    if ([elementName isEqualToString:@"feature"]) {// no longer handling a feature so release
+        featureName = nil;
+    }
+
+}
+
 
 - (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
 {
