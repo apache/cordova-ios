@@ -20,7 +20,6 @@
 #import "CDVInAppBrowser.h"
 #import "CDVPluginResult.h"
 #import "CDVUserAgentUtil.h"
-#import "CDVURLProtocol.h"
 #import "CDVJSON.h"
 
 #define    kInAppBrowserTargetSelf @"_self"
