@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,7 +19,6 @@
 
 #import "CDVTimer.h"
 
-
 #pragma mark CDVTimerItem
 
 @interface CDVTimerItem : NSObject
@@ -28,19 +27,18 @@
 @property (nonatomic, strong) NSDate* started;
 @property (nonatomic, strong) NSDate* ended;
 
-- (void) log;
+- (void)log;
 
 @end
 
 @implementation CDVTimerItem
 
-- (void) log
+- (void)log
 {
     NSLog(@"[CDVTimer][%@] %fms", self.name, [self.ended timeIntervalSinceDate:self.started] * 1000.0);
 }
 
 @end
-
 
 #pragma mark CDVTimer
 
@@ -54,16 +52,16 @@
 
 #pragma mark object methods
 
-- (id) init
+- (id)init
 {
     if (self = [super init]) {
         self.items = [NSMutableDictionary dictionaryWithCapacity:6];
     }
-    
+
     return self;
 }
 
-- (void) add:(NSString*)name
+- (void)add:(NSString*)name
 {
     if ([self.items objectForKey:[name lowercaseString]] == nil) {
         CDVTimerItem* item = [CDVTimerItem new];
@@ -75,10 +73,10 @@
     }
 }
 
-- (void) remove:(NSString*)name
+- (void)remove:(NSString*)name
 {
     CDVTimerItem* item = [self.items objectForKey:[name lowercaseString]];
-    
+
     if (item != nil) {
         item.ended = [NSDate new];
         [item log];
@@ -88,40 +86,38 @@
     }
 }
 
-- (void) removeAll
+- (void)removeAll
 {
     [self.items removeAllObjects];
 }
 
-
 #pragma mark class methods
 
-+ (void) start:(NSString*)name
++ (void)start:(NSString*)name
 {
     [[CDVTimer sharedInstance] add:name];
 }
 
-+ (void) stop:(NSString*)name
++ (void)stop:(NSString*)name
 {
     [[CDVTimer sharedInstance] remove:name];
 }
 
-+ (void) clearAll
++ (void)clearAll
 {
     [[CDVTimer sharedInstance] removeAll];
 }
 
-+ (CDVTimer*) sharedInstance
++ (CDVTimer*)sharedInstance
 {
     static dispatch_once_t pred = 0;
     __strong static CDVTimer* _sharedObject = nil;
-    
+
     dispatch_once(&pred, ^{
-        _sharedObject = [[self alloc] init];
-    });
-    
+            _sharedObject = [[self alloc] init];
+        });
+
     return _sharedObject;
 }
-
 
 @end
