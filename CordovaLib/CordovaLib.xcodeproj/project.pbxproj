@@ -47,6 +47,8 @@
 		68B7516E16FD18190076A8B4 /* CDVJpegHeaderWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B7516B16FD18190076A8B4 /* CDVJpegHeaderWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		68B7516F16FD18190076A8B4 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B7516C16FD18190076A8B4 /* CDVJpegHeaderWriter.m */; };
 		68B7517016FD19F80076A8B4 /* CDVExif.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B7516A16FD18190076A8B4 /* CDVExif.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7E14B5A81705050A0032169E /* CDVTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E14B5A61705050A0032169E /* CDVTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7E14B5A91705050A0032169E /* CDVTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E14B5A71705050A0032169E /* CDVTimer.m */; };
 		8852C43A14B65FD800F0E735 /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852C43614B65FD800F0E735 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8852C43714B65FD800F0E735 /* CDVViewController.m */; };
 		8887FD661090FBE7009987E8 /* CDVCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* CDVCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -147,6 +149,8 @@
 		68B7516A16FD18190076A8B4 /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = Classes/CDVExif.h; sourceTree = "<group>"; };
 		68B7516B16FD18190076A8B4 /* CDVJpegHeaderWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVJpegHeaderWriter.h; path = Classes/CDVJpegHeaderWriter.h; sourceTree = "<group>"; };
 		68B7516C16FD18190076A8B4 /* CDVJpegHeaderWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVJpegHeaderWriter.m; path = Classes/CDVJpegHeaderWriter.m; sourceTree = "<group>"; };
+		7E14B5A61705050A0032169E /* CDVTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVTimer.h; path = Classes/CDVTimer.h; sourceTree = "<group>"; };
+		7E14B5A71705050A0032169E /* CDVTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVTimer.m; path = Classes/CDVTimer.m; sourceTree = "<group>"; };
 		8220B5C316D5427E00EC3921 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8852C43614B65FD800F0E735 /* CDVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVViewController.h; path = Classes/CDVViewController.h; sourceTree = "<group>"; };
 		8852C43714B65FD800F0E735 /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVViewController.m; path = Classes/CDVViewController.m; sourceTree = "<group>"; };
@@ -354,6 +358,8 @@
 				30E563CE13E217EC00C949AA /* NSMutableArray+QueueAdditions.m */,
 				8887FD501090FBE7009987E8 /* NSData+Base64.h */,
 				8887FD511090FBE7009987E8 /* NSData+Base64.m */,
+				7E14B5A61705050A0032169E /* CDVTimer.h */,
+				7E14B5A71705050A0032169E /* CDVTimer.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -420,6 +426,7 @@
 				30F3930B169F839700B22307 /* CDVJSON.h in Headers */,
 				EBFF4DBD16D3FE2E008F452B /* CDVWebViewDelegate.h in Headers */,
 				EB96673B16A8970A00D86CDF /* CDVUserAgentUtil.h in Headers */,
+				7E14B5A81705050A0032169E /* CDVTimer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,6 +523,7 @@
 				EB96673C16A8970A00D86CDF /* CDVUserAgentUtil.m in Sources */,
 				EBFF4DBC16D3FE2E008F452B /* CDVWebViewDelegate.m in Sources */,
 				68B7516F16FD18190076A8B4 /* CDVJpegHeaderWriter.m in Sources */,
+				7E14B5A91705050A0032169E /* CDVTimer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

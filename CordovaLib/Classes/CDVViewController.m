@@ -367,9 +367,15 @@
             [self.webView setValue:[NSNumber numberWithBool:suppressesIncrementalRendering] forKey:@"suppressesIncrementalRendering"];
         }
     }
-
-    for (NSString* pluginName in self.startupPluginNames) {
-        [self getCommandInstance:pluginName];
+    
+    if ([self.startupPluginNames count] > 0) {
+        [CDVTimer start:@"TotalPluginStartup"];
+        for (NSString* pluginName in self.startupPluginNames) {
+            [CDVTimer start:pluginName];
+            [self getCommandInstance:pluginName];
+            [CDVTimer stop:pluginName];
+        }
+        [CDVTimer stop:@"TotalPluginStartup"];
     }
 
     // TODO: Remove this explicit instantiation once we move to cordova-CLI.
