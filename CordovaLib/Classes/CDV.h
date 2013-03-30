@@ -33,7 +33,6 @@
 #import "CDVContact.h"
 #import "CDVContacts.h"
 #import "CDVDebug.h"
-#import "CDVDebugConsole.h"
 #import "CDVDevice.h"
 #import "CDVFile.h"
 #import "CDVFileTransfer.h"

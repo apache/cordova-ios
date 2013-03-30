@@ -25,7 +25,6 @@
         <plugin name="Camera" value="CDVCamera" />
         <plugin name="NetworkStatus" value="CDVConnection" />
         <plugin name="Contacts" value="CDVContacts" />
-        <plugin name="Debug Console" value="CDVDebugConsole" />
         <plugin name="File" value="CDVFile" />
         <plugin name="FileTransfer" value="CDVFileTransfer" />
         <plugin name="Geolocation" value="CDVLocation" />
