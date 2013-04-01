@@ -61,37 +61,36 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
                         TAGINF(@"8769", [NSNumber numberWithInt:EDT_ULONG], @1), @"ExifOffset",
                         nil];
 
+
     // supported tages for exif subIFD
     SubIFDTagFormatDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          // TAGINF(@"9000", [NSNumber numberWithInt:], @), @"ExifVersion",
-                           // TAGINF(@"9202",[NSNumber numberWithInt:EDT_URATIONAL],@1), @"ApertureValue",
-                           // TAGINF(@"9203",[NSNumber numberWithInt:EDT_SRATIONAL],@1), @"BrightnessValue",
+                           // TAGINF(@"9000", [NSNumber numberWithInt:], @), @"ExifVersion",
+                           //TAGINF(@"9202",[NSNumber numberWithInt:EDT_URATIONAL],@1), @"ApertureValue",
+                           //TAGINF(@"9203",[NSNumber numberWithInt:EDT_SRATIONAL],@1), @"BrightnessValue",
                            TAGINF(@"a001",[NSNumber numberWithInt:EDT_USHORT],@1), @"ColorSpace",
-                           TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
-                           TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
+                           //TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
+                           //TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
                            TAGINF(@"a402", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureMode",
                            TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
-                           TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
-                           TAGINF(@"829d", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FNumber",
+                           //                     TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
+                           //          TAGINF(@"829d", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FNumber",
                            TAGINF(@"9209", [NSNumber numberWithInt:EDT_USHORT], @1), @"Flash",
                            // FocalLengthIn35mmFilm
                            TAGINF(@"a405", [NSNumber numberWithInt:EDT_USHORT], @1), @"FocalLenIn35mmFilm",
-                           TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
-
-                           //TAGINF(@"8827", [NSNumber numberWithInt:EDT_USHORT], @2), @"ISOSpeedRatings",
-
-                           TAGINF(@"9207",[NSNumber numberWithInt:EDT_USHORT],@1), @"MeteringMode",
+                           //                         TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
+                           // TAGINF(@"8827", [NSNumber numberWithInt:EDT_USHORT], @2), @"ISOSpeedRatings",
+                           TAGINF(@"9207", [NSNumber numberWithInt:EDT_USHORT],@1), @"MeteringMode",
                            // specific to compressed data
                            TAGINF(@"a002", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelXDimension",
                            TAGINF(@"a003", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelYDimension",
                            // data type undefined, but this is a DSC camera, so value is always 1, treat as ushort
                            TAGINF(@"a301", [NSNumber numberWithInt:EDT_USHORT],@1), @"SceneType",
                            TAGINF(@"a217",[NSNumber numberWithInt:EDT_USHORT],@1), @"SensingMethod",
-                    // TAGINF(@"9201", [NSNumber numberWithInt:EDT_SRATIONAL], @1), @"ShutterSpeedValue",
+                           // TAGINF(@"9201", [NSNumber numberWithInt:EDT_SRATIONAL], @1), @"ShutterSpeedValue",
                            // specifies location of main subject in scene (x,y,wdith,height) expressed before rotation processing
                            // TAGINF(@"9214", [NSNumber numberWithInt:EDT_USHORT], @4), @"SubjectArea",
                            TAGINF(@"a403", [NSNumber numberWithInt:EDT_USHORT], @1), @"WhiteBalance",
-                      nil];
+                           nil];
     return self;
 }
 
