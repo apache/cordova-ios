@@ -136,7 +136,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     //    BOOL trustAllHosts = [[arguments objectAtIndex:6 withDefault:[NSNumber numberWithBool:YES]] boolValue]; // allow self-signed certs
     BOOL chunkedMode = [[arguments objectAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
     NSDictionary* headers = [arguments objectAtIndex:8 withDefault:nil];
-
+    // Allow alternative http method, default to POST. JS side checks
+    // for allowed methods, currently PUT or POST (forces POST for
+    // unrecognised values)
+    NSString* httpMethod = [arguments objectAtIndex:10 withDefault:@"POST"];
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
@@ -158,7 +161,8 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     }
 
     NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:url];
-    [req setHTTPMethod:@"POST"];
+
+    [req setHTTPMethod:httpMethod];
 
     //    Magic value to set a cookie
     if ([options objectForKey:kOptionsKeyCookie]) {
@@ -211,6 +215,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         CFWriteStreamRef writeStream = NULL;
         CFStreamCreateBoundPair(NULL, &readStream, &writeStream, kStreamBufferSize);
         [req setHTTPBodyStream:CFBridgingRelease(readStream)];
+
+        self.backgroundTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTaskID];
+                self.backgroundTaskID = UIBackgroundTaskInvalid;
+                NSLog(@"Background task to upload media finished.");
+            }];
 
         [self.commandDelegate runInBackground:^{
             if (CFWriteStreamOpen(writeStream)) {
@@ -456,19 +466,56 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 @end
 
+@interface CDVFileTransferEntityLengthRequest : NSObject {
+    NSURLConnection* _connection;
+    CDVFileTransferDelegate* __weak _originalDelegate;
+}
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate;
+
+@end;
+
+@implementation CDVFileTransferEntityLengthRequest;
+
+- (CDVFileTransferEntityLengthRequest*)initWithOriginalRequest:(NSURLRequest*)originalRequest andDelegate:(CDVFileTransferDelegate*)originalDelegate
+{
+    if (self) {
+        DLog(@"Requesting entity length for GZIPped content...");
+
+        NSMutableURLRequest* req = [originalRequest mutableCopy];
+        [req setHTTPMethod:@"HEAD"];
+        [req setValue:@"identity" forHTTPHeaderField:@"Accept-Encoding"];
+
+        _originalDelegate = originalDelegate;
+        _connection = [NSURLConnection connectionWithRequest:req delegate:self];
+    }
+    return self;
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
+{
+    DLog(@"HEAD request returned; content-length is %lld", [response expectedContentLength]);
+    [_originalDelegate updateBytesExpected:[response expectedContentLength]];
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
+{}
+
+- (void)connectionDidFinishLoading:(NSURLConnection*)connection
+{}
+
+@end
+
 @implementation CDVFileTransferDelegate
 
-@synthesize callbackId, connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId;
+@synthesize callbackId, connection = _connection, source, target, responseData, command, bytesTransfered, bytesExpected, direction, responseCode, objectId, targetFileHandle;
 
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
     NSString* uploadResponse = nil;
     NSString* downloadResponse = nil;
-    BOOL downloadWriteOK = NO;
     NSMutableDictionary* uploadResult;
     CDVPluginResult* result = nil;
-    NSError* __autoreleasing error = nil;
-    NSString* parentPath;
     BOOL bDirRequest = NO;
     CDVFile* file;
 
@@ -491,40 +538,15 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
         }
     }
     if (self.direction == CDV_TRANSFER_DOWNLOAD) {
-        DLog(@"Write file %@", target);
-        // error=[[NSError alloc]init];
+        if (self.targetFileHandle) {
+            [self.targetFileHandle closeFile];
+            self.targetFileHandle = nil;
+            DLog(@"File Transfer Download success");
 
-        if ((self.responseCode >= 200) && (self.responseCode < 300)) {
-            @try {
-                parentPath = [self.target stringByDeletingLastPathComponent];
-
-                // check if the path exists => create directories if needed
-                if (![[NSFileManager defaultManager] fileExistsAtPath:parentPath]) {
-                    [[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:nil];
-                }
-
-                downloadWriteOK = [self.responseData writeToFile:self.target options:NSDataWritingFileProtectionNone error:&error];
-
-                if (downloadWriteOK == NO) {
-                    // send our results back
-                    downloadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:INVALID_URL_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:downloadResponse]];
-                } else {
-                    DLog(@"File Transfer Download success");
-
-                    file = [[CDVFile alloc] init];
-
-                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[file getDirectoryEntry:target isDirectory:bDirRequest]];
-                }
-            }
-            @catch(id exception) {
-                // jump back to main thread
-                downloadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:downloadResponse]];
-            }
+            file = [[CDVFile alloc] init];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[file getDirectoryEntry:target isDirectory:bDirRequest]];
         } else {
             downloadResponse = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[command createFileTransferError:CONNECTION_ERR AndSource:source AndTarget:target AndHttpStatus:self.responseCode AndBody:downloadResponse]];
         }
     }
@@ -533,11 +555,28 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
     // remove connection for activeTransfers
     [command.activeTransfers removeObjectForKey:objectId];
+
+    // remove background id task in case our upload was done in the background
+    [[UIApplication sharedApplication] endBackgroundTask:self.command.backgroundTaskID];
+    self.command.backgroundTaskID = UIBackgroundTaskInvalid;
+}
+
+- (void)cancelTransferWithError:(NSURLConnection*)connection errorMessage:(NSString*)errorMessage
+{
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[self.command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:self.source AndTarget:self.target AndHttpStatus:self.responseCode AndBody:errorMessage]];
+
+    NSLog(@"File Transfer Error: %@", errorMessage);
+    [connection cancel];
+    [self.command.activeTransfers removeObjectForKey:self.objectId];
+    [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
 {
+    NSError* __autoreleasing error = nil;
+
     self.mimeType = [response MIMEType];
+    self.targetFileHandle = nil;
 
     // required for iOS 4.3, for some reason; response is
     // a plain NSURLResponse, not the HTTP subclass
@@ -546,6 +585,11 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
         self.responseCode = [httpResponse statusCode];
         self.bytesExpected = [response expectedContentLength];
+        if ((self.direction == CDV_TRANSFER_DOWNLOAD) && (self.responseCode == 200) && (self.bytesExpected == NSURLResponseUnknownLength)) {
+            // Kick off HEAD request to server to get real length
+            // bytesExpected will be updated when that response is returned
+            self.entityLengthRequest = [[CDVFileTransferEntityLengthRequest alloc] initWithOriginalRequest:connection.currentRequest andDelegate:self];
+        }
     } else if ([response.URL isFileURL]) {
         NSDictionary* attr = [[NSFileManager defaultManager] attributesOfItemAtPath:[response.URL path] error:nil];
         self.responseCode = 200;
@@ -553,6 +597,31 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     } else {
         self.responseCode = 200;
         self.bytesExpected = NSURLResponseUnknownLength;
+    }
+    if ((self.direction == CDV_TRANSFER_DOWNLOAD) && (self.responseCode >= 200) && (self.responseCode < 300)) {
+        // Download response is okay; begin streaming output to file
+        NSString* parentPath = [self.target stringByDeletingLastPathComponent];
+
+        // create parent directories if needed
+        if ([[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:&error] == NO) {
+            if (error) {
+                [self cancelTransferWithError:connection errorMessage:[NSString stringWithFormat:@"Could not create path to save downloaded file: %@", [error localizedDescription]]];
+            } else {
+                [self cancelTransferWithError:connection errorMessage:@"Could not create path to save downloaded file"];
+            }
+            return;
+        }
+        // create target file
+        if ([[NSFileManager defaultManager] createFileAtPath:self.target contents:nil attributes:nil] == NO) {
+            [self cancelTransferWithError:connection errorMessage:@"Could not create target file"];
+            return;
+        }
+        // open target file for writing
+        self.targetFileHandle = [NSFileHandle fileHandleForWritingAtPath:self.target];
+        if (self.targetFileHandle == nil) {
+            [self cancelTransferWithError:connection errorMessage:@"Could not open target file for writing"];
+        }
+        DLog(@"Streaming to file %@", target);
     }
 }
 
@@ -571,10 +640,30 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
 {
     self.bytesTransfered += data.length;
-    [self.responseData appendData:data];
+    if (self.targetFileHandle) {
+        [self.targetFileHandle writeData:data];
+    } else {
+        [self.responseData appendData:data];
+    }
+    [self updateProgress];
+}
 
+- (void)updateBytesExpected:(NSInteger)newBytesExpected
+{
+    DLog(@"Updating bytesExpected to %d", newBytesExpected);
+    self.bytesExpected = newBytesExpected;
+    [self updateProgress];
+}
+
+- (void)updateProgress
+{
     if (self.direction == CDV_TRANSFER_DOWNLOAD) {
         BOOL lengthComputable = (self.bytesExpected != NSURLResponseUnknownLength);
+        // If the response is GZipped, and we have an outstanding HEAD request to get
+        // the length, then hold off on sending progress events.
+        if (!lengthComputable && (self.entityLengthRequest != nil)) {
+            return;
+        }
         NSMutableDictionary* downloadProgress = [NSMutableDictionary dictionaryWithCapacity:3];
         [downloadProgress setObject:[NSNumber numberWithBool:lengthComputable] forKey:@"lengthComputable"];
         [downloadProgress setObject:[NSNumber numberWithInt:self.bytesTransfered] forKey:@"loaded"];
@@ -618,6 +707,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 {
     if ((self = [super init])) {
         self.responseData = [NSMutableData data];
+        self.targetFileHandle = nil;
     }
     return self;
 }
