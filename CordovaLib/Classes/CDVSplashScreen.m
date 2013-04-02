@@ -87,7 +87,12 @@
     // Set the frame & image later.
     _imageView = [[UIImageView alloc] init];
     [parentView addSubview:_imageView];
-    [parentView addSubview:_activityView];
+
+    id showSplashScreenSpinnerValue = [self.commandDelegate.settings objectForKey:@"ShowSplashScreenSpinner"];
+    // backwards compatibility - if key is missing, default to true
+    if ((showSplashScreenSpinnerValue == nil) || [showSplashScreenSpinnerValue boolValue]) {
+        [parentView addSubview:_activityView];
+    }
 
     // Frame is required when launching in portrait mode.
     // Bounds for landscape since it captures the rotation.
