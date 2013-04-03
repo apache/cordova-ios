@@ -59,7 +59,7 @@ done
 
 BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
 CORDOVALIB_DIR="$BINDIR/../CordovaLib"
-CDV_VER=$(cat $CORDOVALIB_DIR/VERSION)
+CDV_VER=$(cat "$CORDOVALIB_DIR/VERSION")
 
 PROJECT_PATH=$1
 PACKAGE=$2
