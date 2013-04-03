@@ -38,10 +38,10 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     // supported tags for exif IFD
     IFD0TagFormatDict = [[NSDictionary alloc] initWithObjectsAndKeys:
                   //      TAGINF(@"010e", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"ImageDescription",
-    //                    TAGINF(@"0132", [NSNumber numberWithInt:EDT_ASCII_STRING], @20), @"DateTime",
-    //                    TAGINF(@"010f", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Make",
-    //                    TAGINF(@"0110", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Model",
-    //                    TAGINF(@"0131", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Software",
+                        TAGINF(@"0132", [NSNumber numberWithInt:EDT_ASCII_STRING], @20), @"DateTime",
+                        TAGINF(@"010f", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Make",
+                        TAGINF(@"0110", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Model",
+                        TAGINF(@"0131", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Software",
                         TAGINF(@"011a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"XResolution",
                         TAGINF(@"011b", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"YResolution",
                         // currently supplied outside of Exif data block by UIImagePickerControllerMediaMetadata, this is set manually in CDVCamera.m
@@ -64,32 +64,32 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 
     // supported tages for exif subIFD
     SubIFDTagFormatDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                           // TAGINF(@"9000", [NSNumber numberWithInt:], @), @"ExifVersion",
+                           //TAGINF(@"9000", [NSNumber numberWithInt:], @), @"ExifVersion",
                            //TAGINF(@"9202",[NSNumber numberWithInt:EDT_URATIONAL],@1), @"ApertureValue",
                            //TAGINF(@"9203",[NSNumber numberWithInt:EDT_SRATIONAL],@1), @"BrightnessValue",
                            TAGINF(@"a001",[NSNumber numberWithInt:EDT_USHORT],@1), @"ColorSpace",
-                           //TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
-                           //TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
-             //              TAGINF(@"a402", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureMode",
-             //              TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
-                           //                     TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
+                           TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
+                           TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
+                           TAGINF(@"a402", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureMode",
+                           TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
+                           //TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
                            //TAGINF(@"829d", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FNumber",
-              //             TAGINF(@"9209", [NSNumber numberWithInt:EDT_USHORT], @1), @"Flash",
+                           TAGINF(@"9209", [NSNumber numberWithInt:EDT_USHORT], @1), @"Flash",
                            // FocalLengthIn35mmFilm
-               //            TAGINF(@"a405", [NSNumber numberWithInt:EDT_USHORT], @1), @"FocalLenIn35mmFilm",
-                           //                         TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
-                           // TAGINF(@"8827", [NSNumber numberWithInt:EDT_USHORT], @2), @"ISOSpeedRatings",
-                //           TAGINF(@"9207", [NSNumber numberWithInt:EDT_USHORT],@1), @"MeteringMode",
+                           TAGINF(@"a405", [NSNumber numberWithInt:EDT_USHORT], @1), @"FocalLenIn35mmFilm",
+                           //TAGINF(@"920a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"FocalLength",
+                           //TAGINF(@"8827", [NSNumber numberWithInt:EDT_USHORT], @2), @"ISOSpeedRatings",
+                           TAGINF(@"9207", [NSNumber numberWithInt:EDT_USHORT],@1), @"MeteringMode",
                            // specific to compressed data
-                 //          TAGINF(@"a002", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelXDimension",
-                 //          TAGINF(@"a003", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelYDimension",
+                           TAGINF(@"a002", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelXDimension",
+                           TAGINF(@"a003", [NSNumber numberWithInt:EDT_ULONG],@1), @"PixelYDimension",
                            // data type undefined, but this is a DSC camera, so value is always 1, treat as ushort
-                  //         TAGINF(@"a301", [NSNumber numberWithInt:EDT_USHORT],@1), @"SceneType",
-                  //         TAGINF(@"a217",[NSNumber numberWithInt:EDT_USHORT],@1), @"SensingMethod",
-                           // TAGINF(@"9201", [NSNumber numberWithInt:EDT_SRATIONAL], @1), @"ShutterSpeedValue",
+                           TAGINF(@"a301", [NSNumber numberWithInt:EDT_USHORT],@1), @"SceneType",
+                           TAGINF(@"a217",[NSNumber numberWithInt:EDT_USHORT],@1), @"SensingMethod",
+                           //TAGINF(@"9201", [NSNumber numberWithInt:EDT_SRATIONAL], @1), @"ShutterSpeedValue",
                            // specifies location of main subject in scene (x,y,wdith,height) expressed before rotation processing
-                           // TAGINF(@"9214", [NSNumber numberWithInt:EDT_USHORT], @4), @"SubjectArea",
-                   //        TAGINF(@"a403", [NSNumber numberWithInt:EDT_USHORT], @1), @"WhiteBalance",
+                           //TAGINF(@"9214", [NSNumber numberWithInt:EDT_USHORT], @4), @"SubjectArea",
+                           TAGINF(@"a403", [NSNumber numberWithInt:EDT_USHORT], @1), @"WhiteBalance",
                            nil];
     return self;
 }
@@ -173,10 +173,11 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 
     //data labeled as EXIF in UIImagePickerControllerMediaMetaData is part of the EXIF Sub IFD portion of APP1
     subExifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{Exif}"] withFormatDict: SubIFDTagFormatDict isIFD0:NO];
+    /*
     NSLog(@"SUB EXIF IFD %@  WITH SIZE: %d",exifIFD,[exifIFD length]);
     
     NSLog(@"SUB EXIF IFD %@  WITH SIZE: %d",subExifIFD,[subExifIFD length]);
-    
+    */
     // construct the complete app1 data block
     app1 = [[NSMutableString alloc] initWithFormat: @"%@%04x%@%@%@%@%@",
             app1marker,
@@ -251,8 +252,8 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     // calculate IFD0 terminal offset tags, currently ExifSubIFD
     int entrycount = [ifdblock count];
     if (ifd0flag) {
-        // 18 accounts for 8769's width + offset to next ifd, 6 accounts for start of header
-        NSNumber * offset = [NSNumber numberWithInt:[exifstr length] / 2 + [dbstr length] / 2 + 18+6];
+        // 18 accounts for 8769's width + offset to next ifd, 8 accounts for start of header
+        NSNumber * offset = [NSNumber numberWithInt:[exifstr length] / 2 + [dbstr length] / 2 + 18+8];
         
         [self appendExifOffsetTagTo: exifstr
                         withOffset : offset];
