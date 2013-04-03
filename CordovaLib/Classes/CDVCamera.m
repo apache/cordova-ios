@@ -85,12 +85,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
         return;
     }
 
-    NSNumber* cameraDirection = [arguments objectAtIndex:11];
-    UIImagePickerControllerCameraDevice cameraDevice = UIImagePickerControllerCameraDeviceRear; // default
-    if (cameraDirection != nil) {
-        cameraDevice = (UIImagePickerControllerSourceType)[cameraDirection intValue];
-    }
-
     bool allowEdit = [[arguments objectAtIndex:7] boolValue];
     NSNumber* targetWidth = [arguments objectAtIndex:3];
     NSNumber* targetHeight = [arguments objectAtIndex:4];
@@ -114,7 +108,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
     cameraPicker.delegate = self;
     cameraPicker.sourceType = sourceType;
-    cameraPicker.cameraDevice = cameraDevice;
     cameraPicker.allowsEditing = allowEdit; // THIS IS ALL IT TAKES FOR CROPPING - jm
     cameraPicker.callbackId = callbackId;
     cameraPicker.targetSize = targetSize;
@@ -132,18 +125,22 @@ static NSSet* org_apache_cordova_validArrowDirections;
     cameraPicker.returnType = ([arguments objectAtIndex:1]) ? [[arguments objectAtIndex:1] intValue] : DestinationTypeFileUri;
 
     if (sourceType == UIImagePickerControllerSourceTypeCamera) {
-        // we only allow taking pictures (no video) in this api
+        // We only allow taking pictures (no video) in this API.
         cameraPicker.mediaTypes = [NSArray arrayWithObjects:(NSString*)kUTTypeImage, nil];
+
+        // We can only set the camera device if we're actually using the camera.
+        NSNumber* cameraDirection = [command argumentAtIndex:11 withDefault:[NSNumber numberWithInteger:UIImagePickerControllerCameraDeviceRear]];
+        cameraPicker.cameraDevice = (UIImagePickerControllerCameraDevice)[cameraDirection intValue];
     } else if (mediaType == MediaTypeAll) {
         cameraPicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     } else {
-        NSArray* mediaArray = [NSArray arrayWithObjects:(NSString*)(mediaType == MediaTypeVideo ? kUTTypeMovie:kUTTypeImage), nil];
+        NSArray* mediaArray = [NSArray arrayWithObjects:(NSString*)(mediaType == MediaTypeVideo ? kUTTypeMovie : kUTTypeImage), nil];
         cameraPicker.mediaTypes = mediaArray;
     }
 
     if ([self popoverSupported] && (sourceType != UIImagePickerControllerSourceTypeCamera)) {
         if (cameraPicker.popoverController == nil) {
-            cameraPicker.popoverController = [[NSClassFromString (@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
+            cameraPicker.popoverController = [[NSClassFromString(@"UIPopoverController")alloc] initWithContentViewController:cameraPicker];
         }
         NSDictionary* options = [command.arguments objectAtIndex:10 withDefault:nil];
         [self displayPopover:options];
@@ -299,18 +296,17 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
             } else {
                 data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
-                
+
                 /* splice loc */
-                CDVJpegHeaderWriter * exifWriter = [[CDVJpegHeaderWriter alloc] init];
-                NSString * headerstring = [exifWriter createExifAPP1: [info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
+                CDVJpegHeaderWriter* exifWriter = [[CDVJpegHeaderWriter alloc] init];
+                NSString* headerstring = [exifWriter createExifAPP1:[info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
                 data = [exifWriter spliceExifBlockIntoJpeg:data withExifBlock:headerstring];
-                
             }
 
             if (cameraPicker.returnType == DestinationTypeFileUri) {
                 // write to temp directory and return URI
                 // get the temp directory path
-                NSString* docsPath = [NSTemporaryDirectory ()stringByStandardizingPath];
+                NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];
                 NSError* err = nil;
                 NSFileManager* fileMgr = [[NSFileManager alloc] init]; // recommended by apple (vs [NSFileManager defaultManager]) to be threadsafe
                 // generate unique file name
@@ -435,7 +431,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
             rotation_radians = 0.0;
             break;
 
-        case UIImageOrientationDown :
+        case UIImageOrientationDown:
             rotation_radians = M_PI; // don't be scared of radians, if you're reading this, you're good at math
             break;
 
@@ -534,7 +530,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     // first parameter an image
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding : NSUTF8StringEncoding]];
     [postBody appendData:imageData];
 
     //	// second parameter information
