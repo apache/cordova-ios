@@ -24,6 +24,10 @@
 
 ### 2.6.0 (20130401) ###
 
+* [CB-2732] Only set camera device when allowed.
+* [CB-2848] ShowSplashScreenSpinner not used
+* [CB-2790] added splice function to header writer: accepts jpeg as NSData, 
+* [CB-2790] removed old splice code, replaced with JpegHeaderWriter api call
 * [CB-1547] Scope notifications to WebViews
 * [CB-2461] Distinguish sub-frame from top-level loads in InAppBrowser.
 * [CB-2523] Add setting to shrink webview when keyboard pops up
