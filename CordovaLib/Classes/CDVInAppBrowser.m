@@ -545,6 +545,9 @@
             url = _requestedURL;
         }
         [self.navigationDelegate browserLoadStart:url];
+        // Return NO if the URL uses the 'gap-iab' protocol, as this is used for the
+        // IAB bridge, rather than any actual web content.
+        return ![[url scheme] isEqualToString:@"gap-iab"];
     }
     return YES;
 }
