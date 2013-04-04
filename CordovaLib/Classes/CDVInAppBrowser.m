@@ -160,25 +160,35 @@
     }
 }
 
+// This is a helper method for the inject{Script|Style}{Code|File} API calls, which
+// provides a consistent method for injecting JavaScript code into the document.
+//
+// If a wrapper string is supplied, then the source string will be JSON-encoded (adding
+// quotes) and wrapped using string formatting. (The wrapper string should have a single
+// '%@' marker).
+//
+// If no wrapper is supplied, then the source string is executed directly.
+
 - (void)injectDeferredObject:(NSString*)source withWrapper:(NSString*)jsWrapper
 {
-    NSString* sourceArrayString = [@[source] JSONString];
-
-    if (sourceArrayString) {
-        NSString* sourceString = [sourceArrayString substringWithRange:NSMakeRange(1, [sourceArrayString length] - 2)];
-        NSString* jsToInject = [NSString stringWithFormat:jsWrapper, sourceString];
-        [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:jsToInject];
+    if (jsWrapper != nil) {
+        NSString* sourceArrayString = [@[source] JSONString];
+        if (sourceArrayString) {
+            NSString* sourceString = [sourceArrayString substringWithRange:NSMakeRange(1, [sourceArrayString length] - 2)];
+            NSString* jsToInject = [NSString stringWithFormat:jsWrapper, sourceString];
+            [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:jsToInject];
+        }
+    } else {
+        [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:source];
     }
 }
 
 - (void)injectScriptCode:(CDVInvokedUrlCommand*)command
 {
-    NSString* jsWrapper;
+    NSString* jsWrapper = nil;
 
     if ((command.callbackId != nil) && ![command.callbackId isEqualToString:@"INVALID"]) {
         jsWrapper = [NSString stringWithFormat:@"document.getElementById('cdv-iab-bridge').src='gap-iab://%@/'+window.escape(JSON.stringify([eval(%%@)]));", command.callbackId];
-    } else {
-        jsWrapper = @"eval(%@);";
     }
     [self injectDeferredObject:[command argumentAtIndex:0] withWrapper:jsWrapper];
 }
