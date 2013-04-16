@@ -20,8 +20,15 @@
 #import "CDVJpegHeaderWriter.h"
 #include "CDVExif.h"
 
-// tag info shorthand, tagno: tag number, typecode: data type:, components: number of components
+/* macros for tag info shorthand:
+   tagno        : tag number
+   typecode     : data type
+   components   : number of components
+   appendString (TAGINF_W_APPEND only) : string to append to data
+      Exif date data format include an extra 0x00 to the end of the data
+ */
 #define TAGINF(tagno, typecode, components) [NSArray arrayWithObjects: tagno, typecode, components, nil]
+#define TAGINF_W_APPEND(tagno, typecode, components, appendString) [NSArray arrayWithObjects: tagno, typecode, components, appendString, nil]
 
 const uint mJpegId = 0xffd8; // JPEG format marker
 const uint mExifMarker = 0xffe1; // APP1 jpeg header marker
@@ -38,7 +45,7 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     // supported tags for exif IFD
     IFD0TagFormatDict = [[NSDictionary alloc] initWithObjectsAndKeys:
                   //      TAGINF(@"010e", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"ImageDescription",
-                        TAGINF(@"0132", [NSNumber numberWithInt:EDT_ASCII_STRING], @20), @"DateTime",
+                        TAGINF_W_APPEND(@"0132", [NSNumber numberWithInt:EDT_ASCII_STRING], @20, @"00"), @"DateTime",
                         TAGINF(@"010f", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Make",
                         TAGINF(@"0110", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Model",
                         TAGINF(@"0131", [NSNumber numberWithInt:EDT_ASCII_STRING], @0), @"Software",
@@ -68,8 +75,8 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
                            //TAGINF(@"9202",[NSNumber numberWithInt:EDT_URATIONAL],@1), @"ApertureValue",
                            //TAGINF(@"9203",[NSNumber numberWithInt:EDT_SRATIONAL],@1), @"BrightnessValue",
                            TAGINF(@"a001",[NSNumber numberWithInt:EDT_USHORT],@1), @"ColorSpace",
-                           TAGINF(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeDigitized",
-                           TAGINF(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20), @"DateTimeOriginal",
+                           TAGINF_W_APPEND(@"9004",[NSNumber numberWithInt:EDT_ASCII_STRING],@20,@"00"), @"DateTimeDigitized",
+                           TAGINF_W_APPEND(@"9003",[NSNumber numberWithInt:EDT_ASCII_STRING],@20,@"00"), @"DateTimeOriginal",
                            TAGINF(@"a402", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureMode",
                            TAGINF(@"8822", [NSNumber numberWithInt:EDT_USHORT], @1), @"ExposureProgram",
                            //TAGINF(@"829a", [NSNumber numberWithInt:EDT_URATIONAL], @1), @"ExposureTime",
@@ -244,8 +251,14 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
             [exifstr appendFormat : @"%@%@", entry, data];
         } else {
             [exifstr appendFormat : @"%@%08x", entry, addr];
-            [dbstr appendFormat: @"%@", data]; 
+            [dbstr appendFormat: @"%@", data];
             addr+= [data length] / 2;
+            /*
+            NSLog(@"=====data-length[%i]=======",[data length]);
+            NSLog(@"addr-offset[%i]",addr);
+            NSLog(@"entry[%@]",entry);
+            NSLog(@"data[%@]",data);
+             */
         }
     }
     
@@ -307,6 +320,7 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     NSMutableString * datastr = nil;
     NSNumber * tmp = nil;
     NSNumber * formatcode = [dataformat objectAtIndex:1];
+    NSUInteger formatItemsCount = [dataformat count];
     NSNumber * num = @0;
     NSNumber * denom = @0;
     
@@ -317,6 +331,11 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
             datastr = [[NSMutableString alloc] init];
             for (int i = 0; i < [data length]; i++) {
                 [datastr appendFormat:@"%02x",[data characterAtIndex:i]];
+            }
+            if (formatItemsCount > 3) {
+                // We have additional data to append.
+                // currently used by Date format to append final 0x00 but can be used by other data types as well in the future
+                [datastr appendString:[dataformat objectAtIndex:3]];
             }
             if ([datastr length] < 8) {
                 NSString * format = [NSString stringWithFormat:@"%%0%dd", 8 - [datastr length]];
