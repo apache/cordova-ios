@@ -174,12 +174,14 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     NSString * tiffheader = @"4d4d002a";
     //first IFD offset from the Tiff header to IFD0. Since we are writing it, we know it's address 0x08
     NSString * ifd0offset = @"00000008";
+    // current offset to next data area
+    int currentDataOffset = 0;
     
     //data labeled as TIFF in UIImagePickerControllerMediaMetaData is part of the EXIF IFD0 portion of APP1
-    exifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{TIFF}"] withFormatDict: IFD0TagFormatDict isIFD0:YES];
+    exifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{TIFF}"] withFormatDict: IFD0TagFormatDict isIFD0:YES currentDataOffset:&currentDataOffset];
 
     //data labeled as EXIF in UIImagePickerControllerMediaMetaData is part of the EXIF Sub IFD portion of APP1
-    subExifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{Exif}"] withFormatDict: SubIFDTagFormatDict isIFD0:NO];
+    subExifIFD = [self createExifIFDFromDict: [datadict objectForKey:@"{Exif}"] withFormatDict: SubIFDTagFormatDict isIFD0:NO currentDataOffset:&currentDataOffset];
     /*
     NSLog(@"SUB EXIF IFD %@  WITH SIZE: %d",exifIFD,[exifIFD length]);
     
@@ -199,8 +201,11 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
 }
 
 // returns hex string representing a valid exif information file directory constructed from the datadict and formatdict
-- (NSString*) createExifIFDFromDict : (NSDictionary*) datadict withFormatDict : (NSDictionary*) formatdict isIFD0 : (BOOL) ifd0flag {
-    NSArray * datakeys = [datadict allKeys]; // all known data keys 
+- (NSString*) createExifIFDFromDict : (NSDictionary*) datadict
+                     withFormatDict : (NSDictionary*) formatdict
+                             isIFD0 : (BOOL) ifd0flag
+                  currentDataOffset : (int*) dataoffset {
+    NSArray * datakeys = [datadict allKeys]; // all known data keys
     NSArray * knownkeys = [formatdict  allKeys]; // only keys in knowkeys are considered for entry in this IFD
     NSMutableArray * ifdblock = [[NSMutableArray alloc] initWithCapacity: [datadict count]]; // all ifd entries
     NSMutableArray * ifddatablock = [[NSMutableArray alloc] initWithCapacity: [datadict count]]; // data block entries
@@ -232,13 +237,13 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
     NSMutableString * exifstr = [[NSMutableString alloc] initWithCapacity: [ifdblock count] * 24];
     NSMutableString * dbstr = [[NSMutableString alloc] initWithCapacity: 100];
     
-    int addr=0; // current offset/address in datablock
+    int addr=*dataoffset; // current offset/address in datablock
     if (ifd0flag) {
         // calculate offset to datablock based on ifd file entry count
-        addr = 14+(12*([ifddatablock count]+1)); // +1 for tag 0x8769, exifsubifd offset
+        addr += 14+(12*([ifddatablock count]+1)); // +1 for tag 0x8769, exifsubifd offset
     } else {
-        // same calculation as above, but no exifsubifd offset
-        addr = 14+12*[ifddatablock count];
+        // current offset + numSubIFDs (2-bytes) + 12*numSubIFDs + endMarker (4-bytes)
+        addr += 2+(12*[ifddatablock count])+4;
     }
     
     for (int i = 0; i < [ifdblock count]; i++) {
@@ -271,7 +276,8 @@ const uint mTiffLength = 0x2a; // after byte align bits, next to bits are 0x002a
         [self appendExifOffsetTagTo: exifstr
                         withOffset : offset];
         entrycount++;
-    } 
+    }
+    *dataoffset = addr;
     return [[NSString alloc] initWithFormat: @"%04x%@%@%@",
             entrycount,
             exifstr,
