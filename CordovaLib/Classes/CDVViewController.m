@@ -615,12 +615,6 @@
     // It's safe to release the lock even if this is just a sub-frame that's finished loading.
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
-    // The .onNativeReady().fire() will work when cordova.js is already loaded.
-    // The _nativeReady = true; is used when this is run before cordova.js is loaded.
-    NSString* nativeReady = @"try{cordova.require('cordova/channel').onNativeReady.fire();}catch(e){window._nativeReady = true;}";
-    // Don't use [commandDelegate evalJs] here since it relies on cordova.js being loaded already.
-    [self.webView stringByEvaluatingJavaScriptFromString:nativeReady];
-
     /*
      * Hide the Top Activity THROBBER in the Battery Bar
      */
