@@ -24,7 +24,9 @@
 
 @class CDVInAppBrowserViewController;
 
-@interface CDVInAppBrowser : CDVPlugin
+@interface CDVInAppBrowser : CDVPlugin {
+    BOOL _injectedIframeBridge;
+}
 
 @property (nonatomic, retain) CDVInAppBrowserViewController* inAppBrowserViewController;
 @property (nonatomic, copy) NSString* callbackId;
