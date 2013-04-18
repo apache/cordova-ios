@@ -17,6 +17,48 @@
  under the License.
  */
 
+//
+// Testing shows:
+//
+// In all cases, webView.request.URL is the previous page's URL (or empty) during the didStartLoad callback.
+// When loading a page with a redirect:
+// 1. shouldStartLoading (requestURL is target page)
+// 2. didStartLoading
+// 3. shouldStartLoading (requestURL is redirect target)
+// 4. didFinishLoad (request.URL is redirect target)
+//
+// Note the lack of a second didStartLoading **
+//
+// When loading a page with iframes:
+// 1. shouldStartLoading (requestURL is main page)
+// 2. didStartLoading
+// 3. shouldStartLoading (requestURL is one of the iframes)
+// 4. didStartLoading
+// 5. didFinishLoad
+// 6. didFinishLoad
+//
+// Note there is no way to distinguish which didFinishLoad maps to which didStartLoad **
+//
+// Loading a page by calling window.history.go(-1):
+// 1. didStartLoading
+// 2. didFinishLoad
+//
+// Note the lack of a shouldStartLoading call **
+// Actually - this is fixed on iOS6. iOS6 has a shouldStart. **
+//
+// Loading a page by calling location.reload()
+// 1. shouldStartLoading
+// 2. didStartLoading
+// 3. didFinishLoad
+//
+// Loading a page with an iframe that fails to load:
+// 1. shouldStart (main page)
+// 2. didStart
+// 3. shouldStart (iframe)
+// 4. didStart
+// 5. didFailWithError
+// 6. didFinish
+
 #import "CDVWebViewDelegate.h"
 #import "CDVAvailability.h"
 
