@@ -229,8 +229,6 @@
     [self injectDeferredObject:[command argumentAtIndex:0] withWrapper:jsWrapper];
 }
 
-#pragma mark CDVInAppBrowserNavigationDelegate
-
 /**
  * The iframe bridge provided for the InAppBrowser is capable of executing any oustanding callback belonging
  * to the InAppBrowser plugin. Care has been taken that other callbacks cannot be triggered, and that no
@@ -246,14 +244,15 @@
  * value to pass to the callback. [NSURL path] should take care of the URL-unescaping, and a JSON_EXCEPTION
  * is returned if the JSON is invalid.
  */
-- (void)browserLoadStart:(NSURL*)url
+- (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    CDVPluginResult* pluginResult;
+    NSURL* url = request.URL;
 
     // See if the url uses the 'gap-iab' protocol. If so, the host should be the id of a callback to execute,
     // and the path, if present, should be a JSON-encoded value to pass to the callback.
     if ([[url scheme] isEqualToString:@"gap-iab"]) {
         NSString* scriptCallbackId = [url host];
+        CDVPluginResult* pluginResult = nil;
 
         if ([scriptCallbackId hasPrefix:@"InAppBrowser"]) {
             NSString* scriptResult = [url path];
@@ -272,36 +271,45 @@
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:@[]];
             }
             [self.commandDelegate sendPluginResult:pluginResult callbackId:scriptCallbackId];
-            return;
+            return NO;
         }
     }
+    return YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView*)theWebView
+{
     if (self.callbackId != nil) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                     messageAsDictionary:@{@"type":@"loadstart", @"url":[url absoluteString]}];
+        NSString* url = [[self.inAppBrowserViewController requestedURL] absoluteString];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                      messageAsDictionary:@{@"type":@"loadstart", @"url":url}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
 }
 
-- (void)browserLoadStop:(NSURL*)url
+- (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
     // Create an iframe bridge in the new document to communicate with the CDVInAppBrowserViewController
     [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:@"(function(d){var e=d.createElement('iframe');e.id='cdv-iab-bridge';e.style.display='none';d.body.appendChild(e);})(document)"];
     if (self.callbackId != nil) {
+        // TODO: It would be more useful to return the URL the page is actually on (e.g. if it's been redirected).
+        NSString* url = [[self.inAppBrowserViewController requestedURL] absoluteString];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:@{@"type":@"loadstop", @"url":[url absoluteString]}];
+                                                      messageAsDictionary:@{@"type":@"loadstop", @"url":url}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
 }
 
-- (void)browserLoadError:(NSError*)error forUrl:(NSURL*)url
+- (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
 {
     if (self.callbackId != nil) {
+        NSString* url = [[self.inAppBrowserViewController requestedURL] absoluteString];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                      messageAsDictionary:@{@"type":@"loaderror", @"url":[url absoluteString], @"code": [NSNumber numberWithInt:error.code], @"message": error.localizedDescription}];
+                                                      messageAsDictionary:@{@"type":@"loaderror", @"url":url, @"code": [NSNumber numberWithInt:error.code], @"message": error.localizedDescription}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
@@ -327,6 +335,8 @@
 #pragma mark CDVInAppBrowserViewController
 
 @implementation CDVInAppBrowserViewController
+
+@synthesize requestedURL = _requestedURL;
 
 - (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent
 {
@@ -545,21 +555,13 @@
     self.forwardButton.enabled = theWebView.canGoForward;
 
     [self.spinner startAnimating];
+
+    return [self.navigationDelegate webViewDidStartLoad:theWebView];
 }
 
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStart:)]) {
-        NSURL* url = request.URL;
-        if (url == nil) {
-            url = _requestedURL;
-        }
-        [self.navigationDelegate browserLoadStart:url];
-        // Return NO if the URL uses the 'gap-iab' protocol, as this is used for the
-        // IAB bridge, rather than any actual web content.
-        return ![[url scheme] isEqualToString:@"gap-iab"];
-    }
-    return YES;
+    return [self.navigationDelegate webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
@@ -588,9 +590,7 @@
         [CDVUserAgentUtil setUserAgent:_prevUserAgent lockToken:_userAgentLockToken];
     }
 
-    if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadStop:)]) {
-        [self.navigationDelegate browserLoadStop:_requestedURL];
-    }
+    [self.navigationDelegate webViewDidFinishLoad:theWebView];
 }
 
 - (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
@@ -604,9 +604,7 @@
 
     self.addressLabel.text = @"Load Error";
 
-    if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserLoadError:forUrl:)]) {
-        [self.navigationDelegate browserLoadError:error forUrl:_requestedURL];
-    }
+    [self.navigationDelegate webView:theWebView didFailLoadWithError:error];
 }
 
 #pragma mark CDVScreenOrientationDelegate

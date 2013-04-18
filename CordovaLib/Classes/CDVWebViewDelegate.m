@@ -20,6 +20,9 @@
 #import "CDVWebViewDelegate.h"
 #import "CDVAvailability.h"
 
+// #define VerboseLog NSLog
+#define VerboseLog(...) do {} while (0)
+
 typedef enum {
     STATE_NORMAL,
     STATE_SHOULD_LOAD_MISSING,
@@ -66,12 +69,16 @@ typedef enum {
         return;
     }
     if (![self isJsLoadTokenSet:webView]) {
+        VerboseLog(@"Polled for page load start. result = YES!");
         _state = STATE_WAITING_FOR_FINISH;
         [self setLoadToken:webView];
         if ([_delegate respondsToSelector:@selector(webViewDidStartLoad:)]) {
             [_delegate webViewDidStartLoad:webView];
         }
         [self pollForPageLoadFinish:webView];
+    } else {
+        VerboseLog(@"Polled for page load start. result = NO");
+        [self performSelector:@selector(pollForPageLoadStart) withObject:webView afterDelay:50];
     }
 }
 
@@ -81,12 +88,14 @@ typedef enum {
         return;
     }
     if ([self isPageLoaded:webView]) {
+        VerboseLog(@"Polled for page load finish. result = YES!");
         _state = STATE_SHOULD_LOAD_MISSING;
         if ([_delegate respondsToSelector:@selector(webViewDidFinishLoad:)]) {
             [_delegate webViewDidFinishLoad:webView];
         }
     } else {
-        [self performSelector:@selector(pollForPageLoaded) withObject:webView afterDelay:50];
+        VerboseLog(@"Polled for page load finish. result = NO");
+        [self performSelector:@selector(pollForPageLoadFinish) withObject:webView afterDelay:50];
     }
 }
 
@@ -98,23 +107,26 @@ typedef enum {
         shouldLoad = [_delegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
     }
 
+    VerboseLog(@"webView shouldLoad=%d state=%d loadCount=%d URL=%@", shouldLoad, _state, _loadCount, request.URL);
+
     if (shouldLoad) {
         BOOL isTopLevelNavigation = [request.URL isEqual:[request mainDocumentURL]];
         if (isTopLevelNavigation) {
             _loadCount = 0;
             _state = STATE_NORMAL;
         }
+        VerboseLog(@"webView shouldLoad isTopLevelNavigation=%d state=%d loadCount=%d", isTopLevelNavigation, _state, _loadCount);
     }
     return shouldLoad;
 }
 
 - (void)webViewDidStartLoad:(UIWebView*)webView
 {
+    VerboseLog(@"webView didStartLoad (before). state=%d loadCount=%d", _state, _loadCount);
+    BOOL fireCallback = NO;
     if (_state == STATE_NORMAL) {
         if (_loadCount == 0) {
-            if ([_delegate respondsToSelector:@selector(webViewDidStartLoad:)]) {
-                [_delegate webViewDidStartLoad:webView];
-            }
+            fireCallback = [_delegate respondsToSelector:@selector(webViewDidStartLoad:)];
             _loadCount += 1;
         } else if (_loadCount > 0) {
             _loadCount += 1;
@@ -132,15 +144,19 @@ typedef enum {
         [self pollForPageLoadStart:webView];
         [self pollForPageLoadFinish:webView];
     }
+    VerboseLog(@"webView didStartLoad (after). state=%d loadCount=%d", _state, _loadCount);
+    if (fireCallback) {
+        [_delegate webViewDidStartLoad:webView];
+    }
 }
 
 - (void)webViewDidFinishLoad:(UIWebView*)webView
 {
+    VerboseLog(@"webView didFinishLoad (before). state=%d loadCount=%d", _state, _loadCount);
+    BOOL fireCallback = NO;
     if (_state == STATE_NORMAL) {
         if (_loadCount == 1) {
-            if ([_delegate respondsToSelector:@selector(webViewDidFinishLoad:)]) {
-                [_delegate webViewDidFinishLoad:webView];
-            }
+            fireCallback = [_delegate respondsToSelector:@selector(webViewDidFinishLoad:)];
             _loadCount = -1;
         } else if (_loadCount > 1) {
             _loadCount -= 1;
@@ -149,15 +165,20 @@ typedef enum {
         [self pollForPageLoadStart:webView];
         [self pollForPageLoadFinish:webView];
     }
+    VerboseLog(@"webView didFinishLoad (after). state=%d loadCount=%d", _state, _loadCount);
+    if (fireCallback) {
+        [_delegate webViewDidFinishLoad:webView];
+    }
 }
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
 {
+    VerboseLog(@"webView didFailLoad (before). state=%d loadCount=%d", _state, _loadCount);
+    BOOL fireCallback = NO;
+
     if (_state == STATE_NORMAL) {
         if (_loadCount == 1) {
-            if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
-                [_delegate webView:webView didFailLoadWithError:error];
-            }
+            fireCallback = [_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)];
             _loadCount = -1;
         } else if (_loadCount > 1) {
             _loadCount -= 1;
@@ -165,6 +186,10 @@ typedef enum {
     } else {
         [self pollForPageLoadStart:webView];
         [self pollForPageLoadFinish:webView];
+    }
+    VerboseLog(@"webView didFailLoad (after). state=%d loadCount=%d", _state, _loadCount);
+    if (fireCallback) {
+        [_delegate webView:webView didFailLoadWithError:error];
     }
 }
 
