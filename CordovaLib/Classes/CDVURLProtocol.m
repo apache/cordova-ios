@@ -133,8 +133,12 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
             // For this reason, we return NO when cmds exist.
             return !hasCmds;
         }
-
-        return ![gWhitelist URLIsAllowed:theUrl];
+        // we only care about http and https connections.
+        // CORS takes care of http: trying to access file: URLs.
+        if ([gWhitelist schemeIsAllowed:[theUrl scheme]]) {
+            // if it FAILS the whitelist, we return TRUE, so we can fail the connection later
+            return ![gWhitelist URLIsAllowed:theUrl];
+        }
     }
 
     return NO;
