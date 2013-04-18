@@ -126,20 +126,19 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     // arguments order from js: [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]
     // however, params is a JavaScript object and during marshalling is put into the options dict,
     // thus debug and chunkedMode are the 6th and 7th arguments
-    NSArray* arguments = command.arguments;
-    NSString* target = (NSString*)[arguments objectAtIndex:0];
-    NSString* server = (NSString*)[arguments objectAtIndex:1];
-    NSString* fileKey = [arguments objectAtIndex:2 withDefault:@"file"];
-    NSString* fileName = [arguments objectAtIndex:3 withDefault:@"no-filename"];
-    NSString* mimeType = [arguments objectAtIndex:4 withDefault:nil];
-    NSDictionary* options = [arguments objectAtIndex:5 withDefault:nil];
+    NSString* target = [command argumentAtIndex:0];
+    NSString* server = [command argumentAtIndex:1];
+    NSString* fileKey = [command argumentAtIndex:2 withDefault:@"file"];
+    NSString* fileName = [command argumentAtIndex:3 withDefault:@"no-filename"];
+    NSString* mimeType = [command argumentAtIndex:4 withDefault:nil];
+    NSDictionary* options = [command argumentAtIndex:5 withDefault:nil];
     //    BOOL trustAllHosts = [[arguments objectAtIndex:6 withDefault:[NSNumber numberWithBool:YES]] boolValue]; // allow self-signed certs
-    BOOL chunkedMode = [[arguments objectAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
-    NSDictionary* headers = [arguments objectAtIndex:8 withDefault:nil];
+    BOOL chunkedMode = [[command argumentAtIndex:7 withDefault:[NSNumber numberWithBool:YES]] boolValue];
+    NSDictionary* headers = [command argumentAtIndex:8 withDefault:nil];
     // Allow alternative http method, default to POST. JS side checks
     // for allowed methods, currently PUT or POST (forces POST for
     // unrecognised values)
-    NSString* httpMethod = [arguments objectAtIndex:10 withDefault:@"POST"];
+    NSString* httpMethod = [command argumentAtIndex:10 withDefault:@"POST"];
     CDVPluginResult* result = nil;
     CDVFileTransferError errorCode = 0;
 
