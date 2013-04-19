@@ -22,6 +22,7 @@
 #import "CDVJSON.h"
 
 #define DOCUMENTS_SCHEME_PREFIX @"documents://"
+#define FILE_SCHEME_PREFIX @"file://"
 #define HTTP_SCHEME_PREFIX @"http://"
 #define HTTPS_SCHEME_PREFIX @"https://"
 #define RECORDING_WAV @"wav"
@@ -35,13 +36,19 @@
     NSURL* resourceURL = nil;
     NSString* filePath = nil;
 
-    // first try to find HTTP:// or Documents:// resources
+    // first try to find HTTP:// or file://localhost or Documents:// resources
 
     if ([resourcePath hasPrefix:HTTP_SCHEME_PREFIX] || [resourcePath hasPrefix:HTTPS_SCHEME_PREFIX]) {
         // if it is a http url, use it
         NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
         resourceURL = [NSURL URLWithString:resourcePath];
-    } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
+    }else if ([resourcePath hasPrefix:FILE_SCHEME_PREFIX]) {
+        // if it is a file://localhost/path url, use it
+        NSLog(@"Will use resource '%@' from the file URI scheme.", resourcePath);
+        resourceURL = [NSURL URLWithString:resourcePath];
+        
+    
+    }else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
         NSString* docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
         filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", docsPath]];
         NSLog(@"Will use resource '%@' from the documents folder with path = %@", resourcePath, filePath);
@@ -81,6 +88,11 @@
     if ([[resourcePath pathExtension] caseInsensitiveCompare:RECORDING_WAV] != NSOrderedSame) {
         resourceURL = nil;
         NSLog(@"Resource for recording must have %@ extension", RECORDING_WAV);
+    } else if ([resourcePath hasPrefix:FILE_SCHEME_PREFIX]) {
+        // if it is a file://localhost/path url, use it
+        NSLog(@"Will use resource '%@' from the file URI scheme.", resourcePath);
+        resourceURL = [NSURL URLWithString:resourcePath];
+        
     } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
         // try to find Documents:// resources
         filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", docsPath]];
@@ -118,6 +130,11 @@
         // if it is a http url, use it
         NSLog(@"Will use resource '%@' from the Internet.", resourcePath);
         resourceURL = [NSURL URLWithString:resourcePath];
+    } else if ([resourcePath hasPrefix:FILE_SCHEME_PREFIX]) {
+        // if it is a file://localhost/path url, use it
+        NSLog(@"Will use resource '%@' from the file URI scheme.", resourcePath);
+        resourceURL = [NSURL URLWithString:resourcePath];
+        
     } else if ([resourcePath hasPrefix:DOCUMENTS_SCHEME_PREFIX]) {
         NSString* docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
         filePath = [resourcePath stringByReplacingOccurrencesOfString:DOCUMENTS_SCHEME_PREFIX withString:[NSString stringWithFormat:@"%@/", docsPath]];
