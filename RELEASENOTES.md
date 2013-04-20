@@ -22,6 +22,45 @@
  
  Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 2.7.0 (201304XX) ###
+
+* Fix NPE in InAppBrowser's error callback.
+* [CB-2849] Fix bin/create when CordovaLib parent dir has a space
+* [CB-3069] Fix InAppBrowser load events (for non-redirecting pages)
+* InAppBrowser: Don't inject iframe bridge until necessary.
+* Fix FileTransfer unit test. HTTP Method was being set to null.
+* [CB-2305] Add InAppBrowser injectSriptCode command to support InAppBrowser.executeScript and InAppBrowser.insertCSS APIs
+* [CB-2653] Simplify InAppBrowser.injectScriptCode.
+* [CB-2537] Implement streaming downloads for FileTransfer
+* [CB-2190] Allow FileTransfer uploads to continue in background
+* [CB-1518] Request content length in parallel with download for gzipped content
+* [CB-2653] Delay executeScript/insertCSS callback until resources have loaded; pass JS results to callback
+* [CB-2824] Remove DebugConsole plugin
+* [CB-3066] Fire onNativeReady from JS, as bridge is available immediately
+* [CB-2725] Fix www deploy issues with symlinks
+* [CB-2725] follow links in www copy script
+* [CB-3039] iOS Exif date length mismtach
+* [CB-3052] iOS Exif SubIFD offsets incorrect
+* [CB-51] Added httpMethod for file transfer options (defaults to POST)
+* [CB-2732] Only set camera device when allowed.
+* [CB-2911] Updated resolveLocalFileSystemURI.
+* [CB-3032] Add whitelist support for custom schemes.
+* [CB-3048] Add --arc flag to create script, support arc in template.
+* [CB-3067]: fixing ios5 whitelist of file url
+* [CB-3067] Revert CDVURLProtocol to not whitelist file urls
+* [CB-2788] add ./bin/check_reqs script to iOS
+* [CB-2587] Added plugin timing for plugins that are loaded on startup (plugin 'onload' attribute)
+* [CB-2848] ShowSplashScreenSpinner not used
+* [CB-2960] Changing the volume of a sound already playing
+* [CB-3021] Can no longer import CDVPlugin.h from plugin Objective-C++ code
+* [CB-2790] added splice function to header writer: accepts jpeg as NSData, and splices in exif data specified by a string
+* [CB-2790] removed old splice code, replaced with JpegHeaderWriter api calls
+* [CB-2896] split writing of working tags off here, multipart tags not supported
+* [CB-2896] fixed error in exif subifd offset calculation for tag 8769
+* [CB-2902] re-added long/short tags to template dict, fixed subExifIFD offset
+
+<br />
+
 ### 2.6.0 (20130401) ###
 
 * [CB-2732] Only set camera device when allowed.
