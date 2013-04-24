@@ -193,7 +193,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
         UIImagePickerController * cameraPicker = (UIImagePickerController*)navigationController;
         
         if(![cameraPicker.mediaTypes containsObject:(NSString*) kUTTypeImage]){
-            [viewController.navigationItem setTitle:@"Videos"];
+            [viewController.navigationItem setTitle:NSLocalizedString(@"Videos title", nil)];
         }
     }
 }
