@@ -49,11 +49,6 @@ CONFIGURATION=Debug
 
 if [ "$FLAG" == "--release" ]; then
 	CONFIGURATION=Release
-elif [ "$FLAG" == "--debug" ]; then
-	CONFIGURATION=Debug
-else
-	echo "Unknown flag: $FLAG"
-	exit 1
 fi
 
 if [ "$OTHER_FLAGS" != "" ]; then
