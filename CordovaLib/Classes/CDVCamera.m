@@ -282,10 +282,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 image = [info objectForKey:UIImagePickerControllerOriginalImage];
             }
 
-            if (cameraPicker.saveToPhotoAlbum) {
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
-            }
-
             if (cameraPicker.correctOrientation) {
                 image = [self imageCorrectedForCaptureOrientation:image];
             }
@@ -312,6 +308,10 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 CDVJpegHeaderWriter* exifWriter = [[CDVJpegHeaderWriter alloc] init];
                 NSString* headerstring = [exifWriter createExifAPP1:[info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
                 data = [exifWriter spliceExifBlockIntoJpeg:data withExifBlock:headerstring];
+            }
+            
+            if (cameraPicker.saveToPhotoAlbum) {
+                UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:data], nil, nil, nil);
             }
 
             if (cameraPicker.returnType == DestinationTypeFileUri) {
