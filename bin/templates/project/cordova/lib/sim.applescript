@@ -1,3 +1,7 @@
+tell application "System Events"
+	set UI elements enabled to true
+end tell
+
 tell application "iPhone Simulator"
     activate
 end tell
