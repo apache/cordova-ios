@@ -323,29 +323,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
                     if (EXIFDictionary)	{
                         [self.metadata setObject:EXIFDictionary forKey:(NSString *)kCGImagePropertyExifDictionary];
                     }
-                    
-                    //[[self locationManager] startUpdatingLocation];
                 }
-                /*
-                else {
-                    NSURL *url = [info objectForKey:UIImagePickerControllerReferenceURL];
-                    if (url) {
-                        void (^retreiveAssetMetadata)(ALAsset *) = ^(ALAsset *asset) {
-                            self.metadata = [[NSMutableDictionary alloc] init];
-                            
-                            NSMutableDictionary *EXIFDictionary = [[asset.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary]mutableCopy];
-                            NSMutableDictionary *GPSDictionary = [[asset.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyGPSDictionary]mutableCopy];
-                            if (EXIFDictionary)	[self.metadata setObject:EXIFDictionary forKey:(NSString *)kCGImagePropertyExifDictionary];
-                            if (GPSDictionary)	[self.metadata setObject:GPSDictionary forKey:(NSString *)kCGImagePropertyGPSDictionary];
-                            
-                       //     [self imagePickerControllerReturnImageResult];
-                        };
-                        
-                        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-                        [library assetForURL:url resultBlock:retreiveAssetMetadata failureBlock:^(NSError *error) {}];
-                    }
-                }
-                 */
+
                 CGImageSourceRef sourceImage = CGImageSourceCreateWithData((__bridge_retained CFDataRef)data, NULL);
 				CFStringRef sourceType = CGImageSourceGetType(sourceImage);
                 
@@ -356,9 +335,6 @@ static NSSet* org_apache_cordova_validArrowDirections;
 				CFRelease(sourceImage);
 				CFRelease(destinationImage);
             }
-//            [self imagePickerControllerReturnImageResult];
-                
-
             
             if (cameraPicker.saveToPhotoAlbum) {
                 UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:data], nil, nil, nil);
