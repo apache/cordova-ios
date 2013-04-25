@@ -66,7 +66,7 @@ typedef NSUInteger CDVMediaType;
 {}
 
 @property (strong) CDVCameraPicker* pickerController;
-
+@property (strong) NSMutableDictionary *metadata;
 /*
  * getPicture
  *

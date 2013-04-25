@@ -22,6 +22,11 @@
 #import "NSArray+Comparisons.h"
 #import "NSData+Base64.h"
 #import "NSDictionary+Extensions.h"
+#import <ImageIO/CGImageProperties.h>
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import <ImageIO/CGImageSource.h>
+#import <ImageIO/CGImageProperties.h>
+#import <ImageIO/CGImageDestination.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 
 #define CDV_PHOTO_PREFIX @"cdv_photo_"
@@ -307,8 +312,53 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 /* splice loc */
                 CDVJpegHeaderWriter* exifWriter = [[CDVJpegHeaderWriter alloc] init];
                 NSString* headerstring = [exifWriter createExifAPP1:[info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
-                data = [exifWriter spliceExifBlockIntoJpeg:data withExifBlock:headerstring];
+           //     data = [exifWriter spliceExifBlockIntoJpeg:data withExifBlock:headerstring];
+                
+                
+                //NSMutableDictionary *metadata;
+                NSDictionary *controllerMetadata = [info objectForKey:@"UIImagePickerControllerMediaMetadata"];
+                if (controllerMetadata) {
+                    self.metadata = [[NSMutableDictionary alloc] init];
+                NSMutableDictionary *EXIFDictionary = [[controllerMetadata objectForKey:(NSString *)kCGImagePropertyExifDictionary]mutableCopy];
+                    if (EXIFDictionary)	{
+                        [self.metadata setObject:EXIFDictionary forKey:(NSString *)kCGImagePropertyExifDictionary];
+                    }
+                    
+                    //[[self locationManager] startUpdatingLocation];
+                }
+                /*
+                else {
+                    NSURL *url = [info objectForKey:UIImagePickerControllerReferenceURL];
+                    if (url) {
+                        void (^retreiveAssetMetadata)(ALAsset *) = ^(ALAsset *asset) {
+                            self.metadata = [[NSMutableDictionary alloc] init];
+                            
+                            NSMutableDictionary *EXIFDictionary = [[asset.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary]mutableCopy];
+                            NSMutableDictionary *GPSDictionary = [[asset.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyGPSDictionary]mutableCopy];
+                            if (EXIFDictionary)	[self.metadata setObject:EXIFDictionary forKey:(NSString *)kCGImagePropertyExifDictionary];
+                            if (GPSDictionary)	[self.metadata setObject:GPSDictionary forKey:(NSString *)kCGImagePropertyGPSDictionary];
+                            
+                       //     [self imagePickerControllerReturnImageResult];
+                        };
+                        
+                        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+                        [library assetForURL:url resultBlock:retreiveAssetMetadata failureBlock:^(NSError *error) {}];
+                    }
+                }
+                 */
+                CGImageSourceRef sourceImage = CGImageSourceCreateWithData((__bridge_retained CFDataRef)data, NULL);
+				CFStringRef sourceType = CGImageSourceGetType(sourceImage);
+                
+				CGImageDestinationRef destinationImage = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)data, sourceType, 1, NULL);
+				CGImageDestinationAddImageFromSource(destinationImage, sourceImage, 0, (__bridge CFDictionaryRef)self.metadata);
+				CGImageDestinationFinalize(destinationImage);
+                
+				CFRelease(sourceImage);
+				CFRelease(destinationImage);
             }
+//            [self imagePickerControllerReturnImageResult];
+                
+
             
             if (cameraPicker.saveToPhotoAlbum) {
                 UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:data], nil, nil, nil);
