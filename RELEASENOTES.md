@@ -58,6 +58,8 @@
 * [CB-2896] split writing of working tags off here, multipart tags not supported
 * [CB-2896] fixed error in exif subifd offset calculation for tag 8769
 * [CB-2902] re-added long/short tags to template dict, fixed subExifIFD offset
+* [CB-2698] Fix load detection when pages have redirects.
+* [CB-3295] Send InAppBrowser loadstart events when redirects occur
 
 <br />
 
