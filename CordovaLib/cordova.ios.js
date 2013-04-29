@@ -1,8 +1,8 @@
 // Platform: ios
 
-// commit 360bd3e65c33ce4f01e2efb82d641a565ef3c333
+// commit cd29cf0f224ccf25e9d422a33fd02ef67d3a78f4
 
-// File generated at :: Fri Apr 19 2013 18:36:09 GMT-0700 (PDT)
+// File generated at :: Mon Apr 29 2013 16:14:47 GMT-0700 (PDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -909,11 +909,19 @@ function iOSExec() {
         // an invalid callbackId and passes it even if no callbacks were given.
         callbackId = 'INVALID';
     } else {
-        // FORMAT TWO
-        splitCommand = arguments[0].split(".");
-        action = splitCommand.pop();
-        service = splitCommand.join(".");
-        actionArgs = Array.prototype.splice.call(arguments, 1);
+        // FORMAT TWO, REMOVED
+       try {
+           splitCommand = arguments[0].split(".");
+           action = splitCommand.pop();
+           service = splitCommand.join(".");
+           actionArgs = Array.prototype.splice.call(arguments, 1);
+
+           console.log('The old format of this exec call has been removed (deprecated since 2.1). Change to: ' +
+                       "cordova.exec(null, null, \"" + service + "\", " + action + "\"," + JSON.stringify(actionArgs) + ");"
+                       );
+           return;
+       } catch (e) {
+       }
     }
 
     // Register the callbacks and add the callbackId to the positional
@@ -6388,7 +6396,7 @@ require('cordova/channel').onNativeReady.fire();
         xhr.onload = function() {
             // If the response is a JSON string which composes an array, call handlePluginsObject.
             // If the request fails, or the response is not a JSON array, just call finishPluginLoading.
-            var obj = JSON.parse(this.responseText);
+            var obj = this.responseText && JSON.parse(this.responseText);
             if (obj && obj instanceof Array && obj.length > 0) {
                 handlePluginsObject(obj);
             } else {
