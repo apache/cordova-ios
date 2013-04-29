@@ -253,6 +253,7 @@
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = request.URL;
+    BOOL isTopLevelNavigation = [request.URL isEqual:[request mainDocumentURL]];
 
     // See if the url uses the 'gap-iab' protocol. If so, the host should be the id of a callback to execute,
     // and the path, if present, should be a JSON-encoded value to pass to the callback.
@@ -279,28 +280,28 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:scriptCallbackId];
             return NO;
         }
+    } else if ((self.callbackId != nil) && isTopLevelNavigation) {
+        // Send a loadstart event for each top-level navigation (includes redirects).
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                      messageAsDictionary:@{@"type":@"loadstart", @"url":[url absoluteString]}];
+        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
+
     return YES;
 }
 
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
     _injectedIframeBridge = NO;
-    if (self.callbackId != nil) {
-        NSString* url = [[self.inAppBrowserViewController requestedURL] absoluteString];
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:@{@"type":@"loadstart", @"url":url}];
-        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
-    }
 }
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
     if (self.callbackId != nil) {
         // TODO: It would be more useful to return the URL the page is actually on (e.g. if it's been redirected).
-        NSString* url = [[self.inAppBrowserViewController requestedURL] absoluteString];
+        NSString* url = [self.inAppBrowserViewController.currentURL absoluteString];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                       messageAsDictionary:@{@"type":@"loadstop", @"url":url}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
@@ -312,7 +313,7 @@
 - (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
 {
     if (self.callbackId != nil) {
-        NSString* url = [[self.inAppBrowserViewController requestedURL] absoluteString];
+        NSString* url = [self.inAppBrowserViewController.currentURL absoluteString];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                       messageAsDictionary:@{@"type":@"loaderror", @"url":url, @"code": [NSNumber numberWithInt:error.code], @"message": error.localizedDescription}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
@@ -341,7 +342,7 @@
 
 @implementation CDVInAppBrowserViewController
 
-@synthesize requestedURL = _requestedURL;
+@synthesize currentURL;
 
 - (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent
 {
@@ -517,6 +518,8 @@
         [[self parentViewController] dismissModalViewControllerAnimated:YES];
     }
 
+    self.currentURL = nil;
+
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserExit)]) {
         [self.navigationDelegate browserExit];
     }
@@ -525,8 +528,6 @@
 - (void)navigateTo:(NSURL*)url
 {
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
-
-    _requestedURL = url;
 
     if (_userAgentLockToken != 0) {
         [self.webView loadRequest:request];
@@ -566,6 +567,11 @@
 
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
+    BOOL isTopLevelNavigation = [request.URL isEqual:[request mainDocumentURL]];
+
+    if (isTopLevelNavigation) {
+        self.currentURL = request.URL;
+    }
     return [self.navigationDelegate webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 
@@ -573,7 +579,7 @@
 {
     // update url, stop spinner, update back/forward
 
-    self.addressLabel.text = theWebView.request.URL.absoluteString;
+    self.addressLabel.text = [self.currentURL absoluteString];
     self.backButton.enabled = theWebView.canGoBack;
     self.forwardButton.enabled = theWebView.canGoForward;
 
