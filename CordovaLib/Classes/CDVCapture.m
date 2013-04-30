@@ -108,7 +108,6 @@
     if ([options isKindOfClass:[NSNull class]]) {
         options = [NSDictionary dictionary];
     }
-    NSString* mode = [options objectForKey:@"mode"];
 
     // options could contain limit and mode neither of which are supported at this time
     // taking more than one picture (limit) is only supported if provide own controls via cameraOverlayView property
@@ -139,7 +138,6 @@
         }*/
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
-        pickerController.mimeType = mode;
 
         if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
             [self.viewController presentViewController:pickerController animated:YES completion:nil];
