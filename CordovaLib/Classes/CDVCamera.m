@@ -46,7 +46,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     org_apache_cordova_validArrowDirections = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:UIPopoverArrowDirectionUp], [NSNumber numberWithInt:UIPopoverArrowDirectionDown], [NSNumber numberWithInt:UIPopoverArrowDirectionLeft], [NSNumber numberWithInt:UIPopoverArrowDirectionRight], [NSNumber numberWithInt:UIPopoverArrowDirectionAny], nil];
 }
 
-@synthesize hasPendingOperation, pickerController;
+@synthesize hasPendingOperation, pickerController, locationManager;
 
 - (BOOL)popoverSupported
 {
@@ -314,8 +314,9 @@ static NSSet* org_apache_cordova_validArrowDirections;
                 NSString* headerstring = [exifWriter createExifAPP1:[info objectForKey:@"UIImagePickerControllerMediaMetadata"]];
            //     data = [exifWriter spliceExifBlockIntoJpeg:data withExifBlock:headerstring];
                 
-                
                 //NSMutableDictionary *metadata;
+                [[self locationManager] startUpdatingLocation];
+                
                 NSDictionary *controllerMetadata = [info objectForKey:@"UIImagePickerControllerMediaMetadata"];
                 if (controllerMetadata) {
                     self.metadata = [[NSMutableDictionary alloc] init];
@@ -587,6 +588,85 @@ static NSSet* org_apache_cordova_validArrowDirections;
 
     self.hasPendingOperation = NO;
 }
+
+
+- (CLLocationManager *)locationManager {
+    
+	if (locationManager != nil) {
+		return locationManager;
+	}
+    
+	locationManager = [[CLLocationManager alloc] init];
+	[locationManager setDesiredAccuracy:kCLLocationAccuracyNearestTenMeters];
+	[locationManager setDelegate:self];
+    
+	return locationManager;
+}
+
+- (void)locationManager:(CLLocationManager*)manager didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation
+{
+	if (locationManager != nil) {
+		[self.locationManager stopUpdatingLocation];
+		self.locationManager = nil;
+        
+		NSMutableDictionary *GPSDictionary = [[NSMutableDictionary dictionary] init];
+        
+		CLLocationDegrees latitude  = newLocation.coordinate.latitude;
+		CLLocationDegrees longitude = newLocation.coordinate.longitude;
+        
+		// latitude
+		if (latitude < 0.0) {
+			latitude = latitude * -1.0f;
+			[GPSDictionary setObject:@"S" forKey:(NSString*)kCGImagePropertyGPSLatitudeRef];
+		} else {
+			[GPSDictionary setObject:@"N" forKey:(NSString*)kCGImagePropertyGPSLatitudeRef];
+		}
+		[GPSDictionary setObject:[NSNumber numberWithFloat:latitude] forKey:(NSString*)kCGImagePropertyGPSLatitude];
+        
+		// longitude
+		if (longitude < 0.0) {
+			longitude = longitude * -1.0f;
+			[GPSDictionary setObject:@"W" forKey:(NSString*)kCGImagePropertyGPSLongitudeRef];
+		}
+		else {
+			[GPSDictionary setObject:@"E" forKey:(NSString*)kCGImagePropertyGPSLongitudeRef];
+		}
+		[GPSDictionary setObject:[NSNumber numberWithFloat:longitude] forKey:(NSString*)kCGImagePropertyGPSLongitude];
+        
+		// altitude
+        CGFloat altitude = newLocation.altitude;
+        if (!isnan(altitude)){
+			if (altitude < 0) {
+				altitude = -altitude;
+				[GPSDictionary setObject:@"1" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+			} else {
+				[GPSDictionary setObject:@"0" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+			}
+			[GPSDictionary setObject:[NSNumber numberWithFloat:altitude] forKey:(NSString *)kCGImagePropertyGPSAltitude];
+        }
+        
+        // Time and date
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"HH:mm:ss.SSSSSS"];
+        [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+        [GPSDictionary setObject:[formatter stringFromDate:newLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSTimeStamp];
+        [formatter setDateFormat:@"yyyy:MM:dd"];
+        [GPSDictionary setObject:[formatter stringFromDate:newLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSDateStamp];
+        
+		[self.metadata setObject:GPSDictionary forKey:(NSString *)kCGImagePropertyGPSDictionary];
+ 		//[self imagePickerControllerReturnImageResult];
+	}
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+	if (locationManager != nil) {
+		[self.locationManager stopUpdatingLocation];
+		self.locationManager = nil;
+        
+		//[self imagePickerControllerReturnImageResult];
+	}
+}
+
 
 @end
 

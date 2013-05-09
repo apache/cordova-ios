@@ -18,6 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CLLocationManager.h>
 #import "CDVPlugin.h"
 
 enum CDVDestinationType {
@@ -67,6 +68,8 @@ typedef NSUInteger CDVMediaType;
 
 @property (strong) CDVCameraPicker* pickerController;
 @property (strong) NSMutableDictionary *metadata;
+@property (strong, nonatomic) CLLocationManager *locationManager;
+
 /*
  * getPicture
  *
@@ -89,5 +92,6 @@ typedef NSUInteger CDVMediaType;
 - (UIImage*)imageByScalingAndCroppingForSize:(UIImage*)anImage toSize:(CGSize)targetSize;
 - (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize;
 - (UIImage*)imageCorrectedForCaptureOrientation:(UIImage*)anImage;
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error;
 
 @end
