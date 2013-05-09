@@ -448,7 +448,10 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     [result setObject:source forKey:@"source"];
     [result setObject:target forKey:@"target"];
     [result setObject:[NSNumber numberWithInt:httpStatus] forKey:@"http_status"];
+
+    if (body == nil) body = @"";
     [result setObject:body forKey:@"body"];
+    
     NSLog(@"FileTransferError %@", result);
 
     return result;
