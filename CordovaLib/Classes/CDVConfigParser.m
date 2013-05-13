@@ -56,6 +56,13 @@
         if ([@"true" isEqualToString : attributeDict[@"onload"]]) {
             [self.startupPluginNames addObject:name];
         }
+        NSLog(@"\nUse of the <plugin> tag has been deprecated. Use a <feature> tag instead. Change:\n"
+            @"    <plugin name=\"%@\" value=\"%@\" />\n"
+            @"To:\n"
+            @"    <feature name=\"%@\">\n"
+            @"        <param name=\"ios-package\" value=\"%@\">\n"
+            @"    </feature>\n"
+            , attributeDict[@"name"], attributeDict[@"value"], attributeDict[@"name"], attributeDict[@"value"]);
     } else if ([elementName isEqualToString:@"feature"]) { // store feature name to use with correct parameter set
         featureName = [attributeDict[@"name"] lowercaseString];
     } else if ((featureName != nil) && [elementName isEqualToString:@"param"]) {
