@@ -124,7 +124,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
         // check for single wildcard '*', if found set allowAll to YES
         if ([host isEqualToString:@"*"]) {
-            [_expandedWhitelists setObject:[NSArray arrayWithObject:host] forKey:scheme];
+            [_expandedWhitelists setObject:[NSMutableArray arrayWithObject:host] forKey:scheme];
             continue;
         }
 
