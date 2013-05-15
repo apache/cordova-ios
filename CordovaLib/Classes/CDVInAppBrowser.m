@@ -103,6 +103,7 @@
 
     CDVInAppBrowserOptions* browserOptions = [CDVInAppBrowserOptions parseOptions:options];
     [self.inAppBrowserViewController showLocationBar:browserOptions.location];
+    [self.inAppBrowserViewController showToolBar:browserOptions.toolbar];
 
     // Set Presentation Style
     UIModalPresentationStyle presentationStyle = UIModalPresentationFullScreen; // default
@@ -469,30 +470,117 @@
 
 - (void)showLocationBar:(BOOL)show
 {
-    CGRect addressLabelFrame = self.addressLabel.frame;
-    BOOL locationBarVisible = (addressLabelFrame.size.height > 0);
+    CGRect toolbarFrame = self.toolbar.frame;
+    CGRect locationbarFrame = self.addressLabel.frame;
+
+    BOOL toolbarVisible = !self.toolbar.hidden;
 
     // prevent double show/hide
-    if (locationBarVisible == show) {
+    if (show == !(self.addressLabel.hidden)) {
         return;
     }
 
     if (show) {
-        CGRect webViewBounds = self.view.bounds;
-        webViewBounds.size.height -= FOOTER_HEIGHT;
-        self.webView.frame = webViewBounds;
+        self.addressLabel.hidden = NO;
 
-        CGRect addressLabelFrame = self.addressLabel.frame;
-        addressLabelFrame.size.height = LOCATIONBAR_HEIGHT;
-        self.addressLabel.frame = addressLabelFrame;
+        if (toolbarVisible) {
+            // toolBar at the bottom, leave as is
+            // put locationBar on top of the toolBar
+
+            CGRect webViewBounds = self.view.bounds;
+            webViewBounds.size.height -= FOOTER_HEIGHT;
+            self.webView.frame = webViewBounds;
+
+            locationbarFrame.origin.y = webViewBounds.size.height;
+            self.addressLabel.frame = locationbarFrame;
+        } else {
+            // no toolBar, so put locationBar at the bottom
+
+            CGRect webViewBounds = self.view.bounds;
+            webViewBounds.size.height -= LOCATIONBAR_HEIGHT;
+            self.webView.frame = webViewBounds;
+
+            locationbarFrame.origin.y = webViewBounds.size.height;
+            self.addressLabel.frame = locationbarFrame;
+        }
     } else {
-        CGRect webViewBounds = self.view.bounds;
-        webViewBounds.size.height -= TOOLBAR_HEIGHT;
-        self.webView.frame = webViewBounds;
+        self.addressLabel.hidden = YES;
 
-        CGRect addressLabelFrame = self.addressLabel.frame;
-        addressLabelFrame.size.height = 0;
-        self.addressLabel.frame = addressLabelFrame;
+        if (toolbarVisible) {
+            // locationBar is on top of toolBar, hide locationBar
+
+            // webView take up whole height less toolBar height
+            CGRect webViewBounds = self.view.bounds;
+            webViewBounds.size.height -= TOOLBAR_HEIGHT;
+            self.webView.frame = webViewBounds;
+        } else {
+            // no toolBar, expand webView to screen dimensions
+
+            CGRect webViewBounds = self.view.bounds;
+            self.webView.frame = webViewBounds;
+        }
+    }
+}
+
+- (void)showToolBar:(BOOL)show
+{
+    CGRect toolbarFrame = self.toolbar.frame;
+    CGRect locationbarFrame = self.addressLabel.frame;
+
+    BOOL locationbarVisible = !self.addressLabel.hidden;
+
+    // prevent double show/hide
+    if (show == !(self.toolbar.hidden)) {
+        return;
+    }
+
+    if (show) {
+        self.toolbar.hidden = NO;
+
+        if (locationbarVisible) {
+            // locationBar at the bottom, move locationBar up
+            // put toolBar at the bottom
+
+            CGRect webViewBounds = self.view.bounds;
+            webViewBounds.size.height -= FOOTER_HEIGHT;
+            self.webView.frame = webViewBounds;
+
+            locationbarFrame.origin.y = webViewBounds.size.height;
+            self.addressLabel.frame = locationbarFrame;
+
+            toolbarFrame.origin.y = (webViewBounds.size.height + LOCATIONBAR_HEIGHT);
+            self.toolbar.frame = toolbarFrame;
+        } else {
+            // no locationBar, so put toolBar at the bottom
+
+            CGRect webViewBounds = self.view.bounds;
+            webViewBounds.size.height -= TOOLBAR_HEIGHT;
+            self.webView.frame = webViewBounds;
+
+            toolbarFrame.origin.y = webViewBounds.size.height;
+            self.toolbar.frame = toolbarFrame;
+        }
+    } else {
+        self.toolbar.hidden = YES;
+
+        if (locationbarVisible) {
+            // locationBar is on top of toolBar, hide toolBar
+            // put locationBar at the bottom
+
+            // webView take up whole height less locationBar height
+            CGRect webViewBounds = self.view.bounds;
+            webViewBounds.size.height -= LOCATIONBAR_HEIGHT;
+            self.webView.frame = webViewBounds;
+
+            // move locationBar down
+            locationbarFrame.origin.y = webViewBounds.size.height;
+            self.addressLabel.frame = locationbarFrame;
+        } else {
+            // no locationBar, expand webView to screen dimensions
+
+            CGRect webViewBounds = self.view.bounds;
+            self.webView.frame = webViewBounds;
+        }
     }
 }
 
@@ -655,6 +743,7 @@
     if (self = [super init]) {
         // default values
         self.location = YES;
+        self.toolbar = YES;
 
         self.enableviewportscale = NO;
         self.mediaplaybackrequiresuseraction = NO;

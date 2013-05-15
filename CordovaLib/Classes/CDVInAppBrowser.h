@@ -60,6 +60,7 @@
 - (void)close;
 - (void)navigateTo:(NSURL*)url;
 - (void)showLocationBar:(BOOL)show;
+- (void)showToolBar:(BOOL)show;
 
 - (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent;
 
@@ -68,6 +69,7 @@
 @interface CDVInAppBrowserOptions : NSObject {}
 
 @property (nonatomic, assign) BOOL location;
+@property (nonatomic, assign) BOOL toolbar;
 @property (nonatomic, copy) NSString* presentationstyle;
 @property (nonatomic, copy) NSString* transitionstyle;
 
