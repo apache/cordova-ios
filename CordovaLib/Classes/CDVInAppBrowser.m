@@ -104,13 +104,16 @@
     CDVInAppBrowserOptions* browserOptions = [CDVInAppBrowserOptions parseOptions:options];
     [self.inAppBrowserViewController showLocationBar:browserOptions.location];
     [self.inAppBrowserViewController showToolBar:browserOptions.toolbar];
+    if (browserOptions.closebuttoncaption != nil) {
+        [self.inAppBrowserViewController setCloseButtonTitle:browserOptions.closebuttoncaption];
+    }
 
     // Set Presentation Style
     UIModalPresentationStyle presentationStyle = UIModalPresentationFullScreen; // default
     if (browserOptions.presentationstyle != nil) {
-        if ([browserOptions.presentationstyle isEqualToString:@"pagesheet"]) {
+        if ([[browserOptions.presentationstyle lowercaseString] isEqualToString:@"pagesheet"]) {
             presentationStyle = UIModalPresentationPageSheet;
-        } else if ([browserOptions.presentationstyle isEqualToString:@"formsheet"]) {
+        } else if ([[browserOptions.presentationstyle lowercaseString] isEqualToString:@"formsheet"]) {
             presentationStyle = UIModalPresentationFormSheet;
         }
     }
@@ -119,9 +122,9 @@
     // Set Transition Style
     UIModalTransitionStyle transitionStyle = UIModalTransitionStyleCoverVertical; // default
     if (browserOptions.transitionstyle != nil) {
-        if ([browserOptions.transitionstyle isEqualToString:@"fliphorizontal"]) {
+        if ([[browserOptions.transitionstyle lowercaseString] isEqualToString:@"fliphorizontal"]) {
             transitionStyle = UIModalTransitionStyleFlipHorizontal;
-        } else if ([browserOptions.transitionstyle isEqualToString:@"crossdissolve"]) {
+        } else if ([[browserOptions.transitionstyle lowercaseString] isEqualToString:@"crossdissolve"]) {
             transitionStyle = UIModalTransitionStyleCrossDissolve;
         }
     }
@@ -402,9 +405,6 @@
 
     self.closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
     self.closeButton.enabled = YES;
-    self.closeButton.imageInsets = UIEdgeInsetsZero;
-    self.closeButton.style = UIBarButtonItemStylePlain;
-    self.closeButton.width = 32.000;
 
     UIBarButtonItem* flexibleSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 
@@ -468,9 +468,22 @@
     [self.view addSubview:self.spinner];
 }
 
+- (void)setCloseButtonTitle:(NSString*)title
+{
+    // the advantage of using UIBarButtonSystemItemDone is the system will localize it for you automatically
+    // but, if you want to set this yourself, knock yourself out (we can't set the title for a system Done button, so we have to create a new one)
+    self.closeButton = nil;
+    self.closeButton = [[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStyleBordered target:self action:@selector(close)];
+    self.closeButton.enabled = YES;
+    self.closeButton.tintColor = [UIColor colorWithRed:60.0 / 255.0 green:136.0 / 255.0 blue:230.0 / 255.0 alpha:1];
+
+    NSMutableArray* items = [self.toolbar.items mutableCopy];
+    [items replaceObjectAtIndex:0 withObject:self.closeButton];
+    [self.toolbar setItems:items];
+}
+
 - (void)showLocationBar:(BOOL)show
 {
-    CGRect toolbarFrame = self.toolbar.frame;
     CGRect locationbarFrame = self.addressLabel.frame;
 
     BOOL toolbarVisible = !self.toolbar.hidden;
@@ -744,6 +757,7 @@
         // default values
         self.location = YES;
         self.toolbar = YES;
+        self.closebuttoncaption = nil;
 
         self.enableviewportscale = NO;
         self.mediaplaybackrequiresuseraction = NO;
@@ -768,19 +782,20 @@
 
         if ([keyvalue count] == 2) {
             NSString* key = [[keyvalue objectAtIndex:0] lowercaseString];
-            NSString* value = [[keyvalue objectAtIndex:1] lowercaseString];
+            NSString* value = [keyvalue objectAtIndex:1];
+            NSString* value_lc = [value lowercaseString];
 
-            BOOL isBoolean = [value isEqualToString:@"yes"] || [value isEqualToString:@"no"];
+            BOOL isBoolean = [value_lc isEqualToString:@"yes"] || [value_lc isEqualToString:@"no"];
             NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
             [numberFormatter setAllowsFloats:YES];
-            BOOL isNumber = [numberFormatter numberFromString:value] != nil;
+            BOOL isNumber = [numberFormatter numberFromString:value_lc] != nil;
 
             // set the property according to the key name
             if ([obj respondsToSelector:NSSelectorFromString(key)]) {
                 if (isNumber) {
-                    [obj setValue:[numberFormatter numberFromString:value] forKey:key];
+                    [obj setValue:[numberFormatter numberFromString:value_lc] forKey:key];
                 } else if (isBoolean) {
-                    [obj setValue:[NSNumber numberWithBool:[value isEqualToString:@"yes"]] forKey:key];
+                    [obj setValue:[NSNumber numberWithBool:[value_lc isEqualToString:@"yes"]] forKey:key];
                 } else {
                     [obj setValue:value forKey:key];
                 }
