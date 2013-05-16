@@ -91,7 +91,6 @@
 		30AE4E8C1419532F005A9C9A /* CDVContactsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVContactsTests.m; sourceTree = "<group>"; };
 		30B342F415224B360070E6A5 /* CDVWebViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewTest.m; sourceTree = "<group>"; };
 		30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVBase64Tests.m; sourceTree = "<group>"; };
-		30F8AE12152127CE006625B3 /* Cordova.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Cordova.plist; sourceTree = "<group>"; };
 		30F8AE1C152129DA006625B3 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 		686357A9141002F100DF4CF2 /* CordovaLibTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CordovaLibTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		686357AA141002F100DF4CF2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -221,7 +220,6 @@
 		303A406E152124BB00182201 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				30F8AE12152127CE006625B3 /* Cordova.plist */,
 				303A406F152124BB00182201 /* CordovaLibApp-Info.plist */,
 				303A4070152124BB00182201 /* InfoPlist.strings */,
 				303A4073152124BB00182201 /* main.m */,
