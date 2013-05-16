@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		302193F91745430F00BC8D2B /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 302193F81745430F00BC8D2B /* ImageIO.framework */; };
 		3035621714104C34006C2D43 /* CDVWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* CDVWhitelistTests.m */; };
 		303A406A152124BB00182201 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AA141002F100DF4CF2 /* UIKit.framework */; };
 		303A406B152124BB00182201 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AC141002F100DF4CF2 /* Foundation.framework */; };
@@ -76,6 +77,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		302193F81745430F00BC8D2B /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		30356213141049E1006C2D43 /* CDVWhitelistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWhitelistTests.m; sourceTree = "<group>"; };
 		303A4068152124BB00182201 /* CordovaLibApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CordovaLibApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		303A406F152124BB00182201 /* CordovaLibApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "CordovaLibApp-Info.plist"; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				302193F91745430F00BC8D2B /* ImageIO.framework in Frameworks */,
 				EB3B34E9161B5532003DBE7D /* libCordova.a in Frameworks */,
 				8220B5C216D541BD00EC3921 /* AssetsLibrary.framework in Frameworks */,
 				30F8AE0C152125B6006625B3 /* MobileCoreServices.framework in Frameworks */,
@@ -185,6 +188,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				302193F81745430F00BC8D2B /* ImageIO.framework */,
 				68A32D7414103017006B237C /* AddressBook.framework */,
 				8220B5C116D541BD00EC3921 /* AssetsLibrary.framework */,
 				686357DC14100B1600DF4CF2 /* CoreMedia.framework */,
