@@ -212,6 +212,11 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     while (regex = [enumerator nextObject]) {
         NSPredicate* regex_test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
 
+        // if wildcard, break out and allow
+        if ([regex isEqualToString:@"*"]) {
+            return YES;
+        }
+
         if ([regex_test evaluateWithObject:urlHost] == YES) {
             // if it matches at least one rule, return
             return YES;
