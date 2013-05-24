@@ -19,8 +19,43 @@
 #
 -->
 ## Release Notes for Cordova (iOS) ##
- 
- Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/2.7.x...HEAD
+
+Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+### 2.8.0 (201305XX) ###
+
+* [CB-2840] Nil checks to avoid crash when network disconnected
+* [CB-3416] adding empty <plugins> element during deprecation window.
+* [CB-3006] Customize InAppBrowser location bar
+* [CB-3405] InAppBrowser option to hide bottom bar with Done/History buttons
+* [CB-3394] Cordova iOS crashes when multiple access elements in config.xml
+* [CB-3166] Add deprecation notice for use of <plugin> in config.xml in iOS
+* [CB-2905] Exif geolocation meta data tag writing
+* [CB-3307] Rename cordova-ios.js -> cordova.js
+* [CB-1108] Convert <plugin> -> <feature> with <param>
+* [CB-3321] Fix bogus "failed whitelist" log messages
+* [CB-3311] add default textbox for notification prompt
+* [CB-2846] SplashScreen crashes app when image not available
+* [CB-2789] Remove CaptureOptions.mode support.
+* [CB-3295] Send InAppBrowser loadstart events when redirects occur
+* [CB-2896] added ImageIO and OpenAL system frameworks to support new exif functionality in CDVCamera
+* [CB-2896] writing data to object through CGImageDestinationRef, enables multipart exif tag writing
+* [CB-2958] simple fix, moved write to photealbum code and sourced from modified data. Photo data returned by cordova will match photo on cameraroll
+* [CB-3339] add version to command line scripts
+* [CB-3377] Remove cordova/release script
+* [CB-2974] Add a ./cordova/lib/list-devices project-level helper script to iOS
+* [CB-2951] Add a ./cordova/lib/list-emulator-images project-level helper script to iOS
+* [CB-2974] Add a ./cordova/lib/list-devices project-level helper script to iOS
+* [CB-2966] Add a ./cordova/lib/list-started-emulators as project-level helper script to iOS
+* [CB-2990] Add a ./cordova/lib/install-device project-level helper script to iOS
+* [CB-2982] Add a ./cordova/lib/install-emulator project-level helper script to iOS
+* [CB-2998] Add a ./cordova/lib/start-emulator project-level helper script to iOS
+* [CB-2916] Add a ./cordova/clean project-level script for iOS
+* [CB-2053] Update UIImagePickerController label to reflect video media type in CDVCamera
+
+<br />
 
 ### 2.7.0 (201304XX) ###
 
