@@ -429,8 +429,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:3];
 
     [result setObject:[NSNumber numberWithInt:code] forKey:@"code"];
-    [result setObject:source forKey:@"source"];
-    [result setObject:target forKey:@"target"];
+    if (source != nil) {
+        [result setObject:source forKey:@"source"];
+    }
+    if (target != nil) {
+        [result setObject:target forKey:@"target"];
+    }
     NSLog(@"FileTransferError %@", result);
 
     return result;
@@ -445,10 +449,16 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:5];
 
     [result setObject:[NSNumber numberWithInt:code] forKey:@"code"];
-    [result setObject:source forKey:@"source"];
-    [result setObject:target forKey:@"target"];
+    if (source != nil) {
+        [result setObject:source forKey:@"source"];
+    }
+    if (target != nil) {
+        [result setObject:target forKey:@"target"];
+    }
     [result setObject:[NSNumber numberWithInt:httpStatus] forKey:@"http_status"];
-    [result setObject:body forKey:@"body"];
+    if (body != nil) {
+        [result setObject:body forKey:@"body"];
+    }
     NSLog(@"FileTransferError %@", result);
 
     return result;
