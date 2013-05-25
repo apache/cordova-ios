@@ -348,13 +348,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     CDVFileTransferDelegate* delegate = [activeTransfers objectForKey:objectId];
 
     if (delegate != nil) {
-        [delegate.connection cancel];
-        [activeTransfers removeObjectForKey:objectId];
-
-        // delete uncomplete file
-        NSFileManager* fileMgr = [NSFileManager defaultManager];
-        [fileMgr removeItemAtPath:delegate.target error:nil];
-
+        [delegate cancelTransfer:delegate.connection];
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self createFileTransferError:CONNECTION_ABORTED AndSource:delegate.source AndTarget:delegate.target]];
         [self.commandDelegate sendPluginResult:result callbackId:delegate.callbackId];
     }
@@ -570,13 +564,26 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     self.command.backgroundTaskID = UIBackgroundTaskInvalid;
 }
 
+- (void)removeTargetFile
+{
+    NSFileManager* fileMgr = [NSFileManager defaultManager];
+
+    [fileMgr removeItemAtPath:self.target error:nil];
+}
+
+- (void)cancelTransfer:(NSURLConnection*)connection
+{
+    [connection cancel];
+    [self.command.activeTransfers removeObjectForKey:self.objectId];
+    [self removeTargetFile];
+}
+
 - (void)cancelTransferWithError:(NSURLConnection*)connection errorMessage:(NSString*)errorMessage
 {
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsDictionary:[self.command createFileTransferError:FILE_NOT_FOUND_ERR AndSource:self.source AndTarget:self.target AndHttpStatus:self.responseCode AndBody:errorMessage]];
 
     NSLog(@"File Transfer Error: %@", errorMessage);
-    [connection cancel];
-    [self.command.activeTransfers removeObjectForKey:self.objectId];
+    [self cancelTransfer:connection];
     [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
@@ -641,8 +648,7 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
 
-    // remove connection for activeTransfers
-    [command.activeTransfers removeObjectForKey:objectId];
+    [self cancelTransfer:connection];
     [self.command.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
