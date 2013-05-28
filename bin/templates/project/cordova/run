@@ -24,8 +24,6 @@
 #     "iPad"
 #     "iPad (Retina)"
 
-set -e
-
 OPTION_RESULT=()
 TARGET="iPhone (Retina 3.5-inch)"
 TARGET_FLAG='--family iphone --retina'
