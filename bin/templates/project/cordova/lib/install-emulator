@@ -24,8 +24,6 @@
 #     "iPad"
 #     "iPad (Retina)"
 
-set -e
-
 OPTION_RESULT=()
 TARGET="iPhone (Retina 3.5-inch)"
 TARGET_FLAG='--family iphone --retina'
@@ -111,7 +109,7 @@ if [ ! -d "$APP_PATH" ]; then
 fi
 
 IOS_SIM_MIN_VERSION="1.5"
-IOS_SIM_LOCATION=$(which xcodebuild)
+IOS_SIM_LOCATION=$(which ios-sim)
 if [ $? != 0 ]; then
     echo -e "\033[31mError: ios-sim was not found. Please download, build and install version $IOS_SIM_MIN_VERSION or greater from https://github.com/phonegap/ios-sim into your path. Or 'brew install ios-sim' using homebrew: http://mxcl.github.com/homebrew/\033[m"; exit 1;
 	exit 1
