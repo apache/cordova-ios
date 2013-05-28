@@ -545,7 +545,7 @@
 					CoreMedia,
 					"-weak-lSystem",
 					"-all_load",
-					"-Obj-C",
+					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
@@ -585,7 +585,7 @@
 					CoreMedia,
 					"-weak-lSystem",
 					"-all_load",
-					"-Obj-C",
+					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
