@@ -546,7 +546,7 @@
 					"-weak-lSystem",
           "-force_load",
           "${TARGET_BUILD_DIR}/libCordova.a",
-					"-Obj-C",
+					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
@@ -587,7 +587,7 @@
 					"-weak-lSystem",
           "-force_load",
           "${TARGET_BUILD_DIR}/libCordova.a",
-					"-Obj-C",
+					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
