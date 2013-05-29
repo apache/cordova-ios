@@ -87,7 +87,8 @@ typedef enum {
     STATE_WAITING_FOR_LOAD_START,
     STATE_WAITING_FOR_LOAD_FINISH,
     STATE_IOS5_POLLING_FOR_LOAD_START,
-    STATE_IOS5_POLLING_FOR_LOAD_FINISH
+    STATE_IOS5_POLLING_FOR_LOAD_FINISH,
+    STATE_CANCELLED
 } State;
 
 @implementation CDVWebViewDelegate
@@ -231,6 +232,12 @@ typedef enum {
             [self pollForPageLoadStart:webView];
             break;
 
+        case STATE_CANCELLED:
+            fireCallback = YES;
+            _state = STATE_WAITING_FOR_LOAD_FINISH;
+            _loadCount += 1;
+            break;
+
         case STATE_WAITING_FOR_LOAD_START:
             if (_loadCount != 0) {
                 NSLog(@"CDVWebViewDelegate: Unexpected loadCount in didStart. count=%d", _loadCount);
@@ -310,11 +317,17 @@ typedef enum {
             break;
 
         case STATE_WAITING_FOR_LOAD_FINISH:
-            if (_loadCount == 1) {
-                _state = STATE_IDLE;
+            if([error code] != NSURLErrorCancelled) {
+                if (_loadCount == 1) {
+                    _state = STATE_IDLE;
+                    fireCallback = YES;
+                }
+                _loadCount = -1;
+            } else {
                 fireCallback = YES;
+                _state = STATE_CANCELLED;
+                _loadCount -= 1;
             }
-            _loadCount = -1;
             break;
 
         case STATE_IOS5_POLLING_FOR_LOAD_START:
