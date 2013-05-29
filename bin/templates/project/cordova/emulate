@@ -26,12 +26,15 @@ if [[ "$XCODE_VER" < "$XCODE_MIN_VERSION" ]]; then
 	exit 1
 fi
 
+SDK=`xcodebuild -showsdks | grep Sim | tail -1 | awk '{print $6}'`
+
 CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 PROJECT_PATH="$(dirname "$CORDOVA_PATH")"
 XCODEPROJ=$( ls "$PROJECT_PATH" | grep .xcodeproj  )
 PROJECT_NAME=$(basename "$XCODEPROJ" .xcodeproj)
 
-APP_PATH=${1:-$PROJECT_PATH/build/$PROJECT_NAME.app}
+APP_PATH=${1:-$PROJECT_PATH/build/$(xcodebuild -project $PROJECT_NAME.xcodeproj -arch i386 -target $PROJECT_NAME -configuration Debug -sdk $SDK -showBuildSettings | grep FULL_PRODUCT_NAME | awk -F ' = ' '{print $2}')}
+
 DEVICE_FAMILY=${2:-${DEVICE_FAMILY:-iphone}}
 
 if [ ! -d "$APP_PATH" ]; then
