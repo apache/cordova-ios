@@ -19,11 +19,11 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "../ExifTest/CDVJpegHeaderWriter.h"
+#import <Cordova/CDVJpegHeaderWriter.h>
 
 #define ARC4RANDOM_MAX 0x100000000
 
-@interface ExifTestTests : SenTestCase {
+@interface CDVExifTests : SenTestCase {
     CDVJpegHeaderWriter* testHeaderWriter;
     NSNumber* testErrorThreshhold;
 }

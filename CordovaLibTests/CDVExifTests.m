@@ -19,10 +19,9 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "ExifTestTests.h"
-#import "../ExifTest/CDVJpegHeaderWriter.m"
+#import "CDVExifTests.h"
 
-@implementation ExifTestTests
+@implementation CDVExifTests
 
 - (void)setUp
 {
@@ -148,7 +147,7 @@
     result = [testHeaderWriter formatRationalWithNumerator:numerator
                                            withDenominator:denominator
                                                   asSigned:FALSE];
-    NSLog(result);
+    NSLog(@"%@", result);
     STAssertNotNil(result, @"nil returned from testUnsignedRationalToString");
     STAssertTrueNoThrow([result length] == 16, @"returned string with wrong length. Exif rationals are 8 bytes, string has %ld bytes", [result length] / 2);
     STAssertTrueNoThrow([result isEqualToString:@"000000010000000a"], @"result was = %@ should be = @0000000100000010", result);
@@ -163,7 +162,7 @@
     result = [testHeaderWriter formatRationalWithNumerator:numerator
                                            withDenominator:denominator
                                                   asSigned:TRUE];
-    NSLog(result);
+    NSLog(@"%@", result);
     STAssertNotNil(result, @"nil returned from testSignedRationalToString");
     STAssertTrueNoThrow([result length] == 16, @"returned string with wrong length. Exif rationals are 8 bytes, string has %ld bytes", [result length] / 2);
     STAssertTrueNoThrow([result isEqualToString:@"fffffffffffffff6"], @"result was = %@ should be = @000000FF000000F6", result);
