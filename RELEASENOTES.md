@@ -54,6 +54,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-2998] Add a ./cordova/lib/start-emulator project-level helper script to iOS
 * [CB-2916] Add a ./cordova/clean project-level script for iOS
 * [CB-2053] Update UIImagePickerController label to reflect video media type in CDVCamera
+* [CB-3530] PhoneGap app crashes on iOS with error "CDVWebViewDelegate: Navigation started when state=1"
 
 <br />
 
