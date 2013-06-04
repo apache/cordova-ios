@@ -34,6 +34,7 @@
 - (void)open:(CDVInvokedUrlCommand*)command;
 - (void)close:(CDVInvokedUrlCommand*)command;
 - (void)injectScriptCode:(CDVInvokedUrlCommand*)command;
+- (void)show:(CDVInvokedUrlCommand*)command;
 
 @end
 
@@ -81,6 +82,7 @@
 @property (nonatomic, assign) BOOL allowinlinemediaplayback;
 @property (nonatomic, assign) BOOL keyboarddisplayrequiresuseraction;
 @property (nonatomic, assign) BOOL suppressesincrementalrendering;
+@property (nonatomic, assign) BOOL hidden;
 
 + (CDVInAppBrowserOptions*)parseOptions:(NSString*)options;
 
