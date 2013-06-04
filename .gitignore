@@ -4,7 +4,6 @@
 tmp
 *.mode1v3
 *.pbxuser
-build
 *.xcworkspace
 xcuserdata
 CordovaLib/javascript/cordova-*.js
