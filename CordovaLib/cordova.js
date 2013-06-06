@@ -1,5 +1,5 @@
 // Platform: ios
-// 2.8.0rc1-0-g22bc4d8
+// 2.8.0-0-g6208c95
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '2.8.0rc1-0-g22bc4d8';
+var CORDOVA_JS_BUILD_LABEL = '2.8.0-0-g6208c95';
 // file: lib/scripts/require.js
 
 var require,
@@ -2383,11 +2383,7 @@ function initRead(reader, file) {
     reader._error = null;
     reader._readyState = FileReader.LOADING;
 
-    if (typeof file == 'string') {
-        // Deprecated in Cordova 2.4.
-        console.warn('Using a string argument with FileReader.readAs functions is deprecated.');
-        reader._fileName = file;
-    } else if (typeof file.fullPath == 'string') {
+    if (typeof file.fullPath == 'string') {
         reader._fileName = file.fullPath;
     } else {
         reader._fileName = '';
@@ -4502,7 +4498,6 @@ function Device() {
     this.available = false;
     this.platform = null;
     this.version = null;
-    this.name = null;
     this.uuid = null;
     this.cordova = null;
     this.model = null;
@@ -4518,7 +4513,6 @@ function Device() {
             me.available = true;
             me.platform = info.platform;
             me.version = info.version;
-            me.name = info.name;
             me.uuid = info.uuid;
             me.cordova = buildLabel;
             me.model = info.model;
@@ -6259,6 +6253,11 @@ window.cordova = require('cordova');
 // file: lib/scripts/bootstrap.js
 
 (function (context) {
+    if (context._cordovaJsLoaded) {
+        throw new Error('cordova.js included multiple times.');
+    }
+    context._cordovaJsLoaded = true;
+
     var channel = require('cordova/channel');
     var platformInitChannelsArray = [channel.onNativeReady, channel.onPluginsReady];
 
