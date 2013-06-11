@@ -262,7 +262,6 @@
 
     // /////////////////
 
-    NSNumber* enableLocation = [self.settings objectForKey:@"EnableLocation"];
     NSString* enableViewportScale = [self.settings objectForKey:@"EnableViewportScale"];
     NSNumber* allowInlineMediaPlayback = [self.settings objectForKey:@"AllowInlineMediaPlayback"];
     BOOL mediaPlaybackRequiresUserAction = YES;  // default value
@@ -280,10 +279,6 @@
      * Fire up the GPS Service right away as it takes a moment for data to come back.
      */
 
-    if ([enableLocation boolValue]) {
-        NSLog(@"Deprecated: The 'EnableLocation' boolean property is deprecated in 2.5.0, and will be removed in 3.0.0. Use the 'onload' boolean attribute (of the CDVLocation plugin.");
-        [[self.commandDelegate getCommandInstance:@"Geolocation"] getLocation:[CDVInvokedUrlCommand new]];
-    }
 
     if (hideKeyboardFormAccessoryBar) {
         __weak CDVViewController* weakSelf = self;
