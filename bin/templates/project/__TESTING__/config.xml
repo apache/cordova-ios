@@ -52,18 +52,8 @@
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="TopActivityIndicator" value="gray" />
 
-
-    <feature name="Geolocation">
-      <param name="ios-package" value="CDVLocation"/>
-    </feature>
     <feature name="Device">
       <param name="ios-package" value="CDVDevice"/>
-    </feature>
-    <feature name="Accelerometer">
-      <param name="ios-package" value="CDVAccelerometer"/>
-    </feature>
-    <feature name="Compass">
-      <param name="ios-package" value="CDVLocation"/>
     </feature>
     <feature name="Media">
       <param name="ios-package" value="CDVSound"/>
@@ -71,17 +61,11 @@
     <feature name="Camera">
       <param name="ios-package" value="CDVCamera"/>
     </feature>
-    <feature name="Contacts">
-      <param name="ios-package" value="CDVContacts"/>
-    </feature>
     <feature name="File">
       <param name="ios-package"  value="CDVFile"/>
     </feature>
     <feature name="NetworkStatus">
       <param name="ios-package" value="CDVConnection"/>
-    </feature>
-    <feature name="Notification">
-      <param name="ios-package" value="CDVNotification"/>
     </feature>
     <feature name="FileTransfer">
       <param name="ios-package" value="CDVFileTransfer"/>
@@ -89,20 +73,8 @@
     <feature name="Capture">
       <param name="ios-package" value="CDVCapture"/>
     </feature>
-    <feature name="Battery">
-      <param name="ios-package" value="CDVBattery"/>
-    </feature>
-    <feature name="SplashScreen">
-      <param name="ios-package" value="CDVSplashScreen"/>
-    </feature>
-    <feature name="Echo">
-      <param name="ios-package" value="CDVEcho"/>
-    </feature>
     <feature name="Globalization">
       <param name="ios-package" value="CDVGlobalization"/>
-    </feature>
-    <feature name="InAppBrowser">
-      <param name="ios-package" value="CDVInAppBrowser"/>
     </feature>
     <feature name="Logger">
       <param name="ios-package" value="CDVLogger"/>
