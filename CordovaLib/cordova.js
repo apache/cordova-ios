@@ -1,5 +1,5 @@
 // Platform: ios
-// 2.8.0-0-g6208c95
+// 2.7.0rc1-84-g62c5786
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '2.8.0-0-g6208c95';
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-84-g62c5786';
 // file: lib/scripts/require.js
 
 var require,
@@ -3299,6 +3299,9 @@ InAppBrowser.prototype = {
     },
     close: function (eventname) {
         exec(null, null, "InAppBrowser", "close", []);
+    },
+    show: function (eventname) {
+      exec(null, null, "InAppBrowser", "show", []);
     },
     addEventListener: function (eventname,f) {
         if (eventname in this.channels) {
