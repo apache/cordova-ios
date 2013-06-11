@@ -1,5 +1,9 @@
 // Platform: ios
+<<<<<<< HEAD
 // 2.9.0rc1-0-g002f33d
+=======
+// 2.7.0rc1-84-g62c5786
+>>>>>>> updated cordova js file
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +23,11 @@
  under the License.
 */
 ;(function() {
+<<<<<<< HEAD
 var CORDOVA_JS_BUILD_LABEL = '2.9.0rc1-0-g002f33d';
+=======
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-84-g62c5786';
+>>>>>>> updated cordova js file
 // file: lib/scripts/require.js
 
 var require,
