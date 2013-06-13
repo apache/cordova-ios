@@ -1,6 +1,7 @@
 // Platform: ios
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 // 2.9.0rc1-0-g002f33d
 =======
 // 2.7.0rc1-84-g62c5786
@@ -8,6 +9,9 @@
 =======
 // 2.7.0rc1-100-g6a53312
 >>>>>>> updated cordovajs, removed globalization and camera
+=======
+// 2.7.0rc1-101-gc6482ac
+>>>>>>> updated js
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -29,6 +33,7 @@
 ;(function() {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 var CORDOVA_JS_BUILD_LABEL = '2.9.0rc1-0-g002f33d';
 =======
 var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-84-g62c5786';
@@ -36,6 +41,9 @@ var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-84-g62c5786';
 =======
 var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-100-g6a53312';
 >>>>>>> updated cordovajs, removed globalization and camera
+=======
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-101-gc6482ac';
+>>>>>>> updated js
 // file: lib/scripts/require.js
 
 var require,
