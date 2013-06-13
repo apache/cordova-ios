@@ -73,9 +73,6 @@
     <feature name="Capture">
       <param name="ios-package" value="CDVCapture"/>
     </feature>
-    <feature name="Globalization">
-      <param name="ios-package" value="CDVGlobalization"/>
-    </feature>
     <feature name="Logger">
       <param name="ios-package" value="CDVLogger"/>
     </feature>
