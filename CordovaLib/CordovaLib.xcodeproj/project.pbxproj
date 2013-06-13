@@ -531,6 +531,10 @@
 					armv7,
 					armv7s,
 				);
+				"ARCHS[sdk=iphoneos7.*]" = (
+					armv7,
+					armv7s,
+				);
 				"ARCHS[sdk=iphonesimulator*]" = i386;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
@@ -560,6 +564,10 @@
 					armv7,
 					armv7s,
 				);
+				"ARCHS[sdk=iphoneos7.*]" = (
+					armv7,
+					armv7s,
+				);
 				"ARCHS[sdk=iphonesimulator*]" = i386;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
@@ -582,6 +590,10 @@
 			buildSettings = {
 				"ARCHS[sdk=iphoneos*]" = armv7;
 				"ARCHS[sdk=iphoneos6.*]" = (
+					armv7,
+					armv7s,
+				);
+				"ARCHS[sdk=iphoneos7.*]" = (
 					armv7,
 					armv7s,
 				);
@@ -615,6 +627,10 @@
 			buildSettings = {
 				"ARCHS[sdk=iphoneos*]" = armv7;
 				"ARCHS[sdk=iphoneos6.*]" = (
+					armv7,
+					armv7s,
+				);
+				"ARCHS[sdk=iphoneos7.*]" = (
 					armv7,
 					armv7s,
 				);
