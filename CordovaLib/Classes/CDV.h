@@ -25,7 +25,6 @@
 #import "CDVURLProtocol.h"
 #import "CDVInvokedUrlCommand.h"
 
-#import "CDVCamera.h"
 #import "CDVCapture.h"
 #import "CDVConnection.h"
 #import "CDVDebug.h"
