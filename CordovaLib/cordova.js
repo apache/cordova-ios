@@ -1,5 +1,5 @@
 // Platform: ios
-// 2.7.0rc1-100-g6a53312
+// 2.7.0rc1-101-gc6482ac
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-100-g6a53312';
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-101-gc6482ac';
 // file: lib/scripts/require.js
 
 var require,
