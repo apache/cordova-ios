@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 // 2.9.0rc1-0-g002f33d
 =======
 // 2.7.0rc1-84-g62c5786
@@ -12,6 +13,9 @@
 =======
 // 2.7.0rc1-101-gc6482ac
 >>>>>>> updated js
+=======
+// 2.7.0rc1-116-gf0108ae
+>>>>>>> updated cordovajs
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -34,6 +38,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 var CORDOVA_JS_BUILD_LABEL = '2.9.0rc1-0-g002f33d';
 =======
 var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-84-g62c5786';
@@ -44,6 +49,9 @@ var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-100-g6a53312';
 =======
 var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-101-gc6482ac';
 >>>>>>> updated js
+=======
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-116-gf0108ae';
+>>>>>>> updated cordovajs
 // file: lib/scripts/require.js
 
 var require,
@@ -1280,60 +1288,6 @@ module.exports = {
         CELL:"cellular",
         NONE: "none"
 };
-
-});
-
-// file: lib/common/plugin/Coordinates.js
-define("cordova/plugin/Coordinates", function(require, exports, module) {
-
-/**
- * This class contains position information.
- * @param {Object} lat
- * @param {Object} lng
- * @param {Object} alt
- * @param {Object} acc
- * @param {Object} head
- * @param {Object} vel
- * @param {Object} altacc
- * @constructor
- */
-var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
-    /**
-     * The latitude of the position.
-     */
-    this.latitude = lat;
-    /**
-     * The longitude of the position,
-     */
-    this.longitude = lng;
-    /**
-     * The accuracy of the position.
-     */
-    this.accuracy = acc;
-    /**
-     * The altitude of the position.
-     */
-    this.altitude = (alt !== undefined ? alt : null);
-    /**
-     * The direction the device is moving at the position.
-     */
-    this.heading = (head !== undefined ? head : null);
-    /**
-     * The velocity with which the device is moving at the position.
-     */
-    this.speed = (vel !== undefined ? vel : null);
-
-    if (this.speed === 0 || this.speed === null) {
-        this.heading = NaN;
-    }
-
-    /**
-     * The altitude accuracy of the position.
-     */
-    this.altitudeAccuracy = (altacc !== undefined) ? altacc : null;
-};
-
-module.exports = Coordinates;
 
 });
 
