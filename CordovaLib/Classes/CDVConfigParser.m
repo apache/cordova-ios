@@ -60,7 +60,7 @@
             @"    <plugin name=\"%@\" value=\"%@\" />\n"
             @"To:\n"
             @"    <feature name=\"%@\">\n"
-            @"        <param name=\"ios-package\" value=\"%@\">\n"
+            @"        <param name=\"ios-package\" value=\"%@\" />\n"
             @"    </feature>\n"
             , attributeDict[@"name"], attributeDict[@"value"], attributeDict[@"name"], attributeDict[@"value"]);
     } else if ([elementName isEqualToString:@"feature"]) { // store feature name to use with correct parameter set
