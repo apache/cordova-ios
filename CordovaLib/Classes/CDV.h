@@ -25,12 +25,8 @@
 #import "CDVURLProtocol.h"
 #import "CDVInvokedUrlCommand.h"
 
-#import "CDVCapture.h"
 #import "CDVConnection.h"
 #import "CDVDebug.h"
-#import "CDVDevice.h"
-#import "CDVFile.h"
-#import "CDVFileTransfer.h"
 #import "CDVPluginResult.h"
 #import "CDVReachability.h"
 #import "CDVSound.h"
