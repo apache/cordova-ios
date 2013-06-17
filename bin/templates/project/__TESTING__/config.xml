@@ -52,23 +52,11 @@
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="TopActivityIndicator" value="gray" />
 
-    <feature name="Device">
-      <param name="ios-package" value="CDVDevice"/>
-    </feature>
     <feature name="Media">
       <param name="ios-package" value="CDVSound"/>
     </feature>
-    <feature name="File">
-      <param name="ios-package"  value="CDVFile"/>
-    </feature>
     <feature name="NetworkStatus">
       <param name="ios-package" value="CDVConnection"/>
-    </feature>
-    <feature name="FileTransfer">
-      <param name="ios-package" value="CDVFileTransfer"/>
-    </feature>
-    <feature name="Capture">
-      <param name="ios-package" value="CDVCapture"/>
     </feature>
     <feature name="Logger">
       <param name="ios-package" value="CDVLogger"/>
