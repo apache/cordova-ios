@@ -307,10 +307,11 @@ static NSSet* org_apache_cordova_validArrowDirections;
             if (cameraPicker.encodingType == EncodingTypePNG) {
                 data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
             } else {
-                self.data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
+                data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
 
                 NSDictionary *controllerMetadata = [info objectForKey:@"UIImagePickerControllerMediaMetadata"];
                 if (controllerMetadata) {
+                    self.data = data;
                     self.metadata = [[NSMutableDictionary alloc] init];
                     
                     NSMutableDictionary *EXIFDictionary = [[controllerMetadata objectForKey:(NSString *)kCGImagePropertyExifDictionary]mutableCopy];
