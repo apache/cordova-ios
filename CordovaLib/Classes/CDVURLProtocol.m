@@ -25,7 +25,6 @@
 #import "CDVCommandQueue.h"
 #import "CDVWhitelist.h"
 #import "CDVViewController.h"
-#import "CDVFile.h"
 
 @interface CDVHTTPURLResponse : NSHTTPURLResponse
 @property (nonatomic) NSInteger statusCode;
@@ -35,6 +34,8 @@ static CDVWhitelist* gWhitelist = nil;
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
 static NSMutableSet* gRegisteredControllers = nil;
+
+NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
 
 // Returns the registered view controller that sent the given request.
 // If the user-agent is not from a UIWebView, or if it's from an unregistered one,
