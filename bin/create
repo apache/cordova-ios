@@ -132,6 +132,7 @@ else
     mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
     cp -r "$BINDIR/../CordovaLib/Classes" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/VERSION" "$PROJECT_PATH/CordovaLib"
+    cp "$BINDIR/../CordovaLib/cordova.js" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/CordovaLib_Prefix.pch" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
     # Make the sub-project reference to Cordova have the correct path.
