@@ -1,5 +1,5 @@
 // Platform: ios
-// 2.7.0rc1-119-gf0251c4
+// 2.7.0rc1-120-g8731b31
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-119-gf0251c4';
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-120-g8731b31';
 // file: lib/scripts/require.js
 
 var require,
@@ -524,8 +524,6 @@ var utils = require('cordova/utils'),
  * onDOMContentLoaded*         Internal event that is received when the web page is loaded and parsed.
  * onNativeReady*              Internal event that indicates the Cordova native side is ready.
  * onCordovaReady*             Internal event fired when all Cordova JavaScript objects have been created.
- * onCordovaInfoReady*         Internal event fired when device properties are available.
- * onCordovaConnectionReady*   Internal event fired when the connection property has been set.
  * onDeviceReady*              User event fired to indicate that Cordova is ready
  * onResume                    User event fired to indicate a start/resume lifecycle event
  * onPause                     User event fired to indicate a pause lifecycle event
@@ -727,9 +725,6 @@ channel.createSticky('onNativeReady');
 // Event to indicate that all Cordova JavaScript objects have been created
 // and it's time to run plugin constructors.
 channel.createSticky('onCordovaReady');
-
-// Event to indicate that device properties are available
-channel.createSticky('onCordovaInfoReady');
 
 // Event to indicate that all automatically loaded JS plugins are loaded and ready.
 channel.createSticky('onPluginsReady');
