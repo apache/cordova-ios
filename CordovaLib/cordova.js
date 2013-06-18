@@ -1,5 +1,5 @@
 // Platform: ios
-// 2.7.0rc1-116-gf0108ae
+// 2.7.0rc1-119-gf0251c4
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-116-gf0108ae';
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-119-gf0251c4';
 // file: lib/scripts/require.js
 
 var require,
@@ -731,9 +731,6 @@ channel.createSticky('onCordovaReady');
 // Event to indicate that device properties are available
 channel.createSticky('onCordovaInfoReady');
 
-// Event to indicate that the connection property has been set.
-channel.createSticky('onCordovaConnectionReady');
-
 // Event to indicate that all automatically loaded JS plugins are loaded and ready.
 channel.createSticky('onPluginsReady');
 
@@ -751,7 +748,6 @@ channel.createSticky('onDestroy');
 
 // Channels that must fire before "deviceready" is fired.
 channel.waitForInitialization('onCordovaReady');
-channel.waitForInitialization('onCordovaConnectionReady');
 channel.waitForInitialization('onDOMContentLoaded');
 
 module.exports = channel;
@@ -1237,25 +1233,6 @@ function ConfigurationData() {
 }
 
 module.exports = ConfigurationData;
-
-});
-
-// file: lib/common/plugin/Connection.js
-define("cordova/plugin/Connection", function(require, exports, module) {
-
-/**
- * Network status
- */
-module.exports = {
-        UNKNOWN: "unknown",
-        ETHERNET: "ethernet",
-        WIFI: "wifi",
-        CELL_2G: "2g",
-        CELL_3G: "3g",
-        CELL_4G: "4g",
-        CELL:"cellular",
-        NONE: "none"
-};
 
 });
 
@@ -3332,77 +3309,6 @@ for (var key in console) {
 
 });
 
-// file: lib/common/plugin/device.js
-define("cordova/plugin/device", function(require, exports, module) {
-
-var argscheck = require('cordova/argscheck'),
-    channel = require('cordova/channel'),
-    utils = require('cordova/utils'),
-    exec = require('cordova/exec');
-
-// Tell cordova channel to wait on the CordovaInfoReady event
-channel.waitForInitialization('onCordovaInfoReady');
-
-/**
- * This represents the mobile device, and provides properties for inspecting the model, version, UUID of the
- * phone, etc.
- * @constructor
- */
-function Device() {
-    this.available = false;
-    this.platform = null;
-    this.version = null;
-    this.uuid = null;
-    this.cordova = null;
-    this.model = null;
-
-    var me = this;
-
-    channel.onCordovaReady.subscribe(function() {
-        me.getInfo(function(info) {
-            var buildLabel = info.cordova;
-            if (buildLabel != CORDOVA_JS_BUILD_LABEL) {
-                buildLabel += ' JS=' + CORDOVA_JS_BUILD_LABEL;
-            }
-            me.available = true;
-            me.platform = info.platform;
-            me.version = info.version;
-            me.uuid = info.uuid;
-            me.cordova = buildLabel;
-            me.model = info.model;
-            channel.onCordovaInfoReady.fire();
-        },function(e) {
-            me.available = false;
-            utils.alert("[ERROR] Error initializing Cordova: " + e);
-        });
-    });
-}
-
-/**
- * Get device info
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-Device.prototype.getInfo = function(successCallback, errorCallback) {
-    argscheck.checkArgs('fF', 'Device.getInfo', arguments);
-    exec(successCallback, errorCallback, "Device", "getDeviceInfo", []);
-};
-
-module.exports = new Device();
-
-});
-
-// file: lib/common/plugin/device/symbols.js
-define("cordova/plugin/device/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper');
-
-modulemapper.clobbers('cordova/plugin/device', 'device');
-
-});
-
 // file: lib/common/plugin/echo.js
 define("cordova/plugin/echo", function(require, exports, module) {
 
@@ -3873,90 +3779,6 @@ var modulemapper = require('cordova/modulemapper');
 
 modulemapper.defaults('cordova/plugin/Media', 'Media');
 modulemapper.clobbers('cordova/plugin/MediaError', 'MediaError');
-
-});
-
-// file: lib/common/plugin/network.js
-define("cordova/plugin/network", function(require, exports, module) {
-
-var exec = require('cordova/exec'),
-    cordova = require('cordova'),
-    channel = require('cordova/channel'),
-    utils = require('cordova/utils');
-
-// Link the onLine property with the Cordova-supplied network info.
-// This works because we clobber the naviagtor object with our own
-// object in bootstrap.js.
-if (typeof navigator != 'undefined') {
-    utils.defineGetter(navigator, 'onLine', function() {
-        return this.connection.type != 'none';
-    });
-}
-
-function NetworkConnection() {
-    this.type = 'unknown';
-}
-
-/**
- * Get connection info
- *
- * @param {Function} successCallback The function to call when the Connection data is available
- * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
- */
-NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "NetworkStatus", "getConnectionInfo", []);
-};
-
-var me = new NetworkConnection();
-var timerId = null;
-var timeout = 500;
-
-channel.onCordovaReady.subscribe(function() {
-    me.getInfo(function(info) {
-        me.type = info;
-        if (info === "none") {
-            // set a timer if still offline at the end of timer send the offline event
-            timerId = setTimeout(function(){
-                cordova.fireDocumentEvent("offline");
-                timerId = null;
-            }, timeout);
-        } else {
-            // If there is a current offline event pending clear it
-            if (timerId !== null) {
-                clearTimeout(timerId);
-                timerId = null;
-            }
-            cordova.fireDocumentEvent("online");
-        }
-
-        // should only fire this once
-        if (channel.onCordovaConnectionReady.state !== 2) {
-            channel.onCordovaConnectionReady.fire();
-        }
-    },
-    function (e) {
-        // If we can't get the network info we should still tell Cordova
-        // to fire the deviceready event.
-        if (channel.onCordovaConnectionReady.state !== 2) {
-            channel.onCordovaConnectionReady.fire();
-        }
-        console.log("Error initializing Network Connection: " + e);
-    });
-});
-
-module.exports = me;
-
-});
-
-// file: lib/common/plugin/networkstatus/symbols.js
-define("cordova/plugin/networkstatus/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper');
-
-modulemapper.clobbers('cordova/plugin/network', 'navigator.network.connection', 'navigator.network.connection is deprecated. Use navigator.connection instead.');
-modulemapper.clobbers('cordova/plugin/network', 'navigator.connection');
-modulemapper.defaults('cordova/plugin/Connection', 'Connection');
 
 });
 
