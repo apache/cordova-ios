@@ -103,6 +103,45 @@ typedef enum {
     return self;
 }
 
+- (BOOL)request:(NSURLRequest*)newRequest isFragmentIdentifierToRequest:(NSURLRequest*)originalRequest
+{
+    if (originalRequest.URL && newRequest.URL) {
+        NSString* originalRequestUrl = [originalRequest.URL absoluteString];
+        NSString* newRequestUrl = [newRequest.URL absoluteString];
+
+        // no fragment, easy
+        if (newRequest.URL.fragment == nil) {
+            return NO;
+        }
+
+        // if the urls have fragments and they are equal
+        if ((originalRequest.URL.fragment && newRequest.URL.fragment) && [originalRequestUrl isEqualToString:newRequestUrl]) {
+            return YES;
+        }
+
+        NSString* urlFormat = @"%@://%@:%d/%@#%@";
+        // reconstruct the URLs (ignoring basic auth credentials, query string)
+        NSString* baseOriginalRequestUrl = [NSString stringWithFormat:urlFormat,
+            [originalRequest.URL scheme],
+            [originalRequest.URL host],
+            [[originalRequest.URL port] intValue],
+            [originalRequest.URL path],
+            [newRequest.URL fragment]                                 // add the new request's fragment
+            ];
+        NSString* baseNewRequestUrl = [NSString stringWithFormat:urlFormat,
+            [newRequest.URL scheme],
+            [newRequest.URL host],
+            [[newRequest.URL port] intValue],
+            [newRequest.URL path],
+            [newRequest.URL fragment]
+            ];
+
+        return [baseOriginalRequestUrl isEqualToString:baseNewRequestUrl];
+    }
+
+    return NO;
+}
+
 - (BOOL)isPageLoaded:(UIWebView*)webView
 {
     NSString* readyState = [webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
@@ -198,10 +237,12 @@ typedef enum {
                         NSLog(@"%@", description);
                         _loadCount = 0;
                         _state = STATE_WAITING_FOR_LOAD_START;
-                        if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
-                            NSDictionary* errorDictionary = @{NSLocalizedDescriptionKey : description};
-                            NSError* error = [[NSError alloc] initWithDomain:@"CDVWebViewDelegate" code:1 userInfo:errorDictionary];
-                            [_delegate webView:webView didFailLoadWithError:error];
+                        if (![self request:request isFragmentIdentifierToRequest:webView.request]) {
+                            if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
+                                NSDictionary* errorDictionary = @{NSLocalizedDescriptionKey : description};
+                                NSError* error = [[NSError alloc] initWithDomain:@"CDVWebViewDelegate" code:1 userInfo:errorDictionary];
+                                [_delegate webView:webView didFailLoadWithError:error];
+                            }
                         }
                     }
             }
