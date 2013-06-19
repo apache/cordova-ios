@@ -1184,6 +1184,7 @@ module.exports = {
 
 });
 
+<<<<<<< HEAD
 // file: lib/common/plugin/CaptureAudioOptions.js
 define("cordova/plugin/CaptureAudioOptions", function(require, exports, module) {
 
@@ -3202,6 +3203,8 @@ modulemapper.clobbers('cordova/plugin/capture', 'navigator.device.capture');
 
 });
 
+=======
+>>>>>>> updated cordova.js
 // file: lib/common/plugin/console-via-logger.js
 define("cordova/plugin/console-via-logger", function(require, exports, module) {
 
@@ -3409,71 +3412,6 @@ module.exports = function(successCallback, errorCallback, message, forceAsync) {
     exec(successCallback, errorCallback, "Echo", action, args);
 };
 
-
-});
-
-// file: lib/ios/plugin/file/symbols.js
-define("cordova/plugin/file/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper'),
-    symbolshelper = require('cordova/plugin/file/symbolshelper');
-
-symbolshelper(modulemapper.clobbers);
-modulemapper.merges('cordova/plugin/ios/Entry', 'Entry');
-
-});
-
-// file: lib/common/plugin/file/symbolshelper.js
-define("cordova/plugin/file/symbolshelper", function(require, exports, module) {
-
-module.exports = function(exportFunc) {
-    exportFunc('cordova/plugin/DirectoryEntry', 'DirectoryEntry');
-    exportFunc('cordova/plugin/DirectoryReader', 'DirectoryReader');
-    exportFunc('cordova/plugin/Entry', 'Entry');
-    exportFunc('cordova/plugin/File', 'File');
-    exportFunc('cordova/plugin/FileEntry', 'FileEntry');
-    exportFunc('cordova/plugin/FileError', 'FileError');
-    exportFunc('cordova/plugin/FileReader', 'FileReader');
-    exportFunc('cordova/plugin/FileSystem', 'FileSystem');
-    exportFunc('cordova/plugin/FileUploadOptions', 'FileUploadOptions');
-    exportFunc('cordova/plugin/FileUploadResult', 'FileUploadResult');
-    exportFunc('cordova/plugin/FileWriter', 'FileWriter');
-    exportFunc('cordova/plugin/Flags', 'Flags');
-    exportFunc('cordova/plugin/LocalFileSystem', 'LocalFileSystem');
-    exportFunc('cordova/plugin/Metadata', 'Metadata');
-    exportFunc('cordova/plugin/ProgressEvent', 'ProgressEvent');
-    exportFunc('cordova/plugin/requestFileSystem', 'requestFileSystem');
-    exportFunc('cordova/plugin/resolveLocalFileSystemURI', 'resolveLocalFileSystemURI');
-};
-
-});
-
-// file: lib/common/plugin/filetransfer/symbols.js
-define("cordova/plugin/filetransfer/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper');
-
-modulemapper.clobbers('cordova/plugin/FileTransfer', 'FileTransfer');
-modulemapper.clobbers('cordova/plugin/FileTransferError', 'FileTransferError');
-
-});
-
-// file: lib/ios/plugin/ios/Entry.js
-define("cordova/plugin/ios/Entry", function(require, exports, module) {
-
-module.exports = {
-    toURL:function() {
-        // TODO: refactor path in a cross-platform way so we can eliminate
-        // these kinds of platform-specific hacks.
-        return "file://localhost" + this.fullPath;
-    },
-    toURI: function() {
-        console.log("DEPRECATED: Update your code to use 'toURL'");
-        return "file://localhost" + this.fullPath;
-    }
-};
 
 });
 
@@ -3833,112 +3771,6 @@ define("cordova/plugin/logger/symbols", function(require, exports, module) {
 var modulemapper = require('cordova/modulemapper');
 
 modulemapper.clobbers('cordova/plugin/logger', 'cordova.logger');
-
-});
-
-// file: lib/ios/plugin/media/symbols.js
-define("cordova/plugin/media/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper');
-
-modulemapper.defaults('cordova/plugin/Media', 'Media');
-modulemapper.clobbers('cordova/plugin/MediaError', 'MediaError');
-
-});
-
-// file: lib/common/plugin/requestFileSystem.js
-define("cordova/plugin/requestFileSystem", function(require, exports, module) {
-
-var argscheck = require('cordova/argscheck'),
-    FileError = require('cordova/plugin/FileError'),
-    FileSystem = require('cordova/plugin/FileSystem'),
-    exec = require('cordova/exec');
-
-/**
- * Request a file system in which to store application data.
- * @param type  local file system type
- * @param size  indicates how much storage space, in bytes, the application expects to need
- * @param successCallback  invoked with a FileSystem object
- * @param errorCallback  invoked if error occurs retrieving file system
- */
-var requestFileSystem = function(type, size, successCallback, errorCallback) {
-    argscheck.checkArgs('nnFF', 'requestFileSystem', arguments);
-    var fail = function(code) {
-        errorCallback && errorCallback(new FileError(code));
-    };
-
-    if (type < 0 || type > 3) {
-        fail(FileError.SYNTAX_ERR);
-    } else {
-        // if successful, return a FileSystem object
-        var success = function(file_system) {
-            if (file_system) {
-                if (successCallback) {
-                    // grab the name and root from the file system object
-                    var result = new FileSystem(file_system.name, file_system.root);
-                    successCallback(result);
-                }
-            }
-            else {
-                // no FileSystem object returned
-                fail(FileError.NOT_FOUND_ERR);
-            }
-        };
-        exec(success, fail, "File", "requestFileSystem", [type, size]);
-    }
-};
-
-module.exports = requestFileSystem;
-
-});
-
-// file: lib/common/plugin/resolveLocalFileSystemURI.js
-define("cordova/plugin/resolveLocalFileSystemURI", function(require, exports, module) {
-
-var argscheck = require('cordova/argscheck'),
-    DirectoryEntry = require('cordova/plugin/DirectoryEntry'),
-    FileEntry = require('cordova/plugin/FileEntry'),
-    FileError = require('cordova/plugin/FileError'),
-    exec = require('cordova/exec');
-
-/**
- * Look up file system Entry referred to by local URI.
- * @param {DOMString} uri  URI referring to a local file or directory
- * @param successCallback  invoked with Entry object corresponding to URI
- * @param errorCallback    invoked if error occurs retrieving file system entry
- */
-module.exports = function(uri, successCallback, errorCallback) {
-    argscheck.checkArgs('sFF', 'resolveLocalFileSystemURI', arguments);
-    // error callback
-    var fail = function(error) {
-        errorCallback && errorCallback(new FileError(error));
-    };
-    // sanity check for 'not:valid:filename'
-    if(!uri || uri.split(":").length > 2) {
-        setTimeout( function() {
-            fail(FileError.ENCODING_ERR);
-        },0);
-        return;
-    }
-    // if successful, return either a file or directory entry
-    var success = function(entry) {
-        var result;
-        if (entry) {
-            if (successCallback) {
-                // create appropriate Entry object
-                result = (entry.isDirectory) ? new DirectoryEntry(entry.name, entry.fullPath) : new FileEntry(entry.name, entry.fullPath);
-                successCallback(result);
-            }
-        }
-        else {
-            // no Entry object returned
-            fail(FileError.NOT_FOUND_ERR);
-        }
-    };
-
-    exec(success, fail, "File", "resolveLocalFileSystemURI", [uri]);
-};
 
 });
 
