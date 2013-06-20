@@ -24,6 +24,35 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 2.9.0 (201306XX) ###
+
+* [CB-3469] Add a version macro for 2.8.0.
+* [CB-3469] Adding missing license found by RAT
+* [CB-2200] Remove device.name (deprecated)
+* [CB-3031] Fix for emulate script when project name has a space
+* [CB-3420] add hidden option to InAppBrowser
+* [CB-2840] Nil checks to avoid crash when network disconnected
+* [CB-3514] Remove partially-downloaded files when FileTransfer fails
+* [CB-2406] Add ArrayBuffer support to FileWriter.write
+* [CB-3757] camera.getPicture from photolib fails on iOS
+* [CB-3524] cordova/emulate and cordova/run silently fails when ios-sim is not installed
+* [CB-3526] typo in cordova/lib/install-emulator - does not check for ios-sim
+* [CB-3490] Update CordovaLib iOS Deployment Target in Project Setting to 5.0
+* [CB-3528] Update Plugin Upgrade Guide for iOS
+* [CB-3530] PhoneGap app crashes on iOS with error "CDVWebViewDelegate: Navigation started when state=1"
+* [CB-3768] Build to phone failing on Xcode 5 DP1 (OS X Mavericks)
+* [CB-3833] Deprecation plugin tag upgrade step has malformed xml
+* [CB-3743] Remove compatibility headers folder
+* [CB-3619] ./cordova/run script does not always call ./cordova/build first
+* [CB-3463] bin/create should copy cordova.js into the project's CordovaLib
+* [CB-3530] PhoneGap app crashes on iOS with error "CDVWebViewDelegate: Navigation started when state=1" (for navigation to an anchor on the same page)
+* [CB-3507] Wrong Linker Flag for project template
+* [CB-3458] remove all_load dependency. Use force load instead
+* Removing "build" from gitignore as one of our cli scripts is named build :)
+* Added/renamed CDVExifTests to test project.
+
+<br />
+
 ### 2.8.0 (201305XX) ###
 
 * [CB-2840] Nil checks to avoid crash when network disconnected
