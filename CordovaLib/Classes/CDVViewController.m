@@ -23,6 +23,7 @@
 #import "CDVConfigParser.h"
 #import "CDVUserAgentUtil.h"
 #import "CDVWebViewDelegate.h"
+#import <AVFoundation/AVFoundation.h>
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
