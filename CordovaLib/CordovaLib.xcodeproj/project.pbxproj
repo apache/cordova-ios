@@ -40,7 +40,6 @@
 		8887FD751090FBE7009987E8 /* CDVInvokedUrlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD351090FBE7009987E8 /* CDVInvokedUrlCommand.m */; };
 		8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD501090FBE7009987E8 /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD511090FBE7009987E8 /* NSData+Base64.m */; };
-		8887FD9F1090FBE7009987E8 /* CDVSound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD601090FBE7009987E8 /* CDVSound.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EB3B3548161CB44D003DBE7D /* CDVCommandQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = EB3B3546161CB44D003DBE7D /* CDVCommandQueue.m */; };
 		EB3B357C161F2A45003DBE7D /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3B357A161F2A44003DBE7D /* CDVCommandDelegateImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -105,8 +104,6 @@
 		8887FD351090FBE7009987E8 /* CDVInvokedUrlCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVInvokedUrlCommand.m; path = Classes/CDVInvokedUrlCommand.m; sourceTree = "<group>"; };
 		8887FD501090FBE7009987E8 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "Classes/NSData+Base64.h"; sourceTree = "<group>"; };
 		8887FD511090FBE7009987E8 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "Classes/NSData+Base64.m"; sourceTree = "<group>"; };
-		8887FD601090FBE7009987E8 /* CDVSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVSound.h; path = Classes/CDVSound.h; sourceTree = "<group>"; };
-		8887FD611090FBE7009987E8 /* CDVSound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVSound.m; path = Classes/CDVSound.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* CordovaLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CordovaLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		EB3B3545161CB44D003DBE7D /* CDVCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCommandQueue.h; path = Classes/CDVCommandQueue.h; sourceTree = "<group>"; };
 		EB3B3546161CB44D003DBE7D /* CDVCommandQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVCommandQueue.m; path = Classes/CDVCommandQueue.m; sourceTree = "<group>"; };
@@ -219,8 +216,6 @@
 				EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */,
 				8887FD341090FBE7009987E8 /* CDVInvokedUrlCommand.h */,
 				8887FD351090FBE7009987E8 /* CDVInvokedUrlCommand.m */,
-				8887FD601090FBE7009987E8 /* CDVSound.h */,
-				8887FD611090FBE7009987E8 /* CDVSound.m */,
 				3E76876B156A90EE00EB6FA3 /* CDVLogger.m */,
 				3E76876C156A90EE00EB6FA3 /* CDVLogger.h */,
 				3073E9EC1656D51200957977 /* CDVScreenOrientationDelegate.h */,
@@ -272,7 +267,6 @@
 				8887FD681090FBE7009987E8 /* NSDictionary+Extensions.h in Headers */,
 				8887FD741090FBE7009987E8 /* CDVInvokedUrlCommand.h in Headers */,
 				8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */,
-				8887FD9F1090FBE7009987E8 /* CDVSound.h in Headers */,
 				1F92F4A01314023E0046367C /* CDVPluginResult.h in Headers */,
 				30E33AF213A7E24B00594D64 /* CDVPlugin.h in Headers */,
 				302965BC13A94E9D007046C5 /* CDVDebug.h in Headers */,
@@ -356,7 +350,6 @@
 				8887FD691090FBE7009987E8 /* NSDictionary+Extensions.m in Sources */,
 				8887FD751090FBE7009987E8 /* CDVInvokedUrlCommand.m in Sources */,
 				8887FD901090FBE7009987E8 /* NSData+Base64.m in Sources */,
-				8887FDA01090FBE7009987E8 /* CDVSound.m in Sources */,
 				1F92F4A11314023E0046367C /* CDVPluginResult.m in Sources */,
 				30E33AF313A7E24B00594D64 /* CDVPlugin.m in Sources */,
 				30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,

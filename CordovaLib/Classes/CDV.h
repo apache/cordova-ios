@@ -27,7 +27,6 @@
 
 #import "CDVDebug.h"
 #import "CDVPluginResult.h"
-#import "CDVSound.h"
 #import "CDVWhitelist.h"
 #import "CDVLocalStorage.h"
 #import "CDVScreenOrientationDelegate.h"
