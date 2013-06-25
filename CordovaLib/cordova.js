@@ -1,5 +1,5 @@
 // Platform: ios
-// 2.9.0rc1-0-g002f33d
+// 2.9.0-0-g83dc4bd
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '2.9.0rc1-0-g002f33d';
+var CORDOVA_JS_BUILD_LABEL = '2.9.0-0-g83dc4bd';
 // file: lib/scripts/require.js
 
 var require,
@@ -923,7 +923,7 @@ function iOSExec() {
            actionArgs = Array.prototype.splice.call(arguments, 1);
 
            console.log('The old format of this exec call has been removed (deprecated since 2.1). Change to: ' +
-                       "cordova.exec(null, null, \"" + service + "\", " + action + "\"," + JSON.stringify(actionArgs) + ");"
+                       "cordova.exec(null, null, \"" + service + "\", \"" + action + "\"," + JSON.stringify(actionArgs) + ");"
                        );
            return;
        } catch (e) {
