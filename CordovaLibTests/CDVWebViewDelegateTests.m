@@ -38,23 +38,28 @@
 
 - (void)testFragmentIdentifiersWithHttpUrl
 {
-    [self doTestFragmentIdentifiersWithBaseUrl:@"http://cordova.apache.org"];
+    [self doTestFragmentIdentifiersWithBaseUrl:@"http://cordova.apache.org" fragment:@"myfragment"];
 }
 
 - (void)testFragmentIdentifiersWithFileUrl
 {
-    [self doTestFragmentIdentifiersWithBaseUrl:@"file:///var/mobile/GASGEQGQsdga3313/www/index.html"];
+    [self doTestFragmentIdentifiersWithBaseUrl:@"file:///var/mobile/GASGEQGQsdga3313/www/index.html" fragment:@"myfragment"];
 }
 
-- (void)doTestFragmentIdentifiersWithBaseUrl:(NSString*)baseUrl
+- (void)testFragmentIdentifiersWithFileUrlAndMalformedFragment
+{
+    [self doTestFragmentIdentifiersWithBaseUrl:@"file:///var/mobile/GASGEQGQsdga3313/www/index.html" fragment:@"/var/mobile/GASGEQGQsdga3313/www/index.html"];
+}
+
+- (void)doTestFragmentIdentifiersWithBaseUrl:(NSString*)baseUrl fragment:(NSString*)fragment
 {
     CDVWebViewDelegate* wvd = [[CDVWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
 
     NSString* originalUrlString = baseUrl;
     NSURL* originalUrl = [NSURL URLWithString:originalUrlString];
-    NSURL* originalUrlWithFragmentOnly = [NSURL URLWithString:[NSString stringWithFormat:@"%@#myfragment", originalUrlString]];
+    NSURL* originalUrlWithFragmentOnly = [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", originalUrlString, fragment]];
     NSURL* originalUrlWithFragmentOnlyNoIdentifier = [NSURL URLWithString:[NSString stringWithFormat:@"%@#", originalUrlString]];
-    NSURL* originalUrlWithQueryParamsAndFragment = [NSURL URLWithString:[NSString stringWithFormat:@"%@?foo=bar#myfragment", originalUrlString]];
+    NSURL* originalUrlWithQueryParamsAndFragment = [NSURL URLWithString:[NSString stringWithFormat:@"%@?foo=bar#%@", originalUrlString, fragment]];
 
     NSURLRequest* originalRequest = [NSURLRequest requestWithURL:originalUrl];
     NSURLRequest* originalRequestWithFragmentOnly = [NSURLRequest requestWithURL:originalUrlWithFragmentOnly];
