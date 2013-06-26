@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B701028177A61CF00AE11F4 /* CDVShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B701026177A61CF00AE11F4 /* CDVShared.h */; };
+		1B701028177A61CF00AE11F4 /* CDVShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B701026177A61CF00AE11F4 /* CDVShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B701029177A61CF00AE11F4 /* CDVShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B701027177A61CF00AE11F4 /* CDVShared.m */; };
 		1F92F4A01314023E0046367C /* CDVPluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* CDVPluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F92F4A11314023E0046367C /* CDVPluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F92F49F1314023E0046367C /* CDVPluginResult.m */; };
@@ -290,13 +290,13 @@
 				EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */,
 				EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */,
 				EB3B357C161F2A45003DBE7D /* CDVCommandDelegateImpl.h in Headers */,
+				1B701028177A61CF00AE11F4 /* CDVShared.h in Headers */,
 				3073E9ED1656D51200957977 /* CDVScreenOrientationDelegate.h in Headers */,
 				F858FBC6166009A8007DA594 /* CDVConfigParser.h in Headers */,
 				30F3930B169F839700B22307 /* CDVJSON.h in Headers */,
 				EBFF4DBD16D3FE2E008F452B /* CDVWebViewDelegate.h in Headers */,
 				EB96673B16A8970A00D86CDF /* CDVUserAgentUtil.h in Headers */,
 				7E14B5A81705050A0032169E /* CDVTimer.h in Headers */,
-				1B701028177A61CF00AE11F4 /* CDVShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
