@@ -77,6 +77,10 @@ if [ -d "$PROJECT_PATH" ]; then
 		echo "\033[31mError: $PROJECT_PATH is not empty. Please specify an empty folder.\033[m"
 		exit 1
 	fi
+else
+	echo "\033[31mError: $PROJECT_PATH does not exist. Please specify an empty folder.\033[m"
+	exit 1
+
 fi
 
 # copy the files in; then modify them
