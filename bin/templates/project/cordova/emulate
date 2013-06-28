@@ -33,7 +33,7 @@ PROJECT_PATH="$(dirname "$CORDOVA_PATH")"
 XCODEPROJ=$( ls "$PROJECT_PATH" | grep .xcodeproj  )
 PROJECT_NAME=$(basename "$XCODEPROJ" .xcodeproj)
 
-APP_PATH=${1:-$PROJECT_PATH/build/$(xcodebuild -project $PROJECT_NAME.xcodeproj -arch i386 -target $PROJECT_NAME -configuration Debug -sdk $SDK -showBuildSettings | grep FULL_PRODUCT_NAME | awk -F ' = ' '{print $2}')}
+APP_PATH=${1:-$PROJECT_PATH/build/$(xcodebuild -project $PROJECT_PATH/$PROJECT_NAME.xcodeproj -arch i386 -target $PROJECT_NAME -configuration Debug -sdk $SDK -showBuildSettings | grep FULL_PRODUCT_NAME | awk -F ' = ' '{print $2}')}
 
 DEVICE_FAMILY=${2:-${DEVICE_FAMILY:-iphone}}
 
