@@ -30,8 +30,6 @@
 		30F3930B169F839700B22307 /* CDVJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F39309169F839700B22307 /* CDVJSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30F3930C169F839700B22307 /* CDVJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F3930A169F839700B22307 /* CDVJSON.m */; };
 		30F5EBAB14CA26E700987760 /* CDVCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E76876B156A90EE00EB6FA3 /* CDVLogger.m */; };
-		3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E76876C156A90EE00EB6FA3 /* CDVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E14B5A81705050A0032169E /* CDVTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E14B5A61705050A0032169E /* CDVTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E14B5A91705050A0032169E /* CDVTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E14B5A71705050A0032169E /* CDVTimer.m */; };
 		8852C43A14B65FD800F0E735 /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852C43614B65FD800F0E735 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -83,8 +81,6 @@
 		30F39309169F839700B22307 /* CDVJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVJSON.h; path = Classes/CDVJSON.h; sourceTree = "<group>"; };
 		30F3930A169F839700B22307 /* CDVJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVJSON.m; path = Classes/CDVJSON.m; sourceTree = "<group>"; };
 		30F5EBA914CA26E700987760 /* CDVCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCommandDelegate.h; path = Classes/CDVCommandDelegate.h; sourceTree = "<group>"; };
-		3E76876B156A90EE00EB6FA3 /* CDVLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVLogger.m; path = Classes/CDVLogger.m; sourceTree = "<group>"; };
-		3E76876C156A90EE00EB6FA3 /* CDVLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLogger.h; path = Classes/CDVLogger.h; sourceTree = "<group>"; };
 		686357AA141002F100DF4CF2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		686357AC141002F100DF4CF2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		686357AE141002F100DF4CF2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -222,8 +218,6 @@
 				EB80C2AB15DEA63D004D9E7B /* CDVEcho.m */,
 				8887FD341090FBE7009987E8 /* CDVInvokedUrlCommand.h */,
 				8887FD351090FBE7009987E8 /* CDVInvokedUrlCommand.m */,
-				3E76876B156A90EE00EB6FA3 /* CDVLogger.m */,
-				3E76876C156A90EE00EB6FA3 /* CDVLogger.h */,
 				3073E9EC1656D51200957977 /* CDVScreenOrientationDelegate.h */,
 				30F39309169F839700B22307 /* CDVJSON.h */,
 				30F3930A169F839700B22307 /* CDVJSON.m */,
@@ -285,7 +279,6 @@
 				30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */,
 				3034979C1513D56A0090E688 /* CDVLocalStorage.h in Headers */,
 				3062D120151D0EDB000D9128 /* UIDevice+Extensions.h in Headers */,
-				3E76876F156A90EE00EB6FA3 /* CDVLogger.h in Headers */,
 				EBA3557315ABD38C00F4DE24 /* NSArray+Comparisons.h in Headers */,
 				EB80C2AC15DEA63D004D9E7B /* CDVEcho.h in Headers */,
 				EB3B3547161CB44D003DBE7D /* CDVCommandQueue.h in Headers */,
@@ -365,7 +358,6 @@
 				8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */,
 				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				3062D122151D0EDB000D9128 /* UIDevice+Extensions.m in Sources */,
-				3E76876D156A90EE00EB6FA3 /* CDVLogger.m in Sources */,
 				EBA3557515ABD38C00F4DE24 /* NSArray+Comparisons.m in Sources */,
 				EB80C2AD15DEA63D004D9E7B /* CDVEcho.m in Sources */,
 				EB3B3548161CB44D003DBE7D /* CDVCommandQueue.m in Sources */,
