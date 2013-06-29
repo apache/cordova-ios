@@ -130,6 +130,7 @@ if [[ $USE_SHARED = 1 ]]; then
 else
     # Copy in the CordovaLib directory.
     mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
+    cp "$R/.gitignore" "$PROJECT_PATH/"
     cp -r "$BINDIR/../CordovaLib/Classes" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/VERSION" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/cordova.js" "$PROJECT_PATH/CordovaLib"
