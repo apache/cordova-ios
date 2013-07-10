@@ -665,7 +665,7 @@
 {
     // loading url, start spinner, update back/forward
 
-    self.addressLabel.text = @"Loading...";
+    self.addressLabel.text = NSLocalizedString(@"loading");
     self.backButton.enabled = theWebView.canGoBack;
     self.forwardButton.enabled = theWebView.canGoForward;
 
@@ -722,7 +722,7 @@
     self.forwardButton.enabled = theWebView.canGoForward;
     [self.spinner stopAnimating];
 
-    self.addressLabel.text = @"Load Error";
+    self.addressLabel.text = NSLocalizedString(@"load_error");
 
     [self.navigationDelegate webView:theWebView didFailLoadWithError:error];
 }
