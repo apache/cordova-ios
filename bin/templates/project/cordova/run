@@ -103,7 +103,7 @@ PROJECT_NAME=$(basename "$XCODEPROJ" .xcodeproj)
 
 APP_PATH="$PROJECT_PATH/build/$PROJECT_NAME.app"
 
-$CORDOVA_PATH/build || exit $?
+"$CORDOVA_PATH/build" || exit $?
 
 if [ ! -d "$APP_PATH" ]; then
 	echo "$APP_PATH not found to emulate."

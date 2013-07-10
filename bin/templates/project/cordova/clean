@@ -40,5 +40,5 @@ PROJECT_NAME=$(basename "$XCODEPROJ" .xcodeproj)
 
 cd "$PROJECT_PATH"
 
-xcodebuild -project $PROJECT_NAME.xcodeproj -configuration Debug -alltargets clean
-xcodebuild -project $PROJECT_NAME.xcodeproj -configuration Release -alltargets clean
+xcodebuild -project "$PROJECT_NAME.xcodeproj" -configuration Debug -alltargets clean
+xcodebuild -project "$PROJECT_NAME.xcodeproj" -configuration Release -alltargets clean

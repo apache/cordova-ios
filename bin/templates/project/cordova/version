@@ -30,7 +30,7 @@ CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 PROJECT_PATH="$(dirname "$CORDOVA_PATH")"
 
 VERSION_FILE_PATH="$PROJECT_PATH/CordovaLib/VERSION"
-VERSION=$(<$VERSION_FILE_PATH)
+VERSION=$(<"$VERSION_FILE_PATH")
 
 if [ -f "$VERSION_FILE_PATH" ]; then
   echo $VERSION 

@@ -56,5 +56,5 @@ if [ "$OTHER_FLAGS" != "" ]; then
 	exit 2
 fi
 
-$CORDOVA_PATH/clean
-xcodebuild -project $PROJECT_NAME.xcodeproj -arch i386 -target $PROJECT_NAME -configuration $CONFIGURATION -sdk $SDK build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build"
+"$CORDOVA_PATH/clean"
+xcodebuild -project "$PROJECT_NAME.xcodeproj" -arch i386 -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk $SDK build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build"

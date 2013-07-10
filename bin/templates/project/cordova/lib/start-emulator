@@ -31,5 +31,5 @@ DEFAULT_TARGET="iPhone (Retina 3.5-inch)"
 TARGET=${1:-$DEFAULT_TARGET}
 LIB_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 
-SCPT=`sed -e "s/\\$DEVICE_NAME/$TARGET/g" $LIB_PATH/sim.applescript`
+SCPT=`sed -e "s/\\$DEVICE_NAME/$TARGET/g" "$LIB_PATH/sim.applescript"`
 osascript -e "$SCPT"
