@@ -49,7 +49,7 @@
 - (void)parser:(NSXMLParser*)parser didStartElement:(NSString*)elementName namespaceURI:(NSString*)namespaceURI qualifiedName:(NSString*)qualifiedName attributes:(NSDictionary*)attributeDict
 {
     if ([elementName isEqualToString:@"preference"]) {
-        settings[attributeDict[@"name"]] = attributeDict[@"value"];
+        settings[[attributeDict[@"name"] lowercaseString]] = attributeDict[@"value"];
     } else if ([elementName isEqualToString:@"plugin"]) {
         NSString* name = [attributeDict[@"name"] lowercaseString];
         pluginsDict[name] = attributeDict[@"value"];
