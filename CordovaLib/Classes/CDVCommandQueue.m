@@ -141,7 +141,7 @@
         return NO;
     }
     BOOL retVal = YES;
-
+    double started = [[NSDate date] timeIntervalSince1970] * 1000.0;
     // Find the proper selector to call.
     NSString* methodName = [NSString stringWithFormat:@"%@:", command.methodName];
     SEL normalSelector = NSSelectorFromString(methodName);
@@ -153,7 +153,10 @@
         NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", methodName, command.className);
         retVal = NO;
     }
-
+    double elapsed = [[NSDate date] timeIntervalSince1970] * 1000.0 - started;
+    if (elapsed > 10) {
+        NSLog(@"THREAD WARNING: ['%@'] took '%f' ms. Plugin should use a background thread.", command.className, elapsed);
+    }
     return retVal;
 }
 
