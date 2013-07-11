@@ -89,29 +89,6 @@
     }
 }
 
-- (void)legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict
-{
-    NSMutableArray* newArguments = [NSMutableArray arrayWithArray:_arguments];
-
-    for (NSUInteger i = 0; i < [newArguments count]; ++i) {
-        if ([[newArguments objectAtIndex:i] isKindOfClass:[NSDictionary class]]) {
-            if (legacyDict != NULL) {
-                *legacyDict = [newArguments objectAtIndex:i];
-            }
-            [newArguments removeObjectAtIndex:i];
-            break;
-        }
-    }
-
-    // Legacy (two versions back) has no callbackId.
-    if (_callbackId != nil) {
-        [newArguments insertObject:_callbackId atIndex:0];
-    }
-    if (legacyArguments != NULL) {
-        *legacyArguments = newArguments;
-    }
-}
-
 - (id)argumentAtIndex:(NSUInteger)index
 {
     return [self argumentAtIndex:index withDefault:nil];
