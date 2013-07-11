@@ -150,7 +150,9 @@
 
 - (void)show:(CDVInvokedUrlCommand*)command
 {
-  [self.viewController presentModalViewController:self.inAppBrowserViewController animated:YES];
+    if ([self.inAppBrowserViewController isViewLoaded] && self.inAppBrowserViewController.view.window)
+        return;
+    [self.viewController presentModalViewController:self.inAppBrowserViewController animated:YES];
 }
 
 - (void)openInCordovaWebView:(NSURL*)url withOptions:(NSString*)options
