@@ -363,7 +363,7 @@ typedef enum {
             break;
 
         case STATE_WAITING_FOR_LOAD_FINISH:
-            if([error code] != NSURLErrorCancelled) {
+            if ([error code] != NSURLErrorCancelled) {
                 if (_loadCount == 1) {
                     _state = STATE_IDLE;
                     fireCallback = YES;
