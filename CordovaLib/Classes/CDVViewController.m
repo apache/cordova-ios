@@ -52,7 +52,6 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
-@synthesize useSplashScreen;
 @synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
@@ -85,7 +84,6 @@
 
         // load config.xml settings
         [self loadSettings];
-        useSplashScreen = YES;
     }
 }
 
@@ -373,11 +371,6 @@
         }
 
         [CDVTimer stop:@"TotalPluginStartup"];
-    }
-
-    // TODO: Remove this explicit instantiation once we move to cordova-CLI.
-    if (useSplashScreen) {
-        [self getCommandInstance:@"splashscreen"];
     }
 
     // /////////////////

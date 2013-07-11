@@ -43,7 +43,6 @@
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
 @property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
-@property (nonatomic, readwrite, assign) BOOL useSplashScreen CDV_DEPRECATED(2.5, "Add/Remove the SplashScreen plugin instead of setting this property.");
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
