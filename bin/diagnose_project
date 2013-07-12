@@ -156,7 +156,8 @@ def main(argv):
 	xcodeBinaryPrefsPath = os.path.join( os.path.expanduser("~"), "Library", "Preferences", "com.apple.dt.Xcode.plist" );
 	xcodePrefsPlist = getXcodePlist(xcodeBinaryPrefsPath)
 
-	xcodeCordovaLib = xcodePrefsPlist['IDEApplicationwideBuildSettings'].get("CORDOVALIB", "(not found)")
+	ideSetting = xcodePrefsPlist.get('IDEApplicationwideBuildSettings', {})
+	xcodeCordovaLib = ideSetting.get("CORDOVALIB", "(not found)")
 	print "CORDOVALIB:", xcodeCordovaLib
 	print "Build Location Style:", xcodePrefsPlist.get('IDEBuildLocationStyle', "(unknown)")
 
