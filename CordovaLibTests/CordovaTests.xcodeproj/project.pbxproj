@@ -17,7 +17,6 @@
 		303A4078152124BB00182201 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 303A4077152124BB00182201 /* AppDelegate.m */; };
 		303A407B152124BB00182201 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 303A407A152124BB00182201 /* ViewController.m */; };
 		3062D1AE151D4D9D000D9128 /* CDVLocalStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */; };
-		30AE4E8D1419532F005A9C9A /* CDVContactsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30AE4E8C1419532F005A9C9A /* CDVContactsTests.m */; };
 		30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B342F415224B360070E6A5 /* CDVWebViewTest.m */; };
 		30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */; };
 		30F8AE0515212587006625B3 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68A32D7414103017006B237C /* AddressBook.framework */; };
@@ -90,7 +89,6 @@
 		303A4079152124BB00182201 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		303A407A152124BB00182201 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVLocalStorageTests.m; sourceTree = "<group>"; };
-		30AE4E8C1419532F005A9C9A /* CDVContactsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVContactsTests.m; sourceTree = "<group>"; };
 		30B342F415224B360070E6A5 /* CDVWebViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewTest.m; sourceTree = "<group>"; };
 		30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVBase64Tests.m; sourceTree = "<group>"; };
 		30F8AE1C152129DA006625B3 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
@@ -266,7 +264,6 @@
 				3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */,
 				686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */,
 				30356213141049E1006C2D43 /* CDVWhitelistTests.m */,
-				30AE4E8C1419532F005A9C9A /* CDVContactsTests.m */,
 				686357B1141002F200DF4CF2 /* Supporting Files */,
 			);
 			name = CordovaLibTests;
@@ -429,7 +426,6 @@
 			files = (
 				3035621714104C34006C2D43 /* CDVWhitelistTests.m in Sources */,
 				686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */,
-				30AE4E8D1419532F005A9C9A /* CDVContactsTests.m in Sources */,
 				3062D1AE151D4D9D000D9128 /* CDVLocalStorageTests.m in Sources */,
 				30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */,
 				30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */,
