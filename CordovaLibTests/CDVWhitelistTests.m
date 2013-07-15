@@ -308,4 +308,32 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://cordova.apache.org"]], nil);
 }
 
+- (void)testWildcardPlusScheme
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"http://*.apache.org",
+        nil];
+
+    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"https://www.google.com"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"ftp://cordova.apache.org"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://cordova.apache.org"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"https://cordova.apache.org"]], nil);
+}
+
+- (void)testCredentials
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"http://*.apache.org",
+        @"http://www.google.com",
+        nil];
+
+    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://user:pass@www.apache.org"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://user:pass@www.google.com"]], nil);
+}
+
 @end
