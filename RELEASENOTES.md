@@ -24,6 +24,36 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 3.0.0 (20130718) ###
+
+* [CB-3999] Video Capture ignores duration option [iOS]
+* [CB-4202] [CB-3681] Remove Contact plugin unit tests
+* [CB-4202] [CB-3653] Remove EXIF (Camera plugin) unit tests
+* [CB-4202] [CB-3726] Remove File Transfer plugin unit tests
+* [CB-4202] [CB-3973] Remove unit test dependency on Dialogs plugin
+* [CB-4202] [CB-1107] Remove unit tests for old plugin signature
+* [CB-4202] [CB-4145] Remove use of useSplashScreen property by unit tests
+* [CB-4095] Add some additional whitelist unit tests
+* [CB-2608] Remove deprecate EnableLocation key from the config.xml file
+* [CB-4104] Made config parameters case-insensitive.
+* [CB-3530] PhoneGap app crashes on iOS with error "CDVWebViewDelegate: Navigation started when state=1" (for navigation to an anchor on the same page)
+* [CB-3701] Removed Capture.bundle from default project template for 3.0.0
+* [CB-3530] Updated unit tests
+* [CB-4025] iOS emulate command broken when run inside the cordova folder
+* [CB-4037] Unable to Archive iOS projects for upload to App Store in 2.9
+* [CB-4088] `cordova emulate ios` replaces spaces in project name with underscores, conflicting with `cordova build ios` behavior
+* [CB-4145] Remove CDVViewController.useSplashScreen property
+* [CB-3175] Change <plugin> to <feature> in config.xml and remove deprecation notice in iOS
+* [CB-1107] Remove old plugin signature, update Plugin Dev Guide
+* [CB-2180] Convert iOS project template to use ARC
+* [CB-3448] bin/diagnose_project script fails if CORDOVALIB variable not in prefs plist
+* [CB-4199] iOS Platform Script `run --device` uses Simulator
+* [CB-3530] PhoneGap app crashes on iOS with error "CDVWebViewDelegate: Navigation started when state=1" (for navigation to an anchor on the same page)
+* [CB-3567] Redirect initiated in JavaScript fails the app from loading
+* Removed iphone/beep.wav since it is already contained in the dialogs core plugin
+* Have create script include .gitignore file.
+* Removed all core plugins (including console logger) to their own repos (install them using cordova-cli or plugman)
+
 ### 2.9.0 (201306XX) ###
 
 * [CB-3469] Add a version macro for 2.8.0.
