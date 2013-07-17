@@ -154,9 +154,9 @@
         retVal = NO;
     }
     double elapsed = [[NSDate date] timeIntervalSince1970] * 1000.0 - started;
-  if(elapsed>10){
-    NSLog(@"THREAD WARNING: ['%@'] took '%f' ms", command.className, elapsed);
-  }
+    if (elapsed > 10) {
+        NSLog(@"THREAD WARNING: ['%@'] took '%f' ms. Plugin should use a background thread.", command.className, elapsed);
+    }
     return retVal;
 }
 

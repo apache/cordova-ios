@@ -54,6 +54,10 @@ _parseArgs()
       "--target")
         TARGET=${OPTION_RESULT[1]}
         ;;
+    "--device")
+      echo "Targeting a device is not supported currently."
+      exit 1
+      ;;
     esac
   done
 }
