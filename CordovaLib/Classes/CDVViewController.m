@@ -230,15 +230,24 @@
     } else if ([self.wwwFolderName rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
     } else {
-        NSString* startFilePath = [self.commandDelegate pathForResource:self.startPage];
+       
+        // CB-3005 strip parameters from start page to check if page exists in resources
+        NSURL* startURL = [NSURL URLWithString:self.startPage];
+        NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
+        
         if (startFilePath == nil) {
             loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
             self.loadFromString = YES;
             appURL = nil;
         } else {
-            appURL = [NSURL fileURLWithPath:startFilePath];
+            // CB-3005 we know that the page exists : reconstruct full path from bundle
+            NSURL *relativeURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+            NSString* localURL = [NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage];
+            appURL = [NSURL URLWithString:localURL relativeToURL:relativeURL];
         }
+        
+
     }
 
     // // Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
