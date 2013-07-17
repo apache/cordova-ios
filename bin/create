@@ -70,6 +70,8 @@ CDV_VER=$(cat "$CORDOVALIB_DIR/VERSION")
 PROJECT_PATH=$1
 PACKAGE=$2
 PROJECT_NAME=$3
+PROJECT_PARENT=$(dirname $PROJECT_PATH)
+
 
 # check whether the project path exists and is not empty
 if [ -d "$PROJECT_PATH" ]; then
@@ -77,6 +79,13 @@ if [ -d "$PROJECT_PATH" ]; then
 		echo "\033[31mError: $PROJECT_PATH is not empty. Please specify an empty folder.\033[m"
 		exit 1
 	fi
+
+fi
+
+#Ensure the parent directory exists so cp -r will not fail
+if [ ! -d "$PROJECT_PARENT" ]; then
+	echo "\033[31mError: $PROJECT_PARENT does not exist. Please specify an existing parent folder.\033[m"
+	exit 1
 fi
 
 # copy the files in; then modify them
