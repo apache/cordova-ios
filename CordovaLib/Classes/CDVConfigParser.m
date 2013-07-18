@@ -58,8 +58,9 @@
         if ([paramName isEqualToString:@"ios-package"]) {
             pluginsDict[featureName] = value;
         }
-        NSString* onload = [attributeDict[@"onload"] lowercaseString];
-        if ([@"true" isEqualToString : onload]) {
+        BOOL paramIsOnload = ([paramName isEqualToString:@"onload"] && [@"true" isEqualToString : value]);
+        BOOL attribIsOnload = [@"true" isEqualToString : [attributeDict[@"onload"] lowercaseString]];
+        if (paramIsOnload || attribIsOnload) {
             [self.startupPluginNames addObject:featureName];
         }
     } else if ([elementName isEqualToString:@"access"]) {
