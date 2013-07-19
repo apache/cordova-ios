@@ -1,5 +1,5 @@
 // Platform: ios
-// 3.0.0rc1-0-g525e76b
+// 3.0.0-0-ge670de9
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '3.0.0rc1-0-g525e76b';
+var CORDOVA_JS_BUILD_LABEL = '3.0.0-0-ge670de9';
 // file: lib/scripts/require.js
 
 var require,
@@ -1304,7 +1304,7 @@ function handlePluginsObject(path, moduleList) {
     var scriptCounter = moduleList.length;
 
     if (!scriptCounter) {
-        onScriptLoadingComplete();
+        finishPluginLoading();
         return;
     }
     function scriptLoadedCallback() {
