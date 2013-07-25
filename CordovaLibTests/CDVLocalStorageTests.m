@@ -143,4 +143,15 @@
     STAssertTrue([@"/bpath/Library/WebKit" isEqualToString: newPath], nil);
 }
 
+- (void)testGetSetting
+{
+    // The key is changed to its corresponding lowercase value inside
+    id settingVal = [[self localStorage].commandDelegate settingForKey:@"BackupWebStorage"];
+    STAssertNotNil(settingVal, nil);
+
+    // The key is not lowercased
+    settingVal = [self localStorage].commandDelegate.settings[@"BackupWebStorage"];
+    STAssertNil(settingVal, nil);
+}
+
 @end

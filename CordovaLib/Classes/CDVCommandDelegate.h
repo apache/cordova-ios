@@ -50,5 +50,8 @@
 - (NSString*)userAgent;
 // Returns whether the given URL passes the white-list.
 - (BOOL)URLIsWhitelisted:(NSURL*)url;
+// Returns the setting value for the key.
+// The key will be changed to its corresponding lowercase value inside.
+- (id)settingForKey:(NSString*)key;
 
 @end
