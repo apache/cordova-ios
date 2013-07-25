@@ -142,4 +142,9 @@
     return _viewController.settings;
 }
 
+- (id)settingForKey:(NSString*)key
+{
+    return [[self settings] objectForKey:[key lowercaseString]];
+}
+
 @end
