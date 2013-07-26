@@ -47,7 +47,7 @@ if [ ! -d "$APP_PATH" ]; then
 	exit 1
 fi
 
-IOS_SIM_MIN_VERSION="1.5"
+IOS_SIM_MIN_VERSION="1.7"
 IOS_SIM_LOCATION=$(which ios-sim)
 if [ $? != 0 ]; then
     echo -e "\033[31mError: ios-sim was not found. Please download, build and install version $IOS_SIM_MIN_VERSION or greater from https://github.com/phonegap/ios-sim into your path. Or 'brew install ios-sim' using homebrew: http://mxcl.github.com/homebrew/\033[m"; exit 1;
