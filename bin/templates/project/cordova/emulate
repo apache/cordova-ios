@@ -19,7 +19,7 @@
 #
 
 XCODE_VER=$(xcodebuild -version | head -n 1 | sed -e 's/Xcode //')
-XCODE_MIN_VERSION="4.5"
+XCODE_MIN_VERSION="4.6"
 
 if [[ "$XCODE_VER" < "$XCODE_MIN_VERSION" ]]; then
 	echo "Cordova can only run in Xcode version $XCODE_MIN_VERSION or greater."
