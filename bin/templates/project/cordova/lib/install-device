@@ -24,7 +24,41 @@
 #     "iPad"
 #     "iPad (Retina)"
 
-set -e
+XCODE_VER=$(xcodebuild -version | head -n 1 | sed -e 's/Xcode //')
+XCODE_MIN_VERSION="4.6"
 
-echo 'iOS: Not able to install to device through command-line at this time.'
-exit 1
+if [[ "$XCODE_VER" < "$XCODE_MIN_VERSION" ]]; then
+	echo "Cordova can only run in Xcode version $XCODE_MIN_VERSION or greater."
+	exit 1
+fi
+
+LIB_PATH=$( cd "$( dirname "$0" )" && pwd -P)
+CORDOVA_PATH="$(dirname "$LIB_PATH")"
+PROJECT_PATH="$(dirname "$CORDOVA_PATH")"
+XCODEPROJ=$( ls "$PROJECT_PATH" | grep .xcodeproj  )
+PROJECT_NAME=$(basename "$XCODEPROJ" .xcodeproj)
+
+DEVICE_APP_PATH="$PROJECT_PATH/build/device/$PROJECT_NAME.app"
+
+if [ ! -d "$DEVICE_APP_PATH" ]; then
+	echo "Project '$DEVIC_APP_PATH' is not built."
+    exit 1
+fi
+
+
+IOS_DEPLOY_MIN_VERSION="1.0.2"
+IOS_DEPLOY_LOCATION=$(which ios-deploy)
+if [ $? != 0 ]; then
+    echo -e "\033[31mError: ios-deploy was not found. Please download, build and install version $IOS_DEPLOY_MIN_VERSION or greater from https://github.com/phonegap/ios-deploy into your path. Or 'npm install -g ios-deploy' using node.js: http://nodejs.org/\033[m"; exit 1;
+	exit 1
+fi
+
+IOS_DEPLOY_VERSION=$(ios-deploy --version)
+if [[ "$IOS_DEPLOY_VERSION" < "$IOS_DEPLOY_MIN_VERSION" ]]; then
+	echo "Cordova needs ios-deploy version $IOS_DEPLOY_MIN_VERSION or greater, you have version $IOS_DEPLOY_VERSION."
+	exit 1
+fi
+
+# if we got here, we can deploy the app, then exit success
+ios-deploy -b "$DEVICE_APP_PATH"
+exit 0
