@@ -650,9 +650,21 @@
     }
 
     /*
+     * Give plugins the chance to handle the url
+     */
+    for (NSString *pluginName in pluginObjects) {
+        CDVPlugin *plugin = [pluginObjects objectForKey:pluginName];
+        if ([plugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:)]) {
+            if ((BOOL)objc_msgSend(plugin, @selector(shouldOverrideLoadWithRequest:navigationType:), request, navigationType) == YES) {
+                return NO;
+            }
+        }
+    }
+
+    /*
      * If a URL is being loaded that's a file/http/https URL, just load it internally
      */
-    else if ([url isFileURL]) {
+    if ([url isFileURL]) {
         return YES;
     }
 
