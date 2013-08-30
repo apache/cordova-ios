@@ -654,8 +654,9 @@
      */
     for (NSString *pluginName in pluginObjects) {
         CDVPlugin *plugin = [pluginObjects objectForKey:pluginName];
-        if ([plugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:)]) {
-            if ((BOOL)objc_msgSend(plugin, @selector(shouldOverrideLoadWithRequest:navigationType:), request, navigationType) == YES) {
+        SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
+        if ([plugin respondsToSelector:selector]) {
+            if ((BOOL)objc_msgSend(plugin, selector, request, navigationType) == YES) {
                 return NO;
             }
         }
