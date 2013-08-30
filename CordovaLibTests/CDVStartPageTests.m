@@ -24,8 +24,8 @@
 #import "AppDelegate.h"
 
 @interface CDVStartPageTestViewController : UIViewController
-@property (assign, nonatomic) CDVViewController* vc1;
-@property (assign, nonatomic) CDVViewController* vc2;
+@property (strong, nonatomic) CDVViewController* vc1;
+@property (strong, nonatomic) CDVViewController* vc2;
 @end
 
 @implementation CDVStartPageTestViewController
