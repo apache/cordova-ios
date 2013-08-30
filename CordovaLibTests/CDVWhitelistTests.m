@@ -69,77 +69,6 @@
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org.ca"]], nil);
 }
 
-- (void)testWildcardInTLD
-{
-    // NOTE: if the user chooses to do this (a wildcard in the TLD, not a wildcard as the TLD), we allow it because we assume they know what they are doing! We don't replace it with known TLDs
-    // This might be applicable for custom TLDs on a local network DNS
-
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"apache.o*g",
-        nil];
-
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
-
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.ogg"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.foo"]], nil);
-}
-
-- (void)testTLDWildcard
-{
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"apache.*",
-        nil];
-
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
-
-    NSString* hostname = @"apache";
-
-    NSArray* knownTLDs = [NSArray arrayWithObjects:
-        @"aero", @"asia", @"arpa", @"biz", @"cat",
-        @"com", @"coop", @"edu", @"gov", @"info",
-        @"int", @"jobs", @"mil", @"mobi", @"museum",
-        @"name", @"net", @"org", @"pro", @"tel",
-        @"travel", @"xxx",
-        nil];
-
-    // 26*26 combos
-    NSMutableArray* twoCharCountryCodes = [NSMutableArray arrayWithCapacity:(26 * 26)];
-
-    for (char c0 = 'a'; c0 <= 'z'; ++c0) {
-        for (char c1 = 'a'; c1 <= 'z'; ++c1) {
-            [twoCharCountryCodes addObject:[NSString stringWithFormat:@"%c%c", c0, c1]];
-        }
-    }
-
-    NSMutableArray* shouldPass = [NSMutableArray arrayWithCapacity:[knownTLDs count] + [twoCharCountryCodes count]];
-
-    NSEnumerator* knownTLDEnumerator = [knownTLDs objectEnumerator];
-    NSString* tld = nil;
-
-    while (tld = [knownTLDEnumerator nextObject]) {
-        [shouldPass addObject:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@.%@", hostname, tld]]];
-    }
-
-    NSEnumerator* twoCharCountryCodesEnumerator = [twoCharCountryCodes objectEnumerator];
-    NSString* cc = nil;
-
-    while (cc = [twoCharCountryCodesEnumerator nextObject]) {
-        [shouldPass addObject:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@.%@", hostname, cc]]];
-    }
-
-    NSEnumerator* shouldPassEnumerator = [shouldPass objectEnumerator];
-    NSURL* url = nil;
-
-    while (url = [shouldPassEnumerator nextObject]) {
-        STAssertTrue([whitelist URLIsAllowed:url], @"Url tested :%@", [url description]);
-    }
-
-    STAssertFalse(([whitelist URLIsAllowed:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@.%@", hostname, @"faketld"]]]), nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://unknownhostname.faketld"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://unknownhostname.com"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
-}
-
 - (void)testCatchallWildcardOnly
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
@@ -152,22 +81,25 @@
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://build.apache.prg"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"ftp://MyDangerousSite.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"ftps://apache.org.SuspiciousSite.com"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://apache.org"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://apache.org"]], nil);
 }
 
-- (void)testWildcardInHostname
+- (void)testCatchallWildcardByProto
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"www.*apac*he.org",
+        @"http://*",
+        @"https://*",
+        @"ftp://*",
+        @"ftps://*",
         nil];
 
     CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apacMAChe.org"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.MACapache.org"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.MACapacMAChe.org"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://build.apache.prg"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"ftp://MyDangerousSite.org"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"ftps://apache.org.SuspiciousSite.com"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://apache.org"]], nil);
 }
 
 - (void)testExactMatch
@@ -193,21 +125,6 @@
 
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=http://www.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=www.apache.org"]], nil);
-}
-
-- (void)testWildcardMix
-{
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"*.apac*he.*",
-        nil];
-
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
-
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apacMAChe.ca"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apacMAChe.museum"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://blahMAChe.museum"]], nil);
 }
 
 - (void)testIpExactMatch
@@ -254,8 +171,8 @@
 
     CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
-    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://google.com"]], nil);
+    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org/"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://google.com/"]], nil);
 }
 
 - (void)testWhitelistRejectionString
