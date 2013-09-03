@@ -138,9 +138,11 @@
     CGRect newFrame = self.view.bounds;
     if (showEvent) {
         newFrame.size.height -= keyboardFrame.size.height;
+        self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -keyboardFrame.size.height, 0);
+    } else {
+        self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     }
     self.webView.frame = newFrame;
-    self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -keyboardFrame.size.height, 0);
 }
 
 - (void)printDeprecationNotice
