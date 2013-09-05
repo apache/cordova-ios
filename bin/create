@@ -156,4 +156,4 @@ if [[ $USE_ARC = 1 ]]; then
 fi
 
 # Finally copy the scripts
-cp -r "$SCRIPT_TEMPLATE_DIR" "$PROJECT_PATH/cordova"
+cp -r "$SCRIPT_TEMPLATE_DIR"/* "$PROJECT_PATH/"
