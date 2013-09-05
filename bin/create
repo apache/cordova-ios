@@ -72,7 +72,8 @@ PROJECT_PATH=$1
 PACKAGE=$2
 PROJECT_NAME=$3
 PROJECT_PARENT=$(dirname "$PROJECT_PATH")
-PROJECT_TEMPLATE_DIR=${4:-"$BINDIR/templates/project"};
+PROJECT_TEMPLATE_DIR=${4:-"$BINDIR/templates/project"}
+SCRIPT_TEMPLATE_DIR=$BINDIR/templates/scripts
 
 
 # check whether the project path exists and is not empty
@@ -153,3 +154,6 @@ fi
 if [[ $USE_ARC = 1 ]]; then
     /usr/bin/sed -i '' 's/CLANG_ENABLE_OBJC_ARC = NO/CLANG_ENABLE_OBJC_ARC = YES/' "$R.xcodeproj/project.pbxproj" > /dev/null
 fi
+
+# Finally copy the scripts
+cp -r "$SCRIPT_TEMPLATE_DIR" "$PROJECT_PATH/cordova"
