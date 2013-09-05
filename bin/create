@@ -31,12 +31,13 @@
 set -e
 
 function usage() {
-  echo "Usage: $0 [--shared] [--arc] <path_to_new_project> <package_name> <project_name>"
+  echo "Usage: $0 [--shared] [--arc] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
   echo "	--shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it."
   echo "	--arc (optional): Enable ARC."
   echo "	<path_to_new_project>: Path to your new Cordova iOS project"
   echo "	<package_name>: Package name, following reverse-domain style convention"
   echo "	<project_name>: Project name"
+  echo "	<project_template_dir>: Path to project template (override)."
   exit 1
 }
 
@@ -71,6 +72,7 @@ PROJECT_PATH=$1
 PACKAGE=$2
 PROJECT_NAME=$3
 PROJECT_PARENT=$(dirname "$PROJECT_PATH")
+PROJECT_TEMPLATE_DIR=${4:-"$BINDIR/templates/project"};
 
 
 # check whether the project path exists and is not empty
@@ -88,7 +90,7 @@ if [ ! -d "$PROJECT_PARENT" ]; then
 fi
 
 # copy the files in; then modify them
-cp -r "$BINDIR/templates/project/" "$PROJECT_PATH"
+cp -r "$PROJECT_TEMPLATE_DIR/" "$PROJECT_PATH"
 
 # Copy in the JS.
 cp "$CORDOVALIB_DIR/cordova.js" "$PROJECT_PATH/www/cordova.js"
