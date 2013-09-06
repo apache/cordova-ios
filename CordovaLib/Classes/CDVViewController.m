@@ -94,6 +94,13 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    [self __init];
+    return self;
+}
+
 - (id)init
 {
     self = [super init];
