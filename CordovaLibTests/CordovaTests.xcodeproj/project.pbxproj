@@ -60,6 +60,13 @@
 			remoteGlobalIDString = 303A4067152124BB00182201;
 			remoteInfo = CordovaLibApp;
 		};
+		7E73351317E27B4E00AB7A3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EB37018115D18B2D00BEBC43 /* CordovaLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = CordovaLib;
+		};
 		EB3B34E5161B5454003DBE7D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EB37018115D18B2D00BEBC43 /* CordovaLib.xcodeproj */;
@@ -298,6 +305,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7E73351417E27B4E00AB7A3F /* PBXTargetDependency */,
 				30F8AE3315212F07006625B3 /* PBXTargetDependency */,
 			);
 			name = CordovaLibTests;
@@ -439,6 +447,11 @@
 			isa = PBXTargetDependency;
 			target = 303A4067152124BB00182201 /* CordovaLibApp */;
 			targetProxy = 30F8AE3215212F07006625B3 /* PBXContainerItemProxy */;
+		};
+		7E73351417E27B4E00AB7A3F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CordovaLib;
+			targetProxy = 7E73351317E27B4E00AB7A3F /* PBXContainerItemProxy */;
 		};
 		EB3B34E8161B552E003DBE7D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
