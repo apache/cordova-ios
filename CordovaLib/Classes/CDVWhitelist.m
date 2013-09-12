@@ -50,27 +50,30 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 - (id)initWithScheme:(NSString*)scheme host:(NSString*)host port:(NSString*)port path:(NSString*)path
 {
-    if ((scheme == nil) || [scheme isEqualToString:@"*"]) {
-        _scheme = nil;
-    } else {
-        _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:scheme allowWildcards:NO] options:0 error:nil];
-    }
-    if ([host isEqualToString:@"*"]) {
-        _host = nil;
-    } else if ([host hasPrefix:@"*."]) {
-        _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVWhitelistPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:0 error:nil];
-    } else {
-        _host = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:host allowWildcards:NO] options:0 error:nil];
-    }
-    if ((port == nil) || [port isEqualToString:@"*"]) {
-        _port = nil;
-    } else {
-        _port = [[NSNumber alloc] initWithInteger:[port integerValue]];
-    }
-    if ((path == nil) || [path isEqualToString:@"/*"]) {
-        _path = nil;
-    } else {
-        _path = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:path allowWildcards:YES] options:0 error:nil];
+    self = [super init];  // Potentially change "self"
+    if (self) {
+        if ((scheme == nil) || [scheme isEqualToString:@"*"]) {
+            _scheme = nil;
+        } else {
+            _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:scheme allowWildcards:NO] options:0 error:nil];
+        }
+        if ([host isEqualToString:@"*"]) {
+            _host = nil;
+        } else if ([host hasPrefix:@"*."]) {
+            _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVWhitelistPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:0 error:nil];
+        } else {
+            _host = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:host allowWildcards:NO] options:0 error:nil];
+        }
+        if ((port == nil) || [port isEqualToString:@"*"]) {
+            _port = nil;
+        } else {
+            _port = [[NSNumber alloc] initWithInteger:[port integerValue]];
+        }
+        if ((path == nil) || [path isEqualToString:@"/*"]) {
+            _path = nil;
+        } else {
+            _path = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:path allowWildcards:YES] options:0 error:nil];
+        }
     }
     return self;
 }
