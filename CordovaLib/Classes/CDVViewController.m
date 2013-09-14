@@ -94,7 +94,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id)initWithCoder:(NSCoder*)aDecoder
 {
     self = [super initWithCoder:aDecoder];
     [self __init];
@@ -373,6 +373,82 @@
         // property check for compiling under iOS < 6
         if ([self.webView respondsToSelector:@selector(setSuppressesIncrementalRendering:)]) {
             [self.webView setValue:[NSNumber numberWithBool:suppressesIncrementalRendering] forKey:@"suppressesIncrementalRendering"];
+        }
+    }
+
+    /*
+     * iOS 7.0 UIWebView properties
+     */
+    if (IsAtLeastiOSVersion(@"7.0")) {
+        SEL ios7sel = nil;
+        id prefObj = nil;
+
+        CGFloat gapBetweenPages = 0.0; // default
+        prefObj = [self settingForKey:@"GapBetweenPages"];
+        if (prefObj != nil) {
+            gapBetweenPages = [prefObj floatValue];
+        }
+
+        // property check for compiling under iOS < 7
+        ios7sel = NSSelectorFromString(@"setGapBetweenPages:");
+        if ([self.webView respondsToSelector:ios7sel]) {
+            [self.webView setValue:[NSNumber numberWithFloat:gapBetweenPages] forKey:@"gapBetweenPages"];
+        }
+
+        CGFloat pageLength = 0.0; // default
+        prefObj = [self settingForKey:@"PageLength"];
+        if (prefObj != nil) {
+            pageLength = [[self settingForKey:@"PageLength"] floatValue];
+        }
+
+        // property check for compiling under iOS < 7
+        ios7sel = NSSelectorFromString(@"setPageLength:");
+        if ([self.webView respondsToSelector:ios7sel]) {
+            [self.webView setValue:[NSNumber numberWithBool:pageLength] forKey:@"pageLength"];
+        }
+
+        NSInteger paginationBreakingMode = 0; // default - UIWebPaginationBreakingModePage
+        prefObj = [self settingForKey:@"PaginationBreakingMode"];
+        if (prefObj != nil) {
+            NSArray* validValues = @[@"page", @"column"];
+            NSString* prefValue = [validValues objectAtIndex:0];
+
+            if ([prefObj isKindOfClass:[NSString class]]) {
+                prefValue = prefObj;
+            }
+
+            paginationBreakingMode = [validValues indexOfObject:[prefValue lowercaseString]];
+            if (paginationBreakingMode == NSNotFound) {
+                paginationBreakingMode = 0;
+            }
+        }
+
+        // property check for compiling under iOS < 7
+        ios7sel = NSSelectorFromString(@"setPaginationBreakingMode:");
+        if ([self.webView respondsToSelector:ios7sel]) {
+            [self.webView setValue:[NSNumber numberWithInteger:paginationBreakingMode] forKey:@"paginationBreakingMode"];
+        }
+
+        NSInteger paginationMode = 0; // default - UIWebPaginationModeUnpaginated
+        prefObj = [self settingForKey:@"PaginationMode"];
+        if (prefObj != nil) {
+            NSArray* validValues = @[@"unpaginated", @"lefttoright", @"toptobottom", @"bottomtotop", @"righttoleft"];
+            NSString* prefValue = [validValues objectAtIndex:0];
+
+            if ([prefObj isKindOfClass:[NSString class]]) {
+                prefValue = prefObj;
+            }
+
+            paginationMode = [validValues indexOfObject:[prefValue lowercaseString]];
+            if (paginationMode == NSNotFound) {
+                paginationMode = 0;
+            }
+        }
+
+        // property check for compiling under iOS < 7
+        ios7sel = NSSelectorFromString(@"setPaginationMode:");
+        if ([self.webView respondsToSelector:ios7sel]) {
+            [self.webView setValue:[NSNumber numberWithInteger:paginationMode] forKey:@"paginationMode"];
         }
     }
 
@@ -661,8 +737,8 @@
     /*
      * Give plugins the chance to handle the url
      */
-    for (NSString *pluginName in pluginObjects) {
-        CDVPlugin *plugin = [pluginObjects objectForKey:pluginName];
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
             if ((BOOL)objc_msgSend(plugin, selector, request, navigationType) == YES) {
