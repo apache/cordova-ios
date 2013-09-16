@@ -92,14 +92,6 @@ case "$TARGET_LC" in
     ;;
 esac
 
-XCODE_VER=$(xcodebuild -version | head -n 1 | sed -e 's/Xcode //')
-XCODE_MIN_VERSION="4.6"
-
-if [[ "$XCODE_VER" < "$XCODE_MIN_VERSION" ]]; then
-	echo "Cordova can only run in Xcode version $XCODE_MIN_VERSION or greater."
-	exit 1
-fi
-
 CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 PROJECT_PATH="$(dirname "$CORDOVA_PATH")"
 XCODEPROJ=$( ls "$PROJECT_PATH" | grep .xcodeproj  )
@@ -107,6 +99,8 @@ PROJECT_NAME=$(basename "$XCODEPROJ" .xcodeproj)
 
 SIMULATOR_APP_PATH="$PROJECT_PATH/build/emulator/$PROJECT_NAME.app"
 DEVICE_APP_PATH="$PROJECT_PATH/build/device/$PROJECT_NAME.app"
+
+source "$CORDOVA_PATH/check_reqs"
 
 "$CORDOVA_PATH/build" || exit $?
 
