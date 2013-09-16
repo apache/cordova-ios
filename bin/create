@@ -157,3 +157,6 @@ fi
 
 # Finally copy the scripts
 cp -r "$SCRIPT_TEMPLATE_DIR"/* "$PROJECT_PATH/"
+
+# copy the check_reqs script
+cp "$BINDIR/check_reqs" "$PROJECT_PATH"/cordova
