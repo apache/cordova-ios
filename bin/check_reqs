@@ -22,13 +22,13 @@
 XCODEBUILD_LOCATION=$(which xcodebuild)
 if [ $? != 0 ]; then
 	echo "Xcode is (probably) not installed, specifically the command 'xcodebuild' is unavailable."
-	exit 1
+	exit 2
 fi
 
-XCODEBUILD_MIN_VERSION="4.5"
+XCODEBUILD_MIN_VERSION="4.6"
 XCODEBUILD_VERSION=$(xcodebuild -version | head -n 1 | sed -e 's/Xcode //')
 
 if [[ "$XCODEBUILD_VERSION" < "$XCODEBUILD_MIN_VERSION" ]]; then
 	echo "Cordova can only run in Xcode version $XCODEBUILD_MIN_VERSION or greater."
-	exit 1
+	exit 2
 fi
