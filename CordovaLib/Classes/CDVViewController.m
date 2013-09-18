@@ -145,7 +145,9 @@
     CGRect newFrame = self.view.bounds;
     if (showEvent) {
         newFrame.size.height -= keyboardFrame.size.height;
-        self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -keyboardFrame.size.height, 0);
+        if (!(IsAtLeastiOSVersion(@"7.0"))) {
+            self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -keyboardFrame.size.height, 0);
+        }
     } else {
         self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     }
@@ -496,6 +498,11 @@
         for (UIView* view in window.subviews) {
             if ([[view description] hasPrefix:@"<UIPeripheralHostView"]) {
                 for (UIView* peripheralView in view.subviews) {
+                    // hides the backdrop (iOS 7)
+                    if ([[peripheralView description] hasPrefix:@"<UIKBInputBackdropView"]) {
+                        [[peripheralView layer] setOpacity:0.0];
+                    }
+
                     // hides the accessory bar
                     if ([[peripheralView description] hasPrefix:@"<UIWebFormAccessory"]) {
                         // remove the extra scroll space for the form accessory bar
