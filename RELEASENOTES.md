@@ -64,11 +64,6 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-4281] Moving echo to a plugin in MobileSpec
 * [CB-4277] Revert deleting of &lt;param name="onload" value="true" /&gt; support
 * [CB-3005] Add support for query parameters in StartPage url
-* [CB-4133] iOS detection of plugins that run long on main thread
-* [CB-4277] onload (boolean) attribute of config.xml param tag is ignored
-* [CB-4277] Revert deleting of &lt;param name="onload" value="true" /&gt; support
-* [CB-4133] iOS detection of plugins that run long on main thread
-* [CB-4277] onload (boolean) attribute of config.xml param tag is ignored
 * CordovaTests project was missing the CordovaLib dependency: added
 * Update iOS whitelist tests
 * Fix ARC issue in start page tests (critical for Xcode5)
