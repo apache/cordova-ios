@@ -24,6 +24,55 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 3.1.0 (20131001) ###
+
+* [CB-3020] HideKeyboardFormAccessoryBar and KeyboardShrinksView show white bar instead of removing it
+* [CB-4799] Add update script for iOS.
+* [CB-4829] Xcode 5 simulated device names are different (and includes a new 64-bit device)
+* [CB-4827] iOS project/cordova/check\_reqs script should be used by all the scripts
+* [CB-4530] iOS bin/check\_reqs script should check for xcode 4.6 as minimum, and exit with code 2 if error occurs
+* [CB-4537] iOS bin/create script should copy check\_reqs script into project/cordova folder
+* [CB-4803] Set new iOS 7 preferences for the UIWebView in CDVViewController
+* [CB-4801] Add new iOS 7 properties for UIWebView in the config.xml &lt;preferences&gt;
+* [CB-4687] Fix Xcode 5 static analyzer issues
+* [CB-4469] Move copy-build-www-step.sh into scripts template
+* [CB-4539] Cannot create CDVViewController in Storyboard
+* [CB-4654] Wherein it is discovered that cp is too smart for its own good
+* [CB-4469] Move copy\_www.sh to cordova/lib/copy-www-build-step.sh
+* [CB-4654] Exclude platform scripts from template directory; copy those separately
+* [CB-4654] Allow default project template to be overridden on create
+* [CB-4706] Update compiler in CordovaLib.xcodeproj to "default compiler"
+* [CB-4707] Update compiler in default template xcodeproj to "default compiler"
+* [CB-4689] Update default template xcodeproj to Xcode 5 project settings
+* [CB-4688] CordovaLib.xcodeproj - update to Xcode 5 project settings
+* [CB-4691] Fix Xcode 5 warnings
+* [CB-4567] fix issue: "Benchmarks" ->"AutoBench" crashed on iOS
+* [CB-4469] Flip executable bit for copy_www.sh
+* [CB-4469] move copy resource script out of project file
+* [CB-4486] Give iOS plugins the ability to override URL loading
+* [CB-4408] Update cordova/emulate for new emulator build folder
+* [Cb-4336] modify cordova/run and cordova/install-device scripts to use ios-deploy (npm)
+* [CB-4408] Modify cordova/build script to build for device (armv7/armv7s)
+* [CB-4409] Remove build artifact folder on cordova/clean
+* [CB-4405] Increase Xcode minimum version to 4.6 in cordova/* scripts
+* [CB-4334] modify cordova/emulate and cordova/run scripts help text for ios-sim (available as npm module)
+* [CB-4331] require ios-sim version 1.7 in command line scripts
+* [CB-4355] Localstorage plugin handles options incorrectly (the settings key is specified with upper case chars)
+* [CB-4358] Trim amount of frameworks (18) in default template to minimum needed (4)
+* [CB-4095] Unify whitelist implementations
+* [CB-4281] Remove Echo files from Xcode project
+* [CB-4281] Moving echo to a plugin in MobileSpec
+* [CB-4277] Revert deleting of &lt;param name="onload" value="true" /&gt; support
+* [CB-3005] Add support for query parameters in StartPage url
+* [CB-4133] iOS detection of plugins that run long on main thread
+* [CB-4277] onload (boolean) attribute of config.xml param tag is ignored
+* [CB-4277] Revert deleting of &lt;param name="onload" value="true" /&gt; support
+* [CB-4133] iOS detection of plugins that run long on main thread
+* [CB-4277] onload (boolean) attribute of config.xml param tag is ignored
+* CordovaTests project was missing the CordovaLib dependency: added
+* Update iOS whitelist tests
+* Fix ARC issue in start page tests (critical for Xcode5)
+
 ### 3.0.0 (20130718) ###
 
 * [CB-3999] Video Capture ignores duration option [iOS]
