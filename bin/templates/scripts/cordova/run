@@ -27,6 +27,7 @@
 OPTION_RESULT=()
 TARGET="iPhone (Retina 3.5-inch)"
 TARGET_FLAG='--family iphone --retina'
+USE_SIMULATOR=false
 
 # separates "key=value", sets an array with 0th index as key, 1st index as value
 _parseOption() 
@@ -57,6 +58,9 @@ _parseArgs()
     "--device")
       echo "Targeting a device is not supported currently."
       exit 1
+      ;;
+    "--emulate")
+      USE_SIMULATOR=true
       ;;
     esac
   done
@@ -105,7 +109,7 @@ source "$CORDOVA_PATH/check_reqs"
 "$CORDOVA_PATH/build" || exit $?
 
 # if device build found, run it first
-if [ -d "$DEVICE_APP_PATH" ]; then
+if [ -d "$DEVICE_APP_PATH" ] && ! "$USE_SIMULATOR"; then
     IOS_DEPLOY_MIN_VERSION="1.0.2"
     IOS_DEPLOY_LOCATION=$(which ios-deploy)
     if [ $? != 0 ]; then
