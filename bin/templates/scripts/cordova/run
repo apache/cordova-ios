@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -7,9 +7,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,7 +30,7 @@ TARGET_FLAG='--family iphone --retina'
 USE_SIMULATOR=false
 
 # separates "key=value", sets an array with 0th index as key, 1st index as value
-_parseOption() 
+_parseOption()
 {
     local ARG=$@
     OIFS=$IFS
@@ -59,7 +59,7 @@ _parseArgs()
       echo "Targeting a device is not supported currently."
       exit 1
       ;;
-    "--emulate")
+    "--emulator")
       USE_SIMULATOR=true
       ;;
     esac
@@ -75,7 +75,7 @@ _parseArgs "$@"
 # "iPad (Retina)" -> --family ipad --retina
 
 # lowercase the target string
-TARGET_LC=`echo $TARGET | tr '[:upper:]' '[:lower:]'` 
+TARGET_LC=`echo $TARGET | tr '[:upper:]' '[:lower:]'`
 
 # remember the comparison is lowercase
 case "$TARGET_LC" in
@@ -122,7 +122,7 @@ if [ -d "$DEVICE_APP_PATH" ] && ! "$USE_SIMULATOR"; then
     	echo "Cordova needs ios-deploy version $IOS_DEPLOY_MIN_VERSION or greater, you have version $IOS_DEPLOY_VERSION."
     	exit 1
     fi
-    
+
     # if we got here, we can deploy the app, then exit success
     ios-deploy -d -b "$DEVICE_APP_PATH"
 	exit 0
