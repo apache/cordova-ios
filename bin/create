@@ -160,3 +160,8 @@ cp -r "$SCRIPT_TEMPLATE_DIR"/* "$PROJECT_PATH/"
 
 # copy the check_reqs script
 cp "$BINDIR/check_reqs" "$PROJECT_PATH"/cordova
+
+# copy the version scripts script
+cp "$BINDIR/apple_ios_version" "$PROJECT_PATH"/cordova
+cp "$BINDIR/apple_osx_version" "$PROJECT_PATH"/cordova
+cp "$BINDIR/apple_xcode_version" "$PROJECT_PATH"/cordova
