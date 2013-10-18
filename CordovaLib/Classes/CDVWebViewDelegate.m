@@ -83,12 +83,12 @@
 #define VerboseLog(...) do {} while (0)
 
 typedef enum {
-    STATE_IDLE,
-    STATE_WAITING_FOR_LOAD_START,
-    STATE_WAITING_FOR_LOAD_FINISH,
-    STATE_IOS5_POLLING_FOR_LOAD_START,
-    STATE_IOS5_POLLING_FOR_LOAD_FINISH,
-    STATE_CANCELLED
+    STATE_IDLE = 0,
+    STATE_WAITING_FOR_LOAD_START = 1,
+    STATE_WAITING_FOR_LOAD_FINISH = 2,
+    STATE_IOS5_POLLING_FOR_LOAD_START = 3,
+    STATE_IOS5_POLLING_FOR_LOAD_FINISH = 4,
+    STATE_CANCELLED = 5
 } State;
 
 @implementation CDVWebViewDelegate
@@ -227,6 +227,7 @@ typedef enum {
 
                 case STATE_IDLE:
                 case STATE_IOS5_POLLING_FOR_LOAD_START:
+                case STATE_CANCELLED:
                     // Page navigation start.
                     _loadCount = 0;
                     _state = STATE_WAITING_FOR_LOAD_START;
