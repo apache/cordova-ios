@@ -18,9 +18,9 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "CDVPlugin.h"
+#import <Cordova/CDVPlugin.h>
 
-@interface CDVAccelerometer : CDVPlugin <UIAccelerometerDelegate>
+@interface CDVAccelerometer : CDVPlugin
 {
     double x;
     double y;
