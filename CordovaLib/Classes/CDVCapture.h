@@ -20,7 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <AVFoundation/AVFoundation.h>
-#import "CDVPlugin.h"
+#import <Cordova/CDVPlugin.h>
 #import "CDVFile.h"
 
 enum CDVCaptureError {

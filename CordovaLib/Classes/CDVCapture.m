@@ -18,8 +18,8 @@
  */
 
 #import "CDVCapture.h"
-#import "CDVJSON.h"
-#import "CDVAvailability.h"
+#import <Cordova/CDVJSON.h>
+#import <Cordova/CDVAvailability.h>
 
 #define kW3CMediaFormatHeight @"height"
 #define kW3CMediaFormatWidth @"width"
@@ -88,9 +88,11 @@
 
         self.inUse = YES;
 
-        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+        SEL selector = NSSelectorFromString(@"presentViewController:animated:completion:");
+        if ([self.viewController respondsToSelector:selector]) {
             [self.viewController presentViewController:navController animated:YES completion:nil];
         } else {
+            // deprecated as of iOS >= 6.0
             [self.viewController presentModalViewController:navController animated:YES];
         }
     }
@@ -139,9 +141,11 @@
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
 
-        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+        SEL selector = NSSelectorFromString(@"presentViewController:animated:completion:");
+        if ([self.viewController respondsToSelector:selector]) {
             [self.viewController presentViewController:pickerController animated:YES completion:nil];
         } else {
+            // deprecated as of iOS >= 6.0
             [self.viewController presentModalViewController:pickerController animated:YES];
         }
     }
@@ -255,9 +259,11 @@
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
 
-        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+        SEL selector = NSSelectorFromString(@"presentViewController:animated:completion:");
+        if ([self.viewController respondsToSelector:selector]) {
             [self.viewController presentViewController:pickerController animated:YES completion:nil];
         } else {
+            // deprecated as of iOS >= 6.0
             [self.viewController presentModalViewController:pickerController animated:YES];
         }
     }
@@ -615,7 +621,12 @@
     // timerLabel.autoresizingMask = reSizeMask;
     [self.timerLabel setBackgroundColor:[UIColor clearColor]];
     [self.timerLabel setTextColor:[UIColor whiteColor]];
+#ifdef __IPHONE_6_0
+    [self.timerLabel setTextAlignment:NSTextAlignmentCenter];
+#else
+    // for iOS SDK < 6.0
     [self.timerLabel setTextAlignment:UITextAlignmentCenter];
+#endif
     [self.timerLabel setText:@"0:00"];
     [self.timerLabel setAccessibilityHint:NSLocalizedString(@"recorded time in minutes and seconds", nil)];
     self.timerLabel.accessibilityTraits |= UIAccessibilityTraitUpdatesFrequently;
@@ -718,25 +729,47 @@
         [self.recordButton setImage:stopRecordImage forState:UIControlStateNormal];
         self.recordButton.accessibilityTraits &= ~[self accessibilityTraits];
         [self.recordingView setHidden:NO];
-        NSError* error = nil;
-        [self.avSession setCategory:AVAudioSessionCategoryRecord error:&error];
-        [self.avSession setActive:YES error:&error];
-        if (error) {
-            // can't continue without active audio session
-            self.errorCode = CAPTURE_INTERNAL_ERR;
-            [self dismissAudioView:nil];
-        } else {
-            if (self.duration) {
-                self.isTimed = true;
-                [self.avRecorder recordForDuration:[duration doubleValue]];
+        __block NSError* error = nil;
+        
+        void (^startRecording)(void) = ^{
+            [self.avSession setCategory:AVAudioSessionCategoryRecord error:&error];
+            [self.avSession setActive:YES error:&error];
+            if (error) {
+                // can't continue without active audio session
+                self.errorCode = CAPTURE_INTERNAL_ERR;
+                [self dismissAudioView:nil];
             } else {
-                [self.avRecorder record];
+                if (self.duration) {
+                    self.isTimed = true;
+                    [self.avRecorder recordForDuration:[duration doubleValue]];
+                } else {
+                    [self.avRecorder record];
+                }
+                [self.timerLabel setText:@"0.00"];
+                self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
+                self.doneButton.enabled = NO;
             }
-            [self.timerLabel setText:@"0.00"];
-            self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
-            self.doneButton.enabled = NO;
+            UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
+        };
+        
+        SEL rrpSel = NSSelectorFromString(@"requestRecordPermission:");
+        if ([self.avSession respondsToSelector:rrpSel])
+        {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            [self.avSession performSelector:rrpSel withObject:^(BOOL granted){
+                if (granted) {
+                    startRecording();
+                } else {
+                    NSLog(@"Error creating audio session, microphone permission denied.");
+                    self.errorCode = CAPTURE_INTERNAL_ERR;
+                    [self dismissAudioView:nil];
+                }
+            }];
+#pragma clang diagnostic pop
+        } else {
+            startRecording();
         }
-        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
     }
 }
 
