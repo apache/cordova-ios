@@ -18,7 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "CDVPlugin.h"
+#import <Cordova/CDVPlugin.h>
 
 @interface CDVSplashScreen : CDVPlugin {
     UIActivityIndicatorView* _activityView;
