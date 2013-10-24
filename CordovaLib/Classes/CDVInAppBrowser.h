@@ -17,10 +17,10 @@
  under the License.
  */
 
-#import "CDVPlugin.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVScreenOrientationDelegate.h"
-#import "CDVWebViewDelegate.h"
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVScreenOrientationDelegate.h>
+#import <Cordova/CDVWebViewDelegate.h>
 
 @class CDVInAppBrowserViewController;
 
