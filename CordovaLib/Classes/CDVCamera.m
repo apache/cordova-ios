@@ -19,9 +19,9 @@
 
 #import "CDVCamera.h"
 #import "CDVJpegHeaderWriter.h"
-#import "NSArray+Comparisons.h"
-#import "NSData+Base64.h"
-#import "NSDictionary+Extensions.h"
+#import <Cordova/NSArray+Comparisons.h>
+#import <Cordova/NSData+Base64.h>
+#import <Cordova/NSDictionary+Extensions.h>
 #import <ImageIO/CGImageProperties.h>
 #import <AssetsLibrary/ALAssetRepresentation.h>
 #import <ImageIO/CGImageSource.h>
@@ -150,9 +150,11 @@ static NSSet* org_apache_cordova_validArrowDirections;
         NSDictionary* options = [command.arguments objectAtIndex:10 withDefault:nil];
         [self displayPopover:options];
     } else {
-        if ([self.viewController respondsToSelector:@selector(presentViewController:::)]) {
+        SEL selector = NSSelectorFromString(@"presentViewController:animated:completion:");
+        if ([self.viewController respondsToSelector:selector]) {
             [self.viewController presentViewController:cameraPicker animated:YES completion:nil];
         } else {
+            // deprecated as of iOS >= 6.0
             [self.viewController presentModalViewController:cameraPicker animated:YES];
         }
     }
@@ -303,11 +305,16 @@ static NSSet* org_apache_cordova_validArrowDirections;
             }
 
             NSData* data = nil;
+            // returnedImage is the image that is returned to caller and (optionally) saved to photo album
+            UIImage* returnedImage = (scaledImage == nil ? image : scaledImage);
 
             if (cameraPicker.encodingType == EncodingTypePNG) {
-                data = UIImagePNGRepresentation(scaledImage == nil ? image : scaledImage);
+                data = UIImagePNGRepresentation(returnedImage);
+            } else if ((cameraPicker.allowsEditing==false) && (cameraPicker.targetSize.width <= 0) && (cameraPicker.targetSize.height <= 0) && (cameraPicker.correctOrientation==false)){
+                // use image unedited as requested , don't resize
+                data = UIImageJPEGRepresentation(returnedImage, 1.0);
             } else {
-                data = UIImageJPEGRepresentation(scaledImage == nil ? image : scaledImage, cameraPicker.quality / 100.0f);
+                data = UIImageJPEGRepresentation(returnedImage, cameraPicker.quality / 100.0f);
 
                 NSDictionary *controllerMetadata = [info objectForKey:@"UIImagePickerControllerMediaMetadata"];
                 if (controllerMetadata) {
@@ -323,7 +330,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
             }
             
             if (cameraPicker.saveToPhotoAlbum) {
-                UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:data], nil, nil, nil);
+                ALAssetsLibrary *library = [ALAssetsLibrary new];
+                [library writeImageToSavedPhotosAlbum:returnedImage.CGImage orientation:(ALAssetOrientation)(returnedImage.imageOrientation) completionBlock:nil];
             }
 
             if (cameraPicker.returnType == DestinationTypeFileUri) {
@@ -669,7 +677,8 @@ static NSSet* org_apache_cordova_validArrowDirections;
     }
     
     if (self.pickerController.saveToPhotoAlbum) {
-        UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:[self data]], nil, nil, nil);
+        ALAssetsLibrary *library = [ALAssetsLibrary new];
+        [library writeImageDataToSavedPhotosAlbum:self.data metadata:self.metadata completionBlock:nil];
     }
     
     if (self.pickerController.returnType == DestinationTypeFileUri) {
@@ -726,5 +735,22 @@ static NSSet* org_apache_cordova_validArrowDirections;
 @synthesize cropToSize;
 @synthesize webView;
 @synthesize popoverSupported;
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
+- (UIViewController*)childViewControllerForStatusBarHidden {
+    return nil;
+}
+    
+- (void)viewWillAppear:(BOOL)animated {
+    SEL sel = NSSelectorFromString(@"setNeedsStatusBarAppearanceUpdate");
+    if ([self respondsToSelector:sel]) {
+        [self performSelector:sel withObject:nil afterDelay:0];
+    }
+    
+    [super viewWillAppear:animated];
+}
 
 @end

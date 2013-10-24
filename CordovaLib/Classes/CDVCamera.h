@@ -20,7 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import <CoreLocation/CLLocationManager.h>
-#import "CDVPlugin.h"
+#import <Cordova/CDVPlugin.h>
 
 enum CDVDestinationType {
     DestinationTypeDataUrl = 0,
