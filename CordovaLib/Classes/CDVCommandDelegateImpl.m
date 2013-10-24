@@ -134,7 +134,7 @@
 - (BOOL)URLIsWhitelisted:(NSURL*)url
 {
     return ![_viewController.whitelist schemeIsAllowed:[url scheme]] ||
-           [_viewController.whitelist URLIsAllowed:url];
+           [_viewController.whitelist URLIsAllowed:url logFailure:NO];
 }
 
 - (NSDictionary*)settings
