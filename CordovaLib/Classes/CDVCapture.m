@@ -45,6 +45,27 @@
     return UIAccessibilityTraitNone;
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
+- (UIViewController*)childViewControllerForStatusBarHidden
+{
+    return nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    SEL sel = NSSelectorFromString(@"setNeedsStatusBarAppearanceUpdate");
+
+    if ([self respondsToSelector:sel]) {
+        [self performSelector:sel withObject:nil afterDelay:0];
+    }
+
+    [super viewWillAppear:animated];
+}
+
 @end
 
 @implementation CDVCapture
@@ -242,11 +263,11 @@
         // iOS 3.0
         pickerController.mediaTypes = [NSArray arrayWithObjects:mediaType, nil];
 
-        if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]){
+        if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
             if (duration) {
                 pickerController.videoMaximumDuration = [duration doubleValue];
             }
-            //NSLog(@"pickerController.videoMaximumDuration = %f", pickerController.videoMaximumDuration);
+            // NSLog(@"pickerController.videoMaximumDuration = %f", pickerController.videoMaximumDuration);
         }
 
         // iOS 4.0
@@ -580,6 +601,10 @@
 
 - (void)loadView
 {
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+
     // create view and display
     CGRect viewRect = [[UIScreen mainScreen] applicationFrame];
     UIView* tmp = [[UIView alloc] initWithFrame:viewRect];
@@ -622,10 +647,10 @@
     [self.timerLabel setBackgroundColor:[UIColor clearColor]];
     [self.timerLabel setTextColor:[UIColor whiteColor]];
 #ifdef __IPHONE_6_0
-    [self.timerLabel setTextAlignment:NSTextAlignmentCenter];
+        [self.timerLabel setTextAlignment:NSTextAlignmentCenter];
 #else
-    // for iOS SDK < 6.0
-    [self.timerLabel setTextAlignment:UITextAlignmentCenter];
+        // for iOS SDK < 6.0
+        [self.timerLabel setTextAlignment:UITextAlignmentCenter];
 #endif
     [self.timerLabel setText:@"0:00"];
     [self.timerLabel setAccessibilityHint:NSLocalizedString(@"recorded time in minutes and seconds", nil)];
@@ -730,7 +755,7 @@
         self.recordButton.accessibilityTraits &= ~[self accessibilityTraits];
         [self.recordingView setHidden:NO];
         __block NSError* error = nil;
-        
+
         void (^startRecording)(void) = ^{
             [self.avSession setCategory:AVAudioSessionCategoryRecord error:&error];
             [self.avSession setActive:YES error:&error];
@@ -751,13 +776,12 @@
             }
             UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
         };
-        
+
         SEL rrpSel = NSSelectorFromString(@"requestRecordPermission:");
-        if ([self.avSession respondsToSelector:rrpSel])
-        {
+        if ([self.avSession respondsToSelector:rrpSel]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-            [self.avSession performSelector:rrpSel withObject:^(BOOL granted){
+            [self.avSession performSelector:rrpSel withObject:^(BOOL granted) {
                 if (granted) {
                     startRecording();
                 } else {
