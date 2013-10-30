@@ -247,7 +247,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Add a define that turns on logging of exec() bridge
 * Sort preferences in project template.
 * Add KeyboardShrinksView preference to project template
-* Revert accidentaly change in PluginResult that broke threading.
+* Revert accidentally change in PluginResult that broke threading.
 * Remove NSLogs accidentally checked in.
 * Use noCopy versions of NSString init in Base64 code.
 * Add an associatedObject field to CDVPluginResult.
