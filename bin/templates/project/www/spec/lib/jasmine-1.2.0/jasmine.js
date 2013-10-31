@@ -161,7 +161,7 @@ jasmine.isA_ = function(typeName, value) {
 };
 
 /**
- * Pretty printer for expecations.  Takes any object and turns it into a human-readable string.
+ * Pretty printer for expectations.  Takes any object and turns it into a human-readable string.
  *
  * @param value {Object} an object to be outputted
  * @returns {String}
@@ -183,7 +183,7 @@ jasmine.isDomNode = function(obj) {
 };
 
 /**
- * Returns a matchable 'generic' object of the class type.  For use in expecations of type when values don't matter.
+ * Returns a matchable 'generic' object of the class type.  For use in expectations of type when values don't matter.
  *
  * @example
  * // don't care about which function is passed in, as long as it's a function
@@ -212,7 +212,7 @@ jasmine.objectContaining = function (sample) {
 };
 
 /**
- * Jasmine Spies are test doubles that can act as stubs, spies, fakes or when used in an expecation, mocks.
+ * Jasmine Spies are test doubles that can act as stubs, spies, fakes or when used in an expectation, mocks.
  *
  * Spies should be created in test setup, before expectations.  They can then be checked, using the standard Jasmine
  * expectation syntax. Spies can be checked if they were called or not and what the calling params were.
