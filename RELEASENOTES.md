@@ -395,7 +395,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Fix InAppBrowser handling of NSNull relative URLS.
 * Use the VC's address in the User-Agent instead of a GUID.
 * Have the InAppBrowser not use a GUID in its UA.
-* Update cordova.ios.js with change to not require cordove.iOSVCAddr
+* Update cordova.ios.js with change to not require cordova.iOSVCAddr
 * Fix invalidating of cached UA when Locale changes with the app closed.
 * Add a helper script to convert Cordova.plist to config.xml.
 * Rename plist2xml.py -> cordova_plist_to_config_xml.
