@@ -215,10 +215,16 @@
             self.loadFromString = YES;
             appURL = nil;
         } else {
-            // CB-3005 we know that the page exists : reconstruct full path from bundle
-            NSURL* relativeURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-            NSString* localURL = [NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage];
-            appURL = [NSURL URLWithString:localURL relativeToURL:relativeURL];
+            NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
+            if([startFilePath rangeOfString:bundlePath].location == NSNotFound){
+                // use resource path if it is not in the bundle folder
+               appURL = [NSURL fileURLWithPath:startFilePath isDirectory:FALSE];
+            }else{
+                // CB-3005 we know that the page exists : reconstruct full path from bundle
+                NSURL* relativeURL = [NSURL fileURLWithPath:bundlePath];
+                NSString* localURL = [NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage];
+                appURL = [NSURL URLWithString:localURL relativeToURL:relativeURL];
+            }
         }
     }
 
