@@ -515,7 +515,7 @@ var expect = function(actual) {
 if (isCommonJS) exports.expect = expect;
 
 /**
- * Defines part of a jasmine spec.  Used in cominbination with waits or waitsFor in asynchronous specs.
+ * Defines part of a jasmine spec.  Used in combination with waits or waitsFor in asynchronous specs.
  *
  * @param {Function} func Function that defines part of a jasmine spec.
  */
