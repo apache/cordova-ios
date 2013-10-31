@@ -30,7 +30,7 @@
 - (void)dispose;
 
 - (void)resetRequestId;
-- (void)enqueCommandBatch:(NSString*)batchJSON;
+- (void)enqueueCommandBatch:(NSString*)batchJSON;
 
 - (void)maybeFetchCommandsFromJs:(NSNumber*)requestId;
 - (void)fetchCommandsFromJs;

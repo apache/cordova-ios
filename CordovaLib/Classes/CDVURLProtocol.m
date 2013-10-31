@@ -35,7 +35,7 @@ static CDVWhitelist* gWhitelist = nil;
 // the actual pointer to avoid retaining.
 static NSMutableSet* gRegisteredControllers = nil;
 
-NSString* const kCDVAssetsLibraryPrefixs = @"assets-library://";
+NSString* const kCDVAssetsLibraryPrefixes = @"assets-library://";
 
 // Returns the registered view controller that sent the given request.
 // If the user-agent is not from a UIWebView, or if it's from an unregistered one,
@@ -110,7 +110,7 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     NSURL* theUrl = [theRequest URL];
     CDVViewController* viewController = viewControllerForRequest(theRequest);
 
-    if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefixs]) {
+    if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
         return YES;
     } else if (viewController != nil) {
         if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
@@ -122,7 +122,7 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
             }
             BOOL hasCmds = [queuedCommandsJSON length] > 0;
             if (hasCmds) {
-                SEL sel = @selector(enqueCommandBatch:);
+                SEL sel = @selector(enqueueCommandBatch:);
                 [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
             } else {
                 SEL sel = @selector(maybeFetchCommandsFromJs:);
@@ -159,7 +159,7 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     if ([[url path] isEqualToString:@"/!gap_exec"]) {
         [self sendResponseWithResponseCode:200 data:nil mimeType:nil];
         return;
-    } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefixs]) {
+    } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
         ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
             if (asset) {
                 // We have the asset!  Get the data and send it along.

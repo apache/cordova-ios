@@ -161,7 +161,7 @@ jasmine.isA_ = function(typeName, value) {
 };
 
 /**
- * Pretty printer for expecations.  Takes any object and turns it into a human-readable string.
+ * Pretty printer for expectations.  Takes any object and turns it into a human-readable string.
  *
  * @param value {Object} an object to be outputted
  * @returns {String}
@@ -183,7 +183,7 @@ jasmine.isDomNode = function(obj) {
 };
 
 /**
- * Returns a matchable 'generic' object of the class type.  For use in expecations of type when values don't matter.
+ * Returns a matchable 'generic' object of the class type.  For use in expectations of type when values don't matter.
  *
  * @example
  * // don't care about which function is passed in, as long as it's a function
@@ -212,7 +212,7 @@ jasmine.objectContaining = function (sample) {
 };
 
 /**
- * Jasmine Spies are test doubles that can act as stubs, spies, fakes or when used in an expecation, mocks.
+ * Jasmine Spies are test doubles that can act as stubs, spies, fakes or when used in an expectation, mocks.
  *
  * Spies should be created in test setup, before expectations.  They can then be checked, using the standard Jasmine
  * expectation syntax. Spies can be checked if they were called or not and what the calling params were.
@@ -293,7 +293,7 @@ jasmine.Spy = function(name) {
 };
 
 /**
- * Tells a spy to call through to the actual implemenatation.
+ * Tells a spy to call through to the actual implementation.
  *
  * @example
  * var foo = {
@@ -356,7 +356,7 @@ jasmine.Spy.prototype.andThrow = function(exceptionMsg) {
  * // defining a spy from scratch: foo() calls the function baz
  * var foo = jasmine.createSpy('spy on foo').andCall(baz);
  *
- * // defining a spy on an existing property: foo.bar() calls an anonymnous function
+ * // defining a spy on an existing property: foo.bar() calls an anonymous function
  * spyOn(foo, 'bar').andCall(function() { return 'baz';} );
  *
  * @param {Function} fakeFunc
@@ -515,7 +515,7 @@ var expect = function(actual) {
 if (isCommonJS) exports.expect = expect;
 
 /**
- * Defines part of a jasmine spec.  Used in cominbination with waits or waitsFor in asynchrnous specs.
+ * Defines part of a jasmine spec.  Used in combination with waits or waitsFor in asynchronous specs.
  *
  * @param {Function} func Function that defines part of a jasmine spec.
  */

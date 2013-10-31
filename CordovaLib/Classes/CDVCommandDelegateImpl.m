@@ -61,7 +61,7 @@
         CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
     }
 
-    [_commandQueue enqueCommandBatch:commandsJSON];
+    [_commandQueue enqueueCommandBatch:commandsJSON];
 }
 
 - (void)evalJsHelper:(NSString*)js
@@ -71,7 +71,7 @@
     // dead-lock.
     // If the commandQueue is currently executing, then we know that it is safe to
     // execute the callback immediately.
-    // Using    (dispatch_get_main_queue()) does *not* fix deadlocks for some reaon,
+    // Using    (dispatch_get_main_queue()) does *not* fix deadlocks for some reason,
     // but performSelectorOnMainThread: does.
     if (![NSThread isMainThread] || !_commandQueue.currentlyExecuting) {
         [self performSelectorOnMainThread:@selector(evalJsHelper2:) withObject:js waitUntilDone:NO];

@@ -185,7 +185,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-3069] Fix InAppBrowser load events (for non-redirecting pages)
 * InAppBrowser: Don't inject iframe bridge until necessary.
 * Fix FileTransfer unit test. HTTP Method was being set to null.
-* [CB-2305] Add InAppBrowser injectSriptCode command to support InAppBrowser.executeScript and InAppBrowser.insertCSS APIs
+* [CB-2305] Add InAppBrowser injectScriptCode command to support InAppBrowser.executeScript and InAppBrowser.insertCSS APIs
 * [CB-2653] Simplify InAppBrowser.injectScriptCode.
 * [CB-2537] Implement streaming downloads for FileTransfer
 * [CB-2190] Allow FileTransfer uploads to continue in background
@@ -195,7 +195,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-3066] Fire onNativeReady from JS, as bridge is available immediately
 * [CB-2725] Fix www deploy issues with symlinks
 * [CB-2725] follow links in www copy script
-* [CB-3039] iOS Exif date length mismtach
+* [CB-3039] iOS Exif date length mismatch
 * [CB-3052] iOS Exif SubIFD offsets incorrect
 * [CB-51] Added httpMethod for file transfer options (defaults to POST)
 * [CB-2732] Only set camera device when allowed.
@@ -264,7 +264,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Add a define that turns on logging of exec() bridge
 * Sort preferences in project template.
 * Add KeyboardShrinksView preference to project template
-* Revert accidentaly change in PluginResult that broke threading.
+* Revert accidentally change in PluginResult that broke threading.
 * Remove NSLogs accidentally checked in.
 * Use noCopy versions of NSString init in Base64 code.
 * Add an associatedObject field to CDVPluginResult.
@@ -412,7 +412,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Fix InAppBrowser handling of NSNull relative URLS.
 * Use the VC's address in the User-Agent instead of a GUID.
 * Have the InAppBrowser not use a GUID in its UA.
-* Update cordova.ios.js with change to not require cordove.iOSVCAddr
+* Update cordova.ios.js with change to not require cordova.iOSVCAddr
 * Fix invalidating of cached UA when Locale changes with the app closed.
 * Add a helper script to convert Cordova.plist to config.xml.
 * Rename plist2xml.py -> cordova_plist_to_config_xml.
