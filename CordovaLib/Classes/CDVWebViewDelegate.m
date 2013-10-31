@@ -272,7 +272,7 @@ typedef enum {
             // We could try to distinguish using [UIWebView canGoForward], but that's too much complexity,
             // and would work only on the first time it was used.
 
-            // Our work-around is to set a JS variable and poll until it disappears (from a naviagtion).
+            // Our work-around is to set a JS variable and poll until it disappears (from a navigation).
             _state = STATE_IOS5_POLLING_FOR_LOAD_START;
             _loadStartPollCount = 0;
             [self setLoadToken:webView];
