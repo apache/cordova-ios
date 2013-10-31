@@ -61,7 +61,7 @@
         CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
     }
 
-    [_commandQueue enqueCommandBatch:commandsJSON];
+    [_commandQueue enqueueCommandBatch:commandsJSON];
 }
 
 - (void)evalJsHelper:(NSString*)js

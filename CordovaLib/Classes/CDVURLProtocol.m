@@ -122,7 +122,7 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
             }
             BOOL hasCmds = [queuedCommandsJSON length] > 0;
             if (hasCmds) {
-                SEL sel = @selector(enqueCommandBatch:);
+                SEL sel = @selector(enqueueCommandBatch:);
                 [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
             } else {
                 SEL sel = @selector(maybeFetchCommandsFromJs:);

@@ -56,7 +56,7 @@
     _lastCommandQueueFlushRequestId = 0;
 }
 
-- (void)enqueCommandBatch:(NSString*)batchJSON
+- (void)enqueueCommandBatch:(NSString*)batchJSON
 {
     if ([batchJSON length] > 0) {
         [_queue addObject:batchJSON];
@@ -94,7 +94,7 @@
         @"cordova.require('cordova/exec').nativeFetchMessages()"];
 
     CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
-    [self enqueCommandBatch:queuedCommandsJSON];
+    [self enqueueCommandBatch:queuedCommandsJSON];
 }
 
 - (void)executePending
