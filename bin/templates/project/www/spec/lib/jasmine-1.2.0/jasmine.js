@@ -356,7 +356,7 @@ jasmine.Spy.prototype.andThrow = function(exceptionMsg) {
  * // defining a spy from scratch: foo() calls the function baz
  * var foo = jasmine.createSpy('spy on foo').andCall(baz);
  *
- * // defining a spy on an existing property: foo.bar() calls an anonymnous function
+ * // defining a spy on an existing property: foo.bar() calls an anonymous function
  * spyOn(foo, 'bar').andCall(function() { return 'baz';} );
  *
  * @param {Function} fakeFunc
