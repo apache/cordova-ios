@@ -168,7 +168,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-3069] Fix InAppBrowser load events (for non-redirecting pages)
 * InAppBrowser: Don't inject iframe bridge until necessary.
 * Fix FileTransfer unit test. HTTP Method was being set to null.
-* [CB-2305] Add InAppBrowser injectSriptCode command to support InAppBrowser.executeScript and InAppBrowser.insertCSS APIs
+* [CB-2305] Add InAppBrowser injectScriptCode command to support InAppBrowser.executeScript and InAppBrowser.insertCSS APIs
 * [CB-2653] Simplify InAppBrowser.injectScriptCode.
 * [CB-2537] Implement streaming downloads for FileTransfer
 * [CB-2190] Allow FileTransfer uploads to continue in background
