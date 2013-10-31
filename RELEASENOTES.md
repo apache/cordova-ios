@@ -178,7 +178,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-3066] Fire onNativeReady from JS, as bridge is available immediately
 * [CB-2725] Fix www deploy issues with symlinks
 * [CB-2725] follow links in www copy script
-* [CB-3039] iOS Exif date length mismtach
+* [CB-3039] iOS Exif date length mismatch
 * [CB-3052] iOS Exif SubIFD offsets incorrect
 * [CB-51] Added httpMethod for file transfer options (defaults to POST)
 * [CB-2732] Only set camera device when allowed.
