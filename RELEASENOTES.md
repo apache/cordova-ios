@@ -24,6 +24,25 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 2.9.1 (20131104) ###
+
+* CB-5199 - Media Capture - UI issues under iOS 7 (uncrustify style fix-ups as well)
+* CB-5189 - ios - Backport of v2.9.1 - add CoreMotion.framework to the default template
+* CB-5189 - ios - Backport of v2.9.1 from CB-4825, CB-5035 (Device Motion / Accelerometer)
+* CB-5189 - ios - Backport of v2.9.1 from CB-4847 (Media only)
+* CB-5189 - ios - Backport of v2.9.1 from CB-4847 (Media Capture only)
+* CB-5189 - ios - Backport for v2.9.1 of CB-4806, CB-4355 (Splashscreen)
+* CB-5189 - ios - Backport for v2.9.1 of CB-4930 (InAppBrowser)
+* CB-5189 - ios - Backport for v2.9.1 of CB-4958, CB-3482 and CB-3453 changes
+* [CB-4480] Using 64 bit ints to store file size
+* [CB-3448] bin/diagnose_project script fails if CORDOVALIB variable not in prefs plist
+* [CB-3567] Redirect initiated in JavaScript fails the app from loading
+* [CB-4147] Fixing crash when calling show() on an already open InAppBrowser window.
+* [CB-4104] Made config parameters case-insensitive.
+* [CB-4033] Relaxed case-sensitivity of "UTF-8".
+* [CB-4037] Unable to Archive iOS projects for upload to App Store in 2.9
+* [CB-4025] iOS emulate command broken when run inside the cordova folder
+
 ### 2.9.0 (201306XX) ###
 
 * [CB-3469] Add a version macro for 2.8.0.
