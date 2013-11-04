@@ -25,3 +25,8 @@
 "timed recording complete" = "timed recording complete";
 // accessibility hint for display of recorded elapsed time
 "recorded time in minutes and seconds" = "recorded time in minutes and seconds";
+// from in-app browser
+"loading" = "Loading..."
+"load_error" = "Load Error"
+// built-in - included here to make translating easier
+"Done" = "Done"
