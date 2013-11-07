@@ -238,8 +238,17 @@
 
     // // Instantiate the WebView ///////////////
 
-    [self createGapView];
+    if (!self.webView) {
+        [self createGapView];
+    }
 
+    // Configure WebView
+    _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
+    self.webView.delegate = _webViewDelegate;
+    
+    // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
+    [CDVURLProtocol registerViewController:self];
+    
     // /////////////////
 
     NSString* enableViewportScale = [self settingForKey:@"EnableViewportScale"];
@@ -548,22 +557,13 @@
 - (void)createGapView
 {
     CGRect webViewBounds = self.view.bounds;
-
     webViewBounds.origin = self.view.bounds.origin;
-
-    if (!self.webView) {
-        self.webView = [self newCordovaViewWithFrame:webViewBounds];
-        self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-
-        [self.view addSubview:self.webView];
-        [self.view sendSubviewToBack:self.webView];
-
-        _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
-        self.webView.delegate = _webViewDelegate;
-
-        // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
-        [CDVURLProtocol registerViewController:self];
-    }
+    
+    self.webView = [self newCordovaViewWithFrame:webViewBounds];
+    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    
+    [self.view addSubview:self.webView];
+    [self.view sendSubviewToBack:self.webView];
 }
 
 - (void)didReceiveMemoryWarning
