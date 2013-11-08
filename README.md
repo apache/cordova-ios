@@ -46,7 +46,7 @@ Create a Cordova project
 
 1. Launch **Terminal.app**
 2. Go to the location where you installed Cordova, in the **bin** sub-folder
-3. Follow the instructions in the [**Command-Line Usage** section](http://docs.cordova.io/en/edge/guide_command-line_index.md.html#Command-Line%20Usage) of [http://docs.cordova.io](http://docs.cordova.io)
+3. Follow the instructions in the [**Command-Line Usage** section](http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html#The%20Command-line%20Interface) of [http://docs.cordova.io](http://docs.cordova.io)
 
 The docs should also have been included in the distribution.
 
