@@ -24,6 +24,23 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 3.2.0 (20131120) ###
+
+* CB-5124 - Remove splashscreen config.xml values from iOS Configuration Docs, move to plugin docs
+* CB-5229 - cordova/emulate important improvements (stderr, check ios-sim before build)
+* CB-5058 - CordovaLib xcode project gets assigned problematic Build Active Architecture Only settings.
+* CB-5217 - cordova emulate ios doesn't exit
+* CB-4805 - Update cordova/run and cordova/lib/install-device to use latest ios-deploy for iOS 7
+* CB-5103 - Fix cordova/run: --emulate should be --emulator (fix CLI usage)
+* CB-4872 - added iOS sdk version scripts
+* CB-5099 - Add missing icons especially iOS 7 120x120 icon to default template
+* CB-5037 - Fix bridge sometimes not resetting properly during page transitions
+* CB-4990 - Can't run emulator from cordova cli
+* CB-4978 - iOS - Remove HideKeyboardFormAccessoryBar and KeyboardShrinksView preferences in config.xml
+* CB-4935 - iOS - Remove Keyboard preferences code into its own plugin
+* Make CDVWebViewDelegate able to load pages after a failed load.
+* Prevented automatic logging of whitelist failures.
+
 ### 3.1.0 (20131001) ###
 
 * [CB-3020] HideKeyboardFormAccessoryBar and KeyboardShrinksView show white bar instead of removing it
