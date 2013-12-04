@@ -1,5 +1,5 @@
 // Platform: ios
-// 3.3.0-dev-c9de1bc
+// 3.3.0-rc1
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '3.3.0-dev-c9de1bc';
+var CORDOVA_JS_BUILD_LABEL = '3.3.0-rc1';
 // file: lib/scripts/require.js
 
 /*jshint -W079 */
@@ -507,7 +507,7 @@ function include(parent, objects, clobber, merge) {
                 include(result, obj.children, clobber, merge);
             }
         } catch(e) {
-            utils.alert('Exception building cordova JS globals: ' + e + ' for key "' + key + '"');
+            utils.alert('Exception building Cordova JS globals: ' + e + ' for key "' + key + '"');
         }
     });
 }
