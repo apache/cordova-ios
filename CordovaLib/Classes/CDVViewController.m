@@ -215,10 +215,14 @@
             self.loadFromString = YES;
             appURL = nil;
         } else {
-            // CB-3005 we know that the page exists : reconstruct full path from bundle
-            NSURL* relativeURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-            NSString* localURL = [NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage];
-            appURL = [NSURL URLWithString:localURL relativeToURL:relativeURL];
+            appURL = [NSURL fileURLWithPath:startFilePath];
+            // CB-3005 Add on the query params or fragment.
+            NSString* startPageNoParentDirs = self.startPage;
+            NSRange r = [startPageNoParentDirs rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"?#"] options:0];
+            if (r.location != NSNotFound) {
+                NSString* queryAndOrFragment = [self.startPage substringFromIndex:r.location];
+                appURL = [NSURL URLWithString:queryAndOrFragment relativeToURL:appURL];
+            }
         }
     }
 
