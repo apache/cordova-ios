@@ -56,7 +56,7 @@ extern NSString* const CDVLocalNotification;
 
 - (id)appDelegate;
 
-// TODO(agrieve): Deprecate these in favour of using CDVCommandDelegate directly.
+// TODO(agrieve): Deprecate these in favor of using CDVCommandDelegate directly.
 - (NSString*)writeJavascript:(NSString*)javascript;
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
 - (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
