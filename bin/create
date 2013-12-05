@@ -75,6 +75,7 @@ PROJECT_PARENT=$(dirname "$PROJECT_PATH")
 PROJECT_TEMPLATE_DIR=${4:-"$BINDIR/templates/project"}
 SCRIPT_TEMPLATE_DIR=$BINDIR/templates/scripts
 
+"$BINDIR/check_reqs" || exit $?
 
 # check whether the project path exists and is not empty
 if [ -d "$PROJECT_PATH" ]; then
