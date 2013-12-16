@@ -24,6 +24,10 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 3.3.0 (20131214) ###
+
+* No significant changes.
+
 ### 3.2.0 (20131120) ###
 
 * CB-5124 - Remove splashscreen config.xml values from iOS Configuration Docs, move to plugin docs
