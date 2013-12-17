@@ -658,6 +658,17 @@
         return NO;
     }
 
+    if ([[url fragment] hasPrefix:@"%01"]) {
+        NSString* inlineCommands = [[url fragment] substringFromIndex:3];
+        if ([inlineCommands length] == 0) {
+            [_commandQueue fetchCommandsFromJs];
+        } else {
+            inlineCommands = [inlineCommands stringByRemovingPercentEncoding];
+            [_commandQueue enqueueCommandBatch:inlineCommands];
+        }
+        return NO;
+    }
+
     /*
      * Give plugins the chance to handle the url
      */
