@@ -124,8 +124,9 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
             if (hasCmds) {
                 SEL sel = @selector(enqueueCommandBatch:);
                 [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
+                [viewController.commandQueue performSelectorOnMainThread:@selector(executePending) withObject:nil waitUntilDone:NO];
             } else {
-                SEL sel = @selector(maybeFetchCommandsFromJs:);
+                SEL sel = @selector(processXhrExecBridgePoke:);
                 [viewController.commandQueue performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
             }
             // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.

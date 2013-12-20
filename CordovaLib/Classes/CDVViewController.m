@@ -655,17 +655,33 @@
      */
     if ([[url scheme] isEqualToString:@"gap"]) {
         [_commandQueue fetchCommandsFromJs];
+        // The delegate is called asynchronously in this case, so we don't have to use
+        // flushCommandQueueWithDelayedJs (setTimeout(0)) as we do with hash changes.
+        [_commandQueue executePending];
         return NO;
     }
 
-    if ([[url fragment] hasPrefix:@"%01"]) {
+    if ([[url fragment] hasPrefix:@"%01"] || [[url fragment] hasPrefix:@"%02"]) {
+        // Delegate is called *immediately* for hash changes. This means that any
+        // calls to stringByEvaluatingJavascriptFromString will occur in the middle
+        // of an existing (paused) call stack. This doesn't cause errors, but may
+        // be unexpected to callers (exec callbacks will be called before exec() even
+        // returns). To avoid this, we do not do any synchronous JS evals by using
+        // flushCommandQueueWithDelayedJs.
         NSString* inlineCommands = [[url fragment] substringFromIndex:3];
         if ([inlineCommands length] == 0) {
+            // Reach in right away since the WebCore / Main thread are already synchronized.
             [_commandQueue fetchCommandsFromJs];
         } else {
-            inlineCommands = [inlineCommands stringByRemovingPercentEncoding];
+            inlineCommands = [inlineCommands stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             [_commandQueue enqueueCommandBatch:inlineCommands];
         }
+        // Switch these for minor performance improvements, and to really live on the wild side.
+        // Callbacks will occur in the middle of the location.hash = ... statement!
+        [(CDVCommandDelegateImpl*)_commandDelegate flushCommandQueueWithDelayedJs];
+        // [_commandQueue executePending];
+
+        // Although we return NO, the hash change does end up taking effect.
         return NO;
     }
 

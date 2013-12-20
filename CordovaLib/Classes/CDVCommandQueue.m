@@ -58,14 +58,12 @@
 
 - (void)enqueueCommandBatch:(NSString*)batchJSON
 {
-    CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [batchJSON length] > 0);
     if ([batchJSON length] > 0) {
         [_queue addObject:batchJSON];
-        [self executePending];
     }
 }
 
-- (void)maybeFetchCommandsFromJs:(NSNumber*)requestId
+- (void)processXhrExecBridgePoke:(NSNumber*)requestId
 {
     NSInteger rid = [requestId integerValue];
 
@@ -85,6 +83,7 @@
     if (rid > _lastCommandQueueFlushRequestId) {
         _lastCommandQueueFlushRequestId = [requestId integerValue];
         [self fetchCommandsFromJs];
+        [self executePending];
     }
 }
 
@@ -94,6 +93,7 @@
     NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
         @"cordova.require('cordova/exec').nativeFetchMessages()"];
 
+    CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
     [self enqueueCommandBatch:queuedCommandsJSON];
 }
 
