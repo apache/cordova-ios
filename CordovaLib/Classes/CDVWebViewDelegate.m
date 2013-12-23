@@ -91,6 +91,16 @@ typedef enum {
     STATE_CANCELLED = 5
 } State;
 
+static NSString *stripFragment(NSString* url)
+{
+    NSRange r = [url rangeOfString:@"#"];
+
+    if (r.location == NSNotFound) {
+        return url;
+    }
+    return [url substringToIndex:r.location];
+}
+
 @implementation CDVWebViewDelegate
 
 - (id)initWithDelegate:(NSObject <UIWebViewDelegate>*)delegate
@@ -110,33 +120,8 @@ typedef enum {
         NSString* originalRequestUrl = [originalRequest.URL absoluteString];
         NSString* newRequestUrl = [newRequest.URL absoluteString];
 
-        // no fragment, easy
-        if (newRequest.URL.fragment == nil) {
-            return NO;
-        }
-
-        // if the urls have fragments and they are equal
-        if ((originalRequest.URL.fragment && newRequest.URL.fragment) && [originalRequestUrl isEqualToString:newRequestUrl]) {
-            return YES;
-        }
-
-        NSString* urlFormat = @"%@://%@:%d/%@#%@";
-        // reconstruct the URLs (ignoring basic auth credentials, query string)
-        NSString* baseOriginalRequestUrl = [NSString stringWithFormat:urlFormat,
-            [originalRequest.URL scheme],
-            [originalRequest.URL host],
-            [[originalRequest.URL port] intValue],
-            [originalRequest.URL path],
-            [newRequest.URL fragment]                                 // add the new request's fragment
-            ];
-        NSString* baseNewRequestUrl = [NSString stringWithFormat:urlFormat,
-            [newRequest.URL scheme],
-            [newRequest.URL host],
-            [[newRequest.URL port] intValue],
-            [newRequest.URL path],
-            [newRequest.URL fragment]
-            ];
-
+        NSString* baseOriginalRequestUrl = stripFragment(originalRequestUrl);
+        NSString* baseNewRequestUrl = stripFragment(newRequestUrl);
         return [baseOriginalRequestUrl isEqualToString:baseNewRequestUrl];
     }
 
@@ -161,6 +146,11 @@ typedef enum {
 {
     _curLoadToken += 1;
     [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"window.__cordovaLoadToken=%d", _curLoadToken]];
+}
+
+- (NSString*)evalForCurrentURL:(UIWebView*)webView
+{
+    return [webView stringByEvaluatingJavaScriptFromString:@"location.href"];
 }
 
 - (void)pollForPageLoadStart:(UIWebView*)webView
@@ -211,17 +201,23 @@ typedef enum {
         shouldLoad = [_delegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
     }
 
-    // Ignore hash changes that don't navigate to a different page.
-    if ([self request:request isFragmentIdentifierToRequest:webView.request]) {
-        VerboseLog(@"Detected hash change shouldLoad");
-        return shouldLoad;
-    }
-
     VerboseLog(@"webView shouldLoad=%d (before) state=%d loadCount=%d URL=%@", shouldLoad, _state, _loadCount, request.URL);
 
     if (shouldLoad) {
         BOOL isTopLevelNavigation = [request.URL isEqual:[request mainDocumentURL]];
         if (isTopLevelNavigation) {
+            // Ignore hash changes that don't navigate to a different page.
+            // webView.request does actually update when history.replaceState() gets called.
+            if ([self request:request isFragmentIdentifierToRequest:webView.request]) {
+                NSString* prevURL = [self evalForCurrentURL:webView];
+                if ([prevURL isEqualToString:[request.URL absoluteString]]) {
+                    VerboseLog(@"Page reload detected.");
+                } else {
+                    VerboseLog(@"Detected hash change shouldLoad");
+                    return shouldLoad;
+                }
+            }
+
             switch (_state) {
                 case STATE_WAITING_FOR_LOAD_FINISH:
                     // Redirect case.
