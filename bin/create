@@ -31,9 +31,10 @@
 set -e
 
 function usage() {
-  echo "Usage: $0 [--shared] [--arc] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
+  echo "Usage: $0 [--shared] [--arc] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
   echo "	--shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it."
   echo "	--arc (optional): Enable ARC."
+  echo "	--cli (optional): Use the CLI-project template."
   echo "	<path_to_new_project>: Path to your new Cordova iOS project"
   echo "	<package_name>: Package name, following reverse-domain style convention"
   echo "	<project_name>: Project name"
@@ -43,17 +44,32 @@ function usage() {
 
 USE_SHARED=0
 USE_ARC=0
-if [[ $1 == "--shared" ]]; then
-    USE_SHARED=1
-    shift;
-fi
-if [[ $1 == "--arc" ]]; then
-    USE_ARC=1
-    shift;
-fi
+USE_CLI=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+    --shared) USE_SHARED=1 ;;
+    --arc) USE_ARC=1 ;;
+    --cli) USE_CLI=1 ;;
+    -*) echo "Unrecognized argument: $1" >&2; usage ;;
+    *)
+        if [[ -z "$PROJECT_PATH" ]]; then
+            PROJECT_PATH="$1"
+        elif [[ -z "$PACKAGE" ]]; then
+            PACKAGE="$1"
+        elif [[ -z "$PROJECT_NAME" ]]; then
+            PROJECT_NAME="$1"
+        elif [[ -z "$PROJECT_TEMPLATE_DIR" ]]; then
+            PROJECT_TEMPLATE_DIR="$1"
+        else
+            echo "Too many arguments to $0". >&2
+            usage
+        fi
+    esac
+    shift
+done
 
 # check whether it is a proper create command (at least 3 arguments)
-if [ $# -lt 3 ]; then
+if [[ -z "$PROJECT_NAME" ]]; then
 	usage
 fi
 
@@ -68,11 +84,8 @@ BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
 CORDOVALIB_DIR="$BINDIR/../CordovaLib"
 CDV_VER=$(cat "$CORDOVALIB_DIR/VERSION")
 
-PROJECT_PATH=$1
-PACKAGE=$2
-PROJECT_NAME=$3
 PROJECT_PARENT=$(dirname "$PROJECT_PATH")
-PROJECT_TEMPLATE_DIR=${4:-"$BINDIR/templates/project"}
+PROJECT_TEMPLATE_DIR=${PROJECT_TEMPLATE_DIR:-"$BINDIR/templates/project"}
 SCRIPT_TEMPLATE_DIR=$BINDIR/templates/scripts
 
 "$BINDIR/check_reqs" || exit $?
@@ -91,48 +104,38 @@ if [ ! -d "$PROJECT_PARENT" ]; then
 	exit 1
 fi
 
-# copy the files in; then modify them
-cp -r "$PROJECT_TEMPLATE_DIR/" "$PROJECT_PATH"
-
-# Copy in the JS.
+mkdir -p "$PROJECT_PATH"
+cp -r "$PROJECT_TEMPLATE_DIR/www" "$PROJECT_PATH"/www
 cp "$CORDOVALIB_DIR/cordova.js" "$PROJECT_PATH/www/cordova.js"
+cp -r "$PROJECT_TEMPLATE_DIR/www" "$PROJECT_PATH"/www
+if (($USE_CLI)); then
+    cp -r "$PROJECT_TEMPLATE_DIR/__CLI__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
+else
+    cp -r "$PROJECT_TEMPLATE_DIR/__NON-CLI__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
+fi
+cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__" "$PROJECT_PATH/$PROJECT_NAME"
 
-# I've tried to be thorough in my documentation of the manual actions below...
-# on first brush it would seem that the right solution would be to brute force
-# recurse the directory tree renaming instances of __ID__ and __TESTING__ ...however this is a little blunt
-# and while so the below is too being very manual it was/is easier to test, fucking manually, and sort out the automation
-
-# rename the folders/files:
-#
-# - ./__TESTING__.xcodeproj/
-# - ./__TESTING__/
-# - ./__TESTING__/__TESTING__-info.plist
-# - ./__TESTING__/__TESTING__-Prefix.plist
-mv "$PROJECT_PATH/__TESTING__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
-mv "$PROJECT_PATH/__TESTING__" "$PROJECT_PATH/$PROJECT_NAME"
-mv "$PROJECT_PATH/$PROJECT_NAME/__TESTING__-Info.plist" "$PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
-mv "$PROJECT_PATH/$PROJECT_NAME/__TESTING__-Prefix.pch" "$PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Prefix.pch"
-
-# lets store a reference to the root
 R=$PROJECT_PATH/$PROJECT_NAME
+mv "$R/__PROJECT_NAME__-Info.plist" "$R/$PROJECT_NAME-Info.plist"
+mv "$R/__PROJECT_NAME__-Prefix.pch" "$R/$PROJECT_NAME-Prefix.pch"
 
-# replace __TESTING__ and --ID-- with ACTIVITY and ID strings, respectively, in:
+# replace __PROJECT_NAME__ and --ID-- with ACTIVITY and ID strings, respectively, in:
 #
-# - ./__TESTING__.xcodeproj/project.pbxproj
-# - ./__TESTING__/Classes/AppDelegate.h
-# - ./__TESTING__/Classes/AppDelegate.m
-# - ./__TESTING__/Resources/main.m
-# - ./__TESTING__/Resources/__TESTING__-info.plist
-# - ./__TESTING__/Resources/__TESTING__-Prefix.plist
+# - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
+# - ./__PROJECT_NAME__/Classes/AppDelegate.h
+# - ./__PROJECT_NAME__/Classes/AppDelegate.m
+# - ./__PROJECT_NAME__/Resources/main.m
+# - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
+# - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
 
-"$BINDIR/replaces" "$R.xcodeproj/project.pbxproj" __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/AppDelegate.h"     __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/AppDelegate.m"     __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/MainViewController.h" __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/MainViewController.m" __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/main.m"                    __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist"  __TESTING__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __TESTING__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R.xcodeproj/project.pbxproj" __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/Classes/AppDelegate.h"     __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/Classes/AppDelegate.m"     __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/Classes/MainViewController.h" __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/Classes/MainViewController.m" __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/main.m"                    __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist"  __PROJECT_NAME__ "$PROJECT_NAME"
+"$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __PROJECT_NAME__ "$PROJECT_NAME"
 
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
 

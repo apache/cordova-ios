@@ -19,7 +19,7 @@
 
 //
 //  AppDelegate.m
-//  __TESTING__
+//  __PROJECT_NAME__
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
@@ -92,7 +92,7 @@
 }
 
 // this happens while we are running ( in the background, or from within our own app )
-// only valid if __TESTING__-Info.plist specifies a protocol to handle
+// only valid if __PROJECT_NAME__-Info.plist specifies a protocol to handle
 - (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url
 {
     if (!url) {

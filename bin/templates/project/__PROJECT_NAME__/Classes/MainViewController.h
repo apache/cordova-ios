@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,12 +17,24 @@
  under the License.
  */
 
+//
+//  MainViewController.h
+//  __PROJECT_NAME__
+//
+//  Created by ___FULLUSERNAME___ on ___DATE___.
+//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
+//
 
-// controller title for Videos
-"Videos title" = "Videor";
-// accessibility label for recording button
-"toggle audio recording" = "börja/avsluta inspelning";
-// notification spoken by VoiceOver when timed recording finishes
-"timed recording complete" = "inspelning har avslutad";
-// accessibility hint for display of recorded elapsed time
-"recorded time in minutes and seconds" = "inspelad tid in minuter och sekund";
+#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVCommandDelegateImpl.h>
+#import <Cordova/CDVCommandQueue.h>
+
+@interface MainViewController : CDVViewController
+
+@end
+
+@interface MainCommandDelegate : CDVCommandDelegateImpl
+@end
+
+@interface MainCommandQueue : CDVCommandQueue
+@end
