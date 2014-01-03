@@ -43,7 +43,9 @@ static NSMutableArray* gPendingSetUserAgentBlocks = nil;
         NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
         NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
         NSString* localeStr = [[NSLocale currentLocale] localeIdentifier];
-        NSString* systemAndLocale = [NSString stringWithFormat:@"%@ %@", systemVersion, localeStr];
+        // Record the model since simulator can change it without re-install (CB-5420).
+        NSString* model = [UIDevice currentDevice].model;
+        NSString* systemAndLocale = [NSString stringWithFormat:@"%@ %@ %@", model, systemVersion, localeStr];
 
         NSString* cordovaUserAgentVersion = [userDefaults stringForKey:kCdvUserAgentVersionKey];
         gOriginalUserAgent = [userDefaults stringForKey:kCdvUserAgentKey];
