@@ -307,6 +307,11 @@
         }
     }
 
+    NSString* decelerationSetting = [self settingForKey:@"UIWebViewDecelerationSpeed"];
+    if (![@"fast" isEqualToString : decelerationSetting]) {
+        [self.webView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
+    }
+
     /*
      * iOS 6.0 UIWebView properties
      */
