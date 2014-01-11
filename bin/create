@@ -107,7 +107,6 @@ fi
 mkdir -p "$PROJECT_PATH"
 cp -r "$PROJECT_TEMPLATE_DIR/www" "$PROJECT_PATH"/www
 cp "$CORDOVALIB_DIR/cordova.js" "$PROJECT_PATH/www/cordova.js"
-cp -r "$PROJECT_TEMPLATE_DIR/www" "$PROJECT_PATH"/www
 if (($USE_CLI)); then
     cp -r "$PROJECT_TEMPLATE_DIR/__CLI__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
 else
