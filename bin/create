@@ -117,6 +117,7 @@ cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__" "$PROJECT_PATH/$PROJECT_NAME"
 R=$PROJECT_PATH/$PROJECT_NAME
 mv "$R/__PROJECT_NAME__-Info.plist" "$R/$PROJECT_NAME-Info.plist"
 mv "$R/__PROJECT_NAME__-Prefix.pch" "$R/$PROJECT_NAME-Prefix.pch"
+mv "$R/gitignore" "$R/.gitignore"
 
 # replace __PROJECT_NAME__ and --ID-- with ACTIVITY and ID strings, respectively, in:
 #
