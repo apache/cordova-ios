@@ -34,20 +34,23 @@ cd "$PROJECT_PATH"
 
 APP=build/$PROJECT_NAME.app
 
-FLAG=${1:---debug}
-OTHER_FLAGS=$2
 CONFIGURATION=Debug
+EMULATOR=1
+DEVICE=0
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --debug) ;;
+        --release) CONFIGURATION=Release;;
+        --device) EMULATOR=0;;
+        --emulator) ;;
+        *) echo "Unrecognized flag: $1"; exit 2;;
+    esac
+    shift
+done
 
-if [ "$FLAG" == "--release" ]; then
-	CONFIGURATION=Release
+if (( $EMULATOR )); then
+    exec xcodebuild -project "$PROJECT_NAME.xcodeproj" -arch i386 -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphonesimulator build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/emulator"
+else
+    exec xcodebuild -xcconfig "$CORDOVA_PATH/build.xcconfig" -project "$PROJECT_NAME.xcodeproj" ARCHS="armv7 armv7s" -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphoneos build VALID_ARCHS="armv7 armv7s" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/device"
 fi
-
-if [ "$OTHER_FLAGS" != "" ]; then
-	echo "More than one flag provided, specify either --debug or --release only"
-	exit 2
-fi
-
-"$CORDOVA_PATH/clean"
-xcodebuild -xcconfig "$CORDOVA_PATH/build.xcconfig" -project "$PROJECT_NAME.xcodeproj" ARCHS="armv7 armv7s" -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphoneos build VALID_ARCHS="armv7 armv7s" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/device"
-xcodebuild -project "$PROJECT_NAME.xcodeproj" -arch i386 -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphonesimulator build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/emulator"
 
