@@ -373,7 +373,7 @@
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				"ARCHS[sdk=iphoneos6.*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				"ARCHS[sdk=iphoneos7.*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				"ARCHS[sdk=iphonesimulator*]" = i386;
+				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
@@ -400,7 +400,7 @@
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				"ARCHS[sdk=iphoneos6.*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				"ARCHS[sdk=iphoneos7.*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				"ARCHS[sdk=iphonesimulator*]" = i386;
+				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_MODEL_TUNING = G5;
