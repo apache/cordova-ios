@@ -204,7 +204,10 @@ static NSString *stripFragment(NSString* url)
     VerboseLog(@"webView shouldLoad=%d (before) state=%d loadCount=%d URL=%@", shouldLoad, _state, _loadCount, request.URL);
 
     if (shouldLoad) {
-        BOOL isTopLevelNavigation = [request.URL isEqual:[request mainDocumentURL]];
+        // When devtools refresh occurs, it blindly uses the same request object. If a history.replaceState() has occured, then
+        // mainDocumentURL != URL even though it's a top-level navigation.
+        BOOL isDevToolsRefresh = (request == webView.request);
+        BOOL isTopLevelNavigation = isDevToolsRefresh || [request.URL isEqual:[request mainDocumentURL]];
         if (isTopLevelNavigation) {
             // Ignore hash changes that don't navigate to a different page.
             // webView.request does actually update when history.replaceState() gets called.
