@@ -204,6 +204,9 @@
         appURL = [NSURL URLWithString:self.startPage];
     } else if ([self.wwwFolderName rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
+    } else if ([self.wwwFolderName hasPrefix:@"/"]) {
+        // wwwFolderName is an absolute file path
+        appURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
     } else {
         // CB-3005 strip parameters from start page to check if page exists in resources
         NSURL* startURL = [NSURL URLWithString:self.startPage];
