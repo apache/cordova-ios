@@ -61,14 +61,14 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         if ((scheme == nil) || [scheme isEqualToString:@"*"]) {
             _scheme = nil;
         } else {
-            _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:scheme allowWildcards:NO] options:0 error:nil];
+            _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:scheme allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
         }
         if ([host isEqualToString:@"*"]) {
             _host = nil;
         } else if ([host hasPrefix:@"*."]) {
-            _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVWhitelistPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:0 error:nil];
+            _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVWhitelistPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:NSRegularExpressionCaseInsensitive error:nil];
         } else {
-            _host = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:host allowWildcards:NO] options:0 error:nil];
+            _host = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:host allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
         }
         if ((port == nil) || [port isEqualToString:@"*"]) {
             _port = nil;
@@ -168,7 +168,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         self.whitelist = nil;
         self.permittedSchemes = nil;
     } else { // specific access
-        NSRegularExpression* parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|[a-z-]+)://)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
+        NSRegularExpression* parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|[A-Za-z-]+)://)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
         NSTextCheckingResult* m = [parts firstMatchInString:origin options:NSMatchingAnchored range:NSMakeRange(0, [origin length])];
         if (m != nil) {
             NSRange r;
@@ -245,7 +245,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     }
 
     // Shortcut rejection: Check that the scheme is supported
-    NSString* scheme = [url scheme];
+    NSString* scheme = [[url scheme] lowercaseString];
     if (![self schemeIsAllowed:scheme]) {
         if (logFailure) {
             NSLog(@"%@", [self errorStringForURL:url]);
