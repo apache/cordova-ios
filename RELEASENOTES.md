@@ -24,7 +24,7 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
-### 3.4.0 (201301XX) ###
+### 3.4.0 (201401XX) ###
 
 * CB-5794 iOS build script: 1. don't clean 2. recognize --emulator vs --device
 * Don't show environment vars in build log for copy-www script
