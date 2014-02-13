@@ -1,5 +1,5 @@
 // Platform: ios
-// 3.5.0-dev-a9d8c4b
+// 3.5.0-dev-ddf13aa
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '3.5.0-dev-a9d8c4b';
+var CORDOVA_JS_BUILD_LABEL = '3.5.0-dev-ddf13aa';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -942,6 +942,9 @@ function iOSExec() {
             return;
         } catch (e) {}
     }
+    
+    // If actionArgs is not provided, default to an empty array
+    actionArgs = actionArgs || [];
 
     // Register the callbacks and add the callbackId to the positional
     // arguments if given.
@@ -1413,7 +1416,7 @@ function findCordovaPath() {
     var scripts = document.getElementsByTagName('script');
     var term = 'cordova.js';
     for (var n = scripts.length-1; n>-1; n--) {
-        var src = scripts[n].src;
+        var src = scripts[n].src.replace(/\?.*$/, ''); // Strip any query param (CB-6007).
         if (src.indexOf(term) == (src.length - term.length)) {
             path = src.substring(0, src.length - term.length);
             break;
