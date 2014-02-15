@@ -33,7 +33,6 @@ set -e
 function usage() {
   echo "Usage: $0 [--shared] [--arc] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
   echo "	--shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it."
-  echo "	--arc (optional): Enable ARC."
   echo "	--cli (optional): Use the CLI-project template."
   echo "	<path_to_new_project>: Path to your new Cordova iOS project"
   echo "	<package_name>: Package name, following reverse-domain style convention"
@@ -43,7 +42,6 @@ function usage() {
 }
 
 USE_SHARED=0
-USE_ARC=0
 USE_CLI=0
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -153,10 +151,6 @@ else
     cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
     # Make the sub-project reference to Cordova have the correct path.
     "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj/project.pbxproj" > /dev/null
-fi
-
-if [[ $USE_ARC = 1 ]]; then
-    /usr/bin/sed -i '' 's/CLANG_ENABLE_OBJC_ARC = NO/CLANG_ENABLE_OBJC_ARC = YES/' "$R.xcodeproj/project.pbxproj" > /dev/null
 fi
 
 # Finally copy the scripts
