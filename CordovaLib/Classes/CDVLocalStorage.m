@@ -22,7 +22,7 @@
 
 @interface CDVLocalStorage ()
 
-@property (nonatomic, readwrite, strong) NSMutableArray* backupInfo;  // array of CDVBackupInfo objects
+@property (nonatomic, readwrite, strong) NSMutableArray *backupInfo;  // array of CDVBackupInfo objects
 @property (nonatomic, readwrite, weak) id <UIWebViewDelegate> webviewDelegate;
 
 @end
@@ -55,11 +55,11 @@
 
      And between these three, there are various migration paths, most of which only consider 2 of the 3, which is why this helper is based on 2 locations and has a notion of "direction".
      */
-    NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:3];
+    NSMutableArray *backupInfo = [NSMutableArray arrayWithCapacity:3];
 
-    NSString* original;
-    NSString* backup;
-    CDVBackupInfo* backupItem;
+    NSString *original;
+    NSString *backup;
+    CDVBackupInfo *backupItem;
 
     // ////////// LOCALSTORAGE
 
@@ -106,10 +106,10 @@
 + (NSMutableArray*)createBackupInfoWithCloudBackup:(BOOL)cloudBackup
 {
     // create backup info from backup folder to caches folder
-    NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString* cacheFolder = [appLibraryFolder stringByAppendingPathComponent:@"Caches"];
-    NSString* backupsFolder = [appDocumentsFolder stringByAppendingPathComponent:@"Backups"];
+    NSString *appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *cacheFolder = [appLibraryFolder stringByAppendingPathComponent:@"Caches"];
+    NSString *backupsFolder = [appDocumentsFolder stringByAppendingPathComponent:@"Backups"];
 
     // create the backups folder, if needed
     [[NSFileManager defaultManager] createDirectoryAtPath:backupsFolder withIntermediateDirectories:YES attributes:nil error:nil];
@@ -123,7 +123,7 @@
 {
     NSAssert(IsAtLeastiOSVersion(@"5.1"), @"Cannot mark files for NSURLIsExcludedFromBackupKey on iOS less than 5.1");
 
-    NSError* error = nil;
+    NSError *error = nil;
     BOOL success = [URL setResourceValue:[NSNumber numberWithBool:skip] forKey:NSURLIsExcludedFromBackupKey error:&error];
     if (!success) {
         NSLog(@"Error excluding %@ from backup %@", [URL lastPathComponent], error);
@@ -131,12 +131,12 @@
     return success;
 }
 
-+ (BOOL)copyFrom:(NSString*)src to:(NSString*)dest error:(NSError* __autoreleasing*)error
++ (BOOL)copyFrom:(NSString*)src to:(NSString*)dest error:(NSError *__autoreleasing*)error
 {
-    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if (![fileManager fileExistsAtPath:src]) {
-        NSString* errorString = [NSString stringWithFormat:@"%@ file does not exist.", src];
+        NSString *errorString = [NSString stringWithFormat:@"%@ file does not exist.", src];
         if (error != NULL) {
             (*error) = [NSError errorWithDomain:kCDVLocalStorageErrorDomain
                                            code:kCDVLocalStorageFileOperationError
@@ -149,7 +149,7 @@
     // generate unique filepath in temp directory
     CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-    NSString* tempBackup = [[NSTemporaryDirectory() stringByAppendingPathComponent:(__bridge NSString*)uuidString] stringByAppendingPathExtension:@"bak"];
+    NSString *tempBackup = [[NSTemporaryDirectory() stringByAppendingPathComponent:(__bridge NSString*)uuidString] stringByAppendingPathExtension:@"bak"];
     CFRelease(uuidString);
     CFRelease(uuidRef);
 
@@ -190,7 +190,7 @@
 
 - (BOOL)shouldBackup
 {
-    for (CDVBackupInfo* info in self.backupInfo) {
+    for (CDVBackupInfo *info in self.backupInfo) {
         if ([info shouldBackup]) {
             return YES;
         }
@@ -201,7 +201,7 @@
 
 - (BOOL)shouldRestore
 {
-    for (CDVBackupInfo* info in self.backupInfo) {
+    for (CDVBackupInfo *info in self.backupInfo) {
         if ([info shouldRestore]) {
             return YES;
         }
@@ -213,13 +213,13 @@
 /* copy from webkitDbLocation to persistentDbLocation */
 - (void)backup:(CDVInvokedUrlCommand*)command
 {
-    NSString* callbackId = command.callbackId;
+    NSString *callbackId = command.callbackId;
 
-    NSError* __autoreleasing error = nil;
-    CDVPluginResult* result = nil;
-    NSString* message = nil;
+    NSError *__autoreleasing error = nil;
+    CDVPluginResult *result = nil;
+    NSString *message = nil;
 
-    for (CDVBackupInfo* info in self.backupInfo) {
+    for (CDVBackupInfo *info in self.backupInfo) {
         if ([info shouldBackup]) {
             [[self class] copyFrom:info.original to:info.backup error:&error];
 
@@ -245,11 +245,11 @@
 /* copy from persistentDbLocation to webkitDbLocation */
 - (void)restore:(CDVInvokedUrlCommand*)command
 {
-    NSError* __autoreleasing error = nil;
-    CDVPluginResult* result = nil;
-    NSString* message = nil;
+    NSError *__autoreleasing error = nil;
+    CDVPluginResult *result = nil;
+    NSString *message = nil;
 
-    for (CDVBackupInfo* info in self.backupInfo) {
+    for (CDVBackupInfo *info in self.backupInfo) {
         if ([info shouldRestore]) {
             [[self class] copyFrom:info.backup to:info.original error:&error];
 
@@ -278,12 +278,12 @@
 
 + (void)__verifyAndFixDatabaseLocations
 {
-    NSBundle* mainBundle = [NSBundle mainBundle];
-    NSString* bundlePath = [[mainBundle bundlePath] stringByDeletingLastPathComponent];
-    NSString* bundleIdentifier = [[mainBundle infoDictionary] objectForKey:@"CFBundleIdentifier"];
-    NSString* appPlistPath = [bundlePath stringByAppendingPathComponent:[NSString stringWithFormat:@"Library/Preferences/%@.plist", bundleIdentifier]];
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSString *bundlePath = [[mainBundle bundlePath] stringByDeletingLastPathComponent];
+    NSString *bundleIdentifier = [[mainBundle infoDictionary] objectForKey:@"CFBundleIdentifier"];
+    NSString *appPlistPath = [bundlePath stringByAppendingPathComponent:[NSString stringWithFormat:@"Library/Preferences/%@.plist", bundleIdentifier]];
 
-    NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithContentsOfFile:appPlistPath];
+    NSMutableDictionary *appPlistDict = [NSMutableDictionary dictionaryWithContentsOfFile:appPlistPath];
     BOOL modified = [[self class] __verifyAndFixDatabaseLocationsWithAppPlistDict:appPlistDict
                                                                        bundlePath:bundlePath
                                                                       fileManager:[NSFileManager defaultManager]];
@@ -299,23 +299,23 @@
                                              bundlePath:(NSString*)bundlePath
                                             fileManager:(NSFileManager*)fileManager
 {
-    NSString* libraryCaches = @"Library/Caches";
-    NSString* libraryWebKit = @"Library/WebKit";
+    NSString *libraryCaches = @"Library/Caches";
+    NSString *libraryWebKit = @"Library/WebKit";
 
-    NSArray* keysToCheck = [NSArray arrayWithObjects:
+    NSArray *keysToCheck = [NSArray arrayWithObjects:
         @"WebKitLocalStorageDatabasePathPreferenceKey",
         @"WebDatabaseDirectory",
         nil];
 
     BOOL dirty = NO;
 
-    for (NSString* key in keysToCheck) {
-        NSString* value = [appPlistDict objectForKey:key];
+    for (NSString *key in keysToCheck) {
+        NSString *value = [appPlistDict objectForKey:key];
         // verify key exists, and path is in app bundle, if not - fix
         if ((value != nil) && ![value hasPrefix:bundlePath]) {
             // the pathSuffix to use may be wrong - OTA upgrades from < 5.1 to 5.1 do keep the old path Library/WebKit,
             // while Xcode synced ones do change the storage location to Library/Caches
-            NSString* newBundlePath = [bundlePath stringByAppendingPathComponent:libraryCaches];
+            NSString *newBundlePath = [bundlePath stringByAppendingPathComponent:libraryCaches];
             if (![fileManager fileExistsAtPath:newBundlePath]) {
                 newBundlePath = [bundlePath stringByAppendingPathComponent:libraryWebKit];
             }
@@ -334,10 +334,10 @@
         return;
     }
 
-    NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 
-    NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray *backupInfo = [NSMutableArray arrayWithCapacity:0];
 
     if ([backupType isEqualToString:@"cloud"]) {
         // We would like to restore old backups/caches databases to the new destination (nested in lib folder)
@@ -348,9 +348,9 @@
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:[appLibraryFolder stringByAppendingPathComponent:@"Caches"] backupDir:appLibraryFolder targetDirNests:NO backupDirNests:YES rename:NO]];
     }
 
-    NSFileManager* manager = [NSFileManager defaultManager];
+    NSFileManager *manager = [NSFileManager defaultManager];
 
-    for (CDVBackupInfo* info in backupInfo) {
+    for (CDVBackupInfo *info in backupInfo) {
         if ([manager fileExistsAtPath:info.backup]) {
             if ([info shouldRestore]) {
                 NSLog(@"Restoring old webstorage backup. From: '%@' To: '%@'.", info.backup, info.original);
@@ -369,8 +369,8 @@
 
 - (void)onResignActive
 {
-    UIDevice* device = [UIDevice currentDevice];
-    NSNumber* exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
+    UIDevice *device = [UIDevice currentDevice];
+    NSNumber *exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
 
     BOOL isMultitaskingSupported = [device respondsToSelector:@selector(isMultitaskingSupported)] && [device isMultitaskingSupported];
 
@@ -388,7 +388,7 @@
                 backgroundTaskID = UIBackgroundTaskInvalid;
                 NSLog(@"Background task to backup WebSQL/LocalStorage expired.");
             }];
-        CDVLocalStorage __weak* weakSelf = self;
+        CDVLocalStorage __weak *weakSelf = self;
         [self.commandDelegate runInBackground:^{
             [weakSelf backup:nil];
 
@@ -419,14 +419,14 @@
 
 - (BOOL)file:(NSString*)aPath isNewerThanFile:(NSString*)bPath
 {
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    NSError* __autoreleasing error = nil;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *__autoreleasing error = nil;
 
-    NSDictionary* aPathAttribs = [fileManager attributesOfItemAtPath:aPath error:&error];
-    NSDictionary* bPathAttribs = [fileManager attributesOfItemAtPath:bPath error:&error];
+    NSDictionary *aPathAttribs = [fileManager attributesOfItemAtPath:aPath error:&error];
+    NSDictionary *bPathAttribs = [fileManager attributesOfItemAtPath:bPath error:&error];
 
-    NSDate* aPathModDate = [aPathAttribs objectForKey:NSFileModificationDate];
-    NSDate* bPathModDate = [bPathAttribs objectForKey:NSFileModificationDate];
+    NSDate *aPathModDate = [aPathAttribs objectForKey:NSFileModificationDate];
+    NSDate *bPathModDate = [bPathAttribs objectForKey:NSFileModificationDate];
 
     if ((nil == aPathModDate) && (nil == bPathModDate)) {
         return NO;
@@ -437,7 +437,7 @@
 
 - (BOOL)item:(NSString*)aPath isNewerThanItem:(NSString*)bPath
 {
-    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
 
     BOOL aPathIsDir = NO, bPathIsDir = NO;
     BOOL aPathExists = [fileManager fileExistsAtPath:aPath isDirectory:&aPathIsDir];
@@ -456,12 +456,12 @@
     // we get the files in aPath, and see if it is newer than the file in bPath
     // (it is newer if it doesn't exist in bPath) if we encounter the FIRST file that is newer,
     // we return YES
-    NSDirectoryEnumerator* directoryEnumerator = [fileManager enumeratorAtPath:aPath];
-    NSString* path;
+    NSDirectoryEnumerator *directoryEnumerator = [fileManager enumeratorAtPath:aPath];
+    NSString *path;
 
     while ((path = [directoryEnumerator nextObject])) {
-        NSString* aPathFile = [aPath stringByAppendingPathComponent:path];
-        NSString* bPathFile = [bPath stringByAppendingPathComponent:path];
+        NSString *aPathFile = [aPath stringByAppendingPathComponent:path];
+        NSString *bPathFile = [bPath stringByAppendingPathComponent:path];
 
         BOOL isNewer = [self file:aPathFile isNewerThanFile:bPathFile];
         if (isNewer) {

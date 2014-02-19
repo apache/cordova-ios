@@ -25,7 +25,7 @@
 
 @interface CDVWebViewTest : SenTestCase
 
-@property (nonatomic, strong) UIWebView* webView;
+@property (nonatomic, strong) UIWebView *webView;
 
 - (AppDelegate*)appDelegate;
 - (CDVViewController*)viewController;

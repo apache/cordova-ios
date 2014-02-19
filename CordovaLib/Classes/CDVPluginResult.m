@@ -31,9 +31,9 @@
 @implementation CDVPluginResult
 @synthesize status, message, keepCallback, associatedObject;
 
-static NSArray* org_apache_cordova_CommandStatusMsgs;
+static NSArray *org_apache_cordova_CommandStatusMsgs;
 
-id messageFromArrayBuffer(NSData* data)
+id messageFromArrayBuffer(NSData *data)
 {
     return @{
                @"CDVType" : @"ArrayBuffer",
@@ -49,9 +49,9 @@ id massageMessage(id message)
     return message;
 }
 
-id messageFromMultipart(NSArray* theMessages)
+id messageFromMultipart(NSArray *theMessages)
 {
-    NSMutableArray* messages = [NSMutableArray arrayWithArray:theMessages];
+    NSMutableArray *messages = [NSMutableArray arrayWithArray:theMessages];
 
     for (NSUInteger i = 0; i < messages.count; ++i) {
         [messages replaceObjectAtIndex:i withObject:massageMessage([messages objectAtIndex:i])];
@@ -141,7 +141,7 @@ id messageFromMultipart(NSArray* theMessages)
 
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode
 {
-    NSDictionary* errDict = @{@"code" :[NSNumber numberWithInt:errorCode]};
+    NSDictionary *errDict = @{@"code" :[NSNumber numberWithInt:errorCode]};
 
     return [[self alloc] initWithStatus:statusOrdinal message:errDict];
 }
@@ -154,9 +154,9 @@ id messageFromMultipart(NSArray* theMessages)
 - (NSString*)argumentsAsJSON
 {
     id arguments = (self.message == nil ? [NSNull null] : self.message);
-    NSArray* argumentsWrappedInArray = [NSArray arrayWithObject:arguments];
+    NSArray *argumentsWrappedInArray = [NSArray arrayWithObject:arguments];
 
-    NSString* argumentsJSON = [argumentsWrappedInArray JSONString];
+    NSString *argumentsJSON = [argumentsWrappedInArray JSONString];
 
     argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
 
@@ -166,17 +166,17 @@ id messageFromMultipart(NSArray* theMessages)
 // These methods are used by the legacy plugin return result method
 - (NSString*)toJSONString
 {
-    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         self.status, @"status",
         self.message ? self.                                message:[NSNull null], @"message",
         self.keepCallback, @"keepCallback",
         nil];
 
-    NSError* error = nil;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
-    NSString* resultString = nil;
+    NSString *resultString = nil;
 
     if (error != nil) {
         NSLog(@"toJSONString error: %@", [error localizedDescription]);
@@ -192,7 +192,7 @@ id messageFromMultipart(NSArray* theMessages)
 
 - (NSString*)toSuccessCallbackString:(NSString*)callbackId
 {
-    NSString* successCB = [NSString stringWithFormat:@"cordova.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];
+    NSString *successCB = [NSString stringWithFormat:@"cordova.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];
 
     if ([[self class] isVerbose]) {
         NSLog(@"PluginResult toSuccessCallbackString: %@", successCB);
@@ -202,7 +202,7 @@ id messageFromMultipart(NSArray* theMessages)
 
 - (NSString*)toErrorCallbackString:(NSString*)callbackId
 {
-    NSString* errorCB = [NSString stringWithFormat:@"cordova.callbackError('%@',%@);", callbackId, [self toJSONString]];
+    NSString *errorCB = [NSString stringWithFormat:@"cordova.callbackError('%@',%@);", callbackId, [self toJSONString]];
 
     if ([[self class] isVerbose]) {
         NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);

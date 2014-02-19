@@ -30,8 +30,8 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
 
 @interface CDVCommandQueue () {
     NSInteger _lastCommandQueueFlushRequestId;
-    __weak CDVViewController* _viewController;
-    NSMutableArray* _queue;
+    __weak CDVViewController *_viewController;
+    NSMutableArray *_queue;
     NSTimeInterval _startExecutionTime;
 }
 @end
@@ -67,13 +67,13 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
 - (void)enqueueCommandBatch:(NSString*)batchJSON
 {
     if ([batchJSON length] > 0) {
-        NSMutableArray* commandBatchHolder = [[NSMutableArray alloc] init];
+        NSMutableArray *commandBatchHolder = [[NSMutableArray alloc] init];
         [_queue addObject:commandBatchHolder];
         if ([batchJSON length] < JSON_SIZE_FOR_MAIN_THREAD) {
             [commandBatchHolder addObject:[batchJSON JSONObject]];
         } else {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^() {
-                    NSMutableArray* result = [batchJSON JSONObject];
+                    NSMutableArray *result = [batchJSON JSONObject];
                     @synchronized(commandBatchHolder) {
                         [commandBatchHolder addObject:result];
                     }
@@ -110,7 +110,7 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
 - (void)fetchCommandsFromJs
 {
     // Grab all the queued commands from the JS side.
-    NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
+    NSString *queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
         @"cordova.require('cordova/exec').nativeFetchMessages()"];
 
     CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
@@ -127,8 +127,8 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
         _startExecutionTime = [NSDate timeIntervalSinceReferenceDate];
 
         while ([_queue count] > 0) {
-            NSMutableArray* commandBatchHolder = _queue[0];
-            NSMutableArray* commandBatch = nil;
+            NSMutableArray *commandBatchHolder = _queue[0];
+            NSMutableArray *commandBatch = nil;
             @synchronized(commandBatchHolder) {
                 // If the next-up command is still being decoded, wait for it.
                 if ([commandBatchHolder count] == 0) {
@@ -140,18 +140,18 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
             while ([commandBatch count] > 0) {
                 @autoreleasepool {
                     // Execute the commands one-at-a-time.
-                    NSArray* jsonEntry = [commandBatch dequeue];
+                    NSArray *jsonEntry = [commandBatch dequeue];
                     if ([commandBatch count] == 0) {
                         [_queue removeObjectAtIndex:0];
                     }
-                    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+                    CDVInvokedUrlCommand *command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
                     CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
 
                     if (![self execute:command]) {
 #ifdef DEBUG
-                            NSString* commandJson = [jsonEntry JSONString];
+                            NSString *commandJson = [jsonEntry JSONString];
                             static NSUInteger maxLogLength = 1024;
-                            NSString* commandString = ([commandJson length] > maxLogLength) ?
+                            NSString *commandString = ([commandJson length] > maxLogLength) ?
                                 [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
                                 commandJson;
 
@@ -181,7 +181,7 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     }
 
     // Fetch an instance of this class
-    CDVPlugin* obj = [_viewController.commandDelegate getCommandInstance:command.className];
+    CDVPlugin *obj = [_viewController.commandDelegate getCommandInstance:command.className];
 
     if (!([obj isKindOfClass:[CDVPlugin class]])) {
         NSLog(@"ERROR: Plugin '%@' not found, or is not a CDVPlugin. Check your plugin mapping in config.xml.", command.className);
@@ -190,7 +190,7 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     BOOL retVal = YES;
     double started = [[NSDate date] timeIntervalSince1970] * 1000.0;
     // Find the proper selector to call.
-    NSString* methodName = [NSString stringWithFormat:@"%@:", command.methodName];
+    NSString *methodName = [NSString stringWithFormat:@"%@:", command.methodName];
     SEL normalSelector = NSSelectorFromString(methodName);
     if ([obj respondsToSelector:normalSelector]) {
         // [obj performSelector:normalSelector withObject:command];

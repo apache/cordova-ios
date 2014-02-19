@@ -24,8 +24,8 @@
 
 - (NSString*)JSONString
 {
-    NSError* error = nil;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
 
@@ -43,8 +43,8 @@
 
 - (NSString*)JSONString
 {
-    NSError* error = nil;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
 
@@ -62,7 +62,7 @@
 
 - (id)JSONObject
 {
-    NSError* error = nil;
+    NSError *error = nil;
     id object = [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding]
                                                 options:NSJSONReadingMutableContainers
                                                   error:&error];

@@ -24,10 +24,10 @@
 
 - (NSString*)uniqueAppInstanceIdentifier
 {
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-    static NSString* UUID_KEY = @"CDVUUID";
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    static NSString *UUID_KEY = @"CDVUUID";
 
-    NSString* app_uuid = [userDefaults stringForKey:UUID_KEY];
+    NSString *app_uuid = [userDefaults stringForKey:UUID_KEY];
 
     if (app_uuid == nil) {
         CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);

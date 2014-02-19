@@ -91,7 +91,7 @@ typedef enum {
     STATE_CANCELLED = 5
 } State;
 
-static NSString *stripFragment(NSString* url)
+static NSString *stripFragment(NSString *url)
 {
     NSRange r = [url rangeOfString:@"#"];
 
@@ -117,11 +117,11 @@ static NSString *stripFragment(NSString* url)
 - (BOOL)request:(NSURLRequest*)newRequest isFragmentIdentifierToRequest:(NSURLRequest*)originalRequest
 {
     if (originalRequest.URL && newRequest.URL) {
-        NSString* originalRequestUrl = [originalRequest.URL absoluteString];
-        NSString* newRequestUrl = [newRequest.URL absoluteString];
+        NSString *originalRequestUrl = [originalRequest.URL absoluteString];
+        NSString *newRequestUrl = [newRequest.URL absoluteString];
 
-        NSString* baseOriginalRequestUrl = stripFragment(originalRequestUrl);
-        NSString* baseNewRequestUrl = stripFragment(newRequestUrl);
+        NSString *baseOriginalRequestUrl = stripFragment(originalRequestUrl);
+        NSString *baseNewRequestUrl = stripFragment(newRequestUrl);
         return [baseOriginalRequestUrl isEqualToString:baseNewRequestUrl];
     }
 
@@ -130,14 +130,14 @@ static NSString *stripFragment(NSString* url)
 
 - (BOOL)isPageLoaded:(UIWebView*)webView
 {
-    NSString* readyState = [webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
+    NSString *readyState = [webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
 
     return [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
 }
 
 - (BOOL)isJsLoadTokenSet:(UIWebView*)webView
 {
-    NSString* loadToken = [webView stringByEvaluatingJavaScriptFromString:@"window.__cordovaLoadToken"];
+    NSString *loadToken = [webView stringByEvaluatingJavaScriptFromString:@"window.__cordovaLoadToken"];
 
     return [[NSString stringWithFormat:@"%d", _curLoadToken] isEqualToString:loadToken];
 }
@@ -212,7 +212,7 @@ static NSString *stripFragment(NSString* url)
             // Ignore hash changes that don't navigate to a different page.
             // webView.request does actually update when history.replaceState() gets called.
             if ([self request:request isFragmentIdentifierToRequest:webView.request]) {
-                NSString* prevURL = [self evalForCurrentURL:webView];
+                NSString *prevURL = [self evalForCurrentURL:webView];
                 if ([prevURL isEqualToString:[request.URL absoluteString]]) {
                     VerboseLog(@"Page reload detected.");
                 } else {
@@ -242,11 +242,11 @@ static NSString *stripFragment(NSString* url)
                     {
                         _loadCount = 0;
                         _state = STATE_WAITING_FOR_LOAD_START;
-                        NSString* description = [NSString stringWithFormat:@"CDVWebViewDelegate: Navigation started when state=%d", _state];
+                        NSString *description = [NSString stringWithFormat:@"CDVWebViewDelegate: Navigation started when state=%d", _state];
                         NSLog(@"%@", description);
                         if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
-                            NSDictionary* errorDictionary = @{NSLocalizedDescriptionKey : description};
-                            NSError* error = [[NSError alloc] initWithDomain:@"CDVWebViewDelegate" code:1 userInfo:errorDictionary];
+                            NSDictionary *errorDictionary = @{NSLocalizedDescriptionKey : description};
+                            NSError *error = [[NSError alloc] initWithDomain:@"CDVWebViewDelegate" code:1 userInfo:errorDictionary];
                             [_delegate webView:webView didFailLoadWithError:error];
                         }
                     }

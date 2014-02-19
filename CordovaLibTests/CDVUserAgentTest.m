@@ -24,8 +24,8 @@
 #import "AppDelegate.h"
 
 @interface CDVUserAgentTestViewController : UIViewController
-@property (nonatomic) CDVViewController* vc1;
-@property (nonatomic) CDVViewController* vc2;
+@property (nonatomic) CDVViewController *vc1;
+@property (nonatomic) CDVViewController *vc2;
 @end
 
 @implementation CDVUserAgentTestViewController
@@ -44,7 +44,7 @@
     [self addChildViewController:_vc2];
 
     CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
-    UIView* contentView = [[UIView alloc] initWithFrame:applicationFrame];
+    UIView *contentView = [[UIView alloc] initWithFrame:applicationFrame];
 
     CGRect sub1, sub2;
     CGRectDivide(applicationFrame, &sub1, &sub2, applicationFrame.size.height / 2, CGRectMinYEdge);
@@ -76,16 +76,16 @@
 
 - (void)testMultipleViews
 {
-    CDVUserAgentTestViewController* rootVc = [[CDVUserAgentTestViewController alloc] init];
+    CDVUserAgentTestViewController *rootVc = [[CDVUserAgentTestViewController alloc] init];
 
     self.appDelegate.window.rootViewController = rootVc;
 
-    NSString* getUserAgentCode = @"navigator.userAgent";
+    NSString *getUserAgentCode = @"navigator.userAgent";
     [self waitForConditionName:@"getting user-agents" block:^{
         return (BOOL)(rootVc.vc1.webView.request != nil && rootVc.vc2.webView.request != nil);
     }];
-    NSString* ua1 = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
-    NSString* ua2 = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
+    NSString *ua1 = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
+    NSString *ua2 = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
 
     STAssertFalse([ua1 isEqual:ua2], @"User-Agents should be different.");
 }

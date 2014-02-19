@@ -37,14 +37,14 @@
 
 - (NSString*)pathForResource:(NSString*)resourcepath
 {
-    NSBundle* mainBundle = [NSBundle mainBundle];
-    NSMutableArray* directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
-    NSString* filename = [directoryParts lastObject];
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
+    NSString *filename = [directoryParts lastObject];
 
     [directoryParts removeLastObject];
 
-    NSString* directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
-    NSString* directoryStr = _viewController.wwwFolderName;
+    NSString *directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
+    NSString *directoryStr = _viewController.wwwFolderName;
 
     if ([directoryPartsJoined length] > 0) {
         directoryStr = [NSString stringWithFormat:@"%@/%@", _viewController.wwwFolderName, [directoryParts componentsJoinedByString:@"/"]];
@@ -63,7 +63,7 @@
 - (void)evalJsHelper2:(NSString*)js
 {
     CDV_EXEC_LOG(@"Exec: evalling: %@", [js substringToIndex:MIN([js length], 160)]);
-    NSString* commandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:js];
+    NSString *commandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:js];
     if ([commandsJSON length] > 0) {
         CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
     }
@@ -103,9 +103,9 @@
     }
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
-    NSString* argumentsAsJSON = [result argumentsAsJSON];
+    NSString *argumentsAsJSON = [result argumentsAsJSON];
 
-    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)", callbackId, status, argumentsAsJSON, keepCallback];
+    NSString *js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)", callbackId, status, argumentsAsJSON, keepCallback];
 
     [self evalJsHelper:js];
 }

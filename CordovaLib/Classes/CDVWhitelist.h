@@ -19,11 +19,11 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString* const kCDVDefaultWhitelistRejectionString;
+extern NSString *const kCDVDefaultWhitelistRejectionString;
 
 @interface CDVWhitelist : NSObject
 
-@property (nonatomic, copy) NSString* whitelistRejectionFormatString;
+@property (nonatomic, copy) NSString *whitelistRejectionFormatString;
 
 - (id)initWithArray:(NSArray*)array;
 - (BOOL)schemeIsAllowed:(NSString*)scheme;

@@ -31,24 +31,24 @@
     @protected
     id <CDVCommandDelegate> _commandDelegate;
     @protected
-    CDVCommandQueue* _commandQueue;
-    NSString* _userAgent;
+    CDVCommandQueue *_commandQueue;
+    NSString *_userAgent;
 }
 
-@property (nonatomic, strong) IBOutlet UIWebView* webView;
+@property (nonatomic, strong) IBOutlet UIWebView *webView;
 
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
-@property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
-@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
-@property (nonatomic, readonly, strong) NSXMLParser* configParser;
-@property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
+@property (nonatomic, readonly, strong) NSMutableDictionary *pluginObjects;
+@property (nonatomic, readonly, strong) NSDictionary *pluginsMap;
+@property (nonatomic, readonly, strong) NSMutableDictionary *settings;
+@property (nonatomic, readonly, strong) NSXMLParser *configParser;
+@property (nonatomic, readonly, strong) CDVWhitelist *whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 
-@property (nonatomic, readwrite, copy) NSString* wwwFolderName;
-@property (nonatomic, readwrite, copy) NSString* startPage;
-@property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
+@property (nonatomic, readwrite, copy) NSString *wwwFolderName;
+@property (nonatomic, readwrite, copy) NSString *startPage;
+@property (nonatomic, readonly, strong) CDVCommandQueue *commandQueue;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
-@property (nonatomic, readonly) NSString* userAgent;
+@property (nonatomic, readonly) NSString *userAgent;
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;

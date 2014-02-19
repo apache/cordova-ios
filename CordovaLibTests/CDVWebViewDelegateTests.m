@@ -53,19 +53,19 @@
 
 - (void)doTestFragmentIdentifiersWithBaseUrl:(NSString*)baseUrl fragment:(NSString*)fragment
 {
-    CDVWebViewDelegate* wvd = [[CDVWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
+    CDVWebViewDelegate *wvd = [[CDVWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
 
-    NSString* originalUrlString = baseUrl;
-    NSURL* originalUrl = [NSURL URLWithString:originalUrlString];
-    NSURL* originalUrlWithFragmentOnly = [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", originalUrlString, fragment]];
-    NSURL* originalUrlWithFragmentOnlyNoIdentifier = [NSURL URLWithString:[NSString stringWithFormat:@"%@#", originalUrlString]];
-    NSURL* originalUrlWithQueryParamsAndFragment = [NSURL URLWithString:[NSString stringWithFormat:@"%@?foo=bar#%@", originalUrlString, fragment]];
+    NSString *originalUrlString = baseUrl;
+    NSURL *originalUrl = [NSURL URLWithString:originalUrlString];
+    NSURL *originalUrlWithFragmentOnly = [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", originalUrlString, fragment]];
+    NSURL *originalUrlWithFragmentOnlyNoIdentifier = [NSURL URLWithString:[NSString stringWithFormat:@"%@#", originalUrlString]];
+    NSURL *originalUrlWithQueryParamsAndFragment = [NSURL URLWithString:[NSString stringWithFormat:@"%@?foo=bar#%@", originalUrlString, fragment]];
 
-    NSURLRequest* originalRequest = [NSURLRequest requestWithURL:originalUrl];
-    NSURLRequest* originalRequestWithFragmentOnly = [NSURLRequest requestWithURL:originalUrlWithFragmentOnly];
-    NSURLRequest* originalRequestWithFragmentOnlyNoIdentifier = [NSURLRequest requestWithURL:originalUrlWithFragmentOnlyNoIdentifier];
-    NSURLRequest* originalRequestWithQueryParamsAndFragment = [NSURLRequest requestWithURL:originalUrlWithQueryParamsAndFragment];
-    NSURLRequest* notOriginalRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://httpd.apache.org"]];
+    NSURLRequest *originalRequest = [NSURLRequest requestWithURL:originalUrl];
+    NSURLRequest *originalRequestWithFragmentOnly = [NSURLRequest requestWithURL:originalUrlWithFragmentOnly];
+    NSURLRequest *originalRequestWithFragmentOnlyNoIdentifier = [NSURLRequest requestWithURL:originalUrlWithFragmentOnlyNoIdentifier];
+    NSURLRequest *originalRequestWithQueryParamsAndFragment = [NSURLRequest requestWithURL:originalUrlWithQueryParamsAndFragment];
+    NSURLRequest *notOriginalRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://httpd.apache.org"]];
 
     STAssertFalse([wvd request:originalRequest isFragmentIdentifierToRequest:originalRequest], @"originalRequest should not be a fragment of originalRequest");
     STAssertTrue([wvd request:originalRequestWithFragmentOnly isFragmentIdentifierToRequest:originalRequest], @"originalRequestWithFragment should be a fragment of originalRequest");

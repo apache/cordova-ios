@@ -24,8 +24,8 @@
 #import "AppDelegate.h"
 
 @interface CDVStartPageTestViewController : UIViewController
-@property (strong, nonatomic) CDVViewController* vc1;
-@property (strong, nonatomic) CDVViewController* vc2;
+@property (strong, nonatomic) CDVViewController *vc1;
+@property (strong, nonatomic) CDVViewController *vc2;
 @end
 
 @implementation CDVStartPageTestViewController
@@ -44,7 +44,7 @@
     [self addChildViewController:_vc2];
 
     CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
-    UIView* contentView = [[UIView alloc] initWithFrame:applicationFrame];
+    UIView *contentView = [[UIView alloc] initWithFrame:applicationFrame];
 
     CGRect sub1, sub2;
     CGRectDivide(applicationFrame, &sub1, &sub2, applicationFrame.size.height / 2, CGRectMinYEdge);
@@ -76,16 +76,16 @@
 
 - (void)testParametersInStartPage
 {
-    CDVStartPageTestViewController* rootVc = [[CDVStartPageTestViewController alloc] init];
+    CDVStartPageTestViewController *rootVc = [[CDVStartPageTestViewController alloc] init];
 
     self.appDelegate.window.rootViewController = rootVc;
 
-    NSString* geHREF = @"window.location.href";
+    NSString *geHREF = @"window.location.href";
     [self waitForConditionName:@"getting href" block:^{
         return (BOOL)(rootVc.vc1.webView.request != nil && rootVc.vc1.webView.request != nil);
     }];
 
-    NSString* href = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:geHREF];
+    NSString *href = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:geHREF];
     STAssertTrue([href hasSuffix:@"index.html"], @"href should point to index.html");
 
     href = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:geHREF];

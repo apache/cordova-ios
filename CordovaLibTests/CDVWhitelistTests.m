@@ -42,11 +42,11 @@
 
 - (void)testAllowedSchemes
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"*.apache.org",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist schemeIsAllowed:@"http"], nil);
     STAssertTrue([whitelist schemeIsAllowed:@"https"], nil);
@@ -57,11 +57,11 @@
 
 - (void)testSubdomainWildcard
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"*.apache.org",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://build.apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
@@ -71,11 +71,11 @@
 
 - (void)testCatchallWildcardOnly
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"*",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://build.apache.prg"]], nil);
@@ -86,14 +86,14 @@
 
 - (void)testCatchallWildcardByProto
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"http://*",
         @"https://*",
         @"ftp://*",
         @"ftps://*",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://build.apache.prg"]], nil);
@@ -104,11 +104,11 @@
 
 - (void)testExactMatch
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"www.apache.org",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://build.apache.org"]], nil);
@@ -117,11 +117,11 @@
 
 - (void)testNoMatchInQueryParam
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"www.apache.org",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=http://www.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=www.apache.org"]], nil);
@@ -129,12 +129,12 @@
 
 - (void)testIpExactMatch
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"192.168.1.1",
         @"192.168.2.1",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
@@ -144,12 +144,12 @@
 
 - (void)testIpWildcardMatch
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"192.168.1.*",
         @"192.168.2.*",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
@@ -161,7 +161,7 @@
 
 - (void)testHostnameExtraction
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"http://apache.org/",
         @"http://apache.org/foo/bar?x=y",
         @"ftp://apache.org/foo/bar?x=y",
@@ -169,7 +169,7 @@
         @"http://apache.*/foo/bar?x=y",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org/"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://google.com/"]], nil);
@@ -177,12 +177,12 @@
 
 - (void)testWhitelistRejectionString
 {
-    NSArray* allowedHosts = [NSArray arrayWithObject:@"http://www.yahoo.com/"];  // Doesn't matter in this test.
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    NSArray *allowedHosts = [NSArray arrayWithObject:@"http://www.yahoo.com/"];  // Doesn't matter in this test.
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
-    NSURL* testUrl = [NSURL URLWithString:@"http://www/google.com"];
-    NSString* errorString = [whitelist errorStringForURL:testUrl];
-    NSString* expectedErrorString = [NSString stringWithFormat:kCDVDefaultWhitelistRejectionString, [testUrl absoluteString]];
+    NSURL *testUrl = [NSURL URLWithString:@"http://www/google.com"];
+    NSString *errorString = [whitelist errorStringForURL:testUrl];
+    NSString *expectedErrorString = [NSString stringWithFormat:kCDVDefaultWhitelistRejectionString, [testUrl absoluteString]];
 
     STAssertTrue([expectedErrorString isEqualToString:errorString], @"Default error string has an unexpected value.");
 
@@ -194,12 +194,12 @@
 
 - (void)testSpecificProtocol
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"http://www.apache.org",
         @"cordova://www.google.com",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"cordova://www.google.com"]], nil);
@@ -211,12 +211,12 @@
 {
     // test for https://issues.apache.org/jira/browse/CB-3394
 
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"*",
         @"cordova.apache.org",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://*.apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://www.google.com"]], nil);
@@ -227,11 +227,11 @@
 
 - (void)testWildcardPlusScheme
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"http://*.apache.org",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]], nil);
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"https://www.google.com"]], nil);
@@ -242,12 +242,12 @@
 
 - (void)testCredentials
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
         @"http://*.apache.org",
         @"http://www.google.com",
         nil];
 
-    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    CDVWhitelist *whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://user:pass@www.apache.org"]], nil);
     STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://user:pass@www.google.com"]], nil);
