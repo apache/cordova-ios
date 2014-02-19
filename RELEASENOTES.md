@@ -24,29 +24,26 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
-### 3.4.0 (201401XX) ###
+### 3.4.0 (201402XX) ###
 
 * CB-5794 iOS build script: 1. don't clean 2. recognize --emulator vs --device
-* Don't show environment vars in build log for copy-www script
 * CB-4910 Update CLI project template to point to config.xml at the root now that it's not in www/ by default.
-* Move .gitignore in template to gitignore (and add the dot in the script).
 * Fix create script copying project template twice.
 * CB-5740 Use UIScrollViewDecelerationRateNormal by default.
 * CB-5420 Add device model to User-Agent cache key.
-* Copy config.xml within copy-www-build-step.sh instead of in Copy Resoruces step
+* Copy config.xml within copy-www-build-step.sh instead of in Copy Resources step
 * CB-5397 Add a --cli option to bin/create that has ../../www/ ../../merges/ within the project
 * CB-5697 Fix location.reload() not firing deviceready.
 * CB-4330 Fix hash changes being treated as top-level navigations
 * CB-3359 Parse large JSON payloads on a background thread, and yield when executing multiple commands is taking too long.
-* CB-5134 Fix up bugs with new hash-based exec() bridge.
 * CB-5134 Add location.hash based exec() bridge.
 * CB-5658 Fix whitelist crash when URL path has a space.
 * CB-5583 WebView doesn't properly initialize when instantiated from a xib
-* CB-5046: Adding a defaults.xml template
+* CB-5046 Adding a defaults.xml template
 * CB-5290 templates: Updated launch images sizes to include the status bar region
 * CB-5276 Add ability to load start page from a place other then the bundle folder
 * CB-5298 Have bin/create run bin/check_reqs.
-* CB-5328 - .gitignore from cordova-ios excludes `platforms/cordova/build` file
+* CB-5328 Fix .gitignore from cordova-ios excludes `platforms/cordova/build` file
 
 ### 3.3.0 (20131214) ###
 
