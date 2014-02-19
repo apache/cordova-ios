@@ -29,21 +29,21 @@
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
-    CDVWebViewDelegate* _webViewDelegate;
+    CDVWebViewDelegate *_webViewDelegate;
 }
 
-@property (nonatomic, readwrite, strong) NSXMLParser* configParser;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
-@property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
-@property (nonatomic, readwrite, strong) NSArray* startupPluginNames;
-@property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
-@property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
+@property (nonatomic, readwrite, strong) NSXMLParser *configParser;
+@property (nonatomic, readwrite, strong) NSMutableDictionary *settings;
+@property (nonatomic, readwrite, strong) CDVWhitelist *whitelist;
+@property (nonatomic, readwrite, strong) NSMutableDictionary *pluginObjects;
+@property (nonatomic, readwrite, strong) NSArray *startupPluginNames;
+@property (nonatomic, readwrite, strong) NSDictionary *pluginsMap;
+@property (nonatomic, readwrite, strong) NSArray *supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
 
 @property (readwrite, assign) BOOL initialized;
 
-@property (atomic, strong) NSURL* openURL;
+@property (atomic, strong) NSURL *openURL;
 
 @end
 
@@ -129,14 +129,14 @@
 
 - (void)printMultitaskingInfo
 {
-    UIDevice* device = [UIDevice currentDevice];
+    UIDevice *device = [UIDevice currentDevice];
     BOOL backgroundSupported = NO;
 
     if ([device respondsToSelector:@selector(isMultitaskingSupported)]) {
         backgroundSupported = device.multitaskingSupported;
     }
 
-    NSNumber* exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
+    NSNumber *exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
     if (exitsOnSuspend == nil) { // if it's missing, it should be NO (i.e. multi-tasking on by default)
         exitsOnSuspend = [NSNumber numberWithBool:NO];
     }
@@ -155,17 +155,17 @@
 
 - (void)loadSettings
 {
-    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
+    CDVConfigParser *delegate = [[CDVConfigParser alloc] init];
 
     // read from config.xml in the app bundle
-    NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSAssert(NO, @"ERROR: config.xml does not exist. Please run cordova-ios/bin/cordova_plist_to_config_xml path/to/project.");
         return;
     }
 
-    NSURL* url = [NSURL fileURLWithPath:path];
+    NSURL *url = [NSURL fileURLWithPath:path];
 
     configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
     if (configParser == nil) {
@@ -197,8 +197,8 @@
 {
     [super viewDidLoad];
 
-    NSURL* appURL = nil;
-    NSString* loadErr = nil;
+    NSURL *appURL = nil;
+    NSString *loadErr = nil;
 
     if ([self.startPage rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:self.startPage];
@@ -206,8 +206,8 @@
         appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
     } else {
         // CB-3005 strip parameters from start page to check if page exists in resources
-        NSURL* startURL = [NSURL URLWithString:self.startPage];
-        NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
+        NSURL *startURL = [NSURL URLWithString:self.startPage];
+        NSString *startFilePath = [self.commandDelegate pathForResource:[startURL path]];
 
         if (startFilePath == nil) {
             loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
@@ -217,10 +217,10 @@
         } else {
             appURL = [NSURL fileURLWithPath:startFilePath];
             // CB-3005 Add on the query params or fragment.
-            NSString* startPageNoParentDirs = self.startPage;
+            NSString *startPageNoParentDirs = self.startPage;
             NSRange r = [startPageNoParentDirs rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"?#"] options:0];
             if (r.location != NSNotFound) {
-                NSString* queryAndOrFragment = [self.startPage substringFromIndex:r.location];
+                NSString *queryAndOrFragment = [self.startPage substringFromIndex:r.location];
                 appURL = [NSURL URLWithString:queryAndOrFragment relativeToURL:appURL];
             }
         }
@@ -228,7 +228,7 @@
 
     // // Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
 
-    NSString* backupWebStorageType = @"cloud"; // default value
+    NSString *backupWebStorageType = @"cloud"; // default value
 
     id backupWebStorage = [self settingForKey:@"BackupWebStorage"];
     if ([backupWebStorage isKindOfClass:[NSString class]]) {
@@ -255,8 +255,8 @@
 
     // /////////////////
 
-    NSString* enableViewportScale = [self settingForKey:@"EnableViewportScale"];
-    NSNumber* allowInlineMediaPlayback = [self settingForKey:@"AllowInlineMediaPlayback"];
+    NSString *enableViewportScale = [self settingForKey:@"EnableViewportScale"];
+    NSNumber *allowInlineMediaPlayback = [self settingForKey:@"AllowInlineMediaPlayback"];
     BOOL mediaPlaybackRequiresUserAction = YES;  // default value
     if ([self settingForKey:@"MediaPlaybackRequiresUserAction"]) {
         mediaPlaybackRequiresUserAction = [(NSNumber*)[self settingForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
@@ -285,9 +285,9 @@
     // By default, overscroll bouncing is allowed.
     // UIWebViewBounce has been renamed to DisallowOverscroll, but both are checked.
     BOOL bounceAllowed = YES;
-    NSNumber* disallowOverscroll = [self settingForKey:@"DisallowOverscroll"];
+    NSNumber *disallowOverscroll = [self settingForKey:@"DisallowOverscroll"];
     if (disallowOverscroll == nil) {
-        NSNumber* bouncePreference = [self settingForKey:@"UIWebViewBounce"];
+        NSNumber *bouncePreference = [self settingForKey:@"UIWebViewBounce"];
         bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
     } else {
         bounceAllowed = ![disallowOverscroll boolValue];
@@ -307,7 +307,7 @@
         }
     }
 
-    NSString* decelerationSetting = [self settingForKey:@"UIWebViewDecelerationSpeed"];
+    NSString *decelerationSetting = [self settingForKey:@"UIWebViewDecelerationSpeed"];
     if (![@"fast" isEqualToString : decelerationSetting]) {
         [self.webView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
     }
@@ -375,8 +375,8 @@
         NSInteger paginationBreakingMode = 0; // default - UIWebPaginationBreakingModePage
         prefObj = [self settingForKey:@"PaginationBreakingMode"];
         if (prefObj != nil) {
-            NSArray* validValues = @[@"page", @"column"];
-            NSString* prefValue = [validValues objectAtIndex:0];
+            NSArray *validValues = @[@"page", @"column"];
+            NSString *prefValue = [validValues objectAtIndex:0];
 
             if ([prefObj isKindOfClass:[NSString class]]) {
                 prefValue = prefObj;
@@ -397,8 +397,8 @@
         NSInteger paginationMode = 0; // default - UIWebPaginationModeUnpaginated
         prefObj = [self settingForKey:@"PaginationMode"];
         if (prefObj != nil) {
-            NSArray* validValues = @[@"unpaginated", @"lefttoright", @"toptobottom", @"bottomtotop", @"righttoleft"];
-            NSString* prefValue = [validValues objectAtIndex:0];
+            NSArray *validValues = @[@"unpaginated", @"lefttoright", @"toptobottom", @"bottomtotop", @"righttoleft"];
+            NSString *prefValue = [validValues objectAtIndex:0];
 
             if ([prefObj isKindOfClass:[NSString class]]) {
                 prefValue = prefObj;
@@ -420,7 +420,7 @@
     if ([self.startupPluginNames count] > 0) {
         [CDVTimer start:@"TotalPluginStartup"];
 
-        for (NSString* pluginName in self.startupPluginNames) {
+        for (NSString *pluginName in self.startupPluginNames) {
             [CDVTimer start:pluginName];
             [self getCommandInstance:pluginName];
             [CDVTimer stop:pluginName];
@@ -434,10 +434,10 @@
         _userAgentLockToken = lockToken;
         [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
         if (!loadErr) {
-            NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+            NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
             [self.webView loadRequest:appReq];
         } else {
-            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+            NSString *html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
             [self.webView loadHTMLString:html baseURL:nil];
         }
     }];
@@ -455,11 +455,11 @@
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
 {
-    NSMutableArray* result = [[NSMutableArray alloc] init];
+    NSMutableArray *result = [[NSMutableArray alloc] init];
 
     if (orientations != nil) {
-        NSEnumerator* enumerator = [orientations objectEnumerator];
-        NSString* orientationString;
+        NSEnumerator *enumerator = [orientations objectEnumerator];
+        NSString *orientationString;
 
         while (orientationString = [enumerator nextObject]) {
             if ([orientationString isEqualToString:@"UIInterfaceOrientationPortrait"]) {
@@ -505,10 +505,10 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // First, ask the webview via JS if it supports the new orientation
-    NSString* jsCall = [NSString stringWithFormat:
+    NSString *jsCall = [NSString stringWithFormat:
         @"window.shouldRotateToOrientation && window.shouldRotateToOrientation(%d);"
         , [self mapIosOrientationToJsOrientation:interfaceOrientation]];
-    NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
+    NSString *res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
 
     if ([res length] > 0) {
         return [res boolValue];
@@ -556,7 +556,7 @@
 - (NSString*)userAgent
 {
     if (_userAgent == nil) {
-        NSString* originalUserAgent = [CDVUserAgentUtil originalUserAgent];
+        NSString *originalUserAgent = [CDVUserAgentUtil originalUserAgent];
         // Use our address as a unique number to append to the User-Agent.
         _userAgent = [NSString stringWithFormat:@"%@ (%lld)", originalUserAgent, (long long)self];
     }
@@ -581,8 +581,8 @@
     // iterate through all the plugin objects, and call hasPendingOperation
     // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
 
-    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
-    CDVPlugin* plugin;
+    NSEnumerator *enumerator = [self.pluginObjects objectEnumerator];
+    CDVPlugin *plugin;
 
     BOOL doPurge = YES;
 
@@ -652,7 +652,7 @@
 
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    NSURL* url = [request URL];
+    NSURL *url = [request URL];
 
     /*
      * Execute any commands queued with cordova.exec() on the JS side.
@@ -673,7 +673,7 @@
         // be unexpected to callers (exec callbacks will be called before exec() even
         // returns). To avoid this, we do not do any synchronous JS evals by using
         // flushCommandQueueWithDelayedJs.
-        NSString* inlineCommands = [[url fragment] substringFromIndex:3];
+        NSString *inlineCommands = [[url fragment] substringFromIndex:3];
         if ([inlineCommands length] == 0) {
             // Reach in right away since the WebCore / Main thread are already synchronized.
             [_commandQueue fetchCommandsFromJs];
@@ -693,8 +693,8 @@
     /*
      * Give plugins the chance to handle the url
      */
-    for (NSString* pluginName in pluginObjects) {
-        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+    for (NSString *pluginName in pluginObjects) {
+        CDVPlugin *plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
             if ((BOOL)objc_msgSend(plugin, selector, request, navigationType) == YES) {
@@ -763,14 +763,14 @@
 
 - (void)javascriptAlert:(NSString*)text
 {
-    NSString* jsString = [NSString stringWithFormat:@"alert('%@');", text];
+    NSString *jsString = [NSString stringWithFormat:@"alert('%@');", text];
 
     [self.commandDelegate evalJs:jsString];
 }
 
 + (NSString*)resolveImageResource:(NSString*)resource
 {
-    NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+    NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
     BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
 
     // the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
@@ -787,8 +787,8 @@
 
 + (NSString*)applicationDocumentsDirectory
 {
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 
     return basePath;
 }
@@ -819,7 +819,7 @@
         [plugin setCommandDelegate:_commandDelegate];
     }
 
-    NSString* className = NSStringFromClass([plugin class]);
+    NSString *className = NSStringFromClass([plugin class]);
     [self.pluginObjects setObject:plugin forKey:className];
     [self.pluginsMap setValue:className forKey:[pluginName lowercaseString]];
     [plugin pluginInitialize];
@@ -835,7 +835,7 @@
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a
     // possible issue is there can be duplicates possible if you had:
     // "org.apache.cordova.Foo" and "org.apache.cordova.foo" - only the lower-cased entry will match
-    NSString* className = [self.pluginsMap objectForKey:[pluginName lowercaseString]];
+    NSString *className = [self.pluginsMap objectForKey:[pluginName lowercaseString]];
 
     if (className == nil) {
         return nil;
@@ -858,14 +858,14 @@
 
 - (NSString*)appURLScheme
 {
-    NSString* URLScheme = nil;
+    NSString *URLScheme = nil;
 
-    NSArray* URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+    NSArray *URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
 
     if (URLTypes != nil) {
-        NSDictionary* dict = [URLTypes objectAtIndex:0];
+        NSDictionary *dict = [URLTypes objectAtIndex:0];
         if (dict != nil) {
-            NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
+            NSArray *URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
             if (URLSchemes != nil) {
                 URLScheme = [URLSchemes objectAtIndex:0];
             }
@@ -880,11 +880,11 @@
  */
 + (NSDictionary*)getBundlePlist:(NSString*)plistName
 {
-    NSString* errorDesc = nil;
+    NSString *errorDesc = nil;
     NSPropertyListFormat format;
-    NSString* plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
-    NSData* plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-    NSDictionary* temp = (NSDictionary*)[NSPropertyListSerialization
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
+    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
+    NSDictionary *temp = (NSDictionary*)[NSPropertyListSerialization
         propertyListFromData:plistXML
             mutabilityOption:NSPropertyListMutableContainersAndLeaves
                       format:&format errorDescription:&errorDesc];
@@ -901,17 +901,17 @@
 - (void)onAppWillTerminate:(NSNotification*)notification
 {
     // empty the tmp directory
-    NSFileManager* fileMgr = [[NSFileManager alloc] init];
-    NSError* __autoreleasing err = nil;
+    NSFileManager *fileMgr = [[NSFileManager alloc] init];
+    NSError *__autoreleasing err = nil;
 
     // clear contents of NSTemporaryDirectory
-    NSString* tempDirectoryPath = NSTemporaryDirectory();
-    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];
-    NSString* fileName = nil;
+    NSString *tempDirectoryPath = NSTemporaryDirectory();
+    NSDirectoryEnumerator *directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];
+    NSString *fileName = nil;
     BOOL result;
 
     while ((fileName = [directoryEnumerator nextObject])) {
-        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        NSString *filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
         result = [fileMgr removeItemAtPath:filePath error:&err];
         if (!result && err) {
             NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
@@ -968,7 +968,7 @@
 {
     if (self.openURL) {
         // calls into javascript global function 'handleOpenURL'
-        NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", [self.openURL description]];
+        NSString *jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", [self.openURL description]];
         [self.webView stringByEvaluatingJavaScriptFromString:jsString];
         self.openURL = nil;
     }

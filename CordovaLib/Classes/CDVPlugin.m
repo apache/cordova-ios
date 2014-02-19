@@ -19,10 +19,10 @@
 
 #import "CDVPlugin.h"
 
-NSString* const CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
-NSString* const CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
-NSString* const CDVPluginResetNotification = @"CDVPluginResetNotification";
-NSString* const CDVLocalNotification = @"CDVLocalNotification";
+NSString *const CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
+NSString *const CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
+NSString *const CDVPluginResetNotification = @"CDVPluginResetNotification";
+NSString *const CDVLocalNotification = @"CDVLocalNotification";
 
 @interface CDVPlugin ()
 
@@ -93,7 +93,7 @@ NSString* const CDVLocalNotification = @"CDVLocalNotification";
     // override to handle urls sent to your app
     // register your url schemes in your App-Info.plist
 
-    NSURL* url = [notification object];
+    NSURL *url = [notification object];
 
     if ([url isKindOfClass:[NSURL class]]) {
         /* Do your thing! */
@@ -146,7 +146,7 @@ NSString* const CDVLocalNotification = @"CDVLocalNotification";
 // default implementation does nothing, ideally, we are not registered for notification if we aren't going to do anything.
 // - (void)didReceiveLocalNotification:(NSNotification *)notification
 // {
-//    // UILocalNotification* localNotification = [notification object]; // get the payload as a LocalNotification
+//    // UILocalNotification *localNotification = [notification object]; // get the payload as a LocalNotification
 // }
 
 @end

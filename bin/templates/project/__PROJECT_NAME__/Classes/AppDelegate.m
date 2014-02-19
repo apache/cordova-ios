@@ -39,16 +39,16 @@
     /** If you need to do any extra app-specific initialization, you can do it here
      *  -jm
      **/
-    NSHTTPCookieStorage* cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
     [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
 
     int cacheSizeMemory = 8 * 1024 * 1024; // 8MB
     int cacheSizeDisk = 32 * 1024 * 1024; // 32MB
 #if __has_feature(objc_arc)
-        NSURLCache* sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
 #else
-        NSURLCache* sharedCache = [[[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"] autorelease];
+        NSURLCache *sharedCache = [[[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"] autorelease];
 #endif
     [NSURLCache setSharedURLCache:sharedCache];
 
@@ -100,7 +100,7 @@
     }
 
     // calls into javascript global function 'handleOpenURL'
-    NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
+    NSString *jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", url];
     [self.viewController.webView stringByEvaluatingJavaScriptFromString:jsString];
 
     // all plugins will get the notification, and their handlers will be called

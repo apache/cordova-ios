@@ -77,7 +77,7 @@ void *CDVNewBase64Decode(
     }
 
     size_t outputBufferSize = (length / CDV_BASE64_UNIT_SIZE) * CDV_BINARY_UNIT_SIZE;
-    unsigned char* outputBuffer = (unsigned char*)malloc(outputBufferSize);
+    unsigned char *outputBuffer = (unsigned char*)malloc(outputBufferSize);
 
     size_t i = 0;
     size_t j = 0;
@@ -139,7 +139,7 @@ char *CDVNewBase64Encode(
     bool      separateLines,
     size_t    * outputLength)
 {
-    const unsigned char* inputBuffer = (const unsigned char*)buffer;
+    const unsigned char *inputBuffer = (const unsigned char*)buffer;
 
 #define MAX_NUM_PADDING_CHARS 2
 #define OUTPUT_LINE_LENGTH 64
@@ -166,7 +166,7 @@ char *CDVNewBase64Encode(
     //
     // Allocate the output buffer
     //
-    char* outputBuffer = (char*)malloc(outputBufferSize);
+    char *outputBuffer = (char*)malloc(outputBufferSize);
     if (!outputBuffer) {
         return NULL;
     }
@@ -250,7 +250,7 @@ char *CDVNewBase64Encode(
 + (NSData*)dataFromBase64String:(NSString*)aString
 {
     size_t outputLength = 0;
-    void* outputBuffer = CDVNewBase64Decode([aString UTF8String], [aString length], &outputLength);
+    void *outputBuffer = CDVNewBase64Decode([aString UTF8String], [aString length], &outputLength);
 
     return [NSData dataWithBytesNoCopy:outputBuffer length:outputLength freeWhenDone:YES];
 }
@@ -267,10 +267,10 @@ char *CDVNewBase64Encode(
 - (NSString*)base64EncodedString
 {
     size_t outputLength = 0;
-    char* outputBuffer =
+    char *outputBuffer =
         CDVNewBase64Encode([self bytes], [self length], true, &outputLength);
 
-    NSString* result = [[NSString alloc] initWithBytesNoCopy:outputBuffer
+    NSString *result = [[NSString alloc] initWithBytesNoCopy:outputBuffer
                                                       length:outputLength
                                                     encoding:NSASCIIStringEncoding
                                                 freeWhenDone:YES];

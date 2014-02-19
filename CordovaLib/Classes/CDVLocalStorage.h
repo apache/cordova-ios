@@ -24,7 +24,7 @@
 
 @interface CDVLocalStorage : CDVPlugin
 
-@property (nonatomic, readonly, strong) NSMutableArray* backupInfo;
+@property (nonatomic, readonly, strong) NSMutableArray *backupInfo;
 
 - (BOOL)shouldBackup;
 - (BOOL)shouldRestore;
@@ -40,9 +40,9 @@
 
 @interface CDVBackupInfo : NSObject
 
-@property (nonatomic, copy) NSString* original;
-@property (nonatomic, copy) NSString* backup;
-@property (nonatomic, copy) NSString* label;
+@property (nonatomic, copy) NSString *original;
+@property (nonatomic, copy) NSString *backup;
+@property (nonatomic, copy) NSString *label;
 
 - (BOOL)shouldBackup;
 - (BOOL)shouldRestore;

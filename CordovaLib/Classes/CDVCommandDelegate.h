@@ -26,7 +26,7 @@
 
 @protocol CDVCommandDelegate <NSObject>
 
-@property (nonatomic, readonly) NSDictionary* settings;
+@property (nonatomic, readonly) NSDictionary *settings;
 
 - (NSString*)pathForResource:(NSString*)resourcepath;
 - (id)getCommandInstance:(NSString*)pluginName;

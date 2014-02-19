@@ -95,7 +95,7 @@
     // Useful when debugging so that it does not timeout after one loop.
     const int kMinIterations = 4;
 
-    NSDate* startTime = [NSDate date];
+    NSDate *startTime = [NSDate date];
     int i = 0;
 
     while (!block()) {

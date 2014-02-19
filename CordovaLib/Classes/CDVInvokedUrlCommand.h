@@ -20,16 +20,16 @@
 #import <Foundation/Foundation.h>
 
 @interface CDVInvokedUrlCommand : NSObject {
-    NSString* _callbackId;
-    NSString* _className;
-    NSString* _methodName;
-    NSArray* _arguments;
+    NSString *_callbackId;
+    NSString *_className;
+    NSString *_methodName;
+    NSArray *_arguments;
 }
 
-@property (nonatomic, readonly) NSArray* arguments;
-@property (nonatomic, readonly) NSString* callbackId;
-@property (nonatomic, readonly) NSString* className;
-@property (nonatomic, readonly) NSString* methodName;
+@property (nonatomic, readonly) NSArray *arguments;
+@property (nonatomic, readonly) NSString *callbackId;
+@property (nonatomic, readonly) NSString *className;
+@property (nonatomic, readonly) NSString *methodName;
 
 + (CDVInvokedUrlCommand*)commandFromJson:(NSArray*)jsonEntry;
 

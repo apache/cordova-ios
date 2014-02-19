@@ -21,11 +21,11 @@
 
 @interface CDVConfigParser ()
 
-@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginsDict;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
-@property (nonatomic, readwrite, strong) NSMutableArray* whitelistHosts;
-@property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readwrite, strong) NSString* startPage;
+@property (nonatomic, readwrite, strong) NSMutableDictionary *pluginsDict;
+@property (nonatomic, readwrite, strong) NSMutableDictionary *settings;
+@property (nonatomic, readwrite, strong) NSMutableArray *whitelistHosts;
+@property (nonatomic, readwrite, strong) NSMutableArray *startupPluginNames;
+@property (nonatomic, readwrite, strong) NSString *startPage;
 
 @end
 
@@ -56,7 +56,7 @@
     } else if ([elementName isEqualToString:@"feature"]) { // store feature name to use with correct parameter set
         featureName = [attributeDict[@"name"] lowercaseString];
     } else if ((featureName != nil) && [elementName isEqualToString:@"param"]) {
-        NSString* paramName = [attributeDict[@"name"] lowercaseString];
+        NSString *paramName = [attributeDict[@"name"] lowercaseString];
         id value = attributeDict[@"value"];
         if ([paramName isEqualToString:@"ios-package"]) {
             pluginsDict[featureName] = value;

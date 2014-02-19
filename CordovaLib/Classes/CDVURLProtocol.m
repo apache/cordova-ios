@@ -30,24 +30,24 @@
 @property (nonatomic) NSInteger statusCode;
 @end
 
-static CDVWhitelist* gWhitelist = nil;
+static CDVWhitelist *gWhitelist = nil;
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
-static NSMutableSet* gRegisteredControllers = nil;
+static NSMutableSet *gRegisteredControllers = nil;
 
-NSString* const kCDVAssetsLibraryPrefixes = @"assets-library://";
+NSString *const kCDVAssetsLibraryPrefixes = @"assets-library://";
 
 // Returns the registered view controller that sent the given request.
 // If the user-agent is not from a UIWebView, or if it's from an unregistered one,
 // then nil is returned.
-static CDVViewController *viewControllerForRequest(NSURLRequest* request)
+static CDVViewController *viewControllerForRequest(NSURLRequest *request)
 {
     // The exec bridge explicitly sets the VC address in a header.
     // This works around the User-Agent not being set for file: URLs.
-    NSString* addrString = [request valueForHTTPHeaderField:@"vc"];
+    NSString *addrString = [request valueForHTTPHeaderField:@"vc"];
 
     if (addrString == nil) {
-        NSString* userAgent = [request valueForHTTPHeaderField:@"User-Agent"];
+        NSString *userAgent = [request valueForHTTPHeaderField:@"User-Agent"];
         if (userAgent == nil) {
             return nil;
         }
@@ -107,15 +107,15 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
 {
-    NSURL* theUrl = [theRequest URL];
-    CDVViewController* viewController = viewControllerForRequest(theRequest);
+    NSURL *theUrl = [theRequest URL];
+    CDVViewController *viewController = viewControllerForRequest(theRequest);
 
     if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
         return YES;
     } else if (viewController != nil) {
         if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
-            NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
-            NSString* requestId = [theRequest valueForHTTPHeaderField:@"rc"];
+            NSString *queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
+            NSString *requestId = [theRequest valueForHTTPHeaderField:@"rc"];
             if (requestId == nil) {
                 NSLog(@"!cordova request missing rc header");
                 return NO;
@@ -155,37 +155,37 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
 - (void)startLoading
 {
     // NSLog(@"%@ received %@ - start", self, NSStringFromSelector(_cmd));
-    NSURL* url = [[self request] URL];
+    NSURL *url = [[self request] URL];
 
     if ([[url path] isEqualToString:@"/!gap_exec"]) {
         [self sendResponseWithResponseCode:200 data:nil mimeType:nil];
         return;
     } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
-        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset) {
             if (asset) {
                 // We have the asset!  Get the data and send it along.
-                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
-                NSString* MIMEType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)[assetRepresentation UTI], kUTTagClassMIMEType);
-                Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                ALAssetRepresentation *assetRepresentation = [asset defaultRepresentation];
+                NSString *MIMEType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)[assetRepresentation UTI], kUTTagClassMIMEType);
+                Byte *buffer = (Byte*)malloc([assetRepresentation size]);
                 NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
-                NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                NSData *data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
                 [self sendResponseWithResponseCode:200 data:data mimeType:MIMEType];
             } else {
                 // Retrieving the asset failed for some reason.  Send an error.
                 [self sendResponseWithResponseCode:404 data:nil mimeType:nil];
             }
         };
-        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError *error) {
             // Retrieving the asset failed for some reason.  Send an error.
             [self sendResponseWithResponseCode:401 data:nil mimeType:nil];
         };
 
-        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
         [assetsLibrary assetForURL:url resultBlock:resultBlock failureBlock:failureBlock];
         return;
     }
 
-    NSString* body = [gWhitelist errorStringForURL:url];
+    NSString *body = [gWhitelist errorStringForURL:url];
     [self sendResponseWithResponseCode:401 data:[body dataUsingEncoding:NSASCIIStringEncoding] mimeType:nil];
 }
 
@@ -204,8 +204,8 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     if (mimeType == nil) {
         mimeType = @"text/plain";
     }
-    NSString* encodingName = [@"text/plain" isEqualToString : mimeType] ? @"UTF-8" : nil;
-    CDVHTTPURLResponse* response =
+    NSString *encodingName = [@"text/plain" isEqualToString : mimeType] ? @"UTF-8" : nil;
+    CDVHTTPURLResponse *response =
         [[CDVHTTPURLResponse alloc] initWithURL:[[self request] URL]
                                        MIMEType:mimeType
                           expectedContentLength:[data length]

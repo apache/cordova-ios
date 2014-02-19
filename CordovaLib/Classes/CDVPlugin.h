@@ -23,15 +23,15 @@
 #import "NSMutableArray+QueueAdditions.h"
 #import "CDVCommandDelegate.h"
 
-extern NSString* const CDVPageDidLoadNotification;
-extern NSString* const CDVPluginHandleOpenURLNotification;
-extern NSString* const CDVPluginResetNotification;
-extern NSString* const CDVLocalNotification;
+extern NSString *const CDVPageDidLoadNotification;
+extern NSString *const CDVPluginHandleOpenURLNotification;
+extern NSString *const CDVPluginResetNotification;
+extern NSString *const CDVLocalNotification;
 
 @interface CDVPlugin : NSObject {}
 
-@property (nonatomic, weak) UIWebView* webView;
-@property (nonatomic, weak) UIViewController* viewController;
+@property (nonatomic, weak) UIWebView *webView;
+@property (nonatomic, weak) UIViewController *viewController;
 @property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;

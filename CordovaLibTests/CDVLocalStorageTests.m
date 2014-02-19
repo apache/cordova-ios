@@ -54,9 +54,9 @@
 
 - (void)deleteOriginals:(BOOL)originals backups:(BOOL)backups
 {
-    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    for (CDVBackupInfo* info in [self localStorage].backupInfo) {
+    for (CDVBackupInfo *info in [self localStorage].backupInfo) {
         if (originals) {
             [fileManager removeItemAtPath:info.original error:nil];
         }
@@ -68,7 +68,7 @@
 
 - (void)disabled_testBackupAndRestore
 {
-    CDVLocalStorage* localStorage = [self localStorage];
+    CDVLocalStorage *localStorage = [self localStorage];
 
     [self waitForConditionName:@"shouldBackup" block:^{
         [self evalJs:@"localStorage.setItem('foo', 'bar')"];
@@ -91,12 +91,12 @@
 
 - (void)testVerifyAndFixDatabaseLocations_noChangeRequired
 {
-    NSString* const kBundlePath = @"/bpath";
-    id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString* path) {
+    NSString *const kBundlePath = @"/bpath";
+    id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString *path) {
             STFail(@"fileExists called.");
             return NO;
         }];
-    NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
         @"/bpath/foo", @"WebKitLocalStorageDatabasePathPreferenceKey",
         @"/bpath/foo", @"WebDatabaseDirectory",
         nil];
@@ -109,11 +109,11 @@
 
 - (void)testVerifyAndFixDatabaseLocations_changeRequired1
 {
-    NSString* const kBundlePath = @"/bpath";
-    id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString* path) {
+    NSString *const kBundlePath = @"/bpath";
+    id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString *path) {
             return YES;
         }];
-    NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
         @"/foo", @"WebKitLocalStorageDatabasePathPreferenceKey",
         nil];
     BOOL modified = [CDVLocalStorage __verifyAndFixDatabaseLocationsWithAppPlistDict:appPlistDict
@@ -121,17 +121,17 @@
                                                                          fileManager:fakeFileManager];
 
     STAssertTrue(modified, @"Should have applied fix.");
-    NSString* newPath = [appPlistDict objectForKey:@"WebKitLocalStorageDatabasePathPreferenceKey"];
+    NSString *newPath = [appPlistDict objectForKey:@"WebKitLocalStorageDatabasePathPreferenceKey"];
     STAssertTrue([@"/bpath/Library/Caches" isEqualToString: newPath], nil);
 }
 
 - (void)testVerifyAndFixDatabaseLocations_changeRequired2
 {
-    NSString* const kBundlePath = @"/bpath";
-    id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString* path) {
+    NSString *const kBundlePath = @"/bpath";
+    id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString *path) {
             return NO;
         }];
-    NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
         @"/foo", @"WebDatabaseDirectory",
         nil];
     BOOL modified = [CDVLocalStorage __verifyAndFixDatabaseLocationsWithAppPlistDict:appPlistDict
@@ -139,7 +139,7 @@
                                                                          fileManager:fakeFileManager];
 
     STAssertTrue(modified, @"Should have applied fix.");
-    NSString* newPath = [appPlistDict objectForKey:@"WebDatabaseDirectory"];
+    NSString *newPath = [appPlistDict objectForKey:@"WebDatabaseDirectory"];
     STAssertTrue([@"/bpath/Library/WebKit" isEqualToString: newPath], nil);
 }
 

@@ -36,10 +36,10 @@
 - (id)initFromJson:(NSArray*)jsonEntry
 {
     id tmp = [jsonEntry objectAtIndex:0];
-    NSString* callbackId = tmp == [NSNull null] ? nil : tmp;
-    NSString* className = [jsonEntry objectAtIndex:1];
-    NSString* methodName = [jsonEntry objectAtIndex:2];
-    NSMutableArray* arguments = [jsonEntry objectAtIndex:3];
+    NSString *callbackId = tmp == [NSNull null] ? nil : tmp;
+    NSString *className = [jsonEntry objectAtIndex:1];
+    NSString *methodName = [jsonEntry objectAtIndex:2];
+    NSMutableArray *arguments = [jsonEntry objectAtIndex:3];
 
     return [self initWithArguments:arguments
                         callbackId:callbackId
@@ -65,19 +65,19 @@
 
 - (void)massageArguments
 {
-    NSMutableArray* newArgs = nil;
+    NSMutableArray *newArgs = nil;
 
     for (NSUInteger i = 0, count = [_arguments count]; i < count; ++i) {
         id arg = [_arguments objectAtIndex:i];
         if (![arg isKindOfClass:[NSDictionary class]]) {
             continue;
         }
-        NSDictionary* dict = arg;
-        NSString* type = [dict objectForKey:@"CDVType"];
+        NSDictionary *dict = arg;
+        NSString *type = [dict objectForKey:@"CDVType"];
         if (!type || ![type isEqualToString:@"ArrayBuffer"]) {
             continue;
         }
-        NSString* data = [dict objectForKey:@"data"];
+        NSString *data = [dict objectForKey:@"data"];
         if (!data) {
             continue;
         }
