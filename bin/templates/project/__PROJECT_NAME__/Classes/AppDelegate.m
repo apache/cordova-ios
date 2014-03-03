@@ -93,7 +93,7 @@
 
 // this happens while we are running ( in the background, or from within our own app )
 // only valid if __PROJECT_NAME__-Info.plist specifies a protocol to handle
-- (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url
+- (BOOL)application:(UIApplication*)application openURL:(NSURL*)url sourceApplication:(NSString*)sourceApplication annotation:(id)annotation
 {
     if (!url) {
         return NO;
