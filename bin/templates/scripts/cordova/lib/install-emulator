@@ -25,7 +25,7 @@
 #     "iPad (Retina)"
 
 OPTION_RESULT=()
-TARGET="iPhone Retina (3.5-inch)"
+TARGET="iPhone (Retina 3.5-inch)"
 TARGET_FLAG='--family iphone --retina'
 
 # separates "key=value", sets an array with 0th index as key, 1st index as value
@@ -65,22 +65,23 @@ TARGET_LC=`echo $TARGET | tr '[:upper:]' '[:lower:]'`
 
 # remember the comparison is lowercase
 case "$TARGET_LC" in
-  	"iphone retina (3.5-inch)")
+  	"iphone (retina 3.5-inch)")
     TARGET_FLAG="--family iphone --retina"
     ;;
-    "iphone retina (4-inch)")
+    "iphone (retina 4-inch)")
     TARGET_FLAG="--family iphone --retina --tall"
     ;;
-    "iphone retina (4-inch 64-bit)")
-    TARGET_FLAG="--family iphone --retina --tall --64bit"
-    ;;
+    # --64bit not supportted by ios-sim yet
+    #"iphone retina (4-inch 64-bit)")
+    #TARGET_FLAG="--family iphone --retina --tall --64bit"
+    #;;
     "iphone")
     TARGET_FLAG="--family iphone"
     ;;
     "ipad")
     TARGET_FLAG="--family ipad"
     ;;
-    "ipad retina")
+    "ipad (retina)")
     TARGET_FLAG="--family ipad --retina"
     ;;
 esac
