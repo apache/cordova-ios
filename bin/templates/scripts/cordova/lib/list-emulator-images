@@ -26,15 +26,15 @@
 
 set -e
 
-echo \""iPhone Retina (3.5-inch)"\"
-echo \""iPhone Retina (4-inch)"\"
+echo \""iPhone (Retina 3.5-inch)"\"
+echo \""iPhone (Retina 4-inch)"\"
 
-# this assumes Xcode 5 minimum
-echo \""iPhone Retina (4-inch 64-bit)"\"
+# this assumes Xcode 5 minimum not supported by ios-sim yet
+# echo \""iPhone (Retina 4-inch 64-bit)"\"
 
 echo \""iPhone"\"
 echo \""iPad"\"
-echo \""iPad Retina"\"
+echo \""iPad (Retina)"\"
 
 
 
