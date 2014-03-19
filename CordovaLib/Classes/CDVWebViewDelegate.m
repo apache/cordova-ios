@@ -350,6 +350,7 @@ static NSString *stripFragment(NSString* url)
     if (fireCallback && [_delegate respondsToSelector:@selector(webViewDidFinishLoad:)]) {
         [_delegate webViewDidFinishLoad:webView];
     }
+    webView.keyboardDisplayRequiresUserAction = NO;
 }
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error
