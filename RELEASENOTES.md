@@ -24,6 +24,19 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+
+### 3.4.1 (201403XX) ###
+
+* Update Xcode .pbxproj files according to Xcode 5.1 recommendations
+* CB-6327: Allow '.' in plugin feature names (and therefore callback ids)
+* CB-6287 - Add build script support for arm64
+* CB-6217 iOS simulator targets not consistent across scripts
+* CB-5286 - Fix warnings when compiled under arm64
+* CB-4863 - Drop iOS 5.0 support, and support arm64
+* CB-6150 - objc\_msgSend causes EXC\_BAD\_ACCESS with plugins on arm64
+* Validate that callback IDs are always well-formed
+* CB-5018 - bin/create on iOS should use --arc by default
+
 ### 3.4.0 (201402XX) ###
 
 * CB-5794 iOS build script: 1. don't clean 2. recognize --emulator vs --device
