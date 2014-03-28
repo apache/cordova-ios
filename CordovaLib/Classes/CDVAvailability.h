@@ -48,6 +48,7 @@
 #define __CORDOVA_3_2_0 30200
 #define __CORDOVA_3_3_0 30300
 #define __CORDOVA_3_4_0 30400
+#define __CORDOVA_3_4_1 30401
 #define __CORDOVA_NA 99999      /* not available */
 
 /*
