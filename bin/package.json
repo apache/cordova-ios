@@ -10,6 +10,7 @@
   }],
   "dependencies" : {
 		"coffee-script" : "1.1.2",
+		"exit": "0.1.1",
 		"nodeunit" : "0.5.3"
   }
 }
