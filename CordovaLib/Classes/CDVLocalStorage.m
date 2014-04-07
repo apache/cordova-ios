@@ -340,6 +340,12 @@
     NSMutableArray* backupInfo = [NSMutableArray arrayWithCapacity:0];
 
     if ([backupType isEqualToString:@"cloud"]) {
+#ifdef DEBUG
+        NSLog(@"\n\nStarted backup to iCloud! Please be careful."
+              "\nYour application might rejected by Apple if you store too much data."
+              "\nFor more information please read \"iOS Data Storage Guidelines\""
+              "\nYou could find it at the following address https://developer.apple.com/icloud/documentation/data-storage/ .\n\n");
+#endif
         // We would like to restore old backups/caches databases to the new destination (nested in lib folder)
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:appLibraryFolder backupDir:[appDocumentsFolder stringByAppendingPathComponent:@"Backups"] targetDirNests:YES backupDirNests:NO rename:YES]];
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:appLibraryFolder backupDir:[appLibraryFolder stringByAppendingPathComponent:@"Caches"] targetDirNests:YES backupDirNests:NO rename:NO]];
