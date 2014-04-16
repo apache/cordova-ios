@@ -38,10 +38,11 @@ if [[ ! -e "$SRC_DIR" ]]; then
   exit 1
 fi
 
+# Use full path to find to avoid conflict with macports find (CB-6383).
 if [[ -n $COPY_HIDDEN ]]; then
-  alias do_find='find "$SRC_DIR"'
+  alias do_find='/usr/bin/find "$SRC_DIR"'
 else
-  alias do_find='find -L "$SRC_DIR" -name ".*" -prune -o'
+  alias do_find='/usr/bin/find -L "$SRC_DIR" -name ".*" -prune -o'
 fi
 
 time (
