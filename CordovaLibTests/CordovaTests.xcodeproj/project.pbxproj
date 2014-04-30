@@ -42,6 +42,7 @@
 		68A32D7E141030EB006B237C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AA141002F100DF4CF2 /* UIKit.framework */; };
 		68A32D7F141030F3006B237C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AC141002F100DF4CF2 /* Foundation.framework */; };
 		7E91406017711D88002C6A3F /* CDVWebViewDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */; };
+		7EF33BD71911ABA20048544E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EF33BD61911ABA20048544E /* Default-568h@2x.png */; };
 		8220B5C216D541BD00EC3921 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8220B5C116D541BD00EC3921 /* AssetsLibrary.framework */; };
 		8220B5C616D542F500EC3921 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8220B5C116D541BD00EC3921 /* AssetsLibrary.framework */; };
 		EB3B34E9161B5532003DBE7D /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3B34E6161B5454003DBE7D /* libCordova.a */; };
@@ -114,6 +115,7 @@
 		686357DC14100B1600DF4CF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		68A32D7414103017006B237C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewDelegateTests.m; sourceTree = "<group>"; };
+		7EF33BD61911ABA20048544E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8220B5C116D541BD00EC3921 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		EB37018115D18B2D00BEBC43 /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CordovaLib.xcodeproj; path = ../CordovaLib/CordovaLib.xcodeproj; sourceTree = "<group>"; };
 		EB89634915FE66EA00E12277 /* CDVInvokedUrlCommandTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVInvokedUrlCommandTests.m; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 		0867D691FE84028FC02AAC07 /* CordovaLib */ = {
 			isa = PBXGroup;
 			children = (
+				7EF33BD61911ABA20048544E /* Default-568h@2x.png */,
 				F8EB14D0165FFD3200616F39 /* config.xml */,
 				EB37018115D18B2D00BEBC43 /* CordovaLib.xcodeproj */,
 				EB3B34F4161B585D003DBE7D /* CordovaLibTests */,
@@ -319,7 +322,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "CordovaTests" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -365,6 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8EB14D1165FFD3200616F39 /* config.xml in Resources */,
+				7EF33BD71911ABA20048544E /* Default-568h@2x.png in Resources */,
 				303A4072152124BB00182201 /* InfoPlist.strings in Resources */,
 				30F8AE1D152129DA006625B3 /* www in Resources */,
 			);
@@ -483,17 +487,26 @@
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "${DT_TOOLCHAIN_DIR}/usr/lib/arc";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DDEBUG";
 				OTHER_LDFLAGS = (
 					"-all_load",
@@ -509,19 +522,27 @@
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "Classes/**";
-				VALID_ARCHS = "i386 armv7";
 			};
 			name = Debug;
 		};
 		1DEB922408733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "${DT_TOOLCHAIN_DIR}/usr/lib/arc";
@@ -540,7 +561,6 @@
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "Classes/**";
-				VALID_ARCHS = "i386 armv7";
 			};
 			name = Release;
 		};
@@ -548,7 +568,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
@@ -564,7 +583,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "Classes/** ../CordovaLib/Classes/**";
-				VALID_ARCHS = "i386 armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -573,7 +591,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
@@ -586,7 +603,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "Classes/** ../CordovaLib/Classes/**";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "i386 armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -595,7 +611,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CordovaLibApp.app/CordovaLibApp";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -620,7 +635,6 @@
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				USER_HEADER_SEARCH_PATHS = "Classes/** ../CordovaLib/Classes/**";
-				VALID_ARCHS = "i386 armv7";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -629,7 +643,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CordovaLibApp.app/CordovaLibApp";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -652,7 +665,6 @@
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				USER_HEADER_SEARCH_PATHS = "Classes/** ../CordovaLib/Classes/**";
-				VALID_ARCHS = "i386 armv7";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
