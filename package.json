@@ -1,0 +1,22 @@
+{
+  "name": "cordova-ios",
+  "version": "3.4.1",
+  "description": "cordova-ios release",
+  "main": "bin/create",
+  "repository": {
+    "type": "git",
+    "url": "https://git-wip-us.apache.org/repos/asf/cordova-ios.git"
+  },
+  "keywords": [
+    "ios",
+    "cordova",
+    "apache"
+  ],
+  "author": "Apache Software Foundation",
+  "license": "Apache Version 2.0",
+  "dependencies": {
+    "shelljs": "^0.2.6",
+    "coffee-script": "^1.7.1",
+    "nodeunit": "^0.8.7"
+  }
+}
