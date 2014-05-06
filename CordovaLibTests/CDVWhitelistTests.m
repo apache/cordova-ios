@@ -148,14 +148,17 @@
         @"192.168.1.*",
         @"192.168.2.*",
         nil];
-
+    
     CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.2"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]], nil);
-    STAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.2"]], nil);
+    
+    // Ever since Cordova 3.1, whitelist wildcards are simplified, only "*" and "*.apache.org" (subdomain example) are allowed. Therefore the next four tests should fail
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.2"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]], nil);
+    STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.2"]], nil);
+    
     STAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.3.1"]], nil);
 }
 
