@@ -18,12 +18,12 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "CDVPluginResult.h"
 #import "CDVJSON.h"
 
-@interface CDVPluginResultJSONSerializationTests : SenTestCase
+@interface CDVPluginResultJSONSerializationTests : XCTestCase
 @end
 
 @implementation CDVPluginResultJSONSerializationTests
@@ -34,7 +34,7 @@
     NSDictionary* dic = [[result toJSONString] JSONObject];
     NSNumber* message = [dic objectForKey:@"message"];
 
-    STAssertTrue([[NSNumber numberWithInt:5] isEqual:message], nil);
+    XCTAssertTrue([[NSNumber numberWithInt:5] isEqual:message]);
 }
 
 - (void)testSerializingMessageAsDouble
@@ -43,7 +43,7 @@
     NSDictionary* dic = [[result toJSONString] JSONObject];
     NSNumber* message = [dic objectForKey:@"message"];
 
-    STAssertTrue([[NSNumber numberWithDouble:5.5] isEqual:message], nil);
+    XCTAssertTrue([[NSNumber numberWithDouble:5.5] isEqual:message]);
 }
 
 - (void)testSerializingMessageAsBool
@@ -52,7 +52,7 @@
     NSDictionary* dic = [[result toJSONString] JSONObject];
     NSNumber* message = [dic objectForKey:@"message"];
 
-    STAssertTrue([[NSNumber numberWithBool:YES] isEqual:message], nil);
+    XCTAssertTrue([[NSNumber numberWithBool:YES] isEqual:message]);
 }
 
 - (void)testSerializingMessageAsArray
@@ -69,31 +69,31 @@
     NSDictionary* dic = [[result toJSONString] JSONObject];
     NSArray* message = [dic objectForKey:@"message"];
 
-    STAssertTrue([message isKindOfClass:[NSArray class]], nil);
-    STAssertTrue([testValues count] == [message count], nil);
+    XCTAssertTrue([message isKindOfClass:[NSArray class]]);
+    XCTAssertTrue([testValues count] == [message count]);
 
     for (NSInteger i = 0; i < [testValues count]; i++) {
-        STAssertTrue([[testValues objectAtIndex:i] isEqual:[message objectAtIndex:i]], nil);
+        XCTAssertTrue([[testValues objectAtIndex:i] isEqual:[message objectAtIndex:i]]);
     }
 }
 
 - (void)__testDictionary:(NSDictionary*)dictA withDictionary:(NSDictionary*)dictB
 {
-    STAssertTrue([dictA isKindOfClass:[NSDictionary class]], nil);
-    STAssertTrue([dictB isKindOfClass:[NSDictionary class]], nil);
+    XCTAssertTrue([dictA isKindOfClass:[NSDictionary class]]);
+    XCTAssertTrue([dictB isKindOfClass:[NSDictionary class]]);
 
-    STAssertTrue([[dictA allKeys] count] == [[dictB allKeys] count], nil);
+    XCTAssertTrue([[dictA allKeys] count] == [[dictB allKeys] count]);
 
     for (NSInteger i = 0; i < [dictA count]; i++) {
         id keyA = [[dictA allKeys] objectAtIndex:i];
         id objA = [dictA objectForKey:keyA];
         id objB = [dictB objectForKey:keyA];
 
-        STAssertTrue([[dictB allKeys] containsObject:keyA], nil); // key exists
+        XCTAssertTrue([[dictB allKeys] containsObject:keyA]); // key exists
         if ([objA isKindOfClass:[NSDictionary class]]) {
             [self __testDictionary:objA withDictionary:objB];
         } else {
-            STAssertTrue([objA isEqual:objB], nil); // key's value equality
+            XCTAssertTrue([objA isEqual:objB]); // key's value equality
         }
     }
 }
@@ -139,7 +139,7 @@
     NSDictionary* dic = [[result toJSONString] JSONObject];
     NSString* message = [dic objectForKey:@"message"];
 
-    STAssertTrue([quotedString isEqual:message], nil);
+    XCTAssertTrue([quotedString isEqual:message]);
 }
 
 - (void)testSerializingMessageAsStringThatIsNil
@@ -149,7 +149,7 @@
     NSDictionary* dic = [[result toJSONString] JSONObject];
     NSString* message = [dic objectForKey:@"message"];
 
-    STAssertTrue([[NSNull null] isEqual:message], nil);
+    XCTAssertTrue([[NSNull null] isEqual:message]);
 }
 
 @end

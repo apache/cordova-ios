@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "CDVWebViewTest.h"
 #import "CDVViewController.h"
@@ -86,10 +86,10 @@
     }];
 
     NSString* href = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:geHREF];
-    STAssertTrue([href hasSuffix:@"index.html"], @"href should point to index.html");
+    XCTAssertTrue([href hasSuffix:@"index.html"], @"href should point to index.html");
 
     href = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:geHREF];
-    STAssertTrue([href hasSuffix:@"index.html?delta=true"], @"href should point to index.html?delta=true");
+    XCTAssertTrue([href hasSuffix:@"index.html?delta=true"], @"href should point to index.html?delta=true");
 }
 
 @end

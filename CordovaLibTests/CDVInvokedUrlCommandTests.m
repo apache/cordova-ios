@@ -17,11 +17,11 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "CDVInvokedUrlCommand.h"
 
-@interface CDVInvokedUrlCommandTests : SenTestCase
+@interface CDVInvokedUrlCommandTests : XCTestCase
 @end
 
 @implementation CDVInvokedUrlCommandTests
@@ -31,10 +31,10 @@
     NSArray* jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", [NSArray array], nil];
     CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
 
-    STAssertEquals(@"callbackId", command.callbackId, nil);
-    STAssertEquals(@"className", command.className, nil);
-    STAssertEquals(@"methodName", command.methodName, nil);
-    STAssertEquals([NSArray array], command.arguments, nil);
+    XCTAssertEqual(@"callbackId", command.callbackId);
+    XCTAssertEqual(@"className", command.className);
+    XCTAssertEqual(@"methodName", command.methodName);
+    XCTAssertEqual([NSArray array], command.arguments);
 }
 
 - (void)testArgumentAtIndex
@@ -42,10 +42,10 @@
     NSArray* jsonArr = [NSArray arrayWithObjects:[NSNull null], @"className", @"methodName", [NSArray array], nil];
     CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
 
-    STAssertNil([command argumentAtIndex:0], @"NSNull to nil");
-    STAssertNil([command argumentAtIndex:100], @"Invalid index to nil");
-    STAssertEquals(@"default", [command argumentAtIndex:0 withDefault:@"default"], @"NSNull to default");
-    STAssertEquals(@"default", [command argumentAtIndex:100 withDefault:@"default"], @"Invalid index to default");
+    XCTAssertNil([command argumentAtIndex:0], @"NSNull to nil");
+    XCTAssertNil([command argumentAtIndex:100], @"Invalid index to nil");
+    XCTAssertEqual(@"default", [command argumentAtIndex:0 withDefault:@"default"], @"NSNull to default");
+    XCTAssertEqual(@"default", [command argumentAtIndex:100 withDefault:@"default"], @"Invalid index to default");
 }
 
 @end

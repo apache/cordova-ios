@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "CDVWebViewTest.h"
 #import "CDVViewController.h"
@@ -87,7 +87,7 @@
     NSString* ua1 = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
     NSString* ua2 = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
 
-    STAssertFalse([ua1 isEqual:ua2], @"User-Agents should be different.");
+    XCTAssertFalse([ua1 isEqual:ua2], @"User-Agents should be different.");
 }
 
 @end

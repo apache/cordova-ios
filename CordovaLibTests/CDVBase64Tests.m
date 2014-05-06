@@ -17,11 +17,11 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "NSData+Base64.h"
 
-@interface CDVBase64Tests : SenTestCase
+@interface CDVBase64Tests : XCTestCase
 @end
 
 @implementation CDVBase64Tests
@@ -48,7 +48,7 @@
     NSString* expectedEncodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
     NSString* actualEncodedString = [decodedData base64EncodedString];
 
-    STAssertTrue([expectedEncodedString isEqualToString:actualEncodedString], nil);
+    XCTAssertTrue([expectedEncodedString isEqualToString:actualEncodedString]);
 }
 
 - (void)testBase64Decode
@@ -58,7 +58,7 @@
     NSData* encodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
     NSData* decodedData = [NSData dataFromBase64String:encodedString];
 
-    STAssertTrue([encodedData isEqualToData:decodedData], nil);
+    XCTAssertTrue([encodedData isEqualToData:decodedData]);
 }
 
 @end

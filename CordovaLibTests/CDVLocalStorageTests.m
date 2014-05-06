@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "CDVLocalStorage.h"
 #import "CDVWebViewTest.h"
@@ -75,7 +75,7 @@
         return [localStorage shouldBackup];
     }];
     [localStorage backup:[CDVInvokedUrlCommand new]];
-    STAssertFalse([localStorage shouldBackup], @"Should have backed up.");
+    XCTAssertFalse([localStorage shouldBackup], @"Should have backed up.");
 
     // It would be nice to be able to test that the restore functionality
     // alters what localStorage.getItem('foo') returns, but it seems as though
@@ -84,16 +84,16 @@
 
     // Instead, we just test the file copying logic.
     [self deleteOriginals:YES backups:NO];
-    STAssertTrue([localStorage shouldRestore], @"Should restore after deleting originals");
+    XCTAssertTrue([localStorage shouldRestore], @"Should restore after deleting originals");
     [localStorage restore:[CDVInvokedUrlCommand new]];
-    STAssertFalse([localStorage shouldRestore], @"Restore did not complete successfully");
+    XCTAssertFalse([localStorage shouldRestore], @"Restore did not complete successfully");
 }
 
 - (void)testVerifyAndFixDatabaseLocations_noChangeRequired
 {
     NSString* const kBundlePath = @"/bpath";
     id fakeFileManager = [CDVFakeFileManager managerWithFileExistsBlock:^(NSString* path) {
-            STFail(@"fileExists called.");
+            XCTFail(@"fileExists called.");
             return NO;
         }];
     NSMutableDictionary* appPlistDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -104,7 +104,7 @@
                                                                           bundlePath:kBundlePath
                                                                          fileManager:fakeFileManager];
 
-    STAssertFalse(modified, @"Should not have applied fix.");
+    XCTAssertFalse(modified, @"Should not have applied fix.");
 }
 
 - (void)testVerifyAndFixDatabaseLocations_changeRequired1
@@ -120,9 +120,9 @@
                                                                           bundlePath:kBundlePath
                                                                          fileManager:fakeFileManager];
 
-    STAssertTrue(modified, @"Should have applied fix.");
+    XCTAssertTrue(modified, @"Should have applied fix.");
     NSString* newPath = [appPlistDict objectForKey:@"WebKitLocalStorageDatabasePathPreferenceKey"];
-    STAssertTrue([@"/bpath/Library/Caches" isEqualToString: newPath], nil);
+    XCTAssertTrue([@"/bpath/Library/Caches" isEqualToString: newPath]);
 }
 
 - (void)testVerifyAndFixDatabaseLocations_changeRequired2
@@ -138,9 +138,9 @@
                                                                           bundlePath:kBundlePath
                                                                          fileManager:fakeFileManager];
 
-    STAssertTrue(modified, @"Should have applied fix.");
+    XCTAssertTrue(modified, @"Should have applied fix.");
     NSString* newPath = [appPlistDict objectForKey:@"WebDatabaseDirectory"];
-    STAssertTrue([@"/bpath/Library/WebKit" isEqualToString: newPath], nil);
+    XCTAssertTrue([@"/bpath/Library/WebKit" isEqualToString: newPath]);
 }
 
 @end

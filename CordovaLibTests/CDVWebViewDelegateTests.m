@@ -17,11 +17,11 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import <Cordova/CDVWebViewDelegate.h>
 
-@interface CDVWebViewDelegateTests : SenTestCase
+@interface CDVWebViewDelegateTests : XCTestCase
 @end
 
 @implementation CDVWebViewDelegateTests
@@ -67,16 +67,16 @@
     NSURLRequest* originalRequestWithQueryParamsAndFragment = [NSURLRequest requestWithURL:originalUrlWithQueryParamsAndFragment];
     NSURLRequest* notOriginalRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://httpd.apache.org"]];
 
-    STAssertTrue([wvd request:originalRequest isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequest should be a be equal to originalRequest after stripping fragments");
-    STAssertTrue([wvd request:originalRequestWithFragmentOnly isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithFragment should be equal to originalRequest after stripping fragment");
-    STAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithFragmentNoIdentifier should be equal to originalRequest after stripping fragment");
-    STAssertFalse([wvd request:originalRequestWithQueryParamsAndFragment isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithQueryParamsAndFragment should not be equal to originalRequest after stripping fragment");
-    STAssertFalse([wvd request:notOriginalRequest isEqualToRequestAfterStrippingFragments:originalRequest], @"notOriginalRequest should not be equal to originalRequest after stripping fragment");
+    XCTAssertTrue([wvd request:originalRequest isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequest should be a be equal to originalRequest after stripping fragments");
+    XCTAssertTrue([wvd request:originalRequestWithFragmentOnly isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithFragment should be equal to originalRequest after stripping fragment");
+    XCTAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithFragmentNoIdentifier should be equal to originalRequest after stripping fragment");
+    XCTAssertFalse([wvd request:originalRequestWithQueryParamsAndFragment isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithQueryParamsAndFragment should not be equal to originalRequest after stripping fragment");
+    XCTAssertFalse([wvd request:notOriginalRequest isEqualToRequestAfterStrippingFragments:originalRequest], @"notOriginalRequest should not be equal to originalRequest after stripping fragment");
 
     // equality tests
-    STAssertTrue([wvd request:originalRequestWithFragmentOnly isEqualToRequestAfterStrippingFragments:originalRequestWithFragmentOnly], @"originalRequestWithFragment should be a equal to itself after stripping fragments");
-    STAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isEqualToRequestAfterStrippingFragments:originalRequestWithFragmentOnlyNoIdentifier], @"originalRequestWithFragmentNoIdentifier should be a equal to itself after stripping fragments");
-    STAssertTrue([wvd request:originalRequestWithQueryParamsAndFragment isEqualToRequestAfterStrippingFragments:originalRequestWithQueryParamsAndFragment], @"originalRequestWithQueryParamsAndFragment should be equal to itself after stripping fragments");
+    XCTAssertTrue([wvd request:originalRequestWithFragmentOnly isEqualToRequestAfterStrippingFragments:originalRequestWithFragmentOnly], @"originalRequestWithFragment should be a equal to itself after stripping fragments");
+    XCTAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isEqualToRequestAfterStrippingFragments:originalRequestWithFragmentOnlyNoIdentifier], @"originalRequestWithFragmentNoIdentifier should be a equal to itself after stripping fragments");
+    XCTAssertTrue([wvd request:originalRequestWithQueryParamsAndFragment isEqualToRequestAfterStrippingFragments:originalRequestWithQueryParamsAndFragment], @"originalRequestWithQueryParamsAndFragment should be equal to itself after stripping fragments");
 }
 
 @end

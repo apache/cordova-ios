@@ -17,13 +17,13 @@
  under the License.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
 
 @class AppDelegate;
 @class CDVViewController;
 
-@interface CDVWebViewTest : SenTestCase
+@interface CDVWebViewTest : XCTestCase
 
 @property (nonatomic, strong) UIWebView* webView;
 

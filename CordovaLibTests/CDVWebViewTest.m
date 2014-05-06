@@ -38,7 +38,7 @@
     // first exception makes it much easier to identify the source of the error.
     // On iOS < 5 there is a bug in SenTestingKit where the exception is
     // uncaught and the app crashes upon a failed STAssert (oh well).
-    [self raiseAfterFailure];
+    //[self raiseAfterFailure];
 }
 
 - (void)tearDown
@@ -65,7 +65,7 @@
         // here.
         [self waitForPageLoad];
     }
-    STAssertNotNil(self.appDelegate.viewController, @"createViewController failed");
+    XCTAssertNotNil(self.appDelegate.viewController, @"createViewController failed");
     return self.appDelegate.viewController;
 }
 
@@ -78,7 +78,7 @@
 {
     id ret = [self.viewController getCommandInstance:pluginName];
 
-    STAssertNotNil(ret, @"Missing plugin %@", pluginName);
+    XCTAssertNotNil(ret, @"Missing plugin %@", pluginName);
     return ret;
 }
 
@@ -101,7 +101,7 @@
     while (!block()) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
         NSTimeInterval elapsed = -[startTime timeIntervalSinceNow];
-        STAssertTrue(i < kMinIterations || elapsed < kConditionTimeout,
+        XCTAssertTrue(i < kMinIterations || elapsed < kConditionTimeout,
             @"Timed out waiting for condition %@", conditionName);
         ++i;
     }
