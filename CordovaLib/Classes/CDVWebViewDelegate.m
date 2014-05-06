@@ -116,6 +116,11 @@ static NSString *stripFragment(NSString* url)
 
 - (BOOL)request:(NSURLRequest*)newRequest isFragmentIdentifierToRequest:(NSURLRequest*)originalRequest
 {
+    return [self request:newRequest isEqualToRequestAfterStrippingFragments:originalRequest];
+}
+
+- (BOOL)request:(NSURLRequest*)newRequest isEqualToRequestAfterStrippingFragments:(NSURLRequest*)originalRequest
+{
     if (originalRequest.URL && newRequest.URL) {
         NSString* originalRequestUrl = [originalRequest.URL absoluteString];
         NSString* newRequestUrl = [newRequest.URL absoluteString];
@@ -211,7 +216,7 @@ static NSString *stripFragment(NSString* url)
         if (isTopLevelNavigation) {
             // Ignore hash changes that don't navigate to a different page.
             // webView.request does actually update when history.replaceState() gets called.
-            if ([self request:request isFragmentIdentifierToRequest:webView.request]) {
+            if ([self request:request isEqualToRequestAfterStrippingFragments:webView.request]) {
                 NSString* prevURL = [self evalForCurrentURL:webView];
                 if ([prevURL isEqualToString:[request.URL absoluteString]]) {
                     VerboseLog(@"Page reload detected.");

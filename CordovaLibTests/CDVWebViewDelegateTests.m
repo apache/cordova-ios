@@ -67,16 +67,16 @@
     NSURLRequest* originalRequestWithQueryParamsAndFragment = [NSURLRequest requestWithURL:originalUrlWithQueryParamsAndFragment];
     NSURLRequest* notOriginalRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://httpd.apache.org"]];
 
-    STAssertFalse([wvd request:originalRequest isFragmentIdentifierToRequest:originalRequest], @"originalRequest should not be a fragment of originalRequest");
-    STAssertTrue([wvd request:originalRequestWithFragmentOnly isFragmentIdentifierToRequest:originalRequest], @"originalRequestWithFragment should be a fragment of originalRequest");
-    STAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isFragmentIdentifierToRequest:originalRequest], @"originalRequestWithFragmentNoIdentifier should be a fragment of originalRequest");
-    STAssertTrue([wvd request:originalRequestWithQueryParamsAndFragment isFragmentIdentifierToRequest:originalRequest], @"originalRequestWithQueryParamsAndFragment should be a fragment of originalRequest");
-    STAssertFalse([wvd request:notOriginalRequest isFragmentIdentifierToRequest:originalRequest], @"notOriginalRequest should not be a fragment of originalRequest");
+    STAssertTrue([wvd request:originalRequest isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequest should be a be equal to originalRequest after stripping fragments");
+    STAssertTrue([wvd request:originalRequestWithFragmentOnly isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithFragment should be equal to originalRequest after stripping fragment");
+    STAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithFragmentNoIdentifier should be equal to originalRequest after stripping fragment");
+    STAssertFalse([wvd request:originalRequestWithQueryParamsAndFragment isEqualToRequestAfterStrippingFragments:originalRequest], @"originalRequestWithQueryParamsAndFragment should not be equal to originalRequest after stripping fragment");
+    STAssertFalse([wvd request:notOriginalRequest isEqualToRequestAfterStrippingFragments:originalRequest], @"notOriginalRequest should not be equal to originalRequest after stripping fragment");
 
     // equality tests
-    STAssertTrue([wvd request:originalRequestWithFragmentOnly isFragmentIdentifierToRequest:originalRequestWithFragmentOnly], @"originalRequestWithFragment should be a fragment of itself");
-    STAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isFragmentIdentifierToRequest:originalRequestWithFragmentOnlyNoIdentifier], @"originalRequestWithFragmentNoIdentifier should be a fragment of itself");
-    STAssertTrue([wvd request:originalRequestWithQueryParamsAndFragment isFragmentIdentifierToRequest:originalRequestWithQueryParamsAndFragment], @"originalRequestWithQueryParamsAndFragment should be a fragment of itself");
+    STAssertTrue([wvd request:originalRequestWithFragmentOnly isEqualToRequestAfterStrippingFragments:originalRequestWithFragmentOnly], @"originalRequestWithFragment should be a equal to itself after stripping fragments");
+    STAssertTrue([wvd request:originalRequestWithFragmentOnlyNoIdentifier isEqualToRequestAfterStrippingFragments:originalRequestWithFragmentOnlyNoIdentifier], @"originalRequestWithFragmentNoIdentifier should be a equal to itself after stripping fragments");
+    STAssertTrue([wvd request:originalRequestWithQueryParamsAndFragment isEqualToRequestAfterStrippingFragments:originalRequestWithQueryParamsAndFragment], @"originalRequestWithQueryParamsAndFragment should be equal to itself after stripping fragments");
 }
 
 @end
