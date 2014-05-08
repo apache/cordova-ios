@@ -1,5 +1,5 @@
 // Platform: ios
-// 3.5.0-dev-ddf13aa
+// 3.6.0-dev-7e845f3
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '3.5.0-dev-ddf13aa';
+var CORDOVA_JS_BUILD_LABEL = '3.6.0-dev-7e845f3';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -390,6 +390,16 @@ var base64 = exports;
 base64.fromArrayBuffer = function(arrayBuffer) {
     var array = new Uint8Array(arrayBuffer);
     return uint8ToBase64(array);
+};
+
+base64.toArrayBuffer = function(str) {
+    var decodedStr = typeof atob != 'undefined' ? atob(str) : new Buffer(str,'base64').toString('binary');
+    var arrayBuffer = new ArrayBuffer(decodedStr.length);
+    var array = new Uint8Array(arrayBuffer);
+    for (var i=0, len=decodedStr.length; i < len; i++) {
+        array[i] = decodedStr.charCodeAt(i);
+    }
+    return arrayBuffer;
 };
 
 //------------------------------------------------------------------------------
@@ -770,6 +780,7 @@ channel.createSticky('onNativeReady');
 channel.createSticky('onCordovaReady');
 
 // Event to indicate that all automatically loaded JS plugins are loaded and ready.
+// FIXME remove this
 channel.createSticky('onPluginsReady');
 
 // Event to indicate that Cordova is ready
@@ -942,7 +953,7 @@ function iOSExec() {
             return;
         } catch (e) {}
     }
-    
+
     // If actionArgs is not provided, default to an empty array
     actionArgs = actionArgs || [];
 
@@ -972,50 +983,63 @@ function iOSExec() {
         case jsToNativeModes.XHR_NO_PAYLOAD:
         case jsToNativeModes.XHR_WITH_PAYLOAD:
         case jsToNativeModes.XHR_OPTIONAL_PAYLOAD:
-            // This prevents sending an XHR when there is already one being sent.
-            // This should happen only in rare circumstances (refer to unit tests).
-            if (execXhr && execXhr.readyState != 4) {
-                execXhr = null;
-            }
-            // Re-using the XHR improves exec() performance by about 10%.
-            execXhr = execXhr || new XMLHttpRequest();
-            // Changing this to a GET will make the XHR reach the URIProtocol on 4.2.
-            // For some reason it still doesn't work though...
-            // Add a timestamp to the query param to prevent caching.
-            execXhr.open('HEAD', "/!gap_exec?" + (+new Date()), true);
-            if (!vcHeaderValue) {
-                vcHeaderValue = /.*\((.*)\)/.exec(navigator.userAgent)[1];
-            }
-            execXhr.setRequestHeader('vc', vcHeaderValue);
-            execXhr.setRequestHeader('rc', ++requestCount);
-            if (shouldBundleCommandJson()) {
-                execXhr.setRequestHeader('cmds', iOSExec.nativeFetchMessages());
-            }
-            execXhr.send(null);
+            pokeNativeViaXhr();
             break;
-        case jsToNativeModes.IFRAME_HASH_NO_PAYLOAD:
-        case jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD:
-            execHashIframe = execHashIframe || createHashIframe();
-            // Check if they've removed it from the DOM, and put it back if so.
-            if (!execHashIframe.contentWindow) {
-                execHashIframe = createHashIframe();
-            }
-            // The delegate method is called only when the hash changes, so toggle it back and forth.
-            hashToggle = hashToggle ^ 3;
-            var hashValue = '%0' + hashToggle;
-            if (bridgeMode === jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD) {
-                hashValue += iOSExec.nativeFetchMessages();
-            }
-            execHashIframe.contentWindow.location.hash = hashValue;
-            break;
-        default:
-            execIframe = execIframe || createExecIframe();
-            // Check if they've removed it from the DOM, and put it back if so.
-            if (!execIframe.contentWindow) {
-                execIframe = createExecIframe();
-            }
-            execIframe.src = "gap://ready";
+        default: // iframe-based.
+            pokeNativeViaIframe();
         }
+    }
+}
+
+function pokeNativeViaXhr() {
+    // This prevents sending an XHR when there is already one being sent.
+    // This should happen only in rare circumstances (refer to unit tests).
+    if (execXhr && execXhr.readyState != 4) {
+        execXhr = null;
+    }
+    // Re-using the XHR improves exec() performance by about 10%.
+    execXhr = execXhr || new XMLHttpRequest();
+    // Changing this to a GET will make the XHR reach the URIProtocol on 4.2.
+    // For some reason it still doesn't work though...
+    // Add a timestamp to the query param to prevent caching.
+    execXhr.open('HEAD', "/!gap_exec?" + (+new Date()), true);
+    if (!vcHeaderValue) {
+        vcHeaderValue = /.*\((.*)\)/.exec(navigator.userAgent)[1];
+    }
+    execXhr.setRequestHeader('vc', vcHeaderValue);
+    execXhr.setRequestHeader('rc', ++requestCount);
+    if (shouldBundleCommandJson()) {
+        execXhr.setRequestHeader('cmds', iOSExec.nativeFetchMessages());
+    }
+    execXhr.send(null);
+}
+
+function pokeNativeViaIframe() {
+    // CB-5488 - Don't attempt to create iframe before document.body is available.
+    if (!document.body) {
+        setTimeout(pokeNativeViaIframe);
+        return;
+    }
+    if (bridgeMode === jsToNativeModes.IFRAME_HASH_NO_PAYLOAD || bridgeMode === jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD) {
+        execHashIframe = execHashIframe || createHashIframe();
+        // Check if they've removed it from the DOM, and put it back if so.
+        if (!execHashIframe.contentWindow) {
+            execHashIframe = createHashIframe();
+        }
+        // The delegate method is called only when the hash changes, so toggle it back and forth.
+        hashToggle = hashToggle ^ 3;
+        var hashValue = '%0' + hashToggle;
+        if (bridgeMode === jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD) {
+            hashValue += iOSExec.nativeFetchMessages();
+        }
+        execHashIframe.contentWindow.location.hash = hashValue;
+    } else {
+        execIframe = execIframe || createExecIframe();
+        // Check if they've removed it from the DOM, and put it back if so.
+        if (!execIframe.contentWindow) {
+            execIframe = createExecIframe();
+        }
+        execIframe.src = "gap://ready";
     }
 }
 
@@ -1182,9 +1206,13 @@ modulemapper.clobbers('cordova/exec', 'Cordova.exec');
 // Call the platform-specific initialization.
 platform.bootstrap && platform.bootstrap();
 
-pluginloader.load(function() {
-    channel.onPluginsReady.fire();
-});
+// Wrap in a setTimeout to support the use-case of having plugin JS appended to cordova.js.
+// The delay allows the attached modules to be defined before the plugin loader looks for them.
+setTimeout(function() {
+    pluginloader.load(function() {
+        channel.onPluginsReady.fire();
+    });
+}, 0);
 
 /**
  * Create all cordova objects once native side is ready.
@@ -1206,6 +1234,111 @@ channel.join(function() {
 
 }, platformInitChannelsArray);
 
+
+});
+
+// file: src/common/init_b.js
+define("cordova/init_b", function(require, exports, module) {
+
+var channel = require('cordova/channel');
+var cordova = require('cordova');
+var platform = require('cordova/platform');
+
+var platformInitChannelsArray = [channel.onDOMContentLoaded, channel.onNativeReady];
+
+// setting exec
+cordova.exec = require('cordova/exec');
+
+function logUnfiredChannels(arr) {
+    for (var i = 0; i < arr.length; ++i) {
+        if (arr[i].state != 2) {
+            console.log('Channel not fired: ' + arr[i].type);
+        }
+    }
+}
+
+window.setTimeout(function() {
+    if (channel.onDeviceReady.state != 2) {
+        console.log('deviceready has not fired after 5 seconds.');
+        logUnfiredChannels(platformInitChannelsArray);
+        logUnfiredChannels(channel.deviceReadyChannelsArray);
+    }
+}, 5000);
+
+// Replace navigator before any modules are required(), to ensure it happens as soon as possible.
+// We replace it so that properties that can't be clobbered can instead be overridden.
+function replaceNavigator(origNavigator) {
+    var CordovaNavigator = function() {};
+    CordovaNavigator.prototype = origNavigator;
+    var newNavigator = new CordovaNavigator();
+    // This work-around really only applies to new APIs that are newer than Function.bind.
+    // Without it, APIs such as getGamepads() break.
+    if (CordovaNavigator.bind) {
+        for (var key in origNavigator) {
+            if (typeof origNavigator[key] == 'function') {
+                newNavigator[key] = origNavigator[key].bind(origNavigator);
+            }
+        }
+    }
+    return newNavigator;
+}
+if (window.navigator) {
+    window.navigator = replaceNavigator(window.navigator);
+}
+
+if (!window.console) {
+    window.console = {
+        log: function(){}
+    };
+}
+if (!window.console.warn) {
+    window.console.warn = function(msg) {
+        this.log("warn: " + msg);
+    };
+}
+
+// Register pause, resume and deviceready channels as events on document.
+channel.onPause = cordova.addDocumentEventHandler('pause');
+channel.onResume = cordova.addDocumentEventHandler('resume');
+channel.onDeviceReady = cordova.addStickyDocumentEventHandler('deviceready');
+
+// Listen for DOMContentLoaded and notify our channel subscribers.
+if (document.readyState == 'complete' || document.readyState == 'interactive') {
+    channel.onDOMContentLoaded.fire();
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        channel.onDOMContentLoaded.fire();
+    }, false);
+}
+
+// _nativeReady is global variable that the native side can set
+// to signify that the native code is ready. It is a global since
+// it may be called before any cordova JS is ready.
+if (window._nativeReady) {
+    channel.onNativeReady.fire();
+}
+
+// Call the platform-specific initialization.
+platform.bootstrap && platform.bootstrap();
+
+/**
+ * Create all cordova objects once native side is ready.
+ */
+channel.join(function() {
+    
+    platform.initialize && platform.initialize();
+
+    // Fire event to notify that all objects are created
+    channel.onCordovaReady.fire();
+
+    // Fire onDeviceReady event once page has fully loaded, all
+    // constructors have run and cordova info has been received from native
+    // side.
+    channel.join(function() {
+        require('cordova').fireDocumentEvent('deviceready');
+    }, channel.deviceReadyChannelsArray);
+
+}, platformInitChannelsArray);
 
 });
 
@@ -1330,42 +1463,50 @@ var modulemapper = require('cordova/modulemapper');
 var urlutil = require('cordova/urlutil');
 
 // Helper function to inject a <script> tag.
-function injectScript(url, onload, onerror) {
+// Exported for testing.
+exports.injectScript = function(url, onload, onerror) {
     var script = document.createElement("script");
     // onload fires even when script fails loads with an error.
     script.onload = onload;
-    script.onerror = onerror || onload;
+    // onerror fires for malformed URLs.
+    script.onerror = onerror;
     script.src = url;
     document.head.appendChild(script);
+};
+
+function injectIfNecessary(id, url, onload, onerror) {
+    onerror = onerror || onload;
+    if (id in define.moduleMap) {
+        onload();
+    } else {
+        exports.injectScript(url, function() {
+            if (id in define.moduleMap) {
+                onload();
+            } else {
+                onerror();
+            }
+        }, onerror);
+    }
 }
 
 function onScriptLoadingComplete(moduleList, finishPluginLoading) {
     // Loop through all the plugins and then through their clobbers and merges.
     for (var i = 0, module; module = moduleList[i]; i++) {
-        if (module) {
-            try {
-                if (module.clobbers && module.clobbers.length) {
-                    for (var j = 0; j < module.clobbers.length; j++) {
-                        modulemapper.clobbers(module.id, module.clobbers[j]);
-                    }
-                }
-
-                if (module.merges && module.merges.length) {
-                    for (var k = 0; k < module.merges.length; k++) {
-                        modulemapper.merges(module.id, module.merges[k]);
-                    }
-                }
-
-                // Finally, if runs is truthy we want to simply require() the module.
-                // This can be skipped if it had any merges or clobbers, though,
-                // since the mapper will already have required the module.
-                if (module.runs && !(module.clobbers && module.clobbers.length) && !(module.merges && module.merges.length)) {
-                    modulemapper.runs(module.id);
-                }
+        if (module.clobbers && module.clobbers.length) {
+            for (var j = 0; j < module.clobbers.length; j++) {
+                modulemapper.clobbers(module.id, module.clobbers[j]);
             }
-            catch(err) {
-                // error with module, most likely clobbers, should we continue?
+        }
+
+        if (module.merges && module.merges.length) {
+            for (var k = 0; k < module.merges.length; k++) {
+                modulemapper.merges(module.id, module.merges[k]);
             }
+        }
+
+        // Finally, if runs is truthy we want to simply require() the module.
+        if (module.runs) {
+            modulemapper.runs(module.id);
         }
     }
 
@@ -1391,24 +1532,8 @@ function handlePluginsObject(path, moduleList, finishPluginLoading) {
     }
 
     for (var i = 0; i < moduleList.length; i++) {
-        injectScript(path + moduleList[i].file, scriptLoadedCallback);
+        injectIfNecessary(moduleList[i].id, path + moduleList[i].file, scriptLoadedCallback);
     }
-}
-
-function injectPluginScript(pathPrefix, finishPluginLoading) {
-    var pluginPath = pathPrefix + 'cordova_plugins.js';
-
-    injectScript(pluginPath, function() {
-        try {
-            var moduleList = require("cordova/plugin_list");
-            handlePluginsObject(pathPrefix, moduleList, finishPluginLoading);
-        }
-        catch (e) {
-            // Error loading cordova_plugins.js, file not found or something
-            // this is an acceptable error, pre-3.0.0, so we just move on.
-            finishPluginLoading();
-        }
-    }, finishPluginLoading); // also, add script load error handler for file not found
 }
 
 function findCordovaPath() {
@@ -1434,7 +1559,10 @@ exports.load = function(callback) {
         console.log('Could not find cordova.js script tag. Plugin loading may fail.');
         pathPrefix = '';
     }
-    injectPluginScript(pathPrefix, callback);
+    injectIfNecessary('cordova/plugin_list', pathPrefix + 'cordova_plugins.js', function() {
+        var moduleList = require("cordova/plugin_list");
+        handlePluginsObject(pathPrefix, moduleList, callback);
+    }, callback);
 };
 
 
