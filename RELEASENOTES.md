@@ -20,9 +20,49 @@
 -->
 ## Release Notes for Cordova (iOS) ##
 
-Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/2.7.x...HEAD
+Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/3.5.x…HEAD
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+### 3.5.0 (201405XX) ###
+
+* CB-6638 - Convert CordovaLibTests to XCTests
+* CB-6579 - CDVWebViewDelegateTests are failing
+* CB-6580 - CDVWhitelistTests are failing
+* CB-6578 - Fix CordovaLibTests not building
+* CB-6553: added top-level package.json file
+* CB-6491 add CONTRIBUTING.md
+* CB-6500 - Cordova requires arm64 architecture.
+* CB-6383 Fix copy-www-build-step.sh when user has macports installed
+* CB-6327: Allow '.' in plugin feature names (and therefore callback ids)
+* CB-6287 - Add build script support for arm64
+* CB-6340 - Adding rebroadcast capabilities to remote notification registration within AppDelegate (closes #94)
+* CB-6217 iOS simulator targets not consistent across scripts
+* CB-5286 - Fix warnings when compiled under arm64
+* CB-4863 - Drop iOS 5.0 support, and support arm64 (closes #90)
+* CB-6149 - AppDelegate uses deprecated handleOpenURL
+* CB-6150 - objc_msgSend causes EXC_BAD_ACCESS with plugins on arm64
+* CB-5018 - bin/create on iOS should use --arc by default
+* CB-5943 - Update/remove obsolete items in cordova-ios repo
+* CB-5395: Make scheme and host (but not path) case-insensitive in whitelist
+* CB-5991: Fix whitelist path matching for trailing slashes
+* CB-5967 Fix isTopLevelNavigation not being set correctly in rare cases.
+* Validate that callback IDs are always well-formed
+* Removed obsolete .gitmodules
+* Update Xcode .pbxproj files according to Xcode 5.1 recommendations
+* Added NSLog notification for beginning backup to iCloud (closes #96)
+ 
+### 3.4.1 (201403XX) ###
+ 
+* Update Xcode .pbxproj files according to Xcode 5.1 recommendations
+* CB-6327: Allow '.' in plugin feature names (and therefore callback ids)
+* CB-6287 - Add build script support for arm64
+* CB-6217 iOS simulator targets not consistent across scripts
+* CB-5286 - Fix warnings when compiled under arm64
+* CB-4863 - Drop iOS 5.0 support, and support arm64
+* CB-6150 - objc\_msgSend causes EXC\_BAD\_ACCESS with plugins on arm64
+* Validate that callback IDs are always well-formed
+* CB-5018 - bin/create on iOS should use --arc by default
 
 ### 3.4.0 (201402XX) ###
 
