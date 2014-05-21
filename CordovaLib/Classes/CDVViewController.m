@@ -78,6 +78,7 @@
         self.supportedOrientations = [self parseInterfaceOrientations:
             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 
+        [self printVersion];
         [self printMultitaskingInfo];
         [self printDeprecationNotice];
         self.initialized = YES;
@@ -116,6 +117,11 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+}
+
+- (void) printVersion
+{
+    NSLog(@"Apache Cordova native platform version %@ is starting.", CDV_VERSION);
 }
 
 - (void)printDeprecationNotice
