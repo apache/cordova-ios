@@ -80,7 +80,7 @@
 
         [self printVersion];
         [self printMultitaskingInfo];
-        [self printDeprecationNotice];
+        [self printPlatformVersionWarning];
         self.initialized = YES;
 
         // load config.xml settings
@@ -124,10 +124,10 @@
     NSLog(@"Apache Cordova native platform version %@ is starting.", CDV_VERSION);
 }
 
-- (void)printDeprecationNotice
+- (void)printPlatformVersionWarning
 {
-    if (!IsAtLeastiOSVersion(@"5.0")) {
-        NSLog(@"CRITICAL: For Cordova 2.0, you will need to upgrade to at least iOS 5.0 or greater. Your current version of iOS is %@.",
+    if (!IsAtLeastiOSVersion(@"6.0")) {
+        NSLog(@"CRITICAL: For Cordova 3.5.0 and above, you will need to upgrade to at least iOS 6.0 or greater. Your current version of iOS is %@.",
             [[UIDevice currentDevice] systemVersion]
             );
     }
