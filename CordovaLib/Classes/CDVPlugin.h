@@ -59,8 +59,10 @@ extern NSString* const CDVRemoteNotificationError;
 - (id)appDelegate;
 
 // TODO(agrieve): Deprecate these in favour of using CDVCommandDelegate directly.
-- (NSString*)writeJavascript:(NSString*)javascript;
-- (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
-- (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId;
+- (NSString*)writeJavascript:(NSString*)javascript CDV_DEPRECATED(3.6, "Use the CDVCommandDelegate equivalent of evalJs:");
+
+- (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId CDV_DEPRECATED(3.6, "Use the CDVCommandDelegate equivalent of sendPluginResult:callbackId");
+
+- (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId CDV_DEPRECATED(3.6, "Use the CDVCommandDelegate equivalent of sendPluginResult:callbackId");
 
 @end
