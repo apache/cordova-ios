@@ -44,11 +44,12 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
     if (allowWildcards) {
         regex = [regex stringByReplacingOccurrencesOfString:@"\\*" withString:@".*"];
+
         /* [NSURL path] has the peculiarity that a trailing slash at the end of a path
          * will be omitted. This regex tweak compensates for that.
          */
         if ([regex hasSuffix:@"\\/.*"]) {
-            regex = [NSString stringWithFormat:@"%@(\\/.*)?", [regex substringToIndex:([regex length]-4)]];
+            regex = [NSString stringWithFormat:@"%@(\\/.*)?", [regex substringToIndex:([regex length] - 4)]];
         }
     }
     return [NSString stringWithFormat:@"%@$", regex];

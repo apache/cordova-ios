@@ -341,10 +341,10 @@
 
     if ([backupType isEqualToString:@"cloud"]) {
 #ifdef DEBUG
-        NSLog(@"\n\nStarted backup to iCloud! Please be careful."
-              "\nYour application might be rejected by Apple if you store too much data."
-              "\nFor more information please read \"iOS Data Storage Guidelines\" at:"
-              "\nhttps://developer.apple.com/icloud/documentation/data-storage/\n\n");
+            NSLog(@"\n\nStarted backup to iCloud! Please be careful."
+                "\nYour application might be rejected by Apple if you store too much data."
+                "\nFor more information please read \"iOS Data Storage Guidelines\" at:"
+                "\nhttps://developer.apple.com/icloud/documentation/data-storage/\n\n");
 #endif
         // We would like to restore old backups/caches databases to the new destination (nested in lib folder)
         [backupInfo addObjectsFromArray:[self createBackupInfoWithTargetDir:appLibraryFolder backupDir:[appDocumentsFolder stringByAppendingPathComponent:@"Backups"] targetDirNests:YES backupDirNests:NO rename:YES]];

@@ -119,7 +119,7 @@
     [super viewWillDisappear:animated];
 }
 
-- (void) printVersion
+- (void)printVersion
 {
     NSLog(@"Apache Cordova native platform version %@ is starting.", CDV_VERSION);
 }
