@@ -5,11 +5,20 @@
 //  Created by Matt Gallagher on 2009/06/03.
 //  Copyright 2009 Matt Gallagher. All rights reserved.
 //
-//  Permission is given to use this source code file, free of charge, in any
-//  project, commercial or otherwise, entirely at your risk, with the condition
-//  that any redistribution (in part or whole) of source code must retain
-//  this copyright and permission notice. Attribution in compiled projects is
-//  appreciated but not required.
+//  This software is provided 'as-is', without any express or implied
+//  warranty. In no event will the authors be held liable for any damages
+//  arising from the use of this software. Permission is granted to anyone to
+//  use this software for any purpose, including commercial applications, and to
+//  alter it and redistribute it freely, subject to the following restrictions:
+//
+//  1. The origin of this software must not be misrepresented; you must not
+//     claim that you wrote the original software. If you use this software
+//     in a product, an acknowledgment in the product documentation would be
+//     appreciated but is not required.
+//  2. Altered source versions must be plainly marked as such, and must not be
+//     misrepresented as being the original software.
+//  3. This notice may not be removed or altered from any source
+//     distribution.
 //
 
 #import "NSData+Base64.h"
@@ -17,7 +26,7 @@
 //
 // Mapping from 6 bit pattern to ASCII character.
 //
-static unsigned char cdvbase64EncodeLookup[65] =
+static unsigned char base64EncodeLookup[65] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 //
@@ -28,7 +37,7 @@ static unsigned char cdvbase64EncodeLookup[65] =
 //
 // Mapping from ASCII character to 6 bit pattern.
 //
-static unsigned char cdvbase64DecodeLookup[256] =
+static unsigned char base64DecodeLookup[256] =
 {
     xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx,
     xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx,
@@ -51,8 +60,8 @@ static unsigned char cdvbase64DecodeLookup[256] =
 //
 // Fundamental sizes of the binary and base64 encode/decode units in bytes
 //
-#define CDV_BINARY_UNIT_SIZE 3
-#define CDV_BASE64_UNIT_SIZE 4
+#define BINARY_UNIT_SIZE 3
+#define BASE64_UNIT_SIZE 4
 
 //
 // NewBase64Decode
@@ -64,7 +73,7 @@ static unsigned char cdvbase64DecodeLookup[256] =
 //	length - the length of the string or -1 (to specify strlen should be used)
 //	outputLength - if not-NULL, on output will contain the decoded length
 //
-// returns the decoded buffer. Must be freed by caller. Length is given by
+// returns the decoded buffer. Must be free'd by caller. Length is given by
 //	outputLength.
 //
 void *CDVNewBase64Decode(
@@ -76,7 +85,8 @@ void *CDVNewBase64Decode(
         length = strlen(inputBuffer);
     }
 
-    size_t outputBufferSize = (length / CDV_BASE64_UNIT_SIZE) * CDV_BINARY_UNIT_SIZE;
+    size_t outputBufferSize =
+        ((length + BASE64_UNIT_SIZE - 1) / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE;
     unsigned char* outputBuffer = (unsigned char*)malloc(outputBufferSize);
 
     size_t i = 0;
@@ -86,17 +96,16 @@ void *CDVNewBase64Decode(
         //
         // Accumulate 4 valid characters (ignore everything else)
         //
-        unsigned char accumulated[CDV_BASE64_UNIT_SIZE];
-        bzero(accumulated, sizeof(unsigned char) * CDV_BASE64_UNIT_SIZE);
+        unsigned char accumulated[BASE64_UNIT_SIZE];
         size_t accumulateIndex = 0;
 
         while (i < length) {
-            unsigned char decode = cdvbase64DecodeLookup[inputBuffer[i++]];
+            unsigned char decode = base64DecodeLookup[inputBuffer[i++]];
             if (decode != xx) {
                 accumulated[accumulateIndex] = decode;
                 accumulateIndex++;
 
-                if (accumulateIndex == CDV_BASE64_UNIT_SIZE) {
+                if (accumulateIndex == BASE64_UNIT_SIZE) {
                     break;
                 }
             }
@@ -105,9 +114,17 @@ void *CDVNewBase64Decode(
         //
         // Store the 6 bits from each of the 4 characters as 3 bytes
         //
-        outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);
-        outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);
-        outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
+        // (Uses improved bounds checking suggested by Alexandre Colucci)
+        //
+        if (accumulateIndex >= 2) {
+            outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);
+        }
+        if (accumulateIndex >= 3) {
+            outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);
+        }
+        if (accumulateIndex >= 4) {
+            outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
+        }
         j += accumulateIndex - 1;
     }
 
@@ -118,7 +135,7 @@ void *CDVNewBase64Decode(
 }
 
 //
-// NewBase64Decode
+// NewBase64Encode
 //
 // Encodes the arbitrary data in the inputBuffer as base64 into a newly malloced
 // output buffer.
@@ -130,7 +147,7 @@ void *CDVNewBase64Decode(
 //	outputLength - if not-NULL, on output will contain the encoded length
 //		(not including terminating 0 char)
 //
-// returns the encoded buffer. Must be freed by caller. Length is given by
+// returns the encoded buffer. Must be free'd by caller. Length is given by
 //	outputLength.
 //
 char *CDVNewBase64Encode(
@@ -143,16 +160,16 @@ char *CDVNewBase64Encode(
 
 #define MAX_NUM_PADDING_CHARS 2
 #define OUTPUT_LINE_LENGTH 64
-#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / CDV_BASE64_UNIT_SIZE) * CDV_BINARY_UNIT_SIZE)
-#define CR_LF_SIZE 0
+#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE)
+#define CR_LF_SIZE 2
 
     //
     // Byte accurate calculation of final buffer size
     //
     size_t outputBufferSize =
-        ((length / CDV_BINARY_UNIT_SIZE)
-        + ((length % CDV_BINARY_UNIT_SIZE) ? 1 : 0))
-        * CDV_BASE64_UNIT_SIZE;
+        ((length / BINARY_UNIT_SIZE)
+        + ((length % BINARY_UNIT_SIZE) ? 1 : 0))
+        * BASE64_UNIT_SIZE;
     if (separateLines) {
         outputBufferSize +=
             (outputBufferSize / OUTPUT_LINE_LENGTH) * CR_LF_SIZE;
@@ -181,16 +198,16 @@ char *CDVNewBase64Encode(
             lineEnd = length;
         }
 
-        for (; i + CDV_BINARY_UNIT_SIZE - 1 < lineEnd; i += CDV_BINARY_UNIT_SIZE) {
+        for (; i + BINARY_UNIT_SIZE - 1 < lineEnd; i += BINARY_UNIT_SIZE) {
             //
             // Inner loop: turn 48 bytes into 64 base64 characters
             //
-            outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-            outputBuffer[j++] = cdvbase64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+            outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+            outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
                 | ((inputBuffer[i + 1] & 0xF0) >> 4)];
-            outputBuffer[j++] = cdvbase64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
+            outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
                 | ((inputBuffer[i + 2] & 0xC0) >> 6)];
-            outputBuffer[j++] = cdvbase64EncodeLookup[inputBuffer[i + 2] & 0x3F];
+            outputBuffer[j++] = base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
         }
 
         if (lineEnd == length) {
@@ -209,17 +226,17 @@ char *CDVNewBase64Encode(
         //
         // Handle the single '=' case
         //
-        outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-        outputBuffer[j++] = cdvbase64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+        outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
             | ((inputBuffer[i + 1] & 0xF0) >> 4)];
-        outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
+        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
         outputBuffer[j++] = '=';
     } else if (i < length) {
         //
         // Handle the double '=' case
         //
-        outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-        outputBuffer[j++] = cdvbase64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
+        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
         outputBuffer[j++] = '=';
         outputBuffer[j++] = '=';
     }
