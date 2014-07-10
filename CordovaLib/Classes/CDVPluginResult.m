@@ -96,7 +96,7 @@ id messageFromMultipart(NSArray* theMessages)
 
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal
 {
-    return [[self alloc] initWithStatus:statusOrdinal message:[org_apache_cordova_CommandStatusMsgs objectAtIndex:statusOrdinal]];
+    return [[self alloc] initWithStatus:statusOrdinal message:nil];
 }
 
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString*)theMessage
