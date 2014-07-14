@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
+ 
  http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -48,16 +48,16 @@
     NSBundle* mainBundle = [NSBundle mainBundle];
     NSMutableArray* directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
     NSString* filename = [directoryParts lastObject];
-
+    
     [directoryParts removeLastObject];
-
+    
     NSString* directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
     NSString* directoryStr = _viewController.wwwFolderName;
-
+    
     if ([directoryPartsJoined length] > 0) {
         directoryStr = [NSString stringWithFormat:@"%@/%@", _viewController.wwwFolderName, [directoryParts componentsJoinedByString:@"/"]];
     }
-
+    
     return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];
 }
 
@@ -71,13 +71,18 @@
 - (void)evalJsHelper2:(NSString*)js
 {
     CDV_EXEC_LOG(@"Exec: evalling: %@", [js substringToIndex:MIN([js length], 160)]);
-    NSString* commandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:js];
-    if ([commandsJSON length] > 0) {
-        CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
-    }
-
-    [_commandQueue enqueueCommandBatch:commandsJSON];
-    [_commandQueue executePending];
+    [_viewController.webViewOperationsDelegate evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
+        // TODO: obj can be something other than string
+        if ([obj isKindOfClass:[NSString class]]) {
+            NSString* commandsJSON = (NSString*)obj;
+            if ([commandsJSON length] > 0) {
+                CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
+            }
+            
+            [_commandQueue enqueueCommandBatch:commandsJSON];
+            [_commandQueue executePending];
+        }
+    }];
 }
 
 - (void)evalJsHelper:(NSString*)js
@@ -131,9 +136,9 @@
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
     NSString* argumentsAsJSON = [result argumentsAsJSON];
-
+    
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)", callbackId, status, argumentsAsJSON, keepCallback];
-
+    
     [self evalJsHelper:js];
 }
 
@@ -170,7 +175,7 @@
 - (BOOL)URLIsWhitelisted:(NSURL*)url
 {
     return ![_viewController.whitelist schemeIsAllowed:[url scheme]] ||
-           [_viewController.whitelist URLIsAllowed:url logFailure:NO];
+    [_viewController.whitelist URLIsAllowed:url logFailure:NO];
 }
 
 - (NSDictionary*)settings

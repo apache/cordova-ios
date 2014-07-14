@@ -109,9 +109,22 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
 
 - (void)fetchCommandsFromJs
 {
+    NSString* js = @"cordova.require('cordova/exec').nativeFetchMessages()";
+    SEL ui_selector = NSSelectorFromString(@"stringByEvaluatingJavaScriptFromString:");
+
     // Grab all the queued commands from the JS side.
-    NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
-        @"cordova.require('cordova/exec').nativeFetchMessages()"];
+    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:
+        [[_viewController.webView class] instanceMethodSignatureForSelector:ui_selector]];
+
+    [invocation setSelector:ui_selector];
+    [invocation setTarget:_viewController.webView];
+    // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+    [invocation setArgument:&(js) atIndex:2];
+
+    [invocation invoke];
+
+    NSString* queuedCommandsJSON;
+    [invocation getReturnValue:&(queuedCommandsJSON)];
 
     CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
     [self enqueueCommandBatch:queuedCommandsJSON];

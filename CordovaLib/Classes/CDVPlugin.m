@@ -18,6 +18,7 @@
  */
 
 #import "CDVPlugin.h"
+#import "CDVViewController.h"
 
 NSString* const CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
 NSString* const CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
@@ -36,12 +37,12 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
 @synthesize webView, viewController, commandDelegate, hasPendingOperation;
 
 // Do not override these methods. Use pluginInitialize instead.
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
+- (instancetype)initWithWebView:(UIView*)theWebView settings:(NSDictionary*)classSettings
 {
     return [self initWithWebView:theWebView];
 }
 
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
+- (instancetype)initWithWebView:(UIView*)theWebView
 {
     self = [super init];
     if (self) {
@@ -130,7 +131,9 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
 
 - (NSString*)writeJavascript:(NSString*)javascript
 {
-    return [self.webView stringByEvaluatingJavaScriptFromString:javascript];
+    // TODO: although deprecated, should have some solution here instead of removing it
+    [((CDVViewController*)self.viewController).webViewOperationsDelegate evaluateJavaScript : javascript completionHandler : nil]; // bad cast, but ok for now
+    return @"";
 }
 
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId

@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,20 +17,19 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import "CDVCommandDelegate.h"
+#import <Foundation/Foundation.h>
 
-@class CDVViewController;
-@class CDVCommandQueue;
+#ifdef __IPHONE_8_0
+    #import <WebKit/WebKit.h>
+#endif
 
-@interface CDVCommandDelegateImpl : NSObject <CDVCommandDelegate>{
-@private
-    __weak CDVViewController* _viewController;
-    NSRegularExpression* _callbackIdPattern;
-    @protected
-    __weak CDVCommandQueue* _commandQueue;
-    BOOL _delayResponses;
-}
-- (id)initWithViewController:(CDVViewController*)viewController;
-- (void)flushCommandQueueWithDelayedJs;
+@interface CDVWebViewUIDelegate : NSObject
+#ifdef __IPHONE_8_0
+                                      <WKUIDelegate>
+#endif
+
+@property (nonatomic, copy) NSString* title;
+
+- (instancetype)initWithTitle:(NSString*)title;
+
 @end

@@ -925,13 +925,17 @@ function convertMessageToArgsNativeToJs(message) {
 
 function iOSExec() {
     if (bridgeMode === undefined) {
+        if (navigator.userAgent) {
+            bridgeMode = navigator.userAgent.indexOf(' 5_') == -1 ? jsToNativeModes.IFRAME_NAV: jsToNativeModes.XHR_NO_PAYLOAD;
+		} else {
         bridgeMode = jsToNativeModes.IFRAME_NAV;
+        }
     }
 
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
         bridgeMode = jsToNativeModes.WK_WEBVIEW_BINDING;
     }
-
+    
     var successCallback, failCallback, service, action, actionArgs, splitCommand;
     var callbackId = null;
     if (typeof arguments[0] !== "string") {
