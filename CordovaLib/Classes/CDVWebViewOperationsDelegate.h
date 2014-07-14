@@ -17,20 +17,23 @@
  under the License.
  */
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "CDVCommandDelegate.h"
 
-@class CDVViewController;
-@class CDVCommandQueue;
+#ifdef __IPHONE_8_0
+#pragma message("For iOS 8 - Please add WebKit.framework into your 'Link Binary with Libraries' Build Phase Project Setting. This will be baked in once Xcode 6 is required.")
+#endif /* ifdef __IPHONE_8_0 */
 
-@interface CDVCommandDelegateImpl : NSObject <CDVCommandDelegate>{
-@private
-    __weak CDVViewController* _viewController;
-    NSRegularExpression* _callbackIdPattern;
-    @protected
-    __weak CDVCommandQueue* _commandQueue;
-    BOOL _delayResponses;
+
+@interface CDVWebViewOperationsDelegate : NSObject {
+    @private
+    __weak UIView* _webView;
 }
-- (id)initWithViewController:(CDVViewController*)viewController;
-- (void)flushCommandQueueWithDelayedJs;
+
+- (instancetype) initWithWebView:(UIView*)webView;
+
+- (void)loadRequest:(NSURLRequest*)request;
+- (void)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL;
+- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
+
 @end

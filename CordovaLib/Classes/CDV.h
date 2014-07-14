@@ -31,6 +31,8 @@
 #import "CDVLocalStorage.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVTimer.h"
+#import "CDVWebViewPreferences.h"
+#import "CDVWebViewOperationsDelegate.h"
 
 #import "NSArray+Comparisons.h"
 #import "NSData+Base64.h"

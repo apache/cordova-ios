@@ -22,6 +22,9 @@
 #import "CDVPluginResult.h"
 #import "NSMutableArray+QueueAdditions.h"
 #import "CDVCommandDelegate.h"
+#ifdef __IPHONE_8_0
+    #import <WebKit/WebKit.h>
+#endif
 
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
@@ -32,13 +35,13 @@ extern NSString* const CDVRemoteNotificationError;
 
 @interface CDVPlugin : NSObject {}
 
-@property (nonatomic, weak) UIWebView* webView;
+@property (nonatomic, weak) UIView* webView;
 @property (nonatomic, weak) UIViewController* viewController;
 @property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView;
+- (instancetype)initWithWebView:(UIView*)theWebView;
 - (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;
@@ -58,7 +61,7 @@ extern NSString* const CDVRemoteNotificationError;
 
 - (id)appDelegate;
 
-// TODO(agrieve): Deprecate these in favour of using CDVCommandDelegate directly.
+// TODO(agrieve)x: Deprecate these in favour of using CDVCommandDelegate directly.
 - (NSString*)writeJavascript:(NSString*)javascript CDV_DEPRECATED(3.6, "Use the CDVCommandDelegate equivalent of evalJs:");
 
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId CDV_DEPRECATED(3.6, "Use the CDVCommandDelegate equivalent of sendPluginResult:callbackId");

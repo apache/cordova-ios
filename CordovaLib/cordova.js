@@ -1,5 +1,5 @@
 // Platform: ios
-// 3.6.0-dev-7e845f3
+// 3.6.0-dev-f27458f
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '3.6.0-dev-7e845f3';
+var CORDOVA_JS_BUILD_LABEL = '3.6.0-dev-f27458f';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -826,7 +826,8 @@ var cordova = require('cordova'),
         XHR_OPTIONAL_PAYLOAD: 3,
         IFRAME_HASH_NO_PAYLOAD: 4,
         // Bundling the payload turns out to be slower. Probably since it has to be URI encoded / decoded.
-        IFRAME_HASH_WITH_PAYLOAD: 5
+        IFRAME_HASH_WITH_PAYLOAD: 5,
+        WK_WEBVIEW_BINDING: 6
     },
     bridgeMode,
     execIframe,
@@ -921,9 +922,17 @@ function iOSExec() {
     // Use IFRAME_NAV elsewhere since it's faster and XHR bridge
     // seems to have bugs in newer OS's (CB-3900, CB-3359, CB-5457, CB-4970, CB-4998, CB-5134)
     if (bridgeMode === undefined) {
-        bridgeMode = navigator.userAgent.indexOf(' 5_') == -1 ? jsToNativeModes.IFRAME_NAV: jsToNativeModes.XHR_NO_PAYLOAD;
+        if (navigator.userAgent) {
+            bridgeMode = navigator.userAgent.indexOf(' 5_') == -1 ? jsToNativeModes.IFRAME_NAV: jsToNativeModes.XHR_NO_PAYLOAD;
+		} else {
+            bridgeMode = jsToNativeModes.IFRAME_NAV;
+        }
     }
-
+	
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
+        bridgeMode = jsToNativeModes.WK_WEBVIEW_BINDING;
+    }
+    
     var successCallback, failCallback, service, action, actionArgs, splitCommand;
     var callbackId = null;
     if (typeof arguments[0] !== "string") {
@@ -973,20 +982,24 @@ function iOSExec() {
     // effectively clone the command arguments in case they are mutated before
     // the command is executed.
     commandQueue.push(JSON.stringify(command));
-
-    // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
-    // then the queue will be flushed when it returns; no need for a poke.
-    // Also, if there is already a command in the queue, then we've already
-    // poked the native side, so there is no reason to do so again.
-    if (!isInContextOfEvalJs && commandQueue.length == 1) {
-        switch (bridgeMode) {
-        case jsToNativeModes.XHR_NO_PAYLOAD:
-        case jsToNativeModes.XHR_WITH_PAYLOAD:
-        case jsToNativeModes.XHR_OPTIONAL_PAYLOAD:
-            pokeNativeViaXhr();
-            break;
-        default: // iframe-based.
-            pokeNativeViaIframe();
+    
+    if (bridgeMode === jsToNativeModes.WK_WEBVIEW_BINDING) {
+        window.webkit.messageHandlers.cordova.postMessage(command);
+    } else {
+        // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
+        // then the queue will be flushed when it returns; no need for a poke.
+        // Also, if there is already a command in the queue, then we've already
+        // poked the native side, so there is no reason to do so again.
+        if (!isInContextOfEvalJs && commandQueue.length == 1) {
+            switch (bridgeMode) {
+            case jsToNativeModes.XHR_NO_PAYLOAD:
+            case jsToNativeModes.XHR_WITH_PAYLOAD:
+            case jsToNativeModes.XHR_OPTIONAL_PAYLOAD:
+                pokeNativeViaXhr();
+                break;
+            default: // iframe-based.
+                pokeNativeViaIframe();
+            }
         }
     }
 }
