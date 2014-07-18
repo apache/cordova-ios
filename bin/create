@@ -126,14 +126,15 @@ mv "$R/gitignore" "$R/.gitignore"
 # - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
 # - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
 
-"$BINDIR/replaces" "$R.xcodeproj/project.pbxproj" __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/AppDelegate.h"     __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/AppDelegate.m"     __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/MainViewController.h" __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/Classes/MainViewController.m" __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/main.m"                    __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist"  __PROJECT_NAME__ "$PROJECT_NAME"
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __PROJECT_NAME__ "$PROJECT_NAME"
+PROJECT_NAME_ESC="${PROJECT_NAME//&/\\&}"
+"$BINDIR/replaces" "$R.xcodeproj/project.pbxproj" __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/Classes/AppDelegate.h"     __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/Classes/AppDelegate.m"     __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/Classes/MainViewController.h" __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/Classes/MainViewController.m" __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/main.m"                    __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
 
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
 
