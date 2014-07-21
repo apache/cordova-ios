@@ -257,7 +257,7 @@
         theWebView.configuration.mediaPlaybackRequiresUserAction = mediaPlaybackRequiresUserAction;
 
         BOOL suppressesIncrementalRendering = NO; // default
-        prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"];
+        prefObj = [self cordovaSettings:settings forKey:@"SuppressesIncrementalRendering"];
         if (prefObj != nil) {
             suppressesIncrementalRendering = [(NSNumber*)prefObj boolValue];
         }
