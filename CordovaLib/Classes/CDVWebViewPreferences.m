@@ -72,25 +72,34 @@
 
 - (void)updateUIWebView:(UIWebView*)theWebView settings:(NSDictionary*)settings
 {
-    NSString* enableViewportScale = [self cordovaSettings:settings forKey:@"EnableViewportScale"];
-    NSNumber* allowInlineMediaPlayback = [self cordovaSettings:settings forKey:@"AllowInlineMediaPlayback"];
-    BOOL mediaPlaybackRequiresUserAction = YES;  // default value
+    BOOL scalesPageToFit = NO; // default
+    id prefObj = [self cordovaSettings:settings forKey:@"EnableViewportScale"];
 
-    if ([self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"]) {
-        mediaPlaybackRequiresUserAction = [(NSNumber*)[self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"] boolValue];
+    if (prefObj != nil) {
+        scalesPageToFit = [(NSNumber*)prefObj boolValue];
     }
+    theWebView.scalesPageToFit = scalesPageToFit;
 
-    theWebView.scalesPageToFit = [enableViewportScale boolValue];
+    BOOL allowInlineMediaPlayback = NO; // default
+    prefObj = [self cordovaSettings:settings forKey:@"AllowInlineMediaPlayback"];
+    if (prefObj != nil) {
+        allowInlineMediaPlayback = [(NSNumber*)prefObj boolValue];
+    }
+    theWebView.allowsInlineMediaPlayback = allowInlineMediaPlayback;
 
-    /*
-     * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
-     */
-    if ([allowInlineMediaPlayback boolValue] && [theWebView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
-        theWebView.allowsInlineMediaPlayback = YES;
+    BOOL mediaPlaybackRequiresUserAction = YES;  // default
+    prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"];
+    if (prefObj != nil) {
+        mediaPlaybackRequiresUserAction = [(NSNumber*)prefObj boolValue];
     }
-    if ((mediaPlaybackRequiresUserAction == NO) && [theWebView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
-        theWebView.mediaPlaybackRequiresUserAction = NO;
+    theWebView.mediaPlaybackRequiresUserAction = mediaPlaybackRequiresUserAction;
+
+    BOOL mediaPlaybackAllowsAirPlay = YES;  // default
+    prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackAllowsAirPlay"];
+    if (prefObj != nil) {
+        mediaPlaybackAllowsAirPlay = [(NSNumber*)prefObj boolValue];
     }
+    theWebView.mediaPlaybackAllowsAirPlay = mediaPlaybackAllowsAirPlay;
 
     // By default, overscroll bouncing is allowed.
     // UIWebViewBounce has been renamed to DisallowOverscroll, but both are checked.
@@ -262,6 +271,13 @@
             suppressesIncrementalRendering = [(NSNumber*)prefObj boolValue];
         }
         theWebView.configuration.suppressesIncrementalRendering = suppressesIncrementalRendering;
+
+        BOOL mediaPlaybackAllowsAirPlay = YES;  // default
+        prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackAllowsAirPlay"];
+        if (prefObj != nil) {
+            mediaPlaybackAllowsAirPlay = [(NSNumber*)prefObj boolValue];
+        }
+        theWebView.configuration.mediaPlaybackAllowsAirPlay = mediaPlaybackAllowsAirPlay;
 
         /*
         BOOL javaScriptEnabled = YES;  // default value
