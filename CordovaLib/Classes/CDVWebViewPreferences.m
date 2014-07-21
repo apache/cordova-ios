@@ -242,6 +242,27 @@
         }
         theWebView.configuration.preferences.minimumFontSize = minimumFontSize;
 
+        BOOL allowInlineMediaPlayback = NO; // default
+        prefObj = [self cordovaSettings:settings forKey:@"AllowInlineMediaPlayback"];
+        if (prefObj != nil) {
+            allowInlineMediaPlayback = [(NSNumber*)prefObj boolValue];
+        }
+        theWebView.configuration.allowsInlineMediaPlayback = allowInlineMediaPlayback;
+
+        BOOL mediaPlaybackRequiresUserAction = YES;  // default
+        prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"];
+        if (prefObj != nil) {
+            mediaPlaybackRequiresUserAction = [(NSNumber*)prefObj boolValue];
+        }
+        theWebView.configuration.mediaPlaybackRequiresUserAction = mediaPlaybackRequiresUserAction;
+
+        BOOL suppressesIncrementalRendering = NO; // default
+        prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"];
+        if (prefObj != nil) {
+            suppressesIncrementalRendering = [(NSNumber*)prefObj boolValue];
+        }
+        theWebView.configuration.suppressesIncrementalRendering = suppressesIncrementalRendering;
+
         /*
         BOOL javaScriptEnabled = YES;  // default value
         if ([self cordovaSettings:settings forKey:@"JavaScriptEnabled"]) {
