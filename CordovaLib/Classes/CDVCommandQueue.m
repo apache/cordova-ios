@@ -109,25 +109,19 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
 
 - (void)fetchCommandsFromJs
 {
+    __weak CDVCommandQueue* weakSelf = self;
     NSString* js = @"cordova.require('cordova/exec').nativeFetchMessages()";
-    SEL ui_selector = NSSelectorFromString(@"stringByEvaluatingJavaScriptFromString:");
 
-    // Grab all the queued commands from the JS side.
-    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:
-        [[_viewController.webView class] instanceMethodSignatureForSelector:ui_selector]];
-
-    [invocation setSelector:ui_selector];
-    [invocation setTarget:_viewController.webView];
-    // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
-    [invocation setArgument:&(js) atIndex:2];
-
-    [invocation invoke];
-
-    NSString* queuedCommandsJSON;
-    [invocation getReturnValue:&(queuedCommandsJSON)];
-
-    CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
-    [self enqueueCommandBatch:queuedCommandsJSON];
+    [_viewController.webViewOperationsDelegate evaluateJavaScript:js
+                                                completionHandler:^(id obj, NSError* error) {
+        if ((error == nil) && [obj isKindOfClass:[NSString class]]) {
+            NSString* queuedCommandsJSON = (NSString*)obj;
+            CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
+            [weakSelf enqueueCommandBatch:queuedCommandsJSON];
+            // this has to be called here now, because fetchCommandsFromJs is now async (previously: synchronous)
+            [self executePending];
+        }
+    }];
 }
 
 - (void)executePending
