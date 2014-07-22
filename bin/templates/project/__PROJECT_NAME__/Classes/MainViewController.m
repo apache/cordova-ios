@@ -144,7 +144,7 @@
     return [super getCommandInstance:className];
 }
 
-- (NSString*)pathForResource:(NSString*)resourcepath;
+- (NSString*)pathForResource:(NSString*)resourcepath
 {
     return [super pathForResource:resourcepath];
 }

@@ -18,6 +18,8 @@
 # under the License.
 #
 
+PATH=$PATH:/usr/local/bin:/usr/local/sbin
+
 # Redirect output to stderr.
 exec 1>&2
 test $SKIP_UNCRUSTIFY && exit 0
