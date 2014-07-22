@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1B701028177A61CF00AE11F4 /* CDVShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B701026177A61CF00AE11F4 /* CDVShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B701029177A61CF00AE11F4 /* CDVShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B701027177A61CF00AE11F4 /* CDVShared.m */; };
 		1F92F4A01314023E0046367C /* CDVPluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F92F49E1314023E0046367C /* CDVPluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F92F4A11314023E0046367C /* CDVPluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F92F49F1314023E0046367C /* CDVPluginResult.m */; };
 		301F2F2A14F3C9CA003FE9FC /* CDV.h in Headers */ = {isa = PBXBuildFile; fileRef = 301F2F2914F3C9CA003FE9FC /* CDV.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -56,7 +55,6 @@
 
 /* Begin PBXFileReference section */
 		1B701026177A61CF00AE11F4 /* CDVShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVShared.h; path = Classes/CDVShared.h; sourceTree = "<group>"; };
-		1B701027177A61CF00AE11F4 /* CDVShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVShared.m; path = Classes/CDVShared.m; sourceTree = "<group>"; };
 		1F92F49E1314023E0046367C /* CDVPluginResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVPluginResult.h; path = Classes/CDVPluginResult.h; sourceTree = "<group>"; };
 		1F92F49F1314023E0046367C /* CDVPluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVPluginResult.m; path = Classes/CDVPluginResult.m; sourceTree = "<group>"; };
 		301F2F2914F3C9CA003FE9FC /* CDV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDV.h; path = Classes/CDV.h; sourceTree = "<group>"; };
@@ -204,7 +202,6 @@
 				30C684931407044A004C1A8E /* CDVURLProtocol.m */,
 				30C6847E1406CB38004C1A8E /* CDVWhitelist.h */,
 				1B701026177A61CF00AE11F4 /* CDVShared.h */,
-				1B701027177A61CF00AE11F4 /* CDVShared.m */,
 				30C6847F1406CB38004C1A8E /* CDVWhitelist.m */,
 				30E33AF013A7E24B00594D64 /* CDVPlugin.h */,
 				30E33AF113A7E24B00594D64 /* CDVPlugin.m */,
@@ -359,7 +356,6 @@
 				EB96673C16A8970A00D86CDF /* CDVUserAgentUtil.m in Sources */,
 				EBFF4DBC16D3FE2E008F452B /* CDVWebViewDelegate.m in Sources */,
 				7E14B5A91705050A0032169E /* CDVTimer.m in Sources */,
-				1B701029177A61CF00AE11F4 /* CDVShared.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
