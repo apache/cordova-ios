@@ -470,11 +470,13 @@
             configuration.userContentController = userContentController;
 
             cordovaView = [[WKWebView alloc] initWithFrame:bounds configuration:configuration];
+            NSLog(@"Using a WKWebView");
             _webViewUIDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
             ((WKWebView*)cordovaView).UIDelegate = _webViewUIDelegate;
 #endif
     } else {
         cordovaView = [[UIWebView alloc] initWithFrame:bounds];
+        NSLog(@"Using a UIWebView");
     }
 
     return cordovaView;
