@@ -462,7 +462,7 @@
 
             // scriptMessageHandler is the object that conforms to the WKScriptMessageHandler protocol
             // see https://developer.apple.com/library/prerelease/ios/documentation/WebKit/Reference/WKScriptMessageHandler_Ref/index.html#//apple_ref/swift/intf/WKScriptMessageHandler
-            if ([_commandDelegate conformsToProtocol:@protocol(WKScriptMessageHandler)]) {
+            if ([self conformsToProtocol:@protocol(WKScriptMessageHandler)]) {
                 [userContentController addScriptMessageHandler:self name:@"cordova"];
             }
 
