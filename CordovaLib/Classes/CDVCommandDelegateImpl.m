@@ -108,6 +108,10 @@
             return NO;
         }
     }
+    //Allow nil callbackId
+    if (callbackId == nil){
+      return YES;
+    }
     // Disallow if too long or if any invalid characters were found.
     if (([callbackId length] > 100) || [_callbackIdPattern firstMatchInString:callbackId options:0 range:NSMakeRange(0, [callbackId length])]) {
         return NO;
