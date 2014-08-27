@@ -99,6 +99,10 @@
 {
     NSError* err = nil;
 
+    if (callbackId == nil) {
+        return NO;
+    }
+
     // Initialize on first use
     if (_callbackIdPattern == nil) {
         // Catch any invalid characters in the callback id.
