@@ -31,7 +31,7 @@
 set -e
 
 function usage() {
-  echo "Usage: $0 [--shared] [--arc] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
+  echo "Usage: $0 [--shared] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
   echo "	--shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it."
   echo "	--cli (optional): Use the CLI-project template."
   echo "	<path_to_new_project>: Path to your new Cordova iOS project"
@@ -46,7 +46,6 @@ USE_CLI=0
 while [ $# -gt 0 ]; do
     case "$1" in
     --shared) USE_SHARED=1 ;;
-    --arc) USE_ARC=1 ;;
     --cli) USE_CLI=1 ;;
     -*) echo "Unrecognized argument: $1" >&2; usage ;;
     *)
