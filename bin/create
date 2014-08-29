@@ -47,7 +47,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
     --shared) USE_SHARED=1 ;;
     --cli) USE_CLI=1 ;;
-    -*) echo "Unrecognized argument: $1" >&2; usage ;;
+    -*) ;;
     *)
         if [[ -z "$PROJECT_PATH" ]]; then
             PROJECT_PATH="$1"
