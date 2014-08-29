@@ -20,11 +20,39 @@
 -->
 ## Release Notes for Cordova (iOS) ##
 
-Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/3.5.x…HEAD
+Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/3.6.x..HEAD
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
-### 3.5.0 (201405XX) ###
+### 3.6.0 (201409XX) ###
+
+* Updated default template.
+* CB-7432 - iOS - Version script should be updated by coho at release time
+* CB-5535 - ignore unused arguments in bin/create (e.g --arc), remove --arc references in bin/create
+* CB-6897 - nil callbackId in isValidCallbackId() causes regex match to throw exception
+* CB-6897 - Added unit test
+* CB-7169 Fix __PROECT_NAME__ replacing code in create script
+* Remove trailing whitespace from project template's .plist, .pch
+* CB-7187 Delete CDVShared.m & remove dependency on CoreLocation
+* Fix warning in MainViewController.m (spurious semi-colon)
+* CB-7162 - cordova-ios pre-commit hook can't find uncrustify in path in Git GUI apps
+* CB-7134 - Deprecate CDVPluginResult methods
+* CB-7043 - property "statusCode" of CDVHTTPURLResponse conflicts with superclass property statusCode of NSHTTPURLResponse
+* CB-6165 - Removing the "OK" String from success callback
+* Update version of NSData+Base64 to get a more normal license on it
+* Minor uncrustification of a few files
+* Update LICENSE to include shelljs's license
+* Remove LICENSE entries for files that we no longer use
+* CB-6579 - update deprecation to use CDV_DEPRECATED macro
+* CB-6998 - Remove CDVCommandDelegate::execute deprecated call (deprecated since 2.2)
+* CB-6997 - Deprecate obsolete CDVPlugin methods
+* Fix minor grammar in CDVLocalStorage iCloud warning.
+* CB-6785 - Add license to CONTRIBUTING.md
+* CB-6729 - Update printDeprecationNotice to new name, and new warning for iOS < 6.0
+* CB-5651 - [iOS] make visible the version of the Cordova native lib
+
+
+### 3.5.0 (20140522) ###
 
 * CB-6638 - Convert CordovaLibTests to XCTests
 * CB-6579 - CDVWebViewDelegateTests are failing
