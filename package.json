@@ -12,6 +12,9 @@
         "cordova",
         "apache"
     ],
+    "scripts": {
+        "test": "rm -rf \"testcreate 応用\"; ./bin/create \"testcreate 応用\" com.test.app 応用 && \"./testcreate 応用/cordova/build\" && rm -rf \"testcreate 応用\""
+    },
     "author": "Apache Software Foundation",
     "license": "Apache Version 2.0",
     "dependencies": {
