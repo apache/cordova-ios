@@ -1,6 +1,6 @@
 {
     "name": "cordova-ios",
-    "version": "3.6.1",
+    "version": "3.6.3",
     "description": "cordova-ios release",
     "main": "bin/create",
     "repository": {
