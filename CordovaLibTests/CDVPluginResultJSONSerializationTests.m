@@ -30,29 +30,29 @@
 
 - (void)testSerializingMessageAsInt
 {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:5];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSNumber* message = [dic objectForKey:@"message"];
+    int val = 5;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:val];
+    NSString* argJson = [[result argumentsAsJSON] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    XCTAssertTrue([[NSNumber numberWithInt:5] isEqual:message]);
+    XCTAssertTrue([[NSNumber numberWithInt:val] isEqual:@([argJson intValue])]);
 }
 
 - (void)testSerializingMessageAsDouble
 {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:5.5];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSNumber* message = [dic objectForKey:@"message"];
+    double val = 5.5;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:val];
+    NSString* argJson = [[result argumentsAsJSON] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    XCTAssertTrue([[NSNumber numberWithDouble:5.5] isEqual:message]);
+    XCTAssertTrue([[NSNumber numberWithDouble:val] isEqual:@([argJson doubleValue])]);
 }
 
 - (void)testSerializingMessageAsBool
 {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSNumber* message = [dic objectForKey:@"message"];
+    BOOL val = YES;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:val];
+    NSString* argJson = [[result argumentsAsJSON] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    XCTAssertTrue([[NSNumber numberWithBool:YES] isEqual:message]);
+    XCTAssertTrue([[NSNumber numberWithBool:val] isEqual:@([argJson boolValue])]);
 }
 
 - (void)testSerializingMessageAsArray
@@ -66,14 +66,13 @@
         nil];
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:testValues];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSArray* message = [dic objectForKey:@"message"];
+    NSArray* arr = [[result argumentsAsJSON] JSONObject];
 
-    XCTAssertTrue([message isKindOfClass:[NSArray class]]);
-    XCTAssertTrue([testValues count] == [message count]);
+    XCTAssertTrue([arr isKindOfClass:[NSArray class]]);
+    XCTAssertTrue([testValues count] == [arr count]);
 
     for (NSInteger i = 0; i < [testValues count]; i++) {
-        XCTAssertTrue([[testValues objectAtIndex:i] isEqual:[message objectAtIndex:i]]);
+        XCTAssertTrue([[testValues objectAtIndex:i] isEqual:[arr objectAtIndex:i]]);
     }
 }
 
@@ -113,10 +112,9 @@
     [testValues setValue:nestedDict forKey:@"nestedDict"];
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:testValues];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSDictionary* message = [dic objectForKey:@"message"];
+    NSDictionary* dic = [[result argumentsAsJSON] JSONObject];
 
-    [self __testDictionary:testValues withDictionary:message];
+    [self __testDictionary:testValues withDictionary:dic];
 }
 
 - (void)testSerializingMessageAsErrorCode
@@ -126,30 +124,30 @@
         nil];
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageToErrorObject:1];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSDictionary* message = [dic objectForKey:@"message"];
+    NSDictionary* dic = [[result argumentsAsJSON] JSONObject];
 
-    [self __testDictionary:testValues withDictionary:message];
+    [self __testDictionary:testValues withDictionary:dic];
 }
 
 - (void)testSerializingMessageAsStringContainingQuotes
 {
     NSString* quotedString = @"\"quoted\"";
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:quotedString];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSString* message = [dic objectForKey:@"message"];
+    NSString* argJson = [[result argumentsAsJSON] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    XCTAssertTrue([quotedString isEqual:message]);
+    // argJson here will return this will "\"quoted\""
+    // TODO: obviously this is ok when passing to JavaScript, but will fail this test
+
+    XCTAssertTrue([quotedString isEqual:argJson]);
 }
 
 - (void)testSerializingMessageAsStringThatIsNil
 {
     NSString* nilString = nil;
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nilString];
-    NSDictionary* dic = [[result toJSONString] JSONObject];
-    NSString* message = [dic objectForKey:@"message"];
+    NSString* argJson = [[result argumentsAsJSON] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    XCTAssertTrue([[NSNull null] isEqual:message]);
+    XCTAssertTrue([@"null" isEqual: argJson]);
 }
 
 @end
