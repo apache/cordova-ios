@@ -21,6 +21,13 @@
 
 #import <Cordova/CDVWebViewDelegate.h>
 
+@interface CDVWebViewDelegate ()
+
+// expose private interface
+- (BOOL)shouldLoadRequest:(NSURLRequest*)request;
+
+@end
+
 @interface CDVWebViewDelegateTests : XCTestCase
 @end
 
@@ -34,6 +41,20 @@
 - (void)tearDown
 {
     [super tearDown];
+}
+
+- (void)testShouldLoadRequest
+{
+    CDVWebViewDelegate* wvd = [[CDVWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
+
+    NSURLRequest* mailtoUrl = [NSURLRequest requestWithURL:[NSURL URLWithString:@"mailto:dev@cordova.apache.org"]];
+    NSURLRequest* telUrl = [NSURLRequest requestWithURL:[NSURL URLWithString:@"tel:12345"]];
+    NSURLRequest* plainUrl = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://apache.org"]];
+
+    XCTAssertTrue([wvd shouldLoadRequest:mailtoUrl], @"mailto urls should be allowed");
+    XCTAssertTrue([wvd shouldLoadRequest:telUrl], @"tel urls should be allowed");
+    // as long as this is in the whitelist it should pass
+    XCTAssertTrue([wvd shouldLoadRequest:plainUrl], @"http urls should be allowed");
 }
 
 - (void)testFragmentIdentifiersWithHttpUrl
