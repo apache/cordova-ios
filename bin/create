@@ -110,6 +110,8 @@ else
     cp -r "$PROJECT_TEMPLATE_DIR/__NON-CLI__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
 fi
 cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__" "$PROJECT_PATH/$PROJECT_NAME"
+cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__.xcworkspace" "$PROJECT_PATH/$PROJECT_NAME.xcworkspace"
+mv "$PROJECT_PATH/$PROJECT_NAME.xcworkspace/xcshareddata/xcschemes/__PROJECT_NAME__.xcscheme" "$PROJECT_PATH/$PROJECT_NAME.xcworkspace/xcshareddata/xcschemes/$PROJECT_NAME.xcscheme"
 
 R=$PROJECT_PATH/$PROJECT_NAME
 mv "$R/__PROJECT_NAME__-Info.plist" "$R/$PROJECT_NAME-Info.plist"
@@ -134,13 +136,12 @@ PROJECT_NAME_ESC="${PROJECT_NAME//&/\\&}"
 "$BINDIR/replaces" "$R/main.m"                    __PROJECT_NAME__ "$PROJECT_NAME_ESC"
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R.xcworkspace/contents.xcworkspacedata"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
+"$BINDIR/replaces" "$R.xcworkspace/xcshareddata/xcschemes/$PROJECT_NAME.xcscheme"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
 
 "$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
 
-if [[ $USE_SHARED = 1 ]]; then
-    # Make the sub-project reference to Cordova have the correct path.
-    "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" > /dev/null
-else
+if [[ $USE_SHARED != 1 ]]; then
     # Copy in the CordovaLib directory.
     mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
     cp "$R/.gitignore" "$PROJECT_PATH/"
@@ -149,8 +150,6 @@ else
     cp "$BINDIR/../CordovaLib/cordova.js" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/CordovaLib_Prefix.pch" "$PROJECT_PATH/CordovaLib"
     cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
-    # Make the sub-project reference to Cordova have the correct path.
-    "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj/project.pbxproj" > /dev/null
 fi
 
 # Finally copy the scripts
