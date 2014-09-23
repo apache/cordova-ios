@@ -112,6 +112,7 @@ fi
 cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__" "$PROJECT_PATH/$PROJECT_NAME"
 cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__.xcworkspace" "$PROJECT_PATH/$PROJECT_NAME.xcworkspace"
 mv "$PROJECT_PATH/$PROJECT_NAME.xcworkspace/xcshareddata/xcschemes/__PROJECT_NAME__.xcscheme" "$PROJECT_PATH/$PROJECT_NAME.xcworkspace/xcshareddata/xcschemes/$PROJECT_NAME.xcscheme"
+cp "$PROJECT_TEMPLATE_DIR/plugin.pbxproj" "$PROJECT_PATH/plugin.pbxproj"
 
 R=$PROJECT_PATH/$PROJECT_NAME
 mv "$R/__PROJECT_NAME__-Info.plist" "$R/$PROJECT_NAME-Info.plist"
