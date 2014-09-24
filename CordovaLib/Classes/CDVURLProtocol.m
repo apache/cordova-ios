@@ -26,12 +26,6 @@
 #import "CDVWhitelist.h"
 #import "CDVViewController.h"
 
-@interface CDVHTTPURLResponse : NSHTTPURLResponse
-#ifndef __IPHONE_8_0
-                                    @property (nonatomic) NSInteger statusCode;
-#endif
-@end
-
 static CDVWhitelist* gWhitelist = nil;
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
@@ -206,38 +200,14 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     if (mimeType == nil) {
         mimeType = @"text/plain";
     }
-    NSString* encodingName = [@"text/plain" isEqualToString : mimeType] ? @"UTF-8" : nil;
 
-#ifdef __IPHONE_8_0
-        NSHTTPURLResponse* response = [NSHTTPURLResponse alloc];
-#else
-        CDVHTTPURLResponse* response = [CDVHTTPURLResponse alloc];
-#endif
-
-    response = [response initWithURL:[[self request] URL]
-                            MIMEType:mimeType
-               expectedContentLength:[data length]
-                    textEncodingName:encodingName];
-
-#ifndef __IPHONE_8_0
-        response.statusCode = statusCode;
-#endif
+    NSHTTPURLResponse* response = [[NSHTTPURLResponse alloc] initWithURL:[[self request] URL] statusCode:statusCode HTTPVersion:@"HTTP/1.1" headerFields:@{@"Content-Type" : mimeType}];
 
     [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     if (data != nil) {
         [[self client] URLProtocol:self didLoadData:data];
     }
     [[self client] URLProtocolDidFinishLoading:self];
-}
-
-@end
-
-@implementation CDVHTTPURLResponse
-@synthesize statusCode;
-
-- (NSDictionary*)allHeaderFields
-{
-    return nil;
 }
 
 @end
