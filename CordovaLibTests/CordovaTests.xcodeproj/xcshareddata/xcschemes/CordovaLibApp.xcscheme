@@ -32,7 +32,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "686357A8141002F100DF4CF2"
-               BuildableName = "CordovaLibTests.octest"
+               BuildableName = "CordovaLibTests.xctest"
                BlueprintName = "CordovaLibTests"
                ReferencedContainer = "container:CordovaTests.xcodeproj">
             </BuildableReference>
