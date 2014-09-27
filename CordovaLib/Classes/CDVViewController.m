@@ -21,6 +21,7 @@
 #import "CDV.h"
 #import "CDVCommandDelegateImpl.h"
 #import "CDVConfigParser.h"
+#import "CDVConfiguration.h"
 #import "CDVUserAgentUtil.h"
 #import "CDVWebViewDelegate.h"
 #import <AVFoundation/AVFoundation.h>
@@ -206,6 +207,9 @@
     NSURL* appURL = nil;
     NSString* loadErr = nil;
 
+    CDVConfiguration* configuration = [[CDVConfiguration alloc] init];
+    [configuration setData: self.settings];
+
     if ([self.startPage rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:self.startPage];
     } else if ([self.wwwFolderName rangeOfString:@"://"].location != NSNotFound) {
@@ -261,14 +265,9 @@
 
     // /////////////////
 
-    NSString* enableViewportScale = [self settingForKey:@"EnableViewportScale"];
-    NSNumber* allowInlineMediaPlayback = [self settingForKey:@"AllowInlineMediaPlayback"];
-    BOOL mediaPlaybackRequiresUserAction = YES;  // default value
-    if ([self settingForKey:@"MediaPlaybackRequiresUserAction"]) {
-        mediaPlaybackRequiresUserAction = [(NSNumber*)[self settingForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
-    }
-
-    self.webView.scalesPageToFit = [enableViewportScale boolValue];
+    BOOL allowInlineMediaPlayback = configuration.allowInlineMediaPlayback;
+    BOOL mediaPlaybackRequiresUserAction = configuration.mediaPlaybackRequiresUserAction;
+    self.webView.scalesPageToFit = configuration.enableViewportScale;
 
     /*
      * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
@@ -281,7 +280,7 @@
     /*
      * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
      */
-    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
+    if (allowInlineMediaPlayback && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
         self.webView.allowsInlineMediaPlayback = YES;
     }
     if ((mediaPlaybackRequiresUserAction == NO) && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
@@ -290,14 +289,7 @@
 
     // By default, overscroll bouncing is allowed.
     // UIWebViewBounce has been renamed to DisallowOverscroll, but both are checked.
-    BOOL bounceAllowed = YES;
-    NSNumber* disallowOverscroll = [self settingForKey:@"DisallowOverscroll"];
-    if (disallowOverscroll == nil) {
-        NSNumber* bouncePreference = [self settingForKey:@"UIWebViewBounce"];
-        bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
-    } else {
-        bounceAllowed = ![disallowOverscroll boolValue];
-    }
+    BOOL bounceAllowed = configuration.bounceAllowed;
 
     // prevent webView from bouncing
     // based on the DisallowOverscroll/UIWebViewBounce key in config.xml
@@ -322,24 +314,14 @@
      * iOS 6.0 UIWebView properties
      */
     if (IsAtLeastiOSVersion(@"6.0")) {
-        BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
-        if ([self settingForKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
-            if ([self settingForKey:@"KeyboardDisplayRequiresUserAction"]) {
-                keyboardDisplayRequiresUserAction = [(NSNumber*)[self settingForKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
-            }
-        }
+        BOOL keyboardDisplayRequiresUserAction = configuration.keyboardDisplayRequiresUserAction;
 
         // property check for compiling under iOS < 6
         if ([self.webView respondsToSelector:@selector(setKeyboardDisplayRequiresUserAction:)]) {
             [self.webView setValue:[NSNumber numberWithBool:keyboardDisplayRequiresUserAction] forKey:@"keyboardDisplayRequiresUserAction"];
         }
 
-        BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
-        if ([self settingForKey:@"SuppressesIncrementalRendering"] != nil) {
-            if ([self settingForKey:@"SuppressesIncrementalRendering"]) {
-                suppressesIncrementalRendering = [(NSNumber*)[self settingForKey:@"SuppressesIncrementalRendering"] boolValue];
-            }
-        }
+        BOOL suppressesIncrementalRendering = configuration.suppressesIncrementalRendering;
 
         // property check for compiling under iOS < 6
         if ([self.webView respondsToSelector:@selector(setSuppressesIncrementalRendering:)]) {
