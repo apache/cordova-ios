@@ -378,7 +378,11 @@ static NSString *stripFragment(NSString* url)
             break;
 
         case STATE_WAITING_FOR_LOAD_START:
-            _state = STATE_IDLE;
+            if ([error code] == NSURLErrorCancelled) {
+                _state = STATE_CANCELLED;
+            } else {
+                _state = STATE_IDLE;
+            }
             fireCallback = YES;
             break;
 
