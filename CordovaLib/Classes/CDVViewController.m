@@ -562,11 +562,25 @@
 - (NSString*)userAgent
 {
     if (_userAgent == nil) {
-        NSString* originalUserAgent = [CDVUserAgentUtil originalUserAgent];
+        NSString *localBaseUserAgent = [[self class] baseUserAgent];
         // Use our address as a unique number to append to the User-Agent.
-        _userAgent = [NSString stringWithFormat:@"%@ (%lld)", originalUserAgent, (long long)self];
+        _userAgent = [NSString stringWithFormat:@"%@ (%lld)", localBaseUserAgent, (long long)self];
     }
     return _userAgent;
+}
+
+static NSString *gBaseUserAgent = nil;
++ (NSString*)baseUserAgent
+{
+    if (gBaseUserAgent == nil) {
+        gBaseUserAgent = [CDVUserAgentUtil originalUserAgent];
+    }
+    return gBaseUserAgent;
+}
+
++ (void)setBaseUserAgent:(NSString *)newBaseUserAgent
+{
+    gBaseUserAgent = newBaseUserAgent;
 }
 
 - (void)createGapView

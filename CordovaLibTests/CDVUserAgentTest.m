@@ -74,6 +74,23 @@
     [super tearDown];
 }
 
+- (void)testDefaultUserAgent
+{
+    CDVUserAgentTestViewController* rootVc = [[CDVUserAgentTestViewController alloc] init];
+    
+    self.appDelegate.window.rootViewController = rootVc;
+    
+    
+    NSString* getWebUserAgent = @"navigator.userAgent";
+    [self waitForConditionName:@"getting user-agents" block:^BOOL {
+        return (rootVc.vc1.webView.request != nil && rootVc.vc2.webView.request != nil);
+    }];
+    NSString* webUserAgent = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:getWebUserAgent];
+    NSString* cordovaUserAgent = rootVc.vc1.userAgent;
+    
+    XCTAssertTrue([cordovaUserAgent hasPrefix:webUserAgent], @"Default Cordova user agent should be based on navigator.userAgent.");
+}
+
 - (void)testMultipleViews
 {
     CDVUserAgentTestViewController* rootVc = [[CDVUserAgentTestViewController alloc] init];
@@ -81,13 +98,34 @@
     self.appDelegate.window.rootViewController = rootVc;
 
     NSString* getUserAgentCode = @"navigator.userAgent";
-    [self waitForConditionName:@"getting user-agents" block:^{
-        return (BOOL)(rootVc.vc1.webView.request != nil && rootVc.vc2.webView.request != nil);
+    [self waitForConditionName:@"getting user-agents" block:^BOOL {
+        return (rootVc.vc1.webView.request != nil && rootVc.vc2.webView.request != nil);
     }];
     NSString* ua1 = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
     NSString* ua2 = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
 
     XCTAssertFalse([ua1 isEqual:ua2], @"User-Agents should be different.");
+}
+
+- (void)testBaseUserAgent
+{
+    CDVUserAgentTestViewController* rootVc = [[CDVUserAgentTestViewController alloc] init];
+    [CDVViewController setBaseUserAgent:@"A different baseline user agent"];
+    
+    self.appDelegate.window.rootViewController = rootVc;
+    
+    [self waitForConditionName:@"getting user-agents" block:^BOOL {
+        return (rootVc.vc1.webView.request != nil && rootVc.vc2.webView.request != nil);
+    }];
+    NSString* cordovaUserAgent1 = rootVc.vc1.userAgent;
+    NSString* cordovaUserAgent2 = rootVc.vc2.userAgent;
+    NSString* baseUserAgent = [CDVViewController baseUserAgent];
+    
+    XCTAssertTrue([cordovaUserAgent1 hasPrefix:baseUserAgent], @"Cordova user agent should be based on base user agent.");
+    XCTAssertTrue([cordovaUserAgent2 hasPrefix:baseUserAgent], @"Cordova user agent should be based on base user agent.");
+    
+    // Cleanup.
+    [CDVViewController setBaseUserAgent:nil];
 }
 
 @end
