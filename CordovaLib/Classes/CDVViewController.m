@@ -52,7 +52,7 @@
 @synthesize webView, supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
-@synthesize wwwFolderName, startPage, initialized, openURL;
+@synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 
@@ -562,25 +562,16 @@
 - (NSString*)userAgent
 {
     if (_userAgent == nil) {
-        NSString *localBaseUserAgent = [[self class] baseUserAgent];
+        NSString *localBaseUserAgent;
+        if (self.baseUserAgent != nil) {
+            localBaseUserAgent = self.baseUserAgent;
+        } else {
+            localBaseUserAgent = [CDVUserAgentUtil originalUserAgent];
+        }
         // Use our address as a unique number to append to the User-Agent.
         _userAgent = [NSString stringWithFormat:@"%@ (%lld)", localBaseUserAgent, (long long)self];
     }
     return _userAgent;
-}
-
-static NSString *gBaseUserAgent = nil;
-+ (NSString*)baseUserAgent
-{
-    if (gBaseUserAgent == nil) {
-        gBaseUserAgent = [CDVUserAgentUtil originalUserAgent];
-    }
-    return gBaseUserAgent;
-}
-
-+ (void)setBaseUserAgent:(NSString *)newBaseUserAgent
-{
-    gBaseUserAgent = newBaseUserAgent;
 }
 
 - (void)createGapView

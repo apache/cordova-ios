@@ -55,18 +55,11 @@
 @property (nonatomic, readonly) NSString* userAgent;
 
 /**
- @return The base user agent data that Cordova will use to build its user agent.  If this
+ The base user agent data that Cordova will use to build its user agent.  If this
  property isn't set, Cordova will use the standard web view user agent as its
  base.
  */
-+ (NSString*)baseUserAgent;
-
-/**
- Sets the base user agent that Cordova will use to build its user agent.  By default, Cordova
- uses the standard web view user agent as its base.
- @param newBaseUserAgent The base user agent for Cordova to use.
- */
-+ (void)setBaseUserAgent:(NSString*)newBaseUserAgent;
+@property (nonatomic, readwrite, copy) NSString* baseUserAgent;
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
 + (NSString*)applicationDocumentsDirectory;

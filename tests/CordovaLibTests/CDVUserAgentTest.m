@@ -31,14 +31,22 @@
 @implementation CDVUserAgentTestViewController
 @synthesize vc1 = _vc1, vc2 = _vc2;
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _vc1 = [[CDVViewController alloc] init];
+        _vc2 = [[CDVViewController alloc] init];
+    }
+    return self;
+}
+
 - (void)loadView
 {
-    _vc1 = [[CDVViewController alloc] init];
     _vc1.wwwFolderName = @"www";
     _vc1.startPage = @"index.html";
     [self addChildViewController:_vc1];
 
-    _vc2 = [[CDVViewController alloc] init];
     _vc2.wwwFolderName = @"www";
     _vc2.startPage = @"index.html";
     [self addChildViewController:_vc2];
@@ -110,7 +118,8 @@
 - (void)testBaseUserAgent
 {
     CDVUserAgentTestViewController* rootVc = [[CDVUserAgentTestViewController alloc] init];
-    [CDVViewController setBaseUserAgent:@"A different baseline user agent"];
+    rootVc.vc1.baseUserAgent = @"A different baseline user agent 1";
+    rootVc.vc2.baseUserAgent = @"A different baseline user agent 2";
     
     self.appDelegate.window.rootViewController = rootVc;
     
@@ -119,13 +128,9 @@
     }];
     NSString* cordovaUserAgent1 = rootVc.vc1.userAgent;
     NSString* cordovaUserAgent2 = rootVc.vc2.userAgent;
-    NSString* baseUserAgent = [CDVViewController baseUserAgent];
     
-    XCTAssertTrue([cordovaUserAgent1 hasPrefix:baseUserAgent], @"Cordova user agent should be based on base user agent.");
-    XCTAssertTrue([cordovaUserAgent2 hasPrefix:baseUserAgent], @"Cordova user agent should be based on base user agent.");
-    
-    // Cleanup.
-    [CDVViewController setBaseUserAgent:nil];
+    XCTAssertTrue([cordovaUserAgent1 hasPrefix:rootVc.vc1.baseUserAgent], @"Cordova user agent should be based on base user agent.");
+    XCTAssertTrue([cordovaUserAgent2 hasPrefix:rootVc.vc2.baseUserAgent], @"Cordova user agent should be based on base user agent.");
 }
 
 @end
