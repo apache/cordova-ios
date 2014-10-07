@@ -918,8 +918,15 @@ function convertMessageToArgsNativeToJs(message) {
 }
 
 function iOSExec() {
+    // Use XHR for iOS 5 to work around a bug in -webkit-scroll.
+    // Use IFRAME_NAV elsewhere since it's faster and XHR bridge
+    // seems to have bugs in newer OS's (CB-3900, CB-3359, CB-5457, CB-4970, CB-4998, CB-5134)
     if (bridgeMode === undefined) {
-        bridgeMode = jsToNativeModes.IFRAME_NAV;
+        if (navigator.userAgent) {
+            bridgeMode = navigator.userAgent.indexOf(' 5_') == -1 ? jsToNativeModes.IFRAME_NAV: jsToNativeModes.XHR_NO_PAYLOAD;
+        } else {
+            bridgeMode = jsToNativeModes.IFRAME_NAV;
+        }
     }
 
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
@@ -1010,7 +1017,7 @@ function pokeNativeViaXhr() {
     // Add a timestamp to the query param to prevent caching.
     execXhr.open('HEAD', "/!gap_exec?" + (+new Date()), true);
     if (!vcHeaderValue) {
-        vcHeaderValue = /.*\((.*)\)$/.exec(navigator.userAgent)[1];
+        vcHeaderValue = /.*\((.*)\)/.exec(navigator.userAgent)[1];
     }
     execXhr.setRequestHeader('vc', vcHeaderValue);
     execXhr.setRequestHeader('rc', ++requestCount);
