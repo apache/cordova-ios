@@ -55,7 +55,9 @@ By default when you create a new project, the CordovaLib sub-project is copied i
 Tests
 --------------------------------------------------------------------
 
-See the `tests/README.md` file.
+1. Install [node.js](http://nodejs.org)
+2. Run `npm install`
+3. Run `npm test`
 
 Futher reading
 -----
