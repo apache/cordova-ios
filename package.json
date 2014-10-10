@@ -12,6 +12,9 @@
         "cordova",
         "apache"
     ],
+    "scripts" : {
+        "test" : "cd tests && npm test"
+    },
     "author": "Apache Software Foundation",
     "license": "Apache Version 2.0",
     "dependencies": {
