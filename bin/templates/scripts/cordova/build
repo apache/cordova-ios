@@ -49,8 +49,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 if (( $EMULATOR )); then
-    exec xcodebuild -project "$PROJECT_NAME.xcodeproj" -arch i386 -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphonesimulator build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/emulator"
+    exec xcodebuild -project "$PROJECT_NAME.xcodeproj" -arch i386 -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphonesimulator build VALID_ARCHS="i386" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/emulator" SHARED_PRECOMPS_DIR="$PROJECT_PATH/build/sharedpch"
 else
-    exec xcodebuild -xcconfig "$CORDOVA_PATH/build.xcconfig" -project "$PROJECT_NAME.xcodeproj" ARCHS="armv7 armv7s arm64" -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphoneos build VALID_ARCHS="armv7 armv7s arm64" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/device"
+    exec xcodebuild -xcconfig "$CORDOVA_PATH/build.xcconfig" -project "$PROJECT_NAME.xcodeproj" ARCHS="armv7 armv7s arm64" -target "$PROJECT_NAME" -configuration $CONFIGURATION -sdk iphoneos build VALID_ARCHS="armv7 armv7s arm64" CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build/device" SHARED_PRECOMPS_DIR="$PROJECT_PATH/build/sharedpch"
 fi
 
