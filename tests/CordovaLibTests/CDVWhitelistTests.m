@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "CDVWhitelist.h"
+#import <Cordova/CDVWhitelist.h>
 
 @interface CDVWhitelistTests : XCTestCase
 @end

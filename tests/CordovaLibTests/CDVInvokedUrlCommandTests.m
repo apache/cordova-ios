@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "CDVInvokedUrlCommand.h"
+#import <Cordova/CDVInvokedUrlCommand.h>
 
 @interface CDVInvokedUrlCommandTests : XCTestCase
 @end

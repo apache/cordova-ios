@@ -1,0 +1,13 @@
+{
+    "name": "cordova-ios-tests",
+    "version": "1.0.0",
+    "description": "Tests for cordova-ios",
+    "author": "Apache Software Foundation",
+    "license": "Apache Version 2.0",
+    "dependencies": {
+    },
+    "scripts": {
+        "test": "npm run cordovalib",
+        "cordovalib" : "killall 'iOS Simulator' && xcodebuild test -scheme CordovaLibTests -destination 'platform=iOS Simulator,name=iPhone 5'"
+    }    
+}

@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "NSData+Base64.h"
+#import <Cordova/NSData+Base64.h>
 
 @interface CDVBase64Tests : XCTestCase
 @end

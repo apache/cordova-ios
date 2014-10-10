@@ -20,8 +20,8 @@
 #import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
 
-#import "CDVPluginResult.h"
-#import "CDVJSON.h"
+#import <Cordova/CDVPluginResult.h>
+#import <Cordova/CDVJSON.h>
 
 @interface CDVPluginResultJSONSerializationTests : XCTestCase
 @end

@@ -20,7 +20,7 @@
 #import <XCTest/XCTest.h>
 
 #import "CDVWebViewTest.h"
-#import "CDVViewController.h"
+#import <Cordova/CDVViewController.h>
 #import "AppDelegate.h"
 
 @interface CDVUserAgentTestViewController : UIViewController

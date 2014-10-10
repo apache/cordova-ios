@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "CDVLocalStorage.h"
+#import <Cordova/CDVLocalStorage.h>
 #import "CDVWebViewTest.h"
 #import "CDVFakeFileManager.h"
 #import "ViewController.h"
