@@ -52,13 +52,10 @@ When you update to a new Cordova version, you may need to update the CordovaLib 
 By default when you create a new project, the CordovaLib sub-project is copied into your project folder, it is not shared.
 <br />
 
-Unit Tests
+Tests
 --------------------------------------------------------------------
-1. **Create** a new Cordova project
-2. **Download** the code from the **[mobile-spec](https://github.com/apache/cordova-mobile-spec)** and put all of it in the root of your **www** folder
-3. Install all the <a href="http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html#The%20Command-Line%20Interface_add_plugin_features">core plugins</a>
-3. **Run** the project
-<br />
+
+See the `tests/README.md` file.
 
 Futher reading
 -----
