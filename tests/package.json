@@ -7,7 +7,8 @@
     "dependencies": {
     },
     "scripts": {
-        "test": "npm run cordovalib",
-        "cordovalib" : "killall 'iOS Simulator' && xcodebuild test -scheme CordovaLibTests -destination 'platform=iOS Simulator,name=iPhone 5'"
+        "test": "npm run cordovalib-test && npm run create-project-unicode-space-in-path",
+        "cordovalib-test" : "killall 'iOS Simulator' && xcodebuild test -scheme CordovaLibTests -destination 'platform=iOS Simulator,name=iPhone 5'",
+        "create-project-unicode-space-in-path" : "rm -rf \"testcreate 応用\"; ../bin/create \"testcreate 応用\" com.test.app 応用 && \"./testcreate 応用/cordova/build\" && rm -rf \"testcreate 応用\""
     }    
 }
