@@ -18,6 +18,9 @@
 # under the License.
 #
 -->
+
+[![Build Status](https://travis-ci.org/apache/cordova-ios.svg)](https://travis-ci.org/apache/cordova-ios)
+
 Cordova iOS
 =============================================================
 Cordova iOS is an iOS application library that allows for Cordova-based projects to be built for the iOS Platform. Cordova based applications are, at the core, applications written with web technology: HTML, CSS and JavaScript.
