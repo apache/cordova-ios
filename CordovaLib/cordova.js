@@ -1,5 +1,5 @@
 // Platform: ios
-// 3.7.0-dev-1258511
+// d9e2a1c2401b986b5af09ecd6b4be60df2cbf131
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var CORDOVA_JS_BUILD_LABEL = '3.7.0-dev-1258511';
+var PLATFORM_VERSION_BUILD_LABEL = '3.7.0-dev';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -175,7 +175,8 @@ function createEvent(type, data) {
 var cordova = {
     define:define,
     require:require,
-    version:CORDOVA_JS_BUILD_LABEL,
+    version:PLATFORM_VERSION_BUILD_LABEL,
+    platformVersion:PLATFORM_VERSION_BUILD_LABEL,
     platformId:platform.id,
     /**
      * Methods to add/remove your own addEventListener hijacking on document + window.
@@ -262,11 +263,7 @@ var cordova = {
      * Called by native code when returning successful result from an action.
      */
     callbackSuccess: function(callbackId, args) {
-        try {
-            cordova.callbackFromNative(callbackId, true, args.status, [args.message], args.keepCallback);
-        } catch (e) {
-            console.log("Error in success callback: " + callbackId + " = "+e);
-        }
+        cordova.callbackFromNative(callbackId, true, args.status, [args.message], args.keepCallback);
     },
 
     /**
@@ -275,29 +272,33 @@ var cordova = {
     callbackError: function(callbackId, args) {
         // TODO: Deprecate callbackSuccess and callbackError in favour of callbackFromNative.
         // Derive success from status.
-        try {
-            cordova.callbackFromNative(callbackId, false, args.status, [args.message], args.keepCallback);
-        } catch (e) {
-            console.log("Error in error callback: " + callbackId + " = "+e);
-        }
+        cordova.callbackFromNative(callbackId, false, args.status, [args.message], args.keepCallback);
     },
 
     /**
      * Called by native code when returning the result from an action.
      */
-    callbackFromNative: function(callbackId, success, status, args, keepCallback) {
-        var callback = cordova.callbacks[callbackId];
-        if (callback) {
-            if (success && status == cordova.callbackStatus.OK) {
-                callback.success && callback.success.apply(null, args);
-            } else if (!success) {
-                callback.fail && callback.fail.apply(null, args);
-            }
+    callbackFromNative: function(callbackId, isSuccess, status, args, keepCallback) {
+        try {
+            var callback = cordova.callbacks[callbackId];
+            if (callback) {
+                if (isSuccess && status == cordova.callbackStatus.OK) {
+                    callback.success && callback.success.apply(null, args);
+                } else {
+                    callback.fail && callback.fail.apply(null, args);
+                }
 
-            // Clear callback if not expecting any more results
-            if (!keepCallback) {
-                delete cordova.callbacks[callbackId];
+                // Clear callback if not expecting any more results
+                if (!keepCallback) {
+                    delete cordova.callbacks[callbackId];
+                }
             }
+        }
+        catch (err) {
+            var msg = "Error in " + (isSuccess ? "Success" : "Error") + " callbackId: " + callbackId + " : " + err;
+            console && console.log && console.log(msg);
+            cordova.fireWindowEvent("cordovacallbackerror", { 'message': msg });
+            throw err;
         }
     },
     addConstructor: function(func) {
@@ -918,15 +919,8 @@ function convertMessageToArgsNativeToJs(message) {
 }
 
 function iOSExec() {
-    // Use XHR for iOS 5 to work around a bug in -webkit-scroll.
-    // Use IFRAME_NAV elsewhere since it's faster and XHR bridge
-    // seems to have bugs in newer OS's (CB-3900, CB-3359, CB-5457, CB-4970, CB-4998, CB-5134)
     if (bridgeMode === undefined) {
-        if (navigator.userAgent) {
-            bridgeMode = navigator.userAgent.indexOf(' 5_') == -1 ? jsToNativeModes.IFRAME_NAV: jsToNativeModes.XHR_NO_PAYLOAD;
-        } else {
-            bridgeMode = jsToNativeModes.IFRAME_NAV;
-        }
+        bridgeMode = jsToNativeModes.IFRAME_NAV;
     }
 
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
@@ -1017,7 +1011,7 @@ function pokeNativeViaXhr() {
     // Add a timestamp to the query param to prevent caching.
     execXhr.open('HEAD', "/!gap_exec?" + (+new Date()), true);
     if (!vcHeaderValue) {
-        vcHeaderValue = /.*\((.*)\)/.exec(navigator.userAgent)[1];
+        vcHeaderValue = /.*\((.*)\)$/.exec(navigator.userAgent)[1];
     }
     execXhr.setRequestHeader('vc', vcHeaderValue);
     execXhr.setRequestHeader('rc', ++requestCount);
@@ -1171,6 +1165,16 @@ function replaceNavigator(origNavigator) {
         for (var key in origNavigator) {
             if (typeof origNavigator[key] == 'function') {
                 newNavigator[key] = origNavigator[key].bind(origNavigator);
+            } else {
+                (function(k) {
+                        Object.defineProperty(newNavigator, k, {
+                            get: function() {
+                                return origNavigator[k];
+                            },
+                            configurable: true,
+                            enumerable: true
+                        });
+                    })(key);
             }
         }
     }
@@ -1290,6 +1294,16 @@ function replaceNavigator(origNavigator) {
         for (var key in origNavigator) {
             if (typeof origNavigator[key] == 'function') {
                 newNavigator[key] = origNavigator[key].bind(origNavigator);
+            } else {
+                (function(k) {
+                        Object.defineProperty(newNavigator, k, {
+                            get: function() {
+                                return origNavigator[k];
+                            },
+                            configurable: true,
+                            enumerable: true
+                        });
+                    })(key);
             }
         }
     }
