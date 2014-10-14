@@ -1,5 +1,5 @@
 // Platform: ios
-// d9e2a1c2401b986b5af09ecd6b4be60df2cbf131
+// 94291706945c42fd47fa632ed30f5eb811080e95
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -840,15 +840,20 @@ var cordova = require('cordova'),
     commandQueue = [], // Contains pending JS->Native messages.
     isInContextOfEvalJs = 0;
 
-function createExecIframe() {
+function createExecIframe(src, unloadListener) {
     var iframe = document.createElement("iframe");
     iframe.style.display = 'none';
+    // Both the unload listener and the src must be set before adding the iframe
+    // to the document in order to avoid race conditions. Callbacks from native
+    // can happen within the appendChild() call!
+    iframe.onunload = unloadListener;
+    iframe.src = src;
     document.body.appendChild(iframe);
     return iframe;
 }
 
 function createHashIframe() {
-    var ret = createExecIframe();
+    var ret = createExecIframe('about:blank');
     // Hash changes don't work on about:blank, so switch it to file:///.
     ret.contentWindow.history.replaceState(null, null, 'file:///#');
     return ret;
@@ -1021,6 +1026,11 @@ function pokeNativeViaXhr() {
     execXhr.send(null);
 }
 
+function onIframeUnload() {
+    execIframe = null;
+    setTimeout(pokeNativeViaIframe, 0);
+}
+
 function pokeNativeViaIframe() {
     // CB-5488 - Don't attempt to create iframe before document.body is available.
     if (!document.body) {
@@ -1028,6 +1038,7 @@ function pokeNativeViaIframe() {
         return;
     }
     if (bridgeMode === jsToNativeModes.IFRAME_HASH_NO_PAYLOAD || bridgeMode === jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD) {
+        // TODO: This bridge mode doesn't properly support being removed from the DOM (CB-7735)
         execHashIframe = execHashIframe || createHashIframe();
         // Check if they've removed it from the DOM, and put it back if so.
         if (!execHashIframe.contentWindow) {
@@ -1041,12 +1052,15 @@ function pokeNativeViaIframe() {
         }
         execHashIframe.contentWindow.location.hash = hashValue;
     } else {
-        execIframe = execIframe || createExecIframe();
         // Check if they've removed it from the DOM, and put it back if so.
-        if (!execIframe.contentWindow) {
-            execIframe = createExecIframe();
+        if (execIframe && execIframe.contentWindow) {
+            // Listen for unload, since it can happen (CB-7735) that the iframe gets
+            // removed from the DOM before it gets a chance to poke the native side.
+            execIframe.contentWindow.onunload = onIframeUnload;
+            execIframe.src = 'gap://ready';
+        } else {
+            execIframe = createExecIframe('gap://ready', onIframeUnload);
         }
-        execIframe.src = "gap://ready";
     }
 }
 
@@ -1064,6 +1078,10 @@ iOSExec.setJsToNativeBridgeMode = function(mode) {
 };
 
 iOSExec.nativeFetchMessages = function() {
+    // Stop listing for window detatch once native side confirms poke.
+    if (execIframe && execIframe.contentWindow) {
+        execIframe.contentWindow.onunload = null;
+    }
     // Each entry in commandQueue is a JSON string already.
     if (!commandQueue.length) {
         return '';
