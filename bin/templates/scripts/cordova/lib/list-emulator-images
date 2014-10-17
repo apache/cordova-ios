@@ -26,15 +26,14 @@
 
 set -e
 
-echo \""iPhone (Retina 3.5-inch)"\"
-echo \""iPhone (Retina 4-inch)"\"
+IOS_SIM_VERSION=$(ios-sim --version)
 
-# this assumes Xcode 5 minimum not supported by ios-sim yet
-# echo \""iPhone (Retina 4-inch 64-bit)"\"
+if [[ "$IOS_SIM_VERSION" < "$IOS_SIM_MIN_VERSION" ]]; then
+	echo "Cordova needs ios-sim version $IOS_SIM_MIN_VERSION or greater, you have version $IOS_SIM_VERSION." 1>&2;
+	exit 1
+fi
 
-echo \""iPhone"\"
-echo \""iPad"\"
-echo \""iPad (Retina)"\"
+ios-sim showdevicetypes 2>&1 | sed "s/com.apple.CoreSimulator.SimDeviceType.//g" | awk -F',' '{print $1}'
 
 
 
