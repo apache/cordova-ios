@@ -27,4 +27,4 @@ DEFAULT_TARGET="iPhone 5s"
 TARGET=${1:-$DEFAULT_TARGET}
 LIB_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 
-xcrun instruments -w "$TARGET"
+xcrun instruments -w "$TARGET" &> /dev/null
