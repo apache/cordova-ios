@@ -16,13 +16,6 @@
 #  KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
-# Valid values for "--target" (case insensitive):
-#     "iPhone Retina (3.5-inch)" (default)
-#     "iPhone Retina (4-inch)"
-#     "iPhone"
-#     "iPad"
-#     "iPad Retina"
 
 set -e
 

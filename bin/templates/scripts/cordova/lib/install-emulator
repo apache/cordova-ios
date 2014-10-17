@@ -17,17 +17,6 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-# Valid values for "--target" (case sensitive):
-#   iPhone-4s
-#   iPhone-5
-#   iPhone-5s
-#   iPhone-6-Plus
-#   iPhone-6
-#   iPad-2
-#   iPad-Retina
-#   iPad-Air
-#   Resizable-iPhone
-#   Resizable-iPad
 
 OPTION_RESULT=()
 TARGET="iPhone-6"
