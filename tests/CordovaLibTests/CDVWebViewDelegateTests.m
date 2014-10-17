@@ -21,6 +21,27 @@
 
 #import <Cordova/CDVWebViewDelegate.h>
 
+@interface CDVWebViewDelegate2 : CDVWebViewDelegate {}
+
+- (void)setState:(NSInteger)state;
+- (NSInteger)state;
+
+@end
+
+@implementation  CDVWebViewDelegate2
+
+- (void)setState:(NSInteger)state
+{
+    _state = state;
+}
+
+- (NSInteger)state
+{
+    return _state;
+}
+
+@end
+
 @interface CDVWebViewDelegate ()
 
 // expose private interface
@@ -41,6 +62,20 @@
 - (void)tearDown
 {
     [super tearDown];
+}
+
+- (void)testFailLoadStateCancelled
+{
+    NSInteger initialState = 1; // STATE_WAITING_FOR_LOAD_START;
+    NSInteger expectedState = 5; // STATE_CANCELLED;
+    NSError* errorCancelled = [NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorCancelled userInfo:nil];
+
+    CDVWebViewDelegate2* wvd = [[CDVWebViewDelegate2 alloc] initWithDelegate:nil]; // not really testing delegate handling
+
+    wvd.state = initialState;
+    [wvd webView:nil didFailLoadWithError:errorCancelled];
+
+    XCTAssertTrue(wvd.state == expectedState, @"If the load error was through an iframe redirect (NSURLErrorCancelled), the state should be STATE_CANCELLED");
 }
 
 - (void)testShouldLoadRequest
