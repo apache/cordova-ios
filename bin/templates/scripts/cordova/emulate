@@ -31,7 +31,7 @@ APP_PATH=${1:-$PROJECT_PATH/build/emulator/$(xcodebuild -project "$PROJECT_PATH/
 
 TARGET=${2:-${TARGET:-iPhone-6}}
 
-IOS_SIM_MIN_VERSION="1.7"
+IOS_SIM_MIN_VERSION="3.0"
 IOS_SIM_LOCATION=$(which ios-sim)
 if [ $? != 0 ]; then
     echo -e "\033[31mError: ios-sim was not found. Please download, build and install version $IOS_SIM_MIN_VERSION or greater from https://github.com/phonegap/ios-sim into your path. Or 'npm install -g ios-sim' using node.js: http://nodejs.org/\033[m" 1>&2; 
