@@ -20,7 +20,7 @@
 
 set -e
 
-SIM_RUNNING=$(ps aux | grep -i "[i]Phone Simulator" | wc -l)
+SIM_RUNNING=$(ps aux | grep -i "[i]OS Simulator" | wc -l)
 if [ $SIM_RUNNING == 0 ]; then
     echo "No emulators are running."
     exit 1
