@@ -17,13 +17,14 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+# Run the below to get the device targets:
+#     xcrun instruments -s
 
 set -e
 
 
-DEFAULT_TARGET="iPhone Retina (3.5-inch)"
+DEFAULT_TARGET="iPhone 5s"
 TARGET=${1:-$DEFAULT_TARGET}
 LIB_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 
-SCPT=`sed -e "s/\\$DEVICE_NAME/$TARGET/g" "$LIB_PATH/sim.applescript"`
-osascript -e "$SCPT"
+xcrun instruments -w "$TARGET"
