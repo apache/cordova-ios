@@ -18,12 +18,7 @@
 //
 
 //
-// XCode build settings shared by all Build Configurations.
-// Settings are overridden by configuration-level .xcconfig file (build-release/build-debug).
+// XCode Build settings for "Debug" Build Configuration.
 //
 
-
-// Type of signing identity used for codesigning, resolves to first match of given type.
-// "iPhone Developer": Development builds (default, local only; iOS Development certificate) or "iPhone Distribution": Distribution builds (Adhoc/In-House/AppStore; iOS Distribution certificate)
-CODE_SIGN_IDENTITY = iPhone Developer
-CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+#include "build.xcconfig"
