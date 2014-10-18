@@ -1,0 +1,4 @@
+// To automatically use the default "iOS Development" identity, assign "iPhone Developer"
+
+CODE_SIGN_IDENTITY = iPhone Developer
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
