@@ -72,7 +72,8 @@
                                                      name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
                                                      name:UIApplicationDidEnterBackgroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:CDVPluginHandleOpenURLNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPageDidLoad:)
+                                                     name:CDVPageDidLoadNotification object:nil];
 
         // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
         self.supportedOrientations = [self parseInterfaceOrientations:
@@ -562,7 +563,7 @@
 - (NSString*)userAgent
 {
     if (_userAgent == nil) {
-        NSString *localBaseUserAgent;
+        NSString* localBaseUserAgent;
         if (self.baseUserAgent != nil) {
             localBaseUserAgent = self.baseUserAgent;
         } else {
@@ -648,8 +649,6 @@
      * Hide the Top Activity THROBBER in the Battery Bar
      */
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-
-    [self processOpenUrl];
 
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:self.webView]];
 }
@@ -953,19 +952,35 @@
 
 // ///////////////////////
 
-- (void)handleOpenURL:(NSNotification*)notification
-{
-    self.openURL = notification.object;
-}
-
-- (void)processOpenUrl
+- (void)onPageDidLoad:(NSNotification*)notification
 {
     if (self.openURL) {
-        // calls into javascript global function 'handleOpenURL'
-        NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", [self.openURL description]];
-        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+        [self processOpenUrl:self.openURL pageLoaded:YES];
         self.openURL = nil;
     }
+}
+
+- (void)processOpenUrl:(NSURL*)url pageLoaded:(BOOL)pageLoaded
+{
+    if (!pageLoaded) {
+        // query the webview for readystate
+        NSString* readyState = [webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
+        pageLoaded = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
+    }
+
+    if (pageLoaded) {
+        // calls into javascript global function 'handleOpenURL'
+        NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
+        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+    } else {
+        // save for when page has loaded
+        self.openURL = url;
+    }
+}
+
+- (void)processOpenUrl:(NSURL*)url
+{
+    [self processOpenUrl:url pageLoaded:NO];
 }
 
 // ///////////////////////

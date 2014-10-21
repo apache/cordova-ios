@@ -99,9 +99,7 @@
         return NO;
     }
 
-    // calls into javascript global function 'handleOpenURL'
-    NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
-    [self.viewController.webView stringByEvaluatingJavaScriptFromString:jsString];
+    [self.viewController processOpenUrl:url];
 
     // all plugins will get the notification, and their handlers will be called
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
@@ -117,20 +115,20 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:CDVLocalNotification object:notification];
 }
 
-- (void)                                application:(UIApplication *)application
-   didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+- (void)                                 application:(UIApplication*)application
+    didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
     // re-post ( broadcast )
     NSString* token = [[[[deviceToken description]
-                         stringByReplacingOccurrencesOfString: @"<" withString: @""]
-                        stringByReplacingOccurrencesOfString: @">" withString: @""]
-                       stringByReplacingOccurrencesOfString: @" " withString: @""];
+        stringByReplacingOccurrencesOfString:@"<" withString:@""]
+        stringByReplacingOccurrencesOfString:@">" withString:@""]
+        stringByReplacingOccurrencesOfString:@" " withString:@""];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:CDVRemoteNotification object:token];
 }
 
-- (void)                                 application:(UIApplication *)application
-    didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+- (void)                                 application:(UIApplication*)application
+    didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
     // re-post ( broadcast )
     [[NSNotificationCenter defaultCenter] postNotificationName:CDVRemoteNotificationError object:error];
