@@ -426,6 +426,10 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "__PROJECT_NAME__/__PROJECT_NAME__-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/CordovaLib/build/Debug-iphoneos",
+				);
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CoreFoundation,
@@ -457,6 +461,10 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "__PROJECT_NAME__/__PROJECT_NAME__-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/CordovaLib/build/Release-iphoneos",
+				);
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CoreFoundation,
