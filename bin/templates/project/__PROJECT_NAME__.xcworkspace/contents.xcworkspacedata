@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:CordovaLib/CordovaLib.xcodeproj">
+      location = "group:__PROJECT_NAME__.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:__PROJECT_NAME__.xcodeproj">
+      location = "group:CordovaLib/CordovaLib.xcodeproj">
    </FileRef>
 </Workspace>
