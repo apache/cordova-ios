@@ -37,7 +37,7 @@
 		7E7966E61810823500FA85AD /* icon-small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966DC1810823500FA85AD /* icon-small.png */; };
 		7E7966E71810823500FA85AD /* icon-small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966DD1810823500FA85AD /* icon-small@2x.png */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
-        D955B48319C82B54003F0FB2 /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D955B48219C82B54003F0FB2 /* libCordova.a */; };
+		D955B48319C82B54003F0FB2 /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D955B48219C82B54003F0FB2 /* libCordova.a */; };
 		FA1A243519F56B3200BD4A33 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1A243419F56B3200BD4A33 /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -80,7 +80,7 @@
 		7E7966DD1810823500FA85AD /* icon-small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-small@2x.png"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* __PROJECT_NAME__-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "__PROJECT_NAME__-Info.plist"; path = "../__PROJECT_NAME__-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x~iphone.png"; sourceTree = "<group>"; };
-        D955B48219C82B54003F0FB2 /* libCordova.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCordova.a; path = "CordovaLib/build/Debug-iphoneos/libCordova.a"; sourceTree = "<group>"; };
+		D955B48219C82B54003F0FB2 /* libCordova.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCordova.a; path = "CordovaLib/build/Debug-iphoneos/libCordova.a"; sourceTree = "<group>"; };
 		EB87FDF21871DA7A0020F90C /* merges */ = {isa = PBXFileReference; lastKnownFileType = folder; name = merges; path = ../../merges; sourceTree = "<group>"; };
 		EB87FDF31871DA8E0020F90C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../../www; sourceTree = "<group>"; };
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
@@ -94,7 +94,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA1A243519F56B3200BD4A33 /* UIKit.framework in Frameworks */,
-                D955B48319C82B54003F0FB2 /* libCordova.a in Frameworks */,
+				D955B48319C82B54003F0FB2 /* libCordova.a in Frameworks */,
 				5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
@@ -187,7 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				FA1A243419F56B3200BD4A33 /* UIKit.framework */,
-                D955B48219C82B54003F0FB2 /* libCordova.a */,
+				D955B48219C82B54003F0FB2 /* libCordova.a */,
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
