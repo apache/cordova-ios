@@ -91,7 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-                D955B48319C82B54003F0FB2 /* libCordova.a in Frameworks */,
+				D955B48319C82B54003F0FB2 /* libCordova.a in Frameworks */,
 				5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
@@ -183,7 +183,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-                D955B48219C82B54003F0FB2 /* libCordova.a */,
+				D955B48219C82B54003F0FB2 /* libCordova.a */,
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
@@ -426,10 +426,6 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "__PROJECT_NAME__/__PROJECT_NAME__-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-                LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CordovaLib/build/Debug-iphoneos",
-				);                
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CoreFoundation,
@@ -461,10 +457,6 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "__PROJECT_NAME__/__PROJECT_NAME__-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-                LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CordovaLib/build/Release-iphoneos",
-				);                
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CoreFoundation,
