@@ -199,13 +199,9 @@
     self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
 }
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad
+- (NSURL*)appUrl
 {
-    [super viewDidLoad];
-
     NSURL* appURL = nil;
-    NSString* loadErr = nil;
 
     if ([self.startPage rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:self.startPage];
@@ -217,8 +213,6 @@
         NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
 
         if (startFilePath == nil) {
-            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
-            NSLog(@"%@", loadErr);
             self.loadFromString = YES;
             appURL = nil;
         } else {
@@ -232,6 +226,14 @@
             }
         }
     }
+
+    return appURL;
+}
+
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
 
     // // Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
 
@@ -315,7 +317,7 @@
     }
 
     NSString* decelerationSetting = [self settingForKey:@"UIWebViewDecelerationSpeed"];
-    if (![@"fast" isEqualToString : decelerationSetting]) {
+    if (![@"fast" isEqualToString:decelerationSetting]) {
         [self.webView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
     }
 
@@ -437,13 +439,18 @@
     }
 
     // /////////////////
+    NSURL* appURL = [self appUrl];
+
     [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
         _userAgentLockToken = lockToken;
         [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
-        if (!loadErr) {
+        if (appURL) {
             NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
             [self.webView loadRequest:appReq];
         } else {
+            NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
+            NSLog(@"%@", loadErr);
+
             NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
             [self.webView loadHTMLString:html baseURL:nil];
         }
@@ -781,7 +788,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+    NSString* basePath = ([paths count] > 0) ? (([paths objectAtIndex : 0]) : nil);
 
     return basePath;
 }
