@@ -81,4 +81,6 @@
 - (BOOL)URLisAllowed:(NSURL*)url;
 - (void)processOpenUrl:(NSURL*)url;
 
+- (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate;
+
 @end
