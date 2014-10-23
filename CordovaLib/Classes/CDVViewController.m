@@ -230,6 +230,28 @@
     return appURL;
 }
 
+- (NSURL*)errorUrl
+{
+    NSURL* errorURL = nil;
+
+    id setting = [self settingForKey:@"ErrorUrl"];
+
+    if (setting) {
+        NSString* errorUrlString = (NSString*)setting;
+        if ([errorUrlString rangeOfString:@"://"].location != NSNotFound) {
+            errorURL = [NSURL URLWithString:errorUrlString];
+        } else {
+            NSURL* url = [NSURL URLWithString:(NSString*)setting];
+            NSString* errorFilePath = [self.commandDelegate pathForResource:[url path]];
+            if (errorFilePath) {
+                errorURL = [NSURL fileURLWithPath:errorFilePath];
+            }
+        }
+    }
+
+    return errorURL;
+}
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -451,8 +473,15 @@
             NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
 
-            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-            [self.webView loadHTMLString:html baseURL:nil];
+            NSURL* errorUrl = [self errorUrl];
+            if (errorUrl) {
+                errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
+                NSLog(@"%@", [errorUrl absoluteString]);
+                [self.webView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+            } else {
+                NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+                [self.webView loadHTMLString:html baseURL:nil];
+            }
         }
     }];
 }
@@ -664,7 +693,15 @@
 {
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
-    NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
+    NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
+    NSLog(@"%@", message);
+
+    NSURL* errorUrl = [self errorUrl];
+    if (errorUrl) {
+        errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [message stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
+        NSLog(@"%@", [errorUrl absoluteString]);
+        [theWebView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+    }
 }
 
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
