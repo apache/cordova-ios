@@ -163,10 +163,8 @@
     return [self.whitelist URLIsAllowed:url];
 }
 
-- (void)loadSettings
+- (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate
 {
-    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
-
     // read from config.xml in the app bundle
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
 
@@ -184,6 +182,12 @@
     }
     [self.configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
     [self.configParser parse];
+}
+
+- (void)loadSettings
+{
+    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
+    [self parseSettingsWithParser:delegate];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
