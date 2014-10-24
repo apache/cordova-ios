@@ -684,6 +684,78 @@
     return YES;
 }
 
+#pragma mark Network Policy Plugin (Whitelist) hooks
+
+- (BOOL)shouldAllowRequestForURL:(NSURL *)url
+{
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldAllowRequest = NO;
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"shouldAllowRequestForURL:");
+        if ([plugin respondsToSelector:selector]) {
+            anyPluginsResponded = YES;
+            shouldAllowRequest = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
+            if (shouldAllowRequest == NO) {
+                break;
+            }
+        }
+    }
+    if (anyPluginsResponded) {
+        return shouldAllowRequest;
+    }
+
+    /* Default Policy */
+    return NO;
+}
+
+
+- (BOOL)shouldAllowNavigationToURL:(NSURL *)url
+{
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldAllowNavigation = NO;
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"shouldAllowNavigationToURL:");
+        if ([plugin respondsToSelector:selector]) {
+            anyPluginsResponded = YES;
+            shouldAllowNavigation = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
+            if (shouldAllowNavigation == NO) {
+                break;
+            }
+        }
+    }
+    if (anyPluginsResponded) {
+        return shouldAllowNavigation;
+    }
+
+    /* Default Policy */
+    return NO;
+}
+
+- (BOOL)shouldOpenExternalURL:(NSURL *)url
+{
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldOpenExternalURL = NO;
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"shouldOpenExternalURL:");
+        if ([plugin respondsToSelector:selector]) {
+            anyPluginsResponded = YES;
+            shouldOpenExternalURL = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
+            if (shouldOpenExternalURL == NO) {
+                break;
+            }
+        }
+    }
+    if (anyPluginsResponded) {
+        return shouldOpenExternalURL;
+    }
+
+    /* Default policy */
+    return NO;
+}
+
 #pragma mark GapHelpers
 
 - (void)javascriptAlert:(NSString*)text
