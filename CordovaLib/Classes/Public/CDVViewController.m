@@ -36,7 +36,6 @@
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
-@property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
@@ -53,7 +52,7 @@
 @implementation CDVViewController
 
 @synthesize supportedOrientations;
-@synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
+@synthesize pluginObjects, pluginsMap, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
@@ -188,7 +187,6 @@
     // Get the plugin dictionary, whitelist and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
     self.startupPluginNames = delegate.startupPluginNames;
-    self.whitelist = [[CDVWhitelist alloc] initWithArray:delegate.whitelistHosts];
     self.settings = delegate.settings;
 
     // And the start folder/page.

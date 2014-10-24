@@ -23,7 +23,6 @@
 #import "CDVInvokedUrlCommand.h"
 #import "CDVCommandDelegate.h"
 #import "CDVCommandQueue.h"
-#import "CDVWhitelist.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVPlugin.h"
 #import "CDVWebViewEngineProtocol.h"
@@ -44,7 +43,6 @@
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
-@property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
