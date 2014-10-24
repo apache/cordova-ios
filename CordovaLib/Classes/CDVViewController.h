@@ -79,6 +79,10 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 - (BOOL)URLisAllowed:(NSURL*)url;
+- (BOOL)shouldAllowRequestForURL:(NSURL *)url;
+- (BOOL)shouldAllowNavigationToURL:(NSURL *)url;
+- (BOOL)shouldOpenExternalURL:(NSURL *)url;
+
 - (void)processOpenUrl:(NSURL*)url;
 
 - (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate;
