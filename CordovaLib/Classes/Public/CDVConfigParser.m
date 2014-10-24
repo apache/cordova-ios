@@ -23,7 +23,6 @@
 
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginsDict;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
-@property (nonatomic, readwrite, strong) NSMutableArray* whitelistHosts;
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSString* startPage;
 
@@ -31,7 +30,7 @@
 
 @implementation CDVConfigParser
 
-@synthesize pluginsDict, settings, whitelistHosts, startPage, startupPluginNames;
+@synthesize pluginsDict, settings, startPage, startupPluginNames;
 
 - (id)init
 {
@@ -39,10 +38,6 @@
     if (self != nil) {
         self.pluginsDict = [[NSMutableDictionary alloc] initWithCapacity:30];
         self.settings = [[NSMutableDictionary alloc] initWithCapacity:30];
-        self.whitelistHosts = [[NSMutableArray alloc] initWithCapacity:30];
-        [self.whitelistHosts addObject:@"file:///*"];
-        [self.whitelistHosts addObject:@"content:///*"];
-        [self.whitelistHosts addObject:@"data:///*"];
         self.startupPluginNames = [[NSMutableArray alloc] initWithCapacity:8];
         featureName = nil;
     }
@@ -66,8 +61,6 @@
         if (paramIsOnload || attribIsOnload) {
             [self.startupPluginNames addObject:featureName];
         }
-    } else if ([elementName isEqualToString:@"access"]) {
-        [whitelistHosts addObject:attributeDict[@"origin"]];
     } else if ([elementName isEqualToString:@"content"]) {
         self.startPage = attributeDict[@"src"];
     }
