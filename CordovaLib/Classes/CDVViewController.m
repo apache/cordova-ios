@@ -657,6 +657,8 @@
     self.webView.delegate = nil;
     self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
+
+    [super viewDidUnload];
 }
 
 #pragma mark UIWebViewDelegate
