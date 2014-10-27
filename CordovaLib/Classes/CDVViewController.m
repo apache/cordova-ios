@@ -153,11 +153,7 @@
 
 - (BOOL)URLisAllowed:(NSURL*)url
 {
-    if (self.whitelist == nil) {
-        return YES;
-    }
-
-    return [self.whitelist URLIsAllowed:url];
+    return [self shouldAllowNavigationToURL:url];
 }
 
 - (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate
@@ -718,24 +714,44 @@
     }
 
     /*
-     * If a URL is being loaded that's a file/http/https URL, just load it internally
-     */
-    if ([url isFileURL]) {
-        return YES;
-    }
-
-    /*
      *    If we loaded the HTML from a string, we let the app handle it
      */
-    else if (self.loadFromString == YES) {
+    if (self.loadFromString == YES) {
         self.loadFromString = NO;
         return YES;
     }
 
     /*
-     * all tel: scheme urls we let the UIWebview handle it using the default behavior
+     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
      */
-    else if ([[url scheme] isEqualToString:@"tel"]) {
+    BOOL shouldAllowNavigation = [self shouldAllowNavigationToURL:url];
+    if (shouldAllowNavigation) {
+        return YES;
+    } else {
+        BOOL shouldOpenExternalURL = [self shouldOpenExternalURL:url];
+        if (shouldOpenExternalURL) {
+            if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url];
+            } else { // handle any custom schemes to plugins
+                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+            }
+        }
+    }
+
+    return NO;
+}
+
+#pragma mark Network Policy Plugin (Whitelist) hooks
+
+/* This implements the default policy for resource loading and navigation, if there
+ * are no plugins installed which override the whitelist methods.
+ */
+- (BOOL)defaultResourcePolicyForURL:(NSURL *)url
+{
+    /*
+     * If a URL is being loaded that's a file/http/https URL, just load it internally
+     */
+    if ([url isFileURL]) {
         return YES;
     }
 
@@ -753,27 +769,8 @@
         return YES;
     }
 
-    /*
-     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
-     */
-    else {
-        if ([self.whitelist schemeIsAllowed:[url scheme]]) {
-            return [self.whitelist URLIsAllowed:url];
-        } else {
-            if ([[UIApplication sharedApplication] canOpenURL:url]) {
-                [[UIApplication sharedApplication] openURL:url];
-            } else { // handle any custom schemes to plugins
-                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
-            }
-        }
-
-        return NO;
-    }
-
-    return YES;
+    return NO;
 }
-
-#pragma mark Network Policy Plugin (Whitelist) hooks
 
 - (BOOL)shouldAllowRequestForURL:(NSURL *)url
 {
@@ -795,7 +792,7 @@
     }
 
     /* Default Policy */
-    return NO;
+    return [self defaultResourcePolicyForURL:url];
 }
 
 
@@ -819,7 +816,7 @@
     }
 
     /* Default Policy */
-    return NO;
+    return [self defaultResourcePolicyForURL:url];
 }
 
 - (BOOL)shouldOpenExternalURL:(NSURL *)url

@@ -78,7 +78,7 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
-- (BOOL)URLisAllowed:(NSURL*)url;
+- (BOOL)URLisAllowed:(NSURL*)url __attribute__((deprecated));
 - (BOOL)shouldAllowRequestForURL:(NSURL *)url;
 - (BOOL)shouldAllowNavigationToURL:(NSURL *)url;
 - (BOOL)shouldOpenExternalURL:(NSURL *)url;
