@@ -283,7 +283,7 @@
     if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
         self.webView.allowsInlineMediaPlayback = YES;
     }
-    if ((mediaPlaybackRequiresUserAction == NO) && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
+    if ((!mediaPlaybackRequiresUserAction) && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
         self.webView.mediaPlaybackRequiresUserAction = NO;
     }
 
@@ -705,7 +705,7 @@
         CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
-            if (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType) == YES) {
+            if (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType)) {
                 return NO;
             }
         }
@@ -714,7 +714,7 @@
     /*
      *    If we loaded the HTML from a string, we let the app handle it
      */
-    if (self.loadFromString == YES) {
+    if (self.loadFromString) {
         self.loadFromString = NO;
         return YES;
     }
@@ -780,7 +780,7 @@
         if ([plugin respondsToSelector:selector]) {
             anyPluginsResponded = YES;
             shouldAllowRequest = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
-            if (shouldAllowRequest == NO) {
+            if (!shouldAllowRequest) {
                 break;
             }
         }
@@ -804,7 +804,7 @@
         if ([plugin respondsToSelector:selector]) {
             anyPluginsResponded = YES;
             shouldAllowNavigation = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
-            if (shouldAllowNavigation == NO) {
+            if (!shouldAllowNavigation) {
                 break;
             }
         }
@@ -827,7 +827,7 @@
         if ([plugin respondsToSelector:selector]) {
             anyPluginsResponded = YES;
             shouldOpenExternalURL = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
-            if (shouldOpenExternalURL == NO) {
+            if (!shouldOpenExternalURL) {
                 break;
             }
         }
