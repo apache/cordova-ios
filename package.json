@@ -1,6 +1,6 @@
 {
     "name": "cordova-ios",
-    "version": "3.7.0-dev",
+    "version": "3.7.0",
     "description": "cordova-ios release",
     "main": "bin/create",
     "repository": {
@@ -12,10 +12,9 @@
         "cordova",
         "apache"
     ],
-    "scripts" : {
-        "test" : "npm run jasmine",
-        "jasmine" : "jasmine-node --captureExceptions --color tests/spec"
-        
+    "scripts": {
+        "test": "npm run jasmine",
+        "jasmine": "jasmine-node --captureExceptions --color tests/spec"
     },
     "author": "Apache Software Foundation",
     "license": "Apache Version 2.0",

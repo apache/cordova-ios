@@ -24,6 +24,6 @@
 # Note: it does not work if the --shared option was used to create the project.
 #
 
-VERSION="3.7.0-dev"
+VERSION="3.7.0"
 
 echo $VERSION 
