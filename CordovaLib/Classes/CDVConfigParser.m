@@ -70,6 +70,12 @@
         [whitelistHosts addObject:attributeDict[@"origin"]];
     } else if ([elementName isEqualToString:@"content"]) {
         self.startPage = attributeDict[@"src"];
+    }else if ([elementName isEqualToString: @"plugins"]){
+        pluginsName = elementName;
+    }else if (pluginsName != nil && [elementName isEqualToString: @"param"]){
+        NSString *className = attributeDict[@"value"];
+        if (className && className.length > 0)
+            pluginsDict[[className lowercaseString]] = className;
     }
 }
 
@@ -77,6 +83,8 @@
 {
     if ([elementName isEqualToString:@"feature"]) { // no longer handling a feature so release
         featureName = nil;
+    }else if ([elementName isEqualToString: @"plugins"]){
+        pluginsName = nil;
     }
 }
 
