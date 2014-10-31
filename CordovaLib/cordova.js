@@ -931,7 +931,7 @@ function iOSExec() {
         bridgeMode = jsToNativeModes.IFRAME_NAV;
         }
     }
-
+	
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
         bridgeMode = jsToNativeModes.WK_WEBVIEW_BINDING;
     }
