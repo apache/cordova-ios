@@ -331,10 +331,10 @@
             if (errorUrl) {
                 errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
                 NSLog(@"%@", [errorUrl absoluteString]);
-                [self.webView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+                [_webViewOperationsDelegate loadRequest:[NSURLRequest requestWithURL:errorUrl]];
             } else {
-            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-            [_webViewOperationsDelegate loadHTMLString:html baseURL:nil];
+                NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+                [_webViewOperationsDelegate loadHTMLString:html baseURL:nil];
             }
         }
     }];
@@ -716,7 +716,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex : 0]) : nil);
+    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
 
     return basePath;
 }
@@ -891,10 +891,46 @@
 {
     if (self.openURL) {
         [self processOpenUrl:self.openURL pageLoaded:YES];
-        NSString* jsString = [NSString stringWithFormat:@"handleOpenURL(\"%@\");", [self.openURL description]];
-        [_webViewOperationsDelegate evaluateJavaScript:jsString completionHandler:nil];
-        self.openURL = nil;
     }
+}
+
+- (void)processOpenUrl:(NSURL*)url pageLoaded:(BOOL)pageLoaded
+{
+    __weak CDVViewController* weakSelf = self;
+
+    dispatch_block_t handleOpenUrl = ^(void) {
+        NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
+        [_webViewOperationsDelegate evaluateJavaScript:jsString
+                                     completionHandler:^(id object, NSError* error) {
+            if (error == nil) {
+                weakSelf.openURL = nil;
+            }
+        }];
+    };
+
+    if (!pageLoaded) {
+        // query the webview for readystate
+        NSString* jsString = @"document.readystate";
+        [_webViewOperationsDelegate evaluateJavaScript:jsString
+                                     completionHandler:^(id object, NSError* error) {
+            if ((error == nil) && [object isKindOfClass:[NSString class]]) {
+                NSString* readyState = (NSString*)object;
+                BOOL ready = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
+                if (ready) {
+                    handleOpenUrl();
+                } else {
+                    weakSelf.openURL = url;
+                }
+            }
+        }];
+    } else {
+        handleOpenUrl();
+    }
+}
+
+- (void)processOpenUrl:(NSURL*)url
+{
+    [self processOpenUrl:url pageLoaded:NO];
 }
 
 #pragma mark WKScriptMessageHandler implementation
@@ -910,29 +946,19 @@
         CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
         CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
 
-- (void)processOpenUrl:(NSURL*)url pageLoaded:(BOOL)pageLoaded
-{
-    if (!pageLoaded) {
-        // query the webview for readystate
-        NSString* readyState = [webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
-        pageLoaded = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
-    }
+        if (![_commandQueue execute:command]) {
+    #ifdef DEBUG
+                NSString* commandJson = [jsonEntry JSONString];
+                static NSUInteger maxLogLength = 1024;
+                NSString* commandString = ([commandJson length] > maxLogLength) ?
+                    [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
+                    commandJson;
 
-    if (pageLoaded) {
                 DLog(@"FAILED pluginJSON = %@", commandString);
-        NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
     #endif
         }
-    } else {
-        // save for when page has loaded
-        self.openURL = url;
     }
-}
-
 #endif /* ifdef __IPHONE_8_0 */
-{
-    [self processOpenUrl:url pageLoaded:NO];
-}
 
 // ///////////////////////
 
