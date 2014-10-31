@@ -20,6 +20,7 @@
 @interface CDVConfigParser : NSObject <NSXMLParserDelegate>
 {
     NSString* featureName;
+    NSString* pluginsName;    
 }
 
 @property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
