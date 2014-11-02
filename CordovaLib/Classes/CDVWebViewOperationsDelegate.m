@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,37 +22,53 @@
 
 @implementation CDVWebViewOperationsDelegate
 
-- (instancetype) initWithWebView:(UIView*)webView
+- (instancetype)initWithWebView:(UIView*)webView
 {
     self = [super init];
     if (self) {
         Class wk_class = NSClassFromString(@"WKWebView");
-        if ( !([webView isKindOfClass:wk_class] || [webView isKindOfClass:[UIWebView class]] )) {
+        if (!([webView isKindOfClass:wk_class] || [webView isKindOfClass:[UIWebView class]])) {
             return nil;
         }
         _webView = webView;
     }
-    
+
     return self;
 }
 
 - (void)loadRequest:(NSURLRequest*)request
 {
-    SEL selector = NSSelectorFromString(@"loadRequest:");
+    SEL selector = @selector(loadRequest:);
+
     if ([_webView respondsToSelector:selector]) {
         // UIKit operations have to be on the main thread. and this method is synchronous
         [_webView performSelectorOnMainThread:selector withObject:request waitUntilDone:YES];
     }
 }
 
+- (void)loadFileURL:(NSURL*)url allowingReadAccessToURL:(NSURL*)readAccessURL
+{
+    SEL wk_sel = @selector(loadFileURL:allowingReadAccessToURL:);
+    __weak CDVWebViewOperationsDelegate* weakSelf = self;
+
+    // UIKit operations have to be on the main thread. This method does not need to be synchronous
+    dispatch_async(dispatch_get_main_queue(), ^{
+            if ([_webView respondsToSelector:wk_sel] && [[url scheme] isEqualToString:@"file"]) {
+                ((id (*)(id, SEL, id, id))objc_msgSend)(_webView, wk_sel, url, readAccessURL);
+            } else {
+                [weakSelf loadRequest:[NSURLRequest requestWithURL:url]];
+            }
+        });
+}
+
 - (void)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL
 {
-    SEL selector = NSSelectorFromString(@"loadHTMLString:baseURL:");
+    SEL selector = @selector(loadHTMLString:baseURL:);
 
     dispatch_block_t invoke = ^(void) {
         ((void (*)(id, SEL, id, id))objc_msgSend)(_webView, selector, string, baseURL);
     };
-    
+
     if ([_webView respondsToSelector:selector]) {
         // UIKit operations have to be on the main thread.
         // perform a synchronous invoke on the main thread without deadlocking
@@ -66,18 +82,23 @@
 
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler
 {
-    SEL ui_sel = NSSelectorFromString(@"stringByEvaluatingJavaScriptFromString:");
-    SEL wk_sel = NSSelectorFromString(@"evaluateJavaScript:completionHandler:");
+    SEL ui_sel = @selector(stringByEvaluatingJavaScriptFromString:);
+    SEL wk_sel = @selector(evaluateJavaScript:completionHandler:);
 
     // UIKit operations have to be on the main thread. This method does not need to be synchronous
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([_webView respondsToSelector:ui_sel]) {
-            NSString* ret = ((NSString* (*)(id, SEL, id))objc_msgSend)(_webView, ui_sel, javaScriptString);
-            completionHandler(ret, nil);
-        } else if ([_webView respondsToSelector:wk_sel]) {
-            ((void (*)(id, SEL, id, id))objc_msgSend)(_webView, wk_sel, javaScriptString, completionHandler);
-        }
-    });
+            if ([_webView respondsToSelector:ui_sel]) {
+                NSString* ret = ((NSString * (*)(id, SEL, id))objc_msgSend)(_webView, ui_sel, javaScriptString);
+                completionHandler(ret, nil);
+            } else if ([_webView respondsToSelector:wk_sel]) {
+                ((void (*)(id, SEL, id, id))objc_msgSend)(_webView, wk_sel, javaScriptString, completionHandler);
+            }
+        });
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    return _webView;
 }
 
 @end
