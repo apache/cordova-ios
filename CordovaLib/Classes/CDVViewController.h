@@ -26,7 +26,7 @@
 #import "CDVWhitelist.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVPlugin.h"
-#import "CDVWebViewOperationsDelegate.h"
+#import "CDVWebViewProxy.h"
 #ifdef __IPHONE_8_0
     #import <WebKit/WebKit.h>
 #else
@@ -38,7 +38,7 @@
 
 @interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate, WKScriptMessageHandler>{
     @protected
-    CDVWebViewOperationsDelegate* _webViewOperationsDelegate;
+    CDVWebViewProxy* _webViewProxy;
     @protected
     id <CDVCommandDelegate> _commandDelegate;
     @protected
@@ -58,7 +58,7 @@
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
 @property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
-@property (nonatomic, readonly, strong) CDVWebViewOperationsDelegate* webViewOperationsDelegate;
+@property (nonatomic, readonly, strong) CDVWebViewProxy* webViewProxy;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**

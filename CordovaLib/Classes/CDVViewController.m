@@ -57,7 +57,7 @@
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
-@synthesize webViewOperationsDelegate = _webViewOperationsDelegate;
+@synthesize webViewProxy = _webViewProxy;
 
 - (void)__init
 {
@@ -322,7 +322,7 @@
         [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
         if (appURL) {
             NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [_webViewOperationsDelegate loadRequest:appReq];
+            [_webViewProxy loadRequest:appReq];
         } else {
             NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
@@ -331,10 +331,10 @@
             if (errorUrl) {
                 errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
                 NSLog(@"%@", [errorUrl absoluteString]);
-                [_webViewOperationsDelegate loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+                [_webViewProxy loadRequest:[NSURLRequest requestWithURL:errorUrl]];
             } else {
                 NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-                [_webViewOperationsDelegate loadHTMLString:html baseURL:nil];
+                [_webViewProxy loadHTMLString:html baseURL:nil];
             }
         }
     }];
@@ -407,7 +407,7 @@
         , (long)[self mapIosOrientationToJsOrientation:interfaceOrientation]];
     __weak CDVViewController* weakSelf = self;
 
-    [_webViewOperationsDelegate evaluateJavaScript:jsCall completionHandler:^(NSString* obj, NSError* error) {
+    [_webViewProxy evaluateJavaScript:jsCall completionHandler:^(NSString* obj, NSError* error) {
         if ([obj length] > 0) {
             completionHandler([obj boolValue]);
         } else {
@@ -505,7 +505,7 @@
 
     self.webView = [self newCordovaViewWithFrame:webViewBounds];
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    _webViewOperationsDelegate = [[CDVWebViewOperationsDelegate alloc] initWithWebView:self.webView];
+    _webViewProxy = [[CDVWebViewProxy alloc] initWithWebView:self.webView];
 
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
@@ -900,8 +900,8 @@
 
     dispatch_block_t handleOpenUrl = ^(void) {
         NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
-        [_webViewOperationsDelegate evaluateJavaScript:jsString
-                                     completionHandler:^(id object, NSError* error) {
+        [_webViewProxy evaluateJavaScript:jsString
+                        completionHandler:^(id object, NSError* error) {
             if (error == nil) {
                 weakSelf.openURL = nil;
             }
@@ -911,8 +911,8 @@
     if (!pageLoaded) {
         // query the webview for readystate
         NSString* jsString = @"document.readystate";
-        [_webViewOperationsDelegate evaluateJavaScript:jsString
-                                     completionHandler:^(id object, NSError* error) {
+        [_webViewProxy evaluateJavaScript:jsString
+                        completionHandler:^(id object, NSError* error) {
             if ((error == nil) && [object isKindOfClass:[NSString class]]) {
                 NSString* readyState = (NSString*)object;
                 BOOL ready = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];

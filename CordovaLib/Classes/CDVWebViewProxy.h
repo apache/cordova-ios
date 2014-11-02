@@ -24,7 +24,7 @@
     #pragma message("For iOS 8 - Please add WebKit.framework into your 'Link Binary with Libraries' Build Phase Project Setting. This will be baked in once Xcode 6 is required.")
 #endif /* ifdef __IPHONE_8_0 */
 
-@interface CDVWebViewOperationsDelegate : NSObject {
+@interface CDVWebViewProxy : NSObject {
     @private
     __weak UIView* _webView;
 }

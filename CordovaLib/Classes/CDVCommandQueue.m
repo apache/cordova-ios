@@ -112,8 +112,8 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     __weak CDVCommandQueue* weakSelf = self;
     NSString* js = @"cordova.require('cordova/exec').nativeFetchMessages()";
 
-    [_viewController.webViewOperationsDelegate evaluateJavaScript:js
-                                                completionHandler:^(id obj, NSError* error) {
+    [_viewController.webViewProxy evaluateJavaScript:js
+                                   completionHandler:^(id obj, NSError* error) {
         if ((error == nil) && [obj isKindOfClass:[NSString class]]) {
             NSString* queuedCommandsJSON = (NSString*)obj;
             CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);

@@ -18,9 +18,9 @@
  */
 
 #import <objc/message.h>
-#import "CDVWebViewOperationsDelegate.h"
+#import "CDVWebViewProxy.h"
 
-@implementation CDVWebViewOperationsDelegate
+@implementation CDVWebViewProxy
 
 - (instancetype)initWithWebView:(UIView*)webView
 {
@@ -49,7 +49,7 @@
 - (void)loadFileURL:(NSURL*)url allowingReadAccessToURL:(NSURL*)readAccessURL
 {
     SEL wk_sel = @selector(loadFileURL:allowingReadAccessToURL:);
-    __weak CDVWebViewOperationsDelegate* weakSelf = self;
+    __weak CDVWebViewProxy* weakSelf = self;
 
     // UIKit operations have to be on the main thread. This method does not need to be synchronous
     dispatch_async(dispatch_get_main_queue(), ^{
