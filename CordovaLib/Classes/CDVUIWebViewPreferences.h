@@ -17,20 +17,13 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#import "CDVWebViewPreferences.h"
 #import <UIKit/UIKit.h>
 
-@interface CDVWebViewPreferences : NSObject
+@interface CDVUIWebViewPreferences : CDVWebViewPreferences
 
-@property (nonatomic, strong) NSDictionary* settings;
+@property (nonatomic, weak) UIWebView* webView;
 
-- (instancetype)initWithWebView:(UIView*)webView settings:(NSDictionary*)settings;
-- (instancetype)initWithSettings:(NSDictionary*)settings;
-
-- (void)update;
-
-- (id)settingForKey:(NSString*)key;
-- (BOOL)boolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
-- (CGFloat)floatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+- (instancetype)initWithWebView:(UIWebView*)webView settings:(NSDictionary*)settings;
 
 @end

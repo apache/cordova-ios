@@ -299,8 +299,8 @@
         [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
-    CDVWebViewPreferences* prefs = [[CDVWebViewPreferences alloc] initWithWebView:webView];
-    [prefs updateSettings:self.settings];
+    CDVWebViewPreferences* prefs = [[CDVWebViewPreferences alloc] initWithWebView:webView settings:self.settings];
+    [prefs update];
 
     if ([self.startupPluginNames count] > 0) {
         [CDVTimer start:@"TotalPluginStartup"];

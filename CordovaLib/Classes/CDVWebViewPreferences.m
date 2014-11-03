@@ -17,282 +17,72 @@
  under the License.
  */
 #import "CDVWebViewPreferences.h"
+#import "CDVWKWebViewPreferences.h"
+#import "CDVUIWebViewPreferences.h"
 #import "CDVAvailability.h"
 #import <objc/message.h>
-
-#ifdef __IPHONE_8_0
-    #import <WebKit/WebKit.h>
-#endif /* ifdef __IPHONE_8_0 */
+#import <WebKit/WebKit.h>
 
 @implementation CDVWebViewPreferences
 
-- (instancetype)initWithWebView:(UIView*)webView
+- (instancetype)initWithWebView:(UIView*)webView settings:(NSDictionary*)settings
 {
     self = [super init];
     if (self) {
-        Class wk_class = NSClassFromString(@"WKWebView");
-        if (!([webView isKindOfClass:wk_class] || [webView isKindOfClass:[UIWebView class]])) {
+        if ([webView isKindOfClass:[WKWebView class]]) {
+            return [[CDVWKWebViewPreferences alloc] initWithWebView:(WKWebView*)webView settings:settings];
+        } else if ([webView isKindOfClass:[UIWebView class]]) {
+            return [[CDVUIWebViewPreferences alloc] initWithWebView:(UIWebView*)webView settings:settings];
+        } else {
             return nil;
         }
-        _webView = webView;
     }
 
     return self;
 }
 
-- (void)updateSettings:(NSDictionary*)settings
+- (instancetype)initWithSettings:(NSDictionary*)settings
 {
-    Class wk_class = NSClassFromString(@"WKWebView");
-    SEL ui_sel = NSSelectorFromString(@"updateUIWebView:settings:");
-    SEL wk_sel = NSSelectorFromString(@"updateWKWebView:settings:");
-
-    __weak id weakSelf = self;
-
-    dispatch_block_t invoke = ^(void) {
-        if ([_webView isKindOfClass:[UIWebView class]] && [weakSelf respondsToSelector:ui_sel]) {
-            ((void (*)(id, SEL, id, id))objc_msgSend)(weakSelf, ui_sel, _webView, settings);
-        } else if ([_webView isKindOfClass:wk_class] && [weakSelf respondsToSelector:wk_sel]) {
-            ((void (*)(id, SEL, id, id))objc_msgSend)(weakSelf, wk_sel, _webView, settings);
-        }
-    };
-
-    // UIKit operations have to be on the main thread.
-    // perform a synchronous invoke on the main thread without deadlocking
-    if ([NSThread isMainThread]) {
-        invoke();
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), invoke);
+    self = [super init];
+    if (self) {
+        self.settings = settings;
     }
+
+    return self;
 }
 
-- (id)cordovaSettings:(NSDictionary*)settings forKey:(NSString*)key
+- (void)update
 {
-    return [settings objectForKey:[key lowercaseString]];
+    [NSException raise:@"Invoked abstract method" format:@"Invoked abstract method"];
 }
 
-- (void)updateUIWebView:(UIWebView*)theWebView settings:(NSDictionary*)settings
+- (id)settingForKey:(NSString*)key
 {
-    BOOL scalesPageToFit = NO; // default
-    id prefObj = [self cordovaSettings:settings forKey:@"EnableViewportScale"];
-
-    if (prefObj != nil) {
-        scalesPageToFit = [(NSNumber*)prefObj boolValue];
-    }
-    theWebView.scalesPageToFit = scalesPageToFit;
-
-    BOOL allowInlineMediaPlayback = NO; // default
-    prefObj = [self cordovaSettings:settings forKey:@"AllowInlineMediaPlayback"];
-    if (prefObj != nil) {
-        allowInlineMediaPlayback = [(NSNumber*)prefObj boolValue];
-    }
-    theWebView.allowsInlineMediaPlayback = allowInlineMediaPlayback;
-
-    BOOL mediaPlaybackRequiresUserAction = YES;  // default
-    prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"];
-    if (prefObj != nil) {
-        mediaPlaybackRequiresUserAction = [(NSNumber*)prefObj boolValue];
-    }
-    theWebView.mediaPlaybackRequiresUserAction = mediaPlaybackRequiresUserAction;
-
-    BOOL mediaPlaybackAllowsAirPlay = YES;  // default
-    prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackAllowsAirPlay"];
-    if (prefObj != nil) {
-        mediaPlaybackAllowsAirPlay = [(NSNumber*)prefObj boolValue];
-    }
-    theWebView.mediaPlaybackAllowsAirPlay = mediaPlaybackAllowsAirPlay;
-
-    // By default, overscroll bouncing is allowed.
-    // UIWebViewBounce has been renamed to DisallowOverscroll, but both are checked.
-    BOOL bounceAllowed = YES;
-    NSNumber* disallowOverscroll = [self cordovaSettings:settings forKey:@"DisallowOverscroll"];
-    if (disallowOverscroll == nil) {
-        NSNumber* bouncePreference = [self cordovaSettings:settings forKey:@"UIWebViewBounce"];
-        bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
-    } else {
-        bounceAllowed = ![disallowOverscroll boolValue];
-    }
-
-    // prevent webView from bouncing
-    // based on the DisallowOverscroll/UIWebViewBounce key in config.xml
-    if (!bounceAllowed) {
-        if ([theWebView respondsToSelector:@selector(scrollView)]) {
-            ((UIScrollView*)[theWebView scrollView]).bounces = NO;
-        } else {
-            for (id subview in theWebView.subviews) {
-                if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-                    ((UIScrollView*)subview).bounces = NO;
-                }
-            }
-        }
-    }
-
-    NSString* decelerationSetting = [self cordovaSettings:settings forKey:@"UIWebViewDecelerationSpeed"];
-    if (![@"fast" isEqualToString : decelerationSetting]) {
-        [theWebView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
-    }
-
-    /*
-     * iOS 6.0 UIWebView properties
-     */
-    if (IsAtLeastiOSVersion(@"6.0")) {
-        BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
-        if ([self cordovaSettings:settings forKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
-            if ([self cordovaSettings:settings forKey:@"KeyboardDisplayRequiresUserAction"]) {
-                keyboardDisplayRequiresUserAction = [(NSNumber*)[self cordovaSettings:settings forKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
-            }
-        }
-
-        // property check for compiling under iOS < 6
-        if ([theWebView respondsToSelector:@selector(setKeyboardDisplayRequiresUserAction:)]) {
-            [theWebView setValue:[NSNumber numberWithBool:keyboardDisplayRequiresUserAction] forKey:@"keyboardDisplayRequiresUserAction"];
-        }
-
-        BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
-        if ([self cordovaSettings:settings forKey:@"SuppressesIncrementalRendering"] != nil) {
-            if ([self cordovaSettings:settings forKey:@"SuppressesIncrementalRendering"]) {
-                suppressesIncrementalRendering = [(NSNumber*)[self cordovaSettings:settings forKey:@"SuppressesIncrementalRendering"] boolValue];
-            }
-        }
-
-        // property check for compiling under iOS < 6
-        if ([theWebView respondsToSelector:@selector(setSuppressesIncrementalRendering:)]) {
-            [theWebView setValue:[NSNumber numberWithBool:suppressesIncrementalRendering] forKey:@"suppressesIncrementalRendering"];
-        }
-    }
-
-    /*
-     * iOS 7.0 UIWebView properties
-     */
-    if (IsAtLeastiOSVersion(@"7.0")) {
-        SEL ios7sel = nil;
-        id prefObj = nil;
-
-        CGFloat gapBetweenPages = 0.0; // default
-        prefObj = [self cordovaSettings:settings forKey:@"GapBetweenPages"];
-        if (prefObj != nil) {
-            gapBetweenPages = [prefObj floatValue];
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setGapBetweenPages:");
-        if ([theWebView respondsToSelector:ios7sel]) {
-            [theWebView setValue:[NSNumber numberWithFloat:gapBetweenPages] forKey:@"gapBetweenPages"];
-        }
-
-        CGFloat pageLength = 0.0; // default
-        prefObj = [self cordovaSettings:settings forKey:@"PageLength"];
-        if (prefObj != nil) {
-            pageLength = [[self cordovaSettings:settings forKey:@"PageLength"] floatValue];
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setPageLength:");
-        if ([theWebView respondsToSelector:ios7sel]) {
-            [theWebView setValue:[NSNumber numberWithBool:pageLength] forKey:@"pageLength"];
-        }
-
-        NSInteger paginationBreakingMode = 0; // default - UIWebPaginationBreakingModePage
-        prefObj = [self cordovaSettings:settings forKey:@"PaginationBreakingMode"];
-        if (prefObj != nil) {
-            NSArray* validValues = @[@"page", @"column"];
-            NSString* prefValue = [validValues objectAtIndex:0];
-
-            if ([prefObj isKindOfClass:[NSString class]]) {
-                prefValue = prefObj;
-            }
-
-            paginationBreakingMode = [validValues indexOfObject:[prefValue lowercaseString]];
-            if (paginationBreakingMode == NSNotFound) {
-                paginationBreakingMode = 0;
-            }
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setPaginationBreakingMode:");
-        if ([theWebView respondsToSelector:ios7sel]) {
-            [theWebView setValue:[NSNumber numberWithInteger:paginationBreakingMode] forKey:@"paginationBreakingMode"];
-        }
-
-        NSInteger paginationMode = 0; // default - UIWebPaginationModeUnpaginated
-        prefObj = [self cordovaSettings:settings forKey:@"PaginationMode"];
-        if (prefObj != nil) {
-            NSArray* validValues = @[@"unpaginated", @"lefttoright", @"toptobottom", @"bottomtotop", @"righttoleft"];
-            NSString* prefValue = [validValues objectAtIndex:0];
-
-            if ([prefObj isKindOfClass:[NSString class]]) {
-                prefValue = prefObj;
-            }
-
-            paginationMode = [validValues indexOfObject:[prefValue lowercaseString]];
-            if (paginationMode == NSNotFound) {
-                paginationMode = 0;
-            }
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setPaginationMode:");
-        if ([theWebView respondsToSelector:ios7sel]) {
-            [theWebView setValue:[NSNumber numberWithInteger:paginationMode] forKey:@"paginationMode"];
-        }
-    }
+    return [self.settings objectForKey:[key lowercaseString]];
 }
 
-#ifdef __IPHONE_8_0
+- (BOOL)boolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue
+{
+    BOOL value = defaultValue;
+    id prefObj = [self settingForKey:key];
 
-    - (void)updateWKWebView:(WKWebView*)theWebView settings:(NSDictionary*)settings
-    {
-        id prefObj = nil;
-
-        CGFloat minimumFontSize = 0.0; // default
-
-        prefObj = [self cordovaSettings:settings forKey:@"MinimumFontSize"];
-        if (prefObj != nil) {
-            minimumFontSize = [[self cordovaSettings:settings forKey:@"MinimumFontSize"] floatValue];
-        }
-        theWebView.configuration.preferences.minimumFontSize = minimumFontSize;
-
-        BOOL allowInlineMediaPlayback = NO; // default
-        prefObj = [self cordovaSettings:settings forKey:@"AllowInlineMediaPlayback"];
-        if (prefObj != nil) {
-            allowInlineMediaPlayback = [(NSNumber*)prefObj boolValue];
-        }
-        theWebView.configuration.allowsInlineMediaPlayback = allowInlineMediaPlayback;
-
-        BOOL mediaPlaybackRequiresUserAction = YES;  // default
-        prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackRequiresUserAction"];
-        if (prefObj != nil) {
-            mediaPlaybackRequiresUserAction = [(NSNumber*)prefObj boolValue];
-        }
-        theWebView.configuration.mediaPlaybackRequiresUserAction = mediaPlaybackRequiresUserAction;
-
-        BOOL suppressesIncrementalRendering = NO; // default
-        prefObj = [self cordovaSettings:settings forKey:@"SuppressesIncrementalRendering"];
-        if (prefObj != nil) {
-            suppressesIncrementalRendering = [(NSNumber*)prefObj boolValue];
-        }
-        theWebView.configuration.suppressesIncrementalRendering = suppressesIncrementalRendering;
-
-        BOOL mediaPlaybackAllowsAirPlay = YES;  // default
-        prefObj = [self cordovaSettings:settings forKey:@"MediaPlaybackAllowsAirPlay"];
-        if (prefObj != nil) {
-            mediaPlaybackAllowsAirPlay = [(NSNumber*)prefObj boolValue];
-        }
-        theWebView.configuration.mediaPlaybackAllowsAirPlay = mediaPlaybackAllowsAirPlay;
-
-        /*
-        BOOL javaScriptEnabled = YES;  // default value
-        if ([self cordovaSettings:settings forKey:@"JavaScriptEnabled"]) {
-            javaScriptEnabled = [(NSNumber*)[self cordovaSettings:settings forKey:@"JavaScriptEnabled"] boolValue];
-        }
-        theWebView.configuration.preferences.javaScriptEnabled = javaScriptEnabled;
-
-        BOOL javaScriptCanOpenWindowsAutomatically = NO;  // default value
-        if ([self cordovaSettings:settings forKey:@"JavaScriptEnabled"]) {
-            javaScriptCanOpenWindowsAutomatically = [(NSNumber*)[self cordovaSettings:settings forKey:@"JavaScriptEnabled"] boolValue];
-        }
-        theWebView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
-         */
+    if (prefObj != nil) {
+        value = [(NSNumber*)prefObj boolValue];
     }
-#endif /* ifdef __IPHONE_8_0 */
+
+    return value;
+}
+
+- (CGFloat)floatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue
+{
+    CGFloat value = defaultValue;
+    id prefObj = [self settingForKey:key];
+
+    if (prefObj != nil) {
+        value = [prefObj floatValue];
+    }
+
+    return value;
+}
 
 @end
