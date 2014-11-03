@@ -18,7 +18,28 @@
  */
 
 #import <objc/message.h>
+#import <WebKit/WebKit.h>
 #import "CDVWebViewProxy.h"
+
+@interface UIWebView (Extensions)
+
+- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
+
+@end
+
+@implementation UIWebView (Extensions)
+
+- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler
+{
+    NSString* ret = [self stringByEvaluatingJavaScriptFromString:javaScriptString];
+
+    completionHandler(ret, nil);
+}
+
+@end
+
+// see forwardingTargetForSelector: selector comment for the reason for this pragma
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 
 @implementation CDVWebViewProxy
 
@@ -26,8 +47,7 @@
 {
     self = [super init];
     if (self) {
-        Class wk_class = NSClassFromString(@"WKWebView");
-        if (!([webView isKindOfClass:wk_class] || [webView isKindOfClass:[UIWebView class]])) {
+        if (!([webView isKindOfClass:[WKWebView class]] || [webView isKindOfClass:[UIWebView class]])) {
             return nil;
         }
         _webView = webView;
@@ -36,16 +56,9 @@
     return self;
 }
 
-- (void)loadRequest:(NSURLRequest*)request
-{
-    SEL selector = @selector(loadRequest:);
-
-    if ([_webView respondsToSelector:selector]) {
-        // UIKit operations have to be on the main thread. and this method is synchronous
-        [_webView performSelectorOnMainThread:selector withObject:request waitUntilDone:YES];
-    }
-}
-
+// We implement this here because certain versions of iOS 8 do not implement this
+// in WKWebView, so we need to test for this during runtime.
+// It is speculated that this selector will be available in iOS 8.2 for WKWebView
 - (void)loadFileURL:(NSURL*)url allowingReadAccessToURL:(NSURL*)readAccessURL
 {
     SEL wk_sel = @selector(loadFileURL:allowingReadAccessToURL:);
@@ -61,41 +74,11 @@
         });
 }
 
-- (void)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL
-{
-    SEL selector = @selector(loadHTMLString:baseURL:);
-
-    dispatch_block_t invoke = ^(void) {
-        ((void (*)(id, SEL, id, id))objc_msgSend)(_webView, selector, string, baseURL);
-    };
-
-    if ([_webView respondsToSelector:selector]) {
-        // UIKit operations have to be on the main thread.
-        // perform a synchronous invoke on the main thread without deadlocking
-        if ([NSThread isMainThread]) {
-            invoke();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), invoke);
-        }
-    }
-}
-
-- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler
-{
-    SEL ui_sel = @selector(stringByEvaluatingJavaScriptFromString:);
-    SEL wk_sel = @selector(evaluateJavaScript:completionHandler:);
-
-    // UIKit operations have to be on the main thread. This method does not need to be synchronous
-    dispatch_async(dispatch_get_main_queue(), ^{
-            if ([_webView respondsToSelector:ui_sel]) {
-                NSString* ret = ((NSString * (*)(id, SEL, id))objc_msgSend)(_webView, ui_sel, javaScriptString);
-                completionHandler(ret, nil);
-            } else if ([_webView respondsToSelector:wk_sel]) {
-                ((void (*)(id, SEL, id, id))objc_msgSend)(_webView, wk_sel, javaScriptString, completionHandler);
-            }
-        });
-}
-
+// This forwards the methods that are in the header that are not implemented here.
+// Both WKWebView and UIWebView implement the below:
+//     loadHTMLString:baseURL:
+//     loadRequest:
+//     evaluateJavaScript:completionHandler: (UIWebView implements in Category above)
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
     return _webView;
