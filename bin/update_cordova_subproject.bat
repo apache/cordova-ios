@@ -18,9 +18,9 @@
 @ECHO OFF
 SET script="%~dp0update_cordova_subproject"
 IF EXIST %script% (
-	node %script% %*
+    node %script% %*
 ) ELSE (
-	ECHO.
-	ECHO ERROR: Could not find 'update_cordova_subproject' script in 'bin' folder, aborting...>&2
-	EXIT /B 1
+    ECHO.
+    ECHO ERROR: Could not find 'update_cordova_subproject' script in 'bin' folder, aborting...>&2
+    EXIT /B 1
 )

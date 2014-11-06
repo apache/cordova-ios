@@ -18,9 +18,9 @@
 @ECHO OFF
 SET script="%~dp0apple_xcode_version"
 IF EXIST %script% (
-	node %script% %*
+    node %script% %*
 ) ELSE (
-	ECHO.
-	ECHO ERROR: Could not find 'apple_xcode_version' script in 'bin' folder, aborting...>&2
-	EXIT /B 1
+    ECHO.
+    ECHO ERROR: Could not find 'apple_xcode_version' script in 'bin' folder, aborting...>&2
+    EXIT /B 1
 )
