@@ -17,7 +17,6 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
 
 @interface CDVWKWebViewUIDelegate : NSObject <WKUIDelegate>

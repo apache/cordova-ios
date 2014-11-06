@@ -28,16 +28,7 @@
 #import "CDVPlugin.h"
 #import "CDVWebViewEngineProtocol.h"
 
-#ifdef __IPHONE_8_0
-    #import <WebKit/WebKit.h>
-#else
-    @protocol WKScriptMessageHandler
-    @end
-#endif
-
-@protocol WKScriptMessageHandler;
-
-@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate, WKScriptMessageHandler>{
+@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
     @protected
     id <CDVWebViewEngineProtocol> _webViewEngine;
     @protected

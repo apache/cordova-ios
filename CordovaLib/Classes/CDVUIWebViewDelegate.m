@@ -77,7 +77,6 @@
 //
 
 #import "CDVUIWebViewDelegate.h"
-#import "CDVAvailability.h"
 
 // #define VerboseLog NSLog
 #define VerboseLog(...) do {} while (0)

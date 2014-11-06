@@ -17,11 +17,10 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVWebViewEngineProtocol.h"
-#import "CDVPlugin.h"
+#import <WebKit/WebKit.h>
+#import "CDV.h"
 
-@interface CDVWKWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
+@interface CDVWKWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler>
 
 @property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
 

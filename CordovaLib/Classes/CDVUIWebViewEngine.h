@@ -17,10 +17,11 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVWebViewEngineProtocol.h"
 #import "CDVPlugin.h"
+#import "CDVWebViewEngineProtocol.h"
 
 @interface CDVUIWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
+
+@property (nonatomic, strong, readonly) id <UIWebViewDelegate> uiWebViewDelegate;
 
 @end

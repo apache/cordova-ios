@@ -26,6 +26,7 @@
 @interface CDVUIWebViewEngine ()
 
 @property (nonatomic, strong, readwrite) UIView* engineWebView;
+@property (nonatomic, strong, readwrite) id <UIWebViewDelegate> uiWebViewDelegate;
 
 @end
 
@@ -47,9 +48,23 @@
     return self;
 }
 
+- (void)pluginInitialize
+{
+    // viewController would be available now. we attempt to set all possible delegates to it, by default
+
+    UIWebView* uiWebView = (UIWebView*)_engineWebView;
+
+    if ([self.viewController conformsToProtocol:@protocol(UIWebViewDelegate)]) {
+        self.uiWebViewDelegate = [[CDVUIWebViewDelegate alloc] initWithDelegate:(id <UIWebViewDelegate>)self.viewController];
+        uiWebView.delegate = self.uiWebViewDelegate;
+    }
+
+    [self updateSettings:self.commandDelegate.settings];
+}
+
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler
 {
-    NSString* ret = [(UIWebView*)_engineWebView stringByEvaluatingJavaScriptFromString : javaScriptString];
+    NSString* ret = [(UIWebView*)_engineWebView stringByEvaluatingJavaScriptFromString:javaScriptString];
 
     if (completionHandler) {
         completionHandler(ret, nil);
@@ -62,8 +77,8 @@
 
     // UIKit operations have to be on the main thread. This method does not need to be synchronous
     dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf loadRequest:[NSURLRequest requestWithURL:url]];
-        });
+        [weakSelf loadRequest:[NSURLRequest requestWithURL:url]];
+    });
 }
 
 - (void)updateSettings:(NSDictionary*)settings
@@ -98,7 +113,7 @@
     }
 
     NSString* decelerationSetting = [settings cordovaSettingForKey:@"UIWebViewDecelerationSpeed"];
-    if (![@"fast" isEqualToString : decelerationSetting]) {
+    if (![@"fast" isEqualToString:decelerationSetting]) {
         [uiWebView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
     }
 
@@ -139,12 +154,15 @@
 
 - (void)updateWithInfo:(NSDictionary*)info
 {
+    UIWebView* uiWebView = (UIWebView*)_engineWebView;
+
     id <UIWebViewDelegate> uiWebViewDelegate = [info objectForKey:kCDVWebViewEngineUIWebViewDelegate];
     NSDictionary* settings = [info objectForKey:kCDVWebViewEngineWebViewPreferences];
 
     if (uiWebViewDelegate &&
         [uiWebViewDelegate conformsToProtocol:@protocol(UIWebViewDelegate)]) {
-        ((UIWebView*)_engineWebView).delegate = uiWebViewDelegate;
+        self.uiWebViewDelegate = [[CDVUIWebViewDelegate alloc] initWithDelegate:(id <UIWebViewDelegate>)self.viewController];
+        uiWebView.delegate = self.uiWebViewDelegate;
     }
 
     if (settings && [settings isKindOfClass:[NSDictionary class]]) {

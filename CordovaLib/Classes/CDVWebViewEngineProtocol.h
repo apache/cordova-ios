@@ -17,7 +17,6 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 #define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"
@@ -26,7 +25,7 @@
 #define kCDVWebViewEngineWKUIDelegate @"kCDVWebViewEngineWKUIDelegate"
 #define kCDVWebViewEngineWebViewPreferences @"kCDVWebViewEngineWebViewPreferences"
 
-@protocol CDVWebViewEngineProtocol
+@protocol CDVWebViewEngineProtocol <NSObject>
 
 @property (nonatomic, strong, readonly) UIView* engineWebView;
 

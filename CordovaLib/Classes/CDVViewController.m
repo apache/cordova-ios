@@ -18,16 +18,11 @@
  */
 
 #import "CDV.h"
-#import "CDVCommandDelegateImpl.h"
-#import "CDVConfigParser.h"
-#import "CDVUserAgentUtil.h"
 #import "CDVUIWebViewDelegate.h"
 #import "NSDictionary+CordovaPreferences.h"
 
 #import <objc/message.h>
 #import <AVFoundation/AVFoundation.h>
-
-#define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
@@ -293,10 +288,6 @@
         [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
-    // TODO:
-    //    CDVWebViewPreferences* prefs = [[CDVWebViewPreferences alloc] initWithWebView:webView settings:self.settings];
-    //    [prefs update];
-
     if ([self.startupPluginNames count] > 0) {
         [CDVTimer start:@"TotalPluginStartup"];
 
@@ -448,12 +439,9 @@
         self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
     }
 
-    NSMutableDictionary* info = [NSMutableDictionary dictionaryWithCapacity:1];
-    [info setValue:@{@"cordova" : self} forKey:kCDVWebViewEngineScriptMessageHandlers];
-    [info setValue:self forKey:kCDVWebViewEngineUIWebViewDelegate];
-    [info setValue:self.settings forKey:kCDVWebViewEngineWebViewPreferences];
-
-    [self.webViewEngine updateWithInfo:info];
+    if ([self.webViewEngine isKindOfClass:[CDVPlugin class]]) {
+        [self registerPlugin:(CDVPlugin*)self.webViewEngine withClassName:webViewEngineClass];
+    }
 
     return self.webViewEngine.engineWebView;
 }
@@ -688,7 +676,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
+    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex : 0]) : nil);
 
     return basePath;
 }
@@ -904,33 +892,6 @@
 {
     [self processOpenUrl:url pageLoaded:NO];
 }
-
-#pragma mark WKScriptMessageHandler implementation
-
-#ifdef __IPHONE_8_0
-    - (void)userContentController:(WKUserContentController*)userContentController didReceiveScriptMessage:(WKScriptMessage*)message
-    {
-        if (![message.name isEqualToString:@"cordova"]) {
-            return;
-        }
-
-        NSArray* jsonEntry = message.body; // NSString:callbackId, NSString:service, NSString:action, NSArray:args
-        CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
-        CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
-
-        if (![_commandQueue execute:command]) {
-    #ifdef DEBUG
-                NSString* commandJson = [jsonEntry JSONString];
-                static NSUInteger maxLogLength = 1024;
-                NSString* commandString = ([commandJson length] > maxLogLength) ?
-                    [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
-                    commandJson;
-
-                DLog(@"FAILED pluginJSON = %@", commandString);
-    #endif
-        }
-    }
-#endif /* ifdef __IPHONE_8_0 */
 
 // ///////////////////////
 

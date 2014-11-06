@@ -17,110 +17,107 @@
  under the License.
  */
 
-#ifdef __IPHONE_8_0
-
 #import "CDVWKWebViewUIDelegate.h"
 
-    @implementation CDVWKWebViewUIDelegate
+@implementation CDVWKWebViewUIDelegate
 
-    - (instancetype)initWithTitle:(NSString*)title
-    {
-        self = [super init];
-        if (self) {
-            self.title = title;
-        }
-
-        return self;
+- (instancetype)initWithTitle:(NSString*)title
+{
+    self = [super init];
+    if (self) {
+        self.title = title;
     }
 
-    - (void)     webView:(WKWebView*)webView runJavaScriptAlertPanelWithMessage:(NSString*)message
-        initiatedByFrame:(WKFrameInfo*)frame completionHandler:(void (^)())completionHandler
-    {
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
-                                                                       message:message
-                                                                preferredStyle:UIAlertControllerStyleAlert];
+    return self;
+}
 
-        UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction* action)
-            {
-                completionHandler();
-                [alert dismissViewControllerAnimated:YES completion:nil];
-            }];
+- (void)     webView:(WKWebView*)webView runJavaScriptAlertPanelWithMessage:(NSString*)message
+    initiatedByFrame:(WKFrameInfo*)frame completionHandler:(void (^)())completionHandler
+{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
 
-        [alert addAction:ok];
-
-        UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-
-        [rootController presentViewController:alert animated:YES completion:nil];
-    }
-
-    - (void)     webView:(WKWebView*)webView runJavaScriptConfirmPanelWithMessage:(NSString*)message
-        initiatedByFrame:(WKFrameInfo*)frame completionHandler:(void (^)(BOOL result))completionHandler
-    {
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
-                                                                       message:message
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction* action)
-            {
-                completionHandler(YES);
-                [alert dismissViewControllerAnimated:YES completion:nil];
-            }];
-
-        [alert addAction:ok];
-
-        UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction* action)
-            {
-                completionHandler(NO);
-                [alert dismissViewControllerAnimated:YES completion:nil];
-            }];
-        [alert addAction:cancel];
-
-        UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-
-        [rootController presentViewController:alert animated:YES completion:nil];
-    }
-
-    - (void)      webView:(WKWebView*)webView runJavaScriptTextInputPanelWithPrompt:(NSString*)prompt
-              defaultText:(NSString*)defaultText initiatedByFrame:(WKFrameInfo*)frame
-        completionHandler:(void (^)(NSString* result))completionHandler
-    {
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
-                                                                       message:prompt
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction* action)
-            {
-                completionHandler(((UITextField*)alert.textFields[0]).text);
-                [alert dismissViewControllerAnimated:YES completion:nil];
-            }];
-
-        [alert addAction:ok];
-
-        UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction* action)
-            {
-                completionHandler(nil);
-                [alert dismissViewControllerAnimated:YES completion:nil];
-            }];
-        [alert addAction:cancel];
-
-        [alert addTextFieldWithConfigurationHandler:^(UITextField* textField) {
-            textField.text = defaultText;
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction* action)
+        {
+            completionHandler();
+            [alert dismissViewControllerAnimated:YES completion:nil];
         }];
 
-        UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
+    [alert addAction:ok];
 
-        [rootController presentViewController:alert animated:YES completion:nil];
-    }
+    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
-    @end
-#endif /* ifdef __IPHONE_8_0 */
+    [rootController presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)     webView:(WKWebView*)webView runJavaScriptConfirmPanelWithMessage:(NSString*)message
+    initiatedByFrame:(WKFrameInfo*)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction* action)
+        {
+            completionHandler(YES);
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        }];
+
+    [alert addAction:ok];
+
+    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
+                                                     style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction* action)
+        {
+            completionHandler(NO);
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        }];
+    [alert addAction:cancel];
+
+    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
+
+    [rootController presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)      webView:(WKWebView*)webView runJavaScriptTextInputPanelWithPrompt:(NSString*)prompt
+          defaultText:(NSString*)defaultText initiatedByFrame:(WKFrameInfo*)frame
+    completionHandler:(void (^)(NSString* result))completionHandler
+{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
+                                                                   message:prompt
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction* action)
+        {
+            completionHandler(((UITextField*)alert.textFields[0]).text);
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        }];
+
+    [alert addAction:ok];
+
+    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
+                                                     style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction* action)
+        {
+            completionHandler(nil);
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        }];
+    [alert addAction:cancel];
+
+    [alert addTextFieldWithConfigurationHandler:^(UITextField* textField) {
+        textField.text = defaultText;
+    }];
+
+    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
+
+    [rootController presentViewController:alert animated:YES completion:nil];
+}
+
+@end

@@ -19,10 +19,10 @@
 
 #import "CDVWKWebViewEngine.h"
 #import "CDVWKWebViewUIDelegate.h"
-#import "NSDictionary+CordovaPreferences.h"
 
 #import <objc/message.h>
-#import <WebKit/WebKit.h>
+
+#define CDV_BRIDGE_NAME @"cordova"
 
 @interface CDVWKWebViewEngine ()
 
@@ -45,6 +45,7 @@
         self.uiDelegate = [[CDVWKWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
 
         WKUserContentController* userContentController = [[WKUserContentController alloc] init];
+        [userContentController addScriptMessageHandler:self name:CDV_BRIDGE_NAME];
 
         WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
         configuration.userContentController = userContentController;
@@ -52,12 +53,34 @@
         WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
 
         wkWebView.UIDelegate = self.uiDelegate;
+
         self.engineWebView = wkWebView;
 
         NSLog(@"Using WKWebView");
     }
 
     return self;
+}
+
+- (void)pluginInitialize
+{
+    // viewController would be available now. we attempt to set all possible delegates to it, by default
+
+    WKWebView* wkWebView = (WKWebView*)_engineWebView;
+
+    if ([self.viewController conformsToProtocol:@protocol(WKUIDelegate)]) {
+        wkWebView.UIDelegate = (id <WKUIDelegate>)self.viewController;
+    }
+
+    if ([self.viewController conformsToProtocol:@protocol(WKNavigationDelegate)]) {
+        wkWebView.navigationDelegate = (id <WKNavigationDelegate>)self.viewController;
+    }
+
+    if ([self.viewController conformsToProtocol:@protocol(WKScriptMessageHandler)]) {
+        [wkWebView.configuration.userContentController addScriptMessageHandler:(id < WKScriptMessageHandler >)self.viewController name:@"cordova"];
+    }
+
+    [self updateSettings:self.commandDelegate.settings];
 }
 
 // We implement this here because certain versions of iOS 8 do not implement this
@@ -70,12 +93,12 @@
 
     // UIKit operations have to be on the main thread. This method does not need to be synchronous
     dispatch_async(dispatch_get_main_queue(), ^{
-            if ([_engineWebView respondsToSelector:wk_sel] && [[url scheme] isEqualToString:@"file"]) {
-                ((id (*)(id, SEL, id, id))objc_msgSend)(_engineWebView, wk_sel, url, readAccessURL);
-            } else {
-                [weakSelf loadRequest:[NSURLRequest requestWithURL:url]];
-            }
-        });
+        if ([_engineWebView respondsToSelector:wk_sel] && [[url scheme] isEqualToString:@"file"]) {
+            ((id (*)(id, SEL, id, id))objc_msgSend)(_engineWebView, wk_sel, url, readAccessURL);
+        } else {
+            [weakSelf loadRequest:[NSURLRequest requestWithURL:url]];
+        }
+    });
 }
 
 - (void)updateSettings:(NSDictionary*)settings
@@ -134,6 +157,33 @@
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
     return _engineWebView;
+}
+
+#pragma mark WKScriptMessageHandler implementation
+
+- (void)userContentController:(WKUserContentController*)userContentController didReceiveScriptMessage:(WKScriptMessage*)message
+{
+    if (![message.name isEqualToString:CDV_BRIDGE_NAME]) {
+        return;
+    }
+
+    CDVViewController* vc = (CDVViewController*)self.viewController;
+
+    NSArray* jsonEntry = message.body; // NSString:callbackId, NSString:service, NSString:action, NSArray:args
+    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+    CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
+
+    if (![vc.commandQueue execute:command]) {
+#ifdef DEBUG
+            NSString* commandJson = [jsonEntry JSONString];
+            static NSUInteger maxLogLength = 1024;
+            NSString* commandString = ([commandJson length] > maxLogLength) ?
+                [NSString stringWithFormat : @"%@[...]", [commandJson substringToIndex:maxLogLength]] :
+                commandJson;
+
+            DLog(@"FAILED pluginJSON = %@", commandString);
+#endif
+    }
 }
 
 @end
