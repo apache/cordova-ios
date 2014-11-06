@@ -36,7 +36,7 @@
     <content src="index.html" />
 
     <!-- Preferences for iOS -->
-    <preference name="UseWKWebView" value="false" />
+    <preference name="CordovaWebViewEngine" value="CDVUIWebViewEngine" />
     <preference name="AllowInlineMediaPlayback" value="false" />
     <preference name="BackupWebStorage" value="cloud" />
     <preference name="DisallowOverscroll" value="false" />

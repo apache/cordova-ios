@@ -17,13 +17,13 @@
  under the License.
  */
 
-#import "CDVWebViewPreferences.h"
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 
-@interface CDVUIWebViewPreferences : CDVWebViewPreferences
+@interface CDVWKWebViewUIDelegate : NSObject <WKUIDelegate>
 
-@property (nonatomic, weak) UIWebView* webView;
+@property (nonatomic, copy) NSString* title;
 
-- (instancetype)initWithWebView:(UIWebView*)webView settings:(NSDictionary*)settings;
+- (instancetype)initWithTitle:(NSString*)title;
 
 @end

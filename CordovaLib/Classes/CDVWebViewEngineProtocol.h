@@ -20,20 +20,22 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#ifdef __IPHONE_8_0
-    #pragma message("For iOS 8 - Please add WebKit.framework into your 'Link Binary with Libraries' Build Phase Project Setting. This will be baked in once Xcode 6 is required.")
-#endif /* ifdef __IPHONE_8_0 */
+#define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"
+#define kCDVWebViewEngineUIWebViewDelegate @"kCDVWebViewEngineUIWebViewDelegate"
+#define kCDVWebViewEngineWKNavigationDelegate @"kCDVWebViewEngineWKNavigationDelegate"
+#define kCDVWebViewEngineWKUIDelegate @"kCDVWebViewEngineWKUIDelegate"
+#define kCDVWebViewEngineWebViewPreferences @"kCDVWebViewEngineWebViewPreferences"
 
-@interface CDVWebViewProxy : NSObject {
-    @private
-    __weak UIView* _webView;
-}
+@protocol CDVWebViewEngineProtocol
 
-- (instancetype)initWithWebView:(UIView*)webView;
+@property (nonatomic, strong, readonly) UIView* engineWebView;
 
 - (void)loadRequest:(NSURLRequest*)request;
 - (void)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL;
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
 - (void)loadFileURL:(NSURL*)URL allowingReadAccessToURL:(NSURL*)readAccessURL;
+
+- (instancetype)initWithFrame:(CGRect)frame;
+- (void)updateWithInfo:(NSDictionary*)info;
 
 @end

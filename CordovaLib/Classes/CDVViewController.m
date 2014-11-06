@@ -17,21 +17,20 @@
  under the License.
  */
 
-#import <objc/message.h>
 #import "CDV.h"
 #import "CDVCommandDelegateImpl.h"
 #import "CDVConfigParser.h"
 #import "CDVUserAgentUtil.h"
-#import "CDVWebViewDelegate.h"
-#import "CDVWebViewUIDelegate.h"
+#import "CDVUIWebViewDelegate.h"
+#import "NSDictionary+CordovaPreferences.h"
+
+#import <objc/message.h>
 #import <AVFoundation/AVFoundation.h>
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
-    CDVWebViewDelegate* _webViewDelegate;
-    CDVWebViewUIDelegate* _webViewUIDelegate;
 }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
@@ -42,6 +41,7 @@
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
+@property (nonatomic, readwrite, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 
 @property (readwrite, assign) BOOL initialized;
 
@@ -57,7 +57,7 @@
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
-@synthesize webViewProxy = _webViewProxy;
+@synthesize webViewEngine = _webViewEngine;
 
 - (void)__init
 {
@@ -177,13 +177,13 @@
 
     NSURL* url = [NSURL fileURLWithPath:path];
 
-    configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
-    if (configParser == nil) {
+    self.configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
+    if (self.configParser == nil) {
         NSLog(@"Failed to initialize XML parser.");
         return;
     }
-    [configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
-    [configParser parse];
+    [self.configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
+    [self.configParser parse];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
@@ -237,7 +237,7 @@
 {
     NSURL* errorURL = nil;
 
-    id setting = [self settingForKey:@"ErrorUrl"];
+    id setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
 
     if (setting) {
         NSString* errorUrlString = (NSString*)setting;
@@ -264,11 +264,11 @@
 
     NSString* backupWebStorageType = @"cloud"; // default value
 
-    id backupWebStorage = [self settingForKey:@"BackupWebStorage"];
+    id backupWebStorage = [self.settings cordovaSettingForKey:@"BackupWebStorage"];
     if ([backupWebStorage isKindOfClass:[NSString class]]) {
         backupWebStorageType = backupWebStorage;
     }
-    [self setSetting:backupWebStorageType forKey:@"BackupWebStorage"];
+    [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
 
     if (IsAtLeastiOSVersion(@"5.1")) {
         [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
@@ -278,12 +278,6 @@
 
     if (!self.webView) {
         [self createGapView];
-    }
-
-    // Configure WebView
-    _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
-    if ([webView respondsToSelector:@selector(setDelegate:)]) {
-        [webView setValue:_webViewDelegate forKey:@"delegate"];
     }
 
     // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
@@ -299,8 +293,9 @@
         [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
-    CDVWebViewPreferences* prefs = [[CDVWebViewPreferences alloc] initWithWebView:webView settings:self.settings];
-    [prefs update];
+    // TODO:
+    //    CDVWebViewPreferences* prefs = [[CDVWebViewPreferences alloc] initWithWebView:webView settings:self.settings];
+    //    [prefs update];
 
     if ([self.startupPluginNames count] > 0) {
         [CDVTimer start:@"TotalPluginStartup"];
@@ -322,7 +317,7 @@
         [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
         if (appURL) {
             NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [_webViewProxy loadRequest:appReq];
+            [self.webViewEngine loadRequest:appReq];
         } else {
             NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
@@ -331,23 +326,13 @@
             if (errorUrl) {
                 errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
                 NSLog(@"%@", [errorUrl absoluteString]);
-                [_webViewProxy loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+                [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
             } else {
                 NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-                [_webViewProxy loadHTMLString:html baseURL:nil];
+                [self.webViewEngine loadHTMLString:html baseURL:nil];
             }
         }
     }];
-}
-
-- (id)settingForKey:(NSString*)key
-{
-    return [[self settings] objectForKey:[key lowercaseString]];
-}
-
-- (void)setSetting:(id)setting forKey:(NSString*)key
-{
-    [[self settings] setObject:setting forKey:[key lowercaseString]];
 }
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
@@ -407,7 +392,7 @@
         , (long)[self mapIosOrientationToJsOrientation:interfaceOrientation]];
     __weak CDVViewController* weakSelf = self;
 
-    [_webViewProxy evaluateJavaScript:jsCall completionHandler:^(NSString* obj, NSError* error) {
+    [_webViewEngine evaluateJavaScript:jsCall completionHandler:^(NSString* obj, NSError* error) {
         if ([obj length] > 0) {
             completionHandler([obj boolValue]);
         } else {
@@ -449,37 +434,28 @@
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds
 {
-    UIView* cordovaView = nil;
-    BOOL useWKWebView = NO;  // default value
+    NSString* defaultWebViewEngineClass = @"CDVUIWebViewEngine";
+    NSString* webViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
 
-    if ([self settingForKey:@"UseWKWebView"]) {
-        useWKWebView = [(NSNumber*)[self settingForKey:@"UseWKWebView"] boolValue];
+    if (!webViewEngineClass) {
+        webViewEngineClass = defaultWebViewEngineClass;
     }
 
-    if (NSClassFromString(@"WKWebView") && useWKWebView) {
-#ifdef __IPHONE_8_0
-            WKUserContentController* userContentController = [[WKUserContentController alloc] init];
-
-            // scriptMessageHandler is the object that conforms to the WKScriptMessageHandler protocol
-            // see https://developer.apple.com/library/prerelease/ios/documentation/WebKit/Reference/WKScriptMessageHandler_Ref/index.html#//apple_ref/swift/intf/WKScriptMessageHandler
-            if ([self conformsToProtocol:@protocol(WKScriptMessageHandler)]) {
-                [userContentController addScriptMessageHandler:self name:@"cordova"];
-            }
-
-            WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
-            configuration.userContentController = userContentController;
-
-            cordovaView = [[WKWebView alloc] initWithFrame:bounds configuration:configuration];
-            NSLog(@"Using a WKWebView");
-            _webViewUIDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
-            ((WKWebView*)cordovaView).UIDelegate = _webViewUIDelegate;
-#endif
+    // Find webViewEngine
+    if (NSClassFromString(webViewEngineClass)) {
+        self.webViewEngine = [[NSClassFromString(webViewEngineClass) alloc] initWithFrame:bounds];
     } else {
-        cordovaView = [[UIWebView alloc] initWithFrame:bounds];
-        NSLog(@"Using a UIWebView");
+        self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
     }
 
-    return cordovaView;
+    NSMutableDictionary* info = [NSMutableDictionary dictionaryWithCapacity:1];
+    [info setValue:@{@"cordova" : self} forKey:kCDVWebViewEngineScriptMessageHandlers];
+    [info setValue:self forKey:kCDVWebViewEngineUIWebViewDelegate];
+    [info setValue:self.settings forKey:kCDVWebViewEngineWebViewPreferences];
+
+    [self.webViewEngine updateWithInfo:info];
+
+    return self.webViewEngine.engineWebView;
 }
 
 - (NSString*)userAgent
@@ -504,9 +480,8 @@
     webViewBounds.origin = self.view.bounds.origin;
 
     self.webView = [self newCordovaViewWithFrame:webViewBounds];
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    _webViewProxy = [[CDVWebViewProxy alloc] initWithWebView:self.webView];
 
+    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
 }
@@ -541,9 +516,6 @@
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 
-    if ([webView respondsToSelector:@selector(setDelegate:)]) {
-        [webView setValue:nil forKey:@"delegate"];
-    }
     self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
@@ -900,8 +872,8 @@
 
     dispatch_block_t handleOpenUrl = ^(void) {
         NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
-        [_webViewProxy evaluateJavaScript:jsString
-                        completionHandler:^(id object, NSError* error) {
+        [_webViewEngine evaluateJavaScript:jsString
+                         completionHandler:^(id object, NSError* error) {
             if (error == nil) {
                 weakSelf.openURL = nil;
             }
@@ -911,8 +883,8 @@
     if (!pageLoaded) {
         // query the webview for readystate
         NSString* jsString = @"document.readystate";
-        [_webViewProxy evaluateJavaScript:jsString
-                        completionHandler:^(id object, NSError* error) {
+        [_webViewEngine evaluateJavaScript:jsString
+                         completionHandler:^(id object, NSError* error) {
             if ((error == nil) && [object isKindOfClass:[NSString class]]) {
                 NSString* readyState = (NSString*)object;
                 BOOL ready = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
@@ -966,10 +938,6 @@
 {
     [CDVURLProtocol unregisterViewController:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    if ([webView respondsToSelector:@selector(setDelegate:)]) {
-        [webView setValue:nil forKey:@"delegate"];
-    }
 
     self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];

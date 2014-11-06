@@ -71,7 +71,7 @@
 - (void)evalJsHelper2:(NSString*)js
 {
     CDV_EXEC_LOG(@"Exec: evalling: %@", [js substringToIndex:MIN([js length], 160)]);
-    [_viewController.webViewProxy evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
+    [_viewController.webViewEngine evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
         // TODO: obj can be something other than string
         if ([obj isKindOfClass:[NSString class]]) {
             NSString* commandsJSON = (NSString*)obj;

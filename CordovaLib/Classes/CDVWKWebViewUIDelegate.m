@@ -19,9 +19,9 @@
 
 #ifdef __IPHONE_8_0
 
-#import "CDVWebViewUIDelegate.h"
+#import "CDVWKWebViewUIDelegate.h"
 
-    @implementation CDVWebViewUIDelegate
+    @implementation CDVWKWebViewUIDelegate
 
     - (instancetype)initWithTitle:(NSString*)title
     {

@@ -26,7 +26,7 @@
  * and didFinishLoad is called only for top-level navigations.
  * Relevant bug: CB-2389
  */
-@interface CDVWebViewDelegate : NSObject <UIWebViewDelegate>{
+@interface CDVUIWebViewDelegate : NSObject <UIWebViewDelegate>{
     __weak NSObject <UIWebViewDelegate>* _delegate;
     NSInteger _loadCount;
     NSInteger _state;

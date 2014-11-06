@@ -18,18 +18,18 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-#ifdef __IPHONE_8_0
-    #import <WebKit/WebKit.h>
-#endif
+@interface NSDictionary (CordovaPreferences)
 
-@interface CDVWebViewUIDelegate : NSObject
-#ifdef __IPHONE_8_0
-                                      <WKUIDelegate>
-#endif
+- (id)cordovaSettingForKey:(NSString*)key;
+- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
+- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
 
-@property (nonatomic, copy) NSString* title;
+@end
 
-- (instancetype)initWithTitle:(NSString*)title;
+@interface NSMutableDictionary (CordovaPreferences)
+
+- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
 
 @end

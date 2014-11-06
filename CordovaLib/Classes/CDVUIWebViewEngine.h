@@ -18,19 +18,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "CDVWebViewEngineProtocol.h"
+#import "CDVPlugin.h"
 
-@interface CDVWebViewPreferences : NSObject
-
-@property (nonatomic, strong) NSDictionary* settings;
-
-- (instancetype)initWithWebView:(UIView*)webView settings:(NSDictionary*)settings;
-- (instancetype)initWithSettings:(NSDictionary*)settings;
-
-- (void)update;
-
-- (id)settingForKey:(NSString*)key;
-- (BOOL)boolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
-- (CGFloat)floatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+@interface CDVUIWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
 
 @end

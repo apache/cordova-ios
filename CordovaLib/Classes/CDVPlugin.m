@@ -132,7 +132,7 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
 - (NSString*)writeJavascript:(NSString*)javascript
 {
     // TODO: although deprecated, should have some solution here instead of removing it
-    [((CDVViewController*)self.viewController).webViewProxy evaluateJavaScript : javascript completionHandler : nil]; // bad cast, but ok for now
+    [((CDVViewController*)self.viewController).webViewEngine evaluateJavaScript : javascript completionHandler : nil]; // bad cast, but ok for now
     return @"";
 }
 
