@@ -37,8 +37,6 @@
 #import "CDVURLProtocol.h"
 #import "CDVUserAgentUtil.h"
 #import "CDVViewController.h"
-#import "CDVWKWebViewEngine.h"
-#import "CDVWKWebViewUIDelegate.h"
 #import "CDVWebViewEngineProtocol.h"
 #import "CDVWhitelist.h"
 #import "NSArray+Comparisons.h"
