@@ -80,15 +80,23 @@
 
     self.appDelegate.window.rootViewController = rootVc;
 
+    UIWebView* vc1WebView = (UIWebView*)rootVc.vc1.webView;
+    UIWebView* vc2WebView = (UIWebView*)rootVc.vc2.webView;
+
+    // sanity check
+    if (![vc1WebView isKindOfClass:[UIWebView class]] && ![vc2WebView isKindOfClass:[UIWebView class]]) {
+        return;
+    }
+
     NSString* geHREF = @"window.location.href";
     [self waitForConditionName:@"getting href" block:^{
-        return (BOOL)(rootVc.vc1.webView.request != nil && rootVc.vc1.webView.request != nil);
+        return (BOOL)(vc1WebView.request != nil && vc1WebView.request != nil);
     }];
 
-    NSString* href = [rootVc.vc1.webView stringByEvaluatingJavaScriptFromString:geHREF];
+    NSString* href = [vc1WebView stringByEvaluatingJavaScriptFromString:geHREF];
     XCTAssertTrue([href hasSuffix:@"index.html"], @"href should point to index.html");
 
-    href = [rootVc.vc2.webView stringByEvaluatingJavaScriptFromString:geHREF];
+    href = [vc2WebView stringByEvaluatingJavaScriptFromString:geHREF];
     XCTAssertTrue([href hasSuffix:@"index.html?delta=true"], @"href should point to index.html?delta=true");
 }
 
