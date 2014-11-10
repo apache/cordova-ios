@@ -435,6 +435,10 @@
     // Find webViewEngine
     if (NSClassFromString(webViewEngineClass)) {
         self.webViewEngine = [[NSClassFromString(webViewEngineClass) alloc] initWithFrame:bounds];
+        // if a webView engine returns nil (not supported by the current iOS version) or doesn't conform to the protocol, we use UIWebView
+        if (!self.webViewEngine || ![self.webViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)]) {
+            self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+        }
     } else {
         self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
     }
