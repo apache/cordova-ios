@@ -80,7 +80,7 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
-- (BOOL)URLisAllowed:(NSURL*)url __attribute__((deprecated));
+- (BOOL)URLisAllowed:(NSURL*)url __attribute__((deprecated("Scheduled for removal in 5.0. Use shouldAllowRequestForURL, shouldAllowNavigationToURL or shouldOpenExternalURL instead.")));
 - (BOOL)shouldAllowRequestForURL:(NSURL *)url;
 - (BOOL)shouldAllowNavigationToURL:(NSURL *)url;
 - (BOOL)shouldOpenExternalURL:(NSURL *)url;
