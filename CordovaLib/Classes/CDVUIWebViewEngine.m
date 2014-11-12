@@ -30,9 +30,6 @@
 
 @end
 
-// see forwardingTargetForSelector: selector comment for the reason for this pragma
-#pragma clang diagnostic ignored "-Wprotocol"
-
 @implementation CDVUIWebViewEngine
 
 @synthesize engineWebView = _engineWebView;
@@ -64,21 +61,23 @@
 
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler
 {
-    NSString* ret = [(UIWebView*)_engineWebView stringByEvaluatingJavaScriptFromString:javaScriptString];
+    NSString* ret = [(UIWebView*)_engineWebView stringByEvaluatingJavaScriptFromString : javaScriptString];
 
     if (completionHandler) {
         completionHandler(ret, nil);
     }
 }
 
-- (void)loadFileURL:(NSURL*)url allowingReadAccessToURL:(NSURL*)readAccessURL
+- (id)loadRequest:(NSURLRequest*)request
 {
-    __weak CDVUIWebViewEngine* weakSelf = self;
+    [(UIWebView*)_engineWebView loadRequest : request];
+    return nil;
+}
 
-    // UIKit operations have to be on the main thread. This method does not need to be synchronous
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf loadRequest:[NSURLRequest requestWithURL:url]];
-    });
+- (id)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL
+{
+    [(UIWebView*)_engineWebView loadHTMLString : string baseURL : baseURL];
+    return nil;
 }
 
 - (void)updateSettings:(NSDictionary*)settings
@@ -113,7 +112,7 @@
     }
 
     NSString* decelerationSetting = [settings cordovaSettingForKey:@"UIWebViewDecelerationSpeed"];
-    if (![@"fast" isEqualToString:decelerationSetting]) {
+    if (![@"fast" isEqualToString : decelerationSetting]) {
         [uiWebView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
     }
 
