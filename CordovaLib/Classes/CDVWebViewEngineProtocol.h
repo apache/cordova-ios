@@ -29,10 +29,9 @@
 
 @property (nonatomic, strong, readonly) UIView* engineWebView;
 
-- (void)loadRequest:(NSURLRequest*)request;
-- (void)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL;
+- (id)loadRequest:(NSURLRequest*)request;
+- (id)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL;
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
-- (void)loadFileURL:(NSURL*)URL allowingReadAccessToURL:(NSURL*)readAccessURL;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 - (void)updateWithInfo:(NSDictionary*)info;
