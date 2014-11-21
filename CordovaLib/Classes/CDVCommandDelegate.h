@@ -19,6 +19,7 @@
 
 #import "CDVAvailability.h"
 #import "CDVInvokedUrlCommand.h"
+#import "CDVPluginResultDelegate.h"
 
 @class CDVPlugin;
 @class CDVPluginResult;
@@ -27,6 +28,7 @@
 @protocol CDVCommandDelegate <NSObject>
 
 @property (nonatomic, readonly) NSDictionary* settings;
+@property (weak) NSObject <CDVPluginResultDelegate>* pluginResultDelegate;
 
 - (NSString*)pathForResource:(NSString*)resourcepath;
 - (id)getCommandInstance:(NSString*)pluginName;

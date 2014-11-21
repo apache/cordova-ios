@@ -25,6 +25,8 @@
 
 @implementation CDVCommandDelegateImpl
 
+@synthesize pluginResultDelegate;
+
 - (id)initWithViewController:(CDVViewController*)viewController
 {
     self = [super init];
@@ -138,6 +140,10 @@
 
     NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)", callbackId, status, argumentsAsJSON, keepCallback];
 
+	if (pluginResultDelegate) {
+		js = [pluginResultDelegate mungePluginResult:js];
+	}
+	
     [self evalJsHelper:js];
 }
 
