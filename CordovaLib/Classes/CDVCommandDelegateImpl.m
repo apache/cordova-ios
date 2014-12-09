@@ -25,6 +25,8 @@
 
 @implementation CDVCommandDelegateImpl
 
+@synthesize urlTransformer;
+
 - (id)initWithViewController:(CDVViewController*)viewController
 {
     self = [super init];
@@ -124,7 +126,7 @@
 {
     CDV_EXEC_LOG(@"Exec(%@): Sending result. Status=%@", callbackId, result.status);
     // This occurs when there is are no win/fail callbacks for the call.
-    if ([@"INVALID" isEqualToString : callbackId]) {
+    if ([@"INVALID" isEqualToString:callbackId]) {
         return;
     }
     // This occurs when the callback id is malformed.
