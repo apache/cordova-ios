@@ -37,6 +37,9 @@ TARGET="iPhone-6"
 USE_DEVICE=true
 USE_SIMULATOR=false
 
+# options
+NO_BUILD=false
+
 # separates "key=value", sets an array with 0th index as key, 1st index as value
 _parseOption()
 {
@@ -70,6 +73,9 @@ _parseArgs()
     "--emulator")
       USE_DEVICE=false
       USE_SIMULATOR=true
+      ;;
+    "--nobuild")
+      NO_BUILD=true
       ;;
     esac
   done
@@ -109,7 +115,9 @@ if "$USE_DEVICE"; then
         USE_SIMULATOR=true
     else
         # if we got here, we can deploy the app, then exit success
-        "$CORDOVA_PATH/build" --device || exit $?
+        if [ ! $NO_BUILD ] then
+            "$CORDOVA_PATH/build" --device || exit $?
+        fi
         ios-deploy -d -b "$DEVICE_APP_PATH"
     	exit 0
     fi
@@ -131,7 +139,9 @@ if "$USE_SIMULATOR"; then
     fi
     
     # launch using ios-sim
-    "$CORDOVA_PATH/build" --emulator || exit $?
+    if [ ! $NO_BUILD ] then
+        "$CORDOVA_PATH/build" --emulator || exit $?
+    fi
     ios-sim launch "$SIMULATOR_APP_PATH" --stderr "$CORDOVA_PATH/console.log" --stdout "$CORDOVA_PATH/console.log" --devicetypeid com.apple.CoreSimulator.SimDeviceType.$TARGET --exit
 fi
 
