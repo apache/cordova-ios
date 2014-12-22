@@ -108,10 +108,14 @@ describe('create', function() {
 describe('end-to-end list validation', function(){
     it('handles list parameter', function() {
         shell.cp('-f', path.join(cordova_bin, 'check_reqs'), path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'check_reqs'));
+        shell.cp('-f', path.join(cordova_bin, 'lib', 'check_reqs.js'), path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'check_reqs.js'));
+        shell.cp('-f', path.join(cordova_bin, 'lib', 'versions.js'), path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'versions.js'));
         var command = '"' + path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'run') + '" --list';
         var output = shell.exec(command, {silent: true}).output;
         expect(output).toMatch(/Available iOS Virtual Devices/);
         expect(output).toMatch(/Available iOS Devices/);
         shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'check_reqs'));
+        shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'check_reqs.js'));
+        shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'versions.js'));
     });
 });
