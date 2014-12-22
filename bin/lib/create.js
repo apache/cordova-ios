@@ -192,6 +192,7 @@ exports.createProject = function(argv) {
 
     //copy the check_reqs script
     shell.cp(path.join(bin_dir, 'check_reqs'), path.join(project_path, 'cordova'));
+    shell.cp(path.join(bin_dir, 'lib', 'check_reqs.js'), path.join(project_path, 'cordova', 'lib'));
 
     //copy the version scripts script
     shell.cp(path.join(bin_dir, 'apple_ios_version'), path.join(project_path, 'cordova'));

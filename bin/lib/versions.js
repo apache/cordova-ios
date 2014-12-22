@@ -85,17 +85,59 @@ exports.get_apple_xcode_version = function() {
     child_process.exec('xcodebuild -version', function(error, stdout, stderr) {
         if (error) {
             d.reject(stderr);
+        } else {
+            var version = stdout.split('\n')[0].slice(6);
+            d.resolve(version);
         }
-        else {
+    });
+    return d.promise;
+};
+
+/**
+ * Gets ios-deploy util version
+ * @return {Promise} Promise that either resolved with ios-deploy version
+ *                           or rejected in case of error
+ */
+exports.get_ios_deploy_version = function() {
+    var d = Q.defer();
+    child_process.exec('ios-deploy --version', function(error, stdout, stderr) {
+        if (error) {
+            d.reject(stderr);
+        } else {
             d.resolve(stdout);
         }
     });
+    return d.promise;
+};
 
-    return d.promise.then(function(output) {
-        output = output.split('\n');
-        console.log(output[0].slice(6));
-        return Q();
-    }, function(stderr) {
-        return Q.reject(stderr);
+/**
+ * Gets ios-sim util version
+ * @return {Promise} Promise that either resolved with ios-sim version
+ *                           or rejected in case of error
+ */
+exports.get_ios_sim_version = function() {
+    var d = Q.defer();
+    child_process.exec('ios-sim --version', function(error, stdout, stderr) {
+        if (error) {
+            d.reject(stderr);
+        } else {
+            d.resolve(stdout);
+        }
     });
-}
+    return d.promise;
+};
+
+/**
+ * Gets specific tool version
+ * @param  {String} toolName Tool name to check. Known tools are 'xcodebuild', 'ios-sim' and 'ios-deploy'
+ * @return {Promise}         Promise that either resolved with tool version
+ *                                   or rejected in case of error
+ */
+exports.get_tool_version = function (toolName) {
+    switch (toolName) {
+        case 'xcodebuild': return exports.get_apple_xcode_version();
+        case 'ios-sim': return exports.get_apple_xcode_version();
+        case 'ios-deploy': return exports.get_apple_xcode_version();
+        default: return Q.reject(toolName + ' is not valid tool name. Valid names are: \'xcodebuild\', \'ios-sim\' and \'ios-deploy\'');
+    }
+};
