@@ -1,165 +1,42 @@
-#! /bin/sh
+#!/usr/bin/env node
 
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-#  KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
+/*
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-#
-# create a Cordova/iOS project
-#
-# USAGE
-#   ./create <path_to_new_project> <package_name> <project_name>
-#
-# EXAMPLE
-#  ./create ~/Desktop/radness org.apache.cordova.radness Radness
-#
-set -e
+    http://www.apache.org/licenses/LICENSE-2.0
 
-function usage() {
-  echo "Usage: $0 [--shared] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]"
-  echo "	--shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it."
-  echo "	--cli (optional): Use the CLI-project template."
-  echo "	<path_to_new_project>: Path to your new Cordova iOS project"
-  echo "	<package_name>: Package name, following reverse-domain style convention"
-  echo "	<project_name>: Project name"
-  echo "	<project_template_dir>: Path to project template (override)."
-  exit 1
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+
+/*
+ * create a Cordova/iOS project
+ *
+ * USAGE
+ *   ./create <path_to_new_project> <package_name> <project_name>
+ *
+ * EXAMPLE
+ *  ./create ~/Desktop/radness org.apache.cordova.radness Radness
+ */
+
+var create = require('./lib/create');
+
+if (process.argv.length < 3 || process.argv[2].indexOf('--help') > -1) {
+    create.createHelp();
 }
-
-USE_SHARED=0
-USE_CLI=0
-while [ $# -gt 0 ]; do
-    case "$1" in
-    --shared) USE_SHARED=1 ;;
-    --cli) USE_CLI=1 ;;
-    -*) ;;
-    *)
-        if [[ -z "$PROJECT_PATH" ]]; then
-            PROJECT_PATH="$1"
-        elif [[ -z "$PACKAGE" ]]; then
-            PACKAGE="$1"
-        elif [[ -z "$PROJECT_NAME" ]]; then
-            PROJECT_NAME="$1"
-        elif [[ -z "$PROJECT_TEMPLATE_DIR" ]]; then
-            PROJECT_TEMPLATE_DIR="$1"
-        else
-            echo "Too many arguments to $0". >&2
-            usage
-        fi
-    esac
-    shift
-done
-
-# check whether it is a proper create command (at least 3 arguments)
-if [[ -z "$PROJECT_NAME" ]]; then
-	usage
-fi
-
-# the two lines below are to get the current folder, and resolve symlinks
-SCRIPT="$0"
-# need this for relative symlinks
-while [ -h "$SCRIPT" ] ; do
-   SCRIPT=`readlink "$SCRIPT"`
-done
-
-BINDIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
-CORDOVALIB_DIR="$BINDIR/../CordovaLib"
-CDV_VER=$(cat "$CORDOVALIB_DIR/VERSION")
-
-PROJECT_PARENT=$(dirname "$PROJECT_PATH")
-PROJECT_TEMPLATE_DIR=${PROJECT_TEMPLATE_DIR:-"$BINDIR/templates/project"}
-SCRIPT_TEMPLATE_DIR=$BINDIR/templates/scripts
-
-"$BINDIR/check_reqs" || exit $?
-
-# check whether the project path exists and is not empty
-if [ -d "$PROJECT_PATH" ]; then
-	if [ "$(ls -1A "$PROJECT_PATH")" ]; then
-		echo "\033[31mError: $PROJECT_PATH is not empty. Please specify an empty folder.\033[m"
-		exit 1
-	fi
-fi
-
-#Ensure the parent directory exists so cp -r will not fail
-if [ ! -d "$PROJECT_PARENT" ]; then
-	echo "\033[31mError: $PROJECT_PARENT does not exist. Please specify an existing parent folder.\033[m"
-	exit 1
-fi
-
-mkdir -p "$PROJECT_PATH"
-cp -r "$PROJECT_TEMPLATE_DIR/www" "$PROJECT_PATH"/www
-cp "$CORDOVALIB_DIR/cordova.js" "$PROJECT_PATH/www/cordova.js"
-if (($USE_CLI)); then
-    cp -r "$PROJECT_TEMPLATE_DIR/__CLI__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
-else
-    cp -r "$PROJECT_TEMPLATE_DIR/__NON-CLI__.xcodeproj" "$PROJECT_PATH/$PROJECT_NAME.xcodeproj"
-fi
-cp -r "$PROJECT_TEMPLATE_DIR/__PROJECT_NAME__" "$PROJECT_PATH/$PROJECT_NAME"
-
-R=$PROJECT_PATH/$PROJECT_NAME
-mv "$R/__PROJECT_NAME__-Info.plist" "$R/$PROJECT_NAME-Info.plist"
-mv "$R/__PROJECT_NAME__-Prefix.pch" "$R/$PROJECT_NAME-Prefix.pch"
-mv "$R/gitignore" "$R/.gitignore"
-
-# replace __PROJECT_NAME__ and --ID-- with ACTIVITY and ID strings, respectively, in:
-#
-# - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
-# - ./__PROJECT_NAME__/Classes/AppDelegate.h
-# - ./__PROJECT_NAME__/Classes/AppDelegate.m
-# - ./__PROJECT_NAME__/Resources/main.m
-# - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
-# - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
-
-PROJECT_NAME_ESC="${PROJECT_NAME//&/\\&}"
-"$BINDIR/replaces" "$R.xcodeproj/project.pbxproj" __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/Classes/AppDelegate.h"     __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/Classes/AppDelegate.m"     __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/Classes/MainViewController.h" __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/Classes/MainViewController.m" __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/main.m"                    __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Prefix.pch"  __PROJECT_NAME__ "$PROJECT_NAME_ESC"
-
-"$BINDIR/replaces" "$R/$PROJECT_NAME-Info.plist" --ID-- $PACKAGE
-
-if [[ $USE_SHARED = 1 ]]; then
-    # Make the sub-project reference to Cordova have the correct path.
-    "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" > /dev/null
-else
-    # Copy in the CordovaLib directory.
-    mkdir -p "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
-    cp "$R/.gitignore" "$PROJECT_PATH/"
-    cp -r "$BINDIR/../CordovaLib/Classes" "$PROJECT_PATH/CordovaLib"
-    cp "$BINDIR/../CordovaLib/VERSION" "$PROJECT_PATH/CordovaLib"
-    cp "$BINDIR/../CordovaLib/cordova.js" "$PROJECT_PATH/CordovaLib"
-    cp "$BINDIR/../CordovaLib/CordovaLib_Prefix.pch" "$PROJECT_PATH/CordovaLib"
-    cp "$BINDIR/../CordovaLib/CordovaLib.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj"
-    # Make the sub-project reference to Cordova have the correct path.
-    "$BINDIR/update_cordova_subproject" "$R.xcodeproj/project.pbxproj" "$PROJECT_PATH/CordovaLib/CordovaLib.xcodeproj/project.pbxproj" > /dev/null
-fi
-
-# Finally copy the scripts
-cp -r "$SCRIPT_TEMPLATE_DIR"/* "$PROJECT_PATH/"
-
-# copy the check_reqs script
-cp "$BINDIR/check_reqs" "$PROJECT_PATH"/cordova
-
-# copy the version scripts script
-cp "$BINDIR/apple_ios_version" "$PROJECT_PATH"/cordova
-cp "$BINDIR/apple_osx_version" "$PROJECT_PATH"/cordova
-cp "$BINDIR/apple_xcode_version" "$PROJECT_PATH"/cordova
+else {
+    create.createProject(process.argv).done(null, function(err) {
+        console.error('Failed to create project because of error: ' + err);
+        process.exit(2);
+    });
+}

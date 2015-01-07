@@ -37,6 +37,14 @@ TARGET="iPhone-6"
 USE_DEVICE=true
 USE_SIMULATOR=false
 
+# options
+NO_BUILD=false
+
+# display list
+DISPLAY_LIST=false
+DISPLAY_DEVICE=false
+DISPLAY_EMULATOR=false
+
 # separates "key=value", sets an array with 0th index as key, 1st index as value
 _parseOption()
 {
@@ -66,13 +74,33 @@ _parseArgs()
     "--device")
       USE_DEVICE=true
       USE_SIMULATOR=false
+      DISPLAY_DEVICE=true
       ;;
     "--emulator")
       USE_DEVICE=false
       USE_SIMULATOR=true
+      DISPLAY_EMULATOR=true
+      ;;
+    "--list")
+      DISPLAY_LIST=true
+      ;;
+    "--nobuild")
+      NO_BUILD=true
       ;;
     esac
   done
+}
+
+_displayDevices()
+{
+    echo "Available iOS Devices:"
+    "$CORDOVA_PATH/lib/list-devices" 2>&1 | sed 's/^/    /'
+}
+
+_displayVirtualDevices()
+{
+    echo "Available iOS Virtual Devices:"
+    "$CORDOVA_PATH/lib/list-emulator-images" 2>&1 | sed 's/^/    /'
 }
 
 _parseArgs "$@"
@@ -86,6 +114,23 @@ SIMULATOR_APP_PATH="$PROJECT_PATH/build/emulator/$PROJECT_NAME.app"
 DEVICE_APP_PATH="$PROJECT_PATH/build/device/$PROJECT_NAME.app"
 
 source "$CORDOVA_PATH/check_reqs"
+
+# check if it's a list command
+if "$DISPLAY_LIST"; then
+    if "$DISPLAY_DEVICE" || "$DISPLAY_EMULATOR"; then
+        if "$DISPLAY_EMULATOR"; then
+            _displayVirtualDevices
+        fi
+        if "$DISPLAY_DEVICE"; then
+            _displayDevices
+        fi
+        exit 0
+    else
+        _displayVirtualDevices
+        _displayDevices
+        exit 0
+    fi
+fi
 
 
 # if device build found, run it first
@@ -109,7 +154,9 @@ if "$USE_DEVICE"; then
         USE_SIMULATOR=true
     else
         # if we got here, we can deploy the app, then exit success
-        "$CORDOVA_PATH/build" --device || exit $?
+        if ! [ "$NO_BUILD" = true ]; then
+            "$CORDOVA_PATH/build" --device || exit $?
+        fi
         ios-deploy -d -b "$DEVICE_APP_PATH"
     	exit 0
     fi
@@ -131,7 +178,9 @@ if "$USE_SIMULATOR"; then
     fi
     
     # launch using ios-sim
-    "$CORDOVA_PATH/build" --emulator || exit $?
+    if ! [ "$NO_BUILD" = true ]; then
+        "$CORDOVA_PATH/build" --emulator || exit $?
+    fi
     ios-sim launch "$SIMULATOR_APP_PATH" --stderr "$CORDOVA_PATH/console.log" --stdout "$CORDOVA_PATH/console.log" --devicetypeid com.apple.CoreSimulator.SimDeviceType.$TARGET --exit
 fi
 
