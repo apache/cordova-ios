@@ -18,14 +18,14 @@
  */
 
 @interface NSArray (CDVJSONSerializing)
-- (NSString*)JSONString;
+- (NSString*)cdv_JSONString;
 @end
 
 @interface NSDictionary (CDVJSONSerializing)
-- (NSString*)JSONString;
+- (NSString*)cdv_JSONString;
 @end
 
 @interface NSString (CDVJSONSerializing)
-- (id)JSONObject;
-- (id)JSONFragment;
+- (id)cdv_JSONObject;
+- (id)cdv_JSONFragment;
 @end
