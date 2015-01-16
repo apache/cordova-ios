@@ -23,7 +23,6 @@
 #import "CDVInvokedUrlCommand.h"
 #import "CDVCommandDelegate.h"
 #import "CDVCommandQueue.h"
-#import "CDVWhitelist.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVPlugin.h"
 
@@ -41,7 +40,6 @@
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
-@property (nonatomic, readonly, strong) CDVWhitelist* whitelist; // readonly for public
 @property (nonatomic, readonly, assign) BOOL loadFromString;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
@@ -78,7 +76,13 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
-- (BOOL)URLisAllowed:(NSURL*)url;
+- (BOOL)URLisAllowed:(NSURL*)url __attribute__((deprecated("Scheduled for removal in 5.0. Use shouldAllowRequestForURL, shouldAllowNavigationToURL or shouldOpenExternalURL instead.")));
+- (BOOL)shouldAllowRequestForURL:(NSURL *)url;
+- (BOOL)shouldAllowNavigationToURL:(NSURL *)url;
+- (BOOL)shouldOpenExternalURL:(NSURL *)url;
+
 - (void)processOpenUrl:(NSURL*)url;
+
+- (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate;
 
 @end
