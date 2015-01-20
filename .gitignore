@@ -6,4 +6,4 @@ tmp
 *.pbxuser
 xcuserdata
 console.log
-node_modules
+/node_modules
