@@ -26,7 +26,7 @@
 {
     NSError* error = nil;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
-                                                       options:0
+                                                       options:NSJSONWritingPrettyPrinted
                                                          error:&error];
 
     if (error != nil) {
@@ -89,3 +89,4 @@
 }
 
 @end
+
