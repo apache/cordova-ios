@@ -22,7 +22,7 @@
 
 @implementation NSArray (CDVJSONSerializing)
 
-- (NSString*)cdv_JSONString
+- (NSString*)JSONString
 {
     NSError* error = nil;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
@@ -41,7 +41,7 @@
 
 @implementation NSDictionary (CDVJSONSerializing)
 
-- (NSString*)cdv_JSONString
+- (NSString*)JSONString
 {
     NSError* error = nil;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
@@ -60,7 +60,7 @@
 
 @implementation NSString (CDVJSONSerializing)
 
-- (id)cdv_JSONObject
+- (id)JSONObject
 {
     NSError* error = nil;
     id object = [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding]
@@ -74,7 +74,7 @@
     return object;
 }
 
-- (id)cdv_JSONFragment
+- (id)JSONFragment
 {
     NSError* error = nil;
     id object = [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding]
@@ -89,4 +89,3 @@
 }
 
 @end
-

@@ -156,7 +156,7 @@ id messageFromMultipart(NSArray* theMessages)
     id arguments = (self.message == nil ? [NSNull null] : self.message);
     NSArray* argumentsWrappedInArray = [NSArray arrayWithObject:arguments];
 
-    NSString* argumentsJSON = [argumentsWrappedInArray cdv_JSONString];
+    NSString* argumentsJSON = [argumentsWrappedInArray JSONString];
 
     argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
 
