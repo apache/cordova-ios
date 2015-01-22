@@ -58,6 +58,7 @@ module.exports.run = function (argv) {
     if (args.list) {
         if (args.device) return listDevices();
         if (args.emulator) return listEmulators();
+        // if no --device or --emulator flag is specified, list both devices and emulators
         return listDevices().then(function () {
             return listEmulators();
         });
@@ -70,7 +71,7 @@ module.exports.run = function (argv) {
     return checkTools.then(function () {
         // if --nobuild isn't specified then build app first
         if (!args.nobuild) {
-        return build.run(argv);
+            return build.run(argv);
         }
     }).then(function () {
         return build.findXCodeProjectIn(projectPath);
@@ -133,15 +134,23 @@ function deployToSim(appPath, target) {
 }
 
 function listDevices() {
-    var listDevicesScript = path.join(cordovaPath, 'lib', 'list-devices');
-    console.log("Available iOS Devices:");
-    return spawn(listDevicesScript);
+    return require('./list-devices').run()
+    .then(function (devices) {
+        console.log("Available iOS Devices:");
+        devices.forEach(function (device) {
+            console.log('\t' + device);
+        });
+    });
 }
 
 function listEmulators() {
-    var listEmulatorsScript = path.join(cordovaPath, 'lib', 'list-emulator-images');
-    console.log("Available iOS Virtual Devices:");
-    return spawn(listEmulatorsScript);
+    return require('./list-emulator-images').run()
+    .then(function (emulators) {
+        console.log("Available iOS Virtual Devices:");
+        emulators.forEach(function (emulator) {
+            console.log('\t' + emulator);
+        });
+    });
 }
 
 module.exports.help = function () {
