@@ -83,11 +83,11 @@ exports.get_apple_osx_version = function() {
 exports.get_apple_xcode_version = function() {
     var d = Q.defer();
     child_process.exec('xcodebuild -version', function(error, stdout, stderr) {
-        if (error) {
+        var versionMatch = /Xcode (.*)/.exec(stdout);
+        if (error || !versionMatch) {
             d.reject(stderr);
         } else {
-            var version = stdout.split('\n')[0].slice(6);
-            d.resolve(version);
+            d.resolve(versionMatch[1]);
         }
     });
     return d.promise;
@@ -136,8 +136,43 @@ exports.get_ios_sim_version = function() {
 exports.get_tool_version = function (toolName) {
     switch (toolName) {
         case 'xcodebuild': return exports.get_apple_xcode_version();
-        case 'ios-sim': return exports.get_apple_xcode_version();
-        case 'ios-deploy': return exports.get_apple_xcode_version();
+        case 'ios-sim': return exports.get_ios_sim_version();
+        case 'ios-deploy': return exports.get_ios_deploy_version();
         default: return Q.reject(toolName + ' is not valid tool name. Valid names are: \'xcodebuild\', \'ios-sim\' and \'ios-deploy\'');
     }
+};
+
+/**
+ * Compares two semver-notated version strings. Returns number
+ * that indicates equality of provided version strings.
+ * @param  {String} version1 Version to compare
+ * @param  {String} version2 Another version to compare
+ * @return {Number}          Negative number if first version is lower than the second,
+ *                                    positive otherwise and 0 if versions are equal.
+ */
+exports.compareVersions = function (version1, version2) {
+    function parseVer (version) {
+        return version.split('.').map(function (value) {
+            // try to convert version segment to Number
+            var parsed = Number(value);
+            // Number constructor is strict enough and will return NaN
+            // if conversion fails. In this case we won't be able to compare versions properly
+            if (isNaN(parsed)) {
+                throw "Version should contain only numbers and dots";
+            }
+            return parsed;
+        });
+    }
+    var parsedVer1 = parseVer(version1);
+    var parsedVer2 = parseVer(version2);
+
+    // Compare corresponding segments of each version
+    for (var i = 0; i < Math.max(parsedVer1.length, parsedVer2.length); i++) {
+        // if segment is not specified, assume that it is 0
+        // E.g. 3.1 is equal to 3.1.0
+        var ret = (parsedVer1[i] || 0) - (parsedVer2[i] || 0);
+        // if segments are not equal, we're finished
+        if (ret !== 0) return ret;
+    }
+    return 0;
 };

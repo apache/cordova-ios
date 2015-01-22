@@ -46,6 +46,26 @@ module.exports.run = function (argv) {
         return Q.reject('Only one of "device"/"emulator" options should be specified');
     }
     
+    return check_reqs.run().then(function () {
+        return findXCodeProjectIn(projectPath);
+    }).then(function (projectName) {
+        var configuration = args.release ? 'Release' : 'Debug';
+
+        console.log("Building project  : " + path.join(projectPath, projectName + '.xcodeproj'));
+        console.log("\tConfiguration : " + configuration);
+        console.log("\tPlatform      : " + (args.device ? 'device' : 'emulator'));
+
+        var xcodebuildArgs = getXcodeArgs(projectName, projectPath, configuration, args.device);
+        return spawn('xcodebuild', xcodebuildArgs, projectPath);
+    });
+};
+
+/**
+ * Searches for first XCode project in specified folder
+ * @param  {String} projectPath Path where to search project
+ * @return {Promise}            Promise either fulfilled with project name or rejected
+ */
+function findXCodeProjectIn(projectPath) {
     // 'Searching for Xcode project in ' + projectPath);
     var xcodeProjFiles = shell.ls(projectPath).filter(function (name) {
         return path.extname(name) === '.xcodeproj';
@@ -59,19 +79,11 @@ module.exports.run = function (argv) {
             projectPath + '\nUsing first one');
     }
 
-    // 'Found Xcode project at ' + path.join(projectPath, projectName + '.xcodeproj'));
     var projectName = path.basename(xcodeProjFiles[0], '.xcodeproj');
-    var configuration = args.release ? 'Release' : 'Debug';
+    return Q.resolve(projectName);
+}
 
-    return check_reqs.run().then(function () {
-        console.log("Building project  : " + path.join(projectPath, projectName + '.xcodeproj'));
-        console.log("\tConfiguration : " + configuration);
-        console.log("\tPlatform      : " + (args.device ? 'device' : 'emulator'));
-
-        var xcodebuildArgs = getXcodeArgs(projectName, projectPath, configuration, args.device);
-        return spawn('xcodebuild', xcodebuildArgs, projectPath);
-    });
-};
+module.exports.findXCodeProjectIn = findXCodeProjectIn;
 
 /**
  * Returns array of arguments for xcodebuild

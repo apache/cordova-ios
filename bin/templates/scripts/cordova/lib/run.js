@@ -22,7 +22,6 @@
 var Q = require('q'),
     nopt  = require('nopt'),
     path  = require('path'),
-    shell = require('shelljs'),
     build = require('./build'),
     spawn = require('./spawn'),
     check_reqs = require('./check_reqs');
@@ -55,10 +54,6 @@ module.exports.run = function (argv) {
         return Q.reject(args.target + " is not a valid target for emulator");
     }
 
-    // check for either ios-sim or ios-deploy is available
-    // depending on arguments provided
-    var checkTools = args.device ? check_reqs.check_ios_deploy() : check_reqs.check_ios_sim();
-
     // support for CB-8168 `cordova/run --list`
     if (args.list) {
         if (args.device) return listDevices();
@@ -68,36 +63,25 @@ module.exports.run = function (argv) {
         });
     }
 
+    // check for either ios-sim or ios-deploy is available
+    // depending on arguments provided
+    var checkTools = args.device ? check_reqs.check_ios_deploy() : check_reqs.check_ios_sim();
+
     return checkTools.then(function () {
-        if (args.nobuild) {
-            // --nobuild option is passed. Skipping build...
-            return Q();
-        }
         // if --nobuild isn't specified then build app first
+        if (!args.nobuild) {
         return build.run(argv);
+        }
     }).then(function () {
-
-        var xcodeProjFiles = shell.ls(projectPath).filter(function (name) {
-            return path.extname(name) === '.xcodeproj';
-        });
-        
-        if (xcodeProjFiles.length === 0) {
-            return Q.reject("No Xcode project found in " + projectPath);
-        }
-        if (xcodeProjFiles.length > 1) {
-            console.warn('Found multiple .xcodeproj directories in \n' +
-                projectPath + '\nUsing first one');
-        }
-
-        var projectName = path.basename(xcodeProjFiles[0], '.xcodeproj');
-
+        return build.findXCodeProjectIn(projectPath);
+    }).then(function (projectName) {
         var appPath = path.join(projectPath, 'build', (args.device ? 'device' : 'emulator'), projectName + '.app');
         // select command to run and arguments depending whether
         // we're running on device/emulator
         if (args.device) {
             return checkDeviceConnected().then(function () {
                 return deployToDevice(appPath);
-            }).fail(function () {
+            }, function () {
                 // if device connection check failed use emulator then
                 return deployToSim(appPath, args.target);
             });

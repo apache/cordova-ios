@@ -27,14 +27,14 @@ var Q     = require('Q'),
     shell = require('shelljs'),
     versions = require('./versions');
 
-var XCODEBUILD_MIN_VERSION = 4.6;
+var XCODEBUILD_MIN_VERSION = '4.6.0';
 
-var IOS_SIM_MIN_VERSION = 3.0;
+var IOS_SIM_MIN_VERSION = '3.0.0';
 var IOS_SIM_NOT_FOUND_MESSAGE = 'ios-sim was not found. Please download, build and install version ' + IOS_SIM_MIN_VERSION +
     ' or greater from https://github.com/phonegap/ios-sim into your path.' +
     ' Or \'npm install -g ios-sim\' using node.js: http://nodejs.org';
 
-var IOS_DEPLOY_MIN_VERSION = 1.2;
+var IOS_DEPLOY_MIN_VERSION = '1.2.0';
 var IOS_DEPLOY_NOT_FOUND_MESSAGE = 'ios-deploy was not found. Please download, build and install version ' + IOS_DEPLOY_MIN_VERSION +
     ' or greater from https://github.com/phonegap/ios-deploy into your path.' +
     ' Or \'npm install -g ios-deploy\' using node.js: http://nodejs.org';
@@ -86,7 +86,7 @@ function checkTool (tool, minVersion, optMessage) {
     }
     // check if tool version is greater than specified one
     return versions.get_tool_version(tool).then(function (version) {
-        return minVersion <= parseFloat(version) ? 
+        return versions.compareVersions(version, minVersion) >= 0 ?
             Q.resolve(version) :
             Q.reject('Cordova needs ' + tool + ' version ' + minVersion +
               ' or greater, you have version ' + version + '.');
