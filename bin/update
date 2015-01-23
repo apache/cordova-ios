@@ -19,12 +19,24 @@
     under the License.
 */
 
-var update = require('./lib/update');
+var create = require('./lib/create');
+var argv = require('nopt')({
+    'help' : Boolean,
+    'shared' : Boolean, // alias for --link
+    'link' : Boolean
+});
 
-var args = process.argv;
-if (args.length < 3 || (args[2] == '--help' || args[2] == '-h')) {
-    console.log('Usage: ' + path.relative(process.cwd(), path.join(__dirname, 'update')) + ' <path_to_project>');
+var projectPath = argv.argv.remain[0];
+
+if (argv.help || !projectPath) {
+    console.log('Usage: ' + path.relative(process.cwd(), path.join(__dirname, 'update')) + ' <path_to_project> [--link]');
     process.exit(1);
 } else {
-    update.updateProject(args[2]);
+    var projectPath = argv.argv.remain[0];
+    var opts = {
+        link: argv.link || argv.shared
+    };
+
+    create.updateProject(projectPath, opts)
+    .done();
 }
