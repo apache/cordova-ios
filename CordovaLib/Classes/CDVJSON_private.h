@@ -17,16 +17,15 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVAvailabilityDeprecated.h"
+@interface NSArray (CDVJSONSerializingPrivate)
+- (NSString*)cdv_JSONString;
+@end
 
-@interface UIDevice (org_apache_cordova_UIDevice_Extension)
+@interface NSDictionary (CDVJSONSerializingPrivate)
+- (NSString*)cdv_JSONString;
+@end
 
-/*
-    Get the unique identifier from the app bundle's folder, which is already a GUID
-    Upgrading and/or deleting the app and re-installing will get you a new GUID, so
-    this is only unique per install per device.
- */
-- (NSString*)uniqueAppInstanceIdentifier CDV_DEPRECATED(3.8 .0, "API is slated for removal in 4.0.0");
-
+@interface NSString (CDVJSONSerializingPrivate)
+- (id)cdv_JSONObject;
+- (id)cdv_JSONFragment;
 @end

@@ -85,7 +85,7 @@
             newArgs = [NSMutableArray arrayWithArray:_arguments];
             _arguments = newArgs;
         }
-        [newArgs replaceObjectAtIndex:i withObject:[NSData dataFromBase64String:data]];
+        [newArgs replaceObjectAtIndex:i withObject:[NSData cdv_dataFromBase64String:data]];
     }
 }
 
