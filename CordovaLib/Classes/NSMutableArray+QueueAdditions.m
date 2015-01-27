@@ -21,7 +21,7 @@
 
 @implementation NSMutableArray (QueueAdditions)
 
-- (id)queueHead
+- (id)cdv_queueHead
 {
     if ([self count] == 0) {
         return nil;
@@ -30,7 +30,7 @@
     return [self objectAtIndex:0];
 }
 
-- (__autoreleasing id)dequeue
+- (__autoreleasing id)cdv_dequeue
 {
     if ([self count] == 0) {
         return nil;
@@ -45,12 +45,12 @@
     return head;
 }
 
-- (id)pop
+- (id)cdv_pop
 {
-    return [self dequeue];
+    return [self cdv_dequeue];
 }
 
-- (void)enqueue:(id)object
+- (void)cdv_enqueue:(id)object
 {
     [self addObject:object];
 }

@@ -18,7 +18,7 @@
  */
 
 #import "CDVInvokedUrlCommand.h"
-#import "CDVJSON.h"
+#import "CDVJSON_private.h"
 #import "NSData+Base64.h"
 
 @implementation CDVInvokedUrlCommand

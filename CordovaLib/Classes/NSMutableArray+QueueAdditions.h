@@ -21,9 +21,9 @@
 
 @interface NSMutableArray (QueueAdditions)
 
-- (id)pop;
-- (id)queueHead;
-- (id)dequeue;
-- (void)enqueue:(id)obj;
+- (id)cdv_pop;
+- (id)cdv_queueHead;
+- (id)cdv_dequeue;
+- (void)cdv_enqueue:(id)obj;
 
 @end
