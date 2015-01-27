@@ -30,13 +30,26 @@
  */
 
 var create = require('./lib/create');
+var argv = require('nopt')({
+    'help' : Boolean,
+    'cli' : Boolean,
+    'shared' : Boolean, // alias for --link
+    'link' : Boolean
+});
 
-if (process.argv.length < 3 || process.argv[2].indexOf('--help') > -1) {
+var projectPath = argv.argv.remain[0];
+
+if (argv.help || !projectPath) {
     create.createHelp();
-}
-else {
-    create.createProject(process.argv).done(null, function(err) {
-        console.error('Failed to create project because of error: ' + err);
-        process.exit(2);
-    });
+} else {
+    var packageName = argv.argv.remain[1];
+    var projectName = argv.argv.remain[2];
+    var opts = {
+        project_template_dir: argv.argv.remain[3],
+        cli: argv.cli,
+        link: argv.link || argv.shared
+    };
+
+    create.createProject(projectPath, packageName, projectName, opts)
+    .done();
 }

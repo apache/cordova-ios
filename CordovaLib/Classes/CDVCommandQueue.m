@@ -22,6 +22,7 @@
 #import "CDVCommandQueue.h"
 #import "CDVViewController.h"
 #import "CDVCommandDelegateImpl.h"
+#import "CDVJSON_private.h"
 
 // Parse JS on the main thread if it's shorter than this.
 static const NSInteger JSON_SIZE_FOR_MAIN_THREAD = 4 * 1024; // Chosen arbitrarily.

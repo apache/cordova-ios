@@ -23,11 +23,11 @@ var shell = require('shelljs'),
     Q = require ('q'),
     path = require('path'),
     fs = require('fs'),
-    root = path.join(__dirname, '..', '..');
+    ROOT = path.join(__dirname, '..', '..');
 
 function createHelp() {
-    console.log("Usage: $0 [--shared] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]");
-    console.log("   --shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it.");
+    console.log("Usage: $0 [--link] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]");
+    console.log("   --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it.");
     console.log("   --cli (optional): Use the CLI-project template.");
     console.log("   <path_to_new_project>: Path to your new Cordova iOS project");
     console.log("   <package_name>: Package name, following reverse-domain style convention");
@@ -38,6 +38,75 @@ function createHelp() {
 function updateSubprojectHelp() {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.')
     console.log("Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]");
+}
+
+function setShellFatal(value, func) {
+    var oldVal = shell.config.fatal;
+    shell.config.fatal = value;
+    func();
+    shell.config.fatal = oldVal;
+}
+
+function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
+    shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
+    shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
+
+    if (use_shared) {
+        update_cordova_subproject([path.join(projectPath, projectName +'.xcodeproj', 'project.pbxproj')]);
+        // Symlink not used in project file, but is currently required for plugman because
+        // it reads the VERSION file from it (instead of using the cordova/version script
+        // like it should).
+        fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
+    } else {
+        var r = path.join(projectPath, projectName);
+        shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        shell.cp('-f', path.join(r, '.gitignore'), projectPath);
+        shell.cp('-rf',path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        update_cordova_subproject([path.join(r+'.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj')]);
+    }
+}
+
+function copyScripts(projectPath) {
+    var srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
+    var destScriptsDir = path.join(projectPath, 'cordova');
+
+    // Delete old scripts directory.
+    shell.rm('-rf', destScriptsDir);
+
+    // Copy in the new ones.
+    var binDir = path.join(ROOT, 'bin');
+    shell.cp('-r', srcScriptsDir, projectPath);
+    shell.cp('-r', path.join(binDir, 'node_modules'), destScriptsDir);
+
+    // Copy the check_reqs script
+    shell.cp(path.join(binDir, 'check_reqs'), destScriptsDir);
+    shell.cp(path.join(binDir, 'lib', 'check_reqs.js'), path.join(destScriptsDir, 'lib'));
+
+    // Copy the version scripts
+    shell.cp(path.join(binDir, 'apple_ios_version'), destScriptsDir);
+    shell.cp(path.join(binDir, 'apple_osx_version'), destScriptsDir);
+    shell.cp(path.join(binDir, 'apple_xcode_version'), destScriptsDir);
+    shell.cp(path.join(binDir, 'lib', 'versions.js'),  path.join(destScriptsDir, 'lib'));
+
+    // Make sure they are executable (sometimes zipping them can remove executable bit)
+    shell.find(destScriptsDir).forEach(function(entry) {
+        shell.chmod(755, entry);
+    });
+}
+
+function detectProjectName(projectDir) {
+    var files = fs.readdirSync(projectDir);
+    for (var i = 0; i < files.length; ++i) {
+        var m = /(.*)\.xcodeproj$/.exec(files[i]);
+        if (m) {
+            return m[1]
+        }
+    }
+    throw new Exception('Could not find an .xcodeproj directory within ' + projectDir);
 }
 
 function AbsParentPath(_path) {
@@ -63,7 +132,7 @@ function relpath(_path, start) {
 /*
  * Creates a new iOS project with the following options:
  *
- * - --shared (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it
+ * - --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it
  * - --cli (optional): Use the CLI-project template
  * - <path_to_new_project>: Path to your new Cordova iOS project
  * - <package_name>: Package name, following reverse-domain style convention
@@ -71,54 +140,15 @@ function relpath(_path, start) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-
-exports.createProject = function(argv) {
-    var project_path,
-        package_name,
-        project_name,
-        project_template_dir,
-        use_shared = false,
-        use_cli = false;
-
-    //get arguments
-    var args = argv.slice(2);
-
-    //check and set arguments
-    if (args.length < 3)
-    {
-        createHelp();
-        return Q.reject('Too few arguments');
-    }
-
-    for (var i = 0; i < args.length; i++) {
-        if (args[i] === '--shared')
-            use_shared = true;
-        else if (args[i] === '--cli')
-            use_cli = true;
-        else
-        {
-            if (!project_path)
-                project_path = args[i];
-            else if (!package_name)
-                package_name = args[i];
-            else if (!project_name)
-                project_name = args[i];
-            else if (!project_template_dir)
-                project_template_dir = args[i];
-            else
-            {
-                createHelp();
-                return Q.reject('Too many arguments');
-            }
-        }
-    }
-
-    var bin_dir = path.join(root, 'bin'),
-        cordovalib_dir = path.join(root, 'CordovaLib'),
-        cordovalib_ver = fs.readFileSync(path.join(cordovalib_dir, 'VERSION'), 'utf-8').trim();
-        project_parent = path.dirname(project_path),
-        project_template_dir = project_template_dir ? project_template_dir : path.join(bin_dir, 'templates', 'project'),
-        script_template_dir = path.join(bin_dir, 'templates', 'scripts');
+exports.createProject = function(project_path, package_name, project_name, opts) {
+    package_name = package_name || 'my.cordova.project';
+    project_name = project_name || 'CordovaExample';
+    var use_shared = !!opts.link;
+    var use_cli = !!opts.cli;
+    var bin_dir = path.join(ROOT, 'bin'),
+        cordovalib_dir = path.join(ROOT, 'CordovaLib'),
+        project_parent = path.dirname(project_path);
+    var project_template_dir = opts.project_template_dir || path.join(bin_dir, 'templates', 'project');
 
     //check that project path doesn't exist
     if (fs.existsSync(project_path)) {
@@ -130,10 +160,9 @@ exports.createProject = function(argv) {
         return Q.reject(project_parent + ' does not exist. Please specify an existing parent folder');
     }
 
-    //create the project directory and copy over files
-    shell.mkdir('-p', project_path);
+    // create the project directory and copy over files
+    shell.mkdir(project_path);
     shell.cp('-rf', path.join(project_template_dir, 'www'), project_path);
-    shell.cp('-f', path.join(cordovalib_dir, 'cordova.js'), path.join(project_path, 'www', 'cordova.js'));
     if (use_cli) {
         shell.cp('-rf', path.join(project_template_dir, '__CLI__.xcodeproj'), project_path);
         shell.mv(path.join(project_path, '__CLI__.xcodeproj'), path.join(project_path, project_name+'.xcodeproj'));
@@ -171,42 +200,31 @@ exports.createProject = function(argv) {
     shell.sed('-i', /--ID--/g, package_name, path.join(r, project_name+'-Info.plist'));
 
     //CordovaLib stuff
-    if (use_shared) {
-        update_cordova_subproject([path.join(r+'.xcodeproj', 'project.pbxproj')]);
-    }
-    else {
-        //copy in the CordovaLib directory
-        shell.mkdir('-p', path.join(project_path, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        shell.cp('-f', path.join(r, '.gitignore'), project_path);
-        shell.cp('-rf', path.join(bin_dir, '..', 'CordovaLib', 'Classes'), path.join(project_path, 'CordovaLib'));
-        shell.cp('-f', path.join(bin_dir, '..', 'CordovaLib', 'VERSION'), path.join(project_path, 'CordovaLib'));
-        shell.cp('-f', path.join(bin_dir, '..', 'CordovaLib', 'cordova.js'), path.join(project_path, 'CordovaLib'));
-        shell.cp('-f', path.join(bin_dir, '..', 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(project_path, 'CordovaLib'));
-        shell.cp('-f', path.join(bin_dir, '..', 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(project_path, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        update_cordova_subproject([path.join(r+'.xcodeproj', 'project.pbxproj'), path.join(project_path, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj')]);
-    }
+    copyJsAndCordovaLib(project_path, project_name, use_shared);
+    copyScripts(project_path);
 
-    //Finally copy the scripts
-    shell.cp('-r', path.join(script_template_dir, '*'), project_path);
-    shell.cp('-r', path.join(bin_dir, 'node_modules'), path.join(project_path, 'cordova'));
-
-    //copy the check_reqs script
-    shell.cp(path.join(bin_dir, 'check_reqs'), path.join(project_path, 'cordova'));
-
-    //copy the version scripts script
-    shell.cp(path.join(bin_dir, 'apple_ios_version'), path.join(project_path, 'cordova'));
-    shell.cp(path.join(bin_dir, 'apple_osx_version'), path.join(project_path, 'cordova'));
-    shell.cp(path.join(bin_dir, 'apple_xcode_version'), path.join(project_path, 'cordova'));
-    shell.cp(path.join(bin_dir, 'lib', 'versions.js'), path.join(project_path, 'cordova', 'lib'));
-
-    //Make scripts executable
-    shell.find(path.join(project_path, 'cordova')).forEach(function(entry) {
-        shell.chmod(755, entry);
-    });
-
+    console.log(generateDoneMessage('create', use_shared));
     return Q.resolve();
 }
 
+exports.updateProject = function(projectPath, opts) {
+    var projectName = detectProjectName(projectPath);
+    setShellFatal(true, function() {
+        copyJsAndCordovaLib(projectPath, projectName, opts.link);
+        copyScripts(projectPath);
+        console.log(generateDoneMessage('update', opts.link));
+    });
+    return Q.resolve();
+};
+
+function generateDoneMessage(type, link) {
+    var pkg = require('../../package');
+    var msg = 'iOS project ' + (type == 'update' ? 'updated ' : 'created ') + 'with ' + pkg.name + '@' + pkg.version;
+    if (link) {
+        msg += ' and has a linked CordovaLib';
+    }
+    return msg;
+}
 
 function update_cordova_subproject(argv) {
     if (argv.length < 1 || argv.length > 2)
@@ -218,7 +236,7 @@ function update_cordova_subproject(argv) {
     var projectPath = AbsProjectPath(argv[0]),
         cordovaLibXcodePath;
     if (argv.length < 2) {
-        cordovaLibXcodePath = path.join(root, 'CordovaLib', 'CordovaLib.xcodeproj');
+        cordovaLibXcodePath = path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj');
     }
     else {
         cordovaLibXcodePath = AbsProjectPath(argv[1]);
