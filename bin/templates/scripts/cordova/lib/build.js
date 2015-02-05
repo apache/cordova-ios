@@ -99,12 +99,12 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            'ARCHS="armv7 armv7s arm64"',
+            'ARCHS=armv7 armv7s arm64',
             '-target', projectName,
             '-configuration', configuration,
             '-sdk', 'iphoneos',
             'build',
-            'VALID_ARCHS="armv7 armv7s arm64"',
+            'VALID_ARCHS=armv7 armv7s arm64',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
