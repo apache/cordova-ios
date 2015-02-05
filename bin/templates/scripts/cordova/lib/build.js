@@ -110,6 +110,7 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         ];
     } else { // emulator
         xcodebuildArgs = [
+            '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
             'ARCHS="i386"',
             '-target', projectName ,
