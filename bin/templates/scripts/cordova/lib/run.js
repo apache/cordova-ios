@@ -36,9 +36,9 @@ module.exports.run = function (argv) {
     // but still valid since they can be passed down to build command 
     var args  = nopt({
         // "archs": String,     // TODO: add support for building different archs
-        "list": Boolean,
-        "nobuild": Boolean,
-        "device": Boolean, "emulator": Boolean, "target": String
+        'list': Boolean,
+        'nobuild': Boolean,
+        'device': Boolean, 'emulator': Boolean, 'target': String
     }, {}, argv);
 
     // Validate args
@@ -48,10 +48,10 @@ module.exports.run = function (argv) {
 
     // validate target device for ios-sim
     // Valid values for "--target" (case sensitive):
-    var validTargets = ["iPhone-4s", "iPhone-5", "iPhone-5s", "iPhone-6-Plus", "iPhone-6",
-        "iPad-2", "iPad-Retina", "iPad-Air", "Resizable-iPhone", "Resizable-iPad"];
+    var validTargets = ['iPhone-4s', 'iPhone-5', 'iPhone-5s', 'iPhone-6-Plus', 'iPhone-6',
+        'iPad-2', 'iPad-Retina', 'iPad-Air', 'Resizable-iPhone', 'Resizable-iPad'];
     if (args.target && validTargets.indexOf(args.target) < 0 ) {
-        return Q.reject(args.target + " is not a valid target for emulator");
+        return Q.reject(args.target + ' is not a valid target for emulator');
     }
 
     // support for CB-8168 `cordova/run --list`
@@ -136,7 +136,7 @@ function deployToSim(appPath, target) {
 function listDevices() {
     return require('./list-devices').run()
     .then(function (devices) {
-        console.log("Available iOS Devices:");
+        console.log('Available iOS Devices:');
         devices.forEach(function (device) {
             console.log('\t' + device);
         });
@@ -146,7 +146,7 @@ function listDevices() {
 function listEmulators() {
     return require('./list-emulator-images').run()
     .then(function (emulators) {
-        console.log("Available iOS Virtual Devices:");
+        console.log('Available iOS Virtual Devices:');
         emulators.forEach(function (emulator) {
             console.log('\t' + emulator);
         });
@@ -154,24 +154,24 @@ function listEmulators() {
 }
 
 module.exports.help = function () {
-    console.log("\nUsage: run [ --device | [ --emulator [ --target=<id> ] ] ] [ --debug | --release | --nobuild ]");
+    console.log('\nUsage: run [ --device | [ --emulator [ --target=<id> ] ] ] [ --debug | --release | --nobuild ]');
     // TODO: add support for building different archs
     // console.log("           [ --archs=\"<list of target architectures>\" ] ");
-    console.log("    --device      : Deploys and runs the project on the connected device.");
-    console.log("    --emulator    : Deploys and runs the project on an emulator.");
-    console.log("    --target=<id> : Deploys and runs the project on the specified target.");
-    console.log("    --debug       : Builds project in debug mode. (Passed down to build command, if necessary)");
-    console.log("    --release     : Builds project in release mode. (Passed down to build command, if necessary)");
-    console.log("    --nobuild     : Uses pre-built package, or errors if project is not built.");
+    console.log('    --device      : Deploys and runs the project on the connected device.');
+    console.log('    --emulator    : Deploys and runs the project on an emulator.');
+    console.log('    --target=<id> : Deploys and runs the project on the specified target.');
+    console.log('    --debug       : Builds project in debug mode. (Passed down to build command, if necessary)');
+    console.log('    --release     : Builds project in release mode. (Passed down to build command, if necessary)');
+    console.log('    --nobuild     : Uses pre-built package, or errors if project is not built.');
     // TODO: add support for building different archs
     // console.log("    --archs       : Specific chip architectures (`anycpu`, `arm`, `x86`, `x64`).");
-    console.log("");
-    console.log("Examples:");
-    console.log("    run");
-    console.log("    run --device");
-    console.log("    run --emulator --target=\"iPhone-6-Plus\"");
-    console.log("    run --device --release");
-    console.log("    run --emulator --debug");
-    console.log("");
+    console.log('');
+    console.log('Examples:');
+    console.log('    run');
+    console.log('    run --device');
+    console.log('    run --emulator --target=\"iPhone-6-Plus\"');
+    console.log('    run --device --release');
+    console.log('    run --emulator --debug');
+    console.log('');
     process.exit(0);
 };
