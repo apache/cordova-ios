@@ -33,7 +33,7 @@ module.exports.run = function() {
     })[0];
 
     if (!projectName) {
-        return Q.reject("No Xcode project found in " + projectPath);
+        return Q.reject('No Xcode project found in ' + projectPath);
     }
 
     return check_reqs.run().then(function() {
