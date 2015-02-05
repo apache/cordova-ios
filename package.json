@@ -13,8 +13,10 @@
         "apache"
     ],
     "scripts": {
-        "test": "npm run jasmine",
-        "jasmine": "jasmine-node --captureExceptions --color tests/spec"
+        "test": "npm run jshint && npm run jasmine",
+        "jasmine": "jasmine-node --captureExceptions --color tests/spec",
+        "jshint": "node node_modules/jshint/bin/jshint bin && node node_modules/jshint/bin/jshint tests"
+
     },
     "author": "Apache Software Foundation",
     "license": "Apache Version 2.0",
@@ -23,5 +25,8 @@
         "shelljs": "^0.2.6",
         "coffee-script": "^1.7.1",
         "nodeunit": "^0.8.7"
+    },
+    "devDependencies": {
+        "jshint": "^2.6.0"
     }
 }
