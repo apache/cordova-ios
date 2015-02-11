@@ -99,8 +99,6 @@
         return NO;
     }
 
-    [self.viewController processOpenUrl:url];
-
     // all plugins will get the notification, and their handlers will be called
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
 
