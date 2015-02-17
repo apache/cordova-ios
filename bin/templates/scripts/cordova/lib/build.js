@@ -112,12 +112,12 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            'ARCHS="i386"',
+            'ARCHS=i386',
             '-target', projectName ,
             '-configuration', configuration,
             '-sdk', 'iphonesimulator',
             'build',
-            'VALID_ARCHS="i386"',
+            'VALID_ARCHS=i386',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
