@@ -34,8 +34,8 @@ function Usage() {
 
 function VerifyEnv() {
     if ! which "$EXE" > /dev/null; then
-        echo "uncrustify binary not found. Please ensure that it is in your PATH."
-        echo "Install via homebrew using: brew install uncrustify"
+        echo "uncrustify binary not found in the cordova-ios repo."
+        echo "In the repo root, install via npm: npm install"
         exit 1
     fi
 }
