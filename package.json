@@ -27,6 +27,7 @@
         "nodeunit": "^0.8.7"
     },
     "devDependencies": {
-        "jshint": "^2.6.0"
+        "jshint": "^2.6.0",
+        "uncrustify": "^0.6.1"
     }
 }
