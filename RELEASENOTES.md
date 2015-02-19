@@ -20,11 +20,36 @@
 -->
 ## Release Notes for Cordova (iOS) ##
 
-Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/3.6.x..HEAD
+Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/3.7.x..HEAD
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
-### 3.7.0 (201411XX) ###
+### 3.8.0 (201502XX) ###
+
+* CB-8436 Remove more bad quotes from build command
+* CB-8436 Remove unneeded "" when composing xcodebuild arguments (closes #130)
+* CB-8084 Allow for a way to disable push notification delegate methods (through xcconfig). Style fixup using uncrustify.
+* CB-7606 handleOpenURL not working correctly on cold start (handler not evaluated yet) and warm start
+* CB-8435 Enable jshint for iOS platform
+* CB-8417 moved platform specific js into platform
+* CB-8336 Remove plugin prefs from iOS defaults.xml
+* CB-8254 Enable use of .xcconfig when building for emulator
+* CB-8351 Deprecate all non-prefixed class extensions
+* CB-8358 Make --link an alias for --shared plus some code simplification.
+* CB-8197 Convert all bash scripts to node.js (closes #126)
+* CB-8314 Speed up Travis CI (close #125)
+* CB-8036 Don't exclude bin/node_modules from npm pack (via .gitignore)
+* CB-7872 Fix CODE_SIGN_RESOURCE_RULES_PATH being set wrong in xcconfig (closes #120)
+* CB-8168 `cordova/run --list` support for iOS (closes #122)
+* CB-8044 support for --nobuild flag in run script
+* CB-6637 Removed - request:isFragmentIdentifierToRequest: deprecated method in CDVWebViewDelegate (closes #121)
+* CB-8002 (CB-7735) Update cordova.js to include bridge fix
+* CB-5706 convert some of the bash scripts to nodejs (closes #118)
+* CB-8506 Use npm version of uncrustify in cordova-ios (devDependency only)
+* Have CordovaLib classes import CDVJSON_private.h rather than CDVJSON.h
+* Trim down checked-in node_module files to minimal set
+
+### 3.7.0 (20141106) ###
 
 * CB-7882 - viewDidUnload instance method is missing [super viewDidUnload] call
 * CB-7872 - XCode 6.1's xcrun PackageApplication fails at packaging / resigning Cordova applications (closes #115)
