@@ -1,5 +1,5 @@
 // Platform: ios
-// 227d83a122733fdf0300ffe75507a221bcef2b06
+// fc4db9145934bd0053161cbf9ffc0caf83b770c6
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '3.8.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '3.9.0-dev';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -284,10 +284,16 @@ var cordova = {
             if (callback) {
                 if (isSuccess && status == cordova.callbackStatus.OK) {
                     callback.success && callback.success.apply(null, args);
-                } else {
+                } else if (!isSuccess) {
                     callback.fail && callback.fail.apply(null, args);
                 }
-
+                /*
+                else
+                    Note, this case is intentionally not caught.
+                    this can happen if isSuccess is true, but callbackStatus is NO_RESULT
+                    which is used to remove a callback from the list without calling the callbacks
+                    typically keepCallback is false in this case
+                */
                 // Clear callback if not expecting any more results
                 if (!keepCallback) {
                     delete cordova.callbacks[callbackId];
@@ -586,7 +592,6 @@ var utils = require('cordova/utils'),
  * onDeviceReady*              User event fired to indicate that Cordova is ready
  * onResume                    User event fired to indicate a start/resume lifecycle event
  * onPause                     User event fired to indicate a pause lifecycle event
- * onDestroy*                  Internal event fired when app is being destroyed (User should use window.onunload event, not this one).
  *
  * The events marked with an * are sticky. Once they have fired, they will stay in the fired state.
  * All listeners that subscribe after the event is fired will be executed right away.
@@ -798,9 +803,6 @@ channel.create('onResume');
 // Event to indicate a pause lifecycle event
 channel.create('onPause');
 
-// Event to indicate a destroy lifecycle event
-channel.createSticky('onDestroy');
-
 // Channels that must fire before "deviceready" is fired.
 channel.waitForInitialization('onCordovaReady');
 channel.waitForInitialization('onDOMContentLoaded');
@@ -827,6 +829,7 @@ var cordova = require('cordova'),
     // IFRAME_HASH could be made to enable synchronous bridge calls if we wanted this feature.
     jsToNativeModes = {
         IFRAME_NAV: 0, // Default. Uses a new iframe for each poke.
+        // XHR bridge appears to be flaky sometimes: CB-3900, CB-3359, CB-5457, CB-4970, CB-4998, CB-5134
         XHR_NO_PAYLOAD: 1, // About the same speed as IFRAME_NAV. Performance not about the same as IFRAME_NAV, but more variable.
         XHR_WITH_PAYLOAD: 2, // Flakey, and not as performant
         XHR_OPTIONAL_PAYLOAD: 3, // Flakey, and not as performant
