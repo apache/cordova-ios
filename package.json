@@ -1,6 +1,6 @@
 {
     "name": "cordova-ios",
-    "version": "3.8.0-dev",
+    "version": "3.9.0-dev",
     "description": "cordova-ios release",
     "main": "bin/create",
     "repository": {
@@ -16,7 +16,6 @@
         "test": "npm run jshint && npm run jasmine",
         "jasmine": "jasmine-node --captureExceptions --color tests/spec",
         "jshint": "node node_modules/jshint/bin/jshint bin && node node_modules/jshint/bin/jshint tests"
-
     },
     "author": "Apache Software Foundation",
     "license": "Apache Version 2.0",
