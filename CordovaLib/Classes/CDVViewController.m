@@ -601,13 +601,22 @@
 
 - (NSString*)userAgent
 {
-    if (_userAgent == nil) {
-        NSString* localBaseUserAgent;
-        if (self.baseUserAgent != nil) {
-            localBaseUserAgent = self.baseUserAgent;
-        } else {
-            localBaseUserAgent = [CDVUserAgentUtil originalUserAgent];
-        }
+    if (_userAgent != nil) {
+        return _userAgent;
+    }
+
+    NSString* localBaseUserAgent;
+    if (self.baseUserAgent != nil) {
+        localBaseUserAgent = self.baseUserAgent;
+    } else if ([self settingForKey:@"OverrideUserAgent"] != nil) {
+        localBaseUserAgent = [self settingForKey:@"OverrideUserAgent"];
+    } else {
+        localBaseUserAgent = [CDVUserAgentUtil originalUserAgent];
+    }
+    NSString* appendUserAgent = [self settingForKey:@"AppendUserAgent"];
+    if (appendUserAgent) {
+        _userAgent = [NSString stringWithFormat:@"%@ %@", localBaseUserAgent, appendUserAgent];
+    } else {
         // Use our address as a unique number to append to the User-Agent.
         _userAgent = [NSString stringWithFormat:@"%@ (%lld)", localBaseUserAgent, (long long)self];
     }
