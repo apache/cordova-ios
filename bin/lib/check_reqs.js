@@ -22,7 +22,7 @@
           sub:true, laxcomma:true, laxbreak:true
 */
 
-var Q     = require('Q'),
+var Q     = require('q'),
     os    = require('os'),
     shell = require('shelljs'),
     versions = require('./versions');
