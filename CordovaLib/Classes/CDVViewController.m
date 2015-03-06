@@ -46,13 +46,14 @@
 
 @implementation CDVViewController
 
-@synthesize webView, supportedOrientations;
+@synthesize supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 @synthesize webViewEngine = _webViewEngine;
+@dynamic webView;
 
 - (void)__init
 {
@@ -250,6 +251,15 @@
     return errorURL;
 }
 
+- (UIView*)webView
+{
+    if (self.webViewEngine != nil) {
+        return self.webViewEngine.engineWebView;
+    }
+
+    return nil;
+}
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -285,7 +295,7 @@
      */
     if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
         ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
     if ([self.startupPluginNames count] > 0) {
@@ -471,11 +481,11 @@
 
     webViewBounds.origin = self.view.bounds.origin;
 
-    self.webView = [self newCordovaViewWithFrame:webViewBounds];
+    UIView* view = [self newCordovaViewWithFrame:webViewBounds];
 
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    [self.view addSubview:self.webView];
-    [self.view sendSubviewToBack:self.webView];
+    view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    [self.view addSubview:view];
+    [self.view sendSubviewToBack:view];
 }
 
 - (void)didReceiveMemoryWarning
@@ -508,7 +518,6 @@
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 
-    self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     [super viewDidUnload];
@@ -735,7 +744,7 @@
 
     id obj = [self.pluginObjects objectForKey:className];
     if (!obj) {
-        obj = [[NSClassFromString(className)alloc] initWithWebView:webView];
+        obj = [[NSClassFromString(className)alloc] initWithWebViewEngine:_webViewEngine];
 
         if (obj != nil) {
             [self registerPlugin:obj withClassName:className];
@@ -904,7 +913,6 @@
     [CDVURLProtocol unregisterViewController:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];

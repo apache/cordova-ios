@@ -38,7 +38,7 @@
     NSString* _userAgent;
 }
 
-@property (nonatomic, strong) IBOutlet UIView* webView;
+@property (nonatomic, readonly, weak) IBOutlet UIView* webView;
 
 @property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
