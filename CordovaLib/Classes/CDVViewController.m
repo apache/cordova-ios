@@ -17,12 +17,16 @@
  under the License.
  */
 
+#import <objc/message.h>
 #import "CDV.h"
 #import "CDVUIWebViewDelegate.h"
-#import "NSDictionary+CordovaPreferences.h"
-
-#import <objc/message.h>
+#import "CDVConfigParser.h"
+#import "CDVUserAgentUtil.h"
 #import <AVFoundation/AVFoundation.h>
+#import "NSDictionary+CordovaPreferences.h"
+#import "CDVHandleOpenURL.h"
+
+#define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
@@ -309,6 +313,8 @@
 
         [CDVTimer stop:@"TotalPluginStartup"];
     }
+
+    [self registerPlugin:[[CDVHandleOpenURL alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVHandleOpenURL class])];
 
     // /////////////////
     NSURL* appURL = [self appUrl];

@@ -24,11 +24,6 @@ PATH=$PATH:/usr/local/bin:/usr/local/sbin
 exec 1>&2
 test $SKIP_UNCRUSTIFY && exit 0
 
-if [[ "$(uncrustify --version | cut -d' ' -f2)" != 0.60 ]]; then
-  echo "Please install version 0.60 of uncrustify."
-  exit 1
-fi
-
 RET=0
 files=$(bin/uncrustify.sh --filter $(git diff --cached --name-only))
 MSGS=

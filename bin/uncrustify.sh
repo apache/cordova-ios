@@ -20,6 +20,7 @@
 
 SCRIPT_PATH=$(dirname $0)
 CONFIG="$SCRIPT_PATH/uncrustify.cfg"
+EXE="$SCRIPT_PATH/../node_modules/.bin/uncrustify"
 
 function Usage() {
     echo "Formats code using uncrustify."
@@ -32,9 +33,9 @@ function Usage() {
 }
 
 function VerifyEnv() {
-    if ! which uncrustify > /dev/null; then
-        echo "uncrustify binary not found. Please ensure that it is in your PATH."
-        echo "Install via homebrew using: brew install uncrustify"
+    if ! which "$EXE" > /dev/null; then
+        echo "uncrustify binary not found in the cordova-ios repo."
+        echo "In the repo root, install via npm: npm install"
         exit 1
     fi
 }
@@ -77,7 +78,7 @@ elif [[ "$1" = "--all" ]]; then
     files=$(find .)
     FilterAndRun $files
 elif [[ "$1" = "--check-file" ]]; then
-    uncrustify -q -l OC -c "$CONFIG" -f "$2" | cmp --quiet - "$2"
+    "$EXE" -q -l OC -c "$CONFIG" -f "$2" | cmp --quiet - "$2"
 elif [[ "$1" = "--filter" ]]; then
     FilterFileList "$@"
 elif [[ "$1" = -* ]]; then

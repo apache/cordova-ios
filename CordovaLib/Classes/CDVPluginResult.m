@@ -18,7 +18,7 @@
  */
 
 #import "CDVPluginResult.h"
-#import "CDVJSON.h"
+#import "CDVJSON_private.h"
 #import "CDVDebug.h"
 #import "NSData+Base64.h"
 
@@ -37,7 +37,7 @@ id messageFromArrayBuffer(NSData* data)
 {
     return @{
                @"CDVType" : @"ArrayBuffer",
-               @"data" :[data base64EncodedString]
+               @"data" :[data cdv_base64EncodedString]
     };
 }
 
@@ -168,7 +168,7 @@ id messageFromMultipart(NSArray* theMessages)
 {
     NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
         self.status, @"status",
-        self.message ? self.                                message:[NSNull null], @"message",
+        self.message ? self.message : [NSNull null], @"message",
         self.keepCallback, @"keepCallback",
         nil];
 
