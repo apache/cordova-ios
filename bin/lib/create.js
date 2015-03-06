@@ -26,18 +26,18 @@ var shell = require('shelljs'),
     ROOT = path.join(__dirname, '..', '..');
 
 function createHelp() {
-    console.log("Usage: $0 [--link] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]");
-    console.log("   --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it.");
-    console.log("   --cli (optional): Use the CLI-project template.");
-    console.log("   <path_to_new_project>: Path to your new Cordova iOS project");
-    console.log("   <package_name>: Package name, following reverse-domain style convention");
-    console.log("   <project_name>: Project name");
-    console.log("   <project_template_dir>: Path to project template (override).");
+    console.log('Usage: $0 [--link] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]');
+    console.log('   --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it.');
+    console.log('   --cli (optional): Use the CLI-project template.');
+    console.log('   <path_to_new_project>: Path to your new Cordova iOS project');
+    console.log('   <package_name>: Package name, following reverse-domain style convention');
+    console.log('   <project_name>: Project name');
+    console.log('   <project_template_dir>: Path to project template (override).');
 }
 
 function updateSubprojectHelp() {
-    console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.')
-    console.log("Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]");
+    console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
+    console.log('Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]');
 }
 
 function setShellFatal(value, func) {
@@ -103,10 +103,10 @@ function detectProjectName(projectDir) {
     for (var i = 0; i < files.length; ++i) {
         var m = /(.*)\.xcodeproj$/.exec(files[i]);
         if (m) {
-            return m[1]
+            return m[1];
         }
     }
-    throw new Exception('Could not find an .xcodeproj directory within ' + projectDir);
+    throw new Error('Could not find an .xcodeproj directory within ' + projectDir);
 }
 
 function AbsParentPath(_path) {
@@ -146,7 +146,6 @@ exports.createProject = function(project_path, package_name, project_name, opts)
     var use_shared = !!opts.link;
     var use_cli = !!opts.cli;
     var bin_dir = path.join(ROOT, 'bin'),
-        cordovalib_dir = path.join(ROOT, 'CordovaLib'),
         project_parent = path.dirname(project_path);
     var project_template_dir = opts.project_template_dir || path.join(bin_dir, 'templates', 'project');
 
@@ -205,7 +204,7 @@ exports.createProject = function(project_path, package_name, project_name, opts)
 
     console.log(generateDoneMessage('create', use_shared));
     return Q.resolve();
-}
+};
 
 exports.updateProject = function(projectPath, opts) {
     var projectName = detectProjectName(projectPath);

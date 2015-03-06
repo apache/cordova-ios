@@ -51,9 +51,9 @@ module.exports.run = function (argv) {
     }).then(function (projectName) {
         var configuration = args.release ? 'Release' : 'Debug';
 
-        console.log("Building project  : " + path.join(projectPath, projectName + '.xcodeproj'));
-        console.log("\tConfiguration : " + configuration);
-        console.log("\tPlatform      : " + (args.device ? 'device' : 'emulator'));
+        console.log('Building project  : ' + path.join(projectPath, projectName + '.xcodeproj'));
+        console.log('\tConfiguration : ' + configuration);
+        console.log('\tPlatform      : ' + (args.device ? 'device' : 'emulator'));
 
         var xcodebuildArgs = getXcodeArgs(projectName, projectPath, configuration, args.device);
         return spawn('xcodebuild', xcodebuildArgs, projectPath);
@@ -72,7 +72,7 @@ function findXCodeProjectIn(projectPath) {
     });
     
     if (xcodeProjFiles.length === 0) {
-        return Q.reject("No Xcode project found in " + projectPath);
+        return Q.reject('No Xcode project found in ' + projectPath);
     }
     if (xcodeProjFiles.length > 1) {
         console.warn('Found multiple .xcodeproj directories in \n' +
@@ -99,24 +99,25 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            'ARCHS="armv7 armv7s arm64"',
+            'ARCHS=armv7 armv7s arm64',
             '-target', projectName,
             '-configuration', configuration,
             '-sdk', 'iphoneos',
             'build',
-            'VALID_ARCHS="armv7 armv7s arm64"',
+            'VALID_ARCHS=armv7 armv7s arm64',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
     } else { // emulator
         xcodebuildArgs = [
+            '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            'ARCHS="i386"',
+            'ARCHS=i386',
             '-target', projectName ,
             '-configuration', configuration,
             '-sdk', 'iphonesimulator',
             'build',
-            'VALID_ARCHS="i386"',
+            'VALID_ARCHS=i386',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
@@ -126,22 +127,22 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
 
 // help/usage function
 module.exports.help = function help() {
-    console.log("");
-    console.log("Usage: build [ --debug | --release ] [--archs=\"<list of architectures...>\"] [--device | --simulator]");
-    console.log("    --help    : Displays this dialog.");
-    console.log("    --debug   : Builds project in debug mode. (Default)");
-    console.log("    --release : Builds project in release mode.");
-    console.log("    -r        : Shortcut :: builds project in release mode.");
+    console.log('');
+    console.log('Usage: build [ --debug | --release ] [--archs=\"<list of architectures...>\"] [--device | --simulator]');
+    console.log('    --help    : Displays this dialog.');
+    console.log('    --debug   : Builds project in debug mode. (Default)');
+    console.log('    --release : Builds project in release mode.');
+    console.log('    -r        : Shortcut :: builds project in release mode.');
     // TODO: add support for building different archs
     // console.log("    --archs   : Builds project binaries for specific chip architectures (`anycpu`, `arm`, `x86`, `x64`).");
-    console.log("    --device, --simulator");
-    console.log("              : Specifies, what type of project to build");
-    console.log("examples:");
-    console.log("    build ");
-    console.log("    build --debug");
-    console.log("    build --release");
+    console.log('    --device, --simulator');
+    console.log('              : Specifies, what type of project to build');
+    console.log('examples:');
+    console.log('    build ');
+    console.log('    build --debug');
+    console.log('    build --release');
     // TODO: add support for building different archs
     // console.log("    build --release --archs=\"armv7\"");
-    console.log("");
+    console.log('');
     process.exit(0);
 };

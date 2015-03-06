@@ -24,6 +24,7 @@
 #import "CDVUserAgentUtil.h"
 #import "CDVWebViewDelegate.h"
 #import <AVFoundation/AVFoundation.h>
+#import "CDVHandleOpenURL.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
@@ -339,7 +340,7 @@
     }
 
     NSString* decelerationSetting = [self settingForKey:@"UIWebViewDecelerationSpeed"];
-    if (![@"fast" isEqualToString:decelerationSetting]) {
+    if (![@"fast" isEqualToString : decelerationSetting]) {
         [self.webView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
     }
 
@@ -459,6 +460,8 @@
 
         [CDVTimer stop:@"TotalPluginStartup"];
     }
+
+    [self registerPlugin:[[CDVHandleOpenURL alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVHandleOpenURL class])];
 
     // /////////////////
     NSURL* appURL = [self appUrl];
@@ -827,7 +830,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex : 0]) : nil);
+    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
 
     return basePath;
 }

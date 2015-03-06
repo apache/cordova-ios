@@ -30,10 +30,22 @@
         Apache Cordova Team
     </author>
 
-    <access origin="*"/>
-
-    <!-- <content src="http://mysite.com/myapp.html" /> for external pages -->
     <content src="index.html" />
+
+    <!-- Whitelist docs: https://github.com/apache/cordova-plugin-whitelist -->
+    <access origin="*" />
+    <!-- Grant certain URLs the ability to launch external applications. This
+         behaviour is set to match that of Cordova versions before 3.6.0, and
+         should be reviewed before launching an application in production. It
+         may be changed in the future. -->
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <allow-intent href="itms:*" />
+    <allow-intent href="itms-apps:*" />
 
     <!-- Preferences for iOS -->
     <preference name="AllowInlineMediaPlayback" value="false" />
@@ -43,7 +55,6 @@
     <preference name="KeyboardDisplayRequiresUserAction" value="true" />
     <preference name="MediaPlaybackRequiresUserAction" value="false" />
     <preference name="SuppressesIncrementalRendering" value="false" />
-    <preference name="TopActivityIndicator" value="gray" />
     <preference name="GapBetweenPages" value="0" />
     <preference name="PageLength" value="0" />
     <preference name="PaginationBreakingMode" value="page" /> <!-- page, column -->

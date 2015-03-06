@@ -49,7 +49,7 @@ exports.get_apple_ios_version = function() {
     }, function(stderr) {
         return Q.reject(stderr);
     });
-}
+};
 
 exports.get_apple_osx_version = function() {
     var d = Q.defer();
@@ -78,7 +78,7 @@ exports.get_apple_osx_version = function() {
     }, function(stderr) {
         return Q.reject(stderr);
     });
-}
+};
 
 exports.get_apple_xcode_version = function() {
     var d = Q.defer();
@@ -158,7 +158,7 @@ exports.compareVersions = function (version1, version2) {
             // Number constructor is strict enough and will return NaN
             // if conversion fails. In this case we won't be able to compare versions properly
             if (isNaN(parsed)) {
-                throw "Version should contain only numbers and dots";
+                throw 'Version should contain only numbers and dots';
             }
             return parsed;
         });

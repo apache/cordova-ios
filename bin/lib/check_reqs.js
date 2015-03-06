@@ -22,7 +22,7 @@
           sub:true, laxcomma:true, laxbreak:true
 */
 
-var Q     = require('Q'),
+var Q     = require('q'),
     os    = require('os'),
     shell = require('shelljs'),
     versions = require('./versions');
@@ -34,7 +34,7 @@ var IOS_SIM_NOT_FOUND_MESSAGE = 'ios-sim was not found. Please download, build a
     ' or greater from https://github.com/phonegap/ios-sim into your path.' +
     ' Or \'npm install -g ios-sim\' using node.js: http://nodejs.org';
 
-var IOS_DEPLOY_MIN_VERSION = '1.2.0';
+var IOS_DEPLOY_MIN_VERSION = '1.4.0';
 var IOS_DEPLOY_NOT_FOUND_MESSAGE = 'ios-deploy was not found. Please download, build and install version ' + IOS_DEPLOY_MIN_VERSION +
     ' or greater from https://github.com/phonegap/ios-deploy into your path.' +
     ' Or \'npm install -g ios-deploy\' using node.js: http://nodejs.org';
