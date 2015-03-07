@@ -152,25 +152,6 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
     return [[UIApplication sharedApplication] delegate];
 }
 
-- (NSString*)writeJavascript:(NSString*)javascript
-{
-    // TODO: although deprecated, should have some solution here instead of removing it
-    [((CDVViewController*)self.viewController).webViewEngine evaluateJavaScript:javascript completionHandler:nil];     // bad cast, but ok for now
-    return @"";
-}
-
-- (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId
-{
-    [self.commandDelegate evalJs:[pluginResult toSuccessCallbackString:callbackId]];
-    return @"";
-}
-
-- (NSString*)error:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId
-{
-    [self.commandDelegate evalJs:[pluginResult toErrorCallbackString:callbackId]];
-    return @"";
-}
-
 // default implementation does nothing, ideally, we are not registered for notification if we aren't going to do anything.
 // - (void)didReceiveLocalNotification:(NSNotification *)notification
 // {

@@ -163,53 +163,6 @@ id messageFromMultipart(NSArray* theMessages)
     return argumentsJSON;
 }
 
-// These methods are used by the legacy plugin return result method
-- (NSString*)toJSONString
-{
-    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        self.status, @"status",
-        self.message ? self.message : [NSNull null], @"message",
-        self.keepCallback, @"keepCallback",
-        nil];
-
-    NSError* error = nil;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict
-                                                       options:NSJSONWritingPrettyPrinted
-                                                         error:&error];
-    NSString* resultString = nil;
-
-    if (error != nil) {
-        NSLog(@"toJSONString error: %@", [error localizedDescription]);
-    } else {
-        resultString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    }
-
-    if ([[self class] isVerbose]) {
-        NSLog(@"PluginResult:toJSONString - %@", resultString);
-    }
-    return resultString;
-}
-
-- (NSString*)toSuccessCallbackString:(NSString*)callbackId
-{
-    NSString* successCB = [NSString stringWithFormat:@"cordova.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];
-
-    if ([[self class] isVerbose]) {
-        NSLog(@"PluginResult toSuccessCallbackString: %@", successCB);
-    }
-    return successCB;
-}
-
-- (NSString*)toErrorCallbackString:(NSString*)callbackId
-{
-    NSString* errorCB = [NSString stringWithFormat:@"cordova.callbackError('%@',%@);", callbackId, [self toJSONString]];
-
-    if ([[self class] isVerbose]) {
-        NSLog(@"PluginResult toErrorCallbackString: %@", errorCB);
-    }
-    return errorCB;
-}
-
 static BOOL gIsVerbose = NO;
 + (void)setVerbose:(BOOL)verbose
 {
