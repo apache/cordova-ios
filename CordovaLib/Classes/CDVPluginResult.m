@@ -168,7 +168,7 @@ id messageFromMultipart(NSArray* theMessages)
 {
     NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
         self.status, @"status",
-        self.message ? self.                                message:[NSNull null], @"message",
+        self.message ? self.message : [NSNull null], @"message",
         self.keepCallback, @"keepCallback",
         nil];
 

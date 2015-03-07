@@ -17,25 +17,11 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import "CDVAvailability.h"
+#import "CDVPlugin.h"
+#import "CDVWebViewEngineProtocol.h"
 
-/**
- * Distinguishes top-level navigations from sub-frame navigations.
- * shouldStartLoadWithRequest is called for every request, but didStartLoad
- * and didFinishLoad is called only for top-level navigations.
- * Relevant bug: CB-2389
- */
-@interface CDVWebViewDelegate : NSObject <UIWebViewDelegate>{
-    __weak NSObject <UIWebViewDelegate>* _delegate;
-    NSInteger _loadCount;
-    NSInteger _state;
-    NSInteger _curLoadToken;
-    NSInteger _loadStartPollCount;
-}
+@interface CDVUIWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
 
-- (id)initWithDelegate:(NSObject <UIWebViewDelegate>*)delegate;
-
-- (BOOL)request:(NSURLRequest*)newRequest isEqualToRequestAfterStrippingFragments:(NSURLRequest*)originalRequest;
+@property (nonatomic, strong, readonly) id <UIWebViewDelegate> uiWebViewDelegate;
 
 @end

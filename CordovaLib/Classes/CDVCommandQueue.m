@@ -74,12 +74,12 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
             [commandBatchHolder addObject:[batchJSON cdv_JSONObject]];
         } else {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^() {
-                    NSMutableArray* result = [batchJSON cdv_JSONObject];
-                    @synchronized(commandBatchHolder) {
-                        [commandBatchHolder addObject:result];
-                    }
-                    [self performSelectorOnMainThread:@selector(executePending) withObject:nil waitUntilDone:NO];
-                });
+                NSMutableArray* result = [batchJSON cdv_JSONObject];
+                @synchronized(commandBatchHolder) {
+                    [commandBatchHolder addObject:result];
+                }
+                [self performSelectorOnMainThread:@selector(executePending) withObject:nil waitUntilDone:NO];
+            });
         }
     }
 }
@@ -110,12 +110,19 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
 
 - (void)fetchCommandsFromJs
 {
-    // Grab all the queued commands from the JS side.
-    NSString* queuedCommandsJSON = [_viewController.webView stringByEvaluatingJavaScriptFromString:
-        @"cordova.require('cordova/exec').nativeFetchMessages()"];
+    __weak CDVCommandQueue* weakSelf = self;
+    NSString* js = @"cordova.require('cordova/exec').nativeFetchMessages()";
 
-    CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
-    [self enqueueCommandBatch:queuedCommandsJSON];
+    [_viewController.webViewEngine evaluateJavaScript:js
+                                    completionHandler:^(id obj, NSError* error) {
+        if ((error == nil) && [obj isKindOfClass:[NSString class]]) {
+            NSString* queuedCommandsJSON = (NSString*)obj;
+            CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
+            [weakSelf enqueueCommandBatch:queuedCommandsJSON];
+            // this has to be called here now, because fetchCommandsFromJs is now async (previously: synchronous)
+            [self executePending];
+        }
+    }];
 }
 
 - (void)executePending
@@ -153,7 +160,7 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
                             NSString* commandJson = [jsonEntry cdv_JSONString];
                             static NSUInteger maxLogLength = 1024;
                             NSString* commandString = ([commandJson length] > maxLogLength) ?
-                                [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] :
+                                [NSString stringWithFormat : @"%@[...]", [commandJson substringToIndex:maxLogLength]] :
                                 commandJson;
 
                             DLog(@"FAILED pluginJSON = %@", commandString);

@@ -22,6 +22,17 @@
 #import "CDVPluginResult.h"
 #import "NSMutableArray+QueueAdditions.h"
 #import "CDVCommandDelegate.h"
+#import "CDVWebViewEngineProtocol.h"
+
+#ifdef __IPHONE_8_0
+    #import <WebKit/WebKit.h>
+#endif
+
+@interface UIView (org_apache_cordova_UIView_Extension)
+
+@property (nonatomic, weak) UIScrollView* scrollView;
+
+@end
 
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
@@ -32,13 +43,15 @@ extern NSString* const CDVRemoteNotificationError;
 
 @interface CDVPlugin : NSObject {}
 
-@property (nonatomic, weak) UIWebView* webView;
+@property (nonatomic, readonly, weak) UIView* webView;
+@property (nonatomic, readonly, weak) id <CDVWebViewEngineProtocol> webViewEngine;
+
 @property (nonatomic, weak) UIViewController* viewController;
 @property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView;
+- (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine;
 - (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;

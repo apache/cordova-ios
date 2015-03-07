@@ -26,8 +26,11 @@
 #import "CDVWhitelist.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVPlugin.h"
+#import "CDVWebViewEngineProtocol.h"
 
 @interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
+    @protected
+    id <CDVWebViewEngineProtocol> _webViewEngine;
     @protected
     id <CDVCommandDelegate> _commandDelegate;
     @protected
@@ -35,7 +38,7 @@
     NSString* _userAgent;
 }
 
-@property (nonatomic, strong) IBOutlet UIWebView* webView;
+@property (nonatomic, readonly, weak) IBOutlet UIView* webView;
 
 @property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
@@ -47,6 +50,7 @@
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
 @property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
+@property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**
@@ -66,7 +70,7 @@
 
 - (void)printMultitaskingInfo;
 - (void)createGapView;
-- (UIWebView*)newCordovaViewWithFrame:(CGRect)bounds;
+- (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 - (void)javascriptAlert:(NSString*)text;
 - (NSString*)appURLScheme;

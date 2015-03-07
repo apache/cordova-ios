@@ -17,19 +17,19 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVAvailabilityDeprecated.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVViewController.h"
-#import "CDVCommandDelegate.h"
-#import "CDVURLProtocol.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVWhitelist.h"
-#import "CDVLocalStorage.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVScreenOrientationDelegate.h"
-#import "CDVTimer.h"
-#import "CDVUserAgentUtil.h"
-#import "NSData+Base64.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+@interface NSDictionary (CordovaPreferences)
+
+- (id)cordovaSettingForKey:(NSString*)key;
+- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
+- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+
+@end
+
+@interface NSMutableDictionary (CordovaPreferences)
+
+- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
+
+@end

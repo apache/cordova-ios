@@ -18,6 +18,25 @@
  */
 
 #import "CDVPlugin.h"
+#import "CDVViewController.h"
+#include <objc/message.h>
+
+@implementation UIView (org_apache_cordova_UIView_Extension)
+
+@dynamic scrollView;
+
+- (UIScrollView*)scrollView
+{
+    SEL scrollViewSelector = NSSelectorFromString(@"scrollView");
+
+    if ([self respondsToSelector:scrollViewSelector]) {
+        return ((id (*)(id, SEL))objc_msgSend)(self, scrollViewSelector);
+    }
+
+    return nil;
+}
+
+@end
 
 NSString* const CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
 NSString* const CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
@@ -29,28 +48,25 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
 @interface CDVPlugin ()
 
 @property (readwrite, assign) BOOL hasPendingOperation;
+@property (nonatomic, readwrite, weak) id <CDVWebViewEngineProtocol> webViewEngine;
 
 @end
 
 @implementation CDVPlugin
-@synthesize webView, viewController, commandDelegate, hasPendingOperation;
+@synthesize webViewEngine, viewController, commandDelegate, hasPendingOperation;
+@dynamic webView;
 
 // Do not override these methods. Use pluginInitialize instead.
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
-{
-    return [self initWithWebView:theWebView];
-}
-
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
+- (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine
 {
     self = [super init];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppTerminate) name:UIApplicationWillTerminateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:CDVPluginHandleOpenURLNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onReset) name:CDVPluginResetNotification object:theWebView];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onReset) name:CDVPluginResetNotification object:theWebViewEngine.engineWebView];
 
-        self.webView = theWebView;
+        self.webViewEngine = theWebViewEngine;
     }
     return self;
 }
@@ -78,7 +94,15 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
 {
     viewController = nil;
     commandDelegate = nil;
-    webView = nil;
+}
+
+- (UIView*)webView
+{
+    if (self.webViewEngine != nil) {
+        return self.webViewEngine.engineWebView;
+    }
+
+    return nil;
 }
 
 /*
@@ -130,7 +154,9 @@ NSString* const CDVRemoteNotificationError = @"CDVRemoteNotificationError";
 
 - (NSString*)writeJavascript:(NSString*)javascript
 {
-    return [self.webView stringByEvaluatingJavaScriptFromString:javascript];
+    // TODO: although deprecated, should have some solution here instead of removing it
+    [((CDVViewController*)self.viewController).webViewEngine evaluateJavaScript:javascript completionHandler:nil];     // bad cast, but ok for now
+    return @"";
 }
 
 - (NSString*)success:(CDVPluginResult*)pluginResult callbackId:(NSString*)callbackId

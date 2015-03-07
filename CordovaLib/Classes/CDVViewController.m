@@ -19,18 +19,18 @@
 
 #import <objc/message.h>
 #import "CDV.h"
-#import "CDVCommandDelegateImpl.h"
+#import "CDVUIWebViewDelegate.h"
 #import "CDVConfigParser.h"
 #import "CDVUserAgentUtil.h"
-#import "CDVWebViewDelegate.h"
 #import <AVFoundation/AVFoundation.h>
+#import "NSDictionary+CordovaPreferences.h"
 #import "CDVHandleOpenURL.h"
+#import "CDVCommandDelegateImpl.h"
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
-    CDVWebViewDelegate* _webViewDelegate;
 }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
@@ -41,6 +41,7 @@
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
+@property (nonatomic, readwrite, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 
 @property (readwrite, assign) BOOL initialized;
 
@@ -50,12 +51,14 @@
 
 @implementation CDVViewController
 
-@synthesize webView, supportedOrientations;
+@synthesize supportedOrientations;
 @synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
+@synthesize webViewEngine = _webViewEngine;
+@dynamic webView;
 
 - (void)__init
 {
@@ -175,13 +178,13 @@
 
     NSURL* url = [NSURL fileURLWithPath:path];
 
-    configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
-    if (configParser == nil) {
+    self.configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
+    if (self.configParser == nil) {
         NSLog(@"Failed to initialize XML parser.");
         return;
     }
-    [configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
-    [configParser parse];
+    [self.configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
+    [self.configParser parse];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
@@ -235,7 +238,7 @@
 {
     NSURL* errorURL = nil;
 
-    id setting = [self settingForKey:@"ErrorUrl"];
+    id setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
 
     if (setting) {
         NSString* errorUrlString = (NSString*)setting;
@@ -253,6 +256,15 @@
     return errorURL;
 }
 
+- (UIView*)webView
+{
+    if (self.webViewEngine != nil) {
+        return self.webViewEngine.engineWebView;
+    }
+
+    return nil;
+}
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -262,11 +274,11 @@
 
     NSString* backupWebStorageType = @"cloud"; // default value
 
-    id backupWebStorage = [self settingForKey:@"BackupWebStorage"];
+    id backupWebStorage = [self.settings cordovaSettingForKey:@"BackupWebStorage"];
     if ([backupWebStorage isKindOfClass:[NSString class]]) {
         backupWebStorageType = backupWebStorage;
     }
-    [self setSetting:backupWebStorageType forKey:@"BackupWebStorage"];
+    [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
 
     if (IsAtLeastiOSVersion(@"5.1")) {
         [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
@@ -278,175 +290,17 @@
         [self createGapView];
     }
 
-    // Configure WebView
-    _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
-    self.webView.delegate = _webViewDelegate;
-
     // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
     [CDVURLProtocol registerViewController:self];
 
     // /////////////////
-
-    NSString* enableViewportScale = [self settingForKey:@"EnableViewportScale"];
-    NSNumber* allowInlineMediaPlayback = [self settingForKey:@"AllowInlineMediaPlayback"];
-    BOOL mediaPlaybackRequiresUserAction = YES;  // default value
-    if ([self settingForKey:@"MediaPlaybackRequiresUserAction"]) {
-        mediaPlaybackRequiresUserAction = [(NSNumber*)[self settingForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
-    }
-
-    self.webView.scalesPageToFit = [enableViewportScale boolValue];
 
     /*
      * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
      */
     if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
         ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVLocalStorage class])];
-    }
-
-    /*
-     * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
-     */
-    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
-        self.webView.allowsInlineMediaPlayback = YES;
-    }
-    if ((mediaPlaybackRequiresUserAction == NO) && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
-        self.webView.mediaPlaybackRequiresUserAction = NO;
-    }
-
-    // By default, overscroll bouncing is allowed.
-    // UIWebViewBounce has been renamed to DisallowOverscroll, but both are checked.
-    BOOL bounceAllowed = YES;
-    NSNumber* disallowOverscroll = [self settingForKey:@"DisallowOverscroll"];
-    if (disallowOverscroll == nil) {
-        NSNumber* bouncePreference = [self settingForKey:@"UIWebViewBounce"];
-        bounceAllowed = (bouncePreference == nil || [bouncePreference boolValue]);
-    } else {
-        bounceAllowed = ![disallowOverscroll boolValue];
-    }
-
-    // prevent webView from bouncing
-    // based on the DisallowOverscroll/UIWebViewBounce key in config.xml
-    if (!bounceAllowed) {
-        if ([self.webView respondsToSelector:@selector(scrollView)]) {
-            ((UIScrollView*)[self.webView scrollView]).bounces = NO;
-        } else {
-            for (id subview in self.webView.subviews) {
-                if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-                    ((UIScrollView*)subview).bounces = NO;
-                }
-            }
-        }
-    }
-
-    NSString* decelerationSetting = [self settingForKey:@"UIWebViewDecelerationSpeed"];
-    if (![@"fast" isEqualToString : decelerationSetting]) {
-        [self.webView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
-    }
-
-    /*
-     * iOS 6.0 UIWebView properties
-     */
-    if (IsAtLeastiOSVersion(@"6.0")) {
-        BOOL keyboardDisplayRequiresUserAction = YES; // KeyboardDisplayRequiresUserAction - defaults to YES
-        if ([self settingForKey:@"KeyboardDisplayRequiresUserAction"] != nil) {
-            if ([self settingForKey:@"KeyboardDisplayRequiresUserAction"]) {
-                keyboardDisplayRequiresUserAction = [(NSNumber*)[self settingForKey:@"KeyboardDisplayRequiresUserAction"] boolValue];
-            }
-        }
-
-        // property check for compiling under iOS < 6
-        if ([self.webView respondsToSelector:@selector(setKeyboardDisplayRequiresUserAction:)]) {
-            [self.webView setValue:[NSNumber numberWithBool:keyboardDisplayRequiresUserAction] forKey:@"keyboardDisplayRequiresUserAction"];
-        }
-
-        BOOL suppressesIncrementalRendering = NO; // SuppressesIncrementalRendering - defaults to NO
-        if ([self settingForKey:@"SuppressesIncrementalRendering"] != nil) {
-            if ([self settingForKey:@"SuppressesIncrementalRendering"]) {
-                suppressesIncrementalRendering = [(NSNumber*)[self settingForKey:@"SuppressesIncrementalRendering"] boolValue];
-            }
-        }
-
-        // property check for compiling under iOS < 6
-        if ([self.webView respondsToSelector:@selector(setSuppressesIncrementalRendering:)]) {
-            [self.webView setValue:[NSNumber numberWithBool:suppressesIncrementalRendering] forKey:@"suppressesIncrementalRendering"];
-        }
-    }
-
-    /*
-     * iOS 7.0 UIWebView properties
-     */
-    if (IsAtLeastiOSVersion(@"7.0")) {
-        SEL ios7sel = nil;
-        id prefObj = nil;
-
-        CGFloat gapBetweenPages = 0.0; // default
-        prefObj = [self settingForKey:@"GapBetweenPages"];
-        if (prefObj != nil) {
-            gapBetweenPages = [prefObj floatValue];
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setGapBetweenPages:");
-        if ([self.webView respondsToSelector:ios7sel]) {
-            [self.webView setValue:[NSNumber numberWithFloat:gapBetweenPages] forKey:@"gapBetweenPages"];
-        }
-
-        CGFloat pageLength = 0.0; // default
-        prefObj = [self settingForKey:@"PageLength"];
-        if (prefObj != nil) {
-            pageLength = [[self settingForKey:@"PageLength"] floatValue];
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setPageLength:");
-        if ([self.webView respondsToSelector:ios7sel]) {
-            [self.webView setValue:[NSNumber numberWithBool:pageLength] forKey:@"pageLength"];
-        }
-
-        NSInteger paginationBreakingMode = 0; // default - UIWebPaginationBreakingModePage
-        prefObj = [self settingForKey:@"PaginationBreakingMode"];
-        if (prefObj != nil) {
-            NSArray* validValues = @[@"page", @"column"];
-            NSString* prefValue = [validValues objectAtIndex:0];
-
-            if ([prefObj isKindOfClass:[NSString class]]) {
-                prefValue = prefObj;
-            }
-
-            paginationBreakingMode = [validValues indexOfObject:[prefValue lowercaseString]];
-            if (paginationBreakingMode == NSNotFound) {
-                paginationBreakingMode = 0;
-            }
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setPaginationBreakingMode:");
-        if ([self.webView respondsToSelector:ios7sel]) {
-            [self.webView setValue:[NSNumber numberWithInteger:paginationBreakingMode] forKey:@"paginationBreakingMode"];
-        }
-
-        NSInteger paginationMode = 0; // default - UIWebPaginationModeUnpaginated
-        prefObj = [self settingForKey:@"PaginationMode"];
-        if (prefObj != nil) {
-            NSArray* validValues = @[@"unpaginated", @"lefttoright", @"toptobottom", @"bottomtotop", @"righttoleft"];
-            NSString* prefValue = [validValues objectAtIndex:0];
-
-            if ([prefObj isKindOfClass:[NSString class]]) {
-                prefValue = prefObj;
-            }
-
-            paginationMode = [validValues indexOfObject:[prefValue lowercaseString]];
-            if (paginationMode == NSNotFound) {
-                paginationMode = 0;
-            }
-        }
-
-        // property check for compiling under iOS < 7
-        ios7sel = NSSelectorFromString(@"setPaginationMode:");
-        if ([self.webView respondsToSelector:ios7sel]) {
-            [self.webView setValue:[NSNumber numberWithInteger:paginationMode] forKey:@"paginationMode"];
-        }
+        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
     if ([self.startupPluginNames count] > 0) {
@@ -461,7 +315,7 @@
         [CDVTimer stop:@"TotalPluginStartup"];
     }
 
-    [self registerPlugin:[[CDVHandleOpenURL alloc] initWithWebView:self.webView] withClassName:NSStringFromClass([CDVHandleOpenURL class])];
+    [self registerPlugin:[[CDVHandleOpenURL alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVHandleOpenURL class])];
 
     // /////////////////
     NSURL* appURL = [self appUrl];
@@ -471,7 +325,7 @@
         [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
         if (appURL) {
             NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [self.webView loadRequest:appReq];
+            [self.webViewEngine loadRequest:appReq];
         } else {
             NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
@@ -480,23 +334,13 @@
             if (errorUrl) {
                 errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
                 NSLog(@"%@", [errorUrl absoluteString]);
-                [self.webView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+                [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
             } else {
                 NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-                [self.webView loadHTMLString:html baseURL:nil];
+                [self.webViewEngine loadHTMLString:html baseURL:nil];
             }
         }
     }];
-}
-
-- (id)settingForKey:(NSString*)key
-{
-    return [[self settings] objectForKey:[key lowercaseString]];
-}
-
-- (void)setSetting:(id)setting forKey:(NSString*)key
-{
-    [[self settings] setObject:setting forKey:[key lowercaseString]];
 }
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
@@ -548,20 +392,22 @@
     }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (void)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation completionHandler:(void (^)(BOOL))completionHandler
 {
     // First, ask the webview via JS if it supports the new orientation
     NSString* jsCall = [NSString stringWithFormat:
         @"window.shouldRotateToOrientation && window.shouldRotateToOrientation(%ld);"
         , (long)[self mapIosOrientationToJsOrientation:interfaceOrientation]];
-    NSString* res = [webView stringByEvaluatingJavaScriptFromString:jsCall];
+    __weak CDVViewController* weakSelf = self;
 
-    if ([res length] > 0) {
-        return [res boolValue];
-    }
-
-    // if js did not handle the new orientation (no return value), use values from the plist (via supportedOrientations)
-    return [self supportsOrientation:interfaceOrientation];
+    [_webViewEngine evaluateJavaScript:jsCall completionHandler:^(NSString* obj, NSError* error) {
+        if ([obj length] > 0) {
+            completionHandler([obj boolValue]);
+        } else {
+            // if js did not handle the new orientation (no return value), use values from the plist (via supportedOrientations)
+            completionHandler([weakSelf supportsOrientation:interfaceOrientation]);
+        }
+    }];
 }
 
 - (BOOL)shouldAutorotate
@@ -594,9 +440,31 @@
     return [self.supportedOrientations containsObject:[NSNumber numberWithInt:orientation]];
 }
 
-- (UIWebView*)newCordovaViewWithFrame:(CGRect)bounds
+- (UIView*)newCordovaViewWithFrame:(CGRect)bounds
 {
-    return [[UIWebView alloc] initWithFrame:bounds];
+    NSString* defaultWebViewEngineClass = @"CDVUIWebViewEngine";
+    NSString* webViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
+
+    if (!webViewEngineClass) {
+        webViewEngineClass = defaultWebViewEngineClass;
+    }
+
+    // Find webViewEngine
+    if (NSClassFromString(webViewEngineClass)) {
+        self.webViewEngine = [[NSClassFromString(webViewEngineClass) alloc] initWithFrame:bounds];
+        // if a webView engine returns nil (not supported by the current iOS version) or doesn't conform to the protocol, we use UIWebView
+        if (!self.webViewEngine || ![self.webViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)]) {
+            self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+        }
+    } else {
+        self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+    }
+
+    if ([self.webViewEngine isKindOfClass:[CDVPlugin class]]) {
+        [self registerPlugin:(CDVPlugin*)self.webViewEngine withClassName:webViewEngineClass];
+    }
+
+    return self.webViewEngine.engineWebView;
 }
 
 - (NSString*)userAgent
@@ -620,11 +488,11 @@
 
     webViewBounds.origin = self.view.bounds.origin;
 
-    self.webView = [self newCordovaViewWithFrame:webViewBounds];
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    UIView* view = [self newCordovaViewWithFrame:webViewBounds];
 
-    [self.view addSubview:self.webView];
-    [self.view sendSubviewToBack:self.webView];
+    view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    [self.view addSubview:view];
+    [self.view sendSubviewToBack:view];
 }
 
 - (void)didReceiveMemoryWarning
@@ -657,8 +525,6 @@
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 
-    self.webView.delegate = nil;
-    self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     [super viewDidUnload];
@@ -830,7 +696,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
+    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex : 0]) : nil);
 
     return basePath;
 }
@@ -885,7 +751,7 @@
 
     id obj = [self.pluginObjects objectForKey:className];
     if (!obj) {
-        obj = [[NSClassFromString(className)alloc] initWithWebView:webView];
+        obj = [[NSClassFromString(className)alloc] initWithWebViewEngine:_webViewEngine];
 
         if (obj != nil) {
             [self registerPlugin:obj withClassName:className];
@@ -1005,25 +871,40 @@
 {
     if (self.openURL) {
         [self processOpenUrl:self.openURL pageLoaded:YES];
-        self.openURL = nil;
     }
 }
 
 - (void)processOpenUrl:(NSURL*)url pageLoaded:(BOOL)pageLoaded
 {
+    __weak CDVViewController* weakSelf = self;
+
+    dispatch_block_t handleOpenUrl = ^(void) {
+        NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
+        [_webViewEngine evaluateJavaScript:jsString
+                         completionHandler:^(id object, NSError* error) {
+            if (error == nil) {
+                weakSelf.openURL = nil;
+            }
+        }];
+    };
+
     if (!pageLoaded) {
         // query the webview for readystate
-        NSString* readyState = [webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
-        pageLoaded = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
-    }
-
-    if (pageLoaded) {
-        // calls into javascript global function 'handleOpenURL'
-        NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
-        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+        NSString* jsString = @"document.readystate";
+        [_webViewEngine evaluateJavaScript:jsString
+                         completionHandler:^(id object, NSError* error) {
+            if ((error == nil) && [object isKindOfClass:[NSString class]]) {
+                NSString* readyState = (NSString*)object;
+                BOOL ready = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
+                if (ready) {
+                    handleOpenUrl();
+                } else {
+                    weakSelf.openURL = url;
+                }
+            }
+        }];
     } else {
-        // save for when page has loaded
-        self.openURL = url;
+        handleOpenUrl();
     }
 }
 
@@ -1039,8 +920,6 @@
     [CDVURLProtocol unregisterViewController:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    self.webView.delegate = nil;
-    self.webView = nil;
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];

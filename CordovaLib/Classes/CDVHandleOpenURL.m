@@ -55,19 +55,31 @@
 
 - (void)processOpenUrl:(NSURL*)url pageLoaded:(BOOL)pageLoaded
 {
-    if (!pageLoaded) {
-        // query the webview for readystate
-        NSString* readyState = [self.webView stringByEvaluatingJavaScriptFromString:@"document.readyState"];
-        pageLoaded = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
-    }
+    __weak __typeof(self) weakSelf = self;
 
-    if (pageLoaded) {
+    dispatch_block_t handleOpenUrl = ^(void) {
         // calls into javascript global function 'handleOpenURL'
         NSString* jsString = [NSString stringWithFormat:@"document.addEventListener('deviceready',function(){if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}});", url];
-        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+
+        [weakSelf.webViewEngine evaluateJavaScript:jsString completionHandler:nil];
+    };
+
+    if (!pageLoaded) {
+        NSString* jsString = @"document.readystate";
+        [self.webViewEngine evaluateJavaScript:jsString
+                             completionHandler:^(id object, NSError* error) {
+            if ((error == nil) && [object isKindOfClass:[NSString class]]) {
+                NSString* readyState = (NSString*)object;
+                BOOL ready = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
+                if (ready) {
+                    handleOpenUrl();
+                } else {
+                    self.url = url;
+                }
+            }
+        }];
     } else {
-        // save for when page has loaded
-        self.url = url;
+        handleOpenUrl();
     }
 }
 

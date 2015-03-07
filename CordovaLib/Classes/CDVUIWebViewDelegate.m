@@ -76,11 +76,11 @@
 // TODO: Record order when page is re-navigated before the first navigation finishes.
 //
 
-#import "CDVWebViewDelegate.h"
-#import "CDVAvailability.h"
+#import "CDVUIWebViewDelegate.h"
 
 // #define VerboseLog NSLog
-#define VerboseLog(...) do {} while (0)
+#define VerboseLog(...) do { \
+} while (0)
 
 typedef enum {
     STATE_IDLE = 0,
@@ -101,7 +101,7 @@ static NSString *stripFragment(NSString* url)
     return [url substringToIndex:r.location];
 }
 
-@implementation CDVWebViewDelegate
+@implementation CDVUIWebViewDelegate
 
 - (id)initWithDelegate:(NSObject <UIWebViewDelegate>*)delegate
 {
@@ -257,7 +257,7 @@ static NSString *stripFragment(NSString* url)
                         NSLog(@"%@", description);
                         if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
                             NSDictionary* errorDictionary = @{NSLocalizedDescriptionKey : description};
-                            NSError* error = [[NSError alloc] initWithDomain:@"CDVWebViewDelegate" code:1 userInfo:errorDictionary];
+                            NSError* error = [[NSError alloc] initWithDomain:@"CDVUIWebViewDelegate" code:1 userInfo:errorDictionary];
                             [_delegate webView:webView didFailLoadWithError:error];
                         }
                     }

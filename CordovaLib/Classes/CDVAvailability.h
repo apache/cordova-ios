@@ -88,5 +88,6 @@
 #if CDV_ENABLE_EXEC_LOGGING
     #define CDV_EXEC_LOG NSLog
 #else
-    #define CDV_EXEC_LOG(...) do {} while (NO)
+    #define CDV_EXEC_LOG(...) do { \
+} while (NO)
 #endif
