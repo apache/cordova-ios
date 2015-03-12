@@ -47,7 +47,6 @@ extern NSString* const CDVRemoteNotificationError;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 
-- (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine;
 - (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;
