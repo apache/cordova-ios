@@ -34,6 +34,8 @@
 		7E14B5A81705050A0032169E /* CDVTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E14B5A61705050A0032169E /* CDVTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E14B5A91705050A0032169E /* CDVTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E14B5A71705050A0032169E /* CDVTimer.m */; };
 		7E5D94151AB23DB400F4D9EB /* CDVPlugin+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E5D94141AB23DB400F4D9EB /* CDVPlugin+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E5D94181AB250F800F4D9EB /* CDVAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E5D94161AB250F800F4D9EB /* CDVAppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7E5D94191AB250F800F4D9EB /* CDVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D94171AB250F800F4D9EB /* CDVAppDelegate.m */; };
 		8852C43A14B65FD800F0E735 /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852C43614B65FD800F0E735 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8852C43714B65FD800F0E735 /* CDVViewController.m */; };
 		8887FD741090FBE7009987E8 /* CDVInvokedUrlCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD341090FBE7009987E8 /* CDVInvokedUrlCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -81,6 +83,8 @@
 		7E14B5A61705050A0032169E /* CDVTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVTimer.h; path = Classes/CDVTimer.h; sourceTree = "<group>"; };
 		7E14B5A71705050A0032169E /* CDVTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVTimer.m; path = Classes/CDVTimer.m; sourceTree = "<group>"; };
 		7E5D94141AB23DB400F4D9EB /* CDVPlugin+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CDVPlugin+Private.h"; path = "Classes/CDVPlugin+Private.h"; sourceTree = "<group>"; };
+		7E5D94161AB250F800F4D9EB /* CDVAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAppDelegate.h; path = Classes/CDVAppDelegate.h; sourceTree = "<group>"; };
+		7E5D94171AB250F800F4D9EB /* CDVAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVAppDelegate.m; path = Classes/CDVAppDelegate.m; sourceTree = "<group>"; };
 		8852C43614B65FD800F0E735 /* CDVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVViewController.h; path = Classes/CDVViewController.h; sourceTree = "<group>"; };
 		8852C43714B65FD800F0E735 /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVViewController.m; path = Classes/CDVViewController.m; sourceTree = "<group>"; };
 		8887FD341090FBE7009987E8 /* CDVInvokedUrlCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVInvokedUrlCommand.h; path = Classes/CDVInvokedUrlCommand.h; sourceTree = "<group>"; };
@@ -166,6 +170,8 @@
 				8887FD501090FBE7009987E8 /* NSData+Base64.h */,
 				8887FD511090FBE7009987E8 /* NSData+Base64.m */,
 				306ADAE21AAA73E100CAC885 /* CDVWebViewEngineProtocol.h */,
+				7E5D94161AB250F800F4D9EB /* CDVAppDelegate.h */,
+				7E5D94171AB250F800F4D9EB /* CDVAppDelegate.m */,
 			);
 			name = Public;
 			sourceTree = "<group>";
@@ -219,6 +225,7 @@
 				306ADAE61AAA73E100CAC885 /* CDVWebViewEngineProtocol.h in Headers */,
 				EB96673B16A8970A00D86CDF /* CDVUserAgentUtil.h in Headers */,
 				306ADAEA1AAA745400CAC885 /* CDVCommandQueue.h in Headers */,
+				7E5D94181AB250F800F4D9EB /* CDVAppDelegate.h in Headers */,
 				7E5D94151AB23DB400F4D9EB /* CDVPlugin+Private.h in Headers */,
 				EB6A98571A77FA430013FCDB /* NSData+Base64.h in Headers */,
 				306ADAEB1AAA747100CAC885 /* NSMutableArray+QueueAdditions.h in Headers */,
@@ -289,6 +296,7 @@
 				30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
 				30C684821406CB38004C1A8E /* CDVWhitelist.m in Sources */,
 				30C684961407044B004C1A8E /* CDVURLProtocol.m in Sources */,
+				7E5D94191AB250F800F4D9EB /* CDVAppDelegate.m in Sources */,
 				8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */,
 				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				306ADAE51AAA73E100CAC885 /* CDVUIWebViewEngine.m in Sources */,

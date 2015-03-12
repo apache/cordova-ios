@@ -17,17 +17,12 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import <Foundation/Foundation.h>
+#import "CDVViewController.h"
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@interface CDVAppDelegate : NSObject <UIApplicationDelegate>{}
 
-@interface AppDelegate : CDVAppDelegate {}
+@property (nonatomic, strong) IBOutlet UIWindow* window;
+@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
 
 @end
