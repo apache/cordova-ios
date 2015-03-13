@@ -868,54 +868,6 @@
 
 // ///////////////////////
 
-- (void)onPageDidLoad:(NSNotification*)notification
-{
-    if (self.openURL) {
-        [self processOpenUrl:self.openURL pageLoaded:YES];
-    }
-}
-
-- (void)processOpenUrl:(NSURL*)url pageLoaded:(BOOL)pageLoaded
-{
-    __weak CDVViewController* weakSelf = self;
-
-    dispatch_block_t handleOpenUrl = ^(void) {
-        NSString* jsString = [NSString stringWithFormat:@"if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}", url];
-        [_webViewEngine evaluateJavaScript:jsString
-                         completionHandler:^(id object, NSError* error) {
-            if (error == nil) {
-                weakSelf.openURL = nil;
-            }
-        }];
-    };
-
-    if (!pageLoaded) {
-        // query the webview for readystate
-        NSString* jsString = @"document.readystate";
-        [_webViewEngine evaluateJavaScript:jsString
-                         completionHandler:^(id object, NSError* error) {
-            if ((error == nil) && [object isKindOfClass:[NSString class]]) {
-                NSString* readyState = (NSString*)object;
-                BOOL ready = [readyState isEqualToString:@"loaded"] || [readyState isEqualToString:@"complete"];
-                if (ready) {
-                    handleOpenUrl();
-                } else {
-                    weakSelf.openURL = url;
-                }
-            }
-        }];
-    } else {
-        handleOpenUrl();
-    }
-}
-
-- (void)processOpenUrl:(NSURL*)url
-{
-    [self processOpenUrl:url pageLoaded:NO];
-}
-
-// ///////////////////////
-
 - (void)dealloc
 {
     [CDVURLProtocol unregisterViewController:self];
