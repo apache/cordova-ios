@@ -33,6 +33,8 @@
 - (id)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL;
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
 
+- (NSURL*)URL;
+
 - (instancetype)initWithFrame:(CGRect)frame;
 - (void)updateWithInfo:(NSDictionary*)info;
 

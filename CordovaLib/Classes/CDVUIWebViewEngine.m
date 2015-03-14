@@ -80,6 +80,11 @@
     return nil;
 }
 
+- (NSURL*)URL
+{
+    return [[(UIWebView*)_engineWebView request] URL];
+}
+
 - (void)updateSettings:(NSDictionary*)settings
 {
     UIWebView* uiWebView = (UIWebView*)_engineWebView;
