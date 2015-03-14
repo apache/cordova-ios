@@ -83,6 +83,5 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 - (BOOL)URLisAllowed:(NSURL*)url;
-- (void)processOpenUrl:(NSURL*)url;
 
 @end
