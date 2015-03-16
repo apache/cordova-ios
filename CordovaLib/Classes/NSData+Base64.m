@@ -295,14 +295,4 @@ char *CDVNewBase64Encode(
     return result;
 }
 
-+ (NSData*)dataFromBase64String:(NSString*)aString
-{
-    return [self cdv_dataFromBase64String:aString];
-}
-
-- (NSString*)base64EncodedString
-{
-    return [self cdv_base64EncodedString];
-}
-
 @end
