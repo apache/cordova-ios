@@ -38,7 +38,7 @@
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
 @property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
-@property (nonatomic, readwrite, strong) NSArray* startupPluginNames;
+@property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 @property (nonatomic, readwrite, assign) BOOL loadFromString;
@@ -297,7 +297,10 @@
         With minimum iOS 6/7 supported, only first clause applies.
      */
     if ([backupWebStorageType isEqualToString:@"local"]) {
-        [self registerPlugin:[[CDVLocalStorage alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVLocalStorage class])];
+        NSString* localStorageFeatureName = @"localstorage";
+        if ([self.pluginsMap objectForKey:localStorageFeatureName]) { // plugin specified in config
+            [self.startupPluginNames addObject:localStorageFeatureName];
+        }
     }
 
     if ([self.startupPluginNames count] > 0) {
@@ -311,8 +314,6 @@
 
         [CDVTimer stop:@"TotalPluginStartup"];
     }
-
-    [self registerPlugin:[[CDVHandleOpenURL alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVHandleOpenURL class])];
 
     // /////////////////
     NSURL* appURL = [self appUrl];
