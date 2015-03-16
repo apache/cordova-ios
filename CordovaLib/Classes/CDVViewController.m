@@ -130,8 +130,8 @@
 
 - (void)printPlatformVersionWarning
 {
-    if (!IsAtLeastiOSVersion(@"6.0")) {
-        NSLog(@"CRITICAL: For Cordova 3.5.0 and above, you will need to upgrade to at least iOS 6.0 or greater. Your current version of iOS is %@.",
+    if (!IsAtLeastiOSVersion(@"7.0")) {
+        NSLog(@"CRITICAL: For Cordova 4.0.0 and above, you will need to upgrade to at least iOS 7.0 or greater. Your current version of iOS is %@.",
             [[UIDevice currentDevice] systemVersion]
             );
     }
@@ -279,9 +279,7 @@
     }
     [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
 
-    if (IsAtLeastiOSVersion(@"5.1")) {
-        [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
-    }
+    [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
 
     // // Instantiate the WebView ///////////////
 
@@ -296,9 +294,9 @@
 
     /*
      * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
+        With minimum iOS 6/7 supported, only first clause applies.
      */
-    if (IsAtLeastiOSVersion(@"5.1") && (([backupWebStorageType isEqualToString:@"local"]) ||
-        ([backupWebStorageType isEqualToString:@"cloud"] && !IsAtLeastiOSVersion(@"6.0")))) {
+    if ([backupWebStorageType isEqualToString:@"local"]) {
         [self registerPlugin:[[CDVLocalStorage alloc] initWithWebViewEngine:self.webViewEngine] withClassName:NSStringFromClass([CDVLocalStorage class])];
     }
 
@@ -695,7 +693,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex : 0]) : nil);
+    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
 
     return basePath;
 }

@@ -278,19 +278,6 @@ static NSString *stripFragment(NSString* url)
     BOOL fireCallback = NO;
     switch (_state) {
         case STATE_IDLE:
-            if (IsAtLeastiOSVersion(@"6.0")) {
-                break;
-            }
-            // If history.go(-1) is used pre-iOS6, the shouldStartLoadWithRequest function is not called.
-            // Without shouldLoad, we can't distinguish an iframe from a top-level navigation.
-            // We could try to distinguish using [UIWebView canGoForward], but that's too much complexity,
-            // and would work only on the first time it was used.
-
-            // Our work-around is to set a JS variable and poll until it disappears (from a navigation).
-            _state = STATE_IOS5_POLLING_FOR_LOAD_START;
-            _loadStartPollCount = 0;
-            [self setLoadToken:webView];
-            [self pollForPageLoadStart:webView];
             break;
 
         case STATE_CANCELLED:

@@ -121,10 +121,9 @@
 
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL*)URL skip:(BOOL)skip
 {
-    NSAssert(IsAtLeastiOSVersion(@"5.1"), @"Cannot mark files for NSURLIsExcludedFromBackupKey on iOS less than 5.1");
-
     NSError* error = nil;
     BOOL success = [URL setResourceValue:[NSNumber numberWithBool:skip] forKey:NSURLIsExcludedFromBackupKey error:&error];
+
     if (!success) {
         NSLog(@"Error excluding %@ from backup %@", [URL lastPathComponent], error);
     }
@@ -330,10 +329,6 @@
 + (void)__restoreLegacyDatabaseLocationsWithBackupType:(NSString*)backupType
 {
     // on iOS 6, if you toggle between cloud/local backup, you must move database locations.  Default upgrade from iOS5.1 to iOS6 is like a toggle from local to cloud.
-    if (!IsAtLeastiOSVersion(@"6.0")) {
-        return;
-    }
-
     NSString* appLibraryFolder = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString* appDocumentsFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 
