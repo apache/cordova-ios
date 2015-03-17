@@ -56,16 +56,18 @@
 #define __CORDOVA_3_7_0 30700
 #define __CORDOVA_3_8_0 30800
 #define __CORDOVA_4_0_0 40000
+/* coho:next-version,insert-before */
 #define __CORDOVA_NA 99999      /* not available */
 
 /*
- #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_1_7_0
-    // do something when its at least 1.7.0
+ #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_4_0_0
+    // do something when its at least 4.0.0
  #else
-    // do something else (non 1.7.0)
+    // do something else (non 4.0.0)
  #endif
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
+    /* coho:next-version-min-required,replace-after */
     #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_4_0_0
 #endif
 
