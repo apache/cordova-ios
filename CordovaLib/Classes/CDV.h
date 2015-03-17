@@ -19,6 +19,7 @@
 
 #import "CDVAvailability.h"
 #import "CDVAvailabilityDeprecated.h"
+#import "CDVAppDelegate.h"
 #import "CDVPlugin.h"
 #import "CDVPluginResult.h"
 #import "CDVViewController.h"
