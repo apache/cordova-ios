@@ -64,7 +64,7 @@
         <param name="ios-package" value="CDVLocalStorage"/>
     </feature>
     <feature name="HandleOpenUrl">
-        <param name="ios-package" value="CDVHandleOpenUrl"/>
+        <param name="ios-package" value="CDVHandleOpenURL"/>
         <param name="onload" value="true"/>
     </feature>
 </widget>
