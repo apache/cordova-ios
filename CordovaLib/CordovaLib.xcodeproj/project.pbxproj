@@ -13,6 +13,8 @@
 		3034979C1513D56A0090E688 /* CDVLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3034979A1513D56A0090E688 /* CDVLocalStorage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3034979B1513D56A0090E688 /* CDVLocalStorage.m */; };
 		30392E4E14F4FCAB00B9E0B8 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		306A45021AB7B073003D6925 /* CDVPlugin+Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = 306A45001AB7B073003D6925 /* CDVPlugin+Resources.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		306A45031AB7B073003D6925 /* CDVPlugin+Resources.m in Sources */ = {isa = PBXBuildFile; fileRef = 306A45011AB7B073003D6925 /* CDVPlugin+Resources.m */; };
 		306ADADD1AAA739800CAC885 /* CDVHandleOpenURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 306ADADC1AAA739800CAC885 /* CDVHandleOpenURL.h */; };
 		306ADAE01AAA73BA00CAC885 /* CDVHandleOpenURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 306ADADE1AAA73A800CAC885 /* CDVHandleOpenURL.m */; };
 		306ADAE51AAA73E100CAC885 /* CDVUIWebViewEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 306ADAE11AAA73E100CAC885 /* CDVUIWebViewEngine.m */; };
@@ -63,6 +65,8 @@
 		3034979A1513D56A0090E688 /* CDVLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLocalStorage.h; path = Classes/CDVLocalStorage.h; sourceTree = "<group>"; };
 		3034979B1513D56A0090E688 /* CDVLocalStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVLocalStorage.m; path = Classes/CDVLocalStorage.m; sourceTree = "<group>"; };
 		30392E4D14F4FCAB00B9E0B8 /* CDVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAvailability.h; path = Classes/CDVAvailability.h; sourceTree = "<group>"; };
+		306A45001AB7B073003D6925 /* CDVPlugin+Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CDVPlugin+Resources.h"; path = "Classes/CDVPlugin+Resources.h"; sourceTree = "<group>"; };
+		306A45011AB7B073003D6925 /* CDVPlugin+Resources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CDVPlugin+Resources.m"; path = "Classes/CDVPlugin+Resources.m"; sourceTree = "<group>"; };
 		306ADADC1AAA739800CAC885 /* CDVHandleOpenURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVHandleOpenURL.h; path = Classes/CDVHandleOpenURL.h; sourceTree = "<group>"; };
 		306ADADE1AAA73A800CAC885 /* CDVHandleOpenURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVHandleOpenURL.m; path = Classes/CDVHandleOpenURL.m; sourceTree = "<group>"; };
 		306ADAE11AAA73E100CAC885 /* CDVUIWebViewEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVUIWebViewEngine.m; path = Classes/CDVUIWebViewEngine.m; sourceTree = "<group>"; };
@@ -172,6 +176,8 @@
 				306ADAE21AAA73E100CAC885 /* CDVWebViewEngineProtocol.h */,
 				7E5D94161AB250F800F4D9EB /* CDVAppDelegate.h */,
 				7E5D94171AB250F800F4D9EB /* CDVAppDelegate.m */,
+				306A45001AB7B073003D6925 /* CDVPlugin+Resources.h */,
+				306A45011AB7B073003D6925 /* CDVPlugin+Resources.m */,
 			);
 			name = Public;
 			sourceTree = "<group>";
@@ -228,6 +234,7 @@
 				7E5D94151AB23DB400F4D9EB /* CDVPlugin+Private.h in Headers */,
 				306ADAE71AAA73E100CAC885 /* NSDictionary+CordovaPreferences.h in Headers */,
 				EB6A98571A77FA430013FCDB /* NSData+Base64.h in Headers */,
+				306A45021AB7B073003D6925 /* CDVPlugin+Resources.h in Headers */,
 				EBFF4DBD16D3FE2E008F452B /* CDVUIWebViewDelegate.h in Headers */,
 				306ADAEB1AAA747100CAC885 /* NSMutableArray+QueueAdditions.h in Headers */,
 				306ADAEC1AAA753300CAC885 /* CDVCommandDelegateImpl.h in Headers */,
@@ -297,6 +304,7 @@
 				30C684821406CB38004C1A8E /* CDVWhitelist.m in Sources */,
 				30C684961407044B004C1A8E /* CDVURLProtocol.m in Sources */,
 				7E5D94191AB250F800F4D9EB /* CDVAppDelegate.m in Sources */,
+				306A45031AB7B073003D6925 /* CDVPlugin+Resources.m in Sources */,
 				8852C43C14B65FD800F0E735 /* CDVViewController.m in Sources */,
 				3034979E1513D56A0090E688 /* CDVLocalStorage.m in Sources */,
 				306ADAE51AAA73E100CAC885 /* CDVUIWebViewEngine.m in Sources */,

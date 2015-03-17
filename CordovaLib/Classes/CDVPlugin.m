@@ -19,6 +19,7 @@
 
 #import "CDVPlugin.h"
 #import "CDVPlugin+Private.h"
+#import "CDVPlugin+Resources.h"
 #import "CDVViewController.h"
 #include <objc/message.h>
 
