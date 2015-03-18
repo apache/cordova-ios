@@ -21,7 +21,7 @@
 #import <XCTest/XCTest.h>
 
 #import <Cordova/CDVPluginResult.h>
-#import <Cordova/CDVJSON.h>
+#import "CDVJSON_private.h"
 
 @interface CDVPluginResultJSONSerializationTests : XCTestCase
 @end
