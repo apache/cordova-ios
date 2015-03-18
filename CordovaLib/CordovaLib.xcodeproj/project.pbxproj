@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E7F69B61ABA35D8007546F4 /* CDVLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFB1AB9028C008C4574 /* CDVLocalStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E7F69B81ABA368F007546F4 /* CDVUIWebViewEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D001AB9028C008C4574 /* CDVUIWebViewEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E7F69B91ABA3692007546F4 /* CDVHandleOpenURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CF81AB9028C008C4574 /* CDVHandleOpenURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7ED95D021AB9028C008C4574 /* CDVDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CF21AB9028C008C4574 /* CDVDebug.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7ED95D031AB9028C008C4574 /* CDVJSON_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CF31AB9028C008C4574 /* CDVJSON_private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7ED95D041AB9028C008C4574 /* CDVJSON_private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95CF41AB9028C008C4574 /* CDVJSON_private.m */; };
@@ -274,6 +277,9 @@
 				7ED95D031AB9028C008C4574 /* CDVJSON_private.h in Headers */,
 				7ED95D021AB9028C008C4574 /* CDVDebug.h in Headers */,
 				7ED95D051AB9028C008C4574 /* CDVPlugin+Private.h in Headers */,
+				7E7F69B61ABA35D8007546F4 /* CDVLocalStorage.h in Headers */,
+				7E7F69B81ABA368F007546F4 /* CDVUIWebViewEngine.h in Headers */,
+				7E7F69B91ABA3692007546F4 /* CDVHandleOpenURL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
