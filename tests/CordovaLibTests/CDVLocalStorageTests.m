@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import <Cordova/CDVLocalStorage.h>
+#import "CDVLocalStorage.h"
 #import "CDVWebViewTest.h"
 #import "CDVFakeFileManager.h"
 #import "ViewController.h"
@@ -122,7 +122,7 @@
 
     XCTAssertTrue(modified, @"Should have applied fix.");
     NSString* newPath = [appPlistDict objectForKey:@"WebKitLocalStorageDatabasePathPreferenceKey"];
-    XCTAssertTrue([@"/bpath/Library/Caches" isEqualToString: newPath]);
+    XCTAssertTrue([@"/bpath/Library/Caches" isEqualToString:newPath]);
 }
 
 - (void)testVerifyAndFixDatabaseLocations_changeRequired2
@@ -140,7 +140,7 @@
 
     XCTAssertTrue(modified, @"Should have applied fix.");
     NSString* newPath = [appPlistDict objectForKey:@"WebDatabaseDirectory"];
-    XCTAssertTrue([@"/bpath/Library/WebKit" isEqualToString: newPath]);
+    XCTAssertTrue([@"/bpath/Library/WebKit" isEqualToString:newPath]);
 }
 
 @end
