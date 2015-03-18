@@ -178,6 +178,8 @@
 				7E5D94171AB250F800F4D9EB /* CDVAppDelegate.m */,
 				306A45001AB7B073003D6925 /* CDVPlugin+Resources.h */,
 				306A45011AB7B073003D6925 /* CDVPlugin+Resources.m */,
+				306ADAE31AAA73E100CAC885 /* NSDictionary+CordovaPreferences.h */,
+				306ADAE41AAA73E100CAC885 /* NSDictionary+CordovaPreferences.m */,
 			);
 			name = Public;
 			sourceTree = "<group>";
@@ -185,9 +187,7 @@
 		888700D910923009009987E8 /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				306ADAE31AAA73E100CAC885 /* NSDictionary+CordovaPreferences.h */,
 				306ADAE11AAA73E100CAC885 /* CDVUIWebViewEngine.m */,
-				306ADAE41AAA73E100CAC885 /* NSDictionary+CordovaPreferences.m */,
 				306ADADE1AAA73A800CAC885 /* CDVHandleOpenURL.m */,
 				306ADADC1AAA739800CAC885 /* CDVHandleOpenURL.h */,
 				302965BB13A94E9D007046C5 /* CDVDebug.h */,
