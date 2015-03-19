@@ -48,4 +48,9 @@ describe('cordova-lib', function() {
         return_code = shell.exec(command).code;
         expect(return_code).toBe(0);
     });
+    
+    // clean-up last
+    it('cleanup artifacts folder', function() {
+        shell.rm('-rf', artifacts_dir);
+    });
 });
