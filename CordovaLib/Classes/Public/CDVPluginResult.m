@@ -20,7 +20,6 @@
 #import "CDVPluginResult.h"
 #import "CDVJSON_private.h"
 #import "CDVDebug.h"
-#import "NSData+Base64.h"
 
 @interface CDVPluginResult ()
 
@@ -37,7 +36,7 @@ id messageFromArrayBuffer(NSData* data)
 {
     return @{
                @"CDVType" : @"ArrayBuffer",
-               @"data" :[data cdv_base64EncodedString]
+               @"data" :[data base64EncodedStringWithOptions:0]
     };
 }
 

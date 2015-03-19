@@ -19,7 +19,6 @@
 
 #import "CDVInvokedUrlCommand.h"
 #import "CDVJSON_private.h"
-#import "NSData+Base64.h"
 
 @implementation CDVInvokedUrlCommand
 
@@ -85,7 +84,7 @@
             newArgs = [NSMutableArray arrayWithArray:_arguments];
             _arguments = newArgs;
         }
-        [newArgs replaceObjectAtIndex:i withObject:[NSData cdv_dataFromBase64String:data]];
+        [newArgs replaceObjectAtIndex:i withObject:[[NSData alloc] initWithBase64EncodedString:data options:0]];
     }
 }
 
