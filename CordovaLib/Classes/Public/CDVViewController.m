@@ -36,7 +36,6 @@
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
-@property (nonatomic, readwrite, strong) CDVWhitelist* whitelist;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
@@ -53,7 +52,7 @@
 @implementation CDVViewController
 
 @synthesize supportedOrientations;
-@synthesize pluginObjects, pluginsMap, whitelist, startupPluginNames;
+@synthesize pluginObjects, pluginsMap, startupPluginNames;
 @synthesize configParser, settings, loadFromString;
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
@@ -156,17 +155,11 @@
 
 - (BOOL)URLisAllowed:(NSURL*)url
 {
-    if (self.whitelist == nil) {
-        return YES;
-    }
-
-    return [self.whitelist URLIsAllowed:url];
+    return [self shouldAllowNavigationToURL:url];
 }
 
-- (void)loadSettings
+- (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate
 {
-    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
-
     // read from config.xml in the app bundle
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
 
@@ -184,11 +177,16 @@
     }
     [self.configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
     [self.configParser parse];
+}
+
+- (void)loadSettings
+{
+    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
+    [self parseSettingsWithParser:delegate];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
     self.startupPluginNames = delegate.startupPluginNames;
-    self.whitelist = [[CDVWhitelist alloc] initWithArray:delegate.whitelistHosts];
     self.settings = delegate.settings;
 
     // And the start folder/page.
@@ -618,31 +616,51 @@
         CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
-            if (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType) == YES) {
+            if (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType)) {
                 return NO;
             }
         }
     }
 
     /*
-     * If a URL is being loaded that's a file/http/https URL, just load it internally
-     */
-    if ([url isFileURL]) {
-        return YES;
-    }
-
-    /*
      *    If we loaded the HTML from a string, we let the app handle it
      */
-    else if (self.loadFromString == YES) {
+    if (self.loadFromString) {
         self.loadFromString = NO;
         return YES;
     }
 
     /*
-     * all tel: scheme urls we let the UIWebview handle it using the default behavior
+     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
      */
-    else if ([[url scheme] isEqualToString:@"tel"]) {
+    BOOL shouldAllowNavigation = [self shouldAllowNavigationToURL:url];
+    if (shouldAllowNavigation) {
+        return YES;
+    } else {
+        BOOL shouldOpenExternalURL = [self shouldOpenExternalURL:url];
+        if (shouldOpenExternalURL) {
+            if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url];
+            } else { // handle any custom schemes to plugins
+                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+            }
+        }
+    }
+
+    return NO;
+}
+
+#pragma mark Network Policy Plugin (Whitelist) hooks
+
+/* This implements the default policy for resource loading and navigation, if there
+ * are no plugins installed which override the whitelist methods.
+ */
+- (BOOL)defaultResourcePolicyForURL:(NSURL *)url
+{
+    /*
+     * If a URL is being loaded that's a file/http/https URL, just load it internally
+     */
+    if ([url isFileURL]) {
         return YES;
     }
 
@@ -660,24 +678,77 @@
         return YES;
     }
 
-    /*
-     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
-     */
-    else {
-        if ([self.whitelist schemeIsAllowed:[url scheme]]) {
-            return [self.whitelist URLIsAllowed:url];
-        } else {
-            if ([[UIApplication sharedApplication] canOpenURL:url]) {
-                [[UIApplication sharedApplication] openURL:url];
-            } else { // handle any custom schemes to plugins
-                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+    return NO;
+}
+
+- (BOOL)shouldAllowRequestForURL:(NSURL *)url
+{
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldAllowRequest = NO;
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"shouldAllowRequestForURL:");
+        if ([plugin respondsToSelector:selector]) {
+            anyPluginsResponded = YES;
+            shouldAllowRequest = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
+            if (!shouldAllowRequest) {
+                break;
             }
         }
-
-        return NO;
+    }
+    if (anyPluginsResponded) {
+        return shouldAllowRequest;
     }
 
-    return YES;
+    /* Default Policy */
+    return [self defaultResourcePolicyForURL:url];
+}
+
+
+- (BOOL)shouldAllowNavigationToURL:(NSURL *)url
+{
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldAllowNavigation = NO;
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"shouldAllowNavigationToURL:");
+        if ([plugin respondsToSelector:selector]) {
+            anyPluginsResponded = YES;
+            shouldAllowNavigation = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
+            if (!shouldAllowNavigation) {
+                break;
+            }
+        }
+    }
+    if (anyPluginsResponded) {
+        return shouldAllowNavigation;
+    }
+
+    /* Default Policy */
+    return [self defaultResourcePolicyForURL:url];
+}
+
+- (BOOL)shouldOpenExternalURL:(NSURL *)url
+{
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldOpenExternalURL = NO;
+    for (NSString* pluginName in pluginObjects) {
+        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"shouldOpenExternalURL:");
+        if ([plugin respondsToSelector:selector]) {
+            anyPluginsResponded = YES;
+            shouldOpenExternalURL = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
+            if (!shouldOpenExternalURL) {
+                break;
+            }
+        }
+    }
+    if (anyPluginsResponded) {
+        return shouldOpenExternalURL;
+    }
+
+    /* Default policy */
+    return NO;
 }
 
 #pragma mark GapHelpers
