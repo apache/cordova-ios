@@ -17,17 +17,42 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import "NSMutableArray+QueueAdditions.h"
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@implementation NSMutableArray (QueueAdditions)
 
-@interface AppDelegate : CDVAppDelegate {}
+- (id)cdv_queueHead
+{
+    if ([self count] == 0) {
+        return nil;
+    }
+
+    return [self objectAtIndex:0];
+}
+
+- (__autoreleasing id)cdv_dequeue
+{
+    if ([self count] == 0) {
+        return nil;
+    }
+
+    id head = [self objectAtIndex:0];
+    if (head != nil) {
+        // [[head retain] autorelease]; ARC - the __autoreleasing on the return value should so the same thing
+        [self removeObjectAtIndex:0];
+    }
+
+    return head;
+}
+
+- (id)cdv_pop
+{
+    return [self cdv_dequeue];
+}
+
+- (void)cdv_enqueue:(id)object
+{
+    [self addObject:object];
+}
 
 @end

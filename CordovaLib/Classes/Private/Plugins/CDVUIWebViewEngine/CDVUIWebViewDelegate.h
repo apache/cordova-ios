@@ -17,17 +17,25 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import <UIKit/UIKit.h>
+#import "CDVAvailability.h"
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+/**
+ * Distinguishes top-level navigations from sub-frame navigations.
+ * shouldStartLoadWithRequest is called for every request, but didStartLoad
+ * and didFinishLoad is called only for top-level navigations.
+ * Relevant bug: CB-2389
+ */
+@interface CDVUIWebViewDelegate : NSObject <UIWebViewDelegate>{
+    __weak NSObject <UIWebViewDelegate>* _delegate;
+    NSInteger _loadCount;
+    NSInteger _state;
+    NSInteger _curLoadToken;
+    NSInteger _loadStartPollCount;
+}
 
-@interface AppDelegate : CDVAppDelegate {}
+- (id)initWithDelegate:(NSObject <UIWebViewDelegate>*)delegate;
+
+- (BOOL)request:(NSURLRequest*)newRequest isEqualToRequestAfterStrippingFragments:(NSURLRequest*)originalRequest;
 
 @end

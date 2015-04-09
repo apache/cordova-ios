@@ -17,17 +17,8 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+@interface CDVPlugin (Private)
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
-
-@interface AppDelegate : CDVAppDelegate {}
+- (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine;
 
 @end

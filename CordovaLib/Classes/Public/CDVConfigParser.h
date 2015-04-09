@@ -17,17 +17,14 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+@interface CDVConfigParser : NSObject <NSXMLParserDelegate>
+{
+    NSString* featureName;
+}
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
-
-@interface AppDelegate : CDVAppDelegate {}
+@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
+@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
+@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
+@property (nonatomic, readonly, strong) NSString* startPage;
 
 @end

@@ -38,7 +38,7 @@
     // first exception makes it much easier to identify the source of the error.
     // On iOS < 5 there is a bug in SenTestingKit where the exception is
     // uncaught and the app crashes upon a failed STAssert (oh well).
-    //[self raiseAfterFailure];
+    // [self raiseAfterFailure];
 }
 
 - (void)tearDown
@@ -71,7 +71,7 @@
 
 - (UIWebView*)webView
 {
-    return self.viewController.webView;
+    return (UIWebView*)self.viewController.webView;
 }
 
 - (id)pluginInstance:(NSString*)pluginName
@@ -110,7 +110,7 @@
 - (void)waitForPageLoad
 {
     [self waitForConditionName:@"PageLoad" block:^{
-        return [@"true" isEqualToString :[self evalJs:@"window.pageIsLoaded"]];
+        return [@"true" isEqualToString:[self evalJs:@"window.pageIsLoaded"]];
     }];
 }
 

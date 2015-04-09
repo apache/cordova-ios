@@ -19,8 +19,6 @@
 
 #import <XCTest/XCTest.h>
 
-#import <Cordova/NSData+Base64.h>
-
 @interface CDVBase64Tests : XCTestCase
 @end
 
@@ -46,7 +44,7 @@
     NSData* decodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
 
     NSString* expectedEncodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
-    NSString* actualEncodedString = [decodedData base64EncodedString];
+    NSString* actualEncodedString = [decodedData base64EncodedStringWithOptions:0];
 
     XCTAssertTrue([expectedEncodedString isEqualToString:actualEncodedString]);
 }
@@ -56,7 +54,7 @@
     NSString* encodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
     NSString* decodedString = @"abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&";
     NSData* encodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
-    NSData* decodedData = [NSData dataFromBase64String:encodedString];
+    NSData* decodedData = [[NSData alloc] initWithBase64EncodedString:encodedString options:0];
 
     XCTAssertTrue([encodedData isEqualToData:decodedData]);
 }

@@ -6,9 +6,7 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
  http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,18 +14,15 @@
  specific language governing permissions and limitations
  under the License.
  */
-
 //
-//  AppDelegate.h
+//  Bridging-Header.h
 //  __PROJECT_NAME__
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
+//
+//  Use this file to import your target's public headers that you would like to expose to Swift.
+//
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
-
-@interface AppDelegate : CDVAppDelegate {}
-
-@end
+#import <Cordova/CDV.h>

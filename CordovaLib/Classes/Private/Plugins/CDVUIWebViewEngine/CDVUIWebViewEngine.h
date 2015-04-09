@@ -17,17 +17,11 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import "CDVPlugin.h"
+#import "CDVWebViewEngineProtocol.h"
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@interface CDVUIWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
 
-@interface AppDelegate : CDVAppDelegate {}
+@property (nonatomic, strong, readonly) id <UIWebViewDelegate> uiWebViewDelegate;
 
 @end

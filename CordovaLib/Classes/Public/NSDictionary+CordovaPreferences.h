@@ -17,17 +17,19 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@interface NSDictionary (CordovaPreferences)
 
-@interface AppDelegate : CDVAppDelegate {}
+- (id)cordovaSettingForKey:(NSString*)key;
+- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
+- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+
+@end
+
+@interface NSMutableDictionary (CordovaPreferences)
+
+- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
 
 @end

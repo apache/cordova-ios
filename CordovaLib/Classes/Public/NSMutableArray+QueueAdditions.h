@@ -17,17 +17,13 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import <Foundation/Foundation.h>
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@interface NSMutableArray (QueueAdditions)
 
-@interface AppDelegate : CDVAppDelegate {}
+- (id)cdv_pop;
+- (id)cdv_queueHead;
+- (id)cdv_dequeue;
+- (void)cdv_enqueue:(id)obj;
 
 @end

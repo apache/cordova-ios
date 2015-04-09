@@ -17,17 +17,10 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import <UIKit/UIKit.h>
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
-
-@interface AppDelegate : CDVAppDelegate {}
-
-@end
+#ifdef __clang__
+    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#else
+    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
+#endif

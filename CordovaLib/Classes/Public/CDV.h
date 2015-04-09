@@ -17,17 +17,18 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
-
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
-
-@interface AppDelegate : CDVAppDelegate {}
-
-@end
+#import "CDVAvailability.h"
+#import "CDVAvailabilityDeprecated.h"
+#import "CDVAppDelegate.h"
+#import "CDVPlugin.h"
+#import "CDVPluginResult.h"
+#import "CDVViewController.h"
+#import "CDVCommandDelegate.h"
+#import "CDVURLProtocol.h"
+#import "CDVInvokedUrlCommand.h"
+#import "CDVWhitelist.h"
+#import "CDVPlugin.h"
+#import "CDVPluginResult.h"
+#import "CDVScreenOrientationDelegate.h"
+#import "CDVTimer.h"
+#import "CDVUserAgentUtil.h"

@@ -17,17 +17,22 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import "CDVPlugin+Resources.h"
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@implementation CDVPlugin (CDVPluginResources)
 
-@interface AppDelegate : CDVAppDelegate {}
+- (NSString*)pluginLocalizedString:(NSString*)key
+{
+    NSBundle* bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:NSStringFromClass([self class]) ofType:@"bundle"]];
+
+    return [bundle localizedStringForKey:(key) value:nil table:nil];
+}
+
+- (UIImage*)pluginImageResource:(NSString*)name
+{
+    NSString* resourceIdentifier = [NSString stringWithFormat:@"%@.bundle/%@", NSStringFromClass([self class]), name];
+
+    return [UIImage imageNamed:resourceIdentifier];
+}
 
 @end
