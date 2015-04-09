@@ -171,14 +171,14 @@ function iOSExec() {
 
     var command = [callbackId, service, action, actionArgs];
 
-    // Stringify and queue the command. We stringify to command now to
-    // effectively clone the command arguments in case they are mutated before
-    // the command is executed.
-    commandQueue.push(JSON.stringify(command));
-    
     if (bridgeMode === jsToNativeModes.WK_WEBVIEW_BINDING) {
         window.webkit.messageHandlers.cordova.postMessage(command);
     } else {
+        // Stringify and queue the command. We stringify to command now to
+        // effectively clone the command arguments in case they are mutated before
+        // the command is executed.
+        commandQueue.push(JSON.stringify(command));
+    
         // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
         // then the queue will be flushed when it returns; no need for a poke.
         // Also, if there is already a command in the queue, then we've already
