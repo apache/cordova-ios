@@ -821,23 +821,6 @@
     return URLScheme;
 }
 
-/**
- Returns the contents of the named plist bundle, loaded as a dictionary object
- */
-+ (NSDictionary*)getBundlePlist:(NSString*)plistName
-{
-    NSString* errorDesc = nil;
-    NSPropertyListFormat format;
-    NSString* plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
-    NSData* plistXML = [[NSFileManager defaultManager] contentsAtPath:plistPath];
-    NSDictionary* temp = (NSDictionary*)[NSPropertyListSerialization
-        propertyListFromData:plistXML
-            mutabilityOption:NSPropertyListMutableContainersAndLeaves
-                      format:&format errorDescription:&errorDesc];
-
-    return temp;
-}
-
 #pragma mark -
 #pragma mark UIApplicationDelegate impl
 

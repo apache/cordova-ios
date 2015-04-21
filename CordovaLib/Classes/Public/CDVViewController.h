@@ -63,8 +63,6 @@
  */
 @property (nonatomic, readwrite, copy) NSString* baseUserAgent;
 
-+ (NSDictionary*)getBundlePlist:(NSString*)plistName;
-
 - (void)printMultitaskingInfo;
 - (void)createGapView;
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
