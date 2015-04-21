@@ -739,23 +739,6 @@
     return NO;
 }
 
-#pragma mark GapHelpers
-
-- (void)javascriptAlert:(NSString*)text
-{
-    NSString* jsString = [NSString stringWithFormat:@"alert('%@');", text];
-
-    [self.commandDelegate evalJs:jsString];
-}
-
-+ (NSString*)applicationDocumentsDirectory
-{
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
-
-    return basePath;
-}
-
 #pragma mark CordovaCommands
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className

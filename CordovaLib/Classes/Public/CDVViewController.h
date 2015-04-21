@@ -64,13 +64,11 @@
 @property (nonatomic, readwrite, copy) NSString* baseUserAgent;
 
 + (NSDictionary*)getBundlePlist:(NSString*)plistName;
-+ (NSString*)applicationDocumentsDirectory;
 
 - (void)printMultitaskingInfo;
 - (void)createGapView;
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (void)javascriptAlert:(NSString*)text;
 - (NSString*)appURLScheme;
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
