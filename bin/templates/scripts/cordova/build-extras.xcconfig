@@ -18,8 +18,5 @@
 //
 
 //
-// XCode Build settings for "Debug" Build Configuration.
+// Auto-generated config file to override configuration files (build-release/build-debug).
 //
-
-#include "build.xcconfig"
-#include "build-extras.xcconfig"
