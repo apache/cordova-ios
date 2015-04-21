@@ -28,8 +28,6 @@
 #import "CDVHandleOpenURL.h"
 #import "CDVCommandDelegateImpl.h"
 
-#define degreesToRadian(x) (M_PI * (x) / 180.0)
-
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
 }
@@ -110,16 +108,6 @@
     self = [super init];
     [self __init];
     return self;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
 }
 
 - (void)printVersion
@@ -268,8 +256,6 @@
 {
     [super viewDidLoad];
 
-    // // Fix the iOS 5.1 SECURITY_ERR bug (CB-347), this must be before the webView is instantiated ////
-
     NSString* backupWebStorageType = @"cloud"; // default value
 
     id backupWebStorage = [self.settings cordovaSettingForKey:@"BackupWebStorage"];
@@ -291,7 +277,7 @@
 
     /*
      * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
-        With minimum iOS 6/7 supported, only first clause applies.
+        With minimum iOS 7/8 supported, only first clause applies.
      */
     if ([backupWebStorageType isEqualToString:@"local"]) {
         NSString* localStorageFeatureName = @"localstorage";
@@ -365,26 +351,6 @@
     }
 
     return result;
-}
-
-- (NSInteger)mapIosOrientationToJsOrientation:(UIInterfaceOrientation)orientation
-{
-    switch (orientation) {
-        case UIInterfaceOrientationPortraitUpsideDown:
-            return 180;
-
-        case UIInterfaceOrientationLandscapeLeft:
-            return -90;
-
-        case UIInterfaceOrientationLandscapeRight:
-            return 90;
-
-        case UIInterfaceOrientationPortrait:
-            return 0;
-
-        default:
-            return 0;
-    }
 }
 
 - (BOOL)shouldAutorotate
