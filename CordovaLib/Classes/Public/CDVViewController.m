@@ -386,24 +386,6 @@
     }
 }
 
-- (void)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation completionHandler:(void (^)(BOOL))completionHandler
-{
-    // First, ask the webview via JS if it supports the new orientation
-    NSString* jsCall = [NSString stringWithFormat:
-        @"window.shouldRotateToOrientation && window.shouldRotateToOrientation(%ld);"
-        , (long)[self mapIosOrientationToJsOrientation:interfaceOrientation]];
-    __weak CDVViewController* weakSelf = self;
-
-    [_webViewEngine evaluateJavaScript:jsCall completionHandler:^(NSString* obj, NSError* error) {
-        if ([obj length] > 0) {
-            completionHandler([obj boolValue]);
-        } else {
-            // if js did not handle the new orientation (no return value), use values from the plist (via supportedOrientations)
-            completionHandler([weakSelf supportsOrientation:interfaceOrientation]);
-        }
-    }];
-}
-
 - (BOOL)shouldAutorotate
 {
     return YES;
@@ -413,16 +395,16 @@
 {
     NSUInteger ret = 0;
 
-    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationPortrait]) {
+    if ([self supportsOrientation:UIInterfaceOrientationPortrait]) {
         ret = ret | (1 << UIInterfaceOrientationPortrait);
     }
-    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown]) {
+    if ([self supportsOrientation:UIInterfaceOrientationPortraitUpsideDown]) {
         ret = ret | (1 << UIInterfaceOrientationPortraitUpsideDown);
     }
-    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight]) {
+    if ([self supportsOrientation:UIInterfaceOrientationLandscapeRight]) {
         ret = ret | (1 << UIInterfaceOrientationLandscapeRight);
     }
-    if ([self shouldAutorotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft]) {
+    if ([self supportsOrientation:UIInterfaceOrientationLandscapeLeft]) {
         ret = ret | (1 << UIInterfaceOrientationLandscapeLeft);
     }
 
