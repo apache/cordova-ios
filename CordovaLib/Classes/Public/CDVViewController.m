@@ -158,7 +158,7 @@
     return [self shouldAllowNavigationToURL:url];
 }
 
-- (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate
+- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate
 {
     // read from config.xml in the app bundle
     NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
@@ -182,6 +182,7 @@
 - (void)loadSettings
 {
     CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
+
     [self parseSettingsWithParser:delegate];
 
     // Get the plugin dictionary, whitelist and settings from the delegate.
@@ -637,7 +638,7 @@
 /* This implements the default policy for resource loading and navigation, if there
  * are no plugins installed which override the whitelist methods.
  */
-- (BOOL)defaultResourcePolicyForURL:(NSURL *)url
+- (BOOL)defaultResourcePolicyForURL:(NSURL*)url
 {
     /*
      * If a URL is being loaded that's a file/http/https URL, just load it internally
@@ -663,10 +664,11 @@
     return NO;
 }
 
-- (BOOL)shouldAllowRequestForURL:(NSURL *)url
+- (BOOL)shouldAllowRequestForURL:(NSURL*)url
 {
     BOOL anyPluginsResponded = NO;
     BOOL shouldAllowRequest = NO;
+
     for (NSString* pluginName in pluginObjects) {
         CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldAllowRequestForURL:");
@@ -678,6 +680,7 @@
             }
         }
     }
+
     if (anyPluginsResponded) {
         return shouldAllowRequest;
     }
@@ -686,11 +689,11 @@
     return [self defaultResourcePolicyForURL:url];
 }
 
-
-- (BOOL)shouldAllowNavigationToURL:(NSURL *)url
+- (BOOL)shouldAllowNavigationToURL:(NSURL*)url
 {
     BOOL anyPluginsResponded = NO;
     BOOL shouldAllowNavigation = NO;
+
     for (NSString* pluginName in pluginObjects) {
         CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldAllowNavigationToURL:");
@@ -702,6 +705,7 @@
             }
         }
     }
+
     if (anyPluginsResponded) {
         return shouldAllowNavigation;
     }
@@ -710,10 +714,11 @@
     return [self defaultResourcePolicyForURL:url];
 }
 
-- (BOOL)shouldOpenExternalURL:(NSURL *)url
+- (BOOL)shouldOpenExternalURL:(NSURL*)url
 {
     BOOL anyPluginsResponded = NO;
     BOOL shouldOpenExternalURL = NO;
+
     for (NSString* pluginName in pluginObjects) {
         CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOpenExternalURL:");
@@ -725,6 +730,7 @@
             }
         }
     }
+
     if (anyPluginsResponded) {
         return shouldOpenExternalURL;
     }
@@ -745,7 +751,7 @@
 + (NSString*)applicationDocumentsDirectory
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex : 0]) : nil);
+    NSString* basePath = (([paths count] > 0) ? ([paths objectAtIndex:0]) : nil);
 
     return basePath;
 }
