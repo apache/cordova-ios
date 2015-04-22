@@ -220,26 +220,26 @@
     return appURL;
 }
 
-- (NSURL*)errorUrl
+- (NSURL*)errorURL
 {
-    NSURL* errorURL = nil;
+    NSURL* errorUrl = nil;
 
     id setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
 
     if (setting) {
         NSString* errorUrlString = (NSString*)setting;
         if ([errorUrlString rangeOfString:@"://"].location != NSNotFound) {
-            errorURL = [NSURL URLWithString:errorUrlString];
+            errorUrl = [NSURL URLWithString:errorUrlString];
         } else {
             NSURL* url = [NSURL URLWithString:(NSString*)setting];
             NSString* errorFilePath = [self.commandDelegate pathForResource:[url path]];
             if (errorFilePath) {
-                errorURL = [NSURL fileURLWithPath:errorFilePath];
+                errorUrl = [NSURL fileURLWithPath:errorFilePath];
             }
         }
     }
 
-    return errorURL;
+    return errorUrl;
 }
 
 - (UIView*)webView
@@ -311,7 +311,7 @@
             NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
             NSLog(@"%@", loadErr);
 
-            NSURL* errorUrl = [self errorUrl];
+            NSURL* errorUrl = [self errorURL];
             if (errorUrl) {
                 errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
                 NSLog(@"%@", [errorUrl absoluteString]);
@@ -471,132 +471,6 @@
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
 
     [super viewDidUnload];
-}
-
-#pragma mark UIWebViewDelegate
-
-/**
- When web application loads Add stuff to the DOM, mainly the user-defined settings from the Settings.plist file, and
- the device's data such as device ID, platform version, etc.
- */
-- (void)webViewDidStartLoad:(UIWebView*)theWebView
-{
-    NSLog(@"Resetting plugins due to page load.");
-    [_commandQueue resetRequestId];
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:self.webView]];
-}
-
-/**
- Called when the webview finishes loading.  This stops the activity view.
- */
-- (void)webViewDidFinishLoad:(UIWebView*)theWebView
-{
-    NSLog(@"Finished load of: %@", theWebView.request.URL);
-    // It's safe to release the lock even if this is just a sub-frame that's finished loading.
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
-
-    /*
-     * Hide the Top Activity THROBBER in the Battery Bar
-     */
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:self.webView]];
-}
-
-- (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
-{
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
-
-    NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
-    NSLog(@"%@", message);
-
-    NSURL* errorUrl = [self errorUrl];
-    if (errorUrl) {
-        errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [message stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
-        NSLog(@"%@", [errorUrl absoluteString]);
-        [theWebView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
-    }
-}
-
-- (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
-{
-    NSURL* url = [request URL];
-
-    /*
-     * Execute any commands queued with cordova.exec() on the JS side.
-     * The part of the URL after gap:// is irrelevant.
-     */
-    if ([[url scheme] isEqualToString:@"gap"]) {
-        [_commandQueue fetchCommandsFromJs];
-        // The delegate is called asynchronously in this case, so we don't have to use
-        // flushCommandQueueWithDelayedJs (setTimeout(0)) as we do with hash changes.
-        [_commandQueue executePending];
-        return NO;
-    }
-
-    if ([[url fragment] hasPrefix:@"%01"] || [[url fragment] hasPrefix:@"%02"]) {
-        // Delegate is called *immediately* for hash changes. This means that any
-        // calls to stringByEvaluatingJavascriptFromString will occur in the middle
-        // of an existing (paused) call stack. This doesn't cause errors, but may
-        // be unexpected to callers (exec callbacks will be called before exec() even
-        // returns). To avoid this, we do not do any synchronous JS evals by using
-        // flushCommandQueueWithDelayedJs.
-        NSString* inlineCommands = [[url fragment] substringFromIndex:3];
-        if ([inlineCommands length] == 0) {
-            // Reach in right away since the WebCore / Main thread are already synchronized.
-            [_commandQueue fetchCommandsFromJs];
-        } else {
-            inlineCommands = [inlineCommands stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            [_commandQueue enqueueCommandBatch:inlineCommands];
-        }
-        // Switch these for minor performance improvements, and to really live on the wild side.
-        // Callbacks will occur in the middle of the location.hash = ... statement!
-        [(CDVCommandDelegateImpl*)_commandDelegate flushCommandQueueWithDelayedJs];
-        // [_commandQueue executePending];
-
-        // Although we return NO, the hash change does end up taking effect.
-        return NO;
-    }
-
-    /*
-     * Give plugins the chance to handle the url
-     */
-    for (NSString* pluginName in pluginObjects) {
-        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
-        if ([plugin respondsToSelector:selector]) {
-            if (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType)) {
-                return NO;
-            }
-        }
-    }
-
-    /*
-     *    If we loaded the HTML from a string, we let the app handle it
-     */
-    if (self.loadFromString) {
-        self.loadFromString = NO;
-        return YES;
-    }
-
-    /*
-     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
-     */
-    BOOL shouldAllowNavigation = [self shouldAllowNavigationToURL:url];
-    if (shouldAllowNavigation) {
-        return YES;
-    } else {
-        BOOL shouldOpenExternalURL = [self shouldOpenExternalURL:url];
-        if (shouldOpenExternalURL) {
-            if ([[UIApplication sharedApplication] canOpenURL:url]) {
-                [[UIApplication sharedApplication] openURL:url];
-            } else { // handle any custom schemes to plugins
-                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
-            }
-        }
-    }
-
-    return NO;
 }
 
 #pragma mark Network Policy Plugin (Whitelist) hooks
@@ -862,6 +736,11 @@
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
+}
+
+- (NSInteger*)userAgentLockToken
+{
+    return &_userAgentLockToken;
 }
 
 @end

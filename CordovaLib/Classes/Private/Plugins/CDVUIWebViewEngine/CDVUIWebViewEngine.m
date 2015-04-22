@@ -19,6 +19,7 @@
 
 #import "CDVUIWebViewEngine.h"
 #import "CDVUIWebViewDelegate.h"
+#import "CDVUIWebViewNavigationDelegate.h"
 #import "NSDictionary+CordovaPreferences.h"
 
 #import <objc/message.h>
@@ -27,6 +28,7 @@
 
 @property (nonatomic, strong, readwrite) UIView* engineWebView;
 @property (nonatomic, strong, readwrite) id <UIWebViewDelegate> uiWebViewDelegate;
+@property (nonatomic, strong, readwrite) CDVUIWebViewNavigationDelegate* navWebViewDelegate;
 
 @end
 
@@ -53,6 +55,10 @@
 
     if ([self.viewController conformsToProtocol:@protocol(UIWebViewDelegate)]) {
         self.uiWebViewDelegate = [[CDVUIWebViewDelegate alloc] initWithDelegate:(id <UIWebViewDelegate>)self.viewController];
+        uiWebView.delegate = self.uiWebViewDelegate;
+    } else {
+        self.navWebViewDelegate = [[CDVUIWebViewNavigationDelegate alloc] initWithEnginePlugin:self];
+        self.uiWebViewDelegate = [[CDVUIWebViewDelegate alloc] initWithDelegate:self.navWebViewDelegate];
         uiWebView.delegate = self.uiWebViewDelegate;
     }
 

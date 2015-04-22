@@ -27,7 +27,7 @@
 #import "CDVPlugin.h"
 #import "CDVWebViewEngineProtocol.h"
 
-@interface CDVViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
+@interface CDVViewController : UIViewController <CDVScreenOrientationDelegate>{
     @protected
     id <CDVWebViewEngineProtocol> _webViewEngine;
     @protected
@@ -63,11 +63,17 @@
  */
 @property (nonatomic, readwrite, copy) NSString* baseUserAgent;
 
+/**
+ The address of the lock token used for controlling access to setting the user-agent
+ */
+@property (nonatomic, readonly) NSInteger* userAgentLockToken;
+
 - (void)printMultitaskingInfo;
 - (void)createGapView;
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 - (NSString*)appURLScheme;
+- (NSURL*)errorURL;
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
@@ -77,10 +83,11 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 - (BOOL)URLisAllowed:(NSURL*)url __attribute__((deprecated("Scheduled for removal in 5.0. Use shouldAllowRequestForURL, shouldAllowNavigationToURL or shouldOpenExternalURL instead.")));
-- (BOOL)shouldAllowRequestForURL:(NSURL *)url;
-- (BOOL)shouldAllowNavigationToURL:(NSURL *)url;
-- (BOOL)shouldOpenExternalURL:(NSURL *)url;
 
-- (void)parseSettingsWithParser:(NSObject<NSXMLParserDelegate> *)delegate;
+- (BOOL)shouldAllowRequestForURL:(NSURL*)url;
+- (BOOL)shouldAllowNavigationToURL:(NSURL*)url;
+- (BOOL)shouldOpenExternalURL:(NSURL*)url;
+
+- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
 
 @end
