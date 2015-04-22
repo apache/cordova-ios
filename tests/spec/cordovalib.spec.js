@@ -43,7 +43,7 @@ describe('cordova-lib', function() {
         }
         
         // run the tests
-        command = util.format('xcodebuild test -workspace %s/cordova-ios.xcworkspace -scheme CordovaLibTests -destination "platform=iOS Simulator,name=iPhone 5" CONFIGURATION_BUILD_DIR="%s"', tests_dir, artifacts_dir);
+        command = util.format('xcodebuild test -workspace %s/cordova-ios.xcworkspace -scheme CordovaLibTests -destination "platform=iOS Simulator,name=iPhone 5"', tests_dir);
         shell.echo(command);
         return_code = shell.exec(command).code;
         expect(return_code).toBe(0);
