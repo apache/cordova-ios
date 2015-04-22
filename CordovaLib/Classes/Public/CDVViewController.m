@@ -38,7 +38,6 @@
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
-@property (nonatomic, readwrite, assign) BOOL loadFromString;
 @property (nonatomic, readwrite, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 
 @property (readwrite, assign) BOOL initialized;
@@ -51,7 +50,7 @@
 
 @synthesize supportedOrientations;
 @synthesize pluginObjects, pluginsMap, startupPluginNames;
-@synthesize configParser, settings, loadFromString;
+@synthesize configParser, settings;
 @synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
@@ -203,7 +202,6 @@
         NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
 
         if (startFilePath == nil) {
-            self.loadFromString = YES;
             appURL = nil;
         } else {
             appURL = [NSURL fileURLWithPath:startFilePath];

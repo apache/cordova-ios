@@ -43,7 +43,6 @@
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
-@property (nonatomic, readonly, assign) BOOL loadFromString;
 
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
@@ -68,8 +67,6 @@
  */
 @property (nonatomic, readonly) NSInteger* userAgentLockToken;
 
-- (void)printMultitaskingInfo;
-- (void)createGapView;
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 - (NSString*)appURLScheme;
