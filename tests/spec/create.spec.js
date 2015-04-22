@@ -45,7 +45,7 @@ function createAndBuild(projectname, projectid) {
     // build the project
     command = util.format('"%s/cordova/build"', path.join(tmp, projectname));
     shell.echo(command);
-    return_code = shell.exec(command).code;
+    return_code = shell.exec(command, { silent: true }).code;
     expect(return_code).toBe(0);
 
     // clean-up
