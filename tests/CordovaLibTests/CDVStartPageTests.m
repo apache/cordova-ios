@@ -76,28 +76,45 @@
 
 - (void)testParametersInStartPage
 {
+    XCTestExpectation* expectation1 = [self expectationWithDescription:@"href should point to index.html"];
+
+    XCTestExpectation* expectation2 = [self expectationWithDescription:@"href should point to index.html?delta=true"];
+
     CDVStartPageTestViewController* rootVc = [[CDVStartPageTestViewController alloc] init];
 
     self.appDelegate.window.rootViewController = rootVc;
 
-    UIWebView* vc1WebView = (UIWebView*)rootVc.vc1.webView;
-    UIWebView* vc2WebView = (UIWebView*)rootVc.vc2.webView;
-
-    // sanity check
-    if (![vc1WebView isKindOfClass:[UIWebView class]] && ![vc2WebView isKindOfClass:[UIWebView class]]) {
-        return;
-    }
+    id <CDVWebViewEngineProtocol> vc1WebViewEngine = rootVc.vc1.webViewEngine;
+    id <CDVWebViewEngineProtocol> vc2WebViewEngine = rootVc.vc2.webViewEngine;
 
     NSString* geHREF = @"window.location.href";
     [self waitForConditionName:@"getting href" block:^{
-        return (BOOL)(vc1WebView.request != nil && vc1WebView.request != nil);
+        return (BOOL)(vc1WebViewEngine.URL != nil && vc1WebViewEngine.URL != nil);
     }];
 
-    NSString* href = [vc1WebView stringByEvaluatingJavaScriptFromString:geHREF];
-    XCTAssertTrue([href hasSuffix:@"index.html"], @"href should point to index.html");
+    [vc1WebViewEngine evaluateJavaScript:geHREF completionHandler:^(NSString* href, NSError* error) {
+        if (error) {
+            NSLog(@"error is: %@", error);
+        } else {
+            XCTAssertTrue([href hasSuffix:@"index.html"], @"href should point to index.html");
+            [expectation1 fulfill];
+        }
+    }];
 
-    href = [vc2WebView stringByEvaluatingJavaScriptFromString:geHREF];
-    XCTAssertTrue([href hasSuffix:@"index.html?delta=true"], @"href should point to index.html?delta=true");
+    [vc2WebViewEngine evaluateJavaScript:geHREF completionHandler:^(NSString* href, NSError* error) {
+        if (error) {
+            NSLog(@"error is: %@", error);
+        } else {
+            XCTAssertTrue([href hasSuffix:@"index.html?delta=true"], @"href should point to index.html?delta=true");
+            [expectation2 fulfill];
+        }
+    }];
+
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError* error) {
+        if (error) {
+            XCTFail(@"Expectation Failed with error: %@", error);
+        }
+    }];
 }
 
 @end
