@@ -42,9 +42,13 @@ function listDevices() {
           var devicefound;
           // Each command promise resolves with array [stout, stderr], and we need stdout only
           // Append stdout lines to accumulator
-          devicefound = result[0].trim().split('\n')[0];
-          if(devicefound !== ''){
-            accumulator.push(devicefound);
+          devicefound = result[0].trim().split('\n');
+          if(devicefound && devicefound.length) {
+            devicefound.forEach(function(device) {
+              if (device) {
+                accumulator.push(device);
+              }
+            });
           }
         });
         return accumulator;
