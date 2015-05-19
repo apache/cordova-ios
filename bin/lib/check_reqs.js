@@ -29,7 +29,7 @@ var Q     = require('q'),
 
 var XCODEBUILD_MIN_VERSION = '6.0.0';
 
-var IOS_SIM_MIN_VERSION = '3.0.0';
+var IOS_SIM_MIN_VERSION = '4.0.0';
 var IOS_SIM_NOT_FOUND_MESSAGE = 'ios-sim was not found. Please download, build and install version ' + IOS_SIM_MIN_VERSION +
     ' or greater from https://github.com/phonegap/ios-sim into your path.' +
     ' Or \'npm install -g ios-sim\' using node.js: http://nodejs.org';
