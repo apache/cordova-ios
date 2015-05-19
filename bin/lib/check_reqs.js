@@ -27,7 +27,7 @@ var Q     = require('q'),
     shell = require('shelljs'),
     versions = require('./versions');
 
-var XCODEBUILD_MIN_VERSION = '4.6.0';
+var XCODEBUILD_MIN_VERSION = '6.0.0';
 
 var IOS_SIM_MIN_VERSION = '3.0.0';
 var IOS_SIM_NOT_FOUND_MESSAGE = 'ios-sim was not found. Please download, build and install version ' + IOS_SIM_MIN_VERSION +
