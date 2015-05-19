@@ -50,7 +50,7 @@ module.exports.run = function (argv) {
     // Valid values for "--target" (case sensitive):
     var validTargets = ['iPhone-4s', 'iPhone-5', 'iPhone-5s', 'iPhone-6-Plus', 'iPhone-6',
         'iPad-2', 'iPad-Retina', 'iPad-Air', 'Resizable-iPhone', 'Resizable-iPad'];
-    if (args.target && validTargets.indexOf(args.target) < 0 ) {
+    if (!(args.device) && args.target && validTargets.indexOf(args.target) < 0 ) {
         return Q.reject(args.target + ' is not a valid target for emulator');
     }
 
@@ -81,7 +81,7 @@ module.exports.run = function (argv) {
         // we're running on device/emulator
         if (args.device) {
             return checkDeviceConnected().then(function () {
-                return deployToDevice(appPath);
+                return deployToDevice(appPath, args.target);
             }, function () {
                 // if device connection check failed use emulator then
                 return deployToSim(appPath, args.target);
@@ -106,9 +106,13 @@ function checkDeviceConnected() {
  * @param  {String} appPath Path to application package
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-function deployToDevice(appPath) {
+function deployToDevice(appPath, target) {
     // Deploying to device...
-    return spawn('ios-deploy', ['-d', '-b', appPath]);
+    if (target) {
+        return spawn('ios-deploy', ['-d', '-b', appPath, '-i', target]);
+    } else {
+        return spawn('ios-deploy', ['-d', '-b', appPath]);
+    }
 }
 
 /**
