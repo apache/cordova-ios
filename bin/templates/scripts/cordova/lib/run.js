@@ -64,23 +64,46 @@ module.exports.run = function (argv) {
         });
     }
 
-    // check for either ios-sim or ios-deploy is available
-    // depending on arguments provided
-    var checkTools = args.device ? check_reqs.check_ios_deploy() : check_reqs.check_ios_sim();
-
-    return checkTools.then(function () {
-        // if --nobuild isn't specified then build app first
+    var useDevice = false;
+    
+    return require('./list-devices').run()
+    .then(function (devices) {
+        if (devices.length > 0 && !(args.emulator)) {
+            useDevice = true;
+            return check_reqs.check_ios_deploy();
+        } else {
+            return check_reqs.check_ios_sim();
+        }
+    }).then(function () {
         if (!args.nobuild) {
+            if (useDevice) {
+                // remove emulator, add device
+                var idx = argv.indexOf("--emulator");
+                if (idx != -1) {
+                    array.splice(idx, 1);
+                }
+                argv.push("--device");
+            } else {
+                // remove device, add emulator
+                var idx = argv.indexOf("--device");
+                if (idx != -1) {
+                    array.splice(idx, 1);
+                }
+                argv.push("--emulator");
+            }
             return build.run(argv);
+        } else {
+            return Q.resolve();
         }
     }).then(function () {
         return build.findXCodeProjectIn(projectPath);
     }).then(function (projectName) {
-        var appPath = path.join(projectPath, 'build', (args.device ? 'device' : 'emulator'), projectName + '.app');
+        var appPath = path.join(projectPath, 'build', 'emulator', projectName + '.app');
         // select command to run and arguments depending whether
         // we're running on device/emulator
-        if (args.device) {
+        if (useDevice) {
             return checkDeviceConnected().then(function () {
+                appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
                 return deployToDevice(appPath, args.target);
             }, function () {
                 // if device connection check failed use emulator then
@@ -97,7 +120,7 @@ module.exports.run = function (argv) {
  * @return {Promise} Fullfilled when any device is connected, rejected otherwise
  */
 function checkDeviceConnected() {
-    return spawn('ios-deploy', ['-c']);
+    return spawn('ios-deploy', ['-c', '-t', '1']);
 }
 
 /**
@@ -109,9 +132,9 @@ function checkDeviceConnected() {
 function deployToDevice(appPath, target) {
     // Deploying to device...
     if (target) {
-        return spawn('ios-deploy', ['-d', '-b', appPath, '-i', target]);
+        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target]);
     } else {
-        return spawn('ios-deploy', ['-d', '-b', appPath]);
+        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath]);
     }
 }
 
