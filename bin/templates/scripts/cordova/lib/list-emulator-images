@@ -36,7 +36,7 @@ function listEmulatorImages () {
     }).then(function (stdio) {
         // Exec promise resolves with array [stout, stderr], and we need stdout only
         return stdio[0].trim().split('\n');
-    });
+    }).catch(console.log.bind(console));
 }
 
 exports.run = listEmulatorImages;
