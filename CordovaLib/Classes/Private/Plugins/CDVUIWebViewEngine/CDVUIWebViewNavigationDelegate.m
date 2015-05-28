@@ -89,6 +89,14 @@
     NSURL* url = [request URL];
     CDVViewController* vc = (CDVViewController*)self.enginePlugin.viewController;
 
+    // Push these system schemes off to the system, and do not let the UIWebView handle them
+    if ([request.URL.scheme isEqualToString:@"maps"] ||
+        [request.URL.scheme isEqualToString:@"tel"] ||
+        [request.URL.scheme isEqualToString:@"telprompt"]) {
+        [[UIApplication sharedApplication] openURL:url];
+        return NO;
+    }
+
     /*
      * Execute any commands queued with cordova.exec() on the JS side.
      * The part of the URL after gap:// is irrelevant.
