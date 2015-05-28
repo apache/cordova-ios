@@ -76,20 +76,21 @@ module.exports.run = function (argv) {
         }
     }).then(function () {
         if (!args.nobuild) {
+            var idx = -1;
             if (useDevice) {
                 // remove emulator, add device
-                var idx = argv.indexOf("--emulator");
+                idx = argv.indexOf('--emulator');
                 if (idx != -1) {
-                    array.splice(idx, 1);
+                    argv.splice(idx, 1);
                 }
-                argv.push("--device");
+                argv.push('--device');
             } else {
                 // remove device, add emulator
-                var idx = argv.indexOf("--device");
+                idx = argv.indexOf('--device');
                 if (idx != -1) {
-                    array.splice(idx, 1);
+                    argv.splice(idx, 1);
                 }
-                argv.push("--emulator");
+                argv.push('--emulator');
             }
             return build.run(argv);
         } else {
