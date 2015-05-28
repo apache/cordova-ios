@@ -67,4 +67,8 @@
         <param name="ios-package" value="CDVHandleOpenURL"/>
         <param name="onload" value="true"/>
     </feature>
+    <feature name="SystemSchemes">
+        <param name="ios-package" value="CDVSystemSchemes"/>
+        <param name="onload" value="true"/>
+    </feature>
 </widget>
