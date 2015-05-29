@@ -137,8 +137,13 @@
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
     NSString* argumentsAsJSON = [result argumentsAsJSON];
+    BOOL debug = NO;
+    
+#ifdef DEBUG
+    debug = YES;
+#endif
 
-    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d)", callbackId, status, argumentsAsJSON, keepCallback];
+    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d, %d)", callbackId, status, argumentsAsJSON, keepCallback, debug];
 
     [self evalJsHelper:js];
 }

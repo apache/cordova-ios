@@ -301,11 +301,19 @@ iOSExec.nativeFetchMessages = function() {
     return json;
 };
 
-iOSExec.nativeCallback = function(callbackId, status, message, keepCallback) {
+iOSExec.nativeCallback = function(callbackId, status, message, keepCallback, debug) {
     return iOSExec.nativeEvalAndFetch(function() {
         var success = status === 0 || status === 1;
         var args = convertMessageToArgsNativeToJs(message);
-        cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
+        function nc2() {
+            cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
+        };
+        // CB-8468
+        if (debug) {
+            setTimeout(nc2, 0);
+        } else {
+            nc2();
+        }
     });
 };
 
