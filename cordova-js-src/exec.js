@@ -307,7 +307,7 @@ iOSExec.nativeCallback = function(callbackId, status, message, keepCallback, deb
         var args = convertMessageToArgsNativeToJs(message);
         function nc2() {
             cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
-        };
+        }
         // CB-8468
         if (debug) {
             setTimeout(nc2, 0);
