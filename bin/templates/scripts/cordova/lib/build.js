@@ -87,6 +87,13 @@ module.exports.run = function (argv) {
         }
         return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
     }).then(function () {
+        // Ensure platform scripts are executable as the platform could be added on non-OSX environment
+        shell.find(projectPath).filter(function (file) {
+            return file.match(/\.sh$/i);
+        }).forEach(function (file) {
+            fs.chmodSync(file, '755');
+        });
+    }).then(function () {
         var configuration = args.release ? 'Release' : 'Debug';
 
         console.log('Building project  : ' + path.join(projectPath, projectName + '.xcodeproj'));
