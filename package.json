@@ -28,5 +28,11 @@
     "devDependencies": {
         "jshint": "^2.6.0",
         "uncrustify": "^0.6.1"
-    }
+    },
+    "bundledDependencies": [
+        "q",
+        "nopt",
+        "shelljs",
+        "glob"
+    ]
 }
