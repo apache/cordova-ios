@@ -20,37 +20,33 @@
 var shell = require('shelljs'),
     spec = __dirname,
     path = require('path'),
-    util = require('util');
-    
+    util = require('util'),
+    tmp = require('tmp');
+
     var tests_dir = path.join(spec, '..');
-    var artifacts_dir = path.join(spec, '..', 'CordovaLibTests', 'build');
-    
+
 describe('cordova-lib', function() {
 
     it('objective-c unit tests', function() {
         var return_code = 0;
         var command;
-    
+        var artifacts_dir = tmp.dirSync().name;
+
         // check iOS Simulator if running
         command = 'pgrep "iOS Simulator"';
         return_code = shell.exec(command).code;
-        
+
         // if iOS Simulator is running, kill it
         if (return_code === 0) { // found
             shell.echo('iOS Simulator is running, we\'re going to kill it.');
             return_code = shell.exec('killall "iOS Simulator"').code;
             expect(return_code).toBe(0);
         }
-        
+
         // run the tests
         command = util.format('xcodebuild test -workspace %s/cordova-ios.xcworkspace -scheme CordovaLibTests -destination "platform=iOS Simulator,name=iPhone 5" CONFIGURATION_BUILD_DIR="%s"', tests_dir, artifacts_dir);
         shell.echo(command);
         return_code = shell.exec(command).code;
         expect(return_code).toBe(0);
-    });
-    
-    // clean-up last
-    it('cleanup artifacts folder', function() {
-        shell.rm('-rf', artifacts_dir);
     });
 });
