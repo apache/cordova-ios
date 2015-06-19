@@ -25,7 +25,7 @@
 #import "CDVUserAgentUtil.h"
 #import <AVFoundation/AVFoundation.h>
 #import "NSDictionary+CordovaPreferences.h"
-#import "CDVHandleOpenURL.h"
+#import "CDVLocalStorage.h"
 #import "CDVCommandDelegateImpl.h"
 
 @interface CDVViewController () {
@@ -261,6 +261,8 @@
         backupWebStorageType = backupWebStorage;
     }
     [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
+    
+    [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
 
     // // Instantiate the WebView ///////////////
 
