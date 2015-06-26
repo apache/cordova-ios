@@ -49,6 +49,7 @@ function setShellFatal(value, func) {
 
 function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
+    shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www'));
     shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
 
     if (use_shared) {
