@@ -148,7 +148,7 @@ function deployToDevice(appPath, target) {
 function deployToSim(appPath, target) {
     // Select target device for emulator. Default is 'iPhone-6' 
     if (!target) {
-        target = 'iPhone-5'; // set to iPhone-5 for now until CB-9266
+        target = 'iPhone-5s'; // set to iPhone-5s for now until CB-9266
         console.log('No target specified for emulator. Deploying to ' + target + ' simulator');
     }
     var logPath = path.join(cordovaPath, 'console.log');
