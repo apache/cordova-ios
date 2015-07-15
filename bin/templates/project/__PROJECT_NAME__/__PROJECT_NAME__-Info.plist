@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-#  KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
--->
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -31,43 +11,9 @@
 	<key>CFBundleIconFile</key>
 	<string>icon.png</string>
 	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundlePrimaryIcon</key>
-		<dict>
-			<key>CFBundleIconFiles</key>
-			<array>
-				<string>icon-40</string>
-				<string>icon-small</string>
-				<string>icon-60</string>
-				<string>icon.png</string>
-				<string>icon@2x</string>
-				<string>icon-72</string>
-				<string>icon-72@2x</string>
-			</array>
-			<key>UIPrerenderedIcon</key>
-			<false/>
-		</dict>
-	</dict>
+	<dict/>
 	<key>CFBundleIcons~ipad</key>
-	<dict>
-		<key>CFBundlePrimaryIcon</key>
-		<dict>
-			<key>CFBundleIconFiles</key>
-			<array>
-				<string>icon-small</string>
-				<string>icon-40</string>
-				<string>icon-50</string>
-				<string>icon-76</string>
-				<string>icon-60</string>
-				<string>icon</string>
-				<string>icon@2x</string>
-				<string>icon-72</string>
-				<string>icon-72@2x</string>
-			</array>
-			<key>UIPrerenderedIcon</key>
-			<false/>
-		</dict>
-	</dict>
+	<dict/>
 	<key>CFBundleIdentifier</key>
 	<string>--ID--</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -76,11 +22,11 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
-	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -99,108 +45,5 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>UILaunchImages</key>
-        <array>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Portrait</string>
-                <key>UILaunchImageSize</key>
-                <string>{320, 480}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Landscape</string>
-                <key>UILaunchImageSize</key>
-                <string>{320, 480}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-568h</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Portrait</string>
-                <key>UILaunchImageSize</key>
-                <string>{320, 568}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-568h</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Landscape</string>
-                <key>UILaunchImageSize</key>
-                <string>{320, 568}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-667h</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Portrait</string>
-                <key>UILaunchImageSize</key>
-                <string>{375, 667}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-667h</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Landscape</string>
-                <key>UILaunchImageSize</key>
-                <string>{375, 667}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-736h</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Portrait</string>
-                <key>UILaunchImageSize</key>
-                <string>{414, 736}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-Landscape-736h</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Landscape</string>
-                <key>UILaunchImageSize</key>
-                <string>{414, 736}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-Portrait</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Portrait</string>
-                <key>UILaunchImageSize</key>
-                <string>{768, 1024}</string>
-            </dict>
-            <dict>
-                <key>UILaunchImageMinimumOSVersion</key>
-                <string>8.0</string>
-                <key>UILaunchImageName</key>
-                <string>Default-Landscape</string>
-                <key>UILaunchImageOrientation</key>
-                <string>Landscape</string>
-                <key>UILaunchImageSize</key>
-                <string>{768, 1024}</string>
-            </dict>
-        </array>    
 </dict>
 </plist>
