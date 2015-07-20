@@ -29,38 +29,34 @@ Cordova iOS is an iOS application library that allows for Cordova-based projects
 
 Requires:
 
-* Xcode 5.x or greater. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
+* Xcode 6.x or greater. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
 <br />
+* [node.js](https://nodejs.org)
 
 
 Create a Cordova project
 -------------------------------------------------------------
 
-1. Launch **Terminal.app**
-2. Go to the location where you installed Cordova, in the **bin** sub-folder
-3. Follow the instructions in the [**Command-Line Usage** section](http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html#The%20Command-line%20Interface) of [http://docs.cordova.io](http://docs.cordova.io)
+Follow the instructions in the [**Command-Line Usage** section](http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html#The%20Command-line%20Interface) of [http://docs.cordova.io](http://docs.cordova.io)
 
-To use a **shared CordovaLib**, add as the first parameter "**--shared**" to the **bin/create** command.
+To use a **shared CordovaLib**, for example in development, link the appropriate cordova-ios platform folder path:
+
+    cordova platform add --link /path/to/cordova-ios
+    
 <br />
 
-Updating a CordovaLib subproject reference in your project
+Updating a Cordova project
 -------------------------------------------------------------
 
-When you update to a new Cordova version, you may need to update the CordovaLib reference in an existing project. Cordova comes with a script that will help you to do this. 
+When you install a new cordova-cli version that comes with a new iOS platform version, from within your project:
 
-1. Launch **Terminal.app**
-2. Go to the location where you installed Cordova, in the **bin** sub-folder
-3. Run **"update_cordova_subproject [path/to/your/project/xcodeproj]"**  where the first parameter is the path to your project's .xcodeproj file
-
-By default when you create a new project, the CordovaLib sub-project is copied into your project folder, it is not shared.
-<br />
-
+    cordova platform update ios
+    
 Tests
 --------------------------------------------------------------------
 
-1. Install [node.js](http://nodejs.org)
-2. Run `npm install`
-3. Run `npm test`
+1. Run `npm install`
+2. Run `npm test`
 
 Futher reading
 -----
