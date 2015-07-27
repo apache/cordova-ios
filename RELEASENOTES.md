@@ -24,6 +24,26 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 3.9.0 (20150728) ###
+
+* CB-8586 Update ios-deploy minimum version to 1.4.0
+* CB-8485 Support for signed archive for iOS
+* CB-8197 Switch to nodejs for ios platform scripts
+* CB-7747 Update project template with new whitelist settings
+* CB-8954 Adds `requirements` command support to check_reqs module
+* CB-8907 Cordova ios emulate --list it shows duplicates when ios simulators are present for 7.x and 8.x
+* CB-9013 Fix listing of multiple devices in list-devices for iOS
+* CB-3360 Set custom User-Agent
+* CB-8710 Cordova-ios jasmine tests do not clean up build products, tests can only be run once
+* CB-8785 Add try/catch for evalJS
+* CB-8948 Clipboard fix for iOS Safari copy
+* CB-8855 Fix display ios devices with --list
+* CB-8295 Update app template with fix to CSP string
+* CB-8965 Copy cordova-js-src directory to platform folder during create
+* CB-9273 "Copy www build phase" node is not found
+* CB-9088 Sms urls won't open in iframe
+* CB-8621 Fix Q require in list-devices (Q -> q)
+
 ### 3.8.0 (201502XX) ###
 
 * CB-8436 Remove more bad quotes from build command
