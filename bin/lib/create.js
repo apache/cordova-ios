@@ -263,6 +263,12 @@ function update_cordova_subproject(argv) {
         }
     }
 
+    // Patching pbxproj to replace copy www shell script with nodejs
+    // Don't forget to duplicate this in templates/__CLI__.xcodeproj/project.pbxproj and templates/__NON-CLI__.xcodeproj/project.pbxproj on later changes
+    var copyWwwSh = 'cordova\/lib\/copy-www-build-step\.sh';
+    var copyWwwJs = 'NODEJS_PATH=\/usr\/local\/bin; NVM_NODE_PATH=~\/\.nvm\/versions\/node\/`nvm version 2>\/dev\/null`\/bin; N_NODE_PATH=`find \/usr\/local\/n\/versions\/node\/\* -maxdepth 0 -type d 2>\/dev\/null \| tail -1`\/bin; XCODE_NODE_PATH=`xcode-select --print-path`\/usr\/share\/xcs\/Node\/bin; PATH=\$NODEJS_PATH:\$NVM_NODE_PATH:\$N_NODE_PATH:\$XCODE_NODE_PATH:\$PATH && node cordova\/lib\/copy-www-build-step\.js';
+    shell.sed('-i', copyWwwSh, copyWwwJs, path.join(projectPath, 'project.pbxproj'));
+
     if (!found) {
         throw new Error('Subproject: ' + subprojectPath + ' entry not found in project file');
     }
