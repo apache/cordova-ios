@@ -32,7 +32,6 @@ var BUILT_PRODUCTS_DIR = process.env.BUILT_PRODUCTS_DIR,
 var path = require('path'),
     fs = require('fs'),
     shell = require('shelljs'),
-    glob = require('glob'),
     srcDir = 'www',
     dstDir = path.join(BUILT_PRODUCTS_DIR, FULL_PRODUCT_NAME),
     dstWwwDir = path.join(dstDir, 'www');
@@ -58,11 +57,11 @@ shell.rm('-rf', path.join(dstDir, 'embedded.mobileprovision'));
 
 // Copy www dir recursively
 if(!!COPY_HIDDEN) {
-    shell.mkdir('-p', dstWwwDir);
-    shell.cp('-r', glob.sync(srcDir + '/**', { dot: true }), dstWwwDir);
+    shell.exec('rsync -Lra ' + srcDir + ' ' + dstDir);
 } else {
-    shell.cp('-r', srcDir, dstDir);
+    shell.exec('rsync -Lra --exclude="- .*" ' + srcDir + ' ' + dstDir);
 }
+
 
 // Copy the config.xml file.
 shell.cp('-f', path.join(path.dirname(PROJECT_FILE_PATH), path.basename(PROJECT_FILE_PATH, '.xcodeproj'), 'config.xml'),
