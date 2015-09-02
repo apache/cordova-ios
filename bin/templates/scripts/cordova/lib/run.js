@@ -148,9 +148,25 @@ function deployToDevice(appPath, target) {
 function deployToSim(appPath, target) {
     // Select target device for emulator. Default is 'iPhone-6' 
     if (!target) {
-        target = 'iPhone-5s'; // set to iPhone-5s for now until CB-9266
-        console.log('No target specified for emulator. Deploying to ' + target + ' simulator');
+        return require('./list-emulator-images').run()
+        .then(function (emulators) {
+            if (emulators.length > 0) {
+                target = emulators[0];
+            }
+            emulators.forEach(function (emulator) {
+                if (emulator.indexOf("iPhone") == 0) {
+                    target = emulator;
+                }
+            });
+            console.log('No target specified for emulator. Deploying to ' + target + ' simulator');
+            return startSim(appPath, target);
+        });
+    } else {
+        return startSim(appPath, target);
     }
+}
+
+function startSim(appPath, target) {
     var logPath = path.join(cordovaPath, 'console.log');
     var simArgs = ['launch', appPath,
         '--devicetypeid', 'com.apple.CoreSimulator.SimDeviceType.' + target,
