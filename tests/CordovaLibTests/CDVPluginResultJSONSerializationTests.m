@@ -36,6 +36,22 @@
     XCTAssertTrue([[NSNumber numberWithInt:val] isEqual:[[result argumentsAsJSON] cdv_JSONFragment]]);
 }
 
+- (void)testSerializingMessageAsNSNumber
+{
+    NSInteger val = 5;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsNSInteger:val];
+
+    XCTAssertTrue([[NSNumber numberWithInteger:val] isEqual:[[result argumentsAsJSON] cdv_JSONFragment]]);
+}
+
+- (void)testSerializingMessageAsNSUNumber
+{
+    NSUInteger val = 5;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsNSUInteger:val];
+
+    XCTAssertTrue([[NSNumber numberWithUnsignedInteger:val] isEqual:[[result argumentsAsJSON] cdv_JSONFragment]]);
+}
+
 - (void)testSerializingMessageAsDouble
 {
     double val = 5.5;

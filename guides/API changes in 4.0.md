@@ -79,3 +79,12 @@ Methods:
     - (BOOL)shouldAllowRequestForURL:(NSURL *)url
     - (BOOL)shouldAllowNavigationToURL:(NSURL *)url
     - (BOOL)shouldOpenExternalURL:(NSURL *)url
+
+## CDVPluginResult.h
+
+### Added:
+
+Methods:
+
+    + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage;
+    + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage;
