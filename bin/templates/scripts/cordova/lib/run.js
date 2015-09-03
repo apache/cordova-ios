@@ -154,7 +154,7 @@ function deployToSim(appPath, target) {
                 target = emulators[0];
             }
             emulators.forEach(function (emulator) {
-                if (emulator.indexOf("iPhone") == 0) {
+                if (emulator.indexOf('iPhone') === 0) {
                     target = emulator;
                 }
             });
