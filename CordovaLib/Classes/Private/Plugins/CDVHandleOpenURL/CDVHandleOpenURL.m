@@ -59,7 +59,7 @@
 
     dispatch_block_t handleOpenUrl = ^(void) {
         // calls into javascript global function 'handleOpenURL'
-        NSString* jsString = [NSString stringWithFormat:@"document.addEventListener('deviceready',function(){if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}});", url];
+        NSString* jsString = [NSString stringWithFormat:@"document.addEventListener('deviceready',function(){if (typeof handleOpenURL === 'function') { handleOpenURL(\"%@\");}});", url.absoluteString];
 
         [weakSelf.webViewEngine evaluateJavaScript:jsString completionHandler:nil];
     };
