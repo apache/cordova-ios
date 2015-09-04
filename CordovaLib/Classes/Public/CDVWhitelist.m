@@ -64,7 +64,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         } else {
             _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:scheme allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
         }
-        if ([host isEqualToString:@"*"]) {
+        if ([host isEqualToString:@"*"] || host == nil) {
             _host = nil;
         } else if ([host hasPrefix:@"*."]) {
             _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVWhitelistPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:NSRegularExpressionCaseInsensitive error:nil];
