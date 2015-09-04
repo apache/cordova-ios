@@ -16,4 +16,4 @@
 :: under the License
 
 @ECHO OFF
-ECHO WARN: The 'clean' command is not available for cordova-ios on windows machines.>&2
+ECHO WARN: The 'log' command is not available for cordova-ios on windows machines.>&2
