@@ -20,10 +20,11 @@
 /*jshint node: true*/
 
 var Q = require('q'),
-    nopt  = require('nopt'),
-    path  = require('path'),
-    build = require('./build'),
-    spawn = require('./spawn'),
+    nopt   = require('nopt'),
+    path   = require('path'),
+    iossim = require('ios-sim'),
+    build  = require('./build'),
+    spawn  = require('./spawn'),
     check_reqs = require('./check_reqs');
 
 var cordovaPath = path.join(__dirname, '..');
@@ -71,8 +72,6 @@ module.exports.run = function (argv) {
         if (devices.length > 0 && !(args.emulator)) {
             useDevice = true;
             return check_reqs.check_ios_deploy();
-        } else {
-            return check_reqs.check_ios_sim();
         }
     }).then(function () {
         if (!args.nobuild) {
@@ -168,13 +167,8 @@ function deployToSim(appPath, target) {
 
 function startSim(appPath, target) {
     var logPath = path.join(cordovaPath, 'console.log');
-    var simArgs = ['launch', appPath,
-        '--devicetypeid', 'com.apple.CoreSimulator.SimDeviceType.' + target,
-        // We need to redirect simulator output here to use cordova/log command
-        // TODO: Is there any other way to get emulator's output to use in log command?
-        '--stderr', logPath, '--stdout', logPath,
-        '--exit'];
-    return spawn('ios-sim', simArgs);
+
+    return iossim.launch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
 }
 
 function listDevices() {
