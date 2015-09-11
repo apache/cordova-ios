@@ -91,6 +91,11 @@
     return [[(UIWebView*)_engineWebView request] URL];
 }
 
+- (BOOL) canLoadRequest:(NSURLRequest*)request
+{
+    return (request != nil);
+}
+
 - (void)updateSettings:(NSDictionary*)settings
 {
     UIWebView* uiWebView = (UIWebView*)_engineWebView;

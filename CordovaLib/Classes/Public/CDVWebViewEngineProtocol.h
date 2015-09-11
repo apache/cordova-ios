@@ -34,6 +34,7 @@
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
 
 - (NSURL*)URL;
+- (BOOL)canLoadRequest:(NSURLRequest*)request;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 - (void)updateWithInfo:(NSDictionary*)info;
