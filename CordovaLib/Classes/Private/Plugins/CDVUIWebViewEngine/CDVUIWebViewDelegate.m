@@ -196,12 +196,13 @@ static NSString *stripFragment(NSString* url)
 - (BOOL)shouldLoadRequest:(NSURLRequest*)request
 {
     NSString* scheme = [[request URL] scheme];
-
-    if ([scheme isEqualToString:@"mailto"] || [scheme isEqualToString:@"tel"] || [scheme isEqualToString:@"sms"] || [scheme isEqualToString:@"blob"]) {
+    NSArray* allowedSchemes = [NSArray arrayWithObjects:@"mailto",@"tel",@"blob",@"sms",@"data", nil];
+    if([allowedSchemes containsObject:scheme]) {
         return YES;
     }
-
-    return [NSURLConnection canHandleRequest:request];
+    else {
+        return [NSURLConnection canHandleRequest:request];
+    }
 }
 
 - (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType

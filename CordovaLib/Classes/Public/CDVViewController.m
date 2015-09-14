@@ -502,11 +502,13 @@
     else if ([[url scheme] isEqualToString:@"about"]) {
         return NO;
     }
-
+ 
     /*
      * all data: scheme urls are handled
      */
-    else if ([[url scheme] isEqualToString:@"data"]) {
+    NSString* scheme = [url scheme];
+    NSArray* allowedSchemes = [NSArray arrayWithObjects:@"blob",@"data", nil];
+    if([allowedSchemes containsObject:scheme]) {
         return YES;
     }
 
