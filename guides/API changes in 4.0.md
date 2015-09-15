@@ -92,6 +92,7 @@ Methods:
 
 ## NSData+Base64.h
 
+This class has been removed.
 
 ### Removed:
 
@@ -106,4 +107,10 @@ Methods:
 
 Plugin authors are encouraged to use [NSJSONSerialization](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSJSONSerialization_Class/) instead.
 
+## CDVAppDelegate.h
 
+This class is new. The default template's AppDelegate class inherits from this now for you to override.
+    
+### Upgrade Notes:
+
+Apps that add code in the default template's old AppDelegate.m should add the appropriate function override in the new AppDelegate.m. Don't forget to call the superclass' implementation as well in your override.
