@@ -22,7 +22,7 @@
 // Settings are overridden by configuration-level .xcconfig file (build-release/build-debug).
 //
 
-HEADER_SEARCH_PATHS = "$(TARGET_BUILD_DIR)/usr/local/lib/include" "$(OBJROOT)/UninstalledProducts/include" "$(BUILT_PRODUCTS_DIR)"
+HEADER_SEARCH_PATHS = "$(TARGET_BUILD_DIR)/usr/local/lib/include" "$(OBJROOT)/UninstalledProducts/include" "$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include" "$(BUILT_PRODUCTS_DIR)"
 IPHONEOS_DEPLOYMENT_TARGET = 7.0
 OTHER_LDFLAGS = -ObjC
 TARGETED_DEVICE_FAMILY = 1,2
