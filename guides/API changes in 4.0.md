@@ -88,3 +88,22 @@ Methods:
 
     + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage;
     + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage;
+
+
+## NSData+Base64.h
+
+
+### Removed:
+
+Methods:
+
+    + (NSData*)dataFromBase64String:(NSString*)aString CDV_DEPRECATED(3.8 .0, "Use cdv_dataFromBase64String");
+    - (NSString*)base64EncodedString CDV_DEPRECATED(3.8 .0, "Use [NSData cdv_base64EncodedString]");
+    + (NSData*)cdv_dataFromBase64String:(NSString*)aString;
+    - (NSString*)cdv_base64EncodedString;
+    
+### Upgrade Notes:
+
+Plugin authors are encouraged to use [NSJSONSerialization](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSJSONSerialization_Class/) instead.
+
+
