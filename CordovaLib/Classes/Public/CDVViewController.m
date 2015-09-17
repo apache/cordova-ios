@@ -495,7 +495,14 @@
     if ([url isFileURL]) {
         return YES;
     }
-    
+
+    /*
+     * all about: scheme urls are not handled
+     */
+    else if ([[url scheme] isEqualToString:@"about"]) {
+        return NO;
+    }
+ 
     /*
      * all data: scheme urls are handled
      */
