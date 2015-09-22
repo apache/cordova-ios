@@ -50,25 +50,34 @@ function setShellFatal(value, func) {
 function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
     shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www'));
-    shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
-
-    if (use_shared) {
-        update_cordova_subproject([path.join(projectPath, projectName +'.xcodeproj', 'project.pbxproj')]);
-        // Symlink not used in project file, but is currently required for plugman because
-        // it reads the VERSION file from it (instead of using the cordova/version script
-        // like it should).
-        fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
-    } else {
-        var r = path.join(projectPath, projectName);
-        shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        shell.cp('-f', path.join(r, '.gitignore'), projectPath);
-        shell.cp('-rf',path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        update_cordova_subproject([path.join(r+'.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj')]);
-    }
+    
+    fs.lstat(path.join(projectPath, 'CordovaLib'), function(err, stats) {
+        if (!err) {
+            if (stats.isSymbolicLink()) {
+                fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
+            } else {
+                shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
+            }
+        }
+        
+        if (use_shared) {
+            update_cordova_subproject([path.join(projectPath, projectName +'.xcodeproj', 'project.pbxproj')]);
+            // Symlink not used in project file, but is currently required for plugman because
+            // it reads the VERSION file from it (instead of using the cordova/version script
+            // like it should).
+            fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
+        } else {
+            var r = path.join(projectPath, projectName);
+            shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+            shell.cp('-f', path.join(r, '.gitignore'), projectPath);
+            shell.cp('-rf',path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
+            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
+            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
+            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
+            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+            update_cordova_subproject([path.join(r+'.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj')]);
+        }
+    });
 }
 
 function copyScripts(projectPath) {
