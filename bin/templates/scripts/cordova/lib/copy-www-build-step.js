@@ -57,9 +57,9 @@ shell.rm('-rf', path.join(dstDir, 'embedded.mobileprovision'));
 
 // Copy www dir recursively
 if(!!COPY_HIDDEN) {
-    shell.exec('rsync -Lra ' + srcDir + ' ' + dstDir);
+    shell.exec('rsync -Lra "' + srcDir + '" "' + dstDir + '"');
 } else {
-    shell.exec('rsync -Lra --exclude="- .*" ' + srcDir + ' ' + dstDir);
+    shell.exec('rsync -Lra --exclude="- .*" "' + srcDir + '" "' + dstDir + '"');
 }
 
 
