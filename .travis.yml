@@ -2,6 +2,5 @@ language: objective-c
 sudo: false
 install:
 - npm install
-- npm install ios-sim
 - npm install ios-deploy
 script: "npm test"
