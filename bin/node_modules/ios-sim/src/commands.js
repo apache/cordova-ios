@@ -53,7 +53,7 @@ var command_lib = {
         
         app_path = args.argv.remain[1];
         
-        lib.launch(app_path, devicetypeid, log, exit, args.args);
+        lib.launch(app_path, args.devicetypeid, args.log, args.exit, args.args);
     },
 
     install : function(args) {
@@ -69,7 +69,7 @@ var command_lib = {
         
         app_path = args.argv.remain[1];
 
-        lib.install(app_path, devicetypeid, log, exit);
+        lib.install(app_path, args.devicetypeid, args.log, args.exit);
     },
     
     start : function(args) {

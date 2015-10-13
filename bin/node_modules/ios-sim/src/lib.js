@@ -263,6 +263,11 @@ var lib = {
         var list = [];
         for (var deviceName in druntimes) {
             var runtimes = druntimes[ deviceName ];
+            
+            if (!(deviceName in name_id_map)) {
+                continue;
+            }
+            
             runtimes.forEach(function(runtime){
                 // remove "iOS" prefix in runtime, remove prefix "com.apple.CoreSimulator.SimDeviceType." in id
                 list.push(util.format("%s, %s", name_id_map[ deviceName ].replace(/^com.apple.CoreSimulator.SimDeviceType./, ''), runtime.replace(/^iOS /, '')));
