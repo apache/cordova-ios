@@ -797,7 +797,7 @@
      * all about: scheme urls are not handled
      */
     else if ([[url scheme] isEqualToString:@"about"]) {
-        return NO;
+        return YES;
     }
 
     /*
