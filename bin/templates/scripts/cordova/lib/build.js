@@ -41,7 +41,8 @@ module.exports.run = function (argv) {
         'codeSignIdentity': String,
         'codeSignResourceRules': String,
         'provisioningProfile': String,
-        'buildConfig' : String
+        'buildConfig' : String,
+        'noSign' : Boolean
     }, {'-r': '--release'}, argv);
 
     if (args.debug && args.release) {
@@ -96,7 +97,7 @@ module.exports.run = function (argv) {
         var xcodebuildArgs = getXcodeArgs(projectName, projectPath, configuration, args.device);
         return spawn('xcodebuild', xcodebuildArgs, projectPath);
     }).then(function () {
-        if (!args.device) {
+        if (!args.device || args.noSign) {
             return;
         }
         var buildOutputDir = path.join(projectPath, 'build', 'device');
@@ -198,6 +199,7 @@ module.exports.help = function help() {
     console.log('    --codeSignIdentity      : Type of signing identity used for code signing.');
     console.log('    --codeSignResourceRules : Path to ResourceRules.plist.');
     console.log('    --provisioningProfile   : UUID of the profile.');
+    console.log('    --device --noSign       : Builds project without application signing.');
     console.log('');
     console.log('examples:');
     console.log('    build ');

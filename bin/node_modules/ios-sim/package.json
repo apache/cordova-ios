@@ -1,0 +1,44 @@
+{
+  "name": "ios-sim",
+  "version": "5.0.3",
+  "os": [
+    "darwin"
+  ],
+  "preferGlobal": "true",
+  "description": "launch iOS apps into the iOS Simulator from the command line (Xcode 6.0+)",
+  "main": "ios-sim.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phonegap/ios-sim.git"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "keywords": [
+    "ios-sim",
+    "iOS Simulator"
+  ],
+  "bin": {
+    "ios-sim": "./bin/ios-sim"
+  },
+  "bugs": {
+    "url": "https://github.com/phonegap/ios-sim/issues"
+  },
+  "author": {
+    "name": "Shazron Abdullah"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "simctl": "^0.0.6",
+    "nopt": "1.0.9",
+    "bplist-parser": "^0.0.6"
+  },
+  "readme": "ios-sim\n=======\n\nSupports Xcode 6 only since version 3.x.\n\nThe ios-sim tool is a command-line utility that launches an iOS application on the iOS Simulator. This allows for niceties such as automated testing without having to open Xcode.\n\nFeatures\n--------\n\n* Choose the device family to simulate, i.e. iPhone or iPad. Run using \"showdevicetypes\" option to see available device types, and pass it in as the \"devicetypeid\" parameter.\n\nSee the `--help` option for more info.\n\nThe unimplemented options below are in the [backlog](https://github.com/phonegap/ios-sim/milestones/ios-sim%204.2.0)\n\nUsage\n-----\n\n```\n\n    Usage: ios-sim <command> <options> [--args ...]\n        \n    Commands:\n      showsdks                        List the available iOS SDK versions\n      showdevicetypes                 List the available device types\n      launch <application path>       Launch the application at the specified path on the iOS Simulator\n      start                           Launch iOS Simulator without an app\n      install <application path>      Install the application at the specified path on the iOS Simulator without launching the app\n\n    Options:\n      --version                       Print the version of ios-sim\n      --help                          Show this help text\n      --exit                          Exit after startup\n      --log <log file path>           The path where log of the app running in the Simulator will be redirected to\n      --devicetypeid <device type>    The id of the device type that should be simulated (Xcode6+). Use 'showdevicetypes' to list devices.\n                                      e.g \"com.apple.CoreSimulator.SimDeviceType.Resizable-iPhone6, 8.0\"\n                                  \n    Removed in version 4.x:\n      --stdout <stdout file path>     The path where stdout of the simulator will be redirected to (defaults to stdout of ios-sim)\n      --stderr <stderr file path>     The path where stderr of the simulator will be redirected to (defaults to stderr of ios-sim)\n      --sdk <sdkversion>              The iOS SDK version to run the application on (defaults to the latest)\n      --family <device family>        The device type that should be simulated (defaults to `iphone')\n      --retina                        Start a retina device\n      --tall                          In combination with --retina flag, start the tall version of the retina device (e.g. iPhone 5 (4-inch))\n      --64bit                         In combination with --retina flag and the --tall flag, start the 64bit version of the tall retina device (e.g. iPhone 5S (4-inch 64bit))\n                                    \n    Unimplemented in this version:\n      --verbose                       Set the output level to verbose\n      --timeout <seconds>             The timeout time to wait for a response from the Simulator. Default value: 30 seconds\n      --args <...>                    All following arguments will be passed on to the application\n      --env <environment file path>   A plist file containing environment key-value pairs that should be set\n      --setenv NAME=VALUE             Set an environment variable\n                                  \n```\n\nInstallation\n------------\n\nChoose one of the following installation methods.\n\n### Node JS\n\nInstall using node.js (at least 0.10.20):\n\n    $ npm install ios-sim -g\n\n### Zip\n\nDownload a zip file:\n\n    $ curl -L https://github.com/phonegap/ios-sim/archive/master.zip -o ios-sim.zip\n    $ unzip ios-sim.zip\n\n### Git\n\nDownload using git clone:\n\n    $ git clone git://github.com/phonegap/ios-sim.git\n\nTroubleshooting\n---------------\n\nMake sure you enable Developer Mode on your machine:\n\n    $ DevToolsSecurity -enable\n\nMake sure multiple instances of launchd_sim are not running:\n\n    $ killall launchd_sim\n\nLicense\n-------\n\nThis project is available under the MIT license. See [LICENSE][license].\n\n[license]: https://github.com/phonegap/ios-sim/blob/master/LICENSE\n",
+  "readmeFilename": "README.md",
+  "gitHead": "d0dd865bd9b35b0d324ab37dc93126735a309ffb",
+  "homepage": "https://github.com/phonegap/ios-sim#readme",
+  "_id": "ios-sim@5.0.3",
+  "scripts": {},
+  "_shasum": "152c724258f22e13cbfa9b67d55a5300e9920af1",
+  "_from": "ios-sim@*"
+}

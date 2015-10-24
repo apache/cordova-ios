@@ -1,0 +1,49 @@
+{
+  "name": "simctl",
+  "version": "0.0.6",
+  "description": "library for Xcode simctl utility on OS X",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phonegap/simctl.git"
+  },
+  "main": "simctl.js",
+  "dependencies": {
+    "shelljs": "^0.2.6",
+    "tail": "^0.4.0"
+  },
+  "keywords": [
+    "simctl",
+    "iOS Simulator"
+  ],
+  "author": {
+    "name": "Shazron Abdullah"
+  },
+  "license": "MIT",
+  "gitHead": "0a13de1e055ee1f10985d5ee8cdba7cfa9227d6d",
+  "bugs": {
+    "url": "https://github.com/phonegap/simctl/issues"
+  },
+  "homepage": "https://github.com/phonegap/simctl",
+  "_id": "simctl@0.0.6",
+  "scripts": {},
+  "_shasum": "a7c820436bb42ad90cfbbeb19736a5d48688513f",
+  "_from": "simctl@>=0.0.6 <0.0.7",
+  "_npmVersion": "1.4.14",
+  "_npmUser": {
+    "name": "shazron",
+    "email": "shazron@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "shazron",
+      "email": "shazron@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "a7c820436bb42ad90cfbbeb19736a5d48688513f",
+    "tarball": "http://registry.npmjs.org/simctl/-/simctl-0.0.6.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/simctl/-/simctl-0.0.6.tgz",
+  "readme": "ERROR: No README data found!"
+}
