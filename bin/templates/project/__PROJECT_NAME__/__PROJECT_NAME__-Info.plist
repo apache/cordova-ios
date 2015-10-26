@@ -99,6 +99,8 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+    <true/>
     <key>UILaunchImages</key>
         <array>
             <dict>
