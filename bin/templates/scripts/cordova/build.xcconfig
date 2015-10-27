@@ -27,3 +27,6 @@
 // "iPhone Developer": Development builds (default, local only; iOS Development certificate) or "iPhone Distribution": Distribution builds (Adhoc/In-House/AppStore; iOS Distribution certificate)
 CODE_SIGN_IDENTITY = iPhone Developer
 CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+
+// (CB-9721) Set ENABLE_BITCODE to NO in build.xcconfig
+ENABLE_BITCODE = NO
