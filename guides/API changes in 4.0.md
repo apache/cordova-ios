@@ -105,7 +105,13 @@ Methods:
     
 ### Upgrade Notes:
 
-Plugin authors are encouraged to use [NSJSONSerialization](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSJSONSerialization_Class/) instead.
+Plugin authors are encouraged to use the (iOS 7+) base64 encoding and decoding methods available in [MSData](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/) instead.
+
+    // Decode a Base64 encoded string
+    NSData* data = [[NSData alloc] initWithBase64EncodedString:encodedString options:0]
+    
+    // Encode a string to Base64
+    NSString* encodedString = [data base64EncodedStringWithOptions:0];
 
 ## CDVAppDelegate.h
 
