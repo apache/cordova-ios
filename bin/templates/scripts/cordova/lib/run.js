@@ -104,7 +104,8 @@ module.exports.run = function (argv) {
         if (useDevice) {
             return checkDeviceConnected().then(function () {
                 appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
-                return deployToDevice(appPath, args.target);
+                // argv.slice(2) removes node and run.js, filterSupportedArgs removes the run.js args
+                return deployToDevice(appPath, args.target, filterSupportedArgs(argv.slice(2)));
             }, function () {
                 // if device connection check failed use emulator then
                 return deployToSim(appPath, args.target);
@@ -114,6 +115,27 @@ module.exports.run = function (argv) {
         }
     });
 };
+
+/**
+ * Filters the args array and removes supported args for the 'run' command.
+ * 
+ * @return {Array} array with unsupported args for the 'run' command
+ */
+function filterSupportedArgs(args) {
+        var filtered = [];
+        var sargs = ['--device', '--emulator', '--nobuild', '--list', '--target', '--debug', '--release'];
+        var re = new RegExp(sargs.join('|'));
+        
+        args.forEach(function(element) {
+            // supported args not found, we add
+            // we do a regex search because --target can be "--target=XXX"
+            if (element.search(re) == -1) {
+                filtered.push(element);
+            }
+        }, this);
+        
+        return filtered;
+}
 
 /**
  * Checks if any iOS device is connected
@@ -129,12 +151,12 @@ function checkDeviceConnected() {
  * @param  {String} appPath Path to application package
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-function deployToDevice(appPath, target) {
+function deployToDevice(appPath, target, extraArgs) {
     // Deploying to device...
     if (target) {
-        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target]);
+        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs));
     } else {
-        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath]);
+        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath].concat(extraArgs));
     }
 }
 
