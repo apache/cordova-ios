@@ -257,8 +257,6 @@ This Objective-C category has been **removed**.
 
 The Objective-C Category method was used as a helper for the `arguments` property of a `CDVInvokedURLCommand` object. Use the `argumentAtIndex` [methods provided](https://github.com/apache/cordova-ios/blob/master/CordovaLib/Classes/Public/CDVInvokedUrlCommand.h) in the `CDVInvokedURLCommand` object instead. 
 
-"Use [command argumentAtIndex] instead.")
-
 - - -
 
 ## CDVHandleOpenURL.h (_removed_)
