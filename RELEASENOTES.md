@@ -24,6 +24,17 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 3.9.2 (Oct 30, 2015)
+Adds deprecation warnings for upcoming 4.0.0 release
+CB-9721 Set ENABLE_BITCODE to NO in build.xcconfig
+Enable NSAllowsArbitraryLoads by default
+CB-9679 Resource rules issue with iOS 9
+CB-9656 Xcode can't find CDVViewController.h when archiving in Xcode 7.1 beta
+CB-9610 Fix warning in cordova-ios under Xcode 7
+CB-9690 Can't submit iPad apps to the App Store for iOS 9
+CB-9046 cordova run ios --emulator --target "iPhone-5, 7.1" (target with runtime) does not work
+Blob schemes won't load in iframes
+
 ### 3.9.1 (20150805) ###
 
 * CB-9453 Fixed Updating to iOS@3.9.0 not building 
