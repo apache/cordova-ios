@@ -89,10 +89,14 @@
 
     NSString* geHREF = @"window.location.href";
     [self waitForConditionName:@"getting href" block:^{
+        NSURL* vc1URL = vc1WebViewEngine.URL;
+        NSURL* vc2URL = vc2WebViewEngine.URL;
+        
         return
-        (BOOL)
-        ((vc1WebViewEngine.URL != nil && ![[vc1WebViewEngine.URL description] isEqualToString:@"about:blank"]) &&
-         (vc2WebViewEngine.URL != nil && ![[vc2WebViewEngine.URL description] isEqualToString:@"about:blank"]));
+        (BOOL)(
+               (vc1URL != nil && ![[vc1URL absoluteString] isEqualToString:@"about:blank"] && ![[vc1URL absoluteString] isEqualToString:@""]) &&
+               (vc2URL != nil && ![[vc2URL absoluteString] isEqualToString:@"about:blank"] && ![[vc2URL absoluteString] isEqualToString:@""])
+               );
     }];
 
     [vc1WebViewEngine evaluateJavaScript:geHREF completionHandler:^(NSString* href, NSError* error) {
