@@ -32,7 +32,6 @@
 - (void)resetRequestId;
 - (void)enqueueCommandBatch:(NSString*)batchJSON;
 
-- (void)processXhrExecBridgePoke:(NSNumber*)requestId;
 - (void)fetchCommandsFromJs;
 - (void)executePending;
 - (BOOL)execute:(CDVInvokedUrlCommand*)command;
