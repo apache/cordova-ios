@@ -97,28 +97,6 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
         return YES;
     } else if (viewController != nil) {
-        if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
-            NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
-            NSString* requestId = [theRequest valueForHTTPHeaderField:@"rc"];
-            if (requestId == nil) {
-                NSLog(@"!cordova request missing rc header");
-                return NO;
-            }
-            BOOL hasCmds = [queuedCommandsJSON length] > 0;
-            if (hasCmds) {
-                SEL sel = @selector(enqueueCommandBatch:);
-                [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
-                [viewController.commandQueue performSelectorOnMainThread:@selector(executePending) withObject:nil waitUntilDone:NO];
-            } else {
-                SEL sel = @selector(processXhrExecBridgePoke:);
-                [viewController.commandQueue performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
-            }
-            // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.
-            // If JS->Native bridge speed is really important for an app, they should use the iframe bridge.
-            // Returning YES here causes the request to come through canInitWithRequest two more times.
-            // For this reason, we return NO when cmds exist.
-            return !hasCmds;
-        }
         // Returning YES here means that the request will be handled below, by startLoading, which will
         // override the network layer and return a 401 instead. Returning NO means that the network layer
         // will perform as ususal, and the request will be proceed.
@@ -139,10 +117,7 @@ static CDVViewController *viewControllerForRequest(NSURLRequest* request)
     // NSLog(@"%@ received %@ - start", self, NSStringFromSelector(_cmd));
     NSURL* url = [[self request] URL];
 
-    if ([[url path] isEqualToString:@"/!gap_exec"]) {
-        [self sendResponseWithResponseCode:200 data:nil mimeType:nil];
-        return;
-    } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
+    if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
         ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
             if (asset) {
                 // We have the asset!  Get the data and send it along.

@@ -27,20 +27,9 @@ var cordova = require('cordova'),
     channel = require('cordova/channel'),
     utils = require('cordova/utils'),
     base64 = require('cordova/base64'),
-    // XHR mode does not work on iOS 4.2.
-    // XHR mode's main advantage is working around a bug in -webkit-scroll, which
-    // doesn't exist only on iOS 5.x devices.
-    // IFRAME_NAV is the fastest.
-    // IFRAME_HASH could be made to enable synchronous bridge calls if we wanted this feature.
     jsToNativeModes = {
         IFRAME_NAV: 0, // Default. Uses a new iframe for each poke.
-        // XHR bridge appears to be flaky sometimes: CB-3900, CB-3359, CB-5457, CB-4970, CB-4998, CB-5134
-        XHR_NO_PAYLOAD: 1, // About the same speed as IFRAME_NAV. Performance not about the same as IFRAME_NAV, but more variable.
-        XHR_WITH_PAYLOAD: 2, // Flakey, and not as performant
-        XHR_OPTIONAL_PAYLOAD: 3, // Flakey, and not as performant
-        IFRAME_HASH_NO_PAYLOAD: 4, // Not fully baked. A bit faster than IFRAME_NAV, but risks jank since poke happens synchronously.
-        IFRAME_HASH_WITH_PAYLOAD: 5, // Slower than no payload. Maybe since it has to be URI encoded / decoded.
-        WK_WEBVIEW_BINDING: 6 // Only way that works for WKWebView :)
+        WK_WEBVIEW_BINDING: 1 // Only way that works for WKWebView :)
     },
     bridgeMode,
     execIframe,
@@ -52,21 +41,6 @@ var cordova = require('cordova'),
     commandQueue = [], // Contains pending JS->Native messages.
     isInContextOfEvalJs = 0,
     failSafeTimerId = 0;
-
-function shouldBundleCommandJson() {
-    if (bridgeMode === jsToNativeModes.XHR_WITH_PAYLOAD) {
-        return true;
-    }
-    if (bridgeMode === jsToNativeModes.XHR_OPTIONAL_PAYLOAD) {
-        var payloadLength = 0;
-        for (var i = 0; i < commandQueue.length; ++i) {
-            payloadLength += commandQueue[i].length;
-        }
-        // The value here was determined using the benchmark within CordovaLibApp on an iPad 3.
-        return payloadLength < 4500;
-    }
-    return false;
-}
 
 function massageArgsJsToNative(args) {
     if (!args || utils.typeName(args) != 'Array') {
@@ -190,85 +164,33 @@ function iOSExec() {
 }
 
 function pokeNative() {
-    switch (bridgeMode) {
-    case jsToNativeModes.XHR_NO_PAYLOAD:
-    case jsToNativeModes.XHR_WITH_PAYLOAD:
-    case jsToNativeModes.XHR_OPTIONAL_PAYLOAD:
-        pokeNativeViaXhr();
-        break;
-    default: // iframe-based.
-        pokeNativeViaIframe();
-    }
-}
-
-function pokeNativeViaXhr() {
-    // This prevents sending an XHR when there is already one being sent.
-    // This should happen only in rare circumstances (refer to unit tests).
-    if (execXhr && execXhr.readyState != 4) {
-        execXhr = null;
-    }
-    // Re-using the XHR improves exec() performance by about 10%.
-    execXhr = execXhr || new XMLHttpRequest();
-    // Changing this to a GET will make the XHR reach the URIProtocol on 4.2.
-    // For some reason it still doesn't work though...
-    // Add a timestamp to the query param to prevent caching.
-    execXhr.open('HEAD', "/!gap_exec?" + (+new Date()), true);
-    if (!vcHeaderValue) {
-        vcHeaderValue = /.*\((.*)\)$/.exec(navigator.userAgent)[1];
-    }
-    execXhr.setRequestHeader('vc', vcHeaderValue);
-    execXhr.setRequestHeader('rc', ++requestCount);
-    if (shouldBundleCommandJson()) {
-        execXhr.setRequestHeader('cmds', iOSExec.nativeFetchMessages());
-    }
-    execXhr.send(null);
-}
-
-function pokeNativeViaIframe() {
     // CB-5488 - Don't attempt to create iframe before document.body is available.
     if (!document.body) {
-        setTimeout(pokeNativeViaIframe);
+        setTimeout(pokeNative);
         return;
     }
-    if (bridgeMode === jsToNativeModes.IFRAME_HASH_NO_PAYLOAD || bridgeMode === jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD) {
-        // TODO: This bridge mode doesn't properly support being removed from the DOM (CB-7735)
-        if (!execHashIframe) {
-            execHashIframe = document.createElement('iframe');
-            execHashIframe.style.display = 'none';
-            document.body.appendChild(execHashIframe);
-            // Hash changes don't work on about:blank, so switch it to file:///.
-            execHashIframe.contentWindow.history.replaceState(null, null, 'file:///#');
-        }
-        // The delegate method is called only when the hash changes, so toggle it back and forth.
-        hashToggle = hashToggle ^ 3;
-        var hashValue = '%0' + hashToggle;
-        if (bridgeMode === jsToNativeModes.IFRAME_HASH_WITH_PAYLOAD) {
-            hashValue += iOSExec.nativeFetchMessages();
-        }
-        execHashIframe.contentWindow.location.hash = hashValue;
+    
+    // Check if they've removed it from the DOM, and put it back if so.
+    if (execIframe && execIframe.contentWindow) {
+        execIframe.contentWindow.location = 'gap://ready';
     } else {
-        // Check if they've removed it from the DOM, and put it back if so.
-        if (execIframe && execIframe.contentWindow) {
-            execIframe.contentWindow.location = 'gap://ready';
-        } else {
-            execIframe = document.createElement('iframe');
-            execIframe.style.display = 'none';
-            execIframe.src = 'gap://ready';
-            document.body.appendChild(execIframe);
-        }
-        // Use a timer to protect against iframe being unloaded during the poke (CB-7735).
-        // This makes the bridge ~ 7% slower, but works around the poke getting lost
-        // when the iframe is removed from the DOM.
-        // An onunload listener could be used in the case where the iframe has just been
-        // created, but since unload events fire only once, it doesn't work in the normal
-        // case of iframe reuse (where unload will have already fired due to the attempted
-        // navigation of the page).
-        failSafeTimerId = setTimeout(function() {
-            if (commandQueue.length) {
-                pokeNative();
-            }
-        }, 50); // Making this > 0 improves performance (marginally) in the normal case (where it doesn't fire).
+        execIframe = document.createElement('iframe');
+        execIframe.style.display = 'none';
+        execIframe.src = 'gap://ready';
+        document.body.appendChild(execIframe);
     }
+    // Use a timer to protect against iframe being unloaded during the poke (CB-7735).
+    // This makes the bridge ~ 7% slower, but works around the poke getting lost
+    // when the iframe is removed from the DOM.
+    // An onunload listener could be used in the case where the iframe has just been
+    // created, but since unload events fire only once, it doesn't work in the normal
+    // case of iframe reuse (where unload will have already fired due to the attempted
+    // navigation of the page).
+    failSafeTimerId = setTimeout(function() {
+        if (commandQueue.length) {
+            pokeNative();
+        }
+    }, 50); // Making this > 0 improves performance (marginally) in the normal case (where it doesn't fire).
 }
 
 iOSExec.jsToNativeModes = jsToNativeModes;

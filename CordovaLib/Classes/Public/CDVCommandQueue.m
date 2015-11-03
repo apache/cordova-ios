@@ -84,30 +84,6 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     }
 }
 
-- (void)processXhrExecBridgePoke:(NSNumber*)requestId
-{
-    NSInteger rid = [requestId integerValue];
-
-    // An ID of 1 is a special case because that signifies the first request of
-    // the page. Since resetRequestId is called from webViewDidStartLoad, and the
-    // JS context at the time of webViewDidStartLoad is still that of the previous
-    // page, it's possible for requests from the previous page to come in after this
-    // point. We ignore these by enforcing that ID=1 be the first ID.
-    if ((_lastCommandQueueFlushRequestId == 0) && (rid != 1)) {
-        CDV_EXEC_LOG(@"Exec: Ignoring exec request from previous page.");
-        return;
-    }
-
-    // Use the request ID to determine if we've already flushed for this request.
-    // This is required only because the NSURLProtocol enqueues the same request
-    // multiple times.
-    if (rid > _lastCommandQueueFlushRequestId) {
-        _lastCommandQueueFlushRequestId = [requestId integerValue];
-        [self fetchCommandsFromJs];
-        [self executePending];
-    }
-}
-
 - (void)fetchCommandsFromJs
 {
     __weak CDVCommandQueue* weakSelf = self;

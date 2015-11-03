@@ -101,30 +101,6 @@
         return NO;
     }
 
-    if ([[url fragment] hasPrefix:@"%01"] || [[url fragment] hasPrefix:@"%02"]) {
-        // Delegate is called *immediately* for hash changes. This means that any
-        // calls to stringByEvaluatingJavascriptFromString will occur in the middle
-        // of an existing (paused) call stack. This doesn't cause errors, but may
-        // be unexpected to callers (exec callbacks will be called before exec() even
-        // returns). To avoid this, we do not do any synchronous JS evals by using
-        // flushCommandQueueWithDelayedJs.
-        NSString* inlineCommands = [[url fragment] substringFromIndex:3];
-        if ([inlineCommands length] == 0) {
-            // Reach in right away since the WebCore / Main thread are already synchronized.
-            [vc.commandQueue fetchCommandsFromJs];
-        } else {
-            inlineCommands = [inlineCommands stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            [vc.commandQueue enqueueCommandBatch:inlineCommands];
-        }
-        // Switch these for minor performance improvements, and to really live on the wild side.
-        // Callbacks will occur in the middle of the location.hash = ... statement!
-        [(CDVCommandDelegateImpl*)self.enginePlugin.commandDelegate flushCommandQueueWithDelayedJs];
-        // [_commandQueue executePending];
-
-        // Although we return NO, the hash change does end up taking effect.
-        return NO;
-    }
-
     /*
      * Give plugins the chance to handle the url
      */
