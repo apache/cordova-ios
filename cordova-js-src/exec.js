@@ -116,18 +116,9 @@ function iOSExec() {
         // an invalid callbackId and passes it even if no callbacks were given.
         callbackId = 'INVALID';
     } else {
-        // FORMAT TWO, REMOVED
-        try {
-            splitCommand = arguments[0].split(".");
-            action = splitCommand.pop();
-            service = splitCommand.join(".");
-            actionArgs = Array.prototype.splice.call(arguments, 1);
-
-            console.log('The old format of this exec call has been removed (deprecated since 2.1). Change to: ' +
-                       "cordova.exec(null, null, \"" + service + "\", \"" + action + "\"," + JSON.stringify(actionArgs) + ");"
-            );
-            return;
-        } catch (e) {}
+        throw new Error('The old format of this exec call has been removed (deprecated since 2.1). Change to: ' +
+            'cordova.exec(null, null, \'Service\', \'action\', [ arg1, arg2 ]);'
+        );
     }
 
     // If actionArgs is not provided, default to an empty array
