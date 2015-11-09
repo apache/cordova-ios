@@ -20,30 +20,21 @@
 /*jshint node: true*/
 
 var Q = require('q'),
-    nopt   = require('nopt'),
     path   = require('path'),
     iossim = require('ios-sim'),
     build  = require('./build'),
     spawn  = require('./spawn'),
     check_reqs = require('./check_reqs');
 
+var events = require('cordova-common').events;
+
 var cordovaPath = path.join(__dirname, '..');
 var projectPath = path.join(__dirname, '..', '..');
 
-module.exports.run = function (argv) {
-
-    // parse args here
-    // --debug and --release args not parsed here
-    // but still valid since they can be passed down to build command 
-    var args  = nopt({
-        // "archs": String,     // TODO: add support for building different archs
-        'list': Boolean,
-        'nobuild': Boolean,
-        'device': Boolean, 'emulator': Boolean, 'target': String
-    }, {}, argv);
+module.exports.run = function (runOptions) {
 
     // Validate args
-    if (args.device && args.emulator) {
+    if (runOptions.device && runOptions.emulator) {
         return Q.reject('Only one of "device"/"emulator" options should be specified');
     }
 
@@ -51,47 +42,34 @@ module.exports.run = function (argv) {
     // Valid values for "--target" (case sensitive):
     var validTargets = ['iPhone-4s', 'iPhone-5', 'iPhone-5s', 'iPhone-6-Plus', 'iPhone-6',
         'iPad-2', 'iPad-Retina', 'iPad-Air', 'Resizable-iPhone', 'Resizable-iPad'];
-    if (!(args.device) && args.target && validTargets.indexOf(args.target.split(',')[0]) < 0 ) {
-        return Q.reject(args.target + ' is not a valid target for emulator');
+    if (!(runOptions.device) && runOptions.target && validTargets.indexOf(runOptions.target.split(',')[0]) < 0 ) {
+        return Q.reject(runOptions.target + ' is not a valid target for emulator');
     }
 
     // support for CB-8168 `cordova/run --list`
-    if (args.list) {
-        if (args.device) return listDevices();
-        if (args.emulator) return listEmulators();
+    if (runOptions.list) {
+        if (runOptions.device) return listDevices();
+        if (runOptions.emulator) return listEmulators();
         // if no --device or --emulator flag is specified, list both devices and emulators
         return listDevices().then(function () {
             return listEmulators();
         });
     }
 
-    var useDevice = false;
-    
+    var useDevice = !!runOptions.device;
+
     return require('./list-devices').run()
     .then(function (devices) {
-        if (devices.length > 0 && !(args.emulator)) {
+        if (devices.length > 0 && !(runOptions.emulator)) {
             useDevice = true;
+            // we also explicitly set device flag in options as we pass
+            // those parameters to other api (build as an example)
+            runOptions.device = true;
             return check_reqs.check_ios_deploy();
         }
     }).then(function () {
-        if (!args.nobuild) {
-            var idx = -1;
-            if (useDevice) {
-                // remove emulator, add device
-                idx = argv.indexOf('--emulator');
-                if (idx != -1) {
-                    argv.splice(idx, 1);
-                }
-                argv.push('--device');
-            } else {
-                // remove device, add emulator
-                idx = argv.indexOf('--device');
-                if (idx != -1) {
-                    argv.splice(idx, 1);
-                }
-                argv.push('--emulator');
-            }
-            return build.run(argv);
+        if (!runOptions.nobuild) {
+            return build.run(runOptions);
         } else {
             return Q.resolve();
         }
@@ -105,13 +83,13 @@ module.exports.run = function (argv) {
             return checkDeviceConnected().then(function () {
                 appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
                 // argv.slice(2) removes node and run.js, filterSupportedArgs removes the run.js args
-                return deployToDevice(appPath, args.target, filterSupportedArgs(argv.slice(2)));
+                return deployToDevice(appPath, runOptions.target, filterSupportedArgs(runOptions.argv.slice(2)));
             }, function () {
                 // if device connection check failed use emulator then
-                return deployToSim(appPath, args.target);
+                return deployToSim(appPath, runOptions.target);
             });
         } else {
-            return deployToSim(appPath, args.target);
+            return deployToSim(appPath, runOptions.target);
         }
     });
 };
@@ -179,7 +157,7 @@ function deployToSim(appPath, target) {
                     target = emulator;
                 }
             });
-            console.log('No target specified for emulator. Deploying to ' + target + ' simulator');
+            events.emit('log','No target specified for emulator. Deploying to ' + target + ' simulator');
             return startSim(appPath, target);
         });
     } else {
@@ -196,9 +174,9 @@ function startSim(appPath, target) {
 function listDevices() {
     return require('./list-devices').run()
     .then(function (devices) {
-        console.log('Available iOS Devices:');
+        events.emit('log','Available iOS Devices:');
         devices.forEach(function (device) {
-            console.log('\t' + device);
+            events.emit('log','\t' + device);
         });
     });
 }
@@ -206,9 +184,9 @@ function listDevices() {
 function listEmulators() {
     return require('./list-emulator-images').run()
     .then(function (emulators) {
-        console.log('Available iOS Virtual Devices:');
+        events.emit('log','Available iOS Virtual Devices:');
         emulators.forEach(function (emulator) {
-            console.log('\t' + emulator);
+            events.emit('log','\t' + emulator);
         });
     });
 }
