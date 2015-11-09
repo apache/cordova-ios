@@ -1,5 +1,5 @@
 // Platform: ios
-// 7703d38498920bdcfadd574e475553a26fc490e5
+// 8e9610fe33fc743fcaf5d920064f0deb2cad1715
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -817,28 +817,19 @@ module.exports = channel;
 
 });
 
-// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/exec.js
+// file: /Repos/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
+
+/*global require, module, atob, document */
 
 /**
  * Creates a gap bridge iframe used to notify the native code about queued
  * commands.
  */
 var cordova = require('cordova'),
-    channel = require('cordova/channel'),
     utils = require('cordova/utils'),
     base64 = require('cordova/base64'),
-    jsToNativeModes = {
-        IFRAME_NAV: 0, // Default. Uses a new iframe for each poke.
-        WK_WEBVIEW_BINDING: 1 // Only way that works for WKWebView :)
-    },
-    bridgeMode,
     execIframe,
-    execHashIframe,
-    hashToggle = 1,
-    execXhr,
-    requestCount = 0,
-    vcHeaderValue = null,
     commandQueue = [], // Contains pending JS->Native messages.
     isInContextOfEvalJs = 0,
     failSafeTimerId = 0;
@@ -893,17 +884,10 @@ function convertMessageToArgsNativeToJs(message) {
 }
 
 function iOSExec() {
-    if (bridgeMode === undefined) {
-        bridgeMode = jsToNativeModes.IFRAME_NAV;
-    }
 
-    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
-        bridgeMode = jsToNativeModes.WK_WEBVIEW_BINDING;
-    }
-
-    var successCallback, failCallback, service, action, actionArgs, splitCommand;
+    var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
-    if (typeof arguments[0] !== "string") {
+    if (typeof arguments[0] !== 'string') {
         // FORMAT ONE
         successCallback = arguments[0];
         failCallback = arguments[1];
@@ -937,21 +921,17 @@ function iOSExec() {
 
     var command = [callbackId, service, action, actionArgs];
 
-    if (bridgeMode === jsToNativeModes.WK_WEBVIEW_BINDING) {
-        window.webkit.messageHandlers.cordova.postMessage(command);
-    } else {
-        // Stringify and queue the command. We stringify to command now to
-        // effectively clone the command arguments in case they are mutated before
-        // the command is executed.
-        commandQueue.push(JSON.stringify(command));
-    
-        // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
-        // then the queue will be flushed when it returns; no need for a poke.
-        // Also, if there is already a command in the queue, then we've already
-        // poked the native side, so there is no reason to do so again.
-        if (!isInContextOfEvalJs && commandQueue.length == 1) {
-            pokeNative();
-        }
+    // Stringify and queue the command. We stringify to command now to
+    // effectively clone the command arguments in case they are mutated before
+    // the command is executed.
+    commandQueue.push(JSON.stringify(command));
+
+    // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
+    // then the queue will be flushed when it returns; no need for a poke.
+    // Also, if there is already a command in the queue, then we've already
+    // poked the native side, so there is no reason to do so again.
+    if (!isInContextOfEvalJs && commandQueue.length == 1) {
+        pokeNative();
     }
 }
 
@@ -985,21 +965,6 @@ function pokeNative() {
     }, 50); // Making this > 0 improves performance (marginally) in the normal case (where it doesn't fire).
 }
 
-iOSExec.jsToNativeModes = jsToNativeModes;
-
-iOSExec.setJsToNativeBridgeMode = function(mode) {
-    // Remove the iFrame since it may be no longer required, and its existence
-    // can trigger browser bugs.
-    // https://issues.apache.org/jira/browse/CB-593
-    if (execIframe) {
-        if (execIframe.parentNode) {
-            execIframe.parentNode.removeChild(execIframe);
-        }
-        execIframe = null;
-    }
-    bridgeMode = mode;
-};
-
 iOSExec.nativeFetchMessages = function() {
     // Stop listing for window detatch once native side confirms poke.
     if (failSafeTimerId) {
@@ -1022,12 +987,7 @@ iOSExec.nativeCallback = function(callbackId, status, message, keepCallback, deb
         function nc2() {
             cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
         }
-        // CB-8468
-        if (debug) {
-            setTimeout(nc2, 0);
-        } else {
-            nc2();
-        }
+        setTimeout(nc2, 0);
     });
 };
 
@@ -1527,7 +1487,7 @@ exports.reset();
 
 });
 
-// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/platform.js
+// file: /Repos/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1748,17 +1708,21 @@ utils.defineGetterSetter = function(obj, key, getFunc, opt_setFunc) {
  */
 utils.defineGetter = utils.defineGetterSetter;
 
-utils.arrayIndexOf = function(a, item) {
-    if (a.indexOf) {
-        return a.indexOf(item);
-    }
-    var len = a.length;
-    for (var i = 0; i < len; ++i) {
-        if (a[i] == item) {
-            return i;
-        }
-    }
-    return -1;
+utils.arrayIndexOf = [].indexOf ? 
+                     // array.indexOf is available (99.99% of the time)
+                     function(a, item) {
+                        return a.indexOf(item);
+                     } :
+                     // array.indexOf is not available
+                     function(a,item) {
+                        var len = a.length;
+                        for (var i = 0; i < len; ++i) {
+                            if (a[i] == item) {
+                                return i;
+                            }
+                        }
+                        return -1;3
+                    };
 };
 
 /**
