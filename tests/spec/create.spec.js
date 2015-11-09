@@ -102,6 +102,8 @@ describe('end-to-end list validation', function(){
         shell.cp('-f', path.join(cordova_bin, 'check_reqs'), path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'check_reqs'));
         shell.cp('-f', path.join(cordova_bin, 'lib', 'check_reqs.js'), path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'check_reqs.js'));
         shell.cp('-f', path.join(cordova_bin, 'lib', 'versions.js'), path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'versions.js'));
+        // create empty .xcodeproj folder to mimic Cordova app structure, otherwise scripts will fail
+        shell.mkdir('-p', path.join(cordova_bin, 'templates', 'scripts', 'HelloCordova.xcodeproj'));
         var command = '"' + path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'run') + '" --list';
         var output = shell.exec(command, {silent: true}).output;
         expect(output).toMatch(/Available iOS Virtual Devices/);
@@ -109,5 +111,6 @@ describe('end-to-end list validation', function(){
         shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'check_reqs'));
         shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'check_reqs.js'));
         shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'versions.js'));
+        shell.rm('-rf', path.join(cordova_bin, 'templates', 'scripts', 'HelloCordova.xcodeproj'));
     });
 });

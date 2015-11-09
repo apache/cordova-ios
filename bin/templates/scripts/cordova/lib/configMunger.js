@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -19,17 +17,23 @@
        under the License.
 */
 
-var Api = require('./Api');
-var path  = require('path');
+/*jshint node: true*/
 
-if(['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {
-    console.log('Cleans the project directory.');
-    process.exit(0);
-}
+var PlatformJson = require('cordova-common').PlatformJson;
+var PlatformMunger = require('cordova-common').ConfigChanges.PlatformMunger;
+var PluginInfoProvider = require('cordova-common').PluginInfoProvider;
 
-new Api().clean({argv: process.argv.slice(2)}).done(function() {
-    console.log('** CLEAN SUCCEEDED **');
-},function(err) {
-    console.error(err);
-    process.exit(2);
-});
+//shared PlatformMunger instance
+var _instance = null;
+
+module.exports = {
+
+    get: function(platformRoot) {
+        if (!_instance) {
+            _instance = new PlatformMunger('ios', platformRoot, PlatformJson.load(platformRoot, 'ios'),
+                new PluginInfoProvider());
+        }
+
+        return _instance;
+    }
+};

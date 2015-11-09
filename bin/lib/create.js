@@ -50,7 +50,8 @@ function setShellFatal(value, func) {
 function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
     shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www'));
-    
+    shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www'));
+
     fs.lstat(path.join(projectPath, 'CordovaLib'), function(err, stats) {
         if (!err) {
             if (stats.isSymbolicLink()) {
@@ -59,7 +60,7 @@ function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
                 shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
             }
         }
-        
+
         if (use_shared) {
             update_cordova_subproject([path.join(projectPath, projectName +'.xcodeproj', 'project.pbxproj')]);
             // Symlink not used in project file, but is currently required for plugman because
@@ -150,14 +151,14 @@ function relpath(_path, start) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = function(project_path, package_name, project_name, opts) {
+exports.createProject = function(project_path, package_name, project_name, opts, events) {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     var use_shared = !!opts.link;
     var use_cli = !!opts.cli;
     var bin_dir = path.join(ROOT, 'bin'),
         project_parent = path.dirname(project_path);
-    var project_template_dir = opts.project_template_dir || path.join(bin_dir, 'templates', 'project');
+    var project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
 
     //check that project path doesn't exist
     if (fs.existsSync(project_path)) {
@@ -212,16 +213,16 @@ exports.createProject = function(project_path, package_name, project_name, opts)
     copyJsAndCordovaLib(project_path, project_name, use_shared);
     copyScripts(project_path);
 
-    console.log(generateDoneMessage('create', use_shared));
+    events.emit('log', generateDoneMessage('create', use_shared));
     return Q.resolve();
 };
 
-exports.updateProject = function(projectPath, opts) {
+exports.updateProject = function(projectPath, opts, events) {
     var projectName = detectProjectName(projectPath);
     setShellFatal(true, function() {
         copyJsAndCordovaLib(projectPath, projectName, opts.link);
         copyScripts(projectPath);
-        console.log(generateDoneMessage('update', opts.link));
+        events.emit('log',generateDoneMessage('update', opts.link));
     });
     return Q.resolve();
 };

@@ -29,7 +29,10 @@
  *  ./create ~/Desktop/radness org.apache.cordova.radness Radness
  */
 
-var create = require('./lib/create');
+var path = require('path');
+var ConfigParser = require('cordova-common').ConfigParser;
+var Api = require('./templates/scripts/cordova/Api');
+
 var argv = require('nopt')({
     'help' : Boolean,
     'cli' : Boolean,
@@ -41,15 +44,19 @@ var projectPath = argv.argv.remain[0];
 
 if (argv.help || !projectPath) {
     create.createHelp();
-} else {
-    var packageName = argv.argv.remain[1];
-    var projectName = argv.argv.remain[2];
-    var opts = {
-        project_template_dir: argv.argv.remain[3],
-        cli: argv.cli,
-        link: argv.link || argv.shared
-    };
-
-    create.createProject(projectPath, packageName, projectName, opts)
-    .done();
+    process.exit(1);
 }
+
+// use default configuration file from project template
+var config = new ConfigParser(path.resolve(__dirname, 'templates/project/__PROJECT_NAME__/config.xml'));
+
+// apply overrides (package and project names
+if (argv.argv.remain[1]) config.setPackageName(argv.argv.remain[1]);
+if (argv.argv.remain[2]) config.setName(argv.argv.remain[2]);
+
+var options = {
+    link: argv.link || argv.shared,
+    customTemplate: argv.argv.remain[3],
+};
+
+Api.createPlatform(projectPath, config, options).done();

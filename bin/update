@@ -19,24 +19,17 @@
     under the License.
 */
 
-var create = require('./lib/create');
-var argv = require('nopt')({
-    'help' : Boolean,
-    'shared' : Boolean, // alias for --link
-    'link' : Boolean
+var path   = require('path');
+var Api = require('./templates/scripts/cordova/Api');
+var args  = require('nopt')({
+    'link': Boolean,
+    'shared': Boolean, // alias for --link
+    'help': Boolean
 });
 
-var projectPath = argv.argv.remain[0];
-
-if (argv.help || !projectPath) {
+if (args.help || args.argv.remain.length === 0) {
     console.log('Usage: ' + path.relative(process.cwd(), path.join(__dirname, 'update')) + ' <path_to_project> [--link]');
     process.exit(1);
-} else {
-    var projectPath = argv.argv.remain[0];
-    var opts = {
-        link: argv.link || argv.shared
-    };
-
-    create.updateProject(projectPath, opts)
-    .done();
 }
+
+Api.updatePlatform(args.argv.remain[0], {link: (args.link || args.shared)}).done();
