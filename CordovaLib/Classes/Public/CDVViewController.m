@@ -116,8 +116,8 @@
 
 - (void)printPlatformVersionWarning
 {
-    if (!IsAtLeastiOSVersion(@"7.0")) {
-        NSLog(@"CRITICAL: For Cordova 4.0.0 and above, you will need to upgrade to at least iOS 7.0 or greater. Your current version of iOS is %@.",
+    if (!IsAtLeastiOSVersion(@"8.0")) {
+        NSLog(@"CRITICAL: For Cordova 4.0.0 and above, you will need to upgrade to at least iOS 8.0 or greater. Your current version of iOS is %@.",
             [[UIDevice currentDevice] systemVersion]
             );
     }
@@ -138,11 +138,6 @@
     }
 
     NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported ? @"YES" : @"NO"), (![exitsOnSuspend intValue]) ? @"YES" : @"NO");
-}
-
-- (BOOL)URLisAllowed:(NSURL*)url
-{
-    return [self shouldAllowNavigationToURL:url];
 }
 
 - (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate
@@ -269,9 +264,6 @@
     if (!self.webView) {
         [self createGapView];
     }
-
-    // register this viewcontroller with the NSURLProtocol, only after the User-Agent is set
-    [CDVURLProtocol registerViewController:self];
 
     // /////////////////
 
@@ -482,114 +474,6 @@
     [super viewDidUnload];
 }
 
-#pragma mark Network Policy Plugin (Whitelist) hooks
-
-/* This implements the default policy for resource loading and navigation, if there
- * are no plugins installed which override the whitelist methods.
- */
-- (BOOL)defaultResourcePolicyForURL:(NSURL*)url
-{
-    /*
-     * If a URL is being loaded that's a file/http/https URL, just load it internally
-     */
-    if ([url isFileURL]) {
-        return YES;
-    }
-
-    /*
-     * all about: scheme urls are not handled
-     */
-    else if ([[url scheme] isEqualToString:@"about"]) {
-        return NO;
-    }
- 
-    /*
-     * all data: scheme urls are handled
-     */
-    NSString* scheme = [url scheme];
-    NSArray* allowedSchemes = [NSArray arrayWithObjects:@"blob",@"data", nil];
-    if([allowedSchemes containsObject:scheme]) {
-        return YES;
-    }
-
-    return NO;
-}
-
-- (BOOL)shouldAllowRequestForURL:(NSURL*)url
-{
-    BOOL anyPluginsResponded = NO;
-    BOOL shouldAllowRequest = NO;
-
-    for (NSString* pluginName in pluginObjects) {
-        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"shouldAllowRequestForURL:");
-        if ([plugin respondsToSelector:selector]) {
-            anyPluginsResponded = YES;
-            shouldAllowRequest = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
-            if (!shouldAllowRequest) {
-                break;
-            }
-        }
-    }
-
-    if (anyPluginsResponded) {
-        return shouldAllowRequest;
-    }
-
-    /* Default Policy */
-    return [self defaultResourcePolicyForURL:url];
-}
-
-- (BOOL)shouldAllowNavigationToURL:(NSURL*)url
-{
-    BOOL anyPluginsResponded = NO;
-    BOOL shouldAllowNavigation = NO;
-
-    for (NSString* pluginName in pluginObjects) {
-        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"shouldAllowNavigationToURL:");
-        if ([plugin respondsToSelector:selector]) {
-            anyPluginsResponded = YES;
-            shouldAllowNavigation = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
-            if (!shouldAllowNavigation) {
-                break;
-            }
-        }
-    }
-
-    if (anyPluginsResponded) {
-        return shouldAllowNavigation;
-    }
-
-    /* Default Policy */
-    return [self defaultResourcePolicyForURL:url];
-}
-
-- (BOOL)shouldOpenExternalURL:(NSURL*)url
-{
-    BOOL anyPluginsResponded = NO;
-    BOOL shouldOpenExternalURL = NO;
-
-    for (NSString* pluginName in pluginObjects) {
-        CDVPlugin* plugin = [pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"shouldOpenExternalURL:");
-        if ([plugin respondsToSelector:selector]) {
-            anyPluginsResponded = YES;
-            shouldOpenExternalURL = ((BOOL (*)(id, SEL, id))objc_msgSend)(plugin, selector, url);
-            if (!shouldOpenExternalURL) {
-                break;
-            }
-        }
-    }
-
-    if (anyPluginsResponded) {
-        return shouldOpenExternalURL;
-    }
-
-    /* Default policy */
-    return NO;
-}
-
 #pragma mark CordovaCommands
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
@@ -748,7 +632,6 @@
 
 - (void)dealloc
 {
-    [CDVURLProtocol unregisterViewController:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];

@@ -47,7 +47,5 @@ typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 - (void)runInBackground:(void (^)())block;
 // Returns the User-Agent of the associated UIWebView.
 - (NSString*)userAgent;
-// Returns whether the given URL passes the white-list.
-- (BOOL)URLIsWhitelisted:(NSURL*)url;
 
 @end

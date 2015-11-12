@@ -34,6 +34,7 @@ Methods:
     - (void)javascriptAlert:(NSString*)
     - (void)printMultitaskingInfo
     - createGapView
+    - (BOOL)URLisAllowed:(NSURL*)url
 
 Properties:
 
@@ -89,9 +90,7 @@ Properties:
 Methods:
 
     - (NSURL*)errorURL;
-    - (BOOL)shouldAllowRequestForURL:(NSURL*)url
-    - (BOOL)shouldAllowNavigationToURL:(NSURL*)url
-    - (BOOL)shouldOpenExternalURL:(NSURL*)url
+    - (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*) navigationType:(UIWebViewNavigationType)
 
 Properties:
 
@@ -107,9 +106,7 @@ Properties:
 
 Methods:
 
-    - (BOOL)shouldAllowRequestForURL:(NSURL *)url
-    - (BOOL)shouldAllowNavigationToURL:(NSURL *)url
-    - (BOOL)shouldOpenExternalURL:(NSURL *)url
+    - (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*) navigationType:(UIWebViewNavigationType)
 
 ### Upgrade Notes:
 
@@ -222,12 +219,6 @@ These Objective-C Categories have been **removed** from the public API, and is p
 ## CDVWebViewEngineProtocol.h (_new_)
 
 This is new in cordova-ios-4.0. An Objective-C protocol for plugins to implement, if they want to be an alternative WebView engine.
-
-- - -
-
-## CDVURLRequestFilter.h (_new_)
-
-This is new in cordova-ios-4.0. An Objective-C protocol that plugins can implement. The methods in the protocol are called in all plugins (if available) to veto a navigation, request, or an external request to open a URL. 
 
 - - -
 

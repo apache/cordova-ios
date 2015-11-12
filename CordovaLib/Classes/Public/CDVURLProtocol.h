@@ -24,6 +24,4 @@
 
 @interface CDVURLProtocol : NSURLProtocol {}
 
-+ (void)registerViewController:(CDVViewController*)viewController;
-+ (void)unregisterViewController:(CDVViewController*)viewController;
 @end

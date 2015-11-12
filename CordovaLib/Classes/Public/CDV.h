@@ -32,4 +32,3 @@
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVTimer.h"
 #import "CDVUserAgentUtil.h"
-#import "CDVURLRequestFilter.h"

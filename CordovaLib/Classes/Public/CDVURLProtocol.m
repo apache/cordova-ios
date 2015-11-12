@@ -31,76 +31,15 @@ static NSMutableSet* gRegisteredControllers = nil;
 
 NSString* const kCDVAssetsLibraryPrefixes = @"assets-library://";
 
-// Returns the registered view controller that sent the given request.
-// If the user-agent is not from a UIWebView, or if it's from an unregistered one,
-// then nil is returned.
-static CDVViewController *viewControllerForRequest(NSURLRequest* request)
-{
-    // The exec bridge explicitly sets the VC address in a header.
-    // This works around the User-Agent not being set for file: URLs.
-    NSString* addrString = [request valueForHTTPHeaderField:@"vc"];
-
-    if (addrString == nil) {
-        NSString* userAgent = [request valueForHTTPHeaderField:@"User-Agent"];
-        if (userAgent == nil) {
-            return nil;
-        }
-        NSUInteger bracketLocation = [userAgent rangeOfString:@"(" options:NSBackwardsSearch].location;
-        if (bracketLocation == NSNotFound) {
-            return nil;
-        }
-        addrString = [userAgent substringFromIndex:bracketLocation + 1];
-    }
-
-    long long viewControllerAddress = [addrString longLongValue];
-    @synchronized(gRegisteredControllers) {
-        if (![gRegisteredControllers containsObject:[NSNumber numberWithLongLong:viewControllerAddress]]) {
-            return nil;
-        }
-    }
-
-    return (__bridge CDVViewController*)(void*)viewControllerAddress;
-}
-
 @implementation CDVURLProtocol
 
-+ (void)registerPGHttpURLProtocol {}
-
-+ (void)registerURLProtocol {}
-
-// Called to register the URLProtocol, and to make it away of an instance of
-// a ViewController.
-+ (void)registerViewController:(CDVViewController*)viewController
-{
-    if (gRegisteredControllers == nil) {
-        [NSURLProtocol registerClass:[CDVURLProtocol class]];
-        gRegisteredControllers = [[NSMutableSet alloc] initWithCapacity:8];
-    }
-
-    @synchronized(gRegisteredControllers) {
-        [gRegisteredControllers addObject:[NSNumber numberWithLongLong:(long long)viewController]];
-    }
-}
-
-+ (void)unregisterViewController:(CDVViewController*)viewController
-{
-    @synchronized(gRegisteredControllers) {
-        [gRegisteredControllers removeObject:[NSNumber numberWithLongLong:(long long)viewController]];
-    }
-}
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
 {
     NSURL* theUrl = [theRequest URL];
-    CDVViewController* viewController = viewControllerForRequest(theRequest);
 
     if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
         return YES;
-    } else if (viewController != nil) {
-        // Returning YES here means that the request will be handled below, by startLoading, which will
-        // override the network layer and return a 401 instead. Returning NO means that the network layer
-        // will perform as ususal, and the request will be proceed.
-        return ![viewController shouldAllowRequestForURL:theUrl];
     }
 
     return NO;

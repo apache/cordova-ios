@@ -84,6 +84,35 @@
     }
 }
 
+- (BOOL)defaultResourcePolicyForURL:(NSURL*)url
+{
+    /*
+     * If a URL is being loaded that's a file/http/https URL, just load it internally
+     */
+    if ([url isFileURL]) {
+        return YES;
+    }
+    
+    /*
+     * Reject disallowed schemes
+     */
+    NSString* scheme = [url scheme];
+    NSArray* disallowedSchemes = [NSArray arrayWithObjects:@"about", nil];
+    if([disallowedSchemes containsObject:scheme]) {
+        return NO;
+    }
+
+    /*
+     * Accept allowed schemes
+     */
+    NSArray* allowedSchemes = [NSArray arrayWithObjects:@"blob", nil];
+    if([allowedSchemes containsObject:scheme]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = [request URL];
@@ -117,18 +146,11 @@
     /*
      * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
      */
-    BOOL shouldAllowNavigation = [vc shouldAllowNavigationToURL:url];
+    BOOL shouldAllowNavigation = [self defaultResourcePolicyForURL:url];
     if (shouldAllowNavigation) {
         return YES;
     } else {
-        BOOL shouldOpenExternalURL = [vc shouldOpenExternalURL:url];
-        if (shouldOpenExternalURL) {
-            if ([[UIApplication sharedApplication] canOpenURL:url]) {
-                [[UIApplication sharedApplication] openURL:url];
-            } else { // handle any custom schemes to plugins
-                [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
-            }
-        }
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
     }
 
     return NO;
