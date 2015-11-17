@@ -87,26 +87,9 @@
 - (BOOL)defaultResourcePolicyForURL:(NSURL*)url
 {
     /*
-     * If a URL is being loaded that's a file/http/https URL, just load it internally
+     * If a URL is being loaded that's a file url, just load it internally
      */
     if ([url isFileURL]) {
-        return YES;
-    }
-    
-    /*
-     * Reject disallowed schemes
-     */
-    NSString* scheme = [url scheme];
-    NSArray* disallowedSchemes = [NSArray arrayWithObjects:@"about", nil];
-    if([disallowedSchemes containsObject:scheme]) {
-        return NO;
-    }
-
-    /*
-     * Accept allowed schemes
-     */
-    NSArray* allowedSchemes = [NSArray arrayWithObjects:@"blob", nil];
-    if([allowedSchemes containsObject:scheme]) {
         return YES;
     }
     
@@ -133,14 +116,23 @@
     /*
      * Give plugins the chance to handle the url
      */
+    BOOL anyPluginsResponded = NO;
+    BOOL shouldAllowRequest = NO;
+    
     for (NSString* pluginName in vc.pluginObjects) {
         CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
-            if (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType)) {
-                return NO;
+            anyPluginsResponded = YES;
+            shouldAllowRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, request, navigationType));
+            if (!shouldAllowRequest) {
+                break;
             }
         }
+    }
+    
+    if (anyPluginsResponded) {
+        return shouldAllowRequest;
     }
 
     /*
@@ -152,7 +144,7 @@
     } else {
         [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
     }
-
+    
     return NO;
 }
 

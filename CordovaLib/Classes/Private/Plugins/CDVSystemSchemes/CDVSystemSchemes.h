@@ -19,8 +19,6 @@
 
 #import "CDVPlugin.h"
 
-@interface CDVSystemSchemes : CDVPlugin
-
-@property (nonatomic, readonly) NSArray* systemSchemes;
+@interface CDVSystemSchemes : CDVPlugin <NSXMLParserDelegate>
 
 @end

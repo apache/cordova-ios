@@ -18,41 +18,81 @@
  */
 
 #import "CDVSystemSchemes.h"
-#import "NSDictionary+CordovaPreferences.h"
-#import "CDV.h"
+#import <Cordova/CDV.h>
 
 @interface CDVSystemSchemes ()
 
-@property (nonatomic, readwrite) NSArray* systemSchemes;
+@property (nonatomic, readwrite) NSMutableArray* allowIntents;
+@property (nonatomic, readwrite) NSMutableArray* allowNavigations;
+@property (nonatomic, readwrite) CDVWhitelist* allowIntentsWhitelist;
+@property (nonatomic, readwrite) CDVWhitelist* allowNavigationsWhitelist;
 
 @end
 
 @implementation CDVSystemSchemes
 
+#pragma mark NSXMLParserDelegate
+
+- (void)parser:(NSXMLParser*)parser didStartElement:(NSString*)elementName namespaceURI:(NSString*)namespaceURI qualifiedName:(NSString*)qualifiedName attributes:(NSDictionary*)attributeDict
+{
+    if ([elementName isEqualToString:@"allow-navigation"]) {
+        [self.allowNavigations addObject:attributeDict[@"href"]];
+    }
+    if ([elementName isEqualToString:@"allow-intent"]) {
+        [self.allowIntents addObject:attributeDict[@"href"]];
+    }
+}
+
+- (void)parserDidStartDocument:(NSXMLParser*)parser
+{
+    // file: url <allow-navigations> are added by default
+    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://" ]];
+    // no intents are added by default
+    self.allowIntents = [[NSMutableArray alloc] init];
+}
+
+- (void)parserDidEndDocument:(NSXMLParser*)parser
+{
+    self.allowIntentsWhitelist = [[CDVWhitelist alloc] initWithArray:self.allowIntents];
+    self.allowIntentsWhitelist.whitelistRejectionFormatString = @"ERROR External navigation rejected - <allow-intent> not set for url='%@'";
+
+    self.allowNavigationsWhitelist = [[CDVWhitelist alloc] initWithArray:self.allowNavigations];
+    self.allowNavigationsWhitelist.whitelistRejectionFormatString = @"ERROR Internal navigation rejected - <allow-navigation> not set for url='%@'";
+
+}
+
+- (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
+{
+    NSAssert(NO, @"config.xml parse error line %ld col %ld", (long)[parser lineNumber], (long)[parser columnNumber]);
+}
+
+#pragma mark CDVPlugin
+
 - (void)pluginInitialize
 {
-    // Read from preference, if not use default
-    NSString* schemesToOverride = [[self.commandDelegate settings] cordovaSettingForKey:@"CDVSystemSchemesOverride"];
-
-    if ((schemesToOverride == nil) || ([schemesToOverride length] == 0)) {
-        self.systemSchemes = @[@"maps", @"tel", @"telprompt"];
-    } else {
-        // parse csv naïvely
-        self.systemSchemes = [schemesToOverride componentsSeparatedByString:@","];
+    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
+        [(CDVViewController*)self.viewController parseSettingsWithParser:self];
     }
 }
 
 - (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = [request URL];
-
-    // Push these system schemes off to the system, and do not let the UIWebView handle them
-    if ([self.systemSchemes indexOfObject:[url scheme]] != NSNotFound) {
-        [[UIApplication sharedApplication] openURL:url];
-        return YES;
+    
+    switch (navigationType) {
+        case UIWebViewNavigationTypeLinkClicked:
+            // Note that the rejection strings will *only* print if
+            // it's a link click (and url is not whitelisted by <allow-*>)
+            if ([self.allowIntentsWhitelist URLIsAllowed:url]) {
+                // the url *is* in a <allow-intent> tag, push to the system
+                [[UIApplication sharedApplication] openURL:url];
+                return NO;
+            }
+            // fall through, to check whether you can load this in the webview
+        default:
+            // check whether we can internally navigate to this url
+            return ([self.allowNavigationsWhitelist URLIsAllowed:url]);
     }
-
-    return NO;
 }
 
 @end
