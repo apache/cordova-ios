@@ -84,6 +84,19 @@
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://apache.org"]]);
 }
 
+- (void)testURISchemesNotFollowedByDoubleSlashes
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+                             @"tel:*",
+                             @"sms:*",
+                             nil];
+    
+    CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
+    
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"tel:1234567890"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"sms:1234567890"]]);
+}
+
 - (void)testCatchallWildcardByProto
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
