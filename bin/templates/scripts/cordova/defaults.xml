@@ -43,8 +43,8 @@
         <param name="ios-package" value="CDVHandleOpenURL"/>
         <param name="onload" value="true"/>
     </feature>
-    <feature name="SystemSchemes">
-        <param name="ios-package" value="CDVSystemSchemes"/>
+    <feature name="IntentAndNavigationFilter">
+        <param name="ios-package" value="CDVIntentAndNavigationFilter"/>
         <param name="onload" value="true"/>
     </feature>
     <feature name="GestureHandler">

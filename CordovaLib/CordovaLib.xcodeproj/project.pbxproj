@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		30193A501AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30193A4E1AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.m */; };
 		30193A511AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 30193A4F1AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.h */; };
-		3093E2231B16D6A3003F381A /* CDVSystemSchemes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3093E2211B16D6A3003F381A /* CDVSystemSchemes.h */; };
-		3093E2241B16D6A3003F381A /* CDVSystemSchemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 3093E2221B16D6A3003F381A /* CDVSystemSchemes.m */; };
+		3093E2231B16D6A3003F381A /* CDVIntentAndNavigationFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3093E2211B16D6A3003F381A /* CDVIntentAndNavigationFilter.h */; };
+		3093E2241B16D6A3003F381A /* CDVIntentAndNavigationFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3093E2221B16D6A3003F381A /* CDVIntentAndNavigationFilter.m */; };
 		7E7F69B61ABA35D8007546F4 /* CDVLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFB1AB9028C008C4574 /* CDVLocalStorage.h */; };
 		7E7F69B81ABA368F007546F4 /* CDVUIWebViewEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D001AB9028C008C4574 /* CDVUIWebViewEngine.h */; };
 		7E7F69B91ABA3692007546F4 /* CDVHandleOpenURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CF81AB9028C008C4574 /* CDVHandleOpenURL.h */; };
@@ -67,8 +67,8 @@
 		30193A4E1AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVUIWebViewNavigationDelegate.m; sourceTree = "<group>"; };
 		30193A4F1AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVUIWebViewNavigationDelegate.h; sourceTree = "<group>"; };
 		30325A0B136B343700982B63 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
-		3093E2211B16D6A3003F381A /* CDVSystemSchemes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVSystemSchemes.h; sourceTree = "<group>"; };
-		3093E2221B16D6A3003F381A /* CDVSystemSchemes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVSystemSchemes.m; sourceTree = "<group>"; };
+		3093E2211B16D6A3003F381A /* CDVIntentAndNavigationFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVIntentAndNavigationFilter.h; sourceTree = "<group>"; };
+		3093E2221B16D6A3003F381A /* CDVIntentAndNavigationFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVIntentAndNavigationFilter.m; sourceTree = "<group>"; };
 		68A32D7114102E1C006B237C /* libCordova.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCordova.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7ED95CF21AB9028C008C4574 /* CDVDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVDebug.h; sourceTree = "<group>"; };
 		7ED95CF31AB9028C008C4574 /* CDVJSON_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVJSON_private.h; sourceTree = "<group>"; };
@@ -153,13 +153,13 @@
 			name = CordovaLib;
 			sourceTree = "<group>";
 		};
-		3093E2201B16D6A3003F381A /* CDVSystemSchemes */ = {
+		3093E2201B16D6A3003F381A /* CDVIntentAndNavigationFilter */ = {
 			isa = PBXGroup;
 			children = (
-				3093E2211B16D6A3003F381A /* CDVSystemSchemes.h */,
-				3093E2221B16D6A3003F381A /* CDVSystemSchemes.m */,
+				3093E2211B16D6A3003F381A /* CDVIntentAndNavigationFilter.h */,
+				3093E2221B16D6A3003F381A /* CDVIntentAndNavigationFilter.m */,
 			);
-			path = CDVSystemSchemes;
+			path = CDVIntentAndNavigationFilter;
 			sourceTree = "<group>";
 		};
 		7ED95CF11AB9028C008C4574 /* Private */ = {
@@ -180,7 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				A3B082D11BB15CEA00D8DC35 /* CDVGestureHandler */,
-				3093E2201B16D6A3003F381A /* CDVSystemSchemes */,
+				3093E2201B16D6A3003F381A /* CDVIntentAndNavigationFilter */,
 				7ED95CF71AB9028C008C4574 /* CDVHandleOpenURL */,
 				7ED95CFA1AB9028C008C4574 /* CDVLocalStorage */,
 				7ED95CFD1AB9028C008C4574 /* CDVUIWebViewEngine */,
@@ -306,7 +306,7 @@
 				7ED95D021AB9028C008C4574 /* CDVDebug.h in Headers */,
 				7ED95D051AB9028C008C4574 /* CDVPlugin+Private.h in Headers */,
 				7E7F69B61ABA35D8007546F4 /* CDVLocalStorage.h in Headers */,
-				3093E2231B16D6A3003F381A /* CDVSystemSchemes.h in Headers */,
+				3093E2231B16D6A3003F381A /* CDVIntentAndNavigationFilter.h in Headers */,
 				7E7F69B81ABA368F007546F4 /* CDVUIWebViewEngine.h in Headers */,
 				7E7F69B91ABA3692007546F4 /* CDVHandleOpenURL.h in Headers */,
 				30193A511AE6350A0069A75F /* CDVUIWebViewNavigationDelegate.h in Headers */,
@@ -389,7 +389,7 @@
 				7ED95D0D1AB9028C008C4574 /* CDVUIWebViewEngine.m in Sources */,
 				7ED95D461AB9029B008C4574 /* CDVPlugin.m in Sources */,
 				7ED95D091AB9028C008C4574 /* CDVLocalStorage.m in Sources */,
-				3093E2241B16D6A3003F381A /* CDVSystemSchemes.m in Sources */,
+				3093E2241B16D6A3003F381A /* CDVIntentAndNavigationFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

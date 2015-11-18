@@ -19,6 +19,6 @@
 
 #import "CDVPlugin.h"
 
-@interface CDVSystemSchemes : CDVPlugin <NSXMLParserDelegate>
+@interface CDVIntentAndNavigationFilter : CDVPlugin <NSXMLParserDelegate>
 
 @end

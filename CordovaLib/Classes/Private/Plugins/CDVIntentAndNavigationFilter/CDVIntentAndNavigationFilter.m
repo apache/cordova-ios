@@ -17,10 +17,10 @@
  under the License.
  */
 
-#import "CDVSystemSchemes.h"
+#import "CDVIntentAndNavigationFilter.h"
 #import <Cordova/CDV.h>
 
-@interface CDVSystemSchemes ()
+@interface CDVIntentAndNavigationFilter ()
 
 @property (nonatomic, readwrite) NSMutableArray* allowIntents;
 @property (nonatomic, readwrite) NSMutableArray* allowNavigations;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation CDVSystemSchemes
+@implementation CDVIntentAndNavigationFilter
 
 #pragma mark NSXMLParserDelegate
 
