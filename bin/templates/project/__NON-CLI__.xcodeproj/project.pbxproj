@@ -349,7 +349,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "__PROJECT_NAME__/Bridging-Header.h";
 			};
 			name = Debug;
 		};
@@ -375,7 +374,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "__PROJECT_NAME__/Bridging-Header.h";
 			};
 			name = Release;
 		};
