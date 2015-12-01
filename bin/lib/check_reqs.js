@@ -53,10 +53,6 @@ module.exports.check_os = function () {
         Q.reject('Cordova tooling for iOS requires Apple OS X');
 };
 
-module.exports.help = function () {
-    console.log('Usage: check_reqs or node check_reqs');
-};
-
 /**
  * Checks if specific tool is available.
  * @param  {String} tool       Tool name to check. Known tools are 'xcodebuild' and 'ios-deploy'

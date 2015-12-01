@@ -43,8 +43,14 @@ var argv = require('nopt')({
 var projectPath = argv.argv.remain[0];
 
 if (argv.help || !projectPath) {
-    create.createHelp();
-    process.exit(1);
+    console.log('Usage: $0 [--link] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]');
+    console.log('   --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it.');
+    console.log('   --cli (optional): Use the CLI-project template.');
+    console.log('   <path_to_new_project>: Path to your new Cordova iOS project');
+    console.log('   <package_name>: Package name, following reverse-domain style convention');
+    console.log('   <project_name>: Project name');
+    console.log('   <project_template_dir>: Path to project template (override).');
+    process.exit(0);
 }
 
 // use default configuration file from project template
@@ -55,6 +61,7 @@ if (argv.argv.remain[1]) config.setPackageName(argv.argv.remain[1]);
 if (argv.argv.remain[2]) config.setName(argv.argv.remain[2]);
 
 var options = {
+    cli: argv.cli,
     link: argv.link || argv.shared,
     customTemplate: argv.argv.remain[3],
 };

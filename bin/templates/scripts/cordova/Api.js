@@ -79,7 +79,7 @@ function Api(platform, platformRootDir, events) {
 /**
  * Creates platform in a specified directory.
  *
- * @param  {String}  destination Destination directory, where insatll platform to
+ * @param  {String}  destination Destination directory, where install platform to
  * @param  {ConfigParser}  [config] ConfgiParser instance, used to retrieve
  *   project creation options, such as package id and project name.
  * @param  {Object}  [options]  An options object. The most common options are:
@@ -95,7 +95,6 @@ function Api(platform, platformRootDir, events) {
  *   instance or rejected with CordovaError.
  */
 Api.createPlatform = function (destination, config, options, events) {
-    //return Q.reject('Project already exists');
     return require('../../../lib/create')
     .createProject(destination, config.packageName(), config.name(), options, events || ConsoleLogger.get())
     .then(function () {
