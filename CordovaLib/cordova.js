@@ -817,7 +817,7 @@ module.exports = channel;
 
 });
 
-// file: /Repos/cordova/cordova-ios/cordova-js-src/exec.js
+// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -935,7 +935,32 @@ function iOSExec() {
     }
 }
 
+function handleBridgeChange() {
+    if (iOSExec !== cordova.exec) {
+        var commandString = commandQueue.shift();
+        while(commandString) {
+            var command = JSON.parse(commandString);
+            var callbackId = command[0];
+            var service = command[1];
+            var action = command[2];
+            var actionArgs = command[3];
+            var callbacks = cordova.callbacks[callbackId] || {};
+            
+            cordova.exec(callbacks.success, callbacks.fail, service, action, actionArgs);
+            
+            commandString = commandQueue.shift();
+        };
+        return true;
+    }
+    
+    return false;
+}     
+
 function pokeNative() {
+    if (handleBridgeChange()) {
+        return;
+    }
+    
     // CB-5488 - Don't attempt to create iframe before document.body is available.
     if (!document.body) {
         setTimeout(pokeNative);
@@ -1487,7 +1512,7 @@ exports.reset();
 
 });
 
-// file: /Repos/cordova/cordova-ios/cordova-js-src/platform.js
+// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
