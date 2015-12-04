@@ -144,10 +144,13 @@ function updateProject(platformConfig, locations) {
     var CFBundleVersion = platformConfig.ios_CFBundleVersion() || default_CFBundleVersion(version);
     infoPlist['CFBundleVersion'] = CFBundleVersion;
 
-    var ats = (infoPlist['NSAppTransportSecurity'] || {});
-    ats = processAccessEntriesAsATS(platformConfig, ats);
-    ats = processAllowNavigationEntriesAsATS(platformConfig, ats);
-    infoPlist['NSAppTransportSecurity'] = ats;
+    // replace Info.plist ATS entries according to <access> and <allow-navigation> config.xml entries
+    var ats = writeATSEntries(platformConfig);
+    if (Object.keys(ats).length > 0) {
+        infoPlist['NSAppTransportSecurity'] = ats;
+    } else {
+        delete infoPlist['NSAppTransportSecurity'];
+    }
 
     handleOrientationSettings(platformConfig, infoPlist);
 
@@ -368,112 +371,147 @@ function getOrientationValue(platformConfig) {
     return ORIENTATION_DEFAULT;
 }
 
-function processAccessEntriesAsATS(config, ats) {
-    // CB-9569 - Support <access> tag to Application Transport Security (ATS) in iOS 9+
+/*
+    Parses all <access> and <allow-navigation> entries and consolidates duplicates (for ATS).
+    Returns an object with a Hostname as the key, and the value an object with properties:
+        { 
+            Hostname, // String
+            NSExceptionAllowsInsecureHTTPLoads, // boolean 
+            NSIncludesSubdomains,  // boolean
+            NSExceptionMinimumTLSVersion, // String
+             NSExceptionRequiresForwardSecrecy // boolean 
+        }
+*/
+function processAccessAndAllowNavigationEntries(config) {
     var accesses = config.getAccesses();
-
-    // the default is the wildcard, so if there are no access tags, we add the wildcard in
-    if (accesses.length === 0) {
-        accesses.push({ 'origin' : '*'});
-    }
-
-    if (!ats) {
-        ats = {};
-    }
-
-    accesses.forEach(function(access) {
-        ats = processUrlAsATS(ats, access.origin, access.minimum_tls_version, access.requires_forward_secrecy);
-    });
-
-    return ats;
-}
-
-function processAllowNavigationEntriesAsATS(config, ats) {
-    // CB-9569 - Support <allow-navigation> tag to Application Transport Security (ATS) in iOS 9+
     var allow_navigations = config.getAllowNavigations();
-
-    if (!ats) {
-        ats = {};
-    }
-
-    allow_navigations.forEach(function(allow_navigation) {
-        ats = processUrlAsATS(ats, allow_navigation.href, allow_navigation.minimum_tls_version, allow_navigation.requires_forward_secrecy);
-    });
-
-    return ats;
+    
+    return allow_navigations
+    // we concat allow_navigations and accesses, after processing accesses
+    .concat(accesses.map(function(obj) {
+        // map accesses to a common key interface using 'href', not origin
+        obj.href = obj.origin;
+        delete obj.origin;
+        return obj;
+    }))
+    // we reduce the array to an object with all the entries processed (key is Hostname)
+    .reduce(function(previousReturn, currentElement) {
+        var obj = parseWhitelistUrlForATS(currentElement.href, currentElement.minimum_tls_version, currentElement.requires_forward_secrecy);
+        if (obj) {
+            // we 'union' duplicate entries
+            var item = previousReturn[obj.Hostname];
+            if (!item) {
+                item = {};
+            }
+            for(var o in obj) {
+                if (obj.hasOwnProperty(o)) {
+                    item[o] = obj[o];
+                }
+            }
+            previousReturn[obj.Hostname] = item;
+        }  
+        return previousReturn;
+    }, {});
 }
 
-function processUrlAsATS(ats0, url, minimum_tls_version, requires_forward_secrecy) {
-
-    var ats = JSON.parse(JSON.stringify(ats0)); // (shallow) copy, to prevent side effects, +testable
+/*
+    Parses a URL and returns an object with these keys:
+        { 
+            Hostname, // String
+            NSExceptionAllowsInsecureHTTPLoads, // boolean (default: false)
+            NSIncludesSubdomains,  // boolean (default: false)
+            NSExceptionMinimumTLSVersion, // String (default: 'TLSv1.2')
+            NSExceptionRequiresForwardSecrecy // boolean (default: true)
+        }
+        
+    null is returned if the URL cannot be parsed, or is to be skipped for ATS.
+*/
+function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secrecy) {
+    var href = URL.parse(url);
+    var retObj = {};
+    retObj.Hostname = href.hostname;
 
     if (url === '*') {
-        ats['NSAllowsArbitraryLoads'] = true;
-        return ats;
+        return {
+            Hostname : '*'
+        };
     }
+    
+    // Guiding principle: we only set values in retObj if they are NOT the default
 
-    if (!ats['NSExceptionDomains']) {
-        ats['NSExceptionDomains'] = {};
-    }
-    // TODO: require URL
-    var href = URL.parse(url);
-    var includesSubdomains = false;
-    var hostname = href.hostname;
-
-    if (!hostname) {
+    if (!retObj.Hostname) {
         // check origin, if it allows subdomains (wildcard in hostname), we set NSIncludesSubdomains to YES. Default is NO
         var subdomain1 = '/*.'; // wildcard in hostname
         var subdomain2 = '*://*.'; // wildcard in hostname and protocol
         var subdomain3 = '*://'; // wildcard in protocol only
         if (href.pathname.indexOf(subdomain1) === 0) {
-            includesSubdomains = true;
-            hostname = href.pathname.substring(subdomain1.length);
+            retObj.NSIncludesSubdomains = true;
+            retObj.Hostname = href.pathname.substring(subdomain1.length);
         } else if (href.pathname.indexOf(subdomain2) === 0) {
-            includesSubdomains = true;
-            hostname = href.pathname.substring(subdomain2.length);
+            retObj.NSIncludesSubdomains = true;
+            retObj.Hostname = href.pathname.substring(subdomain2.length);
         } else if (href.pathname.indexOf(subdomain3) === 0) {
-            includesSubdomains = false;
-            hostname = href.pathname.substring(subdomain3.length);
+            retObj.Hostname = href.pathname.substring(subdomain3.length);
         } else {
             // Handling "scheme:*" case to avoid creating of a blank key in NSExceptionDomains.
-            return ats;
+            return null;
         }
     }
 
-    // get existing entry, if any
-    var exceptionDomain = ats['NSExceptionDomains'][hostname] || {};
-
-    if (includesSubdomains) {
-        exceptionDomain['NSIncludesSubdomains'] = true;
-    } else {
-        delete exceptionDomain['NSIncludesSubdomains'];
-    }
-
     if (minimum_tls_version && minimum_tls_version !== 'TLSv1.2') { // default is TLSv1.2
-        exceptionDomain['NSExceptionMinimumTLSVersion'] = minimum_tls_version;
-    } else {
-        delete exceptionDomain['NSExceptionMinimumTLSVersion'];
+        retObj.NSExceptionMinimumTLSVersion = minimum_tls_version;
     }
 
     var rfs = (requires_forward_secrecy === 'true');
     if (requires_forward_secrecy && !rfs) { // default is true
-        exceptionDomain['NSExceptionRequiresForwardSecrecy'] = rfs;
-    } else {
-        delete exceptionDomain['NSExceptionRequiresForwardSecrecy'];
+        retObj.NSExceptionRequiresForwardSecrecy = false;
     }
 
     // if the scheme is HTTP, we set NSExceptionAllowsInsecureHTTPLoads to YES. Default is NO
     if (href.protocol === 'http:') {
-        exceptionDomain['NSExceptionAllowsInsecureHTTPLoads'] = true;
+        retObj.NSExceptionAllowsInsecureHTTPLoads = true;
     }
     else if (!href.protocol && href.pathname.indexOf('*:/') === 0) { // wilcard in protocol
-        exceptionDomain['NSExceptionAllowsInsecureHTTPLoads'] = true;
-    } else {
-        delete exceptionDomain['NSExceptionAllowsInsecureHTTPLoads'];
+        retObj.NSExceptionAllowsInsecureHTTPLoads = true;
     }
+    
+    return retObj;
+}
 
-    ats['NSExceptionDomains'][hostname] = exceptionDomain;
 
+/*
+    App Transport Security (ATS) writer from <access> and <allow-navigation> tags
+    in config.xml
+*/
+function writeATSEntries(config) {
+  var pObj = processAccessAndAllowNavigationEntries(config);
+  
+    var ats = {};
+
+    for(var hostname in pObj) {
+        if (pObj.hasOwnProperty(hostname)) {
+              if (hostname === '*') {
+                  ats['NSAllowsArbitraryLoads'] = true;
+                  continue;              
+              }
+              
+              var entry = pObj[hostname];
+              var exceptionDomain = {};
+              
+              for(var key in entry) {
+                  if (entry.hasOwnProperty(key) && key !== 'Hostname') {
+                      exceptionDomain[key] = entry[key];
+                  }
+              }
+
+              if (!ats['NSExceptionDomains']) {
+                  ats['NSExceptionDomains'] = {};
+              }
+
+              ats['NSExceptionDomains'][hostname] = exceptionDomain;
+        }
+    }
+    
     return ats;
 }
 
