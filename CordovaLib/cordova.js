@@ -1,5 +1,5 @@
 // Platform: ios
-// 8e9610fe33fc743fcaf5d920064f0deb2cad1715
+// ded62dda172755defaf75378ed007dc05730ec22
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -817,7 +817,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/exec.js
+// file: /Users/shazron/Documents/git/apache/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -935,8 +935,9 @@ function iOSExec() {
     }
 }
 
+// CB-10106
 function handleBridgeChange() {
-    if (iOSExec !== cordova.exec) {
+    if (execProxy !== cordovaExec()) {
         var commandString = commandQueue.shift();
         while(commandString) {
             var command = JSON.parse(commandString);
@@ -946,7 +947,7 @@ function handleBridgeChange() {
             var actionArgs = command[3];
             var callbacks = cordova.callbacks[callbackId] || {};
             
-            cordova.exec(callbacks.success, callbacks.fail, service, action, actionArgs);
+            execProxy(callbacks.success, callbacks.fail, service, action, actionArgs);
             
             commandString = commandQueue.shift();
         };
@@ -954,13 +955,9 @@ function handleBridgeChange() {
     }
     
     return false;
-}     
+}
 
 function pokeNative() {
-    if (handleBridgeChange()) {
-        return;
-    }
-    
     // CB-5488 - Don't attempt to create iframe before document.body is available.
     if (!document.body) {
         setTimeout(pokeNative);
@@ -985,7 +982,10 @@ function pokeNative() {
     // navigation of the page).
     failSafeTimerId = setTimeout(function() {
         if (commandQueue.length) {
-            pokeNative();
+            // CB-10106 - flush the queue on bridge change
+            if (!handleBridgeChange()) {
+                pokeNative();
+             }
         }
     }, 50); // Making this > 0 improves performance (marginally) in the normal case (where it doesn't fire).
 }
@@ -1027,7 +1027,31 @@ iOSExec.nativeEvalAndFetch = function(func) {
     }
 };
 
-module.exports = iOSExec;
+// Proxy the exec for bridge changes. See CB-10106
+
+function cordovaExec() {
+    var cexec = require('cordova/exec');
+    var cexec_valid = (typeof cexec.nativeFetchMessages === 'function') && (typeof cexec.nativeEvalAndFetch === 'function') && (typeof cexec.nativeCallback === 'function');
+    return (cexec_valid && execProxy !== cexec)? cexec : iOSExec;
+}
+
+function execProxy() {
+    cordovaExec().apply(null, arguments);
+};
+
+execProxy.nativeFetchMessages = function() {
+    return cordovaExec().nativeFetchMessages.apply(null, arguments);
+};
+
+execProxy.nativeEvalAndFetch = function() {
+    return cordovaExec().nativeEvalAndFetch.apply(null, arguments);
+};
+
+execProxy.nativeCallback = function() {
+    return cordovaExec().nativeCallback.apply(null, arguments);
+};
+
+module.exports = execProxy;
 
 });
 
@@ -1512,7 +1536,7 @@ exports.reset();
 
 });
 
-// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/platform.js
+// file: /Users/shazron/Documents/git/apache/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
