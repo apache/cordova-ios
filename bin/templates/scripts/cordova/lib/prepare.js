@@ -160,7 +160,7 @@ function updateProject(platformConfig, locations) {
     events.emit('verbose', 'Wrote out iOS Bundle Identifier to "' + pkg + '"');
     events.emit('verbose', 'Wrote out iOS Bundle Version to "' + version + '"');
 
-    return handleBuildSettings(platformConfig).then(function() {
+    return handleBuildSettings(platformConfig, locations).then(function() {
         if (name == originalName) {
             events.emit('verbose', 'iOS Product Name has not changed (still "' + originalName + '")');
             return Q();
@@ -225,7 +225,7 @@ function handleOrientationSettings(platformConfig, infoPlist) {
     }
 }
 
-function handleBuildSettings(platformConfig) {
+function handleBuildSettings(platformConfig, locations) {
     var targetDevice = parseTargetDevicePreference(platformConfig.getPreference('target-device', 'ios'));
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
 
@@ -234,7 +234,7 @@ function handleBuildSettings(platformConfig) {
         return Q();
     }
 
-    var proj = new xcode.project(this.pbxproj);
+    var proj = new xcode.project(locations.pbxproj);
 
     try {
         proj.parseSync();
@@ -252,7 +252,7 @@ function handleBuildSettings(platformConfig) {
         proj.updateBuildProperty('IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
     }
 
-    fs.writeFileSync(this.pbxproj, proj.writeSync(), 'utf-8');
+    fs.writeFileSync(locations.pbxproj, proj.writeSync(), 'utf-8');
 
     return Q();
 }
