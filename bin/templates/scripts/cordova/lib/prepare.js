@@ -47,8 +47,8 @@ module.exports.prepare = function (cordovaProject) {
         return updateProject(self._config, self.locations);
     })
     .then(function () {
-        handleIcons(cordovaProject.projectConfig, self.root);
-        handleSplashScreens(cordovaProject.projectConfig, self.root);
+        handleIcons(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
+        handleSplashScreens(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
     })
     .then(function () {
         self.events.emit('verbose', 'updated project successfully');
@@ -260,7 +260,7 @@ function handleBuildSettings(platformConfig, locations) {
 function handleIcons(projectConfig, platformRoot) {
 
     var icons = projectConfig.getIcons('ios');
-    var appRoot = projectConfig.path;
+    var appRoot = path.dirname(projectConfig.path);
 
     // See https://developer.apple.com/library/ios/documentation/userexperience/conceptual/mobilehig/LaunchImages.html
     // for launch images sizes reference.
@@ -274,6 +274,7 @@ function handleIcons(projectConfig, platformRoot) {
         {dest: 'icon-small@2x.png', width: 58, height: 58},
         {dest: 'icon-40.png', width: 40, height: 40},
         {dest: 'icon-40@2x.png', width: 80, height: 80},
+        {dest: 'icon-small@3x.png', width: 87, height: 87},
         {dest: 'icon.png', width: 57, height: 57},
         {dest: 'icon@2x.png', width: 114, height: 114},
         {dest: 'icon-72.png', width: 72, height: 72},
@@ -304,7 +305,7 @@ function handleIcons(projectConfig, platformRoot) {
 
 function handleSplashScreens(projectConfig, platformRoot) {
 
-    var appRoot = projectConfig.path;
+    var appRoot = path.dirname(projectConfig.path);
 
     var splashScreens = projectConfig.getSplashScreens('ios');
     var platformSplashScreens = [
