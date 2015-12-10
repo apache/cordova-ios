@@ -262,7 +262,7 @@ function handleIcons(projectConfig, platformRoot) {
     var icons = projectConfig.getIcons('ios');
     var appRoot = path.dirname(projectConfig.path);
 
-    // See https://developer.apple.com/library/ios/documentation/userexperience/conceptual/mobilehig/LaunchImages.html
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/IconMatrix.html
     // for launch images sizes reference.
     var platformIcons = [
         {dest: 'icon-60.png', width: 60, height: 60},
