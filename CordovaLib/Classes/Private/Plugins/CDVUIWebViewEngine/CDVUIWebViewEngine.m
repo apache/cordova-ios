@@ -116,7 +116,7 @@
 
     // prevent webView from bouncing
     if (!bounceAllowed) {
-        if ([self.webView respondsToSelector:@selector(scrollView)]) {
+        if ([uiWebView respondsToSelector:@selector(scrollView)]) {
             ((UIScrollView*)[uiWebView scrollView]).bounces = NO;
         } else {
             for (id subview in self.webView.subviews) {
