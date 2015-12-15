@@ -241,19 +241,30 @@
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://cordova.apache.org"]]);
 }
 
-- (void)testWildcardPlusScheme
+- (void)testWildcardScheme
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"http://*.apache.org",
+        @"*://*.test.com",
         nil];
 
     CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
-    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]]);
-    XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"https://www.google.com"]]);
-    XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"ftp://cordova.apache.org"]]);
-    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://cordova.apache.org"]]);
-    XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"https://cordova.apache.org"]]);
+    XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
+    XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://testtt.com"]]);
+    
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://test.com"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://test.com"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://my.test.com"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://test.com"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://my.test.com"]]);
+
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://test.com/my/path"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://my.test.com/my/path"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://test.com/my/path"]]);
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"https://my.test.com/my/path"]]);
+
+    XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://test.com#foo"]]);
+    XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"#foo"]]);
 }
 
 - (void)testCredentials
