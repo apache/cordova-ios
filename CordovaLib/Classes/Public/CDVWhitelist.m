@@ -88,7 +88,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 - (bool)matches:(NSURL*)url
 {
     return (_scheme == nil || [_scheme numberOfMatchesInString:[url scheme] options:NSMatchingAnchored range:NSMakeRange(0, [[url scheme] length])]) &&
-           (_host == nil || [_host numberOfMatchesInString:[url host] options:NSMatchingAnchored range:NSMakeRange(0, [[url host] length])]) &&
+           (_host == nil || ([url host] != nil && [_host numberOfMatchesInString:[url host] options:NSMatchingAnchored range:NSMakeRange(0, [[url host] length])])) &&
            (_port == nil || [[url port] isEqualToNumber:_port]) &&
            (_path == nil || [_path numberOfMatchesInString:[url path] options:NSMatchingAnchored range:NSMakeRange(0, [[url path] length])])
     ;
