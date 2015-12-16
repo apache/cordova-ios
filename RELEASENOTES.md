@@ -24,6 +24,15 @@ Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merge
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.0.1 (Dec 15, 2015)
+
+* CB-10185 - Update CordovaLib.xcodeproj to recommended settings in Xcode 7.2
+* CB-10171 - WebKit Error after migration to iOS@4.0.0
+* CB-10155 - DisallowOverscroll not working
+* CB-10168 - CDVViewController appURL is nil if wwwFolderName is the path to a resource bundle
+* CB-10162 - update reference url for icon images
+* CB-10162 - correct the paths for iOS icon and splashscreen resources
+
 ### 4.0.0 (Dec 04, 2015)
 
 * CB-10136 - error in cordova prepare (Platform API)
