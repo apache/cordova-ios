@@ -82,9 +82,6 @@
         [self printMultitaskingInfo];
         [self printPlatformVersionWarning];
         self.initialized = YES;
-
-        // load config.xml settings
-        [self loadSettings];
     }
 }
 
@@ -140,16 +137,32 @@
     NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported ? @"YES" : @"NO"), (![exitsOnSuspend intValue]) ? @"YES" : @"NO");
 }
 
+-(NSString*)configFilePath{
+    NSString* path = self.configFile ?: @"config.xml";
+
+    // if path is relative, resolve it against the main bundle
+    if(![path isAbsolutePath]){
+        NSString* absolutePath = [[NSBundle mainBundle] pathForResource:path ofType:nil];
+        if(!absolutePath){
+            NSAssert(NO, @"ERROR: %@ not found in the main bundle!", path);
+        }
+        path = absolutePath;
+    }
+    
+    // Assert file exists
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        NSAssert(NO, @"ERROR: %@ does not exist. Please run cordova-ios/bin/cordova_plist_to_config_xml path/to/project.", path);
+        return nil;
+    }
+    
+    return path;
+}
+
 - (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate
 {
     // read from config.xml in the app bundle
-    NSString* path = [[NSBundle mainBundle] pathForResource:@"config" ofType:@"xml"];
-
-    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        NSAssert(NO, @"ERROR: config.xml does not exist. Please run cordova-ios/bin/cordova_plist_to_config_xml path/to/project.");
-        return;
-    }
-
+    NSString* path = [self configFilePath];
+    
     NSURL* url = [NSURL fileURLWithPath:path];
 
     self.configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
@@ -173,8 +186,12 @@
     self.settings = delegate.settings;
 
     // And the start folder/page.
-    self.wwwFolderName = @"www";
-    self.startPage = delegate.startPage;
+    if(self.wwwFolderName == nil){
+        self.wwwFolderName = @"www";
+    }
+    if(delegate.startPage && self.startPage == nil){
+        self.startPage = delegate.startPage;
+    }
     if (self.startPage == nil) {
         self.startPage = @"index.html";
     }
@@ -252,6 +269,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Load settings
+    [self loadSettings];
 
     NSString* backupWebStorageType = @"cloud"; // default value
 
