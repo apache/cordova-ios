@@ -49,7 +49,9 @@
     <preference name="PageLength" value="0" />
     <preference name="PaginationBreakingMode" value="page" /> <!-- page, column -->
     <preference name="PaginationMode" value="unpaginated" /> <!-- unpaginated, leftToRight, topToBottom, bottomToTop, rightToLeft -->
-
+    <!-- This settings is just used by the CDVViewControllerTest to assert which config file has been loaded -->
+    <preference name="test_CDVConfigFile" value="config.xml" />
+    
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage"/>
     </feature>

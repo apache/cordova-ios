@@ -17,6 +17,8 @@
 		30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B342F415224B360070E6A5 /* CDVWebViewTest.m */; };
 		30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */; };
 		30F8AE1D152129DA006625B3 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE1C152129DA006625B3 /* www */; };
+		5C4C91761C2ACE450055AFC3 /* CDVViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4C91751C2ACE450055AFC3 /* CDVViewControllerTest.m */; };
+		5C4C917B1C2AD44E0055AFC3 /* config-custom.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5C4C91771C2ACF130055AFC3 /* config-custom.xml */; };
 		686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
 		686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */; };
 		7E91406017711D88002C6A3F /* CDVWebViewDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */; };
@@ -54,6 +56,8 @@
 		30B342F415224B360070E6A5 /* CDVWebViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewTest.m; sourceTree = "<group>"; };
 		30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVBase64Tests.m; sourceTree = "<group>"; };
 		30F8AE1C152129DA006625B3 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
+		5C4C91751C2ACE450055AFC3 /* CDVViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVViewControllerTest.m; sourceTree = "<group>"; };
+		5C4C91771C2ACF130055AFC3 /* config-custom.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "config-custom.xml"; sourceTree = "<group>"; };
 		686357A9141002F100DF4CF2 /* CordovaLibTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CordovaLibTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		686357B2141002F200DF4CF2 /* CordovaLibTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CordovaLibTests-Info.plist"; sourceTree = "<group>"; };
 		686357B4141002F200DF4CF2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 			children = (
 				7EF33BD61911ABA20048544E /* Default-568h@2x.png */,
 				F8EB14D0165FFD3200616F39 /* config.xml */,
+				5C4C91771C2ACF130055AFC3 /* config-custom.xml */,
 				EB3B34F4161B585D003DBE7D /* CordovaLibTests */,
 				303A406D152124BB00182201 /* CordovaLibApp */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
@@ -156,18 +161,19 @@
 		EB3B34F4161B585D003DBE7D /* CordovaLibTests */ = {
 			isa = PBXGroup;
 			children = (
+				30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */,
 				30610C9119AD9B95000B3781 /* CDVCommandDelegateTests.m */,
-				EBA7F20417962CCD001A0CE6 /* CDVStartPageTests.m */,
-				7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */,
-				EB96677116ADBCF500D86CDF /* CDVUserAgentTest.m */,
 				EBA3554415A731F100F4DE24 /* CDVFakeFileManager.h */,
 				EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */,
-				EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */,
-				30B342F415224B360070E6A5 /* CDVWebViewTest.m */,
-				30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */,
 				EB89634915FE66EA00E12277 /* CDVInvokedUrlCommandTests.m */,
 				3062D1AD151D4D9D000D9128 /* CDVLocalStorageTests.m */,
 				686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */,
+				EBA7F20417962CCD001A0CE6 /* CDVStartPageTests.m */,
+				EB96677116ADBCF500D86CDF /* CDVUserAgentTest.m */,
+				5C4C91751C2ACE450055AFC3 /* CDVViewControllerTest.m */,
+				7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */,
+				EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */,
+				30B342F415224B360070E6A5 /* CDVWebViewTest.m */,
 				30356213141049E1006C2D43 /* CDVWhitelistTests.m */,
 				686357B1141002F200DF4CF2 /* Supporting Files */,
 			);
@@ -253,6 +259,7 @@
 				7EF33BD71911ABA20048544E /* Default-568h@2x.png in Resources */,
 				303A4072152124BB00182201 /* InfoPlist.strings in Resources */,
 				30F8AE1D152129DA006625B3 /* www in Resources */,
+				5C4C917B1C2AD44E0055AFC3 /* config-custom.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +326,7 @@
 				30B342F515224B360070E6A5 /* CDVWebViewTest.m in Sources */,
 				30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */,
 				EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */,
+				5C4C91761C2ACE450055AFC3 /* CDVViewControllerTest.m in Sources */,
 				EB89634A15FE66EA00E12277 /* CDVInvokedUrlCommandTests.m in Sources */,
 				EB96677216ADBCF500D86CDF /* CDVUserAgentTest.m in Sources */,
 				7E91406017711D88002C6A3F /* CDVWebViewDelegateTests.m in Sources */,
