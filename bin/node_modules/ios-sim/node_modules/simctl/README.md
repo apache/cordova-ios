@@ -1,3 +1,3 @@
-library for Xcode simctl utility on OS X
+## library wrapper for Xcode's simctl utility on OS X
 
-in experimental stage at the moment.
+Used by [ios-sim](https://www.npmjs.com/package/ios-sim)
