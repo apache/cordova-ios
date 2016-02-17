@@ -200,7 +200,6 @@ Plugman.prototype._addModulesInfo = function(plugin, targetDir) {
  *   directories.
  */
 Plugman.prototype._writePluginModules = function (targetDir) {
-    var self = this;
     // Write out moduleObjects as JSON wrapped in a cordova module to cordova_plugins.js
     var final_contents = 'cordova.define(\'cordova/plugin_list\', function(require, exports, module) {\n';
     final_contents += 'module.exports = ' + JSON.stringify(this._platformJson.root.modules, null, '    ') + ';\n';
