@@ -20,7 +20,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         id        = "io.cordova.helloCordova"
         version   = "2.0.0">
-    <name>Hello Cordova</name>
+    <name>HelloCordova</name>
 
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
