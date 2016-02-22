@@ -81,7 +81,7 @@ function copyScripts(projectPath) {
     // Copy in the new ones.
     var binDir = path.join(ROOT, 'bin');
     shell.cp('-r', srcScriptsDir, projectPath);
-    shell.cp('-r', path.join(binDir, 'node_modules'), destScriptsDir);
+    shell.cp('-r', path.join(ROOT, 'node_modules'), destScriptsDir);
 
     // Copy the check_reqs script
     shell.cp(path.join(binDir, 'check_reqs*'), destScriptsDir);
