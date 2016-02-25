@@ -4,3 +4,5 @@ gitignore
 # licenses for both below are in the cordova-ios LICENSE file
 NSData+Base64.h
 NSData+Base64.m
+
+Contents.json
