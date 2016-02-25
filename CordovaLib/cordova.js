@@ -1,5 +1,5 @@
 // Platform: ios
-// ded62dda172755defaf75378ed007dc05730ec22
+// c517ca811b4948b630e0b74dbae6c9637939da24
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '4.1.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '4.2.0-dev';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -817,7 +817,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/exec.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -935,9 +935,18 @@ function iOSExec() {
     }
 }
 
+// CB-10530
+function proxyChanged() {
+    var cexec = cordovaExec();
+       
+    return (execProxy !== cexec && // proxy objects are different
+            iOSExec !== cexec      // proxy object is not the current iOSExec
+            );
+}
+
 // CB-10106
 function handleBridgeChange() {
-    if (execProxy !== cordovaExec()) {
+    if (proxyChanged()) {
         var commandString = commandQueue.shift();
         while(commandString) {
             var command = JSON.parse(commandString);
@@ -1536,7 +1545,7 @@ exports.reset();
 
 });
 
-// file: /Users/shaz/Documents/Git/Apache/cordova-ios/cordova-js-src/platform.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {

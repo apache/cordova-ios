@@ -1,6 +1,6 @@
 {
     "name": "cordova-ios",
-    "version": "4.1.0-dev",
+    "version": "4.2.0-dev",
     "description": "cordova-ios release",
     "main": "bin/templates/scripts/cordova/Api.js",
     "repository": {
@@ -10,7 +10,9 @@
     "keywords": [
         "ios",
         "cordova",
-        "apache"
+        "apache",
+        "ecosystem:cordova",
+        "cordova:platform"
     ],
     "scripts": {
         "test": "npm run jshint && npm run jasmine",
@@ -26,8 +28,23 @@
         "uncrustify": "^0.6.1",
         "tmp": "^0.0.26",
         "jasmine-node": "~1",
-        "shelljs": "^0.2.6",
         "coffee-script": "^1.7.1",
         "nodeunit": "^0.8.7"
-    }
+    },
+    "dependencies": {
+        "cordova-common": "^1.1.0",
+        "ios-sim": "^5.0.6",
+        "nopt": "^3.0.6",
+        "q": "^1.4.1",
+        "shelljs": "^0.5.3",
+        "xcode": "^0.8.3"
+    },
+    "bundledDependencies": [
+        "cordova-common",
+        "ios-sim",
+        "nopt",
+        "q",
+        "shelljs",
+        "xcode"
+    ]
 }

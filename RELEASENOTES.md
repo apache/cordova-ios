@@ -20,9 +20,30 @@
 -->
 ## Release Notes for Cordova (iOS) ##
 
-Update these notes using: git log --pretty=format:'* %s' --topo-order --no-merges origin/3.7.x..HEAD
-
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+### 4.1.0 (Feb 24, 2016)
+* CB-10693 added missing header license
+* CB-10530 Updated `cordova.js`. 
+* CB-10530 App freezes sometimes directly after starting on **iOS**
+* CB-10668 checked in `node_modules`
+* CB-10668 removed `bin/node_modules`
+* CB-10668 updated `create.js` to grab `node_modules` from root, updated `package.json`
+* CB-10138  Adds missing plugin metadata to `plugin_list` module
+* CB-10493 **iOS** Missing `icon.png`
+* CB-10184 `Images.xcassets`: A 83.5x83.5@2x app icon is required for iPad apps targeting **iOS 9.0** and later
+* Disable `ios-deploy` wifi mode when deploying to a device
+* CB-10272 Improve `<allow-intent>` and `<allow-navigation>` error logs
+* Updated bundled `iso-sim` to `5.0.6`
+* CB-10233 Support different `config.xml` file per `CDVViewController` instance
+* Add additional valid targets for simulation
+* Updated CDV version macro to 4.0.1
+* CB-10185 Update `CordovaLib.xcodeproj` to recommended settings in **Xcode 7.2**
+* CB-10171 `WebKit` Error after migration to **iOS@4.0.0**
+* CB-10155 `DisallowOverscroll` not working
+* CB-10168 `CDVViewController` `appURL` is `nil` if `wwwFolderName` is the path to a resource bundle
+* CB-10162 update reference url for icon images
+* CB-10162 correct the paths for **iOS** icon and splashscreen resources
 
 ### 4.0.0 (Dec 04, 2015)
 
