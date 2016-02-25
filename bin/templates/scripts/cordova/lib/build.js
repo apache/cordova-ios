@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -146,12 +146,10 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            'ARCHS=armv7 arm64',
             '-target', projectName,
             '-configuration', configuration,
-            '-sdk', 'iphoneos',
+            '-destination', 'platform=iOS',
             'build',
-            'VALID_ARCHS=armv7 arm64',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
@@ -159,12 +157,10 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            'ARCHS=i386',
             '-target', projectName ,
             '-configuration', configuration,
-            '-sdk', 'iphonesimulator',
+            '-destination', 'platform=iOS Simulator',
             'build',
-            'VALID_ARCHS=i386',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
