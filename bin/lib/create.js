@@ -99,6 +99,34 @@ function copyScripts(projectPath) {
     });
 }
 
+/*
+ * Copy classes from cordova-ios/bin/template/__PROJECT_NAME__/Classes
+ * to cordova project. Replace strings in updated Classes
+ *
+ * @param {String} project_path         path to cordova project
+ * @param {String} project_name         name of cordova project
+ * @param {String} project_template_dir path to cordova-ios template directory     
+ */
+function copyTemplateClasses(project_path, project_name, project_template_dir) {
+    var r = path.join(project_path, project_name);
+
+    //copy updated classes from cordova-ios into cordova project
+    shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__', 'Classes','*'), path.join(r, 'Classes'));
+
+    /* replace __PROJECT_NAME__ ACTIVITY string in:
+     *
+     * - ./__PROJECT_NAME__/Classes/AppDelegate.h
+     * - ./__PROJECT_NAME__/Classes/AppDelegate.m
+     * - ./__PROJECT_NAME__/Classes/MainViewController.h
+     * - ./__PROJECT_NAME__/Classes/MainViewController.m
+     */
+    var project_name_esc = project_name.replace(/&/g, '\\&');
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.m'));
+}
+
 function detectProjectName(projectDir) {
     var files = fs.readdirSync(projectDir);
     for (var i = 0; i < files.length; ++i) {
@@ -209,7 +237,9 @@ exports.createProject = function(project_path, package_name, project_name, opts,
 
 exports.updateProject = function(projectPath, opts, events) {
     var projectName = detectProjectName(projectPath);
+    var project_template_dir = path.join(ROOT, 'bin', 'templates', 'project');
     setShellFatal(true, function() {
+        copyTemplateClasses(projectPath, projectName, project_template_dir)
         copyJsAndCordovaLib(projectPath, projectName, opts.link);
         copyScripts(projectPath);
         events.emit('log',generateDoneMessage('update', opts.link));
