@@ -60,7 +60,7 @@
 #define __CORDOVA_3_9_2 30902
 #define __CORDOVA_4_0_0 40000
 #define __CORDOVA_4_0_1 40001
-#define __CORDOVA_4_1_1 40100
+#define __CORDOVA_4_1_0 40100
 /* coho:next-version,insert-before */
 #define __CORDOVA_NA 99999      /* not available */
 
