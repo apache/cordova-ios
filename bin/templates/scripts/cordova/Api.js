@@ -126,7 +126,7 @@ Api.updatePlatform = function (destination, options, events) {
     .updateProject(destination, options, events || ConsoleLogger.get())
     .then(function () {
         var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-        return new PlatformApi('android', destination, events);
+        return new PlatformApi('ios', destination, events);
     });
 };
 
