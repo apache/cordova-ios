@@ -112,8 +112,8 @@ function copyTemplateFiles(project_path, project_name, project_template_dir, pac
     var r = path.join(project_path, project_name);
 
     shell.rm('-rf', path.join(project_path, project_name+'.xcodeproj'));
-    shell.cp('-rf', path.join(project_template_dir, '__NON-CLI__.xcodeproj'), project_path);
-    shell.mv('-f', path.join(project_path, '__NON-CLI__.xcodeproj'), path.join(project_path, project_name+'.xcodeproj'));
+    shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcodeproj'), project_path);
+    shell.mv('-f', path.join(project_path, '__TEMP__.xcodeproj'), path.join(project_path, project_name+'.xcodeproj'));
 
     shell.rm('-rf', r);
     shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__'), project_path);
