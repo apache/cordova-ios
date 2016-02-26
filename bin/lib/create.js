@@ -214,7 +214,7 @@ exports.createProject = function(project_path, package_name, project_name, opts,
     copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
 
     //CordovaLib stuff
-    copyJsAndCordovaLib(project_path, project_name, package_name);
+    copyJsAndCordovaLib(project_path, project_name, use_shared);
     copyScripts(project_path);
 
     events.emit('log', generateDoneMessage('create', use_shared));
@@ -225,7 +225,7 @@ exports.updateProject = function(projectPath, opts, events) {
     var projectName = detectProjectName(projectPath);
     var project_template_dir = path.join(ROOT, 'bin', 'templates', 'project');
     //Get package_name from existing projectName-Info.plist file
-    var package_name = plist.parse(fs.readFileSync(path.join(projectPath, projectName, projectName+'-Info.plist'), 'utf8'))['CFBundleIdentifier'];
+    var package_name = plist.parse(fs.readFileSync(path.join(projectPath, projectName, projectName+'-Info.plist'), 'utf8')).CFBundleIdentifier;
     setShellFatal(true, function() {
         copyTemplateFiles(projectPath, projectName, project_template_dir, package_name);
         copyJsAndCordovaLib(projectPath, projectName, opts.link);
