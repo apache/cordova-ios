@@ -23,6 +23,7 @@ var shell = require('shelljs'),
     Q = require ('q'),
     path = require('path'),
     fs = require('fs'),
+    plist = require('plist'),
     ROOT = path.join(__dirname, '..', '..');
 
 function updateSubprojectHelp() {
@@ -100,31 +101,49 @@ function copyScripts(projectPath) {
 }
 
 /*
- * Copy classes from cordova-ios/bin/template/__PROJECT_NAME__/Classes
- * to cordova project. Replace strings in updated Classes
+ * Copy project template files into cordova project.  
  *
  * @param {String} project_path         path to cordova project
  * @param {String} project_name         name of cordova project
  * @param {String} project_template_dir path to cordova-ios template directory     
+ * @parm  {BOOL}   use_cli              true if cli project
  */
-function copyTemplateClasses(project_path, project_name, project_template_dir) {
+function copyTemplateFiles(project_path, project_name, project_template_dir, package_name) {
     var r = path.join(project_path, project_name);
 
-    //copy updated classes from cordova-ios into cordova project
-    shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__', 'Classes','*'), path.join(r, 'Classes'));
+    shell.rm('-rf', path.join(project_path, project_name+'.xcodeproj'));
+    shell.cp('-rf', path.join(project_template_dir, '__NON-CLI__.xcodeproj'), project_path);
+    shell.mv('-f', path.join(project_path, '__NON-CLI__.xcodeproj'), path.join(project_path, project_name+'.xcodeproj'));
 
-    /* replace __PROJECT_NAME__ ACTIVITY string in:
+    shell.rm('-rf', r);
+    shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__'), project_path);
+    shell.mv('-f', path.join(project_path, '__PROJECT_NAME__'), r);
+
+    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, project_name+'-Info.plist'));
+    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, project_name+'-Prefix.pch'));
+    shell.mv('-f', path.join(r, 'gitignore'), path.join(r, '.gitignore'));
+
+    /*replace __PROJECT_NAME__ and --ID-- with ACTIVITY and ID strings, respectively, in:
      *
+     * - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
      * - ./__PROJECT_NAME__/Classes/AppDelegate.h
      * - ./__PROJECT_NAME__/Classes/AppDelegate.m
      * - ./__PROJECT_NAME__/Classes/MainViewController.h
      * - ./__PROJECT_NAME__/Classes/MainViewController.m
+     * - ./__PROJECT_NAME__/Resources/main.m
+     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
+     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
      */
     var project_name_esc = project_name.replace(/&/g, '\\&');
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r+'.xcodeproj', 'project.pbxproj'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.m'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'main.m'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name+'-Info.plist'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name+'-Prefix.pch'));
+    shell.sed('-i', /--ID--/g, package_name, path.join(r, project_name+'-Info.plist'));
 }
 
 function detectProjectName(projectDir) {
@@ -173,7 +192,6 @@ exports.createProject = function(project_path, package_name, project_name, opts,
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     var use_shared = !!opts.link;
-    var use_cli = !!opts.cli;
     var bin_dir = path.join(ROOT, 'bin'),
         project_parent = path.dirname(project_path);
     var project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
@@ -191,44 +209,12 @@ exports.createProject = function(project_path, package_name, project_name, opts,
     // create the project directory and copy over files
     shell.mkdir(project_path);
     shell.cp('-rf', path.join(project_template_dir, 'www'), project_path);
-    if (use_cli) {
-        shell.cp('-rf', path.join(project_template_dir, '__CLI__.xcodeproj'), project_path);
-        shell.mv(path.join(project_path, '__CLI__.xcodeproj'), path.join(project_path, project_name+'.xcodeproj'));
-    }
-    else {
-        shell.cp('-rf', path.join(project_template_dir, '__NON-CLI__.xcodeproj'), project_path);
-        shell.mv(path.join(project_path, '__NON-CLI__.xcodeproj'), path.join(project_path, project_name+'.xcodeproj'));
-    }
-    shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__'), project_path);
-    shell.mv(path.join(project_path, '__PROJECT_NAME__'), path.join(project_path, project_name));
 
-    var r = path.join(project_path, project_name);
-    shell.mv(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, project_name+'-Info.plist'));
-    shell.mv(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, project_name+'-Prefix.pch'));
-    shell.mv(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
-
-    /*replace __PROJECT_NAME__ and --ID-- with ACTIVITY and ID strings, respectively, in:
-     *
-     * - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
-     * - ./__PROJECT_NAME__/Classes/AppDelegate.h
-     * - ./__PROJECT_NAME__/Classes/AppDelegate.m
-     * - ./__PROJECT_NAME__/Resources/main.m
-     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
-     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
-     */
-    var project_name_esc = project_name.replace(/&/g, '\\&');
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r+'.xcodeproj', 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'main.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name+'-Info.plist'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name+'-Prefix.pch'));
-    shell.sed('-i', /--ID--/g, package_name, path.join(r, project_name+'-Info.plist'));
+    //Copy project template files
+    copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
 
     //CordovaLib stuff
-    copyJsAndCordovaLib(project_path, project_name, use_shared);
+    copyJsAndCordovaLib(project_path, project_name, package_name);
     copyScripts(project_path);
 
     events.emit('log', generateDoneMessage('create', use_shared));
@@ -238,8 +224,10 @@ exports.createProject = function(project_path, package_name, project_name, opts,
 exports.updateProject = function(projectPath, opts, events) {
     var projectName = detectProjectName(projectPath);
     var project_template_dir = path.join(ROOT, 'bin', 'templates', 'project');
+    //Get package_name from existing projectName-Info.plist file
+    var package_name = plist.parse(fs.readFileSync(path.join(projectPath, projectName, projectName+'-Info.plist'), 'utf8'))['CFBundleIdentifier'];
     setShellFatal(true, function() {
-        copyTemplateClasses(projectPath, projectName, project_template_dir)
+        copyTemplateFiles(projectPath, projectName, project_template_dir, package_name);
         copyJsAndCordovaLib(projectPath, projectName, opts.link);
         copyScripts(projectPath);
         events.emit('log',generateDoneMessage('update', opts.link));
