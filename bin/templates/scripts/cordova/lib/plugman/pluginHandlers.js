@@ -201,7 +201,7 @@ function installHelper(type, obj, plugin_dir, project_dir, plugin_id, options, p
     if (link) {
         var trueSrc = fs.realpathSync(srcFile);
         // Create a symlink in the expected place, so that uninstall can use it.
-        copyNewFile(plugin_dir, trueSrc, project_dir, destFile, link);
+        copyFile(plugin_dir, trueSrc, project_dir, destFile, link);
 
         // Xcode won't save changes to a file if there is a symlink involved.
         // Make the Xcode reference the file directly.
