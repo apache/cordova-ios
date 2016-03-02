@@ -16,74 +16,59 @@
  *
 */
 
-/* jshint laxcomma:true */
+var fs = require('fs');
+var path = require('path');
+var osenv = require('os');
+var shell = require('shelljs');
+var rewire = require('rewire');
 
-var common = require('../../src/plugman/platforms/common')
-  , path = require('path')
-  , fs = require('fs')
-  , osenv = require('os')
-  , shell = require('shelljs')
-  , test_dir = path.join(osenv.tmpdir(), 'test_plugman')
-  , project_dir = path.join(test_dir, 'project')
-  , src = path.join(project_dir, 'src')
-  , dest = path.join(project_dir, 'dest')
-  , java_dir = path.join(src, 'one', 'two', 'three')
-  , java_file = path.join(java_dir, 'test.java')
-  , symlink_file = path.join(java_dir, 'symlink')
-  , non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
+var common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
 
-describe('common platform handler', function() {
-    describe('resolveSrcPath', function() {
-        it('should not throw if path exists', function(){
-            shell.mkdir('-p', test_dir);
-            var target = path.join(test_dir, 'somefile');
-            fs.writeFileSync(target, '80085', 'utf-8');
-            expect(function(){common.resolveSrcPath(test_dir, 'somefile');}).not.toThrow();
-            shell.rm('-rf', test_dir);
-        });
-    });
+var test_dir = path.join(osenv.tmpdir(), 'test_plugman');
+var project_dir = path.join(test_dir, 'project');
+var src = path.join(project_dir, 'src');
+var dest = path.join(project_dir, 'dest');
+var srcDirTree = path.join(src, 'one', 'two', 'three');
+var srcFile = path.join(srcDirTree, 'test.java');
+var symlink_file = path.join(srcDirTree, 'symlink');
+var non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
 
-    describe('resolveTargetPath', function() {
-        it('should throw if path exists', function(){
-            shell.mkdir('-p', test_dir);
-            expect(function(){common.resolveTargetPath(test_dir);}).toThrow();
-            shell.rm('-rf', test_dir);
-        });
+var copyFile = common.__get__('copyFile');
+var copyNewFile = common.__get__('copyNewFile');
+var removeFileAndParents = common.__get__('removeFileAndParents');
 
-        it('should not throw if path cannot be resolved', function(){
-            expect(function(){common.resolveTargetPath(test_dir, 'somefile');}).not.toThrow();
-        });
-    });
+describe('common handler routines', function() {
 
     describe('copyFile', function() {
         it('should throw if source path not found', function(){
-            expect(function(){common.copyFile(test_dir, src, project_dir, dest);}).
+            shell.rm('-rf', test_dir);
+            expect(function(){copyFile(test_dir, src, project_dir, dest);}).
                 toThrow(new Error('"' + src + '" not found!'));
         });
 
         it('should throw if src not in plugin directory', function(){
             shell.mkdir('-p', project_dir);
             fs.writeFileSync(non_plugin_file, 'contents', 'utf-8');
-            expect(function(){common.copyFile(test_dir, '../non_plugin_file', project_dir, dest);}).
+            expect(function(){copyFile(test_dir, '../non_plugin_file', project_dir, dest);}).
                 toThrow(new Error('"' + non_plugin_file + '" not located within plugin!'));
             shell.rm('-rf', test_dir);
         });
 
         it('should allow symlink src, if inside plugin', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
             // This will fail on windows if not admin - ignore the error in that case.
-            if (ignoreEPERMonWin32(java_file, symlink_file)) {
+            if (ignoreEPERMonWin32(srcFile, symlink_file)) {
                 return;
             }
 
-            common.copyFile(test_dir, symlink_file, project_dir, dest);
+            copyFile(test_dir, symlink_file, project_dir, dest);
             shell.rm('-rf', project_dir);
         });
 
         it('should throw if symlink is linked to a file outside the plugin', function(){
-            shell.mkdir('-p', java_dir);
+            shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(non_plugin_file, 'contents', 'utf-8');
 
             // This will fail on windows if not admin - ignore the error in that case.
@@ -91,27 +76,27 @@ describe('common platform handler', function() {
                 return;
             }
 
-            expect(function(){common.copyFile(test_dir, symlink_file, project_dir, dest);}).
+            expect(function(){copyFile(test_dir, symlink_file, project_dir, dest);}).
                 toThrow(new Error('"' + symlink_file + '" not located within plugin!'));
             shell.rm('-rf', project_dir);
         });
 
         it('should throw if dest is outside the project directory', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
-            expect(function(){common.copyFile(test_dir, java_file, project_dir, non_plugin_file);}).
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
+            expect(function(){copyFile(test_dir, srcFile, project_dir, non_plugin_file);}).
                 toThrow(new Error('"' + non_plugin_file + '" not located within project!'));
             shell.rm('-rf', project_dir);
         });
 
         it('should call mkdir -p on target path', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
             var s = spyOn(shell, 'mkdir').andCallThrough();
-            var resolvedDest = common.resolveTargetPath(project_dir, dest);
+            var resolvedDest = path.resolve(project_dir, dest);
 
-            common.copyFile(test_dir, java_file, project_dir, dest);
+            copyFile(test_dir, srcFile, project_dir, dest);
 
             expect(s).toHaveBeenCalled();
             expect(s).toHaveBeenCalledWith('-p', path.dirname(resolvedDest));
@@ -119,16 +104,16 @@ describe('common platform handler', function() {
         });
 
         it('should call cp source/dest paths', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
             var s = spyOn(shell, 'cp').andCallThrough();
-            var resolvedDest = common.resolveTargetPath(project_dir, dest);
+            var resolvedDest = path.resolve(project_dir, dest);
 
-            common.copyFile(test_dir, java_file, project_dir, dest);
+            copyFile(test_dir, srcFile, project_dir, dest);
 
             expect(s).toHaveBeenCalled();
-            expect(s).toHaveBeenCalledWith('-f', java_file, resolvedDest);
+            expect(s).toHaveBeenCalledWith('-f', srcFile, resolvedDest);
 
             shell.rm('-rf', project_dir);
         });
@@ -138,7 +123,7 @@ describe('common platform handler', function() {
     describe('copyNewFile', function () {
         it('should throw if target path exists', function(){
             shell.mkdir('-p', dest);
-            expect(function(){common.copyNewFile(test_dir, src, project_dir, dest);}).
+            expect(function(){copyNewFile(test_dir, src, project_dir, dest);}).
                 toThrow(new Error('"' + dest + '" already exists!'));
             shell.rm('-rf', dest);
         });
@@ -147,37 +132,37 @@ describe('common platform handler', function() {
 
     describe('deleteJava', function() {
         it('should call fs.unlinkSync on the provided paths', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
             var s = spyOn(fs, 'unlinkSync').andCallThrough();
-            common.deleteJava(project_dir, java_file);
+            removeFileAndParents(project_dir, srcFile);
             expect(s).toHaveBeenCalled();
-            expect(s).toHaveBeenCalledWith(path.resolve(project_dir, java_file));
+            expect(s).toHaveBeenCalledWith(path.resolve(project_dir, srcFile));
 
-            shell.rm('-rf', java_dir);
+            shell.rm('-rf', srcDirTree);
         });
 
-        it('should delete empty directories after removing source code in a java src path hierarchy', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
+        it('should delete empty directories after removing source code in path hierarchy', function(){
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            common.deleteJava(project_dir, java_file);
-            expect(fs.existsSync(java_file)).not.toBe(true);
-            expect(fs.existsSync(java_dir)).not.toBe(true);
+            removeFileAndParents(project_dir, srcFile);
+            expect(fs.existsSync(srcFile)).not.toBe(true);
+            expect(fs.existsSync(srcDirTree)).not.toBe(true);
             expect(fs.existsSync(path.join(src,'one'))).not.toBe(true);
 
-            shell.rm('-rf', java_dir);
+            shell.rm('-rf', srcDirTree);
         });
 
-        it('should never delete the top-level src directory, even if all plugins added were removed', function(){
-            shell.mkdir('-p', java_dir);
-            fs.writeFileSync(java_file, 'contents', 'utf-8');
+        it('should delete the top-level src directory if all plugins added were removed', function(){
+            shell.mkdir('-p', srcDirTree);
+            fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            common.deleteJava(project_dir, java_file);
-            expect(fs.existsSync(src)).toBe(true);
+            removeFileAndParents(project_dir, srcFile);
+            expect(fs.existsSync(src)).toBe(false);
 
-            shell.rm('-rf', java_dir);
+            shell.rm('-rf', srcDirTree);
         });
     });
 });
