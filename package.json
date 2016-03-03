@@ -15,10 +15,10 @@
     "cordova:platform"
   ],
   "scripts": {
-    "test": "npm run jshint && npm run jasmine",
-    "jasmine": "npm run objc-tests && npm run jasmine-tests",
+    "test": "npm run jshint && npm run e2e-tests && npm run objc-tests && npm run unit-tests",
+    "e2e-tests": "jasmine-node --captureExceptions --color tests/spec/create.spec.js",
     "objc-tests": "jasmine-node --captureExceptions --color tests/spec/cordovalib.spec.js",
-    "jasmine-tests": "jasmine-node --captureExceptions --color tests/spec/create.spec.js",
+    "unit-tests": "jasmine-node --captureExceptions --color tests/spec/unit",
     "jshint": "node node_modules/jshint/bin/jshint bin && node node_modules/jshint/bin/jshint tests"
   },
   "author": "Apache Software Foundation",
@@ -29,6 +29,7 @@
     "tmp": "^0.0.26",
     "jasmine-node": "~1",
     "coffee-script": "^1.7.1",
+    "rewire": "^2.5.1",
     "nodeunit": "^0.8.7"
   },
   "dependencies": {
