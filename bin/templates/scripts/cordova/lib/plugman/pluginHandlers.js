@@ -83,7 +83,8 @@ var handlers = {
             if (fs.existsSync(targetDir)) throw new CordovaError('target destination "' + targetDir + '" already exists');
             shell.mkdir('-p', path.dirname(targetDir));
             shell.cp('-R', srcFile, path.dirname(targetDir)); // frameworks are directories
-            var project_relative = path.relative(project.projectDir, targetDir);
+            // CB-10773 translate back slashes to forward on win32
+            var project_relative = fixPathSep(path.relative(project.projectDir, targetDir));
             var pbxFile = project.xcode.addFramework(project_relative, {customFramework: true});
             if (pbxFile) {
                 project.xcode.addToPbxEmbedFrameworksBuildPhase(pbxFile);
@@ -107,7 +108,7 @@ var handlers = {
                 return;
             }
 
-            var targetDir = path.resolve(project.plugins_dir, plugin.id, path.basename(src)),
+            var targetDir = fixPathSep(path.resolve(project.plugins_dir, plugin.id, path.basename(src))),
                 pbxFile = project.xcode.removeFramework(targetDir, {customFramework: true});
             if (pbxFile) {
                 project.xcode.removeFromPbxEmbedFrameworksBuildPhase(pbxFile);
