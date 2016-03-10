@@ -431,6 +431,10 @@ function processAccessAndAllowNavigationEntries(config) {
 function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secrecy) {
     var href = URL.parse(url);
     var retObj = {};
+    if(!href.pathname){
+      return null;
+    }
+    
     retObj.Hostname = href.hostname;
 
     if (url === '*') {
