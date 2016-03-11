@@ -230,7 +230,7 @@ describe('ios plugin handler', function() {
                 var frameworks = copyArray(valid_custom_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith(path.normalize('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'), {customFramework:true});
+                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework', {customFramework:true});
             });
 
             // TODO: Add more tests to cover the cases:
@@ -384,11 +384,12 @@ describe('ios plugin handler', function() {
                 spyOn(dummyProject.xcode, 'removeFramework');
             });
 
+            var frameworkPath = path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework').replace(/\\/g, '/');
+
             it('should call into xcodeproj\'s removeFramework', function(){
                 var frameworks = copyArray(valid_custom_frameworks);
                 uninstall(frameworks[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeFramework)
-                    .toHaveBeenCalledWith(path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'), {customFramework:true});
+                expect(dummyProject.xcode.removeFramework).toHaveBeenCalledWith(frameworkPath, {customFramework:true});
             });
 
             // TODO: Add more tests to cover the cases:
@@ -400,7 +401,7 @@ describe('ios plugin handler', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
                     var spy = spyOn(shell, 'rm');
                     uninstall(frameworks[0], dummyPluginInfo, dummyProject);
-                    expect(spy).toHaveBeenCalledWith('-rf', path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'));
+                    expect(spy).toHaveBeenCalledWith('-rf', frameworkPath);
                 });
             });
         });
