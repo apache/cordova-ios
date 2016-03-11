@@ -19,7 +19,8 @@
 #
 -->
 
-[![Build Status](https://travis-ci.org/apache/cordova-ios.svg)](https://travis-ci.org/apache/cordova-ios)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/apache/cordova-ios?branch=master)](https://ci.appveyor.com/project/Humbedooh/cordova-ios)
+[![Build Status](https://travis-ci.org/apache/cordova-ios.svg?branch=master)](https://travis-ci.org/apache/cordova-ios)
 
 Cordova iOS
 =============================================================
