@@ -31,9 +31,8 @@ var configMunger = require('../configMunger');
 var projectFile = require('../projectFile');
 var pluginHandlers = require('./pluginHandlers');
 
-function Plugman(locations, events) {
+function Plugman(locations) {
     this.locations = locations;
-    this.events = events;
 
     this._munger = configMunger.get(this.locations.root);
     this._platformJson = this._munger.platformJson;
@@ -43,10 +42,10 @@ function Plugman(locations, events) {
 // shared Plugman instance
 var _instance = null;
 
-Plugman.get = function(locations, events) {
+Plugman.get = function(locations) {
 
     if (!_instance) {
-        _instance = new Plugman(locations, events);
+        _instance = new Plugman(locations);
     }
     // we use singleton Plugman instance so we don't inistantiate all helper classes
     // for each plugin add or rm

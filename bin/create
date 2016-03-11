@@ -38,7 +38,7 @@ var argv = require('nopt')({
     'cli' : Boolean,
     'shared' : Boolean, // alias for --link
     'link' : Boolean
-});
+}, { 'd' : '--verbose' });
 
 var projectPath = argv.argv.remain[0];
 
@@ -65,5 +65,7 @@ var options = {
     link: argv.link || argv.shared,
     customTemplate: argv.argv.remain[3],
 };
+
+require('./templates/scripts/cordova/loggingHelper').adjustLoggerLevel(argv);
 
 Api.createPlatform(projectPath, config, options).done();

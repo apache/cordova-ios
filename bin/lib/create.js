@@ -24,7 +24,8 @@ var shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
     plist = require('plist'),
-    ROOT = path.join(__dirname, '..', '..');
+    ROOT = path.join(__dirname, '..', '..'),
+    events = require('cordova-common').events;
 
 function updateSubprojectHelp() {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
@@ -188,7 +189,7 @@ function relpath(_path, start) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = function(project_path, package_name, project_name, opts, events) {
+exports.createProject = function(project_path, package_name, project_name, opts) {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     var use_shared = !!opts.link;
@@ -221,7 +222,7 @@ exports.createProject = function(project_path, package_name, project_name, opts,
     return Q.resolve();
 };
 
-exports.updateProject = function(projectPath, opts, events) {
+exports.updateProject = function(projectPath, opts) {
     var projectName = detectProjectName(projectPath);
     var project_template_dir = path.join(ROOT, 'bin', 'templates', 'project');
     //Get package_name from existing projectName-Info.plist file

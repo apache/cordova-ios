@@ -51,7 +51,7 @@ module.exports.prepare = function (cordovaProject) {
         handleSplashScreens(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
     })
     .then(function () {
-        self.events.emit('verbose', 'updated project successfully');
+        events.emit('verbose', 'updated project successfully');
     });
 };
 
