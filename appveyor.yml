@@ -1,0 +1,19 @@
+environment:
+  matrix:
+  - nodejs_version: "0.10"
+  - nodejs_version: "0.12"
+  - nodejs_version: "4.2"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  # Lines below required due to uncrustify installation failure on Windows
+  - npm install --prod
+  - npm install jshint jasmine-node rewire
+
+build: off
+
+test_script:
+  - node --version
+  - npm --version
+  - npm run jshint
+  - npm run unit-tests
