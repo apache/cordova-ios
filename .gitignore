@@ -7,4 +7,5 @@ tmp
 xcuserdata
 console.log
 node_modules/
+coverage/
 npm-debug.log

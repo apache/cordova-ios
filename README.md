@@ -21,6 +21,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/apache/cordova-ios?branch=master)](https://ci.appveyor.com/project/Humbedooh/cordova-ios)
 [![Build Status](https://travis-ci.org/apache/cordova-ios.svg?branch=master)](https://travis-ci.org/apache/cordova-ios)
+[![codecov.io](https://codecov.io/github/apache/cordova-ios/coverage.svg?branch=master)](https://codecov.io/github/apache/cordova-ios?branch=master)
 
 Cordova iOS
 =============================================================

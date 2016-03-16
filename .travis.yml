@@ -1,6 +1,12 @@
 language: objective-c
 sudo: false
 install:
-- npm install
-- npm install ios-deploy
-script: "npm test"
+    - npm install
+    - npm install ios-deploy
+    - npm install -g codecov
+script:
+    - npm run jshint
+    - npm run e2e-tests
+    - npm run objc-tests
+    - npm run cover
+after_script: codecov

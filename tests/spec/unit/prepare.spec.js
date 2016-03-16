@@ -23,6 +23,7 @@ var shell = require('shelljs');
 var plist = require('plist');
 var xcode = require('xcode');
 var rewire = require('rewire');
+var EventEmitter = require('events').EventEmitter;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
 var prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
 
@@ -51,7 +52,7 @@ describe('prepare', function () {
     beforeEach(function() {
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
-        p = new Api('ios', iosPlatform);
+        p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
     afterEach(function () {
