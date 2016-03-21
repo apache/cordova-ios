@@ -32,16 +32,27 @@ describe('cordova-lib', function() {
         var command;
         var artifacts_dir = tmp.dirSync().name;
 
-        // check iOS Simulator if running
-        command = 'pgrep "iOS Simulator"';
-        return_code = shell.exec(command).code;
+        function killSimulator(processName) {
+            var result;
+            // check iOS Simulator if running
+            command = 'pgrep "' + processName + '"';
+            return_code = shell.exec(command).code;
 
-        // if iOS Simulator is running, kill it
-        if (return_code === 0) { // found
-            shell.echo('iOS Simulator is running, we\'re going to kill it.');
-            return_code = shell.exec('killall "iOS Simulator"').code;
-            expect(return_code).toBe(0);
+            // if iOS Simulator is running, kill it
+            if (return_code === 0) { // found
+                shell.echo('iOS Simulator is running("'+ processName +'"), we\'re going to kill it.');
+                result = shell.exec('killall "' + processName + '"');
+                if (result.code !== 0) {
+                    if (!(result.output &&
+                            result.output.indexOf('No matching processes belonging to you were found') !== -1)) {
+                        expect(result.code).toBe(0);
+                    }
+                }
+            }
         }
+
+        killSimulator('iOS Simulator'); // XCode6
+        killSimulator('Simulator'); // XCode7
 
         // run the tests
         command = util.format('xcodebuild test -workspace %s/cordova-ios.xcworkspace -scheme CordovaLibTests -destination "platform=iOS Simulator,name=iPhone 5" CONFIGURATION_BUILD_DIR="%s"', tests_dir, artifacts_dir);
