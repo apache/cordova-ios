@@ -18,7 +18,16 @@
  */
 
 #import "CDVPlugin.h"
+#import "CDVWhitelist.h"
+
+typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
+    CDVIntentAndNavigationFilterValueIntentAllowed,
+    CDVIntentAndNavigationFilterValueNavigationAllowed,
+    CDVIntentAndNavigationFilterValueNoneAllowed
+};
 
 @interface CDVIntentAndNavigationFilter : CDVPlugin <NSXMLParserDelegate>
+
++ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url intentsWhitelist:(CDVWhitelist*)intentsWhitelist navigationsWhitelist:(CDVWhitelist*)navigationsWhitelist;
 
 @end
