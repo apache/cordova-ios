@@ -22,6 +22,26 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.1.1 (Apr 01, 2016)
+* CB-11006 Updated CDV version macro to 4.1.1
+* CB-11006 Added license to loggingHelper.js
+* CB-11006 Updated checked-in node_modules
+* CB-10320 Fixes corrupted logo.png
+* CB-10918 Travis tests are failing sometimes for cordova-ios
+* CB-10912 Bundling ios-sim 5.0.7 to fix 'Invalid Device State' errors
+* CB-10912: update ios-sim to 5.0.7 to fix 'Invalid Device State' errors
+* CB-10888 Enable coverage reports collection via codecov
+* CB-10840 Use cordova-common.CordovaLogger in cordova-ios
+* CB-10846 Add status badges for Travis and AppVeyor
+* CB-10846 Add AppVeyor configuration
+* CB-10773 Update path delimiters in tests
+* CB-10769 Update specs according to actual implementation
+* CB-10769 Copy raw pluginHandler tests from cordova-lib
+* revert bad fix for CB-10828 I blame node 5.7.0
+* CB-10828 TypeError: Cannot read property 'indexOf' of null when allow-navigation using scheme:*
+* CB-10773 Correct FRAMEWORKS_SEARCH_PATHS on win32
+* CB-10673 fixed conflicting plugin install issue with overlapped <source-file> tag using --force option. This closes #199.
+
 ### 4.1.0 (Feb 24, 2016)
 * CB-10693 added missing header license
 * CB-10530 Updated `cordova.js`. 
