@@ -133,9 +133,9 @@ function checkDeviceConnected() {
 function deployToDevice(appPath, target, extraArgs) {
     // Deploying to device...
     if (target) {
-        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs));
+        return spawn('ios-deploy', ['-d', '-b', appPath, '-i', target].concat(extraArgs));
     } else {
-        return spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs));
+        return spawn('ios-deploy', ['--no-wifi', '-d', '-b', appPath].concat(extraArgs));
     }
 }
 
