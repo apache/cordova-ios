@@ -29,12 +29,12 @@ var events = require('cordova-common').events;
 var xmlHelpers = require('cordova-common').xmlHelpers;
 var ConfigParser = require('cordova-common').ConfigParser;
 var CordovaError = require('cordova-common').CordovaError;
+var projectFile = require('./projectFile');
 var configMunger = require('./configMunger');
 
 /*jshint sub:true*/
 
 module.exports.prepare = function (cordovaProject) {
-
     var self = this;
 
     this._config = updateConfigFile(cordovaProject.projectConfig,
@@ -95,7 +95,7 @@ function updateConfigFile(sourceConfig, configMunger, locations) {
  *   the platform 'www' folder
  *
  * @param   {Object}  cordovaProject    An object which describes cordova project.
- * @param   {Object}  destinations      An object that contains destination 
+ * @param   {Object}  destinations      An object that contains destination
  *   paths for www files.
  */
 function updateWww(cordovaProject, destinations) {
@@ -180,13 +180,14 @@ function updateProject(platformConfig, locations) {
         // Move the xcodeproj and other name-based dirs over.
         shell.mv(path.join(locations.xcodeCordovaProj, originalName + '-Info.plist'), path.join(locations.xcodeCordovaProj, name + '-Info.plist'));
         shell.mv(path.join(locations.xcodeCordovaProj, originalName + '-Prefix.pch'), path.join(locations.xcodeCordovaProj, name + '-Prefix.pch'));
-        // CB-8914 remove userdata otherwise project is un-usable in xcode 
+        // CB-8914 remove userdata otherwise project is un-usable in xcode
         shell.rm('-rf',path.join(locations.xcodeProjDir,'xcuserdata/'));
         shell.mv(locations.xcodeProjDir, path.join(locations.root, name + '.xcodeproj'));
         shell.mv(locations.xcodeCordovaProj, path.join(locations.root, name));
 
         // Update locations with new paths
         locations.xcodeCordovaProj = path.join(locations.root, name);
+        locations.configXml = path.join(locations.xcodeCordovaProj, 'config.xml');
         locations.xcodeProjDir = path.join(locations.root, name + '.xcodeproj');
         locations.pbxproj = path.join(locations.xcodeProjDir, 'project.pbxproj');
 
@@ -195,7 +196,11 @@ function updateProject(platformConfig, locations) {
         pbx_contents = pbx_contents.split(originalName).join(name);
         fs.writeFileSync(locations.pbxproj, pbx_contents, 'utf-8');
         events.emit('verbose', 'Wrote out iOS Product Name and updated XCode project file names from "'+originalName+'" to "' + name + '".');
-        // in case of updated paths we return them back to
+
+        // Remove cached `projectFile` instance as it is not valid anymore
+        // since the project structure has changed
+        projectFile.purgeProjectFileCache(locations.root);
+
         return Q();
     });
 }
@@ -376,18 +381,18 @@ function getOrientationValue(platformConfig) {
 /*
     Parses all <access> and <allow-navigation> entries and consolidates duplicates (for ATS).
     Returns an object with a Hostname as the key, and the value an object with properties:
-        { 
+        {
             Hostname, // String
-            NSExceptionAllowsInsecureHTTPLoads, // boolean 
+            NSExceptionAllowsInsecureHTTPLoads, // boolean
             NSIncludesSubdomains,  // boolean
             NSExceptionMinimumTLSVersion, // String
-             NSExceptionRequiresForwardSecrecy // boolean 
+             NSExceptionRequiresForwardSecrecy // boolean
         }
 */
 function processAccessAndAllowNavigationEntries(config) {
     var accesses = config.getAccesses();
     var allow_navigations = config.getAllowNavigations();
-    
+
     return allow_navigations
     // we concat allow_navigations and accesses, after processing accesses
     .concat(accesses.map(function(obj) {
@@ -411,21 +416,21 @@ function processAccessAndAllowNavigationEntries(config) {
                 }
             }
             previousReturn[obj.Hostname] = item;
-        }  
+        }
         return previousReturn;
     }, {});
 }
 
 /*
     Parses a URL and returns an object with these keys:
-        { 
+        {
             Hostname, // String
             NSExceptionAllowsInsecureHTTPLoads, // boolean (default: false)
             NSIncludesSubdomains,  // boolean (default: false)
             NSExceptionMinimumTLSVersion, // String (default: 'TLSv1.2')
             NSExceptionRequiresForwardSecrecy // boolean (default: true)
         }
-        
+
     null is returned if the URL cannot be parsed, or is to be skipped for ATS.
 */
 function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secrecy) {
@@ -438,7 +443,7 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
             Hostname : '*'
         };
     }
-    
+
     // Guiding principle: we only set values in retObj if they are NOT the default
 
     if (!retObj.Hostname) {
@@ -476,7 +481,7 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
     else if (!href.protocol && href.pathname.indexOf('*:/') === 0) { // wilcard in protocol
         retObj.NSExceptionAllowsInsecureHTTPLoads = true;
     }
-    
+
     return retObj;
 }
 
@@ -487,19 +492,19 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
 */
 function writeATSEntries(config) {
   var pObj = processAccessAndAllowNavigationEntries(config);
-  
+
     var ats = {};
 
     for(var hostname in pObj) {
         if (pObj.hasOwnProperty(hostname)) {
               if (hostname === '*') {
                   ats['NSAllowsArbitraryLoads'] = true;
-                  continue;              
+                  continue;
               }
-              
+
               var entry = pObj[hostname];
               var exceptionDomain = {};
-              
+
               for(var key in entry) {
                   if (entry.hasOwnProperty(key) && key !== 'Hostname') {
                       exceptionDomain[key] = entry[key];
@@ -513,7 +518,7 @@ function writeATSEntries(config) {
               ats['NSExceptionDomains'][hostname] = exceptionDomain;
         }
     }
-    
+
     return ats;
 }
 
