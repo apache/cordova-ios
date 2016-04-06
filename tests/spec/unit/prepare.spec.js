@@ -17,6 +17,7 @@
  under the License.
  */
 
+var fs = require('fs');
 var os = require('os');
 var path = require('path');
 var shell = require('shelljs');
@@ -26,6 +27,7 @@ var rewire = require('rewire');
 var EventEmitter = require('events').EventEmitter;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
 var prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
+var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 
 var FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -68,6 +70,7 @@ describe('prepare', function () {
 
         beforeEach(function() {
             mv = spyOn(shell, 'mv');
+            spyOn(fs, 'writeFileSync');
             spyOn(plist, 'parse').andReturn({});
             spyOn(plist, 'build').andReturn('');
             spyOn(xcode, 'project').andCallFake(function (pbxproj) {
@@ -76,7 +79,7 @@ describe('prepare', function () {
                 return xc;
             });
             cfg.name = function() { return 'SampleApp'; };
-            cfg2.name = function() { return 'SampleApp'; };
+            cfg2.name = function() { return 'testname'; };
             cfg.packageName = function() { return 'testpkg'; };
             cfg.version = function() { return 'one point oh'; };
 
@@ -84,14 +87,30 @@ describe('prepare', function () {
         });
 
         it('should update the app name in pbxproj by calling xcode.updateProductName, and move the ios native files to match the new name', function(done) {
-            var test_path = path.join(iosProject, 'platforms/ios/test');
+            var test_path = path.join(iosProject, 'platforms/ios/SampleApp');
             var testname_path = path.join(iosProject, 'platforms/ios/testname');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+
+            // Warm up the projectFile cache
+            projectFile.parse(p.locations);
+            // Copy pbxproj file to expected destination because updateProject expects it would be there
+            var destPbxproj = path.join(p.locations.xcodeProjDir, '../testname.xcodeproj/project.pbxproj');
+            shell.mkdir('-p', path.dirname(destPbxproj));
+            shell.cp(p.locations.pbxproj, destPbxproj);
+
+            wrapper(updateProject(cfg2, p.locations), done, function() {
                 expect(update_name).toHaveBeenCalledWith('testname');
-                expect(mv).toHaveBeenCalledWith(path.join(test_path, 'test-Info.plist'), path.join(test_path, 'testname-Info.plist'));
-                expect(mv).toHaveBeenCalledWith(path.join(test_path, 'test-Prefix.pch'), path.join(test_path, 'testname-Prefix.pch'));
+                expect(mv).toHaveBeenCalledWith(path.join(test_path, 'SampleApp-Info.plist'), path.join(test_path, 'testname-Info.plist'));
+                expect(mv).toHaveBeenCalledWith(path.join(test_path, 'SampleApp-Prefix.pch'), path.join(test_path, 'testname-Prefix.pch'));
                 expect(mv).toHaveBeenCalledWith(test_path + '.xcodeproj', testname_path + '.xcodeproj');
                 expect(mv).toHaveBeenCalledWith(test_path, testname_path);
+
+                // Validate that Api.locations properties also updated according to new project name
+                expect(p.locations.xcodeCordovaProj).toBe(testname_path);
+                expect(p.locations.configXml).toBe(path.join(testname_path, 'config.xml'));
+                expect(p.locations.xcodeProjDir).toBe(path.join(p.locations.root, 'testname.xcodeproj'));
+                expect(p.locations.pbxproj).toBe(path.join(p.locations.root, 'testname.xcodeproj/project.pbxproj'));
+
+                expect(projectFile.__get__('cachedProjectFiles')[p.locations.root]).not.toBeDefined();
             });
         });
         it('should write out the app id to info plist as CFBundleIdentifier', function(done) {
