@@ -48,7 +48,8 @@ module.exports.run = function (buildOpts) {
             return Q.reject('Build config file does not exist:' + buildOpts.buildConfig);
         }
         events.emit('log','Reading build config file:', path.resolve(buildOpts.buildConfig));
-        var buildConfig = JSON.parse(fs.readFileSync(buildOpts.buildConfig, 'utf-8'));
+        var contents = fs.readFileSync(buildOpts.buildConfig, 'utf-8');
+        var buildConfig = JSON.parse(contents.replace(/^\ufeff/, '')); // Remove BOM
         if(buildConfig.ios) {
             var buildType = buildOpts.release ? 'release' : 'debug';
             var config = buildConfig.ios[buildType];
