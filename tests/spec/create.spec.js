@@ -74,6 +74,13 @@ describe('create', function() {
         createAndBuild(projectname, projectid);
     });
 
+    it('create project with unicode name 2, no spaces', function() {
+        var projectname = 'إثرا';
+        var projectid = 'com.test.app3.2';
+
+        createAndBuild(projectname, projectid);
+    });
+
     it('create project with unicode name, and spaces', function() {
         var projectname = '応応応応 用用用用';
         var projectid = 'com.test.app4';

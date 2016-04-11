@@ -21,6 +21,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var unorm = require('unorm');
 
 var CordovaError = require('cordova-common').CordovaError;
 var CordovaLogger = require('cordova-common').CordovaLogger;
@@ -108,8 +109,13 @@ function Api(platform, platformRootDir, events) {
 Api.createPlatform = function (destination, config, options, events) {
     setupEvents(events);
 
+    // CB-6992 it is necessary to normalize characters
+    // because node and shell scripts handles unicode symbols differently
+    // We need to normalize the name to NFD form since iOS uses NFD unicode form
+    var name = unorm.nfd(config.name());
+
     return require('../../../lib/create')
-    .createProject(destination, config.packageName(), config.name(), options)
+    .createProject(destination, config.packageName(), name, options)
     .then(function () {
         // after platform is created we return Api instance based on new Api.js location
         // This is required to correctly resolve paths in the future api calls
