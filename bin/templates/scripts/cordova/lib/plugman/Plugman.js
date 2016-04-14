@@ -95,11 +95,12 @@ Plugman.prototype.addPlugin = function (plugin, installOptions) {
             .add_plugin_changes(plugin, installOptions.variables, /*is_top_level=*/true, /*should_increment=*/true)
             .save_all();
 
-        var targetDir = installOptions.usePlatformWww ?
-            self.locations.platformWww :
-            self.locations.www;
+        var targetDirs = [self.locations.www];
+        if (installOptions.usePlatformWww) targetDirs.push(self.locations.platformWww);
+        self._addModulesInfo(plugin, targetDirs);
 
-        self._addModulesInfo(plugin, targetDir);
+        // CB-11022 Return true to indicate that prepare is not necessary
+        return true;
     });
 };
 
@@ -134,11 +135,12 @@ Plugman.prototype.removePlugin = function (plugin, uninstallOptions) {
             .remove_plugin_changes(plugin, /*is_top_level=*/true)
             .save_all();
 
-        var targetDir = uninstallOptions.usePlatformWww ?
-            self.locations.platformWww :
-            self.locations.www;
+        var targetDirs = [self.locations.www];
+        if (uninstallOptions.usePlatformWww) targetDirs.push(self.locations.platformWww);
+        self._removeModulesInfo(plugin, targetDirs);
 
-        self._removeModulesInfo(plugin, targetDir);
+        // CB-11022 Return true to indicate that prepare is not necessary
+        return true;
     });
 };
 
@@ -148,10 +150,10 @@ Plugman.prototype.removePlugin = function (plugin, uninstallOptions) {
  *
  * @param   {PluginInfo}  plugin  PluginInfo instance for plugin, which modules
  *   needs to be added.
- * @param   {String}  targetDir  The directory, where updated cordova_plugins.js
+ * @param   {String[]}  targetDirs  The directories, where updated cordova_plugins.js
  *   should be written to.
  */
-Plugman.prototype._addModulesInfo = function(plugin, targetDir) {
+Plugman.prototype._addModulesInfo = function(plugin, targetDirs) {
     var installedModules = this._platformJson.root.modules || [];
 
     var installedPaths = installedModules.map(function (installedModule) {
@@ -186,7 +188,7 @@ Plugman.prototype._addModulesInfo = function(plugin, targetDir) {
         this._platformJson.root.plugin_metadata = {};
     }
     this._platformJson.root.plugin_metadata[plugin.id] = plugin.version;
-    this._writePluginModules(targetDir);
+    this._writePluginModules(targetDirs);
     this._platformJson.save();
 };
 
@@ -194,11 +196,11 @@ Plugman.prototype._addModulesInfo = function(plugin, targetDir) {
  * Fetches all installed modules, generates cordova_plugins contents and writes
  *   it to file.
  *
- * @param   {String}  targetDir  Directory, where write cordova_plugins.js to.
+ * @param   {String[]}  targetDirs  Directories, where write cordova_plugins.js to.
  *   Ususally it is either <platform>/www or <platform>/platform_www
  *   directories.
  */
-Plugman.prototype._writePluginModules = function (targetDir) {
+Plugman.prototype._writePluginModules = function (targetDirs) {
     // Write out moduleObjects as JSON wrapped in a cordova module to cordova_plugins.js
     var final_contents = 'cordova.define(\'cordova/plugin_list\', function(require, exports, module) {\n';
     final_contents += 'module.exports = ' + JSON.stringify(this._platformJson.root.modules, null, '    ') + ';\n';
@@ -209,8 +211,10 @@ Plugman.prototype._writePluginModules = function (targetDir) {
     final_contents += '// BOTTOM OF METADATA\n';
     final_contents += '});'; // Close cordova.define.
 
-    shell.mkdir('-p', targetDir);
-    fs.writeFileSync(path.join(targetDir, 'cordova_plugins.js'), final_contents, 'utf-8');
+    targetDirs.forEach(function (targetDir) {
+        shell.mkdir('-p', targetDir);
+        fs.writeFileSync(path.join(targetDir, 'cordova_plugins.js'), final_contents, 'utf-8');
+    });
 };
 
 /**
@@ -219,10 +223,10 @@ Plugman.prototype._writePluginModules = function (targetDir) {
  *
  * @param   {PluginInfo}  plugin  PluginInfo instance for plugin, which modules
  *   needs to be removed.
- * @param   {String}  targetDir  The directory, where updated cordova_plugins.js
+ * @param   {String[]}  targetDirs  The directories, where updated cordova_plugins.js
  *   should be written to.
  */
-Plugman.prototype._removeModulesInfo = function(plugin, targetDir) {
+Plugman.prototype._removeModulesInfo = function(plugin, targetDirs) {
     var installedModules = this._platformJson.root.modules || [];
     var modulesToRemove = plugin.getJsModules(this.platform)
     .map(function (jsModule) {
@@ -238,6 +242,6 @@ Plugman.prototype._removeModulesInfo = function(plugin, targetDir) {
     if (this._platformJson.root.plugin_metadata) {
         delete this._platformJson.root.plugin_metadata[plugin.id];
     }
-    this._writePluginModules(targetDir);
+    this._writePluginModules(targetDirs);
     this._platformJson.save();
 };
