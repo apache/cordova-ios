@@ -262,6 +262,54 @@ describe('ios plugin handler', function() {
             });
         });
 
+        describe('of <js-module> elements', function() {
+            var jsModule = {src: 'www/dummyPlugin.js'};
+            var install = pluginHandlers.getInstaller('js-module');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                spyOn(fs, 'writeFileSync');
+                wwwDest = path.resolve(dummyProject.www, 'plugins', dummyPluginInfo.id, jsModule.src);
+                platformWwwDest = path.resolve(dummyProject.platformWww, 'plugins', dummyPluginInfo.id, jsModule.src);
+            });
+
+            it('should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                install(jsModule, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(fs.writeFileSync).toHaveBeenCalledWith(wwwDest, jasmine.any(String), 'utf-8');
+                expect(fs.writeFileSync).toHaveBeenCalledWith(platformWwwDest, jasmine.any(String), 'utf-8');
+            });
+
+            it('should put module to www only when options.usePlatformWww flag is not specified', function () {
+                install(jsModule, dummyPluginInfo, dummyProject);
+                expect(fs.writeFileSync).toHaveBeenCalledWith(wwwDest, jasmine.any(String), 'utf-8');
+                expect(fs.writeFileSync).not.toHaveBeenCalledWith(platformWwwDest, jasmine.any(String), 'utf-8');
+            });
+        });
+
+        describe('of <asset> elements', function() {
+            var asset = {src: 'www/dummyPlugin.js', target: 'foo/dummy.js'};
+            var install = pluginHandlers.getInstaller('asset');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                spyOn(shell, 'cp');
+                wwwDest = path.resolve(dummyProject.www, asset.target);
+                platformWwwDest = path.resolve(dummyProject.platformWww, asset.target);
+            });
+
+            it('should put asset to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                install(asset, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
+                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
+            });
+
+            it('should put asset to www only when options.usePlatformWww flag is not specified', function () {
+                install(asset, dummyPluginInfo, dummyProject);
+                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
+                expect(shell.cp).not.toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
+            });
+        });
+
         it('of two plugins should apply xcode file changes from both', function(done){
             var api = new Api('ios', temp);
             var fail = jasmine.createSpy('fail');
@@ -403,6 +451,68 @@ describe('ios plugin handler', function() {
                     uninstall(frameworks[0], dummyPluginInfo, dummyProject);
                     expect(spy).toHaveBeenCalledWith('-rf', frameworkPath);
                 });
+            });
+        });
+
+        describe('of <js-module> elements', function() {
+            var jsModule = {src: 'www/dummyPlugin.js'};
+            var uninstall = pluginHandlers.getUninstaller('js-module');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                wwwDest = path.resolve(dummyProject.www, 'plugins', dummyPluginInfo.id, jsModule.src);
+                platformWwwDest = path.resolve(dummyProject.platformWww, 'plugins', dummyPluginInfo.id, jsModule.src);
+
+                spyOn(shell, 'rm');
+
+                var existsSyncOrig = fs.existsSync;
+                spyOn(fs, 'existsSync').andCallFake(function (file) {
+                    if ([wwwDest, platformWwwDest].indexOf(file) >= 0 ) return true;
+                    return existsSyncOrig.call(fs, file);
+                });
+            });
+
+            it('should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                uninstall(jsModule, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+            });
+
+            it('should put module to www only when options.usePlatformWww flag is not specified', function () {
+                uninstall(jsModule, dummyPluginInfo, dummyProject);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).not.toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+            });
+        });
+
+        describe('of <asset> elements', function() {
+            var asset = {src: 'www/dummyPlugin.js', target: 'foo/dummy.js'};
+            var uninstall = pluginHandlers.getUninstaller('asset');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                wwwDest = path.resolve(dummyProject.www, asset.target);
+                platformWwwDest = path.resolve(dummyProject.platformWww, asset.target);
+
+                spyOn(shell, 'rm');
+
+                var existsSyncOrig = fs.existsSync;
+                spyOn(fs, 'existsSync').andCallFake(function (file) {
+                    if ([wwwDest, platformWwwDest].indexOf(file) >= 0 ) return true;
+                    return existsSyncOrig.call(fs, file);
+                });
+            });
+
+            it('should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                uninstall(asset, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+            });
+
+            it('should put module to www only when options.usePlatformWww flag is not specified', function () {
+                uninstall(asset, dummyPluginInfo, dummyProject);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).not.toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
             });
         });
     });

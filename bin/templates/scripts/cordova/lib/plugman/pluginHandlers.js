@@ -133,9 +133,8 @@ var handlers = {
                 throw new CordovaError('<asset> tag without required "target" attribute');
             }
 
-            var www = options.usePlatformWww ? project.platformWww : project.www;
-
-            copyFile(plugin.dir, obj.src, www, obj.target);
+            copyFile(plugin.dir, obj.src, project.www, obj.target);
+            if (options && options.usePlatformWww) copyFile(plugin.dir, obj.src, project.platformWww, obj.target);
         },
         uninstall:function(obj, plugin, project, options) {
             var target = obj.target;
@@ -144,17 +143,19 @@ var handlers = {
                 throw new Error('<asset> tag without required "target" attribute');
             }
 
-            var www = options.usePlatformWww ? project.platformWww : project.www;
-
-            removeFile(www, target);
+            removeFile(project.www, target);
             removeFileF(path.resolve(project.www, 'plugins', plugin.id));
+            if (options && options.usePlatformWww) {
+                removeFile(project.platformWww, target);
+                removeFileF(path.resolve(project.platformWww, 'plugins', plugin.id));
+            }
         }
     },
     'js-module': {
         install: function (obj, plugin, project, options) {
             // Copy the plugin's files into the www directory.
             var moduleSource = path.resolve(plugin.dir, obj.src);
-            var moduleName = plugin.id + '.' + (obj.name || path.parse(obj.src).name);
+            var moduleName = plugin.id + '.' + (obj.name || path.basename(obj.src, path.extname (obj.src)));
 
             // Read in the file, prepend the cordova.define, and write it back out.
             var scriptContent = fs.readFileSync(moduleSource, 'utf-8').replace(/^\ufeff/, ''); // Window BOM
@@ -163,15 +164,19 @@ var handlers = {
             }
             scriptContent = 'cordova.define("' + moduleName + '", function(require, exports, module) {\n' + scriptContent + '\n});\n';
 
-            var www = options.usePlatformWww ? project.platformWww : project.www;
-            var moduleDestination = path.resolve(www, 'plugins', plugin.id, obj.src);
+            var moduleDestination = path.resolve(project.www, 'plugins', plugin.id, obj.src);
             shell.mkdir('-p', path.dirname(moduleDestination));
             fs.writeFileSync(moduleDestination, scriptContent, 'utf-8');
+            if (options && options.usePlatformWww) {
+                var platformWwwDestination = path.resolve(project.platformWww, 'plugins', plugin.id, obj.src);
+                shell.mkdir('-p', path.dirname(platformWwwDestination));
+                fs.writeFileSync(platformWwwDestination, scriptContent, 'utf-8');
+            }
         },
         uninstall: function (obj, plugin, project, options) {
             var pluginRelativePath = path.join('plugins', plugin.id, obj.src);
-            var www = options.usePlatformWww ? project.platformWww : project.www;
-            removeFileAndParents(www, pluginRelativePath);
+            removeFileAndParents(project.www, pluginRelativePath);
+            if (options && options.usePlatformWww) removeFileAndParents(project.platformWww, pluginRelativePath);
         }
     }
 };
