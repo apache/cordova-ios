@@ -31,10 +31,11 @@ var ConfigParser = require('cordova-common').ConfigParser;
 var CordovaError = require('cordova-common').CordovaError;
 var projectFile = require('./projectFile');
 var configMunger = require('./configMunger');
+var FileUpdater = require('cordova-common').FileUpdater;
 
 /*jshint sub:true*/
 
-module.exports.prepare = function (cordovaProject) {
+module.exports.prepare = function (cordovaProject, options) {
     var self = this;
 
     this._config = updateConfigFile(cordovaProject.projectConfig,
@@ -47,11 +48,32 @@ module.exports.prepare = function (cordovaProject) {
         return updateProject(self._config, self.locations);
     })
     .then(function () {
-        handleIcons(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
-        handleSplashScreens(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
+        updateIcons(cordovaProject, self.locations);
+        updateSplashScreens(cordovaProject, self.locations);
     })
     .then(function () {
         events.emit('verbose', 'Prepared iOS project successfully');
+    });
+};
+
+module.exports.clean = function (options) {
+    // A cordovaProject isn't passed into the clean() function, because it might have
+    // been called from the platform shell script rather than the CLI. Check for the
+    // noPrepare option passed in by the non-CLI clean script. If that's present, or if
+    // there's no config.xml found at the project root, then don't clean prepared files.
+    var projectRoot = path.resolve(this.root, '../..');
+    var projectConfigFile = path.join(projectRoot, 'config.xml');
+    if ((options && options.noPrepare) || !fs.existsSync(projectConfigFile)) {
+        return Q();
+    }
+
+    var projectConfig = new ConfigParser(projectConfigFile);
+
+    var self = this;
+    return Q().then(function () {
+        cleanWww(projectRoot, self.locations);
+        cleanIcons(projectRoot, projectConfig, self.locations);
+        cleanSplashScreens(projectRoot, projectConfig, self.locations);
     });
 };
 
@@ -91,29 +113,51 @@ function updateConfigFile(sourceConfig, configMunger, locations) {
 }
 
 /**
+ * Logs all file operations via the verbose event stream, indented.
+ */
+function logFileOp(message) {
+    events.emit('verbose', '  ' + message);
+}
+
+/**
  * Updates platform 'www' directory by replacing it with contents of
  *   'platform_www' and app www. Also copies project's overrides' folder into
  *   the platform 'www' folder
  *
- * @param   {Object}  cordovaProject    An object which describes cordova project.
- * @param   {Object}  destinations      An object that contains destination
+ * @param   {Object}  cordovaProject   An object which describes cordova project.
+ * @param   {boolean} destinations     An object that contains destinations
  *   paths for www files.
  */
 function updateWww(cordovaProject, destinations) {
-    shell.rm('-rf', destinations.www);
-    shell.mkdir('-p', destinations.www);
-    // Copy source files from project's www directory
-    shell.cp('-rf', path.join(cordovaProject.locations.www, '*'), destinations.www);
-    // Override www sources by files in 'platform_www' directory
-    shell.cp('-rf', path.join(destinations.platformWww, '*'), destinations.www);
+    var sourceDirs = [
+        path.relative(cordovaProject.root, cordovaProject.locations.www),
+        path.relative(cordovaProject.root, destinations.platformWww)
+    ];
 
     // If project contains 'merges' for our platform, use them as another overrides
     var merges_path = path.join(cordovaProject.root, 'merges', 'ios');
     if (fs.existsSync(merges_path)) {
         events.emit('verbose', 'Found "merges/ios" folder. Copying its contents into the iOS project.');
-        var overrides = path.join(merges_path, '*');
-        shell.cp('-rf', overrides, destinations.www);
+        sourceDirs.push(path.join('merges', 'ios'));
     }
+
+    var targetDir = path.relative(cordovaProject.root, destinations.www);
+    events.emit(
+        'verbose', 'Merging and updating files from [' + sourceDirs.join(', ') + '] to ' + targetDir);
+    FileUpdater.mergeAndUpdateDir(
+        sourceDirs, targetDir, { rootDir: cordovaProject.root }, logFileOp);
+}
+
+/**
+ * Cleans all files from the platform 'www' directory.
+ */
+function cleanWww(projectRoot, locations) {
+    var targetDir = path.relative(projectRoot, locations.www);
+    events.emit('verbose', 'Cleaning ' + targetDir);
+
+    // No source paths are specified, so mergeAndUpdateDir() will clear the target directory.
+    FileUpdater.mergeAndUpdateDir(
+        [], targetDir, { rootDir: projectRoot, all: true }, logFileOp);
 }
 
 /**
@@ -124,7 +168,6 @@ function updateWww(cordovaProject, destinations) {
  * @param   {Object}  locations       A map of locations for this platform (In/Out)
  */
 function updateProject(platformConfig, locations) {
-
 
     // CB-6992 it is necessary to normalize characters
     // because node and shell scripts handles unicode symbols differently
@@ -262,11 +305,7 @@ function handleBuildSettings(platformConfig, locations) {
     return Q();
 }
 
-function handleIcons(projectConfig, platformRoot) {
-
-    var icons = projectConfig.getIcons('ios');
-    var appRoot = path.dirname(projectConfig.path);
-
+function mapIconResources(icons, iconsDir) {
     // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/IconMatrix.html
     // for launch images sizes reference.
     var platformIcons = [
@@ -289,31 +328,64 @@ function handleIcons(projectConfig, platformRoot) {
         {dest: 'icon-83.5@2x.png', width: 167, height: 167}
     ];
 
-    var destIconsFolder;
-    var xcassetsExists = folderExists(path.join(platformRoot, 'Images.xcassets/'));
-
-    if (xcassetsExists) {
-        destIconsFolder = 'Images.xcassets/AppIcon.appiconset/';
-    } else {
-        destIconsFolder = 'Resources/icons/';
-    }
-
+    var pathMap = {};
     platformIcons.forEach(function (item) {
         var icon = icons.getBySize(item.width, item.height) || icons.getDefault();
-        if (icon){
-            var src = path.join(appRoot, icon.src),
-                dest = path.join(platformRoot, destIconsFolder, item.dest);
-            events.emit('verbose', 'Copying icon from ' + src + ' to ' + dest);
-            shell.cp('-f', src, dest);
+        if (icon) {
+            var target = path.join(iconsDir, item.dest);
+            pathMap[target] = icon.src;
         }
     });
+    return pathMap;
 }
 
-function handleSplashScreens(projectConfig, platformRoot) {
+function getIconsDir(projectRoot, platformProjDir) {
+    var iconsDir;
+    var xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
 
-    var appRoot = path.dirname(projectConfig.path);
+    if (xcassetsExists) {
+        iconsDir = path.join(platformProjDir, 'Images.xcassets/AppIcon.appiconset/');
+    } else {
+        iconsDir = path.join(platformProjDir, 'Resources/icons/');
+    }
 
-    var splashScreens = projectConfig.getSplashScreens('ios');
+    return iconsDir;
+}
+
+function updateIcons(cordovaProject, locations) {
+    var icons = cordovaProject.projectConfig.getIcons('ios');
+
+    if (icons.length === 0) {
+        events.emit('verbose', 'This app does not have icons defined');
+        return;
+    }
+
+    var platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    var iconsDir = getIconsDir(cordovaProject.root, platformProjDir);
+    var resourceMap = mapIconResources(icons, iconsDir);
+    events.emit('verbose', 'Updating icons at ' + iconsDir);
+    FileUpdater.updatePaths(
+        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+}
+
+function cleanIcons(projectRoot, projectConfig, locations) {
+    var icons = projectConfig.getIcons('android');
+    if (icons.length > 0) {
+        var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+        var iconsDir = getIconsDir(projectRoot, platformProjDir);
+        var resourceMap = mapIconResources(icons, iconsDir);
+        Object.keys(resourceMap).forEach(function (targetIconPath) {
+            resourceMap[targetIconPath] = null;
+        });
+        events.emit('verbose', 'Cleaning icons at ' + iconsDir);
+
+        // Source paths are removed from the map, so updatePaths() will delete the target files.
+        FileUpdater.updatePaths(
+            resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
+}
+
+function mapSplashScreenResources(splashScreens, splashScreensDir) {
     var platformSplashScreens = [
         {dest: 'Default~iphone.png', width: 320, height: 480},
         {dest: 'Default@2x~iphone.png', width: 640, height: 960},
@@ -327,24 +399,61 @@ function handleSplashScreens(projectConfig, platformRoot) {
         {dest: 'Default-Landscape-736h.png', width: 2208, height: 1242}
     ];
 
-    var destSplashFolder;
-    var xcassetsExists = folderExists(path.join(platformRoot, 'Images.xcassets/'));
-
-    if (xcassetsExists) {
-        destSplashFolder = 'Images.xcassets/LaunchImage.launchimage/';
-    } else {
-        destSplashFolder = 'Resources/splash/';
-    }
-
-    platformSplashScreens.forEach(function(item) {
+    var pathMap = {};
+    platformSplashScreens.forEach(function (item) {
         var splash = splashScreens.getBySize(item.width, item.height);
-        if (splash){
-            var src = path.join(appRoot, splash.src),
-                dest = path.join(platformRoot, destSplashFolder, item.dest);
-            events.emit('verbose', 'Copying splash from ' + src + ' to ' + dest);
-            shell.cp('-f', src, dest);
+        if (splash) {
+            var target = path.join(splashScreensDir, item.dest);
+            pathMap[target] = splash.src;
         }
     });
+    return pathMap;
+}
+
+function getSplashScreensDir(projectRoot, platformProjDir) {
+    var splashScreensDir;
+    var xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
+
+    if (xcassetsExists) {
+        splashScreensDir = path.join(platformProjDir, 'Images.xcassets/LaunchImage.launchimage/');
+    } else {
+        splashScreensDir = path.join(platformProjDir, 'Resources/splash/');
+    }
+
+    return splashScreensDir;
+}
+
+function updateSplashScreens(cordovaProject, locations) {
+    var splashScreens = cordovaProject.projectConfig.getSplashScreens('ios');
+
+    if (splashScreens.length === 0) {
+        events.emit('verbose', 'This app does not have splash screens defined');
+        return;
+    }
+
+    var platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    var splashScreensDir = getSplashScreensDir(cordovaProject.root, platformProjDir);
+    var resourceMap = mapSplashScreenResources(splashScreens, splashScreensDir);
+    events.emit('verbose', 'Updating splash screens at ' + splashScreensDir);
+    FileUpdater.updatePaths(
+        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+}
+
+function cleanSplashScreens(projectRoot, projectConfig, locations) {
+    var splashScreens = projectConfig.getSplashScreens('android');
+    if (splashScreens.length > 0) {
+        var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+        var splashScreensDir = getSplashScreensDir(projectRoot, platformProjDir);
+        var resourceMap = mapIconResources(splashScreens, splashScreensDir);
+        Object.keys(resourceMap).forEach(function (targetSplashPath) {
+            resourceMap[targetSplashPath] = null;
+        });
+        events.emit('verbose', 'Cleaning splash screens at ' + splashScreensDir);
+
+        // Source paths are removed from the map, so updatePaths() will delete the target files.
+        FileUpdater.updatePaths(
+            resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
 }
 
 /**
