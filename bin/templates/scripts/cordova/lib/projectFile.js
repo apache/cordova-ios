@@ -26,6 +26,7 @@ var path = require('path');
 var fs = require('fs');
 var shell = require('shelljs');
 
+var pluginHandlers = require('./plugman/pluginHandlers');
 var CordovaError = require('cordova-common').CordovaError;
 
 var cachedProjectFiles = {};
@@ -80,6 +81,12 @@ function parseProjectFile(locations) {
         },
         getPackageName: function() {
             return plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
+        },
+        getInstaller: function (name) {
+            return pluginHandlers.getInstaller(name);
+        },
+        getUninstaller: function (name) {
+            return pluginHandlers.getUninstaller(name);
         },
         frameworks: frameworks
     };
