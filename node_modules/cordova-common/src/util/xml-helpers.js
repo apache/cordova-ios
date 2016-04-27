@@ -194,7 +194,7 @@ function findInsertIdx(children, after) {
 }
 
 var BLACKLIST = ['platform', 'feature','plugin','engine'];
-var SINGLETONS = ['content', 'author'];
+var SINGLETONS = ['content', 'author', 'name'];
 function mergeXml(src, dest, platform, clobber) {
     // Do nothing for blacklisted tags.
     if (BLACKLIST.indexOf(src.tag) != -1) return;

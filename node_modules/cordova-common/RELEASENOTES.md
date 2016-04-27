@@ -20,6 +20,13 @@
 -->
 # Cordova-common Release Notes
 
+### 1.2.0 (Apr 18, 2016)
+* CB-11022 Save modulesMetadata to both www and platform_www when necessary
+* CB-10833 Deduplicate common logic for plugin installation/uninstallation
+* CB-10822 Manage plugins/modules metadata using PlatformJson
+* CB-10940 Can't add Android platform from path
+* CB-10965 xml helper allows multiple instances to be merge in config.xml
+
 ### 1.1.1 (Mar 18, 2016)
 * CB-10694 Update test to reflect merging of CB-9264 fix
 * CB-10694 Platform-specific configuration preferences don't override global settings
