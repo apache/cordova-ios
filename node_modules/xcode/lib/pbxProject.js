@@ -304,7 +304,7 @@ pbxProject.prototype.removeFramework = function(fpath, opt) {
     this.removeFromPbxEmbedFrameworksBuildPhase(file); // PBXCopyFilesBuildPhase
 
     if (opt && opt.customFramework) {
-        this.removeFromFrameworkSearchPaths(file.dirname);
+        this.removeFromFrameworkSearchPaths(file);
     }
 
     return file;
@@ -1051,7 +1051,6 @@ pbxProject.prototype.removeFromFrameworkSearchPaths = function(file) {
                 searchPaths.splice(idx, 1);
             });
         }
-
     }
 }
 

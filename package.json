@@ -41,7 +41,7 @@
     "plist": "^1.2.0",
     "q": "^1.4.1",
     "shelljs": "^0.5.3",
-    "xcode": "^0.8.3"
+    "xcode": "^0.8.5"
   },
   "bundledDependencies": [
     "cordova-common",
