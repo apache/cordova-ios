@@ -18,14 +18,11 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <Cordova/CDVAppDelegate.h>
 
 @class ViewController;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
-@property (strong, nonatomic) UIWindow* window;
-
-@property (strong, nonatomic) ViewController* viewController;
+@interface AppDelegate : CDVAppDelegate
 
 - (void)createViewController;
 - (void)destroyViewController;
