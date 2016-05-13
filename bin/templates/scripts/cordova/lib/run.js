@@ -38,15 +38,6 @@ module.exports.run = function (runOptions) {
         return Q.reject('Only one of "device"/"emulator" options should be specified');
     }
 
-    // validate target device for ios-sim
-    // Valid values for "--target" (case sensitive):
-    var validTargets = ['iPhone-4s', 'iPhone-5', 'iPhone-5s', 'iPhone-6-Plus', 'iPhone-6',
-        'iPhone-6s-Plus', 'iPhone-6s', 'iPad-2', 'iPad-Retina', 'iPad-Air', 'iPad-Air-2',
-        'iPad-Pro', 'Resizable-iPhone', 'Resizable-iPad'];
-    if (!(runOptions.device) && runOptions.target && validTargets.indexOf(runOptions.target.split(',')[0]) < 0 ) {
-        return Q.reject(runOptions.target + ' is not a valid target for emulator');
-    }
-
     // support for CB-8168 `cordova/run --list`
     if (runOptions.list) {
         if (runOptions.device) return listDevices();
