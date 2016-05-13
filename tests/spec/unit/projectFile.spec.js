@@ -47,12 +47,12 @@ describe('projectFile', function() {
         it('should throw if project does not contain an appropriate config.xml file', function() {
             shell.rm(path.join(iosProject, 'SampleApp', 'config.xml'));
             expect(function() { projectFile.parse(locations); })
-                .toThrow('could not find -Info.plist file, or config.xml file.');
+                .toThrow('Could not find *-Info.plist file, or config.xml file.');
         });
         it('should throw if project does not contain an appropriate -Info.plist file', function() {
             shell.rm(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'));
             expect(function () { projectFile.parse(locations); })
-                .toThrow('could not find -Info.plist file, or config.xml file.');
+                .toThrow('Could not find *-Info.plist file, or config.xml file.');
         });
         it('should return right directory when multiple .plist files are present', function() {
             //Create a folder named A with config.xml and .plist files in it

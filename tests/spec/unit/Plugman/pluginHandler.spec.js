@@ -194,7 +194,7 @@ describe('ios plugin handler', function() {
                 var resources = copyArray(invalid_resources);
                 expect(function() {
                     install(resources[0], faultyPluginInfo, dummyProject);
-                }).toThrow('cannot find "' + path.resolve(faultyplugin, 'src/ios/IDontExist.bundle') + '" ios <resource-file>');
+                }).toThrow('Cannot find resource file "' + path.resolve(faultyplugin, 'src/ios/IDontExist.bundle') + '" for plugin ' + faultyPluginInfo.id + ' in iOS platform');
             });
             it('should throw if resource-file target already exists', function() {
                 var resources = copyArray(valid_resources);
@@ -203,7 +203,7 @@ describe('ios plugin handler', function() {
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(function() {
                     install(resources[0], dummyPluginInfo, dummyProject);
-                }).toThrow('target destination "' + target + '" already exists');
+                }).toThrow('File already exists at detination "' + target + '" for resource file specified by plugin ' + dummyPluginInfo.id + ' in iOS platform');
             });
             it('should call into xcodeproj\'s addResourceFile', function() {
                 var resources = copyArray(valid_resources);
@@ -242,7 +242,7 @@ describe('ios plugin handler', function() {
                     var frameworks = copyArray(invalid_custom_frameworks);
                     expect(function() {
                         install(frameworks[0], faultyPluginInfo, dummyProject);
-                    }).toThrow('cannot find "' + path.resolve(faultyplugin, 'src/ios/NonExistantCustomFramework.framework') + '" ios <framework>');
+                    }).toThrow('Cannot find framework "' + path.resolve(faultyplugin, 'src/ios/NonExistantCustomFramework.framework')  + '" for plugin ' + faultyPluginInfo.id + ' in iOS platform');
                 });
                 it('should throw if framework target already exists', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
@@ -250,7 +250,7 @@ describe('ios plugin handler', function() {
                     shell.mkdir('-p', target);
                     expect(function() {
                         install(frameworks[0], dummyPluginInfo, dummyProject);
-                    }).toThrow('target destination "' + target + '" already exists');
+                    }).toThrow('Framework "' + target + '" for plugin ' + dummyPluginInfo.id + ' already exists in iOS platform');
                 });
                 it('should cp the file to the right target location', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
