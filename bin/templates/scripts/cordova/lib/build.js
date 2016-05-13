@@ -62,6 +62,7 @@ module.exports.run = function (buildOpts) {
         }
     }
 
+    var configuration = buildOpts.release ? 'Release' : 'Debug';
     return check_reqs.run().then(function () {
         return findXCodeProjectIn(projectPath);
     }).then(function (name) {
@@ -77,9 +78,8 @@ module.exports.run = function (buildOpts) {
         if (buildOpts.provisioningProfile) {
             extraConfig += 'PROVISIONING_PROFILE = ' + buildOpts.provisioningProfile + '\n';
         }
-        return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
+        return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-' + configuration + '.xcconfig'), extraConfig, 'utf-8');
     }).then(function () {
-        var configuration = buildOpts.release ? 'Release' : 'Debug';
 
         events.emit('log','Building project  : ' + path.join(projectPath, projectName + '.xcodeproj'));
         events.emit('log','\tConfiguration : ' + configuration);
