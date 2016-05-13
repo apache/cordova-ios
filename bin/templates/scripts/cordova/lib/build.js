@@ -159,6 +159,7 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
             '-project', projectName + '.xcodeproj',
             '-target', projectName ,
             '-configuration', configuration,
+            '-sdk', 'iphonesimulator',
             '-destination', 'platform=iOS Simulator',
             'build',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
