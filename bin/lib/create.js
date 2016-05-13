@@ -102,11 +102,11 @@ function copyScripts(projectPath) {
 }
 
 /*
- * Copy project template files into cordova project.  
+ * Copy project template files into cordova project.
  *
  * @param {String} project_path         path to cordova project
  * @param {String} project_name         name of cordova project
- * @param {String} project_template_dir path to cordova-ios template directory     
+ * @param {String} project_template_dir path to cordova-ios template directory
  * @parm  {BOOL}   use_cli              true if cli project
  */
 function copyTemplateFiles(project_path, project_name, project_template_dir, package_name) {
@@ -168,7 +168,7 @@ function AbsProjectPath(relative_path) {
         absolute_path = AbsParentPath(absolute_path);
     }
     else if (!(/.xcodeproj$/.test(absolute_path))) {
-        throw new Error('The following is not a valid path to an Xcode project' + absolute_path);
+        throw new Error('The following is not a valid path to an Xcode project: ' + absolute_path);
     }
     return absolute_path;
 }
@@ -204,8 +204,15 @@ exports.createProject = function(project_path, package_name, project_name, opts)
 
     //check that parent directory does exist so cp -r will not fail
     if (!fs.existsSync(project_parent)) {
-        return Q.reject(project_parent + ' does not exist. Please specify an existing parent folder');
+        return Q.reject('Parent directory "' + project_parent + '" of given project path does not exist');
     }
+
+    events.emit('log', 'Creating Cordova project for the iOS platform:');
+    events.emit('log', '\tPath: ' + project_path);
+    events.emit('log', '\tPackage: ' + package_name);
+    events.emit('log', '\tName: ' + project_name);
+
+    events.emit('verbose', 'Copying iOS template project to ' + project_path);
 
     // create the project directory and copy over files
     shell.mkdir(project_path);
@@ -289,7 +296,7 @@ function update_cordova_subproject(argv) {
     shell.sed('-i', copyWwwSh, copyWwwJs, path.join(projectPath, 'project.pbxproj'));
 
     if (!found) {
-        throw new Error('Subproject: ' + subprojectPath + ' entry not found in project file');
+        throw new Error('Entry not found in project file for sub-project: ' + subprojectPath);
     }
 }
 

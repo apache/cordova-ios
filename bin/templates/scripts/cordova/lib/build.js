@@ -36,11 +36,11 @@ module.exports.run = function (buildOpts) {
     buildOpts = buildOpts || {};
 
     if (buildOpts.debug && buildOpts.release) {
-        return Q.reject('Only one of "debug"/"release" options should be specified');
+        return Q.reject('Cannot specify "debug" and "release" options together.');
     }
 
     if (buildOpts.device && buildOpts.emulator) {
-        return Q.reject('Only one of "device"/"emulator" options should be specified');
+        return Q.reject('Cannot specify "device" and "emulator" options together.');
     }
 
     if(buildOpts.buildConfig) {
@@ -81,9 +81,9 @@ module.exports.run = function (buildOpts) {
     }).then(function () {
         var configuration = buildOpts.release ? 'Release' : 'Debug';
 
-        events.emit('log','Building project  : ' + path.join(projectPath, projectName + '.xcodeproj'));
-        events.emit('log','\tConfiguration : ' + configuration);
-        events.emit('log','\tPlatform      : ' + (buildOpts.device ? 'device' : 'emulator'));
+        events.emit('log','Building project: ' + path.join(projectPath, projectName + '.xcodeproj'));
+        events.emit('log','\tConfiguration: ' + configuration);
+        events.emit('log','\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
 
         var xcodebuildArgs = getXcodeArgs(projectName, projectPath, configuration, buildOpts.device);
         return spawn('xcodebuild', xcodebuildArgs, projectPath);

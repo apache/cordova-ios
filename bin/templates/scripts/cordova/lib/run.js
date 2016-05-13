@@ -185,7 +185,7 @@ function listDevices() {
 function listEmulators() {
     return require('./list-emulator-images').run()
     .then(function (emulators) {
-        events.emit('log','Available iOS Virtual Devices:');
+        events.emit('log','Available iOS Simulators:');
         emulators.forEach(function (emulator) {
             events.emit('log','\t' + emulator);
         });

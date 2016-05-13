@@ -51,7 +51,7 @@ module.exports.prepare = function (cordovaProject) {
         handleSplashScreens(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
     })
     .then(function () {
-        events.emit('verbose', 'updated project successfully');
+        events.emit('verbose', 'Prepared iOS project successfully');
     });
 };
 
@@ -70,7 +70,7 @@ module.exports.prepare = function (cordovaProject) {
  *   configuration is already dumped to appropriate config.xml file.
  */
 function updateConfigFile(sourceConfig, configMunger, locations) {
-    events.emit('verbose', 'Generating config.xml from defaults for platform "ios"');
+    events.emit('verbose', 'Generating platform-specific config.xml from defaults for iOS at ' + locations.configXml);
 
     // First cleanup current config and merge project's one into own
     // Overwrite platform config.xml with defaults.xml.
@@ -80,6 +80,7 @@ function updateConfigFile(sourceConfig, configMunger, locations) {
     // in project (including project's config)
     configMunger.reapply_global_munge().save_all();
 
+    events.emit('verbose', 'Merging project\'s config.xml into platform-specific iOS config.xml');
     // Merge changes from app's config.xml into platform's one
     var config = new ConfigParser(locations.configXml);
     xmlHelpers.mergeXml(sourceConfig.doc.getroot(),
@@ -109,7 +110,7 @@ function updateWww(cordovaProject, destinations) {
     // If project contains 'merges' for our platform, use them as another overrides
     var merges_path = path.join(cordovaProject.root, 'merges', 'ios');
     if (fs.existsSync(merges_path)) {
-        events.emit('verbose', 'Found "merges" for ios platform. Copying over existing "www" files.');
+        events.emit('verbose', 'Found "merges/ios" folder. Copying its contents into the iOS project.');
         var overrides = path.join(merges_path, '*');
         shell.cp('-rf', overrides, destinations.www);
     }
@@ -157,8 +158,7 @@ function updateProject(platformConfig, locations) {
     var info_contents = plist.build(infoPlist);
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g,'<string></string>');
     fs.writeFileSync(plistFile, info_contents, 'utf-8');
-    events.emit('verbose', 'Wrote out iOS Bundle Identifier to "' + pkg + '"');
-    events.emit('verbose', 'Wrote out iOS Bundle Version to "' + version + '"');
+    events.emit('verbose', 'Wrote out iOS Bundle Identifier "' + pkg + '" and iOS Bundle Version "' + version + '" to ' + plistFile);
 
     return handleBuildSettings(platformConfig, locations).then(function() {
         if (name == originalName) {
@@ -171,7 +171,7 @@ function updateProject(platformConfig, locations) {
         try {
             proj.parseSync();
         } catch (err) {
-            return Q.reject(new CordovaError('An error occured during parsing of project.pbxproj. Start weeping. Output: ' + err));
+            return Q.reject(new CordovaError('Could not parse project.pbxproj: ' + err));
         }
 
         proj.updateProductName(name);
@@ -244,7 +244,7 @@ function handleBuildSettings(platformConfig, locations) {
     try {
         proj.parseSync();
     } catch (err) {
-        return Q.reject(new CordovaError('An error occured during parsing of project.pbxproj. Start weeping. Output: ' + err));
+        return Q.reject(new CordovaError('Could not parse project.pbxproj: ' + err));
     }
 
     if (targetDevice) {
@@ -372,8 +372,8 @@ function getOrientationValue(platformConfig) {
         return orientation;
     }
 
-    events.emit('warn', 'Unsupported orientation: ' + orientation +
-        '. Defaulting to value: ' + ORIENTATION_DEFAULT);
+    events.emit('warn', 'Unrecognized value for Orientation preference: ' + orientation +
+        '. Defaulting to value: ' + ORIENTATION_DEFAULT + '.');
 
     return ORIENTATION_DEFAULT;
 }
@@ -544,6 +544,6 @@ function parseTargetDevicePreference(value) {
     if (map[value.toLowerCase()]) {
         return map[value.toLowerCase()];
     }
-    events.emit('warn', 'Unknown target-device preference value: "' + value + '".');
+    events.emit('warn', 'Unrecognized value for target-device preference: ' + value + '.');
     return null;
 }
