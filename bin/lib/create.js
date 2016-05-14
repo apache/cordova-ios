@@ -208,7 +208,7 @@ exports.createProject = function(project_path, package_name, project_name, opts)
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
-    events.emit('log', '\tPath: ' + project_path);
+    events.emit('log', '\tPath: ' + path.relative(process.cwd(), (project_path || 'CordovaExample')));
     events.emit('log', '\tPackage: ' + package_name);
     events.emit('log', '\tName: ' + project_name);
 
