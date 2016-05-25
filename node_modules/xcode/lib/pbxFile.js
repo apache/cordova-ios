@@ -34,6 +34,7 @@ var FILETYPE_BY_EXTENSION = {
         'archive.ar': 'Frameworks',
         'compiled.mach-o.dylib': 'Frameworks',
         'wrapper.framework': 'Frameworks',
+        'embedded.framework': 'Embed Frameworks',
         'sourcecode.c.h': 'Resources',
         'sourcecode.c.objc': 'Sources',
         'sourcecode.swift': 'Sources'
@@ -93,13 +94,17 @@ function defaultEncoding(fileRef) {
     }
 }
 
-function detectGroup(fileRef) {
+function detectGroup(fileRef, opt) {
     var extension = path.extname(fileRef.basename).substring(1),
         filetype = fileRef.lastKnownFileType || fileRef.explicitFileType,
         groupName = GROUP_BY_FILETYPE[unquoted(filetype)];
 
     if (extension === 'xcdatamodeld') {
         return 'Sources';
+    }
+
+    if (opt.customFramework && opt.embed) {
+        return GROUP_BY_FILETYPE['embedded.framework'];
     }
 
     if (!groupName) {
@@ -161,7 +166,7 @@ function pbxFile(filepath, opt) {
 
     this.basename = path.basename(filepath);
     this.lastKnownFileType = opt.lastKnownFileType || detectType(filepath);
-    this.group = detectGroup(self);
+    this.group = detectGroup(self, opt);
 
     // for custom frameworks
     if (opt.customFramework == true) {
@@ -194,7 +199,7 @@ function pbxFile(filepath, opt) {
         this.settings.COMPILER_FLAGS = util.format('"%s"', opt.compilerFlags);
     }
 
-    if (opt.sign) {
+    if (opt.embed && opt.sign) {
       if (!this.settings)
           this.settings = {};
       if (!this.settings.ATTRIBUTES)
