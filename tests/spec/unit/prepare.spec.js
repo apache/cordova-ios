@@ -28,6 +28,7 @@ var EventEmitter = require('events').EventEmitter;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
 var prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
 var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+var FileUpdater = require('cordova-common').FileUpdater;
 
 var FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -404,12 +405,11 @@ describe('prepare', function () {
     });
 
     describe('updateWww method', function() {
-        var rm, cp;
         var updateWww = prepare.__get__('updateWww');
+        var logFileOp = prepare.__get__('logFileOp');
 
         beforeEach(function () {
-            rm = spyOn(shell, 'rm');
-            cp = spyOn(shell, 'cp');
+            spyOn(FileUpdater, 'mergeAndUpdateDir').andReturn(true);
         });
 
         var project = {
@@ -417,21 +417,25 @@ describe('prepare', function () {
             locations: { www: path.join(iosProject, 'www') }
         };
 
-        it('should rm project-level www and cp in platform agnostic www', function() {
-            updateWww(project, p.locations);
-            expect(rm).toHaveBeenCalled();
-            expect(cp).toHaveBeenCalled();
-        });
-        it('should do nothing if merges directory does not exist', function() {
-            var merges_path = path.join(project.root, 'merges/ios');
-            updateWww(project, p.locations);
-            expect(cp).not.toHaveBeenCalledWith('-rf', merges_path, p.locations.www);
-        });
-        it('should copy merges path into www', function() {
+        it('should update project-level www and with platform agnostic www and merges', function() {
             var merges_path = path.join(project.root, 'merges/ios');
             shell.mkdir('-p', merges_path);
             updateWww(project, p.locations);
-            expect(cp).toHaveBeenCalledWith('-rf', path.join(merges_path, '*'), p.locations.www);
+            expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
+                [ 'www', 'platforms/ios/platform_www', 'merges/ios' ],
+                'platforms/ios/www',
+                { rootDir : iosProject },
+                logFileOp);
+        });
+        it('should skip merges if merges directory does not exist', function() {
+            var merges_path = path.join(project.root, 'merges/ios');
+            shell.rm('-rf', merges_path);
+            updateWww(project, p.locations);
+            expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
+                [ 'www', 'platforms/ios/platform_www' ],
+                'platforms/ios/www',
+                { rootDir : iosProject },
+                logFileOp);
         });
     });
 });
