@@ -6,6 +6,9 @@ tmp
 *.pbxuser
 xcuserdata
 console.log
-node_modules/
+node_modules/jshint
+node_modules/jasmine-node
+node_modules/rewire
+node_modules/istanbul
 coverage/
 npm-debug.log
