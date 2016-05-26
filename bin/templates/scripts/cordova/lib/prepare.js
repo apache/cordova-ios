@@ -63,11 +63,12 @@ module.exports.clean = function (options) {
     // there's no config.xml found at the project root, then don't clean prepared files.
     var projectRoot = path.resolve(this.root, '../..');
     var projectConfigFile = path.join(projectRoot, 'config.xml');
-    if ((options && options.noPrepare) || !fs.existsSync(projectConfigFile)) {
+    if ((options && options.noPrepare) || !fs.existsSync(projectConfigFile) ||
+            !fs.existsSync(this.locations.configXml)) {
         return Q();
     }
 
-    var projectConfig = new ConfigParser(projectConfigFile);
+    var projectConfig = new ConfigParser(this.locations.configXml);
 
     var self = this;
     return Q().then(function () {
