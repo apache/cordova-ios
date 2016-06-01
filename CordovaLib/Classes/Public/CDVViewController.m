@@ -287,6 +287,11 @@
     
     [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
 
+    [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
+        _userAgentLockToken = lockToken;
+        [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
+    }];
+
     // // Instantiate the WebView ///////////////
 
     if (!self.webView) {
@@ -321,27 +326,23 @@
     // /////////////////
     NSURL* appURL = [self appUrl];
 
-    [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
-        _userAgentLockToken = lockToken;
-        [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
-        if (appURL) {
-            NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [self.webViewEngine loadRequest:appReq];
-        } else {
-            NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
-            NSLog(@"%@", loadErr);
+    if (appURL) {
+        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [self.webViewEngine loadRequest:appReq];
+    } else {
+        NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
+        NSLog(@"%@", loadErr);
 
-            NSURL* errorUrl = [self errorURL];
-            if (errorUrl) {
-                errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
-                NSLog(@"%@", [errorUrl absoluteString]);
-                [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
-            } else {
-                NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-                [self.webViewEngine loadHTMLString:html baseURL:nil];
-            }
+        NSURL* errorUrl = [self errorURL];
+        if (errorUrl) {
+            errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
+            NSLog(@"%@", [errorUrl absoluteString]);
+            [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+        } else {
+            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+            [self.webViewEngine loadHTMLString:html baseURL:nil];
         }
-    }];
+    }
 }
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
