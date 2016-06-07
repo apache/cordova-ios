@@ -193,6 +193,7 @@ function updateProject(platformConfig, locations) {
     var name = unorm.nfd(platformConfig.name());
     var pkg = platformConfig.getAttribute('ios-CFBundleIdentifier') || platformConfig.packageName();
     var version = platformConfig.version();
+    var displayName = platformConfig.shortName && platformConfig.shortName();
 
     var originalName = path.basename(locations.xcodeCordovaProj);
 
@@ -208,6 +209,10 @@ function updateProject(platformConfig, locations) {
 
     if (platformConfig.getAttribute('defaultlocale')) {
         infoPlist['CFBundleDevelopmentRegion'] = platformConfig.getAttribute('defaultlocale');
+    }
+
+    if (displayName) {
+        infoPlist['CFBundleDisplayName'] = displayName;
     }
 
     // replace Info.plist ATS entries according to <access> and <allow-navigation> config.xml entries
