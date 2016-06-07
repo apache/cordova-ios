@@ -25,7 +25,7 @@
     "jshint": "jshint bin tests"
   },
   "author": "Apache Software Foundation",
-  "license": "Apache Version 2.0",
+  "license": "Apache-2.0",
   "devDependencies": {
     "coffee-script": "^1.7.1",
     "istanbul": "^0.4.2",
