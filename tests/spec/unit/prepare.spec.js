@@ -418,22 +418,22 @@ describe('prepare', function () {
         };
 
         it('should update project-level www and with platform agnostic www and merges', function() {
-            var merges_path = path.join(project.root, 'merges/ios');
+            var merges_path = path.join(project.root, 'merges', 'ios');
             shell.mkdir('-p', merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
-                [ 'www', 'platforms/ios/platform_www', 'merges/ios' ],
-                'platforms/ios/www',
+                [ 'www', path.join('platforms', 'ios', 'platform_www'), path.join('merges','ios') ],
+                path.join('platforms', 'ios', 'www'),
                 { rootDir : iosProject },
                 logFileOp);
         });
         it('should skip merges if merges directory does not exist', function() {
-            var merges_path = path.join(project.root, 'merges/ios');
+            var merges_path = path.join(project.root, 'merges', 'ios');
             shell.rm('-rf', merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
-                [ 'www', 'platforms/ios/platform_www' ],
-                'platforms/ios/www',
+                [ 'www', path.join('platforms', 'ios', 'platform_www') ],
+                path.join('platforms', 'ios', 'www'),
                 { rootDir : iosProject },
                 logFileOp);
         });
