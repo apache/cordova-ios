@@ -23,6 +23,7 @@ var FILETYPE_BY_EXTENSION = {
         plist: 'text.plist.xml',
         sh: 'text.script.sh',
         swift: 'sourcecode.swift',
+        tbd: 'sourcecode.text-based-dylib-definition',
         xcassets: 'folder.assetcatalog',
         xcconfig: 'text.xcconfig',
         xcdatamodel: 'wrapper.xcdatamodel',
@@ -33,6 +34,7 @@ var FILETYPE_BY_EXTENSION = {
     GROUP_BY_FILETYPE = {
         'archive.ar': 'Frameworks',
         'compiled.mach-o.dylib': 'Frameworks',
+        'sourcecode.text-based-dylib-definition': 'Frameworks',
         'wrapper.framework': 'Frameworks',
         'embedded.framework': 'Embed Frameworks',
         'sourcecode.c.h': 'Resources',
@@ -41,10 +43,12 @@ var FILETYPE_BY_EXTENSION = {
     },
     PATH_BY_FILETYPE = {
         'compiled.mach-o.dylib': 'usr/lib/',
+        'sourcecode.text-based-dylib-definition': 'usr/lib/',
         'wrapper.framework': 'System/Library/Frameworks/'
     },
     SOURCETREE_BY_FILETYPE = {
         'compiled.mach-o.dylib': 'SDKROOT',
+        'sourcecode.text-based-dylib-definition': 'SDKROOT',
         'wrapper.framework': 'SDKROOT'
     },
     ENCODING_BY_FILETYPE = {

@@ -214,7 +214,14 @@ pbxProject.prototype.removeHeaderFile = function (path, opt, group) {
     }
 }
 
-pbxProject.prototype.addResourceFile = function(path, opt) {
+/**
+ *
+ * @param path {String}
+ * @param opt {Object} see pbxFile for avail options
+ * @param group {String} group key
+ * @returns {Object} file; see pbxFile
+ */
+pbxProject.prototype.addResourceFile = function(path, opt, group) {
     opt = opt || {};
 
     var file;
@@ -223,7 +230,7 @@ pbxProject.prototype.addResourceFile = function(path, opt) {
         file = this.addPluginFile(path, opt);
         if (!file) return false;
     } else {
-        file = new pbxFile(path, opt);
+        file = new pbxFile(path, opt);       
         if (this.hasFile(file.path)) return false;
     }
 
@@ -234,19 +241,32 @@ pbxProject.prototype.addResourceFile = function(path, opt) {
         correctForResourcesPath(file, this);
         file.fileRef = this.generateUuid();
     }
-
+    
     this.addToPbxBuildFileSection(file);        // PBXBuildFile
     this.addToPbxResourcesBuildPhase(file);     // PBXResourcesBuildPhase
-
+    
     if (!opt.plugin) {
         this.addToPbxFileReferenceSection(file);    // PBXFileReference
-        this.addToResourcesPbxGroup(file);          // PBXGroup
+        if (group) {
+            this.addToPbxGroup(file, group);            //Group other than Resources (i.e. 'splash')
+        }
+        else {
+            this.addToResourcesPbxGroup(file);          // PBXGroup
+        }
+        
     }
-
+    
     return file;
 }
 
-pbxProject.prototype.removeResourceFile = function(path, opt) {
+/**
+ *
+ * @param path {String}
+ * @param opt {Object} see pbxFile for avail options
+ * @param group {String} group key
+ * @returns {Object} file; see pbxFile
+ */
+pbxProject.prototype.removeResourceFile = function(path, opt, group) {
     var file = new pbxFile(path, opt);
     file.target = opt ? opt.target : undefined;
 
@@ -254,7 +274,12 @@ pbxProject.prototype.removeResourceFile = function(path, opt) {
 
     this.removeFromPbxBuildFileSection(file);        // PBXBuildFile
     this.removeFromPbxFileReferenceSection(file);    // PBXFileReference
-    this.removeFromResourcesPbxGroup(file);          // PBXGroup
+    if (group) {
+        this.removeFromPbxGroup(file, group);           //Group other than Resources (i.e. 'splash')
+    }
+    else {
+        this.removeFromResourcesPbxGroup(file);          // PBXGroup
+    }    
     this.removeFromPbxResourcesBuildPhase(file);     // PBXResourcesBuildPhase
 
     return file;
