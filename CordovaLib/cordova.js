@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '4.2.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '4.3.0-dev';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -817,7 +817,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/ednamorales/dev/apache_plugins/cordova-ios/cordova-js-src/exec.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -1545,7 +1545,7 @@ exports.reset();
 
 });
 
-// file: /Users/ednamorales/dev/apache_plugins/cordova-ios/cordova-js-src/platform.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
