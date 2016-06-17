@@ -16,11 +16,11 @@
   ],
   "scripts": {
     "test": "npm run e2e-tests && npm run objc-tests && npm run unit-tests",
-        "posttest": "npm run jshint",
+    "posttest": "npm run jshint",
     "cover": "istanbul cover node_modules/jasmine-node/bin/jasmine-node -- tests/spec/unit",
     "e2e-tests": "jasmine-node --captureExceptions --color tests/spec",
     "objc-tests": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
-        "preobjc-tests" : "tests/scripts/killsim.js", 
+    "preobjc-tests": "tests/scripts/killsim.js",
     "unit-tests": "jasmine-node --captureExceptions --color tests/spec/unit",
     "jshint": "jshint bin tests"
   },
