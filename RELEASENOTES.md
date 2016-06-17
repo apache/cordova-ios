@@ -23,6 +23,7 @@
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
 ### 4.2.0 (Jun 16, 2016)
+* `cordova-ios` now supports node 6!
 * [CB-11445](https://issues.apache.org/jira/browse/CB-11445) Updated checked-in `node_modules`
 * [CB-11424](https://issues.apache.org/jira/browse/CB-11424) `AppVeyor` test failures (path separator) on `cordova-ios` platform
 * [CB-11375](https://issues.apache.org/jira/browse/CB-11375) - onReset method of CDVPlugin is never called
@@ -36,7 +37,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-11200](https://issues.apache.org/jira/browse/CB-11200) Bump `node-xcode` version
 * [CB-11235](https://issues.apache.org/jira/browse/CB-11235) `NSInternalInconsistencyException` when running **iOS** unit tests
 * [CB-11161](https://issues.apache.org/jira/browse/CB-11161) Reuse `PluginManager` from `cordova-common` to `add/rm` plugins
-* [CB-11161](https://issues.apache.org/jira/browse/CB-11161) Bump `cordova-common` to `1.3.0`
+* [CB-11161](https://issues.apache.org/jira/browse/CB-11161) Bump `cordova-common` to `1.3.0`.
 * [CB-11019](https://issues.apache.org/jira/browse/CB-11019) Update tests to validate project name updates
 * [CB-11019](https://issues.apache.org/jira/browse/CB-11019) Handle changes of app name gracefully
 * [CB-11022](https://issues.apache.org/jira/browse/CB-11022) Duplicate `www` files on plugin installtion/removal
