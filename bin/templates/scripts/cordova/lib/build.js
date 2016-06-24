@@ -146,7 +146,7 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            '-target', projectName,
+            '-target', projectName.normalize(),
             '-configuration', configuration,
             '-destination', 'platform=iOS',
             'build',
@@ -157,7 +157,7 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-project', projectName + '.xcodeproj',
-            '-target', projectName ,
+            '-target', projectName.normalize() ,
             '-configuration', configuration,
             '-sdk', 'iphonesimulator',
             '-destination', 'platform=iOS Simulator',
