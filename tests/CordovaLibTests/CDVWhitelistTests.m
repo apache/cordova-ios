@@ -295,6 +295,37 @@
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://google.com"] intentsWhitelist:intentsWhitelist navigationsWhitelist:navigationsWhitelist], CDVIntentAndNavigationFilterValueIntentAllowed);
     // Test http (not allowed in either)
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"http://google.com"] intentsWhitelist:intentsWhitelist navigationsWhitelist:navigationsWhitelist], CDVIntentAndNavigationFilterValueNoneAllowed);
+    
+    
+    NSURL* telUrl = [NSURL URLWithString:@"tel:5555555"];
+    NSMutableURLRequest* telRequest = [NSMutableURLRequest requestWithURL:telUrl];
+    telRequest.mainDocumentURL = telUrl;
+    
+    // mainDocumentURL and URL are the same in the NSURLRequest
+    // Only UIWebViewNavigationTypeLinkClicked and UIWebViewNavigationTypeOther should return YES
+    XCTAssertTrue([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeLinkClicked]);
+    XCTAssertTrue([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeOther]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeReload]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeBackForward]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeFormSubmitted]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeFormResubmitted]);
+    
+    telRequest.mainDocumentURL = nil;
+    // mainDocumentURL and URL are not the same in the NSURLRequest
+    // Only UIWebViewNavigationTypeLinkClicked should return YES
+    XCTAssertTrue([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeLinkClicked]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeOther]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeReload]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeBackForward]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeFormSubmitted]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOpenURLRequest:telRequest navigationType:UIWebViewNavigationTypeFormResubmitted]);
+    
+    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://apache.org"]];
+    // Only CDVIntentAndNavigationFilterValueNavigationAllowed should return YES
+    // navigationType doesn't matter
+    XCTAssertTrue([CDVIntentAndNavigationFilter shouldOverrideLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther filterValue:CDVIntentAndNavigationFilterValueNavigationAllowed]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOverrideLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther filterValue:CDVIntentAndNavigationFilterValueIntentAllowed]);
+    XCTAssertFalse([CDVIntentAndNavigationFilter shouldOverrideLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther filterValue:CDVIntentAndNavigationFilterValueNoneAllowed]);
 }
 
 
