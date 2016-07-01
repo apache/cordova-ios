@@ -150,8 +150,8 @@ describe('prepare', function () {
         it('should handle default orientation', function(done) {
             cfg.getPreference.andReturn('default');
             wrapper(updateProject(cfg, p.locations), done, function() {
-                expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toBeUndefined();
-                expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toBeUndefined();
+                expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
+                expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
@@ -179,7 +179,8 @@ describe('prepare', function () {
         it('should handle custom orientation', function(done) {
             cfg.getPreference.andReturn('some-custom-orientation');
             wrapper(updateProject(cfg, p.locations), done, function() {
-                expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toBeUndefined();
+                expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
+                expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
