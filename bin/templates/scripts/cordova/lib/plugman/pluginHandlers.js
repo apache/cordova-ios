@@ -66,17 +66,20 @@ var handlers = {
         install:function(obj, plugin, project, options) {
             var src = obj.src,
                 custom = obj.custom;
-
             if (!custom) {
                 var keepFrameworks = keep_these_frameworks;
 
-                if (keepFrameworks.indexOf(src) < 0) {
-                    project.xcode.addFramework(src, {weak: obj.weak});
-                    project.frameworks[src] = (project.frameworks[src] || 0) + 1;
+                if (keepFrameworks.indexOf(src) < 0) { 
+                    if (obj.type === 'podspec') {
+                        //podspec handled in Api.js
+                    } else {
+                        project.frameworks[src] = project.frameworks[src] || 0;
+                        project.frameworks[src]++;
+                        project.xcode.addFramework(src, {weak: obj.weak});
+                    }
                 }
                 return;
             }
-
             var srcFile = path.resolve(plugin.dir, src),
                 targetDir = path.resolve(project.plugins_dir, plugin.id, path.basename(src));
             if (!fs.existsSync(srcFile)) throw new CordovaError('Cannot find framework "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
@@ -91,18 +94,31 @@ var handlers = {
             }
         },
         uninstall:function(obj, plugin, project, options) {
+            var podsJSON = require(path.join(project.projectDir, 'pods.json'));
             var src = obj.src;
 
-            if (!obj.custom) {
+            if (!obj.custom) { //CB-9825 cocoapod integration for plugins
                 var keepFrameworks = keep_these_frameworks;
-
                 if (keepFrameworks.indexOf(src) < 0) {
-                    project.frameworks[src] = (project.frameworks[src] || 1) - 1;
-                    if (project.frameworks[src] < 1) {
-                        // Only remove non-custom framework from xcode project
-                        // if there is no references remains
-                        project.xcode.removeFramework(src);
-                        delete project.frameworks[src];
+                    if (obj.type === 'podspec') {
+                        if(podsJSON[src]) {
+                            if(podsJSON[src].count > 1) {
+                                podsJSON[src].count = podsJSON[src].count - 1;
+                            } else {
+                                delete podsJSON[src];
+                            }
+                        }
+                    } else {
+                        //this should be refactored 
+                        project.frameworks[src] = project.frameworks[src] || 1;
+                        project.frameworks[src]--;
+                        if (project.frameworks[src] < 1) {
+                            // Only remove non-custom framework from xcode project
+                            // if there is no references remains
+                            project.xcode.removeFramework(src);
+                            console.log('removing ' + src);
+                            delete project.frameworks[src];
+                        }
                     }
                 }
                 return;
