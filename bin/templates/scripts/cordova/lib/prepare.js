@@ -267,9 +267,9 @@ function handleOrientationSettings(platformConfig, infoPlist) {
             infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
             infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
             break;
-        default:
-            delete infoPlist['UISupportedInterfaceOrientations'];
-            delete infoPlist['UISupportedInterfaceOrientations~ipad'];
+        case 'default':
+            infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
+            infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
             delete infoPlist['UIInterfaceOrientation'];
     }
 }
@@ -471,7 +471,7 @@ function getOrientationValue(platformConfig) {
 
     var orientation = platformConfig.getPreference('orientation');
     if (!orientation) {
-        return ORIENTATION_DEFAULT;
+        return '';
     }
 
     orientation = orientation.toLowerCase();
