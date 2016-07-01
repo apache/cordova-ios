@@ -23,7 +23,6 @@ var fs = require('fs');
 var path = require('path');
 var unorm = require('unorm');
 var projectFile = require('./lib/projectFile');
-
 var CordovaError = require('cordova-common').CordovaError;
 var CordovaLogger = require('cordova-common').CordovaLogger;
 var events = require('cordova-common').events;
@@ -54,7 +53,6 @@ function setupEvents(externalEventEmitter) {
 function Api(platform, platformRootDir, events) {
     // 'platform' property is required as per PlatformApi spec
     this.platform = platform || 'ios';
-
     this.root = platformRootDir || path.resolve(__dirname, '..');
 
     setupEvents(events);
@@ -67,7 +65,6 @@ function Api(platform, platformRootDir, events) {
         if (!xcodeProjDir) {
             throw new CordovaError('The provided path "' + this.root + '" is not a Cordova iOS project.');
         }
-
         var cordovaProjName = xcodeProjDir.substring(xcodeProjDir.lastIndexOf(path.sep)+1, xcodeProjDir.indexOf('.xcodeproj'));
         xcodeCordovaProj = path.join(this.root, cordovaProjName);
     } catch(e) {
@@ -217,6 +214,91 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
 
     return PluginManager.get(this.platform, this.locations, xcodeproj)
         .addPlugin(plugin, installOptions)
+        .then(function() {
+            var project_dir = this.locations.root;
+            var project_path = this.locations.xcodeProjDir;
+            var project_name = this.locations.xcodeCordovaProj.split('/').pop();
+            
+            if (plugin.getFrameworks(this.platform).length === 0) return;
+            events.emit('verbose', 'Adding pods since the plugin contained <framework>');
+                    
+            var pods_file = path.join(project_dir, 'pods.json');
+            var pods = {};
+            
+            try {
+                delete require.cache[require.resolve(pods_file)];
+                pods = require(pods_file);
+            } catch (e) { 
+                /* no pods.json exists */ 
+                // create an empty pods.json file 
+                fs.writeFileSync(pods_file, JSON.stringify({}));
+                delete require.cache[require.resolve(pods_file)];
+                pods = require(pods_file);
+            }  
+
+            var podMod = require('./lib/podMod');
+            var frameworkTags = plugin.getFrameworks(this.platform);
+
+            // filter framework tags for type "podspec" 
+            var array_of_pod_objects = frameworkTags.filter(function(obj){
+                return (obj.type == 'podspec'); 
+            });
+
+            var podIsAlreadyInPodfile;
+            var specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile;
+            
+            array_of_pod_objects.forEach(function (obj) {
+                //check if pod already exists, if so if spec has changed 
+                //if pods.json does not exist yet, create it
+                // if it does not exist, only overwrite the type and spec, NOT the count
+                var nameOfPod = obj.src;
+
+                if(!pods[nameOfPod]) {
+                    pods[nameOfPod] = {'type': obj.type, 'spec': obj.spec};
+                    podIsAlreadyInPodfile = false;
+                } else {
+                    podIsAlreadyInPodfile = true;
+                    if (pods[nameOfPod].spec == obj.spec) {
+                        //same version
+                        pods[nameOfPod].spec = obj.spec;
+                        specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile = false;
+                    } else {
+                        //different version
+                        //give warning, don't update anything
+                        specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile = true;
+                        events.emit('warn', plugin.id + ' depends on ' + obj.src + '@' + obj.spec + ', which conflicts with another plugin. ' + obj.src + '@' + pods[nameOfPod].spec + ' is already installed and was not overwritten.');
+                    }
+                }
+
+                // add a count incase multiple plugins depend on it.
+                if (pods[nameOfPod].count) {
+                    pods[nameOfPod].count = pods[nameOfPod].count + 1;
+                } else {
+                    pods[nameOfPod].count = 1;
+                }
+
+                if (podIsAlreadyInPodfile) {
+                    try { 
+                       fs.writeFileSync(pods_file, JSON.stringify(pods, null, 4));
+                    } catch (e) {
+                        throw new CordovaError('\nPod was not able to be added to pods.json in Api.js\n\n' + e);
+                    }
+                } else if (!podIsAlreadyInPodfile) {
+                    //add the pods to the Podfile, then add to pods.json
+                    podMod.addToPodfileSync(project_name, project_path, nameOfPod, obj.spec, pods_file); 
+                    events.emit('verbose', 'About to add ' + nameOfPod + ' to pods json');
+                    //write out updated pods.json, 
+                    // keep track of the order of the pods
+                    try { 
+                        fs.writeFileSync(pods_file, JSON.stringify(pods, null, 4));
+                    } catch (e) {
+                        throw new CordovaError('\nPod was not able to be added to pods.json in Api.js\n\n' + e);
+                    }
+                }
+            });
+            events.emit('verbose', 'Running pod install');
+            podMod.installAllPods(project_dir, false);
+        }.bind(this))
         // CB-11022 return non-falsy value to indicate
         // that there is no need to run prepare after
         .thenResolve(true);
@@ -236,10 +318,47 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
  *   CordovaError instance.
  */
 Api.prototype.removePlugin = function (plugin, uninstallOptions) {
-
     var xcodeproj = projectFile.parse(this.locations);
     return PluginManager.get(this.platform, this.locations, xcodeproj)
         .removePlugin(plugin, uninstallOptions)
+        .then(function() {
+            if (plugin.getFrameworks(this.platform).length === 0) return;
+                events.emit('verbose', 'Removing pods since the plugin contained <framework>');
+                //require script to run pod remove
+                //pods.json might not exist (if not pods were removed). 
+                //the pod will already be removed from pods.json at this stage
+                //need to check podfile and see if a pod exists in podfile that doesn't exist in pods.json. If so, remove it.
+
+                // which pods are in the plugin? 
+                var frameworkTags = plugin.getFrameworks(this.platform);
+                var project_dir = this.locations.root;
+                var pods_file = path.join(project_dir, 'pods.json');
+
+                delete require.cache[require.resolve(pods_file)];
+                var pods = require(pods_file);
+            
+                // filter framework tags for type "podspec" 
+                var array_of_pod_objects = frameworkTags.filter(function(obj){
+                    return (obj.type == 'podspec'); 
+                });
+
+                var podMod = require('./lib/podMod');
+                
+                array_of_pod_objects.forEach(function (obj) {
+                    // according to pods.json, does more than one plugin depend on the pod?
+                    if (pods[obj.src].count > 1) {
+                        // if so, only subtract one from the count in pods.json
+                        pods[obj.src].count = pods[obj.src].count - 1;
+                    } else {
+                        // if not, remove the pod from the Podfile 
+                        podMod.removeFromPodfileSync(project_dir, obj.src); 
+                        // update pods.json
+                        delete pods[obj.src];
+                    }
+                    fs.writeFileSync(pods_file, JSON.stringify(pods, null, 4));
+                });
+                podMod.installAllPods(project_dir, false);
+        }.bind(this))
         // CB-11022 return non-falsy value to indicate
         // that there is no need to run prepare after
         .thenResolve(true);
