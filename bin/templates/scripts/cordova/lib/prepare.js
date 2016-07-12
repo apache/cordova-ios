@@ -29,12 +29,13 @@ var events = require('cordova-common').events;
 var xmlHelpers = require('cordova-common').xmlHelpers;
 var ConfigParser = require('cordova-common').ConfigParser;
 var CordovaError = require('cordova-common').CordovaError;
+var projectFile = require('./projectFile');
 var configMunger = require('./configMunger');
+var FileUpdater = require('cordova-common').FileUpdater;
 
 /*jshint sub:true*/
 
-module.exports.prepare = function (cordovaProject) {
-
+module.exports.prepare = function (cordovaProject, options) {
     var self = this;
 
     this._config = updateConfigFile(cordovaProject.projectConfig,
@@ -47,11 +48,33 @@ module.exports.prepare = function (cordovaProject) {
         return updateProject(self._config, self.locations);
     })
     .then(function () {
-        handleIcons(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
-        handleSplashScreens(cordovaProject.projectConfig, self.locations.xcodeCordovaProj);
+        updateIcons(cordovaProject, self.locations);
+        updateSplashScreens(cordovaProject, self.locations);
     })
     .then(function () {
-        events.emit('verbose', 'updated project successfully');
+        events.emit('verbose', 'Prepared iOS project successfully');
+    });
+};
+
+module.exports.clean = function (options) {
+    // A cordovaProject isn't passed into the clean() function, because it might have
+    // been called from the platform shell script rather than the CLI. Check for the
+    // noPrepare option passed in by the non-CLI clean script. If that's present, or if
+    // there's no config.xml found at the project root, then don't clean prepared files.
+    var projectRoot = path.resolve(this.root, '../..');
+    var projectConfigFile = path.join(projectRoot, 'config.xml');
+    if ((options && options.noPrepare) || !fs.existsSync(projectConfigFile) ||
+            !fs.existsSync(this.locations.configXml)) {
+        return Q();
+    }
+
+    var projectConfig = new ConfigParser(this.locations.configXml);
+
+    var self = this;
+    return Q().then(function () {
+        cleanWww(projectRoot, self.locations);
+        cleanIcons(projectRoot, projectConfig, self.locations);
+        cleanSplashScreens(projectRoot, projectConfig, self.locations);
     });
 };
 
@@ -70,7 +93,7 @@ module.exports.prepare = function (cordovaProject) {
  *   configuration is already dumped to appropriate config.xml file.
  */
 function updateConfigFile(sourceConfig, configMunger, locations) {
-    events.emit('verbose', 'Generating config.xml from defaults for platform "ios"');
+    events.emit('verbose', 'Generating platform-specific config.xml from defaults for iOS at ' + locations.configXml);
 
     // First cleanup current config and merge project's one into own
     // Overwrite platform config.xml with defaults.xml.
@@ -80,6 +103,7 @@ function updateConfigFile(sourceConfig, configMunger, locations) {
     // in project (including project's config)
     configMunger.reapply_global_munge().save_all();
 
+    events.emit('verbose', 'Merging project\'s config.xml into platform-specific iOS config.xml');
     // Merge changes from app's config.xml into platform's one
     var config = new ConfigParser(locations.configXml);
     xmlHelpers.mergeXml(sourceConfig.doc.getroot(),
@@ -90,29 +114,51 @@ function updateConfigFile(sourceConfig, configMunger, locations) {
 }
 
 /**
+ * Logs all file operations via the verbose event stream, indented.
+ */
+function logFileOp(message) {
+    events.emit('verbose', '  ' + message);
+}
+
+/**
  * Updates platform 'www' directory by replacing it with contents of
  *   'platform_www' and app www. Also copies project's overrides' folder into
  *   the platform 'www' folder
  *
- * @param   {Object}  cordovaProject    An object which describes cordova project.
- * @param   {Object}  destinations      An object that contains destination 
+ * @param   {Object}  cordovaProject   An object which describes cordova project.
+ * @param   {boolean} destinations     An object that contains destinations
  *   paths for www files.
  */
 function updateWww(cordovaProject, destinations) {
-    shell.rm('-rf', destinations.www);
-    shell.mkdir('-p', destinations.www);
-    // Copy source files from project's www directory
-    shell.cp('-rf', path.join(cordovaProject.locations.www, '*'), destinations.www);
-    // Override www sources by files in 'platform_www' directory
-    shell.cp('-rf', path.join(destinations.platformWww, '*'), destinations.www);
+    var sourceDirs = [
+        path.relative(cordovaProject.root, cordovaProject.locations.www),
+        path.relative(cordovaProject.root, destinations.platformWww)
+    ];
 
     // If project contains 'merges' for our platform, use them as another overrides
     var merges_path = path.join(cordovaProject.root, 'merges', 'ios');
     if (fs.existsSync(merges_path)) {
-        events.emit('verbose', 'Found "merges" for ios platform. Copying over existing "www" files.');
-        var overrides = path.join(merges_path, '*');
-        shell.cp('-rf', overrides, destinations.www);
+        events.emit('verbose', 'Found "merges/ios" folder. Copying its contents into the iOS project.');
+        sourceDirs.push(path.join('merges', 'ios'));
     }
+
+    var targetDir = path.relative(cordovaProject.root, destinations.www);
+    events.emit(
+        'verbose', 'Merging and updating files from [' + sourceDirs.join(', ') + '] to ' + targetDir);
+    FileUpdater.mergeAndUpdateDir(
+        sourceDirs, targetDir, { rootDir: cordovaProject.root }, logFileOp);
+}
+
+/**
+ * Cleans all files from the platform 'www' directory.
+ */
+function cleanWww(projectRoot, locations) {
+    var targetDir = path.relative(projectRoot, locations.www);
+    events.emit('verbose', 'Cleaning ' + targetDir);
+
+    // No source paths are specified, so mergeAndUpdateDir() will clear the target directory.
+    FileUpdater.mergeAndUpdateDir(
+        [], targetDir, { rootDir: projectRoot, all: true }, logFileOp);
 }
 
 /**
@@ -123,7 +169,6 @@ function updateWww(cordovaProject, destinations) {
  * @param   {Object}  locations       A map of locations for this platform (In/Out)
  */
 function updateProject(platformConfig, locations) {
-
 
     // CB-6992 it is necessary to normalize characters
     // because node and shell scripts handles unicode symbols differently
@@ -157,8 +202,7 @@ function updateProject(platformConfig, locations) {
     var info_contents = plist.build(infoPlist);
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g,'<string></string>');
     fs.writeFileSync(plistFile, info_contents, 'utf-8');
-    events.emit('verbose', 'Wrote out iOS Bundle Identifier to "' + pkg + '"');
-    events.emit('verbose', 'Wrote out iOS Bundle Version to "' + version + '"');
+    events.emit('verbose', 'Wrote out iOS Bundle Identifier "' + pkg + '" and iOS Bundle Version "' + version + '" to ' + plistFile);
 
     return handleBuildSettings(platformConfig, locations).then(function() {
         if (name == originalName) {
@@ -171,7 +215,7 @@ function updateProject(platformConfig, locations) {
         try {
             proj.parseSync();
         } catch (err) {
-            return Q.reject(new CordovaError('An error occured during parsing of project.pbxproj. Start weeping. Output: ' + err));
+            return Q.reject(new CordovaError('Could not parse project.pbxproj: ' + err));
         }
 
         proj.updateProductName(name);
@@ -180,13 +224,14 @@ function updateProject(platformConfig, locations) {
         // Move the xcodeproj and other name-based dirs over.
         shell.mv(path.join(locations.xcodeCordovaProj, originalName + '-Info.plist'), path.join(locations.xcodeCordovaProj, name + '-Info.plist'));
         shell.mv(path.join(locations.xcodeCordovaProj, originalName + '-Prefix.pch'), path.join(locations.xcodeCordovaProj, name + '-Prefix.pch'));
-        // CB-8914 remove userdata otherwise project is un-usable in xcode 
+        // CB-8914 remove userdata otherwise project is un-usable in xcode
         shell.rm('-rf',path.join(locations.xcodeProjDir,'xcuserdata/'));
         shell.mv(locations.xcodeProjDir, path.join(locations.root, name + '.xcodeproj'));
         shell.mv(locations.xcodeCordovaProj, path.join(locations.root, name));
 
         // Update locations with new paths
         locations.xcodeCordovaProj = path.join(locations.root, name);
+        locations.configXml = path.join(locations.xcodeCordovaProj, 'config.xml');
         locations.xcodeProjDir = path.join(locations.root, name + '.xcodeproj');
         locations.pbxproj = path.join(locations.xcodeProjDir, 'project.pbxproj');
 
@@ -195,7 +240,11 @@ function updateProject(platformConfig, locations) {
         pbx_contents = pbx_contents.split(originalName).join(name);
         fs.writeFileSync(locations.pbxproj, pbx_contents, 'utf-8');
         events.emit('verbose', 'Wrote out iOS Product Name and updated XCode project file names from "'+originalName+'" to "' + name + '".');
-        // in case of updated paths we return them back to
+
+        // Remove cached `projectFile` instance as it is not valid anymore
+        // since the project structure has changed
+        projectFile.purgeProjectFileCache(locations.root);
+
         return Q();
     });
 }
@@ -218,9 +267,9 @@ function handleOrientationSettings(platformConfig, infoPlist) {
             infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
             infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
             break;
-        default:
-            delete infoPlist['UISupportedInterfaceOrientations'];
-            delete infoPlist['UISupportedInterfaceOrientations~ipad'];
+        case 'default':
+            infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
+            infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
             delete infoPlist['UIInterfaceOrientation'];
     }
 }
@@ -239,7 +288,7 @@ function handleBuildSettings(platformConfig, locations) {
     try {
         proj.parseSync();
     } catch (err) {
-        return Q.reject(new CordovaError('An error occured during parsing of project.pbxproj. Start weeping. Output: ' + err));
+        return Q.reject(new CordovaError('Could not parse project.pbxproj: ' + err));
     }
 
     if (targetDevice) {
@@ -257,15 +306,10 @@ function handleBuildSettings(platformConfig, locations) {
     return Q();
 }
 
-function handleIcons(projectConfig, platformRoot) {
-
-    var icons = projectConfig.getIcons('ios');
-    var appRoot = path.dirname(projectConfig.path);
-
+function mapIconResources(icons, iconsDir) {
     // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/IconMatrix.html
     // for launch images sizes reference.
     var platformIcons = [
-        {dest: 'icon-60.png', width: 60, height: 60},
         {dest: 'icon-60@2x.png', width: 120, height: 120},
         {dest: 'icon-60@3x.png', width: 180, height: 180},
         {dest: 'icon-76.png', width: 76, height: 76},
@@ -284,31 +328,64 @@ function handleIcons(projectConfig, platformRoot) {
         {dest: 'icon-83.5@2x.png', width: 167, height: 167}
     ];
 
-    var destIconsFolder;
-    var xcassetsExists = folderExists(path.join(platformRoot, 'Images.xcassets/'));
-
-    if (xcassetsExists) {
-        destIconsFolder = 'Images.xcassets/AppIcon.appiconset/';
-    } else {
-        destIconsFolder = 'Resources/icons/';
-    }
-
+    var pathMap = {};
     platformIcons.forEach(function (item) {
         var icon = icons.getBySize(item.width, item.height) || icons.getDefault();
-        if (icon){
-            var src = path.join(appRoot, icon.src),
-                dest = path.join(platformRoot, destIconsFolder, item.dest);
-            events.emit('verbose', 'Copying icon from ' + src + ' to ' + dest);
-            shell.cp('-f', src, dest);
+        if (icon) {
+            var target = path.join(iconsDir, item.dest);
+            pathMap[target] = icon.src;
         }
     });
+    return pathMap;
 }
 
-function handleSplashScreens(projectConfig, platformRoot) {
+function getIconsDir(projectRoot, platformProjDir) {
+    var iconsDir;
+    var xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
 
-    var appRoot = path.dirname(projectConfig.path);
+    if (xcassetsExists) {
+        iconsDir = path.join(platformProjDir, 'Images.xcassets/AppIcon.appiconset/');
+    } else {
+        iconsDir = path.join(platformProjDir, 'Resources/icons/');
+    }
 
-    var splashScreens = projectConfig.getSplashScreens('ios');
+    return iconsDir;
+}
+
+function updateIcons(cordovaProject, locations) {
+    var icons = cordovaProject.projectConfig.getIcons('ios');
+
+    if (icons.length === 0) {
+        events.emit('verbose', 'This app does not have icons defined');
+        return;
+    }
+
+    var platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    var iconsDir = getIconsDir(cordovaProject.root, platformProjDir);
+    var resourceMap = mapIconResources(icons, iconsDir);
+    events.emit('verbose', 'Updating icons at ' + iconsDir);
+    FileUpdater.updatePaths(
+        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+}
+
+function cleanIcons(projectRoot, projectConfig, locations) {
+    var icons = projectConfig.getIcons('android');
+    if (icons.length > 0) {
+        var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+        var iconsDir = getIconsDir(projectRoot, platformProjDir);
+        var resourceMap = mapIconResources(icons, iconsDir);
+        Object.keys(resourceMap).forEach(function (targetIconPath) {
+            resourceMap[targetIconPath] = null;
+        });
+        events.emit('verbose', 'Cleaning icons at ' + iconsDir);
+
+        // Source paths are removed from the map, so updatePaths() will delete the target files.
+        FileUpdater.updatePaths(
+            resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
+}
+
+function mapSplashScreenResources(splashScreens, splashScreensDir) {
     var platformSplashScreens = [
         {dest: 'Default~iphone.png', width: 320, height: 480},
         {dest: 'Default@2x~iphone.png', width: 640, height: 960},
@@ -322,24 +399,61 @@ function handleSplashScreens(projectConfig, platformRoot) {
         {dest: 'Default-Landscape-736h.png', width: 2208, height: 1242}
     ];
 
-    var destSplashFolder;
-    var xcassetsExists = folderExists(path.join(platformRoot, 'Images.xcassets/'));
-
-    if (xcassetsExists) {
-        destSplashFolder = 'Images.xcassets/LaunchImage.launchimage/';
-    } else {
-        destSplashFolder = 'Resources/splash/';
-    }
-
-    platformSplashScreens.forEach(function(item) {
+    var pathMap = {};
+    platformSplashScreens.forEach(function (item) {
         var splash = splashScreens.getBySize(item.width, item.height);
-        if (splash){
-            var src = path.join(appRoot, splash.src),
-                dest = path.join(platformRoot, destSplashFolder, item.dest);
-            events.emit('verbose', 'Copying splash from ' + src + ' to ' + dest);
-            shell.cp('-f', src, dest);
+        if (splash) {
+            var target = path.join(splashScreensDir, item.dest);
+            pathMap[target] = splash.src;
         }
     });
+    return pathMap;
+}
+
+function getSplashScreensDir(projectRoot, platformProjDir) {
+    var splashScreensDir;
+    var xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
+
+    if (xcassetsExists) {
+        splashScreensDir = path.join(platformProjDir, 'Images.xcassets/LaunchImage.launchimage/');
+    } else {
+        splashScreensDir = path.join(platformProjDir, 'Resources/splash/');
+    }
+
+    return splashScreensDir;
+}
+
+function updateSplashScreens(cordovaProject, locations) {
+    var splashScreens = cordovaProject.projectConfig.getSplashScreens('ios');
+
+    if (splashScreens.length === 0) {
+        events.emit('verbose', 'This app does not have splash screens defined');
+        return;
+    }
+
+    var platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    var splashScreensDir = getSplashScreensDir(cordovaProject.root, platformProjDir);
+    var resourceMap = mapSplashScreenResources(splashScreens, splashScreensDir);
+    events.emit('verbose', 'Updating splash screens at ' + splashScreensDir);
+    FileUpdater.updatePaths(
+        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+}
+
+function cleanSplashScreens(projectRoot, projectConfig, locations) {
+    var splashScreens = projectConfig.getSplashScreens('android');
+    if (splashScreens.length > 0) {
+        var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+        var splashScreensDir = getSplashScreensDir(projectRoot, platformProjDir);
+        var resourceMap = mapIconResources(splashScreens, splashScreensDir);
+        Object.keys(resourceMap).forEach(function (targetSplashPath) {
+            resourceMap[targetSplashPath] = null;
+        });
+        events.emit('verbose', 'Cleaning splash screens at ' + splashScreensDir);
+
+        // Source paths are removed from the map, so updatePaths() will delete the target files.
+        FileUpdater.updatePaths(
+            resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
 }
 
 /**
@@ -357,7 +471,7 @@ function getOrientationValue(platformConfig) {
 
     var orientation = platformConfig.getPreference('orientation');
     if (!orientation) {
-        return ORIENTATION_DEFAULT;
+        return '';
     }
 
     orientation = orientation.toLowerCase();
@@ -367,8 +481,8 @@ function getOrientationValue(platformConfig) {
         return orientation;
     }
 
-    events.emit('warn', 'Unsupported orientation: ' + orientation +
-        '. Defaulting to value: ' + ORIENTATION_DEFAULT);
+    events.emit('warn', 'Unrecognized value for Orientation preference: ' + orientation +
+        '. Defaulting to value: ' + ORIENTATION_DEFAULT + '.');
 
     return ORIENTATION_DEFAULT;
 }
@@ -376,18 +490,18 @@ function getOrientationValue(platformConfig) {
 /*
     Parses all <access> and <allow-navigation> entries and consolidates duplicates (for ATS).
     Returns an object with a Hostname as the key, and the value an object with properties:
-        { 
+        {
             Hostname, // String
-            NSExceptionAllowsInsecureHTTPLoads, // boolean 
+            NSExceptionAllowsInsecureHTTPLoads, // boolean
             NSIncludesSubdomains,  // boolean
             NSExceptionMinimumTLSVersion, // String
-             NSExceptionRequiresForwardSecrecy // boolean 
+             NSExceptionRequiresForwardSecrecy // boolean
         }
 */
 function processAccessAndAllowNavigationEntries(config) {
     var accesses = config.getAccesses();
     var allow_navigations = config.getAllowNavigations();
-    
+
     return allow_navigations
     // we concat allow_navigations and accesses, after processing accesses
     .concat(accesses.map(function(obj) {
@@ -411,21 +525,21 @@ function processAccessAndAllowNavigationEntries(config) {
                 }
             }
             previousReturn[obj.Hostname] = item;
-        }  
+        }
         return previousReturn;
     }, {});
 }
 
 /*
     Parses a URL and returns an object with these keys:
-        { 
+        {
             Hostname, // String
             NSExceptionAllowsInsecureHTTPLoads, // boolean (default: false)
             NSIncludesSubdomains,  // boolean (default: false)
             NSExceptionMinimumTLSVersion, // String (default: 'TLSv1.2')
             NSExceptionRequiresForwardSecrecy // boolean (default: true)
         }
-        
+
     null is returned if the URL cannot be parsed, or is to be skipped for ATS.
 */
 function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secrecy) {
@@ -438,7 +552,7 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
             Hostname : '*'
         };
     }
-    
+
     // Guiding principle: we only set values in retObj if they are NOT the default
 
     if (!retObj.Hostname) {
@@ -476,7 +590,7 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
     else if (!href.protocol && href.pathname.indexOf('*:/') === 0) { // wilcard in protocol
         retObj.NSExceptionAllowsInsecureHTTPLoads = true;
     }
-    
+
     return retObj;
 }
 
@@ -487,19 +601,19 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
 */
 function writeATSEntries(config) {
   var pObj = processAccessAndAllowNavigationEntries(config);
-  
+
     var ats = {};
 
     for(var hostname in pObj) {
         if (pObj.hasOwnProperty(hostname)) {
               if (hostname === '*') {
                   ats['NSAllowsArbitraryLoads'] = true;
-                  continue;              
+                  continue;
               }
-              
+
               var entry = pObj[hostname];
               var exceptionDomain = {};
-              
+
               for(var key in entry) {
                   if (entry.hasOwnProperty(key) && key !== 'Hostname') {
                       exceptionDomain[key] = entry[key];
@@ -513,7 +627,7 @@ function writeATSEntries(config) {
               ats['NSExceptionDomains'][hostname] = exceptionDomain;
         }
     }
-    
+
     return ats;
 }
 
@@ -539,6 +653,6 @@ function parseTargetDevicePreference(value) {
     if (map[value.toLowerCase()]) {
         return map[value.toLowerCase()];
     }
-    events.emit('warn', 'Unknown target-device preference value: "' + value + '".');
+    events.emit('warn', 'Unrecognized value for target-device preference: ' + value + '.');
     return null;
 }

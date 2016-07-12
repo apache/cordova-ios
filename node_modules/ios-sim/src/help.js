@@ -35,7 +35,7 @@ function help() {
     } else {
         console.log("Help file missing.");
     }
-};
+}
 
 module.exports = help;
 

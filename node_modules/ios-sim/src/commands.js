@@ -75,7 +75,7 @@ var command_lib = {
     start : function(args) {
         lib.start(args.devicetypeid);
     }
-}
+};
 
 module.exports = command_lib;
 

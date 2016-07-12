@@ -212,6 +212,10 @@
         // www folder is actually a bundle
         NSBundle* bundle = [NSBundle bundleWithPath:self.wwwFolderName];
         appURL = [bundle URLForResource:self.startPage withExtension:nil];
+    } else if([self.wwwFolderName hasSuffix:@".framework"]){
+        // www folder is actually a framework
+        NSBundle* bundle = [NSBundle bundleWithPath:self.wwwFolderName];
+        appURL = [bundle URLForResource:self.startPage withExtension:nil];
     } else {
         // CB-3005 strip parameters from start page to check if page exists in resources
         NSURL* startURL = [NSURL URLWithString:self.startPage];

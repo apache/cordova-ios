@@ -30,21 +30,9 @@ var shell = require('shelljs'),
 
 
 var extensions = {
-	startByApp : function(appName, deviceid) {
-        var command = 'open -a "' + appName + '"';
-        if (!deviceid) {
-            return shell.exec(command, { silent: true } );
-        } else {
-            command += util.format(command + ' --args -CurrentDeviceUDID %s', deviceid);
-            return shell.exec(command, { silent: true } );
-        }
-	},
-	
     start : function(deviceid) {
-		// try "iOS Simulator" first (Xcode 6), if that fails, try "Simulator" (Xcode 7)
-		if (extensions.startByApp('iOS Simulator', deviceid).code !== 0) {
-			extensions.startByApp('Simulator', deviceid);
-		}
+         var command = util.format('xcrun instruments -w "%s"', deviceid);
+         return shell.exec(command, { silent: true } );
      },
 	 
     log : function(deviceid, filepath) {

@@ -194,4 +194,9 @@
     return _engineWebView;
 }
 
+- (UIView*)webView
+{
+    return self.engineWebView;
+}
+
 @end

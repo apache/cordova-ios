@@ -194,7 +194,7 @@ describe('ios plugin handler', function() {
                 var resources = copyArray(invalid_resources);
                 expect(function() {
                     install(resources[0], faultyPluginInfo, dummyProject);
-                }).toThrow('cannot find "' + path.resolve(faultyplugin, 'src/ios/IDontExist.bundle') + '" ios <resource-file>');
+                }).toThrow('Cannot find resource file "' + path.resolve(faultyplugin, 'src/ios/IDontExist.bundle') + '" for plugin ' + faultyPluginInfo.id + ' in iOS platform');
             });
             it('should throw if resource-file target already exists', function() {
                 var resources = copyArray(valid_resources);
@@ -203,7 +203,7 @@ describe('ios plugin handler', function() {
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(function() {
                     install(resources[0], dummyPluginInfo, dummyProject);
-                }).toThrow('target destination "' + target + '" already exists');
+                }).toThrow('File already exists at detination "' + target + '" for resource file specified by plugin ' + dummyPluginInfo.id + ' in iOS platform');
             });
             it('should call into xcodeproj\'s addResourceFile', function() {
                 var resources = copyArray(valid_resources);
@@ -242,7 +242,7 @@ describe('ios plugin handler', function() {
                     var frameworks = copyArray(invalid_custom_frameworks);
                     expect(function() {
                         install(frameworks[0], faultyPluginInfo, dummyProject);
-                    }).toThrow('cannot find "' + path.resolve(faultyplugin, 'src/ios/NonExistantCustomFramework.framework') + '" ios <framework>');
+                    }).toThrow('Cannot find framework "' + path.resolve(faultyplugin, 'src/ios/NonExistantCustomFramework.framework')  + '" for plugin ' + faultyPluginInfo.id + ' in iOS platform');
                 });
                 it('should throw if framework target already exists', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
@@ -250,7 +250,7 @@ describe('ios plugin handler', function() {
                     shell.mkdir('-p', target);
                     expect(function() {
                         install(frameworks[0], dummyPluginInfo, dummyProject);
-                    }).toThrow('target destination "' + target + '" already exists');
+                    }).toThrow('Framework "' + target + '" for plugin ' + dummyPluginInfo.id + ' already exists in iOS platform');
                 });
                 it('should cp the file to the right target location', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
@@ -259,6 +259,54 @@ describe('ios plugin handler', function() {
                     expect(spy).toHaveBeenCalledWith('-R', path.join(dummyplugin, 'src', 'ios', 'Custom.framework'),
                                                      path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin'));
                 });
+            });
+        });
+
+        describe('of <js-module> elements', function() {
+            var jsModule = {src: 'www/dummyPlugin.js'};
+            var install = pluginHandlers.getInstaller('js-module');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                spyOn(fs, 'writeFileSync');
+                wwwDest = path.resolve(dummyProject.www, 'plugins', dummyPluginInfo.id, jsModule.src);
+                platformWwwDest = path.resolve(dummyProject.platformWww, 'plugins', dummyPluginInfo.id, jsModule.src);
+            });
+
+            it('should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                install(jsModule, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(fs.writeFileSync).toHaveBeenCalledWith(wwwDest, jasmine.any(String), 'utf-8');
+                expect(fs.writeFileSync).toHaveBeenCalledWith(platformWwwDest, jasmine.any(String), 'utf-8');
+            });
+
+            it('should put module to www only when options.usePlatformWww flag is not specified', function () {
+                install(jsModule, dummyPluginInfo, dummyProject);
+                expect(fs.writeFileSync).toHaveBeenCalledWith(wwwDest, jasmine.any(String), 'utf-8');
+                expect(fs.writeFileSync).not.toHaveBeenCalledWith(platformWwwDest, jasmine.any(String), 'utf-8');
+            });
+        });
+
+        describe('of <asset> elements', function() {
+            var asset = {src: 'www/dummyPlugin.js', target: 'foo/dummy.js'};
+            var install = pluginHandlers.getInstaller('asset');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                spyOn(shell, 'cp');
+                wwwDest = path.resolve(dummyProject.www, asset.target);
+                platformWwwDest = path.resolve(dummyProject.platformWww, asset.target);
+            });
+
+            it('should put asset to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                install(asset, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
+                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
+            });
+
+            it('should put asset to www only when options.usePlatformWww flag is not specified', function () {
+                install(asset, dummyPluginInfo, dummyProject);
+                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
+                expect(shell.cp).not.toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
             });
         });
 
@@ -403,6 +451,68 @@ describe('ios plugin handler', function() {
                     uninstall(frameworks[0], dummyPluginInfo, dummyProject);
                     expect(spy).toHaveBeenCalledWith('-rf', frameworkPath);
                 });
+            });
+        });
+
+        describe('of <js-module> elements', function() {
+            var jsModule = {src: 'www/dummyPlugin.js'};
+            var uninstall = pluginHandlers.getUninstaller('js-module');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                wwwDest = path.resolve(dummyProject.www, 'plugins', dummyPluginInfo.id, jsModule.src);
+                platformWwwDest = path.resolve(dummyProject.platformWww, 'plugins', dummyPluginInfo.id, jsModule.src);
+
+                spyOn(shell, 'rm');
+
+                var existsSyncOrig = fs.existsSync;
+                spyOn(fs, 'existsSync').andCallFake(function (file) {
+                    if ([wwwDest, platformWwwDest].indexOf(file) >= 0 ) return true;
+                    return existsSyncOrig.call(fs, file);
+                });
+            });
+
+            it('should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                uninstall(jsModule, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+            });
+
+            it('should put module to www only when options.usePlatformWww flag is not specified', function () {
+                uninstall(jsModule, dummyPluginInfo, dummyProject);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).not.toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+            });
+        });
+
+        describe('of <asset> elements', function() {
+            var asset = {src: 'www/dummyPlugin.js', target: 'foo/dummy.js'};
+            var uninstall = pluginHandlers.getUninstaller('asset');
+            var wwwDest, platformWwwDest;
+
+            beforeEach(function () {
+                wwwDest = path.resolve(dummyProject.www, asset.target);
+                platformWwwDest = path.resolve(dummyProject.platformWww, asset.target);
+
+                spyOn(shell, 'rm');
+
+                var existsSyncOrig = fs.existsSync;
+                spyOn(fs, 'existsSync').andCallFake(function (file) {
+                    if ([wwwDest, platformWwwDest].indexOf(file) >= 0 ) return true;
+                    return existsSyncOrig.call(fs, file);
+                });
+            });
+
+            it('should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
+                uninstall(asset, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+            });
+
+            it('should put module to www only when options.usePlatformWww flag is not specified', function () {
+                uninstall(asset, dummyPluginInfo, dummyProject);
+                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
+                expect(shell.rm).not.toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
             });
         });
     });

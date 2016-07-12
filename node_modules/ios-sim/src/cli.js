@@ -45,24 +45,25 @@ function init() {
         );
         process.exit(2);
     }
-};
+}
 
 function cli(inputArgs) {
     
     var knownOpts =
-        { 'version' : Boolean
-        , 'help' : Boolean
-        , 'verbose' : Boolean
-        , 'exit' : Boolean
-        , 'use-gdb' : Boolean
-        , 'uuid' : String
-        , 'env' : String
-        , 'setenv' : String
-        , 'stdout' : path
-        , 'stderr' : path
-        , 'timeout' : Number
-        , 'args' : Array
-        , 'devicetypeid' : String
+        {
+            'version' : Boolean,
+            'help' : Boolean,
+            'verbose' : Boolean,
+            'exit' : Boolean,
+            'use-gdb' : Boolean,
+            'uuid' : String,
+            'env' : String,
+            'setenv' : String,
+            'stdout' : path,
+            'stderr' : path,
+            'timeout' : Number,
+            'args' : Array,
+            'devicetypeid' : String
     };
 
     var shortHands = null;

@@ -74,6 +74,13 @@ describe('create', function() {
         createAndBuild(projectname, projectid);
     });
 
+    it('create project with unicode name 2, no spaces', function() {
+        var projectname = 'إثرا';
+        var projectid = 'com.test.app3.2';
+
+        createAndBuild(projectname, projectid);
+    });
+
     it('create project with unicode name, and spaces', function() {
         var projectname = '応応応応 用用用用';
         var projectid = 'com.test.app4';
@@ -106,7 +113,7 @@ describe('end-to-end list validation', function(){
         shell.mkdir('-p', path.join(cordova_bin, 'templates', 'scripts', 'HelloCordova.xcodeproj'));
         var command = '"' + path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'run') + '" --list';
         var output = shell.exec(command, {silent: true}).output;
-        expect(output).toMatch(/Available iOS Virtual Devices/);
+        expect(output).toMatch(/Available iOS Simulators/);
         expect(output).toMatch(/Available iOS Devices/);
         shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'check_reqs'));
         shell.rm('-f', path.join(cordova_bin, 'templates', 'scripts', 'cordova', 'lib', 'check_reqs.js'));
