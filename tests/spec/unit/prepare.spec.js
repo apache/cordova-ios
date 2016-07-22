@@ -115,13 +115,27 @@ describe('prepare', function () {
             });
         });
         it('should write out the app id to info plist as CFBundleIdentifier', function(done) {
-            cfg.ios_CFBundleIdentifier = function() { return null; };
+            var orig = cfg.getAttribute;
+            cfg.getAttribute = function(name) {
+                if (name == 'ios-CFBundleIdentifier') {
+                    return null;
+                }
+                return orig.call(this, name);
+            };
+
             wrapper(updateProject(cfg, p.locations), done, function() {
                 expect(plist.build.mostRecentCall.args[0].CFBundleIdentifier).toEqual('testpkg');
             });
         });
         it('should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', function(done) {
-            cfg.ios_CFBundleIdentifier = function() { return 'testpkg_ios'; };
+            var orig = cfg.getAttribute;
+            cfg.getAttribute = function(name) {
+                if (name == 'ios-CFBundleIdentifier') {
+                    return 'testpkg_ios';
+                }
+                return orig.call(this, name);
+            };
+
             wrapper(updateProject(cfg, p.locations), done, function() {
                 expect(plist.build.mostRecentCall.args[0].CFBundleIdentifier).toEqual('testpkg_ios');
             });
