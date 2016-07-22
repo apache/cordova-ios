@@ -369,7 +369,7 @@ function updateIcons(cordovaProject, locations) {
 }
 
 function cleanIcons(projectRoot, projectConfig, locations) {
-    var icons = projectConfig.getIcons('android');
+    var icons = projectConfig.getIcons('ios');
     if (icons.length > 0) {
         var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
         var iconsDir = getIconsDir(projectRoot, platformProjDir);
@@ -440,7 +440,7 @@ function updateSplashScreens(cordovaProject, locations) {
 }
 
 function cleanSplashScreens(projectRoot, projectConfig, locations) {
-    var splashScreens = projectConfig.getSplashScreens('android');
+    var splashScreens = projectConfig.getSplashScreens('ios');
     if (splashScreens.length > 0) {
         var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
         var splashScreensDir = getSplashScreensDir(projectRoot, platformProjDir);
