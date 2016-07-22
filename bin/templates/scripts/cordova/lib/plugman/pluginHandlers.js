@@ -97,7 +97,7 @@ var handlers = {
                 var keepFrameworks = keep_these_frameworks;
 
                 if (keepFrameworks.indexOf(src) < 0) {
-                    project.frameworks[src] -= (project.frameworks[src] || 1) - 1;
+                    project.frameworks[src] = (project.frameworks[src] || 1) - 1;
                     if (project.frameworks[src] < 1) {
                         // Only remove non-custom framework from xcode project
                         // if there is no references remains
