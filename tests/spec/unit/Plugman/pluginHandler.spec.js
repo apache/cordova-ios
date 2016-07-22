@@ -452,6 +452,24 @@ describe('ios plugin handler', function() {
                     expect(spy).toHaveBeenCalledWith('-rf', frameworkPath);
                 });
             });
+            
+            describe('without custom="true" attribute ', function() {
+                it('should decrease framework counter after uninstallation', function() {  
+                    var install = pluginHandlers.getInstaller('framework');
+                    var dummyNonCustomFrameworks =  dummyPluginInfo.getFrameworks('ios').filter(function(f) {
+                        return !f.custom;
+                    });
+                    var dummyFramework = dummyNonCustomFrameworks[0];
+                    install(dummyFramework, dummyPluginInfo, dummyProject);
+                    install(dummyFramework, dummyPluginInfo, dummyProject); 
+                    var frameworkName = Object.keys(dummyProject.frameworks)[0]; 
+                    expect(dummyProject.frameworks[frameworkName]).toEqual(2);
+                    uninstall(dummyFramework, dummyPluginInfo, dummyProject);
+                    expect(dummyProject.frameworks[frameworkName]).toEqual(1);                  
+                    uninstall(dummyFramework, dummyPluginInfo, dummyProject); 
+                    expect(dummyProject.frameworks[frameworkName]).not.toBeDefined();
+                });
+            });
         });
 
         describe('of <js-module> elements', function() {
