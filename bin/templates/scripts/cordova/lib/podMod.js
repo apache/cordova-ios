@@ -87,9 +87,9 @@ function installPodSync (projectName, pathToProjectFile, nameOfPod, podSpec, pod
     var lineToInjectInPodfile; //adds pod
     var path = removeProjectFromPath(pathToProjectFile);
     var podfile = path + '/Podfile';
-    var podfileExistsInCurrentDirectory = fs.existsSync(podfile);       //bool
-    var podExistsInPodsJSON = podsJSON[nameOfPod];                      //bool
-    var podRequestedForSpecChange;                                      //bool
+    var podfileExistsInCurrentDirectory = fs.existsSync(podfile);
+    var podExistsInPodsJSON = podsJSON[nameOfPod];
+    var podRequestedForSpecChange;
    
     if (podSpec === '') {
         lineToInjectInPodfile = util.format('pod \'%s\'', nameOfPod);

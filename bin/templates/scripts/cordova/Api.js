@@ -245,6 +245,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
             });
 
             var podIsAlreadyInPodfile;
+            var specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile;
             
             array_of_pod_objects.forEach(function (obj) {
                 //check if pod already exists, if so if spec has changed 
@@ -256,9 +257,17 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                     pods[nameOfPod] = {'type': obj.type, 'spec': obj.spec};
                     podIsAlreadyInPodfile = false;
                 } else {
-                    pods[nameOfPod].type = obj.type;
-                    pods[nameOfPod].spec = obj.spec;
                     podIsAlreadyInPodfile = true;
+                    if (pods[nameOfPod].spec == obj.spec) {
+                        //same version
+                        pods[nameOfPod].spec = obj.spec;
+                        specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile = false;
+                    } else {
+                        //different version
+                        //give warning, don't update anything
+                        specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile = true;
+                        events.emit('warn', plugin.id + ' depends on ' + obj.src + '@' + obj.spec + ', which conflicts with another plugin. The Podfile was not overwritten with the spec for ' + plugin.id + '.');
+                    }
                 }
 
                 // add a count incase multiple plugins depend on it.
@@ -266,31 +275,26 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                     pods[nameOfPod].count = pods[nameOfPod].count + 1;
                 } else {
                     pods[nameOfPod].count = 1;
-                } 
-            
-                function addToPodfile () {
+                }
+
+                if (podIsAlreadyInPodfile) {
+                    try { 
+                       fs.writeFileSync(pods_file, JSON.stringify(pods, null, 4));
+                    } catch (e) {
+                        throw new CordovaError('\nPod was not able to be added to pods.json in Api.js\n\n' + e);
+                    }
+                } else if (!podIsAlreadyInPodfile) {
+                    //add the pods to the Podfile, then add to pods.json
                     podMod.installPodSync(project_name, project_path, nameOfPod, obj.spec, pods_file); 
                     events.emit('verbose', 'About to add ' + nameOfPod + ' to pods json');
-                }
-                
-                //write out updated pods.json, 
-                // keep track of the order of the pods
-                function addToPodsJSON () {
+                    //write out updated pods.json, 
+                    // keep track of the order of the pods
                     try { 
                         fs.writeFileSync(pods_file, JSON.stringify(pods, null, 4));
                     } catch (e) {
                         throw new CordovaError('\nPod was not able to be added to pods.json in Api.js\n\n' + e);
                     }
                 }
-
-                if (podIsAlreadyInPodfile) {
-                    addToPodsJSON();
-                } else if (!podIsAlreadyInPodfile) {
-                    //add the pods to the Podfile, then add to pods.json
-                    addToPodfile();
-                    addToPodsJSON();
-                }
-
             });
             events.emit('verbose', 'Running pod install');
             podMod.installPodSuperspawn(project_dir, false);
