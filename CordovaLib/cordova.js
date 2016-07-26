@@ -1,5 +1,5 @@
 // Platform: ios
-// 2fd4bcb84048415922d13d80d35b8d1668e8e150
+// d403ce434788ffe1937711d6ebcbcc837fcbcb14
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '4.2.0';
+var PLATFORM_VERSION_BUILD_LABEL = '4.2.1';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
@@ -1827,7 +1827,7 @@ utils.clone = function(obj) {
 
     retVal = {};
     for(i in obj){
-        if(!(i in retVal) || retVal[i] != obj[i]) {
+        if((!(i in retVal) || retVal[i] != obj[i]) && typeof obj[i] != 'undefined') {
             retVal[i] = utils.clone(obj[i]);
         }
     }
