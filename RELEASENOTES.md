@@ -22,6 +22,15 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.2.1 (Jul 26, 2016)
+* [CB-11627](https://issues.apache.org/jira/browse/CB-11627) updated `CDVAvailability.h` with new version
+* [CB-11627](https://issues.apache.org/jira/browse/CB-11627) added missing license header
+* [CB-11627](https://issues.apache.org/jira/browse/CB-11627) Updated checked-in `node_modules`
+* [CB-9371](https://issues.apache.org/jira/browse/CB-9371) Fix how prepare handles orientation on **ios**
+* [CB-11431](https://issues.apache.org/jira/browse/CB-11431) Document ways to update delegates, preferences and script message handlers in `WebViewEngines`
+* [CB-11475](https://issues.apache.org/jira/browse/CB-11475) Ignore unsupported 60x60 icon
+* [CB-11426](https://issues.apache.org/jira/browse/CB-11426) Hardcoded path should not be in tests project.
+
 ### 4.2.0 (Jun 16, 2016)
 * `cordova-ios` now supports node 6!
 * [CB-11445](https://issues.apache.org/jira/browse/CB-11445) Updated checked-in `node_modules`
