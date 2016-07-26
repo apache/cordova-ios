@@ -266,7 +266,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                         //different version
                         //give warning, don't update anything
                         specForPodInSecondPluginIsDifferentFromSpecAlreadyInPodfile = true;
-                        events.emit('warn', plugin.id + ' depends on ' + obj.src + '@' + obj.spec + ', which conflicts with another plugin. The Podfile was not overwritten with the spec for ' + plugin.id + '.');
+                        events.emit('warn', plugin.id + ' depends on ' + obj.src + '@' + obj.spec + ', which conflicts with another plugin. ' + obj.src + '@' + pods[nameOfPod].spec + ' is already installed and was not overwritten.');
                     }
                 }
 
