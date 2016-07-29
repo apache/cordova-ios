@@ -116,7 +116,6 @@ var handlers = {
                             // Only remove non-custom framework from xcode project
                             // if there is no references remains
                             project.xcode.removeFramework(src);
-                            console.log('removing ' + src);
                             delete project.frameworks[src];
                         }
                     }
