@@ -121,7 +121,7 @@ function installPodSync (projectName, pathToProjectFile, nameOfPod, podSpec, pod
             events.emit('verbose', 'Selected pod already exists in Podfile according to pods.json');
             //if pod is in Podfile, is there a change in spec? 
             if (podRequestedForSpecChange) {
-                //if spec change requested, replace the line in the Podfile with the correct spec 
+                //if spec change requested, it won't make it to this point-- TODO: rm this line 
                 events.emit('verbose', 'Pod requested for spec change');
             } // no change in spec handled above
         } else if (!podExistsInPodsJSON) {

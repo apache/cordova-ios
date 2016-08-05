@@ -9,7 +9,6 @@
     <asset src="www/test.js" target="test.js" />
     <platform name="ios">
         <framework src="AFNetworking" weak="false" type="podspec"/>
-        <framework src="CWStatusBarNotification" weak="false" type="podpsec"/>
     </platform>
 </plugin>
 
