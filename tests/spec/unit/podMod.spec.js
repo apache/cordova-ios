@@ -1,107 +1,87 @@
 var fs = require('fs'),
 	path = require('path'),
-	cordova = require(path.resolve(__dirname, '..', '..', '..', '..', 'cordova-lib/cordova-lib/src/cordova/cordova'));
+	util = require('util'),
+	superspawn = require('cordova-common').superspawn,
+	CordovaError = require('cordova-common').CordovaError;
 
-var dummyPluginWithSpec = {'path' : path.resolve(__dirname, 'fixtures/sample-cordova-plugin-with-spec'),
-							'id' : 'sample-cordova-plugin-with-spec'};
-var dummyPluginWithoutSpec = { 'path' : path.resolve(__dirname, 'fixtures/sample-cocoapod-plugin-no-spec-overlapping-dependency'),
-								'id'  : 'sample-cocoapod-plugin-no-spec-overlapping-dependency'};
-var pathToSampleProject = path.resolve(__dirname, 'fixtures', 'testProj');
+var podMod = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'podMod.js')));
 
-var podfile = path.resolve(__dirname, 'fixtures/testProj/platforms/ios/Podfile');
-var podsJSON = path.resolve(__dirname, 'fixtures/testProj/platforms/ios/pods.json');
-var pod = 'AFNetworking';
+var fixtureProject = { 'path' : path.resolve(__dirname, 'fixtures', 'testProj'), 
+						'pathToProjectFile' : path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'HelloCordova.xcodeproj'),
+						'pathToProjectDirectory' : path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios'),
+						'id' : 'testProj' };
 
-describe('installPodSync works', function () {
+var samplePods = { 'AFNetworking' : 'AFNetworking', 
+					'emptyPod' : '' };
+var sampleSpec = { 'AFNetworkingSpec' : '~> 2.0', 
+					'emptySpec' : '' };
+var samplePodsJSON = { 'AFNetworkingPodsJSON' : {'AFNetworking' : {'count': 1, 'spec' : '~> 2.0'}},
+						'emptyPodsJSON' : {} };
 
-	it('should add pod to Podfile and pods.json with and without spec', function(done) {
-		
-		process.chdir(pathToSampleProject);
 
-		cordova.raw.plugin('add', dummyPluginWithSpec.path)
-		.then(function () {
-			fs.exists(podfile, function(podfileExists) {
-				expect(podfileExists);
+var fixturePodfile = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'Podfile');
+
+
+// tests are nested in a describe to ensure clean up happens after all unit tests are run
+describe('unit tests for pod module', function () {
+
+	describe('tests', function () {
+		describe('installPodSync', function () {
+			beforeEach(function () {
+				spyOn(fs, 'writeFileSync').andCallThrough();
 			});
-			fs.exists(podsJSON, function(podsJSONExists){
-				expect(podsJSONExists);
+
+			afterEach(function () {
+			    fs.writeFileSync(fixturePodfile, util.format('platform :ios, \'8.0\'\n\ntarget \'%s\' do\n\n  project \'%s\'\n\n  \n\nend' , fixtureProject.id, fixtureProject.pathToProjectFile));
 			});
-			
-			delete require.cache[podsJSON];
-			var podsJSONContent = require(podsJSON);
-			expect(podsJSONContent[pod] !== undefined);
-			expect(podsJSONContent[pod].spec !== undefined);
-			var podfileContent = fs.readFileSync(podfile, 'utf8');
-			expect(podfileContent.includes(pod)).toBe(true);
-			
-			return cordova.raw.plugin('rm', dummyPluginWithSpec.id);
-		})
-		.then(function () { 
-			return cordova.raw.plugin('add', dummyPluginWithoutSpec.path);
-		})
-		.then(function () {
-			var podfileContent = fs.readFileSync(podfile, 'utf8');
-			expect(podfileContent.includes(pod)).toBe(true);
-			delete require.cache[podsJSON];
-			var podsJSONContent = require(podsJSON);
-			expect(podsJSONContent[pod] !== undefined);
-			expect(podsJSONContent[pod].spec === undefined);
-		})
-		.fail(function(err) {
-            console.error(err);
-            expect(err).toBeUndefined();
-        })
-        .fin(done);
-	}, 60000);
-});
 
-describe('uninstallPodSync works', function () {
-
-	it ('should remove pod from podfile when no other plugin depends on it and should not rm the pod when another plugin does depend on it', function(done) {
-
-		process.chdir(pathToSampleProject);
-
-		cordova.raw.plugin('add', dummyPluginWithSpec.path)
-		.then(function () {
-			var podfileContent = fs.readFileSync(podfile, 'utf8');
-			expect(podfileContent.includes(pod)).toBe(true);
-			return cordova.raw.plugin('rm', dummyPluginWithSpec.id);
-		})
-		.then(function () {
-			fs.exists(podsJSON, function(podsJSONExists) {
-				expect(podsJSONExists).toBe(true);
+			it ('throws cordova error when no pod name provided', function () {
+				//expect cordova error to have been thrown
+				expect( function () { podMod.addToPodfileSync(fixtureProject.id, fixtureProject.pathToProjectFile, samplePods.emptyPod, sampleSpec.emptySpec, samplePodsJSON.emptyPodsJSON); } ).toThrow(new CordovaError('\nERROR: name of pod is not specified\n'));
 			});
-			delete require.cache[podsJSON];
-			var podsJSONContent = require(podsJSON);
-			expect(podsJSONContent[pod] === undefined);
 
-			return cordova.raw.plugin('add', dummyPluginWithSpec.path);
-		})
-		.then(function () {
-			return cordova.raw.plugin('add', dummyPluginWithoutSpec.path);
-		})
-		.then(function () {
-			delete require.cache[podsJSON];
-			var podsJSONContent = require(podsJSON);
-			var countAttributeIsTwo = podsJSONContent[pod].count == 2;
-			expect(countAttributeIsTwo).toBe(true);
+			it ('writes to the Podfile via fs.writeFileSync', function () {
+				podMod.addToPodfileSync(fixtureProject.id, fixtureProject.pathToProjectFile, samplePods.AFNetworking, sampleSpec.AFNetworkingSpec, samplePodsJSON.emptyPodsJSON);
+				expect(fs.writeFileSync).toHaveBeenCalled();
+			});
 
-			return cordova.raw.plugin('rm', dummyPluginWithSpec.id);
-		})
-		.then(function () {
-			var podfileContent = fs.readFileSync(podfile, 'utf8');
-			expect(podfileContent.includes(pod)).toBe(true);
-			// delete require.cache[podsJSON];
-			var podsJSONContent = require(podsJSON);
-			expect(podsJSONContent[pod].count).toEqual(1);
-			expect(podsJSONContent[pod].spec === undefined);
+			it ('does not write to Podfile when pod already installed', function () {
+				podMod.addToPodfileSync(fixtureProject.id, fixtureProject.pathToProjectFile, samplePods.AFNetworking, sampleSpec.AFNetworkingSpec, samplePodsJSON.AFNetworkingPodsJSON);
+				expect(fs.writeFileSync).not.toHaveBeenCalled();
+			});
+		});
 
-			return cordova.raw.plugin('rm', dummyPluginWithoutSpec.id);
-		})
-		.fail(function(err) {
-            console.error(err);
-            expect(err).toBeUndefined();
-        })
-        .fin(done);
-	}, 60000);
+		describe('uninstallPodSync', function () {
+			beforeEach(function () {
+				spyOn(fs, 'writeFileSync').andCallThrough();
+			});
+
+			afterEach(function () {
+				fs.writeFileSync(fixturePodfile, util.format('platform :ios, \'8.0\'\n\ntarget \'%s\' do\n\n  project \'%s\'\n\n  \n\nend' , fixtureProject.id, fixtureProject.pathToProjectFile));
+			});
+
+			it ('removes pod from Podfile', function () {
+				podMod.removeFromPodfileSync(fixtureProject.pathToProjectDirectory, samplePods.AFNetworking);
+
+				expect(fs.writeFileSync).toHaveBeenCalled();
+				var fixturePodfileContent = fs.readFileSync(fixturePodfile, 'utf8');
+				expect(fixturePodfileContent.indexOf(samplePods.AFNetworking) === -1);
+			});
+		});
+
+		describe('installPodSuperspawn', function () {
+			beforeEach(function () {
+				spyOn(superspawn, 'spawn').andCallThrough();
+			});
+
+			it ('calls superspawn with pod install', function () {
+				podMod.installAllPods(fixtureProject.pathToProjectFile, true);
+				expect(superspawn.spawn).toHaveBeenCalled();
+			});
+		});
+	});
+
+	it('tear down', function () {
+		fs.unlinkSync(fixturePodfile);
+	});
 });

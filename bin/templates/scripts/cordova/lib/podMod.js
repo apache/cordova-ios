@@ -23,8 +23,8 @@ function removeProjectFromPath (pathToProjectFile) {
 }
 
 function createPodfile (projectName, pathToProjectFile) {
-    var path = removeProjectFromPath(pathToProjectFile);
-    var pathToPodfile = path + '/Podfile';
+    var pathToProjectDirectory = removeProjectFromPath(pathToProjectFile);
+    var pathToPodfile = path.join(pathToProjectDirectory, 'Podfile');
     var podfileText = util.format('platform :ios, \'8.0\'\n\ntarget \'%s\' do\n\n  project \'%s\'\n\n  \n\nend' , projectName, pathToProjectFile);
     fs.writeFileSync(pathToPodfile, podfileText);
 }
@@ -36,7 +36,7 @@ function editPodfileSync (Podfile, pod, isRemoval) {
 
     if (isRemoval) {
         var linesInPodfileToKeep = podfileContentsArray.filter(function(lineInPodfile) {
-            return (!lineInPodfile.includes(pod));
+            return (lineInPodfile.indexOf(pod) === -1);
         });
         
         podfileContents = linesInPodfileToKeep.join('\n');
@@ -48,7 +48,7 @@ function editPodfileSync (Podfile, pod, isRemoval) {
     return podfileContents;
 }
 
-function installPodSuperspawn (path, isPathToProjectFile) {
+function installAllPods (path, isPathToProjectFile) {
     // change working directory for all calls of pod install to platforms/ios
     if (isPathToProjectFile){
         //if the path passed leads to the project, and not the dir that contains the proj
@@ -59,10 +59,7 @@ function installPodSuperspawn (path, isPathToProjectFile) {
     superspawn.spawn('pod', ['install'], opts);
 }
 
-function installPodSync (projectName, pathToProjectFile, nameOfPod, podSpec, podsJSON) {
-    // called from cordova project directory-- when invoked, args are as follows
-    //  projectName         = cordovaProject (name) and 
-    //  pathToProjectFile   = ./path/to/cordovaProject 
+function addToPodfileSync (projectName, pathToProjectFile, nameOfPod, podSpec, podsJSON) {
     //  nameOfPod           = obj.src                   //from framework tag
     //  podSpec             = obj.spec                  //from framework tag   
     //  podsJSON            = pods.json file in cordovaProjectDir/platforms/ios/
@@ -85,8 +82,8 @@ function installPodSync (projectName, pathToProjectFile, nameOfPod, podSpec, pod
     
     var stringToWrite; //overwrites Podfile
     var lineToInjectInPodfile; //adds pod
-    var path = removeProjectFromPath(pathToProjectFile);
-    var podfile = path + '/Podfile';
+    var pathToProject = removeProjectFromPath(pathToProjectFile);
+    var podfile = path.join(pathToProject, 'Podfile');
     var podfileExistsInCurrentDirectory = fs.existsSync(podfile);
     var podExistsInPodsJSON = podsJSON[nameOfPod];
     var podRequestedForSpecChange;
@@ -96,15 +93,7 @@ function installPodSync (projectName, pathToProjectFile, nameOfPod, podSpec, pod
         podRequestedForSpecChange = false;
     } else {
         if (podExistsInPodsJSON){
-            if (podsJSON[nameOfPod].spec == podSpec){
-            //-----------
-            //ERROR
-            //
-            // if pod spec is the one already in the Podfile,
-            // do nothing to the Podfile, return error
-            throw new CordovaError('\nERROR: pod already installed in Podfile, according to pods.json');
-            //------------
-            } else {
+            if (podsJSON[nameOfPod].spec !== podSpec){
                 podRequestedForSpecChange = true; 
             }
         } else {
@@ -139,24 +128,21 @@ function installPodSync (projectName, pathToProjectFile, nameOfPod, podSpec, pod
     
     if (stringToWrite) {
         events.emit('verbose', 'Overwriting Podfile');
-        fs.writeFileSync(podfile, stringToWrite);
+        fs.writeFileSync(podfile, stringToWrite, 'utf8');
     } else {
         //the code should have returned early by now
     }
     events.emit('verbose', 'Pods installed in xcode workspace in platforms/ios');
 }
 
-function uninstallPodSync (projectDirectory, pod) {
-    //split podfile by \n
-    //for each, does each.includes(pod)? if so, remove that line
-    //that will correspond to the line in the podfile, given the amt of pods currently installed in the podfile... 
-    var podfile = projectDirectory + '/Podfile';
+function removeFromPodfileSync (projectDirectory, pod) {
+    var podfile = path.join(projectDirectory, 'Podfile');
     var stringToWrite = editPodfileSync(podfile, pod, true);
     fs.writeFileSync(podfile, stringToWrite);
 }
 
 module.exports = {
-    installPodSync          : installPodSync,
-    uninstallPodSync        : uninstallPodSync,
-    installPodSuperspawn    : installPodSuperspawn
+    addToPodfileSync        : addToPodfileSync,
+    removeFromPodfileSync   : removeFromPodfileSync,
+    installAllPods          : installAllPods
 };

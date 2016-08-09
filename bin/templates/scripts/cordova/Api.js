@@ -285,7 +285,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                     }
                 } else if (!podIsAlreadyInPodfile) {
                     //add the pods to the Podfile, then add to pods.json
-                    podMod.installPodSync(project_name, project_path, nameOfPod, obj.spec, pods_file); 
+                    podMod.addToPodfileSync(project_name, project_path, nameOfPod, obj.spec, pods_file); 
                     events.emit('verbose', 'About to add ' + nameOfPod + ' to pods json');
                     //write out updated pods.json, 
                     // keep track of the order of the pods
@@ -297,7 +297,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 }
             });
             events.emit('verbose', 'Running pod install');
-            podMod.installPodSuperspawn(project_dir, false);
+            podMod.installAllPods(project_dir, false);
         }.bind(this))
         // CB-11022 return non-falsy value to indicate
         // that there is no need to run prepare after
@@ -351,13 +351,13 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
                         pods[obj.src].count = pods[obj.src].count - 1;
                     } else {
                         // if not, remove the pod from the Podfile 
-                        podMod.uninstallPodSync(project_dir, obj.src); 
+                        podMod.removeFromPodfileSync(project_dir, obj.src); 
                         // update pods.json
                         delete pods[obj.src];
                     }
                     fs.writeFileSync(pods_file, JSON.stringify(pods, null, 4));
                 });
-                podMod.installPodSuperspawn(project_dir, false);
+                podMod.installAllPods(project_dir, false);
         }.bind(this))
         // CB-11022 return non-falsy value to indicate
         // that there is no need to run prepare after
