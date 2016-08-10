@@ -95,7 +95,7 @@ module.exports.run = function (buildOpts) {
         var pathToApp = path.join(buildOutputDir, projectName + '.app');
         var pathToIpa = path.join(buildOutputDir, projectName + '.ipa');
         var xcRunArgs = ['-sdk', 'iphoneos', 'PackageApplication',
-            '-v', pathToApp,
+            pathToApp,
             '-o', pathToIpa];
         if (buildOpts.codeSignIdentity) {
             xcRunArgs.concat('--sign', buildOpts.codeSignIdentity);
