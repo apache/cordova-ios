@@ -94,13 +94,13 @@ var handlers = {
             }
         },
         uninstall:function(obj, plugin, project, options) {
-            var podsJSON = require(path.join(project.projectDir, 'pods.json'));
             var src = obj.src;
 
             if (!obj.custom) { //CB-9825 cocoapod integration for plugins
                 var keepFrameworks = keep_these_frameworks;
                 if (keepFrameworks.indexOf(src) < 0) {
                     if (obj.type === 'podspec') {
+                        var podsJSON = require(path.join(project.projectDir, 'pods.json'));
                         if(podsJSON[src]) {
                             if(podsJSON[src].count > 1) {
                                 podsJSON[src].count = podsJSON[src].count - 1;
