@@ -1,9 +1,7 @@
 language: objective-c
 sudo: false
-node_js:
-  - "4.2"
-  - "6.0"
 install:
+    - nvm install stable
     - npm install
     - npm install ios-deploy
     - npm install -g codecov
