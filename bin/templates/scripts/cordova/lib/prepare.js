@@ -53,6 +53,7 @@ module.exports.prepare = function (cordovaProject, options) {
     .then(function () {
         updateIcons(cordovaProject, self.locations);
         updateSplashScreens(cordovaProject, self.locations);
+        updateLaunchStoryboardImages(cordovaProject, self.locations);
     })
     .then(function () {
         events.emit('verbose', 'Prepared iOS project successfully');
@@ -78,6 +79,7 @@ module.exports.clean = function (options) {
         cleanWww(projectRoot, self.locations);
         cleanIcons(projectRoot, projectConfig, self.locations);
         cleanSplashScreens(projectRoot, projectConfig, self.locations);
+        cleanLaunchStoryboardImages(projectRoot, projectConfig, self.locations);
     });
 };
 
@@ -205,6 +207,7 @@ function updateProject(platformConfig, locations) {
     }
 
     handleOrientationSettings(platformConfig, infoPlist);
+    updateProjectPlistForLaunchStoryboard(platformConfig, infoPlist);
 
     var info_contents = plist.build(infoPlist);
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g,'<string></string>');
@@ -434,6 +437,304 @@ function cleanSplashScreens(projectRoot, projectConfig, locations) {
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
             resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
+}
+
+/**
+ * Returns an array of images for each possible idiom, scale, and size class. The images themselves are
+ * located in the platform's splash images by their pattern (@scale~idiom~sizesize). All possible
+ * combinations are returned, but not all will have a `filename` property. If the latter isn't present,
+ * the device won't attempt to load an image matching the same traits. If the filename is present,
+ * the device will try to load the image if it corresponds to the traits.
+ * 
+ * The resulting return looks like this:
+ * 
+ *     [
+ *         {
+ *             idiom: 'universal|ipad|iphone',
+ *             scale: '1x|2x|3x',
+ *             width: 'any|com',
+ *             height: 'any|com',
+ *             filename: undefined|'Default@scale~idiom~widthheight.png',
+ *             src: undefined|'path/to/original/matched/image/from/splash/screens.png',
+ *             target: undefined|'path/to/asset/library/Default@scale~idiom~widthheight.png'
+ *         }, ...
+ *     ]
+ * 
+ * @param  {Array<Object>} splashScreens         splash screens as defined in config.xml for this platform
+ * @param  {string} launchStoryboardImagesDir    project-root/Images.xcassets/LaunchStoryboard.imageset/
+ * @return {Array<Object>}
+ */
+function mapLaunchStoryboardContents(splashScreens, launchStoryboardImagesDir) {
+    var platformLaunchStoryboardImages = [];
+    var idioms = ['universal', 'ipad', 'iphone'];
+    var scalesForIdiom = {
+        universal: ['1x', '2x', '3x'],
+        ipad: ['1x', '2x'],
+        iphone: ['1x', '2x', '3x']
+    };
+    var sizes = ['com', 'any'];
+
+    idioms.forEach(function (idiom) {
+        scalesForIdiom[idiom].forEach(function (scale) {
+            sizes.forEach(function(width) {
+                sizes.forEach(function(height) {
+                    var item = {
+                        idiom: idiom,
+                        scale: scale,
+                        width: width,
+                        height: height
+                    };
+
+                    /* examples of the search pattern:
+                     *    scale   ~  idiom    ~   width    height 
+                     *     @2x    ~ universal ~    any      any
+                     *     @3x    ~  iphone   ~    com      any
+                     *     @2x    ~   ipad    ~    com      any
+                     */
+                    var searchPattern = '@' + scale + '~' + idiom + '~' + width + height;
+
+                    /* because old node versions don't have Array.find, the below is
+                     * functionally equivalent to this:
+                     *     var launchStoryboardImage = splashScreens.find(function(item) {
+                     *         return item.src.indexOf(searchPattern) >= 0;
+                     *     });
+                     */
+                    var launchStoryboardImage = splashScreens.reduce(function (p, c) {
+                        return (c.src.indexOf(searchPattern) >= 0) ? c : p;
+                    }, undefined);
+
+                    if (launchStoryboardImage) {
+                        item.filename = 'Default' + searchPattern + '.png';
+                        item.src = launchStoryboardImage.src;
+                        item.target = path.join(launchStoryboardImagesDir, item.filename);
+                    }
+
+                    platformLaunchStoryboardImages.push(item);
+                });
+            });
+        });
+    });
+    return platformLaunchStoryboardImages;
+}
+
+/**
+ * Returns a dictionary representing the source and destination paths for the launch storyboard images
+ * that need to be copied. 
+ * 
+ * The resulting return looks like this:
+ * 
+ *     {
+ *         'target-path': 'source-path',
+ *         ...
+ *     }
+ * 
+ * @param  {Array<Object>} splashScreens         splash screens as defined in config.xml for this platform
+ * @param  {string} launchStoryboardImagesDir    project-root/Images.xcassets/LaunchStoryboard.imageset/
+ * @return {Object}
+ */
+function mapLaunchStoryboardResources(splashScreens, launchStoryboardImagesDir) {
+    var platformLaunchStoryboardImages = mapLaunchStoryboardContents(splashScreens, launchStoryboardImagesDir);
+    var pathMap = {};
+    platformLaunchStoryboardImages.forEach(function (item) {
+        if (item.target) {
+            pathMap[item.target] = item.src;
+        }
+    });
+    return pathMap;
+}
+
+/**
+ * Builds the object that represents the contents.json file for the LaunchStoryboard image set. 
+ * 
+ * The resulting return looks like this:
+ * 
+ *     {
+ *         images: [
+ *             {
+ *                 idiom: 'universal|ipad|iphone',
+ *                 scale: '1x|2x|3x',
+ *                 width-class: undefined|'compact',
+ *                 height-class: undefined|'compact'
+ *             }, ...
+ *         ],
+ *         info: {
+ *             author: 'Xcode',
+ *             version: 1
+ *         }
+ *     }
+ * 
+ * A bit of minor logic is used to map from the array of images returned from mapLaunchStoryboardContents
+ * to the format requried by Xcode.
+ * 
+ * @param  {Array<Object>} splashScreens         splash screens as defined in config.xml for this platform
+ * @param  {string} launchStoryboardImagesDir    project-root/Images.xcassets/LaunchStoryboard.imageset/
+ * @return {Object}
+ */
+function getLaunchStoryboardContentsJSON(splashScreens, launchStoryboardImagesDir) {
+    var IMAGESET_COMPACT_SIZE_CLASS = 'compact';
+    var CDV_ANY_SIZE_CLASS = 'any';
+
+    var platformLaunchStoryboardImages = mapLaunchStoryboardContents(splashScreens, launchStoryboardImagesDir);
+    var contentsJSON = {
+        images: [],
+        info: {
+            author: 'Xcode',
+            version: 1
+        }
+    };
+    contentsJSON.images = platformLaunchStoryboardImages.map(function(item) {
+        var newItem = {
+            idiom: item.idiom,
+            scale: item.scale
+        };
+
+        // Xcode doesn't want any size class property if the class is "any"
+        // If our size class is "com", Xcode wants "compact". 
+        if (item.width !== CDV_ANY_SIZE_CLASS) {
+            newItem['width-class'] = IMAGESET_COMPACT_SIZE_CLASS;
+        }
+        if (item.height !== CDV_ANY_SIZE_CLASS) {
+            newItem['height-class'] = IMAGESET_COMPACT_SIZE_CLASS;
+        }
+
+        // Xcode doesn't want a filename property if there's no image for these traits       
+        if (item.filename) {
+            newItem.filename = item.filename;
+        }
+        return newItem;
+    });
+    return contentsJSON;
+}
+
+/**
+ * Updates the project's plist based upon our launch storyboard images. If there are no images, then we should
+ * fall back to the regular launch images that might be supplied (that is, our app will be scaled on an iPad Pro),
+ * and if there are some images, we need to alter the UILaunchStoryboardName property to point to 
+ * CDVLaunchScreen.
+ * 
+ * There's some logic here to avoid overwriting changes the user might have made to their plist if they are using
+ * their own launch storyboard.
+ */
+function updateProjectPlistForLaunchStoryboard(platformConfig, infoPlist) {
+    var UI_LAUNCH_STORYBOARD_NAME = 'UILaunchStoryboardName';
+    var CDV_LAUNCH_STORYBOARD_NAME = 'CDVLaunchScreen';
+
+    var splashScreens = platformConfig.getSplashScreens('ios');
+    var contentsJSON = getLaunchStoryboardContentsJSON(splashScreens, '');  // note: we don't need a file path here; we're just counting
+    var currentLaunchStoryboard = infoPlist[UI_LAUNCH_STORYBOARD_NAME];
+
+    events.emit('verbose', 'Current launch storyboard ' + currentLaunchStoryboard);
+
+
+    /* do we have any launch images do we have for our launch storyboard?
+     * Again, for old Node versions, the below code is equivalent to this:
+     *     var hasLaunchStoryboardImages = !!contentsJSON.images.find(function (item) {
+     *        return item.filename !== undefined;
+     *     });
+     */
+    var hasLaunchStoryboardImages = !!contentsJSON.images.reduce(function (p, c) {
+        return (c.filename !== undefined) ? c : p;
+    }, undefined);
+
+    if (hasLaunchStoryboardImages && !currentLaunchStoryboard) {
+        // only change the launch storyboard if we have images to use AND the current value is blank
+        // if it's not blank, we've either done this before, or the user has their own launch storyboard
+        events.emit('verbose', 'Changing project to use our launch storyboard');
+        infoPlist[UI_LAUNCH_STORYBOARD_NAME] = CDV_LAUNCH_STORYBOARD_NAME;
+        return;
+    }
+
+    if (!hasLaunchStoryboardImages && currentLaunchStoryboard === CDV_LAUNCH_STORYBOARD_NAME) {
+        // only revert to using the launch images if we have don't have any images for the launch storyboard
+        // but only clear it if current launch storyboard is our storyboard; the user might be using their
+        // own storyboard instead.
+        events.emit('verbose', 'Changing project to use launch images');
+        infoPlist[UI_LAUNCH_STORYBOARD_NAME] = undefined;
+        return;
+    }
+    events.emit('verbose', 'Not changing launch storyboard setting.');
+}
+
+/**
+ * Returns the directory for the Launch Storyboard image set, if image sets are being used. If they aren't
+ * being used, returns null.
+ * 
+ * @param  {string} projectRoot        The project's root directory
+ * @param  {string} platformProjDir    The platform's project directory
+ */
+function getLaunchStoryboardImagesDir(projectRoot, platformProjDir) {
+    var launchStoryboardImagesDir;
+    var xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
+
+    if (xcassetsExists) {
+        launchStoryboardImagesDir = path.join(platformProjDir, 'Images.xcassets/LaunchStoryboard.imageset/');
+    } else {
+        // if we don't have a asset library for images, we can't do the storyboard.
+        launchStoryboardImagesDir = null;
+    }
+
+    return launchStoryboardImagesDir;
+}
+
+/**
+ * Update the images for the Launch Storyboard and updates the image set's contents.json file appropriately.
+ * 
+ * @param  {Object} cordovaProject     The cordova project
+ * @param  {Object} locations          A dictionary containing useful location paths
+ */
+function updateLaunchStoryboardImages(cordovaProject, locations) {
+    var splashScreens = cordovaProject.projectConfig.getSplashScreens('ios');
+    var platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    var launchStoryboardImagesDir = getLaunchStoryboardImagesDir(cordovaProject.root, platformProjDir);
+
+    if (launchStoryboardImagesDir) {
+        var resourceMap = mapLaunchStoryboardResources(splashScreens, launchStoryboardImagesDir);
+        var contentsJSON = getLaunchStoryboardContentsJSON(splashScreens, launchStoryboardImagesDir);
+
+        events.emit('verbose', 'Updating launch storyboard images at ' + launchStoryboardImagesDir);
+        FileUpdater.updatePaths(
+            resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+        
+        events.emit('verbose', 'Updating Storyboard image set contents.json');
+        fs.writeFileSync(path.join(launchStoryboardImagesDir, 'contents.json'),
+                        JSON.stringify(contentsJSON, null, 2));
+    }
+}
+
+/**
+ * Removes the images from the launch storyboard's image set and updates the image set's contents.json
+ * file appropriately.
+ *
+ * @param  {string} projectRoot        Path to the project root
+ * @param  {Object} projectConfig      The project's config.xml 
+ * @param  {Object} locations          A dictionary containing useful location paths
+ */
+function cleanLaunchStoryboardImages(projectRoot, projectConfig, locations) {
+    var splashScreens = projectConfig.getSplashScreens('ios');
+    var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+    var launchStoryboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
+    if (launchStoryboardImagesDir) {
+        var resourceMap = mapLaunchStoryboardResources(splashScreens, launchStoryboardImagesDir);
+        var contentsJSON = getLaunchStoryboardContentsJSON(splashScreens, launchStoryboardImagesDir);
+
+        Object.keys(resourceMap).forEach(function (targetPath) {
+            resourceMap[targetPath] = null;
+        });
+        events.emit('verbose', 'Cleaning storyboard image set at ' + launchStoryboardImagesDir);
+
+        // Source paths are removed from the map, so updatePaths() will delete the target files.
+        FileUpdater.updatePaths(
+            resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+
+        // delete filename from contents.json
+        contentsJSON.images.forEach(function(image) {
+            image.filename = undefined;
+        });
+
+        events.emit('verbose', 'Updating Storyboard image set contents.json');
+        fs.writeFileSync(path.join(launchStoryboardImagesDir, 'contents.json'),
+                        JSON.stringify(contentsJSON, null, 2));
     }
 }
 
