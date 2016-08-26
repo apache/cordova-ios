@@ -53,7 +53,8 @@ var handlers = {
             if (!fs.existsSync(srcFile)) throw new CordovaError('Cannot find resource file "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
             if (fs.existsSync(destFile)) throw new CordovaError('File already exists at detination "' + destFile + '" for resource file specified by plugin ' + plugin.id + ' in iOS platform');
             project.xcode.addResourceFile(path.join('Resources', path.basename(src)));
-            shell.cp('-R', srcFile, project.resources_dir);
+            var link = !!(options && options.link);
+            copyFile(plugin.dir, src, project.projectDir, destFile, link);
         },
         uninstall:function(obj, plugin, project, options) {
             var src = obj.src,
@@ -69,7 +70,7 @@ var handlers = {
             if (!custom) {
                 var keepFrameworks = keep_these_frameworks;
 
-                if (keepFrameworks.indexOf(src) < 0) { 
+                if (keepFrameworks.indexOf(src) < 0) {
                     if (obj.type === 'podspec') {
                         //podspec handled in Api.js
                     } else {
@@ -84,8 +85,8 @@ var handlers = {
                 targetDir = path.resolve(project.plugins_dir, plugin.id, path.basename(src));
             if (!fs.existsSync(srcFile)) throw new CordovaError('Cannot find framework "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
             if (fs.existsSync(targetDir)) throw new CordovaError('Framework "' + targetDir + '" for plugin ' + plugin.id + ' already exists in iOS platform');
-            shell.mkdir('-p', path.dirname(targetDir));
-            shell.cp('-R', srcFile, path.dirname(targetDir)); // frameworks are directories
+            var link = !!(options && options.link);
+            copyFile(plugin.dir, src, project.projectDir, targetDir, link); // frameworks are directories
             // CB-10773 translate back slashes to forward on win32
             var project_relative = fixPathSep(path.relative(project.projectDir, targetDir));
             var pbxFile = project.xcode.addFramework(project_relative, {customFramework: true});
@@ -109,7 +110,7 @@ var handlers = {
                             }
                         }
                     } else {
-                        //this should be refactored 
+                        //this should be refactored
                         project.frameworks[src] = project.frameworks[src] || 1;
                         project.frameworks[src]--;
                         if (project.frameworks[src] < 1) {
@@ -303,10 +304,10 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
     shell.mkdir('-p', path.dirname(dest));
 
     if (link) {
-        fs.symlinkSync(path.relative(path.dirname(dest), src), dest);
+        symlinkFileOrDirTree(src, dest);
     } else if (fs.statSync(src).isDirectory()) {
         // XXX shelljs decides to create a directory when -R|-r is used which sucks. http://goo.gl/nbsjq
-        shell.cp('-Rf', src+'/*', dest);
+        shell.cp('-Rf', path.join(src, '/*'), dest);
     } else {
         shell.cp('-f', src, dest);
     }
@@ -319,6 +320,22 @@ function copyNewFile (plugin_dir, src, project_dir, dest, link) {
         throw new CordovaError('"' + target_path + '" already exists!');
 
     copyFile(plugin_dir, src, project_dir, dest, !!link);
+}
+
+function symlinkFileOrDirTree(src, dest) {
+    if (fs.existsSync(dest)) {
+        shell.rm('-Rf', dest);
+    }
+
+    if (fs.statSync(src).isDirectory()) {
+        shell.mkdir('-p', dest);
+        fs.readdirSync(src).forEach(function(entry) {
+            symlinkFileOrDirTree(path.join(src, entry), path.join(dest, entry));
+        });
+    }
+    else {
+        fs.symlinkSync(path.relative(fs.realpathSync(path.dirname(dest)), src), dest);
+    }
 }
 
 // checks if file exists and then deletes. Error if doesn't exist
