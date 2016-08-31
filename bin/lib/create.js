@@ -73,7 +73,7 @@ function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
     });
 }
 
-function copyScripts(projectPath) {
+function copyScripts(projectPath, projectName) {
     var srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
     var destScriptsDir = path.join(projectPath, 'cordova');
 
@@ -94,6 +94,11 @@ function copyScripts(projectPath) {
     shell.cp(path.join(binDir, 'apple_osx_version'), destScriptsDir);
     shell.cp(path.join(binDir, 'apple_xcode_version'), destScriptsDir);
     shell.cp(path.join(binDir, 'lib', 'versions.js'),  path.join(destScriptsDir, 'lib'));
+
+    // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
+    var project_name_esc = projectName.replace(/&/g, '\\&');
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-debug.xcconfig'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-release.xcconfig'));
 
     // Make sure they are executable (sometimes zipping them can remove executable bit)
     shell.find(destScriptsDir).forEach(function(entry) {
@@ -230,7 +235,7 @@ exports.createProject = function(project_path, package_name, project_name, opts)
 
     //CordovaLib stuff
     copyJsAndCordovaLib(project_path, project_name, use_shared);
-    copyScripts(project_path);
+    copyScripts(project_path, project_name);
 
     events.emit('log', generateDoneMessage('create', use_shared));
     return Q.resolve();
@@ -244,7 +249,7 @@ exports.updateProject = function(projectPath, opts) {
     setShellFatal(true, function() {
         copyTemplateFiles(projectPath, projectName, project_template_dir, package_name);
         copyJsAndCordovaLib(projectPath, projectName, opts.link);
-        copyScripts(projectPath);
+        copyScripts(projectPath, projectName);
         events.emit('log',generateDoneMessage('update', opts.link));
     });
     return Q.resolve();
