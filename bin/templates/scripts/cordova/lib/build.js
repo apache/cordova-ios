@@ -81,7 +81,7 @@ module.exports.run = function (buildOpts) {
     }).then(function () {
         var configuration = buildOpts.release ? 'Release' : 'Debug';
 
-        events.emit('log','Building project: ' + path.join(projectPath, projectName + '.xcodeproj'));
+        events.emit('log','Building project: ' + path.join(projectPath, projectName + '.xcworkspace'));
         events.emit('log','\tConfiguration: ' + configuration);
         events.emit('log','\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
 
@@ -145,10 +145,10 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
     if (isDevice) {
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
-            '-project', projectName + '.xcodeproj',
-            '-target', projectName,
+            '-workspace', projectName + '.xcworkspace',
+            '-scheme', projectName,
             '-configuration', configuration,
-            '-destination', 'platform=iOS',
+            '-destination', 'generic/platform=iOS',
             'build',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
@@ -156,11 +156,11 @@ function getXcodeArgs(projectName, projectPath, configuration, isDevice) {
     } else { // emulator
         xcodebuildArgs = [
             '-xcconfig', path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
-            '-project', projectName + '.xcodeproj',
-            '-target', projectName ,
+            '-workspace', projectName + '.xcworkspace',
+            '-scheme', projectName ,
             '-configuration', configuration,
             '-sdk', 'iphonesimulator',
-            '-destination', 'platform=iOS Simulator',
+            '-destination', 'platform=iOS Simulator,name=iPhone 5s',
             'build',
             'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
