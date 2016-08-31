@@ -27,7 +27,6 @@ var rewire = require('rewire');
 var EventEmitter = require('events').EventEmitter;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
 var prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
-var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 var FileUpdater = require('cordova-common').FileUpdater;
 
 var FIXTURES = path.join(__dirname, 'fixtures');
@@ -47,6 +46,12 @@ var cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
 function wrapper(p, done, post) {
     p.then(post, function(err) {
         expect(err.stack).toBeUndefined();
+    }).fin(done);
+}
+
+function wrapperError(p, done, post) {
+    p.then(post, function(err) {
+        expect(err.stack).toBeDefined();
     }).fin(done);
 }
 
@@ -79,40 +84,26 @@ describe('prepare', function () {
                 update_name = spyOn(xc, 'updateProductName').andCallThrough();
                 return xc;
             });
-            cfg.name = function() { return 'SampleApp'; };
-            cfg2.name = function() { return 'testname'; };
+            cfg.name = function() { return 'SampleApp'; }; // this is to match p's original project name (based on .xcodeproj)
             cfg.packageName = function() { return 'testpkg'; };
             cfg.version = function() { return 'one point oh'; };
 
             spyOn(cfg, 'getPreference');
         });
 
-        it('should update the app name in pbxproj by calling xcode.updateProductName, and move the ios native files to match the new name', function(done) {
-            var test_path = path.join(iosProject, 'platforms/ios/SampleApp');
-            var testname_path = path.join(iosProject, 'platforms/ios/testname');
+        it('should not update the app name in pbxproj', function(done) {
+            var cfg2OriginalName = cfg2.name;
 
-            // Warm up the projectFile cache
-            projectFile.parse(p.locations);
-            // Copy pbxproj file to expected destination because updateProject expects it would be there
-            var destPbxproj = path.join(p.locations.xcodeProjDir, '../testname.xcodeproj/project.pbxproj');
-            shell.mkdir('-p', path.dirname(destPbxproj));
-            shell.cp(p.locations.pbxproj, destPbxproj);
+            // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
+            cfg2.name = function() { return 'NotSampleApp'; };  // new config has name change            
+            wrapperError(updateProject(cfg2, p.locations), done); // since the name has changed it *should* error
 
-            wrapper(updateProject(cfg2, p.locations), done, function() {
-                expect(update_name).toHaveBeenCalledWith('testname');
-                expect(mv).toHaveBeenCalledWith(path.join(test_path, 'SampleApp-Info.plist'), path.join(test_path, 'testname-Info.plist'));
-                expect(mv).toHaveBeenCalledWith(path.join(test_path, 'SampleApp-Prefix.pch'), path.join(test_path, 'testname-Prefix.pch'));
-                expect(mv).toHaveBeenCalledWith(test_path + '.xcodeproj', testname_path + '.xcodeproj');
-                expect(mv).toHaveBeenCalledWith(test_path, testname_path);
+            // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
+            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            wrapper(updateProject(cfg2, p.locations), done); // since the name has not changed it *should not* error
 
-                // Validate that Api.locations properties also updated according to new project name
-                expect(p.locations.xcodeCordovaProj).toBe(testname_path);
-                expect(p.locations.configXml).toBe(path.join(testname_path, 'config.xml'));
-                expect(p.locations.xcodeProjDir).toBe(path.join(p.locations.root, 'testname.xcodeproj'));
-                expect(p.locations.pbxproj).toBe(path.join(p.locations.root, 'testname.xcodeproj/project.pbxproj'));
-
-                expect(projectFile.__get__('cachedProjectFiles')[p.locations.root]).not.toBeDefined();
-            });
+            // restore cfg2 original name
+            cfg2.name = cfg2OriginalName;
         });
         it('should write out the app id to info plist as CFBundleIdentifier', function(done) {
             var orig = cfg.getAttribute;
@@ -318,6 +309,12 @@ describe('prepare', function () {
         });
         //////////////////////////////////////////////////
         it('<access>, <allow-navigation> - http and https, no clobber', function(done) {
+            var cfg2OriginalName = cfg2.name;
+            // original name here is 'SampleApp' based on p
+            // we are not testing a name change here, but testing a new config being used (name change test is above)
+            // so we set it to the name expected
+            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+
             wrapper(updateProject(cfg2, p.locations), done, function() {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
@@ -331,6 +328,9 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+
+                // restore cfg2 original name
+                cfg2.name = cfg2OriginalName;
             });
         });
         //////////////////////////////////////////////////

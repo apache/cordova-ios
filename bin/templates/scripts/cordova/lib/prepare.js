@@ -32,7 +32,6 @@ var CordovaError = require('cordova-common').CordovaError;
 var PlatformJson = require('cordova-common').PlatformJson;
 var PlatformMunger = require('cordova-common').ConfigChanges.PlatformMunger;
 var PluginInfoProvider = require('cordova-common').PluginInfoProvider;
-var projectFile = require('./projectFile');
 var FileUpdater = require('cordova-common').FileUpdater;
 
 /*jshint sub:true*/
@@ -216,44 +215,18 @@ function updateProject(platformConfig, locations) {
         if (name == originalName) {
             events.emit('verbose', 'iOS Product Name has not changed (still "' + originalName + '")');
             return Q();
+        } else { // CB-11712 <name> was changed, we don't support it'
+            var errorString = 
+            'The product name change (<name> tag) in config.xml is not supported dynamically.\n' +
+            'To change your product name, you have to remove, then add your ios platform again.\n' +
+            'Make sure you save your plugins beforehand using `cordova plugin save`.\n' +
+            '\tcordova plugin save\n' +
+            '\tcordova platform rm ios\n' +
+            '\tcordova platform add ios\n'
+            ;
+
+            return Q.reject(new CordovaError(errorString));
         }
-
-        // Update product name inside pbxproj file
-        var proj = new xcode.project(locations.pbxproj);
-        try {
-            proj.parseSync();
-        } catch (err) {
-            return Q.reject(new CordovaError('Could not parse project.pbxproj: ' + err));
-        }
-
-        proj.updateProductName(name);
-        fs.writeFileSync(locations.pbxproj, proj.writeSync(), 'utf-8');
-
-        // Move the xcodeproj and other name-based dirs over.
-        shell.mv(path.join(locations.xcodeCordovaProj, originalName + '-Info.plist'), path.join(locations.xcodeCordovaProj, name + '-Info.plist'));
-        shell.mv(path.join(locations.xcodeCordovaProj, originalName + '-Prefix.pch'), path.join(locations.xcodeCordovaProj, name + '-Prefix.pch'));
-        // CB-8914 remove userdata otherwise project is un-usable in xcode
-        shell.rm('-rf',path.join(locations.xcodeProjDir,'xcuserdata/'));
-        shell.mv(locations.xcodeProjDir, path.join(locations.root, name + '.xcodeproj'));
-        shell.mv(locations.xcodeCordovaProj, path.join(locations.root, name));
-
-        // Update locations with new paths
-        locations.xcodeCordovaProj = path.join(locations.root, name);
-        locations.configXml = path.join(locations.xcodeCordovaProj, 'config.xml');
-        locations.xcodeProjDir = path.join(locations.root, name + '.xcodeproj');
-        locations.pbxproj = path.join(locations.xcodeProjDir, 'project.pbxproj');
-
-        // Hack this shi*t
-        var pbx_contents = fs.readFileSync(locations.pbxproj, 'utf-8');
-        pbx_contents = pbx_contents.split(originalName).join(name);
-        fs.writeFileSync(locations.pbxproj, pbx_contents, 'utf-8');
-        events.emit('verbose', 'Wrote out iOS Product Name and updated XCode project file names from "'+originalName+'" to "' + name + '".');
-
-        // Remove cached `projectFile` instance as it is not valid anymore
-        // since the project structure has changed
-        projectFile.purgeProjectFileCache(locations.root);
-
-        return Q();
     });
 }
 
