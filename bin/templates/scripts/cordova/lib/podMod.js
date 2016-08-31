@@ -24,8 +24,9 @@ function removeProjectFromPath (pathToProjectFile) {
 
 function createPodfile (projectName, pathToProjectFile) {
     var pathToProjectDirectory = removeProjectFromPath(pathToProjectFile);
+    var projectFileName = pathToProjectFile.split(path.sep).pop();
     var pathToPodfile = path.join(pathToProjectDirectory, 'Podfile');
-    var podfileText = util.format('platform :ios, \'8.0\'\n\ntarget \'%s\' do\n\n  project \'%s\'\n\n  \n\nend' , projectName, pathToProjectFile);
+    var podfileText = util.format('platform :ios, \'8.0\'\n\ntarget \'%s\' do\n\n  project \'%s\'\n\n  \n\nend' , projectName, projectFileName);
     fs.writeFileSync(pathToPodfile, podfileText);
 }
 
