@@ -57,7 +57,28 @@ function installAllPods (path, isPathToProjectFile) {
         path = removeProjectFromPath(path);
     }
     opts.cwd = path;
-    superspawn.spawn('pod', ['install'], opts);
+    opts.stdio = 'pipe';
+    var first = true;
+
+    superspawn.spawn('pod', ['install', '--verbose'], opts)
+    .progress(function (stdio){
+        if (stdio.stderr) { console.error(stdio.stderr); }
+        if (stdio.stdout) {
+            if (first) {
+                events.emit('verbose', '==== pod install start ====\n');
+                first = false;
+            }
+            events.emit('verbose', stdio.stdout); 
+        } 
+    })
+    .then(function() { // done
+        events.emit('verbose', '==== pod install end ====\n');
+    })
+    .fail(function(error) {
+        console.error(error);
+        // TODO: report on what to do if cocoapods is not installed
+    })
+    .fin();
 }
 
 function addToPodfileSync (projectName, pathToProjectFile, nameOfPod, podSpec, podsJSON) {
