@@ -252,11 +252,10 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 var val = podsjsonFile.get(podJson.name);
                 if (val) { // found 
                     if (podJson.spec !== val.spec) { // exists, different spec, print warning
-                        events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');          // no point in doing anything else with this plugin
-                        return;              
-                    } else { // exists, same spec, increment count
-                        podsjsonFile.increment(podJson.name);
+                        events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.'); 
                     }
+                    // increment count, but don't add in Podfile because it already exists
+                    podsjsonFile.increment(podJson.name);
                 } else { // not found, write new
                     podJson.count = 1;
                     podsjsonFile.setJson(podJson.name, podJson);
