@@ -54,7 +54,7 @@ module.exports.run = function (buildOpts) {
             var buildType = buildOpts.release ? 'release' : 'debug';
             var config = buildConfig.ios[buildType];
             if(config) {
-                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile'].forEach(
+                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam'].forEach(
                     function(key) {
                         buildOpts[key] = buildOpts[key] || config[key];
                     });
@@ -76,6 +76,9 @@ module.exports.run = function (buildOpts) {
         }
         if (buildOpts.provisioningProfile) {
             extraConfig += 'PROVISIONING_PROFILE = ' + buildOpts.provisioningProfile + '\n';
+        }
+        if (buildOpts.developmentTeam) {
+            extraConfig += 'DEVELOPMENT_TEAM = ' + buildOpts.developmentTeam + '\n';
         }
         return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
     }).then(function () {
