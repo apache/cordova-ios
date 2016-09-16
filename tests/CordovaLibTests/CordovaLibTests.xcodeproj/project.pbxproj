@@ -208,7 +208,6 @@
 				686357A4141002F100DF4CF2 /* Sources */,
 				686357A5141002F100DF4CF2 /* Frameworks */,
 				686357A6141002F100DF4CF2 /* Resources */,
-				686357A7141002F100DF4CF2 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -289,19 +288,6 @@
 			shellPath = /bin/sh;
 			shellScript = "cp ../../CordovaLib/cordova.js \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www/cordova.js\"";
 			showEnvVarsInLog = 0;
-		};
-		686357A7141002F100DF4CF2 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
