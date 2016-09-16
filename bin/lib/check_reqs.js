@@ -22,7 +22,7 @@ var Q     = require('q'),
     util = require('util'),
     versions = require('./versions');
 
-var XCODEBUILD_MIN_VERSION = '6.0.0';
+var XCODEBUILD_MIN_VERSION = '7.0.0';
 var XCODEBUILD_NOT_FOUND_MESSAGE =
     'Please install version ' + XCODEBUILD_MIN_VERSION + ' or greater from App Store';
 
