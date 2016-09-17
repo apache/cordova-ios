@@ -215,7 +215,16 @@ describe('ios plugin handler', function() {
                 var resources = copyArray(valid_resources);
                 var spy = spyOn(shell, 'cp');
                 install(resources[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-R', path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'SampleApp', 'Resources'));
+                expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'));
+            });
+            it('should symlink files to the right target location', function() {
+                var resources = copyArray(valid_resources);
+                var spy = spyOn(fs, 'symlinkSync');
+                install(resources[0], dummyPluginInfo, dummyProject, { link: true });
+                var src_bundle = path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle');
+                var dest_bundle = path.join(temp, 'SampleApp/Resources/DummyPlugin.bundle');
+                expect(spy).toHaveBeenCalledWith(path.relative(fs.realpathSync(path.dirname(dest_bundle)), src_bundle),
+                                                    dest_bundle);
             });
         });
 
@@ -256,8 +265,17 @@ describe('ios plugin handler', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
                     var spy = spyOn(shell, 'cp');
                     install(frameworks[0], dummyPluginInfo, dummyProject);
-                    expect(spy).toHaveBeenCalledWith('-R', path.join(dummyplugin, 'src', 'ios', 'Custom.framework'),
-                                                     path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin'));
+                    expect(spy).toHaveBeenCalledWith('-Rf', path.join(dummyplugin, 'src', 'ios', 'Custom.framework', '*'),
+                                                     path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'));
+                });
+                it('should deep symlink files to the right target location', function() {
+                    var frameworks = copyArray(valid_custom_frameworks);
+                    var spy = spyOn(fs, 'symlinkSync');
+                    install(frameworks[0], dummyPluginInfo, dummyProject, { link: true });
+                    var src_binlib = path.join(dummyplugin, 'src', 'ios', 'Custom.framework', 'somebinlib');
+                    var dest_binlib = path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework/somebinlib');
+                    expect(spy).toHaveBeenCalledWith(path.relative(fs.realpathSync(path.dirname(dest_binlib)), src_binlib),
+                                                     dest_binlib);
                 });
             });
         });
