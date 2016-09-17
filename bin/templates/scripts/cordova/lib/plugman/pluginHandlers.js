@@ -70,7 +70,7 @@ var handlers = {
             if (!custom) {
                 var keepFrameworks = keep_these_frameworks;
 
-                if (keepFrameworks.indexOf(src) < 0) { 
+                if (keepFrameworks.indexOf(src) < 0) {
                     if (obj.type === 'podspec') {
                         //podspec handled in Api.js
                     } else {
@@ -110,7 +110,7 @@ var handlers = {
                             }
                         }
                     } else {
-                        //this should be refactored 
+                        //this should be refactored
                         project.frameworks[src] = project.frameworks[src] || 1;
                         project.frameworks[src]--;
                         if (project.frameworks[src] < 1) {
@@ -307,7 +307,7 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
         symlinkFileOrDirTree(src, dest);
     } else if (fs.statSync(src).isDirectory()) {
         // XXX shelljs decides to create a directory when -R|-r is used which sucks. http://goo.gl/nbsjq
-        shell.cp('-Rf', src+'/*', dest);
+        shell.cp('-Rf', path.join(src, '/*'), dest);
     } else {
         shell.cp('-f', src, dest);
     }
