@@ -233,6 +233,9 @@ exports.createProject = function(project_path, package_name, project_name, opts)
     //Copy project template files
     copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
 
+    // Copy xcconfig files
+    shell.cp('-rf', path.join(project_template_dir, '*.xcconfig'), project_path);
+
     //CordovaLib stuff
     copyJsAndCordovaLib(project_path, project_name, use_shared);
     copyScripts(project_path, project_name);
