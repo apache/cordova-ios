@@ -116,8 +116,34 @@ module.exports.run = function (buildOpts) {
           return spawn('xcodebuild', xcodearchiveArgs, projectPath);
         }
 
+        function unpackIPA() {
+            var ipafile = path.join(buildOutputDir, projectName + '.ipa');
+
+            // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder 
+            return spawn('unzip', [ '-o', '-qq', ipafile ], buildOutputDir);
+        }
+
+        function moveApp() {
+            var appFileInflated = path.join(buildOutputDir, 'Payload', projectName + '.app');
+            var appFile = path.join(buildOutputDir, projectName + '.app');
+            var payloadFolder = path.join(buildOutputDir, 'Payload');
+
+            // delete the existing platform/ios/build/device/appname.app 
+            return spawn('rm', [ '-rf', appFile ], buildOutputDir)
+                .then(function() {
+                    // move the platform/ios/build/device/Payload/appname.app to parent 
+                    return spawn('mv', [ '-f', appFileInflated, buildOutputDir ], buildOutputDir);
+                })
+                .then(function() {
+                    // delete the platform/ios/build/device/Payload folder
+                    return spawn('rm', [ '-rf', payloadFolder ], buildOutputDir);
+                });
+        }
+
         return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
-                .then(packageArchive);
+                .then(packageArchive)
+                .then(unpackIPA)
+                .then(moveApp);
     });
 };
 
