@@ -89,8 +89,15 @@ module.exports.run = function (buildOpts) {
         events.emit('log','\tConfiguration: ' + configuration);
         events.emit('log','\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
 
-        var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device);
-        return spawn('xcodebuild', xcodebuildArgs, projectPath);
+        var buildOutputDir = path.join(projectPath, 'build', 'device');
+
+        // remove the build/device folder before building
+        return spawn('rm', [ '-rf', buildOutputDir ], projectPath)
+        .then(function() {
+            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device);
+            return spawn('xcodebuild', xcodebuildArgs, projectPath);
+        });
+
     }).then(function () {
         if (!buildOpts.device || buildOpts.noSign) {
             return;
