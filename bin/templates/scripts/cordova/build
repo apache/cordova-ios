@@ -45,6 +45,7 @@ var buildOpts = nopt({
     'developmentTeam': String,
     'packageType': String,
     'buildConfig' : String,
+    'buildFlag' : [String, Array],
     'noSign' : Boolean
 }, { '-r': '--release', 'd' : '--verbose' }, args);
 
