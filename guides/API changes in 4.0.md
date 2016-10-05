@@ -118,6 +118,14 @@ Properties:
     @property id<CDVWebViewEngineProtocol> webViewEngine
 
 
+### Deprecated:
+
+    const CDVLocalNotification
+    const CDVRemoteNotification
+    const CDVRemoteNotificationError
+
+These constants were unfortunately not removed in 4.0, but will be removed in 5.0. Local and remote push notification functionality was removed in the core in 4.0.
+
 ### Modified:
 
     @property UIView* webView

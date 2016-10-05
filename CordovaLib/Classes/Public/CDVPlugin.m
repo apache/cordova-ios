@@ -92,9 +92,6 @@ NSString* const CDVViewWillTransitionToSizeNotification = @"CDVViewWillTransitio
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationWillChange) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationDidChange) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
 
-    // Added in 2.3.0
-    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
-
     // Added in 2.5.0
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad:) name:CDVPageDidLoadNotification object:self.webView];
     //Added in 4.3.0
@@ -161,18 +158,12 @@ NSString* const CDVViewWillTransitionToSizeNotification = @"CDVViewWillTransitio
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];   // this will remove all notification unless added using addObserverForName:object:queue:usingBlock:
+    [[NSNotificationCenter defaultCenter] removeObserver:self];   // this will remove all notifications unless added using addObserverForName:object:queue:usingBlock:
 }
 
 - (id)appDelegate
 {
     return [[UIApplication sharedApplication] delegate];
 }
-
-// default implementation does nothing, ideally, we are not registered for notification if we aren't going to do anything.
-// - (void)didReceiveLocalNotification:(NSNotification *)notification
-// {
-//    // UILocalNotification* localNotification = [notification object]; // get the payload as a LocalNotification
-// }
 
 @end
