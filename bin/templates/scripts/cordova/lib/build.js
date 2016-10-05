@@ -118,6 +118,17 @@ module.exports.run = function (buildOpts) {
 
         var buildOutputDir = path.join(projectPath, 'build', 'device');
 
+
+        function checkSystemRuby() {
+          var ruby_cmd = shell.which('ruby');
+
+          if (ruby_cmd != '/usr/bin/ruby') {
+            events.emit('warn', 'Non-system Ruby in use. This may cause packaging to fail.\n' +
+              'If you use RVM, please run `rvm use system`.\n' +
+              'If you use chruby, please run `chruby system`.');
+          }
+        }
+
         function packageArchive() {
           var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath);
           return spawn('xcodebuild', xcodearchiveArgs, projectPath);
@@ -148,6 +159,7 @@ module.exports.run = function (buildOpts) {
         }
 
         return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
+                .then(checkSystemRuby)
                 .then(packageArchive)
                 .then(unpackIPA)
                 .then(moveApp);
