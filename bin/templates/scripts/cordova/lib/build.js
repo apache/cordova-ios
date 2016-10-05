@@ -43,7 +43,7 @@ var buildFlagMatchers = {
     'valid_archs' : /^(VALID_ARCHS=.*)/,
     'configuration_build_dir' : /^(CONFIGURATION_BUILD_DIR=.*)/,
     'shared_precomps_dir' : /^(SHARED_PRECOMPS_DIR=.*)/
-}
+};
 
 module.exports.run = function (buildOpts) {
 
@@ -291,15 +291,15 @@ function parseBuildFlag(buildFlag, args) {
             args[key] = found[1];
             events.emit('warn','Overriding xcodebuildArg: ', buildFlag);
         }
-    };
+    }
 
     if (!matched) {
         // If the flag starts with a '-' then it is an xcodebuild built-in option or a
         // user-defined setting. The regex makes sure that we don't split a user-defined
         // setting that is wrapped in quotes. 
         if (buildFlag[0] === '-' && !buildFlag.match(/^.*=(\".*\")|(\'.*\')$/)) {
-            args.otherFlags = args.otherFlags.concat(buildFlag.split(" "));
-            events.emit('warn','Adding xcodebuildArg: ', buildFlag.split(" "));
+            args.otherFlags = args.otherFlags.concat(buildFlag.split(' '));
+            events.emit('warn','Adding xcodebuildArg: ', buildFlag.split(' '));
         } else {
             args.otherFlags.push(buildFlag);
             events.emit('warn','Adding xcodebuildArg: ', buildFlag);
