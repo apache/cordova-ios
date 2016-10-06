@@ -23,7 +23,8 @@ var Q     = require('q'),
     path  = require('path'),
     shell = require('shelljs'),
     spawn = require('./spawn'),
-    check_reqs = require('./check_reqs'),
+    optional = require('optional'),
+    check_reqs = optional('./check_reqs') || optional('../../../../lib/check_reqs'),
     fs = require('fs'),
     plist = require('plist');
 

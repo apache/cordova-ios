@@ -1,5 +1,6 @@
 .DS_Store
 .*.sw?
+.vscode
 *.cso
 tmp
 *.mode1v3
@@ -13,6 +14,7 @@ node_modules/istanbul
 node_modules/.bin/cake
 node_modules/.bin/codecov
 node_modules/.bin/coffee
+node_modules/.bin/color-support
 node_modules/.bin/coveralls
 node_modules/.bin/escodegen
 node_modules/.bin/esgenerate
@@ -49,7 +51,10 @@ node_modules/argparse/
 node_modules/asn1/
 node_modules/assert-plus/
 node_modules/async/
+node_modules/asynckit/
 node_modules/aws-sign2/
+node_modules/aws4/
+node_modules/bcrypt-pbkdf/
 node_modules/bl/
 node_modules/bluebird/
 node_modules/boom/
@@ -63,6 +68,7 @@ node_modules/cli/
 node_modules/cliui/
 node_modules/codecov.io/
 node_modules/coffee-script/
+node_modules/color-support/
 node_modules/combined-stream/
 node_modules/commander/
 node_modules/console-browserify/
@@ -102,6 +108,7 @@ node_modules/fileset/
 node_modules/foreground-child/
 node_modules/forever-agent/
 node_modules/form-data/
+node_modules/fs.realpath/
 node_modules/gaze/
 node_modules/generate-function/
 node_modules/generate-object-property/
@@ -152,6 +159,7 @@ node_modules/oauth-sign/
 node_modules/only-shallow/
 node_modules/opener/
 node_modules/optimist/
+node_modules/optional/
 node_modules/optionator/
 node_modules/pinkie-promise/
 node_modules/pinkie/
