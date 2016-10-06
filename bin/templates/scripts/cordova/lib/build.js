@@ -24,7 +24,8 @@ var Q     = require('q'),
     shell = require('shelljs'),
     spawn = require('./spawn'),
     fs = require('fs'),
-    plist = require('plist');
+    plist = require('plist'),
+    util = require('util');
 
 var check_reqs;
 try {
@@ -296,7 +297,7 @@ function parseBuildFlag(buildFlag, args) {
             matched = true;
             // found[0] is the whole match, found[1] is the first match in parentheses.
             args[key] = found[1];
-            events.emit('warn','Overriding xcodebuildArg: ', buildFlag);
+            events.emit('warn', util.format('Overriding xcodebuildArg: %s', buildFlag));
         }
     }
 
@@ -306,10 +307,10 @@ function parseBuildFlag(buildFlag, args) {
         // setting that is wrapped in quotes. 
         if (buildFlag[0] === '-' && !buildFlag.match(/^.*=(\".*\")|(\'.*\')$/)) {
             args.otherFlags = args.otherFlags.concat(buildFlag.split(' '));
-            events.emit('warn','Adding xcodebuildArg: ', buildFlag.split(' '));
+            events.emit('warn', util.format('Adding xcodebuildArg: %s', buildFlag.split(' ')));
         } else {
             args.otherFlags.push(buildFlag);
-            events.emit('warn','Adding xcodebuildArg: ', buildFlag);
+            events.emit('warn', util.format('Adding xcodebuildArg: %s', buildFlag));
         }
     }
 }
