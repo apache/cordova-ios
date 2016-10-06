@@ -38,6 +38,7 @@ var iosPlatform = path.join(iosProject, 'platforms/ios');
 shell.config.silent = true;
 
 var ConfigParser = require('cordova-common').ConfigParser;
+
 // Create a real config object before mocking out everything.
 var cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
 var cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
@@ -190,12 +191,115 @@ describe('prepare', function () {
             });
         });
         ///// App Transport Security Tests /////////////////////////////
+        // NOTE: if an ATS value is equal to "null", it means that it was not written, 
+        // thus it will use the default (check the default for the key).
+        // This is to prevent the Info.plist to be too verbose.  
+
         it('<access> - should handle wildcard', function(done) {
             wrapper(updateProject(cfg, p.locations), done, function() {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(null);
+                expect(ats.NSAllowsLocalNetworking).toEqual(null);
             });
         });
+
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<access origin="*" allows-arbitrary-loads-in-web-content="true" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(null);
+                expect(ats.NSAllowsLocalNetworking).toEqual(null);
+            });
+        });
+
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInMedia', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<access origin="*" allows-arbitrary-loads-in-media="true" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(true);
+                expect(ats.NSAllowsLocalNetworking).toEqual(null);
+            });
+        });
+
+        it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<access origin="*" allows-local-networking="true" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(null);
+                expect(ats.NSAllowsLocalNetworking).toEqual(true);
+            });
+        });
+
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<access origin="*" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(true);
+                expect(ats.NSAllowsLocalNetworking).toEqual(true);
+            });
+        });
+        it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<access origin="http://cordova.apache.org" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(null);
+                expect(ats.NSAllowsLocalNetworking).toEqual(null);
+            });
+        });
+        
+
         it('<access> - https, subdomain wildcard', function(done) {
             wrapper(updateProject(cfg, p.locations), done, function() {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
@@ -210,6 +314,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server02.com'];
                 expect(d).toBeTruthy();
@@ -217,13 +322,31 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
+                d = exceptionDomains['server02-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server02-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                
                 d = exceptionDomains['server03.com'];
                 expect(d).toBeTruthy();
                 expect(d.NSIncludesSubdomains).toEqual(true);
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server04.com'];
                 expect(d).toBeTruthy();
@@ -231,8 +354,26 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server04-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server04-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
             });
         });
+
         it('<access> - http, no wildcard', function(done) {
             wrapper(updateProject(cfg, p.locations), done, function() {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
@@ -247,6 +388,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server06.com'];
                 expect(d).toBeTruthy();
@@ -254,6 +396,23 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server06-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server06-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
                 d = exceptionDomains['server07.com'];
                 expect(d).toBeTruthy();
@@ -261,6 +420,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server08.com'];
                 expect(d).toBeTruthy();
@@ -268,6 +428,24 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server08-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server08-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
             });
         });
         it('<access> - https, no wildcard', function(done) {
@@ -284,6 +462,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server10.com'];
                 expect(d).toBeTruthy();
@@ -291,6 +470,23 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server10-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server10-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
                 d = exceptionDomains['server11.com'];
                 expect(d).toBeTruthy();
@@ -298,6 +494,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server12.com'];
                 expect(d).toBeTruthy();
@@ -305,6 +502,23 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server12-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server12-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
             });
         });
         //////////////////////////////////////////////////
@@ -328,12 +542,275 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 // restore cfg2 original name
                 cfg2.name = cfg2OriginalName;
             });
         });
         //////////////////////////////////////////////////
+
+        it('<allow-navigation> - should handle wildcard', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<allow-navigation href="*" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(null);
+                expect(ats.NSAllowsLocalNetworking).toEqual(null);
+            });
+        });
+
+        it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function(done) {
+
+            var readFile = spyOn(fs, 'readFileSync');
+            var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
+            '<allow-navigation href="http://cordova.apache.org" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
+            '</widget>';
+            readFile.andReturn(configXml);
+
+            var my_config = new ConfigParser('fake/path');
+
+            wrapper(updateProject(my_config, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(null);
+                expect(ats.NSAllowsLocalNetworking).toEqual(null);
+            });
+        });
+        
+        it('<allow-navigation> - https, subdomain wildcard', function(done) {
+            wrapper(updateProject(cfg, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                var exceptionDomains = ats.NSExceptionDomains;
+                var d;
+
+                expect(exceptionDomains).toBeTruthy();
+
+                d = exceptionDomains['server21.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server22.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false); 
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server22-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server22-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                
+                d = exceptionDomains['server23.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server24.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server24-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server24-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
+
+        it('<allow-navigation> - http, no wildcard', function(done) {
+            wrapper(updateProject(cfg, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                var exceptionDomains = ats.NSExceptionDomains;
+                var d;
+
+                expect(exceptionDomains).toBeTruthy();
+
+                d = exceptionDomains['server25.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server26.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server26-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server26-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server27.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server28.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server28-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server28-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+            });
+        });
+
+        it('<allow-navigation> - https, no wildcard', function(done) {
+            wrapper(updateProject(cfg, p.locations), done, function() {
+                var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
+                var exceptionDomains = ats.NSExceptionDomains;
+                var d;
+
+                expect(exceptionDomains).toBeTruthy();
+
+                d = exceptionDomains['server29.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server30.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server30-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server30-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server31.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server32.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server32-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server32-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
+
         it('<allow-navigation> - wildcard scheme, wildcard subdomain', function(done) {
             wrapper(updateProject(cfg, p.locations), done, function() {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
@@ -348,6 +825,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server34.com'];
                 expect(d).toBeTruthy();
@@ -355,6 +833,23 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server34-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server34-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
                 d = exceptionDomains['server35.com'];
                 expect(d).toBeTruthy();
@@ -362,6 +857,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server36.com'];
                 expect(d).toBeTruthy();
@@ -369,6 +865,24 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server36-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server36-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                
             });
         });
         it('<allow-navigation> - wildcard scheme, no subdomain', function(done) {
@@ -385,6 +899,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server38.com'];
                 expect(d).toBeTruthy();
@@ -392,6 +907,23 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server38-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server38-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
                 d = exceptionDomains['server39.com'];
                 expect(d).toBeTruthy();
@@ -399,6 +931,7 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server40.com'];
                 expect(d).toBeTruthy();
@@ -406,6 +939,24 @@ describe('prepare', function () {
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(null);
+
+                d = exceptionDomains['server40-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(null);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+
+                d = exceptionDomains['server40-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(null);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                
             });
         });
         it('<allow-navigation> - should ignore wildcards like data:*, https:*, https://*', function(done) {

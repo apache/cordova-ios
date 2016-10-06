@@ -777,7 +777,15 @@ function getOrientationValue(platformConfig) {
             NSExceptionAllowsInsecureHTTPLoads, // boolean
             NSIncludesSubdomains,  // boolean
             NSExceptionMinimumTLSVersion, // String
-             NSExceptionRequiresForwardSecrecy // boolean
+            NSExceptionRequiresForwardSecrecy, // boolean
+            NSRequiresCertificateTransparency, // boolean
+
+            // the three below _only_ show when the Hostname is '*'
+            // if any of the three are set, it disables setting NSAllowsArbitraryLoads
+            // (Apple already enforces this in ATS)
+            NSAllowsArbitraryLoadsInWebContent, // boolean (default: false)
+            NSAllowsLocalNetworking, // boolean (default: false)
+            NSAllowsArbitraryLoadsInMedia, // boolean (default:false)
         }
 */
 function processAccessAndAllowNavigationEntries(config) {
@@ -794,7 +802,16 @@ function processAccessAndAllowNavigationEntries(config) {
     }))
     // we reduce the array to an object with all the entries processed (key is Hostname)
     .reduce(function(previousReturn, currentElement) {
-        var obj = parseWhitelistUrlForATS(currentElement.href, currentElement.minimum_tls_version, currentElement.requires_forward_secrecy);
+        var options = {
+            minimum_tls_version : currentElement.minimum_tls_version, 
+            requires_forward_secrecy : currentElement.requires_forward_secrecy, 
+            requires_certificate_transparency : currentElement.requires_certificate_transparency,
+            allows_arbitrary_loads_in_media : currentElement.allows_arbitrary_loads_in_media,
+            allows_arbitrary_loads_in_web_content : currentElement.allows_arbitrary_loads_in_web_content,
+            allows_local_networking : currentElement.allows_local_networking
+        };
+        var obj = parseWhitelistUrlForATS(currentElement.href, options);
+
         if (obj) {
             // we 'union' duplicate entries
             var item = previousReturn[obj.Hostname];
@@ -819,23 +836,47 @@ function processAccessAndAllowNavigationEntries(config) {
             NSExceptionAllowsInsecureHTTPLoads, // boolean (default: false)
             NSIncludesSubdomains,  // boolean (default: false)
             NSExceptionMinimumTLSVersion, // String (default: 'TLSv1.2')
-            NSExceptionRequiresForwardSecrecy // boolean (default: true)
+            NSExceptionRequiresForwardSecrecy, // boolean (default: true)
+            NSRequiresCertificateTransparency, // boolean (default: false)
+
+            // the three below _only_ apply when the Hostname is '*'
+            // if any of the three are set, it disables setting NSAllowsArbitraryLoads
+            // (Apple already enforces this in ATS)
+            NSAllowsArbitraryLoadsInWebContent, // boolean (default: false)
+            NSAllowsLocalNetworking, // boolean (default: false)
+            NSAllowsArbitraryLoadsInMedia, // boolean (default:false)
         }
 
     null is returned if the URL cannot be parsed, or is to be skipped for ATS.
 */
-function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secrecy) {
+function parseWhitelistUrlForATS(url, options) {
     var href = URL.parse(url);
     var retObj = {};
     retObj.Hostname = href.hostname;
 
-    if (url === '*') {
-        return {
-            Hostname : '*'
-        };
-    }
-
     // Guiding principle: we only set values in retObj if they are NOT the default
+
+    if (url === '*') {
+        retObj.Hostname = '*';
+        var val;
+
+        val = (options.allows_arbitrary_loads_in_web_content === 'true');
+        if (options.allows_arbitrary_loads_in_web_content && val) { // default is false
+            retObj.NSAllowsArbitraryLoadsInWebContent = true;
+        }
+
+        val = (options.allows_arbitrary_loads_in_media === 'true');
+        if (options.allows_arbitrary_loads_in_media && val) { // default is false
+            retObj.NSAllowsArbitraryLoadsInMedia = true;
+        }
+
+        val = (options.allows_local_networking === 'true');
+        if (options.allows_local_networking && val) { // default is false
+            retObj.NSAllowsLocalNetworking = true;
+        }
+
+        return retObj;
+    }
 
     if (!retObj.Hostname) {
         // check origin, if it allows subdomains (wildcard in hostname), we set NSIncludesSubdomains to YES. Default is NO
@@ -856,13 +897,18 @@ function parseWhitelistUrlForATS(url, minimum_tls_version, requires_forward_secr
         }
     }
 
-    if (minimum_tls_version && minimum_tls_version !== 'TLSv1.2') { // default is TLSv1.2
-        retObj.NSExceptionMinimumTLSVersion = minimum_tls_version;
+    if (options.minimum_tls_version && options.minimum_tls_version !== 'TLSv1.2') { // default is TLSv1.2
+        retObj.NSExceptionMinimumTLSVersion = options.minimum_tls_version;
     }
 
-    var rfs = (requires_forward_secrecy === 'true');
-    if (requires_forward_secrecy && !rfs) { // default is true
+    var rfs = (options.requires_forward_secrecy === 'true');
+    if (options.requires_forward_secrecy && !rfs) { // default is true
         retObj.NSExceptionRequiresForwardSecrecy = false;
+    }
+
+    var rct = (options.requires_certificate_transparency === 'true');
+    if (options.requires_certificate_transparency && rct) { // default is false
+        retObj.NSRequiresCertificateTransparency = true;
     }
 
     // if the scheme is HTTP, we set NSExceptionAllowsInsecureHTTPLoads to YES. Default is NO
@@ -888,25 +934,42 @@ function writeATSEntries(config) {
 
     for(var hostname in pObj) {
         if (pObj.hasOwnProperty(hostname)) {
-              if (hostname === '*') {
-                  ats['NSAllowsArbitraryLoads'] = true;
-                  continue;
-              }
+            var entry = pObj[hostname];
 
-              var entry = pObj[hostname];
-              var exceptionDomain = {};
+            // Guiding principle: we only set values if they are available
 
-              for(var key in entry) {
-                  if (entry.hasOwnProperty(key) && key !== 'Hostname') {
-                      exceptionDomain[key] = entry[key];
-                  }
-              }
+            if (hostname === '*') {
+                // always write this, for iOS 9, since in iOS 10 it will be overriden if
+                // any of the other three keys are written
+                ats['NSAllowsArbitraryLoads'] = true;
 
-              if (!ats['NSExceptionDomains']) {
-                  ats['NSExceptionDomains'] = {};
-              }
+                // at least one of the overriding keys is present
+                if (entry.NSAllowsArbitraryLoadsInWebContent) {
+                    ats['NSAllowsArbitraryLoadsInWebContent'] = true;
+                }
+                if (entry.NSAllowsArbitraryLoadsInMedia) {
+                    ats['NSAllowsArbitraryLoadsInMedia'] = true;
+                }
+                if (entry.NSAllowsLocalNetworking) {
+                    ats['NSAllowsLocalNetworking'] = true;
+                }
+                
+                continue;
+            }
 
-              ats['NSExceptionDomains'][hostname] = exceptionDomain;
+            var exceptionDomain = {};
+
+            for(var key in entry) {
+                if (entry.hasOwnProperty(key) && key !== 'Hostname') {
+                    exceptionDomain[key] = entry[key];
+                }
+            }
+
+            if (!ats['NSExceptionDomains']) {
+                ats['NSExceptionDomains'] = {};
+            }
+
+            ats['NSExceptionDomains'][hostname] = exceptionDomain;
         }
     }
 
