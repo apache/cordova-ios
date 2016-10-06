@@ -23,10 +23,16 @@ var Q     = require('q'),
     path  = require('path'),
     shell = require('shelljs'),
     spawn = require('./spawn'),
-    optional = require('optional'),
-    check_reqs = optional('./check_reqs') || optional('../../../../lib/check_reqs'),
     fs = require('fs'),
     plist = require('plist');
+
+var check_reqs;
+try {
+    check_reqs = require('./check_reqs');
+} catch (err) {
+    // For unit tests, check_reqs.js is not a sibling to build.js
+    check_reqs = require('../../../../lib/check_reqs');
+}
 
 var events = require('cordova-common').events;
 
