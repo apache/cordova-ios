@@ -36,17 +36,17 @@ describe('build', function () {
             var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags);
             expect(args[0]).toEqual('-xcconfig');
             expect(args[1]).toEqual('TestXcconfigFlag');
-            expect(args[2]).toEqual('-project');
-            expect(args[3]).toEqual('TestProjectName.xcodeproj');
-            expect(args[4]).toEqual('ARCHS=armv7 arm64');
-            expect(args[5]).toEqual('-target');
-            expect(args[6]).toEqual('TestProjectName');
-            expect(args[7]).toEqual('-configuration');
-            expect(args[8]).toEqual('TestConfiguration');
-            expect(args[9]).toEqual('-sdk');
-            expect(args[10]).toEqual('iphoneos');
-            expect(args[11]).toEqual('build');
-            expect(args[12]).toEqual('VALID_ARCHS=armv7 arm64');
+            expect(args[2]).toEqual('-workspace');
+            expect(args[3]).toEqual('TestProjectName.xcworkspace');
+            expect(args[4]).toEqual('-scheme');
+            expect(args[5]).toEqual('TestProjectName');
+            expect(args[6]).toEqual('-configuration');
+            expect(args[7]).toEqual('TestConfiguration');
+            expect(args[8]).toEqual('-sdk');
+            expect(args[9]).toEqual('iphoneos');
+            expect(args[10]).toEqual('-destination');
+            expect(args[11]).toEqual('generic/platform=iOS');
+            expect(args[12]).toEqual('build');
             expect(args[13]).toEqual('CONFIGURATION_BUILD_DIR=' + path.join(testProjectPath, 'build', 'device'));
             expect(args[14]).toEqual('SHARED_PRECOMPS_DIR=' + path.join(testProjectPath, 'build', 'sharedpch'));
             expect(args.length).toEqual(15);
@@ -57,12 +57,11 @@ describe('build', function () {
             var isDevice = true;
             var buildFlags = [
                 '-xcconfig TestXcconfigFlag',
-                '-project TestProjectFlag',
-                'ARCHS=TestArchsFlag',
-                '-target TestTargetFlag',
+                '-workspace TestWorkspaceFlag',
+                '-scheme TestSchemeFlag',
                 '-configuration TestConfigurationFlag',
                 '-sdk TestSdkFlag',
-                'VALID_ARCHS=TestValidArchsFlag',
+                '-destination TestDestinationFlag',
                 'CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag',
                 'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
             ];
@@ -70,17 +69,17 @@ describe('build', function () {
             var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags);
             expect(args[0]).toEqual('-xcconfig');
             expect(args[1]).toEqual('TestXcconfigFlag');
-            expect(args[2]).toEqual('-project');
-            expect(args[3]).toEqual('TestProjectFlag');
-            expect(args[4]).toEqual('ARCHS=TestArchsFlag');
-            expect(args[5]).toEqual('-target');
-            expect(args[6]).toEqual('TestTargetFlag');
-            expect(args[7]).toEqual('-configuration');
-            expect(args[8]).toEqual('TestConfigurationFlag');
-            expect(args[9]).toEqual('-sdk');
-            expect(args[10]).toEqual('TestSdkFlag');
-            expect(args[11]).toEqual('build');
-            expect(args[12]).toEqual('VALID_ARCHS=TestValidArchsFlag');
+            expect(args[2]).toEqual('-workspace');
+            expect(args[3]).toEqual('TestWorkspaceFlag');
+            expect(args[4]).toEqual('-scheme');
+            expect(args[5]).toEqual('TestSchemeFlag');
+            expect(args[6]).toEqual('-configuration');
+            expect(args[7]).toEqual('TestConfigurationFlag');
+            expect(args[8]).toEqual('-sdk');
+            expect(args[9]).toEqual('TestSdkFlag');
+            expect(args[10]).toEqual('-destination');
+            expect(args[11]).toEqual('TestDestinationFlag');
+            expect(args[12]).toEqual('build');
             expect(args[13]).toEqual('CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag');
             expect(args[14]).toEqual('SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag');
             expect(args.length).toEqual(15);
@@ -92,17 +91,17 @@ describe('build', function () {
             var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null);
             expect(args[0]).toEqual('-xcconfig');
             expect(args[1]).toEqual(path.join('/test', 'build-testconfiguration.xcconfig'));
-            expect(args[2]).toEqual('-project');
-            expect(args[3]).toEqual('TestProjectName.xcodeproj');
-            expect(args[4]).toEqual('ARCHS=armv7 arm64');
-            expect(args[5]).toEqual('-target');
-            expect(args[6]).toEqual('TestProjectName');
-            expect(args[7]).toEqual('-configuration');
-            expect(args[8]).toEqual('TestConfiguration');
-            expect(args[9]).toEqual('-sdk');
-            expect(args[10]).toEqual('iphoneos');
-            expect(args[11]).toEqual('build');
-            expect(args[12]).toEqual('VALID_ARCHS=armv7 arm64');
+            expect(args[2]).toEqual('-workspace');
+            expect(args[3]).toEqual('TestProjectName.xcworkspace');
+            expect(args[4]).toEqual('-scheme');
+            expect(args[5]).toEqual('TestProjectName');
+            expect(args[6]).toEqual('-configuration');
+            expect(args[7]).toEqual('TestConfiguration');
+            expect(args[8]).toEqual('-sdk');
+            expect(args[9]).toEqual('iphoneos');
+            expect(args[10]).toEqual('-destination');
+            expect(args[11]).toEqual('generic/platform=iOS');
+            expect(args[12]).toEqual('build');
             expect(args[13]).toEqual('CONFIGURATION_BUILD_DIR=' + path.join(testProjectPath, 'build', 'device'));
             expect(args[14]).toEqual('SHARED_PRECOMPS_DIR=' + path.join(testProjectPath, 'build', 'sharedpch'));
             expect(args.length).toEqual(15);
@@ -114,17 +113,17 @@ describe('build', function () {
             var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null);
             expect(args[0]).toEqual('-xcconfig');
             expect(args[1]).toEqual(path.join('/test', 'build-testconfiguration.xcconfig'));
-            expect(args[2]).toEqual('-project');
-            expect(args[3]).toEqual('TestProjectName.xcodeproj');
-            expect(args[4]).toEqual('ARCHS=x86_64 i386');
-            expect(args[5]).toEqual('-target');
-            expect(args[6]).toEqual('TestProjectName');
-            expect(args[7]).toEqual('-configuration');
-            expect(args[8]).toEqual('TestConfiguration');
-            expect(args[9]).toEqual('-sdk');
-            expect(args[10]).toEqual('iphonesimulator');
-            expect(args[11]).toEqual('build');
-            expect(args[12]).toEqual('VALID_ARCHS=x86_64 i386');
+            expect(args[2]).toEqual('-workspace');
+            expect(args[3]).toEqual('TestProjectName.xcworkspace');
+            expect(args[4]).toEqual('-scheme');
+            expect(args[5]).toEqual('TestProjectName');
+            expect(args[6]).toEqual('-configuration');
+            expect(args[7]).toEqual('TestConfiguration');
+            expect(args[8]).toEqual('-sdk');
+            expect(args[9]).toEqual('iphonesimulator');
+            expect(args[10]).toEqual('-destination');
+            expect(args[11]).toEqual('platform=iOS Simulator,name=iPhone 5s');
+            expect(args[12]).toEqual('build');
             expect(args[13]).toEqual('CONFIGURATION_BUILD_DIR=' + path.join(testProjectPath, 'build', 'emulator'));
             expect(args[14]).toEqual('SHARED_PRECOMPS_DIR=' + path.join(testProjectPath, 'build', 'sharedpch'));
             expect(args.length).toEqual(15);
@@ -162,27 +161,19 @@ describe('build', function () {
             expect(args.otherFlags.length).toEqual(0);
             done();
         });
-        it('should detect a project change', function(done) {
-            var buildFlag = '-project MyTestProject';
+        it('should detect a workspace change', function(done) {
+            var buildFlag = '-workspace MyTestWorkspace';
             var args = { 'otherFlags': [] };
             parseBuildFlag(buildFlag, args);
-            expect(args.project).toEqual('MyTestProject');
+            expect(args.workspace).toEqual('MyTestWorkspace');
             expect(args.otherFlags.length).toEqual(0);
             done();
         });
-        it('should detect an archs change', function(done) {
-            var buildFlag = 'ARCHS=NotRealArchitectures';
+        it('should detect a scheme change', function(done) {
+            var buildFlag = '-scheme MyTestScheme';
             var args = { 'otherFlags': [] };
             parseBuildFlag(buildFlag, args);
-            expect(args.archs).toEqual('ARCHS=NotRealArchitectures');
-            expect(args.otherFlags.length).toEqual(0);
-            done();
-        });
-        it('should detect a target change', function(done) {
-            var buildFlag = '-target MyTestTarget';
-            var args = { 'otherFlags': [] };
-            parseBuildFlag(buildFlag, args);
-            expect(args.target).toEqual('MyTestTarget');
+            expect(args.scheme).toEqual('MyTestScheme');
             expect(args.otherFlags.length).toEqual(0);
             done();
         });
@@ -202,11 +193,11 @@ describe('build', function () {
             expect(args.otherFlags.length).toEqual(0);
             done();
         });
-        it('should detect a valid_archs change', function(done) {
-            var buildFlag = 'VALID_ARCHS=NotRealArchitectures';
+        it('should detect a destination change', function(done) {
+            var buildFlag = '-destination MyTestDestination';
             var args = { 'otherFlags': [] };
             parseBuildFlag(buildFlag, args);
-            expect(args.valid_archs).toEqual('VALID_ARCHS=NotRealArchitectures');
+            expect(args.destination).toEqual('MyTestDestination');
             expect(args.otherFlags.length).toEqual(0);
             done();
         });

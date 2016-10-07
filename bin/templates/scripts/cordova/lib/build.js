@@ -43,12 +43,11 @@ var projectName = null;
 // These are regular expressions to detect if the user is changing any of the built-in xcodebuildArgs
 var buildFlagMatchers = {
     'xcconfig' : /^\-xcconfig\s*(.*)$/,
-    'project' : /^\-project\s*(.*)/,
-    'archs' : /^(ARCHS=.*)/,
-    'target' : /^\-target\s*(.*)/,
+    'workspace' : /^\-workspace\s*(.*)/,
+    'scheme' : /^\-scheme\s*(.*)/,
     'configuration' : /^\-configuration\s*(.*)/,
+    'destination' : /^\-destination\s*(.*)/,
     'sdk' : /^\-sdk\s*(.*)/,
-    'valid_archs' : /^(VALID_ARCHS=.*)/,
     'configuration_build_dir' : /^(CONFIGURATION_BUILD_DIR=.*)/,
     'shared_precomps_dir' : /^(SHARED_PRECOMPS_DIR=.*)/
 };
@@ -241,28 +240,26 @@ function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, bu
     if (isDevice) {
         options = [
             '-xcconfig', customArgs.xcconfig || path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
-            '-project',  customArgs.project || projectName + '.xcodeproj',
-            customArgs.archs || 'ARCHS=armv7 arm64',
-            '-target', customArgs.target || projectName,
+            '-workspace',  customArgs.workspace || projectName + '.xcworkspace',
+            '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
-            '-sdk', customArgs.sdk || 'iphoneos'
+            '-sdk', customArgs.sdk || 'iphoneos',
+            '-destination', customArgs.destination || 'generic/platform=iOS'
         ];
         settings = [
-            customArgs.valid_archs || 'VALID_ARCHS=armv7 arm64',
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
     } else { // emulator
         options = [
             '-xcconfig', customArgs.xcconfig || path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
-            '-project', customArgs.project || projectName + '.xcodeproj',
-            customArgs.archs || 'ARCHS=x86_64 i386',
-            '-target', customArgs.target || projectName,
+            '-workspace', customArgs.project || projectName + '.xcworkspace',
+            '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
-            '-sdk', customArgs.sdk || 'iphonesimulator'
+            '-sdk', customArgs.sdk || 'iphonesimulator',
+            '-destination', customArgs.destination || 'platform=iOS Simulator,name=iPhone 5s'
         ];
         settings = [
-            customArgs.valid_archs || 'VALID_ARCHS=x86_64 i386',
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
