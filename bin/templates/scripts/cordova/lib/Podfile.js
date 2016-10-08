@@ -63,9 +63,10 @@ Podfile.prototype.__parseForPods = function(text) {
     var arr = text.split('\n');
 
     // aim is to match (space insignificant around the comma, comma optional):
-    //     'pod 'Foobar', '1.2'
-    //     'pod 'Foobar', 'abc 123 1.2'    
-    var podRE = new RegExp('pod \'(\\w+)\'\\s*,?(\\s*\'(\\w+|\\d+(\\.\\d)?)+\')?');
+    //     pod 'Foobar', '1.2'
+    //     pod 'Foobar', 'abc 123 1.2'
+    //     pod 'PonyDebugger', :configurations => ['Debug', 'Beta']
+    var podRE = new RegExp('pod \'(\\w+)\'\\s*,?\\s*(.*)');
 
     // only grab lines that don't have the pod spec'
     return arr.filter(function(line) {
@@ -77,7 +78,9 @@ Podfile.prototype.__parseForPods = function(text) {
         var m = podRE.exec(line);
 
         if (m !== null) {
-            obj[m[1]] = m[3]; // i.e pod 'Foo', '1.2' ==> { 'Foo' : '1.2'}
+            // strip out any single quotes around the value m[2]
+            var podSpec = m[2].replace(/^\'|\'$/g, '');
+            obj[m[1]] = podSpec; // i.e pod 'Foo', '1.2' ==> { 'Foo' : '1.2'}
         }
 
         return obj;
@@ -145,9 +148,17 @@ Podfile.prototype.write = function() {
         var name = key;
         var spec = self.pods[key];
 
-        return spec.length?
-            util.format('\tpod \'%s\', \'%s\'', name, spec):
-            util.format('\tpod \'%s\'', name);
+        if (spec.length) {
+            if (spec.indexOf(':') === 0) {
+                // don't quote it, it's a specification (starts with ':')
+                return util.format('\tpod \'%s\', %s', name, spec);
+            } else {
+                // quote it, it's a version
+                return util.format('\tpod \'%s\', \'%s\'', name, spec);
+            }
+        } else {
+            return util.format('\tpod \'%s\'', name);
+        }
     })
     .join('\n');
 
