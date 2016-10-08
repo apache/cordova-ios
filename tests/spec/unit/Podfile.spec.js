@@ -101,6 +101,7 @@ describe('unit tests for Podfile module', function () {
 			podfile.addSpec('Foo', '1.0');
 			podfile.addSpec('Bar', '2.0');
 			podfile.addSpec('Baz', '3.0');
+			podfile.addSpec('Bla', ':configurations => [\'Debug\', \'Beta\']');
 
 			podfile.write();
 
@@ -109,11 +110,12 @@ describe('unit tests for Podfile module', function () {
 			expect(newPodfile.existsSpec('Foo')).toBe(true);
 			expect(newPodfile.existsSpec('Bar')).toBe(true);
 			expect(newPodfile.existsSpec('Baz')).toBe(true);
+			expect(newPodfile.existsSpec('Bla')).toBe(true);
 
 			expect(newPodfile.getSpec('Foo')).toBe(podfile.getSpec('Foo'));
 			expect(newPodfile.getSpec('Bar')).toBe(podfile.getSpec('Bar'));
 			expect(newPodfile.getSpec('Baz')).toBe(podfile.getSpec('Baz'));
-			
+			expect(newPodfile.getSpec('Bla')).toBe(podfile.getSpec('Bla'));
 		});
 
 		it ('runs before_install to install xcconfig paths', function () {
