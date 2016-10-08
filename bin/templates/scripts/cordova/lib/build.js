@@ -46,8 +46,9 @@ var buildFlagMatchers = {
     'workspace' : /^\-workspace\s*(.*)/,
     'scheme' : /^\-scheme\s*(.*)/,
     'configuration' : /^\-configuration\s*(.*)/,
-    'destination' : /^\-destination\s*(.*)/,
     'sdk' : /^\-sdk\s*(.*)/,
+    'destination' : /^\-destination\s*(.*)/,
+    'archivePath' : /^\-archivePath\s*(.*)/,
     'configuration_build_dir' : /^(CONFIGURATION_BUILD_DIR=.*)/,
     'shared_precomps_dir' : /^(SHARED_PRECOMPS_DIR=.*)/
 };
@@ -222,7 +223,7 @@ module.exports.findXCodeProjectIn = findXCodeProjectIn;
 function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, buildFlags) {
     var xcodebuildArgs;
     var options;
-    var buildActions = [ 'build' ];
+    var buildActions;
     var settings;
     var customArgs = {};
     customArgs.otherFlags = [];
@@ -243,13 +244,19 @@ function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, bu
             '-workspace',  customArgs.workspace || projectName + '.xcworkspace',
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
-            '-sdk', customArgs.sdk || 'iphoneos',
-            '-destination', customArgs.destination || 'generic/platform=iOS'
+            '-destination', customArgs.destination || 'generic/platform=iOS',
+            '-archivePath', customArgs.archivePath || projectName + '.xcarchive'
         ];
+        buildActions = [ 'archive' ];
         settings = [
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
+        // Add other matched flags to otherFlags to let xcodebuild present an appropriate error.
+        // This is preferable to just ignoring the flags that the user has passed in.
+        if (customArgs.sdk) {
+            customArgs.otherFlags = customArgs.otherFlags.concat(['-sdk', customArgs.sdk]);
+        }
     } else { // emulator
         options = [
             '-xcconfig', customArgs.xcconfig || path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
@@ -259,10 +266,16 @@ function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, bu
             '-sdk', customArgs.sdk || 'iphonesimulator',
             '-destination', customArgs.destination || 'platform=iOS Simulator,name=iPhone 5s'
         ];
+        buildActions = [ 'build' ];
         settings = [
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
+        // Add other matched flags to otherFlags to let xcodebuild present an appropriate error.
+        // This is preferable to just ignoring the flags that the user has passed in.
+        if (customArgs.archivePath) {
+            customArgs.otherFlags = customArgs.otherFlags.concat(['-archivePath', customArgs.archivePath]);
+        }
     }
     xcodebuildArgs = options.concat(buildActions).concat(settings).concat(customArgs.otherFlags);
     return xcodebuildArgs;
