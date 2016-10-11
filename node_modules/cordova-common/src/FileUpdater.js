@@ -291,7 +291,7 @@ function mergeAndUpdateDir(sourceDirs, targetDir, options, log) {
             if (!fs.existsSync(sourcePath)) {
                 throw new Error("Source directory does not exist: " + sourcePath);
             }
-            return mapDirectory(rootDir, sourcePath, include, exclude);
+            return mapDirectory(rootDir, path.relative(rootDir, sourcePath), include, exclude);
         });
 
     // Scan the files in the target directory, if it exists.
