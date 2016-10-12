@@ -115,15 +115,22 @@ Api.createPlatform = function (destination, config, options, events) {
     // because node and shell scripts handles unicode symbols differently
     // We need to normalize the name to NFD form since iOS uses NFD unicode form
     var name = unorm.nfd(config.name());
-
-    return require('../../../lib/create')
-    .createProject(destination, config.packageName(), name, options)
-    .then(function () {
-        // after platform is created we return Api instance based on new Api.js location
-        // This is required to correctly resolve paths in the future api calls
-        var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-        return new PlatformApi('ios', destination, events);
-    });
+    var result;
+    try {
+        result = require('../../../lib/create')
+        .createProject(destination, config.packageName(), name, options)
+        .then(function () {
+            // after platform is created we return Api instance based on new Api.js location
+            // This is required to correctly resolve paths in the future api calls
+            var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+            return new PlatformApi('ios', destination, events);
+        });
+    }
+    catch(e) {
+        events.emit('error','createPlatform is not callable from the iOS project API.');
+        throw(e);
+    }
+    return result;
 };
 
 /**
@@ -145,12 +152,20 @@ Api.createPlatform = function (destination, config, options, events) {
 Api.updatePlatform = function (destination, options, events) {
     setupEvents(events);
 
-    return require('../../../lib/create')
-    .updateProject(destination, options)
-    .then(function () {
-        var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-        return new PlatformApi('ios', destination, events);
-    });
+    var result;
+    try {
+        result = require('../../../lib/create')
+        .updateProject(destination, options)
+        .then(function () {
+            var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+            return new PlatformApi('ios', destination, events);
+        });
+    }
+    catch (e) {
+        events.emit('error','updatePlatform is not callable from the iOS project API, you will need to do this manually.');
+        throw(e);
+    }
+    return result;
 };
 
 /**
@@ -221,7 +236,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
         .then(function(){
             var frameworkTags = plugin.getFrameworks(self.platform);
             var frameworkPods = frameworkTags.filter(function(obj){
-                return (obj.type == 'podspec'); 
+                return (obj.type == 'podspec');
             });
 
             return Q.resolve(frameworkPods);
@@ -240,7 +255,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
             events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
 
             var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name); 
+            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
 
             frameworkPods.forEach(function(obj) {
                 var podJson = {
@@ -250,9 +265,9 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 };
 
                 var val = podsjsonFile.get(podJson.name);
-                if (val) { // found 
+                if (val) { // found
                     if (podJson.spec !== val.spec) { // exists, different spec, print warning
-                        events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.'); 
+                        events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
                     }
                     // increment count, but don't add in Podfile because it already exists
                     podsjsonFile.increment(podJson.name);
@@ -305,7 +320,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
         .then(function(){
             var frameworkTags = plugin.getFrameworks(self.platform);
             var frameworkPods = frameworkTags.filter(function(obj){
-                return (obj.type == 'podspec'); 
+                return (obj.type == 'podspec');
             });
 
             return Q.resolve(frameworkPods);
@@ -324,8 +339,8 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
             events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type=\"podspec\"');
 
             var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name); 
-                
+            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
+
             frameworkPods.forEach(function(obj) {
                 var podJson = {
                     name: obj.src,
