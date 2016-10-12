@@ -115,15 +115,22 @@ Api.createPlatform = function (destination, config, options, events) {
     // because node and shell scripts handles unicode symbols differently
     // We need to normalize the name to NFD form since iOS uses NFD unicode form
     var name = unorm.nfd(config.name());
-
-    return require('../../../lib/create')
-    .createProject(destination, config.packageName(), name, options)
-    .then(function () {
-        // after platform is created we return Api instance based on new Api.js location
-        // This is required to correctly resolve paths in the future api calls
-        var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-        return new PlatformApi('ios', destination, events);
-    });
+    var result;
+    try {
+        result = require('../../../lib/create')
+        .createProject(destination, config.packageName(), name, options)
+        .then(function () {
+            // after platform is created we return Api instance based on new Api.js location
+            // This is required to correctly resolve paths in the future api calls
+            var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+            return new PlatformApi('ios', destination, events);
+        });
+    }
+    catch(e) {
+        events.emit('error','createPlatform is not callable from the iOS project API.');
+        throw(e);
+    }
+    return result;
 };
 
 /**
@@ -145,12 +152,20 @@ Api.createPlatform = function (destination, config, options, events) {
 Api.updatePlatform = function (destination, options, events) {
     setupEvents(events);
 
-    return require('../../../lib/create')
-    .updateProject(destination, options)
-    .then(function () {
-        var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-        return new PlatformApi('ios', destination, events);
-    });
+    var result;
+    try {
+        result = require('../../../lib/create')
+        .updateProject(destination, options)
+        .then(function () {
+            var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+            return new PlatformApi('ios', destination, events);
+        });
+    }
+    catch (e) {
+        events.emit('error','updatePlatform is not callable from the iOS project API, you will need to do this manually.');
+        throw(e);
+    }
+    return result;
 };
 
 /**
