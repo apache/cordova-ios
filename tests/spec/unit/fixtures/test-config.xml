@@ -126,6 +126,11 @@
     <allow-navigation href="http://*" />
     <allow-navigation href="https://*" />
 
+
+    <allow-intent href="https://*" />
+    <allow-intent href="myapp:*" />
+    <allow-intent href="*://*" />
+
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="true" />
     <preference name="orientation" value="portrait" />
