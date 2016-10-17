@@ -480,6 +480,15 @@ ConfigParser.prototype = {
             };
         });
     },
+    /* Get all the allow-intent tags */
+    getAllowIntents: function() {
+        var allow_intents = this.doc.findall('./allow-intent');
+        return allow_intents.map(function(allow_intent){
+            return {
+                'href': allow_intent.attrib.href
+            };
+        });
+    },
     /* Get all edit-config tags */
     getEditConfigs: function(platform) {
         var platform_tag = this.doc.find('./platform[@name="' + platform + '"]');

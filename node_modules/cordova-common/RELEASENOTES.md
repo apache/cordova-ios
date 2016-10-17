@@ -20,6 +20,10 @@
 -->
 # Cordova-common Release Notes
 
+### 1.5.1 (Oct 12, 2016)
+* [CB-12002](https://issues.apache.org/jira/browse/CB-12002) Add `getAllowIntents()` to `ConfigParser`
+* [CB-11998](https://issues.apache.org/jira/browse/CB-11998) `cordova platform add` error with `cordova-common@1.5.0`
+
 ### 1.5.0 (Oct 06, 2016)
 * [CB-11776](https://issues.apache.org/jira/browse/CB-11776) Add test case for different `edit-config` targets
 * [CB-11908](https://issues.apache.org/jira/browse/CB-11908) Add `edit-config` to `config.xml`
