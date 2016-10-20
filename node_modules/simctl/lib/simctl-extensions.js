@@ -28,21 +28,20 @@ var shell = require('shelljs'),
     util = require('util'),
     Tail = require('tail').Tail;
 
-
 var extensions = {
-    start : function(deviceid) {
+    start: function(deviceid) {
          var command = util.format('xcrun instruments -w "%s"', deviceid);
-         return shell.exec(command, { silent: true } );
+         return shell.exec(command, { silent: true });
      },
-	 
-    log : function(deviceid, filepath) {
+
+    log: function(deviceid, filepath) {
         var tail = new Tail(
             path.join(process.env.HOME, 'Library/Logs/CoreSimulator', deviceid, 'system.log')
         );
 
-        tail.on("line", function(data) {
+        tail.on('line', function(data) {
             if (filepath) {
-                fs.appendFile(filepath, data + "\n", function(error) {
+                fs.appendFile(filepath, data + '\n', function(error) {
                     if (error) {
                         console.error('ERROR: ', error);
                         throw error;
@@ -53,7 +52,7 @@ var extensions = {
             }
         });
 
-        tail.on("error", function(error) {
+        tail.on('error', function(error) {
             console.error('ERROR: ', error);
         });
 

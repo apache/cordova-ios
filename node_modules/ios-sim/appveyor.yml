@@ -1,0 +1,12 @@
+# appveyor file
+# http://www.appveyor.com/docs/appveyor-yml
+
+install:
+  - npm install
+
+build: off
+
+test_script:
+  - node --version
+  - npm --version
+  - npm test

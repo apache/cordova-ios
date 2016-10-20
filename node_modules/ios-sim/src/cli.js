@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 var path = require('path'),
     command_lib = require('./commands'),
-    help = require('./help'),
-    nopt;
+    help = require('./help');
+var nopt;
 
 /*
  * init
@@ -48,34 +48,33 @@ function init() {
 }
 
 function cli(inputArgs) {
-    
     var knownOpts =
         {
-            'version' : Boolean,
-            'help' : Boolean,
-            'verbose' : Boolean,
-            'exit' : Boolean,
-            'use-gdb' : Boolean,
-            'uuid' : String,
-            'env' : String,
-            'setenv' : String,
-            'stdout' : path,
-            'stderr' : path,
-            'timeout' : Number,
-            'args' : Array,
-            'devicetypeid' : String
-    };
+            'version': Boolean,
+            'help': Boolean,
+            'verbose': Boolean,
+            'exit': Boolean,
+            'use-gdb': Boolean,
+            'uuid': String,
+            'env': String,
+            'setenv': String,
+            'stdout': path,
+            'stderr': path,
+            'timeout': Number,
+            'args': Array,
+            'devicetypeid': String
+        };
 
     var shortHands = null;
 
     // If no inputArgs given, use process.argv.
     inputArgs = inputArgs || process.argv;
-    
+
     init();
 
     var args = nopt(knownOpts, shortHands, inputArgs);
 
-    process.on('uncaughtException', function(err){
+    process.on('uncaughtException', function(err) {
         if (!args.verbose) {
             console.error(err.message);
         } else {
@@ -83,9 +82,9 @@ function cli(inputArgs) {
         }
         process.exit(1);
     });
-    
+
     var cmd = args.argv.remain[0];
-    
+
     // some options do *not* need commands and can be run
     if (args.help) {
         help();

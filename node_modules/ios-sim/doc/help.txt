@@ -24,7 +24,7 @@ Removed in version 4.x:
   --tall                          In combination with --retina flag, start the tall version of the retina device (e.g. iPhone 5 (4-inch))
   --64bit                         In combination with --retina flag and the --tall flag, start the 64bit version of the tall retina device (e.g. iPhone 5S (4-inch 64bit))
                                     
-Unimplemented in version 4.x:
+Unimplemented since version 4.x:
   --verbose                       Set the output level to verbose
   --timeout <seconds>             The timeout time to wait for a response from the Simulator. Default value: 30 seconds
   --args <...>                    All following arguments will be passed on to the application

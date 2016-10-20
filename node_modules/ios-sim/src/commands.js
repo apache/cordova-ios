@@ -27,52 +27,56 @@ var path = require('path'),
     help = require('./help'),
     lib = require('./lib'),
     util = require('util');
-    
+
 var command_lib = {
-    
-    init : function() {
+
+    init: function() {
         lib.init();
     },
-    
-    showsdks : function(args) {
+
+    //jscs:disable disallowUnusedParams
+    showsdks: function(args) {
         lib.showsdks();
     },
-    
-    showdevicetypes : function(args) {
+    //jscs:enable disallowUnusedParams
+
+    //jscs:disable disallowUnusedParams
+    showdevicetypes: function(args) {
         lib.showdevicetypes();
     },
-    
-    launch : function(args) {
-        var wait_for_debugger = false,
-            app_path;
-        
+    //jscs:enable disallowUnusedParams
+
+    launch: function(args) {
+        var wait_for_debugger = false;
+        var app_path;
+
         if (args.argv.remain.length < 2) {
             help();
             process.exit(1);
         }
-        
+
         app_path = args.argv.remain[1];
-        
+
         lib.launch(app_path, args.devicetypeid, args.log, args.exit, args.args);
     },
 
-    install : function(args) {
-        var app_identifier,
-            argv,
-            app_path,
-            info_plist_path;
+    install: function(args) {
+        var app_identifier;
+        var argv;
+        var app_path;
+        var info_plist_path;
 
         if (args.argv.remain.length < 2) {
             help();
             process.exit(1);
         }
-        
+
         app_path = args.argv.remain[1];
 
         lib.install(app_path, args.devicetypeid, args.log, args.exit);
     },
-    
-    start : function(args) {
+
+    start: function(args) {
         lib.start(args.devicetypeid);
     }
 };
