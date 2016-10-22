@@ -685,7 +685,7 @@ function getLaunchStoryboardImagesDir(projectRoot, platformProjDir) {
  */
 function updateLaunchStoryboardImages(cordovaProject, locations) {
     var splashScreens = cordovaProject.projectConfig.getSplashScreens('ios');
-    var platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    var platformProjDir = locations.xcodeCordovaProj;
     var launchStoryboardImagesDir = getLaunchStoryboardImagesDir(cordovaProject.root, platformProjDir);
 
     if (launchStoryboardImagesDir) {
@@ -712,7 +712,7 @@ function updateLaunchStoryboardImages(cordovaProject, locations) {
  */
 function cleanLaunchStoryboardImages(projectRoot, projectConfig, locations) {
     var splashScreens = projectConfig.getSplashScreens('ios');
-    var platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+    var platformProjDir = locations.xcodeCordovaProj;
     var launchStoryboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
     if (launchStoryboardImagesDir) {
         var resourceMap = mapLaunchStoryboardResources(splashScreens, launchStoryboardImagesDir);
