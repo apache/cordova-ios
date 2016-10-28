@@ -294,6 +294,10 @@ var lib = {
         var name_id_map = {};
 
         list.devicetypes.forEach(function(device) {
+            // replace hyphens in iPad Pro name which differ in 'Device Types' and 'Devices'
+            if (device.name.indexOf('iPad Pro') === 0) {
+                device.name = device.name.replace(/\-/g, ' ').trim();
+            }
             name_id_map[ device.name ] = device.id;
         });
 
@@ -304,6 +308,11 @@ var lib = {
 
         for (var deviceName in druntimes) {
             var runtimes = druntimes[ deviceName ];
+
+            // replace hyphens in iPad Pro name which differ in 'Device Types' and 'Devices'
+            if (deviceName.indexOf('iPad Pro') === 0) {
+                deviceName = deviceName.replace(/\-/g, ' ').trim();
+            }
 
             if (!(deviceName in name_id_map)) {
                 continue;
