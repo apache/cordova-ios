@@ -85,9 +85,9 @@
     return YES;
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000  
 - (NSUInteger)application:(UIApplication*)application supportedInterfaceOrientationsForWindow:(UIWindow*)window
-#else
+#else //CB-12098.  Defaults to UIInterfaceOrientationMask for iOS 9+
 - (UIInterfaceOrientationMask)application:(UIApplication*)application supportedInterfaceOrientationsForWindow:(UIWindow*)window
 #endif
 {
