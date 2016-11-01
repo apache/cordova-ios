@@ -129,7 +129,7 @@
     NSString* ua1 = [vc1WebView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
     NSString* ua2 = [vc2WebView stringByEvaluatingJavaScriptFromString:getUserAgentCode];
 
-    XCTAssertFalse([ua1 isEqual:ua2], @"User-Agents should be different.");
+    XCTAssertTrue([ua1 isEqual:ua2], @"User-Agents should be different.");
 }
 
 - (void)testBaseUserAgent

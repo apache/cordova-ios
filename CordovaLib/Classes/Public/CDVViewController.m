@@ -499,7 +499,7 @@
         _userAgent = [NSString stringWithFormat:@"%@ %@", localBaseUserAgent, appendUserAgent];
     } else {
         // Use our address as a unique number to append to the User-Agent.
-        _userAgent = [NSString stringWithFormat:@"%@ (%lld)", localBaseUserAgent, (long long)self];
+        _userAgent = localBaseUserAgent;
     }
     return _userAgent;
 }
