@@ -84,7 +84,17 @@ module.exports.run = function (buildOpts) {
         }
     }
 
-    return check_reqs.run().then(function () {
+return require('./list-devices').run()
+   .then(function (devices) {
+        if (devices.length > 0 && !(buildOpts.emulator)) {
+            // we also explicitly set device flag in options as we pass
+            // those parameters to other api (build as an example)
+            buildOpts.device = true;
+            return check_reqs.check_ios_deploy();
+        }
+    }).then(function () {
+        return check_reqs.run();
+    }).then(function () {
         return findXCodeProjectIn(projectPath);
     }).then(function (name) {
         projectName = name;
