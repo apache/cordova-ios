@@ -72,12 +72,13 @@ describe('prepare', function () {
         var mv;
         var update_name;
         var xcOrig = xcode.project;
+        var writeFileSyncSpy;
 
         var updateProject = prepare.__get__('updateProject');
 
         beforeEach(function() {
             mv = spyOn(shell, 'mv');
-            spyOn(fs, 'writeFileSync');
+            writeFileSyncSpy = spyOn(fs, 'writeFileSync');
             spyOn(plist, 'parse').andReturn({});
             spyOn(plist, 'build').andReturn('');
             spyOn(xcode, 'project').andCallFake(function (pbxproj) {
@@ -105,6 +106,38 @@ describe('prepare', function () {
 
             // restore cfg2 original name
             cfg2.name = cfg2OriginalName;
+        });
+        it('should write target-device preference', function(done) {
+            var cfg2OriginalName = cfg2.name;
+            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            writeFileSyncSpy.andCallThrough();
+
+            wrapper(updateProject(cfg2, p.locations), done, function() {
+                var xcode = require('xcode');
+                var proj = new xcode.project(p.locations.pbxproj);
+                proj.parseSync();
+                var prop = proj.getBuildProperty('TARGETED_DEVICE_FAMILY');
+                expect(prop).toEqual('"1"'); // 1 is handset
+
+                // restore cfg2 original name
+                cfg2.name = cfg2OriginalName;
+            });
+        });
+        it('should write deployment-target preference', function(done) {
+            var cfg2OriginalName = cfg2.name;
+            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            writeFileSyncSpy.andCallThrough();
+
+            wrapper(updateProject(cfg2, p.locations), done, function() {
+                var xcode = require('xcode');
+                var proj = new xcode.project(p.locations.pbxproj);
+                proj.parseSync();
+                var prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET'); 
+                expect(prop).toEqual('8.0');
+
+                // restore cfg2 original name
+                cfg2.name = cfg2OriginalName;
+            });
         });
         it('should write out the app id to info plist as CFBundleIdentifier', function(done) {
             var orig = cfg.getAttribute;

@@ -23,9 +23,7 @@
 //
 
 HEADER_SEARCH_PATHS = "$(TARGET_BUILD_DIR)/usr/local/lib/include" "$(OBJROOT)/UninstalledProducts/include" "$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include" "$(BUILT_PRODUCTS_DIR)"
-IPHONEOS_DEPLOYMENT_TARGET = 8.0
 OTHER_LDFLAGS = -ObjC
-TARGETED_DEVICE_FAMILY = 1,2
 
 // Type of signing identity used for codesigning, resolves to first match of given type.
 // "iPhone Developer": Development builds (default, local only; iOS Development certificate) or "iPhone Distribution": Distribution builds (Adhoc/In-House/AppStore; iOS Distribution certificate)
