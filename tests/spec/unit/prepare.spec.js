@@ -72,12 +72,13 @@ describe('prepare', function () {
         var mv;
         var update_name;
         var xcOrig = xcode.project;
+        var writeFileSyncSpy;
 
         var updateProject = prepare.__get__('updateProject');
 
         beforeEach(function() {
             mv = spyOn(shell, 'mv');
-            spyOn(fs, 'writeFileSync');
+            writeFileSyncSpy = spyOn(fs, 'writeFileSync');
             spyOn(plist, 'parse').andReturn({});
             spyOn(plist, 'build').andReturn('');
             spyOn(xcode, 'project').andCallFake(function (pbxproj) {
@@ -109,6 +110,7 @@ describe('prepare', function () {
         it('should write target-device preference', function(done) {
             var cfg2OriginalName = cfg2.name;
             cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            writeFileSyncSpy.andCallThrough();
 
             wrapper(updateProject(cfg2, p.locations), done, function() {
                 var xcode = require('xcode');
@@ -124,6 +126,7 @@ describe('prepare', function () {
         it('should write deployment-target preference', function(done) {
             var cfg2OriginalName = cfg2.name;
             cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            writeFileSyncSpy.andCallThrough();
 
             wrapper(updateProject(cfg2, p.locations), done, function() {
                 var xcode = require('xcode');
