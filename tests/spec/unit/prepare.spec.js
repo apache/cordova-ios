@@ -56,7 +56,7 @@ function wrapperError(p, done, post) {
     }).fin(done);
 }
 
-describe('prepare', function () {
+describe('prepare', function() {
     var p;
     beforeEach(function() {
         shell.mkdir('-p', iosPlatform);
@@ -66,6 +66,486 @@ describe('prepare', function () {
 
     afterEach(function () {
         shell.rm('-rf', path.join(__dirname, 'some'));
+    });
+
+    describe('launch storyboard feature (CB-9762)', function() {
+        function makeSplashScreenEntry(src, width, height) {
+            return {
+                src: src,
+                width: width,
+                height: height
+            };
+        }
+
+        var noLaunchStoryboardImages = [];
+
+        var singleLaunchStoryboardImage = [makeSplashScreenEntry('res/splash/ios/Default@2x~universal~anyany.png')];
+
+        var singleLaunchStoryboardImageWithLegacyLaunchImage = [
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/another-image.png', 1024, 768)
+        ];
+
+        var typicalLaunchStoryboardImages = [
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comcom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~universal~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~universal~anycom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~universal~comany.png')
+        ];
+
+        var multiDeviceLaunchStoryboardImages = [
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~comany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~comcom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comcom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~anycom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~comany.png')
+        ];
+
+        describe('#mapLaunchStoryboardContents', function() {
+            var mapLaunchStoryboardContents = prepare.__get__('mapLaunchStoryboardContents');
+
+            it('should return an array with no mapped storyboard images', function() {
+                var result = mapLaunchStoryboardContents(noLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/empty-map'));
+            });
+
+            it('should return an array with one mapped storyboard image', function() {
+                var result = mapLaunchStoryboardContents(singleLaunchStoryboardImage, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/single-2xanyany-map'));
+            });
+
+            it('should return an array with one mapped storyboard image, even with legacy images', function() {
+                var result = mapLaunchStoryboardContents(singleLaunchStoryboardImageWithLegacyLaunchImage, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/single-2xanyany-map'));
+            });
+
+            it('should return an array with several mapped storyboard images', function() {
+                var result = mapLaunchStoryboardContents(typicalLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/typical-universal-map'));
+            });
+
+            it('should return an array with several mapped storyboard images across device classes', function() {
+                var result = mapLaunchStoryboardContents(multiDeviceLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/varied-device-map'));
+            });
+        });
+
+        describe('#mapLaunchStoryboardResources', function() {
+            var mapLaunchStoryboardResources = prepare.__get__('mapLaunchStoryboardResources');
+
+            it('should return an empty object with no mapped storyboard images', function () {
+                var result = mapLaunchStoryboardResources(noLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual({});
+            });
+
+            it('should return an object with one mapped storyboard image', function() {
+                var result = mapLaunchStoryboardResources(singleLaunchStoryboardImage, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual({
+                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png'
+                });
+            });
+
+            it('should return an object with one mapped storyboard image, even with legacy images', function() {
+                var result = mapLaunchStoryboardResources(singleLaunchStoryboardImageWithLegacyLaunchImage, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual({
+                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png'
+                });
+            });
+
+            it('should return an object with several mapped storyboard images', function() {
+                var result = mapLaunchStoryboardResources(typicalLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual({
+                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png',
+                    'Default@2x~universal~comany.png' : 'res/splash/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~comcom.png' : 'res/splash/ios/Default@2x~universal~comcom.png',
+                    'Default@3x~universal~anyany.png' : 'res/splash/ios/Default@3x~universal~anyany.png',
+                    'Default@3x~universal~anycom.png' : 'res/splash/ios/Default@3x~universal~anycom.png',
+                    'Default@3x~universal~comany.png' : 'res/splash/ios/Default@3x~universal~comany.png'
+                });
+            });
+
+            it('should return an object with several mapped storyboard images across device classes', function() {
+                var result = mapLaunchStoryboardResources(multiDeviceLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual({
+                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png',
+                    'Default@2x~universal~comany.png' : 'res/splash/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~comcom.png' : 'res/splash/ios/Default@2x~universal~comcom.png',
+                    'Default@2x~ipad~anyany.png' : 'res/splash/ios/Default@2x~ipad~anyany.png',
+                    'Default@2x~ipad~comany.png' : 'res/splash/ios/Default@2x~ipad~comany.png',
+                    'Default@2x~ipad~comcom.png' : 'res/splash/ios/Default@2x~ipad~comcom.png',
+                    'Default@3x~iphone~anyany.png' : 'res/splash/ios/Default@3x~iphone~anyany.png',
+                    'Default@3x~iphone~anycom.png' : 'res/splash/ios/Default@3x~iphone~anycom.png',
+                    'Default@3x~iphone~comany.png' : 'res/splash/ios/Default@3x~iphone~comany.png'
+                });
+            });
+        });
+
+        describe('#getLaunchStoryboardContentsJSON', function() {
+            var getLaunchStoryboardContentsJSON = prepare.__get__('getLaunchStoryboardContentsJSON');
+
+            it('should return contents.json with no mapped storyboard images', function () {
+                var result = getLaunchStoryboardContentsJSON(noLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/empty'));
+            });
+
+            it('should return contents.json with one mapped storyboard image', function() {
+                var result = getLaunchStoryboardContentsJSON(singleLaunchStoryboardImage, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/single-2xanyany'));
+            });
+
+            it('should return contents.json with one mapped storyboard image, even with legacy images', function() {
+                var result = getLaunchStoryboardContentsJSON(singleLaunchStoryboardImageWithLegacyLaunchImage, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/single-2xanyany'));
+            });
+
+            it('should return contents.json with several mapped storyboard images', function() {
+                var result = getLaunchStoryboardContentsJSON(typicalLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/typical-universal'));
+            });
+
+            it('should return contents.json with several mapped storyboard images across device classes', function() {
+                var result = getLaunchStoryboardContentsJSON(multiDeviceLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/varied-device'));
+            });
+        });
+
+        describe('#getLaunchStoryboardImagesDir', function() {
+            var getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
+            var projectRoot = iosProject;
+
+            it('should find the Images.xcassets file in a project with an asset catalog', function() {
+                var platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                var assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
+                var expectedPath = path.join(platformProjDir, 'Images.xcassets', 'LaunchStoryboard.imageset/');
+
+                var fileExists = shell.test('-e', assetCatalogPath);
+                expect(fileExists).toEqual(true);
+
+                var returnPath = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
+                expect(returnPath).toEqual(expectedPath);
+            });
+
+            it('should NOT find the Images.xcassets file in a project with no asset catalog', function() {
+                var platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
+                var assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
+
+                var fileExists = shell.test('-e', assetCatalogPath);
+                expect(fileExists).toEqual(false);
+
+                var returnPath = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
+                expect(returnPath).toBeNull();
+            });
+        });
+
+        describe ('#platformHasLaunchStoryboardImages', function() {
+            var platformHasLaunchStoryboardImages = prepare.__get__('platformHasLaunchStoryboardImages');
+            var cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+                p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml'));
+                return p;
+            }, {});
+
+            it('should be false with no launch images', function() {
+                expect(platformHasLaunchStoryboardImages(cfgs.none)).toEqual(false);
+            });
+            it('should be false with only legacy images', function() {
+                expect(platformHasLaunchStoryboardImages(cfgs['legacy-only'])).toEqual(false);
+            });
+            it('should be true with typical launch storyboard images', function() {
+                expect(platformHasLaunchStoryboardImages(cfgs['modern-only'])).toEqual(true);
+            });
+            it('should be true with typical and legacy launch storyboard images', function() {
+                expect(platformHasLaunchStoryboardImages(cfgs['modern-and-legacy'])).toEqual(true);
+            });
+        });
+
+        describe ('#platformHasLegacyLaunchImages', function() {
+            var platformHasLegacyLaunchImages = prepare.__get__('platformHasLegacyLaunchImages');
+            var cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+                p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml'));
+                return p;
+            }, {});
+
+            it('should be false with no launch images', function() {
+                expect(platformHasLegacyLaunchImages(cfgs.none)).toEqual(false);
+            });
+            it('should be true with only legacy images', function() {
+                expect(platformHasLegacyLaunchImages(cfgs['legacy-only'])).toEqual(true);
+            });
+            it('should be false with typical launch storyboard images', function() {
+                expect(platformHasLegacyLaunchImages(cfgs['modern-only'])).toEqual(false);
+            });
+            it('should be true with typical and legacy launch storyboard images', function() {
+                expect(platformHasLegacyLaunchImages(cfgs['modern-and-legacy'])).toEqual(true);
+            });
+
+        });
+
+        describe('#updateProjectPlistForLaunchStoryboard', function() {
+            var updateProjectPlistForLaunchStoryboard = prepare.__get__('updateProjectPlistForLaunchStoryboard');
+            var plistFile = path.join(iosPlatform, 'SampleApp', 'SampleApp-Info.plist');
+            var cfgs;
+            it('setup', function () {
+                cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+                    p[c] = {
+                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
+                        plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
+                    };
+                    return p;
+                }, {});
+            });
+
+            it('should not change the info plist when no launch images are supplied', function() {
+                var plist = cfgs.none.plist;
+                updateProjectPlistForLaunchStoryboard(cfgs.none.config, plist);
+                expect(plist.UILaunchStoryboardName).toBeUndefined();
+            });
+            it('should not change the info plist when only legacy launch images are supplied', function() {
+                var plist = cfgs['legacy-only'].plist;
+                updateProjectPlistForLaunchStoryboard(cfgs['legacy-only'].config, plist);
+                expect(plist.UILaunchStoryboardName).toBeUndefined();
+            });
+            it('should change the info plist when only modern launch images are supplied', function() {
+                var plist = cfgs['modern-only'].plist;
+                updateProjectPlistForLaunchStoryboard(cfgs['modern-only'].config, plist);
+                expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
+            });
+            it('should change the info plist when both legacy and modern launch images are supplied', function() {
+                var plist = cfgs['modern-and-legacy'].plist;
+                updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
+                expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
+            });
+            it('should remove the setting when no launch images are supplied but storyboard setting configured', function() {
+                var plist = cfgs.none.plist;
+                plist.UILaunchStoryboardName = 'CDVLaunchScreen';
+                updateProjectPlistForLaunchStoryboard(cfgs.none.config, plist);
+                expect(plist.UILaunchStoryboardName).toBeUndefined();
+            });
+            it('should remove the setting when only legacy images are supplied but storyboard setting configured', function() {
+                var plist = cfgs['legacy-only'].plist;
+                plist.UILaunchStoryboardName = 'CDVLaunchScreen';
+                updateProjectPlistForLaunchStoryboard(cfgs['legacy-only'].config, plist);
+                expect(plist.UILaunchStoryboardName).toBeUndefined();
+            });
+            it('should maintain the launch storyboard setting over multiple calls when modern images supplied', function() {
+                var plist = cfgs['modern-only'].plist;
+                delete plist.UILaunchStoryboardName;
+                updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
+                expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
+                updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
+                expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
+            });
+            it('should not attempt to override launch storyboard setting if not set to our storyboard', function() {
+                var plist = cfgs['modern-and-legacy'].plist;
+                plist.UILaunchStoryboardName = 'AnotherStoryboard';
+                updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
+                expect(plist.UILaunchStoryboardName).toEqual('AnotherStoryboard');
+            });
+
+        });
+
+        describe ('#updateLaunchStoryboardImages', function() {
+            var getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
+            var updateLaunchStoryboardImages = prepare.__get__('updateLaunchStoryboardImages');
+            var logFileOp = prepare.__get__('logFileOp');
+
+            it('should clean storyboard launch images and update contents.json', function() {
+                // spy!
+                var updatePaths = spyOn(FileUpdater, 'updatePaths');
+
+                // get appropriate paths
+                var projectRoot = iosProject;
+                var platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                var storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
+
+                // create a suitable mock project for our method
+                var project = {
+                    root: iosProject,
+                    locations: p.locations,
+                    projectConfig: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', 'modern-only.xml'))
+                };
+
+                // copy the splash screen fixtures to the iOS project
+                shell.cp('-rf', path.join(FIXTURES, 'launch-storyboard-support', 'res'), iosProject);
+
+                // copy splash screens and update Contents.json
+                updateLaunchStoryboardImages(project, p.locations);
+
+                // verify that updatePaths was called as we expect
+                var expectedResourceMap = {
+                    'Default@2x~universal~comcom.png' : 'res/screen/ios/Default@2x~universal~comcom.png',
+                    'Default@2x~universal~comany.png' : 'res/screen/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~anyany.png' : 'res/screen/ios/Default@2x~universal~anyany.png',
+                    'Default@3x~universal~comany.png' : 'res/screen/ios/Default@3x~universal~comany.png',
+                    'Default@3x~universal~anycom.png' : 'res/screen/ios/Default@3x~universal~anycom.png',
+                    'Default@3x~universal~anyany.png' : 'res/screen/ios/Default@3x~universal~anyany.png' };
+                // update keys with path to storyboardImagesDir
+                for (var k in expectedResourceMap) {
+                    if (expectedResourceMap.hasOwnProperty(k)) {
+                        expectedResourceMap[storyboardImagesDir + k] = expectedResourceMap[k];
+                        delete expectedResourceMap[k];
+                    }
+                }
+                expect(updatePaths).toHaveBeenCalledWith( expectedResourceMap, {
+                        rootDir: project.root
+                    }, logFileOp
+                );
+
+                // verify that that Contents.json is as we expect
+                var result = JSON.parse(fs.readFileSync(path.join(project.root, storyboardImagesDir, 'Contents.json')));
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/typical-universal')); 
+            });
+        });
+
+        describe ('#cleanLaunchStoryboardImages', function() {
+            var getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
+            var updateLaunchStoryboardImages = prepare.__get__('updateLaunchStoryboardImages');
+            var cleanLaunchStoryboardImages = prepare.__get__('cleanLaunchStoryboardImages');
+            var logFileOp = prepare.__get__('logFileOp');
+
+            it('should move launch images and update contents.json', function() {
+
+                var projectRoot = iosProject;
+                var platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                var storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
+                var project = {
+                    root: iosProject,
+                    locations: p.locations,
+                    projectConfig: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', 'modern-only.xml'))
+                };
+
+                shell.cp('-rf', path.join(FIXTURES, 'launch-storyboard-support', 'res'), iosProject);
+                updateLaunchStoryboardImages(project, p.locations);
+
+                // now, clean the images
+                var updatePaths = spyOn(FileUpdater, 'updatePaths');
+                cleanLaunchStoryboardImages(projectRoot, project.projectConfig, p.locations);
+
+                // verify that updatePaths was called as we expect
+                var expectedResourceMap = {
+                    'Default@2x~universal~comcom.png' : null,
+                    'Default@2x~universal~comany.png' : null,
+                    'Default@2x~universal~anyany.png' : null, 
+                    'Default@3x~universal~comany.png' : null,
+                    'Default@3x~universal~anycom.png' : null,
+                    'Default@3x~universal~anyany.png' : null };
+                // update keys with path to storyboardImagesDir
+                for (var k in expectedResourceMap) {
+                    if (expectedResourceMap.hasOwnProperty(k)) {
+                        expectedResourceMap[storyboardImagesDir + k] = null;
+                        delete expectedResourceMap[k];
+                    }
+                }
+                expect(updatePaths).toHaveBeenCalledWith( expectedResourceMap, {
+                        rootDir: project.root,
+                        all: true
+                    }, logFileOp
+                );
+
+                // verify that that Contents.json is as we expect
+                var result = JSON.parse(fs.readFileSync(path.join(project.root, storyboardImagesDir, 'Contents.json')));
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/empty')); 
+            });
+        });
+
+        describe ('#checkIfBuildSettingsNeedUpdatedForLaunchStoryboard', function() {
+            var checkIfBuildSettingsNeedUpdatedForLaunchStoryboard = prepare.__get__('checkIfBuildSettingsNeedUpdatedForLaunchStoryboard');
+            var updateProjectPlistForLaunchStoryboard = prepare.__get__('updateProjectPlistForLaunchStoryboard');
+            var plistFile = path.join(iosPlatform, 'SampleApp', 'SampleApp-Info.plist');
+            var cfgs; 
+            it ('setup', function() {
+                cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+                    p[c] = {
+                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
+                        plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
+                    };
+                    return p;
+                }, {});
+            });
+
+            it('should return false with no launch images', function () {
+                var cfg = cfgs.none;
+                updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
+                expect(checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(cfg.config, cfg.plist)).toEqual(false);
+            });
+            it('should return true with only legacy images', function () {
+                // why? because legacy images require Xcode to compile launch image assets
+                // and we may have previously removed that setting
+                var cfg = cfgs['legacy-only'];
+                updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
+                expect(checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(cfg.config, cfg.plist)).toEqual(true);
+            });
+            it('should return true with only storyboard images', function () {
+                var cfg = cfgs['modern-only'];
+                updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
+                expect(checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(cfg.config, cfg.plist)).toEqual(true);
+            });
+            it('should return false with storyboard and legacy images', function () {
+                // why? because we assume that the build settings will still build the asset catalog
+                // the user has specified both legacy and modern images, so why question it?
+                var cfg = cfgs['modern-and-legacy'];
+                updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
+                expect(checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(cfg.config, cfg.plist)).toEqual(false);
+            });
+
+        });
+
+        describe ('#updateBuildSettingsForLaunchStoryboard', function() {
+            var updateBuildSettingsForLaunchStoryboard = prepare.__get__('updateBuildSettingsForLaunchStoryboard');
+            var updateProjectPlistForLaunchStoryboard = prepare.__get__('updateProjectPlistForLaunchStoryboard');
+            var plistFile = path.join(iosPlatform, 'SampleApp', 'SampleApp-Info.plist');
+            var cfgs;
+            it('setup', function () {
+                cfgs = ['legacy-only', 'modern-only'].reduce(function (p,c) {
+                    p[c] = {
+                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
+                        plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
+                    };
+                    return p;
+                }, {});
+            });
+
+            it('should update build property with only legacy images', function () {
+                var cfg = cfgs['legacy-only'];
+                var proj = new xcode.project(p.locations.pbxproj);
+                proj.parseSync();
+                updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
+                updateBuildSettingsForLaunchStoryboard(proj, cfg.config, cfg.plist);
+                expect(proj.getBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME')).toEqual('LaunchImage');
+            });
+            it('should remove build property with only storyboard images', function () {
+                var cfg = cfgs['modern-only'];
+                var proj = new xcode.project(p.locations.pbxproj);
+                proj.parseSync();
+                // set a value for our asset catalog to make sure it really goes away
+                proj.updateBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME','LaunchImage');
+                updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
+                updateBuildSettingsForLaunchStoryboard(proj, cfg.config, cfg.plist);
+                expect(proj.getBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME')).toBeUndefined();
+            });
+        });
+
+
     });
 
     describe('updateProject method', function() {
