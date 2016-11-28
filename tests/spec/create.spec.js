@@ -40,7 +40,7 @@ function createAndBuild(projectname, projectid) {
     expect(return_code).toBe(0);
 
     // build the project
-    command = util.format('"%s/cordova/build"', path.join(tmp, projectname));
+    command = util.format('"%s/cordova/build" --emulator', path.join(tmp, projectname));
     shell.echo(command);
     return_code = shell.exec(command, { silent: true }).code;
     expect(return_code).toBe(0);
