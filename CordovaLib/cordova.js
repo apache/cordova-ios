@@ -1,5 +1,5 @@
 // Platform: ios
-// f28234fbc27c578b9a335f1dabfa2d1b96bfc03d
+// a3732cb71d9b1dd590338e8cf44196f366d46da3
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '4.3.0';
+var PLATFORM_VERSION_BUILD_LABEL = '4.3.1';
 // file: src/scripts/require.js
 
 /*jshint -W079 */
