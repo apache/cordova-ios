@@ -22,6 +22,22 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.3.1 (Dec 01, 2016)
+
+* [CB-12203](https://issues.apache.org/jira/browse/CB-12203) - Updated checked-in node_modules
+* [CB-12190](https://issues.apache.org/jira/browse/CB-12190) - create.spec tests fail when a device is connected
+* [CB-12155](https://issues.apache.org/jira/browse/CB-12155) - Create tests for launch storyboards
+* [CB-12084](https://issues.apache.org/jira/browse/CB-12084) - Update project build settings & plist
+* [CB-12130](https://issues.apache.org/jira/browse/CB-12130) - Launch storyboard images are not updated or cleaned
+* [CB-11243](https://issues.apache.org/jira/browse/CB-11243) - target-device and deployment-target were being ignored
+* [CB-12127](https://issues.apache.org/jira/browse/CB-12127) - Add buildFlag support in build.json
+* [CB-12125](https://issues.apache.org/jira/browse/CB-12125) - Unable to emulate on iPad pro iOS 10
+* [CB-12118](https://issues.apache.org/jira/browse/CB-12118) - Cordova run ios does not automatically deploy to device
+* [CB-12049](https://issues.apache.org/jira/browse/CB-12049) - user-agent string has a unique number appended
+* [CB-12098](https://issues.apache.org/jira/browse/CB-12098) - Update supportedInterfaceOrientations return type
+* [CB-9762](https://issues.apache.org/jira/browse/CB-9762) - Fix mobilespec 'cordova build' exception.
+* Updated bundled ios-sim to version 5.0.12
+
 ### 4.3.0 (Oct 21, 2016)
 
 * [CB-12054](https://issues.apache.org/jira/browse/CB-12054) - Remove npm absolute paths in node_modules/package.json (using removeNPMAbsolutePaths utility)
