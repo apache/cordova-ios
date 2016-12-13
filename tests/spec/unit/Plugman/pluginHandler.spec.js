@@ -217,14 +217,13 @@ describe('ios plugin handler', function() {
                 install(resources[0], dummyPluginInfo, dummyProject);
                 expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'));
             });
-            it('should symlink files to the right target location', function() {
+            it('should link files to the right target location', function() {
                 var resources = copyArray(valid_resources);
-                var spy = spyOn(fs, 'symlinkSync');
+                var spy = spyOn(fs, 'linkSync');
                 install(resources[0], dummyPluginInfo, dummyProject, { link: true });
                 var src_bundle = path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle');
                 var dest_bundle = path.join(temp, 'SampleApp/Resources/DummyPlugin.bundle');
-                expect(spy).toHaveBeenCalledWith(path.relative(fs.realpathSync(path.dirname(dest_bundle)), src_bundle),
-                                                    dest_bundle);
+                expect(spy).toHaveBeenCalledWith(src_bundle, dest_bundle);
             });
         });
 
@@ -268,14 +267,13 @@ describe('ios plugin handler', function() {
                     expect(spy).toHaveBeenCalledWith('-Rf', path.join(dummyplugin, 'src', 'ios', 'Custom.framework', '*'),
                                                      path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'));
                 });
-                it('should deep symlink files to the right target location', function() {
+                it('should deep link files to the right target location', function() {
                     var frameworks = copyArray(valid_custom_frameworks);
-                    var spy = spyOn(fs, 'symlinkSync');
+                    var spy = spyOn(fs, 'linkSync');
                     install(frameworks[0], dummyPluginInfo, dummyProject, { link: true });
                     var src_binlib = path.join(dummyplugin, 'src', 'ios', 'Custom.framework', 'somebinlib');
                     var dest_binlib = path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework/somebinlib');
-                    expect(spy).toHaveBeenCalledWith(path.relative(fs.realpathSync(path.dirname(dest_binlib)), src_binlib),
-                                                     dest_binlib);
+                    expect(spy).toHaveBeenCalledWith(src_binlib, dest_binlib);
                 });
             });
         });
@@ -470,21 +468,21 @@ describe('ios plugin handler', function() {
                     expect(spy).toHaveBeenCalledWith('-rf', frameworkPath);
                 });
             });
-            
+
             describe('without custom="true" attribute ', function() {
-                it('should decrease framework counter after uninstallation', function() {  
+                it('should decrease framework counter after uninstallation', function() {
                     var install = pluginHandlers.getInstaller('framework');
                     var dummyNonCustomFrameworks =  dummyPluginInfo.getFrameworks('ios').filter(function(f) {
                         return !f.custom;
                     });
                     var dummyFramework = dummyNonCustomFrameworks[0];
                     install(dummyFramework, dummyPluginInfo, dummyProject);
-                    install(dummyFramework, dummyPluginInfo, dummyProject); 
-                    var frameworkName = Object.keys(dummyProject.frameworks)[0]; 
+                    install(dummyFramework, dummyPluginInfo, dummyProject);
+                    var frameworkName = Object.keys(dummyProject.frameworks)[0];
                     expect(dummyProject.frameworks[frameworkName]).toEqual(2);
                     uninstall(dummyFramework, dummyPluginInfo, dummyProject);
-                    expect(dummyProject.frameworks[frameworkName]).toEqual(1);                  
-                    uninstall(dummyFramework, dummyPluginInfo, dummyProject); 
+                    expect(dummyProject.frameworks[frameworkName]).toEqual(1);
+                    uninstall(dummyFramework, dummyPluginInfo, dummyProject);
                     expect(dummyProject.frameworks[frameworkName]).not.toBeDefined();
                 });
             });
