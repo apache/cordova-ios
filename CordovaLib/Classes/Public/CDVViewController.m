@@ -207,11 +207,11 @@
         appURL = [NSURL URLWithString:self.startPage];
     } else if ([self.wwwFolderName rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
-    } else if([self.wwwFolderName hasSuffix:@".bundle"]){
+    } else if([self.wwwFolderName rangeOfString:@".bundle"].location != NSNotFound){
         // www folder is actually a bundle
         NSBundle* bundle = [NSBundle bundleWithPath:self.wwwFolderName];
         appURL = [bundle URLForResource:self.startPage withExtension:nil];
-    } else if([self.wwwFolderName hasSuffix:@".framework"]){
+    } else if([self.wwwFolderName rangeOfString:@".framework"].location != NSNotFound){
         // www folder is actually a framework
         NSBundle* bundle = [NSBundle bundleWithPath:self.wwwFolderName];
         appURL = [bundle URLForResource:self.startPage withExtension:nil];
