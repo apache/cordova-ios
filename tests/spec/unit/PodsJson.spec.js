@@ -30,7 +30,7 @@ describe('unit tests for Podfile module', function () {
 
 	describe('tests', function () {
 
-		it ('throws CordovaError when the path filename is not named pods.json', function () {
+		it ('Test 001 : throws CordovaError when the path filename is not named pods.json', function () {
 			var dummyPath = 'NotPodsJson';
 			expect( function () { 
 				new PodsJson(dummyPath);	 
@@ -38,7 +38,7 @@ describe('unit tests for Podfile module', function () {
 			.toThrow(new CordovaError(util.format('PodsJson: The file at %s is not `%s`.', dummyPath, PodsJson.FILENAME)));
 		});
 
-		it ('sets and gets pod test', function () {
+		it ('Test 002 : sets and gets pod test', function () {
 			var val0 = {
 				name: 'Foo',
 				type: 'podspec',
@@ -55,7 +55,7 @@ describe('unit tests for Podfile module', function () {
 			expect(val1.count).toEqual(val0.count);
 		});
 
-		it ('setsJson and remove pod test', function () {
+		it ('Test 003 : setsJson and remove pod test', function () {
 			var val0 = {
 				name: 'Bar',
 				type: 'podspec',
@@ -76,7 +76,7 @@ describe('unit tests for Podfile module', function () {
 			expect(val1).toBeFalsy();
 		});
 		
-		it ('clears all pods', function () {
+		it ('Test 004 : clears all pods', function () {
 			var val0 = {
 				name: 'Baz',
 				type: 'podspec',
@@ -91,7 +91,7 @@ describe('unit tests for Podfile module', function () {
 			expect(podsjson.get('Bar')).toBeFalsy();
 		});
 
-		it ('isDirty tests', function () {
+		it ('Test 005 : isDirty tests', function () {
 			var val0 = {
 				name: 'Foo',
 				type: 'podspec',
@@ -115,7 +115,7 @@ describe('unit tests for Podfile module', function () {
 			expect(podsjson.isDirty()).toBe(false);
 		});
 
-		it ('increment and decrement count test', function () {
+		it ('Test 006 : increment and decrement count test', function () {
 			var val0 = {
 				name: 'Bla',
 				type: 'podspec',
@@ -143,7 +143,7 @@ describe('unit tests for Podfile module', function () {
 			expect(podsjson.get(val0.name)).toBeFalsy();
 		});
 
-		it ('writes pods to the pods.json', function () {
+		it ('Test 007 : writes pods to the pods.json', function () {
 			podsjson.clear();
 
 			var vals = {
@@ -180,7 +180,7 @@ describe('unit tests for Podfile module', function () {
 
 	});
 
-	it('tear down', function () {
+	it('Test 008 : tear down', function () {
 		podsjson.destroy();
 	});
 });

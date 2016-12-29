@@ -40,21 +40,21 @@ describe('projectFile', function() {
     });
 
     describe('parse method', function () {
-        it('should throw if project is not an xcode project', function() {
+        it('Test#001 : should throw if project is not an xcode project', function() {
             shell.rm('-rf', path.join(iosProject, 'SampleApp', 'SampleApp.xcodeproj'));
             expect(function() { projectFile.parse(); }).toThrow();
         });
-        it('should throw if project does not contain an appropriate config.xml file', function() {
+        it('Test#002 : should throw if project does not contain an appropriate config.xml file', function() {
             shell.rm(path.join(iosProject, 'SampleApp', 'config.xml'));
             expect(function() { projectFile.parse(locations); })
-                .toThrow('Could not find *-Info.plist file, or config.xml file.');
+                .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
         });
-        it('should throw if project does not contain an appropriate -Info.plist file', function() {
+        it('Test#003 : should throw if project does not contain an appropriate -Info.plist file', function() {
             shell.rm(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'));
             expect(function () { projectFile.parse(locations); })
-                .toThrow('Could not find *-Info.plist file, or config.xml file.');
+                .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
         });
-        it('should return right directory when multiple .plist files are present', function() {
+        it('Test#004 : should return right directory when multiple .plist files are present', function() {
             //Create a folder named A with config.xml and .plist files in it
             var pathToFolderA = path.join(iosProject, 'A');
             shell.mkdir(pathToFolderA);
@@ -76,7 +76,7 @@ describe('projectFile', function() {
     });
 
     describe('other methods', function () {
-        it('getPackageName method should return the CFBundleIdentifier from the project\'s Info.plist file', function() {
+        it('Test#005 : getPackageName method should return the CFBundleIdentifier from the project\'s Info.plist file', function() {
             expect(projectFile.parse(locations).getPackageName()).toEqual('com.example.friendstring');
         });
     });

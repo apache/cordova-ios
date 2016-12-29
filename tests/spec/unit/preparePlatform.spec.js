@@ -59,14 +59,14 @@ describe('prepare after plugin add', function() {
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
 
-        this.addMatchers(customMatchers);
+        jasmine.addMatchers(customMatchers);
     });
 
     afterEach(function() {
         shell.rm('-rf', iosPlatform);
     });
 
-    it('should not overwrite plugin metadata added by "addPlugin"', function(done) {
+    it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', function(done) {
         var project = {
             root: iosProject,
             projectConfig: new ConfigParser(path.join(iosProject, 'config.xml')),
@@ -77,7 +77,7 @@ describe('prepare after plugin add', function() {
         };
 
         var fail = jasmine.createSpy('fail')
-        .andCallFake(function (err) {
+        .and.callFake(function (err) {
             console.error(err);
         });
 

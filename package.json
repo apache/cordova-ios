@@ -29,7 +29,7 @@
   "devDependencies": {
     "coffee-script": "^1.7.1",
     "istanbul": "^0.4.2",
-    "jasmine-node": "~1",
+    "jasmine": "^2.5.2",
     "jshint": "^2.6.0",
     "nodeunit": "^0.8.7",
     "rewire": "^2.5.1",
