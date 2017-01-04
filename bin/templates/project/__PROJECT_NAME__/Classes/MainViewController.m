@@ -98,7 +98,6 @@
 #else  
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 #endif
-
 {
     return [super supportedInterfaceOrientations];
 }
