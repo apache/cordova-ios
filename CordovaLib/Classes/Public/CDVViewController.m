@@ -425,7 +425,6 @@
 #else  
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 #endif
-
 {
     NSUInteger ret = 0;
 
