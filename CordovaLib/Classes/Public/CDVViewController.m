@@ -393,12 +393,26 @@
 
 - (UIColor*)colorFromColorString:(NSString*)colorString
 {
+    // No value, nothing to do
+    if (!colorString) {
+        return nil;
+    }
+    
+    // Validate format
+    NSError* error = NULL;
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:@"^(#[0-9A-F]{3}|(0x|#)([0-9A-F]{2})?[0-9A-F]{6})$" options:NSRegularExpressionCaseInsensitive error:&error];
+    NSUInteger countMatches = [regex numberOfMatchesInString:colorString options:0 range:NSMakeRange(0, [colorString length])];
+    
+    if (!countMatches) {
+        return nil;
+    }
+    
     // #FAB to #FFAABB
     if ([colorString hasPrefix:@"#"] && [colorString length] == 4) {
         NSString* r = [colorString substringWithRange:NSMakeRange(1, 1)];
         NSString* g = [colorString substringWithRange:NSMakeRange(2, 1)];
         NSString* b = [colorString substringWithRange:NSMakeRange(3, 1)];
-        colorString = [NSString stringWithFormat:@"0x%@%@%@%@%@%@", r, r, g, g, b, b];
+        colorString = [NSString stringWithFormat:@"#%@%@%@%@%@%@", r, r, g, g, b, b];
     }
     
     // #RRGGBB to 0xRRGGBB
