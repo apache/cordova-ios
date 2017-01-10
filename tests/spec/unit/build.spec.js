@@ -110,7 +110,7 @@ describe('build', function () {
 
         it('should generate appropriate args for simulator', function(done) {
             var isDevice = false;
-            var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null);
+            var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null, 'iPhone 5s');
             expect(args[0]).toEqual('-xcconfig');
             expect(args[1]).toEqual(path.join('/test', 'build-testconfiguration.xcconfig'));
             expect(args[2]).toEqual('-workspace');
@@ -160,7 +160,7 @@ describe('build', function () {
             var isDevice = false;
             var buildFlags = '-archivePath TestArchivePathFlag';
 
-            var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags);
+            var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags, 'iPhone 5s');
             expect(args[0]).toEqual('-xcconfig');
             expect(args[1]).toEqual(path.join('/test', 'build-testconfiguration.xcconfig'));
             expect(args[2]).toEqual('-workspace');

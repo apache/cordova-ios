@@ -53,7 +53,33 @@ var buildFlagMatchers = {
     'shared_precomps_dir' : /^(SHARED_PRECOMPS_DIR=.*)/
 };
 
+/**
+ * Returns a promise that resolves to the default simulator target; the logic here
+ * matches what `cordova emulate ios` does. 
+ * 
+ * The return object has two properties: `name` (the Xcode destination name),
+ * `identifier` (the simctl identifier), and `simIdentifier` (essentially the cordova emulate target)
+ * 
+ * @return {Promise}
+ */
+function getDefaultSimulatorTarget() {
+    return require('./list-emulator-build-targets').run()
+    .then(function (emulators) {
+        var targetEmulator;
+        if (emulators.length > 0) {
+            targetEmulator = emulators[0];
+        }
+        emulators.forEach(function (emulator) {
+            if (emulator.name.indexOf('iPhone') === 0) {
+                targetEmulator = emulator;
+            }
+        });
+        return targetEmulator;
+    });
+}
+
 module.exports.run = function (buildOpts) {
+    var emulatorTarget = '';
 
     buildOpts = buildOpts || {};
 
@@ -93,6 +119,22 @@ return require('./list-devices').run()
             return check_reqs.check_ios_deploy();
         }
     }).then(function () {
+        // CB-12287: Determine the device we should target when building for a simulator
+        if (!buildOpts.device) {
+            var promise;
+            if (buildOpts.target) {
+                // a target was given to us, find the matching Xcode destination name
+                promise = require('./list-emulator-build-targets').targetForSimIdentifier(buildOpts.target);
+            } else {
+                // no target provided, pick a default one (matching our emulator logic)
+                promise = getDefaultSimulatorTarget();
+            }
+            return promise.then(function(theTarget) { 
+                emulatorTarget = theTarget.name;
+                events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+            });
+        }
+    }).then(function () {
         return check_reqs.run();
     }).then(function () {
         return findXCodeProjectIn(projectPath);
@@ -125,7 +167,7 @@ return require('./list-devices').run()
         // remove the build/device folder before building
         return spawn('rm', [ '-rf', buildOutputDir ], projectPath)
         .then(function() {
-            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag);
+            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget);
             return spawn('xcodebuild', xcodebuildArgs, projectPath);
         });
 
@@ -224,13 +266,15 @@ module.exports.findXCodeProjectIn = findXCodeProjectIn;
 
 /**
  * Returns array of arguments for xcodebuild
- * @param  {String}  projectName   Name of xcode project
- * @param  {String}  projectPath   Path to project file. Will be used to set CWD for xcodebuild
- * @param  {String}  configuration Configuration name: debug|release
- * @param  {Boolean} isDevice      Flag that specify target for package (device/emulator)
- * @return {Array}                 Array of arguments that could be passed directly to spawn method
+ * @param  {String}  projectName    Name of xcode project
+ * @param  {String}  projectPath    Path to project file. Will be used to set CWD for xcodebuild
+ * @param  {String}  configuration  Configuration name: debug|release
+ * @param  {Boolean} isDevice       Flag that specify target for package (device/emulator)
+ * @param  {Array}   buildFlags
+ * @param  {String}  emulatorTarget Target for emulator (rather than default)
+ * @return {Array}                  Array of arguments that could be passed directly to spawn method
  */
-function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, buildFlags) {
+function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, buildFlags, emulatorTarget) {
     var xcodebuildArgs;
     var options;
     var buildActions;
@@ -274,7 +318,7 @@ function getXcodeBuildArgs(projectName, projectPath, configuration, isDevice, bu
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
             '-sdk', customArgs.sdk || 'iphonesimulator',
-            '-destination', customArgs.destination || 'platform=iOS Simulator,name=iPhone 5s'
+            '-destination', customArgs.destination || 'platform=iOS Simulator,name=' + emulatorTarget
         ];
         buildActions = [ 'build' ];
         settings = [
