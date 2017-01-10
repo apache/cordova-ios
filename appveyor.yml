@@ -9,7 +9,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   # Lines below required due to uncrustify installation failure on Windows
   - npm install --prod
-  - npm install jshint jasmine-node rewire
+  - npm install jshint jasmine rewire
 
 build: off
 

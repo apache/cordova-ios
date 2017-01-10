@@ -593,7 +593,7 @@ describe('prepare', function() {
         it('should write target-device preference', function(done) {
             var cfg2OriginalName = cfg2.name;
             cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
-            writeFileSyncSpy.andCallThrough();
+            writeFileSyncSpy.and.callThrough();
 
             wrapper(updateProject(cfg2, p.locations), done, function() {
                 var xcode = require('xcode');
@@ -609,7 +609,7 @@ describe('prepare', function() {
         it('should write deployment-target preference', function(done) {
             var cfg2OriginalName = cfg2.name;
             cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
-            writeFileSyncSpy.andCallThrough();
+            writeFileSyncSpy.and.callThrough();
 
             wrapper(updateProject(cfg2, p.locations), done, function() {
                 var xcode = require('xcode');
@@ -728,7 +728,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-web-content="true" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 
@@ -747,7 +747,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-media="true" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 
@@ -766,7 +766,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-local-networking="true" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 
@@ -785,7 +785,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 
@@ -803,7 +803,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="http://cordova.apache.org" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 
@@ -1072,7 +1072,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<allow-navigation href="*" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 
@@ -1091,7 +1091,7 @@ describe('prepare', function() {
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<allow-navigation href="http://cordova.apache.org" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
             '</widget>';
-            readFile.andReturn(configXml);
+            readFile.and.returnValue(configXml);
 
             var my_config = new ConfigParser('fake/path');
 

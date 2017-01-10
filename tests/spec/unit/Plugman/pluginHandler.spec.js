@@ -268,11 +268,8 @@ describe('ios plugin handler', function() {
                     expect(spy).toHaveBeenCalledWith('-Rf', path.join(dummyplugin, 'src', 'ios', 'Custom.framework', '*'),
                                                      path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'));
                 });
-<<<<<<< HEAD
-                it('should deep link files to the right target location', function() {
-=======
+
                 it('Test 023 : should deep symlink files to the right target location', function() {
->>>>>>> CB-12018 :updated tests to function with jasmine instead of jasmine-node
                     var frameworks = copyArray(valid_custom_frameworks);
                     var spy = spyOn(fs, 'linkSync');
                     install(frameworks[0], dummyPluginInfo, dummyProject, { link: true });
@@ -475,11 +472,8 @@ describe('ios plugin handler', function() {
             });
 
             describe('without custom="true" attribute ', function() {
-<<<<<<< HEAD
-                it('should decrease framework counter after uninstallation', function() {
-=======
+
                 it('Test 041 : should decrease framework counter after uninstallation', function() {  
->>>>>>> CB-12018 :updated tests to function with jasmine instead of jasmine-node
                     var install = pluginHandlers.getInstaller('framework');
                     var dummyNonCustomFrameworks =  dummyPluginInfo.getFrameworks('ios').filter(function(f) {
                         return !f.custom;
