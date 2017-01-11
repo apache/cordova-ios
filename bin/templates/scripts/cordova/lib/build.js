@@ -162,7 +162,7 @@ return require('./list-devices').run()
         events.emit('log','\tConfiguration: ' + configuration);
         events.emit('log','\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
 
-        var buildOutputDir = path.join(projectPath, 'build', 'device');
+        var buildOutputDir = path.join(projectPath, 'build', (buildOpts.device ? 'device' : 'emulator'));
 
         // remove the build/device folder before building
         return spawn('rm', [ '-rf', buildOutputDir ], projectPath)
