@@ -319,10 +319,11 @@
 
     // /////////////////
     NSURL* appURL = [self appUrl];
+    __weak __typeof__(self) weakSelf = self;
 
     [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
-        _userAgentLockToken = lockToken;
-        [CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
+        // Fix the memory leak caused by the strong reference.
+        [weakSelf setLockToken:lockToken];
         if (appURL) {
             NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
             [self.webViewEngine loadRequest:appReq];
@@ -347,6 +348,12 @@
     NSString* bgColorString = [self.settings cordovaSettingForKey:@"BackgroundColor"];
     UIColor* bgColor = [self colorFromColorString:bgColorString];
     [self.webView setBackgroundColor:bgColor];
+}
+
+- (void)setLockToken:(NSInteger)lockToken
+{
+	_userAgentLockToken = lockToken;
+	[CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
 }
 
 -(void)viewWillAppear:(BOOL)animated
