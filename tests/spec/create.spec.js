@@ -102,6 +102,13 @@ describe('create', function() {
         createAndBuild(projectname, projectid);
     });
 
+    it('Test#008 : create project with ascii name, and spaces, ampersand(&)', function() {
+       var projectname = 'hello & world';
+       var projectid = 'com.test.app7';
+
+       createAndBuild(projectname, projectid);
+    });
+
 });
 
 describe('end-to-end list validation', function(){
