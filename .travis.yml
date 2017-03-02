@@ -14,6 +14,7 @@ script:
     - npm run jshint
     - npm run unit-tests
     - npm run e2e-tests
+    - open -b com.apple.iphonesimulator    
     - npm run objc-tests
     - npm run cover
 after_script: codecov
