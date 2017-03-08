@@ -359,6 +359,7 @@ module.exports.help = function help() {
     console.log('Usage: build [--debug | --release] [--archs=\"<list of architectures...>\"]');
     console.log('             [--device | --simulator] [--codeSignIdentity=\"<identity>\"]');
     console.log('             [--codeSignResourceRules=\"<resourcerules path>\"]');
+    console.log('             [--developmentTeam=\"<Team ID>\"]');
     console.log('             [--provisioningProfile=\"<provisioning profile>\"]');
     console.log('    --help                  : Displays this dialog.');
     console.log('    --debug                 : Builds project in debug mode. (Default)');
@@ -370,6 +371,8 @@ module.exports.help = function help() {
     console.log('                            : Specifies, what type of project to build');
     console.log('    --codeSignIdentity      : Type of signing identity used for code signing.');
     console.log('    --codeSignResourceRules : Path to ResourceRules.plist.');
+    console.log('    --developmentTeam       : New for Xcode 8. The development team (Team ID)');
+    console.log('                              to use for code signing.');
     console.log('    --provisioningProfile   : UUID of the profile.');
     console.log('    --device --noSign       : Builds project without application signing.');
     console.log('');
