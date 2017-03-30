@@ -39,13 +39,13 @@
     "uncrustify": "^0.6.1"
   },
   "dependencies": {
-    "cordova-common": "^1.5.0",
+    "cordova-common": "^2.0.0",
     "ios-sim": "^5.0.12",
     "nopt": "^3.0.6",
     "plist": "^1.2.0",
     "q": "^1.4.1",
     "shelljs": "^0.5.3",
-    "xcode": "^0.8.5",
+    "xcode": "^0.9.0",
     "xml-escape": "^1.1.0"
   },
   "bundledDependencies": [

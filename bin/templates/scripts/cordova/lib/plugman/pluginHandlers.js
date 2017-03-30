@@ -66,7 +66,10 @@ var handlers = {
     'framework':{ // CB-5238 custom frameworks only
         install:function(obj, plugin, project, options) {
             var src = obj.src,
-                custom = obj.custom;
+                custom = !!(obj.custom), // convert to boolean (if truthy/falsy)
+                embed = !!(obj.embed), // convert to boolean (if truthy/falsy)
+                link = !embed; // either link or embed can be true, but not both. the other has to be false
+
             if (!custom) {
                 var keepFrameworks = keep_these_frameworks;
 
@@ -76,7 +79,7 @@ var handlers = {
                     } else {
                         project.frameworks[src] = project.frameworks[src] || 0;
                         project.frameworks[src]++;
-                        project.xcode.addFramework(src, {weak: obj.weak});
+                        project.xcode.addFramework(src, { customFramework: false, embed: false, link: true, weak: obj.weak });
                     }
                 }
                 return;
@@ -85,11 +88,11 @@ var handlers = {
                 targetDir = path.resolve(project.plugins_dir, plugin.id, path.basename(src));
             if (!fs.existsSync(srcFile)) throw new CordovaError('Cannot find framework "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
             if (fs.existsSync(targetDir)) throw new CordovaError('Framework "' + targetDir + '" for plugin ' + plugin.id + ' already exists in iOS platform');
-            var link = !!(options && options.link);
-            copyFile(plugin.dir, src, project.projectDir, targetDir, link); // frameworks are directories
+            var symlink = !!(options && options.link);
+            copyFile(plugin.dir, src, project.projectDir, targetDir, symlink); // frameworks are directories
             // CB-10773 translate back slashes to forward on win32
             var project_relative = fixPathSep(path.relative(project.projectDir, targetDir));
-            var pbxFile = project.xcode.addFramework(project_relative, {customFramework: true});
+            var pbxFile = project.xcode.addFramework(project_relative, { customFramework: true, embed: embed, link: link });
             if (pbxFile) {
                 project.xcode.addToPbxEmbedFrameworksBuildPhase(pbxFile);
             }

@@ -68,7 +68,7 @@
 
     <allow-navigation href="https://*.server23.com" minimum-tls-version="TLSv1.1" requires-forward-secrecy="true" requires-certificate-transparency="false"/>
     <allow-navigation href="https://*.server24.com" minimum-tls-version="TLSv1.1" requires-forward-secrecy="false" requires-certificate-transparency="false"/>
-    <allow-navigation href="https://*.server24-1.com" minimum-tls-version="TLSv1.1" requires-forward-secrecy="true"requires-certificate-transparency="true" />
+    <allow-navigation href="https://*.server24-1.com" minimum-tls-version="TLSv1.1" requires-forward-secrecy="true" requires-certificate-transparency="true" />
     <allow-navigation href="https://*.server24-2.com" minimum-tls-version="TLSv1.1" requires-forward-secrecy="false" requires-certificate-transparency="true"/>
 
     <!-- http, no subdomain, with attribute differences -->

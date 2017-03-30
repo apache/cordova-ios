@@ -62,5 +62,6 @@
         <framework src="src/ios/libsqlite3.dylib" />
         <framework src="src/ios/libsqlite3.dylib" weak="true" />
         <framework src="src/ios/Custom.framework" custom="true" />
+        <framework src="src/ios/CustomEmbeddable.framework" custom="true" embed="true" />
     </platform>
 </plugin>
