@@ -252,7 +252,7 @@ describe('ios plugin handler', function() {
                 frameworks = copyArray(valid_weak_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith(path.join('src','ios','libsqlite3.dylib'), { customFramework: false, embed: false, link: true, weak: true });
+                    .toHaveBeenCalledWith('src/ios/libsqlite3.dylib', { customFramework: false, embed: false, link: true, weak: true });
             });
 
             // TODO: Add more tests to cover the cases:
