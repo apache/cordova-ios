@@ -41,7 +41,10 @@ var dummy_id = dummyPluginInfo.id;
 var valid_source = dummyPluginInfo.getSourceFiles('ios'),
     valid_headers = dummyPluginInfo.getHeaderFiles('ios'),
     valid_resources = dummyPluginInfo.getResourceFiles('ios'),
-    valid_custom_frameworks = dummyPluginInfo.getFrameworks('ios').filter(function(f) { return f.custom; });
+    valid_custom_frameworks = dummyPluginInfo.getFrameworks('ios').filter(function(f) { return f.custom; }),
+    valid_embeddable_custom_frameworks = dummyPluginInfo.getFrameworks('ios').filter(function(f) { return f.custom && f.embed; }),
+    valid_weak_frameworks = dummyPluginInfo.getFrameworks('ios').filter(function(f) { return !(f.custom) && f.weak; });
+    
 
 var faultyPluginInfo = new PluginInfo(faultyplugin);
 var invalid_source = faultyPluginInfo.getSourceFiles('ios');
@@ -239,7 +242,17 @@ describe('ios plugin handler', function() {
                 var frameworks = copyArray(valid_custom_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework', {customFramework:true});
+                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework', { customFramework: true, embed: false, link: true, sign: true });
+
+                frameworks = copyArray(valid_embeddable_custom_frameworks);
+                install(frameworks[0], dummyPluginInfo, dummyProject);
+                expect(dummyProject.xcode.addFramework)
+                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
+
+                frameworks = copyArray(valid_weak_frameworks);
+                install(frameworks[0], dummyPluginInfo, dummyProject);
+                expect(dummyProject.xcode.addFramework)
+                    .toHaveBeenCalledWith('src/ios/libsqlite3.dylib', { customFramework: false, embed: false, link: true, weak: true });
             });
 
             // TODO: Add more tests to cover the cases:
