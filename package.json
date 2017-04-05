@@ -38,6 +38,10 @@
     "tmp": "^0.0.26",
     "uncrustify": "^0.6.1"
   },
+  "engineStrict": true,
+  "engines" : { 
+    "node" : ">=4" 
+  }, 
   "dependencies": {
     "cordova-common": "^1.5.0",
     "ios-sim": "^5.0.12",
