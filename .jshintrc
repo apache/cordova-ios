@@ -7,4 +7,5 @@
   , "indent": 4
   , "unused": "vars"
   , "latedef": "nofunc"
+  , "esversion": "6"
 }
