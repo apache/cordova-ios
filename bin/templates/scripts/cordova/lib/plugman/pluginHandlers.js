@@ -18,6 +18,7 @@
 var fs = require('fs');
 var path = require('path');
 var shell = require('shelljs');
+var util = require('util');
 var events = require('cordova-common').events;
 var CordovaError = require('cordova-common').CordovaError;
 
@@ -69,7 +70,7 @@ var handlers = {
                 custom = !!(obj.custom), // convert to boolean (if truthy/falsy)
                 embed = !!(obj.embed), // convert to boolean (if truthy/falsy)
                 link = !embed; // either link or embed can be true, but not both. the other has to be false
-
+                
             if (!custom) {
                 var keepFrameworks = keep_these_frameworks;
 
@@ -79,7 +80,10 @@ var handlers = {
                     } else {
                         project.frameworks[src] = project.frameworks[src] || 0;
                         project.frameworks[src]++;
-                        project.xcode.addFramework(src, { customFramework: false, embed: false, link: true, weak: obj.weak });
+                        let opt = { customFramework: false, embed: false, link: true, weak: obj.weak };
+                        events.emit('verbose', util.format('Adding non-custom framework to project... %s -> %s', src, JSON.stringify(opt)));
+                        project.xcode.addFramework(src, opt);
+                        events.emit('verbose', util.format('Non-custom framework added to project. %s -> %s', src, JSON.stringify(opt)));
                     }
                 }
                 return;
@@ -92,10 +96,16 @@ var handlers = {
             copyFile(plugin.dir, src, project.projectDir, targetDir, symlink); // frameworks are directories
             // CB-10773 translate back slashes to forward on win32
             var project_relative = fixPathSep(path.relative(project.projectDir, targetDir));
-            var pbxFile = project.xcode.addFramework(project_relative, { customFramework: true, embed: embed, link: link });
-            if (pbxFile) {
-                project.xcode.addToPbxEmbedFrameworksBuildPhase(pbxFile);
+            // CB-11233 create Embed Frameworks Build Phase if does not exist
+            var existsEmbedFrameworks = project.xcode.buildPhaseObject('PBXCopyFilesBuildPhase', 'Embed Frameworks');
+            if (!existsEmbedFrameworks && embed) {
+                events.emit('verbose', '"Embed Frameworks" Build Phase (Embedded Binaries) does not exist, creating it.');
+                project.xcode.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks');
             }
+            let opt = { customFramework: true, embed: embed, link: link };
+            events.emit('verbose', util.format('Adding custom framework to project... %s -> %s', src, JSON.stringify(opt)));
+            project.xcode.addFramework(project_relative, opt);
+            events.emit('verbose', util.format('Custom framework added to project. %s -> %s', src, JSON.stringify(opt)));
         },
         uninstall:function(obj, plugin, project, options) {
             var src = obj.src;
