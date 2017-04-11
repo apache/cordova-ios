@@ -242,12 +242,12 @@ describe('ios plugin handler', function() {
                 var frameworks = copyArray(valid_custom_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework', { customFramework: true, embed: false, link: true });
+                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework', { customFramework: true, embed: false, link: true, sign: true });
 
                 frameworks = copyArray(valid_embeddable_custom_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false });
+                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
 
                 frameworks = copyArray(valid_weak_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
