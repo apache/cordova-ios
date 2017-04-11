@@ -100,9 +100,9 @@ var handlers = {
             var existsEmbedFrameworks = project.xcode.buildPhaseObject('PBXCopyFilesBuildPhase', 'Embed Frameworks');
             if (!existsEmbedFrameworks && embed) {
                 events.emit('verbose', '"Embed Frameworks" Build Phase (Embedded Binaries) does not exist, creating it.');
-                project.xcode.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks');
+                project.xcode.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks', null, 'frameworks');
             }
-            let opt = { customFramework: true, embed: embed, link: link };
+            let opt = { customFramework: true, embed: embed, link: link, sign: true };
             events.emit('verbose', util.format('Adding custom framework to project... %s -> %s', src, JSON.stringify(opt)));
             project.xcode.addFramework(project_relative, opt);
             events.emit('verbose', util.format('Custom framework added to project. %s -> %s', src, JSON.stringify(opt)));
