@@ -256,7 +256,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
     // http[s] and ftp[s] should also validate against the common set in the kCDVDefaultSchemeName list
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"] || [scheme isEqualToString:@"ftp"] || [scheme isEqualToString:@"ftps"]) {
-        NSURL* newUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@%@", kCDVDefaultSchemeName, [url host], [[url path] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+        NSURL* newUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@%@", kCDVDefaultSchemeName, [url host], [[url path] stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]]];
         // If it is allowed, we are done.  If not, continue to check for the actual scheme-specific list
         if ([self URLIsAllowed:newUrl logFailure:NO]) {
             return YES;

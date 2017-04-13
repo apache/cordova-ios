@@ -73,7 +73,7 @@
     CDVWebViewDelegate2* wvd = [[CDVWebViewDelegate2 alloc] initWithDelegate:nil]; // not really testing delegate handling
 
     wvd.state = initialState;
-    [wvd webView:nil didFailLoadWithError:errorCancelled];
+    [wvd webView:[UIWebView new] didFailLoadWithError:errorCancelled];
 
     XCTAssertTrue(wvd.state == expectedState, @"If the load error was through an iframe redirect (NSURLErrorCancelled), the state should be STATE_CANCELLED");
 }

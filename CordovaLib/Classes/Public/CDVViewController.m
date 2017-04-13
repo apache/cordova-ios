@@ -27,6 +27,7 @@
 #import "NSDictionary+CordovaPreferences.h"
 #import "CDVLocalStorage.h"
 #import "CDVCommandDelegateImpl.h"
+#import <Foundation/NSCharacterSet.h>
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
@@ -333,7 +334,7 @@
 
             NSURL* errorUrl = [self errorURL];
             if (errorUrl) {
-                errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] relativeToURL:errorUrl];
+                errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
                 NSLog(@"%@", [errorUrl absoluteString]);
                 [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
             } else {
