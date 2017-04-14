@@ -479,6 +479,8 @@ function updateFileResources(cordovaProject, locations) {
 
     Object.keys(resourceMap).sort().forEach(function (targetPath) {
         var sourcePath = resourceMap[targetPath];
+        // remove before add, so there are no duplicates
+        proj.removeResourceFile(path.join('Resources', path.basename(sourcePath)));
         proj.addResourceFile(path.join('Resources', path.basename(sourcePath)));
     });
 
