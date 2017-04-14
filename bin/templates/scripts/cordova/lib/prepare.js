@@ -62,6 +62,7 @@ module.exports.prepare = function (cordovaProject, options) {
         updateIcons(cordovaProject, self.locations);
         updateSplashScreens(cordovaProject, self.locations);
         updateLaunchStoryboardImages(cordovaProject, self.locations);
+        updateFileResources(cordovaProject, self.locations));
     })
     .then(function () {
         events.emit('verbose', 'Prepared iOS project successfully');
@@ -88,6 +89,7 @@ module.exports.clean = function (options) {
         cleanIcons(projectRoot, projectConfig, self.locations);
         cleanSplashScreens(projectRoot, projectConfig, self.locations);
         cleanLaunchStoryboardImages(projectRoot, projectConfig, self.locations);
+        cleanFileResources(projectRoot, projectConfig, self.locations);
     });
 };
 
@@ -449,6 +451,64 @@ function cleanSplashScreens(projectRoot, projectConfig, locations) {
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
             resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
+}
+
+function updateFileResources(cordovaProject, locations) {
+    var platformDir = path.relative(cordovaProject.root, locations.root);
+    var files = cordovaProject.projectConfig.getFileResources('ios');
+
+    // if there are resource-file elements in config.xml
+    if (files.length === 0) {
+        events.emit('verbose', 'This app does not have additional resource files defined');
+        return;
+    }
+
+    var resourceMap = {};
+    files.forEach(function(res) {
+        var targetPath = path.join(platformDir, res.target);
+        resourceMap[targetPath] = res.src;
+    });
+
+    events.emit('verbose', 'Updating resource files at ' + platformDir);
+    FileUpdater.updatePaths(
+        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+
+    var proj = new xcode.project(locations.pbxproj);
+    proj.parseSync(); // will throw if not able to parse
+
+    Object.keys(resourceMap).sort().forEach(function (targetPath) {
+        var sourcePath = resourceMap[targetPath];
+        proj.addResourceFile(path.join('Resources', path.basename(sourcePath)));
+    });
+
+    fs.writeFileSync(locations.pbxproj, proj.writeSync(), 'utf-8');
+}
+
+function cleanFileResources(projectRoot, projectConfig, locations) {
+    var platformDir = path.relative(projectRoot, locations.root);
+    var files = projectConfig.getFileResources('ios');
+    if (files.length > 0) {
+        events.emit('verbose', 'Cleaning resource files at ' + platformDir);
+
+        var resourceMap = {};
+        files.forEach(function(res) {
+            var filePath = path.join(platformDir, res.target);
+            resourceMap[filePath] = null;
+        });
+
+        FileUpdater.updatePaths(
+                resourceMap, { rootDir: projectRoot, all: true}, logFileOp);
+
+        var proj = new xcode.project(locations.pbxproj);
+        proj.parseSync(); // will throw if not able to parse
+
+        Object.keys(resourceMap).sort().forEach(function (targetPath) {
+            var sourcePath = resourceMap[targetPath];
+            project.removeResourceFile(path.join('Resources', path.basename(sourcePath)));
+        });
+
+        fs.writeFileSync(locations.pbxproj, proj.writeSync(), 'utf-8');
     }
 }
 
