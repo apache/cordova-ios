@@ -505,7 +505,7 @@ function cleanFileResources(projectRoot, projectConfig, locations) {
 
         Object.keys(resourceMap).sort().forEach(function (targetPath) {
             var sourcePath = resourceMap[targetPath];
-            project.removeResourceFile(path.join('Resources', path.basename(sourcePath)));
+            proj.removeResourceFile(path.join('Resources', path.basename(sourcePath)));
         });
 
         fs.writeFileSync(locations.pbxproj, proj.writeSync(), 'utf-8');
