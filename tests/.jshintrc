@@ -8,4 +8,5 @@
   , "unused": "vars"
   , "latedef": "nofunc"
   , "jasmine": true
+  , "esversion": 6  
 }
