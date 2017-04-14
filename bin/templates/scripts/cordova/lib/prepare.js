@@ -17,6 +17,7 @@
     under the License.
 */
 
+'use strict';
 var Q = require('q');
 var fs = require('fs');
 var path = require('path');
@@ -33,6 +34,7 @@ var PlatformJson = require('cordova-common').PlatformJson;
 var PlatformMunger = require('cordova-common').ConfigChanges.PlatformMunger;
 var PluginInfoProvider = require('cordova-common').PluginInfoProvider;
 var FileUpdater = require('cordova-common').FileUpdater;
+var projectFile = require('./projectFile');
 
 // launch storyboard and related constants
 var LAUNCHIMAGE_BUILD_SETTING  = 'ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME';
@@ -62,6 +64,7 @@ module.exports.prepare = function (cordovaProject, options) {
         updateIcons(cordovaProject, self.locations);
         updateSplashScreens(cordovaProject, self.locations);
         updateLaunchStoryboardImages(cordovaProject, self.locations);
+        updateFileResources(cordovaProject, self.locations);
     })
     .then(function () {
         events.emit('verbose', 'Prepared iOS project successfully');
@@ -88,6 +91,7 @@ module.exports.clean = function (options) {
         cleanIcons(projectRoot, projectConfig, self.locations);
         cleanSplashScreens(projectRoot, projectConfig, self.locations);
         cleanLaunchStoryboardImages(projectRoot, projectConfig, self.locations);
+        cleanFileResources(projectRoot, projectConfig, self.locations);
     });
 };
 
@@ -449,6 +453,63 @@ function cleanSplashScreens(projectRoot, projectConfig, locations) {
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
             resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
+}
+
+function updateFileResources(cordovaProject, locations) {
+    const platformDir = path.relative(cordovaProject.root, locations.root);
+    const files = cordovaProject.projectConfig.getFileResources('ios');
+
+    const project = projectFile.parse(locations);
+
+    // if there are resource-file elements in config.xml
+    if (files.length === 0) {
+        events.emit('verbose', 'This app does not have additional resource files defined');
+        return;
+    }
+
+    let resourceMap = {};
+    files.forEach(function(res) {
+        let targetPath = path.join(project.resources_dir, res.target);
+        targetPath = path.relative(cordovaProject.root, targetPath);
+        resourceMap[targetPath] = res.src;
+    });
+
+    events.emit('verbose', 'Updating resource files at ' + platformDir);
+    FileUpdater.updatePaths(
+        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+
+    Object.keys(resourceMap).sort().forEach(function (targetPath) {
+        var sourcePath = resourceMap[targetPath];
+        project.xcode.addResourceFile(path.join('Resources', path.basename(sourcePath)));
+    });
+
+    project.write();
+}
+
+function cleanFileResources(projectRoot, projectConfig, locations) {
+    const platformDir = path.relative(projectRoot, locations.root);
+    const files = projectConfig.getFileResources('ios');
+    if (files.length > 0) {
+        events.emit('verbose', 'Cleaning resource files at ' + platformDir);
+
+        const project = projectFile.parse(locations);
+
+        var resourceMap = {};
+        files.forEach(function(res) {
+            let filePath = path.join(project.resources_dir, res.target);
+            filePath = path.relative(projectRoot, filePath);
+            resourceMap[filePath] = null;
+        });
+
+        FileUpdater.updatePaths(
+                resourceMap, { rootDir: projectRoot, all: true}, logFileOp);
+
+        Object.keys(resourceMap).sort().forEach(function (targetPath) {
+            project.xcode.removeResourceFile(path.join('Resources', path.basename(targetPath)));
+        });
+
+        project.write();
     }
 }
 

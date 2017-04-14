@@ -17,6 +17,7 @@
  under the License.
  */
 
+'use strict';
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
@@ -27,6 +28,7 @@ var rewire = require('rewire');
 var EventEmitter = require('events').EventEmitter;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
 var prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
+var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 var FileUpdater = require('cordova-common').FileUpdater;
 
 var FIXTURES = path.join(__dirname, 'fixtures');
@@ -1483,7 +1485,78 @@ describe('prepare', function() {
                 expect(exceptionDomains['null']).toBeUndefined();
                 expect(exceptionDomains['undefined']).toBeUndefined();
             });
+        });   
+    });
+
+    describe('<resource-file> tests', function() {
+        const imageFileName = 'image-5678.png';
+        const projectRoot = path.join(FIXTURES, 'resource-file-support');
+        const updateFileResources = prepare.__get__('updateFileResources');
+        const cleanFileResources = prepare.__get__('cleanFileResources');
+        const cfgResourceFiles = new ConfigParser(path.join(FIXTURES, 'resource-file-support', 'config.xml'));
+
+        function findImageFileRef(pbxproj) {
+            const buildfiles = pbxproj.pbxBuildFileSection();
+            return Object.keys(buildfiles).filter(function(uuid) {
+                var filename = buildfiles[uuid].fileRef_comment;
+                return (filename === imageFileName);
+            });
+        }
+
+        function findResourcesBuildPhaseRef(pbxproj, ref) {
+            const resBuildPhase = pbxproj.buildPhaseObject('PBXResourcesBuildPhase', 'Resources');
+            let resBuildPhaseFileRefs = [];
+            if (resBuildPhase) {
+                resBuildPhaseFileRefs = resBuildPhase.files.filter(function(item){
+                    return item.value === ref;
+                });
+            }
+
+            return resBuildPhaseFileRefs;
+        }
+
+        it('<resource-file> prepare - copy image-5678.png', function() {
+            const cordovaProject = {
+                root: projectRoot,
+                projectConfig: cfgResourceFiles,
+                locations: {
+                    plugins: path.join(projectRoot, 'plugins'),
+                    www: path.join(projectRoot, 'www')
+                }
+            };
+
+            updateFileResources(cordovaProject, p.locations);
+            const project = projectFile.parse(p.locations);
+
+            // check whether the file is copied in the correct location
+            const copiedImageFile = path.join(project.resources_dir, imageFileName);
+            expect(fs.existsSync(copiedImageFile)).toBeTruthy();
+
+            // find PBXBuildFile file reference
+            const imagefileRefs = findImageFileRef(project.xcode);
+            expect(imagefileRefs.length).toEqual(1);
+
+            // find file reference in PBXResourcesBuildPhase
+            const resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
+            expect(resBuildPhaseFileRefs.length).toEqual(1);
         });
+
+        it('<resource-file> clean - remove image-5678.png', function() {
+            cleanFileResources(projectRoot, cfgResourceFiles, p.locations);
+            const project = projectFile.parse(p.locations);
+
+            // check whether the file is removed from the correct location
+            const copiedImageFile = path.join(project.resources_dir, imageFileName);
+            expect(fs.existsSync(copiedImageFile)).toBeFalsy();
+
+            // find PBXBuildFile file reference
+            const imagefileRefs = findImageFileRef(project.xcode);
+            expect(imagefileRefs.length).toEqual(0);
+
+            // find file reference in PBXResourcesBuildPhase
+            const resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
+            expect(resBuildPhaseFileRefs.length).toEqual(0);
+        }); 
     });
 
     describe('updateWww method', function() {
