@@ -7,7 +7,7 @@ before_install:
     - n stable
     - node --version
 install:
-    - npm install --dev
+    - npm install --only=dev
     - npm install ios-deploy
     - npm install -g codecov
 script:
