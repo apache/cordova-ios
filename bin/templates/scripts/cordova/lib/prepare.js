@@ -62,7 +62,7 @@ module.exports.prepare = function (cordovaProject, options) {
         updateIcons(cordovaProject, self.locations);
         updateSplashScreens(cordovaProject, self.locations);
         updateLaunchStoryboardImages(cordovaProject, self.locations);
-        updateFileResources(cordovaProject, self.locations));
+        updateFileResources(cordovaProject, self.locations);
     })
     .then(function () {
         events.emit('verbose', 'Prepared iOS project successfully');
