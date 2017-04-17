@@ -38,7 +38,6 @@
     "tmp": "^0.0.26",
     "uncrustify": "^0.6.1"
   },
-  "engineStrict": true,
   "engines" : { 
     "node" : ">=4" 
   }, 
