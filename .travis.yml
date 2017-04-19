@@ -4,7 +4,6 @@ sudo: false
 before_install:
     - npm cache clean -f
     - npm install -g n
-    - n stable
     - node --version
 install:
     - npm install
