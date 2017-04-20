@@ -13,6 +13,7 @@
 
     <platform name="ios">
         <resource-file src="image-5678.png" target="image-5678.png" />
+        <resource-file src="image-1234.png" target="images/image-3456.png" />
     </platform>
 
 

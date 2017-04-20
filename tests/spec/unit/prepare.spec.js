@@ -1489,13 +1489,22 @@ describe('prepare', function() {
     });
 
     describe('<resource-file> tests', function() {
-        const imageFileName = 'image-5678.png';
+        const images = [
+            {
+                'src': 'image-5678.png',
+                'target': 'image-5678.png'
+            },
+            {
+                'src': 'image-1234.png',
+                'target': path.join('images', 'image-3456.png')
+            }
+        ];
         const projectRoot = path.join(FIXTURES, 'resource-file-support');
         const updateFileResources = prepare.__get__('updateFileResources');
         const cleanFileResources = prepare.__get__('cleanFileResources');
         const cfgResourceFiles = new ConfigParser(path.join(FIXTURES, 'resource-file-support', 'config.xml'));
 
-        function findImageFileRef(pbxproj) {
+        function findImageFileRef(pbxproj, imageFileName) {
             const buildfiles = pbxproj.pbxBuildFileSection();
             return Object.keys(buildfiles).filter(function(uuid) {
                 var filename = buildfiles[uuid].fileRef_comment;
@@ -1528,34 +1537,36 @@ describe('prepare', function() {
             updateFileResources(cordovaProject, p.locations);
             const project = projectFile.parse(p.locations);
 
-            // check whether the file is copied in the correct location
-            const copiedImageFile = path.join(project.resources_dir, imageFileName);
-            expect(fs.existsSync(copiedImageFile)).toBeTruthy();
+            for (let image of images) {
+                // check whether the file is copied to the target location
+                let copiedImageFile = path.join(project.resources_dir, image.target);
+                expect(fs.existsSync(copiedImageFile)).toEqual(true);
 
-            // find PBXBuildFile file reference
-            const imagefileRefs = findImageFileRef(project.xcode);
-            expect(imagefileRefs.length).toEqual(1);
-
-            // find file reference in PBXResourcesBuildPhase
-            const resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
-            expect(resBuildPhaseFileRefs.length).toEqual(1);
+                // find PBXBuildFile file reference
+                let imagefileRefs = findImageFileRef(project.xcode, path.basename(image.target));
+                expect(imagefileRefs.length).toEqual(1);
+                // find file reference in PBXResourcesBuildPhase
+                let resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
+                expect(resBuildPhaseFileRefs.length).toEqual(1);
+            }
         });
 
         it('<resource-file> clean - remove image-5678.png', function() {
             cleanFileResources(projectRoot, cfgResourceFiles, p.locations);
             const project = projectFile.parse(p.locations);
 
-            // check whether the file is removed from the correct location
-            const copiedImageFile = path.join(project.resources_dir, imageFileName);
-            expect(fs.existsSync(copiedImageFile)).toBeFalsy();
+            for (let image of images) {
+                // check whether the file is removed from the target location
+                let copiedImageFile = path.join(project.resources_dir, image.target);
+                expect(fs.existsSync(copiedImageFile)).toEqual(false);
 
-            // find PBXBuildFile file reference
-            const imagefileRefs = findImageFileRef(project.xcode);
-            expect(imagefileRefs.length).toEqual(0);
-
-            // find file reference in PBXResourcesBuildPhase
-            const resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
-            expect(resBuildPhaseFileRefs.length).toEqual(0);
+                // find PBXBuildFile file reference
+                let imagefileRefs = findImageFileRef(project.xcode, path.basename(image.target));
+                expect(imagefileRefs.length).toEqual(0);
+                // find file reference in PBXResourcesBuildPhase
+                let resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
+                expect(resBuildPhaseFileRefs.length).toEqual(0);
+            }
         }); 
     });
 
