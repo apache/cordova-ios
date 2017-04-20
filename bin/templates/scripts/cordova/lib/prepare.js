@@ -480,8 +480,8 @@ function updateFileResources(cordovaProject, locations) {
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 
     Object.keys(resourceMap).sort().forEach(function (targetPath) {
-        var sourcePath = resourceMap[targetPath];
-        project.xcode.addResourceFile(path.join('Resources', path.basename(sourcePath)));
+        var resfile = path.join('Resources', path.relative(project.resources_dir, targetPath));
+        project.xcode.addResourceFile(resfile);
     });
 
     project.write();
