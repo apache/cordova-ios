@@ -489,7 +489,7 @@ function updateFileResources(cordovaProject, locations) {
 
 function cleanFileResources(projectRoot, projectConfig, locations) {
     const platformDir = path.relative(projectRoot, locations.root);
-    const files = projectConfig.getFileResources('ios');
+    const files = projectConfig.getFileResources('ios', true);
     if (files.length > 0) {
         events.emit('verbose', 'Cleaning resource files at ' + platformDir);
 
