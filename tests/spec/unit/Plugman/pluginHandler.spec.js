@@ -206,7 +206,7 @@ describe('ios plugin handler', function() {
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(function() {
                     install(resources[0], dummyPluginInfo, dummyProject);
-                }).toThrow(new Error('File already exists at detination "' + target + '" for resource file specified by plugin ' + dummyPluginInfo.id + ' in iOS platform'));
+                }).toThrow(new Error('File already exists at destination "' + target + '" for resource file specified by plugin ' + dummyPluginInfo.id + ' in iOS platform'));
             });
             it('Test 016 : should call into xcodeproj\'s addResourceFile', function() {
                 var resources = copyArray(valid_resources);
