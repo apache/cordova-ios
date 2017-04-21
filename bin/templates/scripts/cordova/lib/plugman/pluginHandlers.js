@@ -49,18 +49,34 @@ var handlers = {
     'resource-file':{
         install:function(obj, plugin, project, options) {
             var src = obj.src,
-                srcFile = path.resolve(plugin.dir, src),
-                destFile = path.resolve(project.resources_dir, path.basename(src));
-            if (!fs.existsSync(srcFile)) throw new CordovaError('Cannot find resource file "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
-            if (fs.existsSync(destFile)) throw new CordovaError('File already exists at detination "' + destFile + '" for resource file specified by plugin ' + plugin.id + ' in iOS platform');
-            project.xcode.addResourceFile(path.join('Resources', path.basename(src)));
+                target = obj.target,
+                srcFile = path.resolve(plugin.dir, src);
+
+            if (!target) {
+                target = path.basename(src);
+            }
+            var destFile = path.resolve(project.resources_dir, target);
+
+            if (!fs.existsSync(srcFile)) {
+                throw new CordovaError('Cannot find resource file "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
+            }
+            if (fs.existsSync(destFile)) {
+                throw new CordovaError('File already exists at destination "' + destFile + '" for resource file specified by plugin ' + plugin.id + ' in iOS platform');
+            }
+            project.xcode.addResourceFile(path.join('Resources', target));
             var link = !!(options && options.link);
             copyFile(plugin.dir, src, project.projectDir, destFile, link);
         },
         uninstall:function(obj, plugin, project, options) {
             var src = obj.src,
-                destFile = path.resolve(project.resources_dir, path.basename(src));
-            project.xcode.removeResourceFile(path.join('Resources', path.basename(src)));
+                target = obj.target;
+
+            if (!target) {
+                target = path.basename(src);
+            }
+            var destFile = path.resolve(project.resources_dir, target);
+
+            project.xcode.removeResourceFile(path.join('Resources', target));
             shell.rm('-rf', destFile);
         }
     },
