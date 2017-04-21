@@ -470,19 +470,25 @@ function updateFileResources(cordovaProject, locations) {
 
     let resourceMap = {};
     files.forEach(function(res) {
-        let targetPath = path.join(project.resources_dir, res.target);
+        let src = res.src,
+            target = res.target;
+
+        if (!target) {
+            target = src;
+        }
+
+        let targetPath = path.join(project.resources_dir, target);
         targetPath = path.relative(cordovaProject.root, targetPath);
-        resourceMap[targetPath] = res.src;
+
+        const resfile = path.join('Resources', path.relative(project.resources_dir, targetPath));
+        project.xcode.addResourceFile(resfile);
+
+        resourceMap[targetPath] = src;
     });
 
     events.emit('verbose', 'Updating resource files at ' + platformDir);
     FileUpdater.updatePaths(
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
-
-    Object.keys(resourceMap).sort().forEach(function (targetPath) {
-        var resfile = path.join('Resources', path.relative(project.resources_dir, targetPath));
-        project.xcode.addResourceFile(resfile);
-    });
 
     project.write();
 }
@@ -497,17 +503,23 @@ function cleanFileResources(projectRoot, projectConfig, locations) {
 
         var resourceMap = {};
         files.forEach(function(res) {
-            let filePath = path.join(project.resources_dir, res.target);
-            filePath = path.relative(projectRoot, filePath);
-            resourceMap[filePath] = null;
+            let src = res.src,
+                target = res.target;
+
+            if (!target) {
+                target = src;
+            }
+
+            let targetPath = path.join(project.resources_dir, target);
+            targetPath = path.relative(projectRoot, targetPath);
+            const resfile = path.join('Resources', path.basename(targetPath));
+            project.xcode.removeResourceFile(resfile);
+
+            resourceMap[targetPath] = null;
         });
 
         FileUpdater.updatePaths(
                 resourceMap, { rootDir: projectRoot, all: true}, logFileOp);
-
-        Object.keys(resourceMap).sort().forEach(function (targetPath) {
-            project.xcode.removeResourceFile(path.join('Resources', path.basename(targetPath)));
-        });
 
         project.write();
     }

@@ -1489,6 +1489,7 @@ describe('prepare', function() {
     });
 
     describe('<resource-file> tests', function() {
+        // image-8888.png target attribute is missing in config.xml as a test
         const images = [
             {
                 'src': 'image-5678.png',
@@ -1497,6 +1498,10 @@ describe('prepare', function() {
             {
                 'src': 'image-1234.png',
                 'target': path.join('images', 'image-3456.png')
+            },
+            {
+                'src': 'image-8888.png',
+                'target': 'image-8888.png'
             }
         ];
         const projectRoot = path.join(FIXTURES, 'resource-file-support');
@@ -1524,7 +1529,7 @@ describe('prepare', function() {
             return resBuildPhaseFileRefs;
         }
 
-        it('<resource-file> prepare - copy image-5678.png', function() {
+        it('<resource-file> prepare - copy', function() {
             const cordovaProject = {
                 root: projectRoot,
                 projectConfig: cfgResourceFiles,
@@ -1551,7 +1556,7 @@ describe('prepare', function() {
             }
         });
 
-        it('<resource-file> clean - remove image-5678.png', function() {
+        it('<resource-file> clean - remove', function() {
             cleanFileResources(projectRoot, cfgResourceFiles, p.locations);
             const project = projectFile.parse(p.locations);
 
