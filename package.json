@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "4.4.0",
+  "version": "4.5.0-dev",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
   "repository": {
@@ -38,9 +38,9 @@
     "tmp": "^0.0.26",
     "uncrustify": "^0.6.1"
   },
-  "engines" : { 
-    "node" : ">=4" 
-  }, 
+  "engines": {
+    "node": ">=4"
+  },
   "dependencies": {
     "cordova-common": "2.0.2",
     "ios-sim": "^5.0.12",
