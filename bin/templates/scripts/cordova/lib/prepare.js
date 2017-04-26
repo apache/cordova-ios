@@ -44,6 +44,14 @@ var CDV_LAUNCH_STORYBOARD_NAME = 'CDVLaunchScreen';
 var IMAGESET_COMPACT_SIZE_CLASS = 'compact';
 var CDV_ANY_SIZE_CLASS = 'any';
 
+// launch storyboard and related constants
+var LAUNCHIMAGE_BUILD_SETTING  = 'ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME';
+var LAUNCHIMAGE_BUILD_SETTING_VALUE = 'LaunchImage';
+var UI_LAUNCH_STORYBOARD_NAME = 'UILaunchStoryboardName';
+var CDV_LAUNCH_STORYBOARD_NAME = 'CDVLaunchScreen';
+var IMAGESET_COMPACT_SIZE_CLASS = 'compact';
+var CDV_ANY_SIZE_CLASS = 'any';
+
 /*jshint sub:true*/
 
 module.exports.prepare = function (cordovaProject, options) {
