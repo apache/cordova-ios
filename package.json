@@ -18,12 +18,12 @@
     "test": "npm run e2e-tests && npm run objc-tests && npm run unit-tests",
     "posttest": "npm run jshint",
     "cover": "istanbul cover --root bin/templates/cordova --print detail jasmine",
-    "e2e-tests": "jasmine --captureExceptions --color tests/spec/create.spec.js",
+    "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
     "objc-tests-lib": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "objc-tests-framework": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaFrameworkApp -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "tests/scripts/killsim.js",
-    "unit-tests": "jasmine --captureExceptions --color",
+    "unit-tests": "jasmine",
     "jshint": "jshint bin tests"
   },
   "author": "Apache Software Foundation",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "coffee-script": "^1.7.1",
     "istanbul": "^0.4.2",
-    "jasmine": "^2.5.3",
+    "jasmine": "~2.6.0",
     "jshint": "^2.6.0",
     "nodeunit": "^0.8.7",
     "rewire": "^2.5.1",
