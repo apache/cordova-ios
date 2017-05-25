@@ -236,7 +236,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
         .then(function(){
             var frameworkTags = plugin.getFrameworks(self.platform);
             var frameworkPods = frameworkTags.filter(function(obj){
-                return (obj.type == 'podspec'); 
+                return (obj.type == 'podspec');
             });
 
             return Q.resolve(frameworkPods);
@@ -255,7 +255,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
             events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
 
             var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name); 
+            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
 
             frameworkPods.forEach(function(obj) {
                 var podJson = {
@@ -265,9 +265,9 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 };
 
                 var val = podsjsonFile.get(podJson.name);
-                if (val) { // found 
+                if (val) { // found
                     if (podJson.spec !== val.spec) { // exists, different spec, print warning
-                        events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.'); 
+                        events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
                     }
                     // increment count, but don't add in Podfile because it already exists
                     podsjsonFile.increment(podJson.name);
@@ -320,7 +320,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
         .then(function(){
             var frameworkTags = plugin.getFrameworks(self.platform);
             var frameworkPods = frameworkTags.filter(function(obj){
-                return (obj.type == 'podspec'); 
+                return (obj.type == 'podspec');
             });
 
             return Q.resolve(frameworkPods);
@@ -339,8 +339,8 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
             events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type=\"podspec\"');
 
             var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name); 
-                
+            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
+
             frameworkPods.forEach(function(obj) {
                 var podJson = {
                     name: obj.src,
