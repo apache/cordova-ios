@@ -294,7 +294,7 @@ describe('ios plugin handler', function() {
         });
 
         describe('of <js-module> elements', function() {
-            var jsModule = {src: 'www/dummyPlugin.js'};
+            var jsModule = {src: 'www/dummyplugin.js'};
             var install = pluginHandlers.getInstaller('js-module');
             var wwwDest, platformWwwDest;
 
@@ -318,7 +318,7 @@ describe('ios plugin handler', function() {
         });
 
         describe('of <asset> elements', function() {
-            var asset = {src: 'www/dummyPlugin.js', target: 'foo/dummy.js'};
+            var asset = {src: 'www/dummyplugin.js', target: 'foo/dummy.js'};
             var install = pluginHandlers.getInstaller('asset');
             var wwwDest, platformWwwDest;
 
