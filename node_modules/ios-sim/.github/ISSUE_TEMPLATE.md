@@ -21,4 +21,4 @@ Please run the commands below in your Terminal.app and include it in the issue. 
 - [ ] 2. ios-sim --version
 - [ ] 3. xcodebuild -version
 - [ ] 4. xcode-select --print-path
-- [ ] 5. gcc --version
+- [ ] 5. node --version
