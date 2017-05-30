@@ -277,9 +277,15 @@ var lib = {
         });
 
         list = [];
-        var remove = function(runtime) {
+        var remove = function(devicename, runtime) {
             // remove "iOS" prefix in runtime, remove prefix "com.apple.CoreSimulator.SimDeviceType." in id
-            list.push(util.format('%s, %s', name_id_map[ deviceName ].replace(/^com.apple.CoreSimulator.SimDeviceType./, ''), runtime.replace(/^iOS /, '')));
+            list.push(util.format('%s, %s', name_id_map[ devicename ].replace(/^com.apple.CoreSimulator.SimDeviceType./, ''), runtime.replace(/^iOS /, '')));
+        };
+
+        var cur = function(devicename) {
+            return function(runtime) {
+                remove(devicename, runtime);
+            };
         };
 
         for (var deviceName in druntimes) {
@@ -289,7 +295,8 @@ var lib = {
             if (!(dname in name_id_map)) {
                 continue;
             }
-            runtimes.forEach(remove);
+
+            runtimes.forEach(cur(dname));
         }
         return list;
     },
