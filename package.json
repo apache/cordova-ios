@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "cordova-common": "2.0.2",
-    "ios-sim": "^5.0.12",
+    "ios-sim": "^5.0.13",
     "nopt": "^3.0.6",
     "plist": "^1.2.0",
     "q": "^1.4.1",
