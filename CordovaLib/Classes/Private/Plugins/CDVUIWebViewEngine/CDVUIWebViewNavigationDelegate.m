@@ -45,7 +45,7 @@
     CDVViewController* vc = (CDVViewController*)self.enginePlugin.viewController;
 
     [vc.commandQueue resetRequestId];
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:self.enginePlugin.webView]];
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:theWebView]];
 }
 
 /**
@@ -64,7 +64,7 @@
      */
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:self.enginePlugin.webView]];
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:theWebView]];
 }
 
 - (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
