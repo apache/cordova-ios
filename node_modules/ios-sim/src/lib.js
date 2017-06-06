@@ -51,24 +51,21 @@ function findFirstAvailableDevice(list) {
     var available_runtimes = {};
 
     list.runtimes.forEach(function(runtime) {
-        if (runtime.available) {
-            available_runtimes[ runtime.name ] = true;
-        }
+        available_runtimes[ runtime.name ] = (runtime.availability === '(available)');
     });
 
-    list.devices.some(function(deviceGroup) {
-        deviceGroup.devices.some(function(device) {
-            if (available_runtimes[deviceGroup.runtime]) {
+    Object.keys(list.devices).some(function(deviceGroup) {
+        return list.devices[deviceGroup].some(function(device) {
+            if (available_runtimes[deviceGroup]) {
                 ret_obj = {
                     name: device.name,
-                    id: device.id,
-                    runtime: deviceGroup.runtime
+                    id: device.udid,
+                    runtime: deviceGroup
                 };
                 return true;
             }
             return false;
         });
-        return false;
     });
 
     return ret_obj;
@@ -87,24 +84,22 @@ function findRuntimesGroupByDeviceProperty(list, deviceProperty, availableOnly) 
     var available_runtimes = {};
 
     list.runtimes.forEach(function(runtime) {
-        if (runtime.available) {
-            available_runtimes[ runtime.name ] = true;
-        }
+        available_runtimes[ runtime.name ] = (runtime.availability === '(available)');
     });
 
-    list.devices.forEach(function(deviceGroup) {
-        deviceGroup.devices.forEach(function(device) {
+    Object.keys(list.devices).forEach(function(deviceGroup) {
+        list.devices[deviceGroup].forEach(function(device) {
             var devicePropertyValue = device[deviceProperty];
 
             if (!runtimes[devicePropertyValue]) {
                 runtimes[devicePropertyValue] = [];
             }
             if (availableOnly) {
-                if (available_runtimes[deviceGroup.runtime]) {
-                    runtimes[devicePropertyValue].push(deviceGroup.runtime);
+                if (available_runtimes[deviceGroup]) {
+                    runtimes[devicePropertyValue].push(deviceGroup);
                 }
             } else {
-                runtimes[devicePropertyValue].push(deviceGroup.runtime);
+                runtimes[devicePropertyValue].push(deviceGroup);
             }
         });
     });
@@ -174,7 +169,7 @@ function getDeviceFromDeviceTypeId(devicetypeid) {
 
     // now find the devicename from the devicetype
     var devicename_found = list.devicetypes.some(function(deviceGroup) {
-        if (deviceGroup.id === devicetype) {
+        if (deviceGroup.identifier === devicetype) {
             ret_obj.name = deviceGroup.name;
             return true;
         }
@@ -199,12 +194,12 @@ function getDeviceFromDeviceTypeId(devicetypeid) {
     }
 
     // now find the deviceid (by runtime and devicename)
-    var deviceid_found = list.devices.some(function(deviceGroup) {
+    var deviceid_found = Object.keys(list.devices).some(function(deviceGroup) {
         // found the runtime, now find the actual device matching devicename
-        if (deviceGroup.runtime === ret_obj.runtime) {
-            return deviceGroup.devices.some(function(device) {
+        if (deviceGroup === ret_obj.runtime) {
+            return list.devices[deviceGroup].some(function(device) {
                 if (filterDeviceName(device.name) === filterDeviceName(ret_obj.name)) {
-                    ret_obj.id = device.id;
+                    ret_obj.id = device.udid;
                     return true;
                 }
                 return false;
@@ -256,8 +251,8 @@ var lib = {
 
         console.log('Simulator SDK Roots:');
         list.runtimes.forEach(function(runtime) {
-            if (runtime.available) {
-                console.log(util.format('"%s" (%s)', runtime.name, runtime.build));
+            if (runtime.availability === '(available)') {
+                console.log(util.format('"%s" (%s)', runtime.name, runtime.buildversion));
                 console.log(util.format('\t(unknown)'));
             }
         });
@@ -273,7 +268,7 @@ var lib = {
         var name_id_map = {};
 
         list.devicetypes.forEach(function(device) {
-            name_id_map[ filterDeviceName(device.name) ] = device.id;
+            name_id_map[ filterDeviceName(device.name) ] = device.identifier;
         });
 
         list = [];
