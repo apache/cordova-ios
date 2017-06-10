@@ -1485,7 +1485,13 @@ describe('prepare', function() {
                 expect(exceptionDomains['null']).toBeUndefined();
                 expect(exceptionDomains['undefined']).toBeUndefined();
             });
-        });   
+        });
+        it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', function(done) {
+            cfg.shortName = function() { return 'MyApp'; };
+            wrapper(updateProject(cfg, p.locations), done, function() {
+                expect(plist.build.mostRecentCall.args[0].CFBundleDisplayName).toEqual('MyApp');
+            });
+        });
     });
 
     describe('<resource-file> tests', function() {
@@ -1588,7 +1594,7 @@ describe('prepare', function() {
             locations: { www: path.join(iosProject, 'www') }
         };
 
-        it('Test#020 : should update project-level www and with platform agnostic www and merges', function() {
+        it('Test#021 : should update project-level www and with platform agnostic www and merges', function() {
             var merges_path = path.join(project.root, 'merges', 'ios');
             shell.mkdir('-p', merges_path);
             updateWww(project, p.locations);
@@ -1598,7 +1604,7 @@ describe('prepare', function() {
                 { rootDir : iosProject },
                 logFileOp);
         });
-        it('Test#021 : should skip merges if merges directory does not exist', function() {
+        it('Test#022 : should skip merges if merges directory does not exist', function() {
             var merges_path = path.join(project.root, 'merges', 'ios');
             shell.rm('-rf', merges_path);
             updateWww(project, p.locations);
