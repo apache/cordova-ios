@@ -23,6 +23,7 @@ var fs = require('fs');
 var path = require('path');
 var unorm = require('unorm');
 var projectFile = require('./lib/projectFile');
+var check_reqs = require('./lib/check_reqs');
 var CordovaError = require('cordova-common').CordovaError;
 var CordovaLogger = require('cordova-common').CordovaLogger;
 var events = require('cordova-common').events;
@@ -287,7 +288,6 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 podfileFile.write();
                 events.emit('verbose', 'Running `pod install` (to install plugins)');
 
-                var check_reqs = require('./lib/check_reqs');
                 return podfileFile.install(check_reqs.check_cocoapods);
             } else {
                 events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
@@ -367,7 +367,6 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
                 podfileFile.write();
                 events.emit('verbose', 'Running `pod install` (to uninstall pods)');
 
-                var check_reqs = require('./lib/check_reqs');
                 return podfileFile.install(check_reqs.check_cocoapods);
             } else {
                 events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
@@ -412,7 +411,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
  */
 Api.prototype.build = function (buildOptions) {
     var self = this;
-    return require('./lib/check_reqs').run()
+    return check_reqs.run()
     .then(function () {
         return require('./lib/build').run.call(self, buildOptions);
     });
@@ -432,7 +431,7 @@ Api.prototype.build = function (buildOptions) {
  */
 Api.prototype.run = function(runOptions) {
     var self = this;
-    return require('./lib/check_reqs').run()
+    return check_reqs.run()
     .then(function () {
         return require('./lib/run').run.call(self, runOptions);
     });
@@ -446,7 +445,7 @@ Api.prototype.run = function(runOptions) {
  */
 Api.prototype.clean = function(cleanOptions) {
     var self = this;
-    return require('./lib/check_reqs').run()
+    return check_reqs.run()
     .then(function () {
         return require('./lib/clean').run.call(self, cleanOptions);
     })
@@ -464,7 +463,7 @@ Api.prototype.clean = function(cleanOptions) {
  *   objects for current platform.
  */
 Api.prototype.requirements = function() {
-    return require('./lib/check_reqs').check_all();
+    return check_reqs.check_all();
 };
 
 module.exports = Api;
