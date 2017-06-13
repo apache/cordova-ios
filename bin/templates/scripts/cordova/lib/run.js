@@ -40,11 +40,11 @@ module.exports.run = function (runOptions) {
 
     // support for CB-8168 `cordova/run --list`
     if (runOptions.list) {
-        if (runOptions.device) return listDevices();
-        if (runOptions.emulator) return listEmulators();
+        if (runOptions.device) return module.exports.listDevices();
+        if (runOptions.emulator) return module.exports.listEmulators();
         // if no --device or --emulator flag is specified, list both devices and emulators
-        return listDevices().then(function () {
-            return listEmulators();
+        return module.exports.listDevices().then(function () {
+            return module.exports.listEmulators();
         });
     }
 
@@ -74,7 +74,7 @@ module.exports.run = function (runOptions) {
         // select command to run and arguments depending whether
         // we're running on device/emulator
         if (useDevice) {
-            return checkDeviceConnected()
+            return module.exports.checkDeviceConnected()
             .then(function() {
                 // Unpack IPA
                 var ipafile = path.join(buildOutputDir, projectName + '.ipa');
@@ -104,18 +104,26 @@ module.exports.run = function (runOptions) {
                 var extraArgs = [];
                 if (runOptions.argv) {
                      // argv.slice(2) removes node and run.js, filterSupportedArgs removes the run.js args
-                     extraArgs = filterSupportedArgs(runOptions.argv.slice(2));
+                     extraArgs = module.exports.filterSupportedArgs(runOptions.argv.slice(2));
                 }
-                return deployToDevice(appPath, runOptions.target, extraArgs);
+                return module.exports.deployToDevice(appPath, runOptions.target, extraArgs);
             }, function () {
                 // if device connection check failed use emulator then
-                return deployToSim(appPath, runOptions.target);
+                return module.exports.deployToSim(appPath, runOptions.target);
             });
         } else {
-            return deployToSim(appPath, runOptions.target);
+            return module.exports.deployToSim(appPath, runOptions.target);
         }
     });
 };
+
+module.exports.filterSupportedArgs = filterSupportedArgs;
+module.exports.checkDeviceConnected = checkDeviceConnected;
+module.exports.deployToDevice = deployToDevice;
+module.exports.deployToSim = deployToSim;
+module.exports.startSim = startSim;
+module.exports.listDevices = listDevices;
+module.exports.listEmulators = listEmulators;
 
 /**
  * Filters the args array and removes supported args for the 'run' command.

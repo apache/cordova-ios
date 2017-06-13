@@ -18,8 +18,25 @@
  */
 
 var path = require('path');
+var fs = require('fs');
+var PluginManager = require('cordova-common').PluginManager;
+var events = require('cordova-common').events;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
-var check_reqs = require('../../../bin/lib/check_reqs');
+var check_reqs = require('../../../bin/templates/scripts/cordova/lib/check_reqs');
+
+// The lib/run module pulls in ios-sim, which has a hard requirement that it
+// be run on a Mac OS - simply requiring the module is enough to trigger the
+// environment checks. These checks will blow up on Windows + Linux.
+// So, conditionally pull in the module, and conditionally test the `run`
+// method (more below).
+var run_mod;
+if (process.platform === 'darwin') {
+    run_mod = require('../../../bin/templates/scripts/cordova/lib/run');
+}
+
+var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+var Podfile_mod = require('../../../bin/templates/scripts/cordova/lib/Podfile');
+var PodsJson_mod = require('../../../bin/templates/scripts/cordova/lib/PodsJson');
 var Q = require('q');
 var FIXTURES = path.join(__dirname, 'fixtures');
 var iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
@@ -105,6 +122,139 @@ describe('Platform Api', function () {
                     .catch(fail);
             });
 
+        });
+    });
+
+    describe('.prototype', function () {
+        var api;
+        var projectRoot = '/some/path';
+        beforeEach(function () {
+            spyOn(fs, 'readdirSync').and.returnValue([projectRoot + '/cordova.xcodeproj']);
+            spyOn(projectFile, 'parse').and.returnValue({
+                getPackageName: function () { return 'ios.cordova.io'; }
+            });
+            api = new Api('ios', projectRoot);
+        });
+
+        // See the comment at the top of this file, in the list of requires,
+        // for information on why we conditionall run this test.
+        // tl;dr run_mod requires the ios-sim module, which requires mac OS.
+        if (process.platform === 'darwin') {
+            describe('run', function () {
+                beforeEach(function () {
+                    spyOn(check_reqs, 'run').and.returnValue(Q.resolve());
+                });
+                it('should call into lib/run module', function (done) {
+                    spyOn(run_mod, 'run');
+                    api.run().then(function () {
+                        expect(run_mod.run).toHaveBeenCalled();
+                    }).fail(function (err) {
+                        fail('run fail handler unexpectedly invoked');
+                        console.error(err);
+                    }).done(done);
+                });
+            });
+        }
+
+        describe('addPlugin', function () {
+            var my_plugin = {
+                getFrameworks: function () {}
+            };
+            beforeEach(function () {
+                spyOn(PluginManager, 'get').and.returnValue({
+                    addPlugin: function () { return Q(); }
+                });
+                spyOn(Podfile_mod, 'Podfile');
+                spyOn(PodsJson_mod, 'PodsJson');
+            });
+            it('should assign a package name to plugin variables if one is not explicitly provided via options', function () {
+                var opts = {};
+                api.addPlugin('my cool plugin', opts);
+                expect(opts.variables.PACKAGE_NAME).toEqual('ios.cordova.io');
+            });
+            describe('with frameworks of `podspec` type', function () {
+                var podsjson_mock;
+                var podfile_mock;
+                var my_pod_json = {
+                    type: 'podspec',
+                    src: 'podsource!',
+                    spec: 'podspec!'
+                };
+                beforeEach(function () {
+                    podsjson_mock = jasmine.createSpyObj('podsjson mock', ['get', 'increment', 'write', 'setJson']);
+                    podfile_mock = jasmine.createSpyObj('podfile mock', ['isDirty', 'addSpec', 'write', 'install']);
+                    spyOn(my_plugin, 'getFrameworks').and.returnValue([my_pod_json]);
+                    PodsJson_mod.PodsJson.and.callFake(function () {
+                        return podsjson_mock;
+                    });
+                    Podfile_mod.Podfile.and.callFake(function () {
+                        return podfile_mock;
+                    });
+                });
+                // TODO: a little help with clearly labeling / describing the tests below? :(
+                it('should warn if Pods JSON contains name/src but differs in spec', function (done) {
+                    podsjson_mock.get.and.returnValue({
+                        spec: 'something different from ' + my_pod_json.spec
+                    });
+                    spyOn(events, 'emit');
+                    api.addPlugin(my_plugin)
+                    .then(function () {
+                        expect(events.emit).toHaveBeenCalledWith('warn', jasmine.stringMatching(/which conflicts with another plugin/g));
+                    }).fail(function (err) {
+                        fail('unexpected addPlugin fail handler invoked');
+                        console.error(err);
+                    }).done(done);
+                });
+                it('should increment Pods JSON file if pod name/src already exists in file', function (done) {
+                    podsjson_mock.get.and.returnValue({
+                        spec: my_pod_json.spec
+                    });
+                    api.addPlugin(my_plugin)
+                    .then(function () {
+                        expect(podsjson_mock.increment).toHaveBeenCalledWith('podsource!');
+                    }).fail(function (err) {
+                        fail('unexpected addPlugin fail handler invoked');
+                        console.error(err);
+                    }).done(done);
+                });
+                it('on a new framework/pod name/src/key, it should add a new json to podsjson and add a new spec to podfile', function (done) {
+                    api.addPlugin(my_plugin)
+                    .then(function () {
+                        expect(podsjson_mock.setJson).toHaveBeenCalledWith(my_pod_json.src, jasmine.any(Object));
+                        expect(podfile_mock.addSpec).toHaveBeenCalledWith(my_pod_json.src, my_pod_json.spec);
+                    }).fail(function (err) {
+                        fail('unexpected addPlugin fail handler invoked');
+                        console.error(err);
+                    }).done(done);
+                });
+                it('should write out podfile and install if podfile was changed', function (done) {
+                    podfile_mock.isDirty.and.returnValue(true);
+                    api.addPlugin(my_plugin)
+                    .then(function () {
+                        expect(podfile_mock.write).toHaveBeenCalled();
+                        expect(podfile_mock.install).toHaveBeenCalled();
+                    }).fail(function (err) {
+                        fail('unexpected addPlugin fail handler invoked');
+                        console.error(err);
+                    }).done(done);
+                });
+                it('if two frameworks with the same name are added, should honour the spec of the first-installed plugin', function (done) {
+                    spyOn(events, 'emit');
+                    podsjson_mock.get.and.returnValue({
+                        spec: 'something different from ' + my_pod_json.spec
+                    });
+                    api.addPlugin(my_plugin)
+                    .then(function () {
+                        // Increment will non-destructively set the spec to keep it as it was...
+                        expect(podsjson_mock.increment).toHaveBeenCalledWith(my_pod_json.src);
+                        // ...whereas setJson would overwrite it completely.
+                        expect(podsjson_mock.setJson).not.toHaveBeenCalled();
+                    }).fail(function (err) {
+                        fail('unexpected addPlugin fail handler invoked');
+                        console.error(err);
+                    }).done(done);
+                });
+            });
         });
     });
 });
