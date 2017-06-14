@@ -27,13 +27,7 @@ var Q     = require('q'),
     plist = require('plist'),
     util = require('util');
 
-var check_reqs;
-try {
-    check_reqs = require('./check_reqs');
-} catch (err) {
-    // For unit tests, check_reqs.js is not a sibling to build.js
-    check_reqs = require('../../../../lib/check_reqs');
-}
+var check_reqs = require('./check_reqs');
 
 var events = require('cordova-common').events;
 

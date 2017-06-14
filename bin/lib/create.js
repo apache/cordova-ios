@@ -88,13 +88,22 @@ function copyScripts(projectPath, projectName) {
 
     // Copy the check_reqs script
     shell.cp(path.join(binDir, 'check_reqs*'), destScriptsDir);
-    shell.cp(path.join(binDir, 'lib', 'check_reqs.js'), path.join(destScriptsDir, 'lib'));
 
     // Copy the version scripts
     shell.cp(path.join(binDir, 'apple_ios_version'), destScriptsDir);
     shell.cp(path.join(binDir, 'apple_osx_version'), destScriptsDir);
     shell.cp(path.join(binDir, 'apple_xcode_version'), destScriptsDir);
-    shell.cp(path.join(binDir, 'lib', 'versions.js'),  path.join(destScriptsDir, 'lib'));
+
+    // TODO: the two files being edited on-the-fly here are shared between
+    // platform and project-level commands. the below `sed` is updating the
+    // `require` path for the two libraries. if there's a better way to share
+    // modules across both the repo and generated projects, we should make sure
+    // to remove/update this.
+    var path_regex = /templates\/scripts\/cordova\//;
+    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'check_reqs'));
+    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_ios_version'));
+    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_osx_version'));
+    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_xcode_version'));
 
     // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
     var project_name_esc = projectName.replace(/&/g, '\\&');

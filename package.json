@@ -20,13 +20,13 @@
   "scripts": {
     "test": "npm run e2e-tests && npm run objc-tests && npm run unit-tests",
     "posttest": "npm run jshint",
-    "cover": "istanbul cover --root bin/templates/cordova --print detail jasmine",
+    "cover": "istanbul cover --root bin/templates/scripts/cordova --print detail jasmine -- --config=tests/spec/jasmine.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
     "objc-tests-lib": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "objc-tests-framework": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaFrameworkApp -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "tests/scripts/killsim.js",
-    "unit-tests": "jasmine",
+    "unit-tests": "jasmine --config=tests/spec/jasmine.json",
     "jshint": "jshint bin tests"
   },
   "author": "Apache Software Foundation",
