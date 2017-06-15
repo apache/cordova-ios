@@ -35,14 +35,14 @@ describe('cordova/lib/list-devices', function () {
         it('should trim and split standard output and return as array', function (done) {
             Q.all.and.returnValue(Q.resolve([['   this is\nmy sweet\nstdout\n    ']]));
             list_devices.run()
-            .then(function (results) {
-                expect(results).toContain('this is');
-                expect(results).toContain('my sweet');
-                expect(results).toContain('stdout');
-            }).fail(function (err) {
-                fail('list-devices fail handler unexpectedly invoked');
-                console.error(err);
-            }).done(done);
+                .then(function (results) {
+                    expect(results).toContain('this is');
+                    expect(results).toContain('my sweet');
+                    expect(results).toContain('stdout');
+                }).fail(function (err) {
+                    fail('list-devices fail handler unexpectedly invoked');
+                    console.error(err);
+                }).done(done);
         });
     });
 });

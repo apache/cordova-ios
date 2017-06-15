@@ -22,8 +22,6 @@
 var PLATFORM_VERSION_BUILD_LABEL = '4.5.0-dev';
 // file: src/scripts/require.js
 
-/*jshint -W079 */
-/*jshint -W020 */
 
 var require,
     define;
