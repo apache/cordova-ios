@@ -79,8 +79,16 @@
         return NO;
     }
 
+    NSDictionary *openURLData = @{
+            @"url": url,
+            @"sourceApplication": sourceApplication,
+            @"annotation": annotation
+    };
+
     // all plugins will get the notification, and their handlers will be called
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification object:openURLData]];
+
 
     return YES;
 }
