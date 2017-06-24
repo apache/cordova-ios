@@ -23,7 +23,6 @@ var shell = require('shelljs'),
     Q = require ('q'),
     path = require('path'),
     fs = require('fs'),
-    plist = require('plist'),
     xmlescape = require('xml-escape'),
     ROOT = path.join(__dirname, '..', '..'),
     events = require('cordova-common').events;
@@ -31,13 +30,6 @@ var shell = require('shelljs'),
 function updateSubprojectHelp() {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
     console.log('Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]');
-}
-
-function setShellFatal(value, func) {
-    var oldVal = shell.config.fatal;
-    shell.config.fatal = value;
-    func();
-    shell.config.fatal = oldVal;
 }
 
 function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
@@ -173,17 +165,6 @@ function copyTemplateFiles(project_path, project_name, project_template_dir, pac
     shell.sed('-i', /--ID--/g, package_name, path.join(r, project_name+'-Info.plist'));
 }
 
-function detectProjectName(projectDir) {
-    var files = fs.readdirSync(projectDir);
-    for (var i = 0; i < files.length; ++i) {
-        var m = /(.*)\.xcodeproj$/.exec(files[i]);
-        if (m) {
-            return m[1];
-        }
-    }
-    throw new Error('Could not find an .xcodeproj directory within ' + projectDir);
-}
-
 function AbsParentPath(_path) {
     return path.resolve(path.dirname(_path));
 }
@@ -259,17 +240,17 @@ exports.createProject = function(project_path, package_name, project_name, opts)
 };
 
 exports.updateProject = function(projectPath, opts) {
-    var projectName = detectProjectName(projectPath);
-    var project_template_dir = path.join(ROOT, 'bin', 'templates', 'project');
-    //Get package_name from existing projectName-Info.plist file
-    var package_name = plist.parse(fs.readFileSync(path.join(projectPath, projectName, projectName+'-Info.plist'), 'utf8')).CFBundleIdentifier;
-    setShellFatal(true, function() {
-        copyTemplateFiles(projectPath, projectName, project_template_dir, package_name);
-        copyJsAndCordovaLib(projectPath, projectName, opts.link);
-        copyScripts(projectPath, projectName);
-        events.emit('log',generateDoneMessage('update', opts.link));
-    });
-    return Q.resolve();
+    var errorString = 
+    'An in-place platform update is not supported. \n'+
+    'The `platforms` folder is always treated as a build artifact.\n' +
+    'To update your platform, you have to remove, then add your ios platform again.\n' +
+    'Make sure you save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes in it.\n' +
+    '\tcordova plugin save\n' +
+    '\tcordova platform rm ios\n' +
+    '\tcordova platform add ios\n'
+    ;
+
+    return Q.reject(errorString);    
 };
 
 function generateDoneMessage(type, link) {
