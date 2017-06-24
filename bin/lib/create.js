@@ -23,7 +23,6 @@ var shell = require('shelljs'),
     Q = require ('q'),
     path = require('path'),
     fs = require('fs'),
-    plist = require('plist'),
     xmlescape = require('xml-escape'),
     ROOT = path.join(__dirname, '..', '..'),
     events = require('cordova-common').events;
@@ -31,13 +30,6 @@ var shell = require('shelljs'),
 function updateSubprojectHelp() {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
     console.log('Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]');
-}
-
-function setShellFatal(value, func) {
-    var oldVal = shell.config.fatal;
-    shell.config.fatal = value;
-    func();
-    shell.config.fatal = oldVal;
 }
 
 function copyJsAndCordovaLib(projectPath, projectName, use_shared) {
@@ -171,17 +163,6 @@ function copyTemplateFiles(project_path, project_name, project_template_dir, pac
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name+'-Info.plist'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name+'-Prefix.pch'));
     shell.sed('-i', /--ID--/g, package_name, path.join(r, project_name+'-Info.plist'));
-}
-
-function detectProjectName(projectDir) {
-    var files = fs.readdirSync(projectDir);
-    for (var i = 0; i < files.length; ++i) {
-        var m = /(.*)\.xcodeproj$/.exec(files[i]);
-        if (m) {
-            return m[1];
-        }
-    }
-    throw new Error('Could not find an .xcodeproj directory within ' + projectDir);
 }
 
 function AbsParentPath(_path) {
