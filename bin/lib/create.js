@@ -259,17 +259,17 @@ exports.createProject = function(project_path, package_name, project_name, opts)
 };
 
 exports.updateProject = function(projectPath, opts) {
-    var projectName = detectProjectName(projectPath);
-    var project_template_dir = path.join(ROOT, 'bin', 'templates', 'project');
-    //Get package_name from existing projectName-Info.plist file
-    var package_name = plist.parse(fs.readFileSync(path.join(projectPath, projectName, projectName+'-Info.plist'), 'utf8')).CFBundleIdentifier;
-    setShellFatal(true, function() {
-        copyTemplateFiles(projectPath, projectName, project_template_dir, package_name);
-        copyJsAndCordovaLib(projectPath, projectName, opts.link);
-        copyScripts(projectPath, projectName);
-        events.emit('log',generateDoneMessage('update', opts.link));
-    });
-    return Q.resolve();
+    var errorString = 
+    'An in-place platform update is not supported. \n'+
+    'The `platforms` folder is always treated as a build artifact.\n' +
+    'To update your platform, you have to remove, then add your ios platform again.\n' +
+    'Make sure you save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes in it.\n' +
+    '\tcordova plugin save\n' +
+    '\tcordova platform rm ios\n' +
+    '\tcordova platform add ios\n'
+    ;
+
+    return Q.reject(errorString);    
 };
 
 function generateDoneMessage(type, link) {
