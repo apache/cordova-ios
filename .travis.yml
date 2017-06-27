@@ -1,6 +1,9 @@
 language: objective-c
 osx_image: xcode8.3
 sudo: false
+node_js:
+  - "4"
+  - "6"
 before_install:
     - npm cache clean -f
     - npm install -g n
@@ -13,7 +16,7 @@ script:
     - npm run jshint
     - npm run unit-tests
     - npm run e2e-tests
-    - open -b com.apple.iphonesimulator    
+    - open -b com.apple.iphonesimulator
     - npm run objc-tests
     - npm run cover
 after_script: codecov
