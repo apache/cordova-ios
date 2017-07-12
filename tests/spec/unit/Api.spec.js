@@ -127,13 +127,13 @@ describe('Platform Api', function () {
 
     describe('.prototype', function () {
         var api;
-        var projectRoot = '/some/path';
+        var projectRoot = iosProjectFixture;
         beforeEach(function () {
-            spyOn(fs, 'readdirSync').and.returnValue([projectRoot + '/cordova.xcodeproj']);
+            api = new Api('ios', projectRoot);
+            spyOn(fs, 'readdirSync').and.returnValue([api.locations.xcodeProjDir]);
             spyOn(projectFile, 'parse').and.returnValue({
                 getPackageName: function () { return 'ios.cordova.io'; }
             });
-            api = new Api('ios', projectRoot);
         });
 
         // See the comment at the top of this file, in the list of requires,
