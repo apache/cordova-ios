@@ -30,6 +30,7 @@ var events = require('cordova-common').events;
 var PluginManager = require('cordova-common').PluginManager;
 var Q = require('q');
 var util = require('util');
+var ConfigParser = require('cordova-common').ConfigParser;
 
 function setupEvents(externalEventEmitter) {
     if (externalEventEmitter) {
@@ -181,7 +182,7 @@ Api.prototype.getPlatformInfo = function () {
     result.root = this.root;
     result.name = this.platform;
     result.version = require('./version');
-    result.projectConfig = this._config;
+    result.projectConfig = new ConfigParser(this.locations.configXml);
 
     return result;
 };
@@ -249,6 +250,8 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
 
             var project_dir = self.locations.root;
             var project_name = self.locations.xcodeCordovaProj.split('/').pop();
+            var minDeploymentTarget = self.getPlatformInfo().projectConfig.getPreference('deployment-target', 'ios');
+
 
             var Podfile = require('./lib/Podfile').Podfile;
             var PodsJson = require('./lib/PodsJson').PodsJson;
@@ -256,7 +259,8 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
             events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
 
             var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name); 
+            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name, minDeploymentTarget); 
+
 
             frameworkPods.forEach(function(obj) {
                 var podJson = {

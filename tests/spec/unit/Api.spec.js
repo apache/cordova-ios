@@ -127,9 +127,9 @@ describe('Platform Api', function () {
 
     describe('.prototype', function () {
         var api;
-        var projectRoot = '/some/path';
+        var projectRoot = iosProjectFixture;
         beforeEach(function () {
-            spyOn(fs, 'readdirSync').and.returnValue([projectRoot + '/cordova.xcodeproj']);
+            spyOn(fs, 'readdirSync').and.returnValue([projectRoot + '/SampleApp.xcodeproj']);
             spyOn(projectFile, 'parse').and.returnValue({
                 getPackageName: function () { return 'ios.cordova.io'; }
             });
