@@ -31,12 +31,10 @@ Cordova iOS is an iOS application library that allows for Cordova-based projects
 
 Requires:
 
-* Xcode 7.x or greater. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
-<br />
+* Xcode 8.x or greater. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
 * [node.js](https://nodejs.org)
 
 :warning: Report issues on the [Apache Cordova issue tracker](https://issues.apache.org/jira/issues/?jql=project%20%3D%20CB%20AND%20status%20in%20%28Open%2C%20%22In%20Progress%22%2C%20Reopened%29%20AND%20resolution%20%3D%20Unresolved%20AND%20component%20%3D%20%22iOS%22%20ORDER%20BY%20priority%20DESC%2C%20summary%20ASC%2C%20updatedDate%20DESC)
-
 
 Create a Cordova project
 -------------------------------------------------------------
@@ -47,14 +45,13 @@ To use a **shared CordovaLib**, for example in development, link the appropriate
 
     cordova platform add --link /path/to/cordova-ios
 
-<br />
-
 Updating a Cordova project
 -------------------------------------------------------------
 
 When you install a new cordova-cli version that comes with a new iOS platform version, from within your project:
 
-    cordova platform update ios
+    cordova platform rm ios
+    cordova platform add ios
 
 Tests
 --------------------------------------------------------------------
@@ -66,5 +63,3 @@ Futher reading
 -----
 * [http://cordova.apache.org/](http://cordova.apache.org/)
 * [http://wiki.apache.org/cordova/](http://wiki.apache.org/cordova/)
-
-<br />

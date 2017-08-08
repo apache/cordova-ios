@@ -29,107 +29,107 @@ var shell = require('shelljs'),
     SimCtlExtensions = require('./lib/simctl-extensions'),
     SimCtlListParser = require('./lib/simctl-list-parser');
 
-
 exports = module.exports = {
-    
+
     set noxpc(b) {
         this._noxpc = b;
     },
-    
+
     get noxpc() {
         return this._noxpc;
     },
-    
-    extensions : SimCtlExtensions,
-    
-    check_prerequisites : function() {
+
+    extensions: SimCtlExtensions,
+
+    check_prerequisites: function() {
         var command = util.format('xcrun simctl help');
         var obj = shell.exec(command, {silent: true});
 
         if (obj.code !== 0) {
             obj.output  = 'simctl was not found.\n';
-            obj.output += 'Check that you have Xcode 6.x installed:\n';
+            obj.output += 'Check that you have Xcode 7.x installed:\n';
             obj.output += '\txcodebuild --version';
-            obj.output += 'Check that you have Xcode 6.x selected:\n';
+            obj.output += 'Check that you have Xcode 7.x selected:\n';
             obj.output += '\txcode-select --print-path';
         }
-        
+
         return obj;
     },
-    
-    create : function(name, device_type_id, runtime_id) {
+
+    create: function(name, device_type_id, runtime_id) {
         var command = util.format('xcrun simctl create "%s" "%s" "%s"', name, device_type_id, runtime_id);
         return shell.exec(command);
     },
-    
-    del : function(device) {
+
+    del: function(device) {
         var command = util.format('xcrun simctl delete "%s"', device);
         return shell.exec(command);
     },
-    
-    erase : function(device) {
+
+    erase: function(device) {
         var command = util.format('xcrun simctl erase "%s"', device);
         return shell.exec(command);
     },
-    
-    boot : function(device) {
+
+    boot: function(device) {
         var command = util.format('xcrun simctl boot "%s"', device);
         return shell.exec(command);
     },
-    
-    shutdown : function(device) {
+
+    shutdown: function(device) {
         var command = util.format('xcrun simctl shutdown "%s"', device);
         return shell.exec(command);
     },
-    
-    rename : function(device, name) {
+
+    rename: function(device, name) {
         var command = util.format('xcrun simctl rename "%s" "%s"', device, name);
         return shell.exec(command);
     },
-    
-    getenv : function(device, variable_name) {
+
+    getenv: function(device, variable_name) {
         var command = util.format('xcrun simctl getenv "%s" "%s"', device, variable_name);
         return shell.exec(command);
     },
-    
-    openurl : function(device, url) {
+
+    openurl: function(device, url) {
         var command = util.format('xcrun simctl openurl "%s" "%s"', device, url);
         return shell.exec(command);
     },
-    
-    addphoto : function(device, path) {
+
+    addphoto: function(device, path) {
         var command = util.format('xcrun simctl addphoto "%s" "%s"', device, path);
         return shell.exec(command);
     },
-    
-    install : function(device, path) {
+
+    install: function(device, path) {
         var command = util.format('xcrun simctl install "%s" "%s"', device, path);
         return shell.exec(command);
     },
-    
-    uninstall : function(device, app_identifier) {
+
+    uninstall: function(device, app_identifier) {
         var command = util.format('xcrun simctl uninstall "%s" "%s"', device, app_identifier);
         return shell.exec(command);
     },
-    
-    launch : function(wait_for_debugger, device, app_identifier, argv) {
+
+    launch: function(wait_for_debugger, device, app_identifier, argv) {
         var wait_flag = '';
         if (wait_for_debugger) {
             wait_flag = '--wait-for-debugger';
         }
-        
+
         var argv_expanded = '';
         if (argv.length > 0) {
-            argv_expanded = argv.map(function(arg){
-                return "'" + arg + "'";
-            }).join(" "); 
+            argv_expanded = argv.map(function(arg) {
+                return '\'' + arg + '\'';
+            }).join(' ');
         }
-        
-        var command = util.format('xcrun simctl launch %s "%s" "%s" %s', wait_flag, device, app_identifier, argv_expanded);
+
+        var command = util.format('xcrun simctl launch %s "%s" "%s" %s',
+        wait_flag, device, app_identifier, argv_expanded);
         return shell.exec(command);
     },
-    
-    spawn : function(wait_for_debugger, arch, device, path_to_executable, argv) {
+
+    spawn: function(wait_for_debugger, arch, device, path_to_executable, argv) {
         var wait_flag = '';
         if (wait_for_debugger) {
             wait_flag = '--wait-for-debugger';
@@ -139,22 +139,23 @@ exports = module.exports = {
         if (arch) {
             arch_flag = util.format('--arch="%s"', arch);
         }
-        
+
         var argv_expanded = '';
         if (argv.length > 0) {
-            argv_expanded = argv.map(function(arg){
-                return "'" + arg + "'";
-            }).join(" "); 
+            argv_expanded = argv.map(function(arg) {
+                return '\'' + arg + '\'';
+            }).join(' ');
         }
-        
-        var command = util.format('xcrun simctl spawn %s %s "%s" "%s" %s', wait_flag, arch_flag, device, path_to_executable, argv_expanded);
+
+        var command = util.format('xcrun simctl spawn %s %s "%s" "%s" %s',
+        wait_flag, arch_flag, device, path_to_executable, argv_expanded);
         return shell.exec(command);
     },
-    
-    list : function(options) {
+
+    list: function(options) {
         var sublist = '';
         options = options || {};
-        
+
         if (options.devices) {
             sublist = 'devices';
         } else if (options.devicetypes) {
@@ -162,7 +163,7 @@ exports = module.exports = {
         } else if (options.runtimes) {
             sublist = 'runtimes';
         }
-        
+
         var command = util.format('xcrun simctl list %s', sublist);
         var obj = shell.exec(command, { silent: options.silent });
 
@@ -170,25 +171,25 @@ exports = module.exports = {
             try {
                 var parser = new SimCtlListParser();
                 obj.json = parser.parse(obj.output);
-            } catch(err) {
+            } catch (err) {
                 console.error(err.stack);
             }
         }
 
         return obj;
     },
-    
-    notify_post : function(device, notification_name) {
+
+    notify_post: function(device, notification_name) {
         var command = util.format('xcrun simctl notify_post "%s" "%s"', device, notification_name);
         return shell.exec(command);
     },
-    
-    icloud_sync : function(device) {
+
+    icloud_sync: function(device) {
         var command = util.format('xcrun simctl icloud_sync "%s"', device);
         return shell.exec(command);
     },
-    
-    help : function(subcommand) {
+
+    help: function(subcommand) {
         var command = util.format('xcrun simctl help "%s"', subcommand);
         return shell.exec(command);
     }

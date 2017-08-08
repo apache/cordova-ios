@@ -22,6 +22,99 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.4.0 (Apr 22, 2017)
+* [CB-12009](https://issues.apache.org/jira/browse/CB-12009) - <resource-file> target attribute ignored on iOS when installing a Cordova plugin
+* [CB-12673](https://issues.apache.org/jira/browse/CB-12673) - ios platform does not build on Xcode 8.3.2
+* [CB-12665](https://issues.apache.org/jira/browse/CB-12665) - removing engineStrict as it is no longer supported
+* [CB-8980](https://issues.apache.org/jira/browse/CB-8980) - Adding resource-file element to config.xml for iOS
+* [CB-11895](https://issues.apache.org/jira/browse/CB-11895) - openURL: is deprecated on iOS 10
+* [CB-10026](https://issues.apache.org/jira/browse/CB-10026) - Fix warnings in Objective-C tests
+* [CB-12617](https://issues.apache.org/jira/browse/CB-12617) - added engine strict for users with older node versions
+* [CB-11233](https://issues.apache.org/jira/browse/CB-11233) - Support installing frameworks into "Embedded Binaries" section of the Xcode project
+* [CB-12577](https://issues.apache.org/jira/browse/CB-12577) - Fix module import warnings when using Cordova.framework (Carthage)
+* [CB-12571](https://issues.apache.org/jira/browse/CB-12571) - Podfile gets overwritten and some dependencies disappear.
+* [CB-12050](https://issues.apache.org/jira/browse/CB-12050) - ios: Create shared scheme for framework target, for Carthage support
+* [CB-12384](https://issues.apache.org/jira/browse/CB-12384) - ios: Add Cocoa Touch Framework target for CordovaLib functionality
+* [CB-12309](https://issues.apache.org/jira/browse/CB-12309) - Missing CLI help for --developmentTeam
+* [CB-12405](https://issues.apache.org/jira/browse/CB-12405) - .ipa is uncompressed in preparation for 'run' command during a 'build', resulting in slow builds
+* [CB-12523](https://issues.apache.org/jira/browse/CB-12523) - Remove iOS 8 support
+* [CB-12522](https://issues.apache.org/jira/browse/CB-12522) - Remove node 0.x support in CI
+* [CB-12377](https://issues.apache.org/jira/browse/CB-12377) - Fix bug with updating platform
+* [CB-12473](https://issues.apache.org/jira/browse/CB-12473) - Delete the correct build output folder
+* [CB-12402](https://issues.apache.org/jira/browse/CB-12402) [CB-12206](https://issues.apache.org/jira/browse/CB-12206) - Properly encode app name to generate XML files
+* [CB-12388](https://issues.apache.org/jira/browse/CB-12388) - Fix memory leak due to strong reference
+* [CB-12287](https://issues.apache.org/jira/browse/CB-12287) - Remove hardcoded sim build destination
+* [CB-12018](https://issues.apache.org/jira/browse/CB-12018) - updated pkg.json with jasmine changes to work with jasmine instead of jasmine-node and rebased off of master branch.
+* [CB-12018](https://issues.apache.org/jira/browse/CB-12018) - updated tests to function with jasmine instead of jasmine-node
+* [CB-12341](https://issues.apache.org/jira/browse/CB-12341) - Possible crash in [CDVUserAgentUtil releaseLock:]
+* [CB-12247](https://issues.apache.org/jira/browse/CB-12247) - Symlinking resource files leads to inability to install app on iOS 10
+* [CB-6274](https://issues.apache.org/jira/browse/CB-6274) - Added support for BackgroundColor preference
+* [CB-12098](https://issues.apache.org/jira/browse/CB-12098) - Update supportedInterfaceOrientations return type (removed spaces)
+* [CB-11810](https://issues.apache.org/jira/browse/CB-11810) - (ios) fix unable to load index page from frameworkpath
+* Removed no-longer-working and generally-unused `diagnose_project` script
+
+### 4.3.1 (Dec 01, 2016)
+
+* [CB-12203](https://issues.apache.org/jira/browse/CB-12203) - Updated checked-in node_modules
+* [CB-12190](https://issues.apache.org/jira/browse/CB-12190) - create.spec tests fail when a device is connected
+* [CB-12155](https://issues.apache.org/jira/browse/CB-12155) - Create tests for launch storyboards
+* [CB-12084](https://issues.apache.org/jira/browse/CB-12084) - Update project build settings & plist
+* [CB-12130](https://issues.apache.org/jira/browse/CB-12130) - Launch storyboard images are not updated or cleaned
+* [CB-11243](https://issues.apache.org/jira/browse/CB-11243) - target-device and deployment-target were being ignored
+* [CB-12127](https://issues.apache.org/jira/browse/CB-12127) - Add buildFlag support in build.json
+* [CB-12125](https://issues.apache.org/jira/browse/CB-12125) - Unable to emulate on iPad pro iOS 10
+* [CB-12118](https://issues.apache.org/jira/browse/CB-12118) - Cordova run ios does not automatically deploy to device
+* [CB-12049](https://issues.apache.org/jira/browse/CB-12049) - user-agent string has a unique number appended
+* [CB-12098](https://issues.apache.org/jira/browse/CB-12098) - Update supportedInterfaceOrientations return type
+* [CB-9762](https://issues.apache.org/jira/browse/CB-9762) - Fix mobilespec 'cordova build' exception.
+* Updated bundled ios-sim to version 5.0.12
+
+### 4.3.0 (Oct 21, 2016)
+
+* [CB-12054](https://issues.apache.org/jira/browse/CB-12054) - Remove npm absolute paths in node_modules/package.json (using removeNPMAbsolutePaths utility)
+* [CB-12054](https://issues.apache.org/jira/browse/CB-12054) - Updated checked-in node_modules
+* Update bundled ios-sim to 5.0.9
+* [CB-12003](https://issues.apache.org/jira/browse/CB-12003) - Updated node_modules for cordova-common 1.5.1
+* [CB-11999](https://issues.apache.org/jira/browse/CB-11999) - platformAPIs contain js code that is deceptively uncallable
+* [CB-11936](https://issues.apache.org/jira/browse/CB-11936) - Support four new App Transport Security (ATS) keys
+* [CB-11952](https://issues.apache.org/jira/browse/CB-11952) - Introduce buildFlag option - adds buildFlag option for passing args to xcodebuild 
+* [CB-11970](https://issues.apache.org/jira/browse/CB-11970) - Support CocoaPod pod specification other than version
+* [CB-11729](https://issues.apache.org/jira/browse/CB-11729) - template file MainViewController.m has deprecated override shouldAutorotateToInterfaceOrientation
+* [CB-11957](https://issues.apache.org/jira/browse/CB-11957) - Update docs for remote/local notifications removed in cordova-ios-4.0
+* [CB-11920](https://issues.apache.org/jira/browse/CB-11920) - Add github pull request template
+* [CB-11860](https://issues.apache.org/jira/browse/CB-11860) - Update packaging strategy for Xcode 8
+* [CB-11771](https://issues.apache.org/jira/browse/CB-11771) - Deep symlink directories to target project instead of linking the directory itself
+* [CB-10078](https://issues.apache.org/jira/browse/CB-10078) - Refresh cached userAgent on version bump
+* [CB-9762](https://issues.apache.org/jira/browse/CB-9762)   - Add launch storyboard support
+* [CB-11792](https://issues.apache.org/jira/browse/CB-11792) - Fixed configuration file could not be parsed due to preprocessing errors
+* [CB-11854](https://issues.apache.org/jira/browse/CB-11854) - Create Entitlements.plist file (one each for Debug and Release configurations)
+* [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - Update README
+* [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - Update travis.yml to xcode 7.3 image
+* [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - Update xcodebuild minimum version to 7.0.0
+* [CB-11862](https://issues.apache.org/jira/browse/CB-11862) - Update ios-deploy minimum version required to 1.9.0
+* [CB-11831](https://issues.apache.org/jira/browse/CB-11831) - Add missing LD_RUNPATH_SEARCH_PATHS setting to the Release build configuration
+* [CB-11845](https://issues.apache.org/jira/browse/CB-11845) - Add developmentTeam flag to cordova build and 'developmentTeam' key in build.json buildConfig file
+* [CB-11811](https://issues.apache.org/jira/browse/CB-11811) - CocoaPods error in cordova-lib tests
+* [CB-11790](https://issues.apache.org/jira/browse/CB-11790) - Check that Cocoapods is installed by checking `pod install` return code, show help text
+* [CB-11791](https://issues.apache.org/jira/browse/CB-11791) - 'pod install' should pass in the '--verbose' flag, if set
+* [CB-11789](https://issues.apache.org/jira/browse/CB-11789) - Generated Podfile should not have an absolute path to .xcodeproj
+* [CB-11792](https://issues.apache.org/jira/browse/CB-11792) - Add Cocoapods .xcconfig includes to build.xcconfig files in template, modify create script
+* [CB-11712](https://issues.apache.org/jira/browse/CB-11712) - <name> changes in config.xml does a 'search and replace all' for occurrences of the old name with the new name in the pbxproj
+* [CB-11788](https://issues.apache.org/jira/browse/CB-11788) - Change create and build scripts to use .xcworkspace
+* [CB-11731](https://issues.apache.org/jira/browse/CB-11731) - Re-read ios.json on every prepare
+* [CB-11705](https://issues.apache.org/jira/browse/CB-11705) - Adding CordovaDefaultWebViewEngine configuration option to be able to use a different WebView as default and/or fallback
+* [CB-11725](https://issues.apache.org/jira/browse/CB-11725) - Update appveyor node versions to 4 and 6, so they will always use the latest versions
+* [CB-9789](https://issues.apache.org/jira/browse/CB-9789) - Allow setting the default locale
+* [CB-11703](https://issues.apache.org/jira/browse/CB-11703) - travis ci setup is still using 0.10.32 node (specify specific version, using LTS version)
+* [CB-11706](https://issues.apache.org/jira/browse/CB-11706) - travis ci setup is not running unit-tests
+* [CB-11238](https://issues.apache.org/jira/browse/CB-11238) - Expose supportedOrientations methods so native code can override the current behavior
+* [CB-11648](https://issues.apache.org/jira/browse/CB-11648) - Make CDVViewController send notifications when UIViewController methods are called
+* [CB-9825](https://issues.apache.org/jira/browse/CB-9825) - Cocoapod integration for plugins
+* [CB-11528](https://issues.apache.org/jira/browse/CB-11528) - Remove verbose mode from xcrun in build.js to prevent logging of environment variables.
+* [CB-11270](https://issues.apache.org/jira/browse/CB-11270) - Handle JavaScript onclick handler navigation
+* [CB-11535](https://issues.apache.org/jira/browse/CB-11535) [CB-10361](https://issues.apache.org/jira/browse/CB-10361) - ios: fix bug with remove frameworks
+
+
 ### 4.2.1 (Jul 26, 2016)
 * [CB-11627](https://issues.apache.org/jira/browse/CB-11627) updated `CDVAvailability.h` with new version
 * [CB-11627](https://issues.apache.org/jira/browse/CB-11627) added missing license header

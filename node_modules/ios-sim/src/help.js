@@ -28,12 +28,12 @@ var fs = require('fs'),
 function help() {
     var docdir = path.join(__dirname, '..', 'doc');
     var helpfile = path.join(docdir, 'help.txt');
-    
+
     if (fs.existsSync(helpfile)) {
         var s = fs.readFileSync(helpfile).toString('utf8');
         console.log(s);
     } else {
-        console.log("Help file missing.");
+        console.log('Help file missing.');
     }
 }
 

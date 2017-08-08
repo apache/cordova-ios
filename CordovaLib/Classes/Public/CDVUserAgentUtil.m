@@ -90,7 +90,7 @@ static NSMutableArray* gPendingSetUserAgentBlocks = nil;
 
 + (void)releaseLock:(NSInteger*)lockToken
 {
-    if (*lockToken == 0) {
+    if (lockToken == nil || *lockToken == 0) {
         return;
     }
     NSAssert(gCurrentLockToken == *lockToken, @"Got token %ld, expected %ld", (long)*lockToken, (long)gCurrentLockToken);
