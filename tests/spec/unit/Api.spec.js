@@ -43,13 +43,13 @@ var iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 
 describe('Platform Api', function () {
 
-    describe('constructor', function() {
-        it('Test 001 : should throw if provided directory does not contain an xcodeproj file', function() {
-            expect(function() { new Api('ios', path.join(FIXTURES, '..')); }).toThrow();
+    describe('constructor', function () {
+        it('Test 001 : should throw if provided directory does not contain an xcodeproj file', function () {
+            expect(function () { new Api('ios', path.join(FIXTURES, '..')); }).toThrow(); /* eslint no-new : 0 */
         });
-        it('Test 002 : should create an instance with path, pbxproj, xcodeproj, originalName and cordovaproj properties', function() {
-            expect(function() {
-                var p = new Api('ios',iosProjectFixture);
+        it('Test 002 : should create an instance with path, pbxproj, xcodeproj, originalName and cordovaproj properties', function () {
+            expect(function () {
+                var p = new Api('ios', iosProjectFixture);
                 expect(p.locations.root).toEqual(iosProjectFixture);
                 expect(p.locations.pbxproj).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj', 'project.pbxproj'));
                 expect(p.locations.xcodeProjDir).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj'));
@@ -57,70 +57,70 @@ describe('Platform Api', function () {
                 expect(p.locations.configXml).toEqual(path.join(iosProjectFixture, 'SampleApp', 'config.xml'));
             }).not.toThrow();
         });
-        it('Test 003 : test cocoapods check_reqs, on darwin (macOS)', function(done) {
+        it('Test 003 : test cocoapods check_reqs, on darwin (macOS)', function (done) {
             // the purpose of this test is not to actually test whether CocoaPods is installed
             // it is to test check_reqs can run and be covered (we mock the actual checking, simple check)
 
             check_reqs.check_os()
-            .then(function(message) {
-                // supported os
-                function fail() {
-                    done.fail('check_reqs fail (' + message + ')');
-                }
-                function success() {
-                    done();
-                }
-                var toolsChecker = {
-                    success: function() {
-                        return Q.resolve('CocoaPods found');
-                    },
-                    fail: function() {
-                        return Q.reject('CocoaPods NOT found');
+                .then(function (message) {
+                    // supported os
+                    function fail () {
+                        done.fail('check_reqs fail (' + message + ')');
                     }
-                };
+                    function success () {
+                        done();
+                    }
+                    var toolsChecker = {
+                        success: function () {
+                            return Q.resolve('CocoaPods found');
+                        },
+                        fail: function () {
+                            return Q.reject('CocoaPods NOT found');
+                        }
+                    };
 
-                // success expected
-                check_reqs.check_cocoapods(toolsChecker.success)
-                    .then(success, fail)
-                    .catch(fail);
+                    // success expected
+                    check_reqs.check_cocoapods(toolsChecker.success)
+                        .then(success, fail)
+                        .catch(fail);
 
-                // fail expected
-                check_reqs.check_cocoapods(toolsChecker.fail)
-                    .then(fail, success)
-                    .catch(success);
-                    
-            }, function(){
-                // unsupported os, do nothing
-                done();
-            });
+                    // fail expected
+                    check_reqs.check_cocoapods(toolsChecker.fail)
+                        .then(fail, success)
+                        .catch(success);
+
+                }, function () {
+                    // unsupported os, do nothing
+                    done();
+                });
         });
-        it('Test 004 : test cocoapods check_reqs, expected success on non-darwin (macOS)', function(done) {
+        it('Test 004 : test cocoapods check_reqs, expected success on non-darwin (macOS)', function (done) {
             // the purpose of this test is not to actually test whether CocoaPods is installed
             // it is to test check_reqs can run and be covered (we mock the actual checking, simple check)
             check_reqs.check_os()
-            .then(function(){
-                // supported os, do nothing
-                done();
-            }, function(message) {
-                // unsupported os, check_reqs should be ignored
-                function fail() {
-                    done.fail('check_reqs fail (' + message + ')');
-                }
-                function success(toolOptions) {
-                    expect(toolOptions.ignore).toBeDefined();
-                    expect(toolOptions.ignoreMessage).toBeDefined();
+                .then(function () {
+                    // supported os, do nothing
                     done();
-                }
-                var toolsChecker = function () {
-                    done.fail(); // this function should not ever be called if non-darwin
-                    return Q.reject('CocoaPods NOT found');
-                };
+                }, function (message) {
+                    // unsupported os, check_reqs should be ignored
+                    function fail () {
+                        done.fail('check_reqs fail (' + message + ')');
+                    }
+                    function success (toolOptions) {
+                        expect(toolOptions.ignore).toBeDefined();
+                        expect(toolOptions.ignoreMessage).toBeDefined();
+                        done();
+                    }
+                    var toolsChecker = function () {
+                        done.fail(); // this function should not ever be called if non-darwin
+                        return Q.reject('CocoaPods NOT found');
+                    };
 
-                // success expected
-                check_reqs.check_cocoapods(toolsChecker)
-                    .then(success, fail)
-                    .catch(fail);
-            });
+                    // success expected
+                    check_reqs.check_cocoapods(toolsChecker)
+                        .then(success, fail)
+                        .catch(fail);
+                });
 
         });
     });
@@ -198,45 +198,45 @@ describe('Platform Api', function () {
                     });
                     spyOn(events, 'emit');
                     api.addPlugin(my_plugin)
-                    .then(function () {
-                        expect(events.emit).toHaveBeenCalledWith('warn', jasmine.stringMatching(/which conflicts with another plugin/g));
-                    }).fail(function (err) {
-                        fail('unexpected addPlugin fail handler invoked');
-                        console.error(err);
-                    }).done(done);
+                        .then(function () {
+                            expect(events.emit).toHaveBeenCalledWith('warn', jasmine.stringMatching(/which conflicts with another plugin/g));
+                        }).fail(function (err) {
+                            fail('unexpected addPlugin fail handler invoked');
+                            console.error(err);
+                        }).done(done);
                 });
                 it('should increment Pods JSON file if pod name/src already exists in file', function (done) {
                     podsjson_mock.get.and.returnValue({
                         spec: my_pod_json.spec
                     });
                     api.addPlugin(my_plugin)
-                    .then(function () {
-                        expect(podsjson_mock.increment).toHaveBeenCalledWith('podsource!');
-                    }).fail(function (err) {
-                        fail('unexpected addPlugin fail handler invoked');
-                        console.error(err);
-                    }).done(done);
+                        .then(function () {
+                            expect(podsjson_mock.increment).toHaveBeenCalledWith('podsource!');
+                        }).fail(function (err) {
+                            fail('unexpected addPlugin fail handler invoked');
+                            console.error(err);
+                        }).done(done);
                 });
                 it('on a new framework/pod name/src/key, it should add a new json to podsjson and add a new spec to podfile', function (done) {
                     api.addPlugin(my_plugin)
-                    .then(function () {
-                        expect(podsjson_mock.setJson).toHaveBeenCalledWith(my_pod_json.src, jasmine.any(Object));
-                        expect(podfile_mock.addSpec).toHaveBeenCalledWith(my_pod_json.src, my_pod_json.spec);
-                    }).fail(function (err) {
-                        fail('unexpected addPlugin fail handler invoked');
-                        console.error(err);
-                    }).done(done);
+                        .then(function () {
+                            expect(podsjson_mock.setJson).toHaveBeenCalledWith(my_pod_json.src, jasmine.any(Object));
+                            expect(podfile_mock.addSpec).toHaveBeenCalledWith(my_pod_json.src, my_pod_json.spec);
+                        }).fail(function (err) {
+                            fail('unexpected addPlugin fail handler invoked');
+                            console.error(err);
+                        }).done(done);
                 });
                 it('should write out podfile and install if podfile was changed', function (done) {
                     podfile_mock.isDirty.and.returnValue(true);
                     api.addPlugin(my_plugin)
-                    .then(function () {
-                        expect(podfile_mock.write).toHaveBeenCalled();
-                        expect(podfile_mock.install).toHaveBeenCalled();
-                    }).fail(function (err) {
-                        fail('unexpected addPlugin fail handler invoked');
-                        console.error(err);
-                    }).done(done);
+                        .then(function () {
+                            expect(podfile_mock.write).toHaveBeenCalled();
+                            expect(podfile_mock.install).toHaveBeenCalled();
+                        }).fail(function (err) {
+                            fail('unexpected addPlugin fail handler invoked');
+                            console.error(err);
+                        }).done(done);
                 });
                 it('if two frameworks with the same name are added, should honour the spec of the first-installed plugin', function (done) {
                     spyOn(events, 'emit');
@@ -244,15 +244,15 @@ describe('Platform Api', function () {
                         spec: 'something different from ' + my_pod_json.spec
                     });
                     api.addPlugin(my_plugin)
-                    .then(function () {
-                        // Increment will non-destructively set the spec to keep it as it was...
-                        expect(podsjson_mock.increment).toHaveBeenCalledWith(my_pod_json.src);
-                        // ...whereas setJson would overwrite it completely.
-                        expect(podsjson_mock.setJson).not.toHaveBeenCalled();
-                    }).fail(function (err) {
-                        fail('unexpected addPlugin fail handler invoked');
-                        console.error(err);
-                    }).done(done);
+                        .then(function () {
+                            // Increment will non-destructively set the spec to keep it as it was...
+                            expect(podsjson_mock.increment).toHaveBeenCalledWith(my_pod_json.src);
+                            // ...whereas setJson would overwrite it completely.
+                            expect(podsjson_mock.setJson).not.toHaveBeenCalled();
+                        }).fail(function (err) {
+                            fail('unexpected addPlugin fail handler invoked');
+                            console.error(err);
+                        }).done(done);
                 });
             });
         });

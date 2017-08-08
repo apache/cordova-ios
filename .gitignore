@@ -8,6 +8,7 @@ tmp
 xcuserdata
 console.log
 node_modules/jshint
+node_modules/eslint
 node_modules/jasmine-node
 node_modules/rewire
 node_modules/istanbul

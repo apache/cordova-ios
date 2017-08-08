@@ -45,22 +45,21 @@ var ConfigParser = require('cordova-common').ConfigParser;
 var cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
 var cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
 
-
-function wrapper(p, done, post) {
-    p.then(post, function(err) {
+function wrapper (p, done, post) {
+    p.then(post, function (err) {
         expect(err.stack).toBeUndefined();
     }).fin(done);
 }
 
-function wrapperError(p, done, post) {
-    p.then(post, function(err) {
+function wrapperError (p, done, post) {
+    p.then(post, function (err) {
         expect(err.stack).toBeDefined();
     }).fin(done);
 }
 
-describe('prepare', function() {
+describe('prepare', function () {
     var p;
-    beforeEach(function() {
+    beforeEach(function () {
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
         p = new Api('ios', iosPlatform, new EventEmitter());
@@ -70,8 +69,8 @@ describe('prepare', function() {
         shell.rm('-rf', path.join(__dirname, 'some'));
     });
 
-    describe('launch storyboard feature (CB-9762)', function() {
-        function makeSplashScreenEntry(src, width, height) {
+    describe('launch storyboard feature (CB-9762)', function () {
+        function makeSplashScreenEntry (src, width, height) {
             return {
                 src: src,
                 width: width,
@@ -109,41 +108,41 @@ describe('prepare', function() {
             makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~comany.png')
         ];
 
-        describe('#mapLaunchStoryboardContents', function() {
+        describe('#mapLaunchStoryboardContents', function () {
             var mapLaunchStoryboardContents = prepare.__get__('mapLaunchStoryboardContents');
 
-            it('should return an array with no mapped storyboard images', function() {
+            it('should return an array with no mapped storyboard images', function () {
                 var result = mapLaunchStoryboardContents(noLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/empty-map'));
             });
 
-            it('should return an array with one mapped storyboard image', function() {
+            it('should return an array with one mapped storyboard image', function () {
                 var result = mapLaunchStoryboardContents(singleLaunchStoryboardImage, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/single-2xanyany-map'));
             });
 
-            it('should return an array with one mapped storyboard image, even with legacy images', function() {
+            it('should return an array with one mapped storyboard image, even with legacy images', function () {
                 var result = mapLaunchStoryboardContents(singleLaunchStoryboardImageWithLegacyLaunchImage, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/single-2xanyany-map'));
             });
 
-            it('should return an array with several mapped storyboard images', function() {
+            it('should return an array with several mapped storyboard images', function () {
                 var result = mapLaunchStoryboardContents(typicalLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/typical-universal-map'));
             });
 
-            it('should return an array with several mapped storyboard images across device classes', function() {
+            it('should return an array with several mapped storyboard images across device classes', function () {
                 var result = mapLaunchStoryboardContents(multiDeviceLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/varied-device-map'));
             });
         });
 
-        describe('#mapLaunchStoryboardResources', function() {
+        describe('#mapLaunchStoryboardResources', function () {
             var mapLaunchStoryboardResources = prepare.__get__('mapLaunchStoryboardResources');
 
             it('should return an empty object with no mapped storyboard images', function () {
@@ -152,53 +151,53 @@ describe('prepare', function() {
                 expect(result).toEqual({});
             });
 
-            it('should return an object with one mapped storyboard image', function() {
+            it('should return an object with one mapped storyboard image', function () {
                 var result = mapLaunchStoryboardResources(singleLaunchStoryboardImage, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual({
-                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png'
+                    'Default@2x~universal~anyany.png': 'res/splash/ios/Default@2x~universal~anyany.png'
                 });
             });
 
-            it('should return an object with one mapped storyboard image, even with legacy images', function() {
+            it('should return an object with one mapped storyboard image, even with legacy images', function () {
                 var result = mapLaunchStoryboardResources(singleLaunchStoryboardImageWithLegacyLaunchImage, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual({
-                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png'
+                    'Default@2x~universal~anyany.png': 'res/splash/ios/Default@2x~universal~anyany.png'
                 });
             });
 
-            it('should return an object with several mapped storyboard images', function() {
+            it('should return an object with several mapped storyboard images', function () {
                 var result = mapLaunchStoryboardResources(typicalLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual({
-                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png',
-                    'Default@2x~universal~comany.png' : 'res/splash/ios/Default@2x~universal~comany.png',
-                    'Default@2x~universal~comcom.png' : 'res/splash/ios/Default@2x~universal~comcom.png',
-                    'Default@3x~universal~anyany.png' : 'res/splash/ios/Default@3x~universal~anyany.png',
-                    'Default@3x~universal~anycom.png' : 'res/splash/ios/Default@3x~universal~anycom.png',
-                    'Default@3x~universal~comany.png' : 'res/splash/ios/Default@3x~universal~comany.png'
+                    'Default@2x~universal~anyany.png': 'res/splash/ios/Default@2x~universal~anyany.png',
+                    'Default@2x~universal~comany.png': 'res/splash/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~comcom.png': 'res/splash/ios/Default@2x~universal~comcom.png',
+                    'Default@3x~universal~anyany.png': 'res/splash/ios/Default@3x~universal~anyany.png',
+                    'Default@3x~universal~anycom.png': 'res/splash/ios/Default@3x~universal~anycom.png',
+                    'Default@3x~universal~comany.png': 'res/splash/ios/Default@3x~universal~comany.png'
                 });
             });
 
-            it('should return an object with several mapped storyboard images across device classes', function() {
+            it('should return an object with several mapped storyboard images across device classes', function () {
                 var result = mapLaunchStoryboardResources(multiDeviceLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual({
-                    'Default@2x~universal~anyany.png' : 'res/splash/ios/Default@2x~universal~anyany.png',
-                    'Default@2x~universal~comany.png' : 'res/splash/ios/Default@2x~universal~comany.png',
-                    'Default@2x~universal~comcom.png' : 'res/splash/ios/Default@2x~universal~comcom.png',
-                    'Default@2x~ipad~anyany.png' : 'res/splash/ios/Default@2x~ipad~anyany.png',
-                    'Default@2x~ipad~comany.png' : 'res/splash/ios/Default@2x~ipad~comany.png',
-                    'Default@2x~ipad~comcom.png' : 'res/splash/ios/Default@2x~ipad~comcom.png',
-                    'Default@3x~iphone~anyany.png' : 'res/splash/ios/Default@3x~iphone~anyany.png',
-                    'Default@3x~iphone~anycom.png' : 'res/splash/ios/Default@3x~iphone~anycom.png',
-                    'Default@3x~iphone~comany.png' : 'res/splash/ios/Default@3x~iphone~comany.png'
+                    'Default@2x~universal~anyany.png': 'res/splash/ios/Default@2x~universal~anyany.png',
+                    'Default@2x~universal~comany.png': 'res/splash/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~comcom.png': 'res/splash/ios/Default@2x~universal~comcom.png',
+                    'Default@2x~ipad~anyany.png': 'res/splash/ios/Default@2x~ipad~anyany.png',
+                    'Default@2x~ipad~comany.png': 'res/splash/ios/Default@2x~ipad~comany.png',
+                    'Default@2x~ipad~comcom.png': 'res/splash/ios/Default@2x~ipad~comcom.png',
+                    'Default@3x~iphone~anyany.png': 'res/splash/ios/Default@3x~iphone~anyany.png',
+                    'Default@3x~iphone~anycom.png': 'res/splash/ios/Default@3x~iphone~anycom.png',
+                    'Default@3x~iphone~comany.png': 'res/splash/ios/Default@3x~iphone~comany.png'
                 });
             });
         });
 
-        describe('#getLaunchStoryboardContentsJSON', function() {
+        describe('#getLaunchStoryboardContentsJSON', function () {
             var getLaunchStoryboardContentsJSON = prepare.__get__('getLaunchStoryboardContentsJSON');
 
             it('should return contents.json with no mapped storyboard images', function () {
@@ -207,36 +206,36 @@ describe('prepare', function() {
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/empty'));
             });
 
-            it('should return contents.json with one mapped storyboard image', function() {
+            it('should return contents.json with one mapped storyboard image', function () {
                 var result = getLaunchStoryboardContentsJSON(singleLaunchStoryboardImage, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/single-2xanyany'));
             });
 
-            it('should return contents.json with one mapped storyboard image, even with legacy images', function() {
+            it('should return contents.json with one mapped storyboard image, even with legacy images', function () {
                 var result = getLaunchStoryboardContentsJSON(singleLaunchStoryboardImageWithLegacyLaunchImage, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/single-2xanyany'));
             });
 
-            it('should return contents.json with several mapped storyboard images', function() {
+            it('should return contents.json with several mapped storyboard images', function () {
                 var result = getLaunchStoryboardContentsJSON(typicalLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/typical-universal'));
             });
 
-            it('should return contents.json with several mapped storyboard images across device classes', function() {
+            it('should return contents.json with several mapped storyboard images across device classes', function () {
                 var result = getLaunchStoryboardContentsJSON(multiDeviceLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/varied-device'));
             });
         });
 
-        describe('#getLaunchStoryboardImagesDir', function() {
+        describe('#getLaunchStoryboardImagesDir', function () {
             var getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
             var projectRoot = iosProject;
 
-            it('should find the Images.xcassets file in a project with an asset catalog', function() {
+            it('should find the Images.xcassets file in a project with an asset catalog', function () {
                 var platformProjDir = path.join('platforms', 'ios', 'SampleApp');
                 var assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
                 var expectedPath = path.join(platformProjDir, 'Images.xcassets', 'LaunchStoryboard.imageset/');
@@ -248,7 +247,7 @@ describe('prepare', function() {
                 expect(returnPath).toEqual(expectedPath);
             });
 
-            it('should NOT find the Images.xcassets file in a project with no asset catalog', function() {
+            it('should NOT find the Images.xcassets file in a project with no asset catalog', function () {
                 var platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
                 var assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
 
@@ -260,55 +259,55 @@ describe('prepare', function() {
             });
         });
 
-        describe ('#platformHasLaunchStoryboardImages', function() {
+        describe('#platformHasLaunchStoryboardImages', function () {
             var platformHasLaunchStoryboardImages = prepare.__get__('platformHasLaunchStoryboardImages');
-            var cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+            var cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p, c) {
                 p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml'));
                 return p;
             }, {});
 
-            it('should be false with no launch images', function() {
+            it('should be false with no launch images', function () {
                 expect(platformHasLaunchStoryboardImages(cfgs.none)).toEqual(false);
             });
-            it('should be false with only legacy images', function() {
+            it('should be false with only legacy images', function () {
                 expect(platformHasLaunchStoryboardImages(cfgs['legacy-only'])).toEqual(false);
             });
-            it('should be true with typical launch storyboard images', function() {
+            it('should be true with typical launch storyboard images', function () {
                 expect(platformHasLaunchStoryboardImages(cfgs['modern-only'])).toEqual(true);
             });
-            it('should be true with typical and legacy launch storyboard images', function() {
+            it('should be true with typical and legacy launch storyboard images', function () {
                 expect(platformHasLaunchStoryboardImages(cfgs['modern-and-legacy'])).toEqual(true);
             });
         });
 
-        describe ('#platformHasLegacyLaunchImages', function() {
+        describe('#platformHasLegacyLaunchImages', function () {
             var platformHasLegacyLaunchImages = prepare.__get__('platformHasLegacyLaunchImages');
-            var cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+            var cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p, c) {
                 p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml'));
                 return p;
             }, {});
 
-            it('should be false with no launch images', function() {
+            it('should be false with no launch images', function () {
                 expect(platformHasLegacyLaunchImages(cfgs.none)).toEqual(false);
             });
-            it('should be true with only legacy images', function() {
+            it('should be true with only legacy images', function () {
                 expect(platformHasLegacyLaunchImages(cfgs['legacy-only'])).toEqual(true);
             });
-            it('should be false with typical launch storyboard images', function() {
+            it('should be false with typical launch storyboard images', function () {
                 expect(platformHasLegacyLaunchImages(cfgs['modern-only'])).toEqual(false);
             });
-            it('should be true with typical and legacy launch storyboard images', function() {
+            it('should be true with typical and legacy launch storyboard images', function () {
                 expect(platformHasLegacyLaunchImages(cfgs['modern-and-legacy'])).toEqual(true);
             });
 
         });
 
-        describe('#updateProjectPlistForLaunchStoryboard', function() {
+        describe('#updateProjectPlistForLaunchStoryboard', function () {
             var updateProjectPlistForLaunchStoryboard = prepare.__get__('updateProjectPlistForLaunchStoryboard');
             var plistFile = path.join(iosPlatform, 'SampleApp', 'SampleApp-Info.plist');
             var cfgs;
             it('setup', function () {
-                cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+                cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p, c) {
                     p[c] = {
                         config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
                         plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
@@ -317,39 +316,39 @@ describe('prepare', function() {
                 }, {});
             });
 
-            it('should not change the info plist when no launch images are supplied', function() {
+            it('should not change the info plist when no launch images are supplied', function () {
                 var plist = cfgs.none.plist;
                 updateProjectPlistForLaunchStoryboard(cfgs.none.config, plist);
                 expect(plist.UILaunchStoryboardName).toBeUndefined();
             });
-            it('should not change the info plist when only legacy launch images are supplied', function() {
+            it('should not change the info plist when only legacy launch images are supplied', function () {
                 var plist = cfgs['legacy-only'].plist;
                 updateProjectPlistForLaunchStoryboard(cfgs['legacy-only'].config, plist);
                 expect(plist.UILaunchStoryboardName).toBeUndefined();
             });
-            it('should change the info plist when only modern launch images are supplied', function() {
+            it('should change the info plist when only modern launch images are supplied', function () {
                 var plist = cfgs['modern-only'].plist;
                 updateProjectPlistForLaunchStoryboard(cfgs['modern-only'].config, plist);
                 expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
             });
-            it('should change the info plist when both legacy and modern launch images are supplied', function() {
+            it('should change the info plist when both legacy and modern launch images are supplied', function () {
                 var plist = cfgs['modern-and-legacy'].plist;
                 updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
                 expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
             });
-            it('should remove the setting when no launch images are supplied but storyboard setting configured', function() {
+            it('should remove the setting when no launch images are supplied but storyboard setting configured', function () {
                 var plist = cfgs.none.plist;
                 plist.UILaunchStoryboardName = 'CDVLaunchScreen';
                 updateProjectPlistForLaunchStoryboard(cfgs.none.config, plist);
                 expect(plist.UILaunchStoryboardName).toBeUndefined();
             });
-            it('should remove the setting when only legacy images are supplied but storyboard setting configured', function() {
+            it('should remove the setting when only legacy images are supplied but storyboard setting configured', function () {
                 var plist = cfgs['legacy-only'].plist;
                 plist.UILaunchStoryboardName = 'CDVLaunchScreen';
                 updateProjectPlistForLaunchStoryboard(cfgs['legacy-only'].config, plist);
                 expect(plist.UILaunchStoryboardName).toBeUndefined();
             });
-            it('should maintain the launch storyboard setting over multiple calls when modern images supplied', function() {
+            it('should maintain the launch storyboard setting over multiple calls when modern images supplied', function () {
                 var plist = cfgs['modern-only'].plist;
                 delete plist.UILaunchStoryboardName;
                 updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
@@ -357,7 +356,7 @@ describe('prepare', function() {
                 updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
                 expect(plist.UILaunchStoryboardName).toEqual('CDVLaunchScreen');
             });
-            it('should not attempt to override launch storyboard setting if not set to our storyboard', function() {
+            it('should not attempt to override launch storyboard setting if not set to our storyboard', function () {
                 var plist = cfgs['modern-and-legacy'].plist;
                 plist.UILaunchStoryboardName = 'AnotherStoryboard';
                 updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
@@ -366,12 +365,12 @@ describe('prepare', function() {
 
         });
 
-        describe ('#updateLaunchStoryboardImages', function() {
+        describe('#updateLaunchStoryboardImages', function () {
             var getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
             var updateLaunchStoryboardImages = prepare.__get__('updateLaunchStoryboardImages');
             var logFileOp = prepare.__get__('logFileOp');
 
-            it('should clean storyboard launch images and update contents.json', function() {
+            it('should clean storyboard launch images and update contents.json', function () {
                 // spy!
                 var updatePaths = spyOn(FileUpdater, 'updatePaths');
 
@@ -395,12 +394,12 @@ describe('prepare', function() {
 
                 // verify that updatePaths was called as we expect
                 var expectedResourceMap = {
-                    'Default@2x~universal~comcom.png' : 'res/screen/ios/Default@2x~universal~comcom.png',
-                    'Default@2x~universal~comany.png' : 'res/screen/ios/Default@2x~universal~comany.png',
-                    'Default@2x~universal~anyany.png' : 'res/screen/ios/Default@2x~universal~anyany.png',
-                    'Default@3x~universal~comany.png' : 'res/screen/ios/Default@3x~universal~comany.png',
-                    'Default@3x~universal~anycom.png' : 'res/screen/ios/Default@3x~universal~anycom.png',
-                    'Default@3x~universal~anyany.png' : 'res/screen/ios/Default@3x~universal~anyany.png' };
+                    'Default@2x~universal~comcom.png': 'res/screen/ios/Default@2x~universal~comcom.png',
+                    'Default@2x~universal~comany.png': 'res/screen/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~anyany.png': 'res/screen/ios/Default@2x~universal~anyany.png',
+                    'Default@3x~universal~comany.png': 'res/screen/ios/Default@3x~universal~comany.png',
+                    'Default@3x~universal~anycom.png': 'res/screen/ios/Default@3x~universal~anycom.png',
+                    'Default@3x~universal~anyany.png': 'res/screen/ios/Default@3x~universal~anyany.png' };
                 // update keys with path to storyboardImagesDir
                 for (var k in expectedResourceMap) {
                     if (expectedResourceMap.hasOwnProperty(k)) {
@@ -408,24 +407,24 @@ describe('prepare', function() {
                         delete expectedResourceMap[k];
                     }
                 }
-                expect(updatePaths).toHaveBeenCalledWith( expectedResourceMap, {
-                        rootDir: project.root
-                    }, logFileOp
+                expect(updatePaths).toHaveBeenCalledWith(expectedResourceMap, {
+                    rootDir: project.root
+                }, logFileOp
                 );
 
                 // verify that that Contents.json is as we expect
                 var result = JSON.parse(fs.readFileSync(path.join(project.root, storyboardImagesDir, 'Contents.json')));
-                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/typical-universal')); 
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/typical-universal'));
             });
         });
 
-        describe ('#cleanLaunchStoryboardImages', function() {
+        describe('#cleanLaunchStoryboardImages', function () {
             var getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
             var updateLaunchStoryboardImages = prepare.__get__('updateLaunchStoryboardImages');
             var cleanLaunchStoryboardImages = prepare.__get__('cleanLaunchStoryboardImages');
             var logFileOp = prepare.__get__('logFileOp');
 
-            it('should move launch images and update contents.json', function() {
+            it('should move launch images and update contents.json', function () {
 
                 var projectRoot = iosProject;
                 var platformProjDir = path.join('platforms', 'ios', 'SampleApp');
@@ -445,12 +444,12 @@ describe('prepare', function() {
 
                 // verify that updatePaths was called as we expect
                 var expectedResourceMap = {
-                    'Default@2x~universal~comcom.png' : null,
-                    'Default@2x~universal~comany.png' : null,
-                    'Default@2x~universal~anyany.png' : null, 
-                    'Default@3x~universal~comany.png' : null,
-                    'Default@3x~universal~anycom.png' : null,
-                    'Default@3x~universal~anyany.png' : null };
+                    'Default@2x~universal~comcom.png': null,
+                    'Default@2x~universal~comany.png': null,
+                    'Default@2x~universal~anyany.png': null,
+                    'Default@3x~universal~comany.png': null,
+                    'Default@3x~universal~anycom.png': null,
+                    'Default@3x~universal~anyany.png': null };
                 // update keys with path to storyboardImagesDir
                 for (var k in expectedResourceMap) {
                     if (expectedResourceMap.hasOwnProperty(k)) {
@@ -458,25 +457,25 @@ describe('prepare', function() {
                         delete expectedResourceMap[k];
                     }
                 }
-                expect(updatePaths).toHaveBeenCalledWith( expectedResourceMap, {
-                        rootDir: project.root,
-                        all: true
-                    }, logFileOp
+                expect(updatePaths).toHaveBeenCalledWith(expectedResourceMap, {
+                    rootDir: project.root,
+                    all: true
+                }, logFileOp
                 );
 
                 // verify that that Contents.json is as we expect
                 var result = JSON.parse(fs.readFileSync(path.join(project.root, storyboardImagesDir, 'Contents.json')));
-                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/empty')); 
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/empty'));
             });
         });
 
-        describe ('#checkIfBuildSettingsNeedUpdatedForLaunchStoryboard', function() {
+        describe('#checkIfBuildSettingsNeedUpdatedForLaunchStoryboard', function () {
             var checkIfBuildSettingsNeedUpdatedForLaunchStoryboard = prepare.__get__('checkIfBuildSettingsNeedUpdatedForLaunchStoryboard');
             var updateProjectPlistForLaunchStoryboard = prepare.__get__('updateProjectPlistForLaunchStoryboard');
             var plistFile = path.join(iosPlatform, 'SampleApp', 'SampleApp-Info.plist');
-            var cfgs; 
-            it ('setup', function() {
-                cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p,c) {
+            var cfgs;
+            it('setup', function () {
+                cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce(function (p, c) {
                     p[c] = {
                         config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
                         plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
@@ -512,13 +511,13 @@ describe('prepare', function() {
 
         });
 
-        describe ('#updateBuildSettingsForLaunchStoryboard', function() {
+        describe('#updateBuildSettingsForLaunchStoryboard', function () {
             var updateBuildSettingsForLaunchStoryboard = prepare.__get__('updateBuildSettingsForLaunchStoryboard');
             var updateProjectPlistForLaunchStoryboard = prepare.__get__('updateProjectPlistForLaunchStoryboard');
             var plistFile = path.join(iosPlatform, 'SampleApp', 'SampleApp-Info.plist');
             var cfgs;
             it('setup', function () {
-                cfgs = ['legacy-only', 'modern-only'].reduce(function (p,c) {
+                cfgs = ['legacy-only', 'modern-only'].reduce(function (p, c) {
                     p[c] = {
                         config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
                         plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
@@ -529,7 +528,7 @@ describe('prepare', function() {
 
             it('should update build property with only legacy images', function () {
                 var cfg = cfgs['legacy-only'];
-                var proj = new xcode.project(p.locations.pbxproj);
+                var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
                 updateBuildSettingsForLaunchStoryboard(proj, cfg.config, cfg.plist);
@@ -537,28 +536,29 @@ describe('prepare', function() {
             });
             it('should remove build property with only storyboard images', function () {
                 var cfg = cfgs['modern-only'];
-                var proj = new xcode.project(p.locations.pbxproj);
+                var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 // set a value for our asset catalog to make sure it really goes away
-                proj.updateBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME','LaunchImage');
+                proj.updateBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME', 'LaunchImage');
                 updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
                 updateBuildSettingsForLaunchStoryboard(proj, cfg.config, cfg.plist);
                 expect(proj.getBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME')).toBeUndefined();
             });
         });
 
-
     });
 
-    describe('updateProject method', function() {
+    describe('updateProject method', function () {
+        /* eslint-disable no-unused-vars */
         var mv;
         var update_name;
+        /* eslint-enable no-unused-vars */
         var xcOrig = xcode.project;
         var writeFileSyncSpy;
 
         var updateProject = prepare.__get__('updateProject');
 
-        beforeEach(function() {
+        beforeEach(function () {
             mv = spyOn(shell, 'mv');
             writeFileSyncSpy = spyOn(fs, 'writeFileSync');
 
@@ -566,40 +566,40 @@ describe('prepare', function() {
             spyOn(plist, 'build').and.returnValue('');
             spyOn(xcode, 'project').and.callFake(function (pbxproj) {
 
-                var xc = new xcOrig(pbxproj);
+                var xc = new xcOrig(pbxproj); /* eslint new-cap : 0 */
                 update_name = spyOn(xc, 'updateProductName').and.callThrough();
                 return xc;
             });
-            cfg.name = function() { return 'SampleApp'; }; // this is to match p's original project name (based on .xcodeproj)
-            cfg.packageName = function() { return 'testpkg'; };
-            cfg.version = function() { return 'one point oh'; };
+            cfg.name = function () { return 'SampleApp'; }; // this is to match p's original project name (based on .xcodeproj)
+            cfg.packageName = function () { return 'testpkg'; };
+            cfg.version = function () { return 'one point oh'; };
 
             spyOn(cfg, 'getPreference');
         });
 
-        it('Test#001 : should not update the app name in pbxproj', function(done) {
+        it('Test#001 : should not update the app name in pbxproj', function (done) {
             var cfg2OriginalName = cfg2.name;
 
             // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = function() { return 'NotSampleApp'; };  // new config has name change            
+            cfg2.name = function () { return 'NotSampleApp'; }; // new config has name change
             wrapperError(updateProject(cfg2, p.locations), done); // since the name has changed it *should* error
 
             // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             wrapper(updateProject(cfg2, p.locations), done); // since the name has not changed it *should not* error
 
             // restore cfg2 original name
             cfg2.name = cfg2OriginalName;
         });
 
-        it('should write target-device preference', function(done) {
+        it('should write target-device preference', function (done) {
             var cfg2OriginalName = cfg2.name;
-            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
-            wrapper(updateProject(cfg2, p.locations), done, function() {
+            wrapper(updateProject(cfg2, p.locations), done, function () {
                 var xcode = require('xcode');
-                var proj = new xcode.project(p.locations.pbxproj);
+                var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 var prop = proj.getBuildProperty('TARGETED_DEVICE_FAMILY');
                 expect(prop).toEqual('"1"'); // 1 is handset
@@ -608,16 +608,16 @@ describe('prepare', function() {
                 cfg2.name = cfg2OriginalName;
             });
         });
-        it('should write deployment-target preference', function(done) {
+        it('should write deployment-target preference', function (done) {
             var cfg2OriginalName = cfg2.name;
-            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
-            wrapper(updateProject(cfg2, p.locations), done, function() {
+            wrapper(updateProject(cfg2, p.locations), done, function () {
                 var xcode = require('xcode');
-                var proj = new xcode.project(p.locations.pbxproj);
+                var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
-                var prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET'); 
+                var prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
                 expect(prop).toEqual('8.0');
 
                 // restore cfg2 original name
@@ -625,97 +625,97 @@ describe('prepare', function() {
             });
         });
 
-        it('Test#002 : should write out the app id to info plist as CFBundleIdentifier', function(done) {
+        it('Test#002 : should write out the app id to info plist as CFBundleIdentifier', function (done) {
             var orig = cfg.getAttribute;
-            cfg.getAttribute = function(name) {
-                if (name == 'ios-CFBundleIdentifier') {
+            cfg.getAttribute = function (name) {
+                if (name === 'ios-CFBundleIdentifier') {
                     return null;
                 }
                 return orig.call(this, name);
             };
 
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].CFBundleIdentifier).toEqual('testpkg');
             });
         });
-        it('Test#003 : should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', function(done) {
+        it('Test#003 : should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', function (done) {
             var orig = cfg.getAttribute;
-            cfg.getAttribute = function(name) {
-                if (name == 'ios-CFBundleIdentifier') {
+            cfg.getAttribute = function (name) {
+                if (name === 'ios-CFBundleIdentifier') {
                     return 'testpkg_ios';
                 }
                 return orig.call(this, name);
             };
 
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].CFBundleIdentifier).toEqual('testpkg_ios');
             });
         });
-        it('Test#004 : should write out the app version to info plist as CFBundleVersion', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#004 : should write out the app version to info plist as CFBundleVersion', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].CFBundleShortVersionString).toEqual('one point oh');
             });
         });
-        it('Test#005 : should write out the orientation preference value', function(done) {
+        it('Test#005 : should write out the orientation preference value', function (done) {
             cfg.getPreference.and.callThrough();
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
                 expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
             });
         });
-        it('Test#006 : should handle no orientation', function(done) {
+        it('Test#006 : should handle no orientation', function (done) {
             cfg.getPreference.and.returnValue('');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toBeUndefined();
                 expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toBeUndefined();
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
-        it('Test#007 : should handle default orientation', function(done) {
+        it('Test#007 : should handle default orientation', function (done) {
             cfg.getPreference.and.returnValue('default');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
-        it('Test#008 : should handle portrait orientation', function(done) {
+        it('Test#008 : should handle portrait orientation', function (done) {
             cfg.getPreference.and.returnValue('portrait');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
             });
         });
-        it('Test#009 : should handle landscape orientation', function(done) {
+        it('Test#009 : should handle landscape orientation', function (done) {
             cfg.getPreference.and.returnValue('landscape');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationLandscapeLeft' ]);
             });
         });
-        it('Test#010 : should handle all orientation on ios', function(done) {
+        it('Test#010 : should handle all orientation on ios', function (done) {
             cfg.getPreference.and.returnValue('all');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
             });
         });
-        it('Test#011 : should handle custom orientation', function(done) {
+        it('Test#011 : should handle custom orientation', function (done) {
             cfg.getPreference.and.returnValue('some-custom-orientation');
-            wrapper(updateProject(cfg, p.locations), done, function() {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.mostRecentCall.args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
 
-        ///// App Transport Security Tests /////////////////////////////
-        // NOTE: if an ATS value is equal to "null", it means that it was not written, 
+        /// // App Transport Security Tests /////////////////////////////
+        // NOTE: if an ATS value is equal to "null", it means that it was not written,
         // thus it will use the default (check the default for the key).
-        // This is to prevent the Info.plist to be too verbose.  
-        it('Test#012 : <access> - should handle wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        // This is to prevent the Info.plist to be too verbose.
+        it('Test#012 : <access> - should handle wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
@@ -724,7 +724,7 @@ describe('prepare', function() {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function(done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -734,7 +734,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(true);
@@ -743,7 +743,7 @@ describe('prepare', function() {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInMedia', function(done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInMedia', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -753,7 +753,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
@@ -762,7 +762,7 @@ describe('prepare', function() {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function(done) {
+        it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -772,7 +772,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
@@ -781,7 +781,7 @@ describe('prepare', function() {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function(done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -791,7 +791,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(true);
@@ -799,7 +799,7 @@ describe('prepare', function() {
                 expect(ats.NSAllowsLocalNetworking).toEqual(true);
             });
         });
-        it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function(done) {
+        it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -809,7 +809,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(null);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
@@ -817,9 +817,9 @@ describe('prepare', function() {
                 expect(ats.NSAllowsLocalNetworking).toEqual(null);
             });
         });
-        
-        it('Test#13 : <access> - https, subdomain wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+
+        it('Test#13 : <access> - https, subdomain wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -857,7 +857,7 @@ describe('prepare', function() {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-                
+
                 d = exceptionDomains['server03.com'];
                 expect(d).toBeTruthy();
                 expect(d.NSIncludesSubdomains).toEqual(true);
@@ -892,8 +892,8 @@ describe('prepare', function() {
             });
         });
 
-        it('Test#014 : <access> - http, no wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#014 : <access> - http, no wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -966,8 +966,8 @@ describe('prepare', function() {
 
             });
         });
-        it('Test#015 : <access> - https, no wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#015 : <access> - https, no wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1039,15 +1039,15 @@ describe('prepare', function() {
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
             });
         });
-        //////////////////////////////////////////////////
-        it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', function(done) {
+        /// ///////////////////////////////////////////////
+        it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', function (done) {
             var cfg2OriginalName = cfg2.name;
             // original name here is 'SampleApp' based on p
             // we are not testing a name change here, but testing a new config being used (name change test is above)
             // so we set it to the name expected
-            cfg2.name = function() { return 'SampleApp'; }; // new config does *not* have a name change
+            cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
 
-            wrapper(updateProject(cfg2, p.locations), done, function() {
+            wrapper(updateProject(cfg2, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1066,9 +1066,9 @@ describe('prepare', function() {
                 cfg2.name = cfg2OriginalName;
             });
         });
-        //////////////////////////////////////////////////
+        /// ///////////////////////////////////////////////
 
-        it('<allow-navigation> - should handle wildcard', function(done) {
+        it('<allow-navigation> - should handle wildcard', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -1078,7 +1078,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
@@ -1087,7 +1087,7 @@ describe('prepare', function() {
             });
         });
 
-        it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function(done) {
+        it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsInMedia, NSAllowsLocalNetworking', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -1097,7 +1097,7 @@ describe('prepare', function() {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function() {
+            wrapper(updateProject(my_config, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(null);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(null);
@@ -1105,9 +1105,9 @@ describe('prepare', function() {
                 expect(ats.NSAllowsLocalNetworking).toEqual(null);
             });
         });
-        
-        it('<allow-navigation> - https, subdomain wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+
+        it('<allow-navigation> - https, subdomain wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1127,7 +1127,7 @@ describe('prepare', function() {
                 expect(d.NSIncludesSubdomains).toEqual(true);
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(null);
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
-                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false); 
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(null);
 
                 d = exceptionDomains['server22-1.com'];
@@ -1145,7 +1145,7 @@ describe('prepare', function() {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(null);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-                
+
                 d = exceptionDomains['server23.com'];
                 expect(d).toBeTruthy();
                 expect(d.NSIncludesSubdomains).toEqual(true);
@@ -1180,8 +1180,8 @@ describe('prepare', function() {
             });
         });
 
-        it('<allow-navigation> - http, no wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('<allow-navigation> - http, no wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1255,8 +1255,8 @@ describe('prepare', function() {
             });
         });
 
-        it('<allow-navigation> - https, no wildcard', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('<allow-navigation> - https, no wildcard', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1329,8 +1329,8 @@ describe('prepare', function() {
             });
         });
 
-        it('Test#017 : <allow-navigation> - wildcard scheme, wildcard subdomain', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#017 : <allow-navigation> - wildcard scheme, wildcard subdomain', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1400,11 +1400,11 @@ describe('prepare', function() {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-                
+
             });
         });
-        it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1474,11 +1474,11 @@ describe('prepare', function() {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-                
+
             });
         });
-        it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var ats = plist.build.mostRecentCall.args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 expect(exceptionDomains['']).toBeUndefined();
@@ -1486,15 +1486,15 @@ describe('prepare', function() {
                 expect(exceptionDomains['undefined']).toBeUndefined();
             });
         });
-        it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', function(done) {
-            cfg.shortName = function() { return 'MyApp'; };
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', function (done) {
+            cfg.shortName = function () { return 'MyApp'; };
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 expect(plist.build.mostRecentCall.args[0].CFBundleDisplayName).toEqual('MyApp');
             });
         });
     });
 
-    describe('<resource-file> tests', function() {
+    describe('<resource-file> tests', function () {
         // image-8888.png target attribute is missing in config.xml as a test
         const images = [
             {
@@ -1515,19 +1515,19 @@ describe('prepare', function() {
         const cleanFileResources = prepare.__get__('cleanFileResources');
         const cfgResourceFiles = new ConfigParser(path.join(FIXTURES, 'resource-file-support', 'config.xml'));
 
-        function findImageFileRef(pbxproj, imageFileName) {
+        function findImageFileRef (pbxproj, imageFileName) {
             const buildfiles = pbxproj.pbxBuildFileSection();
-            return Object.keys(buildfiles).filter(function(uuid) {
+            return Object.keys(buildfiles).filter(function (uuid) {
                 var filename = buildfiles[uuid].fileRef_comment;
                 return (filename === imageFileName);
             });
         }
 
-        function findResourcesBuildPhaseRef(pbxproj, ref) {
+        function findResourcesBuildPhaseRef (pbxproj, ref) {
             const resBuildPhase = pbxproj.buildPhaseObject('PBXResourcesBuildPhase', 'Resources');
             let resBuildPhaseFileRefs = [];
             if (resBuildPhase) {
-                resBuildPhaseFileRefs = resBuildPhase.files.filter(function(item){
+                resBuildPhaseFileRefs = resBuildPhase.files.filter(function (item) {
                     return item.value === ref;
                 });
             }
@@ -1535,7 +1535,7 @@ describe('prepare', function() {
             return resBuildPhaseFileRefs;
         }
 
-        it('<resource-file> prepare - copy', function() {
+        it('<resource-file> prepare - copy', function () {
             const cordovaProject = {
                 root: projectRoot,
                 projectConfig: cfgResourceFiles,
@@ -1562,7 +1562,7 @@ describe('prepare', function() {
             }
         });
 
-        it('<resource-file> clean - remove', function() {
+        it('<resource-file> clean - remove', function () {
             cleanFileResources(projectRoot, cfgResourceFiles, p.locations);
             const project = projectFile.parse(p.locations);
 
@@ -1578,10 +1578,10 @@ describe('prepare', function() {
                 let resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
                 expect(resBuildPhaseFileRefs.length).toEqual(0);
             }
-        }); 
+        });
     });
 
-    describe('updateWww method', function() {
+    describe('updateWww method', function () {
         var updateWww = prepare.__get__('updateWww');
         var logFileOp = prepare.__get__('logFileOp');
 
@@ -1594,24 +1594,24 @@ describe('prepare', function() {
             locations: { www: path.join(iosProject, 'www') }
         };
 
-        it('Test#021 : should update project-level www and with platform agnostic www and merges', function() {
+        it('Test#021 : should update project-level www and with platform agnostic www and merges', function () {
             var merges_path = path.join(project.root, 'merges', 'ios');
             shell.mkdir('-p', merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
-                [ 'www', path.join('platforms', 'ios', 'platform_www'), path.join('merges','ios') ],
+                [ 'www', path.join('platforms', 'ios', 'platform_www'), path.join('merges', 'ios') ],
                 path.join('platforms', 'ios', 'www'),
-                { rootDir : iosProject },
+                { rootDir: iosProject },
                 logFileOp);
         });
-        it('Test#022 : should skip merges if merges directory does not exist', function() {
+        it('Test#022 : should skip merges if merges directory does not exist', function () {
             var merges_path = path.join(project.root, 'merges', 'ios');
             shell.rm('-rf', merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 [ 'www', path.join('platforms', 'ios', 'platform_www') ],
                 path.join('platforms', 'ios', 'www'),
-                { rootDir : iosProject },
+                { rootDir: iosProject },
                 logFileOp);
         });
     });
