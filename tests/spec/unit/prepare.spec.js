@@ -1546,8 +1546,14 @@ describe('prepare', function () {
             };
 
             updateFileResources(cordovaProject, p.locations);
+            // try multiple times (3 in total)
+            updateFileResources(cordovaProject, p.locations);
+            updateFileResources(cordovaProject, p.locations);
+
             const project = projectFile.parse(p.locations);
 
+            // for the 3 total file references attempted to be added above,
+            // it should only have one file reference after the fact
             for (let image of images) {
                 // check whether the file is copied to the target location
                 let copiedImageFile = path.join(project.resources_dir, image.target);

@@ -483,8 +483,7 @@ function updateFileResources (cordovaProject, locations) {
         let targetPath = path.join(project.resources_dir, target);
         targetPath = path.relative(cordovaProject.root, targetPath);
 
-        const resfile = path.join('Resources', path.relative(project.resources_dir, targetPath));
-        project.xcode.addResourceFile(resfile);
+        project.xcode.addResourceFile(target);
 
         resourceMap[targetPath] = src;
     });
