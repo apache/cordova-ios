@@ -361,17 +361,17 @@ describe('ios plugin handler', function () {
                     }).xcode;
 
                     // from org.test.plugins.dummyplugin
-                    expect(xcode.hasFile(slashJoin('Resources', 'DummyPlugin.bundle'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('Plugins', 'org.test.plugins.dummyplugin', 'DummyPluginCommand.h'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('Plugins', 'org.test.plugins.dummyplugin', 'DummyPluginCommand.m'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('Plugins', 'org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.h'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('Plugins', 'org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.m'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('DummyPlugin.bundle'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'DummyPluginCommand.h'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'DummyPluginCommand.m'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.h'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.m'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile('usr/lib/libsqlite3.dylib')).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile(slashJoin('SampleApp', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'))).toEqual(jasmine.any(Object));
                     // from org.test.plugins.weblessplugin
-                    expect(xcode.hasFile(slashJoin('Resources', 'WeblessPluginViewController.xib'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('Plugins', 'org.test.plugins.weblessplugin', 'WeblessPluginCommand.h'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('Plugins', 'org.test.plugins.weblessplugin', 'WeblessPluginCommand.m'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('WeblessPluginViewController.xib'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.h'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.m'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile('usr/lib/libsqlite3.dylib')).toEqual(jasmine.any(Object));
 
                     done();
