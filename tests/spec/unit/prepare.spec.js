@@ -1486,9 +1486,9 @@ describe('prepare', function () {
                 expect(exceptionDomains['undefined']).toBeUndefined();
             });
         });
-        //////////////////////////////////////////////////
-        it('<allow-intent> - should add to the list of app schemes', function(done) {
-            wrapper(updateProject(cfg, p.locations), done, function() {
+        /// ///////////////////////////////////////////////
+        it('<allow-intent> - should add to the list of app schemes', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
                 var schemes = plist.build.mostRecentCall.args[0].LSApplicationQueriesSchemes;
 
                 expect(schemes.length).toBe(2);

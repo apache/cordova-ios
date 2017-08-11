@@ -223,7 +223,7 @@ function updateProject (platformConfig, locations) {
 
     // Add the <allow-intent> entries to LSApplicationQueriesSchemes
     var intents = platformConfig.getAllowIntents();
-    var schemes = intents.reduce(function(collection, intent) {
+    var schemes = intents.reduce(function (collection, intent) {
         var scheme = intent.href.split(':')[0];
         if (scheme !== '*') {
             collection.push(scheme);
@@ -233,7 +233,6 @@ function updateProject (platformConfig, locations) {
     if (schemes.length > 0) {
         infoPlist['LSApplicationQueriesSchemes'] = schemes;
     }
-
 
     handleOrientationSettings(platformConfig, infoPlist);
     updateProjectPlistForLaunchStoryboard(platformConfig, infoPlist);
