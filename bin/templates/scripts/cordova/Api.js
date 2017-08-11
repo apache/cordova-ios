@@ -250,14 +250,13 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
             var project_name = self.locations.xcodeCordovaProj.split('/').pop();
             var minDeploymentTarget = self.getPlatformInfo().projectConfig.getPreference('deployment-target', 'ios');
 
-
             var Podfile = require('./lib/Podfile').Podfile;
             var PodsJson = require('./lib/PodsJson').PodsJson;
 
             events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
 
             var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name, minDeploymentTarget); 
+            var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name, minDeploymentTarget);
 
             frameworkPods.forEach(function (obj) {
                 var podJson = {
