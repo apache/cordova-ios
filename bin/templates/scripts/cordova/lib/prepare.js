@@ -922,7 +922,8 @@ function getOrientationValue (platformConfig) {
             // (Apple already enforces this in ATS)
             NSAllowsArbitraryLoadsInWebContent, // boolean (default: false)
             NSAllowsLocalNetworking, // boolean (default: false)
-            NSAllowsArbitraryLoadsInMedia, // boolean (default:false)
+            NSAllowsArbitraryLoadsForMedia, // boolean (default:false)
+
         }
 */
 function processAccessAndAllowNavigationEntries (config) {
@@ -943,7 +944,7 @@ function processAccessAndAllowNavigationEntries (config) {
                 minimum_tls_version: currentElement.minimum_tls_version,
                 requires_forward_secrecy: currentElement.requires_forward_secrecy,
                 requires_certificate_transparency: currentElement.requires_certificate_transparency,
-                allows_arbitrary_loads_in_media: currentElement.allows_arbitrary_loads_in_media,
+                allows_arbitrary_loads_for_media: currentElement.allows_arbitrary_loads_in_media || currentElement.allows_arbitrary_loads_for_media,
                 allows_arbitrary_loads_in_web_content: currentElement.allows_arbitrary_loads_in_web_content,
                 allows_local_networking: currentElement.allows_local_networking
             };
@@ -981,7 +982,7 @@ function processAccessAndAllowNavigationEntries (config) {
             // (Apple already enforces this in ATS)
             NSAllowsArbitraryLoadsInWebContent, // boolean (default: false)
             NSAllowsLocalNetworking, // boolean (default: false)
-            NSAllowsArbitraryLoadsInMedia, // boolean (default:false)
+            NSAllowsArbitraryLoadsForMedia, // boolean (default:false)
         }
 
     null is returned if the URL cannot be parsed, or is to be skipped for ATS.
@@ -1002,9 +1003,9 @@ function parseWhitelistUrlForATS (url, options) {
             retObj.NSAllowsArbitraryLoadsInWebContent = true;
         }
 
-        val = (options.allows_arbitrary_loads_in_media === 'true');
-        if (options.allows_arbitrary_loads_in_media && val) { // default is false
-            retObj.NSAllowsArbitraryLoadsInMedia = true;
+        val = (options.allows_arbitrary_loads_for_media === 'true');
+        if (options.allows_arbitrary_loads_for_media && val) { // default is false
+            retObj.NSAllowsArbitraryLoadsForMedia = true;
         }
 
         val = (options.allows_local_networking === 'true');
@@ -1082,8 +1083,8 @@ function writeATSEntries (config) {
                 if (entry.NSAllowsArbitraryLoadsInWebContent) {
                     ats['NSAllowsArbitraryLoadsInWebContent'] = true;
                 }
-                if (entry.NSAllowsArbitraryLoadsInMedia) {
-                    ats['NSAllowsArbitraryLoadsInMedia'] = true;
+                if (entry.NSAllowsArbitraryLoadsForMedia) {
+                    ats['NSAllowsArbitraryLoadsForMedia'] = true;
                 }
                 if (entry.NSAllowsLocalNetworking) {
                     ats['NSAllowsLocalNetworking'] = true;
