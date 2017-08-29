@@ -115,17 +115,26 @@ module.exports.run = function (buildOpts) {
         }).then(function () {
             // CB-12287: Determine the device we should target when building for a simulator
             if (!buildOpts.device) {
-                var promise;
-                if (buildOpts.target) {
-                    // a target was given to us, find the matching Xcode destination name
-                    promise = require('./list-emulator-build-targets').targetForSimIdentifier(buildOpts.target);
-                } else {
-                    // no target provided, pick a default one (matching our emulator logic)
-                    promise = getDefaultSimulatorTarget();
+                var newTarget = buildOpts.target || '';
+
+                if (newTarget) {
+                    // only grab the device name, not the runtime specifier
+                    newTarget = newTarget.split(',')[0];
                 }
+                // a target was given to us, find the matching Xcode destination name
+                var promise = require('./list-emulator-build-targets').targetForSimIdentifier(newTarget);
                 return promise.then(function (theTarget) {
-                    emulatorTarget = theTarget.name;
-                    events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                    if (!theTarget) {
+                        return getDefaultSimulatorTarget().then(function (defaultTarget) {
+                            emulatorTarget = defaultTarget.name;
+                            events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                            return emulatorTarget;
+                        });
+                    } else {
+                        emulatorTarget = theTarget.name;
+                        events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                        return emulatorTarget;
+                    }
                 });
             }
         }).then(function () {
