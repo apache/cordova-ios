@@ -1,5 +1,5 @@
 // Platform: ios
-// 65fd0f61cca4d979e653ab5cf2dbc32b50416ba9
+// f623343b9ff11fbe7c72d319932cc1fd3fdafed2
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -34,7 +34,7 @@ var require,
         requireStack = [],
     // Map of module ID -> index into requireStack of modules currently being built.
         inProgressModules = {},
-        SEPARATOR = "/";
+        SEPARATOR = ".";
 
 
 
@@ -841,7 +841,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/maj/src/cordova-ios/cordova-js-src/exec.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -1569,7 +1569,7 @@ exports.reset();
 
 });
 
-// file: /Users/maj/src/cordova-ios/cordova-js-src/platform.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1585,12 +1585,12 @@ module.exports = {
 
 });
 
-// file: /Users/maj/src/cordova-ios/cordova-js-src/plugin/ios/console.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
 define("cordova/plugin/ios/console", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
 
-var logger = require("./logger");
+var logger = require('cordova/plugin/ios/logger');
 
 //------------------------------------------------------------------------------
 // object that we're exporting
@@ -1756,7 +1756,7 @@ for (var key in console) {
 
 });
 
-// file: /Users/maj/src/cordova-ios/cordova-js-src/plugin/ios/logger.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
