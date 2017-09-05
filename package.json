@@ -51,7 +51,7 @@
     "node": ">=4"
   },
   "dependencies": {
-    "cordova-common": "2.0.2",
+    "cordova-common": "2.1.0",
     "ios-sim": "^6.0.0",
     "nopt": "^3.0.6",
     "plist": "^1.2.0",
