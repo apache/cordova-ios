@@ -30,7 +30,7 @@ const XCODEBUILD_MIN_VERSION = '7.0.0';
 const XCODEBUILD_NOT_FOUND_MESSAGE =
     'Please install version ' + XCODEBUILD_MIN_VERSION + ' or greater from App Store';
 
-const IOS_DEPLOY_MIN_VERSION = '1.9.0';
+const IOS_DEPLOY_MIN_VERSION = '1.9.2';
 const IOS_DEPLOY_NOT_FOUND_MESSAGE =
     'Please download, build and install version ' + IOS_DEPLOY_MIN_VERSION + ' or greater' +
     ' from https://github.com/phonegap/ios-deploy into your path, or do \'npm install -g ios-deploy\'';
