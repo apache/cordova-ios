@@ -747,11 +747,11 @@ describe('prepare', function () {
             });
         });
 
-        xit('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (fixed allows-arbitrary-loads-for-media)', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (fixed allows-arbitrary-loads-for-media)', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
-            '<access origin="*" allows-arbitrary-loads-for-media="false" />' +
+            '<access origin="*" allows-arbitrary-loads-for-media="true" />' +
             '</widget>';
             readFile.and.returnValue(configXml);
 
@@ -766,7 +766,7 @@ describe('prepare', function () {
             });
         });
 
-        xit('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (fixed allows-arbitrary-loads-for-media)', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (fixed allows-arbitrary-loads-for-media)', function (done) {
 
             var readFile = spyOn(fs, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
