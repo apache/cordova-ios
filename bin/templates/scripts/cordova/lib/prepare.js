@@ -328,7 +328,8 @@ function mapIconResources (icons, iconsDir) {
         {dest: 'icon-72@2x.png', width: 144, height: 144},
         {dest: 'icon-50.png', width: 50, height: 50},
         {dest: 'icon-50@2x.png', width: 100, height: 100},
-        {dest: 'icon-83.5@2x.png', width: 167, height: 167}
+        {dest: 'icon-83.5@2x.png', width: 167, height: 167},
+        {dest: 'icon-1024.png', width: 1024, height: 1024}
     ];
 
     var pathMap = {};
