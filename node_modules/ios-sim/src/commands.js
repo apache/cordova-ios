@@ -36,13 +36,23 @@ var command_lib = {
 
     //jscs:disable disallowUnusedParams
     showsdks: function(args) {
-        lib.showsdks();
+        args = args || {};
+
+        var output = lib.showsdks();
+        if (!args['no-output']) {
+            console.log(output);
+        }
     },
     //jscs:enable disallowUnusedParams
 
     //jscs:disable disallowUnusedParams
     showdevicetypes: function(args) {
-        lib.showdevicetypes();
+        args = args || {};
+
+        var output = lib.showdevicetypes();
+        if (!args['no-output']) {
+            console.log(output);
+        }
     },
     //jscs:enable disallowUnusedParams
 
@@ -82,4 +92,3 @@ var command_lib = {
 };
 
 module.exports = command_lib;
-
