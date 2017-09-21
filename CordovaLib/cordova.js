@@ -841,7 +841,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/shazron/Documents/git/apache/cordova-ios/cordova-js-src/exec.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -1569,7 +1569,7 @@ exports.reset();
 
 });
 
-// file: /Users/shazron/Documents/git/apache/cordova-ios/cordova-js-src/platform.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1585,7 +1585,7 @@ module.exports = {
 
 });
 
-// file: /Users/shazron/Documents/git/apache/cordova-ios/cordova-js-src/plugin/ios/console.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
 define("cordova/plugin/ios/console", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
@@ -1756,7 +1756,7 @@ for (var key in console) {
 
 });
 
-// file: /Users/shazron/Documents/git/apache/cordova-ios/cordova-js-src/plugin/ios/logger.js
+// file: /Users/steveng/repo/cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
