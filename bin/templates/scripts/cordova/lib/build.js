@@ -96,7 +96,7 @@ module.exports.run = function (buildOpts) {
             var buildType = buildOpts.release ? 'release' : 'debug';
             var config = buildConfig.ios[buildType];
             if (config) {
-                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam', 'packageType', 'buildFlag'].forEach(
+                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam', 'packageType', 'buildFlag', 'bundleIdentifier'].forEach(
                     function (key) {
                         buildOpts[key] = buildOpts[key] || config[key];
                     });
@@ -187,6 +187,15 @@ module.exports.run = function (buildOpts) {
 
             if (buildOpts.developmentTeam) {
                 exportOptions.teamID = buildOpts.developmentTeam;
+            }
+     
+            if (buildOpts.provisioningProfile && buildOpts.bundleIdentifier) {               
+                exportOptions.provisioningProfiles = { [buildOpts.bundleIdentifier]  : String(buildOpts.provisioningProfile) };
+                exportOptions.signingStyle = 'manual';
+            }
+
+            if(buildOpts.codeSignIdentity) {
+                exportOptions.signingCertificate = buildOpts.codeSignIdentity;
             }
 
             var exportOptionsPlist = plist.build(exportOptions);
