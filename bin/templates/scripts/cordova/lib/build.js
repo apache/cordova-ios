@@ -197,7 +197,7 @@ module.exports.run = function (buildOpts) {
             }
 
             if (buildOpts.provisioningProfile && bundleIdentifier) {
-                exportOptions.provisioningProfiles = { [bundleIdentifier]:String(buildOpts.provisioningProfile)};
+                exportOptions.provisioningProfiles = { [ bundleIdentifier ]:String(buildOpts.provisioningProfile)};
                 exportOptions.signingStyle = 'manual';
             }
 
