@@ -180,9 +180,6 @@ module.exports.run = function (buildOpts) {
                 return;
             }
 
-            console.log('projectPath:' + projectPath);
-            console.log('projectName:' + projectName);
-
             var locations = {
                 root: projectPath,
                 pbxproj: path.join(projectPath, projectName, 'project.pbxproj')
