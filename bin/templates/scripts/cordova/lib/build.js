@@ -26,6 +26,7 @@ var plist = require('plist');
 var util = require('util');
 
 var check_reqs = require('./check_reqs');
+var projectFile = require('./projectFile');
 
 var events = require('cordova-common').events;
 
@@ -179,6 +180,16 @@ module.exports.run = function (buildOpts) {
                 return;
             }
 
+            console.log('projectPath:' + projectPath);
+            console.log('projectName:' + projectName);
+
+            var locations = {
+                root: projectPath,
+                pbxproj: path.join(projectPath, projectName, 'project.pbxproj')
+            };
+
+            var bundleIdentifier = projectFile.parse(locations).getPackageName();
+            
             var exportOptions = {'compileBitcode': false, 'method': 'development'};
 
             if (buildOpts.packageType) {
@@ -189,8 +200,8 @@ module.exports.run = function (buildOpts) {
                 exportOptions.teamID = buildOpts.developmentTeam;
             }
      
-            if (buildOpts.provisioningProfile && buildOpts.bundleIdentifier) {               
-                exportOptions.provisioningProfiles = { [buildOpts.bundleIdentifier]  : String(buildOpts.provisioningProfile) };
+            if (buildOpts.provisioningProfile && bundleIdentifier) {               
+                exportOptions.provisioningProfiles = { [bundleIdentifier]  : String(buildOpts.provisioningProfile) };
                 exportOptions.signingStyle = 'manual';
             }
 
