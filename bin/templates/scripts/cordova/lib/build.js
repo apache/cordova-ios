@@ -186,7 +186,6 @@ module.exports.run = function (buildOpts) {
             };
 
             var bundleIdentifier = projectFile.parse(locations).getPackageName();
-            
             var exportOptions = {'compileBitcode': false, 'method': 'development'};
 
             if (buildOpts.packageType) {
@@ -196,13 +195,13 @@ module.exports.run = function (buildOpts) {
             if (buildOpts.developmentTeam) {
                 exportOptions.teamID = buildOpts.developmentTeam;
             }
-     
-            if (buildOpts.provisioningProfile && bundleIdentifier) {               
-                exportOptions.provisioningProfiles = { [bundleIdentifier]  : String(buildOpts.provisioningProfile) };
+
+            if (buildOpts.provisioningProfile && bundleIdentifier) {
+                exportOptions.provisioningProfiles = {[bundleIdentifier]:String(buildOpts.provisioningProfile)};
                 exportOptions.signingStyle = 'manual';
             }
 
-            if(buildOpts.codeSignIdentity) {
+            if (buildOpts.codeSignIdentity) {
                 exportOptions.signingCertificate = buildOpts.codeSignIdentity;
             }
 
