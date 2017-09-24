@@ -26,6 +26,8 @@ var plist = require('plist');
 var util = require('util');
 
 var check_reqs = require('./check_reqs');
+var projectFile = require('./projectFile');
+var self = this;
 
 var events = require('cordova-common').events;
 
@@ -179,6 +181,9 @@ module.exports.run = function (buildOpts) {
                 return;
             }
 
+            var project = projectFile.parse(self.locations);
+            var pkgName = project.getPackageName();
+
             var exportOptions = {'compileBitcode': false, 'method': 'development'};
 
             if (buildOpts.packageType) {
@@ -189,12 +194,12 @@ module.exports.run = function (buildOpts) {
                 exportOptions.teamID = buildOpts.developmentTeam;
             }
      
-            if (buildOpts.provisioningProfile && buildOpts.bundleIdentifier) {               
-                exportOptions.provisioningProfiles = { [buildOpts.bundleIdentifier]  : String(buildOpts.provisioningProfile) };
+            if (pkgName && buildOpts.provisioningProfile) {               
+                exportOptions.provisioningProfiles = {[pkgName]: buildOpts.provisioningProfile};
                 exportOptions.signingStyle = 'manual';
             }
 
-            if(buildOpts.codeSignIdentity) {
+            if (buildOpts.codeSignIdentity) {
                 exportOptions.signingCertificate = buildOpts.codeSignIdentity;
             }
 
