@@ -192,6 +192,10 @@ module.exports.run = function (buildOpts) {
                 exportOptions.method = buildOpts.packageType;
             }
 
+            if (buildOpts.iCloudContainerEnvironment) {
+                exportOptions.iCloudContainerEnvironment = buildOpts.iCloudContainerEnvironment;
+            }
+
             if (buildOpts.developmentTeam) {
                 exportOptions.teamID = buildOpts.developmentTeam;
             }
