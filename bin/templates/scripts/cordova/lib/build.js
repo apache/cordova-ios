@@ -182,7 +182,7 @@ module.exports.run = function (buildOpts) {
 
             var locations = {
                 root: projectPath,
-                pbxproj: path.join(projectPath, projectName, 'project.pbxproj')
+                pbxproj: path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')
             };
 
             var bundleIdentifier = projectFile.parse(locations).getPackageName();
