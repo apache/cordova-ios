@@ -313,23 +313,33 @@ function mapIconResources (icons, iconsDir) {
     // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/IconMatrix.html
     // for launch images sizes reference.
     var platformIcons = [
+        {dest: 'icon-20.png', width: 20, height: 20},
+        {dest: 'icon-20@2x.png', width: 40, height: 40},
+        {dest: 'icon-20@3x.png', width: 60, height: 60},
+        {dest: 'icon-40.png', width: 40, height: 40},
+        {dest: 'icon-50.png', width: 50, height: 50},
+        {dest: 'icon-50@2x.png', width: 100, height: 100},
         {dest: 'icon-60@2x.png', width: 120, height: 120},
         {dest: 'icon-60@3x.png', width: 180, height: 180},
+        {dest: 'icon-72.png', width: 72, height: 72},
+        {dest: 'icon-72@2x.png', width: 144, height: 144},
         {dest: 'icon-76.png', width: 76, height: 76},
         {dest: 'icon-76@2x.png', width: 152, height: 152},
+        {dest: 'icon-83.5@2x.png', width: 167, height: 167},
+        {dest: 'icon-1024.png', width: 1024, height: 1024},
         {dest: 'icon-small.png', width: 29, height: 29},
         {dest: 'icon-small@2x.png', width: 58, height: 58},
-        {dest: 'icon-40.png', width: 40, height: 40},
-        {dest: 'icon-40@2x.png', width: 80, height: 80},
         {dest: 'icon-small@3x.png', width: 87, height: 87},
         {dest: 'icon.png', width: 57, height: 57},
         {dest: 'icon@2x.png', width: 114, height: 114},
-        {dest: 'icon-72.png', width: 72, height: 72},
-        {dest: 'icon-72@2x.png', width: 144, height: 144},
-        {dest: 'icon-50.png', width: 50, height: 50},
-        {dest: 'icon-50@2x.png', width: 100, height: 100},
-        {dest: 'icon-83.5@2x.png', width: 167, height: 167},
-        {dest: 'icon-1024.png', width: 1024, height: 1024}
+        {dest: 'AppIcon24x24@2x.png', width: 48, height: 48},
+        {dest: 'AppIcon27.5x27.5@2x.png', width: 55, height: 55},
+        {dest: 'AppIcon29x29@2x.png', width: 58, height: 58},
+        {dest: 'AppIcon29x29@3x.png', width: 87, height: 87},
+        {dest: 'AppIcon40x40@2x.png', width: 80, height: 80},
+        {dest: 'AppIcon44x44@2x.png', width: 88, height: 88},
+        {dest: 'AppIcon86x86@2x.png', width: 172, height: 172},
+        {dest: 'AppIcon98x98@2x.png', width: 196, height: 196}
     ];
 
     var pathMap = {};
