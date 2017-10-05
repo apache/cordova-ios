@@ -775,6 +775,11 @@
 
 // ///////////////////////
 
+- (void)destroyWebView
+{
+    self.webViewEngine = nil;
+}
+
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -782,6 +787,11 @@
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
+
+    [self.webViewEngine loadHTMLString:@"about:blank" baseURL:nil];
+    [self.pluginObjects removeAllObjects];
+    [self.webView removeFromSuperview];
+    [self destroyWebView];
 }
 
 - (NSInteger*)userAgentLockToken

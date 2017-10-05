@@ -88,5 +88,6 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 - (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
+- (void)destroyWebView;
 
 @end
