@@ -317,6 +317,7 @@ function mapIconResources (icons, iconsDir) {
         {dest: 'icon-20@2x.png', width: 40, height: 40},
         {dest: 'icon-20@3x.png', width: 60, height: 60},
         {dest: 'icon-40.png', width: 40, height: 40},
+        {dest: 'icon-40@2x.png', width: 80, height: 80},
         {dest: 'icon-50.png', width: 50, height: 50},
         {dest: 'icon-50@2x.png', width: 100, height: 100},
         {dest: 'icon-60@2x.png', width: 120, height: 120},
