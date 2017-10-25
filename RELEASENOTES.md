@@ -22,6 +22,11 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.5.3 (Oct 25, 2017)
+* [CB-13493](https://issues.apache.org/jira/browse/CB-13493) Updated checked-in node_modules
+* [CB-13290](https://issues.apache.org/jira/browse/CB-13290) (ios) Update splash screen mapping for missing devices
+* [CB-13454](https://issues.apache.org/jira/browse/CB-13454) (ios) re-add icon-40@2x.png that was accidentally removed
+
 ### 4.5.2 (Oct 09, 2017)
 * [CB-13417](https://issues.apache.org/jira/browse/CB-13417) Updated checked in node_modules
 * [CB-12896](https://issues.apache.org/jira/browse/CB-12896) (ios) Update icon mapping
