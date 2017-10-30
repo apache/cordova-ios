@@ -97,7 +97,7 @@ static NSMutableArray* gPendingSetUserAgentBlocks = nil;
 
     VerboseLog(@"Released lock %d", *lockToken);
     if ([gPendingSetUserAgentBlocks count] > 0) {
-        void (^block)() = [gPendingSetUserAgentBlocks objectAtIndex:0];
+        void (^block)(NSInteger lockToken) = [gPendingSetUserAgentBlocks objectAtIndex:0];
         [gPendingSetUserAgentBlocks removeObjectAtIndex:0];
         gCurrentLockToken = ++gNextLockToken;
         NSLog(@"Gave lock %ld", (long)gCurrentLockToken);
