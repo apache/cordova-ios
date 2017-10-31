@@ -97,7 +97,7 @@ module.exports.run = function (buildOpts) {
             var buildType = buildOpts.release ? 'release' : 'debug';
             var config = buildConfig.ios[buildType];
             if (config) {
-                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam', 'packageType', 'buildFlag', 'iCloudContainerEnvironment'].forEach(
+                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam', 'packageType', 'buildFlag', 'iCloudContainerEnvironment', 'automaticProvisioning'].forEach(
                     function (key) {
                         buildOpts[key] = buildOpts[key] || config[key];
                     });
@@ -225,7 +225,7 @@ module.exports.run = function (buildOpts) {
             }
 
             function packageArchive () {
-                var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath);
+                var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
                 return spawn('xcodebuild', xcodearchiveArgs, projectPath);
             }
 
@@ -337,15 +337,16 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
  * @param  {String}  projectPath        Path to project file. Will be used to set CWD for xcodebuild
  * @param  {String}  outputPath         Output directory to contain the IPA
  * @param  {String}  exportOptionsPath  Path to the exportOptions.plist file
+ * @param  {Boolean} autoProvisioning   Whether to allow Xcode to automatically update provisioning
  * @return {Array}                      Array of arguments that could be passed directly to spawn method
  */
-function getXcodeArchiveArgs (projectName, projectPath, outputPath, exportOptionsPath) {
+function getXcodeArchiveArgs (projectName, projectPath, outputPath, exportOptionsPath, autoProvisioning) {
     return [
         '-exportArchive',
         '-archivePath', projectName + '.xcarchive',
         '-exportOptionsPlist', exportOptionsPath,
         '-exportPath', outputPath
-    ];
+    ].concat(autoProvisioning ? ['-allowProvisioningUpdates'] : []);
 }
 
 function parseBuildFlag (buildFlag, args) {

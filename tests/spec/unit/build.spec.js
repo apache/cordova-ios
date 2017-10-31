@@ -199,6 +199,20 @@ describe('build', function () {
             expect(archiveArgs.length).toEqual(7);
             done();
         });
+
+        it('should generate the appropriate arguments for automatic provisioning', function (done) {
+            var archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path', true);
+            expect(archiveArgs[0]).toEqual('-exportArchive');
+            expect(archiveArgs[1]).toEqual('-archivePath');
+            expect(archiveArgs[2]).toEqual('TestProjectName.xcarchive');
+            expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
+            expect(archiveArgs[4]).toEqual('/test/export/options/path');
+            expect(archiveArgs[5]).toEqual('-exportPath');
+            expect(archiveArgs[6]).toEqual('/test/output/path');
+            expect(archiveArgs[7]).toEqual('-allowProvisioningUpdates');
+            expect(archiveArgs.length).toEqual(8);
+            done();
+        });
     });
 
     describe('parseBuildFlag method', function () {
