@@ -28,6 +28,10 @@
 #import "CDVLocalStorage.h"
 #import "CDVCommandDelegateImpl.h"
 #import <Foundation/NSCharacterSet.h>
+#import <CoreTelephony/CTCallCenter.h>
+#import <CoreTelephony/CTCall.h>
+#import <CallKit/CXCallObserver.h>
+#import <CallKit/CXCall.h>
 
 @interface CDVViewController () {
     NSInteger _userAgentLockToken;
@@ -39,6 +43,7 @@
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) id <CDVWebViewEngineProtocol> webViewEngine;
+@property (nonatomic, readwrite, strong) CXCallObserver* callObserver;
 
 @property (readwrite, assign) BOOL initialized;
 
@@ -74,6 +79,11 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
                                                      name:UIApplicationDidEnterBackgroundNotification object:nil];
 
+         if (IsAtLeastiOSVersion(@"10.0")) {
+             CXCallObserver *callObserver = [[CXCallObserver alloc] init];
+             [callObserver setDelegate:self queue:nil];
+             self.callObserver = callObserver;
+         }
         // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
         self.supportedOrientations = [self parseInterfaceOrientations:
             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
@@ -343,9 +353,9 @@
             }
         }
     }];
-    
+
     // /////////////////
-    
+
     NSString* bgColorString = [self.settings cordovaSettingForKey:@"BackgroundColor"];
     UIColor* bgColor = [self colorFromColorString:bgColorString];
     [self.webView setBackgroundColor:bgColor];
@@ -405,16 +415,16 @@
     if (!colorString) {
         return nil;
     }
-    
+
     // Validate format
     NSError* error = NULL;
     NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:@"^(#[0-9A-F]{3}|(0x|#)([0-9A-F]{2})?[0-9A-F]{6})$" options:NSRegularExpressionCaseInsensitive error:&error];
     NSUInteger countMatches = [regex numberOfMatchesInString:colorString options:0 range:NSMakeRange(0, [colorString length])];
-    
+
     if (!countMatches) {
         return nil;
     }
-    
+
     // #FAB to #FFAABB
     if ([colorString hasPrefix:@"#"] && [colorString length] == 4) {
         NSString* r = [colorString substringWithRange:NSMakeRange(1, 1)];
@@ -422,22 +432,22 @@
         NSString* b = [colorString substringWithRange:NSMakeRange(3, 1)];
         colorString = [NSString stringWithFormat:@"#%@%@%@%@%@%@", r, r, g, g, b, b];
     }
-    
+
     // #RRGGBB to 0xRRGGBB
     colorString = [colorString stringByReplacingOccurrencesOfString:@"#" withString:@"0x"];
-    
+
     // 0xRRGGBB to 0xAARRGGBB
     if ([colorString hasPrefix:@"0x"] && [colorString length] == 8) {
         colorString = [@"0xFF" stringByAppendingString:[colorString substringFromIndex:2]];
     }
-    
+
     // 0xAARRGGBB to int
     unsigned colorValue = 0;
     NSScanner *scanner = [NSScanner scannerWithString:colorString];
     if (![scanner scanHexInt:&colorValue]) {
         return nil;
     }
-    
+
     // int to UIColor
     return [UIColor colorWithRed:((float)((colorValue & 0x00FF0000) >> 16))/255.0
                            green:((float)((colorValue & 0x0000FF00) >>  8))/255.0
@@ -480,9 +490,9 @@
 }
 
 // CB-12098
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000  
-- (NSUInteger)supportedInterfaceOrientations  
-#else  
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+- (NSUInteger)supportedInterfaceOrientations
+#else
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 #endif
 {
@@ -728,6 +738,16 @@
 {
     // NSLog(@"%@",@"applicationWillResignActive");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');" scheduledOnRunLoop:NO];
+
+    if (!IsAtLeastiOSVersion(@"10.0")) {
+        CTCallCenter *callCenter = [[CTCallCenter alloc] init];
+        for (CTCall *call in callCenter.currentCalls)  {
+            if (call.callState == CTCallStateConnected) {
+                [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('callstart');"];
+                break;
+            }
+        }
+    }
 }
 
 /*
@@ -753,6 +773,27 @@
 {
     // NSLog(@"%@",@"applicationDidBecomeActive");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('active');"];
+
+    if (!IsAtLeastiOSVersion(@"10.0")) {
+        CTCallCenter *callCenter = [[CTCallCenter alloc] init];
+        for (CTCall *call in callCenter.currentCalls)  {
+            if (call.callState == CTCallStateDisconnected) {
+                [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('callend');"];
+                break;
+            }
+        }
+    }
+}
+
+// Used for iOS 10.0+
+- (void)callObserver:(CXCallObserver *)callObserver callChanged:(CXCall *)call {
+    if (call.hasEnded) {
+        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('callend');"];
+    }
+
+    if (call.hasConnected) {
+        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('callstart');"];
+    }
 }
 
 /*
