@@ -25,11 +25,11 @@
 
 @implementation UIView (org_apache_cordova_UIView_Extension)
 
-@dynamic scrollView;
+@dynamic cdv_srollView;
 
-- (UIScrollView*)scrollView
+- (UIScrollView*)cdv_srollView
 {
-    SEL scrollViewSelector = NSSelectorFromString(@"scrollView");
+    SEL scrollViewSelector = NSSelectorFromString(@"cdv_srollView");
 
     if ([self respondsToSelector:scrollViewSelector]) {
         return ((id (*)(id, SEL))objc_msgSend)(self, scrollViewSelector);

@@ -26,7 +26,7 @@
 
 @interface UIView (org_apache_cordova_UIView_Extension)
 
-@property (nonatomic, weak) UIScrollView* scrollView;
+@property (nonatomic, weak) UIScrollView* cdv_srollView;
 
 @end
 

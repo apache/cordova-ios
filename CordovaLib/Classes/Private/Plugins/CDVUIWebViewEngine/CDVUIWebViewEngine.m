@@ -116,8 +116,8 @@
 
     // prevent webView from bouncing
     if (!bounceAllowed) {
-        if ([uiWebView respondsToSelector:@selector(scrollView)]) {
-            ((UIScrollView*)[uiWebView scrollView]).bounces = NO;
+        if ([uiWebView respondsToSelector:@selector(cdv_srollView)]) {
+            ((UIScrollView*)[uiWebView cdv_srollView]).bounces = NO;
         } else {
             for (id subview in self.webView.subviews) {
                 if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
@@ -129,7 +129,7 @@
 
     NSString* decelerationSetting = [settings cordovaSettingForKey:@"UIWebViewDecelerationSpeed"];
     if (![@"fast" isEqualToString:decelerationSetting]) {
-        [uiWebView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
+        [uiWebView.cdv_srollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
     }
 
     NSInteger paginationBreakingMode = 0; // default - UIWebPaginationBreakingModePage
