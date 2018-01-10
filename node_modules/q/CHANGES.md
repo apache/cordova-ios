@@ -1,4 +1,18 @@
 
+## 1.5.1
+
+ - Q.any now annotates its error message to clarify that Q.any was involved and
+   includes only the last error emitted. (Ivan Etchart)
+ - Avoid domain.dispose during tests in preparation for Node.js 9. (Anna
+   Henningsen)
+
+## 1.5.0
+
+ - Q.any gives an error message from the last rejected promise
+ - Throw if callback supplied to "finally" is invalid (@grahamrhay)
+ - Long stack trace improvements, can now construct long stack traces
+   across rethrows.
+
 ## 1.4.1
 
  - Address an issue that prevented Q from being used as a `<script>` for

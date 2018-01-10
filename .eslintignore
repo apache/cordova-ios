@@ -1,3 +1,4 @@
 bin/node_modules/*
 bin/templates/project/*
 tests/spec/unit/fixtures/*
+CordovaLib/cordova.js

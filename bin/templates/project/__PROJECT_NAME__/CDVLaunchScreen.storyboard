@@ -43,7 +43,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="2ns-9I-Qjs" secondAttribute="trailing" id="FZL-3Z-NFz"/>
-                            <constraint firstItem="2ns-9I-Qjs" firstAttribute="bottom" secondItem="xb3-aO-Qok" secondAttribute="top" id="L9l-pw-wXj"/>
+                            <constraint firstItem="2ns-9I-Qjs" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="L9l-pw-wXj"/>
                             <constraint firstItem="2ns-9I-Qjs" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="oGN-hc-Uzj"/>
                             <constraint firstItem="2ns-9I-Qjs" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="rS9-Wd-zY4"/>
                         </constraints>
