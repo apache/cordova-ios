@@ -739,6 +739,15 @@
 {
     // NSLog(@"%@",@"applicationWillEnterForeground");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
+    
+    if (!IsAtLeastiOSVersion((@"11.0"))) {
+        /** Clipboard fix **/
+        UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+        NSString* string = pasteboard.string;
+        if (string) {
+            [pasteboard setValue:string forPasteboardType:@"public.text"];
+        }
+    }
 }
 
 // This method is called to let your application know that it moved from the inactive to active state.
