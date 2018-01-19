@@ -740,7 +740,7 @@
     // NSLog(@"%@",@"applicationWillEnterForeground");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
     
-    if (!IsAtLeastiOSVersion((@"11.0"))) {
+    if (!IsAtLeastiOSVersion(@"11.0")) {
         /** Clipboard fix **/
         UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
         NSString* string = pasteboard.string;
