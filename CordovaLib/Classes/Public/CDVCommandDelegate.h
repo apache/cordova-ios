@@ -44,7 +44,7 @@ typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 // in dead-lock. This method must be called from the UI thread.
 - (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop;
 // Runs the given block on a background thread using a shared thread-pool.
-- (void)runInBackground:(void (^)())block;
+- (void)runInBackground:(void (^)(void))block;
 // Returns the User-Agent of the associated UIWebView.
 - (NSString*)userAgent;
 
