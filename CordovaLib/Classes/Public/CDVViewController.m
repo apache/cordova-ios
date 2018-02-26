@@ -662,6 +662,12 @@
     id obj = [self.pluginObjects objectForKey:className];
     if (!obj) {
         obj = [[NSClassFromString(className)alloc] initWithWebViewEngine:_webViewEngine];
+        if (!obj) {
+            NSString* fullClassName = [NSString stringWithFormat:@"%@.%@",
+                                       NSBundle.mainBundle.infoDictionary[@"CFBundleExecutable"],
+                                       className];
+            obj = [[NSClassFromString(fullClassName)alloc] initWithWebViewEngine:_webViewEngine];
+        }
 
         if (obj != nil) {
             [self registerPlugin:obj withClassName:className];
