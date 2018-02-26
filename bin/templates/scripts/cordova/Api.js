@@ -285,7 +285,6 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
             if (podfileFile.isDirty()) {
                 podfileFile.write();
                 events.emit('verbose', 'Running `pod install` (to install plugins)');
-                projectFile.purgeProjectFileCache(self.locations.root);
 
                 return podfileFile.install(check_reqs.check_cocoapods);
             } else {
