@@ -168,7 +168,7 @@
     return [_viewController getCommandInstance:pluginName];
 }
 
-- (void)runInBackground:(void (^)())block
+- (void)runInBackground:(void (^)(void))block
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
 }
