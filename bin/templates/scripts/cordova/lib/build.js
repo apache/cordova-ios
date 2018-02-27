@@ -171,7 +171,7 @@ module.exports.run = function (buildOpts) {
             // remove the build/device folder before building
             return spawn('rm', [ '-rf', buildOutputDir ], projectPath)
                 .then(function () {
-                    var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget);
+                    var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
                     return spawn('xcodebuild', xcodebuildArgs, projectPath);
                 });
 
@@ -268,9 +268,10 @@ module.exports.findXCodeProjectIn = findXCodeProjectIn;
  * @param  {Boolean} isDevice       Flag that specify target for package (device/emulator)
  * @param  {Array}   buildFlags
  * @param  {String}  emulatorTarget Target for emulator (rather than default)
+ * @param  {Boolean} autoProvisioning   Whether to allow Xcode to automatically update provisioning
  * @return {Array}                  Array of arguments that could be passed directly to spawn method
  */
-function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, buildFlags, emulatorTarget) {
+function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, buildFlags, emulatorTarget, autoProvisioning) {
     var xcodebuildArgs;
     var options;
     var buildActions;
@@ -306,6 +307,10 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         // This is preferable to just ignoring the flags that the user has passed in.
         if (customArgs.sdk) {
             customArgs.otherFlags = customArgs.otherFlags.concat(['-sdk', customArgs.sdk]);
+        }
+
+        if (autoProvisioning) {
+            options = options.concat(['-allowProvisioningUpdates']);
         }
     } else { // emulator
         options = [

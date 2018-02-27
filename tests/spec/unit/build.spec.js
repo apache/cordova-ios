@@ -181,6 +181,29 @@ describe('build', function () {
             expect(args.length).toEqual(17);
             done();
         });
+
+        it('should generate appropriate args for automatic provisioning', function (done) {
+            var isDevice = true;
+            var args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null, null, true);
+            expect(args[0]).toEqual('-xcconfig');
+            expect(args[1]).toEqual(path.join('/test', 'build-testconfiguration.xcconfig'));
+            expect(args[2]).toEqual('-workspace');
+            expect(args[3]).toEqual('TestProjectName.xcworkspace');
+            expect(args[4]).toEqual('-scheme');
+            expect(args[5]).toEqual('TestProjectName');
+            expect(args[6]).toEqual('-configuration');
+            expect(args[7]).toEqual('TestConfiguration');
+            expect(args[8]).toEqual('-destination');
+            expect(args[9]).toEqual('generic/platform=iOS');
+            expect(args[10]).toEqual('-archivePath');
+            expect(args[11]).toEqual('TestProjectName.xcarchive');
+            expect(args[12]).toEqual('-allowProvisioningUpdates');
+            expect(args[13]).toEqual('archive');
+            expect(args[14]).toEqual('CONFIGURATION_BUILD_DIR=' + path.join(testProjectPath, 'build', 'device'));
+            expect(args[15]).toEqual('SHARED_PRECOMPS_DIR=' + path.join(testProjectPath, 'build', 'sharedpch'));
+            expect(args.length).toEqual(16);
+            done();
+        });
     });
 
     describe('getXcodeArchiveArgs method', function () {
