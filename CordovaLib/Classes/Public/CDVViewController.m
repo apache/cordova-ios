@@ -775,11 +775,6 @@
 
 // ///////////////////////
 
-- (void)destroyWebView
-{
-    self.webViewEngine = nil;
-}
-
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -791,7 +786,7 @@
     [self.webViewEngine loadHTMLString:@"about:blank" baseURL:nil];
     [self.pluginObjects removeAllObjects];
     [self.webView removeFromSuperview];
-    [self destroyWebView];
+    self.webViewEngine = nil;
 }
 
 - (NSInteger*)userAgentLockToken
