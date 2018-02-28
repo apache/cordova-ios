@@ -1,10 +1,10 @@
 language: objective-c
-osx_image: xcode8.3
+osx_image: xcode9.2
 sudo: false
 env:
   matrix:
-  - TRAVIS_NODE_VERSION: '4.2'
-  - TRAVIS_NODE_VERSION: '6.11'
+  - TRAVIS_NODE_VERSION: '4.8.7'
+  - TRAVIS_NODE_VERSION: '6.13'
 before_install:
 - npm cache clean -f
 - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
