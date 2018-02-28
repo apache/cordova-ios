@@ -782,6 +782,11 @@
     [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
+
+    [self.webViewEngine loadHTMLString:@"about:blank" baseURL:nil];
+    [self.pluginObjects removeAllObjects];
+    [self.webView removeFromSuperview];
+    self.webViewEngine = nil;
 }
 
 - (NSInteger*)userAgentLockToken
