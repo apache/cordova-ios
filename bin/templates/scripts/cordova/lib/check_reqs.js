@@ -26,7 +26,7 @@ const versions = require('./versions');
 
 const SUPPORTED_OS_PLATFORMS = [ 'darwin' ];
 
-const XCODEBUILD_MIN_VERSION = '7.0.0';
+const XCODEBUILD_MIN_VERSION = '9.0.0';
 const XCODEBUILD_NOT_FOUND_MESSAGE =
     'Please install version ' + XCODEBUILD_MIN_VERSION + ' or greater from App Store';
 
