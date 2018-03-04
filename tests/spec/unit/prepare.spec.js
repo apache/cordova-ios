@@ -1552,6 +1552,16 @@ describe('prepare', function () {
                 expect(exceptionDomains['undefined']).toBeUndefined();
             });
         });
+        /// ///////////////////////////////////////////////
+        it('<allow-intent> - should add to the list of app schemes', function (done) {
+            wrapper(updateProject(cfg, p.locations), done, function () {
+                var schemes = plist.build.mostRecentCall.args[0].LSApplicationQueriesSchemes;
+
+                expect(schemes.length).toBe(2);
+                expect(schemes[0]).toEqual('https');
+                expect(schemes[1]).toEqual('myapp');
+            });
+        });
         it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', function (done) {
             cfg.shortName = function () { return 'MyApp'; };
             wrapper(updateProject(cfg, p.locations), done, function () {
