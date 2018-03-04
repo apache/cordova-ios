@@ -304,7 +304,7 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
     shell.mkdir('-p', path.dirname(dest));
 
     if (link) {
-        symlinkFileOrDirTree(src, dest);
+        linkFileOrDirTree(src, dest);
     } else if (fs.statSync(src).isDirectory()) {
         // XXX shelljs decides to create a directory when -R|-r is used which sucks. http://goo.gl/nbsjq
         shell.cp('-Rf', path.join(src, '/*'), dest);
@@ -322,7 +322,7 @@ function copyNewFile (plugin_dir, src, project_dir, dest, link) {
     copyFile(plugin_dir, src, project_dir, dest, !!link);
 }
 
-function symlinkFileOrDirTree(src, dest) {
+function linkFileOrDirTree(src, dest) {
     if (fs.existsSync(dest)) {
         shell.rm('-Rf', dest);
     }
@@ -330,11 +330,11 @@ function symlinkFileOrDirTree(src, dest) {
     if (fs.statSync(src).isDirectory()) {
         shell.mkdir('-p', dest);
         fs.readdirSync(src).forEach(function(entry) {
-            symlinkFileOrDirTree(path.join(src, entry), path.join(dest, entry));
+            linkFileOrDirTree(path.join(src, entry), path.join(dest, entry));
         });
     }
     else {
-        fs.symlinkSync(path.relative(fs.realpathSync(path.dirname(dest)), src), dest);
+        fs.linkSync(src, dest);
     }
 }
 

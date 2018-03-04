@@ -79,6 +79,7 @@
 - (NSString*)appURLScheme;
 - (NSURL*)errorURL;
 
+- (UIColor*)colorFromColorString:(NSString*)colorString;
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 

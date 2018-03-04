@@ -24,6 +24,7 @@ var shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
     plist = require('plist'),
+    xmlescape = require('xml-escape'),
     ROOT = path.join(__dirname, '..', '..'),
     events = require('cordova-common').events;
 
@@ -145,10 +146,14 @@ function copyTemplateFiles(project_path, project_name, project_template_dir, pac
      * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
      * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
      */
+
+    // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
+    var project_name_xml_esc = xmlescape(project_name);
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(r+'.xcworkspace', 'contents.xcworkspacedata'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(r+'.xcworkspace', 'xcshareddata', 'xcschemes', project_name +'.xcscheme'));
+
     var project_name_esc = project_name.replace(/&/g, '\\&');
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r+'.xcodeproj', 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r+'.xcworkspace', 'contents.xcworkspacedata'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r+'.xcworkspace', 'xcshareddata', 'xcschemes', project_name +'.xcscheme'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));

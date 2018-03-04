@@ -25,10 +25,10 @@ var iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 describe('Platform Api', function () {
 
     describe('constructor', function() {
-        it('should throw if provided directory does not contain an xcodeproj file', function() {
+        it('Test 001 : should throw if provided directory does not contain an xcodeproj file', function() {
             expect(function() { new Api('ios', path.join(FIXTURES, '..')); }).toThrow();
         });
-        it('should create an instance with path, pbxproj, xcodeproj, originalName and cordovaproj properties', function() {
+        it('Test 002 : should create an instance with path, pbxproj, xcodeproj, originalName and cordovaproj properties', function() {
             expect(function() {
                 var p = new Api('ios',iosProjectFixture);
                 expect(p.locations.root).toEqual(iosProjectFixture);
