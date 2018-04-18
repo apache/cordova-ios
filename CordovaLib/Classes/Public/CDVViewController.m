@@ -720,12 +720,26 @@
     }
 }
 
+- (void)checkAndReinitViewUrl
+{
+    NSString *loadedUrl = [[self.webViewEngine URL] absoluteString];
+    if (loadedUrl == (id) [NSNull null] || [loadedUrl length]==0 || [loadedUrl isEqualToString:@"about:blank"]) {
+        NSURL* appURL = [self appUrl];
+        
+        if (appURL) {
+            NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+            [self.webViewEngine loadRequest:appReq];
+        }
+    }
+}
+
 /*
  This method is called to let your application know that it is about to move from the active to inactive state.
  You should use this method to pause ongoing tasks, disable timer, ...
  */
 - (void)onAppWillResignActive:(NSNotification*)notification
 {
+    [self checkAndReinitViewUrl];
     // NSLog(@"%@",@"applicationWillResignActive");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');" scheduledOnRunLoop:NO];
 }
@@ -737,6 +751,7 @@
  */
 - (void)onAppWillEnterForeground:(NSNotification*)notification
 {
+    [self checkAndReinitViewUrl];
     // NSLog(@"%@",@"applicationWillEnterForeground");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
 
@@ -751,7 +766,8 @@
 // This method is called to let your application know that it moved from the inactive to active state.
 - (void)onAppDidBecomeActive:(NSNotification*)notification
 {
-    // NSLog(@"%@",@"applicationDidBecomeActive");
+    [self checkAndReinitViewUrl];
+// NSLog(@"%@",@"applicationDidBecomeActive");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('active');"];
 }
 
@@ -761,6 +777,7 @@
  */
 - (void)onAppDidEnterBackground:(NSNotification*)notification
 {
+    [self checkAndReinitViewUrl];
     // NSLog(@"%@",@"applicationDidEnterBackground");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
 }
