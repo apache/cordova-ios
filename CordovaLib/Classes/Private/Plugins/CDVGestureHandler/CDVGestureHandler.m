@@ -64,11 +64,7 @@
 
 - (void)handleLongPressGestures:(UILongPressGestureRecognizer*)sender
 {
-    if ([sender isEqual:self.lpgr]) {
-        if (sender.state == UIGestureRecognizerStateBegan) {
-            NSLog(@"Ignoring a longpress in order to suppress the magnifying glass.");
-        }
-    }
+    
 }
 
 @end
