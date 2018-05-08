@@ -37,13 +37,13 @@
 
     self.lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGestures:)];
     self.lpgr.minimumPressDuration = 0.45f;
-    self.lpgr.allowableMovement = 100.0f;
+    self.lpgr.allowableMovement = 200.0f;
 
     // 0.45 is ok for 'regular longpress', 0.05-0.08 is required for '3D Touch longpress',
     // but since this will also kill onclick handlers (not ontouchend) it's optional.
     if ([self.commandDelegate.settings objectForKey:@"suppresses3dtouchgesture"] &&
         [[self.commandDelegate.settings objectForKey:@"suppresses3dtouchgesture"] boolValue]) {
-        self.lpgr.minimumPressDuration = 0.05f;
+        self.lpgr.minimumPressDuration = 0.15f;
     }
 
     NSArray *views = self.webView.subviews;
@@ -64,11 +64,7 @@
 
 - (void)handleLongPressGestures:(UILongPressGestureRecognizer*)sender
 {
-    if ([sender isEqual:self.lpgr]) {
-        if (sender.state == UIGestureRecognizerStateBegan) {
-            NSLog(@"Ignoring a longpress in order to suppress the magnifying glass.");
-        }
-    }
+    
 }
 
 @end
