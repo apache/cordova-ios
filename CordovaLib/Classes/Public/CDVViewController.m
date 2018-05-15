@@ -720,17 +720,24 @@
     }
 }
 
-- (void)checkAndReinitViewUrl
+- (bool)isUrlEmpty:(NSURL *)url
 {
-    NSString *loadedUrl = [[self.webViewEngine URL] absoluteString];
-    if (loadedUrl == (id) [NSNull null] || [loadedUrl length]==0 || [loadedUrl isEqualToString:@"about:blank"]) {
-        NSURL* appURL = [self appUrl];
-        
-        if (appURL) {
-            NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [self.webViewEngine loadRequest:appReq];
-        }
+    if (!url || (url == (id) [NSNull null])) {
+        return true;
     }
+    NSString *urlAsString = [url absoluteString];
+    return (urlAsString == (id) [NSNull null] || [urlAsString length]==0 || [urlAsString isEqualToString:@"about:blank"]);
+}
+
+- (bool)checkAndReinitViewUrl
+{
+    NSURL* appURL = [self appUrl];
+    if ([self isUrlEmpty: [self.webViewEngine URL]] && ![self isUrlEmpty: appURL]) {
+        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [self.webViewEngine loadRequest:appReq];
+        return true;
+    }
+    return false;
 }
 
 /*
@@ -767,7 +774,7 @@
 - (void)onAppDidBecomeActive:(NSNotification*)notification
 {
     [self checkAndReinitViewUrl];
-// NSLog(@"%@",@"applicationDidBecomeActive");
+    // NSLog(@"%@",@"applicationDidBecomeActive");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('active');"];
 }
 
