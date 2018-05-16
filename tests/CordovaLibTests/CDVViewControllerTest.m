@@ -26,6 +26,14 @@
 
 @end
 
+@interface CDVViewController ()
+
+// expose private interface
+- (bool)checkAndReinitViewUrl;
+- (bool)isUrlEmpty:(NSURL*)url;
+
+@end
+
 @implementation CDVViewControllerTest
 
 -(CDVViewController*)viewController{
@@ -87,6 +95,28 @@
     XCTAssertNil([viewController colorFromColorString:@"#12345"]);
     XCTAssertNil([viewController colorFromColorString:@"#1234567"]);
     XCTAssertNil([viewController colorFromColorString:@"#NOTHEX"]);
+}
+
+-(void)testIsUrlEmpty{
+    CDVViewController* viewController = [self viewController];
+    XCTAssertTrue([viewController isUrlEmpty:(id)[NSNull null]]);
+    XCTAssertTrue([viewController isUrlEmpty:nil]);
+    XCTAssertTrue([viewController isUrlEmpty:[NSURL URLWithString:@""]]);
+    XCTAssertTrue([viewController isUrlEmpty:[NSURL URLWithString:@"about:blank"]]);
+}
+
+-(void)testIfItLoadsAppUrlIfCurrentViewIsBlank{
+    CDVViewController* viewController = [self viewController];
+    
+    NSString* appUrl = @"about:blank";
+    NSString* html = @"<html><body></body></html>";
+    [viewController.webViewEngine loadHTMLString:html baseURL:[NSURL URLWithString:appUrl]];
+    XCTAssertFalse([viewController checkAndReinitViewUrl]);
+
+    appUrl = @"https://cordova.apache.org";
+    viewController.startPage = appUrl;
+    [viewController.webViewEngine loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:appUrl]]];
+    XCTAssertTrue([viewController checkAndReinitViewUrl]);
 }
 
 @end
