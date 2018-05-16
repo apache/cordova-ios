@@ -115,7 +115,7 @@
 
     appUrl = @"https://cordova.apache.org";
     viewController.startPage = appUrl;
-    [viewController.webViewEngine loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://cordova.apache.org"]]];
+    [viewController.webViewEngine loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:appUrl]]];
     XCTAssertTrue([viewController checkAndReinitViewUrl]);
 }
 
