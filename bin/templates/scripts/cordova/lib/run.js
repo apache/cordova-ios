@@ -20,7 +20,6 @@
 var Q = require('q');
 var path = require('path');
 var cp = require('child_process');
-// var iossim = require('ios-sim');
 var build = require('./build');
 var spawn = require('./spawn');
 var check_reqs = require('./check_reqs');
