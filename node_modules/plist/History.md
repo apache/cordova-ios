@@ -1,22 +1,61 @@
-1.2.0 / 2015-11-10
+3.0.0 / 2018-03-18
+==================
+* [[`cb0d8f1bc6`]](https://github.com/TooTallNate/plist.js/commit/cb0d8f1bc60dee423f8fc2cfcac427452dfaddb0) update Makefile, rebuild dist/ (Mike Reinstein)
+* [[`9dfeffe73f`]](https://github.com/TooTallNate/plist.js/commit/9dfeffe73fdb447ac5a87ee364a1472975f12adf) remove unsupported browser versions from travis (Mike Reinstein)
+* [[`c962bfe1ea`]](https://github.com/TooTallNate/plist.js/commit/c962bfe1ea04dd87966250253d33738bceecab61) update module deps, remove support for node < 6 (Mike Reinstein)
 
-* package: update "browserify" to v12.0.1
-* package: update "zuul" to v3.7.2
-* package: update "xmlbuilder" to v4.0.0
-* package: update "util-deprecate" to v1.0.2
-* package: update "mocha" to v2.3.3
-* package: update "base64-js" to v0.0.8
-* build: omit undefined values
-* travis: add node 4.0 and 4.1 to test matrix
+
+2.1.0 / 2017-05-04
+==================
+
+* [[`e4f06669bb`]](https://github.com/TooTallNate/plist.js/commit/e4f06669bb51d2e65654df7c39aab52bc3bf4e8a) - update license (extend copyright term) (Mike Reinstein)
+* [[`edc6e41035`]](https://github.com/TooTallNate/plist.js/commit/edc6e4103546b1d7518a577e7c202c305a8abec0) - update module deps (Mike Reinstein)
+* [[`85d11c48ef`](https://github.com/TooTallNate/plist.js/commit/85d11c48eff02312cbdd67f46fd8e74b0d372ca1)] - Harden test-cases and implementation to align with other implementations (Björn Brauer)
+* [[`7619537eaa`]](https://github.com/TooTallNate/plist.js/commit/7619537eaa9e3e5a80829e759c004d2e017a07d2) review feedback: early returns and constants for nodeTypes (Björn Brauer)
+
+
+2.0.1 / 2016-08-16
+==================
+
+* [[`de136c8388`](https://github.com/TooTallNate/plist/commit/de136c8388)] - bad npm release… (Nathan Rajlich)
+
+
+2.0.0 / 2016-08-16
+==================
+
+* [[`90deef5d43`](https://github.com/TooTallNate/plist/commit/90deef5d43)] - remove deprecated functions (Nathan Rajlich)
+* [[`d475cd8ce9`](https://github.com/TooTallNate/plist/commit/d475cd8ce9)] - Added travis ci support for node 6 (Amila Welihinda)
+* [[`04c8ee7646`](https://github.com/TooTallNate/plist/commit/04c8ee7646)] - update dependencies (Mitchell Hentges)
+* [[`97c02b3f05`](https://github.com/TooTallNate/plist/commit/97c02b3f05)] - **travis**: add `sudo: false` and test more node versions (Nathan Rajlich)
+* [[`54c821ec29`](https://github.com/TooTallNate/plist/commit/54c821ec29)] - #71 - fixed and added test (Andrew Goldis)
+* [[`4afb7c5079`](https://github.com/TooTallNate/plist/commit/4afb7c5079)] - fix `Cannot read property 'nodeValue' of undefined exception` that is thrown when a `<key></key>` construct appears in plist (Chris Kinsman)
+* [[`f360d7d685`](https://github.com/TooTallNate/plist/commit/f360d7d685)] - #66 - fixed empty keys and added tests (Andrew Goldis)
+* [[`421c7f26e9`](https://github.com/TooTallNate/plist/commit/421c7f26e9)] - #66 - fixed empty key (Andrew Goldis)
+* [[`a88aa4dca7`](https://github.com/TooTallNate/plist/commit/a88aa4dca7)] - add verbose examples (mrzmyr)
+
+
+1.2.0 / 2015-11-10
+==================
+
+  * package: update "browserify" to v12.0.1
+  * package: update "zuul" to v3.7.2
+  * package: update "xmlbuilder" to v4.0.0
+  * package: update "util-deprecate" to v1.0.2
+  * package: update "mocha" to v2.3.3
+  * package: update "base64-js" to v0.0.8
+  * build: omit undefined values
+  * travis: add node 4.0 and 4.1 to test matrix
+
 
 1.1.0 / 2014-08-27
 ==================
 
- * package: update "browserify" to v5.10.1
- * package: update "zuul" to v1.10.2
- * README: add "Sauce Test Status" build badge
- * travis: use new "plistjs" sauce credentials
- * travis: set up zuul saucelabs automated testing
+  * package: update "browserify" to v5.10.1
+  * package: update "zuul" to v1.10.2
+  * README: add "Sauce Test Status" build badge
+  * travis: use new "plistjs" sauce credentials
+  * travis: set up zuul saucelabs automated testing
+
 
 1.0.1 / 2014-06-25
 ==================
@@ -27,6 +66,7 @@
   * package: use --check-leaks when running mocha tests
   * README: update examples to use preferred API
   * package: add "browser" keyword
+
 
 1.0.0 / 2014-05-20
 ==================
