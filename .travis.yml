@@ -6,6 +6,8 @@ env:
   matrix:
   - TRAVIS_NODE_VERSION: '4.8.7'
   - TRAVIS_NODE_VERSION: '6.13'
+  - TRAVIS_NODE_VERSION: '8'
+  - TRAVIS_NODE_VERSION: '10'
 
 before_install:
 - npm cache clean -f
