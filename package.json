@@ -49,7 +49,7 @@
     "node": ">=4"
   },
   "dependencies": {
-    "cordova-common": "2.1.0",
+    "cordova-common": "github:brodybits/cordova-common#cb-fix3",
     "ios-sim": "^7.0.0",
     "nopt": "^3.0.6",
     "plist": "^3.0.1",
