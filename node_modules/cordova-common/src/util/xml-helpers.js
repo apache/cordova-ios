@@ -328,7 +328,7 @@ function mergeXml (src, dest, platform, clobber) {
         });
 
         // write new preferences
-        Object.keys(prefHash).forEach(function (key, index) {
+        Object.keys(prefHash).forEach(function (key) {
             var element = et.SubElement(xml, 'preference');
             element.set('name', key);
             element.set('value', this[key]);

@@ -1,0 +1,19 @@
+env:
+    jasmine: true
+
+rules:
+  # TBD easy fix:
+  padded-blocks: off
+  spaced-comment: off
+
+  # TODO resolve:
+  eol-last: off
+  semi: off
+
+  # TBD easy resolve:
+  key-spacing: off
+
+  # FUTURE TBD:
+  indent: off
+  quotes: off
+  space-before-function-paren: off

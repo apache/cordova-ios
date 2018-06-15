@@ -186,7 +186,7 @@ function updatePath (sourcePath, targetPath, options, log) {
         throw new Error('A target path is required.');
     }
 
-    log = log || function (message) { };
+    log = log || function () { };
 
     return updatePathInternal(sourcePath, targetPath, options, log);
 }
@@ -213,7 +213,7 @@ function updatePaths (pathMap, options, log) {
         throw new Error('An object mapping from target paths to source paths is required.');
     }
 
-    log = log || function (message) { };
+    log = log || function () { };
 
     var updated = false;
 
@@ -266,7 +266,7 @@ function mergeAndUpdateDir (sourceDirs, targetDir, options, log) {
         throw new Error('A target directory path is required.');
     }
 
-    log = log || function (message) { };
+    log = log || function () { };
 
     var rootDir = (options && options.rootDir) || '';
 
