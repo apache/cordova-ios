@@ -17,22 +17,29 @@
     under the License.
 */
 var commands = require('../src/commands');
+var os = require('os');
 
 describe('commands end-to-end', function() {
 
     beforeEach(function() {
-      commands.init();
+      if (os.platform() === 'darwin') {
+        commands.init();
+      }
     });
 
     afterEach(function() {
     });
 
     it('command - showsdks', function() {
-      commands.showsdks({ 'no-output': true });
+      if (os.platform() === 'darwin') {
+        commands.showsdks({ 'no-output': true });
+      }
     });
 
     it('command - showdevicetypes', function() {
-      commands.showdevicetypes({ 'no-output': true });;
+      if (os.platform() === 'darwin') {
+        commands.showdevicetypes({ 'no-output': true });
+      }
     });
 
     it('command - launch', function() {
@@ -47,6 +54,8 @@ describe('commands end-to-end', function() {
 
     it('command - start', function() {
       var devicetypeid = 'iPhone-6';
-      commands.start({ 'devicetypeid': devicetypeid });
+      if (os.platform() === 'darwin') {
+        commands.start({ 'devicetypeid': devicetypeid });
+      }
     });
 });

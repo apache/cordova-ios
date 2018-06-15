@@ -1,0 +1,21 @@
+rules:
+  # common src exception:
+  camelcase: off
+
+  # TBD easy fix:
+  padded-blocks: off
+
+  # TODO resolve:
+  eqeqeq: off
+  no-unused-vars: off
+  node/no-deprecated-api: off
+
+  # TBD easy resolve:
+  comma-spacing: off
+  no-useless-escape: off
+
+  # FUTURE TBD:
+  no-multiple-empty-lines: off
+  one-var: off
+  spaced-comment: off
+  space-before-function-paren: off

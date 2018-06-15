@@ -110,7 +110,7 @@ function findRuntimesGroupByDeviceProperty(list, deviceProperty, availableOnly) 
 function findAvailableRuntime(list, device_name) {
 
     var all_druntimes = findRuntimesGroupByDeviceProperty(list, 'name', true);
-    var druntime = all_druntimes[ filterDeviceName(device_name) ];
+    var druntime = all_druntimes[ filterDeviceName(device_name) ] || all_druntimes[ device_name ];
     var runtime_found = druntime && druntime.length > 0;
 
     if (!runtime_found) {
