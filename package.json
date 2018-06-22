@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "4.5.4",
+  "version": "4.5.5-dev",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
   "repository": {
@@ -32,7 +32,6 @@
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "coffee-script": "^1.7.1",
     "eslint": "^4.0.0",
     "eslint-config-semistandard": "^11.0.0",
     "eslint-config-standard": "^10.2.1",
@@ -44,17 +43,16 @@
     "jasmine": "~2.6.0",
     "nodeunit": "^0.8.7",
     "rewire": "^2.5.1",
-    "tmp": "^0.0.26",
-    "uncrustify": "^0.6.1"
+    "tmp": "^0.0.26"
   },
   "engines": {
     "node": ">=4"
   },
   "dependencies": {
-    "cordova-common": "2.1.0",
-    "ios-sim": "^6.1.2",
+    "cordova-common": "github:brodybits/cordova-common#plist-2-patch",
+    "ios-sim": "github:brodybits/ios-sim#plist-2-patch",
     "nopt": "^3.0.6",
-    "plist": "^1.2.0",
+    "plist": "^2.1.0",
     "q": "^1.4.1",
     "shelljs": "^0.5.3",
     "xcode": "^0.9.0",
