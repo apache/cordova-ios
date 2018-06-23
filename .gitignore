@@ -197,3 +197,4 @@ node_modules/jasmine/
 node_modules/eslint-*
 node_modules/pegjs
 package-lock.json
+.nyc_output/
