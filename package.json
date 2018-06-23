@@ -20,7 +20,7 @@
   "scripts": {
     "test": "npm run e2e-tests && npm run objc-tests && npm run unit-tests",
     "posttest": "npm run eslint",
-    "cover": "istanbul cover --root bin/templates/scripts/cordova --print detail jasmine -- --config=tests/spec/jasmine.json",
+    "cover": "nyc npm run unit-tests",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
     "objc-tests-lib": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
@@ -39,10 +39,10 @@
     "eslint-plugin-node": "^5.1.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "istanbul": "^0.4.2",
-    "jasmine": "~2.6.0",
+    "jasmine": "^3.1.0",
     "nodeunit": "^0.8.7",
-    "rewire": "^2.5.1",
+    "nyc": "^12.0.2",
+    "rewire": "^4.0.1",
     "tmp": "^0.0.26"
   },
   "engines": {
@@ -68,5 +68,14 @@
     "shelljs",
     "xcode",
     "xml-escape"
-  ]
+  ],
+  "nyc": {
+    "include": [
+      "bin/templates/scripts/**"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  }
 }
