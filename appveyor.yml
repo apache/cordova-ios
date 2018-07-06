@@ -2,14 +2,12 @@ environment:
   matrix:
   - nodejs_version: "4"
   - nodejs_version: "6"
+  - nodejs_version: "8"
+  - nodejs_version: "10"
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  # Lines below required due to uncrustify installation failure on Windows
-  - npm install --prod
-  - npm install eslint eslint-config-semistandard jasmine rewire
-  - npm install eslint-config-standard eslint-plugin-import eslint-plugin-node
-  - npm install eslint-plugin-promise eslint-plugin-standard
+  - npm install
 
 build: off
 
