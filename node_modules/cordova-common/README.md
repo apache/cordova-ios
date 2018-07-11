@@ -24,11 +24,11 @@
 [![NPM](https://nodei.co/npm/cordova-common.png)](https://nodei.co/npm/cordova-common/)
 
 # cordova-common
-Expoeses shared functionality used by [cordova-lib](https://github.com/apache/cordova-lib/) and Cordova platforms.
+Exposes shared functionality used by [cordova-lib](https://github.com/apache/cordova-lib/) and Cordova platforms.
 ## Exposed APIs
 
 ### `events`
-  
+
 Represents special instance of NodeJS EventEmitter which is intended to be used to post events to cordova-lib and cordova-cli
 
 Usage:
@@ -122,7 +122,7 @@ superspawn.spawn('adb', ['devices'])
 
 ### `xmlHelpers`
 
-A set of utility methods for dealing with xml files.
+A set of utility methods for dealing with XML files.
 
 Usage:
 ```js
@@ -148,10 +148,8 @@ mungeUtil
 
 ## Setup
 * Clone this repository onto your local machine
-    `git clone https://git-wip-us.apache.org/repos/asf/cordova-lib.git`
-* In terminal, navigate to the inner cordova-common directory
-    `cd cordova-lib/cordova-common`
-* Install dependencies and npm-link
-    `npm install && npm link`
+    `git clone https://github.com/apache/cordova-common.git`
+* Navigate to cordova-common directory, install dependencies and npm-link
+    `cd cordova-common && npm install && npm link`
 * Navigate to cordova-lib directory and link cordova-common
-    `cd ../cordova-lib && npm link cordova-common && npm install`
+    `cd <cordova-lib directory> && npm link cordova-common && npm install`

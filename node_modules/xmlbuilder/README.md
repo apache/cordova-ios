@@ -1,6 +1,6 @@
 # xmlbuilder-js
 
-An XML builder for [node.js](https://nodejs.org/) similar to 
+An XML builder for [node.js](https://nodejs.org/) similar to
 [java-xmlbuilder](https://github.com/jmurty/java-xmlbuilder).
 
 [![License](http://img.shields.io/npm/l/xmlbuilder.svg?style=flat-square)](http://opensource.org/licenses/MIT)
@@ -8,7 +8,6 @@ An XML builder for [node.js](https://nodejs.org/) similar to
 [![NPM Downloads](https://img.shields.io/npm/dm/xmlbuilder.svg?style=flat-square)](https://npmjs.com/package/xmlbuilder)
 
 [![Build Status](http://img.shields.io/travis/oozcitak/xmlbuilder-js.svg?style=flat-square)](http://travis-ci.org/oozcitak/xmlbuilder-js)
-[![Dependency Status](http://img.shields.io/david/oozcitak/xmlbuilder-js.svg?style=flat-square)](https://david-dm.org/oozcitak/xmlbuilder-js)
 [![Dev Dependency Status](http://img.shields.io/david/dev/oozcitak/xmlbuilder-js.svg?style=flat-square)](https://david-dm.org/oozcitak/xmlbuilder-js)
 [![Code Coverage](https://img.shields.io/coveralls/oozcitak/xmlbuilder-js.svg?style=flat-square)](https://coveralls.io/github/oozcitak/xmlbuilder-js)
 
@@ -26,7 +25,7 @@ var xml = builder.create('root')
   .ele('xmlbuilder')
     .ele('repo', {'type': 'git'}, 'git://github.com/oozcitak/xmlbuilder-js.git')
   .end({ pretty: true});
-    
+
 console.log(xml);
 ```
 

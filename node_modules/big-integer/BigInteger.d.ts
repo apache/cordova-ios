@@ -101,6 +101,11 @@ declare namespace bigInt {
         and(number: BigNumber): BigInteger;
 
         /**
+         * Returns the number of digits required to represent a bigInt in binary.
+         */
+        bitLength(): BigInteger;
+
+        /**
          * Performs a comparison between two numbers. If the numbers are equal, it returns 0.
          * If the first number is greater, it returns 1. If the first number is lesser, it returns -1.
          */
@@ -338,6 +343,12 @@ declare namespace bigInt {
         times(number: BigNumber): BigInteger;
 
         /**
+         *
+         * Converts a bigInt to an object representing it as an array of integers module the given radix.
+         */
+         toArray(radix: number): BaseArray;
+
+        /**
          * Converts a bigInt into a native Javascript number. Loses precision for numbers outside the range.
          */
         toJSNumber(): number;
@@ -346,6 +357,11 @@ declare namespace bigInt {
          * Converts a bigInt to a string.
          */
         toString(radix?: number): string;
+		
+		/**
+         * Converts a bigInt to a string. This method is called behind the scenes in JSON.stringify.
+         */
+        toJSON(): string;
 
         /**
          * Converts a bigInt to a native Javascript number. This override allows you to use native
@@ -2360,5 +2376,10 @@ declare namespace bigInt {
         '997': BigInteger;
         '998': BigInteger;
         '999': BigInteger;
+    }
+
+    interface BaseArray {
+        value: number[],
+        isNegative: boolean
     }
 }

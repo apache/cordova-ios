@@ -92,6 +92,12 @@ Performs the bitwise AND operation. The operands are treated as if they were rep
  - `bigInt(6).and(3)` => `2`
  - `bigInt(6).and(-3)` => `4`
 
+#### `bitLength()`
+
+Returns the number of digits required to represent a bigInt in binary.
+
+ - `bigInt(5)` => `3` (since 5 is `101` in binary, which is three digits long)
+
 #### `compare(number)`
 
 Performs a comparison between two numbers. If the numbers are equal, it returns `0`. If the first number is greater, it returns `1`. If the first number is lesser, it returns `-1`.
@@ -405,6 +411,50 @@ Alias for the `multiply` method.
  - `bigInt(111).times(111)` => `12321`
  
 [View benchmarks for this method](http://peterolson.github.io/BigInteger.js/benchmark/#Multiplication)
+
+#### `toArray(radix)`
+
+Converts a bigInt into an object with the properties "value" and "isNegative." "Value" is an array of integers modulo the given radix. "isNegative" is a boolean that represents the sign of the result.
+
+ - `bigInt("1e9").toArray(10)` => {
+     value: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+     isNegative: false
+   }
+ - `bigInt("1e9").toArray(16)` => {
+     value: [3, 11, 9, 10, 12, 10, 0, 0],
+     isNegative: false
+   }
+ - `bigInt(567890).toArray(100)` => {
+     value: [56, 78, 90],
+     isNegative: false
+   }
+
+Negative bases are supported.
+
+ - `bigInt(12345).toArray(-10)` => {
+     value: [2, 8, 4, 6, 5],
+     isNegative: false
+   }
+
+Base 1 and base -1 are also supported.
+
+ - `bigInt(-15).toArray(1)` => {
+     value: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+     isNegative: true
+   }
+ - `bigInt(-15).toArray(-1)` => {
+     value: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+             0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+     isNegative: false
+   }
+
+Base 0 is only allowed for the number zero.
+
+ - `bigInt(0).toArray(0)` => {
+     value: [0],
+     isNegative: false
+   }
+ - `bigInt(1).toArray(0)` => `Error: Cannot convert nonzero numbers to base 0.`
 
 #### `toJSNumber()`
 
