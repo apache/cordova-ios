@@ -1,0 +1,24 @@
+os: osx
+osx_image: xcode8.3
+sudo: false
+env:
+  matrix:
+  - TRAVIS_NODE_VERSION: '4'
+  - TRAVIS_NODE_VERSION: '6'
+git:
+  depth: 10
+before_install:
+- rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
+  && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm
+  install $TRAVIS_NODE_VERSION
+- node --version
+- npm --version
+- npm cache clean
+- npm install -g npm@3
+install:
+- npm install
+script:
+- npm test
+notifications:
+  slack:
+    secure: gn0YH0MCFOYR3Dd8Vsx3K/J9G0aazhnRjQVfqbeRKN3f6vToKif1CxhiDLXI6cxEB5DBiAtpK58jkoDYrXoNLGuSbiTHBJ+ankU8aG3s0OTIHa/8I0TjRKjBRc0PrMV7n7EiLC6LQxNe0x0mMSE1gdOUeS1UrZ5ZiVrS1u0eHHs=
