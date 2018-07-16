@@ -19,7 +19,7 @@
 
 var Q = require('q');
 var path = require('path');
-var iossim = require('ios-sim');
+var cp = require('child_process');
 var build = require('./build');
 var spawn = require('./spawn');
 var check_reqs = require('./check_reqs');
@@ -197,7 +197,15 @@ function deployToSim (appPath, target) {
 function startSim (appPath, target) {
     var logPath = path.join(cordovaPath, 'console.log');
 
-    return iossim.launch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
+    return iossimLaunch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
+}
+
+function iossimLaunch (app_path, devicetypeid, log, exit) {
+    var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
+    var proc = cp.spawn(f, ['launch', app_path, '--devicetypeid', devicetypeid, '--log', log, exit]);
+    proc.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
 }
 
 function listDevices () {
