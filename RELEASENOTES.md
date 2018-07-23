@@ -22,6 +22,14 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 4.5.5 (Jul 23, 2018)
+* [CB-14145](https://issues.apache.org/jira/browse/CB-14145) - update dependencies to resolve `npm audit` issues, pinned in 4.5.x only ([GH-379](https://github.com/apache/cordova-ios/pull/379))
+* [GH-379](https://github.com/apache/cordova-ios/pull/379) - commit updated `node_modules` in `4.5.x` only
+* [GH-379](https://github.com/apache/cordova-ios/pull/379) - update and pin more added bundled dependencies in `4.5.x` only
+* [GH-379](https://github.com/apache/cordova-ios/pull/379) - remove devDependencies not needed (`4.5.x`)
+* [GH-379](https://github.com/apache/cordova-ios/pull/379) - `.travis.yml` and `appveyor.yml` updates (`4.5.x`)
+* [CB-9366](https://issues.apache.org/jira/browse/CB-9366) - log `error.stack` in `cordova.js` (update from `cordova-js@4.2.4`) in `4.5.x`
+
 ### 4.5.4 (Nov 15, 2017)
 * [CB-13523](https://issues.apache.org/jira/browse/CB-13523) - Add flag for Xcode-managed provisioning
 * [GH-346](https://github.com/apache/cordova-ios/pull/346) - Fix compile error when compile source as objective-c++
