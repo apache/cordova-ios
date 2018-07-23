@@ -69,8 +69,34 @@ Parsing a plist from string payload:
 ``` javascript
 var plist = require('plist');
 
-var obj = plist.parse('<plist><string>Hello World!</string></plist>');
-console.log(obj);  // Hello World!
+var xml =
+  '<?xml version="1.0" encoding="UTF-8"?>' +
+  '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' +
+  '<plist version="1.0">' +
+    '<key>metadata</key>' +
+    '<dict>' +
+      '<key>bundle-identifier</key>' +
+      '<string>com.company.app</string>' +
+      '<key>bundle-version</key>' +
+      '<string>0.1.1</string>' +
+      '<key>kind</key>' +
+      '<string>software</string>' +
+      '<key>title</key>' +
+      '<string>AppName</string>' +
+    '</dict>' +
+  '</plist>';
+
+console.log(plist.parse(xml));
+
+// [
+//   "metadata",
+//   {
+//     "bundle-identifier": "com.company.app",
+//     "bundle-version": "0.1.1",
+//     "kind": "software",
+//     "title": "AppName"
+//   }
+// ]
 ```
 
 ### Building
@@ -81,33 +107,35 @@ that complies with the plist DTD:
 ``` javascript
 var plist = require('plist');
 
-console.log(plist.build({ foo: 'bar' }));
-```
+var json = [
+  "metadata",
+  {
+    "bundle-identifier": "com.company.app",
+    "bundle-version": "0.1.1",
+    "kind": "software",
+    "title": "AppName"
+  }
+];
 
+console.log(plist.build(json));
+
+// <?xml version="1.0" encoding="UTF-8"?>
+// <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+// <plist version="1.0">
+//   <key>metadata</key>
+//   <dict>
+//     <key>bundle-identifier</key>
+//     <string>com.company.app</string>
+//     <key>bundle-version</key>
+//     <string>0.1.1</string>
+//     <key>kind</key>
+//     <string>software</string>
+//     <key>title</key>
+//     <string>AppName</string>
+//   </dict>
+// </plist>
+```
 
 ## License
 
-(The MIT License)
-
-Copyright (c) 2010-2014 Nathan Rajlich <nathan@tootallnate.net>
-
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
+[(The MIT License)](LICENSE)
