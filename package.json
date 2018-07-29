@@ -41,7 +41,6 @@
     "eslint-plugin-standard": "^3.0.1",
     "istanbul": "^0.4.2",
     "jasmine": "~2.6.0",
-    "nodeunit": "^0.8.7",
     "rewire": "^2.5.1",
     "tmp": "^0.0.26"
   },
