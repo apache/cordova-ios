@@ -17,6 +17,8 @@
  under the License.
  */
 
+'use strict';
+
 var rewire = require('rewire');
 var checkReqs = rewire('../../../../bin/templates/scripts/cordova/lib/check_reqs');
 

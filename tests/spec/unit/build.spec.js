@@ -17,6 +17,8 @@
  under the License.
  */
 
+'use strict';
+
 var path = require('path');
 var rewire = require('rewire');
 var build = rewire('../../../bin/templates/scripts/cordova/lib/build');
