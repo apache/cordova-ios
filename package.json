@@ -58,15 +58,5 @@
     "shelljs": "^0.5.3",
     "xcode": "^0.9.0",
     "xml-escape": "^1.1.0"
-  },
-  "bundledDependencies": [
-    "cordova-common",
-    "ios-sim",
-    "nopt",
-    "plist",
-    "q",
-    "shelljs",
-    "xcode",
-    "xml-escape"
-  ]
+  }
 }
