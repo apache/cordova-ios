@@ -46,8 +46,9 @@
     "tmp": "^0.0.26"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
+  "engineStrict": true,
   "dependencies": {
     "cordova-common": "2.1.0",
     "ios-sim": "^6.1.2",
