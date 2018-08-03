@@ -50,42 +50,5 @@ if (process.platform === 'darwin') {
                 });
             });
         });
-
-        describe('get_tool_version method', () => {
-            it('should not have found tool by name.', (done) => {
-                versions.get_tool_version('unknown').catch((error) => {
-                    expect(error).toContain('is not valid tool name');
-                    done();
-                });
-            });
-
-            it('should find xcodebuild version.', (done) => {
-                versions.get_tool_version('xcodebuild').then((version) => {
-                    expect(version).not.toBe(undefined);
-                    done();
-                });
-            });
-
-            it('should find ios-sim version.', (done) => {
-                versions.get_tool_version('ios-sim').then((version) => {
-                    expect(version).not.toBe(undefined);
-                    done();
-                });
-            });
-
-            it('should find ios-deploy version.', (done) => {
-                versions.get_tool_version('ios-deploy').then((version) => {
-                    expect(version).not.toBe(undefined);
-                    done();
-                });
-            });
-
-            it('should find pod version.', (done) => {
-                versions.get_tool_version('pod').then((version) => {
-                    expect(version).not.toBe(undefined);
-                    done();
-                });
-            });
-        });
     });
 }
