@@ -340,4 +340,174 @@ describe('build', function () {
             done();
         });
     });
+
+    describe('help method', () => {
+        it('should log a bunch of options', () => {
+            const logSpy = jasmine.createSpy();
+            const procStub = { exit: _ => null, cwd: _ => '', argv: ['', ''] };
+            build.__set__({ console: { log: logSpy }, process: procStub });
+
+            build.help();
+            expect(logSpy).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
+        });
+    });
+
+    describe('run method', () => {
+        let rejectSpy;
+
+        beforeEach(() => {
+            rejectSpy = jasmine.createSpy('reject');
+
+            build.__set__('Q', {
+                reject: rejectSpy
+            });
+        });
+
+        it('should not accept debug and release options together', () => {
+            build.run({
+                debug: true,
+                release: true
+            });
+
+            expect(rejectSpy).toHaveBeenCalledWith('Cannot specify "debug" and "release" options together.');
+        });
+
+        it('should not accept device and emulator options together', () => {
+            build.run({
+                device: true,
+                emulator: true
+            });
+
+            expect(rejectSpy).toHaveBeenCalledWith('Cannot specify "device" and "emulator" options together.');
+        });
+
+        it('should reject when build config file missing', () => {
+            const existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
+            build.__set__('fs', {
+                existsSync: existsSyncSpy
+            });
+
+            build.run({
+                buildConfig: './some/config/path'
+            });
+
+            expect(rejectSpy).toHaveBeenCalledWith(jasmine.stringMatching(/^Build config file does not exist:/));
+        });
+    });
+
+    describe('getDefaultSimulatorTarget method', () => {
+        it('should find iPhone X as the default simulator target.', (done) => {
+            const mockedEmulators = [{
+                name: 'iPhone 7',
+                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-7',
+                simIdentifier: 'iPhone-7'
+            },
+            {
+                name: 'iPhone 8',
+                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-8',
+                simIdentifier: 'iPhone-8'
+            },
+            {
+                name: 'iPhone X',
+                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-X',
+                simIdentifier: 'iPhone-X'
+            }];
+
+            // This method will require a module that supports the run method.
+            build.__set__('require', () => {
+                return {
+                    run: () => {
+                        return new Promise((resolve, reject) => {
+                            resolve(mockedEmulators);
+                        });
+                    }
+                };
+            });
+
+            const getDefaultSimulatorTarget = build.__get__('getDefaultSimulatorTarget');
+            const exec = getDefaultSimulatorTarget();
+
+            const expected = {
+                name: 'iPhone X',
+                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-X',
+                simIdentifier: 'iPhone-X'
+            };
+
+            exec.then((actual) => {
+                expect(actual).toEqual(expected);
+                done();
+            });
+        });
+    });
+
+    describe('findXCodeProjectIn method', () => {
+        let findXCodeProjectIn;
+        let shellLsSpy;
+        let rejectSpy;
+        let resolveSpy;
+        let emitSpy;
+        const fakePath = '/path/foobar';
+
+        beforeEach(() => {
+            findXCodeProjectIn = build.__get__('findXCodeProjectIn');
+
+            // Shell Spy
+            shellLsSpy = jasmine.createSpy('shellLsSpy');
+            build.__set__('shell', {
+                ls: shellLsSpy
+            });
+
+            // Q Spy
+            rejectSpy = jasmine.createSpy('rejectSpy');
+            resolveSpy = jasmine.createSpy('resolveSpy');
+            build.__set__('Q', {
+                reject: rejectSpy,
+                resolve: resolveSpy
+            });
+
+            // Events spy
+            emitSpy = jasmine.createSpy('emitSpy');
+            build.__set__('events', {
+                emit: emitSpy
+            });
+        });
+
+        it('should find not find Xcode project', () => {
+            shellLsSpy.and.returnValue(['README.md']);
+
+            findXCodeProjectIn(fakePath);
+
+            expect(rejectSpy).toHaveBeenCalledWith('No Xcode project found in ' + fakePath);
+        });
+
+        it('should emit finding multiple Xcode projects', () => {
+            shellLsSpy.and.returnValue(['Test1.xcodeproj', 'Test2.xcodeproj']);
+
+            findXCodeProjectIn(fakePath);
+
+            // Emit
+            let actualEmit = emitSpy.calls.argsFor(0)[1];
+            expect(emitSpy).toHaveBeenCalled();
+            expect(actualEmit).toContain('Found multiple .xcodeproj directories in');
+
+            // Resolve
+            let actualResolve = resolveSpy.calls.argsFor(0)[0];
+            expect(resolveSpy).toHaveBeenCalled();
+            expect(actualResolve).toContain('Test1');
+        });
+
+        it('should detect and return only one projects', () => {
+            shellLsSpy.and.returnValue(['Test1.xcodeproj']);
+
+            findXCodeProjectIn(fakePath);
+
+            // Emit
+            expect(emitSpy).not.toHaveBeenCalled();
+
+            // Resolve
+            let actualResolve = resolveSpy.calls.argsFor(0)[0];
+            expect(resolveSpy).toHaveBeenCalled();
+            expect(actualResolve).toContain('Test1');
+        });
+    });
 });
