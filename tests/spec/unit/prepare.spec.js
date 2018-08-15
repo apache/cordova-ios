@@ -44,6 +44,7 @@ var ConfigParser = require('cordova-common').ConfigParser;
 // Create a real config object before mocking out everything.
 var cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
 var cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
+var cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
 
 function wrapper (p, done, post) {
     p.then(post, function (err) {
@@ -624,6 +625,41 @@ describe('prepare', function () {
 
                 // restore cfg2 original name
                 cfg2.name = cfg2OriginalName;
+            });
+        });
+        it('should write SwiftVersion preference (4.1)', function (done) {
+            var cfg3OriginalName = cfg3.name;
+            cfg3.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
+            writeFileSyncSpy.and.callThrough();
+            wrapper(updateProject(cfg3, p.locations), done, function () {
+                var xcode = require('xcode');
+                var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                proj.parseSync();
+                var prop = proj.getBuildProperty('SWIFT_VERSION');
+                expect(prop).toEqual('4.1');
+
+                // restore cfg2 original name
+                cfg3.name = cfg3OriginalName;
+            });
+        });
+        it('should write SwiftVersion preference (3.3)', function (done) {
+            var cfg3OriginalName = cfg3.name;
+            cfg3.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
+            var pref = cfg3.doc.findall('platform[@name=\'ios\']/preference').filter(function (elem) {
+                return elem.attrib.name.toLowerCase() === 'swiftversion';
+            })[0];
+            var prefOriginalSwiftVersion = pref.attrib.value;
+            pref.attrib.value = '3.3';
+            writeFileSyncSpy.and.callThrough();
+            wrapper(updateProject(cfg3, p.locations), done, function () {
+                var xcode = require('xcode');
+                var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                proj.parseSync();
+                var prop = proj.getBuildProperty('SWIFT_VERSION');
+                expect(prop).toEqual('3.3');
+                // restore cfg2 original name
+                cfg3.name = cfg3OriginalName;
+                pref.attrib.value = prefOriginalSwiftVersion;
             });
         });
 
