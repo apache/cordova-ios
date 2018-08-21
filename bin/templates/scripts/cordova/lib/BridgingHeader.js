@@ -25,7 +25,7 @@ function BridgingHeader (bridgingHeaderPath) {
     this.path = bridgingHeaderPath;
     this.bridgingHeaders = null;
     if (!fs.existsSync(this.path)) {
-        throw new CordovaError('BridgingHeader.js is not found.');
+        throw new CordovaError('BridgingHeader.h is not found.');
     }
     this.bridgingHeaders = this.__parseForBridgingHeader(fs.readFileSync(this.path, 'utf8'));
 }

@@ -252,7 +252,6 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                     bridgingHeaderFile.write();
                 }
             }
-            return Q.resolve();
         })
         .then(function () {
             var frameworkTags = plugin.getFrameworks(self.platform);
@@ -358,7 +357,6 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
                     bridgingHeaderFile.write();
                 }
             }
-            return Q.resolve();
         })
         .then(function () {
             var frameworkTags = plugin.getFrameworks(self.platform);
