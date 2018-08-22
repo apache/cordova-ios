@@ -36,7 +36,6 @@ var projectName = null;
 // These are regular expressions to detect if the user is changing any of the built-in xcodebuildArgs
 /* eslint-disable no-useless-escape */
 var buildFlagMatchers = {
-    'xcconfig': /^\-xcconfig\s*(.*)$/,
     'workspace': /^\-workspace\s*(.*)/,
     'scheme': /^\-scheme\s*(.*)/,
     'configuration': /^\-configuration\s*(.*)/,
@@ -291,7 +290,6 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
 
     if (isDevice) {
         options = [
-            '-xcconfig', customArgs.xcconfig || path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-workspace', customArgs.workspace || projectName + '.xcworkspace',
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
@@ -314,7 +312,6 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         }
     } else { // emulator
         options = [
-            '-xcconfig', customArgs.xcconfig || path.join(__dirname, '..', 'build-' + configuration.toLowerCase() + '.xcconfig'),
             '-workspace', customArgs.project || projectName + '.xcworkspace',
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
