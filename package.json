@@ -24,8 +24,8 @@
     "cover": "nyc jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
-    "objc-tests-lib": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
-    "objc-tests-framework": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaFrameworkApp -destination \"platform=iOS Simulator,name=iPhone 5\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "objc-tests-lib": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "objc-tests-framework": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaFrameworkApp -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "tests/scripts/killsim.js",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
     "eslint": "eslint bin tests"
