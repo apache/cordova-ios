@@ -129,16 +129,7 @@ var handlers = {
             if (!obj.custom) { // CB-9825 cocoapod integration for plugins
                 var keepFrameworks = keep_these_frameworks;
                 if (keepFrameworks.indexOf(src) < 0) {
-                    if (obj.type === 'podspec') {
-                        var podsJSON = require(path.join(project.projectDir, 'pods.json'));
-                        if (podsJSON[src]) {
-                            if (podsJSON[src].count > 1) {
-                                podsJSON[src].count = podsJSON[src].count - 1;
-                            } else {
-                                delete podsJSON[src];
-                            }
-                        }
-                    } else {
+                    if (obj.type !== 'podspec') {
                         // this should be refactored
                         project.frameworks[src] = project.frameworks[src] || 1;
                         project.frameworks[src]--;

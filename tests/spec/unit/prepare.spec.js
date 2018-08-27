@@ -18,7 +18,9 @@
  */
 
 'use strict';
-var fs = require('fs-extra');
+var fs = require('fs');
+var fse = require('fs-extra');
+
 var os = require('os');
 var path = require('path');
 var shell = require('shelljs');
@@ -769,7 +771,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-web-content="true" />' +
             '</widget>';
@@ -789,7 +791,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (fixed allows-arbitrary-loads-for-media)', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-for-media="true" />' +
             '</widget>';
@@ -808,7 +810,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (fixed allows-arbitrary-loads-for-media)', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-for-media="false" />' +
             '</widget>';
@@ -827,7 +829,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (deprecated allows-arbitrary-loads-in-media)', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-media="true" />' +
             '</widget>';
@@ -846,7 +848,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (deprecated allows-arbitrary-loads-in-media)', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-media="false" />' +
             '</widget>';
@@ -865,7 +867,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-local-networking="true" />' +
             '</widget>';
@@ -885,7 +887,7 @@ describe('prepare', function () {
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="*" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
             '</widget>';
@@ -904,7 +906,7 @@ describe('prepare', function () {
         });
         it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<access origin="http://cordova.apache.org" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
             '</widget>';
@@ -1174,7 +1176,7 @@ describe('prepare', function () {
 
         it('<allow-navigation> - should handle wildcard', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<allow-navigation href="*" />' +
             '</widget>';
@@ -1194,7 +1196,7 @@ describe('prepare', function () {
 
         it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function (done) {
 
-            var readFile = spyOn(fs, 'readFileSync');
+            var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
             '<allow-navigation href="http://cordova.apache.org" allows-arbitrary-loads-in-web-content="true" allows-arbitrary-loads-in-media="true" allows-local-networking="true" />' +
             '</widget>';
