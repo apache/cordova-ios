@@ -63,7 +63,7 @@ exports.get_apple_osx_version = function () {
     return d.promise.then(function (output) {
         var regex = /[0-9]*\.[0-9]*/;
         var versions = [];
-        var regexOSX = /^OS X \d+/;
+        var regexOSX = /^macOS \d+/;
         output = output.split('\n');
         for (var i = 0; i < output.length; i++) {
             if (output[i].trim().match(regexOSX)) {

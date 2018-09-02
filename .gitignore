@@ -227,3 +227,4 @@ node_modules/fs.realpath/
 node_modules/jasmine-core/
 node_modules/jasmine/
 node_modules/eslint-*
+.nyc_output/

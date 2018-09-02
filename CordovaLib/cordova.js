@@ -1,5 +1,5 @@
 // Platform: ios
-// 4450a4cea50616e080a82e8ede9e3d6a1fe3c3ec
+// 9e8e1b716252c4a08abcd31a13013b868d6f4141
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '4.6.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '5.0.0-dev';
 // file: src/scripts/require.js
 
 /* jshint -W079 */
@@ -307,6 +307,7 @@ var cordova = {
         } catch (err) {
             var msg = 'Error in ' + (isSuccess ? 'Success' : 'Error') + ' callbackId: ' + callbackId + ' : ' + err;
             console && console.log && console.log(msg);
+            console && console.log && err.stack && console.log(err.stack);
             cordova.fireWindowEvent('cordovacallbackerror', { 'message': msg });
             throw err;
         }
@@ -836,7 +837,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/spindori/Documents/Cordova/cordova-ios/cordova-js-src/exec.js
+// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -1559,7 +1560,7 @@ exports.reset();
 
 });
 
-// file: /Users/spindori/Documents/Cordova/cordova-ios/cordova-js-src/platform.js
+// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1575,7 +1576,7 @@ module.exports = {
 
 });
 
-// file: /Users/spindori/Documents/Cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
+// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
 define("cordova/plugin/ios/console", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
@@ -1746,7 +1747,7 @@ for (var key in console) {
 
 });
 
-// file: /Users/spindori/Documents/Cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
+// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
 //------------------------------------------------------------------------------

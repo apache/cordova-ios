@@ -1,33 +1,31 @@
 language: objective-c
-osx_image: xcode9.2
+osx_image: xcode9.3
 sudo: false
 
 env:
   matrix:
-  - TRAVIS_NODE_VERSION: '4.8.7'
-  - TRAVIS_NODE_VERSION: '6.13'
-  - TRAVIS_NODE_VERSION: '8'
-  - TRAVIS_NODE_VERSION: '10'
+    - TRAVIS_NODE_VERSION: '6'
+    - TRAVIS_NODE_VERSION: '8'
+    - TRAVIS_NODE_VERSION: '10'
 
 before_install:
-- npm cache clean -f
-- rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
-  && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm
-  install $TRAVIS_NODE_VERSION
-- node --version
+  - nvm install $TRAVIS_NODE_VERSION
 
 install:
-- npm install
-- npm install ios-deploy
-- npm install -g codecov
+  - npm install
+  - npm install ios-deploy
+  - npm install -g codecov
 
 script:
-    - npm run unit-tests
-    - npm run e2e-tests
-    - open -b com.apple.iphonesimulator    
-    - npm run objc-tests
-    - npm run cover
-    - npm run eslint
+  - node --version
+  - npm --version
+  - npm run eslint
+  - npm run unit-tests
+  - npm run test:component
+  - npm run e2e-tests
+  - open -b com.apple.iphonesimulator
+  - npm run objc-tests
+  - npm run cover
 
 after_script:
-    - codecov
+  - codecov
