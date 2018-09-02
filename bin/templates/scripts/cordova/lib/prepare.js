@@ -503,7 +503,11 @@ function updateFileResources (cordovaProject, locations) {
         let targetPath = path.join(project.resources_dir, target);
         targetPath = path.relative(cordovaProject.root, targetPath);
 
-        project.xcode.addResourceFile(target);
+        if (!fs.existsSync(targetPath)) {
+            project.xcode.addResourceFile(target);
+        } else {
+            events.emit('warn', 'Overwriting existing resource file at ' + targetPath);
+        }
 
         resourceMap[targetPath] = src;
     });
