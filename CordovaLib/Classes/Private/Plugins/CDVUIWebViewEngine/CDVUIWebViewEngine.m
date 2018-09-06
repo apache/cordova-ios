@@ -67,6 +67,8 @@
 
 - (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler
 {
+    javaScriptString = [javaScriptString stringByReplacingOccurrencesOfString:@"\u2028" withString:@""];
+    javaScriptString = [javaScriptString stringByReplacingOccurrencesOfString:@"\u2029" withString:@""];
     NSString* ret = [(UIWebView*)_engineWebView stringByEvaluatingJavaScriptFromString:javaScriptString];
 
     if (completionHandler) {
