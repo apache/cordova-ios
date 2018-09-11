@@ -25,8 +25,8 @@ if (process.platform === 'darwin') {
     describe('versions', function () {
         describe('get_apple_ios_version method', () => {
             it('should have found ios version.', (done) => {
-                var _console = versions.__get__('console');
-                var logSpy = jasmine.createSpy('logSpy');
+                let _console = versions.__get__('console');
+                let logSpy = jasmine.createSpy('logSpy');
                 versions.__set__('console', {log: logSpy});
 
                 versions.get_apple_ios_version().then(() => {
@@ -39,8 +39,8 @@ if (process.platform === 'darwin') {
 
         describe('get_apple_osx_version method', () => {
             it('should have found osx version.', (done) => {
-                var _console = versions.__get__('console');
-                var logSpy = jasmine.createSpy('logSpy');
+                let _console = versions.__get__('console');
+                let logSpy = jasmine.createSpy('logSpy');
                 versions.__set__('console', {log: logSpy});
 
                 versions.get_apple_osx_version().then(() => {

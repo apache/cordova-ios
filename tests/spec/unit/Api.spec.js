@@ -35,6 +35,7 @@ if (process.platform === 'darwin') {
 }
 
 var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+var BridgingHeader_mod = require('../../../bin/templates/scripts/cordova/lib/BridgingHeader.js');
 var Podfile_mod = require('../../../bin/templates/scripts/cordova/lib/Podfile');
 var PodsJson_mod = require('../../../bin/templates/scripts/cordova/lib/PodsJson');
 var Q = require('q');
@@ -158,12 +159,14 @@ describe('Platform Api', function () {
 
         describe('addPlugin', function () {
             var my_plugin = {
+                getHeaderFiles: function () { return []; },
                 getFrameworks: function () {}
             };
             beforeEach(function () {
                 spyOn(PluginManager, 'get').and.returnValue({
                     addPlugin: function () { return Q(); }
                 });
+                spyOn(BridgingHeader_mod, 'BridgingHeader');
                 spyOn(Podfile_mod, 'Podfile');
                 spyOn(PodsJson_mod, 'PodsJson');
             });
@@ -171,6 +174,32 @@ describe('Platform Api', function () {
                 var opts = {};
                 api.addPlugin('my cool plugin', opts);
                 expect(opts.variables.PACKAGE_NAME).toEqual('ios.cordova.io');
+            });
+            describe('with header-file of `BridgingHeader` type', function () {
+                var bridgingHeader_mock;
+                var my_bridgingHeader_json = {
+                    type: 'BridgingHeader',
+                    src: 'bridgingHeaderSource!'
+                };
+                beforeEach(function () {
+                    bridgingHeader_mock = jasmine.createSpyObj('bridgingHeader mock', ['addHeader', 'write']);
+                    spyOn(my_plugin, 'getFrameworks').and.returnValue([]);
+                    spyOn(my_plugin, 'getHeaderFiles').and.returnValue([my_bridgingHeader_json]);
+                    BridgingHeader_mod.BridgingHeader.and.callFake(function () {
+                        return bridgingHeader_mock;
+                    });
+                });
+                it('should add BridgingHeader', function (done) {
+                    api.addPlugin(my_plugin)
+                        .then(function () {
+                            expect(bridgingHeader_mock.addHeader).toHaveBeenCalledWith(my_plugin.id, 'bridgingHeaderSource!');
+                            expect(bridgingHeader_mock.write).toHaveBeenCalled();
+                        }).fail(function (err) {
+                            fail('unexpected addPlugin fail handler invoked');
+                            console.error(err);
+                        }).done(done);
+                });
+
             });
             describe('with frameworks of `podspec` type', function () {
                 var podsjson_mock;

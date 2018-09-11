@@ -277,10 +277,11 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var targetDevice = parseTargetDevicePreference(platformConfig.getPreference('target-device', 'ios'));
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
+    var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
 
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
-    if (!targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard) {
+    if (!targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion) {
         return Q();
     }
 
@@ -300,6 +301,11 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     if (deploymentTarget) {
         events.emit('verbose', 'Set IPHONEOS_DEPLOYMENT_TARGET to "' + deploymentTarget + '".');
         proj.updateBuildProperty('IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
+    }
+
+    if (swiftVersion) {
+        events.emit('verbose', 'Set SwiftVersion to "' + swiftVersion + '".');
+        proj.updateBuildProperty('SWIFT_VERSION', swiftVersion);
     }
 
     updateBuildSettingsForLaunchStoryboard(proj, platformConfig, infoPlist);
@@ -497,7 +503,11 @@ function updateFileResources (cordovaProject, locations) {
         let targetPath = path.join(project.resources_dir, target);
         targetPath = path.relative(cordovaProject.root, targetPath);
 
-        project.xcode.addResourceFile(target);
+        if (!fs.existsSync(targetPath)) {
+            project.xcode.addResourceFile(target);
+        } else {
+            events.emit('warn', 'Overwriting existing resource file at ' + targetPath);
+        }
 
         resourceMap[targetPath] = src;
     });

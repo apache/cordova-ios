@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode9.2
+osx_image: xcode9.3
 sudo: false
 
 env:
@@ -19,12 +19,13 @@ install:
 script:
   - node --version
   - npm --version
+  - npm run eslint
   - npm run unit-tests
+  - npm run test:component
   - npm run e2e-tests
   - open -b com.apple.iphonesimulator
   - npm run objc-tests
   - npm run cover
-  - npm run eslint
 
 after_script:
   - codecov
