@@ -17,8 +17,8 @@
  under the License.
  */
 
-#import "CDVPlugin.h"
-#import "CDVWhitelist.h"
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVWhitelist.h>
 
 typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
     CDVIntentAndNavigationFilterValueIntentAllowed,
