@@ -189,7 +189,6 @@ function updateProject (platformConfig, locations) {
     // because node and shell scripts handles unicode symbols differently
     // We need to normalize the name to NFD form since iOS uses NFD unicode form
     var name = unorm.nfd(platformConfig.name());
-    var pkg = platformConfig.getAttribute('ios-CFBundleIdentifier') || platformConfig.packageName();
     var version = platformConfig.version();
     var displayName = platformConfig.shortName && platformConfig.shortName();
 
@@ -198,7 +197,6 @@ function updateProject (platformConfig, locations) {
     // Update package id (bundle id)
     var plistFile = path.join(locations.xcodeCordovaProj, originalName + '-Info.plist');
     var infoPlist = plist.parse(fs.readFileSync(plistFile, 'utf8'));
-    infoPlist['CFBundleIdentifier'] = pkg;
 
     // Update version (bundle version)
     infoPlist['CFBundleShortVersionString'] = version;
@@ -224,10 +222,14 @@ function updateProject (platformConfig, locations) {
     handleOrientationSettings(platformConfig, infoPlist);
     updateProjectPlistForLaunchStoryboard(platformConfig, infoPlist);
 
-    var info_contents = plist.build(infoPlist);
+    /* eslint-disable no-tabs */
+    // Write out the plist file with the same formatting as Xcode does
+    var info_contents = plist.build(infoPlist, { indent: '	', offset: -1 });
+    /* eslint-enable no-tabs */
+
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g, '<string></string>');
     fs.writeFileSync(plistFile, info_contents, 'utf-8');
-    events.emit('verbose', 'Wrote out iOS Bundle Identifier "' + pkg + '" and iOS Bundle Version "' + version + '" to ' + plistFile);
+    events.emit('verbose', 'Wrote out iOS Bundle Version "' + version + '" to ' + plistFile);
 
     return handleBuildSettings(platformConfig, locations, infoPlist).then(function () {
         if (name === originalName) {
@@ -274,23 +276,31 @@ function handleOrientationSettings (platformConfig, infoPlist) {
 }
 
 function handleBuildSettings (platformConfig, locations, infoPlist) {
+    var pkg = platformConfig.getAttribute('ios-CFBundleIdentifier') || platformConfig.packageName();
     var targetDevice = parseTargetDevicePreference(platformConfig.getPreference('target-device', 'ios'));
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-
-    // no build settings provided and we don't need to update build settings for launch storyboards,
-    // then we don't need to parse and update .pbxproj file
-    if (!targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion) {
-        return Q();
-    }
 
     var proj = new xcode.project(locations.pbxproj); /* eslint new-cap : 0 */
 
     try {
         proj.parseSync();
     } catch (err) {
-        return Q.reject(new CordovaError('Could not parse project.pbxproj: ' + err));
+        return Q.reject(new CordovaError('Could not parse ' + locations.pbxproj + ': ' + err));
+    }
+
+    var origPkg = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
+
+    // no build settings provided and we don't need to update build settings for launch storyboards,
+    // then we don't need to parse and update .pbxproj file
+    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion) {
+        return Q();
+    }
+
+    if (origPkg !== pkg) {
+        events.emit('verbose', 'Set PRODUCT_BUNDLE_IDENTIFIER to ' + pkg + '.');
+        proj.updateBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', pkg);
     }
 
     if (targetDevice) {
