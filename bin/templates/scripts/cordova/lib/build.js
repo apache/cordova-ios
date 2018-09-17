@@ -290,6 +290,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
 
     if (isDevice) {
         options = [
+            '-UseModernBuildSystem=NO',
             '-workspace', customArgs.workspace || projectName + '.xcworkspace',
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
@@ -312,6 +313,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         }
     } else { // emulator
         options = [
+            '-UseModernBuildSystem=NO',
             '-workspace', customArgs.project || projectName + '.xcworkspace',
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
