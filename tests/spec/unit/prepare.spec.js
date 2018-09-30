@@ -25,8 +25,6 @@ var shell = require('shelljs');
 var plist = require('plist');
 var xcode = require('xcode');
 var rewire = require('rewire');
-var EventEmitter = require('events').EventEmitter;
-var Api = require('../../../bin/templates/scripts/cordova/Api');
 var prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
 var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 var FileUpdater = require('cordova-common').FileUpdater;
@@ -61,15 +59,21 @@ function wrapperError (p, done, post) {
 }
 
 describe('prepare', function () {
-    var p;
+    var p, Api;
     beforeEach(function () {
+        Api = rewire('../../../bin/templates/scripts/cordova/Api');
+
+        // Prevent logging to avoid polluting the test reports
+        Api.__set__('events.emit', jasmine.createSpy());
+
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
-        p = new Api('ios', iosPlatform, new EventEmitter());
+        p = new Api('ios', iosPlatform);
     });
 
     afterEach(function () {
         shell.rm('-rf', path.join(__dirname, 'some'));
+        process.removeAllListeners();
     });
 
     describe('launch storyboard feature (CB-9762)', function () {
