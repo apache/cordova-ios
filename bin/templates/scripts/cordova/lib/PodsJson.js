@@ -86,7 +86,7 @@ PodsJson.prototype.increment = function (name) {
     var val = this.get(name);
     if (val) {
         val.count++;
-        this.setJson(val);
+        this.setJson(name, val);
     }
 };
 
@@ -97,7 +97,7 @@ PodsJson.prototype.decrement = function (name) {
         if (val.count <= 0) {
             this.remove(name);
         } else {
-            this.setJson(val);
+            this.setJson(name, val);
         }
     }
 };
