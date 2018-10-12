@@ -456,7 +456,6 @@
 				C0C01EAD1E3911D50056E6CB /* Sources */,
 				C0C01EAE1E3911D50056E6CB /* Frameworks */,
 				C0C01EAF1E3911D50056E6CB /* Headers */,
-				C0C01EB01E3911D50056E6CB /* Resources */,
 			);
 			buildRules = (
 			);
@@ -490,7 +489,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 1000;
 				TargetAttributes = {
 					C0C01EB11E3911D50056E6CB = {
 						CreatedOnToolsVersion = 8.2;
