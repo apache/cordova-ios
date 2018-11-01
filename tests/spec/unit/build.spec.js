@@ -22,7 +22,16 @@ var rewire = require('rewire');
 var build = rewire('../../../bin/templates/scripts/cordova/lib/build');
 
 describe('build', function () {
+    let emitSpy;
     var testProjectPath = path.join('/test', 'project', 'path');
+
+    beforeEach(function () {
+        // Events spy
+        emitSpy = jasmine.createSpy('emitSpy');
+        build.__set__('events', {
+            emit: emitSpy
+        });
+    });
 
     describe('getXcodeBuildArgs method', function () {
 
@@ -436,7 +445,6 @@ describe('build', function () {
         let shellLsSpy;
         let rejectSpy;
         let resolveSpy;
-        let emitSpy;
         const fakePath = '/path/foobar';
 
         beforeEach(() => {
@@ -454,12 +462,6 @@ describe('build', function () {
             build.__set__('Q', {
                 reject: rejectSpy,
                 resolve: resolveSpy
-            });
-
-            // Events spy
-            emitSpy = jasmine.createSpy('emitSpy');
-            build.__set__('events', {
-                emit: emitSpy
             });
         });
 
