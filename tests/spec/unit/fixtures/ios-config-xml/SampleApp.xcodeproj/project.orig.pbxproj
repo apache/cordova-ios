@@ -302,7 +302,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "ChildApp/ChildApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRODUCT_NAME = "ChildApp";
@@ -324,7 +324,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "ChildApp/ChildApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRODUCT_NAME = "ChildApp";
