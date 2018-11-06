@@ -35,7 +35,7 @@ static const NSInteger MAX_CONCURRENT_OPERATION = 32; // Half of the GCD limitat
     if (self != nil) {
         _viewController = viewController;
         _commandQueue = _viewController.commandQueue;
-        [_operationQueue = [[NSOperationQueue alloc] init];
+        _operationQueue = [[NSOperationQueue alloc] init];
         [_operationQueue setQualityOfService:NSQualityOfServiceBackground];
         [_operationQueue setMaxConcurrentOperationCount:MAX_CONCURRENT_OPERATION];
 
