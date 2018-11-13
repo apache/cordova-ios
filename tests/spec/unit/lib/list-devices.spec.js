@@ -28,9 +28,9 @@ describe('cordova/lib/list-devices', function () {
         });
         it('should invoke proper system calls to retrieve connected devices', function () {
             list_devices.run();
-            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/system_profiler.*iPad/g));
-            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/system_profiler.*iPod/g));
-            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/system_profiler.*iPhone/g));
+            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
+            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
+            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
         });
         it('should trim and split standard output and return as array', function (done) {
             Q.all.and.returnValue(Q.resolve([['   this is\nmy sweet\nstdout\n    ']]));
