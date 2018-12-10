@@ -100,6 +100,8 @@ describe('unit tests for Podfile module', function () {
             podfile.addSpec('Foo-Baz', '4.0');
             podfile.addSpec('Foo~Baz@!%@!%!', '5.0');
             podfile.addSpec('Bla', ':configurations => [\'Debug\', \'Beta\']');
+            podfile.addSpec('Bla2', {'configurations': 'Debug,Release'});
+            podfile.addSpec('Bla3', {'configurations': 'Debug, Release'});
 
             podfile.write();
 
@@ -112,12 +114,14 @@ describe('unit tests for Podfile module', function () {
             expect(newPodfile.existsSpec('Foo~Baz@!%@!%!')).toBe(true);
             expect(newPodfile.existsSpec('Bla')).toBe(true);
 
-            expect(newPodfile.getSpec('Foo')).toBe(podfile.getSpec('Foo'));
-            expect(newPodfile.getSpec('Bar')).toBe(podfile.getSpec('Bar'));
-            expect(newPodfile.getSpec('Baz')).toBe(podfile.getSpec('Baz'));
-            expect(newPodfile.getSpec('Foo-Baz')).toBe(podfile.getSpec('Foo-Baz'));
-            expect(newPodfile.getSpec('Foo~Baz@!%@!%!')).toBe(podfile.getSpec('Foo~Baz@!%@!%!'));
-            expect(newPodfile.getSpec('Bla')).toBe(podfile.getSpec('Bla'));
+            expect(newPodfile.getSpec('Foo')).toEqual(podfile.getSpec('Foo'));
+            expect(newPodfile.getSpec('Bar')).toEqual(podfile.getSpec('Bar'));
+            expect(newPodfile.getSpec('Baz')).toEqual(podfile.getSpec('Baz'));
+            expect(newPodfile.getSpec('Foo-Baz')).toEqual(podfile.getSpec('Foo-Baz'));
+            expect(newPodfile.getSpec('Foo~Baz@!%@!%!')).toEqual(podfile.getSpec('Foo~Baz@!%@!%!'));
+            expect(newPodfile.getSpec('Bla')).toEqual(podfile.getSpec('Bla'));
+            expect(newPodfile.getSpec('Bla2').options).toEqual(':configurations => [\'Debug\',\'Release\']');
+            expect(newPodfile.getSpec('Bla3').options).toEqual(':configurations => [\'Debug\',\'Release\']');
         });
 
         it('Test 009 : runs before_install to install xcconfig paths', function () {

@@ -17,6 +17,7 @@
        under the License.
 */
 
+var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var CordovaError = require('cordova-common').CordovaError;
@@ -26,7 +27,13 @@ var fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
 describe('unit tests for Podfile module', function () {
-    var podsjson = new PodsJson(fixturePodsJson);
+    var podsjson = null;
+    beforeEach(function () {
+        podsjson = new PodsJson(fixturePodsJson);
+    });
+    afterEach(function () {
+        podsjson.destroy();
+    });
 
     describe('tests', function () {
 
@@ -37,15 +44,15 @@ describe('unit tests for Podfile module', function () {
             }).toThrow(new CordovaError(util.format('PodsJson: The file at %s is not `%s`.', dummyPath, PodsJson.FILENAME)));
         });
 
-        it('Test 002 : sets and gets pod test', function () {
+        it('Test 002 : setsJson and gets pod test', function () {
             var val0 = {
                 name: 'Foo',
                 type: 'podspec',
                 spec: '1.0',
                 count: 1
             };
-            podsjson.set(val0.name, val0.type, val0.spec, val0.count);
-            var val1 = podsjson.get(val0.name);
+            podsjson.setJsonLibrary(val0.name, val0);
+            var val1 = podsjson.getLibrary(val0.name);
 
             expect(val1).toBeTruthy();
             expect(val1.name).toEqual(val0.name);
@@ -61,8 +68,8 @@ describe('unit tests for Podfile module', function () {
                 spec: '2.0',
                 count: 2
             };
-            podsjson.setJson(val0.name, val0);
-            var val1 = podsjson.get(val0.name);
+            podsjson.setJsonLibrary(val0.name, val0);
+            var val1 = podsjson.getLibrary(val0.name);
 
             expect(val1).toBeTruthy();
             expect(val1.name).toEqual(val0.name);
@@ -70,8 +77,8 @@ describe('unit tests for Podfile module', function () {
             expect(val1.spec).toEqual(val0.spec);
             expect(val1.count).toEqual(val0.count);
 
-            podsjson.remove(val0.name);
-            val1 = podsjson.get(val0.name);
+            podsjson.removeLibrary(val0.name);
+            val1 = podsjson.getLibrary(val0.name);
             expect(val1).toBeFalsy();
         });
 
@@ -82,12 +89,12 @@ describe('unit tests for Podfile module', function () {
                 spec: '3.0',
                 count: 3
             };
-            podsjson.setJson(val0.name, val0);
+            podsjson.setJsonLibrary(val0.name, val0);
             podsjson.clear();
 
-            expect(podsjson.get(val0.name)).toBeFalsy();
-            expect(podsjson.get('Foo')).toBeFalsy();
-            expect(podsjson.get('Bar')).toBeFalsy();
+            expect(podsjson.getLibrary(val0.name)).toBeFalsy();
+            expect(podsjson.getLibrary('Foo')).toBeFalsy();
+            expect(podsjson.getLibrary('Bar')).toBeFalsy();
         });
 
         it('Test 005 : isDirty tests', function () {
@@ -98,13 +105,13 @@ describe('unit tests for Podfile module', function () {
                 count: 1
             };
 
-            podsjson.setJson(val0.name, val0);
+            podsjson.setJsonLibrary(val0.name, val0);
             expect(podsjson.isDirty()).toBe(true);
 
             podsjson.write();
             expect(podsjson.isDirty()).toBe(false);
 
-            podsjson.remove(val0.name);
+            podsjson.removeLibrary(val0.name);
             expect(podsjson.isDirty()).toBe(true);
 
             podsjson.clear();
@@ -122,24 +129,24 @@ describe('unit tests for Podfile module', function () {
                 count: 4
             };
 
-            podsjson.setJson(val0.name, val0);
-            expect(podsjson.get(val0.name).count).toBe(4);
+            podsjson.setJsonLibrary(val0.name, val0);
+            expect(podsjson.getLibrary(val0.name).count).toBe(4);
 
-            podsjson.increment(val0.name);
-            expect(podsjson.get(val0.name).count).toBe(5);
+            podsjson.incrementLibrary(val0.name);
+            expect(podsjson.getLibrary(val0.name).count).toBe(5);
 
-            podsjson.decrement(val0.name);
-            expect(podsjson.get(val0.name).count).toBe(4);
-            podsjson.decrement(val0.name);
-            expect(podsjson.get(val0.name).count).toBe(3);
-            podsjson.decrement(val0.name);
-            expect(podsjson.get(val0.name).count).toBe(2);
-            podsjson.decrement(val0.name);
-            expect(podsjson.get(val0.name).count).toBe(1);
+            podsjson.decrementLibrary(val0.name);
+            expect(podsjson.getLibrary(val0.name).count).toBe(4);
+            podsjson.decrementLibrary(val0.name);
+            expect(podsjson.getLibrary(val0.name).count).toBe(3);
+            podsjson.decrementLibrary(val0.name);
+            expect(podsjson.getLibrary(val0.name).count).toBe(2);
+            podsjson.decrementLibrary(val0.name);
+            expect(podsjson.getLibrary(val0.name).count).toBe(1);
 
             // this next decrement takes it down to zero, where the pod will just be removed
-            podsjson.decrement(val0.name);
-            expect(podsjson.get(val0.name)).toBeFalsy();
+            podsjson.decrementLibrary(val0.name);
+            expect(podsjson.getLibrary(val0.name)).toBeFalsy();
         });
 
         it('Test 007 : writes pods to the pods.json', function () {
@@ -151,17 +158,17 @@ describe('unit tests for Podfile module', function () {
                 'Baz': { name: 'Baz', type: 'podspec', spec: '3.0', count: 3 }
             };
 
-            podsjson.setJson('Foo', vals.Foo);
-            podsjson.setJson('Bar', vals.Bar);
-            podsjson.setJson('Baz', vals.Baz);
+            podsjson.setJsonLibrary('Foo', vals.Foo);
+            podsjson.setJsonLibrary('Bar', vals.Bar);
+            podsjson.setJsonLibrary('Baz', vals.Baz);
 
             podsjson.write();
 
             // verify by reading it back in a new PodsJson
             var newPodsJson = new PodsJson(fixturePodsJson);
-            expect(newPodsJson.get('Foo')).toBeTruthy();
-            expect(newPodsJson.get('Bar')).toBeTruthy();
-            expect(newPodsJson.get('Baz')).toBeTruthy();
+            expect(newPodsJson.getLibrary('Foo')).toBeTruthy();
+            expect(newPodsJson.getLibrary('Bar')).toBeTruthy();
+            expect(newPodsJson.getLibrary('Baz')).toBeTruthy();
 
             function podEqual (a, b) {
                 return (
@@ -172,14 +179,76 @@ describe('unit tests for Podfile module', function () {
                 );
             }
 
-            expect(podEqual(podsjson.get('Foo'), newPodsJson.get('Foo'))).toBe(true);
-            expect(podEqual(podsjson.get('Bar'), newPodsJson.get('Bar'))).toBe(true);
-            expect(podEqual(podsjson.get('Baz'), newPodsJson.get('Baz'))).toBe(true);
+            expect(podEqual(podsjson.getLibrary('Foo'), newPodsJson.getLibrary('Foo'))).toBe(true);
+            expect(podEqual(podsjson.getLibrary('Bar'), newPodsJson.getLibrary('Bar'))).toBe(true);
+            expect(podEqual(podsjson.getLibrary('Baz'), newPodsJson.getLibrary('Baz'))).toBe(true);
+        });
+
+        it('Test 008 : setJson, get, increment, decrement, remove and write for Declaration', function () {
+            var result = null;
+            var writeFileSyncSpy = spyOn(fs, 'writeFileSync');
+            writeFileSyncSpy.and.callFake(function (filepath, data, encode) {
+                result = data;
+            });
+            var json = {
+                declaration: 'use_frameworks!',
+                count: 1
+            };
+            var json2 = {
+                declaration: 'inhibit_all_warnings!',
+                count: 2
+            };
+            podsjson.setJsonDeclaration(json.declaration, json);
+            expect(podsjson.getDeclaration(json.declaration)).not.toBe(json);
+            expect(podsjson.getDeclaration(json.declaration)).toEqual(json);
+            podsjson.incrementDeclaration(json.declaration);
+            expect(podsjson.getDeclaration(json.declaration).count).toEqual(2);
+            podsjson.decrementDeclaration(json.declaration);
+            expect(podsjson.getDeclaration(json.declaration).count).toEqual(1);
+            podsjson.setJsonDeclaration(json2.declaration, json2);
+            expect(podsjson.getDeclaration(json.declaration)).toEqual(json);
+            expect(podsjson.getDeclaration(json2.declaration)).toEqual(json2);
+            podsjson.removeDeclaration(json.declaration);
+            expect(podsjson.getDeclaration(json.declaration)).toBeUndefined();
+            podsjson.write();
+            expect(writeFileSyncSpy).toHaveBeenCalled();
+            expect(JSON.parse(result).declarations[json2.declaration]).toEqual(json2);
+        });
+
+        it('Test 009 : setJson, get, increment, decrement, remove and write for Source', function () {
+            var result = null;
+            var writeFileSyncSpy = spyOn(fs, 'writeFileSync');
+            writeFileSyncSpy.and.callFake(function (filepath, data, encode) {
+                result = data;
+            });
+            var json = {
+                source: 'https://github.com/brightcove/BrightcoveSpecs.git',
+                count: 1
+            };
+            var json2 = {
+                source: 'https://github.com/CocoaPods/Specs.git',
+                count: 2
+            };
+            podsjson.setJsonSource(json.source, json);
+            expect(podsjson.getSource(json.source)).not.toBe(json);
+            expect(podsjson.getSource(json.source)).toEqual(json);
+            podsjson.incrementSource(json.source);
+            expect(podsjson.getSource(json.source).count).toEqual(2);
+            podsjson.decrementSource(json.source);
+            expect(podsjson.getSource(json.source).count).toEqual(1);
+            podsjson.setJsonSource(json2.source, json2);
+            expect(podsjson.getSource(json.source)).toEqual(json);
+            expect(podsjson.getSource(json2.source)).toEqual(json2);
+            podsjson.removeSource(json.source);
+            expect(podsjson.getSource(json.source)).toBeUndefined();
+            podsjson.write();
+            expect(writeFileSyncSpy).toHaveBeenCalled();
+            expect(JSON.parse(result).sources[json2.source]).toEqual(json2);
         });
 
     });
 
-    it('Test 008 : tear down', function () {
-        podsjson.destroy();
-    });
+    // it('Test 008 : tear down', function () {
+    //     podsjson.destroy();
+    // });
 });

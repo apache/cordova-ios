@@ -24,6 +24,9 @@ var events = require('cordova-common').events;
 var CordovaError = require('cordova-common').CordovaError;
 
 PodsJson.FILENAME = 'pods.json';
+PodsJson.LIBRARY = 'libraries';
+PodsJson.SOURCE = 'sources';
+PodsJson.DECLARATION = 'declarations';
 
 function PodsJson (podsJsonPath) {
     this.path = podsJsonPath;
@@ -43,25 +46,81 @@ function PodsJson (podsJsonPath) {
     } else {
         events.emit('verbose', 'pods.json found in platforms/ios');
         // load contents
-        this.contents = fs.readFileSync(this.path, 'utf8');
-        this.contents = JSON.parse(this.contents);
+        var contents = fs.readFileSync(this.path, 'utf8');
+        this.contents = JSON.parse(contents);
     }
+    this.__updateFormatIfNecessary();
 }
 
-PodsJson.prototype.get = function (name) {
-    return this.contents[name];
+PodsJson.prototype.__isOldFormat = function () {
+    if (this.contents !== null) {
+        if (this.contents.declarations === undefined ||
+            this.contents.sources === undefined ||
+            this.contents.libraries === undefined) {
+            return true;
+        }
+    }
+    return false;
 };
 
-PodsJson.prototype.remove = function (name) {
-    if (this.contents[name]) {
-        delete this.contents[name];
+PodsJson.prototype.__updateFormatIfNecessary = function () {
+    if (this.__isOldFormat()) {
+        this.contents = {
+            declarations: {},
+            sources: {},
+            libraries: this.contents
+        };
         this.__dirty = true;
-        events.emit('verbose', util.format('Remove from pods.json for `%s`', name));
+        events.emit('verbose', 'Update format of pods.json');
     }
+};
+
+PodsJson.prototype.getLibraries = function () {
+    return this.contents[PodsJson.LIBRARY];
+};
+
+PodsJson.prototype.__get = function (kind, name) {
+    return this.contents[kind][name];
+};
+
+PodsJson.prototype.getLibrary = function (name) {
+    return this.__get(PodsJson.LIBRARY, name);
+};
+
+PodsJson.prototype.getSource = function (name) {
+    return this.__get(PodsJson.SOURCE, name);
+};
+
+PodsJson.prototype.getDeclaration = function (name) {
+    return this.__get(PodsJson.DECLARATION, name);
+};
+
+PodsJson.prototype.__remove = function (kind, name) {
+    if (this.contents[kind][name]) {
+        delete this.contents[kind][name];
+        this.__dirty = true;
+        events.emit('verbose', util.format('Remove from pods.json for `%s` - `%s`', name));
+    }
+};
+
+PodsJson.prototype.removeLibrary = function (name) {
+    this.__remove(PodsJson.LIBRARY, name);
+};
+
+PodsJson.prototype.removeSource = function (name) {
+    this.__remove(PodsJson.SOURCE, name);
+};
+
+PodsJson.prototype.removeDeclaration = function (name) {
+    this.__remove(PodsJson.DECLARATION, name);
 };
 
 PodsJson.prototype.clear = function () {
-    this.contents = {};
+    this.contents = {
+        declarations: {},
+        sources: {},
+        libraries: {}
+    };
     this.__dirty = true;
 };
 
@@ -78,34 +137,69 @@ PodsJson.prototype.write = function () {
     }
 };
 
-PodsJson.prototype.set = function (name, type, spec, count) {
-    this.setJson(name, { name: name, type: type, spec: spec, count: count });
-};
-
-PodsJson.prototype.increment = function (name) {
-    var val = this.get(name);
+PodsJson.prototype.__increment = function (kind, name) {
+    var val = this.__get(kind, name);
     if (val) {
         val.count++;
-        this.setJson(val);
     }
 };
 
-PodsJson.prototype.decrement = function (name) {
-    var val = this.get(name);
+PodsJson.prototype.incrementLibrary = function (name) {
+    this.__increment(PodsJson.LIBRARY, name);
+};
+
+PodsJson.prototype.incrementSource = function (name) {
+    this.__increment(PodsJson.SOURCE, name);
+};
+
+PodsJson.prototype.incrementDeclaration = function (name) {
+    this.__increment(PodsJson.DECLARATION, name);
+};
+
+PodsJson.prototype.__decrement = function (kind, name) {
+    var val = this.__get(kind, name);
     if (val) {
         val.count--;
         if (val.count <= 0) {
-            this.remove(name);
-        } else {
-            this.setJson(val);
+            this.__remove(kind, name);
         }
     }
 };
 
-PodsJson.prototype.setJson = function (name, json) {
-    this.contents[name] = json;
+PodsJson.prototype.decrementLibrary = function (name) {
+    this.__decrement(PodsJson.LIBRARY, name);
+};
+
+PodsJson.prototype.decrementSource = function (name) {
+    this.__decrement(PodsJson.SOURCE, name);
+};
+
+PodsJson.prototype.decrementDeclaration = function (name) {
+    this.__decrement(PodsJson.DECLARATION, name);
+};
+
+PodsJson.prototype.__setJson = function (kind, name, json) {
+    this.contents[kind][name] = Object.assign({}, json);
     this.__dirty = true;
-    events.emit('verbose', util.format('Set pods.json for `%s`', name));
+    events.emit('verbose', util.format('Set pods.json for `%s` - `%s`', kind, name));
+};
+
+// sample json for library
+// { name: "Eureka", spec: "4.2.0", "swift-version": "4.1", count: 1 }
+PodsJson.prototype.setJsonLibrary = function (name, json) {
+    this.__setJson(PodsJson.LIBRARY, name, json);
+};
+
+// sample json for source
+// { source: "https://github.com/brightcove/BrightcoveSpecs.git", count: 1 }
+PodsJson.prototype.setJsonSource = function (name, json) {
+    this.__setJson(PodsJson.SOURCE, name, json);
+};
+
+// sample json for declaration
+// { declaration: ""}
+PodsJson.prototype.setJsonDeclaration = function (name, json) {
+    this.__setJson(PodsJson.DECLARATION, name, json);
 };
 
 PodsJson.prototype.isDirty = function () {
