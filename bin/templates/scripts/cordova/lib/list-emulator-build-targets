@@ -50,7 +50,7 @@ function listEmulatorBuildTargets () {
             var availableDevices = Object.keys(devices).reduce(function (availAcc, deviceCategory) {
                 var availableDevicesInCategory = devices[deviceCategory];
                 availableDevicesInCategory.forEach(function (device) {
-                    if (device.name === deviceType.name.replace(/\-inch/g, ' inch')) {
+                    if (device.name === deviceType.name || device.name === deviceType.name.replace(/\-inch/g, ' inch')) {
                         // Check new flag isAvailable (XCode 10.1+) or legacy string availability (XCode 10 and lower)
                         if (device.isAvailable || (device.availability && device.availability.toLowerCase().indexOf('unavailable') < 0)) {
                             availAcc.push(device);
