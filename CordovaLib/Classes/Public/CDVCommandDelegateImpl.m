@@ -81,8 +81,8 @@
                 CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
             }
 
-            [_commandQueue enqueueCommandBatch:commandsJSON];
-            [_commandQueue executePending];
+            [self->_commandQueue enqueueCommandBatch:commandsJSON];
+            [self->_commandQueue executePending];
         }
     }];
 }

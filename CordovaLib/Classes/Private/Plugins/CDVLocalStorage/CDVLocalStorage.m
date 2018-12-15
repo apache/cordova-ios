@@ -18,7 +18,7 @@
  */
 
 #import "CDVLocalStorage.h"
-#import "CDV.h"
+#import <Cordova/CDV.h>
 
 @interface CDVLocalStorage ()
 

@@ -136,7 +136,7 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
     shell.mv('-f', path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, project_name + '-Prefix.pch'));
     shell.mv('-f', path.join(r, 'gitignore'), path.join(r, '.gitignore'));
 
-    /* replace __PROJECT_NAME__ and --ID-- with ACTIVITY and ID strings, respectively, in:
+    /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
      *
      * - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
      * - ./__PROJECT_NAME__/Classes/AppDelegate.h
@@ -155,6 +155,7 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     var project_name_esc = project_name.replace(/&/g, '\\&');
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r + '.xcodeproj', 'project.pbxproj'));
+    shell.sed('-i', /__PROJECT_ID__/g, package_name, path.join(r + '.xcodeproj', 'project.pbxproj'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
@@ -162,7 +163,6 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'main.m'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name + '-Info.plist'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name + '-Prefix.pch'));
-    shell.sed('-i', /--ID--/g, package_name, path.join(r, project_name + '-Info.plist'));
 }
 
 function AbsParentPath (_path) {
