@@ -168,11 +168,10 @@ module.exports.run = function (buildOpts) {
             var buildOutputDir = path.join(projectPath, 'build', (buildOpts.device ? 'device' : 'emulator'));
 
             // remove the build/device folder before building
-            return superspawn.spawn('rm', [ '-rf', buildOutputDir ], { cwd: projectPath })
-                .then(function () {
-                    var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-                    return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath });
-                });
+            shell.rm('-rf', buildOutputDir);
+
+            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
+            return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath });
 
         }).then(function () {
             if (!buildOpts.device || buildOpts.noSign) {

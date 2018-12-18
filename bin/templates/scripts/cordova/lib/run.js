@@ -21,6 +21,7 @@ var Q = require('q');
 var path = require('path');
 var cp = require('child_process');
 var build = require('./build');
+var shell = require('shelljs');
 var superspawn = require('cordova-common').superspawn;
 var check_reqs = require('./check_reqs');
 
@@ -87,15 +88,13 @@ module.exports.run = function (runOptions) {
                         var payloadFolder = path.join(buildOutputDir, 'Payload');
 
                         // delete the existing platform/ios/build/device/appname.app
-                        return superspawn('rm', [ '-rf', appFile ], { cwd: buildOutputDir })
-                            .then(function () {
-                                // move the platform/ios/build/device/Payload/appname.app to parent
-                                return superspawn('mv', [ '-f', appFileInflated, buildOutputDir ], { cwd: buildOutputDir });
-                            })
-                            .then(function () {
-                                // delete the platform/ios/build/device/Payload folder
-                                return superspawn('rm', [ '-rf', payloadFolder ], { cwd: buildOutputDir });
-                            });
+                        shell.rm('-rf', appFile);
+                        // move the platform/ios/build/device/Payload/appname.app to parent
+                        shell.mv('-f', appFileInflated, buildOutputDir);
+                        // delete the platform/ios/build/device/Payload folder
+                        shell.rm('-rf', payloadFolder);
+
+                        return null;
                     })
                     .then(function () {
                         appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
