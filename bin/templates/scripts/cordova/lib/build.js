@@ -20,7 +20,6 @@
 var Q = require('q');
 var path = require('path');
 var shell = require('shelljs');
-var superspawn = require('cordova-common').superspawn;
 var fs = require('fs');
 var plist = require('plist');
 var util = require('util');
@@ -28,6 +27,8 @@ var util = require('util');
 var check_reqs = require('./check_reqs');
 var projectFile = require('./projectFile');
 
+// NOTE: as of cordova-common@3 superspawn is using cross-spawn.
+var superspawn = require('cordova-common').superspawn;
 var events = require('cordova-common').events;
 
 var projectPath = path.join(__dirname, '..', '..');
