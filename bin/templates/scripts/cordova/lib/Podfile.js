@@ -385,6 +385,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     var opts = {};
     opts.cwd = path.join(this.path, '..'); // parent path of this Podfile
     opts.stdio = 'pipe';
+    opts.printCommand = true;
     var first = true;
     var self = this;
 
