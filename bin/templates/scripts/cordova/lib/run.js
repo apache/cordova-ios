@@ -21,7 +21,7 @@ var Q = require('q');
 var path = require('path');
 var cp = require('child_process');
 var build = require('./build');
-var spawn = require('./spawn');
+var superspawn = require('cordova-common').superspawn;
 var check_reqs = require('./check_reqs');
 
 var events = require('cordova-common').events;
@@ -78,7 +78,7 @@ module.exports.run = function (runOptions) {
                         var ipafile = path.join(buildOutputDir, projectName + '.ipa');
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return spawn('unzip', [ '-o', '-qq', ipafile ], buildOutputDir);
+                        return superspawn.spawn('unzip', [ '-o', '-qq', ipafile ], { cwd: buildOutputDir });
                     })
                     .then(function () {
                         // Uncompress IPA (zip file)
@@ -87,14 +87,14 @@ module.exports.run = function (runOptions) {
                         var payloadFolder = path.join(buildOutputDir, 'Payload');
 
                         // delete the existing platform/ios/build/device/appname.app
-                        return spawn('rm', [ '-rf', appFile ], buildOutputDir)
+                        return superspawn('rm', [ '-rf', appFile ], { cwd: buildOutputDir })
                             .then(function () {
                                 // move the platform/ios/build/device/Payload/appname.app to parent
-                                return spawn('mv', [ '-f', appFileInflated, buildOutputDir ], buildOutputDir);
+                                return superspawn('mv', [ '-f', appFileInflated, buildOutputDir ], { cwd: buildOutputDir });
                             })
                             .then(function () {
                                 // delete the platform/ios/build/device/Payload folder
-                                return spawn('rm', [ '-rf', payloadFolder ], buildOutputDir);
+                                return superspawn('rm', [ '-rf', payloadFolder ], { cwd: buildOutputDir });
                             });
                     })
                     .then(function () {
@@ -149,7 +149,7 @@ function filterSupportedArgs (args) {
  * @return {Promise} Fullfilled when any device is connected, rejected otherwise
  */
 function checkDeviceConnected () {
-    return spawn('ios-deploy', ['-c', '-t', '1']);
+    return superspawn.spawn('ios-deploy', ['-c', '-t', '1']);
 }
 
 /**
@@ -161,9 +161,9 @@ function checkDeviceConnected () {
 function deployToDevice (appPath, target, extraArgs) {
     // Deploying to device...
     if (target) {
-        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs));
+        return superspawn.spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs));
     } else {
-        return spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs));
+        return superspawn.spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs));
     }
 }
 
