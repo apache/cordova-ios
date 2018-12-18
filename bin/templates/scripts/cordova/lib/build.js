@@ -20,7 +20,7 @@
 var Q = require('q');
 var path = require('path');
 var shell = require('shelljs');
-var spawn = require('./spawn');
+var superspawn = require('cordova-common').superspawn;
 var fs = require('fs');
 var plist = require('plist');
 var util = require('util');
@@ -168,11 +168,10 @@ module.exports.run = function (buildOpts) {
             var buildOutputDir = path.join(projectPath, 'build', (buildOpts.device ? 'device' : 'emulator'));
 
             // remove the build/device folder before building
-            return spawn('rm', [ '-rf', buildOutputDir ], projectPath)
-                .then(function () {
-                    var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-                    return spawn('xcodebuild', xcodebuildArgs, projectPath);
-                });
+            shell.rm('-rf', buildOutputDir);
+
+            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
+            return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath });
 
         }).then(function () {
             if (!buildOpts.device || buildOpts.noSign) {
@@ -225,7 +224,7 @@ module.exports.run = function (buildOpts) {
 
             function packageArchive () {
                 var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return spawn('xcodebuild', xcodearchiveArgs, projectPath);
+                return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath });
             }
 
             return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
