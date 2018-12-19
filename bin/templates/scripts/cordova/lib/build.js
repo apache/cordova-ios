@@ -171,7 +171,7 @@ module.exports.run = function (buildOpts) {
             shell.rm('-rf', buildOutputDir);
 
             var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-            return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath });
+            return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true });
 
         }).then(function () {
             if (!buildOpts.device || buildOpts.noSign) {
@@ -224,7 +224,7 @@ module.exports.run = function (buildOpts) {
 
             function packageArchive () {
                 var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath });
+                return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true });
             }
 
             return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')

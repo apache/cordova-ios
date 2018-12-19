@@ -79,7 +79,7 @@ module.exports.run = function (runOptions) {
                         var ipafile = path.join(buildOutputDir, projectName + '.ipa');
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return superspawn.spawn('unzip', [ '-o', '-qq', ipafile ], { cwd: buildOutputDir });
+                        return superspawn.spawn('unzip', [ '-o', '-qq', ipafile ], { cwd: buildOutputDir, printCommand: true });
                     })
                     .then(function () {
                         // Uncompress IPA (zip file)
@@ -148,7 +148,7 @@ function filterSupportedArgs (args) {
  * @return {Promise} Fullfilled when any device is connected, rejected otherwise
  */
 function checkDeviceConnected () {
-    return superspawn.spawn('ios-deploy', ['-c', '-t', '1']);
+    return superspawn.spawn('ios-deploy', ['-c', '-t', '1'], { printCommand: true });
 }
 
 /**
@@ -160,9 +160,9 @@ function checkDeviceConnected () {
 function deployToDevice (appPath, target, extraArgs) {
     // Deploying to device...
     if (target) {
-        return superspawn.spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs));
+        return superspawn.spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { printCommand: true });
     } else {
-        return superspawn.spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs));
+        return superspawn.spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs), { printCommand: true });
     }
 }
 
