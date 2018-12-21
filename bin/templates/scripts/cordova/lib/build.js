@@ -170,7 +170,7 @@ module.exports.run = function (buildOpts) {
             // remove the build/device folder before building
             shell.rm('-rf', buildOutputDir);
 
-            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
+            var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning, buildOpts.buildAction);
             return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
 
         }).then(function () {
@@ -269,7 +269,7 @@ module.exports.findXCodeProjectIn = findXCodeProjectIn;
  * @param  {Boolean} autoProvisioning   Whether to allow Xcode to automatically update provisioning
  * @return {Array}                  Array of arguments that could be passed directly to spawn method
  */
-function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, buildFlags, emulatorTarget, autoProvisioning) {
+function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, buildFlags, emulatorTarget, autoProvisioning, buildAction) {
     var xcodebuildArgs;
     var options;
     var buildActions;
@@ -295,7 +295,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
             '-destination', customArgs.destination || 'generic/platform=iOS',
             '-archivePath', customArgs.archivePath || projectName + '.xcarchive'
         ];
-        buildActions = [ 'archive' ];
+        buildActions = buildAction ? [ buildAction ] : [ 'archive' ];
         settings = [
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')

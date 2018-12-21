@@ -21,7 +21,6 @@ var Q = require('q');
 var path = require('path');
 var cp = require('child_process');
 var build = require('./build');
-var shell = require('shelljs');
 var superspawn = require('cordova-common').superspawn;
 var check_reqs = require('./check_reqs');
 
@@ -59,6 +58,13 @@ module.exports.run = function (runOptions) {
                 return check_reqs.check_ios_deploy();
             }
         }).then(function () {
+            if (useDevice) { // for device
+                if (!runOptions['nobuild-device']) {
+                    return build.run(Object.assign({}, runOptions, {buildFlag: 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device-run'), buildAction: 'build'}));
+                } else {
+                    return Q.resolve();
+                }
+            } // for emulator
             if (!runOptions.nobuild) {
                 return build.run(runOptions);
             } else {
@@ -68,36 +74,10 @@ module.exports.run = function (runOptions) {
             return build.findXCodeProjectIn(projectPath);
         }).then(function (projectName) {
             var appPath = path.join(projectPath, 'build', 'emulator', projectName + '.app');
-            var buildOutputDir = path.join(projectPath, 'build', 'device');
-
-            // select command to run and arguments depending whether
-            // we're running on device/emulator
             if (useDevice) {
                 return module.exports.checkDeviceConnected()
                     .then(function () {
-                        // Unpack IPA
-                        var ipafile = path.join(buildOutputDir, projectName + '.ipa');
-
-                        // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return superspawn.spawn('unzip', [ '-o', '-qq', ipafile ], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
-                    })
-                    .then(function () {
-                        // Uncompress IPA (zip file)
-                        var appFileInflated = path.join(buildOutputDir, 'Payload', projectName + '.app');
-                        var appFile = path.join(buildOutputDir, projectName + '.app');
-                        var payloadFolder = path.join(buildOutputDir, 'Payload');
-
-                        // delete the existing platform/ios/build/device/appname.app
-                        shell.rm('-rf', appFile);
-                        // move the platform/ios/build/device/Payload/appname.app to parent
-                        shell.mv('-f', appFileInflated, buildOutputDir);
-                        // delete the platform/ios/build/device/Payload folder
-                        shell.rm('-rf', payloadFolder);
-
-                        return null;
-                    })
-                    .then(function () {
-                        appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
+                        appPath = path.join(projectPath, 'build', 'device-run', projectName + '.app');
                         var extraArgs = [];
                         if (runOptions.argv) {
                             // argv.slice(2) removes node and run.js, filterSupportedArgs removes the run.js args
@@ -129,7 +109,7 @@ module.exports.listEmulators = listEmulators;
  */
 function filterSupportedArgs (args) {
     var filtered = [];
-    var sargs = ['--device', '--emulator', '--nobuild', '--list', '--target', '--debug', '--release'];
+    var sargs = ['--device', '--emulator', '--nobuild', '--nobuild-device', '--list', '--target', '--debug', '--release'];
     var re = new RegExp(sargs.join('|'));
 
     args.forEach(function (element) {
@@ -228,7 +208,7 @@ function listEmulators () {
 }
 
 module.exports.help = function () {
-    console.log('\nUsage: run [ --device | [ --emulator [ --target=<id> ] ] ] [ --debug | --release | --nobuild ]');
+    console.log('\nUsage: run [ --device | [ --emulator [ --target=<id> ] ] ] [ --debug | --release | --nobuild | --nobuild-device ]');
     // TODO: add support for building different archs
     // console.log("           [ --archs=\"<list of target architectures>\" ] ");
     console.log('    --device      : Deploys and runs the project on the connected device.');
@@ -236,7 +216,8 @@ module.exports.help = function () {
     console.log('    --target=<id> : Deploys and runs the project on the specified target.');
     console.log('    --debug       : Builds project in debug mode. (Passed down to build command, if necessary)');
     console.log('    --release     : Builds project in release mode. (Passed down to build command, if necessary)');
-    console.log('    --nobuild     : Uses pre-built package, or errors if project is not built.');
+    console.log('    --nobuild     : Uses pre-built package, or errors if project is not built for emulator.');
+    console.log('    --nobuild-device : Uses pre-built package, or errors if project is not built for device.');
     // TODO: add support for building different archs
     // console.log("    --archs       : Specific chip architectures (`anycpu`, `arm`, `x86`, `x64`).");
     console.log('');
