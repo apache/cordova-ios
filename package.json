@@ -53,6 +53,7 @@
   "dependencies": {
     "cordova-common": "^3.0.0",
     "ios-sim": "^6.1.2",
+    "node-ios-device": "^1.6.3",
     "nopt": "^3.0.6",
     "plist": "^1.2.0",
     "q": "^1.4.1",

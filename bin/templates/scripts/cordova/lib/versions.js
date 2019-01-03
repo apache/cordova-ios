@@ -92,23 +92,6 @@ exports.get_apple_xcode_version = function () {
 };
 
 /**
- * Gets ios-deploy util version
- * @return {Promise} Promise that either resolved with ios-deploy version
- *                           or rejected in case of error
- */
-exports.get_ios_deploy_version = function () {
-    var d = Q.defer();
-    child_process.exec('ios-deploy --version', function (error, stdout, stderr) {
-        if (error) {
-            d.reject(stderr);
-        } else {
-            d.resolve(stdout);
-        }
-    });
-    return d.promise;
-};
-
-/**
  * Gets pod (CocoaPods) util version
  * @return {Promise} Promise that either resolved with pod version
  *                           or rejected in case of error
@@ -144,7 +127,7 @@ exports.get_ios_sim_version = function () {
 
 /**
  * Gets specific tool version
- * @param  {String} toolName Tool name to check. Known tools are 'xcodebuild', 'ios-sim' and 'ios-deploy'
+ * @param  {String} toolName Tool name to check. Known tools are 'xcodebuild' and 'ios-sim'
  * @return {Promise}         Promise that either resolved with tool version
  *                                   or rejected in case of error
  */
@@ -152,9 +135,8 @@ exports.get_tool_version = function (toolName) {
     switch (toolName) {
     case 'xcodebuild': return exports.get_apple_xcode_version();
     case 'ios-sim': return exports.get_ios_sim_version();
-    case 'ios-deploy': return exports.get_ios_deploy_version();
     case 'pod': return exports.get_cocoapods_version();
-    default: return Q.reject(toolName + ' is not valid tool name. Valid names are: \'xcodebuild\', \'ios-sim\', \'ios-deploy\', and \'pod\'');
+    default: return Q.reject(toolName + ' is not valid tool name. Valid names are: \'xcodebuild\', \'ios-sim\', and \'pod\'');
     }
 };
 

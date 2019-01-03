@@ -110,9 +110,8 @@ module.exports.run = function (buildOpts) {
                 // we also explicitly set device flag in options as we pass
                 // those parameters to other api (build as an example)
                 buildOpts.device = true;
-                return check_reqs.check_ios_deploy();
             }
-        }).then(function () {
+
             // CB-12287: Determine the device we should target when building for a simulator
             if (!buildOpts.device) {
                 var newTarget = buildOpts.target || '';

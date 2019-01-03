@@ -13,7 +13,6 @@ before_install:
 
 install:
   - npm install
-  - npm install ios-deploy
   - npm install -g codecov
 
 script:

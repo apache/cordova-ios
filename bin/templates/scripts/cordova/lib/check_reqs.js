@@ -30,11 +30,6 @@ const XCODEBUILD_MIN_VERSION = '9.0.0';
 const XCODEBUILD_NOT_FOUND_MESSAGE =
     'Please install version ' + XCODEBUILD_MIN_VERSION + ' or greater from App Store';
 
-const IOS_DEPLOY_MIN_VERSION = '1.9.2';
-const IOS_DEPLOY_NOT_FOUND_MESSAGE =
-    'Please download, build and install version ' + IOS_DEPLOY_MIN_VERSION + ' or greater' +
-    ' from https://github.com/phonegap/ios-deploy into your path, or do \'npm install -g ios-deploy\'';
-
 const COCOAPODS_MIN_VERSION = '1.0.1';
 const COCOAPODS_NOT_FOUND_MESSAGE =
     'Please install version ' + COCOAPODS_MIN_VERSION + ' or greater from https://cocoapods.org/';
@@ -51,14 +46,6 @@ const COCOAPODS_REPO_NOT_FOUND_MESSAGE = 'The CocoaPods repo at ~/.cocoapods was
  */
 module.exports.run = module.exports.check_xcodebuild = function () {
     return checkTool('xcodebuild', XCODEBUILD_MIN_VERSION, XCODEBUILD_NOT_FOUND_MESSAGE);
-};
-
-/**
- * Checks if ios-deploy util is available
- * @return {Promise} Returns a promise either resolved with ios-deploy version or rejected
- */
-module.exports.check_ios_deploy = function () {
-    return checkTool('ios-deploy', IOS_DEPLOY_MIN_VERSION, IOS_DEPLOY_NOT_FOUND_MESSAGE);
 };
 
 module.exports.check_os = function () {
@@ -136,7 +123,7 @@ module.exports.check_cocoapods = function (toolChecker) {
 
 /**
  * Checks if specific tool is available.
- * @param  {String} tool       Tool name to check. Known tools are 'xcodebuild' and 'ios-deploy'
+ * @param  {String} tool       Tool name to check. Known tools are 'xcodebuild'
  * @param  {Number} minVersion Min allowed tool version.
  * @param  {String} message    Message that will be used to reject promise.
  * @param  {String} toolFriendlyName  Friendly name of the tool, to report to the user. Optional.
@@ -187,7 +174,6 @@ module.exports.check_all = function () {
     const requirements = [
         new Requirement('os', 'Apple macOS', true),
         new Requirement('xcode', 'Xcode'),
-        new Requirement('ios-deploy', 'ios-deploy'),
         new Requirement('CocoaPods', 'CocoaPods')
     ];
 
@@ -197,7 +183,6 @@ module.exports.check_all = function () {
     let checkFns = [
         module.exports.check_os,
         module.exports.check_xcodebuild,
-        module.exports.check_ios_deploy,
         module.exports.check_cocoapods
     ];
 

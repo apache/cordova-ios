@@ -23,8 +23,7 @@ var cp = require('child_process');
 var build = require('./build');
 var shell = require('shelljs');
 var superspawn = require('cordova-common').superspawn;
-var check_reqs = require('./check_reqs');
-
+var iosDevice = require('node-ios-device');
 var events = require('cordova-common').events;
 
 var cordovaPath = path.join(__dirname, '..');
@@ -56,9 +55,8 @@ module.exports.run = function (runOptions) {
                 // we also explicitly set device flag in options as we pass
                 // those parameters to other api (build as an example)
                 runOptions.device = true;
-                return check_reqs.check_ios_deploy();
             }
-        }).then(function () {
+
             if (!runOptions.nobuild) {
                 return build.run(runOptions);
             } else {
@@ -148,22 +146,38 @@ function filterSupportedArgs (args) {
  * @return {Promise} Fullfilled when any device is connected, rejected otherwise
  */
 function checkDeviceConnected () {
-    return superspawn.spawn('ios-deploy', ['-c', '-t', '1'], { printCommand: true, stdio: 'inherit' });
+    return Q.Promise(function (resolve, reject) {
+        return iosDevice.devices(function (err, devices) {
+            if (err || !devices.length) {
+                return reject(err || new Error('no device connected'));
+            }
+            return resolve(devices[0].udid);
+        });
+    });
 }
 
 /**
  * Deploy specified app package to connected device
- * using ios-deploy command
+ * using node-ios-device
  * @param  {String} appPath Path to application package
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-function deployToDevice (appPath, target, extraArgs) {
+function deployToDevice (appPath, target) {
     // Deploying to device...
-    if (target) {
-        return superspawn.spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { printCommand: true, stdio: 'inherit' });
-    } else {
-        return superspawn.spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs), { printCommand: true, stdio: 'inherit' });
-    }
+
+    return Q.Promise((resolve) => {
+        if (target) {
+            return resolve(target);
+        }
+        return resolve(checkDeviceConnected());
+    }).then(device => Q.Promise((resolve, reject) => {
+        return iosDevice.installApp(device, appPath, err => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        });
+    }));
 }
 
 /**

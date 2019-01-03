@@ -47,13 +47,6 @@ if (process.platform === 'darwin') {
                 }).catch(() => done.fail('expected promise resolution'));
             });
 
-            it('should find ios-deploy version.', (done) => {
-                versions.get_tool_version('ios-deploy').then((version) => {
-                    expect(version).not.toBe(undefined);
-                    done();
-                }).catch(() => done.fail('expected promise resolution'));
-            });
-
             it('should find pod version.', (done) => {
                 versions.get_tool_version('pod').then((version) => {
                     expect(version).not.toBe(undefined);
