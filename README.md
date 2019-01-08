@@ -31,7 +31,7 @@ Cordova iOS is an iOS application library that allows for Cordova-based projects
 
 Requires:
 
-* Xcode 8.x or greater. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
+* Xcode 9.x (deprecated), 10, or greater. Download it at [http://developer.apple.com/downloads](http://developer.apple.com/downloads) or the [Mac App Store](http://itunes.apple.com/us/app/xcode/id497799835?mt=12).
 * [node.js](https://nodejs.org)
 
 Create a Cordova project
