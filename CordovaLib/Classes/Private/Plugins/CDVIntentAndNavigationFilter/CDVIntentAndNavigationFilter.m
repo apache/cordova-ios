@@ -118,18 +118,7 @@
             // only allow-intent if it's a UIWebViewNavigationTypeLinkClicked (anchor tag) OR
             // it's a UIWebViewNavigationTypeOther, and it's an internal link
             if ([[self class] shouldOpenURLRequest:request navigationType:navigationType]){
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
-                // CB-11895; openURL with a single parameter is deprecated in iOS 10
-                // see https://useyourloaf.com/blog/openurl-deprecated-in-ios10
-                if ([[UIApplication sharedApplication] respondsToSelector:@selector(openURL:options:completionHandler:)]) {
-                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-                } else {
-                    [[UIApplication sharedApplication] openURL:url];
-                }
-#else
-                // fall back if on older SDK
-                [[UIApplication sharedApplication] openURL:url];
-#endif
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
             }
             
             // consume the request (i.e. no error) if it wasn't handled above
