@@ -187,8 +187,8 @@ module.exports.run = function (buildOpts) {
             var packageName = project.getPackageName();
             var bundleIdentifier = packageName;
 
-            var variables = packageName.match(/\$\((\w+)\)/) // match $(VARIABLE), if any
-            if (variables && variables.length >=2) {
+            var variables = packageName.match(/\$\((\w+)\)/); // match $(VARIABLE), if any
+            if (variables && variables.length >= 2) {
                 bundleIdentifier = project.xcode.getBuildProperty(variables[1]);
             }
 
