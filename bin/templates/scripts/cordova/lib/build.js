@@ -183,7 +183,15 @@ module.exports.run = function (buildOpts) {
                 pbxproj: path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')
             };
 
-            var bundleIdentifier = projectFile.parse(locations).getPackageName();
+            var project = projectFile.parse(locations);
+            var packageName = project.getPackageName();
+            var bundleIdentifier = packageName;
+
+            var variables = packageName.match(/\$\((\w+)\)/) // match $(VARIABLE), if any
+            if (variables && variables.length >=2) {
+                bundleIdentifier = project.xcode.getBuildProperty(variables[1]);
+            }
+
             var exportOptions = {'compileBitcode': false, 'method': 'development'};
 
             if (buildOpts.packageType) {
