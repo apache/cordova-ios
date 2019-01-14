@@ -44,15 +44,14 @@ var buildFlagMatchers = {
 };
 /* eslint-enable no-useless-escape */
 
-
 /**
  * Creates a project object (see projectFile.js/parseProjectFile) from
  * a project path and name
- * 
- * @param {*} projectPath 
- * @param {*} projectName 
+ *
+ * @param {*} projectPath
+ * @param {*} projectName
  */
-function createProjectObject(projectPath, projectName) {
+function createProjectObject (projectPath, projectName) {
     var locations = {
         root: projectPath,
         pbxproj: path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')
@@ -64,10 +63,10 @@ function createProjectObject(projectPath, projectName) {
 /**
  * Gets the resolved bundle identifier from a project.
  * Resolves the variable set in INFO.plist, if any (simple case)
- * 
- * @param {*} projectObject 
+ *
+ * @param {*} projectObject
  */
-function getBundleIdentifier(projectObject) {
+function getBundleIdentifier (projectObject) {
     var packageName = projectObject.getPackageName();
     var bundleIdentifier = packageName;
 
@@ -192,7 +191,7 @@ module.exports.run = function (buildOpts) {
                 extraConfig += 'DEVELOPMENT_TEAM = ' + buildOpts.developmentTeam + '\n';
             }
 
-            function writeCodeSignStyle(value) {
+            function writeCodeSignStyle (value) {
                 var project = createProjectObject(projectPath, projectName);
 
                 events.emit('verbose', `Set CODE_SIGN_STYLE Build Property to ${value}.`);
