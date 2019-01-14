@@ -24,6 +24,9 @@ var build = require('./build');
 var shell = require('shelljs');
 var superspawn = require('cordova-common').superspawn;
 var iosDevice = require('node-ios-device');
+var check_reqs = require('./check_reqs');
+var fs = require('fs-extra');
+
 var events = require('cordova-common').events;
 
 var cordovaPath = path.join(__dirname, '..');
@@ -86,7 +89,7 @@ module.exports.run = function (runOptions) {
                         var payloadFolder = path.join(buildOutputDir, 'Payload');
 
                         // delete the existing platform/ios/build/device/appname.app
-                        shell.rm('-rf', appFile);
+                        fs.removeSync(appFile);
                         // move the platform/ios/build/device/Payload/appname.app to parent
                         shell.mv('-f', appFileInflated, buildOutputDir);
                         // delete the platform/ios/build/device/Payload folder

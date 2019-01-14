@@ -66,7 +66,17 @@ function Api (platform, platformRootDir, events) {
     var xcodeCordovaProj;
 
     try {
-        xcodeProjDir = fs.readdirSync(this.root).filter(function (e) { return e.match(/\.xcodeproj$/i); })[0];
+
+        var xcodeProjDir_array = fs.readdirSync(this.root).filter(function (e) { return e.match(/\.xcodeproj$/i); });
+        if (xcodeProjDir_array.length > 1) {
+            for (var x = 0; x < xcodeProjDir_array.length; x++) {
+                if (xcodeProjDir_array[x].substring(0, 2) === '._') {
+                    xcodeProjDir_array.splice(x, 1);
+                }
+            }
+        }
+        xcodeProjDir = xcodeProjDir_array[0];
+
         if (!xcodeProjDir) {
             throw new CordovaError('The provided path "' + this.root + '" is not a Cordova iOS project.');
         }
