@@ -30,9 +30,6 @@ var projectFile = require('./projectFile');
 
 var events = require('cordova-common').events;
 
-var projectPath = path.join(__dirname, '..', '..');
-var projectName = null;
-
 // These are regular expressions to detect if the user is changing any of the built-in xcodebuildArgs
 /* eslint-disable no-useless-escape */
 var buildFlagMatchers = {
@@ -46,6 +43,41 @@ var buildFlagMatchers = {
     'shared_precomps_dir': /^(SHARED_PRECOMPS_DIR=.*)/
 };
 /* eslint-enable no-useless-escape */
+
+
+/**
+ * Creates a project object (see projectFile.js/parseProjectFile) from
+ * a project path and name
+ * 
+ * @param {*} projectPath 
+ * @param {*} projectName 
+ */
+function createProjectObject(projectPath, projectName) {
+    var locations = {
+        root: projectPath,
+        pbxproj: path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')
+    };
+
+    return projectFile.parse(locations);
+}
+
+/**
+ * Gets the resolved bundle identifier from a project.
+ * Resolves the variable set in INFO.plist, if any (simple case)
+ * 
+ * @param {*} projectObject 
+ */
+function getBundleIdentifier(projectObject) {
+    var packageName = projectObject.getPackageName();
+    var bundleIdentifier = packageName;
+
+    var variables = packageName.match(/\$\((\w+)\)/); // match $(VARIABLE), if any
+    if (variables && variables.length >= 2) {
+        bundleIdentifier = projectObject.xcode.getBuildProperty(variables[1]);
+    }
+
+    return bundleIdentifier;
+}
 
 /**
  * Returns a promise that resolves to the default simulator target; the logic here
@@ -74,6 +106,8 @@ function getDefaultSimulatorTarget () {
 
 module.exports.run = function (buildOpts) {
     var emulatorTarget = '';
+    var projectPath = path.join(__dirname, '..', '..');
+    var projectName = '';
 
     buildOpts = buildOpts || {};
 
@@ -157,6 +191,26 @@ module.exports.run = function (buildOpts) {
             if (buildOpts.developmentTeam) {
                 extraConfig += 'DEVELOPMENT_TEAM = ' + buildOpts.developmentTeam + '\n';
             }
+
+            function writeCodeSignStyle(value) {
+                var project = createProjectObject(projectPath, projectName);
+
+                events.emit('verbose', `Set CODE_SIGN_STYLE Build Property to ${value}.`);
+                project.xcode.updateBuildProperty('CODE_SIGN_STYLE', value);
+                events.emit('verbose', `Set ProvisioningStyle Target Attribute to ${value}.`);
+                project.xcode.addTargetAttribute('ProvisioningStyle', value);
+
+                project.write();
+            }
+
+            if (buildOpts.provisioningProfile) {
+                events.emit('verbose', 'ProvisioningProfile build option set, changing project settings to Manual.');
+                writeCodeSignStyle('Manual');
+            } else if (buildOpts.automaticProvisioning) {
+                events.emit('verbose', 'ProvisioningProfile build option NOT set, changing project settings to Automatic.');
+                writeCodeSignStyle('Automatic');
+            }
+
             return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
         }).then(function () {
             var configuration = buildOpts.release ? 'Release' : 'Debug';
@@ -178,20 +232,8 @@ module.exports.run = function (buildOpts) {
                 return;
             }
 
-            var locations = {
-                root: projectPath,
-                pbxproj: path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')
-            };
-
-            var project = projectFile.parse(locations);
-            var packageName = project.getPackageName();
-            var bundleIdentifier = packageName;
-
-            var variables = packageName.match(/\$\((\w+)\)/); // match $(VARIABLE), if any
-            if (variables && variables.length >= 2) {
-                bundleIdentifier = project.xcode.getBuildProperty(variables[1]);
-            }
-
+            var project = createProjectObject(projectPath, projectName);
+            var bundleIdentifier = getBundleIdentifier(project);
             var exportOptions = {'compileBitcode': false, 'method': 'development'};
 
             if (buildOpts.packageType) {
