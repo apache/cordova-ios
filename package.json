@@ -52,8 +52,8 @@
   "dependencies": {
     "cordova-common": "^3.1.0",
     "ios-sim": "^7.0.0",
-    "nopt": "^3.0.6",
-    "plist": "^1.2.0",
+    "nopt": "^4.0.1",
+    "plist": "^3.0.1",
     "q": "^1.4.1",
     "shelljs": "^0.5.3",
     "unorm": "^1.4.1",
