@@ -31,7 +31,7 @@ function BridgingHeader (bridgingHeaderPath) {
 }
 
 BridgingHeader.prototype.addHeader = function (plugin_id, header_path) {
-    this.bridgingHeaders.push({type: 'code', code: '#import "' + header_path + '"\n'});
+    this.bridgingHeaders.push({ type: 'code', code: '#import "' + header_path + '"\n' });
 };
 
 BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
@@ -47,7 +47,7 @@ BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
             }
         }
         return true;
-    }, {found: false});
+    }, { found: false });
 };
 
 BridgingHeader.prototype.write = function () {
@@ -71,7 +71,7 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         case 'comment':
             if (i + 1 < text.length && text[i] === '*' && text[i + 1] === '/') {
                 i += 2;
-                list.push({type: type, code: text.slice(start, i)});
+                list.push({ type: type, code: text.slice(start, i) });
                 type = 'code';
                 start = i;
             } else {
@@ -81,7 +81,7 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         case 'line-comment':
             if (i < text.length && text[i] === '\n') {
                 i += 1;
-                list.push({type: type, code: text.slice(start, i)});
+                list.push({ type: type, code: text.slice(start, i) });
                 type = 'code';
                 start = i;
             } else {
@@ -92,19 +92,19 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         default:
             if (i + 1 < text.length && text[i] === '/' && text[i + 1] === '*') { // comment
                 if (start < i) {
-                    list.push({type: type, code: text.slice(start, i)});
+                    list.push({ type: type, code: text.slice(start, i) });
                 }
                 type = 'comment';
                 start = i;
             } else if (i + 1 < text.length && text[i] === '/' && text[i + 1] === '/') { // line comment
                 if (start < i) {
-                    list.push({type: type, code: text.slice(start, i)});
+                    list.push({ type: type, code: text.slice(start, i) });
                 }
                 type = 'line-comment';
                 start = i;
             } else if (i < text.length && text[i] === '\n') {
                 i += 1;
-                list.push({type: type, code: text.slice(start, i)});
+                list.push({ type: type, code: text.slice(start, i) });
                 start = i;
             } else {
                 i += 1;
@@ -113,7 +113,7 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         }
     }
     if (start < i) {
-        list.push({type: type, code: text.slice(start, i)});
+        list.push({ type: type, code: text.slice(start, i) });
     }
     return list;
 };

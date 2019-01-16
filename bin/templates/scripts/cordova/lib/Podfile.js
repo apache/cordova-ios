@@ -99,7 +99,7 @@ Podfile.prototype.__parseForDeclarations = function (text) {
             // do nothing;
         }
         return acc;
-    }, {state: 0, lines: []})
+    }, { state: 0, lines: [] })
         .lines
         .filter(function (line) {
             return declarationRE.exec(line);
@@ -197,9 +197,9 @@ Podfile.prototype.addSpec = function (name, spec) {
 
     if (typeof spec === 'string') {
         if (spec.startsWith(':')) {
-            spec = {name: name, options: spec};
+            spec = { name: name, options: spec };
         } else {
-            spec = {name: name, spec: spec};
+            spec = { name: name, spec: spec };
         }
     }
 

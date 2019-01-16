@@ -260,7 +260,7 @@ describe('Platform Api', function () {
                             compareListWithoutOrder(podsjson_mock.getDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
                             expect(podsjson_mock.setJsonDeclaration.calls.count()).toEqual(2);
                             compareListWithoutOrder(podsjson_mock.setJsonDeclaration.calls.allArgs(),
-                                [['use_frameworks!', {declaration: 'use_frameworks!', count: 1}], ['inhibit_all_warnings!', {declaration: 'inhibit_all_warnings!', count: 1}]]);
+                                [['use_frameworks!', { declaration: 'use_frameworks!', count: 1 }], ['inhibit_all_warnings!', { declaration: 'inhibit_all_warnings!', count: 1 }]]);
                             expect(podfile_mock.addDeclaration.calls.count()).toEqual(2);
                             compareListWithoutOrder(podfile_mock.addDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
                         }).fail(function (err) {
@@ -270,7 +270,7 @@ describe('Platform Api', function () {
                 it('should increment count in declarations if already exists', function (done) {
                     podsjson_mock.getDeclaration.and.callFake(function (declaration) {
                         if (declaration === 'use_frameworks!') {
-                            return {declaration: 'use_frameworks!', count: 1};
+                            return { declaration: 'use_frameworks!', count: 1 };
                         }
                         return null;
                     });
@@ -280,7 +280,7 @@ describe('Platform Api', function () {
                             compareListWithoutOrder(podsjson_mock.getDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
                             expect(podsjson_mock.incrementDeclaration).toHaveBeenCalledWith('use_frameworks!');
                             expect(podsjson_mock.setJsonDeclaration.calls.count()).toEqual(1);
-                            compareListWithoutOrder(podsjson_mock.setJsonDeclaration.calls.allArgs(), [['inhibit_all_warnings!', {declaration: 'inhibit_all_warnings!', count: 1}]]);
+                            compareListWithoutOrder(podsjson_mock.setJsonDeclaration.calls.allArgs(), [['inhibit_all_warnings!', { declaration: 'inhibit_all_warnings!', count: 1 }]]);
                             expect(podfile_mock.addDeclaration.calls.count()).toEqual(1);
                             compareListWithoutOrder(podfile_mock.addDeclaration.calls.allArgs(), [['inhibit_all_warnings!']]);
                         }).fail(function (err) {
@@ -294,8 +294,8 @@ describe('Platform Api', function () {
                             compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
                             expect(podsjson_mock.setJsonSource.calls.count()).toEqual(2);
                             compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [
-                                ['https://github.com/sample/SampleSpecs.git', {source: 'https://github.com/sample/SampleSpecs.git', count: 1}],
-                                ['https://github.com/CocoaPods/Specs.git', {source: 'https://github.com/CocoaPods/Specs.git', count: 1}]
+                                ['https://github.com/sample/SampleSpecs.git', { source: 'https://github.com/sample/SampleSpecs.git', count: 1 }],
+                                ['https://github.com/CocoaPods/Specs.git', { source: 'https://github.com/CocoaPods/Specs.git', count: 1 }]
                             ]);
                             expect(podfile_mock.addSource.calls.count()).toEqual(2);
                             compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
@@ -306,7 +306,7 @@ describe('Platform Api', function () {
                 it('should increment count in sources if already exists', function (done) {
                     podsjson_mock.getSource.and.callFake(function (source) {
                         if (source === 'https://github.com/CocoaPods/Specs.git') {
-                            return {source: 'https://github.com/CocoaPods/Specs.git', count: 1};
+                            return { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
                         }
                         return null;
                     });
@@ -316,7 +316,7 @@ describe('Platform Api', function () {
                             compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
                             expect(podsjson_mock.incrementSource).toHaveBeenCalledWith('https://github.com/CocoaPods/Specs.git');
                             expect(podsjson_mock.setJsonSource.calls.count()).toEqual(1);
-                            compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git', {source: 'https://github.com/sample/SampleSpecs.git', count: 1}]]);
+                            compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git', { source: 'https://github.com/sample/SampleSpecs.git', count: 1 }]]);
                             expect(podfile_mock.addSource.calls.count()).toEqual(1);
                             compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git']]);
                         }).fail(function (err) {
@@ -334,15 +334,15 @@ describe('Platform Api', function () {
                             ]);
                             expect(podsjson_mock.setJsonLibrary.calls.count()).toEqual(3);
                             compareListWithoutOrder(podsjson_mock.setJsonLibrary.calls.allArgs(), [
-                                ['AFNetworking', {name: 'AFNetworking', spec: '~> 3.2', count: 1}],
-                                ['Eureka', {name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1}],
-                                ['HogeLib', {name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1}]
+                                ['AFNetworking', { name: 'AFNetworking', spec: '~> 3.2', count: 1 }],
+                                ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
+                                ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
                             ]);
                             expect(podfile_mock.addSpec.calls.count()).toEqual(3);
                             compareListWithoutOrder(podfile_mock.addSpec.calls.allArgs(), [
-                                ['AFNetworking', {name: 'AFNetworking', spec: '~> 3.2', count: 1}],
-                                ['Eureka', {name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1}],
-                                ['HogeLib', {name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1}]
+                                ['AFNetworking', { name: 'AFNetworking', spec: '~> 3.2', count: 1 }],
+                                ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
+                                ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
                             ]);
                         }).fail(function (err) {
                             fail('unexpected addPlugin fail handler invoked :' + err);
@@ -351,7 +351,7 @@ describe('Platform Api', function () {
                 it('should increment count in libraries if already exists', function (done) {
                     podsjson_mock.getLibrary.and.callFake(function (library) {
                         if (library === 'AFNetworking') {
-                            return {name: 'AFNetworking', spec: '~> 3.2', count: 1};
+                            return { name: 'AFNetworking', spec: '~> 3.2', count: 1 };
                         }
                         return null;
                     });
@@ -366,13 +366,13 @@ describe('Platform Api', function () {
                             expect(podsjson_mock.incrementLibrary).toHaveBeenCalledWith('AFNetworking');
                             expect(podsjson_mock.setJsonLibrary.calls.count()).toEqual(2);
                             compareListWithoutOrder(podsjson_mock.setJsonLibrary.calls.allArgs(), [
-                                ['Eureka', {name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1}],
-                                ['HogeLib', {name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1}]
+                                ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
+                                ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
                             ]);
                             expect(podfile_mock.addSpec.calls.count()).toEqual(2);
                             compareListWithoutOrder(podfile_mock.addSpec.calls.allArgs(), [
-                                ['Eureka', {name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1}],
-                                ['HogeLib', {name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1}]
+                                ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
+                                ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
                             ]);
                         }).fail(function (err) {
                             fail('unexpected addPlugin fail handler invoked :' + err);
@@ -436,7 +436,7 @@ describe('Platform Api', function () {
                 });
                 it('should write out podfile and install if podfile was changed', function (done) {
                     podfile_mock.isDirty.and.returnValue(true);
-                    podfile_mock.install.and.returnValue({then: function () { }});
+                    podfile_mock.install.and.returnValue({ then: function () { } });
                     api.addPlugin(my_plugin)
                         .then(function () {
                             expect(podfile_mock.write).toHaveBeenCalled();
@@ -521,8 +521,8 @@ describe('Platform Api', function () {
                     });
                 });
                 it('on a last declaration, it should remove a json from declarations', function (done) {
-                    var json1 = {declaration: 'use_frameworks!', count: 1};
-                    var json2 = {declaration: 'inhibit_all_warnings!', count: 1};
+                    var json1 = { declaration: 'use_frameworks!', count: 1 };
+                    var json2 = { declaration: 'inhibit_all_warnings!', count: 1 };
                     podsjson_mock.getDeclaration.and.callFake(function (declaration) {
                         if (declaration === 'use_frameworks!') {
                             return json1;
@@ -551,8 +551,8 @@ describe('Platform Api', function () {
                         }).done(done);
                 });
                 it('should decrement count in declarations and does not remove if count > 1', function (done) {
-                    var json1 = {declaration: 'use_frameworks!', count: 2};
-                    var json2 = {declaration: 'inhibit_all_warnings!', count: 1};
+                    var json1 = { declaration: 'use_frameworks!', count: 2 };
+                    var json2 = { declaration: 'inhibit_all_warnings!', count: 1 };
                     podsjson_mock.getDeclaration.and.callFake(function (declaration) {
                         if (declaration === 'use_frameworks!') {
                             return json1;

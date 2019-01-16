@@ -42,7 +42,7 @@ describe('unit tests for BridgingHeader module', function () {
             return bridgingHeaderFileContent;
         });
         writeFileSyncSpy.and.callFake(function (write_path, text, charset) {
-            result_json = {write_path: write_path, text: text, charset: charset};
+            result_json = { write_path: write_path, text: text, charset: charset };
         });
 
         var bridgingHeader = new BridgingHeader(dummy_path);
@@ -75,7 +75,7 @@ describe('unit tests for BridgingHeader module', function () {
         });
         writeFileSyncSpy.and.callFake(function (write_path, text, charset) {
             bridgingHeaderFileContent = text;
-            result_json = {write_path: write_path, text: text, charset: charset};
+            result_json = { write_path: write_path, text: text, charset: charset };
         });
 
         var bridgingHeader = new BridgingHeader(dummy_path);
