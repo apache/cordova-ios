@@ -41,10 +41,9 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "jasmine": "~3.1.0",
-    "nodeunit": "^0.8.7",
     "nyc": "^13.1.0",
     "rewire": "^4.0.1",
-    "tmp": "^0.0.26"
+    "tmp": "0.0.33"
   },
   "engines": {
     "node": ">=6"
