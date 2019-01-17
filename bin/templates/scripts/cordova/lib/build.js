@@ -233,7 +233,7 @@ module.exports.run = function (buildOpts) {
 
             var project = createProjectObject(projectPath, projectName);
             var bundleIdentifier = getBundleIdentifier(project);
-            var exportOptions = {'compileBitcode': false, 'method': 'development'};
+            var exportOptions = { 'compileBitcode': false, 'method': 'development' };
 
             if (buildOpts.packageType) {
                 exportOptions.method = buildOpts.packageType;

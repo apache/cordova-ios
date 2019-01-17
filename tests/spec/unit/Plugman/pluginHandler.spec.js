@@ -133,7 +133,7 @@ describe('ios plugin handler', function () {
                 spyOn(dummyProject.xcode, 'addFramework');
                 install(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith(path.join('SampleApp', 'Plugins', dummy_id, 'SourceWithFramework.m'), {weak: false});
+                    .toHaveBeenCalledWith(path.join('SampleApp', 'Plugins', dummy_id, 'SourceWithFramework.m'), { weak: false });
             });
         });
 
@@ -293,7 +293,7 @@ describe('ios plugin handler', function () {
         });
 
         describe('of <js-module> elements', function () {
-            var jsModule = {src: 'www/dummyplugin.js'};
+            var jsModule = { src: 'www/dummyplugin.js' };
             var install = pluginHandlers.getInstaller('js-module');
             var wwwDest, platformWwwDest;
 
@@ -304,7 +304,7 @@ describe('ios plugin handler', function () {
             });
 
             it('Test 024 : should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
-                install(jsModule, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                install(jsModule, dummyPluginInfo, dummyProject, { usePlatformWww: true });
                 expect(fs.writeFileSync).toHaveBeenCalledWith(wwwDest, jasmine.any(String), 'utf-8');
                 expect(fs.writeFileSync).toHaveBeenCalledWith(platformWwwDest, jasmine.any(String), 'utf-8');
             });
@@ -317,7 +317,7 @@ describe('ios plugin handler', function () {
         });
 
         describe('of <asset> elements', function () {
-            var asset = {src: 'www/dummyplugin.js', target: 'foo/dummy.js'};
+            var asset = { src: 'www/dummyplugin.js', target: 'foo/dummy.js' };
             var install = pluginHandlers.getInstaller('asset');
             /* eslint-disable no-unused-vars */
             var wwwDest;
@@ -331,7 +331,7 @@ describe('ios plugin handler', function () {
             });
 
             it('Test 026 : should put asset to both www and platform_www when options.usePlatformWww flag is specified', function () {
-                install(asset, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                install(asset, dummyPluginInfo, dummyProject, { usePlatformWww: true });
                 expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
                 expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
             });
@@ -470,7 +470,7 @@ describe('ios plugin handler', function () {
             it('Test 039 : should call into xcodeproj\'s removeFramework', function () {
                 var frameworks = copyArray(valid_custom_frameworks);
                 uninstall(frameworks[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeFramework).toHaveBeenCalledWith(frameworkPath, {customFramework: true});
+                expect(dummyProject.xcode.removeFramework).toHaveBeenCalledWith(frameworkPath, { customFramework: true });
             });
 
             // TODO: Add more tests to cover the cases:
@@ -507,7 +507,7 @@ describe('ios plugin handler', function () {
         });
 
         describe('of <js-module> elements', function () {
-            var jsModule = {src: 'www/dummyPlugin.js'};
+            var jsModule = { src: 'www/dummyPlugin.js' };
             var uninstall = pluginHandlers.getUninstaller('js-module');
             var wwwDest, platformWwwDest;
 
@@ -525,7 +525,7 @@ describe('ios plugin handler', function () {
             });
 
             it('Test 042 : should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
-                uninstall(jsModule, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                uninstall(jsModule, dummyPluginInfo, dummyProject, { usePlatformWww: true });
                 expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
                 expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
             });
@@ -538,7 +538,7 @@ describe('ios plugin handler', function () {
         });
 
         describe('of <asset> elements', function () {
-            var asset = {src: 'www/dummyPlugin.js', target: 'foo/dummy.js'};
+            var asset = { src: 'www/dummyPlugin.js', target: 'foo/dummy.js' };
             var uninstall = pluginHandlers.getUninstaller('asset');
             var wwwDest, platformWwwDest;
 
@@ -556,7 +556,7 @@ describe('ios plugin handler', function () {
             });
 
             it('Test 044 : should put module to both www and platform_www when options.usePlatformWww flag is specified', function () {
-                uninstall(asset, dummyPluginInfo, dummyProject, {usePlatformWww: true});
+                uninstall(asset, dummyPluginInfo, dummyProject, { usePlatformWww: true });
                 expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
                 expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
             });

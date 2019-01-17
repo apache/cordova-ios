@@ -86,7 +86,7 @@ describe('check_reqs', function () {
 
             checkTool('node', '1.0.0').then(() => {
                 let actual = resolveSpy.calls.argsFor(0)[0];
-                expect(actual).toEqual({version: '1.0.0'});
+                expect(actual).toEqual({ version: '1.0.0' });
                 done();
             });
         });

@@ -8,7 +8,7 @@
     "url": "https://github.com/apache/cordova-ios"
   },
   "bugs": {
-    "url": "https://issues.apache.org/jira/browse/CB"
+    "url": "https://github.com/apache/cordova-ios/issues"
   },
   "keywords": [
     "ios",
@@ -33,32 +33,31 @@
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "eslint": "^4.0.0",
-    "eslint-config-semistandard": "^11.0.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
+    "eslint": "^5.12.0",
+    "eslint-config-semistandard": "^13.0.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "jasmine": "~3.1.0",
-    "nodeunit": "^0.8.7",
-    "nyc": "^12.0.2",
+    "nyc": "^13.1.0",
     "rewire": "^4.0.1",
-    "tmp": "^0.0.26"
+    "tmp": "0.0.33"
   },
   "engines": {
     "node": ">=6"
   },
   "engineStrict": true,
   "dependencies": {
-    "cordova-common": "^3.0.0",
-    "ios-sim": "^6.1.2",
-    "nopt": "^3.0.6",
-    "plist": "^1.2.0",
-    "q": "^1.4.1",
+    "cordova-common": "^3.1.0",
+    "ios-sim": "^7.0.0",
+    "nopt": "^4.0.1",
+    "plist": "^3.0.1",
+    "q": "^1.5.1",
     "shelljs": "^0.5.3",
     "unorm": "^1.4.1",
-    "xcode": "^0.9.0",
+    "xcode": "^2.0.0",
     "xml-escape": "^1.1.0"
   },
   "nyc": {
