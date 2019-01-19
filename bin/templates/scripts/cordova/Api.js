@@ -267,7 +267,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
         })
         .then(function () {
             if (plugin != null) {
-                var podSpecs = plugin.getPodSpecs(self.platform);
+                var podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
                 var frameworkTags = plugin.getFrameworks(self.platform);
                 var frameworkPods = frameworkTags.filter(function (obj) {
                     return (obj.type === 'podspec');
@@ -321,7 +321,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
         })
         .then(function () {
             if (plugin != null) {
-                var podSpecs = plugin.getPodSpecs(self.platform);
+                var podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
                 var frameworkTags = plugin.getFrameworks(self.platform);
                 var frameworkPods = frameworkTags.filter(function (obj) {
                     return (obj.type === 'podspec');
