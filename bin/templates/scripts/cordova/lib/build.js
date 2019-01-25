@@ -240,12 +240,12 @@ module.exports.run = function (buildOpts) {
                 return validProvs.sort((a, b) => {
                     if (a.bundleId.length > b.bundleId.length) {
                         return -1;
-                    } else if (a.bundleId.length > b.bundleId.length) {
+                    } else if (a.bundleId.length < b.bundleId.length) {
                         return +1;
                     }
-                    if (a.creationDateMilli < b.creationDateMilli) {
+                    if (a.creationDateMilli > b.creationDateMilli) {
                         return -1;
-                    } else if (a.creationDateMilli > b.creationDateMilli) {
+                    } else if (a.creationDateMilli < b.creationDateMilli) {
                         return +1;
                     }
                     return 0;
