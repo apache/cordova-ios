@@ -27,6 +27,7 @@ var util = require('util');
 
 var check_reqs = require('./check_reqs');
 var projectFile = require('./projectFile');
+var pv = require('./provisioning');
 
 var events = require('cordova-common').events;
 
@@ -231,54 +232,108 @@ module.exports.run = function (buildOpts) {
                 return;
             }
 
-            var project = createProjectObject(projectPath, projectName);
-            var bundleIdentifier = getBundleIdentifier(project);
-            var exportOptions = { 'compileBitcode': false, 'method': 'development' };
+            const project = createProjectObject(projectPath, projectName);
+            const bundleIdentifier = getBundleIdentifier(project);
+            const exportOptions = { 'compileBitcode': false, 'method': 'development' };
 
-            if (buildOpts.packageType) {
-                exportOptions.method = buildOpts.packageType;
-            }
+            const promise = buildOpts.automaticProvisioning ? pv.findValidProvisioingsPromise().then((validProvs) => {
+                return validProvs.sort((a, b) => {
+                    if (a.bundleId.length > b.bundleId.length) {
+                        return -1;
+                    } else if (a.bundleId.length > b.bundleId.length) {
+                        return +1;
+                    }
+                    if (a.creationDateMilli < b.creationDateMilli) {
+                        return -1;
+                    } else if (a.creationDateMilli > b.creationDateMilli) {
+                        return +1;
+                    }
+                    return 0;
+                });
+            }).then((validProvs) => {
+                return pv.findPluggedDevicesPromise().then((pluggedDevices) => {
+                    const pluggedDevice = pluggedDevices.find((device) => true);
+                    return validProvs.filter((prov) => {
+                        if (prov.teamId !== buildOpts.developmentTeam) {
+                            return false;
+                        }
+                        if (pluggedDevice) {
+                            const provisionedDevices = prov.provisionedDevices;
+                            if (!provisionedDevices || !prov.provisionedDevices.includes(pluggedDevice)) {
+                                return false;
+                            }
+                        }
+                        const bundleId = prov.bundleId;
+                        if (bundleId === bundleIdentifier) {
+                            return true;
+                        }
+                        if (bundleId.slice(-1) === '*') {
+                            const prefix = bundleId.slice(0, -1);
+                            if (prefix === 0 || bundleIdentifier.indexOf(prefix) === 0) {
+                                return true;
+                            }
+                        }
+                    });
+                });
+            }) : Promise.resolve(null);
 
-            if (buildOpts.iCloudContainerEnvironment) {
-                exportOptions.iCloudContainerEnvironment = buildOpts.iCloudContainerEnvironment;
-            }
-
-            if (buildOpts.developmentTeam) {
-                exportOptions.teamID = buildOpts.developmentTeam;
-            }
-
-            if (buildOpts.provisioningProfile && bundleIdentifier) {
-                exportOptions.provisioningProfiles = { [ bundleIdentifier ]: String(buildOpts.provisioningProfile) };
-                exportOptions.signingStyle = 'manual';
-            }
-
-            if (buildOpts.codeSignIdentity) {
-                exportOptions.signingCertificate = buildOpts.codeSignIdentity;
-            }
-
-            var exportOptionsPlist = plist.build(exportOptions);
-            var exportOptionsPath = path.join(projectPath, 'exportOptions.plist');
-
-            var buildOutputDir = path.join(projectPath, 'build', 'device');
-
-            function checkSystemRuby () {
-                var ruby_cmd = shell.which('ruby');
-
-                if (ruby_cmd !== '/usr/bin/ruby') {
-                    events.emit('warn', 'Non-system Ruby in use. This may cause packaging to fail.\n' +
-                  'If you use RVM, please run `rvm use system`.\n' +
-                  'If you use chruby, please run `chruby system`.');
+            return promise.then((pvList) => {
+                if (pvList) {
+                    if (pvList.length > 0) {
+                        const uuid = pvList[0].UUID;
+                        events.emit('verbose', 'Extract Package by using ProvisioningProfile:' + uuid);
+                        buildOpts.provisioningProfile = uuid;
+                        buildOpts.automaticProvisioning = '';
+                    } else {
+                        events.emit('warn', 'Failed to Select ProvisioningProfile');
+                    }
                 }
-            }
 
-            function packageArchive () {
-                var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
-            }
+                if (buildOpts.packageType) {
+                    exportOptions.method = buildOpts.packageType;
+                }
 
-            return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
-                .then(checkSystemRuby)
-                .then(packageArchive);
+                if (buildOpts.iCloudContainerEnvironment) {
+                    exportOptions.iCloudContainerEnvironment = buildOpts.iCloudContainerEnvironment;
+                }
+
+                if (buildOpts.developmentTeam) {
+                    exportOptions.teamID = buildOpts.developmentTeam;
+                }
+
+                if (buildOpts.provisioningProfile && bundleIdentifier) {
+                    exportOptions.provisioningProfiles = { [ bundleIdentifier ]: String(buildOpts.provisioningProfile) };
+                    exportOptions.signingStyle = 'manual';
+                }
+
+                if (buildOpts.codeSignIdentity) {
+                    exportOptions.signingCertificate = buildOpts.codeSignIdentity;
+                }
+
+                var exportOptionsPlist = plist.build(exportOptions);
+                var exportOptionsPath = path.join(projectPath, 'exportOptions.plist');
+
+                var buildOutputDir = path.join(projectPath, 'build', 'device');
+
+                function checkSystemRuby () {
+                    var ruby_cmd = shell.which('ruby');
+
+                    if (ruby_cmd !== '/usr/bin/ruby') {
+                        events.emit('warn', 'Non-system Ruby in use. This may cause packaging to fail.\n' +
+                      'If you use RVM, please run `rvm use system`.\n' +
+                      'If you use chruby, please run `chruby system`.');
+                    }
+                }
+
+                function packageArchive () {
+                    var xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
+                    return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+                }
+
+                return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
+                    .then(checkSystemRuby)
+                    .then(packageArchive);
+            });
         });
 };
 
