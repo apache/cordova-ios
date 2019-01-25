@@ -93,6 +93,12 @@ function extractProvisioning (json) {
     const expirationDate = json['ExpirationDate'];
     const creationDate = json['CreationDate'];
     const bundleId = (appId.indexOf(appIdPrefix + '.') === 0) ? appId.substr(appIdPrefix.length + 1) : appId;
+    const [type, distributionType] = json['Entitlements']['get-task-allow'] ? ['development', false] : ['distribution',
+        json['Entitlements']['beta-reports-active'] ? 'release' : (
+            json['ProvisionsAllDevices'] ? 'inhouse' : 'adhoc'
+        )
+    ];
+    const isXcodeManaged = json['IsXcodeManaged'];
     return {
         teamId: teamId,
         UUID: UUID,
@@ -106,7 +112,10 @@ function extractProvisioning (json) {
         expirationDate: expirationDate,
         expirationDateMilli: Date.parse(expirationDate),
         creationDate: creationDate,
-        creationDateMilli: Date.parse(creationDate)
+        creationDateMilli: Date.parse(creationDate),
+        type: type,
+        distributionType: distributionType,
+        isXcodeManaged: isXcodeManaged
     };
 }
 

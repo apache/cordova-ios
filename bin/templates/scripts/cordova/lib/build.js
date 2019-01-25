@@ -254,6 +254,15 @@ module.exports.run = function (buildOpts) {
                 return pv.findPluggedDevicesPromise().then((pluggedDevices) => {
                     const pluggedDevice = pluggedDevices.find((device) => true);
                     return validProvs.filter((prov) => {
+                        if (prov.isXcodeManaged) {
+                            return false;
+                        }
+                        if (!buildOpts.release && prov.type !== 'development') {
+                            return false;
+                        }
+                        if (buildOpts.release && prov.type === 'development') {
+                            return false;
+                        }
                         if (prov.teamId !== buildOpts.developmentTeam) {
                             return false;
                         }
