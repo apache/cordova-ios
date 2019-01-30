@@ -601,16 +601,6 @@
     // Release any cached data, images, etc. that aren't in use.
 }
 
-- (void)viewDidUnload
-{
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
-
-    [super viewDidUnload];
-}
-
 #pragma mark CordovaCommands
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
