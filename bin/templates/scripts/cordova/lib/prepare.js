@@ -344,19 +344,16 @@ function mapIconResources (icons, iconsDir) {
         { dest: 'icon-76@2x.png', width: 152, height: 152 },
         { dest: 'icon-83.5@2x.png', width: 167, height: 167 },
         { dest: 'icon-1024.png', width: 1024, height: 1024 },
-        { dest: 'icon-small.png', width: 29, height: 29 },
-        { dest: 'icon-small@2x.png', width: 58, height: 58 },
-        { dest: 'icon-small@3x.png', width: 87, height: 87 },
+        { dest: 'icon-29.png', width: 29, height: 29 },
+        { dest: 'icon-29@2x.png', width: 58, height: 58 },
+        { dest: 'icon-29@3x.png', width: 87, height: 87 },
         { dest: 'icon.png', width: 57, height: 57 },
         { dest: 'icon@2x.png', width: 114, height: 114 },
-        { dest: 'AppIcon24x24@2x.png', width: 48, height: 48 },
-        { dest: 'AppIcon27.5x27.5@2x.png', width: 55, height: 55 },
-        { dest: 'AppIcon29x29@2x.png', width: 58, height: 58 },
-        { dest: 'AppIcon29x29@3x.png', width: 87, height: 87 },
-        { dest: 'AppIcon40x40@2x.png', width: 80, height: 80 },
-        { dest: 'AppIcon44x44@2x.png', width: 88, height: 88 },
-        { dest: 'AppIcon86x86@2x.png', width: 172, height: 172 },
-        { dest: 'AppIcon98x98@2x.png', width: 196, height: 196 }
+        { dest: 'icon-24@2x.png', width: 48, height: 48 },
+        { dest: 'icon-27.5@2x.png', width: 55, height: 55 },
+        { dest: 'icon-44@2x.png', width: 88, height: 88 },
+        { dest: 'icon-86@2x.png', width: 172, height: 172 },
+        { dest: 'icon-98@2x.png', width: 196, height: 196 }
     ];
 
     var pathMap = {};
