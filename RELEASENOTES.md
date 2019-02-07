@@ -22,6 +22,59 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 5.0.0 (Feb 07, 2019)
+* [GH-515](https://github.com/apache/cordova-ios/pull/515) Remove Deprecated Local and Remote Push Notification Constants
+* [GH-512](https://github.com/apache/cordova-ios/pull/512) AppIcon and LaunchImage Updates
+* [GH-254](https://github.com/apache/cordova-ios/pull/254) Expose `CDVCommandStatus` enum to Swift
+* [GH-508](https://github.com/apache/cordova-ios/pull/508) GH-407: remove removing certificates functions in xcode post scripts
+* [GH-489](https://github.com/apache/cordova-ios/pull/489) CordovaLib.xcodeproj file upgraded for Xcode 10
+* [GH-501](https://github.com/apache/cordova-ios/pull/501) `cordova-common` backwards compatability for `getPodSpecs` function
+* [GH-496](https://github.com/apache/cordova-ios/pull/496) iOS Platform Release Preparation (Cordova 9)
+* [GH-494](https://github.com/apache/cordova-ios/pull/494) Fixes `$(PRODUCT_BUNDLE_IDENTIFIER)` not being resolved for a product archive
+* [GH-481](https://github.com/apache/cordova-ios/pull/481) Add warning that function in spawn.js is deprecated
+* [GH-461](https://github.com/apache/cordova-ios/pull/461) `cordova run --list --device` fails for Virtualhere devices (fixes #458)
+* [GH-355](https://github.com/apache/cordova-ios/pull/355) [CB-13927](https://issues.apache.org/jira/browse/CB-13927) - Modified xcodeProjDir to filter out files/folders that contain "._"
+* [GH-485](https://github.com/apache/cordova-ios/pull/485) Ensure test failure on unexpected promise resolution
+* [GH-483](https://github.com/apache/cordova-ios/pull/483) Restore stdio behavior from previous spawn approach
+* [GH-479](https://github.com/apache/cordova-ios/pull/479) emit xcodebuild & other spawned CLI commands
+* [GH-482](https://github.com/apache/cordova-ios/pull/482) Copy node_modules if the directory exists
+* [GH-478](https://github.com/apache/cordova-ios/pull/478) Use `cross-spawn` & `shelljs` instead of `child-process`
+* [GH-409](https://github.com/apache/cordova-ios/pull/409) Update project files for Xcode 10
+* [GH-474](https://github.com/apache/cordova-ios/pull/474) Fix issue after updating to macOS 10.14.2.
+* [GH-405](https://github.com/apache/cordova-ios/pull/405) Cocoapods support improvement, using podspec tag in `plugin.xml`
+* [GH-451](https://github.com/apache/cordova-ios/pull/451) iOS: Fix running `cordova build ios` for emulators with Xcode 10.1 RELEASE
+* [GH-406](https://github.com/apache/cordova-ios/pull/406) Added missing `unorm` dependency
+* [GH-398](https://github.com/apache/cordova-ios/pull/398) Removal of xcconfig build flag
+* [CB-14141](https://issues.apache.org/jira/browse/CB-14141) Don't duplicate resource files in xcodeproj
+* [GH-397](https://github.com/apache/cordova-ios/pull/397) Update Objc-Test for Local & TravisCI
+* [GH-395](https://github.com/apache/cordova-ios/pull/395) Implement Swift Support and Testing
+* [GH-392](https://github.com/apache/cordova-ios/pull/392) Pin `Jasmine@~3.1.0`
+* [GH-377](https://github.com/apache/cordova-ios/pull/377) Increase Code Coverage & use `nyc`
+* [CB-14242](https://issues.apache.org/jira/browse/CB-14242) .gitignore completely ignore node_modules
+* [CB-14242](https://issues.apache.org/jira/browse/CB-14242) remove committed node_modules
+* [CB-14242](https://issues.apache.org/jira/browse/CB-14242) `package.json` remove bundledDependencies
+* [CB-14074](https://issues.apache.org/jira/browse/CB-14074) **iOS**: Remove Node 4 from CI (#375)
+* [CB-14244](https://issues.apache.org/jira/browse/CB-14244) [CB-9366](https://issues.apache.org/jira/browse/CB-9366) log error.stack in cordova.js
+* [GH-384](https://github.com/apache/cordova-ios/pull/384) spec cover apple version functions
+* [GH-383](https://github.com/apache/cordova-ios/pull/383) `appveyor.yml` simplify install
+* [GH-376](https://github.com/apache/cordova-ios/pull/376) Fixed Get Apple OSX Version method
+* [CB-13581](https://issues.apache.org/jira/browse/CB-13581) open **iOS** simulator by using child_process (#366)
+* [GH-371](https://github.com/apache/cordova-ios/pull/371) CI testing on Node.js versions 8 & 10
+* [CB-14045](https://issues.apache.org/jira/browse/CB-14045) - Reinit url after app freezes (#363)
+* [CB-14076](https://issues.apache.org/jira/browse/CB-14076) Setting UIWebViewDelegate on CDVWebViewEngineProtocol doesn't work (#365)
+* [CB-14039](https://issues.apache.org/jira/browse/CB-14039) Inputs type text don't work on **iOS** (#364)
+* [CB-13921](https://issues.apache.org/jira/browse/CB-13921) - Update Xcode requirement to Xcode 9 (#360)
+* [CB-13382](https://issues.apache.org/jira/browse/CB-13382) dealloc the webViewEngine (#359)
+* [CB-13523](https://issues.apache.org/jira/browse/CB-13523) Pass automaticProvisioning to build step (#358)
+* [CB-12940](https://issues.apache.org/jira/browse/CB-12940) [IOS] Use deployment-target from `config.xml` for platform version in Podfile (#335)
+* [CB-13824](https://issues.apache.org/jira/browse/CB-13824) - Xcode 9/Swift 4 support (#353)
+* [GH-354](https://github.com/apache/cordova-ios/pull/354) exec purgeProjectFileCache when pod install
+* [GH-356](https://github.com/apache/cordova-ios/pull/356) Fix prototype declaration warnings
+* [CB-13510](https://issues.apache.org/jira/browse/CB-13510) (iOS) Removed clipboard workaround, which was braking copy/paste functional **iOS** 11 (#352)
+* [GH-343](https://github.com/apache/cordova-ios/pull/343) CB-13513 (ios) Declare ProvisioningStyle as Automatic in project.pbxproj template.
+* [GH-351](https://github.com/apache/cordova-ios/pull/351) Prevent a memory leak when converting to JSON
+* [CB-13597](https://issues.apache.org/jira/browse/CB-13597) (ios) update podfile with **iOS** version 9.0
+
 ### 4.5.5 (Jul 23, 2018)
 * [CB-14145](https://issues.apache.org/jira/browse/CB-14145) - update dependencies to resolve `npm audit` issues, pinned in 4.5.x only ([GH-379](https://github.com/apache/cordova-ios/pull/379))
 * [GH-379](https://github.com/apache/cordova-ios/pull/379) - commit updated `node_modules` in `4.5.x` only
