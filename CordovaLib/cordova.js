@@ -1,5 +1,5 @@
 // Platform: ios
-// 9e8e1b716252c4a08abcd31a13013b868d6f4141
+// d07d9d0989196f1b90fe962ca68f5ceb355c69ec
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,11 +19,8 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '5.0.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '5.0.0';
 // file: src/scripts/require.js
-
-/* jshint -W079 */
-/* jshint -W020 */
 
 var require;
 var define;
@@ -837,7 +834,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/exec.js
+// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -1240,130 +1237,6 @@ channel.join(function () {
 
 });
 
-// file: src/common/init_b.js
-define("cordova/init_b", function(require, exports, module) {
-
-var channel = require('cordova/channel');
-var cordova = require('cordova');
-var modulemapper = require('cordova/modulemapper');
-var platform = require('cordova/platform');
-var pluginloader = require('cordova/pluginloader');
-var utils = require('cordova/utils');
-
-var platformInitChannelsArray = [channel.onDOMContentLoaded, channel.onNativeReady, channel.onPluginsReady];
-
-// setting exec
-cordova.exec = require('cordova/exec');
-
-function logUnfiredChannels (arr) {
-    for (var i = 0; i < arr.length; ++i) {
-        if (arr[i].state !== 2) {
-            console.log('Channel not fired: ' + arr[i].type);
-        }
-    }
-}
-
-window.setTimeout(function () {
-    if (channel.onDeviceReady.state !== 2) {
-        console.log('deviceready has not fired after 5 seconds.');
-        logUnfiredChannels(platformInitChannelsArray);
-        logUnfiredChannels(channel.deviceReadyChannelsArray);
-    }
-}, 5000);
-
-// Replace navigator before any modules are required(), to ensure it happens as soon as possible.
-// We replace it so that properties that can't be clobbered can instead be overridden.
-function replaceNavigator (origNavigator) {
-    var CordovaNavigator = function () {};
-    CordovaNavigator.prototype = origNavigator;
-    var newNavigator = new CordovaNavigator();
-    // This work-around really only applies to new APIs that are newer than Function.bind.
-    // Without it, APIs such as getGamepads() break.
-    if (CordovaNavigator.bind) {
-        for (var key in origNavigator) {
-            if (typeof origNavigator[key] === 'function') {
-                newNavigator[key] = origNavigator[key].bind(origNavigator);
-            } else {
-                (function (k) {
-                    utils.defineGetterSetter(newNavigator, key, function () {
-                        return origNavigator[k];
-                    });
-                })(key);
-            }
-        }
-    }
-    return newNavigator;
-}
-if (window.navigator) {
-    window.navigator = replaceNavigator(window.navigator);
-}
-
-if (!window.console) {
-    window.console = {
-        log: function () {}
-    };
-}
-if (!window.console.warn) {
-    window.console.warn = function (msg) {
-        this.log('warn: ' + msg);
-    };
-}
-
-// Register pause, resume and deviceready channels as events on document.
-channel.onPause = cordova.addDocumentEventHandler('pause');
-channel.onResume = cordova.addDocumentEventHandler('resume');
-channel.onActivated = cordova.addDocumentEventHandler('activated');
-channel.onDeviceReady = cordova.addStickyDocumentEventHandler('deviceready');
-
-// Listen for DOMContentLoaded and notify our channel subscribers.
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    channel.onDOMContentLoaded.fire();
-} else {
-    document.addEventListener('DOMContentLoaded', function () {
-        channel.onDOMContentLoaded.fire();
-    }, false);
-}
-
-// _nativeReady is global variable that the native side can set
-// to signify that the native code is ready. It is a global since
-// it may be called before any cordova JS is ready.
-if (window._nativeReady) {
-    channel.onNativeReady.fire();
-}
-
-// Call the platform-specific initialization.
-platform.bootstrap && platform.bootstrap();
-
-// Wrap in a setTimeout to support the use-case of having plugin JS appended to cordova.js.
-// The delay allows the attached modules to be defined before the plugin loader looks for them.
-setTimeout(function () {
-    pluginloader.load(function () {
-        channel.onPluginsReady.fire();
-    });
-}, 0);
-
-/**
- * Create all cordova objects once native side is ready.
- */
-channel.join(function () {
-    modulemapper.mapModules(window);
-
-    platform.initialize && platform.initialize();
-
-    // Fire event to notify that all objects are created
-    channel.onCordovaReady.fire();
-
-    // Fire onDeviceReady event once page has fully loaded, all
-    // constructors have run and cordova info has been received from native
-    // side.
-    channel.join(function () {
-        require('cordova').fireDocumentEvent('deviceready');
-    }, channel.deviceReadyChannelsArray);
-
-}, platformInitChannelsArray);
-
-});
-
 // file: src/common/modulemapper.js
 define("cordova/modulemapper", function(require, exports, module) {
 
@@ -1464,103 +1337,7 @@ exports.reset();
 
 });
 
-// file: src/common/modulemapper_b.js
-define("cordova/modulemapper_b", function(require, exports, module) {
-
-var builder = require('cordova/builder');
-var symbolList = [];
-var deprecationMap;
-
-exports.reset = function () {
-    symbolList = [];
-    deprecationMap = {};
-};
-
-function addEntry (strategy, moduleName, symbolPath, opt_deprecationMessage) {
-    symbolList.push(strategy, moduleName, symbolPath);
-    if (opt_deprecationMessage) {
-        deprecationMap[symbolPath] = opt_deprecationMessage;
-    }
-}
-
-// Note: Android 2.3 does have Function.bind().
-exports.clobbers = function (moduleName, symbolPath, opt_deprecationMessage) {
-    addEntry('c', moduleName, symbolPath, opt_deprecationMessage);
-};
-
-exports.merges = function (moduleName, symbolPath, opt_deprecationMessage) {
-    addEntry('m', moduleName, symbolPath, opt_deprecationMessage);
-};
-
-exports.defaults = function (moduleName, symbolPath, opt_deprecationMessage) {
-    addEntry('d', moduleName, symbolPath, opt_deprecationMessage);
-};
-
-exports.runs = function (moduleName) {
-    addEntry('r', moduleName, null);
-};
-
-function prepareNamespace (symbolPath, context) {
-    if (!symbolPath) {
-        return context;
-    }
-    var parts = symbolPath.split('.');
-    var cur = context;
-    for (var i = 0, part; part = parts[i]; ++i) { // eslint-disable-line no-cond-assign
-        cur = cur[part] = cur[part] || {};
-    }
-    return cur;
-}
-
-exports.mapModules = function (context) {
-    var origSymbols = {};
-    context.CDV_origSymbols = origSymbols;
-    for (var i = 0, len = symbolList.length; i < len; i += 3) {
-        var strategy = symbolList[i];
-        var moduleName = symbolList[i + 1];
-        var module = require(moduleName);
-        // <runs/>
-        if (strategy === 'r') {
-            continue;
-        }
-        var symbolPath = symbolList[i + 2];
-        var lastDot = symbolPath.lastIndexOf('.');
-        var namespace = symbolPath.substr(0, lastDot);
-        var lastName = symbolPath.substr(lastDot + 1);
-
-        var deprecationMsg = symbolPath in deprecationMap ? 'Access made to deprecated symbol: ' + symbolPath + '. ' + deprecationMsg : null;
-        var parentObj = prepareNamespace(namespace, context);
-        var target = parentObj[lastName];
-
-        if (strategy === 'm' && target) {
-            builder.recursiveMerge(target, module);
-        } else if ((strategy === 'd' && !target) || (strategy !== 'd')) {
-            if (!(symbolPath in origSymbols)) {
-                origSymbols[symbolPath] = target;
-            }
-            builder.assignOrWrapInDeprecateGetter(parentObj, lastName, module, deprecationMsg);
-        }
-    }
-};
-
-exports.getOriginalSymbol = function (context, symbolPath) {
-    var origSymbols = context.CDV_origSymbols;
-    if (origSymbols && (symbolPath in origSymbols)) {
-        return origSymbols[symbolPath];
-    }
-    var parts = symbolPath.split('.');
-    var obj = context;
-    for (var i = 0; i < parts.length; ++i) {
-        obj = obj && obj[parts[i]];
-    }
-    return obj;
-};
-
-exports.reset();
-
-});
-
-// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/platform.js
+// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1576,7 +1353,7 @@ module.exports = {
 
 });
 
-// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
+// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
 define("cordova/plugin/ios/console", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
@@ -1747,7 +1524,7 @@ for (var key in console) {
 
 });
 
-// file: /Users/brodybits/Documents/cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
+// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
@@ -2192,53 +1969,6 @@ exports.load = function (callback) {
         var moduleList = require('cordova/plugin_list');
         handlePluginsObject(pathPrefix, moduleList, callback);
     }, callback);
-};
-
-});
-
-// file: src/common/pluginloader_b.js
-define("cordova/pluginloader_b", function(require, exports, module) {
-
-var modulemapper = require('cordova/modulemapper');
-
-// Handler for the cordova_plugins.js content.
-// See plugman's plugin_loader.js for the details of this object.
-function handlePluginsObject (moduleList) {
-    // if moduleList is not defined or empty, we've nothing to do
-    if (!moduleList || !moduleList.length) {
-        return;
-    }
-
-    // Loop through all the modules and then through their clobbers and merges.
-    for (var i = 0, module; module = moduleList[i]; i++) { // eslint-disable-line no-cond-assign
-        if (module.clobbers && module.clobbers.length) {
-            for (var j = 0; j < module.clobbers.length; j++) {
-                modulemapper.clobbers(module.id, module.clobbers[j]);
-            }
-        }
-
-        if (module.merges && module.merges.length) {
-            for (var k = 0; k < module.merges.length; k++) {
-                modulemapper.merges(module.id, module.merges[k]);
-            }
-        }
-
-        // Finally, if runs is truthy we want to simply require() the module.
-        if (module.runs) {
-            modulemapper.runs(module.id);
-        }
-    }
-}
-
-// Loads all plugins' js-modules. Plugin loading is syncronous in browserified bundle
-// but the method accepts callback to be compatible with non-browserify flow.
-// onDeviceReady is blocked on onPluginsReady. onPluginsReady is fired when there are
-// no plugins to load, or they are all done.
-exports.load = function (callback) {
-    var moduleList = require('cordova/plugin_list');
-    handlePluginsObject(moduleList);
-
-    callback();
 };
 
 });
