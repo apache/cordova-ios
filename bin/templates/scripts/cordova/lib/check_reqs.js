@@ -33,7 +33,7 @@ const XCODEBUILD_NOT_FOUND_MESSAGE =
 const IOS_DEPLOY_MIN_VERSION = '1.9.2';
 const IOS_DEPLOY_NOT_FOUND_MESSAGE =
     'Please download, build and install version ' + IOS_DEPLOY_MIN_VERSION + ' or greater' +
-    ' from https://github.com/phonegap/ios-deploy into your path, or do \'npm install -g ios-deploy\'';
+    ' from https://github.com/ios-control/ios-deploy into your path, or do \'npm install -g ios-deploy\'';
 
 const COCOAPODS_MIN_VERSION = '1.0.1';
 const COCOAPODS_NOT_FOUND_MESSAGE =
