@@ -129,7 +129,7 @@ module.exports.run = function(buildOpts) {
             var buildType = buildOpts.release ? 'release' : 'debug';
             var config = buildConfig.ios[buildType];
             if (config) {
-                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam', 'packageType', 'buildFlag', 'iCloudContainerEnvironment', 'automaticProvisioning'].forEach(
+                ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'multipleProvisioningProfiles', 'developmentTeam', 'packageType', 'buildFlag', 'iCloudContainerEnvironment', 'automaticProvisioning'].forEach(
                     function(key) {
                         buildOpts[key] = buildOpts[key] || config[key];
                     });
