@@ -275,12 +275,59 @@ function handleOrientationSettings (platformConfig, infoPlist) {
     }
 }
 
+// Make sure only update properties from our target project
+function updateBuildPropertyLocal(proj, displayName, prop, value, build) {
+    try {
+        // Check if we have a valid target - during prepare we do not have it
+        var target = proj.pbxTargetByName(displayName);
+        
+        if (target == null || target.buildConfigurationList == null) {
+            proj.updateBuildProperty(prop, value, build);
+        } else {
+            var targetProjectBuildReference = target.buildConfigurationList;
+            
+            // Collect the uuid's from the configuration of our target
+            var COMMENT_KEY = /_comment$/;
+            var validConfigs = [];
+            var configList = proj.pbxXCConfigurationList();
+            for (var configName in configList) {
+                if (!COMMENT_KEY.test(configName) && targetProjectBuildReference === configName) {
+                    var buildVariants = configList[configName].buildConfigurations;
+                    for (var i = 0; i < buildVariants.length; i++) {
+                        validConfigs.push(buildVariants[i].value);
+                    }
+                    break;
+                }
+            }
+            
+            // Only update target props
+            var configs = proj.pbxXCBuildConfigurationSection();
+            for (var configName in configs) {
+                if (!COMMENT_KEY.test(configName)) {
+                    if (validConfigs.indexOf(configName) == -1) {
+                        continue;
+                    }
+                    
+                    var config = configs[configName];
+                    if ((build && config.name === build) || (!build)) {
+                        config.buildSettings[prop] = value;
+                    }
+                }
+            }
+        }
+    } catch (e) { // fallback to default behavior on error
+        proj.updateBuildProperty(prop, value, build);
+    }
+}
+
+
 function handleBuildSettings (platformConfig, locations, infoPlist) {
     var pkg = platformConfig.getAttribute('ios-CFBundleIdentifier') || platformConfig.packageName();
     var targetDevice = parseTargetDevicePreference(platformConfig.getPreference('target-device', 'ios'));
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
+    var displayName = platformConfig.shortName && platformConfig.shortName();
 
     var proj = new xcode.project(locations.pbxproj); /* eslint new-cap : 0 */
 
@@ -300,22 +347,22 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     if (origPkg !== pkg) {
         events.emit('verbose', 'Set PRODUCT_BUNDLE_IDENTIFIER to ' + pkg + '.');
-        proj.updateBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', pkg);
+        updateBuildPropertyLocal(proj, displayName, 'PRODUCT_BUNDLE_IDENTIFIER', pkg);
     }
 
     if (targetDevice) {
         events.emit('verbose', 'Set TARGETED_DEVICE_FAMILY to ' + targetDevice + '.');
-        proj.updateBuildProperty('TARGETED_DEVICE_FAMILY', targetDevice);
+        updateBuildPropertyLocal(proj, displayName, 'TARGETED_DEVICE_FAMILY', targetDevice);
     }
 
     if (deploymentTarget) {
         events.emit('verbose', 'Set IPHONEOS_DEPLOYMENT_TARGET to "' + deploymentTarget + '".');
-        proj.updateBuildProperty('IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
+        updateBuildPropertyLocal(proj, displayName, 'IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
     }
 
     if (swiftVersion) {
         events.emit('verbose', 'Set SwiftVersion to "' + swiftVersion + '".');
-        proj.updateBuildProperty('SWIFT_VERSION', swiftVersion);
+        updateBuildPropertyLocal(proj, displayName, 'SWIFT_VERSION', swiftVersion);
     }
 
     updateBuildSettingsForLaunchStoryboard(proj, platformConfig, infoPlist);
