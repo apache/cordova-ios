@@ -327,8 +327,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-    var displayName = platformConfig.shortName && platformConfig.shortName();
-
+    var displayName = platformConfig.name().replace(/\"/g, ""); 
     var proj = new xcode.project(locations.pbxproj); /* eslint new-cap : 0 */
 
     try {
