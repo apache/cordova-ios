@@ -316,14 +316,13 @@ function updateBuildPropertyLocal (proj, displayName, prop, value, build) {
     }
 }
 
-
 function handleBuildSettings (platformConfig, locations, infoPlist) {
     var pkg = platformConfig.getAttribute('ios-CFBundleIdentifier') || platformConfig.packageName();
     var targetDevice = parseTargetDevicePreference(platformConfig.getPreference('target-device', 'ios'));
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-    var displayName = platformConfig.name().replace(/\"/g, ''); 
+    var displayName = platformConfig.name().replace(/"/g, '');
     var proj = new xcode.project(locations.pbxproj); /* eslint new-cap : 0 */
 
     try {
