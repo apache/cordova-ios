@@ -251,7 +251,7 @@ module.exports.run = function (buildOpts) {
                 if (buildOpts.multipleProvisioningProfiles) {
                     exportOptions.provisioningProfiles = {};
                     for (var i = 0; i < buildOpts.multipleProvisioningProfiles.length; i++) {
-                        exportOptions.provisioningProfiles[buildOpts.multipleProvisioningProfiles[i]["key"]] = String(buildOpts.multipleProvisioningProfiles[i]["value"]);
+                        exportOptions.provisioningProfiles[buildOpts.multipleProvisioningProfiles[i]['key']] = String(buildOpts.multipleProvisioningProfiles[i]['value']);
                     }
                 } else {
                     exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };

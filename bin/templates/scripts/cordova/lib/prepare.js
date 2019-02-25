@@ -276,16 +276,14 @@ function handleOrientationSettings (platformConfig, infoPlist) {
 }
 
 // Make sure only update properties from our target project
-function updateBuildPropertyLocal(proj, displayName, prop, value, build) {
+function updateBuildPropertyLocal (proj, displayName, prop, value, build) {
     try {
         // Check if we have a valid target - during prepare we do not have it
         var target = proj.pbxTargetByName(displayName);
-        
         if (target == null || target.buildConfigurationList == null) {
             proj.updateBuildProperty(prop, value, build);
         } else {
             var targetProjectBuildReference = target.buildConfigurationList;
-            
             // Collect the uuid's from the configuration of our target
             var COMMENT_KEY = /_comment$/;
             var validConfigs = [];
@@ -299,15 +297,13 @@ function updateBuildPropertyLocal(proj, displayName, prop, value, build) {
                     break;
                 }
             }
-            
             // Only update target props
             var configs = proj.pbxXCBuildConfigurationSection();
-            for (var configName in configs) {
+            for (configName in configs) {
                 if (!COMMENT_KEY.test(configName)) {
-                    if (validConfigs.indexOf(configName) == -1) {
+                    if (validConfigs.indexOf(configName) === -1) {
                         continue;
                     }
-                    
                     var config = configs[configName];
                     if ((build && config.name === build) || (!build)) {
                         config.buildSettings[prop] = value;
@@ -327,7 +323,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-    var displayName = platformConfig.name().replace(/\"/g, ""); 
+    var displayName = platformConfig.name().replace(/\"/g, ''); 
     var proj = new xcode.project(locations.pbxproj); /* eslint new-cap : 0 */
 
     try {
