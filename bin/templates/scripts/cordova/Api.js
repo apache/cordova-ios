@@ -131,7 +131,7 @@ Api.createPlatform = function (destination, config, options, events) {
     var result;
     try {
         result = require('../../../lib/create')
-            .createProject(destination, config.packageName(), name, options)
+            .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options)
             .then(function () {
                 // after platform is created we return Api instance based on new Api.js location
                 // This is required to correctly resolve paths in the future api calls
