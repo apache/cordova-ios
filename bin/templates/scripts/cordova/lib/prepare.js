@@ -1052,8 +1052,8 @@ function parseWhitelistUrlForATS (url, options) {
         var subdomain1 = '/*.'; // wildcard in hostname
         var subdomain2 = '*://*.'; // wildcard in hostname and protocol
         var subdomain3 = '*://'; // wildcard in protocol only
-        if(!href.pathname) {
-            return null;   
+        if (!href.pathname) {
+            return null;
         } else if (href.pathname.indexOf(subdomain1) === 0) {
             retObj.NSIncludesSubdomains = true;
             retObj.Hostname = href.pathname.substring(subdomain1.length);
