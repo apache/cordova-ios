@@ -95,11 +95,7 @@ function Api (platform, platformRootDir, events) {
         defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
         pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
         xcodeProjDir: path.join(this.root, xcodeProjDir),
-        xcodeCordovaProj: xcodeCordovaProj,
-        // NOTE: this is required by browserify logic.
-        // As per platformApi spec we return relative to template root paths here
-        cordovaJs: 'bin/CordovaLib/cordova.js',
-        cordovaJsSrc: 'bin/cordova-js-src'
+        xcodeCordovaProj: xcodeCordovaProj
     };
 }
 
