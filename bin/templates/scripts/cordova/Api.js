@@ -211,6 +211,8 @@ Api.prototype.getPlatformInfo = function () {
  *   CordovaError instance.
  */
 Api.prototype.prepare = function (cordovaProject) {
+    cordovaProject.projectConfig = new ConfigParser(cordovaProject.locations.rootConfigXml || cordovaProject.projectConfig.path);
+
     return require('./lib/prepare').prepare.call(this, cordovaProject);
 };
 
