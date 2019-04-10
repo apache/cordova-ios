@@ -48,7 +48,6 @@
   "engines": {
     "node": ">=6"
   },
-  "engineStrict": true,
   "dependencies": {
     "cordova-common": "^3.1.0",
     "ios-sim": "^8.0.1",
