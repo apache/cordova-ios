@@ -51,7 +51,7 @@
   "engineStrict": true,
   "dependencies": {
     "cordova-common": "^3.1.0",
-    "ios-sim": "^8.0.0",
+    "ios-sim": "^8.0.1",
     "nopt": "^4.0.1",
     "plist": "^3.0.1",
     "q": "^1.5.1",
