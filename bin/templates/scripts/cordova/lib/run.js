@@ -202,9 +202,13 @@ function startSim (appPath, target) {
     return iossimLaunch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
 }
 
-function iossimLaunch (app_path, devicetypeid, log, exit) {
+function iossimLaunch (appPath, devicetypeid, log, exit) {
     var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
-    var proc = cp.spawn(f, ['launch', app_path, '--devicetypeid', devicetypeid, '--log', log, exit]);
+    
+    var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
+    console.log("$ " + f + params.join(' '));
+    var proc = cp.spawn(f, params);
+    
     proc.stdout.on('data', (data) => {
         console.log(data.toString());
     });
