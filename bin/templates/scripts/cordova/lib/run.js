@@ -210,7 +210,7 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
     var proc = cp.spawn(f, params);
     
     proc.stdout.on('data', (data) => {
-        console.log("Data from simulator: " + data.toString());
+        console.log("ios-sim log: " + data.toString());
     });
 }
 
