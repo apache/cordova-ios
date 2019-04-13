@@ -188,7 +188,7 @@ function deployToSim (appPath, target) {
                         target = emulator;
                     }
                 });
-                events.emit('log', 'No target specified for emulator. Deploying to ' + target + ' simulator');
+                events.emit('log', 'No target specified for emulator. Deploying to "' + target + '" simulator');
                 return startSim(appPath, target);
             });
     } else {
