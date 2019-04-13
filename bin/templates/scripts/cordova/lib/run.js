@@ -159,6 +159,7 @@ function checkDeviceConnected () {
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
 function deployToDevice (appPath, target, extraArgs) {
+    events.emit('log', 'Deploying to device');
     // Deploying to device...
     if (target) {
         return superspawn.spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { printCommand: true, stdio: 'inherit' });
@@ -174,6 +175,7 @@ function deployToDevice (appPath, target, extraArgs) {
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
 function deployToSim (appPath, target) {
+    events.emit('log', 'Deploying to simulator');
     if (!target) {
         return require('./list-emulator-images').run()
             .then(function (emulators) {
