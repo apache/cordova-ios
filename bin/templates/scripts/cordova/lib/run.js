@@ -174,7 +174,6 @@ function deployToDevice (appPath, target, extraArgs) {
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
 function deployToSim (appPath, target) {
-    // Select target device for emulator. Default is 'iPhone-6'
     if (!target) {
         return require('./list-emulator-images').run()
             .then(function (emulators) {
