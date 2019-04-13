@@ -177,6 +177,7 @@ function deployToDevice (appPath, target, extraArgs) {
 function deployToSim (appPath, target) {
     events.emit('log', 'Deploying to simulator');
     if (!target) {
+        // Select target device for emulator
         return require('./list-emulator-images').run()
             .then(function (emulators) {
                 if (emulators.length > 0) {
