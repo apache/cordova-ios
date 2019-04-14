@@ -160,7 +160,7 @@ module.exports.run = function (buildOpts) {
                     if (!theTarget) {
                         return getDefaultSimulatorTarget().then(function (defaultTarget) {
                             emulatorTarget = defaultTarget.name;
-                            events.emit('log', 'Building for "' + emulatorTarget + '" Simulator (' + theTarget.identifier + ', ' + theTarget.simIdentifier + ')');
+                            events.emit('log', 'Building for "' + emulatorTarget + '" Simulator (' + defaultTarget.identifier + ', ' + defaultTarget.simIdentifier + ')');
                             return emulatorTarget;
                         });
                     } else {
