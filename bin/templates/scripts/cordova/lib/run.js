@@ -204,13 +204,13 @@ function startSim (appPath, target) {
 
 function iossimLaunch (appPath, devicetypeid, log, exit) {
     var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
-    
+
     var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
-    console.log("$ " + f + ' ' + params.join(' '));
+    console.log('$ ' + f + ' ' + params.join(' '));
     var proc = cp.spawn(f, params);
-    
+
     proc.stdout.on('data', (data) => {
-        console.log("ios-sim log: " + data.toString());
+        console.log('ios-sim log: ' + data.toString());
     });
 }
 
