@@ -207,11 +207,19 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
 
     var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
     console.log('$ ' + f + ' ' + params.join(' '));
-    var proc = cp.spawn(f, params);
 
-    proc.stdout.on('data', (data) => {
-        console.log('ios-sim log: ' + data.toString());
-    });
+    return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true, stdio: 'inherit' })
+        .progress(function (stdio) {
+            if (stdio.stderr) { 
+                console.error(stdio.stderr); 
+            }
+            if (stdio.stdout) {
+                console.log('ios-sim log: ' + data.toString());
+            }
+        })
+        .then(function(result){
+            console.log('Simulator successfully started via `ios-sim`.');
+        });
 }
 
 function listDevices () {
