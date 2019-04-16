@@ -204,11 +204,9 @@ function startSim (appPath, target) {
 
 function iossimLaunch (appPath, devicetypeid, log, exit) {
     var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
-
     var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
-    console.log('$ ' + f + ' ' + params.join(' '));
 
-    return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true, stdio: 'inherit' })
+    return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true, stdio: 'pipe' })
         .progress(function (stdio) {
             if (stdio.stderr) { 
                 console.error(stdio.stderr); 
