@@ -19,7 +19,6 @@
 
 var Q = require('q');
 var path = require('path');
-var cp = require('child_process');
 var build = require('./build');
 var shell = require('shelljs');
 var superspawn = require('cordova-common').superspawn;
@@ -208,15 +207,15 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
 
     return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true, stdio: 'pipe' })
         .progress(function (stdio) {
-            if (stdio.stderr) { 
-                console.error(stdio.stderr); 
+            if (stdio.stderr) {
+                console.error(stdio.stderr);
             }
             if (stdio.stdout) {
-                console.log('ios-sim log: ' + data.toString());
+                console.log('ios-sim log: ' + stdio.stdout);
             }
         })
-        .then(function(result){
-            console.log('Simulator successfully started via `ios-sim`.');
+        .then(function (result) {
+            console.log('Simulator successfully started via `ios-sim`.', result);
         });
 }
 
