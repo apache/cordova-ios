@@ -187,7 +187,7 @@ function deployToSim (appPath, target) {
                         target = emulator;
                     }
                 });
-                events.emit('log', 'No target specified for emulator. Deploying to "' + target + '" simulator');
+                events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
                 return startSim(appPath, target);
             });
     } else {
@@ -208,10 +208,10 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
     return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true })
         .progress(function (stdio) {
             if (stdio.stderr) {
-                console.error('ios-sim: ' + stdio.stderr);
+                events.emit('error', `[ios-sim] ${stdio.stderr}`);
             }
             if (stdio.stdout) {
-                events.emit('log', 'ios-sim: ' + stdio.stdout.trim());
+                events.emit('log', `[ios-sim] ${stdio.stdout.trim()}`);
             }
         })
         .then(function (result) {

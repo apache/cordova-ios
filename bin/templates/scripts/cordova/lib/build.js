@@ -160,12 +160,13 @@ module.exports.run = function (buildOpts) {
                     if (!theTarget) {
                         return getDefaultSimulatorTarget().then(function (defaultTarget) {
                             emulatorTarget = defaultTarget.name;
-                            events.emit('log', 'Building for "' + emulatorTarget + '" Simulator (' + defaultTarget.identifier + ', ' + defaultTarget.simIdentifier + ')');
+                            events.emit('warn', `No simulator found for "${newTarget}. Falling back to the default target.`);
+                            events.emit('log', `Building for "${emulatorTarget}" Simulator (${defaultTarget.identifier}, ${defaultTarget.simIdentifier}).`);
                             return emulatorTarget;
                         });
                     } else {
                         emulatorTarget = theTarget.name;
-                        events.emit('log', 'Building for "' + emulatorTarget + '" Simulator (' + theTarget.identifier + ', ' + theTarget.simIdentifier + ')');
+                        events.emit('log', `Building for "${emulatorTarget}" Simulator (${theTarget.identifier}, ${theTarget.simIdentifier}).`);
                         return emulatorTarget;
                     }
                 });
