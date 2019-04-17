@@ -205,17 +205,17 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
     var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
     var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
 
-    return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true, stdio: 'pipe' })
+    return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true })
         .progress(function (stdio) {
             if (stdio.stderr) {
-                console.error(stdio.stderr);
+                console.error('ios-sim: ' + stdio.stderr);
             }
             if (stdio.stdout) {
-                console.log('ios-sim log: ' + stdio.stdout);
+                events.emit('log', 'ios-sim: ' + stdio.stdout.trim());
             }
         })
         .then(function (result) {
-            console.log('Simulator successfully started via `ios-sim`.', result);
+            events.emit('log', 'Simulator successfully started via `ios-sim`.');
         });
 }
 
