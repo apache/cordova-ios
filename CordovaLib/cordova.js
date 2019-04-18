@@ -1,5 +1,5 @@
 // Platform: ios
-// d07d9d0989196f1b90fe962ca68f5ceb355c69ec
+// 948e932548412305aa7f24b3a90e386aa5c3d12c
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '5.0.0';
+var PLATFORM_VERSION_BUILD_LABEL = '5.0.1';
 // file: src/scripts/require.js
 
 var require;
@@ -205,8 +205,8 @@ var cordova = {
      * @return object
      */
     getOriginalHandlers: function () {
-        return {'document': {'addEventListener': m_document_addEventListener, 'removeEventListener': m_document_removeEventListener},
-            'window': {'addEventListener': m_window_addEventListener, 'removeEventListener': m_window_removeEventListener}};
+        return { 'document': { 'addEventListener': m_document_addEventListener, 'removeEventListener': m_document_removeEventListener },
+            'window': { 'addEventListener': m_window_addEventListener, 'removeEventListener': m_window_removeEventListener } };
     },
     /**
      * Method to fire event from native code
@@ -834,7 +834,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/exec.js
+// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
@@ -1337,7 +1337,7 @@ exports.reset();
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/platform.js
+// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1353,7 +1353,7 @@ module.exports = {
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/plugin/ios/console.js
+// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/plugin/ios/console.js
 define("cordova/plugin/ios/console", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
@@ -1524,7 +1524,7 @@ for (var key in console) {
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-ios/cordova-js-src/plugin/ios/logger.js
+// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
 //------------------------------------------------------------------------------
