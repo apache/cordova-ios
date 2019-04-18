@@ -95,11 +95,7 @@ function Api (platform, platformRootDir, events) {
         defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
         pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
         xcodeProjDir: path.join(this.root, xcodeProjDir),
-        xcodeCordovaProj: xcodeCordovaProj,
-        // NOTE: this is required by browserify logic.
-        // As per platformApi spec we return relative to template root paths here
-        cordovaJs: 'bin/CordovaLib/cordova.js',
-        cordovaJsSrc: 'bin/cordova-js-src'
+        xcodeCordovaProj: xcodeCordovaProj
     };
 }
 
@@ -131,7 +127,7 @@ Api.createPlatform = function (destination, config, options, events) {
     var result;
     try {
         result = require('../../../lib/create')
-            .createProject(destination, config.packageName(), name, options)
+            .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options)
             .then(function () {
                 // after platform is created we return Api instance based on new Api.js location
                 // This is required to correctly resolve paths in the future api calls
@@ -211,6 +207,8 @@ Api.prototype.getPlatformInfo = function () {
  *   CordovaError instance.
  */
 Api.prototype.prepare = function (cordovaProject) {
+    cordovaProject.projectConfig = new ConfigParser(cordovaProject.locations.rootConfigXml || cordovaProject.projectConfig.path);
+
     return require('./lib/prepare').prepare.call(this, cordovaProject);
 };
 
@@ -445,7 +443,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
 
             return podfileFile.install(check_reqs.check_cocoapods)
                 .then(function () {
-                    self.setSwiftVersionForCocoaPodsLibraries(podsjsonFile);
+                    return self.setSwiftVersionForCocoaPodsLibraries(podsjsonFile);
                 });
         } else {
             events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
@@ -564,7 +562,7 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
 
             return podfileFile.install(check_reqs.check_cocoapods)
                 .then(function () {
-                    self.setSwiftVersionForCocoaPodsLibraries(podsjsonFile);
+                    return self.setSwiftVersionForCocoaPodsLibraries(podsjsonFile);
                 });
         } else {
             events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
@@ -582,41 +580,47 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
 Api.prototype.setSwiftVersionForCocoaPodsLibraries = function (podsjsonFile) {
     var self = this;
     var __dirty = false;
-    var podPbxPath = path.join(self.root, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
-    var podXcodeproj = xcode.project(podPbxPath);
-    podXcodeproj.parseSync();
-    var podTargets = podXcodeproj.pbxNativeTargetSection();
-    var podConfigurationList = podXcodeproj.pbxXCConfigurationList();
-    var podConfigs = podXcodeproj.pbxXCBuildConfigurationSection();
+    return check_reqs.check_cocoapods().then(function (toolOptions) {
+        if (toolOptions.ignore) {
+            events.emit('verbose', '=== skip Swift Version Settings For Cocoapods Libraries');
+        } else {
+            var podPbxPath = path.join(self.root, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
+            var podXcodeproj = xcode.project(podPbxPath);
+            podXcodeproj.parseSync();
+            var podTargets = podXcodeproj.pbxNativeTargetSection();
+            var podConfigurationList = podXcodeproj.pbxXCConfigurationList();
+            var podConfigs = podXcodeproj.pbxXCBuildConfigurationSection();
 
-    var libraries = podsjsonFile.getLibraries();
-    Object.keys(libraries).forEach(function (key) {
-        var podJson = libraries[key];
-        var name = podJson.name;
-        var swiftVersion = podJson['swift-version'];
-        if (swiftVersion) {
-            __dirty = true;
-            Object.keys(podTargets).filter(function (targetKey) {
-                return podTargets[targetKey].productName === name;
-            }).map(function (targetKey) {
-                return podTargets[targetKey].buildConfigurationList;
-            }).map(function (buildConfigurationListId) {
-                return podConfigurationList[buildConfigurationListId];
-            }).map(function (buildConfigurationList) {
-                return buildConfigurationList.buildConfigurations;
-            }).reduce(function (acc, buildConfigurations) {
-                return acc.concat(buildConfigurations);
-            }, []).map(function (buildConfiguration) {
-                return buildConfiguration.value;
-            }).forEach(function (buildId) {
-                __dirty = true;
-                podConfigs[buildId].buildSettings['SWIFT_VERSION'] = swiftVersion;
+            var libraries = podsjsonFile.getLibraries();
+            Object.keys(libraries).forEach(function (key) {
+                var podJson = libraries[key];
+                var name = podJson.name;
+                var swiftVersion = podJson['swift-version'];
+                if (swiftVersion) {
+                    __dirty = true;
+                    Object.keys(podTargets).filter(function (targetKey) {
+                        return podTargets[targetKey].productName === name;
+                    }).map(function (targetKey) {
+                        return podTargets[targetKey].buildConfigurationList;
+                    }).map(function (buildConfigurationListId) {
+                        return podConfigurationList[buildConfigurationListId];
+                    }).map(function (buildConfigurationList) {
+                        return buildConfigurationList.buildConfigurations;
+                    }).reduce(function (acc, buildConfigurations) {
+                        return acc.concat(buildConfigurations);
+                    }, []).map(function (buildConfiguration) {
+                        return buildConfiguration.value;
+                    }).forEach(function (buildId) {
+                        __dirty = true;
+                        podConfigs[buildId].buildSettings['SWIFT_VERSION'] = swiftVersion;
+                    });
+                }
             });
+            if (__dirty) {
+                fs.writeFileSync(podPbxPath, podXcodeproj.writeSync(), 'utf-8');
+            }
         }
     });
-    if (__dirty) {
-        fs.writeFileSync(podPbxPath, podXcodeproj.writeSync(), 'utf-8');
-    }
 };
 
 /**

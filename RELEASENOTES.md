@@ -22,6 +22,20 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 5.0.1 (Apr 18, 2019)
+* [GH-596](https://github.com/apache/cordova-ios/pull/596) More logging for simulator selection and deployment
+* [GH-540](https://github.com/apache/cordova-ios/pull/540) Fix copy-www-build-step without shelljs
+* [GH-589](https://github.com/apache/cordova-ios/pull/589) Bump `ios-sim` dependency version to fix simulator listing
+* [GH-577](https://github.com/apache/cordova-ios/pull/577) Don't write spec to podfile when it's an empty string
+* [GH-535](https://github.com/apache/cordova-ios/pull/535) Run prepare with the correct ConfigParser
+* [GH-581](https://github.com/apache/cordova-ios/pull/571) Null check for missing pathname
+* [GH-566](https://github.com/apache/cordova-ios/pull/566) Override id with `ios-CFBundleIdentifier`
+* [GH-450](https://github.com/apache/cordova-ios/pull/450) Fix deadlocks in iOS 12 when `UIWebView loadRequest` is called multiple times
+* [GH-546](https://github.com/apache/cordova-ios/pull/546) Fix setting of target-device to handset in combination with plugins and resource-file
+* [GH-560](https://github.com/apache/cordova-ios/pull/560) Fixing dynamic framework installation path
+* [GH-528](https://github.com/apache/cordova-ios/pull/528) ignore Swift version settings of Cocoapods library on non-macOS environments
+* [GH-542](https://github.com/apache/cordova-ios/pull/542) Enabling `Defines Module` flag
+
 ### 5.0.0 (Feb 07, 2019)
 * [GH-515](https://github.com/apache/cordova-ios/pull/515) Remove Deprecated Local and Remote Push Notification Constants
 * [GH-512](https://github.com/apache/cordova-ios/pull/512) AppIcon and LaunchImage Updates
@@ -71,7 +85,7 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [GH-354](https://github.com/apache/cordova-ios/pull/354) exec purgeProjectFileCache when pod install
 * [GH-356](https://github.com/apache/cordova-ios/pull/356) Fix prototype declaration warnings
 * [CB-13510](https://issues.apache.org/jira/browse/CB-13510) (iOS) Removed clipboard workaround, which was braking copy/paste functional **iOS** 11 (#352)
-* [GH-343](https://github.com/apache/cordova-ios/pull/343) CB-13513 (ios) Declare ProvisioningStyle as Automatic in project.pbxproj template.
+* [GH-343](https://github.com/apache/cordova-ios/pull/343) [CB-13513](https://issues.apache.org/jira/browse/CB-13513) (ios) Declare ProvisioningStyle as Automatic in project.pbxproj template.
 * [GH-351](https://github.com/apache/cordova-ios/pull/351) Prevent a memory leak when converting to JSON
 * [CB-13597](https://issues.apache.org/jira/browse/CB-13597) (ios) update podfile with **iOS** version 9.0
 

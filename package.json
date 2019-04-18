@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "5.0.0",
+  "version": "5.1.0-dev",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
   "repository": {
@@ -41,17 +41,16 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "jasmine": "~3.1.0",
-    "nyc": "^13.1.0",
+    "nyc": "^14.0.0",
     "rewire": "^4.0.1",
     "tmp": "0.0.33"
   },
   "engines": {
     "node": ">=6"
   },
-  "engineStrict": true,
   "dependencies": {
     "cordova-common": "^3.1.0",
-    "ios-sim": "^7.0.0",
+    "ios-sim": "^8.0.1",
     "nopt": "^4.0.1",
     "plist": "^3.0.1",
     "q": "^1.5.1",
