@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "5.1.0-dev",
+  "version": "5.0.1",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
   "repository": {
