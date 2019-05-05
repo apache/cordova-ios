@@ -1,13 +1,13 @@
 Pod::Spec.new do |s|
   s.name         = "Cordova"
   s.version      = "5.1.0"
-  s.summary      = "Cordova for iOS"
+  s.summary      = "Apache Cordova for iOS"
   s.homepage     = "https://github.com/apache/cordova-ios"
   s.license      = { :type => "Apache 2.0", :file => "LICENSE" }
-  s.author       = { "Bharath Hariharan" => "bhariharan@salesforce.com" }
-  s.platform     = :ios, "11.0"
+  s.author       = { "Apache Software Foundation" }
+  s.platform     = :ios, "10.0"
   s.source       = { :git => "https://github.com/apache/cordova-ios.git",
-                     :tag => "{s.version}",
+                     :tag => "rel/{s.version}",
                      :submodules => true }
   s.requires_arc = true
   s.default_subspec  = 'Cordova'
