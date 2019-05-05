@@ -95,11 +95,7 @@ function Api (platform, platformRootDir, events) {
         defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
         pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
         xcodeProjDir: path.join(this.root, xcodeProjDir),
-        xcodeCordovaProj: xcodeCordovaProj,
-        // NOTE: this is required by browserify logic.
-        // As per platformApi spec we return relative to template root paths here
-        cordovaJs: 'bin/CordovaLib/cordova.js',
-        cordovaJsSrc: 'bin/cordova-js-src'
+        xcodeCordovaProj: xcodeCordovaProj
     };
 }
 
@@ -131,7 +127,7 @@ Api.createPlatform = function (destination, config, options, events) {
     var result;
     try {
         result = require('../../../lib/create')
-            .createProject(destination, config.packageName(), name, options)
+            .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options)
             .then(function () {
                 // after platform is created we return Api instance based on new Api.js location
                 // This is required to correctly resolve paths in the future api calls
@@ -211,6 +207,8 @@ Api.prototype.getPlatformInfo = function () {
  *   CordovaError instance.
  */
 Api.prototype.prepare = function (cordovaProject) {
+    cordovaProject.projectConfig = new ConfigParser(cordovaProject.locations.rootConfigXml || cordovaProject.projectConfig.path);
+
     return require('./lib/prepare').prepare.call(this, cordovaProject);
 };
 

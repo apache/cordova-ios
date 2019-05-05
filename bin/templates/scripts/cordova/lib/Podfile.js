@@ -313,7 +313,7 @@ Podfile.prototype.write = function () {
             }
         } else {
             var list = ['\'' + name + '\''];
-            if ('spec' in json) {
+            if ('spec' in json && json.spec.length) {
                 list.push('\'' + json.spec + '\'');
             }
 

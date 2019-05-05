@@ -19,7 +19,6 @@
 
 var Q = require('q');
 var path = require('path');
-var cp = require('child_process');
 var build = require('./build');
 var shell = require('shelljs');
 var superspawn = require('cordova-common').superspawn;
@@ -159,6 +158,7 @@ function checkDeviceConnected () {
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
 function deployToDevice (appPath, target, extraArgs) {
+    events.emit('log', 'Deploying to device');
     // Deploying to device...
     if (target) {
         return superspawn.spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { printCommand: true, stdio: 'inherit' });
@@ -174,8 +174,9 @@ function deployToDevice (appPath, target, extraArgs) {
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
 function deployToSim (appPath, target) {
-    // Select target device for emulator. Default is 'iPhone-6'
+    events.emit('log', 'Deploying to simulator');
     if (!target) {
+        // Select target device for emulator
         return require('./list-emulator-images').run()
             .then(function (emulators) {
                 if (emulators.length > 0) {
@@ -186,7 +187,7 @@ function deployToSim (appPath, target) {
                         target = emulator;
                     }
                 });
-                events.emit('log', 'No target specified for emulator. Deploying to ' + target + ' simulator');
+                events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
                 return startSim(appPath, target);
             });
     } else {
@@ -200,12 +201,22 @@ function startSim (appPath, target) {
     return iossimLaunch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
 }
 
-function iossimLaunch (app_path, devicetypeid, log, exit) {
+function iossimLaunch (appPath, devicetypeid, log, exit) {
     var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
-    var proc = cp.spawn(f, ['launch', app_path, '--devicetypeid', devicetypeid, '--log', log, exit]);
-    proc.stdout.on('data', (data) => {
-        console.log(data.toString());
-    });
+    var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
+
+    return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true })
+        .progress(function (stdio) {
+            if (stdio.stderr) {
+                events.emit('error', `[ios-sim] ${stdio.stderr}`);
+            }
+            if (stdio.stdout) {
+                events.emit('log', `[ios-sim] ${stdio.stdout.trim()}`);
+            }
+        })
+        .then(function (result) {
+            events.emit('log', 'Simulator successfully started via `ios-sim`.');
+        });
 }
 
 function listDevices () {

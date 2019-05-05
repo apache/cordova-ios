@@ -160,12 +160,13 @@ module.exports.run = function (buildOpts) {
                     if (!theTarget) {
                         return getDefaultSimulatorTarget().then(function (defaultTarget) {
                             emulatorTarget = defaultTarget.name;
-                            events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                            events.emit('warn', `No simulator found for "${newTarget}. Falling back to the default target.`);
+                            events.emit('log', `Building for "${emulatorTarget}" Simulator (${defaultTarget.identifier}, ${defaultTarget.simIdentifier}).`);
                             return emulatorTarget;
                         });
                     } else {
                         emulatorTarget = theTarget.name;
-                        events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                        events.emit('log', `Building for "${emulatorTarget}" Simulator (${theTarget.identifier}, ${theTarget.simIdentifier}).`);
                         return emulatorTarget;
                     }
                 });
@@ -217,6 +218,7 @@ module.exports.run = function (buildOpts) {
             events.emit('log', 'Building project: ' + path.join(projectPath, projectName + '.xcworkspace'));
             events.emit('log', '\tConfiguration: ' + configuration);
             events.emit('log', '\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
+            events.emit('log', '\tTarget: ' + emulatorTarget);
 
             var buildOutputDir = path.join(projectPath, 'build', (buildOpts.device ? 'device' : 'emulator'));
 
