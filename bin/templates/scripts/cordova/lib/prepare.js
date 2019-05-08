@@ -223,7 +223,7 @@ function updateProject (platformConfig, locations) {
 
     /* eslint-disable no-tabs */
     // Write out the plist file with the same formatting as Xcode does
-    var info_contents = plist.build(infoPlist, { indent: '	', offset: -1 });
+    var info_contents = plist.build(infoPlist, { indent: '\t', offset: -1 });
     /* eslint-enable no-tabs */
 
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g, '<string></string>');
