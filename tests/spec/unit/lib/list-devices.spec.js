@@ -23,26 +23,25 @@ var Q = require('q');
 describe('cordova/lib/list-devices', function () {
     describe('run method', function () {
         beforeEach(function () {
-            spyOn(Q, 'all').and.returnValue(Q.resolve());
+            spyOn(Q, 'all').and.returnValue(Q.resolve([]));
             spyOn(Q, 'nfcall');
         });
         it('should invoke proper system calls to retrieve connected devices', function () {
-            list_devices.run();
-            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
-            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
-            expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
+            return list_devices.run()
+                .then(() => {
+                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
+                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
+                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
+                });
         });
-        it('should trim and split standard output and return as array', function (done) {
+        it('should trim and split standard output and return as array', function () {
             Q.all.and.returnValue(Q.resolve([['   this is\nmy sweet\nstdout\n    ']]));
-            list_devices.run()
+            return list_devices.run()
                 .then(function (results) {
                     expect(results).toContain('this is');
                     expect(results).toContain('my sweet');
                     expect(results).toContain('stdout');
-                }).fail(function (err) {
-                    fail('list-devices fail handler unexpectedly invoked');
-                    console.error(err);
-                }).done(done);
+                });
         });
     });
 });
