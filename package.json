@@ -40,7 +40,7 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "jasmine": "~3.1.0",
+    "jasmine": "^3.4.0",
     "nyc": "^14.0.0",
     "rewire": "^4.0.1",
     "tmp": "0.0.33"
