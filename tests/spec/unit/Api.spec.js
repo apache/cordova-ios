@@ -169,7 +169,7 @@ describe('Platform Api', function () {
         describe('addPlugin', function () {
             var my_plugin = {
                 getHeaderFiles: function () { return []; },
-                getFrameworks: function () {},
+                getFrameworks: function () { return []; },
                 getPodSpecs: function () { return []; }
             };
             beforeEach(function () {
@@ -182,8 +182,8 @@ describe('Platform Api', function () {
             });
             it('should assign a package name to plugin variables if one is not explicitly provided via options', function () {
                 var opts = {};
-                api.addPlugin('my cool plugin', opts);
-                expect(opts.variables.PACKAGE_NAME).toEqual('ios.cordova.io');
+                return api.addPlugin(my_plugin, opts)
+                    .then(() => expect(opts.variables.PACKAGE_NAME).toEqual('ios.cordova.io'));
             });
             describe('with header-file of `BridgingHeader` type', function () {
                 var bridgingHeader_mock;
