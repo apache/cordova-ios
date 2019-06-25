@@ -39,7 +39,7 @@ function Podfile (podFilePath, projectName, minDeploymentTarget) {
 
     this.path = podFilePath;
     this.projectName = projectName;
-    this.minDeploymentTarget = minDeploymentTarget || '9.0';
+    this.minDeploymentTarget = minDeploymentTarget || '10.0';
     this.contents = null;
     this.sources = null;
     this.declarations = null;
@@ -75,7 +75,7 @@ Podfile.prototype.__parseForDeclarations = function (text) {
     // split by \n
     var arr = text.split('\n');
 
-    // getting lines between "platform :ios, '9.0'"" and "target 'HelloCordova'" do
+    // getting lines between "platform :ios, '10.0'"" and "target 'HelloCordova'" do
     var declarationsPreRE = new RegExp('platform :ios,\\s+\'[^\']+\'');
     var declarationsPostRE = new RegExp('target\\s+\'[^\']+\'\\s+do');
     var declarationRE = new RegExp('^\\s*[^#]');
