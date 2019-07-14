@@ -6,6 +6,8 @@ matrix:
     # Run one test with Xcode 9.x, the rest with 10.2
     - osx_image: xcode9.3
       env: TRAVIS_NODE_VERSION=10
+    - osx_image: xcode10.1
+      env: TRAVIS_NODE_VERSION=10
     - osx_image: xcode10.2
       env: TRAVIS_NODE_VERSION=6
     - osx_image: xcode10.2
