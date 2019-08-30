@@ -321,7 +321,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     if (wkWebViewOnly) {
         events.emit('verbose', 'Set WK_WEB_VIEW_ONLY.');
         project.xcode.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
-        project.xcode_lib.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
+        //project.xcode_lib.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
     }
 
     updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
