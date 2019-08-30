@@ -308,7 +308,7 @@ function update_cordova_subproject (argv) {
 
     var wkWebViewOnly = projectConfig.getPreference('WKWebViewOnly') === 'true';
     if (wkWebViewOnly) {
-        var pbxPath = path.join(projectPath, 'project.pbxproj');
+        var pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
         var xcodeproj = xcode.project(pbxPath);
         xcodeproj.parseSync();
         xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
