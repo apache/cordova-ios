@@ -32,7 +32,7 @@ static NSInteger gNextLockToken = 0;
 static NSInteger gCurrentLockToken = 0;
 static NSMutableArray* gPendingSetUserAgentBlocks = nil;
 
- #if MODERN_WEB_VIEW_ONLY
+ #if WK_WEB_VIEW_ONLY
 @interface WKWebView(SynchronousEvaluateJavaScript)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
 @end
@@ -86,7 +86,7 @@ static NSMutableArray* gPendingSetUserAgentBlocks = nil;
         BOOL cachedValueIsOld = ![systemAndLocale isEqualToString:cordovaUserAgentVersion];
 
         if ((gOriginalUserAgent == nil) || cachedValueIsOld) {
- #if MODERN_WEB_VIEW_ONLY
+ #if WK_WEB_VIEW_ONLY
             WKWebView* sampleWebView = [[WKWebView alloc] initWithFrame:CGRectZero];
  #else
             UIWebView* sampleWebView = [[UIWebView alloc] initWithFrame:CGRectZero];

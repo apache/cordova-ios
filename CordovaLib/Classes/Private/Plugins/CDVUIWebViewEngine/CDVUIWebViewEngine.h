@@ -22,7 +22,7 @@
 
 @interface CDVUIWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
 
-#if !MODERN_WEB_VIEW_ONLY
+#if !WK_WEB_VIEW_ONLY
 @property (nonatomic, strong, readonly) id <UIWebViewDelegate> uiWebViewDelegate;
 #endif
 

@@ -49,6 +49,10 @@ function parseProjectFile (locations) {
         throw new CordovaError('Could not find *-Info.plist file, or config.xml file.');
     }
 
+    var pbxPath_lib = path.join(project_dir, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj');
+    var xcodeproj_lib = xcode.project(pbxPath_lib);
+    xcodeproj_lib.parseSync();
+
     var frameworks_file = path.join(project_dir, 'frameworks.json');
     var frameworks = {};
     try {
@@ -63,6 +67,7 @@ function parseProjectFile (locations) {
         plugins_dir: pluginsDir,
         resources_dir: resourcesDir,
         xcode: xcodeproj,
+        xcode_lib: xcodeproj_lib,
         xcode_path: xcode_dir,
         pbx: pbxPath,
         projectDir: project_dir,
@@ -70,6 +75,7 @@ function parseProjectFile (locations) {
         www: path.join(project_dir, 'www'),
         write: function () {
             fs.writeFileSync(pbxPath, xcodeproj.writeSync());
+            fs.writeFileSync(pbxPath_lib, xcodeproj_lib.writeSync());
             if (Object.keys(this.frameworks).length === 0) {
                 // If there is no framework references remain in the project, just remove this file
                 shell.rm('-rf', frameworks_file);

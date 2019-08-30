@@ -294,7 +294,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
-    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion && !modernWebViewOnly) {
+    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion && !wkWebViewOnly) {
         return Q();
     }
 
@@ -319,8 +319,9 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     }
 
     if (wkWebViewOnly) {
-        events.emit('verbose', 'Set MODERN_WEB_VIEW_ONLY.');
-        project.xcode.updateBuildProperty('MODERN_WEB_VIEW_ONLY', '1');
+        events.emit('verbose', 'Set WK_WEB_VIEW_ONLY.');
+        project.xcode.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
+        project.xcode_lib.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
     }
 
     updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);

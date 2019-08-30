@@ -17,7 +17,7 @@
  under the License.
  */
 
-#if !MODERN_WEB_VIEW_ONLY
+#if !WK_WEB_VIEW_ONLY
 
 #import "CDVUIWebViewEngine.h"
 #import "CDVUIWebViewDelegate.h"
