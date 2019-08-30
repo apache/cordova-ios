@@ -32,7 +32,9 @@ static NSInteger gNextLockToken = 0;
 static NSInteger gCurrentLockToken = 0;
 static NSMutableArray* gPendingSetUserAgentBlocks = nil;
 
- #if WK_WEB_VIEW_ONLY
+#if WK_WEB_VIEW_ONLY
+#import <WebKit/WebKit.h>
+
 @interface WKWebView(SynchronousEvaluateJavaScript)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
 @end
