@@ -17,6 +17,8 @@
  under the License.
  */
 
+#if !WK_WEB_VIEW_ONLY
+
 #import "CDVIntentAndNavigationFilter.h"
 #import <Cordova/CDV.h>
 
@@ -75,10 +77,10 @@
 {
     // a URL can only allow-intent OR allow-navigation, if both are specified,
     // only allow-navigation is allowed
-    
+
     BOOL allowNavigationsPass = [navigationsWhitelist URLIsAllowed:url logFailure:NO];
     BOOL allowIntentPass = [intentsWhitelist URLIsAllowed:url logFailure:NO];
-    
+
     if (allowNavigationsPass && allowIntentPass) {
         return CDVIntentAndNavigationFilterValueNavigationAllowed;
     } else if (allowNavigationsPass) {
@@ -86,7 +88,7 @@
     } else if (allowIntentPass) {
         return CDVIntentAndNavigationFilterValueIntentAllowed;
     }
-    
+
     return CDVIntentAndNavigationFilterValueNoneAllowed;
 }
 
@@ -108,9 +110,9 @@
 {
     NSString* allowIntents_whitelistRejectionFormatString = @"ERROR External navigation rejected - <allow-intent> not set for url='%@'";
     NSString* allowNavigations_whitelistRejectionFormatString = @"ERROR Internal navigation rejected - <allow-navigation> not set for url='%@'";
-    
+
     NSURL* url = [request URL];
-    
+
     switch (filterValue) {
         case CDVIntentAndNavigationFilterValueNavigationAllowed:
             return YES;
@@ -120,7 +122,7 @@
             if ([[self class] shouldOpenURLRequest:request navigationType:navigationType]){
                 [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
             }
-            
+
             // consume the request (i.e. no error) if it wasn't handled above
             return NO;
         case CDVIntentAndNavigationFilterValueNoneAllowed:
@@ -140,3 +142,5 @@
 }
 
 @end
+
+#endif

@@ -17,6 +17,8 @@
  under the License.
  */
 
+#if !WK_WEB_VIEW_ONLY
+
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVWhitelist.h>
 
@@ -32,3 +34,5 @@ typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
 + (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue;
 + (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType;
 @end
+
+#endif
