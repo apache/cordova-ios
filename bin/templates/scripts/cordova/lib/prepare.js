@@ -280,6 +280,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
+    var modernWebViewOnly = platformConfig.getPreference('CordovaWebViewEngine', 'ios') === 'CDVWKWebViewEngine';
 
     var project;
 
@@ -315,6 +316,11 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     if (swiftVersion) {
         events.emit('verbose', 'Set SwiftVersion to "' + swiftVersion + '".');
         project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
+    }
+
+    if (modernWebViewOnly) {
+        events.emit('verbose', 'Set MODERN_WEB_VIEW_ONLY.');
+        project.xcode.updateBuildProperty('MODERN_WEB_VIEW_ONLY', '1');
     }
 
     updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
