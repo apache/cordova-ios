@@ -17,8 +17,6 @@
  under the License.
  */
 
-#if !WK_WEB_VIEW_ONLY
-
 #import "CDVIntentAndNavigationFilter.h"
 #import <Cordova/CDV.h>
 
@@ -97,16 +95,24 @@
     return [[self class] filterUrl:url intentsWhitelist:self.allowIntentsWhitelist navigationsWhitelist:self.allowNavigationsWhitelist];
 }
 
-+ (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
+#if WK_WEB_VIEW_ONLY
+#define CDVWebViewNavigationTypeLinkClicked 0
+#define CDVWebViewNavigationTypeOther 5
+#else
+#define CDVWebViewNavigationTypeLinkClicked UIWebViewNavigationTypeLinkClicked
+#define CDVWebViewNavigationTypeOther UIWebViewNavigationTypeOther
+#endif
+
++ (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
-    return (UIWebViewNavigationTypeLinkClicked == navigationType ||
-        (UIWebViewNavigationTypeOther == navigationType &&
+    return (CDVWebViewNavigationTypeLinkClicked == navigationType ||
+        (CDVWebViewNavigationTypeOther == navigationType &&
          [[request.mainDocumentURL absoluteString] isEqualToString:[request.URL absoluteString]]
          )
         );
 }
 
-+ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue
++ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue
 {
     NSString* allowIntents_whitelistRejectionFormatString = @"ERROR External navigation rejected - <allow-intent> not set for url='%@'";
     NSString* allowNavigations_whitelistRejectionFormatString = @"ERROR Internal navigation rejected - <allow-navigation> not set for url='%@'";
@@ -129,18 +135,16 @@
             // allow-navigation attempt failed for sure
             NSLog(@"%@", [NSString stringWithFormat:allowNavigations_whitelistRejectionFormatString, [url absoluteString]]);
             // anchor tag link means it was an allow-intent attempt that failed as well
-            if (UIWebViewNavigationTypeLinkClicked == navigationType) {
+            if (CDVWebViewNavigationTypeLinkClicked == navigationType) {
                 NSLog(@"%@", [NSString stringWithFormat:allowIntents_whitelistRejectionFormatString, [url absoluteString]]);
             }
             return NO;
     }
 }
 
-- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
     return [[self class] shouldOverrideLoadWithRequest:request navigationType:navigationType filterValue:[self filterUrl:request.URL]];
 }
 
 @end
-
-#endif
