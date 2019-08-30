@@ -322,7 +322,13 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     if (wkWebViewOnly) {
         events.emit('verbose', 'Set WK_WEB_VIEW_ONLY.');
         project.xcode.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
+    }
 
+    updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
+
+    project.write();
+
+    if (wkWebViewOnly) {
         // update CordovaLib Xcode project, too
         var pbxPath = path.join(project.projectDir, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj');
         var xcodeproj = xcode.project(pbxPath);
@@ -330,10 +336,6 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
         xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
         fs.writeFileSync(pbxPath, xcodeproj.writeSync());
     }
-
-    updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
-
-    project.write();
 
     return Q();
 }
