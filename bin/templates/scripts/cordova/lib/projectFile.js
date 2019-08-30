@@ -37,7 +37,7 @@ function parseProjectFile (locations) {
         return cachedProjectFiles[project_dir];
     }
 
-    var xcodeproj = xcode.project(pbxPath);
+    var xcodeproj = new xcode.project(pbxPath);
     xcodeproj.parseSync();
 
     var xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
@@ -49,9 +49,9 @@ function parseProjectFile (locations) {
         throw new CordovaError('Could not find *-Info.plist file, or config.xml file.');
     }
 
-    //var pbxPath_lib = path.join(project_dir, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj');
-    //var xcodeproj_lib = new xcode.project(pbxPath_lib);
-    //xcodeproj_lib.parseSync();
+    var pbxPath_lib = path.join(project_dir, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj');
+    var xcodeproj_lib = new xcode.project(pbxPath_lib);
+    xcodeproj_lib.parseSync();
 
     var frameworks_file = path.join(project_dir, 'frameworks.json');
     var frameworks = {};
@@ -67,7 +67,7 @@ function parseProjectFile (locations) {
         plugins_dir: pluginsDir,
         resources_dir: resourcesDir,
         xcode: xcodeproj,
-        //xcode_lib: xcodeproj_lib,
+        xcode_lib: xcodeproj_lib,
         xcode_path: xcode_dir,
         pbx: pbxPath,
         projectDir: project_dir,
@@ -75,7 +75,7 @@ function parseProjectFile (locations) {
         www: path.join(project_dir, 'www'),
         write: function () {
             fs.writeFileSync(pbxPath, xcodeproj.writeSync());
-            //fs.writeFileSync(pbxPath_lib, xcodeproj_lib.writeSync());
+            fs.writeFileSync(pbxPath_lib, xcodeproj_lib.writeSync());
             if (Object.keys(this.frameworks).length === 0) {
                 // If there is no framework references remain in the project, just remove this file
                 shell.rm('-rf', frameworks_file);
