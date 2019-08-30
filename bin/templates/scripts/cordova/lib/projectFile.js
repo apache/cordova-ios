@@ -50,7 +50,7 @@ function parseProjectFile (locations) {
     }
 
     var pbxPath_lib = path.join(project_dir, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj');
-    var xcodeproj_lib = xcode.project(pbxPath_lib);
+    var xcodeproj_lib = new xcode.project(pbxPath_lib);
     xcodeproj_lib.parseSync();
 
     var frameworks_file = path.join(project_dir, 'frameworks.json');
