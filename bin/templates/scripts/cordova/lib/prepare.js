@@ -280,7 +280,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-    var modernWebViewOnly = platformConfig.getPreference('ModernWebViewOnly', 'ios') === 'true';
+    var wkWebViewOnly = platformConfig.getPreference('WKWebViewOnly') === 'true';
 
     var project;
 
@@ -318,7 +318,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
         project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
     }
 
-    if (modernWebViewOnly) {
+    if (wkWebViewOnly) {
         events.emit('verbose', 'Set MODERN_WEB_VIEW_ONLY.');
         project.xcode.updateBuildProperty('MODERN_WEB_VIEW_ONLY', '1');
     }
