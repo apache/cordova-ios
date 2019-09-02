@@ -984,15 +984,6 @@ execProxy.nativeCallback = function () {
 
 module.exports = execProxy;
 
-var cexec = require('cordova/exec');
-var WkWebKit = {
-    allowsBackForwardNavigationGestures: function (allow) {
-        cexec(null, null, 'CDVWKWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
-    }
-};
-
-module.exports = WkWebKit;
-
 });
 
 // file: src/common/exec/proxy.js
@@ -1261,10 +1252,26 @@ module.exports = {
         // see the file under plugin/ios/console.js
         require('cordova/modulemapper').clobbers('cordova/plugin/ios/console', 'window.console');
 
+        // Attach the webkit utility to window.webkit
+        // see the file under plugin/ios/webkit.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/webkit', 'window.webkit');
+
         require('cordova/channel').onNativeReady.fire();
     }
 };
 
+});
+
+// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/plugin/ios/webkit.js
+define("cordova/plugin/ios/webkit", function(require, exports, module) {
+    var cexec = require('cordova/exec');
+    var WkWebKit = {
+        allowsBackForwardNavigationGestures: function (allow) {
+            cexec(null, null, 'CDVWKWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
+        }
+    };
+
+    module.exports = WkWebKit;
 });
 
 // file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/plugin/ios/console.js
