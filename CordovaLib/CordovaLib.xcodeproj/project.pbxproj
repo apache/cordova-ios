@@ -13,7 +13,7 @@
 		3093E2241B16D6A3003F381A /* CDVIntentAndNavigationFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3093E2221B16D6A3003F381A /* CDVIntentAndNavigationFilter.m */; };
 		7E7F69B61ABA35D8007546F4 /* CDVLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFB1AB9028C008C4574 /* CDVLocalStorage.h */; };
 		7E7F69B91ABA3692007546F4 /* CDVHandleOpenURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CF81AB9028C008C4574 /* CDVHandleOpenURL.h */; };
-		7E99793D231CEE5900689DFB /* CDVWKWebViewUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E997937231CEE5900689DFB /* CDVWKWebViewUIDelegate.h */; };
+		7E99793D231CEE5900689DFB /* CDVWKWebViewUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E997937231CEE5900689DFB /* CDVWKWebViewUIDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E99793E231CEE5900689DFB /* CDVWKWebViewUIDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E997938231CEE5900689DFB /* CDVWKWebViewUIDelegate.m */; };
 		7E99793F231CEE5900689DFB /* CDVWKProcessPoolFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E997939231CEE5900689DFB /* CDVWKProcessPoolFactory.m */; };
 		7E997940231CEE5900689DFB /* CDVWKProcessPoolFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E99793A231CEE5900689DFB /* CDVWKProcessPoolFactory.h */; };

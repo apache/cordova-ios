@@ -22,7 +22,6 @@
 		5C4C917B1C2AD44E0055AFC3 /* config-custom.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5C4C91771C2ACF130055AFC3 /* config-custom.xml */; };
 		686357B5141002F200DF4CF2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
 		686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */; };
-		7E91406017711D88002C6A3F /* CDVWebViewDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */; };
 		7EF33BD71911ABA20048544E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EF33BD61911ABA20048544E /* Default-568h@2x.png */; };
 		C0FA7C9B1E4BB6420077B045 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 303A4073152124BB00182201 /* main.m */; };
 		C0FA7C9C1E4BB6420077B045 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 303A4077152124BB00182201 /* AppDelegate.m */; };
@@ -41,7 +40,6 @@
 		C0FA7CBB1E4BBBBE0077B045 /* CDVViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4C91751C2ACE450055AFC3 /* CDVViewControllerTest.m */; };
 		C0FA7CBC1E4BBBBE0077B045 /* CDVInvokedUrlCommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB89634915FE66EA00E12277 /* CDVInvokedUrlCommandTests.m */; };
 		C0FA7CBD1E4BBBBE0077B045 /* CDVUserAgentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = EB96677116ADBCF500D86CDF /* CDVUserAgentTest.m */; };
-		C0FA7CBE1E4BBBBE0077B045 /* CDVWebViewDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */; };
 		C0FA7CBF1E4BBBBE0077B045 /* CDVCommandDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30610C9119AD9B95000B3781 /* CDVCommandDelegateTests.m */; };
 		C0FA7CC01E4BBBBE0077B045 /* CDVStartPageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA7F20417962CCD001A0CE6 /* CDVStartPageTests.m */; };
 		C0FA7CC31E4BBBBE0077B045 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 686357B3141002F200DF4CF2 /* InfoPlist.strings */; };
@@ -108,7 +106,6 @@
 		686357B2141002F200DF4CF2 /* CordovaLibTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CordovaLibTests-Info.plist"; sourceTree = "<group>"; };
 		686357B4141002F200DF4CF2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDVPluginResultJSONSerializationTests.m; sourceTree = "<group>"; };
-		7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewDelegateTests.m; sourceTree = "<group>"; };
 		7EF33BD61911ABA20048544E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C0FA7CAA1E4BB6420077B045 /* CordovaFrameworkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CordovaFrameworkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FA7CAC1E4BB6B30077B045 /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cordova.framework; path = "../Debug-iphonesimulator/Cordova.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -238,7 +235,6 @@
 				EBA7F20417962CCD001A0CE6 /* CDVStartPageTests.m */,
 				EB96677116ADBCF500D86CDF /* CDVUserAgentTest.m */,
 				5C4C91751C2ACE450055AFC3 /* CDVViewControllerTest.m */,
-				7E91405F17711D88002C6A3F /* CDVWebViewDelegateTests.m */,
 				EBA3550F15A5F18900F4DE24 /* CDVWebViewTest.h */,
 				30B342F415224B360070E6A5 /* CDVWebViewTest.m */,
 				30356213141049E1006C2D43 /* CDVWhitelistTests.m */,
@@ -331,6 +327,9 @@
 			attributes = {
 				LastUpgradeCheck = 0600;
 				TargetAttributes = {
+					686357A8141002F100DF4CF2 = {
+						DevelopmentTeam = 5VQE5755TC;
+					};
 					C0FA7CB11E4BBBBE0077B045 = {
 						TestTargetID = C0FA7C991E4BB6420077B045;
 					};
@@ -462,7 +461,6 @@
 				5C4C91761C2ACE450055AFC3 /* CDVViewControllerTest.m in Sources */,
 				EB89634A15FE66EA00E12277 /* CDVInvokedUrlCommandTests.m in Sources */,
 				EB96677216ADBCF500D86CDF /* CDVUserAgentTest.m in Sources */,
-				7E91406017711D88002C6A3F /* CDVWebViewDelegateTests.m in Sources */,
 				30610C9219AD9B95000B3781 /* CDVCommandDelegateTests.m in Sources */,
 				EBA7F20517962CCD001A0CE6 /* CDVStartPageTests.m in Sources */,
 			);
@@ -491,7 +489,6 @@
 				C0FA7CBB1E4BBBBE0077B045 /* CDVViewControllerTest.m in Sources */,
 				C0FA7CBC1E4BBBBE0077B045 /* CDVInvokedUrlCommandTests.m in Sources */,
 				C0FA7CBD1E4BBBBE0077B045 /* CDVUserAgentTest.m in Sources */,
-				C0FA7CBE1E4BBBBE0077B045 /* CDVWebViewDelegateTests.m in Sources */,
 				C0FA7CBF1E4BBBBE0077B045 /* CDVCommandDelegateTests.m in Sources */,
 				C0FA7CC01E4BBBBE0077B045 /* CDVStartPageTests.m in Sources */,
 			);
@@ -671,6 +668,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 5VQE5755TC;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
@@ -704,6 +702,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 5VQE5755TC;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_THUMB_SUPPORT = NO;
