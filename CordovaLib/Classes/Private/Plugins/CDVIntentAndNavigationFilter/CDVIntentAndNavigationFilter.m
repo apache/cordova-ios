@@ -75,10 +75,10 @@
 {
     // a URL can only allow-intent OR allow-navigation, if both are specified,
     // only allow-navigation is allowed
-    
+
     BOOL allowNavigationsPass = [navigationsWhitelist URLIsAllowed:url logFailure:NO];
     BOOL allowIntentPass = [intentsWhitelist URLIsAllowed:url logFailure:NO];
-    
+
     if (allowNavigationsPass && allowIntentPass) {
         return CDVIntentAndNavigationFilterValueNavigationAllowed;
     } else if (allowNavigationsPass) {
@@ -86,7 +86,7 @@
     } else if (allowIntentPass) {
         return CDVIntentAndNavigationFilterValueIntentAllowed;
     }
-    
+
     return CDVIntentAndNavigationFilterValueNoneAllowed;
 }
 
@@ -95,46 +95,49 @@
     return [[self class] filterUrl:url intentsWhitelist:self.allowIntentsWhitelist navigationsWhitelist:self.allowNavigationsWhitelist];
 }
 
-+ (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
+#define CDVWebViewNavigationTypeLinkClicked 0
+#define CDVWebViewNavigationTypeOther 5
+
++ (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
-    return (UIWebViewNavigationTypeLinkClicked == navigationType ||
-        (UIWebViewNavigationTypeOther == navigationType &&
+    return (CDVWebViewNavigationTypeLinkClicked == navigationType ||
+        (CDVWebViewNavigationTypeOther == navigationType &&
          [[request.mainDocumentURL absoluteString] isEqualToString:[request.URL absoluteString]]
          )
         );
 }
 
-+ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue
++ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue
 {
     NSString* allowIntents_whitelistRejectionFormatString = @"ERROR External navigation rejected - <allow-intent> not set for url='%@'";
     NSString* allowNavigations_whitelistRejectionFormatString = @"ERROR Internal navigation rejected - <allow-navigation> not set for url='%@'";
-    
+
     NSURL* url = [request URL];
-    
+
     switch (filterValue) {
         case CDVIntentAndNavigationFilterValueNavigationAllowed:
             return YES;
         case CDVIntentAndNavigationFilterValueIntentAllowed:
-            // only allow-intent if it's a UIWebViewNavigationTypeLinkClicked (anchor tag) OR
-            // it's a UIWebViewNavigationTypeOther, and it's an internal link
+            // only allow-intent if it's a WKWebViewNavigationTypeLinkClicked (anchor tag) OR
+            // it's a WKWebViewNavigationTypeOther, and it's an internal link
             if ([[self class] shouldOpenURLRequest:request navigationType:navigationType]){
                 [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
             }
-            
+
             // consume the request (i.e. no error) if it wasn't handled above
             return NO;
         case CDVIntentAndNavigationFilterValueNoneAllowed:
             // allow-navigation attempt failed for sure
             NSLog(@"%@", [NSString stringWithFormat:allowNavigations_whitelistRejectionFormatString, [url absoluteString]]);
             // anchor tag link means it was an allow-intent attempt that failed as well
-            if (UIWebViewNavigationTypeLinkClicked == navigationType) {
+            if (CDVWebViewNavigationTypeLinkClicked == navigationType) {
                 NSLog(@"%@", [NSString stringWithFormat:allowIntents_whitelistRejectionFormatString, [url absoluteString]]);
             }
             return NO;
     }
 }
 
-- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
     return [[self class] shouldOverrideLoadWithRequest:request navigationType:navigationType filterValue:[self filterUrl:request.URL]];
 }

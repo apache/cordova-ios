@@ -17,25 +17,12 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import <Cordova/CDVAvailability.h>
+#import <WebKit/WebKit.h>
 
-/**
- * Distinguishes top-level navigations from sub-frame navigations.
- * shouldStartLoadWithRequest is called for every request, but didStartLoad
- * and didFinishLoad is called only for top-level navigations.
- * Relevant bug: CB-2389
- */
-@interface CDVUIWebViewDelegate : NSObject <UIWebViewDelegate>{
-    __weak NSObject <UIWebViewDelegate>* _delegate;
-    NSInteger _loadCount;
-    NSInteger _state;
-    NSInteger _curLoadToken;
-    NSInteger _loadStartPollCount;
-}
+@interface CDVWKWebViewUIDelegate : NSObject <WKUIDelegate>
 
-- (id)initWithDelegate:(NSObject <UIWebViewDelegate>*)delegate;
+@property (nonatomic, copy) NSString* title;
 
-- (BOOL)request:(NSURLRequest*)newRequest isEqualToRequestAfterStrippingFragments:(NSURLRequest*)originalRequest;
+- (instancetype)initWithTitle:(NSString*)title;
 
 @end

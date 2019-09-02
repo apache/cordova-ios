@@ -23,13 +23,12 @@
 @interface CDVLocalStorage ()
 
 @property (nonatomic, readwrite, strong) NSMutableArray* backupInfo;  // array of CDVBackupInfo objects
-@property (nonatomic, readwrite, weak) id <UIWebViewDelegate> webviewDelegate;
 
 @end
 
 @implementation CDVLocalStorage
 
-@synthesize backupInfo, webviewDelegate;
+@synthesize backupInfo;
 
 - (void)pluginInitialize
 {
