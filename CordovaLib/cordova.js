@@ -984,9 +984,10 @@ execProxy.nativeCallback = function () {
 
 module.exports = execProxy;
 
+var cexec = require('cordova/exec');
 var WkWebKit = {
     allowsBackForwardNavigationGestures: function (allow) {
-        exec(null, null, 'CDVWKWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
+        cexec(null, null, 'CDVWKWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
     }
 };
 
