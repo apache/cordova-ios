@@ -839,7 +839,7 @@ define("cordova/exec", function(require, exports, module) {
 
 /*global require, module, atob, document */
 
-**
+/**
 * Creates the exec bridge used to notify the native code of
 * commands.
 */
