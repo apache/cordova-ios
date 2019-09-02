@@ -26,6 +26,10 @@ module.exports = {
         // see the file under plugin/ios/console.js
         require('cordova/modulemapper').clobbers('cordova/plugin/ios/console', 'window.console');
 
+        // Attach the webkit utility to window.webkit
+        // see the file under plugin/ios/webkit.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/webkit', 'window.webkit');
+        
         require('cordova/channel').onNativeReady.fire();
     }
 };
