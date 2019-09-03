@@ -25,7 +25,7 @@
 
 - (void)createViewController
 {
-    NSAssert(!self.viewController, @"ViewController already created.");
+    //NSAssert(!self.viewController, @"ViewController already created.");
 
     self.viewController = [[ViewController alloc] init];
     self.viewController.wwwFolderName = @"www";
