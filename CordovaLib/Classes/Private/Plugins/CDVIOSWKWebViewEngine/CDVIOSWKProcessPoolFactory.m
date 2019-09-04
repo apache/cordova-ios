@@ -17,11 +17,33 @@
  under the License.
  */
 
+#import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
+#import "CDVIOSWKProcessPoolFactory.h"
 
-@interface CDVWKProcessPoolFactory : NSObject
-@property (nonatomic, retain) WKProcessPool* sharedPool;
+static CDVIOSWKProcessPoolFactory *factory = nil;
 
-+(instancetype) sharedFactory;
--(WKProcessPool*) sharedProcessPool;
+@implementation CDVIOSWKProcessPoolFactory
+
++ (instancetype)sharedFactory
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        factory = [[CDVIOSWKProcessPoolFactory alloc] init];
+    });
+    
+    return factory;
+}
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        _sharedPool = [[WKProcessPool alloc] init];
+    }
+    return self;
+}
+
+- (WKProcessPool*) sharedProcessPool {
+    return _sharedPool;
+}
 @end

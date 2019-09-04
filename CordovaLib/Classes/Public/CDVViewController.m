@@ -20,7 +20,7 @@
 #import <objc/message.h>
 #import "CDV.h"
 #import "CDVPlugin+Private.h"
-#import "CDVWKWebViewUIDelegate.h"
+#import "CDVIOSWKWebViewUIDelegate.h"
 #import "CDVConfigParser.h"
 #import "CDVUserAgentUtil.h"
 #import <AVFoundation/AVFoundation.h>
@@ -515,7 +515,7 @@
     NSString* webViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
 
     if (!defaultWebViewEngineClass) {
-        defaultWebViewEngineClass = @"CDVWKWebViewEngine";
+        defaultWebViewEngineClass = @"CDVIOSWKWebViewEngine";
     }
     if (!webViewEngineClass) {
         webViewEngineClass = defaultWebViewEngineClass;

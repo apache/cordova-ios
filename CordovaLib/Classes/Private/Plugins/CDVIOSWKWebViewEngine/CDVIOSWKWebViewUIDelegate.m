@@ -17,9 +17,9 @@
  under the License.
  */
 
-#import "CDVWKWebViewUIDelegate.h"
+#import "CDVIOSWKWebViewUIDelegate.h"
 
-@implementation CDVWKWebViewUIDelegate
+@implementation CDVIOSWKWebViewUIDelegate
 
 - (instancetype)initWithTitle:(NSString*)title
 {

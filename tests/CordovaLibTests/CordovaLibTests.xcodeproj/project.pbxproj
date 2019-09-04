@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0020F9EA231E884A006AD4B6 /* CDVWKWebViewEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0020F9E9231E884A006AD4B6 /* CDVWKWebViewEngineTest.m */; };
-		0020F9EB231E884A006AD4B6 /* CDVWKWebViewEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0020F9E9231E884A006AD4B6 /* CDVWKWebViewEngineTest.m */; };
+		0020F9EA231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0020F9E9231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m */; };
+		0020F9EB231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0020F9E9231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m */; };
 		3006BCEA1D1A859B0035385C /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3006BCE91D1A859B0035385C /* libCordova.a */; };
 		3035621714104C34006C2D43 /* CDVWhitelistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30356213141049E1006C2D43 /* CDVWhitelistTests.m */; };
 		303A4072152124BB00182201 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 303A4070152124BB00182201 /* InfoPlist.strings */; };
@@ -79,7 +79,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0020F9E9231E884A006AD4B6 /* CDVWKWebViewEngineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWKWebViewEngineTest.m; sourceTree = "<group>"; };
+		0020F9E9231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVIOSWKWebViewEngineTest.m; sourceTree = "<group>"; };
 		3006BCE91D1A859B0035385C /* libCordova.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCordova.a; path = "../Debug-iphonesimulator/libCordova.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30356213141049E1006C2D43 /* CDVWhitelistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWhitelistTests.m; sourceTree = "<group>"; };
 		303A4068152124BB00182201 /* CordovaLibApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CordovaLibApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -221,7 +221,7 @@
 				EBA3554515A731F100F4DE24 /* CDVFakeFileManager.m */,
 				EB89634915FE66EA00E12277 /* CDVInvokedUrlCommandTests.m */,
 				686357B9141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m */,
-				0020F9E9231E884A006AD4B6 /* CDVWKWebViewEngineTest.m */,
+				0020F9E9231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m */,
 				5C4C91751C2ACE450055AFC3 /* CDVViewControllerTest.m */,
 				30356213141049E1006C2D43 /* CDVWhitelistTests.m */,
 				686357B1141002F200DF4CF2 /* Supporting Files */,
@@ -441,7 +441,7 @@
 				3035621714104C34006C2D43 /* CDVWhitelistTests.m in Sources */,
 				686357BA141002F200DF4CF2 /* CDVPluginResultJSONSerializationTests.m in Sources */,
 				30D1B08C15A2B36D0060C291 /* CDVBase64Tests.m in Sources */,
-				0020F9EA231E884A006AD4B6 /* CDVWKWebViewEngineTest.m in Sources */,
+				0020F9EA231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m in Sources */,
 				EBA3554615A731F100F4DE24 /* CDVFakeFileManager.m in Sources */,
 				5C4C91761C2ACE450055AFC3 /* CDVViewControllerTest.m in Sources */,
 				EB89634A15FE66EA00E12277 /* CDVInvokedUrlCommandTests.m in Sources */,
@@ -466,7 +466,7 @@
 				C0FA7CB51E4BBBBE0077B045 /* CDVWhitelistTests.m in Sources */,
 				C0FA7CB61E4BBBBE0077B045 /* CDVPluginResultJSONSerializationTests.m in Sources */,
 				C0FA7CB91E4BBBBE0077B045 /* CDVBase64Tests.m in Sources */,
-				0020F9EB231E884A006AD4B6 /* CDVWKWebViewEngineTest.m in Sources */,
+				0020F9EB231E884A006AD4B6 /* CDVIOSWKWebViewEngineTest.m in Sources */,
 				C0FA7CBA1E4BBBBE0077B045 /* CDVFakeFileManager.m in Sources */,
 				C0FA7CBB1E4BBBBE0077B045 /* CDVViewControllerTest.m in Sources */,
 				C0FA7CBC1E4BBBBE0077B045 /* CDVInvokedUrlCommandTests.m in Sources */,

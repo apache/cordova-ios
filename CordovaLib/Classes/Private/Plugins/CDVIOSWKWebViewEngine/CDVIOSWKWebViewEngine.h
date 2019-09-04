@@ -18,11 +18,12 @@
  */
 
 #import <WebKit/WebKit.h>
+#import <Cordova/CDV.h>
 
-@interface CDVWKWebViewUIDelegate : NSObject <WKUIDelegate>
+@interface CDVIOSWKWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 
-@property (nonatomic, copy) NSString* title;
+@property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
 
-- (instancetype)initWithTitle:(NSString*)title;
+- (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
 
 @end

@@ -17,9 +17,9 @@
  under the License.
  */
 
-#import "CDVWKWebViewEngine.h"
-#import "CDVWKWebViewUIDelegate.h"
-#import "CDVWKProcessPoolFactory.h"
+#import "CDVIOSWKWebViewEngine.h"
+#import "CDVIOSWKWebViewUIDelegate.h"
+#import "CDVIOSWKProcessPoolFactory.h"
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 
 #import <objc/message.h>
@@ -27,7 +27,7 @@
 #define CDV_BRIDGE_NAME @"cordova"
 #define CDV_WKWEBVIEW_FILE_URL_LOAD_SELECTOR @"loadFileURL:allowingReadAccessToURL:"
 
-@interface CDVWKWeakScriptMessageHandler : NSObject <WKScriptMessageHandler>
+@interface CDVIOSWKWeakScriptMessageHandler : NSObject <WKScriptMessageHandler>
 
 @property (nonatomic, weak, readonly) id<WKScriptMessageHandler>scriptMessageHandler;
 
@@ -36,7 +36,7 @@
 @end
 
 
-@interface CDVWKWebViewEngine ()
+@interface CDVIOSWKWebViewEngine ()
 
 @property (nonatomic, strong, readwrite) UIView* engineWebView;
 @property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
@@ -47,7 +47,7 @@
 // see forwardingTargetForSelector: selector comment for the reason for this pragma
 #pragma clang diagnostic ignored "-Wprotocol"
 
-@implementation CDVWKWebViewEngine
+@implementation CDVIOSWKWebViewEngine
 
 @synthesize engineWebView = _engineWebView;
 
@@ -68,7 +68,7 @@
 - (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
 {
     WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
-    configuration.processPool = [[CDVWKProcessPoolFactory sharedFactory] sharedProcessPool];
+    configuration.processPool = [[CDVIOSWKProcessPoolFactory sharedFactory] sharedProcessPool];
     if (settings == nil) {
         return configuration;
     }
@@ -85,9 +85,9 @@
     // viewController would be available now. we attempt to set all possible delegates to it, by default
     NSDictionary* settings = self.commandDelegate.settings;
 
-    self.uiDelegate = [[CDVWKWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
+    self.uiDelegate = [[CDVIOSWKWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
 
-    CDVWKWeakScriptMessageHandler *weakScriptMessageHandler = [[CDVWKWeakScriptMessageHandler alloc] initWithScriptMessageHandler:self];
+    CDVIOSWKWeakScriptMessageHandler *weakScriptMessageHandler = [[CDVIOSWKWeakScriptMessageHandler alloc] initWithScriptMessageHandler:self];
 
     WKUserContentController* userContentController = [[WKUserContentController alloc] init];
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
@@ -121,7 +121,7 @@
     [self updateSettings:settings];
 
     // check if content thread has died on resume
-    NSLog(@"%@", @"CDVWKWebViewEngine will reload WKWebView if required on resume");
+    NSLog(@"%@", @"CDVIOSWKWebViewEngine will reload WKWebView if required on resume");
     [[NSNotificationCenter defaultCenter]
         addObserver:self
            selector:@selector(onAppWillEnterForeground:)
@@ -158,7 +158,7 @@ static void * KVOContext = &KVOContext;
 
 - (void) onAppWillEnterForeground:(NSNotification*)notification {
     if ([self shouldReloadWebView]) {
-        NSLog(@"%@", @"CDVWKWebViewEngine reloading!");
+        NSLog(@"%@", @"CDVIOSWKWebViewEngine reloading!");
         [(WKWebView*)_engineWebView reload];
     }
 }
@@ -177,10 +177,10 @@ static void * KVOContext = &KVOContext;
     BOOL reload = (title_is_nil || location_is_blank);
 
 #ifdef DEBUG
-    NSLog(@"%@", @"CDVWKWebViewEngine shouldReloadWebView::");
-    NSLog(@"CDVWKWebViewEngine shouldReloadWebView title: %@", title);
-    NSLog(@"CDVWKWebViewEngine shouldReloadWebView location: %@", [location absoluteString]);
-    NSLog(@"CDVWKWebViewEngine shouldReloadWebView reload: %u", reload);
+    NSLog(@"%@", @"CDVIOSWKWebViewEngine shouldReloadWebView::");
+    NSLog(@"CDVIOSWKWebViewEngine shouldReloadWebView title: %@", title);
+    NSLog(@"CDVIOSWKWebViewEngine shouldReloadWebView location: %@", [location absoluteString]);
+    NSLog(@"CDVIOSWKWebViewEngine shouldReloadWebView reload: %u", reload);
 #endif
 
     return reload;
@@ -468,9 +468,9 @@ static void * KVOContext = &KVOContext;
 
 @end
 
-#pragma mark - CDVWKWeakScriptMessageHandler
+#pragma mark - CDVIOSWKWeakScriptMessageHandler
 
-@implementation CDVWKWeakScriptMessageHandler
+@implementation CDVIOSWKWeakScriptMessageHandler
 
 - (instancetype)initWithScriptMessageHandler:(id<WKScriptMessageHandler>)scriptMessageHandler
 {

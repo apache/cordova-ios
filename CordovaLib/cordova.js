@@ -1252,9 +1252,9 @@ module.exports = {
         // see the file under plugin/ios/console.js
         require('cordova/modulemapper').clobbers('cordova/plugin/ios/console', 'window.console');
 
-        // Attach the webkit utility to window.WkWebView
-        // see the file under plugin/ios/webkit.js
-        require('cordova/modulemapper').clobbers('cordova/plugin/ios/webkit', 'window.WkWebView');
+        // Attach the wkwebkit utility to window.WkWebView
+        // see the file under plugin/ios/wkwebkit.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/wkwebkit', 'window.WkWebView');
 
         require('cordova/channel').onNativeReady.fire();
     }
@@ -1262,12 +1262,12 @@ module.exports = {
 
 });
 
-// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/plugin/ios/webkit.js
-define("cordova/plugin/ios/webkit", function(require, exports, module) {
+// file: /Users/dpogue/Coding/cordova-ios/cordova-js-src/plugin/ios/wkwebkit.js
+define("cordova/plugin/ios/wkwebkit", function(require, exports, module) {
     var cexec = require('cordova/exec');
     var WkWebKit = {
         allowsBackForwardNavigationGestures: function (allow) {
-            cexec(null, null, 'CDVWKWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
+            cexec(null, null, 'CDVIOSWKWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
         }
     };
 

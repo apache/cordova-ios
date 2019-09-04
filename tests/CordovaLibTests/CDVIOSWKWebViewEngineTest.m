@@ -19,19 +19,19 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "CDVWKWebViewEngine.h"
-#import "CDVWKProcessPoolFactory.h"
+#import "CDVIOSWKWebViewEngine.h"
+#import "CDVIOSWKProcessPoolFactory.h"
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import <Cordova/CDVAvailability.h>
 
-@interface CDVWKWebViewEngineTest : XCTestCase
+@interface CDVIOSWKWebViewEngineTest : XCTestCase
 
-@property (nonatomic, strong) CDVWKWebViewEngine* plugin;
+@property (nonatomic, strong) CDVIOSWKWebViewEngine* plugin;
 @property (nonatomic, strong) CDVViewController* viewController;
 
 @end
 
-@interface CDVWKWebViewEngine ()
+@interface CDVIOSWKWebViewEngine ()
 
 // TODO: expose private interface, if needed
 - (BOOL)shouldReloadWebView;
@@ -46,14 +46,14 @@
 
 @end
 
-@implementation CDVWKWebViewEngineTest
+@implementation CDVIOSWKWebViewEngineTest
 
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
     
     // NOTE: no app settings are set, so it will rely on default WKWebViewConfiguration settings
-    self.plugin = [[CDVWKWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.plugin = [[CDVIOSWKWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     
     XCTAssert([self.plugin conformsToProtocol:@protocol(CDVWebViewEngineProtocol)], @"Plugin does not conform to CDVWebViewEngineProtocol");
 }
@@ -133,7 +133,7 @@
 
 - (void) testConfigurationFromSettings {
     // we need to re-set the plugin from the "setup" to take in the app settings we need
-    self.plugin = [[CDVWKWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.plugin = [[CDVIOSWKWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     self.viewController = [[CDVViewController alloc] init];
     
     // generate the app settings
@@ -220,7 +220,7 @@
 }
 
 - (void) testWKProcessPoolFactory {
-    WKProcessPool* shared = [[CDVWKProcessPoolFactory sharedFactory] sharedProcessPool];
+    WKProcessPool* shared = [[CDVIOSWKProcessPoolFactory sharedFactory] sharedProcessPool];
     XCTAssertTrue(shared != nil);
 }
 
