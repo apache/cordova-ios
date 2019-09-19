@@ -348,7 +348,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         ];
         buildActions = [ 'archive' ];
         settings = [
-            customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
+            customArgs.configuration_build_dir || '',
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
         // Add other matched flags to otherFlags to let xcodebuild present an appropriate error.
@@ -370,7 +370,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         ];
         buildActions = [ 'build' ];
         settings = [
-            customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
+            customArgs.configuration_build_dir || '',
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
         ];
         // Add other matched flags to otherFlags to let xcodebuild present an appropriate error.
