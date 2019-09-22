@@ -120,9 +120,9 @@ module.exports.run = function (buildOpts) {
 
     if (buildOpts.buildConfig) {
         if (!fs.existsSync(buildOpts.buildConfig)) {
-            return Q.reject('Build config file does not exist:' + buildOpts.buildConfig);
+            return Q.reject('Build config file does not exist: ' + buildOpts.buildConfig);
         }
-        events.emit('log', 'Reading build config file:', path.resolve(buildOpts.buildConfig));
+        events.emit('log', 'Reading build config file: ' + path.resolve(buildOpts.buildConfig));
         var contents = fs.readFileSync(buildOpts.buildConfig, 'utf-8');
         var buildConfig = JSON.parse(contents.replace(/^\ufeff/, '')); // Remove BOM
         if (buildConfig.ios) {

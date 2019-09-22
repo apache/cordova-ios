@@ -12,6 +12,8 @@ matrix:
       env: TRAVIS_NODE_VERSION=8
     - osx_image: xcode10.1
       env: TRAVIS_NODE_VERSION=10
+    - osx_image: xcode10.1
+      env: TRAVIS_NODE_VERSION=12
 
 before_install:
   - nvm install $TRAVIS_NODE_VERSION
