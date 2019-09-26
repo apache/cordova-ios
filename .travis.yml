@@ -3,6 +3,9 @@ sudo: false
 
 matrix:
   include:
+    # test with Xcode 11
+    - osx_image: xcode11
+      env: TRAVIS_NODE_VERSION=10
     # tests with Xcode 9.x & Xcode 10.1, the rest with 10.2
     - osx_image: xcode9.3
       env: TRAVIS_NODE_VERSION=10
