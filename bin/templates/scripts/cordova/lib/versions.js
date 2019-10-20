@@ -179,8 +179,8 @@ exports.compareVersions = function (version1, version2) {
             return parsed;
         });
     }
-    var parsedVer1 = parseVer(version1);
-    var parsedVer2 = parseVer(version2);
+    var parsedVer1 = parseVer(version1.replace(/-[a-zA-Z]{1,}(\d*)/, '$1'));
+    var parsedVer2 = parseVer(version2.replace(/-[a-zA-Z]{1,}(\d*)/, '$1'));
 
     // Compare corresponding segments of each version
     for (var i = 0; i < Math.max(parsedVer1.length, parsedVer2.length); i++) {
