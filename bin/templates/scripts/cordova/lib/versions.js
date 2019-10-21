@@ -21,6 +21,7 @@
 
 var child_process = require('child_process');
 var Q = require('q');
+var semver = require('semver');
 
 exports.get_apple_ios_version = function () {
     var d = Q.defer();
@@ -167,28 +168,20 @@ exports.get_tool_version = function (toolName) {
  *                                    positive otherwise and 0 if versions are equal.
  */
 exports.compareVersions = function (version1, version2) {
-    function parseVer (version) {
-        return version.split('.').map(function (value) {
-            // try to convert version segment to Number
-            var parsed = Number(value);
-            // Number constructor is strict enough and will return NaN
-            // if conversion fails. In this case we won't be able to compare versions properly
-            if (isNaN(parsed)) {
-                throw 'Version should contain only numbers and dots';
-            }
-            return parsed;
-        });
-    }
-    var parsedVer1 = parseVer(version1.replace(/-[a-zA-Z.]{1,}(\d*)/, '$1'));
-    var parsedVer2 = parseVer(version2.replace(/-[a-zA-Z.]{1,}(\d*)/, '$1'));
+    // coerce and validate versions
+    var cleanV1 = semver.valid(semver.coerce(version1));
+    var cleanV2 = semver.valid(semver.coerce(version2));
 
-    // Compare corresponding segments of each version
-    for (var i = 0; i < Math.max(parsedVer1.length, parsedVer2.length); i++) {
-        // if segment is not specified, assume that it is 0
-        // E.g. 3.1 is equal to 3.1.0
-        var ret = (parsedVer1[i] || 0) - (parsedVer2[i] || 0);
-        // if segments are not equal, we're finished
-        if (ret !== 0) return ret;
+    // throw exception in the event one or both versions cannot be validated
+    if (cleanV1 === null || !cleanV2 === null) {
+        throw 'Version should be in valid semver syntax. See: https://semver.org/';
     }
-    return 0;
+
+    // if versions are equivalent, return 0;
+    if (cleanV1 === cleanV2) {
+        return 0;
+    }
+
+    // alternatively return positive/negative number
+    return semver.gt(cleanV1, cleanV2) ? 1 : -1;
 };
