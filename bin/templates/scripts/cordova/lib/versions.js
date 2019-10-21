@@ -173,7 +173,7 @@ exports.compareVersions = function (version1, version2) {
     var cleanV2 = semver.valid(semver.coerce(version2));
 
     // throw exception in the event one or both versions cannot be validated
-    if (cleanV1 === null || !cleanV2 === null) {
+    if (cleanV1 === null || cleanV2 === null) {
         throw 'Version should be in valid semver syntax. See: https://semver.org/';
     }
 
