@@ -177,11 +177,19 @@ exports.compareVersions = function (version1, version2) {
         throw 'Version should be in valid semver syntax. See: https://semver.org/';
     }
 
-    // if versions are equivalent, return 0;
+    // if versions are equivalent (check for pre-release status)
     if (cleanV1 === cleanV2) {
+        if (
+            (version1.includes('-') && !version2.includes('-')) || 
+            (version2.includes('-') && !version1.includes('-'))
+        ) {
+            // one version is pre-release (and the other is not), favour non-prerelease
+            return version1.includes('-') ? -1 : 1; 
+        }
+        // versions are completely identical
         return 0;
     }
-
+    
     // alternatively return positive/negative number
     return semver.gt(cleanV1, cleanV2) ? 1 : -1;
 };
