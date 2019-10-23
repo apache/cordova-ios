@@ -160,11 +160,20 @@ exports.get_tool_version = function (toolName) {
 };
 
 /**
- * Compares two semver-notated version strings. Returns number
- * that indicates equality of provided version strings.
+ * Compares two version strings that can be coerced to semver.
+ *
  * @param  {String} version1 Version to compare
  * @param  {String} version2 Another version to compare
  * @return {Number}          Negative number if first version is lower than the second,
  *                                    positive otherwise and 0 if versions are equal.
  */
-exports.compareVersions = semver.compare;
+exports.compareVersions = (...args) => {
+    const coerceToSemverIfInvalid = v => {
+        const semverVersion = semver.parse(v) || semver.coerce(v);
+        if (!semverVersion) throw new TypeError(`Invalid Version: ${v}`);
+        return semverVersion;
+    };
+
+    const semverVersions = args.map(coerceToSemverIfInvalid);
+    return semver.compare(...semverVersions);
+};
