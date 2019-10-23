@@ -167,29 +167,4 @@ exports.get_tool_version = function (toolName) {
  * @return {Number}          Negative number if first version is lower than the second,
  *                                    positive otherwise and 0 if versions are equal.
  */
-exports.compareVersions = function (version1, version2) {
-    // coerce and validate versions
-    var cleanV1 = semver.valid(semver.coerce(version1));
-    var cleanV2 = semver.valid(semver.coerce(version2));
-
-    // throw exception in the event one or both versions cannot be validated
-    if (cleanV1 === null || cleanV2 === null) {
-        throw 'Version should be in valid semver syntax. See: https://semver.org/';
-    }
-
-    // if versions are equivalent (check for pre-release status)
-    if (cleanV1 === cleanV2) {
-        if (
-            (version1.includes('-') && !version2.includes('-')) ||
-            (version2.includes('-') && !version1.includes('-'))
-        ) {
-            // one version is pre-release (and the other is not), favour non-prerelease
-            return version1.includes('-') ? -1 : 1;
-        }
-        // versions are completely identical
-        return 0;
-    }
-
-    // alternatively return positive/negative number
-    return semver.gt(cleanV1, cleanV2) ? 1 : -1;
-};
+exports.compareVersions = semver.compare;

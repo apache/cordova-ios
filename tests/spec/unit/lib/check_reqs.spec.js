@@ -68,7 +68,7 @@ describe('check_reqs', function () {
             });
 
             checkTool('node', 'a.b.c').catch(err => {
-                expect(err).toEqual('Version should be in valid semver syntax. See: https://semver.org/');
+                expect(err).toEqual(new TypeError('Invalid Version: a.b.c'));
                 done();
             });
         });
