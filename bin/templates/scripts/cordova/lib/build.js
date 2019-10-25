@@ -120,9 +120,9 @@ module.exports.run = function (buildOpts) {
 
     if (buildOpts.buildConfig) {
         if (!fs.existsSync(buildOpts.buildConfig)) {
-            return Q.reject('Build config file does not exist:' + buildOpts.buildConfig);
+            return Q.reject('Build config file does not exist: ' + buildOpts.buildConfig);
         }
-        events.emit('log', 'Reading build config file:', path.resolve(buildOpts.buildConfig));
+        events.emit('log', 'Reading build config file: ' + path.resolve(buildOpts.buildConfig));
         var contents = fs.readFileSync(buildOpts.buildConfig, 'utf-8');
         var buildConfig = JSON.parse(contents.replace(/^\ufeff/, '')); // Remove BOM
         if (buildConfig.ios) {
@@ -160,12 +160,13 @@ module.exports.run = function (buildOpts) {
                     if (!theTarget) {
                         return getDefaultSimulatorTarget().then(function (defaultTarget) {
                             emulatorTarget = defaultTarget.name;
-                            events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                            events.emit('warn', `No simulator found for "${newTarget}. Falling back to the default target.`);
+                            events.emit('log', `Building for "${emulatorTarget}" Simulator (${defaultTarget.identifier}, ${defaultTarget.simIdentifier}).`);
                             return emulatorTarget;
                         });
                     } else {
                         emulatorTarget = theTarget.name;
-                        events.emit('log', 'Building for ' + emulatorTarget + ' Simulator');
+                        events.emit('log', `Building for "${emulatorTarget}" Simulator (${theTarget.identifier}, ${theTarget.simIdentifier}).`);
                         return emulatorTarget;
                     }
                 });
@@ -217,6 +218,7 @@ module.exports.run = function (buildOpts) {
             events.emit('log', 'Building project: ' + path.join(projectPath, projectName + '.xcworkspace'));
             events.emit('log', '\tConfiguration: ' + configuration);
             events.emit('log', '\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
+            events.emit('log', '\tTarget: ' + emulatorTarget);
 
             var buildOutputDir = path.join(projectPath, 'build', (buildOpts.device ? 'device' : 'emulator'));
 

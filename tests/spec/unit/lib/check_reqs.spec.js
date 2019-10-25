@@ -67,8 +67,8 @@ describe('check_reqs', function () {
                 compareVersions: originalVersion.compareVersions
             });
 
-            checkTool('node', 'v1.0.0').catch((error) => {
-                expect(error).toEqual('Version should contain only numbers and dots');
+            checkTool('node', 'a.b.c').catch(err => {
+                expect(err).toEqual(new TypeError('Invalid Version: a.b.c'));
                 done();
             });
         });

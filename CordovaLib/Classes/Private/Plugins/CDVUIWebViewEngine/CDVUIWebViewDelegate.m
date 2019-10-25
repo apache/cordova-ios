@@ -329,9 +329,14 @@ static NSString *stripFragment(NSString* url)
             break;
 
         case STATE_WAITING_FOR_LOAD_FINISH:
-            if (_loadCount == 1) {
+            // fix call loadRequest multiple times just callback webViewDidFinishLoad once time in iOS 12
+            if (@available(iOS 12.0, *)) {
                 fireCallback = YES;
-                _state = STATE_IDLE;
+            } else {
+                if (_loadCount == 1) {
+                    fireCallback = YES;
+                    _state = STATE_IDLE;
+                }
             }
             _loadCount -= 1;
             break;

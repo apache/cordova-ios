@@ -17,6 +17,7 @@
  under the License.
  */
 
+var semver = require('semver');
 var rewire = require('rewire');
 var versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
 
@@ -52,3 +53,37 @@ if (process.platform === 'darwin') {
         });
     });
 }
+
+describe('versions', () => {
+    describe('compareVersions method', () => {
+        it('calls semver.compare, given valid semver', () => {
+            const testVersions = ['1.0.0', '1.1.0'];
+            spyOn(semver, 'compare');
+
+            versions.compareVersions(...testVersions);
+            expect(semver.compare).toHaveBeenCalledWith(
+                ...testVersions.map(version =>
+                    jasmine.objectContaining({ version })
+                )
+            );
+        });
+
+        it('handles pre-release identifiers', () => {
+            expect(
+                versions.compareVersions('1.0.0-rc.0', '1.0.0')
+            ).toBe(-1);
+        });
+
+        it('handles non-semver versions', () => {
+            expect(
+                versions.compareVersions('10.1', '10')
+            ).toBe(1);
+        });
+
+        it('does not handle pre-release identifiers on non-semver versions', () => {
+            expect(
+                versions.compareVersions('10.1-beta.1', '10.1')
+            ).toBe(0);
+        });
+    });
+});
