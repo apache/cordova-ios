@@ -42,11 +42,6 @@ shell.config.silent = true;
 
 var ConfigParser = require('cordova-common').ConfigParser;
 
-// Create a real config object before mocking out everything.
-var cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
-var cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
-var cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
-
 function wrapper (p, done, post) {
     p.then(post, function (err) {
         expect(err.stack).toBeUndefined();
@@ -561,10 +556,16 @@ describe('prepare', function () {
         /* eslint-enable no-unused-vars */
         var xcOrig = xcode.project;
         var writeFileSyncSpy;
+        let cfg, cfg2, cfg3;
 
         var updateProject = prepare.__get__('updateProject');
 
         beforeEach(function () {
+            // Create real config objects before mocking out everything.
+            cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
+            cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
+            cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
+
             mv = spyOn(shell, 'mv');
             writeFileSyncSpy = spyOn(fs, 'writeFileSync');
 
@@ -584,22 +585,16 @@ describe('prepare', function () {
         });
 
         it('Test#001 : should not update the app name in pbxproj', function (done) {
-            var cfg2OriginalName = cfg2.name;
+            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
 
-            // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
             cfg2.name = function () { return 'NotSampleApp'; }; // new config has name change
             wrapperError(updateProject(cfg2, p.locations), done); // since the name has changed it *should* error
 
-            // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             wrapper(updateProject(cfg2, p.locations), done); // since the name has not changed it *should not* error
-
-            // restore cfg2 original name
-            cfg2.name = cfg2OriginalName;
         });
 
         it('should write target-device preference', function (done) {
-            var cfg2OriginalName = cfg2.name;
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
@@ -609,13 +604,9 @@ describe('prepare', function () {
                 proj.parseSync();
                 var prop = proj.getBuildProperty('TARGETED_DEVICE_FAMILY');
                 expect(prop).toEqual('"1"'); // 1 is handset
-
-                // restore cfg2 original name
-                cfg2.name = cfg2OriginalName;
             });
         });
         it('should write deployment-target preference', function (done) {
-            var cfg2OriginalName = cfg2.name;
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
@@ -625,13 +616,9 @@ describe('prepare', function () {
                 proj.parseSync();
                 var prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
                 expect(prop).toEqual('8.0');
-
-                // restore cfg2 original name
-                cfg2.name = cfg2OriginalName;
             });
         });
         it('should write SwiftVersion preference (4.1)', function (done) {
-            var cfg3OriginalName = cfg3.name;
             cfg3.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
             wrapper(updateProject(cfg3, p.locations), done, function () {
@@ -640,18 +627,13 @@ describe('prepare', function () {
                 proj.parseSync();
                 var prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('4.1');
-
-                // restore cfg2 original name
-                cfg3.name = cfg3OriginalName;
             });
         });
         it('should write SwiftVersion preference (3.3)', function (done) {
-            var cfg3OriginalName = cfg3.name;
             cfg3.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             var pref = cfg3.doc.findall('platform[@name=\'ios\']/preference').filter(function (elem) {
                 return elem.attrib.name.toLowerCase() === 'swiftversion';
             })[0];
-            var prefOriginalSwiftVersion = pref.attrib.value;
             pref.attrib.value = '3.3';
             writeFileSyncSpy.and.callThrough();
             wrapper(updateProject(cfg3, p.locations), done, function () {
@@ -660,9 +642,6 @@ describe('prepare', function () {
                 proj.parseSync();
                 var prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('3.3');
-                // restore cfg2 original name
-                cfg3.name = cfg3OriginalName;
-                pref.attrib.value = prefOriginalSwiftVersion;
             });
         });
 
@@ -1211,7 +1190,6 @@ describe('prepare', function () {
         });
         /// ///////////////////////////////////////////////
         it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', function (done) {
-            var cfg2OriginalName = cfg2.name;
             // original name here is 'SampleApp' based on p
             // we are not testing a name change here, but testing a new config being used (name change test is above)
             // so we set it to the name expected
@@ -1231,9 +1209,6 @@ describe('prepare', function () {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
                 expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
-
-                // restore cfg2 original name
-                cfg2.name = cfg2OriginalName;
             });
         });
         /// ///////////////////////////////////////////////
