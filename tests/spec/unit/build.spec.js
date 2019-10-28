@@ -343,12 +343,11 @@ describe('build', function () {
 
     describe('help method', () => {
         it('should log a bunch of options', () => {
-            const logSpy = jasmine.createSpy();
-            const procStub = { exit: _ => null, cwd: _ => '', argv: ['', ''] };
-            build.__set__({ console: { log: logSpy }, process: procStub });
+            spyOn(console, 'log');
+            spyOn(process, 'exit');
 
             build.help();
-            expect(logSpy).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
+            expect(console.log).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
         });
     });
 

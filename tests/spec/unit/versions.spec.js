@@ -18,21 +18,19 @@
  */
 
 var semver = require('semver');
-var rewire = require('rewire');
-var versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
+var versions = require('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {
     describe('versions', function () {
+        beforeEach(() => {
+            spyOn(console, 'log');
+        });
+
         describe('get_apple_ios_version method', () => {
             it('should have found ios version.', (done) => {
-                let _console = versions.__get__('console');
-                let logSpy = jasmine.createSpy('logSpy');
-                versions.__set__('console', { log: logSpy });
-
                 versions.get_apple_ios_version().then(() => {
-                    expect(logSpy).not.toHaveBeenCalledWith(undefined);
-                    versions.__set__('console', _console);
+                    expect(console.log).not.toHaveBeenCalledWith(undefined);
                     done();
                 });
             });
@@ -40,13 +38,8 @@ if (process.platform === 'darwin') {
 
         describe('get_apple_osx_version method', () => {
             it('should have found osx version.', (done) => {
-                let _console = versions.__get__('console');
-                let logSpy = jasmine.createSpy('logSpy');
-                versions.__set__('console', { log: logSpy });
-
                 versions.get_apple_osx_version().then(() => {
-                    expect(logSpy).not.toHaveBeenCalledWith(undefined);
-                    versions.__set__('console', _console);
+                    expect(console.log).not.toHaveBeenCalledWith(undefined);
                     done();
                 });
             });
