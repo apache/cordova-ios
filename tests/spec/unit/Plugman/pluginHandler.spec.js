@@ -22,6 +22,7 @@ var fs = require('fs');
 var path = require('path');
 var rewire = require('rewire');
 var shell = require('shelljs');
+const EventEmitter = require('events');
 
 var PluginInfo = require('cordova-common').PluginInfo;
 var Api = require('../../../../bin/templates/scripts/cordova/Api');
@@ -344,7 +345,7 @@ describe('ios plugin handler', function () {
         });
 
         it('Test 028 : of two plugins should apply xcode file changes from both', function (done) {
-            var api = new Api('ios', temp);
+            var api = new Api('ios', temp, new EventEmitter());
             var fail = jasmine.createSpy('fail');
 
             api.addPlugin(dummyPluginInfo)

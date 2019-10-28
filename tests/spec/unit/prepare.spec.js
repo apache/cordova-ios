@@ -21,6 +21,7 @@
 var fs = require('fs');
 var fse = require('fs-extra');
 
+const EventEmitter = require('events');
 var os = require('os');
 var path = require('path');
 var shell = require('shelljs');
@@ -65,17 +66,13 @@ describe('prepare', function () {
     beforeEach(function () {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
-        // Prevent logging to avoid polluting the test reports
-        Api.__set__('events.emit', jasmine.createSpy());
-
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
-        p = new Api('ios', iosPlatform);
+        p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
     afterEach(function () {
         shell.rm('-rf', path.join(__dirname, 'some'));
-        process.removeAllListeners();
     });
 
     describe('launch storyboard feature (CB-9762)', function () {
