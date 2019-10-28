@@ -584,14 +584,16 @@ describe('prepare', function () {
             spyOn(cfg, 'getPreference');
         });
 
-        it('Test#001 : should not update the app name in pbxproj', function (done) {
+        it('should resolve', function (done) {
             // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
-
-            cfg2.name = function () { return 'NotSampleApp'; }; // new config has name change
-            wrapperError(updateProject(cfg2, p.locations), done); // since the name has changed it *should* error
-
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             wrapper(updateProject(cfg2, p.locations), done); // since the name has not changed it *should not* error
+        });
+
+        it('should reject when the app name has changed', function (done) {
+            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
+            cfg2.name = function () { return 'NotSampleApp'; }; // new config has name change
+            wrapperError(updateProject(cfg2, p.locations), done); // since the name has changed it *should* error
         });
 
         it('should write target-device preference', function (done) {
