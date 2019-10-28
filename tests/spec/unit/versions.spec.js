@@ -28,19 +28,17 @@ if (process.platform === 'darwin') {
         });
 
         describe('get_apple_ios_version method', () => {
-            it('should have found ios version.', (done) => {
-                versions.get_apple_ios_version().then(() => {
+            it('should have found ios version.', () => {
+                return versions.get_apple_ios_version().then(() => {
                     expect(console.log).not.toHaveBeenCalledWith(undefined);
-                    done();
                 });
             });
         });
 
         describe('get_apple_osx_version method', () => {
-            it('should have found osx version.', (done) => {
-                versions.get_apple_osx_version().then(() => {
+            it('should have found osx version.', () => {
+                return versions.get_apple_osx_version().then(() => {
                     expect(console.log).not.toHaveBeenCalledWith(undefined);
-                    done();
                 });
             });
         });
