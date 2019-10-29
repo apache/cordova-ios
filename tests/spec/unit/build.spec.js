@@ -343,12 +343,11 @@ describe('build', function () {
 
     describe('help method', () => {
         it('should log a bunch of options', () => {
-            const logSpy = jasmine.createSpy();
-            const procStub = { exit: _ => null, cwd: _ => '', argv: ['', ''] };
-            build.__set__({ console: { log: logSpy }, process: procStub });
+            spyOn(console, 'log');
+            spyOn(process, 'exit');
 
             build.help();
-            expect(logSpy).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
+            expect(console.log).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
         });
     });
 
@@ -416,25 +415,18 @@ describe('build', function () {
             // This method will require a module that supports the run method.
             build.__set__('require', () => {
                 return {
-                    run: () => {
-                        return new Promise((resolve, reject) => {
-                            resolve(mockedEmulators);
-                        });
-                    }
+                    run: () => Promise.resolve(mockedEmulators)
                 };
             });
 
             const getDefaultSimulatorTarget = build.__get__('getDefaultSimulatorTarget');
-            const exec = getDefaultSimulatorTarget();
 
-            const expected = {
-                name: 'iPhone X',
-                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-X',
-                simIdentifier: 'iPhone-X'
-            };
-
-            exec.then((actual) => {
-                expect(actual).toEqual(expected);
+            getDefaultSimulatorTarget().then((actual) => {
+                expect(actual).toEqual({
+                    name: 'iPhone X',
+                    identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-X',
+                    simIdentifier: 'iPhone-X'
+                });
                 done();
             });
         });

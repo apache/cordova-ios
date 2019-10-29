@@ -19,8 +19,8 @@
 
 var path = require('path');
 var fs = require('fs');
+const EventEmitter = require('events');
 var PluginManager = require('cordova-common').PluginManager;
-var events = require('cordova-common').events;
 var Api = require('../../../bin/templates/scripts/cordova/Api');
 var check_reqs = require('../../../bin/templates/scripts/cordova/lib/check_reqs');
 
@@ -49,16 +49,14 @@ function compareListWithoutOrder (list1, list2) {
 describe('Platform Api', function () {
 
     describe('constructor', function () {
-        beforeEach(function () {
-            events.removeAllListeners();
-        });
-
         it('Test 001 : should throw if provided directory does not contain an xcodeproj file', function () {
-            expect(function () { new Api('ios', path.join(FIXTURES, '..')); }).toThrow(); /* eslint no-new : 0 */
+            expect(() =>
+                new Api('ios', path.join(FIXTURES, '..'), new EventEmitter())
+            ).toThrow();
         });
         it('Test 002 : should create an instance with path, pbxproj, xcodeproj, originalName and cordovaproj properties', function () {
             expect(function () {
-                var p = new Api('ios', iosProjectFixture);
+                var p = new Api('ios', iosProjectFixture, new EventEmitter());
                 expect(p.locations.root).toEqual(iosProjectFixture);
                 expect(p.locations.pbxproj).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj', 'project.pbxproj'));
                 expect(p.locations.xcodeProjDir).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj'));
@@ -66,80 +64,14 @@ describe('Platform Api', function () {
                 expect(p.locations.configXml).toEqual(path.join(iosProjectFixture, 'SampleApp', 'config.xml'));
             }).not.toThrow();
         });
-        it('Test 003 : test cocoapods check_reqs, on darwin (macOS)', function (done) {
-            // the purpose of this test is not to actually test whether CocoaPods is installed
-            // it is to test check_reqs can run and be covered (we mock the actual checking, simple check)
-
-            check_reqs.check_os()
-                .then(function (message) {
-                    // supported os
-                    function fail () {
-                        done.fail('check_reqs fail (' + message + ')');
-                    }
-                    function success () {
-                        done();
-                    }
-                    var toolsChecker = {
-                        success: function () {
-                            return Q.resolve('CocoaPods found');
-                        },
-                        fail: function () {
-                            return Q.reject('CocoaPods NOT found');
-                        }
-                    };
-
-                    // success expected
-                    check_reqs.check_cocoapods(toolsChecker.success)
-                        .then(success, fail)
-                        .catch(fail);
-
-                    // fail expected
-                    check_reqs.check_cocoapods(toolsChecker.fail)
-                        .then(fail, success)
-                        .catch(success);
-
-                }, function () {
-                    // unsupported os, do nothing
-                    done();
-                });
-        });
-        it('Test 004 : test cocoapods check_reqs, expected success on non-darwin (macOS)', function (done) {
-            // the purpose of this test is not to actually test whether CocoaPods is installed
-            // it is to test check_reqs can run and be covered (we mock the actual checking, simple check)
-            check_reqs.check_os()
-                .then(function () {
-                    // supported os, do nothing
-                    done();
-                }, function (message) {
-                    // unsupported os, check_reqs should be ignored
-                    function fail () {
-                        done.fail('check_reqs fail (' + message + ')');
-                    }
-                    function success (toolOptions) {
-                        expect(toolOptions.ignore).toBeDefined();
-                        expect(toolOptions.ignoreMessage).toBeDefined();
-                        done();
-                    }
-                    var toolsChecker = function () {
-                        done.fail(); // this function should not ever be called if non-darwin
-                        return Q.reject('CocoaPods NOT found');
-                    };
-
-                    // success expected
-                    check_reqs.check_cocoapods(toolsChecker)
-                        .then(success, fail)
-                        .catch(fail);
-                });
-
-        });
     });
 
     describe('.prototype', function () {
-        var api;
+        var api, events;
         var projectRoot = iosProjectFixture;
         beforeEach(function () {
-            events.removeAllListeners();
-            api = new Api('ios', projectRoot);
+            events = new EventEmitter();
+            api = new Api('ios', projectRoot, events);
             spyOn(fs, 'readdirSync').and.returnValue([api.locations.xcodeProjDir]);
             spyOn(projectFile, 'parse').and.returnValue({
                 getPackageName: function () { return 'ios.cordova.io'; }
@@ -447,7 +379,6 @@ describe('Platform Api', function () {
                         }).done(done);
                 });
                 it('if two frameworks with the same name are added, should honour the spec of the first-installed plugin', function (done) {
-                    spyOn(events, 'emit');
                     podsjson_mock.getLibrary.and.returnValue({
                         spec: 'something different from ' + my_pod_json.spec
                     });
