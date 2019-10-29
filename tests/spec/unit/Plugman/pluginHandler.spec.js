@@ -344,18 +344,14 @@ describe('ios plugin handler', function () {
             });
         });
 
-        it('Test 028 : of two plugins should apply xcode file changes from both', function (done) {
+        it('Test 028 : of two plugins should apply xcode file changes from both', function () {
             var api = new Api('ios', temp, new EventEmitter());
-            var fail = jasmine.createSpy('fail');
 
-            api.addPlugin(dummyPluginInfo)
+            return api.addPlugin(dummyPluginInfo)
                 .then(function () {
                     return api.addPlugin(weblessPluginInfo);
                 })
-                .fail(fail)
-                .done(function () {
-                    expect(fail).not.toHaveBeenCalled();
-
+                .then(function () {
                     var xcode = projectFile.parse({
                         root: temp,
                         pbxproj: path.join(temp, 'SampleApp.xcodeproj/project.pbxproj')
@@ -374,8 +370,6 @@ describe('ios plugin handler', function () {
                     expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.h'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.m'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile('usr/lib/libsqlite3.dylib')).toEqual(jasmine.any(Object));
-
-                    done();
                 });
         });
     });
