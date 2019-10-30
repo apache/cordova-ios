@@ -29,7 +29,7 @@
     "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "tests/scripts/killsim.js",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
-    "eslint": "eslint bin tests"
+    "eslint": "eslint . \"bin/**/!(*.*)\""
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
