@@ -19,4 +19,4 @@
  * under the License.
  */
 
-require('nodeunit').reporters.default.run(['bin/tests'])
+require('nodeunit').reporters.default.run(['bin/tests']);
