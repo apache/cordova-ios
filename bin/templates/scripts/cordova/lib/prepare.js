@@ -324,6 +324,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var displayName = platformConfig.name().replace(/"/g, '');
 
     var project;
+
     try {
         project = projectFile.parse(locations);
     } catch (err) {
