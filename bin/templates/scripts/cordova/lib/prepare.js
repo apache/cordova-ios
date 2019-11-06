@@ -346,7 +346,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     if (targetDevice) {
         events.emit('verbose', 'Set TARGETED_DEVICE_FAMILY to ' + targetDevice + '.');
-        updateBuildPropertyLocal(project.xcode, displayName, 'TARGETED_DEVICE_FAMILY', targetDevice);
+        project.xcode.updateBuildProperty('TARGETED_DEVICE_FAMILY', targetDevice);
     }
 
     if (deploymentTarget) {
