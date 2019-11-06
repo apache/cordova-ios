@@ -279,7 +279,7 @@ logger.format = function (formatString, args) {
  */
 function __format (formatString, args) {
     if (formatString === null || formatString === undefined) return [''];
-    if (arguments.length == 1) return [formatString.toString()];
+    if (arguments.length === 1) return [formatString.toString()];
 
     if (typeof formatString !== 'string') { formatString = formatString.toString(); }
 
@@ -295,7 +295,7 @@ function __format (formatString, args) {
         rest = match[3];
         result.push(match[1]);
 
-        if (match[2] == '%') {
+        if (match[2] === '%') {
             result.push('%');
             args.unshift(arg);
             continue;

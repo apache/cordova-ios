@@ -22,7 +22,6 @@
 var args = process.argv;
 var Api = require('./Api');
 var nopt = require('nopt');
-var path = require('path');
 
 // Support basic help commands
 if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {

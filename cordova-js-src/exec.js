@@ -34,12 +34,12 @@ var isInContextOfEvalJs = 0;
 var failSafeTimerId = 0;
 
 function massageArgsJsToNative (args) {
-    if (!args || utils.typeName(args) != 'Array') {
+    if (!args || utils.typeName(args) !== 'Array') {
         return args;
     }
     var ret = [];
     args.forEach(function (arg, i) {
-        if (utils.typeName(arg) == 'ArrayBuffer') {
+        if (utils.typeName(arg) === 'ArrayBuffer') {
             ret.push({
                 'CDVType': 'ArrayBuffer',
                 'data': base64.fromArrayBuffer(arg)
@@ -52,7 +52,7 @@ function massageArgsJsToNative (args) {
 }
 
 function massageMessageNativeToJs (message) {
-    if (message.CDVType == 'ArrayBuffer') {
+    if (message.CDVType === 'ArrayBuffer') {
         var stringToArrayBuffer = function (str) {
             var ret = new Uint8Array(str.length);
             for (var i = 0; i < str.length; i++) {
@@ -72,7 +72,7 @@ function convertMessageToArgsNativeToJs (message) {
     var args = [];
     if (!message || !message.hasOwnProperty('CDVType')) {
         args.push(message);
-    } else if (message.CDVType == 'MultiPart') {
+    } else if (message.CDVType === 'MultiPart') {
         message.messages.forEach(function (e) {
             args.push(massageMessageNativeToJs(e));
         });
@@ -129,7 +129,7 @@ function iOSExec () {
     // then the queue will be flushed when it returns; no need for a poke.
     // Also, if there is already a command in the queue, then we've already
     // poked the native side, so there is no reason to do so again.
-    if (!isInContextOfEvalJs && commandQueue.length == 1) {
+    if (!isInContextOfEvalJs && commandQueue.length === 1) {
         pokeNative();
     }
 }

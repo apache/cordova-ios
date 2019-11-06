@@ -21,8 +21,6 @@
 
 var Q = require('q');
 var iossim = require('ios-sim');
-var exec = require('child_process').exec;
-var check_reqs = require('./check_reqs');
 
 /**
  * Gets list of iOS devices available for simulation
