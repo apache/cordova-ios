@@ -351,12 +351,12 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     if (deploymentTarget) {
         events.emit('verbose', 'Set IPHONEOS_DEPLOYMENT_TARGET to "' + deploymentTarget + '".');
-        updateBuildPropertyLocal(project.xcode, displayName, 'IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
+        project.xcode.updateBuildProperty('IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
     }
 
     if (swiftVersion) {
         events.emit('verbose', 'Set SwiftVersion to "' + swiftVersion + '".');
-        updateBuildPropertyLocal(project.xcode, displayName, 'SWIFT_VERSION', swiftVersion);
+        project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
     }
 
     updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
