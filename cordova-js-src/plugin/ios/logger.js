@@ -19,7 +19,7 @@
  *
 */
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // The logger module exports the following properties/functions:
 //
 // LOG                          - constant for the level LOG
@@ -38,16 +38,16 @@
 // debug(message,...)           - logs a message at level DEBUG
 // logLevel(level,message,...)  - logs a message specified level
 //
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 var logger = exports;
 
-var exec    = require('cordova/exec');
+var exec = require('cordova/exec');
 
-var UseConsole   = false;
-var UseLogger    = true;
-var Queued       = [];
-var DeviceReady  = false;
+var UseConsole = false;
+var UseLogger = true;
+var Queued = [];
+var DeviceReady = false;
 var CurrentLevel;
 
 var originalConsole = console;
@@ -57,11 +57,11 @@ var originalConsole = console;
  */
 
 var Levels = [
-    "LOG",
-    "ERROR",
-    "WARN",
-    "INFO",
-    "DEBUG"
+    'LOG',
+    'ERROR',
+    'WARN',
+    'INFO',
+    'DEBUG'
 ];
 
 /*
@@ -70,10 +70,10 @@ var Levels = [
  */
 
 var LevelsMap = {};
-for (var i=0; i<Levels.length; i++) {
+for (var i = 0; i < Levels.length; i++) {
     var level = Levels[i];
     LevelsMap[level] = i;
-    logger[level]    = level;
+    logger[level] = level;
 }
 
 CurrentLevel = LevelsMap.WARN;
@@ -100,7 +100,7 @@ CurrentLevel = LevelsMap.WARN;
 logger.level = function (value) {
     if (arguments.length) {
         if (LevelsMap[value] === null) {
-            throw new Error("invalid logging level: " + value);
+            throw new Error('invalid logging level: ' + value);
         }
         CurrentLevel = LevelsMap[value];
     }
@@ -118,17 +118,17 @@ logger.useConsole = function (value) {
     if (arguments.length) UseConsole = !!value;
 
     if (UseConsole) {
-        if (typeof console == "undefined") {
-            throw new Error("global console object is not defined");
+        if (typeof console === 'undefined') {
+            throw new Error('global console object is not defined');
         }
 
-        if (typeof console.log != "function") {
-            throw new Error("global console object does not have a log function");
+        if (typeof console.log !== 'function') {
+            throw new Error('global console object does not have a log function');
         }
 
-        if (typeof console.useLogger == "function") {
+        if (typeof console.useLogger === 'function') {
             if (console.useLogger()) {
-                throw new Error("console and logger are too intertwingly");
+                throw new Error('console and logger are too intertwingly');
             }
         }
     }
@@ -154,7 +154,7 @@ logger.useLogger = function (value) {
  * Parameters passed after message are used applied to
  * the message with utils.format()
  */
-logger.log   = function(message) { logWithArgs("LOG",   arguments); };
+logger.log = function (message) { logWithArgs('LOG', arguments); };
 
 /**
  * Logs a message at the ERROR level.
@@ -162,7 +162,7 @@ logger.log   = function(message) { logWithArgs("LOG",   arguments); };
  * Parameters passed after message are used applied to
  * the message with utils.format()
  */
-logger.error = function(message) { logWithArgs("ERROR", arguments); };
+logger.error = function (message) { logWithArgs('ERROR', arguments); };
 
 /**
  * Logs a message at the WARN level.
@@ -170,7 +170,7 @@ logger.error = function(message) { logWithArgs("ERROR", arguments); };
  * Parameters passed after message are used applied to
  * the message with utils.format()
  */
-logger.warn  = function(message) { logWithArgs("WARN",  arguments); };
+logger.warn = function (message) { logWithArgs('WARN', arguments); };
 
 /**
  * Logs a message at the INFO level.
@@ -178,7 +178,7 @@ logger.warn  = function(message) { logWithArgs("WARN",  arguments); };
  * Parameters passed after message are used applied to
  * the message with utils.format()
  */
-logger.info  = function(message) { logWithArgs("INFO",  arguments); };
+logger.info = function (message) { logWithArgs('INFO', arguments); };
 
 /**
  * Logs a message at the DEBUG level.
@@ -186,17 +186,17 @@ logger.info  = function(message) { logWithArgs("INFO",  arguments); };
  * Parameters passed after message are used applied to
  * the message with utils.format()
  */
-logger.debug = function(message) { logWithArgs("DEBUG", arguments); };
+logger.debug = function (message) { logWithArgs('DEBUG', arguments); };
 
 // log at the specified level with args
-function logWithArgs(level, args) {
+function logWithArgs (level, args) {
     args = [level].concat([].slice.call(args));
     logger.logLevel.apply(logger, args);
 }
 
 // return the correct formatString for an object
-function formatStringForMessage(message) {
-    return (typeof message === "string") ? "" : "%o"; 
+function formatStringForMessage (message) {
+    return (typeof message === 'string') ? '' : '%o';
 }
 
 /**
@@ -205,18 +205,18 @@ function formatStringForMessage(message) {
  * Parameters passed after message are used applied to
  * the message with utils.format()
  */
-logger.logLevel = function(level /* , ... */) {
+logger.logLevel = function (level /* , ... */) {
     // format the message with the parameters
     var formatArgs = [].slice.call(arguments, 1);
     var fmtString = formatStringForMessage(formatArgs[0]);
-    if (fmtString.length > 0){
+    if (fmtString.length > 0) {
         formatArgs.unshift(fmtString); // add formatString
     }
 
-    var message    = logger.format.apply(logger.format, formatArgs);
+    var message = logger.format.apply(logger.format, formatArgs);
 
     if (LevelsMap[level] === null) {
-        throw new Error("invalid logging level: " + level);
+        throw new Error('invalid logging level: ' + level);
     }
 
     if (LevelsMap[level] > CurrentLevel) return;
@@ -229,27 +229,26 @@ logger.logLevel = function(level /* , ... */) {
 
     // Log using the native logger if that is enabled
     if (UseLogger) {
-        exec(null, null, "Console", "logLevel", [level, message]);
+        exec(null, null, 'Console', 'logLevel', [level, message]);
     }
 
     // Log using the console if that is enabled
     if (UseConsole) {
         // make sure console is not using logger
         if (console.useLogger()) {
-            throw new Error("console and logger are too intertwingly");
+            throw new Error('console and logger are too intertwingly');
         }
 
         // log to the console
         switch (level) {
-            case logger.LOG:   originalConsole.log(message); break;
-            case logger.ERROR: originalConsole.log("ERROR: " + message); break;
-            case logger.WARN:  originalConsole.log("WARN: "  + message); break;
-            case logger.INFO:  originalConsole.log("INFO: "  + message); break;
-            case logger.DEBUG: originalConsole.log("DEBUG: " + message); break;
+        case logger.LOG: originalConsole.log(message); break;
+        case logger.ERROR: originalConsole.log('ERROR: ' + message); break;
+        case logger.WARN: originalConsole.log('WARN: ' + message); break;
+        case logger.INFO: originalConsole.log('INFO: ' + message); break;
+        case logger.DEBUG: originalConsole.log('DEBUG: ' + message); break;
         }
     }
 };
-
 
 /**
  * Formats a string and arguments following it ala console.log()
@@ -259,12 +258,11 @@ logger.logLevel = function(level /* , ... */) {
  * for rationale, see FireBug's Console API:
  *    http://getfirebug.com/wiki/index.php/Console_API
  */
-logger.format = function(formatString, args) {
-    return __format(arguments[0], [].slice.call(arguments,1)).join(' ');
+logger.format = function (formatString, args) {
+    return __format(arguments[0], [].slice.call(arguments, 1)).join(' ');
 };
 
-
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 /**
  * Formats a string and arguments following it ala vsprintf()
  *
@@ -279,26 +277,25 @@ logger.format = function(formatString, args) {
  * Returns an array containing the formatted string and any remaining
  * arguments.
  */
-function __format(formatString, args) {
-    if (formatString === null || formatString === undefined) return [""];
-    if (arguments.length == 1) return [formatString.toString()];
+function __format (formatString, args) {
+    if (formatString === null || formatString === undefined) return [''];
+    if (arguments.length === 1) return [formatString.toString()];
 
-    if (typeof formatString != "string")
-        formatString = formatString.toString();
+    if (typeof formatString !== 'string') { formatString = formatString.toString(); }
 
     var pattern = /(.*?)%(.)(.*)/;
-    var rest    = formatString;
-    var result  = [];
+    var rest = formatString;
+    var result = [];
 
     while (args.length) {
         var match = pattern.exec(rest);
         if (!match) break;
 
-        var arg   = args.shift();
+        var arg = args.shift();
         rest = match[3];
         result.push(match[1]);
 
-        if (match[2] == '%') {
+        if (match[2] === '%') {
             result.push('%');
             args.unshift(arg);
             continue;
@@ -314,17 +311,16 @@ function __format(formatString, args) {
     return remainingArgs;
 }
 
-function __formatted(object, formatChar) {
+function __formatted (object, formatChar) {
 
     try {
-        switch(formatChar) {
-            case 'j':
-            case 'o': return JSON.stringify(object);
-            case 'c': return '';
+        switch (formatChar) {
+        case 'j':
+        case 'o': return JSON.stringify(object);
+        case 'c': return '';
         }
-    }
-    catch (e) {
-        return "error JSON.stringify()ing argument: " + e;
+    } catch (e) {
+        return 'error JSON.stringify()ing argument: ' + e;
     }
 
     if ((object === null) || (object === undefined)) {
@@ -334,15 +330,14 @@ function __formatted(object, formatChar) {
     return object.toString();
 }
 
-
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // when deviceready fires, log queued messages
-logger.__onDeviceReady = function() {
+logger.__onDeviceReady = function () {
     if (DeviceReady) return;
 
     DeviceReady = true;
 
-    for (var i=0; i<Queued.length; i++) {
+    for (var i = 0; i < Queued.length; i++) {
         var messageArgs = Queued[i];
         logger.logLevel(messageArgs[0], messageArgs[1]);
     }
@@ -351,4 +346,4 @@ logger.__onDeviceReady = function() {
 };
 
 // add a deviceready event to log queued messages
-document.addEventListener("deviceready", logger.__onDeviceReady, false);
+document.addEventListener('deviceready', logger.__onDeviceReady, false);

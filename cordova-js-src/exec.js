@@ -19,27 +19,27 @@
  *
 */
 
-/*global require, module, atob, document */
+/* global require, module, atob, document */
 
 /**
  * Creates a gap bridge iframe used to notify the native code about queued
  * commands.
  */
-var cordova = require('cordova'),
-    utils = require('cordova/utils'),
-    base64 = require('cordova/base64'),
-    execIframe,
-    commandQueue = [], // Contains pending JS->Native messages.
-    isInContextOfEvalJs = 0,
-    failSafeTimerId = 0;
+var cordova = require('cordova');
+var utils = require('cordova/utils');
+var base64 = require('cordova/base64');
+var execIframe;
+var commandQueue = []; // Contains pending JS->Native messages.
+var isInContextOfEvalJs = 0;
+var failSafeTimerId = 0;
 
-function massageArgsJsToNative(args) {
-    if (!args || utils.typeName(args) != 'Array') {
+function massageArgsJsToNative (args) {
+    if (!args || utils.typeName(args) !== 'Array') {
         return args;
     }
     var ret = [];
-    args.forEach(function(arg, i) {
-        if (utils.typeName(arg) == 'ArrayBuffer') {
+    args.forEach(function (arg, i) {
+        if (utils.typeName(arg) === 'ArrayBuffer') {
             ret.push({
                 'CDVType': 'ArrayBuffer',
                 'data': base64.fromArrayBuffer(arg)
@@ -51,16 +51,16 @@ function massageArgsJsToNative(args) {
     return ret;
 }
 
-function massageMessageNativeToJs(message) {
-    if (message.CDVType == 'ArrayBuffer') {
-        var stringToArrayBuffer = function(str) {
+function massageMessageNativeToJs (message) {
+    if (message.CDVType === 'ArrayBuffer') {
+        var stringToArrayBuffer = function (str) {
             var ret = new Uint8Array(str.length);
             for (var i = 0; i < str.length; i++) {
                 ret[i] = str.charCodeAt(i);
             }
             return ret.buffer;
         };
-        var base64ToArrayBuffer = function(b64) {
+        var base64ToArrayBuffer = function (b64) {
             return stringToArrayBuffer(atob(b64));
         };
         message = base64ToArrayBuffer(message.data);
@@ -68,12 +68,12 @@ function massageMessageNativeToJs(message) {
     return message;
 }
 
-function convertMessageToArgsNativeToJs(message) {
+function convertMessageToArgsNativeToJs (message) {
     var args = [];
     if (!message || !message.hasOwnProperty('CDVType')) {
         args.push(message);
-    } else if (message.CDVType == 'MultiPart') {
-        message.messages.forEach(function(e) {
+    } else if (message.CDVType === 'MultiPart') {
+        message.messages.forEach(function (e) {
             args.push(massageMessageNativeToJs(e));
         });
     } else {
@@ -82,7 +82,7 @@ function convertMessageToArgsNativeToJs(message) {
     return args;
 }
 
-function iOSExec() {
+function iOSExec () {
 
     var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
@@ -113,7 +113,7 @@ function iOSExec() {
     if (successCallback || failCallback) {
         callbackId = service + cordova.callbackId++;
         cordova.callbacks[callbackId] =
-            {success:successCallback, fail:failCallback};
+            { success: successCallback, fail: failCallback };
     }
 
     actionArgs = massageArgsJsToNative(actionArgs);
@@ -129,49 +129,49 @@ function iOSExec() {
     // then the queue will be flushed when it returns; no need for a poke.
     // Also, if there is already a command in the queue, then we've already
     // poked the native side, so there is no reason to do so again.
-    if (!isInContextOfEvalJs && commandQueue.length == 1) {
+    if (!isInContextOfEvalJs && commandQueue.length === 1) {
         pokeNative();
     }
 }
 
 // CB-10530
-function proxyChanged() {
+function proxyChanged () {
     var cexec = cordovaExec();
-       
+
     return (execProxy !== cexec && // proxy objects are different
-            iOSExec !== cexec      // proxy object is not the current iOSExec
-            );
+            iOSExec !== cexec // proxy object is not the current iOSExec
+    );
 }
 
 // CB-10106
-function handleBridgeChange() {
+function handleBridgeChange () {
     if (proxyChanged()) {
         var commandString = commandQueue.shift();
-        while(commandString) {
+        while (commandString) {
             var command = JSON.parse(commandString);
             var callbackId = command[0];
             var service = command[1];
             var action = command[2];
             var actionArgs = command[3];
             var callbacks = cordova.callbacks[callbackId] || {};
-            
+
             execProxy(callbacks.success, callbacks.fail, service, action, actionArgs);
-            
+
             commandString = commandQueue.shift();
-        };
+        }
         return true;
     }
-    
+
     return false;
 }
 
-function pokeNative() {
+function pokeNative () {
     // CB-5488 - Don't attempt to create iframe before document.body is available.
     if (!document.body) {
         setTimeout(pokeNative);
         return;
     }
-    
+
     // Check if they've removed it from the DOM, and put it back if so.
     if (execIframe && execIframe.contentWindow) {
         execIframe.contentWindow.location = 'gap://ready';
@@ -188,17 +188,17 @@ function pokeNative() {
     // created, but since unload events fire only once, it doesn't work in the normal
     // case of iframe reuse (where unload will have already fired due to the attempted
     // navigation of the page).
-    failSafeTimerId = setTimeout(function() {
+    failSafeTimerId = setTimeout(function () {
         if (commandQueue.length) {
             // CB-10106 - flush the queue on bridge change
             if (!handleBridgeChange()) {
                 pokeNative();
-             }
+            }
         }
     }, 50); // Making this > 0 improves performance (marginally) in the normal case (where it doesn't fire).
 }
 
-iOSExec.nativeFetchMessages = function() {
+iOSExec.nativeFetchMessages = function () {
     // Stop listing for window detatch once native side confirms poke.
     if (failSafeTimerId) {
         clearTimeout(failSafeTimerId);
@@ -213,18 +213,18 @@ iOSExec.nativeFetchMessages = function() {
     return json;
 };
 
-iOSExec.nativeCallback = function(callbackId, status, message, keepCallback, debug) {
-    return iOSExec.nativeEvalAndFetch(function() {
+iOSExec.nativeCallback = function (callbackId, status, message, keepCallback, debug) {
+    return iOSExec.nativeEvalAndFetch(function () {
         var success = status === 0 || status === 1;
         var args = convertMessageToArgsNativeToJs(message);
-        function nc2() {
+        function nc2 () {
             cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
         }
         setTimeout(nc2, 0);
     });
 };
 
-iOSExec.nativeEvalAndFetch = function(func) {
+iOSExec.nativeEvalAndFetch = function (func) {
     // This shouldn't be nested, but better to be safe.
     isInContextOfEvalJs++;
     try {
@@ -237,25 +237,25 @@ iOSExec.nativeEvalAndFetch = function(func) {
 
 // Proxy the exec for bridge changes. See CB-10106
 
-function cordovaExec() {
+function cordovaExec () {
     var cexec = require('cordova/exec');
     var cexec_valid = (typeof cexec.nativeFetchMessages === 'function') && (typeof cexec.nativeEvalAndFetch === 'function') && (typeof cexec.nativeCallback === 'function');
-    return (cexec_valid && execProxy !== cexec)? cexec : iOSExec;
+    return (cexec_valid && execProxy !== cexec) ? cexec : iOSExec;
 }
 
-function execProxy() {
+function execProxy () {
     cordovaExec().apply(null, arguments);
-};
+}
 
-execProxy.nativeFetchMessages = function() {
+execProxy.nativeFetchMessages = function () {
     return cordovaExec().nativeFetchMessages.apply(null, arguments);
 };
 
-execProxy.nativeEvalAndFetch = function() {
+execProxy.nativeEvalAndFetch = function () {
     return cordovaExec().nativeEvalAndFetch.apply(null, arguments);
 };
 
-execProxy.nativeCallback = function() {
+execProxy.nativeCallback = function () {
     return cordovaExec().nativeCallback.apply(null, arguments);
 };
 

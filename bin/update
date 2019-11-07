@@ -19,13 +19,13 @@
     under the License.
 */
 
-var path   = require('path');
+var path = require('path');
 var Api = require('./templates/scripts/cordova/Api');
-var args  = require('nopt')({
+var args = require('nopt')({
     'link': Boolean,
     'shared': Boolean, // alias for --link
     'help': Boolean
-}, { 'd' : '--verbose' });
+}, { 'd': '--verbose' });
 
 if (args.help || args.argv.remain.length === 0) {
     console.log('Usage: ' + path.relative(process.cwd(), path.join(__dirname, 'update')) + ' <path_to_project> [--link]');
@@ -34,4 +34,4 @@ if (args.help || args.argv.remain.length === 0) {
 
 require('./templates/scripts/cordova/loggingHelper').adjustLoggerLevel(args);
 
-Api.updatePlatform(args.argv.remain[0], {link: (args.link || args.shared)}).done();
+Api.updatePlatform(args.argv.remain[0], { link: (args.link || args.shared) }).done();

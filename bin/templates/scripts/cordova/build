@@ -19,21 +19,20 @@
        under the License.
 */
 
-var args  = process.argv;
+var args = process.argv;
 var Api = require('./Api');
 var nopt = require('nopt');
-var path = require('path');
 
 // Support basic help commands
-if(['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {
+if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {
     require('./lib/build').help();
     process.exit(0);
 }
 
 // Parse arguments
 var buildOpts = nopt({
-    'verbose' : Boolean,
-    'silent' : Boolean,
+    'verbose': Boolean,
+    'silent': Boolean,
     'archs': String,
     'debug': Boolean,
     'release': Boolean,
@@ -45,20 +44,20 @@ var buildOpts = nopt({
     'automaticProvisioning': Boolean,
     'developmentTeam': String,
     'packageType': String,
-    'buildConfig' : String,
-    'buildFlag' : [String, Array],
-    'noSign' : Boolean
-}, { '-r': '--release', 'd' : '--verbose' }, args);
+    'buildConfig': String,
+    'buildFlag': [String, Array],
+    'noSign': Boolean
+}, { '-r': '--release', 'd': '--verbose' }, args);
 
 // Make buildOptions compatible with PlatformApi build method spec
 buildOpts.argv = buildOpts.argv.remain;
 
 require('./loggingHelper').adjustLoggerLevel(buildOpts);
 
-new Api().build(buildOpts).done(function() {
-        console.log('** BUILD SUCCEEDED **');
-    }, function(err) {
-        var errorMessage = (err && err.stack) ? err.stack : err;
-        console.error(errorMessage);
-        process.exit(2);
-    });
+new Api().build(buildOpts).done(function () {
+    console.log('** BUILD SUCCEEDED **');
+}, function (err) {
+    var errorMessage = (err && err.stack) ? err.stack : err;
+    console.error(errorMessage);
+    process.exit(2);
+});
