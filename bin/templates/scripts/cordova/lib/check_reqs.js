@@ -122,18 +122,20 @@ module.exports.check_cocoapods = function (toolChecker) {
         // check whether the cocoapods repo has been synced through `pod repo` command
         // a value of '0 repos' means it hasn't been synced
         .then(function (toolOptions) {
+            if (toolOptions.ignore) return toolOptions;
+
             let podVersion = shell.exec('pod --version', { silent: true });
             if (podVersion && podVersion.output) {
                 const version = podVersion.output.trim();
                 // starting with 1.8.0 cocoapods now use cdn and we dont need to sync first
-                if ((semver.valid(version) && semver.gte(version, '1.8.0')) || toolOptions.ignore) {
+                if ((semver.valid(version) && semver.gte(version, '1.8.0'))) {
                     return toolOptions;
                 }
             }
             let code = shell.exec('pod repo | grep -e "^0 repos"', { silent: true }).code;
             let repoIsSynced = (code !== 0);
 
-            if (toolOptions.ignore || repoIsSynced) {
+            if (repoIsSynced) {
                 // return check_cocoapods_repo_size();
                 // we could check the repo size above, but it takes too long.
                 return toolOptions;
