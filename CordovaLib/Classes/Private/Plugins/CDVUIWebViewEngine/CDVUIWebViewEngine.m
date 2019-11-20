@@ -17,6 +17,8 @@
  under the License.
  */
 
+#if !WK_WEB_VIEW_ONLY
+
 #import "CDVUIWebViewEngine.h"
 #import "CDVUIWebViewDelegate.h"
 #import "CDVUIWebViewNavigationDelegate.h"
@@ -200,3 +202,5 @@
 }
 
 @end
+
+#endif

@@ -23,6 +23,7 @@ var shell = require('shelljs');
 var Q = require('q');
 var path = require('path');
 var fs = require('fs');
+var xcode = require('xcode');
 var xmlescape = require('xml-escape');
 var ROOT = path.join(__dirname, '..', '..');
 var events = require('cordova-common').events;
@@ -32,7 +33,7 @@ function updateSubprojectHelp () {
     console.log('Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]');
 }
 
-function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
+function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
     shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www'));
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www'));
@@ -47,7 +48,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
         }
 
         if (use_shared) {
-            update_cordova_subproject([path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')]);
+            update_cordova_subproject([path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj'), config]);
             // Symlink not used in project file, but is currently required for plugman because
             // it reads the VERSION file from it (instead of using the cordova/version script
             // like it should).
@@ -61,7 +62,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
             shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
             shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
             shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-            update_cordova_subproject([path.join(r + '.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj')]);
+            update_cordova_subproject([path.join(r + '.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
         }
     });
 }
@@ -197,7 +198,7 @@ function relpath (_path, start) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = function (project_path, package_name, project_name, opts) {
+exports.createProject = function (project_path, package_name, project_name, opts, config) {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     var use_shared = !!opts.link;
@@ -233,7 +234,7 @@ exports.createProject = function (project_path, package_name, project_name, opts
     shell.cp('-rf', path.join(project_template_dir, '*.xcconfig'), project_path);
 
     // CordovaLib stuff
-    copyJsAndCordovaLib(project_path, project_name, use_shared);
+    copyJsAndCordovaLib(project_path, project_name, use_shared, config);
     copyScripts(project_path, project_name);
 
     events.emit('log', generateDoneMessage('create', use_shared));
@@ -264,17 +265,20 @@ function generateDoneMessage (type, link) {
 }
 
 function update_cordova_subproject (argv) {
-    if (argv.length < 1 || argv.length > 2) {
+    if (argv.length < 1 || argv.length > 3) {
         updateSubprojectHelp();
         throw new Error('Usage error for update_cordova_subproject');
     }
 
     var projectPath = AbsProjectPath(argv[0]);
     var cordovaLibXcodePath;
-    if (argv.length < 2) {
+    var projectConfig;
+    if (argv.length < 3) {
         cordovaLibXcodePath = path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj');
+        projectConfig = argv[1];
     } else {
         cordovaLibXcodePath = AbsProjectPath(argv[1]);
+        projectConfig = argv[2];
     }
 
     var parentProjectPath = AbsParentPath(projectPath);
@@ -300,6 +304,15 @@ function update_cordova_subproject (argv) {
 
     if (!found) {
         throw new Error('Entry not found in project file for sub-project: ' + subprojectPath);
+    }
+
+    var wkWebViewOnly = projectConfig.getPreference('WKWebViewOnly') === 'true';
+    if (wkWebViewOnly) {
+        var pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
+        var xcodeproj = xcode.project(pbxPath);
+        xcodeproj.parseSync();
+        xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
+        fs.writeFileSync(pbxPath, xcodeproj.writeSync());
     }
 }
 

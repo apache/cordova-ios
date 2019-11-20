@@ -643,6 +643,7 @@
 				GCC_PREFIX_HEADER = CordovaLib_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"WK_WEB_VIEW_ONLY=$(WK_WEB_VIEW_ONLY)",
 					"$(inherited)",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -659,6 +660,7 @@
 				PRODUCT_NAME = Cordova;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				WK_WEB_VIEW_ONLY = 0;
 			};
 			name = Debug;
 		};
@@ -703,6 +705,10 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CordovaLib_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"WK_WEB_VIEW_ONLY=$(WK_WEB_VIEW_ONLY)",
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -717,6 +723,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
+				WK_WEB_VIEW_ONLY = 0;
 			};
 			name = Release;
 		};
