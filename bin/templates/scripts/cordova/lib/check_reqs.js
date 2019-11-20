@@ -23,7 +23,6 @@ const Q = require('q');
 const shell = require('shelljs');
 const util = require('util');
 const versions = require('./versions');
-const semver = require('semver');
 
 const SUPPORTED_OS_PLATFORMS = [ 'darwin' ];
 
@@ -124,14 +123,11 @@ module.exports.check_cocoapods = function (toolChecker) {
         .then(function (toolOptions) {
             if (toolOptions.ignore) return toolOptions;
 
-            let podVersion = shell.exec('pod --version', { silent: true });
-            if (podVersion && podVersion.output) {
-                const version = podVersion.output.trim();
-                // starting with 1.8.0 cocoapods now use cdn and we dont need to sync first
-                if ((semver.valid(version) && semver.gte(version, '1.8.0'))) {
-                    return toolOptions;
-                }
+            // starting with 1.8.0 cocoapods now use cdn and we dont need to sync first
+            if (versions.compareVersions(toolOptions.version, '1.8.0') >= 0) {
+                return toolOptions;
             }
+
             let code = shell.exec('pod repo | grep -e "^0 repos"', { silent: true }).code;
             let repoIsSynced = (code !== 0);
 
