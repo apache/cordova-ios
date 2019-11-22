@@ -71,7 +71,7 @@ describe('check_reqs', function () {
         let toolsChecker;
         beforeEach(() => {
             toolsChecker = jasmine.createSpy('toolsChecker')
-                .and.returnValue(Promise.resolve({}));
+                .and.returnValue(Promise.resolve({ version: '1.2.3' }));
         });
 
         it('should resolve when on an unsupported platform', () => {
