@@ -1,5 +1,5 @@
 // Platform: ios
-// 7d4d671c98d4cdafbe157795f6adad723adf9c13
+// 9c79667cd175f51fd2edf2dc91ac8be98b89076a
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -50,10 +50,10 @@ var define;
 
     require = function (id) {
         if (!modules[id]) {
-            throw new Error('module ' + id + ' not found');
+            throw 'module ' + id + ' not found';
         } else if (id in inProgressModules) {
             var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
-            throw new Error('Cycle in require graph: ' + cycle);
+            throw 'Cycle in require graph: ' + cycle;
         }
         if (modules[id].factory) {
             try {
@@ -70,7 +70,7 @@ var define;
 
     define = function (id, factory) {
         if (Object.prototype.hasOwnProperty.call(modules, id)) {
-            throw new Error('module ' + id + ' already defined');
+            throw 'module ' + id + ' already defined';
         }
 
         modules[id] = {
@@ -310,7 +310,9 @@ var cordova = {
             }
         } catch (err) {
             var msg = 'Error in ' + (isSuccess ? 'Success' : 'Error') + ' callbackId: ' + callbackId + ' : ' + err;
-            cordova.fireWindowEvent('cordovacallbackerror', { 'message': msg, 'error': err });
+            console && console.log && console.log(msg);
+            console && console.log && err.stack && console.log(err.stack);
+            cordova.fireWindowEvent('cordovacallbackerror', { 'message': msg });
             throw err;
         }
     },
@@ -1151,6 +1153,7 @@ var cordova = require('cordova');
 var modulemapper = require('cordova/modulemapper');
 var platform = require('cordova/platform');
 var pluginloader = require('cordova/pluginloader');
+var utils = require('cordova/utils');
 
 var platformInitChannelsArray = [channel.onNativeReady, channel.onPluginsReady];
 
@@ -1169,6 +1172,34 @@ window.setTimeout(function () {
         logUnfiredChannels(channel.deviceReadyChannelsArray);
     }
 }, 5000);
+
+// Replace navigator before any modules are required(), to ensure it happens as soon as possible.
+// We replace it so that properties that can't be clobbered can instead be overridden.
+function replaceNavigator (origNavigator) {
+    var CordovaNavigator = function () {};
+    CordovaNavigator.prototype = origNavigator;
+    var newNavigator = new CordovaNavigator();
+    // This work-around really only applies to new APIs that are newer than Function.bind.
+    // Without it, APIs such as getGamepads() break.
+    if (CordovaNavigator.bind) {
+        for (var key in origNavigator) {
+            if (typeof origNavigator[key] === 'function') {
+                newNavigator[key] = origNavigator[key].bind(origNavigator);
+            } else {
+                (function (k) {
+                    utils.defineGetterSetter(newNavigator, key, function () {
+                        return origNavigator[k];
+                    });
+                })(key);
+            }
+        }
+    }
+    return newNavigator;
+}
+
+if (window.navigator) {
+    window.navigator = replaceNavigator(window.navigator);
+}
 
 if (!window.console) {
     window.console = {
@@ -1235,6 +1266,7 @@ channel.join(function () {
     channel.join(function () {
         require('cordova').fireDocumentEvent('deviceready');
     }, channel.deviceReadyChannelsArray);
+
 }, platformInitChannelsArray);
 
 });
@@ -2128,6 +2160,7 @@ utils.extend = (function () {
     var F = function () {};
     // extend Child from Parent
     return function (Child, Parent) {
+
         F.prototype = Parent.prototype;
         Child.prototype = new F();
         Child.__super__ = Parent.prototype;
