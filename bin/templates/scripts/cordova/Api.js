@@ -136,7 +136,7 @@ Api.createPlatform = function (destination, config, options, events) {
             });
     } catch (e) {
         events.emit('error', 'createPlatform is not callable from the iOS project API.');
-        throw (e);
+        throw e;
     }
     return result;
 };
@@ -170,7 +170,7 @@ Api.updatePlatform = function (destination, options, events) {
             });
     } catch (e) {
         events.emit('error', 'updatePlatform is not callable from the iOS project API, you will need to do this manually.');
-        throw (e);
+        throw e;
     }
     return result;
 };
