@@ -35,24 +35,22 @@ if (process.platform === 'darwin') {
                 spyOn(run, 'listEmulators').and.returnValue(deferred.promise);
             });
             it('should delegate to listDevices method if `options.device` specified', function () {
-                run.run({ list: true, device: true });
-                expect(run.listDevices).toHaveBeenCalled();
-                expect(run.listEmulators).not.toHaveBeenCalled();
+                return run.run({ list: true, device: true }).then(() => {
+                    expect(run.listDevices).toHaveBeenCalled();
+                    expect(run.listEmulators).not.toHaveBeenCalled();
+                });
             });
             it('should delegate to listEmulators method if `options.device` specified', function () {
-                run.run({ list: true, emulator: true });
-                expect(run.listDevices).not.toHaveBeenCalled();
-                expect(run.listEmulators).toHaveBeenCalled();
+                return run.run({ list: true, emulator: true }).then(() => {
+                    expect(run.listDevices).not.toHaveBeenCalled();
+                    expect(run.listEmulators).toHaveBeenCalled();
+                });
             });
-            it('should delegate to to both listEmulators and listDevices methods if neither `options.device` nor `options.emulator` are specified', function (done) {
-                run.run({ list: true })
-                    .then(function () {
-                        expect(run.listDevices).toHaveBeenCalled();
-                        expect(run.listEmulators).toHaveBeenCalled();
-                    }).fail(function (err) {
-                        fail('run fail handler unexpectedly invoked');
-                        console.error(err);
-                    }).done(done);
+            it('should delegate to both listEmulators and listDevices methods if neither `options.device` nor `options.emulator` are specified', () => {
+                return run.run({ list: true }).then(() => {
+                    expect(run.listDevices).toHaveBeenCalled();
+                    expect(run.listEmulators).toHaveBeenCalled();
+                });
             });
         });
     });

@@ -25,8 +25,8 @@ var check_reqs = require('./templates/scripts/cordova/lib/check_reqs');
 if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) > -1) {
     console.log('Usage: check_reqs or node check_reqs');
 } else {
-  check_reqs.run().done(null, function (err) {
-      console.error('Failed to check requirements due to ' + err);
-      process.exit(2);
-  });
+    check_reqs.run().done(null, function (err) {
+        console.error('Failed to check requirements due to ' + err);
+        process.exit(2);
+    });
 }

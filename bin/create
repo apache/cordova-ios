@@ -34,11 +34,11 @@ var ConfigParser = require('cordova-common').ConfigParser;
 var Api = require('./templates/scripts/cordova/Api');
 
 var argv = require('nopt')({
-    'help' : Boolean,
-    'cli' : Boolean,
-    'shared' : Boolean, // alias for --link
-    'link' : Boolean
-}, { 'd' : '--verbose' });
+    'help': Boolean,
+    'cli': Boolean,
+    'shared': Boolean, // alias for --link
+    'link': Boolean
+}, { 'd': '--verbose' });
 
 var projectPath = argv.argv.remain[0];
 

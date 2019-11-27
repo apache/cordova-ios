@@ -19,9 +19,8 @@
        under the License.
 */
 
-
-var Q = require('q'),
-    exec = require('child_process').exec;
+var Q = require('q');
+var exec = require('child_process').exec;
 
 /**
  * Gets list of running iOS simulators
@@ -30,11 +29,11 @@ var Q = require('q'),
 function listStartedEmulators () {
     // wrap exec call into promise
     return Q.nfcall(exec, 'ps aux | grep -i "[i]OS Simulator"')
-    .then(function () {
-        return Q.nfcall(exec, 'defaults read com.apple.iphonesimulator "SimulateDevice"');
-    }).then(function (stdio) {
-        return stdio[0].trim().split('\n');
-    });
+        .then(function () {
+            return Q.nfcall(exec, 'defaults read com.apple.iphonesimulator "SimulateDevice"');
+        }).then(function (stdio) {
+            return stdio[0].trim().split('\n');
+        });
 }
 
 exports.run = listStartedEmulators;

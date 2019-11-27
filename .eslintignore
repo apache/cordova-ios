@@ -2,3 +2,9 @@ bin/node_modules/*
 bin/templates/project/*
 tests/spec/unit/fixtures/*
 CordovaLib/cordova.js
+
+# Non-JS binaries
+bin/test
+bin/cordova_plist_to_config_xml
+bin/templates/scripts/cordova/log
+bin/templates/scripts/cordova/lib/start-emulator
