@@ -168,7 +168,7 @@ Podfile.prototype.__parseForPods = function (text) {
 };
 
 Podfile.prototype.escapeSingleQuotes = function (string) {
-    return string.replace(/\'/g, '\\\'');
+    return string.replace(/'/g, '\\\'');
 };
 
 Podfile.prototype.getTemplate = function () {
