@@ -1,14 +1,20 @@
+require "json"
+
+packageJson = JSON.parse(File.read(File.join(__dir__, "package.json")))
+relVersion = package['version']
+relSource  = { :git => "https://github.com/apache/cordova-ios.git",
+            :tag => "rel/{relVersion}",
+            :submodules => true }
+
 Pod::Spec.new do |s|
   s.name         = "Cordova"
-  s.version      = "5.1.0"
+  s.version      = relVersion
   s.summary      = "Apache Cordova for iOS"
   s.homepage     = "https://github.com/apache/cordova-ios"
   s.license      = { :type => "Apache 2.0", :file => "LICENSE" }
   s.author       = { "Apache Software Foundation" }
   s.platform     = :ios, "10.0"
-  s.source       = { :git => "https://github.com/apache/cordova-ios.git",
-                     :tag => "rel/{s.version}",
-                     :submodules => true }
+  s.source       = relSource
   s.requires_arc = true
   s.default_subspec  = 'Cordova'
   s.subspec 'Cordova' do |cordova|
@@ -24,9 +30,8 @@ end
 #
 # This file needs to be updated manually whenever a Cordova upgrade is performed.
 # Sections that need to be updated:
-#   1. {s.version} should be the latest version of Cordova.
-#   2. {s.platform} should be updated if the minimum version of iOS has changed.
-#   3. {cordova.source_files} should be updated if the path of the library has changed.
-#   4. {cordova.public_header_files} should be updated, by removing the public headers
+#   1. {s.platform} should be updated if the minimum version of iOS has changed.
+#   2. {cordova.source_files} should be updated if the path of the library has changed.
+#   3. {cordova.public_header_files} should be updated, by removing the public headers
 #      that have been removed and adding the public headers that have been added.
 #
