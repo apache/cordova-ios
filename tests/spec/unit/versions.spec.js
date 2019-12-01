@@ -17,38 +17,64 @@
  under the License.
  */
 
-var rewire = require('rewire');
-var versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
+var semver = require('semver');
+var versions = require('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {
     describe('versions', function () {
-        describe('get_apple_ios_version method', () => {
-            it('should have found ios version.', (done) => {
-                let _console = versions.__get__('console');
-                let logSpy = jasmine.createSpy('logSpy');
-                versions.__set__('console', { log: logSpy });
+        beforeEach(() => {
+            spyOn(console, 'log');
+        });
 
-                versions.get_apple_ios_version().then(() => {
-                    expect(logSpy).not.toHaveBeenCalledWith(undefined);
-                    versions.__set__('console', _console);
-                    done();
+        describe('get_apple_ios_version method', () => {
+            it('should have found ios version.', () => {
+                return versions.get_apple_ios_version().then(() => {
+                    expect(console.log).not.toHaveBeenCalledWith(undefined);
                 });
             });
         });
 
         describe('get_apple_osx_version method', () => {
-            it('should have found osx version.', (done) => {
-                let _console = versions.__get__('console');
-                let logSpy = jasmine.createSpy('logSpy');
-                versions.__set__('console', { log: logSpy });
-
-                versions.get_apple_osx_version().then(() => {
-                    expect(logSpy).not.toHaveBeenCalledWith(undefined);
-                    versions.__set__('console', _console);
-                    done();
+            it('should have found osx version.', () => {
+                return versions.get_apple_osx_version().then(() => {
+                    expect(console.log).not.toHaveBeenCalledWith(undefined);
                 });
             });
         });
     });
 }
+
+describe('versions', () => {
+    describe('compareVersions method', () => {
+        it('calls semver.compare, given valid semver', () => {
+            const testVersions = ['1.0.0', '1.1.0'];
+            spyOn(semver, 'compare');
+
+            versions.compareVersions(...testVersions);
+            expect(semver.compare).toHaveBeenCalledWith(
+                ...testVersions.map(version =>
+                    jasmine.objectContaining({ version })
+                )
+            );
+        });
+
+        it('handles pre-release identifiers', () => {
+            expect(
+                versions.compareVersions('1.0.0-rc.0', '1.0.0')
+            ).toBe(-1);
+        });
+
+        it('handles non-semver versions', () => {
+            expect(
+                versions.compareVersions('10.1', '10')
+            ).toBe(1);
+        });
+
+        it('does not handle pre-release identifiers on non-semver versions', () => {
+            expect(
+                versions.compareVersions('10.1-beta.1', '10.1')
+            ).toBe(0);
+        });
+    });
+});

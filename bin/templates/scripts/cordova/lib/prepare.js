@@ -34,6 +34,7 @@ var PlatformMunger = require('cordova-common').ConfigChanges.PlatformMunger;
 var PluginInfoProvider = require('cordova-common').PluginInfoProvider;
 var FileUpdater = require('cordova-common').FileUpdater;
 var projectFile = require('./projectFile');
+var xcode = require('xcode');
 
 // launch storyboard and related constants
 var LAUNCHIMAGE_BUILD_SETTING = 'ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME';
@@ -223,7 +224,7 @@ function updateProject (platformConfig, locations) {
 
     /* eslint-disable no-tabs */
     // Write out the plist file with the same formatting as Xcode does
-    var info_contents = plist.build(infoPlist, { indent: '	', offset: -1 });
+    var info_contents = plist.build(infoPlist, { indent: '\t', offset: -1 });
     /* eslint-enable no-tabs */
 
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g, '<string></string>');
@@ -280,6 +281,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
+    var wkWebViewOnly = platformConfig.getPreference('WKWebViewOnly');
 
     var project;
 
@@ -293,7 +295,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
-    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion) {
+    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion && !wkWebViewOnly) {
         return Q();
     }
 
@@ -315,6 +317,22 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     if (swiftVersion) {
         events.emit('verbose', 'Set SwiftVersion to "' + swiftVersion + '".');
         project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
+    }
+    if (wkWebViewOnly) {
+        var wkwebviewValue = '1';
+        if (wkWebViewOnly === 'true') {
+            events.emit('verbose', 'Set WK_WEB_VIEW_ONLY.');
+        } else {
+            wkwebviewValue = '0';
+            events.emit('verbose', 'Unset WK_WEB_VIEW_ONLY.');
+        }
+        project.xcode.updateBuildProperty('WK_WEB_VIEW_ONLY', wkwebviewValue);
+        var cordovaLibXcodePath = path.join(locations.root, 'CordovaLib', 'CordovaLib.xcodeproj');
+        var pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
+        var xcodeproj = xcode.project(pbxPath);
+        xcodeproj.parseSync();
+        xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', wkwebviewValue);
+        fs.writeFileSync(pbxPath, xcodeproj.writeSync());
     }
 
     updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);

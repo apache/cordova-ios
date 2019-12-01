@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "5.1.0-dev",
+  "version": "5.2.0-dev",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
   "repository": {
@@ -24,11 +24,12 @@
     "cover": "nyc jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
-    "objc-tests-lib": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaLibTests -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
-    "objc-tests-framework": "xcodebuild test -workspace tests/cordova-ios.xcworkspace -scheme CordovaFrameworkApp -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "objc-tests-lib": "npm run xcodebuild -- -scheme CordovaLibTests",
+    "objc-tests-framework": "npm run xcodebuild -- -scheme CordovaFrameworkApp",
+    "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "tests/scripts/killsim.js",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
-    "eslint": "eslint bin tests"
+    "eslint": "eslint . \"bin/**/!(*.*)\""
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
@@ -54,6 +55,7 @@
     "nopt": "^4.0.1",
     "plist": "^3.0.1",
     "q": "^1.5.1",
+    "semver": "^6.3.0",
     "shelljs": "^0.5.3",
     "unorm": "^1.4.1",
     "xcode": "^2.0.0",

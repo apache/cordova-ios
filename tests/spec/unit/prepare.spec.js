@@ -21,6 +21,7 @@
 var fs = require('fs');
 var fse = require('fs-extra');
 
+const EventEmitter = require('events');
 var os = require('os');
 var path = require('path');
 var shell = require('shelljs');
@@ -41,41 +42,18 @@ shell.config.silent = true;
 
 var ConfigParser = require('cordova-common').ConfigParser;
 
-// Create a real config object before mocking out everything.
-var cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
-var cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
-var cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
-
-function wrapper (p, done, post) {
-    p.then(post, function (err) {
-        expect(err.stack).toBeUndefined();
-    }).catch(function (e) {
-        expect(e.stack).toBeUndefined();
-    }).fin(done);
-}
-
-function wrapperError (p, done, post) {
-    p.then(post, function (err) {
-        expect(err.stack).toBeDefined();
-    }).fin(done);
-}
-
 describe('prepare', function () {
     var p, Api;
     beforeEach(function () {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
-        // Prevent logging to avoid polluting the test reports
-        Api.__set__('events.emit', jasmine.createSpy());
-
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
-        p = new Api('ios', iosPlatform);
+        p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
     afterEach(function () {
         shell.rm('-rf', path.join(__dirname, 'some'));
-        process.removeAllListeners();
     });
 
     describe('launch storyboard feature (CB-9762)', function () {
@@ -564,10 +542,16 @@ describe('prepare', function () {
         /* eslint-enable no-unused-vars */
         var xcOrig = xcode.project;
         var writeFileSyncSpy;
+        let cfg, cfg2, cfg3;
 
         var updateProject = prepare.__get__('updateProject');
 
         beforeEach(function () {
+            // Create real config objects before mocking out everything.
+            cfg = new ConfigParser(path.join(FIXTURES, 'test-config.xml'));
+            cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
+            cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
+
             mv = spyOn(shell, 'mv');
             writeFileSyncSpy = spyOn(fs, 'writeFileSync');
 
@@ -586,90 +570,73 @@ describe('prepare', function () {
             spyOn(cfg, 'getPreference');
         });
 
-        it('Test#001 : should not update the app name in pbxproj', function (done) {
-            var cfg2OriginalName = cfg2.name;
-
-            // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = function () { return 'NotSampleApp'; }; // new config has name change
-            wrapperError(updateProject(cfg2, p.locations), done); // since the name has changed it *should* error
-
-            // originalName here will be `SampleApp` (based on the xcodeproj basename) from p
+        it('should resolve', function () {
+            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
-            wrapper(updateProject(cfg2, p.locations), done); // since the name has not changed it *should not* error
-
-            // restore cfg2 original name
-            cfg2.name = cfg2OriginalName;
+            return updateProject(cfg2, p.locations); // since the name has not changed it *should not* error
         });
 
-        it('should write target-device preference', function (done) {
-            var cfg2OriginalName = cfg2.name;
+        it('should reject when the app name has changed', function () {
+            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
+            cfg2.name = function () { return 'NotSampleApp'; }; // new config has name change
+            return updateProject(cfg2, p.locations).then( // since the name has changed it *should* error
+                () => fail('Expected promise to be rejected'),
+                err => expect(err).toEqual(jasmine.any(Error))
+            );
+        });
+
+        it('should write target-device preference', function () {
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
-            wrapper(updateProject(cfg2, p.locations), done, function () {
+            return updateProject(cfg2, p.locations).then(() => {
                 var xcode = require('xcode');
                 var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 var prop = proj.getBuildProperty('TARGETED_DEVICE_FAMILY');
                 expect(prop).toEqual('"1"'); // 1 is handset
-
-                // restore cfg2 original name
-                cfg2.name = cfg2OriginalName;
             });
         });
-        it('should write deployment-target preference', function (done) {
-            var cfg2OriginalName = cfg2.name;
+        it('should write deployment-target preference', function () {
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
-            wrapper(updateProject(cfg2, p.locations), done, function () {
+            return updateProject(cfg2, p.locations).then(() => {
                 var xcode = require('xcode');
                 var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 var prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
                 expect(prop).toEqual('8.0');
-
-                // restore cfg2 original name
-                cfg2.name = cfg2OriginalName;
             });
         });
-        it('should write SwiftVersion preference (4.1)', function (done) {
-            var cfg3OriginalName = cfg3.name;
+        it('should write SwiftVersion preference (4.1)', function () {
             cfg3.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
-            wrapper(updateProject(cfg3, p.locations), done, function () {
+            return updateProject(cfg3, p.locations).then(() => {
                 var xcode = require('xcode');
                 var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 var prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('4.1');
-
-                // restore cfg2 original name
-                cfg3.name = cfg3OriginalName;
             });
         });
-        it('should write SwiftVersion preference (3.3)', function (done) {
-            var cfg3OriginalName = cfg3.name;
+        it('should write SwiftVersion preference (3.3)', function () {
             cfg3.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
             var pref = cfg3.doc.findall('platform[@name=\'ios\']/preference').filter(function (elem) {
                 return elem.attrib.name.toLowerCase() === 'swiftversion';
             })[0];
-            var prefOriginalSwiftVersion = pref.attrib.value;
             pref.attrib.value = '3.3';
             writeFileSyncSpy.and.callThrough();
-            wrapper(updateProject(cfg3, p.locations), done, function () {
+            return updateProject(cfg3, p.locations).then(() => {
                 var xcode = require('xcode');
                 var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 var prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('3.3');
-                // restore cfg2 original name
-                cfg3.name = cfg3OriginalName;
-                pref.attrib.value = prefOriginalSwiftVersion;
             });
         });
 
-        it('Test#002 : should write out the app id to info plist as CFBundleIdentifier', function (done) {
+        it('Test#002 : should write out the app id to info plist as CFBundleIdentifier', function () {
             var orig = cfg.getAttribute;
             cfg.getAttribute = function (name) {
                 if (name === 'ios-CFBundleIdentifier') {
@@ -679,7 +646,7 @@ describe('prepare', function () {
             };
             writeFileSyncSpy.and.callThrough();
 
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var xcode = require('xcode');
                 var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
@@ -687,7 +654,7 @@ describe('prepare', function () {
                 expect(prop).toEqual('testpkg');
             });
         });
-        it('Test#003 : should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', function (done) {
+        it('Test#003 : should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', function () {
             var orig = cfg.getAttribute;
             cfg.getAttribute = function (name) {
                 if (name === 'ios-CFBundleIdentifier') {
@@ -698,7 +665,7 @@ describe('prepare', function () {
 
             writeFileSyncSpy.and.callThrough();
 
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var xcode = require('xcode');
                 var proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
@@ -706,59 +673,59 @@ describe('prepare', function () {
                 expect(prop).toEqual('testpkg_ios');
             });
         });
-        it('Test#004 : should write out the app version to info plist as CFBundleVersion', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#004 : should write out the app version to info plist as CFBundleVersion', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].CFBundleShortVersionString).toEqual('one point oh');
             });
         });
-        it('Test#005 : should write out the orientation preference value', function (done) {
+        it('Test#005 : should write out the orientation preference value', function () {
             cfg.getPreference.and.callThrough();
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
                 expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
             });
         });
-        it('Test#006 : should handle no orientation', function (done) {
+        it('Test#006 : should handle no orientation', function () {
             cfg.getPreference.and.returnValue('');
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toBeUndefined();
                 expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toBeUndefined();
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
-        it('Test#007 : should handle default orientation', function (done) {
+        it('Test#007 : should handle default orientation', function () {
             cfg.getPreference.and.returnValue('default');
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
-        it('Test#008 : should handle portrait orientation', function (done) {
+        it('Test#008 : should handle portrait orientation', function () {
             cfg.getPreference.and.returnValue('portrait');
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
             });
         });
-        it('Test#009 : should handle landscape orientation', function (done) {
+        it('Test#009 : should handle landscape orientation', function () {
             cfg.getPreference.and.returnValue('landscape');
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationLandscapeLeft' ]);
             });
         });
-        it('Test#010 : should handle all orientation on ios', function (done) {
+        it('Test#010 : should handle all orientation on ios', function () {
             cfg.getPreference.and.returnValue('all');
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
             });
         });
-        it('Test#011 : should handle custom orientation', function (done) {
+        it('Test#011 : should handle custom orientation', function () {
             cfg.getPreference.and.returnValue('some-custom-orientation');
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
@@ -769,8 +736,8 @@ describe('prepare', function () {
         // NOTE: if an ATS value is equal to "null", it means that it was not written,
         // thus it will use the default (check the default for the key).
         // This is to prevent the Info.plist to be too verbose.
-        it('Test#012 : <access> - should handle wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#012 : <access> - should handle wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -780,7 +747,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -797,7 +764,7 @@ describe('prepare', function () {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(true);
@@ -807,7 +774,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (fixed allows-arbitrary-loads-for-media)', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (fixed allows-arbitrary-loads-for-media)', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -823,7 +790,7 @@ describe('prepare', function () {
             });
 
             var my_config = new ConfigParser('fake/path');
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -833,7 +800,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (fixed allows-arbitrary-loads-for-media)', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (fixed allows-arbitrary-loads-for-media)', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -849,7 +816,7 @@ describe('prepare', function () {
             });
 
             var my_config = new ConfigParser('fake/path');
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -859,7 +826,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (deprecated allows-arbitrary-loads-in-media)', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (deprecated allows-arbitrary-loads-in-media)', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -875,7 +842,7 @@ describe('prepare', function () {
             });
 
             var my_config = new ConfigParser('fake/path');
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -885,7 +852,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (deprecated allows-arbitrary-loads-in-media)', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (deprecated allows-arbitrary-loads-in-media)', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -901,7 +868,7 @@ describe('prepare', function () {
             });
 
             var my_config = new ConfigParser('fake/path');
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -911,7 +878,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -928,7 +895,7 @@ describe('prepare', function () {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -938,7 +905,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function (done) {
+        it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -955,7 +922,7 @@ describe('prepare', function () {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(true);
@@ -964,7 +931,7 @@ describe('prepare', function () {
                 expect(ats.NSAllowsLocalNetworking).toEqual(true);
             });
         });
-        it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function (done) {
+        it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -981,7 +948,7 @@ describe('prepare', function () {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(undefined);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -991,8 +958,8 @@ describe('prepare', function () {
             });
         });
 
-        it('Test#13 : <access> - https, subdomain wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#13 : <access> - https, subdomain wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1065,8 +1032,8 @@ describe('prepare', function () {
             });
         });
 
-        it('Test#014 : <access> - http, no wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#014 : <access> - http, no wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1139,8 +1106,8 @@ describe('prepare', function () {
 
             });
         });
-        it('Test#015 : <access> - https, no wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#015 : <access> - https, no wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1213,14 +1180,13 @@ describe('prepare', function () {
             });
         });
         /// ///////////////////////////////////////////////
-        it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', function (done) {
-            var cfg2OriginalName = cfg2.name;
+        it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', function () {
             // original name here is 'SampleApp' based on p
             // we are not testing a name change here, but testing a new config being used (name change test is above)
             // so we set it to the name expected
             cfg2.name = function () { return 'SampleApp'; }; // new config does *not* have a name change
 
-            wrapper(updateProject(cfg2, p.locations), done, function () {
+            return updateProject(cfg2, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1234,14 +1200,11 @@ describe('prepare', function () {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
                 expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
-
-                // restore cfg2 original name
-                cfg2.name = cfg2OriginalName;
             });
         });
         /// ///////////////////////////////////////////////
 
-        it('<allow-navigation> - should handle wildcard', function (done) {
+        it('<allow-navigation> - should handle wildcard', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -1258,7 +1221,7 @@ describe('prepare', function () {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(true);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -1268,7 +1231,7 @@ describe('prepare', function () {
             });
         });
 
-        it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function (done) {
+        it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function () {
 
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
@@ -1285,7 +1248,7 @@ describe('prepare', function () {
 
             var my_config = new ConfigParser('fake/path');
 
-            wrapper(updateProject(my_config, p.locations), done, function () {
+            return updateProject(my_config, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 expect(ats.NSAllowsArbitraryLoads).toEqual(undefined);
                 expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
@@ -1295,8 +1258,8 @@ describe('prepare', function () {
             });
         });
 
-        it('<allow-navigation> - https, subdomain wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('<allow-navigation> - https, subdomain wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1369,8 +1332,8 @@ describe('prepare', function () {
             });
         });
 
-        it('<allow-navigation> - http, no wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('<allow-navigation> - http, no wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1444,8 +1407,8 @@ describe('prepare', function () {
             });
         });
 
-        it('<allow-navigation> - https, no wildcard', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('<allow-navigation> - https, no wildcard', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1518,8 +1481,8 @@ describe('prepare', function () {
             });
         });
 
-        it('Test#017 : <allow-navigation> - wildcard scheme, wildcard subdomain', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#017 : <allow-navigation> - wildcard scheme, wildcard subdomain', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1592,8 +1555,8 @@ describe('prepare', function () {
 
             });
         });
-        it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 var d;
@@ -1666,8 +1629,8 @@ describe('prepare', function () {
 
             });
         });
-        it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', function (done) {
-            wrapper(updateProject(cfg, p.locations), done, function () {
+        it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', function () {
+            return updateProject(cfg, p.locations).then(() => {
                 var ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 var exceptionDomains = ats.NSExceptionDomains;
                 expect(exceptionDomains['']).toBeUndefined();
@@ -1675,9 +1638,9 @@ describe('prepare', function () {
                 expect(exceptionDomains['undefined']).toBeUndefined();
             });
         });
-        it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', function (done) {
+        it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', function () {
             cfg.shortName = function () { return 'MyApp'; };
-            wrapper(updateProject(cfg, p.locations), done, function () {
+            return updateProject(cfg, p.locations).then(() => {
                 expect(plist.build.calls.mostRecent().args[0].CFBundleDisplayName).toEqual('MyApp');
             });
         });

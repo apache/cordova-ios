@@ -72,7 +72,7 @@ describe('prepare after plugin add', function () {
         shell.rm('-rf', iosPlatform);
     });
 
-    it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', function (done) {
+    it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', function () {
         var project = {
             root: iosProject,
             projectConfig: new ConfigParser(path.join(iosProject, 'config.xml')),
@@ -82,12 +82,7 @@ describe('prepare after plugin add', function () {
             }
         };
 
-        var fail = jasmine.createSpy('fail')
-            .and.callFake(function (err) {
-                console.error(err);
-            });
-
-        api.prepare(project, {})
+        return api.prepare(project, {})
             .then(function () {
                 expect(fs.existsSync(path.join(iosPlatform, 'ios.json'))).toBe(true);
                 expect(DUMMY_PLUGIN).not.toBeInstalledIn(iosProject);
@@ -99,11 +94,6 @@ describe('prepare after plugin add', function () {
             })
             .then(function () {
                 expect(DUMMY_PLUGIN).toBeInstalledIn(iosPlatform);
-            })
-            .catch(fail)
-            .finally(function () {
-                expect(fail).not.toHaveBeenCalled();
-                done();
             });
     });
 });

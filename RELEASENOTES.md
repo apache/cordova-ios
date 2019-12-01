@@ -22,6 +22,28 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 5.1.1 (Nov 28, 2019)
+* [GH-726](https://github.com/apache/cordova-ios/pull/726) fix: make prepare wait for add to finish
+* [GH-728](https://github.com/apache/cordova-ios/pull/728) chore: delete some useless characters
+
+### 5.1.0 (Nov 22, 2019)
+* [GH-719](https://github.com/apache/cordova-ios/pull/719) Add check for newer versions of cocoapods to avoid locking adding platforms on non synced pods repo
+* [GH-715](https://github.com/apache/cordova-ios/pull/715) feat: add optional compile-time decision for disabling `UIWebView`
+* [GH-712](https://github.com/apache/cordova-ios/pull/712) Update Xcode versions used in CI to latest minor release
+* [GH-710](https://github.com/apache/cordova-ios/pull/710) Lint everything
+* [GH-614](https://github.com/apache/cordova-ios/pull/614) Don't use whitespace as an indent indicator
+* [GH-704](https://github.com/apache/cordova-ios/pull/704) Reuse common `xcodebuild` arguments in npm scripts
+* [GH-705](https://github.com/apache/cordova-ios/pull/705) Let Jasmine handle `async` test results
+* [GH-703](https://github.com/apache/cordova-ios/pull/703) Reduce verbosity of `xcodebuild` output during tests
+* [GH-702](https://github.com/apache/cordova-ios/pull/702) Fix, simplify and improve tests
+* [GH-695](https://github.com/apache/cordova-ios/pull/695) fix: Support all valid SemVer syntax in version comparison helper
+* [GH-608](https://github.com/apache/cordova-ios/pull/608) chore: add Node.js 12 to CI services
+* [GH-650](https://github.com/apache/cordova-ios/pull/650) fix(`build.json`): spacing in error message and missing path in log
+* [GH-646](https://github.com/apache/cordova-ios/pull/646) `tmp@0.1` update in devDependencies
+* [GH-635](https://github.com/apache/cordova-ios/pull/635) Bump default `minDeploymentTarget` to 10.0 in Podfile
+* [GH-632](https://github.com/apache/cordova-ios/pull/632) Update jasmine & fix broken tests
+* [GH-622](https://github.com/apache/cordova-ios/pull/622) Remove outdated component/duo package manager package definition
+
 ### 5.0.1 (Apr 18, 2019)
 * [GH-596](https://github.com/apache/cordova-ios/pull/596) More logging for simulator selection and deployment
 * [GH-540](https://github.com/apache/cordova-ios/pull/540) Fix copy-www-build-step without shelljs

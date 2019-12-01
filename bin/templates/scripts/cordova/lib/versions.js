@@ -21,6 +21,7 @@
 
 var child_process = require('child_process');
 var Q = require('q');
+var semver = require('semver');
 
 exports.get_apple_ios_version = function () {
     var d = Q.defer();
@@ -159,36 +160,20 @@ exports.get_tool_version = function (toolName) {
 };
 
 /**
- * Compares two semver-notated version strings. Returns number
- * that indicates equality of provided version strings.
+ * Compares two version strings that can be coerced to semver.
+ *
  * @param  {String} version1 Version to compare
  * @param  {String} version2 Another version to compare
  * @return {Number}          Negative number if first version is lower than the second,
  *                                    positive otherwise and 0 if versions are equal.
  */
-exports.compareVersions = function (version1, version2) {
-    function parseVer (version) {
-        return version.split('.').map(function (value) {
-            // try to convert version segment to Number
-            var parsed = Number(value);
-            // Number constructor is strict enough and will return NaN
-            // if conversion fails. In this case we won't be able to compare versions properly
-            if (isNaN(parsed)) {
-                throw 'Version should contain only numbers and dots';
-            }
-            return parsed;
-        });
-    }
-    var parsedVer1 = parseVer(version1);
-    var parsedVer2 = parseVer(version2);
+exports.compareVersions = (...args) => {
+    const coerceToSemverIfInvalid = v => {
+        const semverVersion = semver.parse(v) || semver.coerce(v);
+        if (!semverVersion) throw new TypeError(`Invalid Version: ${v}`);
+        return semverVersion;
+    };
 
-    // Compare corresponding segments of each version
-    for (var i = 0; i < Math.max(parsedVer1.length, parsedVer2.length); i++) {
-        // if segment is not specified, assume that it is 0
-        // E.g. 3.1 is equal to 3.1.0
-        var ret = (parsedVer1[i] || 0) - (parsedVer2[i] || 0);
-        // if segments are not equal, we're finished
-        if (ret !== 0) return ret;
-    }
-    return 0;
+    const semverVersions = args.map(coerceToSemverIfInvalid);
+    return semver.compare(...semverVersions);
 };

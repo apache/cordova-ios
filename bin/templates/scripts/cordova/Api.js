@@ -103,7 +103,7 @@ function Api (platform, platformRootDir, events) {
  * Creates platform in a specified directory.
  *
  * @param  {String}  destination Destination directory, where install platform to
- * @param  {ConfigParser}  [config] ConfgiParser instance, used to retrieve
+ * @param  {ConfigParser}  [config] ConfigParser instance, used to retrieve
  *   project creation options, such as package id and project name.
  * @param  {Object}  [options]  An options object. The most common options are:
  * @param  {String}  [options.customTemplate]  A path to custom template, that
@@ -127,7 +127,7 @@ Api.createPlatform = function (destination, config, options, events) {
     var result;
     try {
         result = require('../../../lib/create')
-            .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options)
+            .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options, config)
             .then(function () {
                 // after platform is created we return Api instance based on new Api.js location
                 // This is required to correctly resolve paths in the future api calls
@@ -136,7 +136,7 @@ Api.createPlatform = function (destination, config, options, events) {
             });
     } catch (e) {
         events.emit('error', 'createPlatform is not callable from the iOS project API.');
-        throw (e);
+        throw e;
     }
     return result;
 };
@@ -170,7 +170,7 @@ Api.updatePlatform = function (destination, options, events) {
             });
     } catch (e) {
         events.emit('error', 'updatePlatform is not callable from the iOS project API, you will need to do this manually.');
-        throw (e);
+        throw e;
     }
     return result;
 };

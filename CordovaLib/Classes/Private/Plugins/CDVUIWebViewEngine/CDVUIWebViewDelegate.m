@@ -76,6 +76,8 @@
 // TODO: Record order when page is re-navigated before the first navigation finishes.
 //
 
+#if !WK_WEB_VIEW_ONLY
+
 #import "CDVUIWebViewDelegate.h"
 
 // #define VerboseLog NSLog
@@ -256,7 +258,7 @@ static NSString *stripFragment(NSString* url)
                         NSLog(@"%@", description);
                         _loadCount = 0;
                         _state = STATE_WAITING_FOR_LOAD_START;
-                                
+
                         NSDictionary* errorDictionary = @{NSLocalizedDescriptionKey : description};
                         NSError* error = [[NSError alloc] initWithDomain:@"CDVUIWebViewDelegate" code:1 userInfo:errorDictionary];
                         [self webView:webView didFailLoadWithError:error];
@@ -402,3 +404,5 @@ static NSString *stripFragment(NSString* url)
 }
 
 @end
+
+#endif

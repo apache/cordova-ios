@@ -17,97 +17,97 @@
  under the License.
  */
 
-var rewire = require('rewire');
-var checkReqs = rewire('../../../../bin/templates/scripts/cordova/lib/check_reqs');
+const rewire = require('rewire');
+const shell = require('shelljs');
+const versions = require('../../../../bin/templates/scripts/cordova/lib/versions');
 
 describe('check_reqs', function () {
+    let checkReqs;
+    beforeEach(() => {
+        checkReqs = rewire('../../../../bin/templates/scripts/cordova/lib/check_reqs');
+    });
+
     describe('checkTool method', () => {
-        const originalVersion = checkReqs.__get__('versions');
-        let shellWhichSpy;
-        let rejectSpy;
-        let resolveSpy;
-        let getToolVersionSpy;
+        let checkTool;
 
         beforeEach(() => {
-            // Shell Spy
-            shellWhichSpy = jasmine.createSpy('shellWhichSpy');
-            checkReqs.__set__('shell', {
-                which: shellWhichSpy
-            });
+            checkTool = checkReqs.__get__('checkTool');
 
-            // Q Spy
-            rejectSpy = jasmine.createSpy('rejectSpy');
-            resolveSpy = jasmine.createSpy('resolveSpy');
-            checkReqs.__set__('Q', {
-                reject: rejectSpy,
-                resolve: resolveSpy
-            });
-
-            // Versions Spy
-            getToolVersionSpy = jasmine.createSpy('rejectSpy');
+            spyOn(shell, 'which').and.returnValue('/bin/node');
+            spyOn(versions, 'get_tool_version').and.returnValue(Promise.resolve('1.0.0'));
         });
 
         it('should not have found tool.', () => {
-            shellWhichSpy.and.returnValue(false);
-            const checkTool = checkReqs.__get__('checkTool');
+            shell.which.and.returnValue(false);
 
-            checkTool('node', '1.0.0');
-
-            expect(rejectSpy).toHaveBeenCalledWith(jasmine.stringMatching(/^node was not found./));
+            return checkTool('node', '1.0.0').then(
+                () => fail('Expected promise to be rejected'),
+                reason => expect(reason).toContain('node was not found.')
+            );
         });
 
-        it('should throw error because version is not following semver-notated.', (done) => {
-            shellWhichSpy.and.returnValue('/bin/node');
-            const checkTool = checkReqs.__get__('checkTool');
+        it('should throw error because version is not following semver-notated.', () => {
+            return checkTool('node', 'a.b.c').then(
+                () => fail('Expected promise to be rejected'),
+                err => expect(err).toEqual(new TypeError('Invalid Version: a.b.c'))
+            );
+        });
 
-            checkReqs.__set__('versions', {
-                get_tool_version: getToolVersionSpy.and.returnValue(new Promise((resolve) => {
-                    return resolve('1.0.0');
-                }).catch((error) => { console.log(error); })),
-                compareVersions: originalVersion.compareVersions
-            });
-
-            checkTool('node', 'v1.0.0').catch((error) => {
-                expect(error).toEqual('Version should contain only numbers and dots');
-                done();
+        it('should resolve passing back tool version.', () => {
+            return checkTool('node', '1.0.0').then(result => {
+                expect(result).toEqual({ version: '1.0.0' });
             });
         });
 
-        it('should resolve passing back tool version.', (done) => {
-            shellWhichSpy.and.returnValue('/bin/node');
-            const checkTool = checkReqs.__get__('checkTool');
+        it('should reject because tool does not meet minimum requirement.', () => {
+            return checkTool('node', '1.0.1').then(
+                () => fail('Expected promise to be rejected'),
+                reason => expect(reason).toContain('version 1.0.1 or greater, you have version 1.0.0')
+            );
+        });
+    });
 
-            checkReqs.__set__('versions', {
-                get_tool_version: getToolVersionSpy.and.returnValue(new Promise((resolve) => {
-                    return resolve('1.0.0');
-                })),
-                compareVersions: originalVersion.compareVersions
+    describe('check_cocoapods method', () => {
+        let toolsChecker;
+        beforeEach(() => {
+            toolsChecker = jasmine.createSpy('toolsChecker')
+                .and.returnValue(Promise.resolve({ version: '1.2.3' }));
+        });
+
+        it('should resolve when on an unsupported platform', () => {
+            checkReqs.__set__({
+                os_platform_is_supported: () => false
             });
 
-            checkTool('node', '1.0.0').then(() => {
-                let actual = resolveSpy.calls.argsFor(0)[0];
-                expect(actual).toEqual({ version: '1.0.0' });
-                done();
+            return checkReqs.check_cocoapods(toolsChecker).then(toolOptions => {
+                expect(toolsChecker).not.toHaveBeenCalled();
+                expect(toolOptions.ignore).toBeDefined();
+                expect(toolOptions.ignoreMessage).toBeDefined();
             });
         });
 
-        it('should reject because tool does not meet minimum requirement.', (done) => {
-            shellWhichSpy.and.returnValue('/bin/node');
-            const checkTool = checkReqs.__get__('checkTool');
-
-            checkReqs.__set__('versions', {
-                get_tool_version: getToolVersionSpy.and.returnValue(new Promise((resolve) => {
-                    return resolve('1.0.0');
-                })),
-                compareVersions: originalVersion.compareVersions
+        it('should resolve when toolsChecker resolves', () => {
+            checkReqs.__set__({
+                os_platform_is_supported: () => true
             });
+            spyOn(shell, 'exec').and.returnValue({ code: 1 });
 
-            checkTool('node', '1.0.1').then(() => {
-                let actual = rejectSpy.calls.argsFor(0)[0];
-                expect(actual).toContain('version 1.0.1 or greater');
-                expect(actual).toContain('you have version 1.0.0');
-                done();
+            return checkReqs.check_cocoapods(toolsChecker).then(() => {
+                expect(shell.exec).toHaveBeenCalled();
             });
+        });
+
+        it('should reject when toolsChecker rejects', () => {
+            checkReqs.__set__({
+                os_platform_is_supported: () => true
+            });
+            const testError = new Error();
+            toolsChecker.and.callFake(() => Promise.reject(testError));
+
+            return checkReqs.check_cocoapods(toolsChecker).then(
+                () => fail('Expected promise to be rejected'),
+                err => expect(err).toBe(testError)
+            );
         });
     });
 });
