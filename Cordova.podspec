@@ -28,10 +28,8 @@ end
 #
 # ATTENTION: 
 #
-# This file needs to be updated manually whenever a Cordova upgrade is performed.
+# This file needs to be updated manually whenever a Cordova upgrade that bumps up min version of iOS is performed.
+# The release version number and the list of public headers are automatically updated through scipts.
 # Sections that need to be updated:
 #   1. {s.platform} should be updated if the minimum version of iOS has changed.
-#   2. {cordova.source_files} should be updated if the path of the library has changed.
-#   3. {cordova.public_header_files} should be updated, by removing the public headers
-#      that have been removed and adding the public headers that have been added.
 #
