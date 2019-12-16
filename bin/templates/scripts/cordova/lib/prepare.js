@@ -276,10 +276,10 @@ function handleOrientationSettings (platformConfig, infoPlist) {
 }
 
 // Make sure only update properties from our target project
-function updateBuildPropertyLocal (proj, displayName, prop, value, build) {
+function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
     try {
         // Check if we have a valid target - during prepare we do not have it
-        var target = proj.pbxTargetByName(displayName);
+        var target = proj.pbxTargetByName(targetName);
         if (target == null || target.buildConfigurationList == null) {
             proj.updateBuildProperty(prop, value, build);
         } else {
@@ -322,7 +322,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     var deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     var needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     var swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-    var displayName = platformConfig.name().replace(/"/g, '');
+    var targetName = unorm.nfd(platformConfig.name());
     var wkWebViewOnly = platformConfig.getPreference('WKWebViewOnly');
 
     var project;
@@ -343,7 +343,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     if (origPkg !== pkg) {
         events.emit('verbose', 'Set PRODUCT_BUNDLE_IDENTIFIER to ' + pkg + '.');
-        updateBuildPropertyLocal(project.xcode, displayName, 'PRODUCT_BUNDLE_IDENTIFIER', pkg);
+        updateBuildPropertyLocal(project.xcode, targetName, 'PRODUCT_BUNDLE_IDENTIFIER', pkg);
     }
 
     if (targetDevice) {
