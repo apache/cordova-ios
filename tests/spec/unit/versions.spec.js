@@ -17,8 +17,8 @@
  under the License.
  */
 
-var semver = require('semver');
-var versions = require('../../../bin/templates/scripts/cordova/lib/versions');
+const semver = require('semver');
+const versions = require('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {

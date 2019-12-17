@@ -17,17 +17,17 @@
        under the License.
 */
 
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var CordovaError = require('cordova-common').CordovaError;
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const CordovaError = require('cordova-common').CordovaError;
 
-var PodsJson = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'PodsJson.js'))).PodsJson;
-var fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'pods.json');
+const PodsJson = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'PodsJson.js'))).PodsJson;
+const fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'pods.json');
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
 describe('unit tests for Podfile module', function () {
-    var podsjson = null;
+    let podsjson = null;
     beforeEach(function () {
         podsjson = new PodsJson(fixturePodsJson);
     });
@@ -37,21 +37,21 @@ describe('unit tests for Podfile module', function () {
 
     describe('tests', function () {
         it('Test 001 : throws CordovaError when the path filename is not named pods.json', function () {
-            var dummyPath = 'NotPodsJson';
+            const dummyPath = 'NotPodsJson';
             expect(function () {
                 new PodsJson(dummyPath); /* eslint no-new : 0 */
             }).toThrow(new CordovaError(util.format('PodsJson: The file at %s is not `%s`.', dummyPath, PodsJson.FILENAME)));
         });
 
         it('Test 002 : setsJson and gets pod test', function () {
-            var val0 = {
+            const val0 = {
                 name: 'Foo',
                 type: 'podspec',
                 spec: '1.0',
                 count: 1
             };
             podsjson.setJsonLibrary(val0.name, val0);
-            var val1 = podsjson.getLibrary(val0.name);
+            const val1 = podsjson.getLibrary(val0.name);
 
             expect(val1).toBeTruthy();
             expect(val1.name).toEqual(val0.name);
@@ -61,14 +61,14 @@ describe('unit tests for Podfile module', function () {
         });
 
         it('Test 003 : setsJson and remove pod test', function () {
-            var val0 = {
+            const val0 = {
                 name: 'Bar',
                 type: 'podspec',
                 spec: '2.0',
                 count: 2
             };
             podsjson.setJsonLibrary(val0.name, val0);
-            var val1 = podsjson.getLibrary(val0.name);
+            let val1 = podsjson.getLibrary(val0.name);
 
             expect(val1).toBeTruthy();
             expect(val1.name).toEqual(val0.name);
@@ -82,7 +82,7 @@ describe('unit tests for Podfile module', function () {
         });
 
         it('Test 004 : clears all pods', function () {
-            var val0 = {
+            const val0 = {
                 name: 'Baz',
                 type: 'podspec',
                 spec: '3.0',
@@ -97,7 +97,7 @@ describe('unit tests for Podfile module', function () {
         });
 
         it('Test 005 : isDirty tests', function () {
-            var val0 = {
+            const val0 = {
                 name: 'Foo',
                 type: 'podspec',
                 spec: '1.0',
@@ -121,7 +121,7 @@ describe('unit tests for Podfile module', function () {
         });
 
         it('Test 006 : increment and decrement count test', function () {
-            var val0 = {
+            const val0 = {
                 name: 'Bla',
                 type: 'podspec',
                 spec: '4.0',
@@ -151,7 +151,7 @@ describe('unit tests for Podfile module', function () {
         it('Test 007 : writes pods to the pods.json', function () {
             podsjson.clear();
 
-            var vals = {
+            const vals = {
                 Foo: { name: 'Foo', type: 'podspec', spec: '1.0', count: 1 },
                 Bar: { name: 'Bar', type: 'podspec', spec: '2.0', count: 2 },
                 Baz: { name: 'Baz', type: 'podspec', spec: '3.0', count: 3 }
@@ -164,7 +164,7 @@ describe('unit tests for Podfile module', function () {
             podsjson.write();
 
             // verify by reading it back in a new PodsJson
-            var newPodsJson = new PodsJson(fixturePodsJson);
+            const newPodsJson = new PodsJson(fixturePodsJson);
             expect(newPodsJson.getLibrary('Foo')).toBeTruthy();
             expect(newPodsJson.getLibrary('Bar')).toBeTruthy();
             expect(newPodsJson.getLibrary('Baz')).toBeTruthy();
@@ -184,16 +184,16 @@ describe('unit tests for Podfile module', function () {
         });
 
         it('Test 008 : setJson, get, increment, decrement, remove and write for Declaration', function () {
-            var result = null;
-            var writeFileSyncSpy = spyOn(fs, 'writeFileSync');
+            let result = null;
+            const writeFileSyncSpy = spyOn(fs, 'writeFileSync');
             writeFileSyncSpy.and.callFake(function (filepath, data, encode) {
                 result = data;
             });
-            var json = {
+            const json = {
                 declaration: 'use_frameworks!',
                 count: 1
             };
-            var json2 = {
+            const json2 = {
                 declaration: 'inhibit_all_warnings!',
                 count: 2
             };
@@ -215,16 +215,16 @@ describe('unit tests for Podfile module', function () {
         });
 
         it('Test 009 : setJson, get, increment, decrement, remove and write for Source', function () {
-            var result = null;
-            var writeFileSyncSpy = spyOn(fs, 'writeFileSync');
+            let result = null;
+            const writeFileSyncSpy = spyOn(fs, 'writeFileSync');
             writeFileSyncSpy.and.callFake(function (filepath, data, encode) {
                 result = data;
             });
-            var json = {
+            const json = {
                 source: 'https://github.com/brightcove/BrightcoveSpecs.git',
                 count: 1
             };
-            var json2 = {
+            const json2 = {
                 source: 'https://github.com/CocoaPods/Specs.git',
                 count: 2
             };
