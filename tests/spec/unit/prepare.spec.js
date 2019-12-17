@@ -1174,11 +1174,10 @@ describe('prepare', function () {
             return updateProject(cfg2, p.locations).then(() => {
                 const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 const exceptionDomains = ats.NSExceptionDomains;
-                let d;
 
                 expect(exceptionDomains).toBeTruthy();
 
-                d = exceptionDomains['apache.org'];
+                const d = exceptionDomains['apache.org'];
                 expect(d).toBeTruthy();
                 expect(d.NSIncludesSubdomains).toEqual(true);
                 expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);

@@ -320,7 +320,6 @@ module.exports.findXCodeProjectIn = findXCodeProjectIn;
  * @return {Array}                  Array of arguments that could be passed directly to spawn method
  */
 function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, buildFlags, emulatorTarget, autoProvisioning) {
-    let xcodebuildArgs;
     let options;
     let buildActions;
     let settings;
@@ -378,8 +377,8 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
             customArgs.otherFlags = customArgs.otherFlags.concat(['-archivePath', customArgs.archivePath]);
         }
     }
-    xcodebuildArgs = options.concat(buildActions).concat(settings).concat(customArgs.otherFlags);
-    return xcodebuildArgs;
+
+    return options.concat(buildActions).concat(settings).concat(customArgs.otherFlags);
 }
 
 /**
