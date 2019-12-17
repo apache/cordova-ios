@@ -184,7 +184,6 @@ function cleanWww (projectRoot, locations) {
  * @param   {Object}  locations       A map of locations for this platform (In/Out)
  */
 function updateProject (platformConfig, locations) {
-
     // CB-6992 it is necessary to normalize characters
     // because node and shell scripts handles unicode symbols differently
     // We need to normalize the name to NFD form since iOS uses NFD unicode form
@@ -251,26 +250,25 @@ function updateProject (platformConfig, locations) {
 }
 
 function handleOrientationSettings (platformConfig, infoPlist) {
-
     switch (getOrientationValue(platformConfig)) {
     case 'portrait':
-        infoPlist['UIInterfaceOrientation'] = [ 'UIInterfaceOrientationPortrait' ];
-        infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ];
-        infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ];
+        infoPlist['UIInterfaceOrientation'] = ['UIInterfaceOrientationPortrait'];
+        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown'];
+        infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown'];
         break;
     case 'landscape':
-        infoPlist['UIInterfaceOrientation'] = [ 'UIInterfaceOrientationLandscapeLeft' ];
-        infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
-        infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
+        infoPlist['UIInterfaceOrientation'] = ['UIInterfaceOrientationLandscapeLeft'];
+        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
+        infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         break;
     case 'all':
-        infoPlist['UIInterfaceOrientation'] = [ 'UIInterfaceOrientationPortrait' ];
-        infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
-        infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
+        infoPlist['UIInterfaceOrientation'] = ['UIInterfaceOrientationPortrait'];
+        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
+        infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         break;
     case 'default':
-        infoPlist['UISupportedInterfaceOrientations'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
-        infoPlist['UISupportedInterfaceOrientations~ipad'] = [ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ];
+        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
+        infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         delete infoPlist['UIInterfaceOrientation'];
     }
 }
@@ -515,9 +513,9 @@ function updateFileResources (cordovaProject, locations) {
         return;
     }
 
-    let resourceMap = {};
+    const resourceMap = {};
     files.forEach(function (res) {
-        let src = res.src;
+        const src = res.src;
         let target = res.target;
 
         if (!target) {
@@ -553,7 +551,7 @@ function cleanFileResources (projectRoot, projectConfig, locations) {
 
         var resourceMap = {};
         files.forEach(function (res) {
-            let src = res.src;
+            const src = res.src;
             let target = res.target;
 
             if (!target) {
@@ -707,7 +705,6 @@ function mapLaunchStoryboardResources (splashScreens, launchStoryboardImagesDir)
  * @return {Object}
  */
 function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesDir) {
-
     var platformLaunchStoryboardImages = mapLaunchStoryboardContents(splashScreens, launchStoryboardImagesDir);
     var contentsJSON = {
         images: [],
@@ -933,7 +930,6 @@ function cleanLaunchStoryboardImages (projectRoot, projectConfig, locations) {
  *   (or empty string if both are undefined).
  */
 function getOrientationValue (platformConfig) {
-
     var ORIENTATION_DEFAULT = 'default';
 
     var orientation = platformConfig.getPreference('orientation');
@@ -1181,7 +1177,7 @@ function default_CFBundleVersion (version) {
 // Converts cordova specific representation of target device to XCode value
 function parseTargetDevicePreference (value) {
     if (!value) return null;
-    var map = { 'universal': '"1,2"', 'handset': '"1"', 'tablet': '"2"' };
+    var map = { universal: '"1,2"', handset: '"1"', tablet: '"2"' };
     if (map[value.toLowerCase()]) {
         return map[value.toLowerCase()];
     }

@@ -20,7 +20,7 @@
   "scripts": {
     "test": "npm run unit-tests && npm run test:component && npm run objc-tests && npm run e2e-tests",
     "test:component": "jasmine --config=tests/spec/component.json",
-    "posttest": "npm run eslint",
+    "posttest": "npm run lint",
     "cover": "nyc jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
@@ -29,18 +29,12 @@
     "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "tests/scripts/killsim.js",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
-    "eslint": "eslint . \"bin/**/!(*.*)\""
+    "lint": "eslint ."
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "eslint": "^5.12.0",
-    "eslint-config-semistandard": "^13.0.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "@cordova/eslint-config": "^2.0.0",
     "jasmine": "^3.4.0",
     "nyc": "^14.0.0",
     "rewire": "^4.0.1",

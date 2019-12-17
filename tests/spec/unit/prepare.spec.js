@@ -286,7 +286,6 @@ describe('prepare', function () {
             it('should be true with typical and legacy launch storyboard images', function () {
                 expect(platformHasLegacyLaunchImages(cfgs['modern-and-legacy'])).toEqual(true);
             });
-
         });
 
         describe('#updateProjectPlistForLaunchStoryboard', function () {
@@ -349,7 +348,6 @@ describe('prepare', function () {
                 updateProjectPlistForLaunchStoryboard(cfgs['modern-and-legacy'].config, plist);
                 expect(plist.UILaunchStoryboardName).toEqual('AnotherStoryboard');
             });
-
         });
 
         describe('#updateLaunchStoryboardImages', function () {
@@ -412,7 +410,6 @@ describe('prepare', function () {
             var logFileOp = prepare.__get__('logFileOp');
 
             it('should move launch images and update contents.json', function () {
-
                 var projectRoot = iosProject;
                 var platformProjDir = path.join('platforms', 'ios', 'SampleApp');
                 var storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
@@ -495,7 +492,6 @@ describe('prepare', function () {
                 updateProjectPlistForLaunchStoryboard(cfg.config, cfg.plist);
                 expect(checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(cfg.config, cfg.plist)).toEqual(false);
             });
-
         });
 
         describe('#updateBuildSettingsForLaunchStoryboard', function () {
@@ -532,7 +528,6 @@ describe('prepare', function () {
                 expect(proj.getBuildProperty('ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME')).toBeUndefined();
             });
         });
-
     });
 
     describe('updateProject method', function () {
@@ -558,7 +553,6 @@ describe('prepare', function () {
             spyOn(plist, 'parse').and.returnValue({});
             spyOn(plist, 'build').and.returnValue('');
             spyOn(xcode, 'project').and.callFake(function (pbxproj) {
-
                 var xc = new xcOrig(pbxproj); /* eslint new-cap : 0 */
                 update_name = spyOn(xc, 'updateProductName').and.callThrough();
                 return xc;
@@ -681,9 +675,9 @@ describe('prepare', function () {
         it('Test#005 : should write out the orientation preference value', function () {
             cfg.getPreference.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
+                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
+                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
+                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
             });
         });
         it('Test#006 : should handle no orientation', function () {
@@ -697,37 +691,37 @@ describe('prepare', function () {
         it('Test#007 : should handle default orientation', function () {
             cfg.getPreference.and.returnValue('default');
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
+                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
+                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
         it('Test#008 : should handle portrait orientation', function () {
             cfg.getPreference.and.returnValue('portrait');
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown' ]);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
+                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
+                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
             });
         });
         it('Test#009 : should handle landscape orientation', function () {
             cfg.getPreference.and.returnValue('landscape');
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationLandscapeLeft' ]);
+                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
+                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationLandscapeLeft']);
             });
         });
         it('Test#010 : should handle all orientation on ios', function () {
             cfg.getPreference.and.returnValue('all');
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual([ 'UIInterfaceOrientationPortrait' ]);
+                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
+                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
             });
         });
         it('Test#011 : should handle custom orientation', function () {
             cfg.getPreference.and.returnValue('some-custom-orientation');
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual([ 'UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight' ]);
+                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
+                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
                 expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
             });
         });
@@ -748,7 +742,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -775,7 +768,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (fixed allows-arbitrary-loads-for-media)', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -801,7 +793,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (fixed allows-arbitrary-loads-for-media)', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -827,7 +818,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia set (deprecated allows-arbitrary-loads-in-media)', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -853,7 +843,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsForMedia not set (deprecated allows-arbitrary-loads-in-media)', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -879,7 +868,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsLocalNetworking', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -906,7 +894,6 @@ describe('prepare', function () {
         });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -932,7 +919,6 @@ describe('prepare', function () {
             });
         });
         it('<access> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -1103,7 +1089,6 @@ describe('prepare', function () {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-
             });
         });
         it('Test#015 : <access> - https, no wildcard', function () {
@@ -1205,7 +1190,6 @@ describe('prepare', function () {
         /// ///////////////////////////////////////////////
 
         it('<allow-navigation> - should handle wildcard', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -1232,7 +1216,6 @@ describe('prepare', function () {
         });
 
         it('<allow-navigation> - sanity check - no wildcard but has NSAllowsArbitraryLoadsInWebContent, NSAllowsArbitraryLoadsForMedia, NSAllowsLocalNetworking', function () {
-
             const origReadFile = fse.readFileSync;
             var readFile = spyOn(fse, 'readFileSync');
             var configXml = '<?xml version="1.0" encoding="UTF-8"?><widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"><name>SampleApp</name>' +
@@ -1403,7 +1386,6 @@ describe('prepare', function () {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-
             });
         });
 
@@ -1552,7 +1534,6 @@ describe('prepare', function () {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-
             });
         });
         it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', function () {
@@ -1626,7 +1607,6 @@ describe('prepare', function () {
                 expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
                 expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
                 expect(d.NSRequiresCertificateTransparency).toEqual(true);
-
             });
         });
         it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', function () {
@@ -1650,16 +1630,16 @@ describe('prepare', function () {
         // image-8888.png target attribute is missing in config.xml as a test
         const images = [
             {
-                'src': 'image-5678.png',
-                'target': 'image-5678.png'
+                src: 'image-5678.png',
+                target: 'image-5678.png'
             },
             {
-                'src': 'image-1234.png',
-                'target': path.join('images', 'image-3456.png')
+                src: 'image-1234.png',
+                target: path.join('images', 'image-3456.png')
             },
             {
-                'src': 'image-8888.png',
-                'target': 'image-8888.png'
+                src: 'image-8888.png',
+                target: 'image-8888.png'
             }
         ];
         const projectRoot = path.join(FIXTURES, 'resource-file-support');
@@ -1706,16 +1686,16 @@ describe('prepare', function () {
 
             // for the 3 total file references attempted to be added above,
             // it should only have one file reference after the fact
-            for (let image of images) {
+            for (const image of images) {
                 // check whether the file is copied to the target location
-                let copiedImageFile = path.join(project.resources_dir, image.target);
+                const copiedImageFile = path.join(project.resources_dir, image.target);
                 expect(fs.existsSync(copiedImageFile)).toEqual(true);
 
                 // find PBXBuildFile file reference
-                let imagefileRefs = findImageFileRef(project.xcode, path.basename(image.target));
+                const imagefileRefs = findImageFileRef(project.xcode, path.basename(image.target));
                 expect(imagefileRefs.length).toEqual(1);
                 // find file reference in PBXResourcesBuildPhase
-                let resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
+                const resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
                 expect(resBuildPhaseFileRefs.length).toEqual(1);
             }
         });
@@ -1724,16 +1704,16 @@ describe('prepare', function () {
             cleanFileResources(projectRoot, cfgResourceFiles, p.locations);
             const project = projectFile.parse(p.locations);
 
-            for (let image of images) {
+            for (const image of images) {
                 // check whether the file is removed from the target location
-                let copiedImageFile = path.join(project.resources_dir, image.target);
+                const copiedImageFile = path.join(project.resources_dir, image.target);
                 expect(fs.existsSync(copiedImageFile)).toEqual(false);
 
                 // find PBXBuildFile file reference
-                let imagefileRefs = findImageFileRef(project.xcode, path.basename(image.target));
+                const imagefileRefs = findImageFileRef(project.xcode, path.basename(image.target));
                 expect(imagefileRefs.length).toEqual(0);
                 // find file reference in PBXResourcesBuildPhase
-                let resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
+                const resBuildPhaseFileRefs = findResourcesBuildPhaseRef(project.xcode, imagefileRefs[0]);
                 expect(resBuildPhaseFileRefs.length).toEqual(0);
             }
         });
@@ -1757,7 +1737,7 @@ describe('prepare', function () {
             shell.mkdir('-p', merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
-                [ 'www', path.join('platforms', 'ios', 'platform_www'), path.join('merges', 'ios') ],
+                ['www', path.join('platforms', 'ios', 'platform_www'), path.join('merges', 'ios')],
                 path.join('platforms', 'ios', 'www'),
                 { rootDir: iosProject },
                 logFileOp);
@@ -1767,7 +1747,7 @@ describe('prepare', function () {
             shell.rm('-rf', merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
-                [ 'www', path.join('platforms', 'ios', 'platform_www') ],
+                ['www', path.join('platforms', 'ios', 'platform_www')],
                 path.join('platforms', 'ios', 'www'),
                 { rootDir: iosProject },
                 logFileOp);

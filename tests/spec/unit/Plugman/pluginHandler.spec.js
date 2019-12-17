@@ -82,7 +82,6 @@ describe('ios plugin handler', function () {
     });
 
     describe('installation', function () {
-
         describe('of <source-file> elements', function () {
             var install = pluginHandlers.getInstaller('source-file');
 
@@ -232,7 +231,6 @@ describe('ios plugin handler', function () {
         });
 
         describe('of <framework> elements', function () {
-
             var install = pluginHandlers.getInstaller('framework');
             beforeEach(function () {
                 spyOn(dummyProject.xcode, 'addFramework');
@@ -482,7 +480,6 @@ describe('ios plugin handler', function () {
             });
 
             describe('without custom="true" attribute ', function () {
-
                 it('Test 041 : should decrease framework counter after uninstallation', function () {
                     var install = pluginHandlers.getInstaller('framework');
                     var dummyNonCustomFrameworks = dummyPluginInfo.getFrameworks('ios').filter(function (f) {

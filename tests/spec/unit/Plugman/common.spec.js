@@ -38,7 +38,6 @@ var copyNewFile = common.__get__('copyNewFile');
 var removeFileAndParents = common.__get__('removeFileAndParents');
 
 describe('common handler routines', function () {
-
     describe('copyFile', function () {
         it('Test 001 : should throw if source path not found', function () {
             shell.rm('-rf', test_dir);
@@ -118,7 +117,6 @@ describe('common handler routines', function () {
 
             shell.rm('-rf', project_dir);
         });
-
     });
 
     describe('copyNewFile', function () {
@@ -128,7 +126,6 @@ describe('common handler routines', function () {
                 .toThrow(new Error('"' + dest + '" already exists!'));
             shell.rm('-rf', dest);
         });
-
     });
 
     describe('deleteJava', function () {

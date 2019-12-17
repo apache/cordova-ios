@@ -33,7 +33,6 @@ describe('unit tests for Podfile module', function () {
     var podfile = new Podfile(fixturePodfile, PROJECT_NAME);
 
     describe('tests', function () {
-
         it('Test 001 : throws CordovaError when the path filename is not named Podfile', function () {
             var dummyPath = 'NotAPodfile';
             expect(function () {
@@ -100,8 +99,8 @@ describe('unit tests for Podfile module', function () {
             podfile.addSpec('Foo-Baz', '4.0');
             podfile.addSpec('Foo~Baz@!%@!%!', '5.0');
             podfile.addSpec('Bla', ':configurations => [\'Debug\', \'Beta\']');
-            podfile.addSpec('Bla2', { 'configurations': 'Debug,Release' });
-            podfile.addSpec('Bla3', { 'configurations': 'Debug, Release' });
+            podfile.addSpec('Bla2', { configurations: 'Debug,Release' });
+            podfile.addSpec('Bla3', { configurations: 'Debug, Release' });
 
             podfile.write();
 
@@ -163,7 +162,6 @@ describe('unit tests for Podfile module', function () {
 
             expect(actualProjectName).toBe(expectedProjectName);
         });
-
     });
 
     it('Test 012 : tear down', function () {
