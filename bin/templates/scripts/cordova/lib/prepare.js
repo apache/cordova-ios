@@ -607,10 +607,10 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
             sizes.forEach(width => {
                 sizes.forEach(height => {
                     const item = {
-                        idiom: idiom,
-                        scale: scale,
-                        width: width,
-                        height: height
+                        idiom,
+                        scale,
+                        width,
+                        height
                     };
 
                     /* examples of the search pattern:

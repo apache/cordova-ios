@@ -162,7 +162,7 @@ function checkTool (tool, minVersion, message, toolFriendlyName) {
     return versions.get_tool_version(tool).then(version => {
         version = version.trim();
         return versions.compareVersions(version, minVersion) >= 0
-            ? Q.resolve({ version: version })
+            ? Q.resolve({ version })
             : Q.reject('Cordova needs ' + toolFriendlyName + ' version ' + minVersion +
               ' or greater, you have version ' + version + '. ' + (message || ''));
     });

@@ -86,7 +86,7 @@ function parseProjectFile (locations) {
         getUninstaller: function (name) {
             return pluginHandlers.getUninstaller(name);
         },
-        frameworks: frameworks
+        frameworks
     };
     return cachedProjectFiles[project_dir];
 }
@@ -97,7 +97,7 @@ function purgeProjectFileCache (project_dir) {
 
 module.exports = {
     parse: parseProjectFile,
-    purgeProjectFileCache: purgeProjectFileCache
+    purgeProjectFileCache
 };
 
 xcode.project.prototype.pbxEmbedFrameworksBuildPhaseObj = function (target) {
