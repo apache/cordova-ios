@@ -20,24 +20,22 @@
 const list_devices = require('../../../../bin/templates/scripts/cordova/lib/list-devices');
 const Q = require('q');
 
-describe('cordova/lib/list-devices', function () {
-    describe('run method', function () {
-        beforeEach(function () {
+describe('cordova/lib/list-devices', () => {
+    describe('run method', () => {
+        beforeEach(() => {
             spyOn(Q, 'all').and.returnValue(Q.resolve([]));
             spyOn(Q, 'nfcall');
         });
-        it('should invoke proper system calls to retrieve connected devices', function () {
-            return list_devices.run()
-                .then(() => {
-                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
-                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
-                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
-                });
-        });
-        it('should trim and split standard output and return as array', function () {
+        it('should invoke proper system calls to retrieve connected devices', () => list_devices.run()
+            .then(() => {
+                expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
+                expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
+                expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
+            }));
+        it('should trim and split standard output and return as array', () => {
             Q.all.and.returnValue(Q.resolve([['   this is\nmy sweet\nstdout\n    ']]));
             return list_devices.run()
-                .then(function (results) {
+                .then(results => {
                     expect(results).toContain('this is');
                     expect(results).toContain('my sweet');
                     expect(results).toContain('stdout');

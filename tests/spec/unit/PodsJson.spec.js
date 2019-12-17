@@ -26,24 +26,24 @@ const PodsJson = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bi
 const fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'pods.json');
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
-describe('unit tests for Podfile module', function () {
+describe('unit tests for Podfile module', () => {
     let podsjson = null;
-    beforeEach(function () {
+    beforeEach(() => {
         podsjson = new PodsJson(fixturePodsJson);
     });
-    afterEach(function () {
+    afterEach(() => {
         podsjson.destroy();
     });
 
-    describe('tests', function () {
-        it('Test 001 : throws CordovaError when the path filename is not named pods.json', function () {
+    describe('tests', () => {
+        it('Test 001 : throws CordovaError when the path filename is not named pods.json', () => {
             const dummyPath = 'NotPodsJson';
-            expect(function () {
+            expect(() => {
                 new PodsJson(dummyPath); /* eslint no-new : 0 */
             }).toThrow(new CordovaError(util.format('PodsJson: The file at %s is not `%s`.', dummyPath, PodsJson.FILENAME)));
         });
 
-        it('Test 002 : setsJson and gets pod test', function () {
+        it('Test 002 : setsJson and gets pod test', () => {
             const val0 = {
                 name: 'Foo',
                 type: 'podspec',
@@ -60,7 +60,7 @@ describe('unit tests for Podfile module', function () {
             expect(val1.count).toEqual(val0.count);
         });
 
-        it('Test 003 : setsJson and remove pod test', function () {
+        it('Test 003 : setsJson and remove pod test', () => {
             const val0 = {
                 name: 'Bar',
                 type: 'podspec',
@@ -81,7 +81,7 @@ describe('unit tests for Podfile module', function () {
             expect(val1).toBeFalsy();
         });
 
-        it('Test 004 : clears all pods', function () {
+        it('Test 004 : clears all pods', () => {
             const val0 = {
                 name: 'Baz',
                 type: 'podspec',
@@ -96,7 +96,7 @@ describe('unit tests for Podfile module', function () {
             expect(podsjson.getLibrary('Bar')).toBeFalsy();
         });
 
-        it('Test 005 : isDirty tests', function () {
+        it('Test 005 : isDirty tests', () => {
             const val0 = {
                 name: 'Foo',
                 type: 'podspec',
@@ -120,7 +120,7 @@ describe('unit tests for Podfile module', function () {
             expect(podsjson.isDirty()).toBe(false);
         });
 
-        it('Test 006 : increment and decrement count test', function () {
+        it('Test 006 : increment and decrement count test', () => {
             const val0 = {
                 name: 'Bla',
                 type: 'podspec',
@@ -148,7 +148,7 @@ describe('unit tests for Podfile module', function () {
             expect(podsjson.getLibrary(val0.name)).toBeFalsy();
         });
 
-        it('Test 007 : writes pods to the pods.json', function () {
+        it('Test 007 : writes pods to the pods.json', () => {
             podsjson.clear();
 
             const vals = {
@@ -183,10 +183,10 @@ describe('unit tests for Podfile module', function () {
             expect(podEqual(podsjson.getLibrary('Baz'), newPodsJson.getLibrary('Baz'))).toBe(true);
         });
 
-        it('Test 008 : setJson, get, increment, decrement, remove and write for Declaration', function () {
+        it('Test 008 : setJson, get, increment, decrement, remove and write for Declaration', () => {
             let result = null;
             const writeFileSyncSpy = spyOn(fs, 'writeFileSync');
-            writeFileSyncSpy.and.callFake(function (filepath, data, encode) {
+            writeFileSyncSpy.and.callFake((filepath, data, encode) => {
                 result = data;
             });
             const json = {
@@ -214,10 +214,10 @@ describe('unit tests for Podfile module', function () {
             expect(JSON.parse(result).declarations[json2.declaration]).toEqual(json2);
         });
 
-        it('Test 009 : setJson, get, increment, decrement, remove and write for Source', function () {
+        it('Test 009 : setJson, get, increment, decrement, remove and write for Source', () => {
             let result = null;
             const writeFileSyncSpy = spyOn(fs, 'writeFileSync');
-            writeFileSyncSpy.and.callFake(function (filepath, data, encode) {
+            writeFileSyncSpy.and.callFake((filepath, data, encode) => {
                 result = data;
             });
             const json = {

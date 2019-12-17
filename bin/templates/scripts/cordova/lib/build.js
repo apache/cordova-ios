@@ -89,12 +89,12 @@ function getBundleIdentifier (projectObject) {
  */
 function getDefaultSimulatorTarget () {
     return require('./list-emulator-build-targets').run()
-        .then(function (emulators) {
+        .then(emulators => {
             let targetEmulator;
             if (emulators.length > 0) {
                 targetEmulator = emulators[0];
             }
-            emulators.forEach(function (emulator) {
+            emulators.forEach(emulator => {
                 if (emulator.name.indexOf('iPhone') === 0) {
                     targetEmulator = emulator;
                 }
@@ -103,7 +103,7 @@ function getDefaultSimulatorTarget () {
         });
 }
 
-module.exports.run = function (buildOpts) {
+module.exports.run = buildOpts => {
     let emulatorTarget = '';
     const projectPath = path.join(__dirname, '..', '..');
     let projectName = '';
@@ -130,7 +130,7 @@ module.exports.run = function (buildOpts) {
             const config = buildConfig.ios[buildType];
             if (config) {
                 ['codeSignIdentity', 'codeSignResourceRules', 'provisioningProfile', 'developmentTeam', 'packageType', 'buildFlag', 'iCloudContainerEnvironment', 'automaticProvisioning'].forEach(
-                    function (key) {
+                    key => {
                         buildOpts[key] = buildOpts[key] || config[key];
                     });
             }
@@ -138,14 +138,14 @@ module.exports.run = function (buildOpts) {
     }
 
     return require('./list-devices').run()
-        .then(function (devices) {
+        .then(devices => {
             if (devices.length > 0 && !(buildOpts.emulator)) {
                 // we also explicitly set device flag in options as we pass
                 // those parameters to other api (build as an example)
                 buildOpts.device = true;
                 return check_reqs.check_ios_deploy();
             }
-        }).then(function () {
+        }).then(() => {
             // CB-12287: Determine the device we should target when building for a simulator
             if (!buildOpts.device) {
                 let newTarget = buildOpts.target || '';
@@ -156,9 +156,9 @@ module.exports.run = function (buildOpts) {
                 }
                 // a target was given to us, find the matching Xcode destination name
                 const promise = require('./list-emulator-build-targets').targetForSimIdentifier(newTarget);
-                return promise.then(function (theTarget) {
+                return promise.then(theTarget => {
                     if (!theTarget) {
-                        return getDefaultSimulatorTarget().then(function (defaultTarget) {
+                        return getDefaultSimulatorTarget().then(defaultTarget => {
                             emulatorTarget = defaultTarget.name;
                             events.emit('warn', `No simulator found for "${newTarget}. Falling back to the default target.`);
                             events.emit('log', `Building for "${emulatorTarget}" Simulator (${defaultTarget.identifier}, ${defaultTarget.simIdentifier}).`);
@@ -171,11 +171,10 @@ module.exports.run = function (buildOpts) {
                     }
                 });
             }
-        }).then(function () {
-            return check_reqs.run();
-        }).then(function () {
-            return findXCodeProjectIn(projectPath);
-        }).then(function (name) {
+        })
+        .then(() => check_reqs.run())
+        .then(() => findXCodeProjectIn(projectPath))
+        .then(name => {
             projectName = name;
             let extraConfig = '';
             if (buildOpts.codeSignIdentity) {
@@ -212,7 +211,7 @@ module.exports.run = function (buildOpts) {
             }
 
             return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
-        }).then(function () {
+        }).then(() => {
             const configuration = buildOpts.release ? 'Release' : 'Debug';
 
             events.emit('log', 'Building project: ' + path.join(projectPath, projectName + '.xcworkspace'));
@@ -227,7 +226,7 @@ module.exports.run = function (buildOpts) {
 
             const xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
             return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
-        }).then(function () {
+        }).then(() => {
             if (!buildOpts.device || buildOpts.noSign) {
                 return;
             }
@@ -290,9 +289,7 @@ module.exports.run = function (buildOpts) {
  */
 function findXCodeProjectIn (projectPath) {
     // 'Searching for Xcode project in ' + projectPath);
-    const xcodeProjFiles = shell.ls(projectPath).filter(function (name) {
-        return path.extname(name) === '.xcodeproj';
-    });
+    const xcodeProjFiles = shell.ls(projectPath).filter(name => path.extname(name) === '.xcodeproj');
 
     if (xcodeProjFiles.length === 0) {
         return Q.reject('No Xcode project found in ' + projectPath);
@@ -330,7 +327,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         if (typeof buildFlags === 'string' || buildFlags instanceof String) {
             parseBuildFlag(buildFlags, customArgs);
         } else { // buildFlags is an Array of strings
-            buildFlags.forEach(function (flag) {
+            buildFlags.forEach(flag => {
                 parseBuildFlag(flag, customArgs);
             });
         }

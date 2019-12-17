@@ -22,38 +22,28 @@ const versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {
-    describe('versions', function () {
+    describe('versions', () => {
         describe('get_tool_version method', () => {
-            it('should not have found tool by name.', () => {
-                return versions.get_tool_version('unknown').then(
-                    () => fail('expected promise rejection'),
-                    error => expect(error).toContain('is not valid tool name')
-                );
-            });
+            it('should not have found tool by name.', () => versions.get_tool_version('unknown').then(
+                () => fail('expected promise rejection'),
+                error => expect(error).toContain('is not valid tool name')
+            ));
 
-            it('should find xcodebuild version.', () => {
-                return versions.get_tool_version('xcodebuild').then((version) => {
-                    expect(version).not.toBe(undefined);
-                });
-            });
+            it('should find xcodebuild version.', () => versions.get_tool_version('xcodebuild').then((version) => {
+                expect(version).not.toBe(undefined);
+            }));
 
-            it('should find ios-sim version.', () => {
-                return versions.get_tool_version('ios-sim').then((version) => {
-                    expect(version).not.toBe(undefined);
-                });
-            });
+            it('should find ios-sim version.', () => versions.get_tool_version('ios-sim').then((version) => {
+                expect(version).not.toBe(undefined);
+            }));
 
-            it('should find ios-deploy version.', () => {
-                return versions.get_tool_version('ios-deploy').then((version) => {
-                    expect(version).not.toBe(undefined);
-                });
-            });
+            it('should find ios-deploy version.', () => versions.get_tool_version('ios-deploy').then((version) => {
+                expect(version).not.toBe(undefined);
+            }));
 
-            it('should find pod version.', () => {
-                return versions.get_tool_version('pod').then((version) => {
-                    expect(version).not.toBe(undefined);
-                });
-            });
+            it('should find pod version.', () => versions.get_tool_version('pod').then((version) => {
+                expect(version).not.toBe(undefined);
+            }));
         });
     });
 }

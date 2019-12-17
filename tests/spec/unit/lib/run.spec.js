@@ -25,33 +25,27 @@ if (process.platform === 'darwin') {
     const run = require('../../../../bin/templates/scripts/cordova/lib/run');
     const Q = require('q');
 
-    describe('cordova/lib/run', function () {
-        describe('--list option', function () {
+    describe('cordova/lib/run', () => {
+        describe('--list option', () => {
             let deferred;
-            beforeEach(function () {
+            beforeEach(() => {
                 deferred = Q.defer();
                 deferred.resolve();
                 spyOn(run, 'listDevices').and.returnValue(deferred.promise);
                 spyOn(run, 'listEmulators').and.returnValue(deferred.promise);
             });
-            it('should delegate to listDevices method if `options.device` specified', function () {
-                return run.run({ list: true, device: true }).then(() => {
-                    expect(run.listDevices).toHaveBeenCalled();
-                    expect(run.listEmulators).not.toHaveBeenCalled();
-                });
-            });
-            it('should delegate to listEmulators method if `options.device` specified', function () {
-                return run.run({ list: true, emulator: true }).then(() => {
-                    expect(run.listDevices).not.toHaveBeenCalled();
-                    expect(run.listEmulators).toHaveBeenCalled();
-                });
-            });
-            it('should delegate to both listEmulators and listDevices methods if neither `options.device` nor `options.emulator` are specified', () => {
-                return run.run({ list: true }).then(() => {
-                    expect(run.listDevices).toHaveBeenCalled();
-                    expect(run.listEmulators).toHaveBeenCalled();
-                });
-            });
+            it('should delegate to listDevices method if `options.device` specified', () => run.run({ list: true, device: true }).then(() => {
+                expect(run.listDevices).toHaveBeenCalled();
+                expect(run.listEmulators).not.toHaveBeenCalled();
+            }));
+            it('should delegate to listEmulators method if `options.device` specified', () => run.run({ list: true, emulator: true }).then(() => {
+                expect(run.listDevices).not.toHaveBeenCalled();
+                expect(run.listEmulators).toHaveBeenCalled();
+            }));
+            it('should delegate to both listEmulators and listDevices methods if neither `options.device` nor `options.emulator` are specified', () => run.run({ list: true }).then(() => {
+                expect(run.listDevices).toHaveBeenCalled();
+                expect(run.listEmulators).toHaveBeenCalled();
+            }));
         });
     });
 }

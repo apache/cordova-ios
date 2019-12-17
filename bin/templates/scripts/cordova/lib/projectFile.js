@@ -41,7 +41,7 @@ function parseProjectFile (locations) {
     xcodeproj.parseSync();
 
     const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
-    const plist_file_entry = _.find(xcBuildConfiguration, function (entry) { return entry.buildSettings && entry.buildSettings.INFOPLIST_FILE; });
+    const plist_file_entry = _.find(xcBuildConfiguration, entry => entry.buildSettings && entry.buildSettings.INFOPLIST_FILE);
     const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
     const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
@@ -113,9 +113,7 @@ xcode.project.prototype.addToPbxEmbedFrameworksBuildPhase = function (file) {
 xcode.project.prototype.removeFromPbxEmbedFrameworksBuildPhase = function (file) {
     const sources = this.pbxEmbedFrameworksBuildPhaseObj(file.target);
     if (sources) {
-        sources.files = _.reject(sources.files, function (file) {
-            return file.comment === longComment(file);
-        });
+        sources.files = _.reject(sources.files, file => file.comment === longComment(file));
     }
 };
 

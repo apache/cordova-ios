@@ -50,57 +50,57 @@ function createAndBuild (projectname, projectid) {
     shell.rm('-rf', command);
 }
 
-describe('create', function () {
-    it('Test#001 : create project with ascii name, no spaces', function () {
+describe('create', () => {
+    it('Test#001 : create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#002 : create project with ascii name, and spaces', function () {
+    it('Test#002 : create project with ascii name, and spaces', () => {
         const projectname = 'test create';
         const projectid = 'com.test.app2';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#003 : create project with unicode name, no spaces', function () {
+    it('Test#003 : create project with unicode name, no spaces', () => {
         const projectname = '応応応応用用用用';
         const projectid = 'com.test.app3';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#004 : create project with unicode name 2, no spaces', function () {
+    it('Test#004 : create project with unicode name 2, no spaces', () => {
         const projectname = 'إثرا';
         const projectid = 'com.test.app3.2';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#005 : create project with unicode name, and spaces', function () {
+    it('Test#005 : create project with unicode name, and spaces', () => {
         const projectname = '応応応応 用用用用';
         const projectid = 'com.test.app4';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#006 : create project with ascii+unicode name, no spaces', function () {
+    it('Test#006 : create project with ascii+unicode name, no spaces', () => {
         const projectname = '応応応応hello用用用用';
         const projectid = 'com.test.app5';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#007 : create project with ascii+unicode name, and spaces', function () {
+    it('Test#007 : create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('Test#008 : create project with ascii name, and spaces, ampersand(&)', function () {
+    it('Test#008 : create project with ascii name, and spaces, ampersand(&)', () => {
         const projectname = 'hello & world';
         const projectid = 'com.test.app7';
 
