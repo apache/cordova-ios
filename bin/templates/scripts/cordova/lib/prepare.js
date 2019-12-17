@@ -1001,7 +1001,7 @@ function processAccessAndAllowNavigationEntries (config) {
                     item = {};
                 }
                 for (var o in obj) {
-                    if (obj.hasOwnProperty(o)) {
+                    if (Object.prototype.hasOwnProperty.call(obj, o)) {
                         item[o] = obj[o];
                     }
                 }
@@ -1116,7 +1116,7 @@ function writeATSEntries (config) {
     var ats = {};
 
     for (var hostname in pObj) {
-        if (pObj.hasOwnProperty(hostname)) {
+        if (Object.prototype.hasOwnProperty.call(pObj, hostname)) {
             var entry = pObj[hostname];
 
             // Guiding principle: we only set values if they are available
@@ -1143,7 +1143,7 @@ function writeATSEntries (config) {
             var exceptionDomain = {};
 
             for (var key in entry) {
-                if (entry.hasOwnProperty(key) && key !== 'Hostname') {
+                if (Object.prototype.hasOwnProperty.call(entry, key) && key !== 'Hostname') {
                     exceptionDomain[key] = entry[key];
                 }
             }

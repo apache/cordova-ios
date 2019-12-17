@@ -387,7 +387,7 @@ describe('prepare', function () {
                     'Default@3x~universal~anyany.png': 'res/screen/ios/Default@3x~universal~anyany.png' };
                 // update keys with path to storyboardImagesDir
                 for (var k in expectedResourceMap) {
-                    if (expectedResourceMap.hasOwnProperty(k)) {
+                    if (Object.prototype.hasOwnProperty.call(expectedResourceMap, k)) {
                         expectedResourceMap[storyboardImagesDir + k] = expectedResourceMap[k];
                         delete expectedResourceMap[k];
                     }
@@ -436,7 +436,7 @@ describe('prepare', function () {
                     'Default@3x~universal~anyany.png': null };
                 // update keys with path to storyboardImagesDir
                 for (var k in expectedResourceMap) {
-                    if (expectedResourceMap.hasOwnProperty(k)) {
+                    if (Object.prototype.hasOwnProperty.call(expectedResourceMap, k)) {
                         expectedResourceMap[storyboardImagesDir + k] = null;
                         delete expectedResourceMap[k];
                     }
