@@ -47,7 +47,7 @@
     "tmp": "^0.1.0"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=10"
   },
   "dependencies": {
     "cordova-common": "^3.1.0",
