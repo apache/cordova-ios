@@ -26,12 +26,14 @@ describe('cordova/lib/list-devices', () => {
             spyOn(Q, 'all').and.returnValue(Q.resolve([]));
             spyOn(Q, 'nfcall');
         });
-        it('should invoke proper system calls to retrieve connected devices', () => list_devices.run()
-            .then(() => {
-                expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
-                expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
-                expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
-            }));
+        it('should invoke proper system calls to retrieve connected devices', () => {
+            return list_devices.run()
+                .then(() => {
+                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
+                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
+                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
+                });
+        });
         it('should trim and split standard output and return as array', () => {
             Q.all.and.returnValue(Q.resolve([['   this is\nmy sweet\nstdout\n    ']]));
             return list_devices.run()

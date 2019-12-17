@@ -51,9 +51,11 @@ describe('check_reqs', () => {
             err => expect(err).toEqual(new TypeError('Invalid Version: a.b.c'))
         ));
 
-        it('should resolve passing back tool version.', () => checkTool('node', '1.0.0').then(result => {
-            expect(result).toEqual({ version: '1.0.0' });
-        }));
+        it('should resolve passing back tool version.', () => {
+            return checkTool('node', '1.0.0').then(result => {
+                expect(result).toEqual({ version: '1.0.0' });
+            });
+        });
 
         it('should reject because tool does not meet minimum requirement.', () => checkTool('node', '1.0.1').then(
             () => fail('Expected promise to be rejected'),

@@ -125,11 +125,13 @@ describe('Platform Api', () => {
                     spyOn(my_plugin, 'getHeaderFiles').and.returnValue([my_bridgingHeader_json]);
                     BridgingHeader_mod.BridgingHeader.and.callFake(() => bridgingHeader_mock);
                 });
-                it('should add BridgingHeader', () => api.addPlugin(my_plugin)
-                    .then(() => {
-                        expect(bridgingHeader_mock.addHeader).toHaveBeenCalledWith(my_plugin.id, 'bridgingHeaderSource!');
-                        expect(bridgingHeader_mock.write).toHaveBeenCalled();
-                    }));
+                it('should add BridgingHeader', () => {
+                    return api.addPlugin(my_plugin)
+                        .then(() => {
+                            expect(bridgingHeader_mock.addHeader).toHaveBeenCalledWith(my_plugin.id, 'bridgingHeaderSource!');
+                            expect(bridgingHeader_mock.write).toHaveBeenCalled();
+                        });
+                });
             });
             describe('adding pods since the plugin contained <podspecs>', () => {
                 let podsjson_mock;
@@ -170,16 +172,18 @@ describe('Platform Api', () => {
                     PodsJson_mod.PodsJson.and.callFake(() => podsjson_mock);
                     Podfile_mod.Podfile.and.callFake(() => podfile_mock);
                 });
-                it('on a new declaration, it should add a new json to declarations', () => api.addPlugin(my_plugin)
-                    .then(() => {
-                        expect(podsjson_mock.getDeclaration.calls.count()).toEqual(2);
-                        compareListWithoutOrder(podsjson_mock.getDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
-                        expect(podsjson_mock.setJsonDeclaration.calls.count()).toEqual(2);
-                        compareListWithoutOrder(podsjson_mock.setJsonDeclaration.calls.allArgs(),
-                            [['use_frameworks!', { declaration: 'use_frameworks!', count: 1 }], ['inhibit_all_warnings!', { declaration: 'inhibit_all_warnings!', count: 1 }]]);
-                        expect(podfile_mock.addDeclaration.calls.count()).toEqual(2);
-                        compareListWithoutOrder(podfile_mock.addDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
-                    }));
+                it('on a new declaration, it should add a new json to declarations', () => {
+                    return api.addPlugin(my_plugin)
+                        .then(() => {
+                            expect(podsjson_mock.getDeclaration.calls.count()).toEqual(2);
+                            compareListWithoutOrder(podsjson_mock.getDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
+                            expect(podsjson_mock.setJsonDeclaration.calls.count()).toEqual(2);
+                            compareListWithoutOrder(podsjson_mock.setJsonDeclaration.calls.allArgs(),
+                                [['use_frameworks!', { declaration: 'use_frameworks!', count: 1 }], ['inhibit_all_warnings!', { declaration: 'inhibit_all_warnings!', count: 1 }]]);
+                            expect(podfile_mock.addDeclaration.calls.count()).toEqual(2);
+                            compareListWithoutOrder(podfile_mock.addDeclaration.calls.allArgs(), [['use_frameworks!'], ['inhibit_all_warnings!']]);
+                        });
+                });
                 it('should increment count in declarations if already exists', () => {
                     podsjson_mock.getDeclaration.and.callFake(declaration => {
                         if (declaration === 'use_frameworks!') {
@@ -198,18 +202,20 @@ describe('Platform Api', () => {
                             compareListWithoutOrder(podfile_mock.addDeclaration.calls.allArgs(), [['inhibit_all_warnings!']]);
                         });
                 });
-                it('on a new source, it should add a new json to sources', () => api.addPlugin(my_plugin)
-                    .then(() => {
-                        expect(podsjson_mock.getSource.calls.count()).toEqual(2);
-                        compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
-                        expect(podsjson_mock.setJsonSource.calls.count()).toEqual(2);
-                        compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [
-                            ['https://github.com/sample/SampleSpecs.git', { source: 'https://github.com/sample/SampleSpecs.git', count: 1 }],
-                            ['https://github.com/CocoaPods/Specs.git', { source: 'https://github.com/CocoaPods/Specs.git', count: 1 }]
-                        ]);
-                        expect(podfile_mock.addSource.calls.count()).toEqual(2);
-                        compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
-                    }));
+                it('on a new source, it should add a new json to sources', () => {
+                    return api.addPlugin(my_plugin)
+                        .then(() => {
+                            expect(podsjson_mock.getSource.calls.count()).toEqual(2);
+                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            expect(podsjson_mock.setJsonSource.calls.count()).toEqual(2);
+                            compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [
+                                ['https://github.com/sample/SampleSpecs.git', { source: 'https://github.com/sample/SampleSpecs.git', count: 1 }],
+                                ['https://github.com/CocoaPods/Specs.git', { source: 'https://github.com/CocoaPods/Specs.git', count: 1 }]
+                            ]);
+                            expect(podfile_mock.addSource.calls.count()).toEqual(2);
+                            compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                        });
+                });
                 it('should increment count in sources if already exists', () => {
                     podsjson_mock.getSource.and.callFake(source => {
                         if (source === 'https://github.com/CocoaPods/Specs.git') {
@@ -228,27 +234,29 @@ describe('Platform Api', () => {
                             compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git']]);
                         });
                 });
-                it('on a new library, it should add a new json to library', () => api.addPlugin(my_plugin)
-                    .then(() => {
-                        expect(podsjson_mock.getLibrary.calls.count()).toEqual(3);
-                        compareListWithoutOrder(podsjson_mock.getLibrary.calls.allArgs(), [
-                            ['AFNetworking'],
-                            ['Eureka'],
-                            ['HogeLib']
-                        ]);
-                        expect(podsjson_mock.setJsonLibrary.calls.count()).toEqual(3);
-                        compareListWithoutOrder(podsjson_mock.setJsonLibrary.calls.allArgs(), [
-                            ['AFNetworking', { name: 'AFNetworking', spec: '~> 3.2', count: 1 }],
-                            ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
-                            ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
-                        ]);
-                        expect(podfile_mock.addSpec.calls.count()).toEqual(3);
-                        compareListWithoutOrder(podfile_mock.addSpec.calls.allArgs(), [
-                            ['AFNetworking', { name: 'AFNetworking', spec: '~> 3.2', count: 1 }],
-                            ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
-                            ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
-                        ]);
-                    }));
+                it('on a new library, it should add a new json to library', () => {
+                    return api.addPlugin(my_plugin)
+                        .then(() => {
+                            expect(podsjson_mock.getLibrary.calls.count()).toEqual(3);
+                            compareListWithoutOrder(podsjson_mock.getLibrary.calls.allArgs(), [
+                                ['AFNetworking'],
+                                ['Eureka'],
+                                ['HogeLib']
+                            ]);
+                            expect(podsjson_mock.setJsonLibrary.calls.count()).toEqual(3);
+                            compareListWithoutOrder(podsjson_mock.setJsonLibrary.calls.allArgs(), [
+                                ['AFNetworking', { name: 'AFNetworking', spec: '~> 3.2', count: 1 }],
+                                ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
+                                ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
+                            ]);
+                            expect(podfile_mock.addSpec.calls.count()).toEqual(3);
+                            compareListWithoutOrder(podfile_mock.addSpec.calls.allArgs(), [
+                                ['AFNetworking', { name: 'AFNetworking', spec: '~> 3.2', count: 1 }],
+                                ['Eureka', { name: 'Eureka', spec: '4.0', 'swift-version': '4.1', count: 1 }],
+                                ['HogeLib', { name: 'HogeLib', git: 'https://github.com/hoge/HogewLib.git', branch: 'develop', count: 1 }]
+                            ]);
+                        });
+                });
                 it('should increment count in libraries if already exists', () => {
                     podsjson_mock.getLibrary.and.callFake(library => {
                         if (library === 'AFNetworking') {
@@ -313,11 +321,13 @@ describe('Platform Api', () => {
                             expect(podsjson_mock.incrementLibrary).toHaveBeenCalledWith('podsource!');
                         });
                 });
-                it('on a new framework/pod name/src/key, it should add a new json to podsjson and add a new spec to podfile', () => api.addPlugin(my_plugin)
-                    .then(() => {
-                        expect(podsjson_mock.setJsonLibrary).toHaveBeenCalledWith(my_pod_json.src, jasmine.any(Object));
-                        expect(podfile_mock.addSpec).toHaveBeenCalledWith(my_pod_json.src, my_pod_json.spec);
-                    }));
+                it('on a new framework/pod name/src/key, it should add a new json to podsjson and add a new spec to podfile', () => {
+                    return api.addPlugin(my_plugin)
+                        .then(() => {
+                            expect(podsjson_mock.setJsonLibrary).toHaveBeenCalledWith(my_pod_json.src, jasmine.any(Object));
+                            expect(podfile_mock.addSpec).toHaveBeenCalledWith(my_pod_json.src, my_pod_json.spec);
+                        });
+                });
                 it('should write out podfile and install if podfile was changed', () => {
                     podfile_mock.isDirty.and.returnValue(true);
                     podfile_mock.install.and.returnValue({ then: function () { } });

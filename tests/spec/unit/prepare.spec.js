@@ -665,9 +665,11 @@ describe('prepare', () => {
                 expect(prop).toEqual('testpkg_ios');
             });
         });
-        it('Test#004 : should write out the app version to info plist as CFBundleVersion', () => updateProject(cfg, p.locations).then(() => {
-            expect(plist.build.calls.mostRecent().args[0].CFBundleShortVersionString).toEqual('one point oh');
-        }));
+        it('Test#004 : should write out the app version to info plist as CFBundleVersion', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                expect(plist.build.calls.mostRecent().args[0].CFBundleShortVersionString).toEqual('one point oh');
+            });
+        });
         it('Test#005 : should write out the orientation preference value', () => {
             cfg.getPreference.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
@@ -726,14 +728,16 @@ describe('prepare', () => {
         // NOTE: if an ATS value is equal to "null", it means that it was not written,
         // thus it will use the default (check the default for the key).
         // This is to prevent the Info.plist to be too verbose.
-        it('Test#012 : <access> - should handle wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            expect(ats.NSAllowsArbitraryLoads).toEqual(true);
-            expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
-            expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(undefined); // DEPRECATED
-            expect(ats.NSAllowsArbitraryLoadsForMedia).toEqual(undefined);
-            expect(ats.NSAllowsLocalNetworking).toEqual(undefined);
-        }));
+        it('Test#012 : <access> - should handle wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                expect(ats.NSAllowsArbitraryLoads).toEqual(true);
+                expect(ats.NSAllowsArbitraryLoadsInWebContent).toEqual(undefined);
+                expect(ats.NSAllowsArbitraryLoadsInMedia).toEqual(undefined); // DEPRECATED
+                expect(ats.NSAllowsArbitraryLoadsForMedia).toEqual(undefined);
+                expect(ats.NSAllowsLocalNetworking).toEqual(undefined);
+            });
+        });
 
         it('<access> - should handle wildcard, with NSAllowsArbitraryLoadsInWebContent', () => {
             const origReadFile = fse.readFileSync;
@@ -938,220 +942,226 @@ describe('prepare', () => {
             });
         });
 
-        it('Test#13 : <access> - https, subdomain wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+        it('Test#13 : <access> - https, subdomain wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server01.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server01.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server02.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server02.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server02-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server02-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server02-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server02-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server03.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server03.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server04.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server04.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server04-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server04-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server04-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
+                d = exceptionDomains['server04-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
 
-        it('Test#014 : <access> - http, no wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+        it('Test#014 : <access> - http, no wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server05.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server05.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server06.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server06.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server06-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server06-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server06-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server06-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server07.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server07.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server08.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server08.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server08-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server08-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server08-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
-        it('Test#015 : <access> - https, no wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+                d = exceptionDomains['server08-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
+        it('Test#015 : <access> - https, no wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server09.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server09.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server10.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server10.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server10-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server10-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server10-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server10-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server11.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server11.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server12.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server12.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server12-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server12-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server12-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
+                d = exceptionDomains['server12-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
         /// ///////////////////////////////////////////////
         it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', () => {
             // original name here is 'SampleApp' based on p
@@ -1228,371 +1238,383 @@ describe('prepare', () => {
             });
         });
 
-        it('<allow-navigation> - https, subdomain wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+        it('<allow-navigation> - https, subdomain wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server21.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server21.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server22.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server22.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server22-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server22-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server22-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server22-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server23.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server23.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server24.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server24.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server24-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server24-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server24-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
+                d = exceptionDomains['server24-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
 
-        it('<allow-navigation> - http, no wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+        it('<allow-navigation> - http, no wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server25.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server25.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server26.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server26.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server26-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server26-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server26-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server26-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server27.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server27.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server28.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server28.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server28-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server28-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server28-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
+                d = exceptionDomains['server28-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
 
-        it('<allow-navigation> - https, no wildcard', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+        it('<allow-navigation> - https, no wildcard', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server29.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server29.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server30.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server30.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server30-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server30-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server30-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server30-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server31.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server31.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server32.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server32.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server32-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server32-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server32-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
+                d = exceptionDomains['server32-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(undefined);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
 
-        it('Test#017 : <allow-navigation> - wildcard scheme, wildcard subdomain', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+        it('Test#017 : <allow-navigation> - wildcard scheme, wildcard subdomain', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server33.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server33.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server34.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server34.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server34-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server34-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server34-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server34-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server35.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server35.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server36.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server36.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server36-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server36-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server36-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(true);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
-        it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            let d;
+                d = exceptionDomains['server36-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(true);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
+        it('Test#018 : <allow-navigation> - wildcard scheme, no subdomain', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                let d;
 
-            expect(exceptionDomains).toBeTruthy();
+                expect(exceptionDomains).toBeTruthy();
 
-            d = exceptionDomains['server37.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server37.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server38.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server38.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server38-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server38-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server38-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server38-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual(undefined);
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server39.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server39.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server40.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
+                d = exceptionDomains['server40.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(undefined);
 
-            d = exceptionDomains['server40-1.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
+                d = exceptionDomains['server40-1.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(undefined);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
 
-            d = exceptionDomains['server40-2.com'];
-            expect(d).toBeTruthy();
-            expect(d.NSIncludesSubdomains).toEqual(undefined);
-            expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
-            expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
-            expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
-            expect(d.NSRequiresCertificateTransparency).toEqual(true);
-        }));
-        it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', () => updateProject(cfg, p.locations).then(() => {
-            const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
-            const exceptionDomains = ats.NSExceptionDomains;
-            expect(exceptionDomains['']).toBeUndefined();
-            expect(exceptionDomains['null']).toBeUndefined();
-            expect(exceptionDomains['undefined']).toBeUndefined();
-        }));
+                d = exceptionDomains['server40-2.com'];
+                expect(d).toBeTruthy();
+                expect(d.NSIncludesSubdomains).toEqual(undefined);
+                expect(d.NSExceptionAllowsInsecureHTTPLoads).toEqual(true);
+                expect(d.NSExceptionMinimumTLSVersion).toEqual('TLSv1.1');
+                expect(d.NSExceptionRequiresForwardSecrecy).toEqual(false);
+                expect(d.NSRequiresCertificateTransparency).toEqual(true);
+            });
+        });
+        it('Test#019 : <allow-navigation> - should ignore wildcards like data:*, https:*, https://*', () => {
+            return updateProject(cfg, p.locations).then(() => {
+                const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
+                const exceptionDomains = ats.NSExceptionDomains;
+                expect(exceptionDomains['']).toBeUndefined();
+                expect(exceptionDomains['null']).toBeUndefined();
+                expect(exceptionDomains['undefined']).toBeUndefined();
+            });
+        });
         it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', () => {
             cfg.shortName = () => 'MyApp';
             return updateProject(cfg, p.locations).then(() => {
