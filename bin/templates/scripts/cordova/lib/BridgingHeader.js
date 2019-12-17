@@ -31,7 +31,7 @@ function BridgingHeader (bridgingHeaderPath) {
 }
 
 BridgingHeader.prototype.addHeader = function (plugin_id, header_path) {
-    this.bridgingHeaders.push({ type: 'code', code: '#import "' + header_path + '"\n' });
+    this.bridgingHeaders.push({ type: 'code', code: `#import "${header_path}"\n` });
 };
 
 BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
@@ -40,7 +40,7 @@ BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
             return true;
         }
         if (line.type === 'code') {
-            const re = new RegExp('#import\\s+"' + preg_quote(header_path) + '"(\\s*|\\s.+)(\\n|$)');
+            const re = new RegExp(`#import\\s+"${preg_quote(header_path)}"(\\s*|\\s.+)(\\n|$)`);
             if (re.test(line.code)) {
                 this.found = true;
                 return false;
@@ -117,7 +117,7 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
 };
 
 function preg_quote (str, delimiter) {
-    return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
+    return (`${str}`).replace(new RegExp(`[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\${delimiter || ''}-]`, 'g'), '\\$&');
 }
 
 module.exports.BridgingHeader = BridgingHeader;

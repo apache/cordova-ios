@@ -28,7 +28,7 @@ module.exports.run = () => {
     const projectName = shell.ls(projectPath).filter(name => path.extname(name) === '.xcodeproj')[0];
 
     if (!projectName) {
-        return Q.reject('No Xcode project found in ' + projectPath);
+        return Q.reject(`No Xcode project found in ${projectPath}`);
     }
 
     const xcodebuildClean = configName => {

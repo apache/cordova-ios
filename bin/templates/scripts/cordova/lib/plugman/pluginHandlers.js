@@ -58,10 +58,10 @@ const handlers = {
             const destFile = path.resolve(project.resources_dir, target);
 
             if (!fs.existsSync(srcFile)) {
-                throw new CordovaError('Cannot find resource file "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
+                throw new CordovaError(`Cannot find resource file "${srcFile}" for plugin ${plugin.id} in iOS platform`);
             }
             if (fs.existsSync(destFile)) {
-                throw new CordovaError('File already exists at destination "' + destFile + '" for resource file specified by plugin ' + plugin.id + ' in iOS platform');
+                throw new CordovaError(`File already exists at destination "${destFile}" for resource file specified by plugin ${plugin.id} in iOS platform`);
             }
             project.xcode.addResourceFile(path.join('Resources', target));
             const link = !!(options && options.link);
@@ -106,8 +106,8 @@ const handlers = {
             }
             const srcFile = path.resolve(plugin.dir, src);
             const targetDir = path.resolve(project.plugins_dir, plugin.id, path.basename(src));
-            if (!fs.existsSync(srcFile)) throw new CordovaError('Cannot find framework "' + srcFile + '" for plugin ' + plugin.id + ' in iOS platform');
-            if (fs.existsSync(targetDir)) throw new CordovaError('Framework "' + targetDir + '" for plugin ' + plugin.id + ' already exists in iOS platform');
+            if (!fs.existsSync(srcFile)) throw new CordovaError(`Cannot find framework "${srcFile}" for plugin ${plugin.id} in iOS platform`);
+            if (fs.existsSync(targetDir)) throw new CordovaError(`Framework "${targetDir}" for plugin ${plugin.id} already exists in iOS platform`);
             const symlink = !!(options && options.link);
             copyFile(plugin.dir, src, project.projectDir, targetDir, symlink); // frameworks are directories
             // CB-10773 translate back slashes to forward on win32
@@ -191,14 +191,14 @@ const handlers = {
         install: function (obj, plugin, project, options) {
             // Copy the plugin's files into the www directory.
             const moduleSource = path.resolve(plugin.dir, obj.src);
-            const moduleName = plugin.id + '.' + (obj.name || path.basename(obj.src, path.extname(obj.src)));
+            const moduleName = `${plugin.id}.${obj.name || path.basename(obj.src, path.extname(obj.src))}`;
 
             // Read in the file, prepend the cordova.define, and write it back out.
             let scriptContent = fs.readFileSync(moduleSource, 'utf-8').replace(/^\ufeff/, ''); // Window BOM
             if (moduleSource.match(/.*\.json$/)) {
-                scriptContent = 'module.exports = ' + scriptContent;
+                scriptContent = `module.exports = ${scriptContent}`;
             }
-            scriptContent = 'cordova.define("' + moduleName + '", function(require, exports, module) {\n' + scriptContent + '\n});\n';
+            scriptContent = `cordova.define("${moduleName}", function(require, exports, module) {\n${scriptContent}\n});\n`;
 
             const moduleDestination = path.resolve(project.www, 'plugins', plugin.id, obj.src);
             shell.mkdir('-p', path.dirname(moduleDestination));
@@ -222,7 +222,7 @@ module.exports.getInstaller = type => {
         return handlers[type].install;
     }
 
-    events.emit('warn', '<' + type + '> is not supported for iOS plugins');
+    events.emit('warn', `<${type}> is not supported for iOS plugins`);
 };
 
 module.exports.getUninstaller = type => {
@@ -230,7 +230,7 @@ module.exports.getUninstaller = type => {
         return handlers[type].uninstall;
     }
 
-    events.emit('warn', '<' + type + '> is not supported for iOS plugins');
+    events.emit('warn', `<${type}> is not supported for iOS plugins`);
 };
 
 function installHelper (type, obj, plugin_dir, project_dir, plugin_id, options, project) {
@@ -252,14 +252,14 @@ function installHelper (type, obj, plugin_dir, project_dir, plugin_id, options, 
         // Make the Xcode reference the file directly.
         // Note: Can't use path.join() here since it collapses 'Plugins/..', and xcode
         // library special-cases Plugins/ prefix.
-        project_ref = 'Plugins/' + fixPathSep(path.relative(fs.realpathSync(project.plugins_dir), trueSrc));
+        project_ref = `Plugins/${fixPathSep(path.relative(fs.realpathSync(project.plugins_dir), trueSrc))}`;
     } else {
         if (options && options.force) {
             copyFile(plugin_dir, srcFile, project_dir, destFile, link);
         } else {
             copyNewFile(plugin_dir, srcFile, project_dir, destFile, link);
         }
-        project_ref = 'Plugins/' + fixPathSep(path.relative(project.plugins_dir, destFile));
+        project_ref = `Plugins/${fixPathSep(path.relative(project.plugins_dir, destFile))}`;
     }
 
     if (type === 'header-file') {
@@ -282,9 +282,9 @@ function uninstallHelper (type, obj, project_dir, plugin_id, options, project) {
     const link = !!(options && options.link);
     if (link) {
         const trueSrc = fs.readlinkSync(destFile);
-        project_ref = 'Plugins/' + fixPathSep(path.relative(fs.realpathSync(project.plugins_dir), trueSrc));
+        project_ref = `Plugins/${fixPathSep(path.relative(fs.realpathSync(project.plugins_dir), trueSrc))}`;
     } else {
-        project_ref = 'Plugins/' + fixPathSep(path.relative(project.plugins_dir, destFile));
+        project_ref = `Plugins/${fixPathSep(path.relative(project.plugins_dir, destFile))}`;
     }
 
     shell.rm('-rf', targetDir);
@@ -307,17 +307,17 @@ function fixPathSep (file) {
 
 function copyFile (plugin_dir, src, project_dir, dest, link) {
     src = path.resolve(plugin_dir, src);
-    if (!fs.existsSync(src)) throw new CordovaError('"' + src + '" not found!');
+    if (!fs.existsSync(src)) throw new CordovaError(`"${src}" not found!`);
 
     // check that src path is inside plugin directory
     const real_path = fs.realpathSync(src);
     const real_plugin_path = fs.realpathSync(plugin_dir);
-    if (real_path.indexOf(real_plugin_path) !== 0) { throw new CordovaError('File "' + src + '" is located outside the plugin directory "' + plugin_dir + '"'); }
+    if (real_path.indexOf(real_plugin_path) !== 0) { throw new CordovaError(`File "${src}" is located outside the plugin directory "${plugin_dir}"`); }
 
     dest = path.resolve(project_dir, dest);
 
     // check that dest path is located in project directory
-    if (dest.indexOf(project_dir) !== 0) { throw new CordovaError('Destination "' + dest + '" for source file "' + src + '" is located outside the project'); }
+    if (dest.indexOf(project_dir) !== 0) { throw new CordovaError(`Destination "${dest}" for source file "${src}" is located outside the project`); }
 
     shell.mkdir('-p', path.dirname(dest));
 
@@ -334,7 +334,7 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
 // Same as copy file but throws error if target exists
 function copyNewFile (plugin_dir, src, project_dir, dest, link) {
     const target_path = path.resolve(project_dir, dest);
-    if (fs.existsSync(target_path)) { throw new CordovaError('"' + target_path + '" already exists!'); }
+    if (fs.existsSync(target_path)) { throw new CordovaError(`"${target_path}" already exists!`); }
 
     copyFile(plugin_dir, src, project_dir, dest, !!link);
 }
@@ -387,5 +387,5 @@ function removeFileAndParents (baseDir, destFile, stopper) {
 }
 
 function generateAttributeError (attribute, element, id) {
-    return 'Required attribute "' + attribute + '" not specified in <' + element + '> element from plugin: ' + id;
+    return `Required attribute "${attribute}" not specified in <${element}> element from plugin: ${id}`;
 }

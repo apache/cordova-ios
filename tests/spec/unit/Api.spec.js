@@ -305,7 +305,7 @@ describe('Platform Api', () => {
                 // TODO: a little help with clearly labeling / describing the tests below? :(
                 it('should warn if Pods JSON contains name/src but differs in spec', () => {
                     podsjson_mock.getLibrary.and.returnValue({
-                        spec: 'something different from ' + my_pod_json.spec
+                        spec: `something different from ${my_pod_json.spec}`
                     });
                     spyOn(events, 'emit');
                     return api.addPlugin(my_plugin)
@@ -340,7 +340,7 @@ describe('Platform Api', () => {
                 });
                 it('if two frameworks with the same name are added, should honour the spec of the first-installed plugin', () => {
                     podsjson_mock.getLibrary.and.returnValue({
-                        spec: 'something different from ' + my_pod_json.spec
+                        spec: `something different from ${my_pod_json.spec}`
                     });
                     return api.addPlugin(my_plugin)
                         .then(() => {

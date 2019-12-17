@@ -309,17 +309,17 @@ Podfile.prototype.write = function () {
                 return util.format('\tpod \'%s\'', name);
             }
         } else {
-            const list = ['\'' + name + '\''];
+            const list = [`'${name}'`];
             if ('spec' in json && json.spec.length) {
-                list.push('\'' + json.spec + '\'');
+                list.push(`'${json.spec}'`);
             }
 
             let options = ['tag', 'branch', 'commit', 'git', 'podspec']
                 .filter(tag => tag in json)
-                .map(tag => ':' + tag + ' => \'' + json[tag] + '\'');
+                .map(tag => `:${tag} => '${json[tag]}'`);
 
             if ('configurations' in json) {
-                options.push(':configurations => [' + json['configurations'].split(',').map(conf => '\'' + conf.trim() + '\'').join(',') + ']');
+                options.push(`:configurations => [${json['configurations'].split(',').map(conf => `'${conf.trim()}'`).join(',')}]`);
             }
             if ('options' in json) {
                 options = [json.options];

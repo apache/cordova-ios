@@ -39,7 +39,7 @@ module.exports = (cmd, args, opt_cwd) => {
 
         child.on('exit', code => {
             if (code) {
-                d.reject('Error code ' + code + ' for command: ' + cmd + ' with args: ' + args);
+                d.reject(`Error code ${code} for command: ${cmd} with args: ${args}`);
             } else {
                 d.resolve();
             }
