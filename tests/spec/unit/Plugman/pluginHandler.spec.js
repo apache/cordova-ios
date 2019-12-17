@@ -294,7 +294,8 @@ describe('ios plugin handler', () => {
         describe('of <js-module> elements', () => {
             const jsModule = { src: 'www/dummyplugin.js' };
             const install = pluginHandlers.getInstaller('js-module');
-            let wwwDest, platformWwwDest;
+            let wwwDest;
+            let platformWwwDest;
 
             beforeEach(() => {
                 spyOn(fs, 'writeFileSync');
@@ -497,7 +498,8 @@ describe('ios plugin handler', () => {
         describe('of <js-module> elements', () => {
             const jsModule = { src: 'www/dummyPlugin.js' };
             const uninstall = pluginHandlers.getUninstaller('js-module');
-            let wwwDest, platformWwwDest;
+            let wwwDest;
+            let platformWwwDest;
 
             beforeEach(() => {
                 wwwDest = path.resolve(dummyProject.www, 'plugins', dummyPluginInfo.id, jsModule.src);
@@ -528,7 +530,8 @@ describe('ios plugin handler', () => {
         describe('of <asset> elements', () => {
             const asset = { src: 'www/dummyPlugin.js', target: 'foo/dummy.js' };
             const uninstall = pluginHandlers.getUninstaller('asset');
-            let wwwDest, platformWwwDest;
+            let wwwDest;
+            let platformWwwDest;
 
             beforeEach(() => {
                 wwwDest = path.resolve(dummyProject.www, asset.target);

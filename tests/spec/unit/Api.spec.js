@@ -66,7 +66,8 @@ describe('Platform Api', () => {
     });
 
     describe('.prototype', () => {
-        let api, events;
+        let api;
+        let events;
         const projectRoot = iosProjectFixture;
         beforeEach(() => {
             events = new EventEmitter();
