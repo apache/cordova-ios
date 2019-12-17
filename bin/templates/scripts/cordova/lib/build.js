@@ -33,14 +33,14 @@ var events = require('cordova-common').events;
 // These are regular expressions to detect if the user is changing any of the built-in xcodebuildArgs
 /* eslint-disable no-useless-escape */
 var buildFlagMatchers = {
-    'workspace': /^\-workspace\s*(.*)/,
-    'scheme': /^\-scheme\s*(.*)/,
-    'configuration': /^\-configuration\s*(.*)/,
-    'sdk': /^\-sdk\s*(.*)/,
-    'destination': /^\-destination\s*(.*)/,
-    'archivePath': /^\-archivePath\s*(.*)/,
-    'configuration_build_dir': /^(CONFIGURATION_BUILD_DIR=.*)/,
-    'shared_precomps_dir': /^(SHARED_PRECOMPS_DIR=.*)/
+    workspace: /^\-workspace\s*(.*)/,
+    scheme: /^\-scheme\s*(.*)/,
+    configuration: /^\-configuration\s*(.*)/,
+    sdk: /^\-sdk\s*(.*)/,
+    destination: /^\-destination\s*(.*)/,
+    archivePath: /^\-archivePath\s*(.*)/,
+    configuration_build_dir: /^(CONFIGURATION_BUILD_DIR=.*)/,
+    shared_precomps_dir: /^(SHARED_PRECOMPS_DIR=.*)/
 };
 /* eslint-enable no-useless-escape */
 
@@ -227,7 +227,6 @@ module.exports.run = function (buildOpts) {
 
             var xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
             return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
-
         }).then(function () {
             if (!buildOpts.device || buildOpts.noSign) {
                 return;
@@ -235,7 +234,7 @@ module.exports.run = function (buildOpts) {
 
             var project = createProjectObject(projectPath, projectName);
             var bundleIdentifier = getBundleIdentifier(project);
-            var exportOptions = { 'compileBitcode': false, 'method': 'development' };
+            var exportOptions = { compileBitcode: false, method: 'development' };
 
             if (buildOpts.packageType) {
                 exportOptions.method = buildOpts.packageType;
@@ -250,7 +249,7 @@ module.exports.run = function (buildOpts) {
             }
 
             if (buildOpts.provisioningProfile && bundleIdentifier) {
-                exportOptions.provisioningProfiles = { [ bundleIdentifier ]: String(buildOpts.provisioningProfile) };
+                exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };
                 exportOptions.signingStyle = 'manual';
             }
 
@@ -346,7 +345,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
             '-destination', customArgs.destination || 'generic/platform=iOS',
             '-archivePath', customArgs.archivePath || projectName + '.xcarchive'
         ];
-        buildActions = [ 'archive' ];
+        buildActions = ['archive'];
         settings = [
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
@@ -368,7 +367,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
             '-sdk', customArgs.sdk || 'iphonesimulator',
             '-destination', customArgs.destination || 'platform=iOS Simulator,name=' + emulatorTarget
         ];
-        buildActions = [ 'build' ];
+        buildActions = ['build'];
         settings = [
             customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
             customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')

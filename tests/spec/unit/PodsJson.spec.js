@@ -36,7 +36,6 @@ describe('unit tests for Podfile module', function () {
     });
 
     describe('tests', function () {
-
         it('Test 001 : throws CordovaError when the path filename is not named pods.json', function () {
             var dummyPath = 'NotPodsJson';
             expect(function () {
@@ -153,9 +152,9 @@ describe('unit tests for Podfile module', function () {
             podsjson.clear();
 
             var vals = {
-                'Foo': { name: 'Foo', type: 'podspec', spec: '1.0', count: 1 },
-                'Bar': { name: 'Bar', type: 'podspec', spec: '2.0', count: 2 },
-                'Baz': { name: 'Baz', type: 'podspec', spec: '3.0', count: 3 }
+                Foo: { name: 'Foo', type: 'podspec', spec: '1.0', count: 1 },
+                Bar: { name: 'Bar', type: 'podspec', spec: '2.0', count: 2 },
+                Baz: { name: 'Baz', type: 'podspec', spec: '3.0', count: 3 }
             };
 
             podsjson.setJsonLibrary('Foo', vals.Foo);
@@ -245,7 +244,6 @@ describe('unit tests for Podfile module', function () {
             expect(writeFileSyncSpy).toHaveBeenCalled();
             expect(JSON.parse(result).sources[json2.source]).toEqual(json2);
         });
-
     });
 
     // it('Test 008 : tear down', function () {

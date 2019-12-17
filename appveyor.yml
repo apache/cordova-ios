@@ -12,5 +12,5 @@ build: off
 test_script:
   - node --version
   - npm --version
+  - npm run lint
   - npm run unit-tests
-  - npm run eslint

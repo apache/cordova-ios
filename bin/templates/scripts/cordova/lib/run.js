@@ -31,7 +31,6 @@ var cordovaPath = path.join(__dirname, '..');
 var projectPath = path.join(__dirname, '..', '..');
 
 module.exports.run = function (runOptions) {
-
     // Validate args
     if (runOptions.device && runOptions.emulator) {
         return Q.reject('Only one of "device"/"emulator" options should be specified');
@@ -79,7 +78,7 @@ module.exports.run = function (runOptions) {
                         var ipafile = path.join(buildOutputDir, projectName + '.ipa');
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return superspawn.spawn('unzip', [ '-o', '-qq', ipafile ], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
+                        return superspawn.spawn('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
                     })
                     .then(function () {
                         // Uncompress IPA (zip file)

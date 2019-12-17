@@ -47,7 +47,6 @@ function compareListWithoutOrder (list1, list2) {
 }
 
 describe('Platform Api', function () {
-
     describe('constructor', function () {
         it('Test 001 : should throw if provided directory does not contain an xcodeproj file', function () {
             expect(() =>
@@ -149,16 +148,16 @@ describe('Platform Api', function () {
                         'https://github.com/CocoaPods/Specs.git': { source: 'https://github.com/CocoaPods/Specs.git' }
                     },
                     libraries: {
-                        'AFNetworking': {
+                        AFNetworking: {
                             name: 'AFNetworking',
                             spec: '~> 3.2'
                         },
-                        'Eureka': {
+                        Eureka: {
                             name: 'Eureka',
                             spec: '4.0',
                             'swift-version': '4.1'
                         },
-                        'HogeLib': {
+                        HogeLib: {
                             name: 'HogeLib',
                             git: 'https://github.com/hoge/HogewLib.git',
                             branch: 'develop'
@@ -388,16 +387,16 @@ describe('Platform Api', function () {
                         'https://github.com/CocoaPods/Specs.git': { source: 'https://github.com/CocoaPods/Specs.git' }
                     },
                     libraries: {
-                        'AFNetworking': {
+                        AFNetworking: {
                             name: 'AFNetworking',
                             spec: '~> 3.2'
                         },
-                        'Eureka': {
+                        Eureka: {
                             name: 'Eureka',
                             spec: '4.0',
                             'swift-version': '4.1'
                         },
-                        'HogeLib': {
+                        HogeLib: {
                             name: 'HogeLib',
                             git: 'https://github.com/hoge/HogewLib.git',
                             branch: 'develop'

@@ -124,7 +124,5 @@ describe('unit tests for BridgingHeader module', function () {
         text_list = result_json.text.split('\n');
         expect(text_list.filter(function (line) { return line === headerImportText(dummy_plugin.header_path); }).length).toEqual(0);
         expect(text_list.filter(function (line) { return line === headerImportText(dummy_plugin2.header_path); }).length).toEqual(0);
-
     });
-
 });
