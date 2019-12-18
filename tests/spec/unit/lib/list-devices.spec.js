@@ -17,8 +17,8 @@
        under the License.
 */
 
-var list_devices = require('../../../../bin/templates/scripts/cordova/lib/list-devices');
-var Q = require('q');
+const list_devices = require('../../../../bin/templates/scripts/cordova/lib/list-devices');
+const Q = require('q');
 
 describe('cordova/lib/list-devices', function () {
     describe('run method', function () {

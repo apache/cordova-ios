@@ -19,13 +19,13 @@
  under the License.
  */
 
-var shell = require('shelljs');
+const shell = require('shelljs');
 
 function killSimulator (processName) {
-    var result;
-    var return_code = 0;
+    let result;
+    let return_code = 0;
     // check iOS Simulator if running
-    var command = 'pgrep -x "' + processName + '" > /dev/null';
+    const command = 'pgrep -x "' + processName + '" > /dev/null';
     return_code = shell.exec(command).code;
 
     // if iOS Simulator is running, kill it

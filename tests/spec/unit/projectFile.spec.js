@@ -17,15 +17,15 @@
     under the License.
 */
 
-var os = require('os');
-var path = require('path');
-var shell = require('shelljs');
-var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+const os = require('os');
+const path = require('path');
+const shell = require('shelljs');
+const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 
-var iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
-var iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml/*');
+const iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
+const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml/*');
 
-var locations = {
+const locations = {
     root: iosProject,
     pbxproj: path.join(iosProject, 'SampleApp.xcodeproj/project.pbxproj')
 };
@@ -56,18 +56,18 @@ describe('projectFile', function () {
         });
         it('Test#004 : should return right directory when multiple .plist files are present', function () {
             // Create a folder named A with config.xml and .plist files in it
-            var pathToFolderA = path.join(iosProject, 'A');
+            const pathToFolderA = path.join(iosProject, 'A');
             shell.mkdir(pathToFolderA);
             shell.cp('-rf', path.join(iosProject, 'SampleApp/*'), pathToFolderA);
 
-            var parsedProjectFile = projectFile.parse(locations);
-            var pluginsDir = parsedProjectFile.plugins_dir;
-            var resourcesDir = parsedProjectFile.resources_dir;
-            var xcodePath = parsedProjectFile.xcode_path;
+            const parsedProjectFile = projectFile.parse(locations);
+            const pluginsDir = parsedProjectFile.plugins_dir;
+            const resourcesDir = parsedProjectFile.resources_dir;
+            const xcodePath = parsedProjectFile.xcode_path;
 
-            var pluginsDirParent = path.dirname(pluginsDir);
-            var resourcesDirParent = path.dirname(resourcesDir);
-            var sampleAppDir = path.join(iosProject, 'SampleApp');
+            const pluginsDirParent = path.dirname(pluginsDir);
+            const resourcesDirParent = path.dirname(resourcesDir);
+            const sampleAppDir = path.join(iosProject, 'SampleApp');
 
             expect(pluginsDirParent).toEqual(sampleAppDir);
             expect(resourcesDirParent).toEqual(sampleAppDir);
