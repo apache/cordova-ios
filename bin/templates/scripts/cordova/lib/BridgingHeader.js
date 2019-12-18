@@ -55,9 +55,11 @@ BridgingHeader.prototype.write = function () {
     fs.writeFileSync(this.path, text, 'utf8');
 };
 
-BridgingHeader.prototype.__stringifyForBridgingHeader = bridgingHeaders => bridgingHeaders.map(obj => obj.code).join('');
+BridgingHeader.prototype.__stringifyForBridgingHeader = function (bridgingHeaders) {
+    return bridgingHeaders.map(obj => obj.code).join('');
+};
 
-BridgingHeader.prototype.__parseForBridgingHeader = text => {
+BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
     let i = 0;
     const list = [];
     let type = 'code';

@@ -71,7 +71,7 @@ function Podfile (podFilePath, projectName, minDeploymentTarget) {
     }
 }
 
-Podfile.prototype.__parseForDeclarations = text => {
+Podfile.prototype.__parseForDeclarations = function (text) {
     // split by \n
     const arr = text.split('\n');
 
@@ -108,7 +108,7 @@ Podfile.prototype.__parseForDeclarations = text => {
         }, {});
 };
 
-Podfile.prototype.__parseForSources = text => {
+Podfile.prototype.__parseForSources = function (text) {
     // split by \n
     const arr = text.split('\n');
 
@@ -128,7 +128,7 @@ Podfile.prototype.__parseForSources = text => {
         }, {});
 };
 
-Podfile.prototype.__parseForPods = text => {
+Podfile.prototype.__parseForPods = function (text) {
     // split by \n
     const arr = text.split('\n');
 
@@ -165,7 +165,9 @@ Podfile.prototype.__parseForPods = text => {
         }, {});
 };
 
-Podfile.prototype.escapeSingleQuotes = string => string.replace(/'/g, '\\\'');
+Podfile.prototype.escapeSingleQuotes = function (string) {
+    return string.replace(/'/g, '\\\'');
+};
 
 Podfile.prototype.getTemplate = function () {
     // Escaping possible ' in the project name
@@ -258,7 +260,7 @@ Podfile.prototype.removeDeclaration = function (declaration) {
     events.emit('verbose', util.format('Removed source line for `%s`', declaration));
 };
 
-Podfile.proofDeclaration = declaration => {
+Podfile.proofDeclaration = function (declaration) {
     const list = Object.keys(Podfile.declarationRegexpMap).filter(key => {
         const regexp = new RegExp(Podfile.declarationRegexpMap[key]);
         return regexp.test(declaration);

@@ -630,7 +630,10 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
                      *         return item.src.indexOf(searchPattern) >= 0;
                      *     });
                      */
-                    const launchStoryboardImage = splashScreens.reduce((p, c) => (c.src.indexOf(searchPattern) >= 0) ? c : p, undefined);
+                    const launchStoryboardImage = splashScreens.reduce(
+                        (p, c) => (c.src.indexOf(searchPattern) >= 0) ? c : p
+                        , undefined
+                    );
 
                     if (launchStoryboardImage) {
                         item.filename = 'Default' + searchPattern + '.png';

@@ -46,10 +46,12 @@ describe('check_reqs', () => {
             );
         });
 
-        it('should throw error because version is not following semver-notated.', () => checkTool('node', 'a.b.c').then(
-            () => fail('Expected promise to be rejected'),
-            err => expect(err).toEqual(new TypeError('Invalid Version: a.b.c'))
-        ));
+        it('should throw error because version is not following semver-notated.', () => {
+            return checkTool('node', 'a.b.c').then(
+                () => fail('Expected promise to be rejected'),
+                err => expect(err).toEqual(new TypeError('Invalid Version: a.b.c'))
+            );
+        });
 
         it('should resolve passing back tool version.', () => {
             return checkTool('node', '1.0.0').then(result => {
@@ -57,10 +59,12 @@ describe('check_reqs', () => {
             });
         });
 
-        it('should reject because tool does not meet minimum requirement.', () => checkTool('node', '1.0.1').then(
-            () => fail('Expected promise to be rejected'),
-            reason => expect(reason).toContain('version 1.0.1 or greater, you have version 1.0.0')
-        ));
+        it('should reject because tool does not meet minimum requirement.', () => {
+            return checkTool('node', '1.0.1').then(
+                () => fail('Expected promise to be rejected'),
+                reason => expect(reason).toContain('version 1.0.1 or greater, you have version 1.0.0')
+            );
+        });
     });
 
     describe('check_cocoapods method', () => {

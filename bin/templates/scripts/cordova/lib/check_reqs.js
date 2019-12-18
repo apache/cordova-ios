@@ -49,18 +49,24 @@ const COCOAPODS_REPO_NOT_FOUND_MESSAGE = 'The CocoaPods repo at ~/.cocoapods was
  * Checks if xcode util is available
  * @return {Promise} Returns a promise either resolved with xcode version or rejected
  */
-module.exports.run = module.exports.check_xcodebuild = () => checkTool('xcodebuild', XCODEBUILD_MIN_VERSION, XCODEBUILD_NOT_FOUND_MESSAGE);
+module.exports.run = module.exports.check_xcodebuild = () => {
+    return checkTool('xcodebuild', XCODEBUILD_MIN_VERSION, XCODEBUILD_NOT_FOUND_MESSAGE);
+};
 
 /**
  * Checks if ios-deploy util is available
  * @return {Promise} Returns a promise either resolved with ios-deploy version or rejected
  */
-module.exports.check_ios_deploy = () => checkTool('ios-deploy', IOS_DEPLOY_MIN_VERSION, IOS_DEPLOY_NOT_FOUND_MESSAGE);
+module.exports.check_ios_deploy = () => {
+    return checkTool('ios-deploy', IOS_DEPLOY_MIN_VERSION, IOS_DEPLOY_NOT_FOUND_MESSAGE);
+};
 
 // Build iOS apps available for OSX platform only, so we reject on others platforms
-module.exports.check_os = () => os_platform_is_supported()
-    ? Q.resolve(process.platform)
-    : Q.reject('Cordova tooling for iOS requires Apple macOS');
+module.exports.check_os = () => {
+    return os_platform_is_supported()
+        ? Q.resolve(process.platform)
+        : Q.reject('Cordova tooling for iOS requires Apple macOS');
+};
 
 function os_platform_is_supported () {
     return (SUPPORTED_OS_PLATFORMS.indexOf(process.platform) !== -1);

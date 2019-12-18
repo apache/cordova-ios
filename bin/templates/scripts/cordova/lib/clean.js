@@ -31,19 +31,15 @@ module.exports.run = () => {
         return Q.reject('No Xcode project found in ' + projectPath);
     }
 
-    return superspawn.spawn(
-        'xcodebuild',
-        ['-project', projectName, '-configuration', 'Debug', '-alltargets', 'clean'],
-        { cwd: projectPath, printCommand: true, stdio: 'inherit' }
-    )
-        .then(
-            () => superspawn.spawn(
-                'xcodebuild',
-                ['-project', projectName, '-configuration', 'Release', '-alltargets', 'clean'],
-                { cwd: projectPath, printCommand: true, stdio: 'inherit' }
-            )
-        )
-        .then(
-            () => shell.rm('-rf', path.join(projectPath, 'build'))
+    const xcodebuildClean = configName => {
+        return superspawn.spawn(
+            'xcodebuild',
+            ['-project', projectName, '-configuration', configName, '-alltargets', 'clean'],
+            { cwd: projectPath, printCommand: true, stdio: 'inherit' }
         );
+    };
+
+    return xcodebuildClean('Debug')
+        .then(() => xcodebuildClean('Release'))
+        .then(() => shell.rm('-rf', path.join(projectPath, 'build')));
 };

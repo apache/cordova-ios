@@ -116,7 +116,7 @@ function Api (platform, platformRootDir, events) {
  * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
  *   instance or rejected with CordovaError.
  */
-Api.createPlatform = (destination, config, options, events) => {
+Api.createPlatform = function (destination, config, options, events) {
     setupEvents(events);
 
     // CB-6992 it is necessary to normalize characters
@@ -156,7 +156,7 @@ Api.createPlatform = (destination, config, options, events) => {
  * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
  *   instance or rejected with CordovaError.
  */
-Api.updatePlatform = (destination, options, events) => {
+Api.updatePlatform = function (destination, options, events) {
     setupEvents(events);
 
     let result;
@@ -679,6 +679,8 @@ Api.prototype.clean = function (cleanOptions) {
  * @return  {Promise<Requirement[]>}  Promise, resolved with set of Requirement
  *   objects for current platform.
  */
-Api.prototype.requirements = () => check_reqs.check_all();
+Api.prototype.requirements = function () {
+    return check_reqs.check_all();
+};
 
 module.exports = Api;

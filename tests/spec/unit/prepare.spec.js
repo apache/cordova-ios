@@ -616,7 +616,8 @@ describe('prepare', () => {
         });
         it('should write SwiftVersion preference (3.3)', () => {
             cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
-            const pref = cfg3.doc.findall('platform[@name=\'ios\']/preference').filter(elem => elem.attrib.name.toLowerCase() === 'swiftversion')[0];
+            const pref = cfg3.doc.findall('platform[@name=\'ios\']/preference')
+                .filter(elem => elem.attrib.name.toLowerCase() === 'swiftversion')[0];
             pref.attrib.value = '3.3';
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
