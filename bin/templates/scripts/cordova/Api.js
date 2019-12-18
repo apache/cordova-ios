@@ -270,7 +270,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 var frameworkPods = frameworkTags.filter(function (obj) {
                     return (obj.type === 'podspec');
                 });
-                return self.addPodSpecs(plugin, podSpecs, frameworkPods);
+                return self.addPodSpecs(plugin, podSpecs, frameworkPods, installOptions);
             }
         })
         // CB-11022 return non-falsy value to indicate
@@ -342,7 +342,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
  * @return  {Promise}  Return a promise
  */
 
-Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
+Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOptions) {
     var self = this;
 
     var project_dir = self.locations.root;
@@ -391,6 +391,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
             // libraries
             Object.keys(obj.libraries).forEach(function (key) {
                 var podJson = Object.assign({}, obj.libraries[key]);
+                podJson.spec = podJson.spec.includes('$') ? installOptions.variables[podJson.spec.replace('$', '')] : podJson.spec;
                 var val = podsjsonFile.getLibrary(key);
                 if (val) {
                     events.emit('warn', plugin.id + ' depends on ' + podJson.name + ', which may conflict with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
@@ -409,10 +410,11 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
         events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
         events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
         frameworkPods.forEach(function (obj) {
+            var spec = obj.spec.includes('$') ? installOptions.variables[obj.spec.replace('$', '')] : obj.spec;
             var podJson = {
                 name: obj.src,
                 type: obj.type,
-                spec: obj.spec
+                spec: spec
             };
 
             var val = podsjsonFile.getLibrary(podJson.name);
