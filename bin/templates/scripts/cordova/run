@@ -31,23 +31,23 @@ if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >=
 
 // Parse arguments (includes build params as well)
 var opts = nopt({
-    'verbose': Boolean,
-    'silent': Boolean,
-    'debug': Boolean,
-    'release': Boolean,
-    'nobuild': Boolean,
-    'archs': String,
-    'list': Boolean,
-    'device': Boolean,
-    'emulator': Boolean,
-    'target': String,
-    'codeSignIdentity': String,
-    'codeSignResourceRules': String,
-    'provisioningProfile': String,
-    'automaticProvisioning': Boolean,
-    'buildConfig': String,
-    'noSign': Boolean
-}, { 'd': '--verbose' }, args);
+    verbose: Boolean,
+    silent: Boolean,
+    debug: Boolean,
+    release: Boolean,
+    nobuild: Boolean,
+    archs: String,
+    list: Boolean,
+    device: Boolean,
+    emulator: Boolean,
+    target: String,
+    codeSignIdentity: String,
+    codeSignResourceRules: String,
+    provisioningProfile: String,
+    automaticProvisioning: Boolean,
+    buildConfig: String,
+    noSign: Boolean
+}, { d: '--verbose' }, args);
 
 // Make options compatible with PlatformApi build method spec
 opts.argv = opts.argv.remain;

@@ -1,7 +1,5 @@
 environment:
   matrix:
-  - nodejs_version: 6
-  - nodejs_version: 8
   - nodejs_version: 10
   - nodejs_version: 12
 
@@ -14,5 +12,5 @@ build: off
 test_script:
   - node --version
   - npm --version
+  - npm run lint
   - npm run unit-tests
-  - npm run eslint

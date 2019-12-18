@@ -80,7 +80,7 @@ var handlers = {
             shell.rm('-rf', destFile);
         }
     },
-    'framework': { // CB-5238 custom frameworks only
+    framework: { // CB-5238 custom frameworks only
         install: function (obj, plugin, project, options) {
             var src = obj.src;
             var custom = !!(obj.custom); // convert to boolean (if truthy/falsy)
@@ -96,7 +96,7 @@ var handlers = {
                     } else {
                         project.frameworks[src] = project.frameworks[src] || 0;
                         project.frameworks[src]++;
-                        let opt = { customFramework: false, embed: false, link: true, weak: obj.weak };
+                        const opt = { customFramework: false, embed: false, link: true, weak: obj.weak };
                         events.emit('verbose', util.format('Adding non-custom framework to project... %s -> %s', src, JSON.stringify(opt)));
                         project.xcode.addFramework(src, opt);
                         events.emit('verbose', util.format('Non-custom framework added to project. %s -> %s', src, JSON.stringify(opt)));
@@ -118,7 +118,7 @@ var handlers = {
                 events.emit('verbose', '"Embed Frameworks" Build Phase (Embedded Binaries) does not exist, creating it.');
                 project.xcode.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks', null, 'frameworks');
             }
-            let opt = { customFramework: true, embed: embed, link: link, sign: true };
+            const opt = { customFramework: true, embed: embed, link: link, sign: true };
             events.emit('verbose', util.format('Adding custom framework to project... %s -> %s', src, JSON.stringify(opt)));
             project.xcode.addFramework(project_relative, opt);
             events.emit('verbose', util.format('Custom framework added to project. %s -> %s', src, JSON.stringify(opt)));
@@ -160,7 +160,7 @@ var handlers = {
             events.emit('verbose', '<lib-file> uninstall is not supported for iOS plugins');
         }
     },
-    'asset': {
+    asset: {
         install: function (obj, plugin, project, options) {
             if (!obj.src) {
                 throw new CordovaError(generateAttributeError('src', 'asset', plugin.id));

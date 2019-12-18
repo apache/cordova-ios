@@ -66,7 +66,6 @@ function Api (platform, platformRootDir, events) {
     var xcodeCordovaProj;
 
     try {
-
         var xcodeProjDir_array = fs.readdirSync(this.root).filter(function (e) { return e.match(/\.xcodeproj$/i); });
         if (xcodeProjDir_array.length > 1) {
             for (var x = 0; x < xcodeProjDir_array.length; x++) {
@@ -230,7 +229,6 @@ Api.prototype.prepare = function (cordovaProject) {
  *   CordovaError instance.
  */
 Api.prototype.addPlugin = function (plugin, installOptions) {
-
     var xcodeproj = projectFile.parse(this.locations);
     var self = this;
 
@@ -402,7 +400,6 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
                     podfileFile.addSpec(podJson.name, podJson);
                 }
             });
-
         });
     }
 
@@ -527,7 +524,6 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
                     podfileFile.removeSpec(podJson.name);
                 }
             });
-
         });
     }
 

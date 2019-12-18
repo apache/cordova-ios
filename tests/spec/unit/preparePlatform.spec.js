@@ -43,7 +43,7 @@ describe('prepare after plugin add', function () {
         api = new Api('ios', iosPlatform, new EventEmitter());
 
         jasmine.addMatchers({
-            'toBeInstalledIn': function () {
+            toBeInstalledIn: function () {
                 return {
                     compare: function (actual, expected) {
                         var result = {};

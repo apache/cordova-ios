@@ -51,7 +51,6 @@ function createAndBuild (projectname, projectid) {
 }
 
 describe('create', function () {
-
     it('Test#001 : create project with ascii name, no spaces', function () {
         var projectname = 'testcreate';
         var projectid = 'com.test.app1';
