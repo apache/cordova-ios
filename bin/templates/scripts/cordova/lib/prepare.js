@@ -631,8 +631,8 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
                      *     });
                      */
                     const launchStoryboardImage = splashScreens.reduce(
-                        (p, c) => (c.src.indexOf(searchPattern) >= 0) ? c : p
-                        , undefined
+                        (p, c) => (c.src.indexOf(searchPattern) >= 0) ? c : p,
+                        undefined
                     );
 
                     if (launchStoryboardImage) {
