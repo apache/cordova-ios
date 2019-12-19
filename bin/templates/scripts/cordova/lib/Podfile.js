@@ -260,7 +260,7 @@ Podfile.prototype.removeDeclaration = function (declaration) {
     events.emit('verbose', util.format('Removed source line for `%s`', declaration));
 };
 
-Podfile.proofDeclaration = function (declaration) {
+Podfile.proofDeclaration = declaration => {
     const list = Object.keys(Podfile.declarationRegexpMap).filter(key => {
         const regexp = new RegExp(Podfile.declarationRegexpMap[key]);
         return regexp.test(declaration);
