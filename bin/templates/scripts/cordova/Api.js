@@ -45,8 +45,7 @@ function setupEvents (externalEventEmitter) {
 }
 
 function getVariableSpec (spec, options) {
-    const variables = options ? options.variables || options.cli_variables : {};
-    return spec.includes('$') ? variables[spec.replace('$', '')] : spec;
+    return spec.includes('$') ? options.cli_variables[spec.replace('$', '')] : spec;
 }
 
 /**
