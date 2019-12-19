@@ -61,8 +61,8 @@ module.exports.check_ios_deploy = () => {
     return checkTool('ios-deploy', IOS_DEPLOY_MIN_VERSION, IOS_DEPLOY_NOT_FOUND_MESSAGE);
 };
 
-// Build iOS apps available for OSX platform only, so we reject on others platforms
 module.exports.check_os = () => {
+    // Build iOS apps available for OSX platform only, so we reject on others platforms
     return os_platform_is_supported()
         ? Q.resolve(process.platform)
         : Q.reject('Cordova tooling for iOS requires Apple macOS');
