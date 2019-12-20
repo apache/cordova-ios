@@ -44,6 +44,10 @@ function setupEvents (externalEventEmitter) {
     }
 }
 
+function getVariableSpec (spec, options) {
+    return spec.includes('$') ? options.cli_variables[spec.replace('$', '')] : spec;
+}
+
 /**
  * Creates a new PlatformApi instance.
  *
@@ -264,7 +268,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
                 const frameworkTags = plugin.getFrameworks(self.platform);
                 const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
-                return self.addPodSpecs(plugin, podSpecs, frameworkPods);
+                return self.addPodSpecs(plugin, podSpecs, frameworkPods, );
             }
         })
         // CB-11022 return non-falsy value to indicate
@@ -314,7 +318,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
                 const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
                 const frameworkTags = plugin.getFrameworks(self.platform);
                 const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
-                return self.removePodSpecs(plugin, podSpecs, frameworkPods);
+                return self.removePodSpecs(plugin, podSpecs, frameworkPods, uninstallOptions);
             }
         })
         // CB-11022 return non-falsy value to indicate
@@ -332,7 +336,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
  * @return  {Promise}  Return a promise
  */
 
-Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
+Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOptions) {
     const self = this;
 
     const project_dir = self.locations.root;
@@ -381,6 +385,9 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
             // libraries
             Object.keys(obj.libraries).forEach(key => {
                 const podJson = Object.assign({}, obj.libraries[key]);
+                if (podJson.spec) {
+                    podJson.spec = getVariableSpec(podJson.spec, installOptions);
+                }
                 const val = podsjsonFile.getLibrary(key);
                 if (val) {
                     events.emit('warn', plugin.id + ' depends on ' + podJson.name + ', which may conflict with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
@@ -398,10 +405,11 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
         events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
         events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
         frameworkPods.forEach(obj => {
+            const spec = getVariableSpec(obj.spec, installOptions);
             const podJson = {
                 name: obj.src,
                 type: obj.type,
-                spec: obj.spec
+                spec
             };
 
             const val = podsjsonFile.getLibrary(podJson.name);
@@ -449,7 +457,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
  * @return  {Promise}  Return a promise
  */
 
-Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
+Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods, uninstallOptions) {
     const self = this;
 
     const project_dir = self.locations.root;
@@ -501,6 +509,9 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
             // libraries
             Object.keys(obj.libraries).forEach(key => {
                 const podJson = Object.assign({}, obj.libraries[key]);
+                if (podJson.spec) {
+                    podJson.spec = getVariableSpec(podJson.spec, uninstallOptions);
+                }
                 const val = podsjsonFile.getLibrary(key);
                 if (val) {
                     podsjsonFile.decrementLibrary(key);
@@ -519,10 +530,11 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
         events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
         events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type=\"podspec\"'); /* eslint no-useless-escape : 0 */
         frameworkPods.forEach(obj => {
+            const spec = getVariableSpec(obj.spec, uninstallOptions);
             const podJson = {
                 name: obj.src,
                 type: obj.type,
-                spec: obj.spec
+                spec
             };
 
             const val = podsjsonFile.getLibrary(podJson.name);
