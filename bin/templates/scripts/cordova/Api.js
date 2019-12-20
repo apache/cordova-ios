@@ -268,7 +268,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
                 const frameworkTags = plugin.getFrameworks(self.platform);
                 const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
-                return self.addPodSpecs(plugin, podSpecs, frameworkPods, );
+                return self.addPodSpecs(plugin, podSpecs, frameworkPods, installOptions);
             }
         })
         // CB-11022 return non-falsy value to indicate
