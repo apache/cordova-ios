@@ -17,37 +17,36 @@
  under the License.
  */
 
-var path = require('path');
-var fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 const EventEmitter = require('events');
-var PluginManager = require('cordova-common').PluginManager;
-var Api = require('../../../bin/templates/scripts/cordova/Api');
-var check_reqs = require('../../../bin/templates/scripts/cordova/lib/check_reqs');
+const PluginManager = require('cordova-common').PluginManager;
+const Api = require('../../../bin/templates/scripts/cordova/Api');
+const check_reqs = require('../../../bin/templates/scripts/cordova/lib/check_reqs');
 
 // The lib/run module pulls in ios-sim, which has a hard requirement that it
 // be run on a Mac OS - simply requiring the module is enough to trigger the
 // environment checks. These checks will blow up on Windows + Linux.
 // So, conditionally pull in the module, and conditionally test the `run`
 // method (more below).
-var run_mod;
+let run_mod;
 if (process.platform === 'darwin') {
     run_mod = require('../../../bin/templates/scripts/cordova/lib/run');
 }
 
-var projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
-var BridgingHeader_mod = require('../../../bin/templates/scripts/cordova/lib/BridgingHeader.js');
-var Podfile_mod = require('../../../bin/templates/scripts/cordova/lib/Podfile');
-var PodsJson_mod = require('../../../bin/templates/scripts/cordova/lib/PodsJson');
-var Q = require('q');
-var FIXTURES = path.join(__dirname, 'fixtures');
-var iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
+const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+const BridgingHeader_mod = require('../../../bin/templates/scripts/cordova/lib/BridgingHeader.js');
+const Podfile_mod = require('../../../bin/templates/scripts/cordova/lib/Podfile');
+const PodsJson_mod = require('../../../bin/templates/scripts/cordova/lib/PodsJson');
+const Q = require('q');
+const FIXTURES = path.join(__dirname, 'fixtures');
+const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 
 function compareListWithoutOrder (list1, list2) {
     expect(list1.sort()).toEqual(list2.sort());
 }
 
 describe('Platform Api', function () {
-
     describe('constructor', function () {
         it('Test 001 : should throw if provided directory does not contain an xcodeproj file', function () {
             expect(() =>
@@ -56,7 +55,7 @@ describe('Platform Api', function () {
         });
         it('Test 002 : should create an instance with path, pbxproj, xcodeproj, originalName and cordovaproj properties', function () {
             expect(function () {
-                var p = new Api('ios', iosProjectFixture, new EventEmitter());
+                const p = new Api('ios', iosProjectFixture, new EventEmitter());
                 expect(p.locations.root).toEqual(iosProjectFixture);
                 expect(p.locations.pbxproj).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj', 'project.pbxproj'));
                 expect(p.locations.xcodeProjDir).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj'));
@@ -67,8 +66,8 @@ describe('Platform Api', function () {
     });
 
     describe('.prototype', function () {
-        var api, events;
-        var projectRoot = iosProjectFixture;
+        let api, events;
+        const projectRoot = iosProjectFixture;
         beforeEach(function () {
             events = new EventEmitter();
             api = new Api('ios', projectRoot, events);
@@ -96,7 +95,7 @@ describe('Platform Api', function () {
         }
 
         describe('addPlugin', function () {
-            var my_plugin = {
+            const my_plugin = {
                 getHeaderFiles: function () { return []; },
                 getFrameworks: function () { return []; },
                 getPodSpecs: function () { return []; }
@@ -110,13 +109,13 @@ describe('Platform Api', function () {
                 spyOn(PodsJson_mod, 'PodsJson');
             });
             it('should assign a package name to plugin variables if one is not explicitly provided via options', function () {
-                var opts = {};
+                const opts = {};
                 return api.addPlugin(my_plugin, opts)
                     .then(() => expect(opts.variables.PACKAGE_NAME).toEqual('ios.cordova.io'));
             });
             describe('with header-file of `BridgingHeader` type', function () {
-                var bridgingHeader_mock;
-                var my_bridgingHeader_json = {
+                let bridgingHeader_mock;
+                const my_bridgingHeader_json = {
                     type: 'BridgingHeader',
                     src: 'bridgingHeaderSource!'
                 };
@@ -137,9 +136,9 @@ describe('Platform Api', function () {
                 });
             });
             describe('adding pods since the plugin contained <podspecs>', function () {
-                var podsjson_mock;
-                var podfile_mock;
-                var my_pod_json = {
+                let podsjson_mock;
+                let podfile_mock;
+                const my_pod_json = {
                     declarations: {
                         'use-frameworks': 'true',
                         'inhibit_all_warnings!': 'true'
@@ -149,16 +148,16 @@ describe('Platform Api', function () {
                         'https://github.com/CocoaPods/Specs.git': { source: 'https://github.com/CocoaPods/Specs.git' }
                     },
                     libraries: {
-                        'AFNetworking': {
+                        AFNetworking: {
                             name: 'AFNetworking',
                             spec: '~> 3.2'
                         },
-                        'Eureka': {
+                        Eureka: {
                             name: 'Eureka',
                             spec: '4.0',
                             'swift-version': '4.1'
                         },
-                        'HogeLib': {
+                        HogeLib: {
                             name: 'HogeLib',
                             git: 'https://github.com/hoge/HogewLib.git',
                             branch: 'develop'
@@ -294,9 +293,9 @@ describe('Platform Api', function () {
                 });
             });
             describe('with frameworks of `podspec` type', function () {
-                var podsjson_mock;
-                var podfile_mock;
-                var my_pod_json = {
+                let podsjson_mock;
+                let podfile_mock;
+                const my_pod_json = {
                     type: 'podspec',
                     src: 'podsource!',
                     spec: 'podspec!'
@@ -363,7 +362,7 @@ describe('Platform Api', function () {
             });
         });
         describe('removePlugin', function () {
-            var my_plugin = {
+            const my_plugin = {
                 getHeaderFiles: function () { return []; },
                 getFrameworks: function () {},
                 getPodSpecs: function () { return []; }
@@ -376,9 +375,9 @@ describe('Platform Api', function () {
                 spyOn(PodsJson_mod, 'PodsJson');
             });
             describe('removing pods since the plugin contained <podspecs>', function () {
-                var podsjson_mock;
-                var podfile_mock;
-                var my_pod_json = {
+                let podsjson_mock;
+                let podfile_mock;
+                const my_pod_json = {
                     declarations: {
                         'use-frameworks': 'true',
                         'inhibit_all_warnings!': 'true'
@@ -388,16 +387,16 @@ describe('Platform Api', function () {
                         'https://github.com/CocoaPods/Specs.git': { source: 'https://github.com/CocoaPods/Specs.git' }
                     },
                     libraries: {
-                        'AFNetworking': {
+                        AFNetworking: {
                             name: 'AFNetworking',
                             spec: '~> 3.2'
                         },
-                        'Eureka': {
+                        Eureka: {
                             name: 'Eureka',
                             spec: '4.0',
                             'swift-version': '4.1'
                         },
-                        'HogeLib': {
+                        HogeLib: {
                             name: 'HogeLib',
                             git: 'https://github.com/hoge/HogewLib.git',
                             branch: 'develop'
@@ -419,8 +418,8 @@ describe('Platform Api', function () {
                     });
                 });
                 it('on a last declaration, it should remove a json from declarations', function () {
-                    var json1 = { declaration: 'use_frameworks!', count: 1 };
-                    var json2 = { declaration: 'inhibit_all_warnings!', count: 1 };
+                    const json1 = { declaration: 'use_frameworks!', count: 1 };
+                    const json2 = { declaration: 'inhibit_all_warnings!', count: 1 };
                     podsjson_mock.getDeclaration.and.callFake(function (declaration) {
                         if (declaration === 'use_frameworks!') {
                             return json1;
@@ -447,8 +446,8 @@ describe('Platform Api', function () {
                         });
                 });
                 it('should decrement count in declarations and does not remove if count > 1', function () {
-                    var json1 = { declaration: 'use_frameworks!', count: 2 };
-                    var json2 = { declaration: 'inhibit_all_warnings!', count: 1 };
+                    const json1 = { declaration: 'use_frameworks!', count: 2 };
+                    const json2 = { declaration: 'inhibit_all_warnings!', count: 1 };
                     podsjson_mock.getDeclaration.and.callFake(function (declaration) {
                         if (declaration === 'use_frameworks!') {
                             return json1;
@@ -475,8 +474,8 @@ describe('Platform Api', function () {
                         });
                 });
                 it('on a last source, it should remove a json from sources', function () {
-                    var json1 = { source: 'https://github.com/sample/SampleSpecs.git', count: 1 };
-                    var json2 = { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
+                    const json1 = { source: 'https://github.com/sample/SampleSpecs.git', count: 1 };
+                    const json2 = { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
                     podsjson_mock.getSource.and.callFake(function (source) {
                         if (source === 'https://github.com/sample/SampleSpecs.git') {
                             return json1;
@@ -503,8 +502,8 @@ describe('Platform Api', function () {
                         });
                 });
                 it('should decrement count in sources and does not remove if count > 1', function () {
-                    var json1 = { source: 'https://github.com/sample/SampleSpecs.git', count: 2 };
-                    var json2 = { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
+                    const json1 = { source: 'https://github.com/sample/SampleSpecs.git', count: 2 };
+                    const json2 = { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
                     podsjson_mock.getSource.and.callFake(function (source) {
                         if (source === 'https://github.com/sample/SampleSpecs.git') {
                             return json1;
@@ -531,9 +530,9 @@ describe('Platform Api', function () {
                         });
                 });
                 it('on a last library, it should remove a json from libraries', function () {
-                    var json1 = Object.assign({}, my_pod_json.libraries['AFNetworking'], { count: 1 });
-                    var json2 = Object.assign({}, my_pod_json.libraries['Eureka'], { count: 1 });
-                    var json3 = Object.assign({}, my_pod_json.libraries['HogeLib'], { count: 1 });
+                    const json1 = Object.assign({}, my_pod_json.libraries['AFNetworking'], { count: 1 });
+                    const json2 = Object.assign({}, my_pod_json.libraries['Eureka'], { count: 1 });
+                    const json3 = Object.assign({}, my_pod_json.libraries['HogeLib'], { count: 1 });
                     podsjson_mock.getLibrary.and.callFake(function (name) {
                         if (name === json1.name) {
                             return json1;
@@ -564,9 +563,9 @@ describe('Platform Api', function () {
                         });
                 });
                 it('should decrement count in libraries and does not remove if count > 1', function () {
-                    var json1 = Object.assign({}, my_pod_json.libraries['AFNetworking'], { count: 2 });
-                    var json2 = Object.assign({}, my_pod_json.libraries['Eureka'], { count: 1 });
-                    var json3 = Object.assign({}, my_pod_json.libraries['HogeLib'], { count: 1 });
+                    const json1 = Object.assign({}, my_pod_json.libraries['AFNetworking'], { count: 2 });
+                    const json2 = Object.assign({}, my_pod_json.libraries['Eureka'], { count: 1 });
+                    const json3 = Object.assign({}, my_pod_json.libraries['HogeLib'], { count: 1 });
                     podsjson_mock.getLibrary.and.callFake(function (name) {
                         if (name === json1.name) {
                             return json1;

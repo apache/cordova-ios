@@ -17,21 +17,20 @@
        under the License.
 */
 
-var Q = require('q');
-var path = require('path');
-var build = require('./build');
-var shell = require('shelljs');
-var superspawn = require('cordova-common').superspawn;
-var check_reqs = require('./check_reqs');
-var fs = require('fs-extra');
+const Q = require('q');
+const path = require('path');
+const build = require('./build');
+const shell = require('shelljs');
+const superspawn = require('cordova-common').superspawn;
+const check_reqs = require('./check_reqs');
+const fs = require('fs-extra');
 
-var events = require('cordova-common').events;
+const events = require('cordova-common').events;
 
-var cordovaPath = path.join(__dirname, '..');
-var projectPath = path.join(__dirname, '..', '..');
+const cordovaPath = path.join(__dirname, '..');
+const projectPath = path.join(__dirname, '..', '..');
 
 module.exports.run = function (runOptions) {
-
     // Validate args
     if (runOptions.device && runOptions.emulator) {
         return Q.reject('Only one of "device"/"emulator" options should be specified');
@@ -47,7 +46,7 @@ module.exports.run = function (runOptions) {
         });
     }
 
-    var useDevice = !!runOptions.device;
+    let useDevice = !!runOptions.device;
 
     return require('./list-devices').run()
         .then(function (devices) {
@@ -67,8 +66,8 @@ module.exports.run = function (runOptions) {
         }).then(function () {
             return build.findXCodeProjectIn(projectPath);
         }).then(function (projectName) {
-            var appPath = path.join(projectPath, 'build', 'emulator', projectName + '.app');
-            var buildOutputDir = path.join(projectPath, 'build', 'device');
+            let appPath = path.join(projectPath, 'build', 'emulator', projectName + '.app');
+            const buildOutputDir = path.join(projectPath, 'build', 'device');
 
             // select command to run and arguments depending whether
             // we're running on device/emulator
@@ -76,16 +75,16 @@ module.exports.run = function (runOptions) {
                 return module.exports.checkDeviceConnected()
                     .then(function () {
                         // Unpack IPA
-                        var ipafile = path.join(buildOutputDir, projectName + '.ipa');
+                        const ipafile = path.join(buildOutputDir, projectName + '.ipa');
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return superspawn.spawn('unzip', [ '-o', '-qq', ipafile ], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
+                        return superspawn.spawn('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
                     })
                     .then(function () {
                         // Uncompress IPA (zip file)
-                        var appFileInflated = path.join(buildOutputDir, 'Payload', projectName + '.app');
-                        var appFile = path.join(buildOutputDir, projectName + '.app');
-                        var payloadFolder = path.join(buildOutputDir, 'Payload');
+                        const appFileInflated = path.join(buildOutputDir, 'Payload', projectName + '.app');
+                        const appFile = path.join(buildOutputDir, projectName + '.app');
+                        const payloadFolder = path.join(buildOutputDir, 'Payload');
 
                         // delete the existing platform/ios/build/device/appname.app
                         fs.removeSync(appFile);
@@ -98,7 +97,7 @@ module.exports.run = function (runOptions) {
                     })
                     .then(function () {
                         appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
-                        var extraArgs = [];
+                        let extraArgs = [];
                         if (runOptions.argv) {
                             // argv.slice(2) removes node and run.js, filterSupportedArgs removes the run.js args
                             extraArgs = module.exports.filterSupportedArgs(runOptions.argv.slice(2));
@@ -128,9 +127,9 @@ module.exports.listEmulators = listEmulators;
  * @return {Array} array with unsupported args for the 'run' command
  */
 function filterSupportedArgs (args) {
-    var filtered = [];
-    var sargs = ['--device', '--emulator', '--nobuild', '--list', '--target', '--debug', '--release'];
-    var re = new RegExp(sargs.join('|'));
+    const filtered = [];
+    const sargs = ['--device', '--emulator', '--nobuild', '--list', '--target', '--debug', '--release'];
+    const re = new RegExp(sargs.join('|'));
 
     args.forEach(function (element) {
         // supported args not found, we add
@@ -196,14 +195,14 @@ function deployToSim (appPath, target) {
 }
 
 function startSim (appPath, target) {
-    var logPath = path.join(cordovaPath, 'console.log');
+    const logPath = path.join(cordovaPath, 'console.log');
 
     return iossimLaunch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
 }
 
 function iossimLaunch (appPath, devicetypeid, log, exit) {
-    var f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
-    var params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
+    const f = path.resolve(path.dirname(require.resolve('ios-sim')), 'bin', 'ios-sim');
+    const params = ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit];
 
     return superspawn.spawn(f, params, { cwd: projectPath, printCommand: true })
         .progress(function (stdio) {

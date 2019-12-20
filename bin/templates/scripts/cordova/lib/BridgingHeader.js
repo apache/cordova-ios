@@ -18,8 +18,8 @@
 */
 'use strict';
 
-var fs = require('fs');
-var CordovaError = require('cordova-common').CordovaError;
+const fs = require('fs');
+const CordovaError = require('cordova-common').CordovaError;
 
 function BridgingHeader (bridgingHeaderPath) {
     this.path = bridgingHeaderPath;
@@ -40,7 +40,7 @@ BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
             return true;
         }
         if (line.type === 'code') {
-            var re = new RegExp('#import\\s+"' + preg_quote(header_path) + '"(\\s*|\\s.+)(\\n|$)');
+            const re = new RegExp('#import\\s+"' + preg_quote(header_path) + '"(\\s*|\\s.+)(\\n|$)');
             if (re.test(line.code)) {
                 this.found = true;
                 return false;
@@ -51,7 +51,7 @@ BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
 };
 
 BridgingHeader.prototype.write = function () {
-    var text = this.__stringifyForBridgingHeader(this.bridgingHeaders);
+    const text = this.__stringifyForBridgingHeader(this.bridgingHeaders);
     fs.writeFileSync(this.path, text, 'utf8');
 };
 
@@ -62,10 +62,10 @@ BridgingHeader.prototype.__stringifyForBridgingHeader = function (bridgingHeader
 };
 
 BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
-    var i = 0;
-    var list = [];
-    var type = 'code';
-    var start = 0;
+    let i = 0;
+    const list = [];
+    let type = 'code';
+    let start = 0;
     while (i < text.length) {
         switch (type) {
         case 'comment':

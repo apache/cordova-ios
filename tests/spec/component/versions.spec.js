@@ -17,8 +17,8 @@
  under the License.
  */
 
-var rewire = require('rewire');
-var versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
+const rewire = require('rewire');
+const versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {

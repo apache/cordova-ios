@@ -16,29 +16,28 @@
  *
 */
 
-var fs = require('fs');
-var path = require('path');
-var osenv = require('os');
-var shell = require('shelljs');
-var rewire = require('rewire');
+const fs = require('fs');
+const path = require('path');
+const osenv = require('os');
+const shell = require('shelljs');
+const rewire = require('rewire');
 
-var common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
+const common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
 
-var test_dir = path.join(osenv.tmpdir(), 'test_plugman');
-var project_dir = path.join(test_dir, 'project');
-var src = path.join(project_dir, 'src');
-var dest = path.join(project_dir, 'dest');
-var srcDirTree = path.join(src, 'one', 'two', 'three');
-var srcFile = path.join(srcDirTree, 'test.java');
-var symlink_file = path.join(srcDirTree, 'symlink');
-var non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
+const test_dir = path.join(osenv.tmpdir(), 'test_plugman');
+const project_dir = path.join(test_dir, 'project');
+const src = path.join(project_dir, 'src');
+const dest = path.join(project_dir, 'dest');
+const srcDirTree = path.join(src, 'one', 'two', 'three');
+const srcFile = path.join(srcDirTree, 'test.java');
+const symlink_file = path.join(srcDirTree, 'symlink');
+const non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
 
-var copyFile = common.__get__('copyFile');
-var copyNewFile = common.__get__('copyNewFile');
-var removeFileAndParents = common.__get__('removeFileAndParents');
+const copyFile = common.__get__('copyFile');
+const copyNewFile = common.__get__('copyNewFile');
+const removeFileAndParents = common.__get__('removeFileAndParents');
 
 describe('common handler routines', function () {
-
     describe('copyFile', function () {
         it('Test 001 : should throw if source path not found', function () {
             shell.rm('-rf', test_dir);
@@ -49,7 +48,7 @@ describe('common handler routines', function () {
         it('Test 002 : should throw if src not in plugin directory', function () {
             shell.mkdir('-p', project_dir);
             fs.writeFileSync(non_plugin_file, 'contents', 'utf-8');
-            var outside_file = '../non_plugin_file';
+            const outside_file = '../non_plugin_file';
             expect(function () { copyFile(test_dir, outside_file, project_dir, dest); })
                 .toThrow(new Error('File "' + path.resolve(test_dir, outside_file) + '" is located outside the plugin directory "' + test_dir + '"'));
             shell.rm('-rf', test_dir);
@@ -94,8 +93,8 @@ describe('common handler routines', function () {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            var s = spyOn(shell, 'mkdir').and.callThrough();
-            var resolvedDest = path.resolve(project_dir, dest);
+            const s = spyOn(shell, 'mkdir').and.callThrough();
+            const resolvedDest = path.resolve(project_dir, dest);
 
             copyFile(test_dir, srcFile, project_dir, dest);
 
@@ -108,8 +107,8 @@ describe('common handler routines', function () {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            var s = spyOn(shell, 'cp').and.callThrough();
-            var resolvedDest = path.resolve(project_dir, dest);
+            const s = spyOn(shell, 'cp').and.callThrough();
+            const resolvedDest = path.resolve(project_dir, dest);
 
             copyFile(test_dir, srcFile, project_dir, dest);
 
@@ -118,7 +117,6 @@ describe('common handler routines', function () {
 
             shell.rm('-rf', project_dir);
         });
-
     });
 
     describe('copyNewFile', function () {
@@ -128,7 +126,6 @@ describe('common handler routines', function () {
                 .toThrow(new Error('"' + dest + '" already exists!'));
             shell.rm('-rf', dest);
         });
-
     });
 
     describe('deleteJava', function () {
@@ -136,7 +133,7 @@ describe('common handler routines', function () {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            var s = spyOn(fs, 'unlinkSync').and.callThrough();
+            const s = spyOn(fs, 'unlinkSync').and.callThrough();
             removeFileAndParents(project_dir, srcFile);
             expect(s).toHaveBeenCalled();
             expect(s).toHaveBeenCalledWith(path.resolve(project_dir, srcFile));

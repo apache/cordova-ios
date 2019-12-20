@@ -17,20 +17,20 @@
  under the License.
  */
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var BridgingHeader = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'BridgingHeader.js'))).BridgingHeader;
-var fixtureBridgingHeader = fs.readFileSync(path.resolve(__dirname, 'fixtures', 'test-Bridging-Header.h'), 'utf-8');
+const BridgingHeader = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'BridgingHeader.js'))).BridgingHeader;
+const fixtureBridgingHeader = fs.readFileSync(path.resolve(__dirname, 'fixtures', 'test-Bridging-Header.h'), 'utf-8');
 
 describe('unit tests for BridgingHeader module', function () {
-    var existsSyncSpy;
-    var readFileSyncSpy;
-    var writeFileSyncSpy;
-    var dummy_path = 'dummy_path';
-    var dummy_plugin = { id: 'dummy_plugin', header_path: 'dummy_header_path' };
-    var dummy_plugin2 = { id: 'dummy_plugin2', header_path: 'dummy_header_path2' };
-    var headerImportText = function (header_path) { return '#import "' + header_path + '"'; };
+    let existsSyncSpy;
+    let readFileSyncSpy;
+    let writeFileSyncSpy;
+    const dummy_path = 'dummy_path';
+    const dummy_plugin = { id: 'dummy_plugin', header_path: 'dummy_header_path' };
+    const dummy_plugin2 = { id: 'dummy_plugin2', header_path: 'dummy_header_path2' };
+    const headerImportText = function (header_path) { return '#import "' + header_path + '"'; };
 
     beforeEach(function () {
         existsSyncSpy = spyOn(fs, 'existsSync');
@@ -40,7 +40,7 @@ describe('unit tests for BridgingHeader module', function () {
     it('Test#001 : should error if BridgingHeader file does not exist', function () {
         existsSyncSpy.and.returnValue(false);
         expect(function () {
-            var _ = new BridgingHeader(fixtureBridgingHeader);
+            const _ = new BridgingHeader(fixtureBridgingHeader);
             expect(_).not.toEqual(null); // To avoid ESLINT error "Do not use 'new' for side effects"
         }).toThrow();
     });
@@ -48,14 +48,14 @@ describe('unit tests for BridgingHeader module', function () {
         existsSyncSpy.and.returnValue(true);
         readFileSyncSpy.and.returnValue(fixtureBridgingHeader);
 
-        var bridgingHeader = new BridgingHeader(dummy_path);
+        const bridgingHeader = new BridgingHeader(dummy_path);
         expect(bridgingHeader.path).toEqual(dummy_path);
         expect(bridgingHeader).not.toEqual(null);
     });
     it('Test#003 : add and remove a BridgingHeader', function () {
-        var result_json = null;
-        var text_list = null;
-        var bridgingHeaderFileContent = fixtureBridgingHeader;
+        let result_json = null;
+        let text_list = null;
+        const bridgingHeaderFileContent = fixtureBridgingHeader;
         existsSyncSpy.and.returnValue(true);
         readFileSyncSpy.and.callFake(function (read_path, charset) {
             return bridgingHeaderFileContent;
@@ -64,7 +64,7 @@ describe('unit tests for BridgingHeader module', function () {
             result_json = { write_path: write_path, text: text, charset: charset };
         });
 
-        var bridgingHeader = new BridgingHeader(dummy_path);
+        let bridgingHeader = new BridgingHeader(dummy_path);
         bridgingHeader.addHeader(dummy_plugin.id, dummy_plugin.header_path);
         bridgingHeader.write();
         expect(result_json).not.toEqual(null);
@@ -85,9 +85,9 @@ describe('unit tests for BridgingHeader module', function () {
         expect(text_list.filter(function (line) { return line === headerImportText(dummy_plugin.header_path); }).length).toEqual(0);
     });
     it('Test#004 : add and remove two BridgingHeaders', function () {
-        var result_json = null;
-        var text_list = null;
-        var bridgingHeaderFileContent = fixtureBridgingHeader;
+        let result_json = null;
+        let text_list = null;
+        let bridgingHeaderFileContent = fixtureBridgingHeader;
         existsSyncSpy.and.returnValue(true);
         readFileSyncSpy.and.callFake(function (read_path, charset) {
             return bridgingHeaderFileContent;
@@ -97,7 +97,7 @@ describe('unit tests for BridgingHeader module', function () {
             result_json = { write_path: write_path, text: text, charset: charset };
         });
 
-        var bridgingHeader = new BridgingHeader(dummy_path);
+        let bridgingHeader = new BridgingHeader(dummy_path);
         bridgingHeader.addHeader(dummy_plugin.id, dummy_plugin.header_path);
         bridgingHeader.write();
 
@@ -124,7 +124,5 @@ describe('unit tests for BridgingHeader module', function () {
         text_list = result_json.text.split('\n');
         expect(text_list.filter(function (line) { return line === headerImportText(dummy_plugin.header_path); }).length).toEqual(0);
         expect(text_list.filter(function (line) { return line === headerImportText(dummy_plugin2.header_path); }).length).toEqual(0);
-
     });
-
 });

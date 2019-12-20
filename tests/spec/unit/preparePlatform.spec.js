@@ -17,40 +17,40 @@
  under the License.
  */
 
-var path = require('path');
-var fs = require('fs');
-var shell = require('shelljs');
-var EventEmitter = require('events').EventEmitter;
-var ConfigParser = require('cordova-common').ConfigParser;
-var PluginInfo = require('cordova-common').PluginInfo;
-var Api = require('../../../bin/templates/scripts/cordova/Api');
+const path = require('path');
+const fs = require('fs');
+const shell = require('shelljs');
+const EventEmitter = require('events').EventEmitter;
+const ConfigParser = require('cordova-common').ConfigParser;
+const PluginInfo = require('cordova-common').PluginInfo;
+const Api = require('../../../bin/templates/scripts/cordova/Api');
 
-var FIXTURES = path.join(__dirname, 'fixtures');
-var DUMMY_PLUGIN = 'org.test.plugins.dummyplugin';
+const FIXTURES = path.join(__dirname, 'fixtures');
+const DUMMY_PLUGIN = 'org.test.plugins.dummyplugin';
 
-var iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
-var iosProject = path.join(FIXTURES, 'dummyProj');
-var iosPlatform = path.join(iosProject, 'platforms/ios');
-var dummyPlugin = path.join(FIXTURES, DUMMY_PLUGIN);
+const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
+const iosProject = path.join(FIXTURES, 'dummyProj');
+const iosPlatform = path.join(iosProject, 'platforms/ios');
+const dummyPlugin = path.join(FIXTURES, DUMMY_PLUGIN);
 
 shell.config.silent = true;
 
 describe('prepare after plugin add', function () {
-    var api;
+    let api;
     beforeEach(function () {
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
 
         jasmine.addMatchers({
-            'toBeInstalledIn': function () {
+            toBeInstalledIn: function () {
                 return {
                     compare: function (actual, expected) {
-                        var result = {};
-                        var content;
+                        const result = {};
+                        let content;
                         try {
                             content = fs.readFileSync(path.join(expected, 'ios.json'));
-                            var cfg = JSON.parse(content);
+                            const cfg = JSON.parse(content);
                             result.pass = Object.keys(cfg.installed_plugins).indexOf(actual) > -1;
                         } catch (e) {
                             result.pass = false;
@@ -73,7 +73,7 @@ describe('prepare after plugin add', function () {
     });
 
     it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', function () {
-        var project = {
+        const project = {
             root: iosProject,
             projectConfig: new ConfigParser(path.join(iosProject, 'config.xml')),
             locations: {
