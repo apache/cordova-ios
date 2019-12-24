@@ -279,7 +279,7 @@ function handleOrientationSettings (platformConfig, infoPlist) {
 function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
     try {
         // Check if we have a valid target - during prepare we do not have it
-        var target = proj.pbxTargetByName(targetName);
+        const target = proj.pbxTargetByName(targetName);
         if (target == null || target.buildConfigurationList == null) {
             proj.updateBuildProperty(prop, value, build);
         } else {
