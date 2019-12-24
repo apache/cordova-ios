@@ -279,23 +279,23 @@ function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
             const COMMENT_KEY = /_comment$/;
             const validConfigs = [];
             const configList = proj.pbxXCConfigurationList();
-            for (var configName in configList) {
+            for (const configName in configList) {
                 if (!COMMENT_KEY.test(configName) && target.buildConfigurationList === configName) {
-                    var buildVariants = configList[configName].buildConfigurations;
-                    for (var i = 0; i < buildVariants.length; i++) {
+                    const buildVariants = configList[configName].buildConfigurations;
+                    for (let i = 0; i < buildVariants.length; i++) {
                         validConfigs.push(buildVariants[i].value);
                     }
                     break;
                 }
             }
             // Only update target props
-            var configs = proj.pbxXCBuildConfigurationSection();
-            for (configName in configs) {
+            const configs = proj.pbxXCBuildConfigurationSection();
+            for (const configName in configs) {
                 if (!COMMENT_KEY.test(configName)) {
                     if (!validConfigs.includes(configName)) {
                         continue;
                     }
-                    var config = configs[configName];
+                    const config = configs[configName];
                     if ((build && config.name === build) || (!build)) {
                         config.buildSettings[prop] = value;
                     }
