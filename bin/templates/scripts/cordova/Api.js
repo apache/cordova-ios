@@ -98,7 +98,7 @@ function Api (platform, platformRootDir, events) {
         defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
         pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
         xcodeProjDir: path.join(this.root, xcodeProjDir),
-        xcodeCordovaProj: xcodeCordovaProj
+        xcodeCordovaProj
     };
 }
 
@@ -352,7 +352,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
                 if (obj.declarations[key] === 'true') {
                     const declaration = Podfile.proofDeclaration(key);
                     const podJson = {
-                        declaration: declaration
+                        declaration
                     };
                     const val = podsjsonFile.getDeclaration(declaration);
                     if (val) {
@@ -470,7 +470,7 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods, uninst
                 if (obj.declarations[key] === 'true') {
                     const declaration = Podfile.proofDeclaration(key);
                     const podJson = {
-                        declaration: declaration
+                        declaration
                     };
                     const val = podsjsonFile.getDeclaration(declaration);
                     if (val) {

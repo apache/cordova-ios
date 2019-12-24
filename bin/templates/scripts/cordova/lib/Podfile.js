@@ -195,9 +195,9 @@ Podfile.prototype.addSpec = function (name, spec) {
 
     if (typeof spec === 'string') {
         if (spec.startsWith(':')) {
-            spec = { name: name, options: spec };
+            spec = { name, options: spec };
         } else {
-            spec = { name: name, spec: spec };
+            spec = { name, spec };
         }
     }
 

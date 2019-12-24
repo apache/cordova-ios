@@ -59,7 +59,7 @@ describe('unit tests for BridgingHeader module', () => {
         existsSyncSpy.and.returnValue(true);
         readFileSyncSpy.and.callFake((read_path, charset) => bridgingHeaderFileContent);
         writeFileSyncSpy.and.callFake((write_path, text, charset) => {
-            result_json = { write_path: write_path, text: text, charset: charset };
+            result_json = { write_path, text, charset };
         });
 
         let bridgingHeader = new BridgingHeader(dummy_path);
@@ -90,7 +90,7 @@ describe('unit tests for BridgingHeader module', () => {
         readFileSyncSpy.and.callFake((read_path, charset) => bridgingHeaderFileContent);
         writeFileSyncSpy.and.callFake((write_path, text, charset) => {
             bridgingHeaderFileContent = text;
-            result_json = { write_path: write_path, text: text, charset: charset };
+            result_json = { write_path, text, charset };
         });
 
         let bridgingHeader = new BridgingHeader(dummy_path);
