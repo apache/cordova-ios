@@ -22,7 +22,7 @@ const versions = require('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {
-    describe('versions', function () {
+    describe('versions', () => {
         beforeEach(() => {
             spyOn(console, 'log');
         });

@@ -56,9 +56,7 @@ BridgingHeader.prototype.write = function () {
 };
 
 BridgingHeader.prototype.__stringifyForBridgingHeader = function (bridgingHeaders) {
-    return bridgingHeaders.map(function (obj) {
-        return obj.code;
-    }).join('');
+    return bridgingHeaders.map(obj => obj.code).join('');
 };
 
 BridgingHeader.prototype.__parseForBridgingHeader = function (text) {

@@ -35,9 +35,9 @@ const dummyPlugin = path.join(FIXTURES, DUMMY_PLUGIN);
 
 shell.config.silent = true;
 
-describe('prepare after plugin add', function () {
+describe('prepare after plugin add', () => {
     let api;
-    beforeEach(function () {
+    beforeEach(() => {
         shell.mkdir('-p', iosPlatform);
         shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
@@ -68,11 +68,11 @@ describe('prepare after plugin add', function () {
         });
     });
 
-    afterEach(function () {
+    afterEach(() => {
         shell.rm('-rf', iosPlatform);
     });
 
-    it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', function () {
+    it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', () => {
         const project = {
             root: iosProject,
             projectConfig: new ConfigParser(path.join(iosProject, 'config.xml')),
@@ -83,16 +83,16 @@ describe('prepare after plugin add', function () {
         };
 
         return api.prepare(project, {})
-            .then(function () {
+            .then(() => {
                 expect(fs.existsSync(path.join(iosPlatform, 'ios.json'))).toBe(true);
                 expect(DUMMY_PLUGIN).not.toBeInstalledIn(iosProject);
                 return api.addPlugin(new PluginInfo(dummyPlugin), {});
             })
-            .then(function () {
+            .then(() => {
                 expect(DUMMY_PLUGIN).toBeInstalledIn(iosPlatform);
                 return api.prepare(project, {});
             })
-            .then(function () {
+            .then(() => {
                 expect(DUMMY_PLUGIN).toBeInstalledIn(iosPlatform);
             });
     });
