@@ -280,7 +280,7 @@ function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
     try {
         // Check if we have a valid target - during prepare we do not have it
         const target = proj.pbxTargetByName(targetName);
-        if (target == null || target.buildConfigurationList == null) {
+        if (!target || !target.buildConfigurationList) {
             proj.updateBuildProperty(prop, value, build);
         } else {
             var targetProjectBuildReference = target.buildConfigurationList;
