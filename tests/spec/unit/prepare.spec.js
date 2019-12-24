@@ -58,11 +58,7 @@ describe('prepare', () => {
 
     describe('launch storyboard feature (CB-9762)', () => {
         function makeSplashScreenEntry (src, width, height) {
-            return {
-                src,
-                width,
-                height
-            };
+            return { src, width, height };
         }
 
         const noLaunchStoryboardImages = [];

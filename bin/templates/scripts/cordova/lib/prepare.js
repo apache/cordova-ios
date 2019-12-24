@@ -606,12 +606,7 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
         scalesForIdiom[idiom].forEach(scale => {
             sizes.forEach(width => {
                 sizes.forEach(height => {
-                    const item = {
-                        idiom,
-                        scale,
-                        width,
-                        height
-                    };
+                    const item = { idiom, scale, width, height };
 
                     /* examples of the search pattern:
                      *    scale   ~  idiom    ~   width    height
