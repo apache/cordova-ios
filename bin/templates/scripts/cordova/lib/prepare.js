@@ -45,8 +45,6 @@ const IMAGESET_COMPACT_SIZE_CLASS = 'compact';
 const CDV_ANY_SIZE_CLASS = 'any';
 
 module.exports.prepare = function (cordovaProject, options) {
-    const self = this;
-
     const platformJson = PlatformJson.load(this.locations.root, 'ios');
     const munger = new PlatformMunger('ios', this.locations.root, platformJson, new PluginInfoProvider());
 
@@ -55,12 +53,12 @@ module.exports.prepare = function (cordovaProject, options) {
     // Update own www dir with project's www assets and plugins' assets and js-files
     return Q.when(updateWww(cordovaProject, this.locations))
         // update project according to config.xml changes.
-        .then(() => updateProject(self._config, self.locations))
+        .then(() => updateProject(this._config, this.locations))
         .then(() => {
-            updateIcons(cordovaProject, self.locations);
-            updateSplashScreens(cordovaProject, self.locations);
-            updateLaunchStoryboardImages(cordovaProject, self.locations);
-            updateFileResources(cordovaProject, self.locations);
+            updateIcons(cordovaProject, this.locations);
+            updateSplashScreens(cordovaProject, this.locations);
+            updateLaunchStoryboardImages(cordovaProject, this.locations);
+            updateFileResources(cordovaProject, this.locations);
         })
         .then(() => {
             events.emit('verbose', 'Prepared iOS project successfully');
@@ -81,13 +79,12 @@ module.exports.clean = function (options) {
 
     const projectConfig = new ConfigParser(this.locations.configXml);
 
-    const self = this;
     return Q().then(() => {
-        cleanWww(projectRoot, self.locations);
-        cleanIcons(projectRoot, projectConfig, self.locations);
-        cleanSplashScreens(projectRoot, projectConfig, self.locations);
-        cleanLaunchStoryboardImages(projectRoot, projectConfig, self.locations);
-        cleanFileResources(projectRoot, projectConfig, self.locations);
+        cleanWww(projectRoot, this.locations);
+        cleanIcons(projectRoot, projectConfig, this.locations);
+        cleanSplashScreens(projectRoot, projectConfig, this.locations);
+        cleanLaunchStoryboardImages(projectRoot, projectConfig, this.locations);
+        cleanFileResources(projectRoot, projectConfig, this.locations);
     });
 };
 

@@ -289,12 +289,11 @@ Podfile.prototype.destroy = function () {
 
 Podfile.prototype.write = function () {
     let text = this.getTemplate();
-    const self = this;
 
     const podsString =
     Object.keys(this.pods).map(key => {
         const name = key;
-        const json = self.pods[key];
+        const json = this.pods[key];
 
         if (typeof json === 'string') { // compatibility for using framework tag.
             const spec = json;
@@ -334,13 +333,13 @@ Podfile.prototype.write = function () {
 
     const sourcesString =
     Object.keys(this.sources).map(key => {
-        const source = self.sources[key];
+        const source = this.sources[key];
         return util.format('source \'%s\'', source);
     }).join('\n');
 
     const declarationString =
     Object.keys(this.declarations).map(key => {
-        const declaration = self.declarations[key];
+        const declaration = this.declarations[key];
         return declaration;
     }).join('\n');
 
@@ -384,14 +383,13 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     opts.stdio = 'pipe';
     opts.printCommand = true;
     let first = true;
-    const self = this;
 
     if (!requirementsCheckerFunction) {
         requirementsCheckerFunction = Q();
     }
 
     return requirementsCheckerFunction()
-        .then(toolOptions => self.before_install(toolOptions))
+        .then(toolOptions => this.before_install(toolOptions))
         .then(toolOptions => {
             if (toolOptions.ignore) {
                 events.emit('verbose', '==== pod install start ====\n');
