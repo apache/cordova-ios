@@ -41,8 +41,8 @@ function massageArgsJsToNative (args) {
     args.forEach(function (arg, i) {
         if (utils.typeName(arg) === 'ArrayBuffer') {
             ret.push({
-                'CDVType': 'ArrayBuffer',
-                'data': base64.fromArrayBuffer(arg)
+                CDVType: 'ArrayBuffer',
+                data: base64.fromArrayBuffer(arg)
             });
         } else {
             ret.push(arg);
@@ -70,7 +70,7 @@ function massageMessageNativeToJs (message) {
 
 function convertMessageToArgsNativeToJs (message) {
     var args = [];
-    if (!message || !message.hasOwnProperty('CDVType')) {
+    if (!message || !Object.prototype.hasOwnProperty.call(message, 'CDVType')) {
         args.push(message);
     } else if (message.CDVType === 'MultiPart') {
         message.messages.forEach(function (e) {
@@ -83,7 +83,6 @@ function convertMessageToArgsNativeToJs (message) {
 }
 
 function iOSExec () {
-
     var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
     if (typeof arguments[0] !== 'string') {

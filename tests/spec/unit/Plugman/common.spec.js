@@ -16,46 +16,45 @@
  *
 */
 
-var fs = require('fs');
-var path = require('path');
-var osenv = require('os');
-var shell = require('shelljs');
-var rewire = require('rewire');
+const fs = require('fs');
+const path = require('path');
+const osenv = require('os');
+const shell = require('shelljs');
+const rewire = require('rewire');
 
-var common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
+const common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
 
-var test_dir = path.join(osenv.tmpdir(), 'test_plugman');
-var project_dir = path.join(test_dir, 'project');
-var src = path.join(project_dir, 'src');
-var dest = path.join(project_dir, 'dest');
-var srcDirTree = path.join(src, 'one', 'two', 'three');
-var srcFile = path.join(srcDirTree, 'test.java');
-var symlink_file = path.join(srcDirTree, 'symlink');
-var non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
+const test_dir = path.join(osenv.tmpdir(), 'test_plugman');
+const project_dir = path.join(test_dir, 'project');
+const src = path.join(project_dir, 'src');
+const dest = path.join(project_dir, 'dest');
+const srcDirTree = path.join(src, 'one', 'two', 'three');
+const srcFile = path.join(srcDirTree, 'test.java');
+const symlink_file = path.join(srcDirTree, 'symlink');
+const non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
 
-var copyFile = common.__get__('copyFile');
-var copyNewFile = common.__get__('copyNewFile');
-var removeFileAndParents = common.__get__('removeFileAndParents');
+const copyFile = common.__get__('copyFile');
+const copyNewFile = common.__get__('copyNewFile');
+const removeFileAndParents = common.__get__('removeFileAndParents');
 
-describe('common handler routines', function () {
-
-    describe('copyFile', function () {
-        it('Test 001 : should throw if source path not found', function () {
+describe('common handler routines', () => {
+    describe('copyFile', () => {
+        it('Test 001 : should throw if source path not found', () => {
             shell.rm('-rf', test_dir);
-            expect(function () { copyFile(test_dir, src, project_dir, dest); })
+            expect(() => { copyFile(test_dir, src, project_dir, dest); })
                 .toThrow(new Error('"' + src + '" not found!'));
         });
 
-        it('Test 002 : should throw if src not in plugin directory', function () {
+        it('Test 002 : should throw if src not in plugin directory', () => {
             shell.mkdir('-p', project_dir);
             fs.writeFileSync(non_plugin_file, 'contents', 'utf-8');
-            var outside_file = '../non_plugin_file';
-            expect(function () { copyFile(test_dir, outside_file, project_dir, dest); })
+            const outside_file = '../non_plugin_file';
+            expect(() => { copyFile(test_dir, outside_file, project_dir, dest); })
                 .toThrow(new Error('File "' + path.resolve(test_dir, outside_file) + '" is located outside the plugin directory "' + test_dir + '"'));
             shell.rm('-rf', test_dir);
         });
 
-        it('Test 003 : should allow symlink src, if inside plugin', function () {
+        it('Test 003 : should allow symlink src, if inside plugin', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
@@ -68,7 +67,7 @@ describe('common handler routines', function () {
             shell.rm('-rf', project_dir);
         });
 
-        it('Test 004 : should throw if symlink is linked to a file outside the plugin', function () {
+        it('Test 004 : should throw if symlink is linked to a file outside the plugin', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(non_plugin_file, 'contents', 'utf-8');
 
@@ -77,25 +76,25 @@ describe('common handler routines', function () {
                 return;
             }
 
-            expect(function () { copyFile(test_dir, symlink_file, project_dir, dest); })
+            expect(() => { copyFile(test_dir, symlink_file, project_dir, dest); })
                 .toThrow(new Error('File "' + path.resolve(test_dir, symlink_file) + '" is located outside the plugin directory "' + test_dir + '"'));
             shell.rm('-rf', project_dir);
         });
 
-        it('Test 005 : should throw if dest is outside the project directory', function () {
+        it('Test 005 : should throw if dest is outside the project directory', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
-            expect(function () { copyFile(test_dir, srcFile, project_dir, non_plugin_file); })
+            expect(() => { copyFile(test_dir, srcFile, project_dir, non_plugin_file); })
                 .toThrow(new Error('Destination "' + path.resolve(project_dir, non_plugin_file) + '" for source file "' + path.resolve(test_dir, srcFile) + '" is located outside the project'));
             shell.rm('-rf', project_dir);
         });
 
-        it('Test 006 : should call mkdir -p on target path', function () {
+        it('Test 006 : should call mkdir -p on target path', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            var s = spyOn(shell, 'mkdir').and.callThrough();
-            var resolvedDest = path.resolve(project_dir, dest);
+            const s = spyOn(shell, 'mkdir').and.callThrough();
+            const resolvedDest = path.resolve(project_dir, dest);
 
             copyFile(test_dir, srcFile, project_dir, dest);
 
@@ -104,12 +103,12 @@ describe('common handler routines', function () {
             shell.rm('-rf', project_dir);
         });
 
-        it('Test 007 : should call cp source/dest paths', function () {
+        it('Test 007 : should call cp source/dest paths', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            var s = spyOn(shell, 'cp').and.callThrough();
-            var resolvedDest = path.resolve(project_dir, dest);
+            const s = spyOn(shell, 'cp').and.callThrough();
+            const resolvedDest = path.resolve(project_dir, dest);
 
             copyFile(test_dir, srcFile, project_dir, dest);
 
@@ -118,25 +117,23 @@ describe('common handler routines', function () {
 
             shell.rm('-rf', project_dir);
         });
-
     });
 
-    describe('copyNewFile', function () {
-        it('Test 008 : should throw if target path exists', function () {
+    describe('copyNewFile', () => {
+        it('Test 008 : should throw if target path exists', () => {
             shell.mkdir('-p', dest);
-            expect(function () { copyNewFile(test_dir, src, project_dir, dest); })
+            expect(() => { copyNewFile(test_dir, src, project_dir, dest); })
                 .toThrow(new Error('"' + dest + '" already exists!'));
             shell.rm('-rf', dest);
         });
-
     });
 
-    describe('deleteJava', function () {
-        it('Test 009 : should call fs.unlinkSync on the provided paths', function () {
+    describe('deleteJava', () => {
+        it('Test 009 : should call fs.unlinkSync on the provided paths', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            var s = spyOn(fs, 'unlinkSync').and.callThrough();
+            const s = spyOn(fs, 'unlinkSync').and.callThrough();
             removeFileAndParents(project_dir, srcFile);
             expect(s).toHaveBeenCalled();
             expect(s).toHaveBeenCalledWith(path.resolve(project_dir, srcFile));
@@ -144,7 +141,7 @@ describe('common handler routines', function () {
             shell.rm('-rf', srcDirTree);
         });
 
-        it('Test 010 : should delete empty directories after removing source code in path hierarchy', function () {
+        it('Test 010 : should delete empty directories after removing source code in path hierarchy', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
@@ -156,7 +153,7 @@ describe('common handler routines', function () {
             shell.rm('-rf', srcDirTree);
         });
 
-        it('Test 011 : should delete the top-level src directory if all plugins added were removed', function () {
+        it('Test 011 : should delete the top-level src directory if all plugins added were removed', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 

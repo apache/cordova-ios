@@ -19,14 +19,14 @@
     under the License.
 */
 
-var shell = require('shelljs');
-var Q = require('q');
-var path = require('path');
-var fs = require('fs');
-var xcode = require('xcode');
-var xmlescape = require('xml-escape');
-var ROOT = path.join(__dirname, '..', '..');
-var events = require('cordova-common').events;
+const shell = require('shelljs');
+const Q = require('q');
+const path = require('path');
+const fs = require('fs');
+const xcode = require('xcode');
+const xmlescape = require('xml-escape');
+const ROOT = path.join(__dirname, '..', '..');
+const events = require('cordova-common').events;
 
 function updateSubprojectHelp () {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
@@ -37,48 +37,45 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
     shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www'));
     shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www'));
-
-    fs.lstat(path.join(projectPath, 'CordovaLib'), function (err, stats) {
-        if (!err) {
-            if (stats.isSymbolicLink()) {
-                fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
-            } else {
-                shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
-            }
-        }
-
-        if (use_shared) {
-            update_cordova_subproject([path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj'), config]);
-            // Symlink not used in project file, but is currently required for plugman because
-            // it reads the VERSION file from it (instead of using the cordova/version script
-            // like it should).
-            fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
+    try {
+        const stats = fs.lstatSync(path.join(projectPath, 'CordovaLib'));
+        if (stats.isSymbolicLink()) {
+            fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
         } else {
-            var r = path.join(projectPath, projectName);
-            shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-            shell.cp('-f', path.join(r, '.gitignore'), projectPath);
-            shell.cp('-rf', path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
-            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
-            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
-            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
-            shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-            update_cordova_subproject([path.join(r + '.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
+            shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
         }
-    });
+    } catch (e) { }
+    if (use_shared) {
+        update_cordova_subproject([path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj'), config]);
+        // Symlink not used in project file, but is currently required for plugman because
+        // it reads the VERSION file from it (instead of using the cordova/version script
+        // like it should).
+        fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
+    } else {
+        const r = path.join(projectPath, projectName);
+        shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        shell.cp('-f', path.join(r, '.gitignore'), projectPath);
+        shell.cp('-rf', path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
+        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        update_cordova_subproject([path.join(r + '.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
+    }
 }
 
 function copyScripts (projectPath, projectName) {
-    var srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
-    var destScriptsDir = path.join(projectPath, 'cordova');
+    const srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
+    const destScriptsDir = path.join(projectPath, 'cordova');
 
     // Delete old scripts directory.
     shell.rm('-rf', destScriptsDir);
 
     // Copy in the new ones.
-    var binDir = path.join(ROOT, 'bin');
+    const binDir = path.join(ROOT, 'bin');
     shell.cp('-r', srcScriptsDir, projectPath);
 
-    let nodeModulesDir = path.join(ROOT, 'node_modules');
+    const nodeModulesDir = path.join(ROOT, 'node_modules');
     if (fs.existsSync(nodeModulesDir)) shell.cp('-r', nodeModulesDir, destScriptsDir);
 
     // Copy the check_reqs script
@@ -94,19 +91,19 @@ function copyScripts (projectPath, projectName) {
     // `require` path for the two libraries. if there's a better way to share
     // modules across both the repo and generated projects, we should make sure
     // to remove/update this.
-    var path_regex = /templates\/scripts\/cordova\//;
+    const path_regex = /templates\/scripts\/cordova\//;
     shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'check_reqs'));
     shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_ios_version'));
     shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_osx_version'));
     shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_xcode_version'));
 
     // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
-    var project_name_esc = projectName.replace(/&/g, '\\&');
+    const project_name_esc = projectName.replace(/&/g, '\\&');
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-debug.xcconfig'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-release.xcconfig'));
 
     // Make sure they are executable (sometimes zipping them can remove executable bit)
-    shell.find(destScriptsDir).forEach(function (entry) {
+    shell.find(destScriptsDir).forEach(entry => {
         shell.chmod(755, entry);
     });
 }
@@ -120,7 +117,7 @@ function copyScripts (projectPath, projectName) {
  * @parm  {BOOL}   use_cli              true if cli project
  */
 function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
-    var r = path.join(project_path, project_name);
+    const r = path.join(project_path, project_name);
 
     shell.rm('-rf', path.join(r + '.xcodeproj'));
     shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcodeproj'), project_path);
@@ -152,11 +149,11 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
      */
 
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
-    var project_name_xml_esc = xmlescape(project_name);
+    const project_name_xml_esc = xmlescape(project_name);
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(r + '.xcworkspace', 'contents.xcworkspacedata'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(r + '.xcworkspace', 'xcshareddata', 'xcschemes', project_name + '.xcscheme'));
 
-    var project_name_esc = project_name.replace(/&/g, '\\&');
+    const project_name_esc = project_name.replace(/&/g, '\\&');
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r + '.xcodeproj', 'project.pbxproj'));
     shell.sed('-i', /__PROJECT_ID__/g, package_name, path.join(r + '.xcodeproj', 'project.pbxproj'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
@@ -173,7 +170,7 @@ function AbsParentPath (_path) {
 }
 
 function AbsProjectPath (relative_path) {
-    var absolute_path = path.resolve(relative_path);
+    let absolute_path = path.resolve(relative_path);
     if (/.pbxproj$/.test(absolute_path)) {
         absolute_path = AbsParentPath(absolute_path);
     } else if (!(/.xcodeproj$/.test(absolute_path))) {
@@ -198,13 +195,13 @@ function relpath (_path, start) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = function (project_path, package_name, project_name, opts, config) {
+exports.createProject = (project_path, package_name, project_name, opts, config) => {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
-    var use_shared = !!opts.link;
-    var bin_dir = path.join(ROOT, 'bin');
-    var project_parent = path.dirname(project_path);
-    var project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
+    const use_shared = !!opts.link;
+    const bin_dir = path.join(ROOT, 'bin');
+    const project_parent = path.dirname(project_path);
+    const project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
@@ -241,23 +238,22 @@ exports.createProject = function (project_path, package_name, project_name, opts
     return Q.resolve();
 };
 
-exports.updateProject = function (projectPath, opts) {
-    var errorString =
+exports.updateProject = (projectPath, opts) => {
+    const errorString =
     'An in-place platform update is not supported. \n' +
     'The `platforms` folder is always treated as a build artifact.\n' +
     'To update your platform, you have to remove, then add your ios platform again.\n' +
     'Make sure you save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes in it.\n' +
     '\tcordova plugin save\n' +
     '\tcordova platform rm ios\n' +
-    '\tcordova platform add ios\n'
-    ;
+    '\tcordova platform add ios\n';
 
     return Q.reject(errorString);
 };
 
 function generateDoneMessage (type, link) {
-    var pkg = require('../../package');
-    var msg = 'iOS project ' + (type === 'update' ? 'updated ' : 'created ') + 'with ' + pkg.name + '@' + pkg.version;
+    const pkg = require('../../package');
+    let msg = 'iOS project ' + (type === 'update' ? 'updated ' : 'created ') + 'with ' + pkg.name + '@' + pkg.version;
     if (link) {
         msg += ' and has a linked CordovaLib';
     }
@@ -270,9 +266,9 @@ function update_cordova_subproject (argv) {
         throw new Error('Usage error for update_cordova_subproject');
     }
 
-    var projectPath = AbsProjectPath(argv[0]);
-    var cordovaLibXcodePath;
-    var projectConfig;
+    const projectPath = AbsProjectPath(argv[0]);
+    let cordovaLibXcodePath;
+    let projectConfig;
     if (argv.length < 3) {
         cordovaLibXcodePath = path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj');
         projectConfig = argv[1];
@@ -281,16 +277,16 @@ function update_cordova_subproject (argv) {
         projectConfig = argv[2];
     }
 
-    var parentProjectPath = AbsParentPath(projectPath);
-    var subprojectPath = relpath(cordovaLibXcodePath, parentProjectPath);
-    var REGEX = /(.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
-    var newLine;
-    var lines = shell.grep('CordovaLib.xcodeproj', path.join(projectPath, 'project.pbxproj'));
-    var found = false;
+    const parentProjectPath = AbsParentPath(projectPath);
+    let subprojectPath = relpath(cordovaLibXcodePath, parentProjectPath);
+    const REGEX = /(.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
+    let newLine;
+    let lines = shell.grep('CordovaLib.xcodeproj', path.join(projectPath, 'project.pbxproj'));
+    let found = false;
 
     subprojectPath = subprojectPath.replace(/\\/g, '/');
     lines = lines.split('\n');
-    for (var i = 0; i < lines.length; ++i) {
+    for (let i = 0; i < lines.length; ++i) {
         if (lines[i].match(REGEX)) {
             found = true;
             newLine = lines[i].replace(/path = .+?;/, 'path = ' + subprojectPath + ';');
@@ -306,10 +302,10 @@ function update_cordova_subproject (argv) {
         throw new Error('Entry not found in project file for sub-project: ' + subprojectPath);
     }
 
-    var wkWebViewOnly = projectConfig.getPreference('WKWebViewOnly') === 'true';
+    const wkWebViewOnly = projectConfig.getPreference('WKWebViewOnly') === 'true';
     if (wkWebViewOnly) {
-        var pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
-        var xcodeproj = xcode.project(pbxPath);
+        const pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
+        const xcodeproj = xcode.project(pbxPath);
         xcodeproj.parseSync();
         xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
         fs.writeFileSync(pbxPath, xcodeproj.writeSync());

@@ -22,25 +22,25 @@
 // environment bits that allow for interacting with iOS Simulators. On
 // Windows+Linux we are bound to not-have-that.
 if (process.platform === 'darwin') {
-    var run = require('../../../../bin/templates/scripts/cordova/lib/run');
-    var Q = require('q');
+    const run = require('../../../../bin/templates/scripts/cordova/lib/run');
+    const Q = require('q');
 
-    describe('cordova/lib/run', function () {
-        describe('--list option', function () {
-            var deferred;
-            beforeEach(function () {
+    describe('cordova/lib/run', () => {
+        describe('--list option', () => {
+            let deferred;
+            beforeEach(() => {
                 deferred = Q.defer();
                 deferred.resolve();
                 spyOn(run, 'listDevices').and.returnValue(deferred.promise);
                 spyOn(run, 'listEmulators').and.returnValue(deferred.promise);
             });
-            it('should delegate to listDevices method if `options.device` specified', function () {
+            it('should delegate to listDevices method if `options.device` specified', () => {
                 return run.run({ list: true, device: true }).then(() => {
                     expect(run.listDevices).toHaveBeenCalled();
                     expect(run.listEmulators).not.toHaveBeenCalled();
                 });
             });
-            it('should delegate to listEmulators method if `options.device` specified', function () {
+            it('should delegate to listEmulators method if `options.device` specified', () => {
                 return run.run({ list: true, emulator: true }).then(() => {
                     expect(run.listDevices).not.toHaveBeenCalled();
                     expect(run.listEmulators).toHaveBeenCalled();

@@ -17,8 +17,8 @@
        under the License.
 */
 
-var Q = require('q');
-var proc = require('child_process');
+const Q = require('q');
+const proc = require('child_process');
 
 /**
  * Run specified command with arguments
@@ -29,15 +29,15 @@ var proc = require('child_process');
  * @return {Promise}              Promise either fullfilled or rejected with error code
  * @deprecated Use `require('cordova-common').superspawn` instead.
  */
-module.exports = function (cmd, args, opt_cwd) {
+module.exports = (cmd, args, opt_cwd) => {
     console.warn(
         'This function is deprecated, may be removed from a future release. ' +
         "Use `require('cordova-common').superspawn` instead.");
-    var d = Q.defer();
+    const d = Q.defer();
     try {
-        var child = proc.spawn(cmd, args, { cwd: opt_cwd, stdio: 'inherit' });
+        const child = proc.spawn(cmd, args, { cwd: opt_cwd, stdio: 'inherit' });
 
-        child.on('exit', function (code) {
+        child.on('exit', code => {
             if (code) {
                 d.reject('Error code ' + code + ' for command: ' + cmd + ' with args: ' + args);
             } else {

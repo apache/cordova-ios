@@ -17,12 +17,12 @@
  under the License.
  */
 
-var rewire = require('rewire');
-var versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
+const rewire = require('rewire');
+const versions = rewire('../../../bin/templates/scripts/cordova/lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {
-    describe('versions', function () {
+    describe('versions', () => {
         describe('get_tool_version method', () => {
             it('should not have found tool by name.', () => {
                 return versions.get_tool_version('unknown').then(

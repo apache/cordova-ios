@@ -22,15 +22,15 @@
 // allow for interacting with iOS Simulators. On Windows+Linux we are
 // bound to not-have-that.
 if (process.platform === 'darwin') {
-    var list_emus = require('../../../../bin/templates/scripts/cordova/lib/list-emulator-images');
-    var iossim = require('ios-sim');
+    const list_emus = require('../../../../bin/templates/scripts/cordova/lib/list-emulator-images');
+    const iossim = require('ios-sim');
 
-    describe('cordova/lib/list-emulator-images', function () {
-        describe('run method', function () {
-            beforeEach(function () {
+    describe('cordova/lib/list-emulator-images', () => {
+        describe('run method', () => {
+            beforeEach(() => {
                 spyOn(iossim, 'getdevicetypes');
             });
-            it('should delegate to the ios-sim getdevicetypes method', function () {
+            it('should delegate to the ios-sim getdevicetypes method', () => {
                 list_emus.run();
                 expect(iossim.getdevicetypes).toHaveBeenCalled();
             });
