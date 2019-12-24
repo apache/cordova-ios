@@ -301,7 +301,7 @@ function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
             var configs = proj.pbxXCBuildConfigurationSection();
             for (configName in configs) {
                 if (!COMMENT_KEY.test(configName)) {
-                    if (validConfigs.indexOf(configName) === -1) {
+                    if (!validConfigs.includes(configName)) {
                         continue;
                     }
                     var config = configs[configName];
