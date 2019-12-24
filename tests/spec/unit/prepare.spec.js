@@ -43,7 +43,8 @@ shell.config.silent = true;
 const ConfigParser = require('cordova-common').ConfigParser;
 
 describe('prepare', () => {
-    let p, Api;
+    let p;
+    let Api;
     beforeEach(() => {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
@@ -533,7 +534,9 @@ describe('prepare', () => {
         /* eslint-enable no-unused-vars */
         const xcOrig = xcode.project;
         let writeFileSyncSpy;
-        let cfg, cfg2, cfg3;
+        let cfg;
+        let cfg2;
+        let cfg3;
 
         const updateProject = prepare.__get__('updateProject');
 
