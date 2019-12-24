@@ -275,13 +275,12 @@ function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
         if (!target || !target.buildConfigurationList) {
             proj.updateBuildProperty(prop, value, build);
         } else {
-            var targetProjectBuildReference = target.buildConfigurationList;
             // Collect the uuid's from the configuration of our target
-            var COMMENT_KEY = /_comment$/;
-            var validConfigs = [];
-            var configList = proj.pbxXCConfigurationList();
+            const COMMENT_KEY = /_comment$/;
+            const validConfigs = [];
+            const configList = proj.pbxXCConfigurationList();
             for (var configName in configList) {
-                if (!COMMENT_KEY.test(configName) && targetProjectBuildReference === configName) {
+                if (!COMMENT_KEY.test(configName) && target.buildConfigurationList === configName) {
                     var buildVariants = configList[configName].buildConfigurations;
                     for (var i = 0; i < buildVariants.length; i++) {
                         validConfigs.push(buildVariants[i].value);
