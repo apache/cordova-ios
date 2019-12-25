@@ -272,37 +272,46 @@ function updateBuildPropertyLocal (proj, targetName, prop, value, build) {
     try {
         // Check if we have a valid target - during prepare we do not have it
         const target = proj.pbxTargetByName(targetName);
-        if (!target || !target.buildConfigurationList) {
-            proj.updateBuildProperty(prop, value, build);
-        } else {
-            // Collect the uuid's from the configuration of our target
-            const COMMENT_KEY = /_comment$/;
-            const validConfigs = [];
-            const configList = proj.pbxXCConfigurationList();
-            for (const configName in configList) {
-                if (!COMMENT_KEY.test(configName) && target.buildConfigurationList === configName) {
-                    const buildVariants = configList[configName].buildConfigurations;
-                    for (let i = 0; i < buildVariants.length; i++) {
-                        validConfigs.push(buildVariants[i].value);
-                    }
-                    break;
+        const targetBuildConfigs = target && target.buildConfigurationList;
+
+        // Go to fallback in the catch and update build properties
+        if (!targetBuildConfigs) throw new CordovaError(`The target "${targetName}" is missing build configurations. Falling back to update build properties.`);
+
+        const COMMENT_KEY = /_comment$/;
+        const validConfigs = [];
+        const xcConfigList = proj.pbxXCConfigurationList();
+
+        // Collect the UUID's from the configuration of our target
+        for (const configName in xcConfigList) {
+            if (!COMMENT_KEY.test(configName) && targetBuildConfigs === configName) {
+                const buildVariants = xcConfigList[configName].buildConfigurations;
+
+                for (const item of buildVariants) {
+                    validConfigs.push(item.value);
                 }
+
+                break;
             }
-            // Only update target props
-            const configs = proj.pbxXCBuildConfigurationSection();
-            for (const configName in configs) {
-                if (!COMMENT_KEY.test(configName)) {
-                    if (!validConfigs.includes(configName)) {
-                        continue;
-                    }
-                    const config = configs[configName];
-                    if ((build && config.name === build) || (!build)) {
-                        config.buildSettings[prop] = value;
-                    }
+        }
+
+        const configs = proj.pbxXCBuildConfigurationSection();
+
+        // Only update target props
+        for (const configName in configs) {
+            if (!COMMENT_KEY.test(configName)) {
+                if (!validConfigs.includes(configName)) continue;
+
+                const config = configs[configName];
+
+                if ((build && config.name === build) || (!build)) {
+                    config.buildSettings[prop] = value;
                 }
             }
         }
-    } catch (e) { // fallback to default behavior on error
+    } catch (e) {
+        // fallback to default behavior on error
+        events.emit('verbose', e);
+
         proj.updateBuildProperty(prop, value, build);
     }
 }
