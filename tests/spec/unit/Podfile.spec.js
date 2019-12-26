@@ -29,43 +29,43 @@ const fixturePodXcconfigDebug = path.resolve(__dirname, 'fixtures', PROJECT_NAME
 const fixturePodXcconfigRelease = path.resolve(__dirname, 'fixtures', PROJECT_NAME, 'platforms', 'ios', 'pods-release.xcconfig');
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
-describe('unit tests for Podfile module', function () {
+describe('unit tests for Podfile module', () => {
     const podfile = new Podfile(fixturePodfile, PROJECT_NAME);
 
-    describe('tests', function () {
-        it('Test 001 : throws CordovaError when the path filename is not named Podfile', function () {
+    describe('tests', () => {
+        it('Test 001 : throws CordovaError when the path filename is not named Podfile', () => {
             const dummyPath = 'NotAPodfile';
-            expect(function () {
+            expect(() => {
                 new Podfile(dummyPath); /* eslint no-new : 0 */
             }).toThrow(new CordovaError(util.format('Podfile: The file at %s is not `%s`.', dummyPath, Podfile.FILENAME)));
         });
 
-        it('Test 002 : throws CordovaError when no projectName provided when creating a Podfile', function () {
-            expect(function () {
+        it('Test 002 : throws CordovaError when no projectName provided when creating a Podfile', () => {
+            expect(() => {
                 new Podfile(fixturePodfile); /* eslint no-new : 0 */
             }).toThrow(new CordovaError('Podfile: The projectName was not specified in the constructor.'));
         });
 
-        it('Test 003 : throws CordovaError when no pod name provided when adding a spec', function () {
-            expect(function () {
+        it('Test 003 : throws CordovaError when no pod name provided when adding a spec', () => {
+            expect(() => {
                 podfile.addSpec(null);
             }).toThrow(new CordovaError('Podfile addSpec: name is not specified.'));
         });
 
-        it('Test 004 : adds the spec', function () {
+        it('Test 004 : adds the spec', () => {
             expect(podfile.existsSpec('Foo')).toBe(false);
             podfile.addSpec('Foo', '1.0');
             expect(podfile.existsSpec('Foo')).toBe(true);
         });
 
-        it('Test 005 : removes the spec', function () {
+        it('Test 005 : removes the spec', () => {
             podfile.addSpec('Baz', '3.0');
             expect(podfile.existsSpec('Baz')).toBe(true);
             podfile.removeSpec('Baz');
             expect(podfile.existsSpec('Baz')).toBe(false);
         });
 
-        it('Test 006 : clears all specs', function () {
+        it('Test 006 : clears all specs', () => {
             podfile.addSpec('Bar', '2.0');
             podfile.clear();
 
@@ -73,7 +73,7 @@ describe('unit tests for Podfile module', function () {
             expect(podfile.existsSpec('Bar')).toBe(false);
         });
 
-        it('Test 007 : isDirty tests', function () {
+        it('Test 007 : isDirty tests', () => {
             podfile.addSpec('Foo', '1.0');
             expect(podfile.isDirty()).toBe(true);
 
@@ -90,7 +90,7 @@ describe('unit tests for Podfile module', function () {
             expect(podfile.isDirty()).toBe(false);
         });
 
-        it('Test 008 : writes specs to the Podfile', function () {
+        it('Test 008 : writes specs to the Podfile', () => {
             podfile.clear();
 
             podfile.addSpec('Foo', '1.0');
@@ -123,7 +123,7 @@ describe('unit tests for Podfile module', function () {
             expect(newPodfile.getSpec('Bla3').options).toEqual(':configurations => [\'Debug\',\'Release\']');
         });
 
-        it('Test 009 : runs before_install to install xcconfig paths', function () {
+        it('Test 009 : runs before_install to install xcconfig paths', () => {
             podfile.before_install();
 
             // Template tokens in order: project name, project name, debug | release
@@ -141,7 +141,7 @@ describe('unit tests for Podfile module', function () {
             expect(actualReleaseContents).toBe(expectedReleaseContents);
         });
 
-        it('Test 010 : escapes single quotes in project name when writing a Podfile', function () {
+        it('Test 010 : escapes single quotes in project name when writing a Podfile', () => {
             podfile.before_install();
 
             const projectName = 'This project\'s name';
@@ -152,7 +152,7 @@ describe('unit tests for Podfile module', function () {
             expect(actualProjectName).toBe(expectedProjectName);
         });
 
-        it('Test 011 : escapes double single quotes in project name when writing a Podfile', function () {
+        it('Test 011 : escapes double single quotes in project name when writing a Podfile', () => {
             podfile.before_install();
 
             const projectName = 'l\'etat c\'est moi';
@@ -164,7 +164,7 @@ describe('unit tests for Podfile module', function () {
         });
     });
 
-    it('Test 012 : tear down', function () {
+    it('Test 012 : tear down', () => {
         podfile.destroy();
 
         const text = '// DO NOT MODIFY -- auto-generated by Apache Cordova\n';

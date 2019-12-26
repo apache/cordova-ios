@@ -29,7 +29,7 @@ const proc = require('child_process');
  * @return {Promise}              Promise either fullfilled or rejected with error code
  * @deprecated Use `require('cordova-common').superspawn` instead.
  */
-module.exports = function (cmd, args, opt_cwd) {
+module.exports = (cmd, args, opt_cwd) => {
     console.warn(
         'This function is deprecated, may be removed from a future release. ' +
         "Use `require('cordova-common').superspawn` instead.");
@@ -37,7 +37,7 @@ module.exports = function (cmd, args, opt_cwd) {
     try {
         const child = proc.spawn(cmd, args, { cwd: opt_cwd, stdio: 'inherit' });
 
-        child.on('exit', function (code) {
+        child.on('exit', code => {
             if (code) {
                 d.reject('Error code ' + code + ' for command: ' + cmd + ' with args: ' + args);
             } else {

@@ -118,7 +118,7 @@ const handlers = {
                 events.emit('verbose', '"Embed Frameworks" Build Phase (Embedded Binaries) does not exist, creating it.');
                 project.xcode.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks', null, 'frameworks');
             }
-            const opt = { customFramework: true, embed: embed, link: link, sign: true };
+            const opt = { customFramework: true, embed, link, sign: true };
             events.emit('verbose', util.format('Adding custom framework to project... %s -> %s', src, JSON.stringify(opt)));
             project.xcode.addFramework(project_relative, opt);
             events.emit('verbose', util.format('Custom framework added to project. %s -> %s', src, JSON.stringify(opt)));
@@ -217,7 +217,7 @@ const handlers = {
     }
 };
 
-module.exports.getInstaller = function (type) {
+module.exports.getInstaller = type => {
     if (handlers[type] && handlers[type].install) {
         return handlers[type].install;
     }
@@ -225,7 +225,7 @@ module.exports.getInstaller = function (type) {
     events.emit('warn', '<' + type + '> is not supported for iOS plugins');
 };
 
-module.exports.getUninstaller = function (type) {
+module.exports.getUninstaller = type => {
     if (handlers[type] && handlers[type].uninstall) {
         return handlers[type].uninstall;
     }
@@ -346,7 +346,7 @@ function linkFileOrDirTree (src, dest) {
 
     if (fs.statSync(src).isDirectory()) {
         shell.mkdir('-p', dest);
-        fs.readdirSync(src).forEach(function (entry) {
+        fs.readdirSync(src).forEach(entry => {
             linkFileOrDirTree(path.join(src, entry), path.join(dest, entry));
         });
     } else {

@@ -103,7 +103,7 @@ function copyScripts (projectPath, projectName) {
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-release.xcconfig'));
 
     // Make sure they are executable (sometimes zipping them can remove executable bit)
-    shell.find(destScriptsDir).forEach(function (entry) {
+    shell.find(destScriptsDir).forEach(entry => {
         shell.chmod(755, entry);
     });
 }
@@ -195,7 +195,7 @@ function relpath (_path, start) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = function (project_path, package_name, project_name, opts, config) {
+exports.createProject = (project_path, package_name, project_name, opts, config) => {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
@@ -238,7 +238,7 @@ exports.createProject = function (project_path, package_name, project_name, opts
     return Q.resolve();
 };
 
-exports.updateProject = function (projectPath, opts) {
+exports.updateProject = (projectPath, opts) => {
     const errorString =
     'An in-place platform update is not supported. \n' +
     'The `platforms` folder is always treated as a build artifact.\n' +

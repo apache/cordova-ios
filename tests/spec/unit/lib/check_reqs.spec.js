@@ -21,7 +21,7 @@ const rewire = require('rewire');
 const shell = require('shelljs');
 const versions = require('../../../../bin/templates/scripts/cordova/lib/versions');
 
-describe('check_reqs', function () {
+describe('check_reqs', () => {
     let checkReqs;
     beforeEach(() => {
         checkReqs = rewire('../../../../bin/templates/scripts/cordova/lib/check_reqs');

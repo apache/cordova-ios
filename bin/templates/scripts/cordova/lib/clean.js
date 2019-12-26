@@ -24,19 +24,22 @@ const superspawn = require('cordova-common').superspawn;
 
 const projectPath = path.join(__dirname, '..', '..');
 
-module.exports.run = function () {
-    const projectName = shell.ls(projectPath).filter(function (name) {
-        return path.extname(name) === '.xcodeproj';
-    })[0];
+module.exports.run = () => {
+    const projectName = shell.ls(projectPath).filter(name => path.extname(name) === '.xcodeproj')[0];
 
     if (!projectName) {
         return Q.reject('No Xcode project found in ' + projectPath);
     }
 
-    return superspawn.spawn('xcodebuild', ['-project', projectName, '-configuration', 'Debug', '-alltargets', 'clean'], { cwd: projectPath, printCommand: true, stdio: 'inherit' })
-        .then(function () {
-            return superspawn.spawn('xcodebuild', ['-project', projectName, '-configuration', 'Release', '-alltargets', 'clean'], { cwd: projectPath, printCommand: true, stdio: 'inherit' });
-        }).then(function () {
-            return shell.rm('-rf', path.join(projectPath, 'build'));
-        });
+    const xcodebuildClean = configName => {
+        return superspawn.spawn(
+            'xcodebuild',
+            ['-project', projectName, '-configuration', configName, '-alltargets', 'clean'],
+            { cwd: projectPath, printCommand: true, stdio: 'inherit' }
+        );
+    };
+
+    return xcodebuildClean('Debug')
+        .then(() => xcodebuildClean('Release'))
+        .then(() => shell.rm('-rf', path.join(projectPath, 'build')));
 };

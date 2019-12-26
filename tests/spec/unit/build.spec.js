@@ -21,11 +21,11 @@ const path = require('path');
 const rewire = require('rewire');
 const build = rewire('../../../bin/templates/scripts/cordova/lib/build');
 
-describe('build', function () {
+describe('build', () => {
     let emitSpy;
     const testProjectPath = path.join('/test', 'project', 'path');
 
-    beforeEach(function () {
+    beforeEach(() => {
         // Events spy
         emitSpy = jasmine.createSpy('emitSpy');
         build.__set__('events', {
@@ -33,11 +33,11 @@ describe('build', function () {
         });
     });
 
-    describe('getXcodeBuildArgs method', function () {
+    describe('getXcodeBuildArgs method', () => {
         const getXcodeBuildArgs = build.__get__('getXcodeBuildArgs');
         build.__set__('__dirname', path.join('/test', 'dir'));
 
-        it('should generate appropriate args if a single buildFlag is passed in', function () {
+        it('should generate appropriate args if a single buildFlag is passed in', () => {
             const isDevice = true;
             const buildFlags = '';
 
@@ -60,7 +60,7 @@ describe('build', function () {
             expect(args.length).toEqual(13);
         });
 
-        it('should generate appropriate args if buildFlags are passed in', function () {
+        it('should generate appropriate args if buildFlags are passed in', () => {
             const isDevice = true;
             const buildFlags = [
                 '-workspace TestWorkspaceFlag',
@@ -91,7 +91,7 @@ describe('build', function () {
             expect(args.length).toEqual(13);
         });
 
-        it('should generate appropriate args for device', function () {
+        it('should generate appropriate args for device', () => {
             const isDevice = true;
             const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null);
             expect(args).toEqual([
@@ -112,7 +112,7 @@ describe('build', function () {
             expect(args.length).toEqual(13);
         });
 
-        it('should generate appropriate args for simulator', function () {
+        it('should generate appropriate args for simulator', () => {
             const isDevice = false;
             const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null, 'iPhone 5s');
             expect(args).toEqual([
@@ -133,7 +133,7 @@ describe('build', function () {
             expect(args.length).toEqual(13);
         });
 
-        it('should add matched flags that are not overriding for device', function () {
+        it('should add matched flags that are not overriding for device', () => {
             const isDevice = true;
             const buildFlags = '-sdk TestSdkFlag';
 
@@ -158,7 +158,7 @@ describe('build', function () {
             expect(args.length).toEqual(15);
         });
 
-        it('should add matched flags that are not overriding for simulator', function () {
+        it('should add matched flags that are not overriding for simulator', () => {
             const isDevice = false;
             const buildFlags = '-archivePath TestArchivePathFlag';
 
@@ -183,7 +183,7 @@ describe('build', function () {
             expect(args.length).toEqual(15);
         });
 
-        it('should generate appropriate args for automatic provisioning', function () {
+        it('should generate appropriate args for automatic provisioning', () => {
             const isDevice = true;
             const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null, null, true);
             expect(args).toEqual([
@@ -206,10 +206,10 @@ describe('build', function () {
         });
     });
 
-    describe('getXcodeArchiveArgs method', function () {
+    describe('getXcodeArchiveArgs method', () => {
         const getXcodeArchiveArgs = build.__get__('getXcodeArchiveArgs');
 
-        it('should generate the appropriate arguments', function () {
+        it('should generate the appropriate arguments', () => {
             const archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path');
             expect(archiveArgs[0]).toEqual('-exportArchive');
             expect(archiveArgs[1]).toEqual('-archivePath');
@@ -221,7 +221,7 @@ describe('build', function () {
             expect(archiveArgs.length).toEqual(7);
         });
 
-        it('should generate the appropriate arguments for automatic provisioning', function () {
+        it('should generate the appropriate arguments for automatic provisioning', () => {
             const archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path', true);
             expect(archiveArgs[0]).toEqual('-exportArchive');
             expect(archiveArgs[1]).toEqual('-archivePath');
@@ -235,80 +235,80 @@ describe('build', function () {
         });
     });
 
-    describe('parseBuildFlag method', function () {
+    describe('parseBuildFlag method', () => {
         const parseBuildFlag = build.__get__('parseBuildFlag');
 
-        it('should detect a workspace change', function () {
+        it('should detect a workspace change', () => {
             const buildFlag = '-workspace MyTestWorkspace';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.workspace).toEqual('MyTestWorkspace');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect a scheme change', function () {
+        it('should detect a scheme change', () => {
             const buildFlag = '-scheme MyTestScheme';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.scheme).toEqual('MyTestScheme');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect a configuration change', function () {
+        it('should detect a configuration change', () => {
             const buildFlag = '-configuration MyTestConfiguration';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.configuration).toEqual('MyTestConfiguration');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect an sdk change', function () {
+        it('should detect an sdk change', () => {
             const buildFlag = '-sdk NotARealSDK';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.sdk).toEqual('NotARealSDK');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect a destination change', function () {
+        it('should detect a destination change', () => {
             const buildFlag = '-destination MyTestDestination';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.destination).toEqual('MyTestDestination');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect an archivePath change', function () {
+        it('should detect an archivePath change', () => {
             const buildFlag = '-archivePath MyTestArchivePath';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.archivePath).toEqual('MyTestArchivePath');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect a configuration_build_dir change', function () {
+        it('should detect a configuration_build_dir change', () => {
             const buildFlag = 'CONFIGURATION_BUILD_DIR=/path/to/fake/config/build/dir';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.configuration_build_dir).toEqual('CONFIGURATION_BUILD_DIR=/path/to/fake/config/build/dir');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should detect a shared_precomps_dir change', function () {
+        it('should detect a shared_precomps_dir change', () => {
             const buildFlag = 'SHARED_PRECOMPS_DIR=/path/to/fake/shared/precomps/dir';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.shared_precomps_dir).toEqual('SHARED_PRECOMPS_DIR=/path/to/fake/shared/precomps/dir');
             expect(args.otherFlags.length).toEqual(0);
         });
-        it('should parse arbitrary build settings', function () {
+        it('should parse arbitrary build settings', () => {
             const buildFlag = 'MY_ARBITRARY_BUILD_SETTING=ValueOfArbitraryBuildSetting';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.otherFlags[0]).toEqual('MY_ARBITRARY_BUILD_SETTING=ValueOfArbitraryBuildSetting');
             expect(args.otherFlags.length).toEqual(1);
         });
-        it('should parse userdefaults', function () {
+        it('should parse userdefaults', () => {
             const buildFlag = '-myuserdefault=TestUserDefaultValue';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
             expect(args.otherFlags[0]).toEqual('-myuserdefault=TestUserDefaultValue');
             expect(args.otherFlags.length).toEqual(1);
         });
-        it('should parse settings with a space', function () {
+        it('should parse settings with a space', () => {
             const buildFlag = '-anotherxcodebuildsetting withASpace';
             const args = { otherFlags: [] };
             parseBuildFlag(buildFlag, args);
@@ -390,11 +390,9 @@ describe('build', function () {
             }];
 
             // This method will require a module that supports the run method.
-            build.__set__('require', () => {
-                return {
-                    run: () => Promise.resolve(mockedEmulators)
-                };
-            });
+            build.__set__('require', () => ({
+                run: () => Promise.resolve(mockedEmulators)
+            }));
 
             const getDefaultSimulatorTarget = build.__get__('getDefaultSimulatorTarget');
 

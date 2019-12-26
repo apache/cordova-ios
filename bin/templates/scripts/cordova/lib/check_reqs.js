@@ -49,7 +49,7 @@ const COCOAPODS_REPO_NOT_FOUND_MESSAGE = 'The CocoaPods repo at ~/.cocoapods was
  * Checks if xcode util is available
  * @return {Promise} Returns a promise either resolved with xcode version or rejected
  */
-module.exports.run = module.exports.check_xcodebuild = function () {
+module.exports.run = module.exports.check_xcodebuild = () => {
     return checkTool('xcodebuild', XCODEBUILD_MIN_VERSION, XCODEBUILD_NOT_FOUND_MESSAGE);
 };
 
@@ -57,11 +57,11 @@ module.exports.run = module.exports.check_xcodebuild = function () {
  * Checks if ios-deploy util is available
  * @return {Promise} Returns a promise either resolved with ios-deploy version or rejected
  */
-module.exports.check_ios_deploy = function () {
+module.exports.check_ios_deploy = () => {
     return checkTool('ios-deploy', IOS_DEPLOY_MIN_VERSION, IOS_DEPLOY_NOT_FOUND_MESSAGE);
 };
 
-module.exports.check_os = function () {
+module.exports.check_os = () => {
     // Build iOS apps available for OSX platform only, so we reject on others platforms
     return os_platform_is_supported()
         ? Q.resolve(process.platform)
@@ -88,9 +88,9 @@ function check_cocoapod_tool (toolChecker) {
  * Checks if cocoapods repo size is what is expected
  * @return {Promise} Returns a promise either resolved or rejected
  */
-module.exports.check_cocoapods_repo_size = function () {
+module.exports.check_cocoapods_repo_size = () => {
     return check_cocoapod_tool()
-        .then(function (toolOptions) {
+        .then(toolOptions => {
             // check size of ~/.cocoapods repo
             const commandString = util.format('du -sh %s/.cocoapods', process.env.HOME);
             const command = shell.exec(commandString, { silent: true });
@@ -103,7 +103,7 @@ module.exports.check_cocoapods_repo_size = function () {
                 return Q.reject(util.format('%s (%s)', COCOAPODS_REPO_NOT_FOUND_MESSAGE, command.output));
             }
         })
-        .then(function (repoSize, toolOptions) {
+        .then((repoSize, toolOptions) => {
             if (toolOptions.ignore || COCOAPODS_SYNCED_MIN_SIZE <= repoSize) { // success, expected size
                 return Q.resolve(toolOptions);
             } else {
@@ -116,11 +116,11 @@ module.exports.check_cocoapods_repo_size = function () {
  * Checks if cocoapods is available, and whether the repo is synced (because it takes a long time to download)
  * @return {Promise} Returns a promise either resolved or rejected
  */
-module.exports.check_cocoapods = function (toolChecker) {
+module.exports.check_cocoapods = toolChecker => {
     return check_cocoapod_tool(toolChecker)
         // check whether the cocoapods repo has been synced through `pod repo` command
         // a value of '0 repos' means it hasn't been synced
-        .then(function (toolOptions) {
+        .then(toolOptions => {
             if (toolOptions.ignore) return toolOptions;
 
             // starting with 1.8.0 cocoapods now use cdn and we dont need to sync first
@@ -159,10 +159,10 @@ function checkTool (tool, minVersion, message, toolFriendlyName) {
     }
 
     // check if tool version is greater than specified one
-    return versions.get_tool_version(tool).then(function (version) {
+    return versions.get_tool_version(tool).then(version => {
         version = version.trim();
         return versions.compareVersions(version, minVersion) >= 0
-            ? Q.resolve({ version: version })
+            ? Q.resolve({ version })
             : Q.reject('Cordova needs ' + toolFriendlyName + ' version ' + minVersion +
               ' or greater, you have version ' + version + '. ' + (message || ''));
     });
@@ -189,7 +189,7 @@ const Requirement = function (id, name, isFatal) {
  *
  * @return Promise<Requirement[]> Array of requirements. Due to implementation, promise is always fulfilled.
  */
-module.exports.check_all = function () {
+module.exports.check_all = () => {
     const requirements = [
         new Requirement('os', 'Apple macOS', true),
         new Requirement('xcode', 'Xcode'),
@@ -208,27 +208,25 @@ module.exports.check_all = function () {
     ];
 
     // Then execute requirement checks one-by-one
-    return checkFns.reduce(function (promise, checkFn, idx) {
-        return promise.then(function () {
+    return checkFns.reduce((promise, checkFn, idx) => {
+        return promise.then(() => {
             // If fatal requirement is failed,
             // we don't need to check others
             if (fatalIsHit) return Q();
 
             const requirement = requirements[idx];
             return checkFn()
-                .then(function (version) {
+                .then(version => {
                     requirement.installed = true;
                     requirement.metadata.version = version;
                     result.push(requirement);
-                }, function (err) {
+                }, err => {
                     if (requirement.isFatal) fatalIsHit = true;
                     requirement.metadata.reason = err;
                     result.push(requirement);
                 });
         });
     }, Q())
-        .then(function () {
-            // When chain is completed, return requirements array to upstream API
-            return result;
-        });
+        // When chain is completed, return requirements array to upstream API
+        .then(() => result);
 };

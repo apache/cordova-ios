@@ -45,8 +45,6 @@ const IMAGESET_COMPACT_SIZE_CLASS = 'compact';
 const CDV_ANY_SIZE_CLASS = 'any';
 
 module.exports.prepare = function (cordovaProject, options) {
-    const self = this;
-
     const platformJson = PlatformJson.load(this.locations.root, 'ios');
     const munger = new PlatformMunger('ios', this.locations.root, platformJson, new PluginInfoProvider());
 
@@ -54,17 +52,15 @@ module.exports.prepare = function (cordovaProject, options) {
 
     // Update own www dir with project's www assets and plugins' assets and js-files
     return Q.when(updateWww(cordovaProject, this.locations))
-        .then(function () {
-            // update project according to config.xml changes.
-            return updateProject(self._config, self.locations);
+        // update project according to config.xml changes.
+        .then(() => updateProject(this._config, this.locations))
+        .then(() => {
+            updateIcons(cordovaProject, this.locations);
+            updateSplashScreens(cordovaProject, this.locations);
+            updateLaunchStoryboardImages(cordovaProject, this.locations);
+            updateFileResources(cordovaProject, this.locations);
         })
-        .then(function () {
-            updateIcons(cordovaProject, self.locations);
-            updateSplashScreens(cordovaProject, self.locations);
-            updateLaunchStoryboardImages(cordovaProject, self.locations);
-            updateFileResources(cordovaProject, self.locations);
-        })
-        .then(function () {
+        .then(() => {
             events.emit('verbose', 'Prepared iOS project successfully');
         });
 };
@@ -83,13 +79,12 @@ module.exports.clean = function (options) {
 
     const projectConfig = new ConfigParser(this.locations.configXml);
 
-    const self = this;
-    return Q().then(function () {
-        cleanWww(projectRoot, self.locations);
-        cleanIcons(projectRoot, projectConfig, self.locations);
-        cleanSplashScreens(projectRoot, projectConfig, self.locations);
-        cleanLaunchStoryboardImages(projectRoot, projectConfig, self.locations);
-        cleanFileResources(projectRoot, projectConfig, self.locations);
+    return Q().then(() => {
+        cleanWww(projectRoot, this.locations);
+        cleanIcons(projectRoot, projectConfig, this.locations);
+        cleanSplashScreens(projectRoot, projectConfig, this.locations);
+        cleanLaunchStoryboardImages(projectRoot, projectConfig, this.locations);
+        cleanFileResources(projectRoot, projectConfig, this.locations);
     });
 };
 
@@ -230,7 +225,7 @@ function updateProject (platformConfig, locations) {
     fs.writeFileSync(plistFile, info_contents, 'utf-8');
     events.emit('verbose', 'Wrote out iOS Bundle Version "' + version + '" to ' + plistFile);
 
-    return handleBuildSettings(platformConfig, locations, infoPlist).then(function () {
+    return handleBuildSettings(platformConfig, locations, infoPlist).then(() => {
         if (name === originalName) {
             events.emit('verbose', 'iOS Product Name has not changed (still "' + originalName + '")');
             return Q();
@@ -371,7 +366,7 @@ function mapIconResources (icons, iconsDir) {
     ];
 
     const pathMap = {};
-    platformIcons.forEach(function (item) {
+    platformIcons.forEach(item => {
         const icon = icons.getBySize(item.width, item.height) || icons.getDefault();
         if (icon) {
             const target = path.join(iconsDir, item.dest);
@@ -416,7 +411,7 @@ function cleanIcons (projectRoot, projectConfig, locations) {
         const platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
         const iconsDir = getIconsDir(projectRoot, platformProjDir);
         const resourceMap = mapIconResources(icons, iconsDir);
-        Object.keys(resourceMap).forEach(function (targetIconPath) {
+        Object.keys(resourceMap).forEach(targetIconPath => {
             resourceMap[targetIconPath] = null;
         });
         events.emit('verbose', 'Cleaning icons at ' + iconsDir);
@@ -444,7 +439,7 @@ function mapSplashScreenResources (splashScreens, splashScreensDir) {
     ];
 
     const pathMap = {};
-    platformSplashScreens.forEach(function (item) {
+    platformSplashScreens.forEach(item => {
         const splash = splashScreens.getBySize(item.width, item.height);
         if (splash) {
             const target = path.join(splashScreensDir, item.dest);
@@ -489,7 +484,7 @@ function cleanSplashScreens (projectRoot, projectConfig, locations) {
         const platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
         const splashScreensDir = getSplashScreensDir(projectRoot, platformProjDir);
         const resourceMap = mapIconResources(splashScreens, splashScreensDir);
-        Object.keys(resourceMap).forEach(function (targetSplashPath) {
+        Object.keys(resourceMap).forEach(targetSplashPath => {
             resourceMap[targetSplashPath] = null;
         });
         events.emit('verbose', 'Cleaning splash screens at ' + splashScreensDir);
@@ -513,7 +508,7 @@ function updateFileResources (cordovaProject, locations) {
     }
 
     const resourceMap = {};
-    files.forEach(function (res) {
+    files.forEach(res => {
         const src = res.src;
         let target = res.target;
 
@@ -549,7 +544,7 @@ function cleanFileResources (projectRoot, projectConfig, locations) {
         const project = projectFile.parse(locations);
 
         const resourceMap = {};
-        files.forEach(function (res) {
+        files.forEach(res => {
             const src = res.src;
             let target = res.target;
 
@@ -607,16 +602,11 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
     };
     const sizes = ['com', 'any'];
 
-    idioms.forEach(function (idiom) {
-        scalesForIdiom[idiom].forEach(function (scale) {
-            sizes.forEach(function (width) {
-                sizes.forEach(function (height) {
-                    const item = {
-                        idiom: idiom,
-                        scale: scale,
-                        width: width,
-                        height: height
-                    };
+    idioms.forEach(idiom => {
+        scalesForIdiom[idiom].forEach(scale => {
+            sizes.forEach(width => {
+                sizes.forEach(height => {
+                    const item = { idiom, scale, width, height };
 
                     /* examples of the search pattern:
                      *    scale   ~  idiom    ~   width    height
@@ -632,9 +622,10 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
                      *         return item.src.indexOf(searchPattern) >= 0;
                      *     });
                      */
-                    const launchStoryboardImage = splashScreens.reduce(function (p, c) {
-                        return (c.src.indexOf(searchPattern) >= 0) ? c : p;
-                    }, undefined);
+                    const launchStoryboardImage = splashScreens.reduce(
+                        (p, c) => (c.src.indexOf(searchPattern) >= 0) ? c : p,
+                        undefined
+                    );
 
                     if (launchStoryboardImage) {
                         item.filename = 'Default' + searchPattern + '.png';
@@ -668,7 +659,7 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
 function mapLaunchStoryboardResources (splashScreens, launchStoryboardImagesDir) {
     const platformLaunchStoryboardImages = mapLaunchStoryboardContents(splashScreens, launchStoryboardImagesDir);
     const pathMap = {};
-    platformLaunchStoryboardImages.forEach(function (item) {
+    platformLaunchStoryboardImages.forEach(item => {
         if (item.target) {
             pathMap[item.target] = item.src;
         }
@@ -712,7 +703,7 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
             version: 1
         }
     };
-    contentsJSON.images = platformLaunchStoryboardImages.map(function (item) {
+    contentsJSON.images = platformLaunchStoryboardImages.map(item => {
         const newItem = {
             idiom: item.idiom,
             scale: item.scale
@@ -785,9 +776,7 @@ function splashScreensHaveLaunchStoryboardImages (contentsJSON) {
      *        return item.filename !== undefined;
      *     });
      */
-    return !!contentsJSON.images.reduce(function (p, c) {
-        return (c.filename !== undefined) ? c : p;
-    }, undefined);
+    return !!contentsJSON.images.reduce((p, c) => (c.filename !== undefined) ? c : p, undefined);
 }
 
 function platformHasLaunchStoryboardImages (platformConfig) {
@@ -798,9 +787,7 @@ function platformHasLaunchStoryboardImages (platformConfig) {
 
 function platformHasLegacyLaunchImages (platformConfig) {
     const splashScreens = platformConfig.getSplashScreens('ios');
-    return !!splashScreens.reduce(function (p, c) {
-        return (c.width !== undefined || c.height !== undefined) ? c : p;
-    }, undefined);
+    return !!splashScreens.reduce((p, c) => (c.width !== undefined || c.height !== undefined) ? c : p, undefined);
 }
 
 /**
@@ -899,7 +886,7 @@ function cleanLaunchStoryboardImages (projectRoot, projectConfig, locations) {
         const resourceMap = mapLaunchStoryboardResources(splashScreens, launchStoryboardImagesDir);
         const contentsJSON = getLaunchStoryboardContentsJSON(splashScreens, launchStoryboardImagesDir);
 
-        Object.keys(resourceMap).forEach(function (targetPath) {
+        Object.keys(resourceMap).forEach(targetPath => {
             resourceMap[targetPath] = null;
         });
         events.emit('verbose', 'Cleaning storyboard image set at ' + launchStoryboardImagesDir);
@@ -909,7 +896,7 @@ function cleanLaunchStoryboardImages (projectRoot, projectConfig, locations) {
             resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
 
         // delete filename from contents.json
-        contentsJSON.images.forEach(function (image) {
+        contentsJSON.images.forEach(image => {
             image.filename = undefined;
         });
 
@@ -975,14 +962,14 @@ function processAccessAndAllowNavigationEntries (config) {
 
     return allow_navigations
     // we concat allow_navigations and accesses, after processing accesses
-        .concat(accesses.map(function (obj) {
+        .concat(accesses.map(obj => {
             // map accesses to a common key interface using 'href', not origin
             obj.href = obj.origin;
             delete obj.origin;
             return obj;
         }))
         // we reduce the array to an object with all the entries processed (key is Hostname)
-        .reduce(function (previousReturn, currentElement) {
+        .reduce((previousReturn, currentElement) => {
             const options = {
                 minimum_tls_version: currentElement.minimum_tls_version,
                 requires_forward_secrecy: currentElement.requires_forward_secrecy,

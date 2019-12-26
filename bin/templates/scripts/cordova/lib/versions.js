@@ -23,9 +23,9 @@ const child_process = require('child_process');
 const Q = require('q');
 const semver = require('semver');
 
-exports.get_apple_ios_version = function () {
+exports.get_apple_ios_version = () => {
     const d = Q.defer();
-    child_process.exec('xcodebuild -showsdks', function (error, stdout, stderr) {
+    child_process.exec('xcodebuild -showsdks', (error, stdout, stderr) => {
         if (error) {
             d.reject(stderr);
         } else {
@@ -33,7 +33,7 @@ exports.get_apple_ios_version = function () {
         }
     });
 
-    return d.promise.then(function (output) {
+    return d.promise.then(output => {
         const regex = /[0-9]*\.[0-9]*/;
         const versions = [];
         const regexIOS = /^iOS \d+/;
@@ -46,14 +46,12 @@ exports.get_apple_ios_version = function () {
         versions.sort();
         console.log(versions[0]);
         return Q();
-    }, function (stderr) {
-        return Q.reject(stderr);
-    });
+    }, stderr => Q.reject(stderr));
 };
 
-exports.get_apple_osx_version = function () {
+exports.get_apple_osx_version = () => {
     const d = Q.defer();
-    child_process.exec('xcodebuild -showsdks', function (error, stdout, stderr) {
+    child_process.exec('xcodebuild -showsdks', (error, stdout, stderr) => {
         if (error) {
             d.reject(stderr);
         } else {
@@ -61,7 +59,7 @@ exports.get_apple_osx_version = function () {
         }
     });
 
-    return d.promise.then(function (output) {
+    return d.promise.then(output => {
         const regex = /[0-9]*\.[0-9]*/;
         const versions = [];
         const regexOSX = /^macOS \d+/;
@@ -74,14 +72,12 @@ exports.get_apple_osx_version = function () {
         versions.sort();
         console.log(versions[0]);
         return Q();
-    }, function (stderr) {
-        return Q.reject(stderr);
-    });
+    }, stderr => Q.reject(stderr));
 };
 
-exports.get_apple_xcode_version = function () {
+exports.get_apple_xcode_version = () => {
     const d = Q.defer();
-    child_process.exec('xcodebuild -version', function (error, stdout, stderr) {
+    child_process.exec('xcodebuild -version', (error, stdout, stderr) => {
         const versionMatch = /Xcode (.*)/.exec(stdout);
         if (error || !versionMatch) {
             d.reject(stderr);
@@ -97,9 +93,9 @@ exports.get_apple_xcode_version = function () {
  * @return {Promise} Promise that either resolved with ios-deploy version
  *                           or rejected in case of error
  */
-exports.get_ios_deploy_version = function () {
+exports.get_ios_deploy_version = () => {
     const d = Q.defer();
-    child_process.exec('ios-deploy --version', function (error, stdout, stderr) {
+    child_process.exec('ios-deploy --version', (error, stdout, stderr) => {
         if (error) {
             d.reject(stderr);
         } else {
@@ -114,9 +110,9 @@ exports.get_ios_deploy_version = function () {
  * @return {Promise} Promise that either resolved with pod version
  *                           or rejected in case of error
  */
-exports.get_cocoapods_version = function () {
+exports.get_cocoapods_version = () => {
     const d = Q.defer();
-    child_process.exec('pod --version', function (error, stdout, stderr) {
+    child_process.exec('pod --version', (error, stdout, stderr) => {
         if (error) {
             d.reject(stderr);
         } else {
@@ -131,9 +127,9 @@ exports.get_cocoapods_version = function () {
  * @return {Promise} Promise that either resolved with ios-sim version
  *                           or rejected in case of error
  */
-exports.get_ios_sim_version = function () {
+exports.get_ios_sim_version = () => {
     const d = Q.defer();
-    child_process.exec('ios-sim --version', function (error, stdout, stderr) {
+    child_process.exec('ios-sim --version', (error, stdout, stderr) => {
         if (error) {
             d.reject(stderr);
         } else {
@@ -149,7 +145,7 @@ exports.get_ios_sim_version = function () {
  * @return {Promise}         Promise that either resolved with tool version
  *                                   or rejected in case of error
  */
-exports.get_tool_version = function (toolName) {
+exports.get_tool_version = toolName => {
     switch (toolName) {
     case 'xcodebuild': return exports.get_apple_xcode_version();
     case 'ios-sim': return exports.get_ios_sim_version();
