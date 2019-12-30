@@ -103,7 +103,7 @@ module.exports.clean = function (options) {
  *   configuration is already dumped to appropriate config.xml file.
  */
 function updateConfigFile (sourceConfig, configMunger, locations) {
-    events.emit('verbose', 'Generating platform-specific config.xml from defaults for iOS at ' + locations.configXml);
+    events.emit('verbose', `Generating platform-specific config.xml from defaults for iOS at ${locations.configXml}`);
 
     // First cleanup current config and merge project's one into own
     // Overwrite platform config.xml with defaults.xml.
@@ -127,7 +127,7 @@ function updateConfigFile (sourceConfig, configMunger, locations) {
  * Logs all file operations via the verbose event stream, indented.
  */
 function logFileOp (message) {
-    events.emit('verbose', '  ' + message);
+    events.emit('verbose', `  ${message}`);
 }
 
 /**
@@ -154,7 +154,7 @@ function updateWww (cordovaProject, destinations) {
 
     const targetDir = path.relative(cordovaProject.root, destinations.www);
     events.emit(
-        'verbose', 'Merging and updating files from [' + sourceDirs.join(', ') + '] to ' + targetDir);
+        'verbose', `Merging and updating files from [${sourceDirs.join(', ')}] to ${targetDir}`);
     FileUpdater.mergeAndUpdateDir(
         sourceDirs, targetDir, { rootDir: cordovaProject.root }, logFileOp);
 }
@@ -164,7 +164,7 @@ function updateWww (cordovaProject, destinations) {
  */
 function cleanWww (projectRoot, locations) {
     const targetDir = path.relative(projectRoot, locations.www);
-    events.emit('verbose', 'Cleaning ' + targetDir);
+    events.emit('verbose', `Cleaning ${targetDir}`);
 
     // No source paths are specified, so mergeAndUpdateDir() will clear the target directory.
     FileUpdater.mergeAndUpdateDir(
@@ -189,7 +189,7 @@ function updateProject (platformConfig, locations) {
     const originalName = path.basename(locations.xcodeCordovaProj);
 
     // Update package id (bundle id)
-    const plistFile = path.join(locations.xcodeCordovaProj, originalName + '-Info.plist');
+    const plistFile = path.join(locations.xcodeCordovaProj, `${originalName}-Info.plist`);
     const infoPlist = plist.parse(fs.readFileSync(plistFile, 'utf8'));
 
     // Update version (bundle version)
@@ -223,11 +223,11 @@ function updateProject (platformConfig, locations) {
 
     info_contents = info_contents.replace(/<string>[\s\r\n]*<\/string>/g, '<string></string>');
     fs.writeFileSync(plistFile, info_contents, 'utf-8');
-    events.emit('verbose', 'Wrote out iOS Bundle Version "' + version + '" to ' + plistFile);
+    events.emit('verbose', `Wrote out iOS Bundle Version "${version}" to ${plistFile}`);
 
     return handleBuildSettings(platformConfig, locations, infoPlist).then(() => {
         if (name === originalName) {
-            events.emit('verbose', 'iOS Product Name has not changed (still "' + originalName + '")');
+            events.emit('verbose', `iOS Product Name has not changed (still "${originalName}")`);
             return Q();
         } else { // CB-11712 <name> was changed, we don't support it'
             const errorString =
@@ -280,7 +280,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     try {
         project = projectFile.parse(locations);
     } catch (err) {
-        return Q.reject(new CordovaError('Could not parse ' + locations.pbxproj + ': ' + err));
+        return Q.reject(new CordovaError(`Could not parse ${locations.pbxproj}: ${err}`));
     }
 
     const origPkg = project.xcode.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
@@ -292,22 +292,22 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     }
 
     if (origPkg !== pkg) {
-        events.emit('verbose', 'Set PRODUCT_BUNDLE_IDENTIFIER to ' + pkg + '.');
+        events.emit('verbose', `Set PRODUCT_BUNDLE_IDENTIFIER to ${pkg}.`);
         project.xcode.updateBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', pkg);
     }
 
     if (targetDevice) {
-        events.emit('verbose', 'Set TARGETED_DEVICE_FAMILY to ' + targetDevice + '.');
+        events.emit('verbose', `Set TARGETED_DEVICE_FAMILY to ${targetDevice}.`);
         project.xcode.updateBuildProperty('TARGETED_DEVICE_FAMILY', targetDevice);
     }
 
     if (deploymentTarget) {
-        events.emit('verbose', 'Set IPHONEOS_DEPLOYMENT_TARGET to "' + deploymentTarget + '".');
+        events.emit('verbose', `Set IPHONEOS_DEPLOYMENT_TARGET to "${deploymentTarget}".`);
         project.xcode.updateBuildProperty('IPHONEOS_DEPLOYMENT_TARGET', deploymentTarget);
     }
 
     if (swiftVersion) {
-        events.emit('verbose', 'Set SwiftVersion to "' + swiftVersion + '".');
+        events.emit('verbose', `Set SwiftVersion to "${swiftVersion}".`);
         project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
     }
     if (wkWebViewOnly) {
@@ -400,7 +400,7 @@ function updateIcons (cordovaProject, locations) {
     const platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
     const iconsDir = getIconsDir(cordovaProject.root, platformProjDir);
     const resourceMap = mapIconResources(icons, iconsDir);
-    events.emit('verbose', 'Updating icons at ' + iconsDir);
+    events.emit('verbose', `Updating icons at ${iconsDir}`);
     FileUpdater.updatePaths(
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 }
@@ -414,7 +414,7 @@ function cleanIcons (projectRoot, projectConfig, locations) {
         Object.keys(resourceMap).forEach(targetIconPath => {
             resourceMap[targetIconPath] = null;
         });
-        events.emit('verbose', 'Cleaning icons at ' + iconsDir);
+        events.emit('verbose', `Cleaning icons at ${iconsDir}`);
 
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
@@ -473,7 +473,7 @@ function updateSplashScreens (cordovaProject, locations) {
     const platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
     const splashScreensDir = getSplashScreensDir(cordovaProject.root, platformProjDir);
     const resourceMap = mapSplashScreenResources(splashScreens, splashScreensDir);
-    events.emit('verbose', 'Updating splash screens at ' + splashScreensDir);
+    events.emit('verbose', `Updating splash screens at ${splashScreensDir}`);
     FileUpdater.updatePaths(
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 }
@@ -487,7 +487,7 @@ function cleanSplashScreens (projectRoot, projectConfig, locations) {
         Object.keys(resourceMap).forEach(targetSplashPath => {
             resourceMap[targetSplashPath] = null;
         });
-        events.emit('verbose', 'Cleaning splash screens at ' + splashScreensDir);
+        events.emit('verbose', `Cleaning splash screens at ${splashScreensDir}`);
 
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
@@ -522,13 +522,13 @@ function updateFileResources (cordovaProject, locations) {
         if (!fs.existsSync(targetPath)) {
             project.xcode.addResourceFile(target);
         } else {
-            events.emit('warn', 'Overwriting existing resource file at ' + targetPath);
+            events.emit('warn', `Overwriting existing resource file at ${targetPath}`);
         }
 
         resourceMap[targetPath] = src;
     });
 
-    events.emit('verbose', 'Updating resource files at ' + platformDir);
+    events.emit('verbose', `Updating resource files at ${platformDir}`);
     FileUpdater.updatePaths(
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 
@@ -539,7 +539,7 @@ function cleanFileResources (projectRoot, projectConfig, locations) {
     const platformDir = path.relative(projectRoot, locations.root);
     const files = projectConfig.getFileResources('ios', true);
     if (files.length > 0) {
-        events.emit('verbose', 'Cleaning resource files at ' + platformDir);
+        events.emit('verbose', `Cleaning resource files at ${platformDir}`);
 
         const project = projectFile.parse(locations);
 
@@ -614,7 +614,7 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
                      *     @3x    ~  iphone   ~    com      any
                      *     @2x    ~   ipad    ~    com      any
                      */
-                    const searchPattern = '@' + scale + '~' + idiom + '~' + width + height;
+                    const searchPattern = `@${scale}~${idiom}~${width}${height}`;
 
                     /* because old node versions don't have Array.find, the below is
                      * functionally equivalent to this:
@@ -628,7 +628,7 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
                     );
 
                     if (launchStoryboardImage) {
-                        item.filename = 'Default' + searchPattern + '.png';
+                        item.filename = `Default${searchPattern}.png`;
                         item.src = launchStoryboardImage.src;
                         item.target = path.join(launchStoryboardImagesDir, item.filename);
                     }
@@ -758,11 +758,11 @@ function updateBuildSettingsForLaunchStoryboard (proj, platformConfig, infoPlist
 
     if (hasLaunchStoryboardImages && currentLaunchStoryboard === CDV_LAUNCH_STORYBOARD_NAME && !hasLegacyLaunchImages) {
         // don't need legacy launch images if we are using our launch storyboard
-        events.emit('verbose', 'Removed ' + LAUNCHIMAGE_BUILD_SETTING + ' because project is using our launch storyboard.');
+        events.emit('verbose', `Removed ${LAUNCHIMAGE_BUILD_SETTING} because project is using our launch storyboard.`);
         proj.removeBuildProperty(LAUNCHIMAGE_BUILD_SETTING);
     } else if (hasLegacyLaunchImages && !currentLaunchStoryboard) {
         // we do need to ensure legacy launch images are used if there's no launch storyboard present
-        events.emit('verbose', 'Set ' + LAUNCHIMAGE_BUILD_SETTING + ' to ' + LAUNCHIMAGE_BUILD_SETTING_VALUE + ' because project is using legacy launch images and no storyboard.');
+        events.emit('verbose', `Set ${LAUNCHIMAGE_BUILD_SETTING} to ${LAUNCHIMAGE_BUILD_SETTING_VALUE} because project is using legacy launch images and no storyboard.`);
         proj.updateBuildProperty(LAUNCHIMAGE_BUILD_SETTING, LAUNCHIMAGE_BUILD_SETTING_VALUE);
     } else {
         events.emit('verbose', 'Did not update build settings for launch storyboard support.');
@@ -801,7 +801,7 @@ function platformHasLegacyLaunchImages (platformConfig) {
  */
 function updateProjectPlistForLaunchStoryboard (platformConfig, infoPlist) {
     const currentLaunchStoryboard = infoPlist[UI_LAUNCH_STORYBOARD_NAME];
-    events.emit('verbose', 'Current launch storyboard ' + currentLaunchStoryboard);
+    events.emit('verbose', `Current launch storyboard ${currentLaunchStoryboard}`);
 
     const hasLaunchStoryboardImages = platformHasLaunchStoryboardImages(platformConfig);
 
@@ -860,7 +860,7 @@ function updateLaunchStoryboardImages (cordovaProject, locations) {
         const resourceMap = mapLaunchStoryboardResources(splashScreens, launchStoryboardImagesDir);
         const contentsJSON = getLaunchStoryboardContentsJSON(splashScreens, launchStoryboardImagesDir);
 
-        events.emit('verbose', 'Updating launch storyboard images at ' + launchStoryboardImagesDir);
+        events.emit('verbose', `Updating launch storyboard images at ${launchStoryboardImagesDir}`);
         FileUpdater.updatePaths(
             resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 
@@ -889,7 +889,7 @@ function cleanLaunchStoryboardImages (projectRoot, projectConfig, locations) {
         Object.keys(resourceMap).forEach(targetPath => {
             resourceMap[targetPath] = null;
         });
-        events.emit('verbose', 'Cleaning storyboard image set at ' + launchStoryboardImagesDir);
+        events.emit('verbose', `Cleaning storyboard image set at ${launchStoryboardImagesDir}`);
 
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
@@ -930,8 +930,7 @@ function getOrientationValue (platformConfig) {
         return orientation;
     }
 
-    events.emit('warn', 'Unrecognized value for Orientation preference: ' + orientation +
-        '. Defaulting to value: ' + ORIENTATION_DEFAULT + '.');
+    events.emit('warn', `Unrecognized value for Orientation preference: ${orientation}. Defaulting to value: ${ORIENTATION_DEFAULT}.`);
 
     return ORIENTATION_DEFAULT;
 }
@@ -1167,6 +1166,6 @@ function parseTargetDevicePreference (value) {
     if (map[value.toLowerCase()]) {
         return map[value.toLowerCase()];
     }
-    events.emit('warn', 'Unrecognized value for target-device preference: ' + value + '.');
+    events.emit('warn', `Unrecognized value for target-device preference: ${value}.`);
     return null;
 }

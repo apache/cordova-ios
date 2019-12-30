@@ -46,7 +46,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         }
     } catch (e) { }
     if (use_shared) {
-        update_cordova_subproject([path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj'), config]);
+        update_cordova_subproject([path.join(projectPath, `${projectName}.xcodeproj`, 'project.pbxproj'), config]);
         // Symlink not used in project file, but is currently required for plugman because
         // it reads the VERSION file from it (instead of using the cordova/version script
         // like it should).
@@ -60,7 +60,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
         shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
         shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        update_cordova_subproject([path.join(r + '.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
+        update_cordova_subproject([path.join(`${r}.xcodeproj`, 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
     }
 }
 
@@ -119,21 +119,21 @@ function copyScripts (projectPath, projectName) {
 function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
     const r = path.join(project_path, project_name);
 
-    shell.rm('-rf', path.join(r + '.xcodeproj'));
+    shell.rm('-rf', path.join(`${r}.xcodeproj`));
     shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcodeproj'), project_path);
-    shell.mv('-f', path.join(project_path, '__TEMP__.xcodeproj'), path.join(r + '.xcodeproj'));
+    shell.mv('-f', path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
 
-    shell.rm('-rf', path.join(project_path, project_name + '.xcworkspace'));
+    shell.rm('-rf', path.join(project_path, `${project_name}.xcworkspace`));
     shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcworkspace'), project_path);
-    shell.mv('-f', path.join(project_path, '__TEMP__.xcworkspace'), path.join(r + '.xcworkspace'));
-    shell.mv('-f', path.join(r + '.xcworkspace', 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(r + '.xcworkspace', 'xcshareddata', 'xcschemes', project_name + '.xcscheme'));
+    shell.mv('-f', path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
+    shell.mv('-f', path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
     shell.rm('-rf', r);
     shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__'), project_path);
     shell.mv('-f', path.join(project_path, '__PROJECT_NAME__'), r);
 
-    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, project_name + '-Info.plist'));
-    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, project_name + '-Prefix.pch'));
+    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
+    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
     shell.mv('-f', path.join(r, 'gitignore'), path.join(r, '.gitignore'));
 
     /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
@@ -150,19 +150,19 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
     const project_name_xml_esc = xmlescape(project_name);
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(r + '.xcworkspace', 'contents.xcworkspacedata'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(r + '.xcworkspace', 'xcshareddata', 'xcschemes', project_name + '.xcscheme'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
     const project_name_esc = project_name.replace(/&/g, '\\&');
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r + '.xcodeproj', 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_ID__/g, package_name, path.join(r + '.xcodeproj', 'project.pbxproj'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(`${r}.xcodeproj`, 'project.pbxproj'));
+    shell.sed('-i', /__PROJECT_ID__/g, package_name, path.join(`${r}.xcodeproj`, 'project.pbxproj'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.m'));
     shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'main.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name + '-Info.plist'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, project_name + '-Prefix.pch'));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, `${project_name}-Info.plist`));
+    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, `${project_name}-Prefix.pch`));
 }
 
 function AbsParentPath (_path) {
@@ -174,7 +174,7 @@ function AbsProjectPath (relative_path) {
     if (/.pbxproj$/.test(absolute_path)) {
         absolute_path = AbsParentPath(absolute_path);
     } else if (!(/.xcodeproj$/.test(absolute_path))) {
-        throw new Error('The following is not a valid path to an Xcode project: ' + absolute_path);
+        throw new Error(`The following is not a valid path to an Xcode project: ${absolute_path}`);
     }
     return absolute_path;
 }
@@ -210,15 +210,15 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
 
     // check that parent directory does exist so cp -r will not fail
     if (!fs.existsSync(project_parent)) {
-        return Q.reject('Parent directory "' + project_parent + '" of given project path does not exist');
+        return Q.reject(`Parent directory "${project_parent}" of given project path does not exist`);
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
-    events.emit('log', '\tPath: ' + path.relative(process.cwd(), project_path));
-    events.emit('log', '\tPackage: ' + package_name);
-    events.emit('log', '\tName: ' + project_name);
+    events.emit('log', `\tPath: ${path.relative(process.cwd(), project_path)}`);
+    events.emit('log', `\tPackage: ${package_name}`);
+    events.emit('log', `\tName: ${project_name}`);
 
-    events.emit('verbose', 'Copying iOS template project to ' + project_path);
+    events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
     // create the project directory and copy over files
     shell.mkdir(project_path);
@@ -253,7 +253,7 @@ exports.updateProject = (projectPath, opts) => {
 
 function generateDoneMessage (type, link) {
     const pkg = require('../../package');
-    let msg = 'iOS project ' + (type === 'update' ? 'updated ' : 'created ') + 'with ' + pkg.name + '@' + pkg.version;
+    let msg = `iOS project ${type === 'update' ? 'updated' : 'created'} with ${pkg.name}@${pkg.version}`;
     if (link) {
         msg += ' and has a linked CordovaLib';
     }
@@ -289,7 +289,7 @@ function update_cordova_subproject (argv) {
     for (let i = 0; i < lines.length; ++i) {
         if (lines[i].match(REGEX)) {
             found = true;
-            newLine = lines[i].replace(/path = .+?;/, 'path = ' + subprojectPath + ';');
+            newLine = lines[i].replace(/path = .+?;/, `path = ${subprojectPath};`);
             newLine = newLine.replace(/sourceTree.+?;/, 'sourceTree = \"<group>\";'); /* eslint no-useless-escape : 0 */
             if (!newLine.match('name')) {
                 newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
@@ -299,7 +299,7 @@ function update_cordova_subproject (argv) {
     }
 
     if (!found) {
-        throw new Error('Entry not found in project file for sub-project: ' + subprojectPath);
+        throw new Error(`Entry not found in project file for sub-project: ${subprojectPath}`);
     }
 
     const wkWebViewOnly = projectConfig.getPreference('WKWebViewOnly') === 'true';

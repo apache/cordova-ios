@@ -25,17 +25,17 @@ function killSimulator (processName) {
     let result;
     let return_code = 0;
     // check iOS Simulator if running
-    const command = 'pgrep -x "' + processName + '" > /dev/null';
+    const command = `pgrep -x "${processName}" > /dev/null`;
     return_code = shell.exec(command).code;
 
     // if iOS Simulator is running, kill it
     if (return_code === 0) { // found
-        shell.echo('iOS Simulator is running as ("' + processName + '"), we\'re going to kill it.');
-        result = shell.exec('killall "' + processName + '"');
+        shell.echo(`iOS Simulator is running as ("${processName}"), we're going to kill it.`);
+        result = shell.exec(`killall "${processName}"`);
         if (result.code !== 0) {
-            shell.echo('Failed to kill process: ' + processName);
+            shell.echo(`Failed to kill process: ${processName}`);
         } else {
-            shell.echo('Process was killed: ' + processName);
+            shell.echo(`Process was killed: ${processName}`);
         }
     }
 }

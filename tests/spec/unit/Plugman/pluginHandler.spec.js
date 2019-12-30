@@ -196,7 +196,7 @@ describe('ios plugin handler', () => {
                 const resources = copyArray(invalid_resources);
                 expect(() => {
                     install(resources[0], faultyPluginInfo, dummyProject);
-                }).toThrow(new Error('Cannot find resource file "' + path.resolve(faultyplugin, 'src/ios/IDontExist.bundle') + '" for plugin ' + faultyPluginInfo.id + ' in iOS platform'));
+                }).toThrow(new Error(`Cannot find resource file "${path.resolve(faultyplugin, 'src/ios/IDontExist.bundle')}" for plugin ${faultyPluginInfo.id} in iOS platform`));
             });
             it('Test 015 : should throw if resource-file target already exists', () => {
                 const resources = copyArray(valid_resources);
@@ -205,7 +205,7 @@ describe('ios plugin handler', () => {
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
                     install(resources[0], dummyPluginInfo, dummyProject);
-                }).toThrow(new Error('File already exists at destination "' + target + '" for resource file specified by plugin ' + dummyPluginInfo.id + ' in iOS platform'));
+                }).toThrow(new Error(`File already exists at destination "${target}" for resource file specified by plugin ${dummyPluginInfo.id} in iOS platform`));
             });
             it('Test 016 : should call into xcodeproj\'s addResourceFile', () => {
                 const resources = copyArray(valid_resources);
@@ -262,7 +262,7 @@ describe('ios plugin handler', () => {
                     const frameworks = copyArray(invalid_custom_frameworks);
                     expect(() => {
                         install(frameworks[0], faultyPluginInfo, dummyProject);
-                    }).toThrow(new Error('Cannot find framework "' + path.resolve(faultyplugin, 'src/ios/NonExistantCustomFramework.framework') + '" for plugin ' + faultyPluginInfo.id + ' in iOS platform'));
+                    }).toThrow(new Error(`Cannot find framework "${path.resolve(faultyplugin, 'src/ios/NonExistantCustomFramework.framework')}" for plugin ${faultyPluginInfo.id} in iOS platform`));
                 });
                 it('Test 021 : should throw if framework target already exists', () => {
                     const frameworks = copyArray(valid_custom_frameworks);
@@ -270,7 +270,7 @@ describe('ios plugin handler', () => {
                     shell.mkdir('-p', target);
                     expect(() => {
                         install(frameworks[0], dummyPluginInfo, dummyProject);
-                    }).toThrow(new Error('Framework "' + target + '" for plugin ' + dummyPluginInfo.id + ' already exists in iOS platform'));
+                    }).toThrow(new Error(`Framework "${target}" for plugin ${dummyPluginInfo.id} already exists in iOS platform`));
                 });
                 it('Test 022 : should cp the file to the right target location', () => {
                     const frameworks = copyArray(valid_custom_frameworks);

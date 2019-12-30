@@ -105,7 +105,7 @@ describe('unit tests for Podfile module', () => {
             podfile.write();
 
             // verify by reading it back in a new Podfile
-            const newPodfile = new Podfile(fixturePodfile, PROJECT_NAME + '2');
+            const newPodfile = new Podfile(fixturePodfile, `${PROJECT_NAME}2`);
             expect(newPodfile.existsSpec('Foo')).toBe(true);
             expect(newPodfile.existsSpec('Bar')).toBe(true);
             expect(newPodfile.existsSpec('Baz')).toBe(true);

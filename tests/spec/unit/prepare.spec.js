@@ -49,7 +49,7 @@ describe('prepare', () => {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
         shell.mkdir('-p', iosPlatform);
-        shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
+        shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
         p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
@@ -246,7 +246,7 @@ describe('prepare', () => {
         describe('#platformHasLaunchStoryboardImages', () => {
             const platformHasLaunchStoryboardImages = prepare.__get__('platformHasLaunchStoryboardImages');
             const cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce((p, c) => {
-                p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml'));
+                p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', `${c}.xml`));
                 return p;
             }, {});
 
@@ -267,7 +267,7 @@ describe('prepare', () => {
         describe('#platformHasLegacyLaunchImages', () => {
             const platformHasLegacyLaunchImages = prepare.__get__('platformHasLegacyLaunchImages');
             const cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce((p, c) => {
-                p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml'));
+                p[c] = new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', `${c}.xml`));
                 return p;
             }, {});
 
@@ -292,7 +292,7 @@ describe('prepare', () => {
             it('setup', () => {
                 cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce((p, c) => {
                     p[c] = {
-                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
+                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', `${c}.xml`)),
                         plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
                     };
                     return p;
@@ -458,7 +458,7 @@ describe('prepare', () => {
             it('setup', () => {
                 cfgs = ['none', 'legacy-only', 'modern-only', 'modern-and-legacy'].reduce((p, c) => {
                     p[c] = {
-                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
+                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', `${c}.xml`)),
                         plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
                     };
                     return p;
@@ -499,7 +499,7 @@ describe('prepare', () => {
             it('setup', () => {
                 cfgs = ['legacy-only', 'modern-only'].reduce((p, c) => {
                     p[c] = {
-                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', c + '.xml')),
+                        config: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', `${c}.xml`)),
                         plist: plist.parse(fs.readFileSync(plistFile, 'utf8'))
                     };
                     return p;

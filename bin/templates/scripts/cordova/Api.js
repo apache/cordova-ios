@@ -81,13 +81,13 @@ function Api (platform, platformRootDir, events) {
         xcodeProjDir = xcodeProjDir_array[0];
 
         if (!xcodeProjDir) {
-            throw new CordovaError('The provided path "' + this.root + '" is not a Cordova iOS project.');
+            throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
         }
 
         const cordovaProjName = xcodeProjDir.substring(xcodeProjDir.lastIndexOf(path.sep) + 1, xcodeProjDir.indexOf('.xcodeproj'));
         xcodeCordovaProj = path.join(this.root, cordovaProjName);
     } catch (e) {
-        throw new CordovaError('The provided path "' + this.root + '" is not a Cordova iOS project.');
+        throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
     }
 
     this.locations = {
@@ -386,7 +386,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
                 }
                 const val = podsjsonFile.getLibrary(key);
                 if (val) {
-                    events.emit('warn', plugin.id + ' depends on ' + podJson.name + ', which may conflict with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
+                    events.emit('warn', `${plugin.id} depends on ${podJson.name}, which may conflict with another plugin. ${podJson.name}@${val.spec} is already installed and was not overwritten.`);
                     podsjsonFile.incrementLibrary(key);
                 } else {
                     podJson.count = 1;
@@ -411,7 +411,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
             const val = podsjsonFile.getLibrary(podJson.name);
             if (val) { // found
                 if (podJson.spec !== val.spec) { // exists, different spec, print warning
-                    events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
+                    events.emit('warn', `${plugin.id} depends on ${podJson.name}@${podJson.spec}, which conflicts with another plugin. ${podJson.name}@${val.spec} is already installed and was not overwritten.`);
                 }
                 // increment count, but don't add in Podfile because it already exists
                 podsjsonFile.incrementLibrary(podJson.name);
