@@ -42,7 +42,7 @@ describe('common handler routines', () => {
         it('Test 001 : should throw if source path not found', () => {
             shell.rm('-rf', test_dir);
             expect(() => { copyFile(test_dir, src, project_dir, dest); })
-                .toThrow(new Error('"' + src + '" not found!'));
+                .toThrow(new Error(`"${src}" not found!`));
         });
 
         it('Test 002 : should throw if src not in plugin directory', () => {
@@ -50,7 +50,7 @@ describe('common handler routines', () => {
             fs.writeFileSync(non_plugin_file, 'contents', 'utf-8');
             const outside_file = '../non_plugin_file';
             expect(() => { copyFile(test_dir, outside_file, project_dir, dest); })
-                .toThrow(new Error('File "' + path.resolve(test_dir, outside_file) + '" is located outside the plugin directory "' + test_dir + '"'));
+                .toThrow(new Error(`File "${path.resolve(test_dir, outside_file)}" is located outside the plugin directory "${test_dir}"`));
             shell.rm('-rf', test_dir);
         });
 
@@ -77,7 +77,7 @@ describe('common handler routines', () => {
             }
 
             expect(() => { copyFile(test_dir, symlink_file, project_dir, dest); })
-                .toThrow(new Error('File "' + path.resolve(test_dir, symlink_file) + '" is located outside the plugin directory "' + test_dir + '"'));
+                .toThrow(new Error(`File "${path.resolve(test_dir, symlink_file)}" is located outside the plugin directory "${test_dir}"`));
             shell.rm('-rf', project_dir);
         });
 
@@ -85,7 +85,7 @@ describe('common handler routines', () => {
             shell.mkdir('-p', srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
             expect(() => { copyFile(test_dir, srcFile, project_dir, non_plugin_file); })
-                .toThrow(new Error('Destination "' + path.resolve(project_dir, non_plugin_file) + '" for source file "' + path.resolve(test_dir, srcFile) + '" is located outside the project'));
+                .toThrow(new Error(`Destination "${path.resolve(project_dir, non_plugin_file)}" for source file "${path.resolve(test_dir, srcFile)}" is located outside the project`));
             shell.rm('-rf', project_dir);
         });
 
@@ -123,7 +123,7 @@ describe('common handler routines', () => {
         it('Test 008 : should throw if target path exists', () => {
             shell.mkdir('-p', dest);
             expect(() => { copyNewFile(test_dir, src, project_dir, dest); })
-                .toThrow(new Error('"' + dest + '" already exists!'));
+                .toThrow(new Error(`"${dest}" already exists!`));
             shell.rm('-rf', dest);
         });
     });

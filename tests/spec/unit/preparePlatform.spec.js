@@ -39,7 +39,7 @@ describe('prepare after plugin add', () => {
     let api;
     beforeEach(() => {
         shell.mkdir('-p', iosPlatform);
-        shell.cp('-rf', iosProjectFixture + '/*', iosPlatform);
+        shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
 
         jasmine.addMatchers({
@@ -57,9 +57,9 @@ describe('prepare after plugin add', () => {
                         }
 
                         if (result.pass) {
-                            result.message = 'Expected ' + actual + ' to be installed in ' + expected + '.';
+                            result.message = `Expected ${actual} to be installed in ${expected}.`;
                         } else {
-                            result.message = 'Expected ' + actual + ' to not be installed in ' + expected + '.';
+                            result.message = `Expected ${actual} to not be installed in ${expected}.`;
                         }
                         return result;
                     }

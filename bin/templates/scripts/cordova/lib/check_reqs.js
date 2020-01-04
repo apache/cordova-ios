@@ -28,21 +28,20 @@ const SUPPORTED_OS_PLATFORMS = ['darwin'];
 
 const XCODEBUILD_MIN_VERSION = '9.0.0';
 const XCODEBUILD_NOT_FOUND_MESSAGE =
-    'Please install version ' + XCODEBUILD_MIN_VERSION + ' or greater from App Store';
+    `Please install version ${XCODEBUILD_MIN_VERSION} or greater from App Store`;
 
 const IOS_DEPLOY_MIN_VERSION = '1.9.2';
 const IOS_DEPLOY_NOT_FOUND_MESSAGE =
-    'Please download, build and install version ' + IOS_DEPLOY_MIN_VERSION + ' or greater' +
-    ' from https://github.com/ios-control/ios-deploy into your path, or do \'npm install -g ios-deploy\'';
+    `Please download, build and install version ${IOS_DEPLOY_MIN_VERSION} or greater from https://github.com/ios-control/ios-deploy into your path, or do 'npm install -g ios-deploy'`;
 
 const COCOAPODS_MIN_VERSION = '1.0.1';
 const COCOAPODS_NOT_FOUND_MESSAGE =
-    'Please install version ' + COCOAPODS_MIN_VERSION + ' or greater from https://cocoapods.org/';
+    `Please install version ${COCOAPODS_MIN_VERSION} or greater from https://cocoapods.org/`;
 const COCOAPODS_NOT_SYNCED_MESSAGE =
     'The CocoaPods repo has not been synced yet, this will take a long time (approximately 500MB as of Sept 2016). Please run `pod setup` first to sync the repo.';
 const COCOAPODS_SYNCED_MIN_SIZE = 475; // in megabytes
 const COCOAPODS_SYNC_ERROR_MESSAGE =
-    'The CocoaPods repo has been created, but there appears to be a sync error. The repo size should be at least ' + COCOAPODS_SYNCED_MIN_SIZE + '. Please run `pod setup --verbose` to sync the repo.';
+    `The CocoaPods repo has been created, but there appears to be a sync error. The repo size should be at least ${COCOAPODS_SYNCED_MIN_SIZE}. Please run \`pod setup --verbose\` to sync the repo.`;
 const COCOAPODS_REPO_NOT_FOUND_MESSAGE = 'The CocoaPods repo at ~/.cocoapods was not found.';
 
 /**
@@ -155,7 +154,7 @@ function checkTool (tool, minVersion, message, toolFriendlyName) {
     // Check whether tool command is available at all
     const tool_command = shell.which(tool);
     if (!tool_command) {
-        return Q.reject(toolFriendlyName + ' was not found. ' + (message || ''));
+        return Q.reject(`${toolFriendlyName} was not found. ${message || ''}`);
     }
 
     // check if tool version is greater than specified one
@@ -163,8 +162,7 @@ function checkTool (tool, minVersion, message, toolFriendlyName) {
         version = version.trim();
         return versions.compareVersions(version, minVersion) >= 0
             ? Q.resolve({ version })
-            : Q.reject('Cordova needs ' + toolFriendlyName + ' version ' + minVersion +
-              ' or greater, you have version ' + version + '. ' + (message || ''));
+            : Q.reject(`Cordova needs ${toolFriendlyName} version ${minVersion} or greater, you have version ${version}. ${message || ''}`);
     });
 }
 

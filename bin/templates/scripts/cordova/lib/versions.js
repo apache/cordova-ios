@@ -151,7 +151,7 @@ exports.get_tool_version = toolName => {
     case 'ios-sim': return exports.get_ios_sim_version();
     case 'ios-deploy': return exports.get_ios_deploy_version();
     case 'pod': return exports.get_cocoapods_version();
-    default: return Q.reject(toolName + ' is not valid tool name. Valid names are: \'xcodebuild\', \'ios-sim\', \'ios-deploy\', and \'pod\'');
+    default: return Q.reject(`${toolName} is not valid tool name. Valid names are: 'xcodebuild', 'ios-sim', 'ios-deploy', and 'pod'`);
     }
 };
 

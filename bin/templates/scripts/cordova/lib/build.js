@@ -54,7 +54,7 @@ const buildFlagMatchers = {
 function createProjectObject (projectPath, projectName) {
     const locations = {
         root: projectPath,
-        pbxproj: path.join(projectPath, projectName + '.xcodeproj', 'project.pbxproj')
+        pbxproj: path.join(projectPath, `${projectName}.xcodeproj`, 'project.pbxproj')
     };
 
     return projectFile.parse(locations);
@@ -120,9 +120,9 @@ module.exports.run = buildOpts => {
 
     if (buildOpts.buildConfig) {
         if (!fs.existsSync(buildOpts.buildConfig)) {
-            return Q.reject('Build config file does not exist: ' + buildOpts.buildConfig);
+            return Q.reject(`Build config file does not exist: ${buildOpts.buildConfig}`);
         }
-        events.emit('log', 'Reading build config file: ' + path.resolve(buildOpts.buildConfig));
+        events.emit('log', `Reading build config file: ${path.resolve(buildOpts.buildConfig)}`);
         const contents = fs.readFileSync(buildOpts.buildConfig, 'utf-8');
         const buildConfig = JSON.parse(contents.replace(/^\ufeff/, '')); // Remove BOM
         if (buildConfig.ios) {
@@ -178,17 +178,17 @@ module.exports.run = buildOpts => {
             projectName = name;
             let extraConfig = '';
             if (buildOpts.codeSignIdentity) {
-                extraConfig += 'CODE_SIGN_IDENTITY = ' + buildOpts.codeSignIdentity + '\n';
-                extraConfig += 'CODE_SIGN_IDENTITY[sdk=iphoneos*] = ' + buildOpts.codeSignIdentity + '\n';
+                extraConfig += `CODE_SIGN_IDENTITY = ${buildOpts.codeSignIdentity}\n`;
+                extraConfig += `CODE_SIGN_IDENTITY[sdk=iphoneos*] = ${buildOpts.codeSignIdentity}\n`;
             }
             if (buildOpts.codeSignResourceRules) {
-                extraConfig += 'CODE_SIGN_RESOURCE_RULES_PATH = ' + buildOpts.codeSignResourceRules + '\n';
+                extraConfig += `CODE_SIGN_RESOURCE_RULES_PATH = ${buildOpts.codeSignResourceRules}\n`;
             }
             if (buildOpts.provisioningProfile) {
-                extraConfig += 'PROVISIONING_PROFILE = ' + buildOpts.provisioningProfile + '\n';
+                extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile}\n`;
             }
             if (buildOpts.developmentTeam) {
-                extraConfig += 'DEVELOPMENT_TEAM = ' + buildOpts.developmentTeam + '\n';
+                extraConfig += `DEVELOPMENT_TEAM = ${buildOpts.developmentTeam}\n`;
             }
 
             function writeCodeSignStyle (value) {
@@ -214,10 +214,10 @@ module.exports.run = buildOpts => {
         }).then(() => {
             const configuration = buildOpts.release ? 'Release' : 'Debug';
 
-            events.emit('log', 'Building project: ' + path.join(projectPath, projectName + '.xcworkspace'));
-            events.emit('log', '\tConfiguration: ' + configuration);
-            events.emit('log', '\tPlatform: ' + (buildOpts.device ? 'device' : 'emulator'));
-            events.emit('log', '\tTarget: ' + emulatorTarget);
+            events.emit('log', `Building project: ${path.join(projectPath, `${projectName}.xcworkspace`)}`);
+            events.emit('log', `\tConfiguration: ${configuration}`);
+            events.emit('log', `\tPlatform: ${buildOpts.device ? 'device' : 'emulator'}`);
+            events.emit('log', `\tTarget: ${emulatorTarget}`);
 
             const buildOutputDir = path.join(projectPath, 'build', (buildOpts.device ? 'device' : 'emulator'));
 
@@ -292,11 +292,10 @@ function findXCodeProjectIn (projectPath) {
     const xcodeProjFiles = shell.ls(projectPath).filter(name => path.extname(name) === '.xcodeproj');
 
     if (xcodeProjFiles.length === 0) {
-        return Q.reject('No Xcode project found in ' + projectPath);
+        return Q.reject(`No Xcode project found in ${projectPath}`);
     }
     if (xcodeProjFiles.length > 1) {
-        events.emit('warn', 'Found multiple .xcodeproj directories in \n' +
-            projectPath + '\nUsing first one');
+        events.emit('warn', `Found multiple .xcodeproj directories in \n${projectPath}\nUsing first one`);
     }
 
     const projectName = path.basename(xcodeProjFiles[0], '.xcodeproj');
@@ -335,16 +334,16 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
 
     if (isDevice) {
         options = [
-            '-workspace', customArgs.workspace || projectName + '.xcworkspace',
+            '-workspace', customArgs.workspace || `${projectName}.xcworkspace`,
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
             '-destination', customArgs.destination || 'generic/platform=iOS',
-            '-archivePath', customArgs.archivePath || projectName + '.xcarchive'
+            '-archivePath', customArgs.archivePath || `${projectName}.xcarchive`
         ];
         buildActions = ['archive'];
         settings = [
-            customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'device'),
-            customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
+            customArgs.configuration_build_dir || `CONFIGURATION_BUILD_DIR=${path.join(projectPath, 'build', 'device')}`,
+            customArgs.shared_precomps_dir || `SHARED_PRECOMPS_DIR=${path.join(projectPath, 'build', 'sharedpch')}`
         ];
         // Add other matched flags to otherFlags to let xcodebuild present an appropriate error.
         // This is preferable to just ignoring the flags that the user has passed in.
@@ -357,16 +356,16 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
         }
     } else { // emulator
         options = [
-            '-workspace', customArgs.project || projectName + '.xcworkspace',
+            '-workspace', customArgs.project || `${projectName}.xcworkspace`,
             '-scheme', customArgs.scheme || projectName,
             '-configuration', customArgs.configuration || configuration,
             '-sdk', customArgs.sdk || 'iphonesimulator',
-            '-destination', customArgs.destination || 'platform=iOS Simulator,name=' + emulatorTarget
+            '-destination', customArgs.destination || `platform=iOS Simulator,name=${emulatorTarget}`
         ];
         buildActions = ['build'];
         settings = [
-            customArgs.configuration_build_dir || 'CONFIGURATION_BUILD_DIR=' + path.join(projectPath, 'build', 'emulator'),
-            customArgs.shared_precomps_dir || 'SHARED_PRECOMPS_DIR=' + path.join(projectPath, 'build', 'sharedpch')
+            customArgs.configuration_build_dir || `CONFIGURATION_BUILD_DIR=${path.join(projectPath, 'build', 'emulator')}`,
+            customArgs.shared_precomps_dir || `SHARED_PRECOMPS_DIR=${path.join(projectPath, 'build', 'sharedpch')}`
         ];
         // Add other matched flags to otherFlags to let xcodebuild present an appropriate error.
         // This is preferable to just ignoring the flags that the user has passed in.
@@ -390,7 +389,7 @@ function getXcodeBuildArgs (projectName, projectPath, configuration, isDevice, b
 function getXcodeArchiveArgs (projectName, projectPath, outputPath, exportOptionsPath, autoProvisioning) {
     return [
         '-exportArchive',
-        '-archivePath', projectName + '.xcarchive',
+        '-archivePath', `${projectName}.xcarchive`,
         '-exportOptionsPlist', exportOptionsPath,
         '-exportPath', outputPath
     ].concat(autoProvisioning ? ['-allowProvisioningUpdates'] : []);
