@@ -20,7 +20,7 @@
 const Q = require('q');
 const path = require('path');
 const shell = require('shelljs');
-const superspawn = require('cordova-common').superspawn;
+const execa = require('execa');
 
 const projectPath = path.join(__dirname, '..', '..');
 
@@ -32,11 +32,11 @@ module.exports.run = () => {
     }
 
     const xcodebuildClean = configName => {
-        return superspawn.spawn(
+        return execa(
             'xcodebuild',
             ['-project', projectName, '-configuration', configName, '-alltargets', 'clean'],
-            { cwd: projectPath, printCommand: true, stdio: 'inherit' }
-        );
+            { cwd: projectPath, stdio: 'inherit' }
+        ).then(({ stdout }) => stdout);
     };
 
     return xcodebuildClean('Debug')

@@ -23,7 +23,7 @@ const path = require('path');
 const util = require('util');
 const events = require('cordova-common').events;
 const Q = require('q');
-const superspawn = require('cordova-common').superspawn;
+const execa = require('execa');
 const CordovaError = require('cordova-common').CordovaError;
 
 Podfile.FILENAME = 'Podfile';
@@ -381,8 +381,6 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     const opts = {};
     opts.cwd = path.join(this.path, '..'); // parent path of this Podfile
     opts.stdio = 'pipe';
-    opts.printCommand = true;
-    let first = true;
 
     if (!requirementsCheckerFunction) {
         requirementsCheckerFunction = Q();
@@ -391,25 +389,14 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     return requirementsCheckerFunction()
         .then(toolOptions => this.before_install(toolOptions))
         .then(toolOptions => {
-            if (toolOptions.ignore) {
-                events.emit('verbose', '==== pod install start ====\n');
-                events.emit('verbose', toolOptions.ignoreMessage);
-                return Q.resolve();
-            } else {
-                return superspawn.spawn('pod', ['install', '--verbose'], opts)
-                    .progress(stdio => {
-                        if (stdio.stderr) { console.error(stdio.stderr); }
-                        if (stdio.stdout) {
-                            if (first) {
-                                events.emit('verbose', '==== pod install start ====\n');
-                                first = false;
-                            }
-                            events.emit('verbose', stdio.stdout);
-                        }
-                    });
-            }
+            events.emit('verbose', '==== pod install start ====\n');
+
+            return toolOptions.ignore
+                ? Q.resolve(toolOptions.ignoreMessage)
+                : execa('pod', ['install', '--verbose'], opts).then(({ stdout }) => stdout);
         })
-        .then(() => { // done
+        .then((results) => {
+            events.emit('verbose', results);
             events.emit('verbose', '==== pod install end ====\n');
         });
 };

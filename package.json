@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "cordova-common": "^4.0.1",
+    "execa": "^4.0.0",
     "fs-extra": "^9.0.0",
     "ios-sim": "^9.0.0",
     "nopt": "^4.0.3",
@@ -52,6 +53,7 @@
     "q": "^1.5.1",
     "semver": "^7.3.2",
     "shelljs": "^0.5.3",
+    "split2": "^3.1.1",
     "unorm": "^1.6.0",
     "xcode": "^3.0.1",
     "xml-escape": "^1.1.0"

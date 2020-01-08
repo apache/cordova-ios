@@ -20,7 +20,7 @@
 const Q = require('q');
 const path = require('path');
 const shell = require('shelljs');
-const superspawn = require('cordova-common').superspawn;
+const execa = require('execa');
 const fs = require('fs-extra');
 const plist = require('plist');
 const util = require('util');
@@ -225,7 +225,7 @@ module.exports.run = buildOpts => {
             shell.rm('-rf', buildOutputDir);
 
             const xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-            return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+            return execa('xcodebuild', xcodebuildArgs, { cwd: projectPath, stdio: 'inherit' }).then(({ stdout }) => stdout);
         }).then(() => {
             if (!buildOpts.device || buildOpts.noSign) {
                 return;
@@ -273,7 +273,7 @@ module.exports.run = buildOpts => {
 
             function packageArchive () {
                 const xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+                return execa('xcodebuild', xcodearchiveArgs, { cwd: projectPath, stdio: 'inherit' }).then(({ stdout }) => stdout);
             }
 
             return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
