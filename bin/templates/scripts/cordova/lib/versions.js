@@ -25,7 +25,7 @@ function fetchSdkVersionByType (sdkType) {
     return execa('xcodebuild', ['-showsdks'])
         .then(
             ({ stdout }) => stdout,
-            ({ stderr }) => stderr
+            ({ stderr }) => Promise.reject(stderr)
         )
         .then(output => {
             output = output.split('\n');
