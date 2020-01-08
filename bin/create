@@ -68,4 +68,4 @@ var options = {
 
 require('./templates/scripts/cordova/loggingHelper').adjustLoggerLevel(argv);
 
-Api.createPlatform(projectPath, config, options).done();
+Api.createPlatform(projectPath, config, options);

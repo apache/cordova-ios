@@ -41,9 +41,12 @@ opts.noPrepare = true;
 
 require('./loggingHelper').adjustLoggerLevel(opts);
 
-new Api().clean(opts).done(function () {
-    console.log('** CLEAN SUCCEEDED **');
-}, function (err) {
-    console.error(err);
-    process.exit(2);
-});
+new Api().clean(opts).then(
+    () => {
+        console.log('** CLEAN SUCCEEDED **');
+    },
+    err => {
+        console.error(err);
+        process.exit(2);
+    }
+);

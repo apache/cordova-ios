@@ -17,8 +17,7 @@
        under the License.
 */
 
-var Q = require('q');
-var exec = require('child_process').exec;
+const execa = require('execa');
 
 /**
  * Returns a list of available simulator build targets of the form
@@ -32,10 +31,8 @@ var exec = require('child_process').exec;
  *
  */
 function listEmulatorBuildTargets () {
-    return Q.nfcall(exec, 'xcrun simctl list --json')
-        .then(function (stdio) {
-            return JSON.parse(stdio[0]);
-        })
+    return execa('xcrun', ['simctl', 'list', '--json'])
+        .then(({ stdout }) => JSON.parse(stdout))
         .then(function (simInfo) {
             var devices = simInfo.devices;
             var deviceTypes = simInfo.devicetypes;

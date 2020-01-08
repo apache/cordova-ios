@@ -17,15 +17,14 @@
        under the License.
 */
 
-var Q = require('q');
-var iossim = require('ios-sim');
+const iossim = require('ios-sim');
 
 /**
  * Gets list of iOS devices available for simulation
  * @return {Promise} Promise fulfilled with list of devices available for simulation
  */
 function listEmulatorImages () {
-    return Q.resolve(iossim.getdevicetypes());
+    return Promise.resolve(iossim.getdevicetypes());
 }
 
 exports.run = listEmulatorImages;

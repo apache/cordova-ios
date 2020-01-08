@@ -17,38 +17,39 @@
        under the License.
 */
 
-var Q = require('q');
-var exec = require('child_process').exec;
+const execa = require('execa');
 
 /**
  * Gets list of connected iOS devices
  * @return {Promise} Promise fulfilled with list of available iOS devices
  */
 function listDevices () {
-    var commands = [
-        Q.nfcall(exec, "ioreg -p IOUSB -l | sed -n -e '/iPad/,/USB Serial Number/p' | grep 'Serial Number' | awk -F\\\" '{print $4 \" iPad\"}'"),
-        Q.nfcall(exec, "ioreg -p IOUSB -l | sed -n -e '/iPhone/,/USB Serial Number/p' | grep 'Serial Number' | awk -F\\\" '{print $4 \" iPhone\"}'"),
-        Q.nfcall(exec, "ioreg -p IOUSB -l | sed -n -e '/iPod/,/USB Serial Number/p' | grep 'Serial Number' | awk -F\\\" '{print $4 \" iPod\"}'")
-    ];
+    return execa.command('ioreg -p IOUSB -l')
+        .then(({ stdout }) => {
+            const deviceTypes = ['iPhone', 'iPad', 'iPod'];
+            const detectedDevices = [];
+            let targetDeviceType = null;
 
-    // wrap al lexec calls into promises and wait until they're fullfilled
-    return Q.all(commands).then(function (results) {
-        var accumulator = [];
-        results.forEach(function (result) {
-            var devicefound;
-            // Each command promise resolves with array [stout, stderr], and we need stdout only
-            // Append stdout lines to accumulator
-            devicefound = result[0].trim().split('\n');
-            if (devicefound && devicefound.length) {
-                devicefound.forEach(function (device) {
-                    if (device) {
-                        accumulator.push(device);
+            stdout.split('\n').forEach(line => {
+                if (!targetDeviceType) {
+                    const detectedDevice = deviceTypes.filter(deviceType => line.includes(`-o ${deviceType}`));
+
+                    if (detectedDevice.length) {
+                        targetDeviceType = detectedDevice[0];
                     }
-                });
-            }
+                } else if (targetDeviceType && line.includes('USB Serial Number')) {
+                    const reuslt = line.match(/"USB Serial Number" = "(.*)"/);
+
+                    if (reuslt && !detectedDevices.includes(reuslt[1])) {
+                        detectedDevices.push(`${reuslt[1]} ${targetDeviceType}`);
+                    }
+
+                    targetDeviceType = null;
+                }
+            });
+
+            return detectedDevices;
         });
-        return accumulator;
-    });
 }
 
 exports.run = listDevices;

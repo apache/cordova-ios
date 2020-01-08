@@ -17,21 +17,33 @@
        under the License.
 */
 
-var Q = require('q');
-var exec = require('child_process').exec;
+const execa = require('execa');
 
 /**
  * Gets list of running iOS simulators
  * @return {Promise} Promise fulfilled with list of running iOS simulators
+ *
+ * @todo In the next PR, I will refactor this entire method.
+ *
+ * The process no longer contains the pattern "[i]OS Simulator".
+ * The process is now called "Simulator.app"
+ *
+ * Additionaly, `defaults read com.apple.iphonesimulator "SimulateDevice"` is also not valid aymore.
+ *
+ * I will replace this entire method to locate the active simulators though `simctl`
+ *
+ * Alternativly, remove this file. It is not documented in Cordova and not used anywhere in our code base.
  */
 function listStartedEmulators () {
-    // wrap exec call into promise
-    return Q.nfcall(exec, 'ps aux | grep -i "[i]OS Simulator"')
-        .then(function () {
-            return Q.nfcall(exec, 'defaults read com.apple.iphonesimulator "SimulateDevice"');
-        }).then(function (stdio) {
-            return stdio[0].trim().split('\n');
-        });
+    return execa('ps', ['aux'])
+        .then(({ stdout }) => {
+            if (stdout.match(/[i]OS Simulator/)) {
+                return execa('defaults', ['read', 'com.apple.iphonesimulator', '"SimulateDevice"']);
+            }
+
+            return { stdout: '' };
+        })
+        .then(({ stdout }) => stdout.trim().split('\n'));
 }
 
 exports.run = listStartedEmulators;

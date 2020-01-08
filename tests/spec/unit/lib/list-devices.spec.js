@@ -17,30 +17,24 @@
        under the License.
 */
 
+const fs = require('fs-extra');
+const path = require('path');
+const execa = require('execa');
 const list_devices = require('../../../../bin/templates/scripts/cordova/lib/listDevices');
-const Q = require('q');
+
+const sampleData = fs.readFileSync(path.resolve('tests/spec/unit/fixtures/sample-ioreg-output.txt'), 'utf-8');
 
 describe('cordova/lib/listDevices', () => {
     describe('run method', () => {
         beforeEach(() => {
-            spyOn(Q, 'all').and.returnValue(Q.resolve([]));
-            spyOn(Q, 'nfcall');
+            spyOn(execa, 'command').and.returnValue(Promise.resolve({ stdout: sampleData }));
         });
-        it('should invoke proper system calls to retrieve connected devices', () => {
-            return list_devices.run()
-                .then(() => {
-                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPad/g));
-                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPod/g));
-                    expect(Q.nfcall).toHaveBeenCalledWith(jasmine.any(Function), jasmine.stringMatching(/ioreg.*iPhone/g));
-                });
-        });
+
         it('should trim and split standard output and return as array', () => {
-            Q.all.and.returnValue(Q.resolve([['   this is\nmy sweet\nstdout\n    ']]));
             return list_devices.run()
                 .then(results => {
-                    expect(results).toContain('this is');
-                    expect(results).toContain('my sweet');
-                    expect(results).toContain('stdout');
+                    expect(results.includes('THE_IPHONE_SERIAL iPhone')).toBe(true);
+                    expect(results.includes('THE_IPAD_SERIAL iPad')).toBe(true);
                 });
         });
     });

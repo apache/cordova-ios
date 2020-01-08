@@ -54,10 +54,13 @@ opts.argv = opts.argv.remain;
 
 require('./loggingHelper').adjustLoggerLevel(opts);
 
-new Api().run(opts).done(function () {
-    console.log('** RUN SUCCEEDED **');
-}, function (err) {
-    var errorMessage = (err && err.stack) ? err.stack : err;
-    console.error(errorMessage);
-    process.exit(2);
-});
+new Api().run(opts).then(
+    () => {
+        console.log('** RUN SUCCEEDED **');
+    },
+    err => {
+        var errorMessage = (err && err.stack) ? err.stack : err;
+        console.error(errorMessage);
+        process.exit(2);
+    }
+);
