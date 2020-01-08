@@ -77,7 +77,7 @@ exports.get_ios_deploy_version = () => {
     return execa('ios-deploy', ['--version'])
         .then(
             ({ stdout }) => stdout,
-            ({ stderr }) => stderr
+            ({ stderr }) => Promise.reject(stderr)
         );
 };
 
