@@ -103,7 +103,7 @@ exports.get_ios_sim_version = () => {
     return execa('ios-sim', ['--version'])
         .then(
             ({ stdout }) => stdout,
-            ({ stderr }) => stderr
+            ({ stderr }) => Promise.reject(stderr)
         );
 };
 
