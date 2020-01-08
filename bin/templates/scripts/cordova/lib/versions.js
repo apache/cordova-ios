@@ -64,7 +64,7 @@ exports.get_apple_xcode_version = () => {
 
                 return versionMatch[1];
             },
-            ({ stderr }) => stderr
+            ({ stderr }) => Promise.reject(stderr)
         );
 };
 
