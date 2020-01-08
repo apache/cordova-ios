@@ -57,10 +57,10 @@ exports.get_apple_osx_version = () => {
 exports.get_apple_xcode_version = () => {
     return execa('xcodebuild', ['-version'])
         .then(
-            ({ stdout }) => {
+            ({ stdout, stderr }) => {
                 const versionMatch = /Xcode (.*)/.exec(stdout);
 
-                if (!versionMatch) Promise.reject(new Error('Missing version'));
+                if (!versionMatch) return Promise.reject(stderr);
 
                 return versionMatch[1];
             },

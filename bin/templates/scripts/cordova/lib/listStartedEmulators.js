@@ -43,7 +43,7 @@ function listStartedEmulators () {
 
             return { stdout: '' };
         })
-        .then(({ stdout }) => stdout.trim().split('\n'));
+        .then(({ stdout }) => stdout.split('\n'));
 }
 
 exports.run = listStartedEmulators;
