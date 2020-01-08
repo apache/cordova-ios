@@ -90,7 +90,7 @@ exports.get_cocoapods_version = () => {
     return execa('pod', ['--version'])
         .then(
             ({ stdout }) => stdout,
-            ({ stderr }) => stderr
+            ({ stderr }) => Promise.reject(stderr)
         );
 };
 
