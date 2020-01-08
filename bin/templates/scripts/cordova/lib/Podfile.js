@@ -392,7 +392,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
             events.emit('verbose', '==== pod install start ====\n');
 
             return toolOptions.ignore
-                ? Q.resolve(toolOptions.ignoreMessage)
+                ? Promise.resolve(toolOptions.ignoreMessage)
                 : execa('pod', ['install', '--verbose'], opts).then(({ stdout }) => stdout);
         })
         .then((results) => {
