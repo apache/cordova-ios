@@ -38,10 +38,10 @@ function listDevices () {
                         targetDeviceType = detectedDevice[0];
                     }
                 } else if (targetDeviceType && line.includes('USB Serial Number')) {
-                    const reuslt = line.match(/"USB Serial Number" = "(.*)"/);
+                    const result = line.match(/"USB Serial Number" = "(.*)"/);
 
-                    if (reuslt && !detectedDevices.includes(reuslt[1])) {
-                        detectedDevices.push(`${reuslt[1]} ${targetDeviceType}`);
+                    if (result) {
+                        detectedDevices.push(`${result[1]} ${targetDeviceType}`);
                     }
 
                     targetDeviceType = null;

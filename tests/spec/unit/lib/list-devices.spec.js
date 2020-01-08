@@ -22,7 +22,7 @@ const path = require('path');
 const execa = require('execa');
 const list_devices = require('../../../../bin/templates/scripts/cordova/lib/listDevices');
 
-const sampleData = fs.readFileSync(path.resolve('tests/spec/unit/fixtures/sample-ioreg-output.txt'), 'utf-8');
+const sampleData = fs.readFileSync(path.resolve(`${__dirname}/../fixtures/sample-ioreg-output.txt`), 'utf-8');
 
 describe('cordova/lib/listDevices', () => {
     describe('run method', () => {
@@ -33,6 +33,7 @@ describe('cordova/lib/listDevices', () => {
         it('should trim and split standard output and return as array', () => {
             return list_devices.run()
                 .then(results => {
+                    expect(execa.command).toHaveBeenCalledWith('ioreg -p IOUSB -l');
                     expect(results.includes('THE_IPHONE_SERIAL iPhone')).toBe(true);
                     expect(results.includes('THE_IPAD_SERIAL iPad')).toBe(true);
                 });

@@ -218,12 +218,11 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
         .pipe(split2())
         .on('data', transformOutput.bind(this, 'error'));
 
-    return (async () => {
-        const { stderr } = await subprocess;
-        const hasError = !!stderr;
+    subprocess.then(() => {
+        events.emit('log', 'Simulator successfully started via `ios-sim`.');
+    });
 
-        events.emit('log', `Simulator ${hasError ? 'had an error while starting' : 'successfully started'} via "ios-sim".`);
-    })();
+    return subprocess;
 }
 
 function listDevices () {

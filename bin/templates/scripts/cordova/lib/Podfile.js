@@ -21,6 +21,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
+const split2 = require('split2');
 const events = require('cordova-common').events;
 const Q = require('q');
 const execa = require('execa');
@@ -391,9 +392,23 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
         .then(toolOptions => {
             events.emit('verbose', '==== pod install start ====\n');
 
-            return toolOptions.ignore
-                ? Promise.resolve(toolOptions.ignoreMessage)
-                : execa('pod', ['install', '--verbose'], opts).then(({ stdout }) => stdout);
+            if (toolOptions.ignore) return Promise.resolve(toolOptions.ignoreMessage);
+
+            const subprocess = execa('pod', ['install', '--verbose'], opts);
+
+            subprocess.stdout
+                .pipe(split2())
+                .on('data', line => {
+                    events.emit('verbose', line);
+                });
+
+            subprocess.stderr
+                .pipe(split2())
+                .on('data', line => {
+                    events.emit('error', line);
+                });
+
+            return subprocess;
         })
         .then((results) => {
             events.emit('verbose', results);
