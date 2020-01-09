@@ -19,6 +19,8 @@
 
 const execa = require('execa');
 
+const DEVICE_REGEX = /-o (iPhone|iPad|iPod)@.*?"USB Serial Number" = "([^"]*)"/gs;
+
 /**
  * Gets list of connected iOS devices
  * @return {Promise} Promise fulfilled with list of available iOS devices
@@ -26,30 +28,15 @@ const execa = require('execa');
 function listDevices () {
     return execa.command('ioreg -p IOUSB -l')
         .then(({ stdout }) => {
-            const deviceTypes = ['iPhone', 'iPad', 'iPod'];
-            const detectedDevices = [];
-            let targetDeviceType = null;
-
-            stdout.split('\n').forEach(line => {
-                if (!targetDeviceType) {
-                    const detectedDevice = deviceTypes.filter(deviceType => line.includes(`-o ${deviceType}`));
-
-                    if (detectedDevice.length) {
-                        targetDeviceType = detectedDevice[0];
-                    }
-                } else if (targetDeviceType && line.includes('USB Serial Number')) {
-                    const result = line.match(/"USB Serial Number" = "(.*)"/);
-
-                    if (result) {
-                        detectedDevices.push(`${result[1]} ${targetDeviceType}`);
-                    }
-
-                    targetDeviceType = null;
-                }
-            });
-
-            return detectedDevices;
+            return [...matchAll(stdout, DEVICE_REGEX)]
+                .map(m => m.slice(1).reverse().join(' '))
         });
+}
+
+// TODO: Should be replaced with String#matchAll once available
+function* matchAll (s, r) {
+    let match;
+    while (match = r.exec(s)) yield match;
 }
 
 exports.run = listDevices;
