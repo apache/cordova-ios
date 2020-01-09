@@ -381,7 +381,7 @@ Podfile.prototype.before_install = function (toolOptions) {
 Podfile.prototype.install = function (requirementsCheckerFunction) {
     const opts = {};
     opts.cwd = path.join(this.path, '..'); // parent path of this Podfile
-    opts.stdio = 'pipe';
+    opts.stderr = 'inherit';
 
     if (!requirementsCheckerFunction) {
         requirementsCheckerFunction = Q();
@@ -403,12 +403,6 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
                 .pipe(split2())
                 .on('data', line => {
                     events.emit('verbose', line);
-                });
-
-            subprocess.stderr
-                .pipe(split2())
-                .on('data', line => {
-                    events.emit('error', line);
                 });
 
             return subprocess;
