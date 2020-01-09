@@ -34,8 +34,10 @@ describe('cordova/lib/listDevices', () => {
             return list_devices.run()
                 .then(results => {
                     expect(execa.command).toHaveBeenCalledWith('ioreg -p IOUSB -l');
-                    expect(results.includes('THE_IPHONE_SERIAL iPhone')).toBe(true);
-                    expect(results.includes('THE_IPAD_SERIAL iPad')).toBe(true);
+                    expect(results).toEqual([
+                        'THE_IPHONE_SERIAL iPhone',
+                        'THE_IPAD_SERIAL iPad'
+                    ]);
                 });
         });
     });
