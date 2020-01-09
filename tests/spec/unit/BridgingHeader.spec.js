@@ -30,7 +30,7 @@ describe('unit tests for BridgingHeader module', () => {
     const dummy_path = 'dummy_path';
     const dummy_plugin = { id: 'dummy_plugin', header_path: 'dummy_header_path' };
     const dummy_plugin2 = { id: 'dummy_plugin2', header_path: 'dummy_header_path2' };
-    const headerImportText = header_path => '#import "' + header_path + '"';
+    const headerImportText = header_path => `#import "${header_path}"`;
 
     beforeEach(() => {
         existsSyncSpy = spyOn(fs, 'existsSync');

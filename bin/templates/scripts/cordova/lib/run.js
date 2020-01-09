@@ -63,7 +63,7 @@ module.exports.run = runOptions => {
             }
         }).then(() => build.findXCodeProjectIn(projectPath))
         .then(projectName => {
-            let appPath = path.join(projectPath, 'build', 'emulator', projectName + '.app');
+            let appPath = path.join(projectPath, 'build', 'emulator', `${projectName}.app`);
             const buildOutputDir = path.join(projectPath, 'build', 'device');
 
             // select command to run and arguments depending whether
@@ -72,15 +72,15 @@ module.exports.run = runOptions => {
                 return module.exports.checkDeviceConnected()
                     .then(() => {
                         // Unpack IPA
-                        const ipafile = path.join(buildOutputDir, projectName + '.ipa');
+                        const ipafile = path.join(buildOutputDir, `${projectName}.ipa`);
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
                         return superspawn.spawn('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
                     })
                     .then(() => {
                         // Uncompress IPA (zip file)
-                        const appFileInflated = path.join(buildOutputDir, 'Payload', projectName + '.app');
-                        const appFile = path.join(buildOutputDir, projectName + '.app');
+                        const appFileInflated = path.join(buildOutputDir, 'Payload', `${projectName}.app`);
+                        const appFile = path.join(buildOutputDir, `${projectName}.app`);
                         const payloadFolder = path.join(buildOutputDir, 'Payload');
 
                         // delete the existing platform/ios/build/device/appname.app
@@ -94,7 +94,7 @@ module.exports.run = runOptions => {
                     })
                     .then(
                         () => {
-                            appPath = path.join(projectPath, 'build', 'device', projectName + '.app');
+                            appPath = path.join(projectPath, 'build', 'device', `${projectName}.app`);
                             let extraArgs = [];
                             if (runOptions.argv) {
                                 // argv.slice(2) removes node and run.js, filterSupportedArgs removes the run.js args
@@ -195,7 +195,7 @@ function deployToSim (appPath, target) {
 function startSim (appPath, target) {
     const logPath = path.join(cordovaPath, 'console.log');
 
-    return iossimLaunch(appPath, 'com.apple.CoreSimulator.SimDeviceType.' + target, logPath, '--exit');
+    return iossimLaunch(appPath, `com.apple.CoreSimulator.SimDeviceType.${target}`, logPath, '--exit');
 }
 
 function iossimLaunch (appPath, devicetypeid, log, exit) {
@@ -221,7 +221,7 @@ function listDevices () {
         .then(devices => {
             events.emit('log', 'Available iOS Devices:');
             devices.forEach(device => {
-                events.emit('log', '\t' + device);
+                events.emit('log', `\t${device}`);
             });
         });
 }
@@ -231,7 +231,7 @@ function listEmulators () {
         .then(emulators => {
             events.emit('log', 'Available iOS Simulators:');
             emulators.forEach(emulator => {
-                events.emit('log', '\t' + emulator);
+                events.emit('log', `\t${emulator}`);
             });
         });
 }
