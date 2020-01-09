@@ -28,20 +28,13 @@ function fetchSdkVersionByType (sdkType) {
             ({ stderr }) => Promise.reject(stderr)
         )
         .then(output => {
-            output = output.split('\n');
-
-            const versions = [];
             const regexSdk = new RegExp(`^${sdkType} \\d`);
 
-            for (const line of output) {
-                const matched = line.trim();
+            const versions = output.split('\n')
+                .filter(line => line.trim().match(regexSdk))
+                .map(line => line.match(/\d+\.\d+/)[0])
+                .sort(exports.compareVersions)
 
-                if (matched.match(regexSdk)) {
-                    versions.push(parseFloat(matched.match(/[0-9]*\.[0-9]*/)[0]));
-                }
-            }
-
-            versions.sort();
             console.log(versions[0]);
         });
 }
