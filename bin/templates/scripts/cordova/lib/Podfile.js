@@ -392,7 +392,10 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
         .then(toolOptions => {
             events.emit('verbose', '==== pod install start ====\n');
 
-            if (toolOptions.ignore) return Promise.resolve(toolOptions.ignoreMessage);
+            if (toolOptions.ignore) {
+                events.emit('verbose', toolOptions.ignoreMessage);
+                return;
+            };
 
             const subprocess = execa('pod', ['install', '--verbose'], opts);
 
@@ -410,8 +413,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
 
             return subprocess;
         })
-        .then((results) => {
-            events.emit('verbose', results);
+        .then(() => { // done
             events.emit('verbose', '==== pod install end ====\n');
         });
 };
