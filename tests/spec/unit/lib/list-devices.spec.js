@@ -22,7 +22,7 @@ const path = require('path');
 const execa = require('execa');
 const list_devices = require('../../../../bin/templates/scripts/cordova/lib/listDevices');
 
-const sampleData = fs.readFileSync(path.resolve(`${__dirname}/../fixtures/sample-ioreg-output.txt`), 'utf-8');
+const sampleData = fs.readFileSync(path.resolve(__dirname, '../fixtures/sample-ioreg-output.txt'), 'utf-8');
 
 describe('cordova/lib/listDevices', () => {
     describe('run method', () => {
