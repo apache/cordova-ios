@@ -278,10 +278,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
                 return this.addPodSpecs(plugin, podSpecs, frameworkPods, installOptions);
             }
-        })
-        // CB-11022 return non-falsy value to indicate
-        // that there is no need to run prepare after
-        .thenResolve(true);
+        });
 };
 
 /**
@@ -327,10 +324,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
                 const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
                 return this.removePodSpecs(plugin, podSpecs, frameworkPods, uninstallOptions);
             }
-        })
-        // CB-11022 return non-falsy value to indicate
-        // that there is no need to run prepare after
-        .thenResolve(true);
+        });
 };
 
 /**
