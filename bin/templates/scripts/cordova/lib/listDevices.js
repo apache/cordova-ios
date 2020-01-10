@@ -29,14 +29,14 @@ function listDevices () {
     return execa.command('ioreg -p IOUSB -l')
         .then(({ stdout }) => {
             return [...matchAll(stdout, DEVICE_REGEX)]
-                .map(m => m.slice(1).reverse().join(' '))
+                .map(m => m.slice(1).reverse().join(' '));
         });
 }
 
 // TODO: Should be replaced with String#matchAll once available
-function* matchAll (s, r) {
+function * matchAll (s, r) {
     let match;
-    while (match = r.exec(s)) yield match;
+    while ((match = r.exec(s))) yield match;
 }
 
 exports.run = listDevices;

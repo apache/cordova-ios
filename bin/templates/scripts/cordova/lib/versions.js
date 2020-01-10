@@ -33,7 +33,7 @@ function fetchSdkVersionByType (sdkType) {
             const versions = output.split('\n')
                 .filter(line => line.trim().match(regexSdk))
                 .map(line => line.match(/\d+\.\d+/)[0])
-                .sort(exports.compareVersions)
+                .sort(exports.compareVersions);
 
             console.log(versions[0]);
         });

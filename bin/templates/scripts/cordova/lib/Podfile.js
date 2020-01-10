@@ -395,7 +395,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
             if (toolOptions.ignore) {
                 events.emit('verbose', toolOptions.ignoreMessage);
                 return;
-            };
+            }
 
             const subprocess = execa('pod', ['install', '--verbose'], opts);
 
