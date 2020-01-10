@@ -20,6 +20,7 @@
 const path = require('path');
 const rewire = require('rewire');
 const build = rewire('../../../bin/templates/scripts/cordova/lib/build');
+const { CordovaError } = require('cordova-common');
 
 describe('build', () => {
     let emitSpy;
@@ -329,14 +330,8 @@ describe('build', () => {
     });
 
     describe('run method', () => {
-        let rejectSpy;
-
         beforeEach(() => {
-            rejectSpy = jasmine.createSpy('reject');
-
-            build.__set__('Q', {
-                reject: rejectSpy
-            });
+            spyOn(Promise, 'reject');
         });
 
         it('should not accept debug and release options together', () => {
@@ -345,7 +340,7 @@ describe('build', () => {
                 release: true
             });
 
-            expect(rejectSpy).toHaveBeenCalledWith('Cannot specify "debug" and "release" options together.');
+            expect(Promise.reject).toHaveBeenCalledWith(new CordovaError('Cannot specify "debug" and "release" options together.'));
         });
 
         it('should not accept device and emulator options together', () => {
@@ -354,7 +349,7 @@ describe('build', () => {
                 emulator: true
             });
 
-            expect(rejectSpy).toHaveBeenCalledWith('Cannot specify "device" and "emulator" options together.');
+            expect(Promise.reject).toHaveBeenCalledWith(new CordovaError('Cannot specify "device" and "emulator" options together.'));
         });
 
         it('should reject when build config file missing', () => {
@@ -367,7 +362,7 @@ describe('build', () => {
                 buildConfig: './some/config/path'
             });
 
-            expect(rejectSpy).toHaveBeenCalledWith(jasmine.stringMatching(/^Build config file does not exist:/));
+            expect(Promise.reject).toHaveBeenCalledWith(jasmine.stringMatching(/^Build config file does not exist:/));
         });
     });
 
@@ -409,8 +404,6 @@ describe('build', () => {
     describe('findXCodeProjectIn method', () => {
         let findXCodeProjectIn;
         let shellLsSpy;
-        let rejectSpy;
-        let resolveSpy;
         const fakePath = '/path/foobar';
 
         beforeEach(() => {
@@ -422,13 +415,8 @@ describe('build', () => {
                 ls: shellLsSpy
             });
 
-            // Q Spy
-            rejectSpy = jasmine.createSpy('rejectSpy');
-            resolveSpy = jasmine.createSpy('resolveSpy');
-            build.__set__('Q', {
-                reject: rejectSpy,
-                resolve: resolveSpy
-            });
+            spyOn(Promise, 'reject');
+            spyOn(Promise, 'resolve');
         });
 
         it('should find not find Xcode project', () => {
@@ -436,7 +424,7 @@ describe('build', () => {
 
             findXCodeProjectIn(fakePath);
 
-            expect(rejectSpy).toHaveBeenCalledWith(`No Xcode project found in ${fakePath}`);
+            expect(Promise.reject).toHaveBeenCalledWith(new CordovaError(`No Xcode project found in ${fakePath}`));
         });
 
         it('should emit finding multiple Xcode projects', () => {
@@ -450,8 +438,8 @@ describe('build', () => {
             expect(actualEmit).toContain('Found multiple .xcodeproj directories in');
 
             // Resolve
-            const actualResolve = resolveSpy.calls.argsFor(0)[0];
-            expect(resolveSpy).toHaveBeenCalled();
+            const actualResolve = Promise.resolve.calls.argsFor(0)[0];
+            expect(Promise.resolve).toHaveBeenCalled();
             expect(actualResolve).toContain('Test1');
         });
 
@@ -464,8 +452,8 @@ describe('build', () => {
             expect(emitSpy).not.toHaveBeenCalled();
 
             // Resolve
-            const actualResolve = resolveSpy.calls.argsFor(0)[0];
-            expect(resolveSpy).toHaveBeenCalled();
+            const actualResolve = Promise.resolve.calls.argsFor(0)[0];
+            expect(Promise.resolve).toHaveBeenCalled();
             expect(actualResolve).toContain('Test1');
         });
     });

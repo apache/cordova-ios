@@ -23,7 +23,6 @@ const path = require('path');
 const util = require('util');
 const split2 = require('split2');
 const events = require('cordova-common').events;
-const Q = require('q');
 const execa = require('execa');
 const CordovaError = require('cordova-common').CordovaError;
 
@@ -375,7 +374,7 @@ Podfile.prototype.before_install = function (toolOptions) {
     fs.writeFileSync(debugConfigPath, debugContents, 'utf8');
     fs.writeFileSync(releaseConfigPath, releaseContents, 'utf8');
 
-    return Q.resolve(toolOptions);
+    return Promise.resolve(toolOptions);
 };
 
 Podfile.prototype.install = function (requirementsCheckerFunction) {
@@ -384,7 +383,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     opts.stderr = 'inherit';
 
     if (!requirementsCheckerFunction) {
-        requirementsCheckerFunction = Q();
+        requirementsCheckerFunction = Promise.resolve();
     }
 
     return requirementsCheckerFunction()

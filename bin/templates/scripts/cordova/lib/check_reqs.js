@@ -19,9 +19,9 @@
 
 'use strict';
 
-const Q = require('q');
 const shell = require('shelljs');
 const versions = require('./versions');
+const { CordovaError } = require('cordova-common');
 
 const SUPPORTED_OS_PLATFORMS = ['darwin'];
 
@@ -55,8 +55,8 @@ module.exports.check_ios_deploy = () => {
 module.exports.check_os = () => {
     // Build iOS apps available for OSX platform only, so we reject on others platforms
     return os_platform_is_supported()
-        ? Q.resolve(process.platform)
-        : Q.reject('Cordova tooling for iOS requires Apple macOS');
+        ? Promise.resolve(process.platform)
+        : Promise.reject(new CordovaError('Cordova tooling for iOS requires Apple macOS'));
 };
 
 function os_platform_is_supported () {
@@ -85,15 +85,15 @@ function checkTool (tool, minVersion, message, toolFriendlyName) {
     // Check whether tool command is available at all
     const tool_command = shell.which(tool);
     if (!tool_command) {
-        return Q.reject(`${toolFriendlyName} was not found. ${message || ''}`);
+        return Promise.reject(new CordovaError(`${toolFriendlyName} was not found. ${message || ''}`));
     }
 
     // check if tool version is greater than specified one
     return versions.get_tool_version(tool).then(version => {
         version = version.trim();
         return versions.compareVersions(version, minVersion) >= 0
-            ? Q.resolve({ version })
-            : Q.reject(`Cordova needs ${toolFriendlyName} version ${minVersion} or greater, you have version ${version}. ${message || ''}`);
+            ? Promise.resolve({ version })
+            : Promise.reject(new CordovaError(`Cordova needs ${toolFriendlyName} version ${minVersion} or greater, you have version ${version}. ${message || ''}`));
     });
 }
 
@@ -141,7 +141,7 @@ module.exports.check_all = () => {
         return promise.then(() => {
             // If fatal requirement is failed,
             // we don't need to check others
-            if (fatalIsHit) return Q();
+            if (fatalIsHit) return Promise.resolve();
 
             const requirement = requirements[idx];
             return checkFn()
@@ -155,7 +155,7 @@ module.exports.check_all = () => {
                     result.push(requirement);
                 });
         });
-    }, Q())
+    }, Promise.resolve())
         // When chain is completed, return requirements array to upstream API
         .then(() => result);
 };

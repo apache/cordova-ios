@@ -17,9 +17,9 @@
     under the License.
 */
 
-const Q = require('q');
 const execa = require('execa');
 const semver = require('semver');
+const { CordovaError } = require('cordova-common');
 
 function fetchSdkVersionByType (sdkType) {
     return execa('xcodebuild', ['-showsdks'])
@@ -112,7 +112,7 @@ exports.get_tool_version = toolName => {
     case 'ios-sim': return exports.get_ios_sim_version();
     case 'ios-deploy': return exports.get_ios_deploy_version();
     case 'pod': return exports.get_cocoapods_version();
-    default: return Q.reject(`${toolName} is not valid tool name. Valid names are: 'xcodebuild', 'ios-sim', 'ios-deploy', and 'pod'`);
+    default: return Promise.reject(new CordovaError(`${toolName} is not valid tool name. Valid names are: 'xcodebuild', 'ios-sim', 'ios-deploy', and 'pod'`));
     }
 };
 

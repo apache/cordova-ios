@@ -37,7 +37,6 @@ const CordovaError = require('cordova-common').CordovaError;
 const CordovaLogger = require('cordova-common').CordovaLogger;
 const events = require('cordova-common').events;
 const PluginManager = require('cordova-common').PluginManager;
-const Q = require('q');
 const util = require('util');
 const xcode = require('xcode');
 const ConfigParser = require('cordova-common').ConfigParser;
@@ -443,7 +442,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
             events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
         }
     }
-    return Q.when();
+    return Promise.resolve();
 };
 
 /**
@@ -561,7 +560,7 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods, uninst
             events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
         }
     }
-    return Q.when();
+    return Promise.resolve();
 };
 
 /**

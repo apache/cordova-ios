@@ -17,10 +17,10 @@
  * under the License.
  */
 
-const Q = require('q');
 const path = require('path');
 const shell = require('shelljs');
 const execa = require('execa');
+const { CordovaError } = require('cordova-common');
 
 const projectPath = path.join(__dirname, '..', '..');
 
@@ -28,7 +28,7 @@ module.exports.run = () => {
     const projectName = shell.ls(projectPath).filter(name => path.extname(name) === '.xcodeproj')[0];
 
     if (!projectName) {
-        return Q.reject(`No Xcode project found in ${projectPath}`);
+        return Promise.reject(new CordovaError(`No Xcode project found in ${projectPath}`));
     }
 
     const xcodebuildClean = configName => {

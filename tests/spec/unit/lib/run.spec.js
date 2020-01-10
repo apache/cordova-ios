@@ -23,16 +23,12 @@
 // Windows+Linux we are bound to not-have-that.
 if (process.platform === 'darwin') {
     const run = require('../../../../bin/templates/scripts/cordova/lib/run');
-    const Q = require('q');
 
     describe('cordova/lib/run', () => {
         describe('--list option', () => {
-            let deferred;
             beforeEach(() => {
-                deferred = Q.defer();
-                deferred.resolve();
-                spyOn(run, 'listDevices').and.returnValue(deferred.promise);
-                spyOn(run, 'listEmulators').and.returnValue(deferred.promise);
+                spyOn(run, 'listDevices').and.returnValue(Promise.resolve());
+                spyOn(run, 'listEmulators').and.returnValue(Promise.resolve());
             });
             it('should delegate to listDevices method if `options.device` specified', () => {
                 return run.run({ list: true, device: true }).then(() => {
