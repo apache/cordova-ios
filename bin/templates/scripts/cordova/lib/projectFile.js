@@ -40,16 +40,17 @@ function parseProjectFile (locations) {
     const xcodeproj = xcode.project(pbxPath);
     xcodeproj.parseSync();
 
-    var projectName = '';
-    if (fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace'))) {
+    let projectName = '';
+    const workspaceCollection = fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace'));
+    if (workspaceCollection) {
         projectName = fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace')).replace('.xcworkspace', '');
     }
-    var xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
-    var plist_file_entry = _.find(xcBuildConfiguration, function (entry) {
+    const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
+    const plist_file_entry = _.find(xcBuildConfiguration, function (entry) {
         return (
             entry.buildSettings &&
             entry.buildSettings.INFOPLIST_FILE &&
-            projectName ? entry.buildSettings.INFOPLIST_FILE.includes(projectName) : true
+            projectName ? entry.buildSettings.INFOPLIST_FILE.includes(`${projectName}/${projectName}-Info.plist`) : true
         );
     });
     const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
