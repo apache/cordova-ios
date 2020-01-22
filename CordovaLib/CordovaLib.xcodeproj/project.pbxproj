@@ -22,7 +22,7 @@
 		7ED95D051AB9028C008C4574 /* CDVPlugin+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CF51AB9028C008C4574 /* CDVPlugin+Private.h */; };
 		7ED95D071AB9028C008C4574 /* CDVHandleOpenURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95CF91AB9028C008C4574 /* CDVHandleOpenURL.m */; };
 		7ED95D091AB9028C008C4574 /* CDVLocalStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95CFC1AB9028C008C4574 /* CDVLocalStorage.m */; };
-		7ED95D0A1AB9028C008C4574 /* CDVUIWebViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFE1AB9028C008C4574 /* CDVUIWebViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7ED95D0A1AB9028C008C4574 /* CDVUIWebViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFE1AB9028C008C4574 /* CDVUIWebViewDelegate.h */; };
 		7ED95D0B1AB9028C008C4574 /* CDVUIWebViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95CFF1AB9028C008C4574 /* CDVUIWebViewDelegate.m */; };
 		7ED95D0D1AB9028C008C4574 /* CDVUIWebViewEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D011AB9028C008C4574 /* CDVUIWebViewEngine.m */; };
 		7ED95D351AB9029B008C4574 /* CDV.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D0F1AB9029B008C4574 /* CDV.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -119,7 +119,7 @@
 		C0C01ECD1E39131A0056E6CB /* CDVWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D2D1AB9029B008C4574 /* CDVWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01ECE1E39131A0056E6CB /* NSDictionary+CordovaPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D311AB9029B008C4574 /* NSDictionary+CordovaPreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01ECF1E39131A0056E6CB /* NSMutableArray+QueueAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D331AB9029B008C4574 /* NSMutableArray+QueueAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C0C01ED01E3913610056E6CB /* CDVUIWebViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFE1AB9028C008C4574 /* CDVUIWebViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C0C01ED01E3913610056E6CB /* CDVUIWebViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95CFE1AB9028C008C4574 /* CDVUIWebViewDelegate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
