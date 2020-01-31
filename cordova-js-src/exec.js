@@ -77,12 +77,6 @@ function convertMessageToArgsNativeToJs (message) {
 }
 
 var iOSExec = function () {
-    // detect change in bridge, if there is a change, we forward to new bridge
-
-    // if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
-    //     bridgeMode = jsToNativeModes.WK_WEBVIEW_BINDING;
-    // }
-
     var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
     if (typeof arguments[0] !== 'string') {
@@ -163,12 +157,3 @@ execProxy.nativeCallback = function () {
 };
 
 module.exports = execProxy;
-
-if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova && window.webkit.messageHandlers.cordova.postMessage) {
-    // unregister the old bridge
-    cordova.define.remove('cordova/exec');
-    // redefine bridge to our new bridge
-    cordova.define('cordova/exec', function (require, exports, module) {
-        module.exports = execProxy;
-    });
-}
