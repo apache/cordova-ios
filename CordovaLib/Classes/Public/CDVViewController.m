@@ -25,7 +25,6 @@
 #import "CDVUserAgentUtil.h"
 #import <AVFoundation/AVFoundation.h>
 #import "NSDictionary+CordovaPreferences.h"
-#import "CDVLocalStorage.h"
 #import "CDVCommandDelegateImpl.h"
 #import <Foundation/NSCharacterSet.h>
 
@@ -285,8 +284,6 @@
     }
     [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
 
-    [CDVLocalStorage __fixupDatabaseLocationsWithBackupType:backupWebStorageType];
-
     // // Instantiate the WebView ///////////////
 
     if (!self.webView) {
@@ -294,17 +291,6 @@
     }
 
     // /////////////////
-
-    /*
-     * Fire up CDVLocalStorage to work-around WebKit storage limitations: on all iOS 5.1+ versions for local-only backups, but only needed on iOS 5.1 for cloud backup.
-        With minimum iOS 7/8 supported, only first clause applies.
-     */
-    if ([backupWebStorageType isEqualToString:@"local"]) {
-        NSString* localStorageFeatureName = @"localstorage";
-        if ([self.pluginsMap objectForKey:localStorageFeatureName]) { // plugin specified in config
-            [self.startupPluginNames addObject:localStorageFeatureName];
-        }
-    }
 
     if ([self.startupPluginNames count] > 0) {
         [CDVTimer start:@"TotalPluginStartup"];
