@@ -96,15 +96,14 @@
 }
 
 #define CDVWebViewNavigationTypeLinkClicked 0
-#define CDVWebViewNavigationTypeOther 5
+#define CDVWebViewNavigationTypeLinkOther -1
 
 + (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
-    return (CDVWebViewNavigationTypeLinkClicked == navigationType ||
-        (CDVWebViewNavigationTypeOther == navigationType &&
-         [[request.mainDocumentURL absoluteString] isEqualToString:[request.URL absoluteString]]
-         )
-        );
+    return (
+        navigationType == CDVWebViewNavigationTypeLinkClicked ||
+        navigationType == CDVWebViewNavigationTypeLinkOther
+    );
 }
 
 + (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue
@@ -118,8 +117,7 @@
         case CDVIntentAndNavigationFilterValueNavigationAllowed:
             return YES;
         case CDVIntentAndNavigationFilterValueIntentAllowed:
-            // only allow-intent if it's a CDVWebViewNavigationTypeLinkClicked (anchor tag) OR
-            // it's a CDVWebViewNavigationTypeOther, and it's an internal link
+            // only allow-intent if it's a CDVWebViewNavigationTypeLinkClicked (anchor tag) or CDVWebViewNavigationTypeOther and it's an internal link
             if ([[self class] shouldOpenURLRequest:request navigationType:navigationType]){
                 [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
             }

@@ -27,8 +27,6 @@
 #define CDV_BRIDGE_NAME @"cordova"
 #define CDV_WKWEBVIEW_FILE_URL_LOAD_SELECTOR @"loadFileURL:allowingReadAccessToURL:"
 
-#define CDVWebViewNavigationTypeOther 5
-
 @interface CDVWebViewWeakScriptMessageHandler : NSObject <WKScriptMessageHandler>
 
 @property (nonatomic, weak, readonly) id<WKScriptMessageHandler>scriptMessageHandler;
@@ -427,7 +425,8 @@ static void * KVOContext = &KVOContext;
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
             anyPluginsResponded = YES;
-            int navType = (int)CDVWebViewNavigationTypeOther;
+            // https://issues.apache.org/jira/browse/CB-12497
+            int navType = (int)navigationAction.navigationType;
             shouldAllowRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, navigationAction.request, navType));
             if (!shouldAllowRequest) {
                 break;
