@@ -522,7 +522,8 @@ function updateFileResources (cordovaProject, locations) {
 
 function alertDeprecatedPreference (configParser) {
     const deprecatedToNewPreferences = {
-        MediaPlaybackRequiresUserAction: 'MediaTypesRequiringUserActionForPlayback'
+        MediaPlaybackRequiresUserAction: 'MediaTypesRequiringUserActionForPlayback',
+        MediaPlaybackAllowsAirPlay: 'AllowsAirPlayForMediaPlayback'
     };
 
     Object.keys(deprecatedToNewPreferences).forEach(oldKey => {

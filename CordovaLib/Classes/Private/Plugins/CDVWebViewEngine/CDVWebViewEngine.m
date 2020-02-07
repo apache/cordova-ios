@@ -84,7 +84,17 @@
     configuration.mediaTypesRequiringUserActionForPlayback = mediaTypesRequiringUserActionForPlayback;
 
     configuration.suppressesIncrementalRendering = [settings cordovaBoolSettingForKey:@"SuppressesIncrementalRendering" defaultValue:NO];
-    configuration.mediaPlaybackAllowsAirPlay = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
+
+    /*
+     * If the old preference key "MediaPlaybackAllowsAirPlay" exists, use it or default to "YES".
+     * Check if the new preference key "AllowsAirPlayForMediaPlayback" exists and overwrite the "MediaPlaybackAllowsAirPlay" value.
+     */
+    BOOL allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
+    if([settings cordovaSettingForKey:@"AllowsAirPlayForMediaPlayback"] != nil) {
+        allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
+    }
+    configuration.allowsAirPlayForMediaPlayback = allowsAirPlayForMediaPlayback;
+
     return configuration;
 }
 
