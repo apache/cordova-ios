@@ -60,6 +60,9 @@ module.exports.prepare = function (cordovaProject, options) {
             updateFileResources(cordovaProject, this.locations);
         })
         .then(() => {
+            alertDeprecatedPreference(this._config);
+        })
+        .then(() => {
             events.emit('verbose', 'Prepared iOS project successfully');
         });
 };
@@ -515,6 +518,28 @@ function updateFileResources (cordovaProject, locations) {
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 
     project.write();
+}
+
+function alertDeprecatedPreference (configParser) {
+    const deprecatedToNewPreferences = {
+        MediaPlaybackRequiresUserAction: 'MediaTypesRequiringUserActionForPlayback'
+    };
+
+    Object.keys(deprecatedToNewPreferences).forEach(oldKey => {
+        if (configParser.getPreference(oldKey)) {
+            const log = [`The preference name "${oldKey}" is being deprecated.`];
+
+            if (deprecatedToNewPreferences[oldKey]) {
+                log.push(`It is recommended to update this preference with "${deprecatedToNewPreferences[oldKey]}."`);
+            } else {
+                log.push(`There is no replacement for this preference.`);
+            }
+
+            log.push(`Please note that this preference will be removed in the near future.`);
+
+            events.emit('warn', log.join(' '));
+        }
+    });
 }
 
 function cleanFileResources (projectRoot, projectConfig, locations) {

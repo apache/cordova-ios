@@ -74,7 +74,15 @@
     }
 
     configuration.allowsInlineMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowInlineMediaPlayback" defaultValue:NO];
-    configuration.mediaPlaybackRequiresUserAction = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
+
+    // Check for usage of the older preference key, alert, and use.
+    BOOL mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaTypesRequiringUserActionForPlayback" defaultValue:YES];
+    NSString *mediaPlaybackRequiresUserActionKey = [settings cordovaSettingForKey:@"MediaPlaybackRequiresUserAction"];
+    if(mediaPlaybackRequiresUserActionKey != nil) {
+        mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
+    }
+    configuration.mediaTypesRequiringUserActionForPlayback = mediaTypesRequiringUserActionForPlayback;
+
     configuration.suppressesIncrementalRendering = [settings cordovaBoolSettingForKey:@"SuppressesIncrementalRendering" defaultValue:NO];
     configuration.mediaPlaybackAllowsAirPlay = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
     return configuration;
