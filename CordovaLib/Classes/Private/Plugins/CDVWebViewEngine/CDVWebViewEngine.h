@@ -17,13 +17,13 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVWebViewEngineProtocol.h>
+#import <WebKit/WebKit.h>
+#import <Cordova/CDV.h>
 
-@interface CDVUIWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol>
+@interface CDVWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 
-#if !WK_WEB_VIEW_ONLY
-@property (nonatomic, strong, readonly) id <UIWebViewDelegate> uiWebViewDelegate;
-#endif
+@property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
+
+- (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
 
 @end

@@ -19,9 +19,9 @@
 
 #import <XCTest/XCTest.h>
 
-#import <Cordova/CDVUIWebViewDelegate.h>
+#import <Cordova/CDVWebViewDelegate.h>
 
-@interface CDVWebViewDelegate2 : CDVUIWebViewDelegate {}
+@interface CDVWebViewDelegate2 : CDVWebViewDelegate {}
 
 - (void)setState:(NSInteger)state;
 - (NSInteger)state;
@@ -42,12 +42,10 @@
 
 @end
 
-@interface CDVUIWebViewDelegate ()
+@interface CDVWebViewDelegate ()
 
 // expose private interface
 - (BOOL)shouldLoadRequest:(NSURLRequest*)request;
-
--(BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType;
 
 @end
 
@@ -66,38 +64,9 @@
     [super tearDown];
 }
 
-- (void)testShouldLoadRequestWithStateWaitForStart
-{
-    NSInteger initialState = 1; // STATE_WAITING_FOR_LOAD_START;
-    NSInteger expectedState = 0; // STATE_IDLE;
-    
-    CDVWebViewDelegate2* wvd = [[CDVWebViewDelegate2 alloc] initWithDelegate:nil]; // not really testing delegate handling
-    wvd.state = initialState;
-    
-    // Testing a top-level navigation
-    [wvd webView:[UIWebView new] shouldStartLoadWithRequest:nil navigationType:UIWebViewNavigationTypeLinkClicked];
-    
-    XCTAssertTrue(wvd.state == expectedState, @"If the navigation started with state STATE_WAITING_FOR_LOAD_START then it must fail and the state should be STATE_IDLE");
-}
-
-
-- (void)testFailLoadStateCancelled
-{
-    NSInteger initialState = 1; // STATE_WAITING_FOR_LOAD_START;
-    NSInteger expectedState = 5; // STATE_CANCELLED;
-    NSError* errorCancelled = [NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorCancelled userInfo:nil];
-
-    CDVWebViewDelegate2* wvd = [[CDVWebViewDelegate2 alloc] initWithDelegate:nil]; // not really testing delegate handling
-
-    wvd.state = initialState;
-    [wvd webView:[UIWebView new] didFailLoadWithError:errorCancelled];
-
-    XCTAssertTrue(wvd.state == expectedState, @"If the load error was through an iframe redirect (NSURLErrorCancelled), the state should be STATE_CANCELLED");
-}
-
 - (void)testShouldLoadRequest
 {
-    CDVUIWebViewDelegate* wvd = [[CDVUIWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
+    CDVWebViewDelegate* wvd = [[CDVWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
 
     NSURLRequest* mailtoUrl = [NSURLRequest requestWithURL:[NSURL URLWithString:@"mailto:dev@cordova.apache.org"]];
     NSURLRequest* telUrl = [NSURLRequest requestWithURL:[NSURL URLWithString:@"tel:12345"]];
@@ -132,7 +101,7 @@
 
 - (void)doTestFragmentIdentifiersWithBaseUrl:(NSString*)baseUrl fragment:(NSString*)fragment
 {
-    CDVUIWebViewDelegate* wvd = [[CDVUIWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
+    CDVWebViewDelegate* wvd = [[CDVWebViewDelegate alloc] initWithDelegate:nil]; // not really testing delegate handling
 
     NSString* originalUrlString = baseUrl;
     NSURL* originalUrl = [NSURL URLWithString:originalUrlString];
