@@ -24,6 +24,18 @@ var exec = require('cordova/exec');
 var WkWebKit = {
     allowsBackForwardNavigationGestures: function (allow) {
         exec(null, null, 'CDVWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
+    },
+    convertFilePath: function (path) {
+        if (!path) {
+            return path;
+        }
+        if (path.startsWith('/')) {
+            return window.CDV_ASSETS_URL + '/_app_file_' + path;
+        }
+        if (path.startsWith('file://')) {
+            return window.CDV_ASSETS_URL + path.replace('file://', '/_app_file_');
+        }
+        return path;
     }
 };
 

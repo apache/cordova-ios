@@ -41,10 +41,14 @@
     NSString * scheme = url.scheme;
 
     if ([scheme isEqualToString:self.scheme]) {
-        if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
-            startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
+        if ([stringToLoad hasPrefix:@"/_app_file_"]) {
+            startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
         } else {
-            startPath = [startPath stringByAppendingPathComponent:stringToLoad];
+            if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
+                startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
+            } else {
+                startPath = [startPath stringByAppendingPathComponent:stringToLoad];
+            }
         }
     }
 
