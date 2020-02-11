@@ -69,11 +69,6 @@
     return self.appDelegate.viewController;
 }
 
-- (UIWebView*)webView
-{
-    return (UIWebView*)self.viewController.webView;
-}
-
 - (id)pluginInstance:(NSString*)pluginName
 {
     id ret = [self.viewController getCommandInstance:pluginName];

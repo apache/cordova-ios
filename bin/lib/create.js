@@ -23,7 +23,6 @@ const shell = require('shelljs');
 const Q = require('q');
 const path = require('path');
 const fs = require('fs');
-const xcode = require('xcode');
 const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
 const events = require('cordova-common').events;
@@ -268,13 +267,10 @@ function update_cordova_subproject (argv) {
 
     const projectPath = AbsProjectPath(argv[0]);
     let cordovaLibXcodePath;
-    let projectConfig;
     if (argv.length < 3) {
         cordovaLibXcodePath = path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj');
-        projectConfig = argv[1];
     } else {
         cordovaLibXcodePath = AbsProjectPath(argv[1]);
-        projectConfig = argv[2];
     }
 
     const parentProjectPath = AbsParentPath(projectPath);
@@ -300,15 +296,6 @@ function update_cordova_subproject (argv) {
 
     if (!found) {
         throw new Error(`Entry not found in project file for sub-project: ${subprojectPath}`);
-    }
-
-    const wkWebViewOnly = projectConfig.getPreference('WKWebViewOnly') === 'true';
-    if (wkWebViewOnly) {
-        const pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
-        const xcodeproj = xcode.project(pbxPath);
-        xcodeproj.parseSync();
-        xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', '1');
-        fs.writeFileSync(pbxPath, xcodeproj.writeSync());
     }
 }
 

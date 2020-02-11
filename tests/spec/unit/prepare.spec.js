@@ -599,7 +599,7 @@ describe('prepare', () => {
                 const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
                 const prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
-                expect(prop).toEqual('8.0');
+                expect(prop).toEqual('11.0');
             });
         });
         it('should write SwiftVersion preference (4.1)', () => {
