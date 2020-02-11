@@ -34,8 +34,6 @@
 
     <!-- Whitelist docs: https://github.com/apache/cordova-plugin-whitelist -->
     <access origin="*" />
-    <!-- Allow navigation to app scheme -->
-    <allow-navigation href="app://*"/>
     <!-- Grant certain URLs the ability to launch external applications. This
          behaviour is set to match that of Cordova versions before 3.6.0, and
          should be reviewed before launching an application in production. It

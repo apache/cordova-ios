@@ -46,7 +46,7 @@
 - (void)parserDidStartDocument:(NSXMLParser*)parser
 {
     // file: url <allow-navigations> are added by default
-    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://" ]];
+    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://", @"app://" ]];
     // no intents are added by default
     self.allowIntents = [[NSMutableArray alloc] init];
 }

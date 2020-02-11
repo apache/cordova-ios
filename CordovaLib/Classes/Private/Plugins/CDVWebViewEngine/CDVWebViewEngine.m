@@ -88,16 +88,6 @@
     // viewController would be available now. we attempt to set all possible delegates to it, by default
     NSDictionary* settings = self.commandDelegate.settings;
 
-    self.uiDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
-
-    CDVWebViewWeakScriptMessageHandler *weakScriptMessageHandler = [[CDVWebViewWeakScriptMessageHandler alloc] initWithScriptMessageHandler:self];
-
-    WKUserContentController* userContentController = [[WKUserContentController alloc] init];
-    [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
-
-    WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
-    configuration.userContentController = userContentController;
-
     NSString *hostname = [settings cordovaSettingForKey:@"hostname"];
     if(hostname == nil){
         hostname = @"localhost";
@@ -107,6 +97,22 @@
         scheme = @"app";
     }
     self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
+
+    self.uiDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
+
+    CDVWebViewWeakScriptMessageHandler *weakScriptMessageHandler = [[CDVWebViewWeakScriptMessageHandler alloc] initWithScriptMessageHandler:self];
+
+    WKUserContentController* userContentController = [[WKUserContentController alloc] init];
+    [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
+    NSString * scriptCode = [NSString stringWithFormat:@"window.CDV_ASSETS_URL = '%@';", self.CDV_ASSETS_URL];
+    WKUserScript *wkScript =
+    [[WKUserScript alloc] initWithSource:scriptCode injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
+    if (wkScript) {
+        [userContentController addUserScript:wkScript];
+    }
+
+    WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
+    configuration.userContentController = userContentController;
 
     CDVViewController* vc = (CDVViewController*)self.viewController;
     self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc andScheme:scheme];
