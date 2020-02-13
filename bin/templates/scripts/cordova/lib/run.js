@@ -46,7 +46,7 @@ module.exports.run = runOptions => {
 
     let useDevice = !!runOptions.device;
 
-    return require('./list-devices').run()
+    return require('./listDevices').run()
         .then(devices => {
             if (devices.length > 0 && !(runOptions.emulator)) {
                 useDevice = true;
@@ -174,7 +174,7 @@ function deployToSim (appPath, target) {
     events.emit('log', 'Deploying to simulator');
     if (!target) {
         // Select target device for emulator
-        return require('./list-emulator-images').run()
+        return require('./listEmulatorImages').run()
             .then(emulators => {
                 if (emulators.length > 0) {
                     target = emulators[0];
@@ -217,7 +217,7 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
 }
 
 function listDevices () {
-    return require('./list-devices').run()
+    return require('./listDevices').run()
         .then(devices => {
             events.emit('log', 'Available iOS Devices:');
             devices.forEach(device => {
@@ -227,7 +227,7 @@ function listDevices () {
 }
 
 function listEmulators () {
-    return require('./list-emulator-images').run()
+    return require('./listEmulatorImages').run()
         .then(emulators => {
             events.emit('log', 'Available iOS Simulators:');
             emulators.forEach(emulator => {
