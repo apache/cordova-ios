@@ -19,6 +19,15 @@
 
 /* jslint node: true */
 
+/**
+ * @todo update coho to update this line.
+ * @todo use `package.json` instead but first
+ *  figure out how this fit in with the platform-centered workflow structure.
+ *  This workflow would not have the `package.json` file.
+ */
+// Coho updates this line
+const VERSION = '6.0.0-dev';
+
 const fs = require('fs');
 const path = require('path');
 const unorm = require('unorm');
@@ -189,7 +198,7 @@ Api.prototype.getPlatformInfo = function () {
     result.locations = this.locations;
     result.root = this.root;
     result.name = this.platform;
-    result.version = require('./version');
+    result.version = Api.version();
     result.projectConfig = new ConfigParser(this.locations.configXml);
 
     return result;
@@ -683,6 +692,10 @@ Api.prototype.clean = function (cleanOptions) {
  */
 Api.prototype.requirements = function () {
     return check_reqs.check_all();
+};
+
+Api.version = function () {
+    return VERSION;
 };
 
 module.exports = Api;

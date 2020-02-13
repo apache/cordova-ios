@@ -17,10 +17,10 @@
        under the License.
 */
 
-const list_devices = require('../../../../bin/templates/scripts/cordova/lib/list-devices');
+const list_devices = require('../../../../bin/templates/scripts/cordova/lib/listDevices');
 const Q = require('q');
 
-describe('cordova/lib/list-devices', () => {
+describe('cordova/lib/listDevices', () => {
     describe('run method', () => {
         beforeEach(() => {
             spyOn(Q, 'all').and.returnValue(Q.resolve([]));
