@@ -36,7 +36,7 @@ module.exports.run = () => {
             'xcodebuild',
             ['-project', projectName, '-configuration', configName, '-alltargets', 'clean'],
             { cwd: projectPath, stdio: 'inherit' }
-        ).then(({ stdout }) => stdout);
+        );
     };
 
     return xcodebuildClean('Debug')

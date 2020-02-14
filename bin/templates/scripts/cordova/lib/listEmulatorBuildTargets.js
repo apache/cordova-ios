@@ -32,7 +32,7 @@ const { superspawn: { spawn } } = require('cordova-common');
  */
 function listEmulatorBuildTargets () {
     return spawn('xcrun', ['simctl', 'list', '--json'])
-        .then(({ stdout }) => JSON.parse(stdout))
+        .then(output => JSON.parse(output))
         .then(function (simInfo) {
             var devices = simInfo.devices;
             var deviceTypes = simInfo.devicetypes;

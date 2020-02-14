@@ -36,14 +36,14 @@ const { superspawn: { spawn } } = require('cordova-common');
  */
 function listStartedEmulators () {
     return spawn('ps', ['aux'])
-        .then(({ stdout }) => {
-            if (stdout.match(/[i]OS Simulator/)) {
+        .then(output => {
+            if (output.match(/[i]OS Simulator/)) {
                 return spawn('defaults', ['read', 'com.apple.iphonesimulator', '"SimulateDevice"']);
             }
 
-            return { stdout: '' };
+            return '';
         })
-        .then(({ stdout }) => stdout.split('\n'));
+        .then(output => output.split('\n'));
 }
 
 exports.run = listStartedEmulators;

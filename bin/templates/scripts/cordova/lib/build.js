@@ -224,7 +224,7 @@ module.exports.run = buildOpts => {
             shell.rm('-rf', buildOutputDir);
 
             const xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-            return spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, stdio: 'inherit' }).then(({ stdout }) => stdout);
+            return spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, stdio: 'inherit' });
         }).then(() => {
             if (!buildOpts.device || buildOpts.noSign) {
                 return;
@@ -272,7 +272,7 @@ module.exports.run = buildOpts => {
 
             function packageArchive () {
                 const xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, stdio: 'inherit' }).then(({ stdout }) => stdout);
+                return spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, stdio: 'inherit' });
             }
 
             return fs.writeFile(exportOptionsPath, exportOptionsPlist, 'utf-8')

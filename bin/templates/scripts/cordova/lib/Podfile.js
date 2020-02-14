@@ -21,7 +21,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
-const split2 = require('split2');
 const events = require('cordova-common').events;
 const { superspawn: { spawn } } = require('cordova-common');
 const CordovaError = require('cordova-common').CordovaError;
@@ -378,6 +377,7 @@ Podfile.prototype.before_install = function (toolOptions) {
 };
 
 Podfile.prototype.install = function (requirementsCheckerFunction) {
+    let first = true;
     const opts = {};
     opts.cwd = path.join(this.path, '..'); // parent path of this Podfile
     opts.stderr = 'inherit';
@@ -396,15 +396,17 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
                 return;
             }
 
-            const subprocess = spawn('pod', ['install', '--verbose'], opts);
-
-            subprocess.stdout
-                .pipe(split2())
-                .on('data', line => {
-                    events.emit('verbose', line);
+            return spawn('pod', ['install', '--verbose'], opts)
+                .progress(stdio => {
+                    if (stdio.stderr) { console.error(stdio.stderr); }
+                    if (stdio.stdout) {
+                        if (first) {
+                            events.emit('verbose', '==== pod install start ====\n');
+                            first = false;
+                        }
+                        events.emit('verbose', stdio.stdout);
+                    }
                 });
-
-            return subprocess;
         })
         .then(() => { // done
             events.emit('verbose', '==== pod install end ====\n');

@@ -21,7 +21,6 @@ const path = require('path');
 const build = require('./build');
 const shell = require('shelljs');
 const { superspawn: { spawn } } = require('cordova-common');
-const split2 = require('split2');
 const check_reqs = require('./check_reqs');
 const fs = require('fs-extra');
 
@@ -75,7 +74,7 @@ module.exports.run = runOptions => {
                         const ipafile = path.join(buildOutputDir, `${projectName}.ipa`);
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return spawn('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, stdio: 'inherit' }).then(({ stdout }) => stdout);
+                        return spawn('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, stdio: 'inherit' });
                     })
                     .then(() => {
                         // Uncompress IPA (zip file)
@@ -145,7 +144,7 @@ function filterSupportedArgs (args) {
  * @return {Promise} Fullfilled when any device is connected, rejected otherwise
  */
 function checkDeviceConnected () {
-    return spawn('ios-deploy', ['-c', '-t', '1'], { stdio: 'inherit' }).then(({ stdout }) => stdout);
+    return spawn('ios-deploy', ['-c', '-t', '1'], { stdio: 'inherit' });
 }
 
 /**
@@ -158,9 +157,9 @@ function deployToDevice (appPath, target, extraArgs) {
     events.emit('log', 'Deploying to device');
     // Deploying to device...
     if (target) {
-        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { stdio: 'inherit' }).then(({ stdout }) => stdout);
+        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { stdio: 'inherit' });
     } else {
-        return spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs), { stdio: 'inherit' }).then(({ stdout }) => stdout);
+        return spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs), { stdio: 'inherit' });
     }
 }
 
@@ -199,29 +198,20 @@ function startSim (appPath, target) {
 }
 
 function iossimLaunch (appPath, devicetypeid, log, exit) {
-    const subprocess = spawn(
+    return spawn(
         require.resolve('ios-sim/bin/ios-sim'),
         ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit],
         { cwd: projectPath }
-    );
-
-    const transformOutput = (channel, line) => {
-        events.emit(channel, `[ios-sim] ${line}`);
-    };
-
-    subprocess.stdout
-        .pipe(split2())
-        .on('data', transformOutput.bind(this, 'log'));
-
-    subprocess.stderr
-        .pipe(split2())
-        .on('data', transformOutput.bind(this, 'error'));
-
-    subprocess.then(() => {
+    ).progress(stdio => {
+        if (stdio.stderr) {
+            events.emit('error', `[ios-sim] ${stdio.stderr}`);
+        }
+        if (stdio.stdout) {
+            events.emit('log', `[ios-sim] ${stdio.stdout.trim()}`);
+        }
+    }).then(() => {
         events.emit('log', 'Simulator successfully started via `ios-sim`.');
     });
-
-    return subprocess;
 }
 
 function listDevices () {
