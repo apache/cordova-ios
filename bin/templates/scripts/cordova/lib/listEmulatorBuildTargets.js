@@ -17,7 +17,7 @@
        under the License.
 */
 
-const execa = require('execa');
+const { superspawn: { spawn } } = require('cordova-common');
 
 /**
  * Returns a list of available simulator build targets of the form
@@ -31,7 +31,7 @@ const execa = require('execa');
  *
  */
 function listEmulatorBuildTargets () {
-    return execa('xcrun', ['simctl', 'list', '--json'])
+    return spawn('xcrun', ['simctl', 'list', '--json'])
         .then(({ stdout }) => JSON.parse(stdout))
         .then(function (simInfo) {
             var devices = simInfo.devices;

@@ -19,7 +19,7 @@
 
 const path = require('path');
 const shell = require('shelljs');
-const execa = require('execa');
+const { superspawn: { spawn } } = require('cordova-common');
 const { CordovaError } = require('cordova-common');
 
 const projectPath = path.join(__dirname, '..', '..');
@@ -32,7 +32,7 @@ module.exports.run = () => {
     }
 
     const xcodebuildClean = configName => {
-        return execa(
+        return spawn(
             'xcodebuild',
             ['-project', projectName, '-configuration', configName, '-alltargets', 'clean'],
             { cwd: projectPath, stdio: 'inherit' }

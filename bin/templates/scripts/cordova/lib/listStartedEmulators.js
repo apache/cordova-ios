@@ -17,7 +17,7 @@
        under the License.
 */
 
-const execa = require('execa');
+const { superspawn: { spawn } } = require('cordova-common');
 
 /**
  * Gets list of running iOS simulators
@@ -35,10 +35,10 @@ const execa = require('execa');
  * Alternativly, remove this file. It is not documented in Cordova and not used anywhere in our code base.
  */
 function listStartedEmulators () {
-    return execa('ps', ['aux'])
+    return spawn('ps', ['aux'])
         .then(({ stdout }) => {
             if (stdout.match(/[i]OS Simulator/)) {
-                return execa('defaults', ['read', 'com.apple.iphonesimulator', '"SimulateDevice"']);
+                return spawn('defaults', ['read', 'com.apple.iphonesimulator', '"SimulateDevice"']);
             }
 
             return { stdout: '' };

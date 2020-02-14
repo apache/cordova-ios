@@ -17,12 +17,12 @@
     under the License.
 */
 
-const execa = require('execa');
+const { superspawn: { spawn } } = require('cordova-common');
 const semver = require('semver');
 const { CordovaError } = require('cordova-common');
 
 function fetchSdkVersionByType (sdkType) {
-    return execa('xcodebuild', ['-showsdks'])
+    return spawn('xcodebuild', ['-showsdks'])
         .then(
             ({ stdout }) => stdout,
             ({ stderr }) => Promise.reject(stderr)
@@ -48,7 +48,7 @@ exports.get_apple_osx_version = () => {
 };
 
 exports.get_apple_xcode_version = () => {
-    return execa('xcodebuild', ['-version'])
+    return spawn('xcodebuild', ['-version'])
         .then(
             ({ stdout, stderr }) => {
                 const versionMatch = /Xcode (.*)/.exec(stdout);
@@ -67,7 +67,7 @@ exports.get_apple_xcode_version = () => {
  *                           or rejected in case of error
  */
 exports.get_ios_deploy_version = () => {
-    return execa('ios-deploy', ['--version'])
+    return spawn('ios-deploy', ['--version'])
         .then(
             ({ stdout }) => stdout,
             ({ stderr }) => Promise.reject(stderr)
@@ -80,7 +80,7 @@ exports.get_ios_deploy_version = () => {
  *                           or rejected in case of error
  */
 exports.get_cocoapods_version = () => {
-    return execa('pod', ['--version'])
+    return spawn('pod', ['--version'])
         .then(
             ({ stdout }) => stdout,
             ({ stderr }) => Promise.reject(stderr)
@@ -93,7 +93,7 @@ exports.get_cocoapods_version = () => {
  *                           or rejected in case of error
  */
 exports.get_ios_sim_version = () => {
-    return execa('ios-sim', ['--version'])
+    return spawn('ios-sim', ['--version'])
         .then(
             ({ stdout }) => stdout,
             ({ stderr }) => Promise.reject(stderr)

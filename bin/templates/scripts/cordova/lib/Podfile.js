@@ -23,7 +23,7 @@ const path = require('path');
 const util = require('util');
 const split2 = require('split2');
 const events = require('cordova-common').events;
-const execa = require('execa');
+const { superspawn: { spawn } } = require('cordova-common');
 const CordovaError = require('cordova-common').CordovaError;
 
 Podfile.FILENAME = 'Podfile';
@@ -396,7 +396,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
                 return;
             }
 
-            const subprocess = execa('pod', ['install', '--verbose'], opts);
+            const subprocess = spawn('pod', ['install', '--verbose'], opts);
 
             subprocess.stdout
                 .pipe(split2())

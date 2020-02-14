@@ -19,7 +19,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const execa = require('execa');
+const { superspawn } = require('cordova-common');
 const list_devices = require('../../../../bin/templates/scripts/cordova/lib/listDevices');
 
 const sampleData = fs.readFileSync(path.resolve(__dirname, '../fixtures/sample-ioreg-output.txt'), 'utf-8');
@@ -27,13 +27,13 @@ const sampleData = fs.readFileSync(path.resolve(__dirname, '../fixtures/sample-i
 describe('cordova/lib/listDevices', () => {
     describe('run method', () => {
         beforeEach(() => {
-            spyOn(execa, 'command').and.returnValue(Promise.resolve({ stdout: sampleData }));
+            spyOn(superspawn, 'spawn').and.returnValue(Promise.resolve({ stdout: sampleData }));
         });
 
         it('should trim and split standard output and return as array', () => {
             return list_devices.run()
                 .then(results => {
-                    expect(execa.command).toHaveBeenCalledWith('ioreg -p IOUSB -l');
+                    expect(superspawn.spawn).toHaveBeenCalledWith('ioreg -p IOUSB -l');
                     expect(results).toEqual([
                         'THE_IPHONE_SERIAL iPhone',
                         'THE_IPAD_SERIAL iPad'

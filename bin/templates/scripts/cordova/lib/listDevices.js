@@ -17,7 +17,7 @@
        under the License.
 */
 
-const execa = require('execa');
+const { superspawn: { spawn } } = require('cordova-common');
 
 const DEVICE_REGEX = /-o (iPhone|iPad|iPod)@.*?"USB Serial Number" = "([^"]*)"/gs;
 
@@ -26,7 +26,7 @@ const DEVICE_REGEX = /-o (iPhone|iPad|iPod)@.*?"USB Serial Number" = "([^"]*)"/g
  * @return {Promise} Promise fulfilled with list of available iOS devices
  */
 function listDevices () {
-    return execa.command('ioreg -p IOUSB -l')
+    return spawn('ioreg -p IOUSB -l')
         .then(({ stdout }) => {
             return [...matchAll(stdout, DEVICE_REGEX)]
                 .map(m => m.slice(1).reverse().join(' '));
