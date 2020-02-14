@@ -19,21 +19,15 @@
  *
 */
 
-module.exports = {
-    id: 'ios',
-    bootstrap: function () {
-        // Attach the console polyfill that is iOS-only to window.console
-        // see the file under plugin/ios/console.js
-        require('cordova/modulemapper').clobbers('cordova/plugin/ios/console', 'window.console');
+var exec = require('cordova/exec');
 
-        // Attach the wkwebkit utility to window.WkWebView
-        // see the file under plugin/ios/wkwebkit.js
-        require('cordova/modulemapper').clobbers('cordova/plugin/ios/wkwebkit', 'window.WkWebView');
-
-        // Attach the splashscreen utility to window.navigator.splashscreen
-        // see the file under plugin/ios/launchscreen.js
-        require('cordova/modulemapper').clobbers('cordova/plugin/ios/launchscreen', 'navigator.splashscreen');
-
-        require('cordova/channel').onNativeReady.fire();
+var launchscreen = {
+    show: function () {
+        exec(null, null, 'LaunchScreen', 'show', []);
+    },
+    hide: function () {
+        exec(null, null, 'LaunchScreen', 'hide', []);
     }
 };
+
+module.exports = launchscreen;
