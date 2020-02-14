@@ -24,7 +24,6 @@
 #import "CDVPluginResult.h"
 #import "CDVViewController.h"
 #import "CDVCommandDelegate.h"
-#import "CDVURLProtocol.h"
 #import "CDVInvokedUrlCommand.h"
 #import "CDVWhitelist.h"
 #import "CDVScreenOrientationDelegate.h"
