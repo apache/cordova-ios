@@ -35,6 +35,7 @@
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) id <CDVWebViewEngineProtocol> webViewEngine;
+@property (nonatomic, readwrite, strong) UIView* launchView;
 
 @property (readwrite, assign) BOOL initialized;
 
@@ -69,6 +70,9 @@
                                                      name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
                                                      name:UIApplicationDidEnterBackgroundNotification object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onWebViewPageDidLoad:)
+                                                     name:CDVPageDidLoadNotification object:nil];
 
         // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
         self.supportedOrientations = [self parseInterfaceOrientations:
@@ -281,6 +285,12 @@
     }
     [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
 
+    // // Instantiate the Launch screen /////////
+
+    if (!self.launchView) {
+        [self createLaunchView];
+    }
+
     // // Instantiate the WebView ///////////////
 
     if (!self.webView) {
@@ -325,6 +335,7 @@
 
     NSString* bgColorString = [self.settings cordovaSettingForKey:@"BackgroundColor"];
     UIColor* bgColor = [self colorFromColorString:bgColorString];
+    [self.launchView setBackgroundColor:bgColor];
     [self.webView setBackgroundColor:bgColor];
 }
 
@@ -505,15 +516,35 @@
     return self.webViewEngine.engineWebView;
 }
 
+- (void)createLaunchView
+{
+    CGRect webViewBounds = self.view.bounds;
+    webViewBounds.origin = self.view.bounds.origin;
+
+    UIView* view = [[UIView alloc] initWithFrame:webViewBounds];
+    view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+
+    NSString* launchStoryboardName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchStoryboardName"];
+    if (launchStoryboardName != nil) {
+        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:launchStoryboardName bundle:[NSBundle mainBundle]];
+        UIViewController* vc = [storyboard instantiateInitialViewController];
+
+        [view addSubview:[vc.view snapshotViewAfterScreenUpdates:true]];
+    }
+
+    self.launchView = view;
+    [self.view addSubview:view];
+}
+
 - (void)createGapView
 {
     CGRect webViewBounds = self.view.bounds;
-
     webViewBounds.origin = self.view.bounds.origin;
 
     UIView* view = [self newCordovaViewWithFrame:webViewBounds];
-
+    view.hidden = YES;
     view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+
     [self.view addSubview:view];
     [self.view sendSubviewToBack:view];
 }
@@ -727,6 +758,43 @@
     [self checkAndReinitViewUrl];
     // NSLog(@"%@",@"applicationDidEnterBackground");
     [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
+}
+
+/**
+ Show the webview and fade out the intermediary view
+ This is to prevent the flashing of the mainViewController
+ */
+- (void)onWebViewPageDidLoad:(NSNotification*)notification
+{
+    self.webView.hidden = NO;
+
+    if ([self.settings cordovaBoolSettingForKey:@"AutoHideSplashScreen" defaultValue:YES]) {
+       [self showLaunchScreen:NO];
+    }
+}
+
+/**
+ Method to be called from the plugin JavaScript to show or hide the launch screen.
+ */
+- (void)showLaunchScreen:(BOOL)visible
+{
+    CGFloat splashScreenDelay = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
+
+    // AnimateWithDuration takes seconds but cordova documentation specifies milliseconds
+    CGFloat fadeSplashScreenDuration = [self.settings cordovaFloatSettingForKey:@"FadeSplashScreenDuration" defaultValue:250];
+
+    // Setting minimum value for fade to 0.25 seconds
+    fadeSplashScreenDuration = fadeSplashScreenDuration < 250 ? 250 : fadeSplashScreenDuration;
+
+    // Divide by 1000 because config returns milliseconds and NSTimer takes seconds
+    CGFloat delayToFade = (MAX(splashScreenDelay, fadeSplashScreenDuration) - fadeSplashScreenDuration)/1000;
+    CGFloat fadeDuration = fadeSplashScreenDuration/1000;
+
+    [NSTimer scheduledTimerWithTimeInterval:delayToFade repeats:NO block:^(NSTimer * _Nonnull timer) {
+        [UIView animateWithDuration:fadeDuration animations:^{
+            [self.launchView setAlpha:(visible ? 1 : 0)];
+        }];
+    }];
 }
 
 // ///////////////////////
