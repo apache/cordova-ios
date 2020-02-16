@@ -22,7 +22,7 @@
     "test:component": "jasmine --config=tests/spec/component.json",
     "posttest": "npm run lint",
     "cover": "nyc jasmine --config=tests/spec/coverage.json",
-    "e2e-tests": "jasmine tests/spec/create.spec.js",
+    "e2e-tests": "jasmine --config=tests/spec/e2e-tests.json tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
     "objc-tests-lib": "npm run xcodebuild -- -scheme CordovaLibTests",
     "objc-tests-framework": "npm run xcodebuild -- -scheme CordovaFrameworkApp",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "@cordova/eslint-config": "^2.0.0",
     "jasmine": "^3.4.0",
+    "jasmine-spec-reporter": "^4.2.1",
     "nyc": "^14.0.0",
     "rewire": "^4.0.1",
     "tmp": "^0.1.0"

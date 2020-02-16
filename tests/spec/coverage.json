@@ -4,6 +4,9 @@
       "unit/**/*[sS]pec.js",
       "component/**/*[sS]pec.js"
   ],
+  "helpers": [
+      "helper.js"
+  ],
   "stopSpecOnExpectationFailure": false,
   "random": false
 }
