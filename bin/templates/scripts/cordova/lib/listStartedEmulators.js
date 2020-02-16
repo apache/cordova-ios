@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -19,8 +17,21 @@
        under the License.
 */
 
-const { run } = require('./listEmulatorBuildTargets');
+var Q = require('q');
+var exec = require('child_process').exec;
 
-run().then(targets => {
-    console.log(JSON.stringify(targets, null, 2));
-});
+/**
+ * Gets list of running iOS simulators
+ * @return {Promise} Promise fulfilled with list of running iOS simulators
+ */
+function listStartedEmulators () {
+    // wrap exec call into promise
+    return Q.nfcall(exec, 'ps aux | grep -i "[i]OS Simulator"')
+        .then(function () {
+            return Q.nfcall(exec, 'defaults read com.apple.iphonesimulator "SimulateDevice"');
+        }).then(function (stdio) {
+            return stdio[0].trim().split('\n');
+        });
+}
+
+exports.run = listStartedEmulators;
