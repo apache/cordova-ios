@@ -86,6 +86,7 @@
 - (void)pluginInitialize
 {
     // viewController would be available now. we attempt to set all possible delegates to it, by default
+    CDVViewController* vc = (CDVViewController*)self.viewController;
     NSDictionary* settings = self.commandDelegate.settings;
 
     NSString *hostname = [settings cordovaSettingForKey:@"hostname"];
@@ -96,6 +97,7 @@
     if(scheme == nil || [WKWebView handlesURLScheme:scheme]){
         scheme = @"app";
     }
+    vc.appScheme = scheme;
     self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
 
     self.uiDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
@@ -114,7 +116,6 @@
     WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
     configuration.userContentController = userContentController;
 
-    CDVViewController* vc = (CDVViewController*)self.viewController;
     self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc andScheme:scheme];
     [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     // re-create WKWebView, since we need to update configuration
