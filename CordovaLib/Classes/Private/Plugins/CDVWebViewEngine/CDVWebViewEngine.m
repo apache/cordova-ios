@@ -116,7 +116,7 @@
     WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
     configuration.userContentController = userContentController;
 
-    self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc andScheme:scheme];
+    self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc];
     [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     // re-create WKWebView, since we need to update configuration
     WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];

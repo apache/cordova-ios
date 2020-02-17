@@ -24,11 +24,11 @@
 @implementation CDVURLSchemeHandler
 
 
-- (instancetype)initWithVC:(CDVViewController *)controller andScheme:(NSString *)scheme {
+- (instancetype)initWithVC:(CDVViewController *)controller
+{
     self = [super init];
     if (self) {
         _viewController = controller;
-        _scheme = scheme;
     }
     return self;
 }
@@ -40,7 +40,7 @@
     NSString * stringToLoad = url.path;
     NSString * scheme = url.scheme;
 
-    if ([scheme isEqualToString:self.scheme]) {
+    if ([scheme isEqualToString:self.viewController.appScheme]) {
         if ([stringToLoad hasPrefix:@"/_app_file_"]) {
             startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
         } else {

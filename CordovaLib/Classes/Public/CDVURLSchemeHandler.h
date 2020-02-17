@@ -24,10 +24,9 @@
 
 @interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
 
-@property (nonatomic, strong) NSString * scheme;
-@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
+@property (nonatomic, strong) CDVViewController* viewController;
 
-- (instancetype)initWithVC:(CDVViewController *)controller andScheme:(NSString *)scheme;
+- (instancetype)initWithVC:(CDVViewController *)controller;
 
 
 @end
