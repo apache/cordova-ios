@@ -18,7 +18,7 @@
     "cordova:platform"
   ],
   "scripts": {
-    "test": "npm run unit-tests && npm run test:component && npm run objc-tests && npm run e2e-tests",
+    "test": "npm run unit-tests && npm run test:component && npm run e2e-tests && npm run objc-tests",
     "test:component": "jasmine --config=tests/spec/component.json",
     "posttest": "npm run lint",
     "cover": "nyc jasmine --config=tests/spec/coverage.json",
