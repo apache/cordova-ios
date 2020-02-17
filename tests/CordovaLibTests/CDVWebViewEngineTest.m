@@ -87,13 +87,10 @@
     id<CDVWebViewEngineProtocol> webViewEngineProtocol = self.plugin;
     WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
     
-    // iOS >=10 defaults to NO, < 10 defaults to YES.
-    BOOL mediaPlaybackRequiresUserActionDefault = IsAtLeastiOSVersion(@"10.0")? NO : YES;
-    
     NSDictionary* preferences = @{
                                [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                               [@"MediaPlaybackRequiresUserAction" lowercaseString] : @(!mediaPlaybackRequiresUserActionDefault), // default is NO on iOS >= 10, YES for < 10
+                               [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @YES, // default is NO
                                [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
                                [@"MediaPlaybackAllowsAirPlay" lowercaseString] : @NO, // default is YES
                                [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
@@ -108,11 +105,7 @@
     XCTAssertEqualWithAccuracy(wkWebView.configuration.preferences.minimumFontSize, 1.1, 0.0001);
     
     // the WKWebViewConfiguration properties, we **cannot** change outside of initialization
-    if (IsAtLeastiOSVersion(@"10.0")) {
-        XCTAssertFalse(wkWebView.configuration.mediaPlaybackRequiresUserAction);
-    } else {
-        XCTAssertTrue(wkWebView.configuration.mediaPlaybackRequiresUserAction);
-    }
+    XCTAssertTrue(wkWebView.configuration.mediaTypesRequiringUserActionForPlayback);
     XCTAssertFalse(wkWebView.configuration.allowsInlineMediaPlayback);
     XCTAssertFalse(wkWebView.configuration.suppressesIncrementalRendering);
     XCTAssertTrue(wkWebView.configuration.mediaPlaybackAllowsAirPlay);
@@ -137,13 +130,10 @@
     self.viewController = [[CDVViewController alloc] init];
     
     // generate the app settings
-    // iOS >=10 defaults to NO, < 10 defaults to YES.
-    BOOL mediaPlaybackRequiresUserActionDefault = IsAtLeastiOSVersion(@"10.0")? NO : YES;
-
     NSDictionary* settings = @{
                                   [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                   [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                                  [@"MediaPlaybackRequiresUserAction" lowercaseString] : @(!mediaPlaybackRequiresUserActionDefault), // default is NO on iOS >= 10, YES for < 10
+                                  [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @YES, // default is NO
                                   [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
                                   [@"MediaPlaybackAllowsAirPlay" lowercaseString] : @NO, // default is YES
                                   [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
@@ -163,11 +153,7 @@
     XCTAssertEqualWithAccuracy(wkWebView.configuration.preferences.minimumFontSize, 1.1, 0.0001);
     
     // the WKWebViewConfiguration properties, we **cannot** change outside of initialization
-    if (IsAtLeastiOSVersion(@"10.0")) {
-        XCTAssertTrue(wkWebView.configuration.mediaPlaybackRequiresUserAction);
-    } else {
-        XCTAssertFalse(wkWebView.configuration.mediaPlaybackRequiresUserAction);
-    }
+    XCTAssertTrue(wkWebView.configuration.mediaTypesRequiringUserActionForPlayback);
     XCTAssertTrue(wkWebView.configuration.allowsInlineMediaPlayback);
     XCTAssertTrue(wkWebView.configuration.suppressesIncrementalRendering);
     // The test case below is in a separate test "testConfigurationWithMediaPlaybackAllowsAirPlay" (Apple bug)
