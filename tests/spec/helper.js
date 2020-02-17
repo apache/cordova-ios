@@ -20,12 +20,23 @@ const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 jasmine.getEnv().clearReporters();
 jasmine.getEnv().addReporter(new SpecReporter({
+    suite: {
+        displayNumber: true
+    },
     spec: {
+        displayErrorMessages: true,
+        displayStacktrace: true,
+        displaySuccessful: false,
+        displayFailed: true,
         displayPending: true,
         displayDuration: true
     },
     summary: {
-        displayDuration: true,
-        displayStacktrace: true
+        displayErrorMessages: false,
+        displayStacktrace: false,
+        displaySuccessful: false,
+        displayFailed: false,
+        displayPending: false,
+        displayDuration: true
     }
 }));
