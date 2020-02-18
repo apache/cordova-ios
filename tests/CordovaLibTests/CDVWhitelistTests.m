@@ -296,11 +296,9 @@
     // Test http (not allowed in either)
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"http://google.com"] intentsWhitelist:intentsWhitelist navigationsWhitelist:navigationsWhitelist], CDVIntentAndNavigationFilterValueNoneAllowed);
 
-
     NSURL* telUrl = [NSURL URLWithString:@"tel:5555555"];
     NSMutableURLRequest* telRequest = [NSMutableURLRequest requestWithURL:telUrl];
     telRequest.mainDocumentURL = telUrl;
 }
-
 
 @end
