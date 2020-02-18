@@ -50,7 +50,7 @@ function parseProjectFile (locations) {
         return (
             entry.buildSettings &&
             entry.buildSettings.INFOPLIST_FILE &&
-            projectName ? entry.buildSettings.INFOPLIST_FILE.includes(`${projectName}/${projectName}-Info.plist`) : true
+            !(projectName && entry.buildSettings.INFOPLIST_FILE.includes(`${projectName}/${projectName}-Info.plist`))
         );
     });
     const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
