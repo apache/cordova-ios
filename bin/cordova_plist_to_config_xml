@@ -106,7 +106,7 @@ def UpdateProjectFile(path):
     if 'Cordova.plist' in line:
       line = line.replace('Cordova.plist', 'config.xml')
       line = line.replace('lastKnownFileType = text.plist.xml', 'lastKnownFileType = text.xml')
-    print(line, end='')
+    print(line, end=' ')
   file_handle.close()
 
 
