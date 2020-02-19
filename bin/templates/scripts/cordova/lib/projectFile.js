@@ -40,8 +40,19 @@ function parseProjectFile (locations) {
     const xcodeproj = xcode.project(pbxPath);
     xcodeproj.parseSync();
 
+    let projectName = '';
+    const workspaceCollection = fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace'));
+    if (workspaceCollection) {
+        projectName = fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace')).replace('.xcworkspace', '');
+    }
     const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
-    const plist_file_entry = _.find(xcBuildConfiguration, entry => entry.buildSettings && entry.buildSettings.INFOPLIST_FILE);
+    const plist_file_entry = _.find(xcBuildConfiguration, function (entry) {
+        return (
+            entry.buildSettings &&
+            entry.buildSettings.INFOPLIST_FILE &&
+            !(projectName && entry.buildSettings.INFOPLIST_FILE.includes(`${projectName}/${projectName}-Info.plist`))
+        );
+    });
     const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
     const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
