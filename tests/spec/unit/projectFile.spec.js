@@ -17,26 +17,33 @@
     under the License.
 */
 
-const os = require('os');
 const path = require('path');
 const shell = require('shelljs');
+const tmp = require('tmp');
+
 const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 
-const iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
 const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml/*');
 
-const locations = {
-    root: iosProject,
-    pbxproj: path.join(iosProject, 'SampleApp.xcodeproj/project.pbxproj')
-};
-
 describe('projectFile', () => {
-    beforeEach(() => {
-        shell.cp('-rf', iosProjectFixture, iosProject);
-    });
+    let iosProject = '';
 
-    afterEach(() => {
-        shell.rm('-rf', iosProject);
+    let locations = {};
+
+    beforeEach(() => {
+        const tmpobj = tmp.dirSync();
+
+        iosProject = path.join(tmpobj.name, 'plugman/projectFile');
+
+        locations = {
+            root: iosProject,
+            pbxproj: path.join(
+                iosProject,
+                'SampleApp.xcodeproj/project.pbxproj')
+        };
+
+        shell.mkdir('-p', iosProject);
+        shell.cp('-rf', iosProjectFixture, iosProject);
     });
 
     describe('parse method', () => {
