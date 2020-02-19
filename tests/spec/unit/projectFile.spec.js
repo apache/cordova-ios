@@ -60,13 +60,14 @@ describe('projectFile', () => {
         it('Test#003 : should throw if project does not contain an appropriate config.xml file', () => {
             shell.rm(path.join(iosProject, 'SampleApp', 'config.xml'));
             expect(() => { projectFile.parse(locations); })
-                .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
+                .toThrow(new Error('Could not find config.xml file.'));
         });
 
         it('Test#004 : should throw if project does not contain an appropriate -Info.plist file', () => {
             shell.rm(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'));
             expect(() => { projectFile.parse(locations); })
-                .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
+                .toThrow(new Error(
+                    'Could not find SampleApp-Info.plist file.'));
         });
 
         it('Test#005 : should return right directory when multiple .plist files are present', () => {

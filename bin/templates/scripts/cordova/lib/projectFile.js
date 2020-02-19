@@ -68,10 +68,15 @@ function parseProjectFile (locations) {
             .replace(/^"(.*)"$/g, '$1')
             .replace(/\\&/g, '&'));
 
+    if (!fs.existsSync(plist_file)) {
+        throw new CordovaError(
+            `Could not find ${projectName}-Info.plist file.`);
+    }
+
     const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
-    if (!fs.existsSync(plist_file) || !fs.existsSync(config_file)) {
-        throw new CordovaError('Could not find *-Info.plist file, or config.xml file.');
+    if (!fs.existsSync(config_file)) {
+        throw new CordovaError('Could not find config.xml file.');
     }
 
     const frameworks_file = path.join(project_dir, 'frameworks.json');
