@@ -116,9 +116,8 @@ describe('projectFile', () => {
                 path.join(iosProject, 'SampleApp.xcodeproj', 'project.pbxproj'));
 
             expect(() => { projectFile.parse(locations); }).toThrow(
-                // FUTURE TBD consider throwing a more descriptive error:
-                new TypeError(
-                    `Cannot read property 'buildSettings' of undefined`));
+                new Error(
+                    'Could not find correct INFOPLIST_FILE entry in pbxproj'));
         });
     });
 });

@@ -57,6 +57,11 @@ function parseProjectFile (locations) {
         entry.buildSettings.INFOPLIST_FILE.includes(plistFilePath)
     ));
 
+    if (!plist_file_entry) {
+        throw new CordovaError(
+            'Could not find correct INFOPLIST_FILE entry in pbxproj');
+    }
+
     const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
     const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
