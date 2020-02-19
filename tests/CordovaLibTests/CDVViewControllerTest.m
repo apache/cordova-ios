@@ -50,10 +50,10 @@
     }else{
         // Do not specify config file ==> fallback to default config.xml
     }
-    
+
     // Trigger -viewDidLoad
     [viewController view];
-    
+
     // Assert that the proper file was actually loaded, checking the value of a test setting it must contain
     NSString* settingValue = [viewController.settings objectForKey:CDVViewControllerTestSettingKey];
     XCTAssertEqualObjects(settingValue, value);
@@ -75,18 +75,18 @@
 
 -(void)testColorFromColorString{
     CDVViewController* viewController = [self viewController];
-    
+
     // Comparison values: #FFAABB and #99FFAABB
     UIColor* referenceColor = [UIColor colorWithRed:255.0/255.0 green:170.0/255.0 blue:187.0/255.0 alpha:1.0];
     UIColor* referenceColorAlpha = [UIColor colorWithRed:255.0/255.0 green:170.0/255.0 blue:187.0/255.0 alpha:0.6];
-    
+
     // Valid values
     XCTAssertTrue([[viewController colorFromColorString:@"#FAB"] isEqual:referenceColor]);
     XCTAssertTrue([[viewController colorFromColorString:@"#FFAABB"] isEqual:referenceColor]);
     XCTAssertTrue([[viewController colorFromColorString:@"0xFFAABB"] isEqual:referenceColor]);
     XCTAssertTrue([[viewController colorFromColorString:@"#99FFAABB"] isEqual:referenceColorAlpha]);
     XCTAssertTrue([[viewController colorFromColorString:@"0x99FFAABB"] isEqual:referenceColorAlpha]);
-    
+
     // Invalid values
     XCTAssertNil([viewController colorFromColorString:nil]);
     XCTAssertNil([viewController colorFromColorString:@"black"]);
@@ -107,7 +107,7 @@
 
 -(void)testIfItLoadsAppUrlIfCurrentViewIsBlank{
     CDVViewController* viewController = [self viewController];
-    
+
     NSString* appUrl = @"about:blank";
     NSString* html = @"<html><body></body></html>";
     [viewController.webViewEngine loadHTMLString:html baseURL:[NSURL URLWithString:appUrl]];
