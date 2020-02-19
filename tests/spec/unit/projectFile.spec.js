@@ -92,5 +92,21 @@ describe('projectFile', () => {
         it('Test#006 : getPackageName method should return the CFBundleIdentifier from the project\'s Info.plist file', () => {
             expect(projectFile.parse(locations).getPackageName()).toEqual('com.example.friendstring');
         });
+
+        it('Test#007 : should use correct plist in case an extra INFOPLIST_FILE entry comes first in project.pbxproj', () => {
+            // Change a single INFOPLIST_FILE entry to:
+            //     INFOPLIST_FILE = "SampleApp/Sample2-Info.plist"
+            // Second INFOPLIST_FILE entry remains correct in project.pbxproj
+            shell.sed('-i',
+                'INFOPLIST_FILE = "SampleApp/SampleApp-Info.plist"',
+                'INFOPLIST_FILE = "SampleApp/Sample2-Info.plist"',
+                path.join(iosProject,
+                    'SampleApp.xcodeproj', 'project.pbxproj'));
+
+            // ensure parse method uses correct INFOPLIST_FILE entry and
+            // reads from correct plist file:
+            expect(projectFile.parse(locations).getPackageName())
+                .toEqual('com.example.friendstring');
+        });
     });
 });
