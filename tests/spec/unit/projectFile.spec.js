@@ -47,6 +47,10 @@ describe('projectFile', () => {
     });
 
     describe('parse method', () => {
+        it('Test#001 : should return result with correct xcode_path value', () => {
+            expect(projectFile.parse(locations).xcode_path)
+                .toEqual(path.join(iosProject, 'SampleApp'));
+        });
         it('Test#001 : should throw if project is not an xcode project', () => {
             shell.rm('-rf', path.join(iosProject, 'SampleApp', 'SampleApp.xcodeproj'));
             expect(() => { projectFile.parse(); }).toThrow();
