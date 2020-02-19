@@ -108,5 +108,17 @@ describe('projectFile', () => {
             expect(projectFile.parse(locations).getPackageName())
                 .toEqual('com.example.friendstring');
         });
+
+        it('Test#008 : should throw if project contains single -Info.plist file with incorrect name', () => {
+            shell.mv(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'),
+                path.join(iosProject, 'SampleApp', 'Sample2-Info.plist'));
+            shell.sed('-i', /SampleApp-Info.plist/g, 'Sample2-Info.plist',
+                path.join(iosProject, 'SampleApp.xcodeproj', 'project.pbxproj'));
+
+            expect(() => { projectFile.parse(locations); }).toThrow(
+                // FUTURE TBD consider throwing a more descriptive error:
+                new TypeError(
+                    `Cannot read property 'buildSettings' of undefined`));
+        });
     });
 });
