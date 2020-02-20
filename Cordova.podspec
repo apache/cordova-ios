@@ -16,6 +16,8 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "11.0"
   s.source       = relSource
   s.requires_arc = true
+  s.preserve_paths = 'CordovaLib/cordova.js', 'CordovaLib/VERSION'
+  s.frameworks = 'AssetsLibrary', 'MobileCoreServices', 'AVFoundation', 'CoreLocation'
   s.default_subspec  = 'Cordova'
   s.subspec 'Cordova' do |cordova|
       cordova.source_files = 'CordovaLib/Classes/**/*.{h,m}', 'CordovaLib/Cordova/Cordova.h'
