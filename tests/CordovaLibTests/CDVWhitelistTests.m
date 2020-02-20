@@ -91,9 +91,9 @@
                              @"tel:*",
                              @"sms:*",
                              nil];
-    
+
     CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
-    
+
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"tel:1234567890"]]);
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"sms:1234567890"]]);
 }
@@ -162,17 +162,17 @@
         @"192.168.1.*",
         @"192.168.2.*",
         nil];
-    
+
     CDVWhitelist* whitelist = [[CDVWhitelist alloc] initWithArray:allowedHosts];
 
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
-    
+
     // Ever since Cordova 3.1, whitelist wildcards are simplified, only "*" and "*.apache.org" (subdomain example) are allowed. Therefore the next four tests should fail
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]]);
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.2"]]);
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.1"]]);
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.2.2"]]);
-    
+
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://192.168.3.1"]]);
 }
 
@@ -252,7 +252,7 @@
 
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
     XCTAssertFalse([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://testtt.com"]]);
-    
+
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"gopher://test.com"]]);
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://test.com"]]);
     XCTAssertTrue([whitelist URLIsAllowed:[NSURL URLWithString:@"http://my.test.com"]]);
@@ -285,22 +285,20 @@
 {
     NSArray* allowIntents = @[ @"https://*" ];
     NSArray* allowNavigations = @[ @"https://*.apache.org" ];
-    
+
     CDVWhitelist* intentsWhitelist = [[CDVWhitelist alloc] initWithArray:allowIntents];
     CDVWhitelist* navigationsWhitelist = [[CDVWhitelist alloc] initWithArray:allowNavigations];
-    
+
     // Test allow-navigation superceding allow-intent
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://apache.org/foo.html"] intentsWhitelist:intentsWhitelist navigationsWhitelist:navigationsWhitelist], CDVIntentAndNavigationFilterValueNavigationAllowed);
     // Test wildcard https as allow-intent
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://google.com"] intentsWhitelist:intentsWhitelist navigationsWhitelist:navigationsWhitelist], CDVIntentAndNavigationFilterValueIntentAllowed);
     // Test http (not allowed in either)
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"http://google.com"] intentsWhitelist:intentsWhitelist navigationsWhitelist:navigationsWhitelist], CDVIntentAndNavigationFilterValueNoneAllowed);
-    
-    
+
     NSURL* telUrl = [NSURL URLWithString:@"tel:5555555"];
     NSMutableURLRequest* telRequest = [NSMutableURLRequest requestWithURL:telUrl];
     telRequest.mainDocumentURL = telUrl;
 }
-
 
 @end
