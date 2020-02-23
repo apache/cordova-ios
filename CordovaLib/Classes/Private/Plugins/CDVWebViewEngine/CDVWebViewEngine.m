@@ -75,13 +75,31 @@
 
     configuration.allowsInlineMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowInlineMediaPlayback" defaultValue:NO];
 
-    // Check for usage of the older preference key, alert, and use.
-    BOOL mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaTypesRequiringUserActionForPlayback" defaultValue:YES];
-    NSString *mediaPlaybackRequiresUserActionKey = [settings cordovaSettingForKey:@"MediaPlaybackRequiresUserAction"];
-    if(mediaPlaybackRequiresUserActionKey != nil) {
-        mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
+    /*
+     * If the old preference key "MediaPlaybackRequiresUserAction" exists, use it or default to "YES".
+     * Old to New Preference Mapping
+     *   YES = ALL
+     *   NO = NONE
+     * Check if the new preference key "MediaTypesRequiringUserActionForPlayback" exists and overwrite the "MediaPlaybackRequiresUserAction" value.
+     */
+    BOOL mediaPlaybackRequiresUserAction = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
+    WKAudiovisualMediaTypes mediaType = mediaPlaybackRequiresUserAction ? WKAudiovisualMediaTypeAll : WKAudiovisualMediaTypeNone;
+
+    id targetMediaType = [settings cordovaSettingForKey:@"MediaTypesRequiringUserActionForPlayback"];
+    if(targetMediaType != nil) {
+        if ([targetMediaType isEqualToString:@"none"]) {
+            mediaType = WKAudiovisualMediaTypeNone;
+        } else if ([targetMediaType isEqualToString:@"audio"]) {
+            mediaType = WKAudiovisualMediaTypeAudio;
+        } else if ([targetMediaType isEqualToString:@"video"]) {
+            mediaType = WKAudiovisualMediaTypeVideo;
+        } else if ([targetMediaType isEqualToString:@"all"]) {
+            mediaType = WKAudiovisualMediaTypeAll;
+        } else {
+            NSLog(@"Invalid \"MediaTypesRequiringUserActionForPlayback\" was detected. Fallback to default value.");
+        }
     }
-    configuration.mediaTypesRequiringUserActionForPlayback = mediaTypesRequiringUserActionForPlayback;
+    configuration.mediaTypesRequiringUserActionForPlayback = mediaType;
 
     configuration.suppressesIncrementalRendering = [settings cordovaBoolSettingForKey:@"SuppressesIncrementalRendering" defaultValue:NO];
 
