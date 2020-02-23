@@ -75,29 +75,21 @@
 
     configuration.allowsInlineMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowInlineMediaPlayback" defaultValue:NO];
 
-    /*
-     * If the old preference key "MediaPlaybackRequiresUserAction" exists, use it or default to "YES".
-     * Old to New Preference Mapping
-     *   YES = ALL
-     *   NO = NONE
-     * Check if the new preference key "MediaTypesRequiringUserActionForPlayback" exists and overwrite the "MediaPlaybackRequiresUserAction" value.
-     */
-    BOOL mediaPlaybackRequiresUserAction = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
-    WKAudiovisualMediaTypes mediaType = mediaPlaybackRequiresUserAction ? WKAudiovisualMediaTypeAll : WKAudiovisualMediaTypeNone;
+    // Set the media types that are required for user action for playback
+    WKAudiovisualMediaTypes mediaType = WKAudiovisualMediaTypeAll; // default
 
+    // targetMediaType will always exist, either from user's "config.xml" or default ("defaults.xml").
     id targetMediaType = [settings cordovaSettingForKey:@"MediaTypesRequiringUserActionForPlayback"];
-    if(targetMediaType != nil) {
-        if ([targetMediaType isEqualToString:@"none"]) {
-            mediaType = WKAudiovisualMediaTypeNone;
-        } else if ([targetMediaType isEqualToString:@"audio"]) {
-            mediaType = WKAudiovisualMediaTypeAudio;
-        } else if ([targetMediaType isEqualToString:@"video"]) {
-            mediaType = WKAudiovisualMediaTypeVideo;
-        } else if ([targetMediaType isEqualToString:@"all"]) {
-            mediaType = WKAudiovisualMediaTypeAll;
-        } else {
-            NSLog(@"Invalid \"MediaTypesRequiringUserActionForPlayback\" was detected. Fallback to default value.");
-        }
+    if ([targetMediaType isEqualToString:@"none"]) {
+        mediaType = WKAudiovisualMediaTypeNone;
+    } else if ([targetMediaType isEqualToString:@"audio"]) {
+        mediaType = WKAudiovisualMediaTypeAudio;
+    } else if ([targetMediaType isEqualToString:@"video"]) {
+        mediaType = WKAudiovisualMediaTypeVideo;
+    } else if ([targetMediaType isEqualToString:@"all"]) {
+        mediaType = WKAudiovisualMediaTypeAll;
+    } else {
+        NSLog(@"Invalid \"MediaTypesRequiringUserActionForPlayback\" was detected. Fallback to default value of \"all\" types.");
     }
     configuration.mediaTypesRequiringUserActionForPlayback = mediaType;
 
