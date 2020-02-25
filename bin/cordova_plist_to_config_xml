@@ -26,17 +26,13 @@ Usage:
 from __future__ import print_function
 
 import fileinput
+import io
 import os
 import plistlib
 import re
 import sys
 from xml.dom import minidom
 from xml.etree import ElementTree
-
-try:  # Python 2
-  from StringIO import StringIO
-except ImportError:  # Python 3
-  from io import StringIO
 
 
 def Usage():
@@ -93,10 +89,10 @@ def ConvertPlist(src_path, dst_path):
     root.append(ElementTree.Element('access', attrib={'origin':value}))
 
   tree = ElementTree.ElementTree(root)
-  s = StringIO()
-  tree.write(s, encoding='UTF-8')
-  mini_dom = minidom.parseString(s.getvalue())
-  with open(dst_path, 'w') as out:
+  with io.BytesIO() as s:
+    tree.write(s, encoding='UTF-8')
+    mini_dom = minidom.parseString(s.getvalue())
+  with open(dst_path, 'wb') as out:
     out.write(mini_dom.toprettyxml(encoding='UTF-8'))
 
 
