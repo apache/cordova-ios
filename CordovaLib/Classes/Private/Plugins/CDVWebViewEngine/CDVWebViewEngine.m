@@ -91,7 +91,7 @@
      */
     BOOL allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
     if([settings cordovaSettingForKey:@"AllowsAirPlayForMediaPlayback"] != nil) {
-        allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
+        allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowsAirPlayForMediaPlayback" defaultValue:YES];
     }
     configuration.allowsAirPlayForMediaPlayback = allowsAirPlayForMediaPlayback;
 
