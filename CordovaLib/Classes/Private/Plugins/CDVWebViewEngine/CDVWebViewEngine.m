@@ -75,13 +75,23 @@
 
     configuration.allowsInlineMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowInlineMediaPlayback" defaultValue:NO];
 
-    // Check for usage of the older preference key, alert, and use.
-    BOOL mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaTypesRequiringUserActionForPlayback" defaultValue:YES];
-    NSString *mediaPlaybackRequiresUserActionKey = [settings cordovaSettingForKey:@"MediaPlaybackRequiresUserAction"];
-    if(mediaPlaybackRequiresUserActionKey != nil) {
-        mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
+    // Set the media types that are required for user action for playback
+    WKAudiovisualMediaTypes mediaType = WKAudiovisualMediaTypeAll; // default
+
+    // targetMediaType will always exist, either from user's "config.xml" or default ("defaults.xml").
+    id targetMediaType = [settings cordovaSettingForKey:@"MediaTypesRequiringUserActionForPlayback"];
+    if ([targetMediaType isEqualToString:@"none"]) {
+        mediaType = WKAudiovisualMediaTypeNone;
+    } else if ([targetMediaType isEqualToString:@"audio"]) {
+        mediaType = WKAudiovisualMediaTypeAudio;
+    } else if ([targetMediaType isEqualToString:@"video"]) {
+        mediaType = WKAudiovisualMediaTypeVideo;
+    } else if ([targetMediaType isEqualToString:@"all"]) {
+        mediaType = WKAudiovisualMediaTypeAll;
+    } else {
+        NSLog(@"Invalid \"MediaTypesRequiringUserActionForPlayback\" was detected. Fallback to default value of \"all\" types.");
     }
-    configuration.mediaTypesRequiringUserActionForPlayback = mediaTypesRequiringUserActionForPlayback;
+    configuration.mediaTypesRequiringUserActionForPlayback = mediaType;
 
     configuration.suppressesIncrementalRendering = [settings cordovaBoolSettingForKey:@"SuppressesIncrementalRendering" defaultValue:NO];
 
