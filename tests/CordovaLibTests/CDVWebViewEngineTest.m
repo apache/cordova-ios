@@ -90,7 +90,7 @@
     NSDictionary* preferences = @{
                                [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                               [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is NO
+                               [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
                                [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
                                [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
                                [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
@@ -133,7 +133,7 @@
     NSDictionary* settings = @{
                                   [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                   [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                                  [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is NO
+                                  [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
                                   [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
                                   [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
                                   [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
