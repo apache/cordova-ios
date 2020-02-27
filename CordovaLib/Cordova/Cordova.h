@@ -38,12 +38,12 @@ FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVConfigParser.h>
-#import <Cordova/CDVURLProtocol.h>
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVPlugin+Resources.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
+#import <Cordova/CDVWebViewUIDelegate.h>
 #import <Cordova/CDVWhitelist.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVTimer.h>

@@ -91,7 +91,7 @@
     [self waitForConditionName:@"getting href" block:^{
         NSURL* vc1URL = vc1WebViewEngine.URL;
         NSURL* vc2URL = vc2WebViewEngine.URL;
-        
+
         return
         (BOOL)(
                (vc1URL != nil && ![[vc1URL absoluteString] isEqualToString:@"about:blank"] && ![[vc1URL absoluteString] isEqualToString:@""]) &&

@@ -17,27 +17,13 @@
  under the License.
  */
 
-#import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
+#import <Cordova/CDV.h>
 
-@class AppDelegate;
-@class CDVViewController;
+@interface CDVWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 
-@interface CDVWebViewTest : XCTestCase
+@property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
 
-@property (nonatomic, strong) UIWebView* webView;
+(void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
 
-- (AppDelegate*)appDelegate;
-- (CDVViewController*)viewController;
-- (UIWebView*)webView;
-
-// Returns the already registered plugin object for the given class.
-- (id)pluginInstance:(NSString*)pluginName;
-// Destroys the existing webview and creates a new one.
-- (void)reloadWebView;
-// Runs the run loop until the given block returns true, or until a timeout
-// occurs.
-- (void)waitForConditionName:(NSString*)conditionName block:(BOOL (^)())block;
-// Convenience function for stringByEvaluatingJavaScriptFromString.
-- (NSString*)evalJs:(NSString*)code;
 @end

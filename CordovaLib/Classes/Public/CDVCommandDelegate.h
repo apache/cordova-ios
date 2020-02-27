@@ -45,7 +45,7 @@ typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 - (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop;
 // Runs the given block on a background thread using a shared thread-pool.
 - (void)runInBackground:(void (^)(void))block;
-// Returns the User-Agent of the associated UIWebView.
+// Returns the User-Agent of the associated WKWebView.
 - (NSString*)userAgent;
 
 @end

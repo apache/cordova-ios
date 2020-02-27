@@ -92,7 +92,7 @@
     // Cycle the run-loop before executing the JS.
     // For _delayResponses -
     //    This ensures that we don't eval JS during the middle of an existing JS
-    //    function (possible since UIWebViewDelegate callbacks can be synchronous).
+    //    function (possible since WKWebViewDelegate callbacks can be synchronous).
     // For !isMainThread -
     //    It's a hard error to eval on the non-UI thread.
     // For !_commandQueue.currentlyExecuting -

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -19,8 +17,15 @@
        under the License.
 */
 
-const { run } = require('./listEmulatorBuildTargets');
+var Q = require('q');
+var iossim = require('ios-sim');
 
-run().then(targets => {
-    console.log(JSON.stringify(targets, null, 2));
-});
+/**
+ * Gets list of iOS devices available for simulation
+ * @return {Promise} Promise fulfilled with list of devices available for simulation
+ */
+function listEmulatorImages () {
+    return Q.resolve(iossim.getdevicetypes());
+}
+
+exports.run = listEmulatorImages;

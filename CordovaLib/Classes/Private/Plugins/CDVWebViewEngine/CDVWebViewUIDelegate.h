@@ -17,11 +17,12 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVAvailability.h"
+#import <WebKit/WebKit.h>
 
-@class CDVViewController;
+@interface CDVWebViewUIDelegate : NSObject <WKUIDelegate>
 
-@interface CDVURLProtocol : NSURLProtocol {}
+@property (nonatomic, copy) NSString* title;
+
+- (instancetype)initWithTitle:(NSString*)title;
 
 @end

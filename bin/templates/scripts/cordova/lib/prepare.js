@@ -34,7 +34,6 @@ const PlatformMunger = require('cordova-common').ConfigChanges.PlatformMunger;
 const PluginInfoProvider = require('cordova-common').PluginInfoProvider;
 const FileUpdater = require('cordova-common').FileUpdater;
 const projectFile = require('./projectFile');
-const xcode = require('xcode');
 
 // launch storyboard and related constants
 const LAUNCHIMAGE_BUILD_SETTING = 'ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME';
@@ -59,6 +58,9 @@ module.exports.prepare = function (cordovaProject, options) {
             updateSplashScreens(cordovaProject, this.locations);
             updateLaunchStoryboardImages(cordovaProject, this.locations);
             updateFileResources(cordovaProject, this.locations);
+        })
+        .then(() => {
+            alertDeprecatedPreference(this._config);
         })
         .then(() => {
             events.emit('verbose', 'Prepared iOS project successfully');
@@ -322,7 +324,6 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     const deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
     const needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     const swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
-    const wkWebViewOnly = platformConfig.getPreference('WKWebViewOnly');
     const targetName = unorm.nfd(platformConfig.name());
 
     let project;
@@ -337,7 +338,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
-    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion && !wkWebViewOnly) {
+    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion) {
         return Q();
     }
 
@@ -359,22 +360,6 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     if (swiftVersion) {
         events.emit('verbose', `Set SwiftVersion to "${swiftVersion}".`);
         project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
-    }
-    if (wkWebViewOnly) {
-        let wkwebviewValue = '1';
-        if (wkWebViewOnly === 'true') {
-            events.emit('verbose', 'Set WK_WEB_VIEW_ONLY.');
-        } else {
-            wkwebviewValue = '0';
-            events.emit('verbose', 'Unset WK_WEB_VIEW_ONLY.');
-        }
-        project.xcode.updateBuildProperty('WK_WEB_VIEW_ONLY', wkwebviewValue);
-        const cordovaLibXcodePath = path.join(locations.root, 'CordovaLib', 'CordovaLib.xcodeproj');
-        const pbxPath = path.join(cordovaLibXcodePath, 'project.pbxproj');
-        const xcodeproj = xcode.project(pbxPath);
-        xcodeproj.parseSync();
-        xcodeproj.updateBuildProperty('WK_WEB_VIEW_ONLY', wkwebviewValue);
-        fs.writeFileSync(pbxPath, xcodeproj.writeSync());
     }
 
     updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
@@ -583,6 +568,48 @@ function updateFileResources (cordovaProject, locations) {
         resourceMap, { rootDir: cordovaProject.root }, logFileOp);
 
     project.write();
+}
+
+function alertDeprecatedPreference (configParser) {
+    const deprecatedToNewPreferences = {
+        MediaPlaybackRequiresUserAction: {
+            newPreference: 'MediaTypesRequiringUserActionForPlayback',
+            isDeprecated: true
+        },
+        MediaPlaybackAllowsAirPlay: {
+            newPreference: 'AllowsAirPlayForMediaPlayback',
+            isDeprecated: false
+        }
+    };
+
+    Object.keys(deprecatedToNewPreferences).forEach(oldKey => {
+        if (configParser.getPreference(oldKey)) {
+            const isDeprecated = deprecatedToNewPreferences[oldKey].isDeprecated;
+            const verb = isDeprecated ? 'has been' : 'is being';
+            const newPreferenceKey = deprecatedToNewPreferences[oldKey].newPreference;
+
+            // Create the Log Message
+            const log = [`The preference name "${oldKey}" ${verb} deprecated.`];
+            if (newPreferenceKey) {
+                log.push(`It is recommended to replace this preference with "${newPreferenceKey}."`);
+            } else {
+                log.push(`There is no replacement for this preference.`);
+            }
+
+            /**
+             * If the preference has been deprecated, the usage of the old preference is no longer used.
+             * Therefore, the following line is not appended. It is added only if the old preference is still used.
+             * We are only keeping the top lines for deprecated items only for an additional major release when
+             * the pre-warning was not provided in a past major release due to a necessary quick deprecation.
+             * Typically caused by implementation nature or third-party requirement changes.
+             */
+            if (!isDeprecated) {
+                log.push(`Please note that this preference will be removed in the near future.`);
+            }
+
+            events.emit('warn', log.join(' '));
+        }
+    });
 }
 
 function cleanFileResources (projectRoot, projectConfig, locations) {

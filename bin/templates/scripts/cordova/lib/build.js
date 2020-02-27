@@ -88,7 +88,7 @@ function getBundleIdentifier (projectObject) {
  * @return {Promise}
  */
 function getDefaultSimulatorTarget () {
-    return require('./list-emulator-build-targets').run()
+    return require('./listEmulatorBuildTargets').run()
         .then(emulators => {
             let targetEmulator;
             if (emulators.length > 0) {
@@ -137,7 +137,7 @@ module.exports.run = buildOpts => {
         }
     }
 
-    return require('./list-devices').run()
+    return require('./listDevices').run()
         .then(devices => {
             if (devices.length > 0 && !(buildOpts.emulator)) {
                 // we also explicitly set device flag in options as we pass
@@ -155,7 +155,7 @@ module.exports.run = buildOpts => {
                     newTarget = newTarget.split(',')[0];
                 }
                 // a target was given to us, find the matching Xcode destination name
-                const promise = require('./list-emulator-build-targets').targetForSimIdentifier(newTarget);
+                const promise = require('./listEmulatorBuildTargets').targetForSimIdentifier(newTarget);
                 return promise.then(theTarget => {
                     if (!theTarget) {
                         return getDefaultSimulatorTarget().then(defaultTarget => {
