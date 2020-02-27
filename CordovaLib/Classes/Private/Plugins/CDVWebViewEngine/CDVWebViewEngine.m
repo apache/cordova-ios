@@ -21,6 +21,7 @@
 #import "CDVWebViewUIDelegate.h"
 #import "CDVWebViewProcessPoolFactory.h"
 #import <Cordova/NSDictionary+CordovaPreferences.h>
+#import "CDVURLSchemeHandler.h"
 
 #import <objc/message.h>
 
@@ -41,6 +42,8 @@
 @property (nonatomic, strong, readwrite) UIView* engineWebView;
 @property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
 @property (nonatomic, weak) id <WKScriptMessageHandler> weakScriptMessageHandler;
+@property (nonatomic, strong) CDVURLSchemeHandler * schemeHandler;
+@property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 
 @end
 
@@ -111,7 +114,19 @@
 - (void)pluginInitialize
 {
     // viewController would be available now. we attempt to set all possible delegates to it, by default
+    CDVViewController* vc = (CDVViewController*)self.viewController;
     NSDictionary* settings = self.commandDelegate.settings;
+
+    NSString *hostname = [settings cordovaSettingForKey:@"hostname"];
+    if(hostname == nil){
+        hostname = @"localhost";
+    }
+    NSString *scheme = [settings cordovaSettingForKey:@"scheme"];
+    if(scheme == nil || [WKWebView handlesURLScheme:scheme]){
+        scheme = @"app";
+    }
+    vc.appScheme = scheme;
+    self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
 
     self.uiDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
 
@@ -119,18 +134,24 @@
 
     WKUserContentController* userContentController = [[WKUserContentController alloc] init];
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
+    NSString * scriptCode = [NSString stringWithFormat:@"window.CDV_ASSETS_URL = '%@';", self.CDV_ASSETS_URL];
+    WKUserScript *wkScript =
+    [[WKUserScript alloc] initWithSource:scriptCode injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
+    if (wkScript) {
+        [userContentController addUserScript:wkScript];
+    }
 
     WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
     configuration.userContentController = userContentController;
 
+    self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc];
+    [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     // re-create WKWebView, since we need to update configuration
     WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
     wkWebView.UIDelegate = self.uiDelegate;
     self.engineWebView = wkWebView;
 
-    if (IsAtLeastiOSVersion(@"9.0") && [self.viewController isKindOfClass:[CDVViewController class]]) {
-        wkWebView.customUserAgent = ((CDVViewController*) self.viewController).userAgent;
-    }
+    wkWebView.customUserAgent = vc.userAgent;
 
     if ([self.viewController conformsToProtocol:@protocol(WKUIDelegate)]) {
         wkWebView.UIDelegate = (id <WKUIDelegate>)self.viewController;
@@ -219,12 +240,21 @@ static void * KVOContext = &KVOContext;
 {
     if ([self canLoadRequest:request]) { // can load, differentiate between file urls and other schemes
         if (request.URL.fileURL) {
-            SEL wk_sel = NSSelectorFromString(CDV_WKWEBVIEW_FILE_URL_LOAD_SELECTOR);
-            NSURL* readAccessUrl = [request.URL URLByDeletingLastPathComponent];
-            return ((id (*)(id, SEL, id, id))objc_msgSend)(_engineWebView, wk_sel, request.URL, readAccessUrl);
-        } else {
-            return [(WKWebView*)_engineWebView loadRequest:request];
+            NSURL* startURL = [NSURL URLWithString:((CDVViewController *)self.viewController).startPage];
+            NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
+            NSURL *url = [[NSURL URLWithString:self.CDV_ASSETS_URL] URLByAppendingPathComponent:request.URL.path];
+            if ([request.URL.path isEqualToString:startFilePath]) {
+                url = [NSURL URLWithString:self.CDV_ASSETS_URL];
+            }
+            if(request.URL.query) {
+                url = [NSURL URLWithString:[@"?" stringByAppendingString:request.URL.query] relativeToURL:url];
+            }
+            if(request.URL.fragment) {
+                url = [NSURL URLWithString:[@"#" stringByAppendingString:request.URL.fragment] relativeToURL:url];
+            }
+            request = [NSURLRequest requestWithURL:url];
         }
+        return [(WKWebView*)_engineWebView loadRequest:request];
     } else { // can't load, print out error
         NSString* errorHtml = [NSString stringWithFormat:
                                @"<!doctype html>"
