@@ -34,7 +34,6 @@
     id <CDVCommandDelegate> _commandDelegate;
     @protected
     CDVCommandQueue* _commandQueue;
-    NSString* _userAgent;
 }
 
 @property (nonatomic, readonly, weak) IBOutlet UIView* webView;
@@ -53,27 +52,10 @@
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**
- The complete user agent that Cordova will use when sending web requests.
- */
-@property (nonatomic, readonly) NSString* userAgent;
-
-/**
- The base user agent data that Cordova will use to build its user agent.  If this
- property isn't set, Cordova will use the standard web view user agent as its
- base.
- */
-@property (nonatomic, readwrite, copy) NSString* baseUserAgent;
-
-/**
 	Takes/Gives an array of UIInterfaceOrientation (int) objects
 	ex. UIInterfaceOrientationPortrait
 */
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
-
-/**
- The address of the lock token used for controlling access to setting the user-agent
- */
-@property (nonatomic, readonly) NSInteger* userAgentLockToken;
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
