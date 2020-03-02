@@ -301,6 +301,27 @@
         [CDVTimer stop:@"TotalPluginStartup"];
     }
 
+    // /////////////////
+    NSURL* appURL = [self appUrl];
+
+    if (appURL) {
+        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [self.webViewEngine loadRequest:appReq];
+    } else {
+        NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
+        NSLog(@"%@", loadErr);
+
+        NSURL* errorUrl = [self errorURL];
+        if (errorUrl) {
+            errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
+            NSLog(@"%@", [errorUrl absoluteString]);
+            [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+        } else {
+            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+            [self.webViewEngine loadHTMLString:html baseURL:nil];
+        }
+    }
+    // /////////////////
 
     NSString* bgColorString = [self.settings cordovaSettingForKey:@"BackgroundColor"];
     UIColor* bgColor = [self colorFromColorString:bgColorString];
