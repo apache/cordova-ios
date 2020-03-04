@@ -20,15 +20,17 @@
 #import "CDVPlugin.h"
 #import "CDVWhitelist.h"
 
+#define CDVWebViewNavigationType int
+
 typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
-    CDVIntentAndNavigationFilterValueIntentAllowed,
-    CDVIntentAndNavigationFilterValueNavigationAllowed,
-    CDVIntentAndNavigationFilterValueNoneAllowed
+  CDVIntentAndNavigationFilterValueIntentAllowed,
+          CDVIntentAndNavigationFilterValueNavigationAllowed,
+          CDVIntentAndNavigationFilterValueNoneAllowed
 };
 
 @interface CDVIntentAndNavigationFilter : CDVPlugin <NSXMLParserDelegate>
 
-+ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url intentsWhitelist:(CDVWhitelist*)intentsWhitelist navigationsWhitelist:(CDVWhitelist*)navigationsWhitelist;
-+ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue;
-+ (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType;
++(CDVIntentAndNavigationFilterValue) filterUrl : (NSURL*) url intentsWhitelist : (CDVWhitelist*) intentsWhitelist navigationsWhitelist : (CDVWhitelist*) navigationsWhitelist;
++(BOOL) shouldOverrideLoadWithRequest : (NSURLRequest*) request navigationType : (CDVWebViewNavigationType) navigationType filterValue : (CDVIntentAndNavigationFilterValue) filterValue;
++(BOOL) shouldOpenURLRequest : (NSURLRequest*) request navigationType : (CDVWebViewNavigationType) navigationType;
 @end
