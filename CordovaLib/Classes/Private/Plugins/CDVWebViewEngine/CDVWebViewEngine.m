@@ -108,6 +108,32 @@
     }
     configuration.allowsAirPlayForMediaPlayback = allowsAirPlayForMediaPlayback;
 
+    /*
+     * Sets Custom User Agents
+     * - (Default) "userAgent" is set the the clean user agent.
+     *   E.g.
+     *     UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+     *
+     * - If "OverrideUserAgent" is set, it will overwrite the entire "userAgent" value. The "AppendUserAgent" will be iggnored if set.
+     *   Notice: The override logic is handled in the "pluginInitialize" method.
+     *   E.g.
+     *     OverrideUserAgent = "foobar"
+     *     UserAgent = "foobar"
+     *
+     * - If "AppendUserAgent" is set and "OverrideUserAgent" is not set, the user defined "AppendUserAgent" will be appended to the "userAgent"
+     *   E.g.
+     *     AppendUserAgent = "foobar"
+     *     UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 foobar"
+     */
+    NSString *userAgent = configuration.applicationNameForUserAgent;
+    if (
+        [settings cordovaSettingForKey:@"OverrideUserAgent"] == nil &&
+        [settings cordovaSettingForKey:@"AppendUserAgent"] != nil
+        ) {
+        userAgent = [NSString stringWithFormat:@"%@ %@", userAgent, [settings cordovaSettingForKey:@"AppendUserAgent"]];
+    }
+    configuration.applicationNameForUserAgent = userAgent;
+
     return configuration;
 }
 
@@ -149,9 +175,16 @@
     // re-create WKWebView, since we need to update configuration
     WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
     wkWebView.UIDelegate = self.uiDelegate;
-    self.engineWebView = wkWebView;
 
-    wkWebView.customUserAgent = vc.userAgent;
+    /*
+     * This is where the "OverrideUserAgent" is handled. This will replace the entire UserAgent
+     * with the user defined custom UserAgent.
+     */
+    if ([settings cordovaSettingForKey:@"OverrideUserAgent"] != nil) {
+        wkWebView.customUserAgent = [settings cordovaSettingForKey:@"OverrideUserAgent"];
+    }
+
+    self.engineWebView = wkWebView;
 
     if ([self.viewController conformsToProtocol:@protocol(WKUIDelegate)]) {
         wkWebView.UIDelegate = (id <WKUIDelegate>)self.viewController;
@@ -425,9 +458,6 @@ static void * KVOContext = &KVOContext;
 
 - (void)webView:(WKWebView*)webView didFinishNavigation:(WKNavigation*)navigation
 {
-    CDVViewController* vc = (CDVViewController*)self.viewController;
-    [CDVUserAgentUtil releaseLock:vc.userAgentLockToken];
-
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:webView]];
 }
 
@@ -439,7 +469,6 @@ static void * KVOContext = &KVOContext;
 - (void)webView:(WKWebView*)theWebView didFailNavigation:(WKNavigation*)navigation withError:(NSError*)error
 {
     CDVViewController* vc = (CDVViewController*)self.viewController;
-    [CDVUserAgentUtil releaseLock:vc.userAgentLockToken];
 
     NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
     NSLog(@"%@", message);

@@ -49,8 +49,6 @@
 		7ED95D491AB9029B008C4574 /* CDVScreenOrientationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D231AB9029B008C4574 /* CDVScreenOrientationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D4A1AB9029B008C4574 /* CDVTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D241AB9029B008C4574 /* CDVTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D4B1AB9029B008C4574 /* CDVTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D251AB9029B008C4574 /* CDVTimer.m */; };
-		7ED95D4E1AB9029B008C4574 /* CDVUserAgentUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D281AB9029B008C4574 /* CDVUserAgentUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7ED95D4F1AB9029B008C4574 /* CDVUserAgentUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D291AB9029B008C4574 /* CDVUserAgentUtil.m */; };
 		7ED95D501AB9029B008C4574 /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D2A1AB9029B008C4574 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D511AB9029B008C4574 /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D2B1AB9029B008C4574 /* CDVViewController.m */; };
 		7ED95D521AB9029B008C4574 /* CDVWebViewEngineProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D2C1AB9029B008C4574 /* CDVWebViewEngineProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -69,7 +67,6 @@
 		9052DE772150D040008E83D4 /* CDVPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D201AB9029B008C4574 /* CDVPlugin.m */; };
 		9052DE782150D040008E83D4 /* CDVPluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D221AB9029B008C4574 /* CDVPluginResult.m */; };
 		9052DE792150D040008E83D4 /* CDVTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D251AB9029B008C4574 /* CDVTimer.m */; };
-		9052DE7B2150D040008E83D4 /* CDVUserAgentUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D291AB9029B008C4574 /* CDVUserAgentUtil.m */; };
 		9052DE7C2150D040008E83D4 /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D2B1AB9029B008C4574 /* CDVViewController.m */; };
 		9052DE7D2150D040008E83D4 /* CDVWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D2E1AB9029B008C4574 /* CDVWhitelist.m */; };
 		9052DE7E2150D040008E83D4 /* NSDictionary+CordovaPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D321AB9029B008C4574 /* NSDictionary+CordovaPreferences.m */; };
@@ -103,7 +100,6 @@
 		C0C01EC61E39131A0056E6CB /* CDVPluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D211AB9029B008C4574 /* CDVPluginResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01EC71E39131A0056E6CB /* CDVScreenOrientationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D231AB9029B008C4574 /* CDVScreenOrientationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01EC81E39131A0056E6CB /* CDVTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D241AB9029B008C4574 /* CDVTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C0C01ECA1E39131A0056E6CB /* CDVUserAgentUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D281AB9029B008C4574 /* CDVUserAgentUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01ECB1E39131A0056E6CB /* CDVViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D2A1AB9029B008C4574 /* CDVViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01ECC1E39131A0056E6CB /* CDVWebViewEngineProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D2C1AB9029B008C4574 /* CDVWebViewEngineProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01ECD1E39131A0056E6CB /* CDVWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D2D1AB9029B008C4574 /* CDVWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -154,8 +150,6 @@
 		7ED95D231AB9029B008C4574 /* CDVScreenOrientationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVScreenOrientationDelegate.h; sourceTree = "<group>"; };
 		7ED95D241AB9029B008C4574 /* CDVTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVTimer.h; sourceTree = "<group>"; };
 		7ED95D251AB9029B008C4574 /* CDVTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVTimer.m; sourceTree = "<group>"; };
-		7ED95D281AB9029B008C4574 /* CDVUserAgentUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVUserAgentUtil.h; sourceTree = "<group>"; };
-		7ED95D291AB9029B008C4574 /* CDVUserAgentUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVUserAgentUtil.m; sourceTree = "<group>"; };
 		7ED95D2A1AB9029B008C4574 /* CDVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVViewController.h; sourceTree = "<group>"; };
 		7ED95D2B1AB9029B008C4574 /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVViewController.m; sourceTree = "<group>"; };
 		7ED95D2C1AB9029B008C4574 /* CDVWebViewEngineProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVWebViewEngineProtocol.h; sourceTree = "<group>"; };
@@ -302,8 +296,6 @@
 				7ED95D231AB9029B008C4574 /* CDVScreenOrientationDelegate.h */,
 				7ED95D241AB9029B008C4574 /* CDVTimer.h */,
 				7ED95D251AB9029B008C4574 /* CDVTimer.m */,
-				7ED95D281AB9029B008C4574 /* CDVUserAgentUtil.h */,
-				7ED95D291AB9029B008C4574 /* CDVUserAgentUtil.m */,
 				7ED95D2A1AB9029B008C4574 /* CDVViewController.h */,
 				7ED95D2B1AB9029B008C4574 /* CDVViewController.m */,
 				7ED95D2C1AB9029B008C4574 /* CDVWebViewEngineProtocol.h */,
@@ -360,7 +352,6 @@
 				C0C01EC61E39131A0056E6CB /* CDVPluginResult.h in Headers */,
 				C0C01EC71E39131A0056E6CB /* CDVScreenOrientationDelegate.h in Headers */,
 				C0C01EC81E39131A0056E6CB /* CDVTimer.h in Headers */,
-				C0C01ECA1E39131A0056E6CB /* CDVUserAgentUtil.h in Headers */,
 				C0C01ECB1E39131A0056E6CB /* CDVViewController.h in Headers */,
 				C0C01ECC1E39131A0056E6CB /* CDVWebViewEngineProtocol.h in Headers */,
 				C0C01ECD1E39131A0056E6CB /* CDVWhitelist.h in Headers */,
@@ -398,7 +389,6 @@
 				7ED95D491AB9029B008C4574 /* CDVScreenOrientationDelegate.h in Headers */,
 				4E23F8FC23E16E96006CD852 /* CDVWebViewUIDelegate.h in Headers */,
 				7ED95D4A1AB9029B008C4574 /* CDVTimer.h in Headers */,
-				7ED95D4E1AB9029B008C4574 /* CDVUserAgentUtil.h in Headers */,
 				7ED95D501AB9029B008C4574 /* CDVViewController.h in Headers */,
 				7ED95D521AB9029B008C4574 /* CDVWebViewEngineProtocol.h in Headers */,
 				4E23F90023E16E96006CD852 /* CDVWebViewEngine.h in Headers */,
@@ -502,7 +492,6 @@
 				9052DE772150D040008E83D4 /* CDVPlugin.m in Sources */,
 				9052DE782150D040008E83D4 /* CDVPluginResult.m in Sources */,
 				9052DE792150D040008E83D4 /* CDVTimer.m in Sources */,
-				9052DE7B2150D040008E83D4 /* CDVUserAgentUtil.m in Sources */,
 				9052DE7C2150D040008E83D4 /* CDVViewController.m in Sources */,
 				9052DE7D2150D040008E83D4 /* CDVWhitelist.m in Sources */,
 				9052DE7E2150D040008E83D4 /* NSDictionary+CordovaPreferences.m in Sources */,
@@ -531,7 +520,6 @@
 				7ED95D4B1AB9029B008C4574 /* CDVTimer.m in Sources */,
 				4E23F8FE23E16E96006CD852 /* CDVWebViewEngine.m in Sources */,
 				4E23F8FB23E16E96006CD852 /* CDVWebViewProcessPoolFactory.m in Sources */,
-				7ED95D4F1AB9029B008C4574 /* CDVUserAgentUtil.m in Sources */,
 				7ED95D511AB9029B008C4574 /* CDVViewController.m in Sources */,
 				7ED95D541AB9029B008C4574 /* CDVWhitelist.m in Sources */,
 				7ED95D581AB9029B008C4574 /* NSDictionary+CordovaPreferences.m in Sources */,

@@ -22,15 +22,12 @@
 #import "CDVPlugin+Private.h"
 #import "CDVWebViewUIDelegate.h"
 #import "CDVConfigParser.h"
-#import "CDVUserAgentUtil.h"
 #import <AVFoundation/AVFoundation.h>
 #import "NSDictionary+CordovaPreferences.h"
 #import "CDVCommandDelegateImpl.h"
 #import <Foundation/NSCharacterSet.h>
 
-@interface CDVViewController () {
-    NSInteger _userAgentLockToken;
-}
+@interface CDVViewController () { }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
@@ -50,7 +47,7 @@
 @synthesize supportedOrientations;
 @synthesize pluginObjects, pluginsMap, startupPluginNames;
 @synthesize configParser, settings;
-@synthesize wwwFolderName, startPage, initialized, openURL, baseUserAgent;
+@synthesize wwwFolderName, startPage, initialized, openURL;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 @synthesize webViewEngine = _webViewEngine;
@@ -306,41 +303,29 @@
 
     // /////////////////
     NSURL* appURL = [self appUrl];
-    __weak __typeof__(self) weakSelf = self;
 
-    [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
-        // Fix the memory leak caused by the strong reference.
-        [weakSelf setLockToken:lockToken];
-        if (appURL) {
-            NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-            [self.webViewEngine loadRequest:appReq];
+    if (appURL) {
+        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [self.webViewEngine loadRequest:appReq];
+    } else {
+        NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
+        NSLog(@"%@", loadErr);
+
+        NSURL* errorUrl = [self errorURL];
+        if (errorUrl) {
+            errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
+            NSLog(@"%@", [errorUrl absoluteString]);
+            [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
         } else {
-            NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
-            NSLog(@"%@", loadErr);
-
-            NSURL* errorUrl = [self errorURL];
-            if (errorUrl) {
-                errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
-                NSLog(@"%@", [errorUrl absoluteString]);
-                [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
-            } else {
-                NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-                [self.webViewEngine loadHTMLString:html baseURL:nil];
-            }
+            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+            [self.webViewEngine loadHTMLString:html baseURL:nil];
         }
-    }];
-
+    }
     // /////////////////
 
     NSString* bgColorString = [self.settings cordovaSettingForKey:@"BackgroundColor"];
     UIColor* bgColor = [self colorFromColorString:bgColorString];
     [self.webView setBackgroundColor:bgColor];
-}
-
-- (void)setLockToken:(NSInteger)lockToken
-{
-	_userAgentLockToken = lockToken;
-	[CDVUserAgentUtil setUserAgent:self.userAgent lockToken:lockToken];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -523,30 +508,6 @@
     }
 
     return self.webViewEngine.engineWebView;
-}
-
-- (NSString*)userAgent
-{
-    if (_userAgent != nil) {
-        return _userAgent;
-    }
-
-    NSString* localBaseUserAgent;
-    if (self.baseUserAgent != nil) {
-        localBaseUserAgent = self.baseUserAgent;
-    } else if ([self.settings cordovaSettingForKey:@"OverrideUserAgent"] != nil) {
-        localBaseUserAgent = [self.settings cordovaSettingForKey:@"OverrideUserAgent"];
-    } else {
-        localBaseUserAgent = [CDVUserAgentUtil originalUserAgent];
-    }
-    NSString* appendUserAgent = [self.settings cordovaSettingForKey:@"AppendUserAgent"];
-    if (appendUserAgent) {
-        _userAgent = [NSString stringWithFormat:@"%@ %@", localBaseUserAgent, appendUserAgent];
-    } else {
-        // Use our address as a unique number to append to the User-Agent.
-        _userAgent = localBaseUserAgent;
-    }
-    return _userAgent;
 }
 
 - (void)createGapView
@@ -779,7 +740,6 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [_commandQueue dispose];
     [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
 
@@ -787,11 +747,6 @@
     [self.pluginObjects removeAllObjects];
     [self.webView removeFromSuperview];
     self.webViewEngine = nil;
-}
-
-- (NSInteger*)userAgentLockToken
-{
-    return &_userAgentLockToken;
 }
 
 @end
