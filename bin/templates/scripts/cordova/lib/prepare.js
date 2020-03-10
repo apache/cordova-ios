@@ -636,28 +636,28 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
             sizes.forEach(width => {
                 sizes.forEach(height => {
                     appearences.forEach(appearence => {
-                        var item = { idiom, scale, width, height };
-                        
+                        const item = { idiom, scale, width, height };
+
                         if (appearence !== '') {
                             item.appearence = appearence;
                         }
 
-                         /* examples of the search pattern:
+                        /* examples of the search pattern:
                          *    scale   ~  idiom    ~   width    height ~ appearence
                          *     @2x    ~ universal ~    any      any
-                         *     @3x    ~  iphone   ~    com      any   ~    dark
-                         *     @2x    ~   ipad    ~    com      any   ~    light
+                         *     @3x    ~  iphone   ~    com      any   ~   dark
+                         *     @2x    ~   ipad    ~    com      any   ~   light
                          */
-                        const searchPattern = '@' + scale + '~' + idiom + '~' + width + height + (appearence ? '~'+appearence : '');
+                        const searchPattern = '@' + scale + '~' + idiom + '~' + width + height + (appearence ? '~' + appearence : '');
 
                         /* because old node versions don't have Array.find, the below is
                          * functionally equivalent to this:
                          *     var launchStoryboardImage = splashScreens.find(function(item) {
-                         *         return (item.src.indexOf(searchPattern) >= 0) ? (appearence !== "" ? true : ((item.src.indexOf(searchPattern+"~light") >= 0 || (item.src.indexOf(searchPattern+"~dark") >= 0)) ? false : true)) : false;
+                         *         return (item.src.indexOf(searchPattern) >= 0) ? (appearence !== '' ? true : ((item.src.indexOf(searchPattern + '~light') >= 0 || (item.src.indexOf(searchPattern + '~dark') >= 0)) ? false : true)) : false;
                          *     });
                          */
                         const launchStoryboardImage = splashScreens.reduce(
-                            (p, c) => (c.src.indexOf(searchPattern) >= 0) ? (appearence !== "" ? c : ((c.src.indexOf(searchPattern+"~light") >= 0 || (c.src.indexOf(searchPattern+"~dark") >= 0)) ? p : c)) : p,
+                            (p, c) => (c.src.indexOf(searchPattern) >= 0) ? (appearence !== '' ? c : ((c.src.indexOf(searchPattern + '~light') >= 0 || (c.src.indexOf(searchPattern + '~dark') >= 0)) ? p : c)) : p,
                             undefined
                         );
 
@@ -666,7 +666,7 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
                             item.src = launchStoryboardImage.src;
                             item.target = path.join(launchStoryboardImagesDir, item.filename);
                         }
-   
+
                         platformLaunchStoryboardImages.push(item);
                     });
                 });
@@ -755,7 +755,7 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
         }
         
         if (item.appearence) {
-            newItem['appearances'] = [ {'appearance' : 'luminosity', 'value' : item.appearence} ];
+            newItem['appearances'] = [{ appearance: 'luminosity', value: item.appearence }];
         }
 
         // Xcode doesn't want a filename property if there's no image for these traits
