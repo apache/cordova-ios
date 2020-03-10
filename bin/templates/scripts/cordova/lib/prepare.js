@@ -753,7 +753,7 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
         if (item.height !== CDV_ANY_SIZE_CLASS) {
             newItem['height-class'] = IMAGESET_COMPACT_SIZE_CLASS;
         }
-        
+
         if (item.appearence) {
             newItem['appearances'] = [{ appearance: 'luminosity', value: item.appearence }];
         }
