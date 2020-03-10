@@ -28,4 +28,3 @@
 #import "CDVWhitelist.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVTimer.h"
-#import "CDVUserAgentUtil.h"

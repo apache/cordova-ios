@@ -21,6 +21,7 @@
 #import "CDVWebViewUIDelegate.h"
 #import "CDVWebViewProcessPoolFactory.h"
 #import <Cordova/NSDictionary+CordovaPreferences.h>
+#import "CDVURLSchemeHandler.h"
 
 #import <objc/message.h>
 
@@ -41,6 +42,8 @@
 @property (nonatomic, strong, readwrite) UIView* engineWebView;
 @property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
 @property (nonatomic, weak) id <WKScriptMessageHandler> weakScriptMessageHandler;
+@property (nonatomic, strong) CDVURLSchemeHandler * schemeHandler;
+@property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 
 @end
 
@@ -75,23 +78,81 @@
 
     configuration.allowsInlineMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowInlineMediaPlayback" defaultValue:NO];
 
-    // Check for usage of the older preference key, alert, and use.
-    BOOL mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaTypesRequiringUserActionForPlayback" defaultValue:YES];
-    NSString *mediaPlaybackRequiresUserActionKey = [settings cordovaSettingForKey:@"MediaPlaybackRequiresUserAction"];
-    if(mediaPlaybackRequiresUserActionKey != nil) {
-        mediaTypesRequiringUserActionForPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackRequiresUserAction" defaultValue:YES];
+    // Set the media types that are required for user action for playback
+    WKAudiovisualMediaTypes mediaType = WKAudiovisualMediaTypeAll; // default
+
+    // targetMediaType will always exist, either from user's "config.xml" or default ("defaults.xml").
+    id targetMediaType = [settings cordovaSettingForKey:@"MediaTypesRequiringUserActionForPlayback"];
+    if ([targetMediaType isEqualToString:@"none"]) {
+        mediaType = WKAudiovisualMediaTypeNone;
+    } else if ([targetMediaType isEqualToString:@"audio"]) {
+        mediaType = WKAudiovisualMediaTypeAudio;
+    } else if ([targetMediaType isEqualToString:@"video"]) {
+        mediaType = WKAudiovisualMediaTypeVideo;
+    } else if ([targetMediaType isEqualToString:@"all"]) {
+        mediaType = WKAudiovisualMediaTypeAll;
+    } else {
+        NSLog(@"Invalid \"MediaTypesRequiringUserActionForPlayback\" was detected. Fallback to default value of \"all\" types.");
     }
-    configuration.mediaTypesRequiringUserActionForPlayback = mediaTypesRequiringUserActionForPlayback;
+    configuration.mediaTypesRequiringUserActionForPlayback = mediaType;
 
     configuration.suppressesIncrementalRendering = [settings cordovaBoolSettingForKey:@"SuppressesIncrementalRendering" defaultValue:NO];
-    configuration.mediaPlaybackAllowsAirPlay = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
+
+    /*
+     * If the old preference key "MediaPlaybackAllowsAirPlay" exists, use it or default to "YES".
+     * Check if the new preference key "AllowsAirPlayForMediaPlayback" exists and overwrite the "MediaPlaybackAllowsAirPlay" value.
+     */
+    BOOL allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
+    if([settings cordovaSettingForKey:@"AllowsAirPlayForMediaPlayback"] != nil) {
+        allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowsAirPlayForMediaPlayback" defaultValue:YES];
+    }
+    configuration.allowsAirPlayForMediaPlayback = allowsAirPlayForMediaPlayback;
+
+    /*
+     * Sets Custom User Agents
+     * - (Default) "userAgent" is set the the clean user agent.
+     *   E.g.
+     *     UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+     *
+     * - If "OverrideUserAgent" is set, it will overwrite the entire "userAgent" value. The "AppendUserAgent" will be iggnored if set.
+     *   Notice: The override logic is handled in the "pluginInitialize" method.
+     *   E.g.
+     *     OverrideUserAgent = "foobar"
+     *     UserAgent = "foobar"
+     *
+     * - If "AppendUserAgent" is set and "OverrideUserAgent" is not set, the user defined "AppendUserAgent" will be appended to the "userAgent"
+     *   E.g.
+     *     AppendUserAgent = "foobar"
+     *     UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 foobar"
+     */
+    NSString *userAgent = configuration.applicationNameForUserAgent;
+    if (
+        [settings cordovaSettingForKey:@"OverrideUserAgent"] == nil &&
+        [settings cordovaSettingForKey:@"AppendUserAgent"] != nil
+        ) {
+        userAgent = [NSString stringWithFormat:@"%@ %@", userAgent, [settings cordovaSettingForKey:@"AppendUserAgent"]];
+    }
+    configuration.applicationNameForUserAgent = userAgent;
+
     return configuration;
 }
 
 - (void)pluginInitialize
 {
     // viewController would be available now. we attempt to set all possible delegates to it, by default
+    CDVViewController* vc = (CDVViewController*)self.viewController;
     NSDictionary* settings = self.commandDelegate.settings;
+
+    NSString *hostname = [settings cordovaSettingForKey:@"hostname"];
+    if(hostname == nil){
+        hostname = @"localhost";
+    }
+    NSString *scheme = [settings cordovaSettingForKey:@"scheme"];
+    if(scheme == nil || [WKWebView handlesURLScheme:scheme]){
+        scheme = @"app";
+    }
+    vc.appScheme = scheme;
+    self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
 
     self.uiDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
 
@@ -99,18 +160,31 @@
 
     WKUserContentController* userContentController = [[WKUserContentController alloc] init];
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
+    NSString * scriptCode = [NSString stringWithFormat:@"window.CDV_ASSETS_URL = '%@';", self.CDV_ASSETS_URL];
+    WKUserScript *wkScript =
+    [[WKUserScript alloc] initWithSource:scriptCode injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
+    if (wkScript) {
+        [userContentController addUserScript:wkScript];
+    }
 
     WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
     configuration.userContentController = userContentController;
 
+    self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc];
+    [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     // re-create WKWebView, since we need to update configuration
     WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
     wkWebView.UIDelegate = self.uiDelegate;
-    self.engineWebView = wkWebView;
 
-    if (IsAtLeastiOSVersion(@"9.0") && [self.viewController isKindOfClass:[CDVViewController class]]) {
-        wkWebView.customUserAgent = ((CDVViewController*) self.viewController).userAgent;
+    /*
+     * This is where the "OverrideUserAgent" is handled. This will replace the entire UserAgent
+     * with the user defined custom UserAgent.
+     */
+    if ([settings cordovaSettingForKey:@"OverrideUserAgent"] != nil) {
+        wkWebView.customUserAgent = [settings cordovaSettingForKey:@"OverrideUserAgent"];
     }
+
+    self.engineWebView = wkWebView;
 
     if ([self.viewController conformsToProtocol:@protocol(WKUIDelegate)]) {
         wkWebView.UIDelegate = (id <WKUIDelegate>)self.viewController;
@@ -199,12 +273,21 @@ static void * KVOContext = &KVOContext;
 {
     if ([self canLoadRequest:request]) { // can load, differentiate between file urls and other schemes
         if (request.URL.fileURL) {
-            SEL wk_sel = NSSelectorFromString(CDV_WKWEBVIEW_FILE_URL_LOAD_SELECTOR);
-            NSURL* readAccessUrl = [request.URL URLByDeletingLastPathComponent];
-            return ((id (*)(id, SEL, id, id))objc_msgSend)(_engineWebView, wk_sel, request.URL, readAccessUrl);
-        } else {
-            return [(WKWebView*)_engineWebView loadRequest:request];
+            NSURL* startURL = [NSURL URLWithString:((CDVViewController *)self.viewController).startPage];
+            NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
+            NSURL *url = [[NSURL URLWithString:self.CDV_ASSETS_URL] URLByAppendingPathComponent:request.URL.path];
+            if ([request.URL.path isEqualToString:startFilePath]) {
+                url = [NSURL URLWithString:self.CDV_ASSETS_URL];
+            }
+            if(request.URL.query) {
+                url = [NSURL URLWithString:[@"?" stringByAppendingString:request.URL.query] relativeToURL:url];
+            }
+            if(request.URL.fragment) {
+                url = [NSURL URLWithString:[@"#" stringByAppendingString:request.URL.fragment] relativeToURL:url];
+            }
+            request = [NSURLRequest requestWithURL:url];
         }
+        return [(WKWebView*)_engineWebView loadRequest:request];
     } else { // can't load, print out error
         NSString* errorHtml = [NSString stringWithFormat:
                                @"<!doctype html>"
@@ -375,9 +458,6 @@ static void * KVOContext = &KVOContext;
 
 - (void)webView:(WKWebView*)webView didFinishNavigation:(WKNavigation*)navigation
 {
-    CDVViewController* vc = (CDVViewController*)self.viewController;
-    [CDVUserAgentUtil releaseLock:vc.userAgentLockToken];
-
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:webView]];
 }
 
@@ -389,7 +469,6 @@ static void * KVOContext = &KVOContext;
 - (void)webView:(WKWebView*)theWebView didFailNavigation:(WKNavigation*)navigation withError:(NSError*)error
 {
     CDVViewController* vc = (CDVViewController*)self.viewController;
-    [CDVUserAgentUtil releaseLock:vc.userAgentLockToken];
 
     NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
     NSLog(@"%@", message);

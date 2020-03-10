@@ -45,8 +45,10 @@
 
 - (void)parserDidStartDocument:(NSXMLParser*)parser
 {
+    NSString* scheme = [NSString stringWithFormat:@"%@://",((CDVViewController*)self.viewController).appScheme];
     // file: url <allow-navigations> are added by default
-    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://" ]];
+    // navigation to the scheme used by the app is also allowed
+    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://", scheme ]];
     // no intents are added by default
     self.allowIntents = [[NSMutableArray alloc] init];
 }

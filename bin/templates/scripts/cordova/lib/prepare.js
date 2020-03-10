@@ -522,20 +522,40 @@ function updateFileResources (cordovaProject, locations) {
 
 function alertDeprecatedPreference (configParser) {
     const deprecatedToNewPreferences = {
-        MediaPlaybackRequiresUserAction: 'MediaTypesRequiringUserActionForPlayback'
+        MediaPlaybackRequiresUserAction: {
+            newPreference: 'MediaTypesRequiringUserActionForPlayback',
+            isDeprecated: true
+        },
+        MediaPlaybackAllowsAirPlay: {
+            newPreference: 'AllowsAirPlayForMediaPlayback',
+            isDeprecated: false
+        }
     };
 
     Object.keys(deprecatedToNewPreferences).forEach(oldKey => {
         if (configParser.getPreference(oldKey)) {
-            const log = [`The preference name "${oldKey}" is being deprecated.`];
+            const isDeprecated = deprecatedToNewPreferences[oldKey].isDeprecated;
+            const verb = isDeprecated ? 'has been' : 'is being';
+            const newPreferenceKey = deprecatedToNewPreferences[oldKey].newPreference;
 
-            if (deprecatedToNewPreferences[oldKey]) {
-                log.push(`It is recommended to update this preference with "${deprecatedToNewPreferences[oldKey]}."`);
+            // Create the Log Message
+            const log = [`The preference name "${oldKey}" ${verb} deprecated.`];
+            if (newPreferenceKey) {
+                log.push(`It is recommended to replace this preference with "${newPreferenceKey}."`);
             } else {
                 log.push(`There is no replacement for this preference.`);
             }
 
-            log.push(`Please note that this preference will be removed in the near future.`);
+            /**
+             * If the preference has been deprecated, the usage of the old preference is no longer used.
+             * Therefore, the following line is not appended. It is added only if the old preference is still used.
+             * We are only keeping the top lines for deprecated items only for an additional major release when
+             * the pre-warning was not provided in a past major release due to a necessary quick deprecation.
+             * Typically caused by implementation nature or third-party requirement changes.
+             */
+            if (!isDeprecated) {
+                log.push(`Please note that this preference will be removed in the near future.`);
+            }
 
             events.emit('warn', log.join(' '));
         }

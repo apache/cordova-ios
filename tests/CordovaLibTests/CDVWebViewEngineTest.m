@@ -90,9 +90,9 @@
     NSDictionary* preferences = @{
                                [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                               [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @YES, // default is NO
+                               [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
                                [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
-                               [@"MediaPlaybackAllowsAirPlay" lowercaseString] : @NO, // default is YES
+                               [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
                                [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
                                [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast" // default is 'normal'
                                };
@@ -108,7 +108,7 @@
     XCTAssertTrue(wkWebView.configuration.mediaTypesRequiringUserActionForPlayback);
     XCTAssertFalse(wkWebView.configuration.allowsInlineMediaPlayback);
     XCTAssertFalse(wkWebView.configuration.suppressesIncrementalRendering);
-    XCTAssertTrue(wkWebView.configuration.mediaPlaybackAllowsAirPlay);
+    XCTAssertTrue(wkWebView.configuration.allowsAirPlayForMediaPlayback);
 
     // in the test above, DisallowOverscroll is YES, so no bounce
     if ([wkWebView respondsToSelector:@selector(scrollView)]) {
@@ -133,9 +133,9 @@
     NSDictionary* settings = @{
                                   [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                   [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                                  [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @YES, // default is NO
+                                  [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
                                   [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
-                                  [@"MediaPlaybackAllowsAirPlay" lowercaseString] : @NO, // default is YES
+                                  [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
                                   [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
                                   [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast" // default is 'normal'
                                   };
@@ -157,7 +157,7 @@
     XCTAssertTrue(wkWebView.configuration.allowsInlineMediaPlayback);
     XCTAssertTrue(wkWebView.configuration.suppressesIncrementalRendering);
     // The test case below is in a separate test "testConfigurationWithMediaPlaybackAllowsAirPlay" (Apple bug)
-    // XCTAssertFalse(wkWebView.configuration.mediaPlaybackAllowsAirPlay);
+    // XCTAssertFalse(wkWebView.configuration.allowsAirPlayForMediaPlayback);
 
     // in the test above, DisallowOverscroll is YES, so no bounce
     if ([wkWebView respondsToSelector:@selector(scrollView)]) {

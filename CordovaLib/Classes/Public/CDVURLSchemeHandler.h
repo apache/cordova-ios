@@ -18,10 +18,15 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
+#import "CDVViewController.h"
 
-@interface CDVUserAgentUtil : NSObject
-+ (NSString*)originalUserAgent;
-+ (void)acquireLock:(void (^)(NSInteger lockToken))block;
-+ (void)releaseLock:(NSInteger*)lockToken;
-+ (void)setUserAgent:(NSString*)value lockToken:(NSInteger)lockToken;
+
+@interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
+
+@property (nonatomic, strong) CDVViewController* viewController;
+
+- (instancetype)initWithVC:(CDVViewController *)controller;
+
+
 @end
