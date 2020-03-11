@@ -92,6 +92,26 @@ describe('prepare', () => {
             makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~comany.png')
         ];
 
+        const multiDeviceMultiThemeLaunchStoryboardImages = [
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~anyany~dark.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~anyany~light.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~comany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~comcom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~comcom~dark.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~ipad~comcom~light.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comany~dark.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comcom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@2x~universal~comcom~light.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~anyany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~anyany~dark.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~anycom.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~comany.png'),
+            makeSplashScreenEntry('res/splash/ios/Default@3x~iphone~comany~light.png')
+        ];
+
         describe('#mapLaunchStoryboardContents', () => {
             const mapLaunchStoryboardContents = prepare.__get__('mapLaunchStoryboardContents');
 
@@ -123,6 +143,12 @@ describe('prepare', () => {
                 const result = mapLaunchStoryboardContents(multiDeviceLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/varied-device-map'));
+            });
+
+            it('should return an array with several mapped storyboard images across device classes and themes', () => {
+                const result = mapLaunchStoryboardContents(multiDeviceMultiThemeLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-map/varied-device-and-theme-map'));
             });
         });
 
@@ -179,6 +205,30 @@ describe('prepare', () => {
                     'Default@3x~iphone~comany.png': 'res/splash/ios/Default@3x~iphone~comany.png'
                 });
             });
+
+            it('should return an object with several mapped storyboard images across device classes and themes', () => {
+                const result = mapLaunchStoryboardResources(multiDeviceMultiThemeLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual({
+                    'Default@2x~universal~anyany.png': 'res/splash/ios/Default@2x~universal~anyany.png',
+                    'Default@2x~universal~comany.png': 'res/splash/ios/Default@2x~universal~comany.png',
+                    'Default@2x~universal~comany~dark.png': 'res/splash/ios/Default@2x~universal~comany~dark.png',
+                    'Default@2x~universal~comcom.png': 'res/splash/ios/Default@2x~universal~comcom.png',
+                    'Default@2x~universal~comcom~light.png': 'res/splash/ios/Default@2x~universal~comcom~light.png',
+                    'Default@2x~ipad~anyany.png': 'res/splash/ios/Default@2x~ipad~anyany.png',
+                    'Default@2x~ipad~anyany~dark.png': 'res/splash/ios/Default@2x~ipad~anyany~dark.png',
+                    'Default@2x~ipad~anyany~light.png': 'res/splash/ios/Default@2x~ipad~anyany~light.png',
+                    'Default@2x~ipad~comany.png': 'res/splash/ios/Default@2x~ipad~comany.png',
+                    'Default@2x~ipad~comcom.png': 'res/splash/ios/Default@2x~ipad~comcom.png',
+                    'Default@2x~ipad~comcom~dark.png': 'res/splash/ios/Default@2x~ipad~comcom~dark.png',
+                    'Default@2x~ipad~comcom~light.png': 'res/splash/ios/Default@2x~ipad~comcom~light.png',
+                    'Default@3x~iphone~anyany.png': 'res/splash/ios/Default@3x~iphone~anyany.png',
+                    'Default@3x~iphone~anyany~dark.png': 'res/splash/ios/Default@3x~iphone~anyany~dark.png',
+                    'Default@3x~iphone~anycom.png': 'res/splash/ios/Default@3x~iphone~anycom.png',
+                    'Default@3x~iphone~comany.png': 'res/splash/ios/Default@3x~iphone~comany.png',
+                    'Default@3x~iphone~comany~light.png': 'res/splash/ios/Default@3x~iphone~comany~light.png'
+                });
+            });
         });
 
         describe('#getLaunchStoryboardContentsJSON', () => {
@@ -212,6 +262,12 @@ describe('prepare', () => {
                 const result = getLaunchStoryboardContentsJSON(multiDeviceLaunchStoryboardImages, '');
                 expect(result).toBeDefined();
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/varied-device'));
+            });
+
+            it('should return contents.json with several mapped storyboard images across device classes and themes', () => {
+                const result = getLaunchStoryboardContentsJSON(multiDeviceMultiThemeLaunchStoryboardImages, '');
+                expect(result).toBeDefined();
+                expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/varied-device-and-theme'));
             });
         });
 
