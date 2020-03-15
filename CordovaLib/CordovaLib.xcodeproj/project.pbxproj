@@ -415,6 +415,7 @@
 				C0C01EAD1E3911D50056E6CB /* Sources */,
 				C0C01EAE1E3911D50056E6CB /* Frameworks */,
 				C0C01EAF1E3911D50056E6CB /* Headers */,
+				CEDDBB5523948D4C00506451 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -477,6 +478,26 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CEDDBB5523948D4C00506451 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/../update_podspec.sh\" -s cordova\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C0C01EAD1E3911D50056E6CB /* Sources */ = {
