@@ -60,4 +60,3 @@ Tests
 Futher reading
 -----
 * [http://cordova.apache.org/](http://cordova.apache.org/)
-* [http://wiki.apache.org/cordova/](http://wiki.apache.org/cordova/)
