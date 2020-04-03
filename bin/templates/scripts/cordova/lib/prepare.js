@@ -294,7 +294,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     if (origPkg !== pkg) {
         events.emit('verbose', `Set PRODUCT_BUNDLE_IDENTIFIER to ${pkg}.`);
-        project.xcode.updateBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', pkg);
+        project.xcode.updateBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', pkg, null, platformConfig.name());
     }
 
     if (targetDevice) {
