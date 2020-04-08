@@ -185,7 +185,7 @@ module.exports.run = buildOpts => {
                 extraConfig += `CODE_SIGN_RESOURCE_RULES_PATH = ${buildOpts.codeSignResourceRules}\n`;
             }
             if (buildOpts.provisioningProfile) {
-                extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile}\n`;
+                extraConfig += `PROVISIONING_PROFILE_SPECIFIER = ${buildOpts.provisioningProfile}\n`;
             }
             if (buildOpts.developmentTeam) {
                 extraConfig += `DEVELOPMENT_TEAM = ${buildOpts.developmentTeam}\n`;
