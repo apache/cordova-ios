@@ -472,7 +472,7 @@
 
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation
 {
-    return [self.supportedOrientations containsObject:[NSNumber numberWithInt:orientation]];
+    return [self.supportedOrientations containsObject:@(orientation)];
 }
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds
