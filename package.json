@@ -45,13 +45,13 @@
   },
   "dependencies": {
     "cordova-common": "^3.1.0",
-    "ios-sim": "^8.0.1",
-    "nopt": "^4.0.1",
+    "ios-sim": "^9.0.0",
+    "nopt": "^4.0.3",
     "plist": "^3.0.1",
     "q": "^1.5.1",
-    "semver": "^6.3.0",
+    "semver": "^7.3.2",
     "shelljs": "^0.5.3",
-    "unorm": "^1.4.1",
+    "unorm": "^1.6.0",
     "xcode": "^2.0.0",
     "xml-escape": "^1.1.0"
   },
