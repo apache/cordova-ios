@@ -15,7 +15,7 @@
        under the License.
 */
 'use strict';
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const shell = require('shelljs');
 const util = require('util');

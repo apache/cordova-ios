@@ -28,7 +28,7 @@
 // Coho updates this line
 const VERSION = '6.0.0-dev';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const unorm = require('unorm');
 const projectFile = require('./lib/projectFile');

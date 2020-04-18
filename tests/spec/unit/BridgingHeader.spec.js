@@ -17,7 +17,7 @@
  under the License.
  */
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 
 const BridgingHeader = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'BridgingHeader.js'))).BridgingHeader;

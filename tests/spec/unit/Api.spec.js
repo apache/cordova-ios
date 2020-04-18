@@ -18,7 +18,7 @@
  */
 
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const EventEmitter = require('events');
 const PluginManager = require('cordova-common').PluginManager;
 const Api = require('../../../bin/templates/scripts/cordova/Api');

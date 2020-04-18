@@ -19,7 +19,7 @@
 
 'use strict';
 const Q = require('q');
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const shell = require('shelljs');
 const unorm = require('unorm');
