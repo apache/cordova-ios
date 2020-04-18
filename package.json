@@ -35,9 +35,9 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@cordova/eslint-config": "^2.0.0",
-    "jasmine": "^3.4.0",
-    "nyc": "^14.0.0",
-    "rewire": "^4.0.1",
+    "jasmine": "^3.5.0",
+    "nyc": "^15.0.1",
+    "rewire": "^5.0.0",
     "tmp": "^0.1.0"
   },
   "engines": {
