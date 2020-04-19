@@ -642,7 +642,7 @@ describe('prepare', () => {
                 const xcode = require('xcode');
                 const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
-                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
+                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
                 expect(prop).toEqual('testpkg');
             });
         });
@@ -661,7 +661,7 @@ describe('prepare', () => {
                 const xcode = require('xcode');
                 const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
                 proj.parseSync();
-                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
+                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
                 expect(prop).toEqual('testpkg_ios');
             });
         });
