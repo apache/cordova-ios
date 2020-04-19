@@ -19,6 +19,7 @@
 
 const rewire = require('rewire');
 const shell = require('shelljs');
+const which = require('which');
 const versions = require('../../../../bin/templates/scripts/cordova/lib/versions');
 
 describe('check_reqs', () => {
@@ -33,12 +34,12 @@ describe('check_reqs', () => {
         beforeEach(() => {
             checkTool = checkReqs.__get__('checkTool');
 
-            spyOn(shell, 'which').and.returnValue('/bin/node');
+            spyOn(which, 'sync').and.returnValue('/bin/node');
             spyOn(versions, 'get_tool_version').and.returnValue(Promise.resolve('1.0.0'));
         });
 
         it('should not have found tool.', () => {
-            shell.which.and.returnValue(false);
+            which.sync.and.returnValue(false);
 
             return checkTool('node', '1.0.0').then(
                 () => fail('Expected promise to be rejected'),

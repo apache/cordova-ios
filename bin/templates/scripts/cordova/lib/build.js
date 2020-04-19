@@ -20,6 +20,7 @@
 const Q = require('q');
 const path = require('path');
 const shell = require('shelljs');
+const which = require('which');
 const superspawn = require('cordova-common').superspawn;
 const fs = require('fs-extra');
 const plist = require('plist');
@@ -262,7 +263,7 @@ module.exports.run = buildOpts => {
             const buildOutputDir = path.join(projectPath, 'build', 'device');
 
             function checkSystemRuby () {
-                const ruby_cmd = shell.which('ruby');
+                const ruby_cmd = which.sync('ruby', { nothrow: true });
 
                 if (ruby_cmd !== '/usr/bin/ruby') {
                     events.emit('warn', 'Non-system Ruby in use. This may cause packaging to fail.\n' +
