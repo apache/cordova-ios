@@ -20,6 +20,7 @@
 const shell = require('shelljs');
 const spec = __dirname;
 const path = require('path');
+const fs = require('fs-extra');
 const util = require('util');
 
 const cordova_bin = path.join(spec, '../..', 'bin');
@@ -31,7 +32,7 @@ function createAndBuild (projectname, projectid) {
 
     // remove existing folder
     command = path.join(tmp, projectname);
-    shell.rm('-rf', command);
+    fs.removeSync(command);
 
     // create the project
     command = util.format('"%s/create" "%s/%s" %s "%s"', cordova_bin, tmp, projectname, projectid, projectname);
@@ -47,7 +48,7 @@ function createAndBuild (projectname, projectid) {
 
     // clean-up
     command = path.join(tmp, projectname);
-    shell.rm('-rf', command);
+    fs.removeSync(command);
 }
 
 describe('create', () => {

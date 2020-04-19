@@ -88,7 +88,7 @@ module.exports.run = runOptions => {
                         // move the platform/ios/build/device/Payload/appname.app to parent
                         shell.mv('-f', appFileInflated, buildOutputDir);
                         // delete the platform/ios/build/device/Payload folder
-                        shell.rm('-rf', payloadFolder);
+                        fs.removeSync(payloadFolder);
 
                         return null;
                     })

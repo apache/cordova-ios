@@ -78,7 +78,7 @@ describe('ios plugin handler', () => {
     });
 
     afterEach(() => {
-        shell.rm('-rf', temp);
+        fs.removeSync(temp);
     });
 
     describe('installation', () => {
@@ -391,15 +391,15 @@ describe('ios plugin handler', () => {
             });
             it('Test 031 : should rm the file from the right target location when element has no target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
-                const spy = spyOn(shell, 'rm');
+                const spy = spyOn(fs, 'removeSync');
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-rf', path.join(temp, 'SampleApp', 'Plugins', dummy_id));
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Plugins', dummy_id));
             });
             it('Test 032 : should rm the file from the right target location when element has a target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir !== undefined);
-                const spy = spyOn(shell, 'rm');
+                const spy = spyOn(fs, 'removeSync');
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-rf', path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir'));
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir'));
             });
             it('Test 033 : should call into xcodeproj\'s removeFramework appropriately when element framework=true set', () => {
                 const source = copyArray(valid_source).filter(s => s.framework);
@@ -426,9 +426,9 @@ describe('ios plugin handler', () => {
             });
             it('Test 036 : should rm the file from the right target location', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
-                const spy = spyOn(shell, 'rm');
+                const spy = spyOn(fs, 'removeSync');
                 uninstall(headers[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-rf', path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir'));
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir'));
             });
         });
 
@@ -445,9 +445,9 @@ describe('ios plugin handler', () => {
             });
             it('Test 038 : should rm the file from the right target location', () => {
                 const resources = copyArray(valid_resources);
-                const spy = spyOn(shell, 'rm');
+                const spy = spyOn(fs, 'removeSync');
                 uninstall(resources[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-rf', path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'));
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'));
             });
         });
 
@@ -472,9 +472,9 @@ describe('ios plugin handler', () => {
             describe('with custom="true" attribute', () => {
                 it('Test 040 : should rm the file from the right target location', () => {
                     const frameworks = copyArray(valid_custom_frameworks);
-                    const spy = spyOn(shell, 'rm');
+                    const spy = spyOn(fs, 'removeSync');
                     uninstall(frameworks[0], dummyPluginInfo, dummyProject);
-                    expect(spy).toHaveBeenCalledWith('-rf', frameworkPath);
+                    expect(spy).toHaveBeenCalledWith(frameworkPath);
                 });
             });
 
@@ -505,7 +505,7 @@ describe('ios plugin handler', () => {
                 wwwDest = path.resolve(dummyProject.www, 'plugins', dummyPluginInfo.id, jsModule.src);
                 platformWwwDest = path.resolve(dummyProject.platformWww, 'plugins', dummyPluginInfo.id, jsModule.src);
 
-                spyOn(shell, 'rm');
+                spyOn(fs, 'removeSync');
 
                 const existsSyncOrig = fs.existsSync;
                 spyOn(fs, 'existsSync').and.callFake(file => {
@@ -516,14 +516,14 @@ describe('ios plugin handler', () => {
 
             it('Test 042 : should put module to both www and platform_www when options.usePlatformWww flag is specified', () => {
                 uninstall(jsModule, dummyPluginInfo, dummyProject, { usePlatformWww: true });
-                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
-                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+                expect(fs.removeSync).toHaveBeenCalledWith(wwwDest);
+                expect(fs.removeSync).toHaveBeenCalledWith(platformWwwDest);
             });
 
             it('Test 043 : should put module to www only when options.usePlatformWww flag is not specified', () => {
                 uninstall(jsModule, dummyPluginInfo, dummyProject);
-                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
-                expect(shell.rm).not.toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+                expect(fs.removeSync).toHaveBeenCalledWith(wwwDest);
+                expect(fs.removeSync).not.toHaveBeenCalledWith(platformWwwDest);
             });
         });
 
@@ -537,7 +537,7 @@ describe('ios plugin handler', () => {
                 wwwDest = path.resolve(dummyProject.www, asset.target);
                 platformWwwDest = path.resolve(dummyProject.platformWww, asset.target);
 
-                spyOn(shell, 'rm');
+                spyOn(fs, 'removeSync');
 
                 const existsSyncOrig = fs.existsSync;
                 spyOn(fs, 'existsSync').and.callFake(file => {
@@ -548,14 +548,14 @@ describe('ios plugin handler', () => {
 
             it('Test 044 : should put module to both www and platform_www when options.usePlatformWww flag is specified', () => {
                 uninstall(asset, dummyPluginInfo, dummyProject, { usePlatformWww: true });
-                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
-                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+                expect(fs.removeSync).toHaveBeenCalledWith(wwwDest);
+                expect(fs.removeSync).toHaveBeenCalledWith(platformWwwDest);
             });
 
             it('Test 045 : should put module to www only when options.usePlatformWww flag is not specified', () => {
                 uninstall(asset, dummyPluginInfo, dummyProject);
-                expect(shell.rm).toHaveBeenCalledWith(jasmine.any(String), wwwDest);
-                expect(shell.rm).not.toHaveBeenCalledWith(jasmine.any(String), platformWwwDest);
+                expect(fs.removeSync).toHaveBeenCalledWith(wwwDest);
+                expect(fs.removeSync).not.toHaveBeenCalledWith(platformWwwDest);
             });
         });
     });

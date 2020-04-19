@@ -19,6 +19,7 @@
 
 const Q = require('q');
 const path = require('path');
+const fs = require('fs-extra');
 const shell = require('shelljs');
 const superspawn = require('cordova-common').superspawn;
 
@@ -41,5 +42,5 @@ module.exports.run = () => {
 
     return xcodebuildClean('Debug')
         .then(() => xcodebuildClean('Release'))
-        .then(() => shell.rm('-rf', path.join(projectPath, 'build')));
+        .then(() => fs.removeSync(path.join(projectPath, 'build')));
 };

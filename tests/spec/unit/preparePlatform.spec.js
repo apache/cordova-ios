@@ -69,7 +69,7 @@ describe('prepare after plugin add', () => {
     });
 
     afterEach(() => {
-        shell.rm('-rf', iosPlatform);
+        fs.removeSync(iosPlatform);
     });
 
     it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', () => {

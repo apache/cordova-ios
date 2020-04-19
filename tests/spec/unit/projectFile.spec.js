@@ -19,6 +19,7 @@
 
 const os = require('os');
 const path = require('path');
+const fs = require('fs-extra');
 const shell = require('shelljs');
 const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 
@@ -36,21 +37,21 @@ describe('projectFile', () => {
     });
 
     afterEach(() => {
-        shell.rm('-rf', iosProject);
+        fs.removeSync(iosProject);
     });
 
     describe('parse method', () => {
         it('Test#001 : should throw if project is not an xcode project', () => {
-            shell.rm('-rf', path.join(iosProject, 'SampleApp', 'SampleApp.xcodeproj'));
+            fs.removeSync(path.join(iosProject, 'SampleApp', 'SampleApp.xcodeproj'));
             expect(() => { projectFile.parse(); }).toThrow();
         });
         it('Test#002 : should throw if project does not contain an appropriate config.xml file', () => {
-            shell.rm(path.join(iosProject, 'SampleApp', 'config.xml'));
+            fs.removeSync(path.join(iosProject, 'SampleApp', 'config.xml'));
             expect(() => { projectFile.parse(locations); })
                 .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
         });
         it('Test#003 : should throw if project does not contain an appropriate -Info.plist file', () => {
-            shell.rm(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'));
+            fs.removeSync(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'));
             expect(() => { projectFile.parse(locations); })
                 .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
         });

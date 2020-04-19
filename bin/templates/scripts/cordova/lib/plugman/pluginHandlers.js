@@ -77,7 +77,7 @@ const handlers = {
             const destFile = path.resolve(project.resources_dir, target);
 
             project.xcode.removeResourceFile(path.join('Resources', target));
-            shell.rm('-rf', destFile);
+            fs.removeSync(destFile);
         }
     },
     framework: { // CB-5238 custom frameworks only
@@ -149,7 +149,7 @@ const handlers = {
             if (pbxFile) {
                 project.xcode.removeFromPbxEmbedFrameworksBuildPhase(pbxFile);
             }
-            shell.rm('-rf', targetDir);
+            fs.removeSync(targetDir);
         }
     },
     'lib-file': {
@@ -287,7 +287,7 @@ function uninstallHelper (type, obj, project_dir, plugin_id, options, project) {
         project_ref = `Plugins/${fixPathSep(path.relative(project.plugins_dir, destFile))}`;
     }
 
-    shell.rm('-rf', targetDir);
+    fs.removeSync(targetDir);
 
     if (type === 'header-file') {
         project.xcode.removeHeaderFile(project_ref);
@@ -341,7 +341,7 @@ function copyNewFile (plugin_dir, src, project_dir, dest, link) {
 
 function linkFileOrDirTree (src, dest) {
     if (fs.existsSync(dest)) {
-        shell.rm('-Rf', dest);
+        fs.removeSync(dest);
     }
 
     if (fs.statSync(src).isDirectory()) {
@@ -357,12 +357,12 @@ function linkFileOrDirTree (src, dest) {
 // checks if file exists and then deletes. Error if doesn't exist
 function removeFile (project_dir, src) {
     const file = path.resolve(project_dir, src);
-    shell.rm('-Rf', file);
+    fs.removeSync(file);
 }
 
 // deletes file/directory without checking
 function removeFileF (file) {
-    shell.rm('-Rf', file);
+    fs.removeSync(file);
 }
 
 function removeFileAndParents (baseDir, destFile, stopper) {

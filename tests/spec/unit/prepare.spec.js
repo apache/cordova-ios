@@ -53,7 +53,7 @@ describe('prepare', () => {
     });
 
     afterEach(() => {
-        shell.rm('-rf', path.join(__dirname, 'some'));
+        fs.removeSync(path.join(__dirname, 'some'));
     });
 
     describe('launch storyboard feature (CB-9762)', () => {
@@ -1422,7 +1422,7 @@ describe('prepare', () => {
         });
         it('Test#022 : should skip merges if merges directory does not exist', () => {
             const merges_path = path.join(project.root, 'merges', 'ios');
-            shell.rm('-rf', merges_path);
+            fs.removeSync(merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 ['www', path.join('platforms', 'ios', 'platform_www')],

@@ -39,7 +39,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         if (stats.isSymbolicLink()) {
             fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
         } else {
-            shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
+            fs.removeSync(path.join(projectPath, 'CordovaLib'));
         }
     } catch (e) { }
     if (use_shared) {
@@ -66,7 +66,7 @@ function copyScripts (projectPath, projectName) {
     const destScriptsDir = path.join(projectPath, 'cordova');
 
     // Delete old scripts directory.
-    shell.rm('-rf', destScriptsDir);
+    fs.removeSync(destScriptsDir);
 
     // Copy in the new ones.
     const binDir = path.join(ROOT, 'bin');
@@ -116,16 +116,16 @@ function copyScripts (projectPath, projectName) {
 function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
     const r = path.join(project_path, project_name);
 
-    shell.rm('-rf', path.join(`${r}.xcodeproj`));
+    fs.removeSync(path.join(`${r}.xcodeproj`));
     shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcodeproj'), project_path);
     shell.mv('-f', path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
 
-    shell.rm('-rf', path.join(project_path, `${project_name}.xcworkspace`));
+    fs.removeSync(path.join(project_path, `${project_name}.xcworkspace`));
     shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcworkspace'), project_path);
     shell.mv('-f', path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
     shell.mv('-f', path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
-    shell.rm('-rf', r);
+    fs.removeSync(r);
     shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__'), project_path);
     shell.mv('-f', path.join(project_path, '__PROJECT_NAME__'), r);
 
