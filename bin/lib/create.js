@@ -24,6 +24,7 @@ const fs = require('fs-extra');
 const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
 const events = require('cordova-common').events;
+const utils = require('./utils');
 
 function updateSubprojectHelp () {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
@@ -90,15 +91,15 @@ function copyScripts (projectPath, projectName) {
     // modules across both the repo and generated projects, we should make sure
     // to remove/update this.
     const path_regex = /templates\/scripts\/cordova\//;
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'check_reqs'));
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_ios_version'));
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_osx_version'));
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_xcode_version'));
+    utils.replaceFileContents(path.join(destScriptsDir, 'check_reqs'), path_regex, '');
+    utils.replaceFileContents(path.join(destScriptsDir, 'apple_ios_version'), path_regex, '');
+    utils.replaceFileContents(path.join(destScriptsDir, 'apple_osx_version'), path_regex, '');
+    utils.replaceFileContents(path.join(destScriptsDir, 'apple_xcode_version'), path_regex, '');
 
     // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
     const project_name_esc = projectName.replace(/&/g, '\\&');
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-debug.xcconfig'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-release.xcconfig'));
+    utils.replaceFileContents(path.join(destScriptsDir, 'build-debug.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(destScriptsDir, 'build-release.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
 
     // Make sure they are executable (sometimes zipping them can remove executable bit)
     shell.find(destScriptsDir).forEach(entry => {
@@ -148,19 +149,19 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
     const project_name_xml_esc = xmlescape(project_name);
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
+    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'), /__PROJECT_NAME__/g, project_name_xml_esc);
+    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`), /__PROJECT_NAME__/g, project_name_xml_esc);
 
     const project_name_esc = project_name.replace(/&/g, '\\&');
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(`${r}.xcodeproj`, 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_ID__/g, package_name, path.join(`${r}.xcodeproj`, 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'main.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, `${project_name}-Info.plist`));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, `${project_name}-Prefix.pch`));
+    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_ID__/g, package_name);
+    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.h'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.m'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.h'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.m'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'main.m'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, `${project_name}-Info.plist`), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, `${project_name}-Prefix.pch`), /__PROJECT_NAME__/g, project_name_esc);
 }
 
 function AbsParentPath (_path) {
@@ -290,7 +291,7 @@ function update_cordova_subproject (argv) {
             if (!newLine.match('name')) {
                 newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
             }
-            shell.sed('-i', lines[i], newLine, path.join(projectPath, 'project.pbxproj'));
+            utils.replaceFileContents(path.join(projectPath, 'project.pbxproj'), lines[i], newLine);
         }
     }
 
