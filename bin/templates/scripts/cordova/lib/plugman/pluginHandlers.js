@@ -201,11 +201,11 @@ const handlers = {
             scriptContent = `cordova.define("${moduleName}", function(require, exports, module) {\n${scriptContent}\n});\n`;
 
             const moduleDestination = path.resolve(project.www, 'plugins', plugin.id, obj.src);
-            shell.mkdir('-p', path.dirname(moduleDestination));
+            fs.ensureDirSync(path.dirname(moduleDestination));
             fs.writeFileSync(moduleDestination, scriptContent, 'utf-8');
             if (options && options.usePlatformWww) {
                 const platformWwwDestination = path.resolve(project.platformWww, 'plugins', plugin.id, obj.src);
-                shell.mkdir('-p', path.dirname(platformWwwDestination));
+                fs.ensureDirSync(path.dirname(platformWwwDestination));
                 fs.writeFileSync(platformWwwDestination, scriptContent, 'utf-8');
             }
         },
@@ -319,7 +319,7 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
     // check that dest path is located in project directory
     if (dest.indexOf(project_dir) !== 0) { throw new CordovaError(`Destination "${dest}" for source file "${src}" is located outside the project`); }
 
-    shell.mkdir('-p', path.dirname(dest));
+    fs.ensureDirSync(path.dirname(dest));
 
     if (link) {
         linkFileOrDirTree(src, dest);
@@ -345,7 +345,7 @@ function linkFileOrDirTree (src, dest) {
     }
 
     if (fs.statSync(src).isDirectory()) {
-        shell.mkdir('-p', dest);
+        fs.ensureDirSync(dest);
         fs.readdirSync(src).forEach(entry => {
             linkFileOrDirTree(path.join(src, entry), path.join(dest, entry));
         });

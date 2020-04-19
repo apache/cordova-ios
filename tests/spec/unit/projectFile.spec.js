@@ -58,7 +58,7 @@ describe('projectFile', () => {
         it('Test#004 : should return right directory when multiple .plist files are present', () => {
             // Create a folder named A with config.xml and .plist files in it
             const pathToFolderA = path.join(iosProject, 'A');
-            shell.mkdir(pathToFolderA);
+            fs.ensureDirSync(pathToFolderA);
             shell.cp('-rf', path.join(iosProject, 'SampleApp/*'), pathToFolderA);
 
             const parsedProjectFile = projectFile.parse(locations);

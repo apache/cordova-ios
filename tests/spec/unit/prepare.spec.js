@@ -47,7 +47,7 @@ describe('prepare', () => {
     beforeEach(() => {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
-        shell.mkdir('-p', iosPlatform);
+        fs.ensureDirSync(iosPlatform);
         shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
         p = new Api('ios', iosPlatform, new EventEmitter());
     });
@@ -1412,7 +1412,7 @@ describe('prepare', () => {
 
         it('Test#021 : should update project-level www and with platform agnostic www and merges', () => {
             const merges_path = path.join(project.root, 'merges', 'ios');
-            shell.mkdir('-p', merges_path);
+            fs.ensureDirSync(merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 ['www', path.join('platforms', 'ios', 'platform_www'), path.join('merges', 'ios')],

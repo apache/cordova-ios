@@ -98,7 +98,7 @@ describe('ios plugin handler', () => {
             it('Test 002 : should throw if source-file target already exists', () => {
                 const source = copyArray(valid_source);
                 const target = path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.m');
-                shell.mkdir('-p', path.dirname(target));
+                fs.ensureDirSync(path.dirname(target));
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
                     install(source[0], dummyPluginInfo, dummyProject);
@@ -153,7 +153,7 @@ describe('ios plugin handler', () => {
             it('Test 009 : should throw if header-file target already exists', () => {
                 const headers = copyArray(valid_headers);
                 const target = path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.h');
-                shell.mkdir('-p', path.dirname(target));
+                fs.ensureDirSync(path.dirname(target));
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
                     install(headers[0], dummyPluginInfo, dummyProject);
@@ -201,7 +201,7 @@ describe('ios plugin handler', () => {
             it('Test 015 : should throw if resource-file target already exists', () => {
                 const resources = copyArray(valid_resources);
                 const target = path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle');
-                shell.mkdir('-p', path.dirname(target));
+                fs.ensureDirSync(path.dirname(target));
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
                     install(resources[0], dummyPluginInfo, dummyProject);
@@ -267,7 +267,7 @@ describe('ios plugin handler', () => {
                 it('Test 021 : should throw if framework target already exists', () => {
                     const frameworks = copyArray(valid_custom_frameworks);
                     const target = path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework');
-                    shell.mkdir('-p', target);
+                    fs.ensureDirSync(target);
                     expect(() => {
                         install(frameworks[0], dummyPluginInfo, dummyProject);
                     }).toThrow(new Error(`Framework "${target}" for plugin ${dummyPluginInfo.id} already exists in iOS platform`));

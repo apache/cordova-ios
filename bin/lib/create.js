@@ -50,7 +50,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
     } else {
         const r = path.join(projectPath, projectName);
-        shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        fs.ensureDirSync(path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
         shell.cp('-f', path.join(r, '.gitignore'), projectPath);
         shell.cp('-rf', path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
         shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
@@ -218,7 +218,7 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
     // create the project directory and copy over files
-    shell.mkdir(project_path);
+    fs.ensureDirSync(project_path);
     shell.cp('-rf', path.join(project_template_dir, 'www'), project_path);
 
     // Copy project template files

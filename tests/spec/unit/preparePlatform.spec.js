@@ -38,7 +38,7 @@ shell.config.silent = true;
 describe('prepare after plugin add', () => {
     let api;
     beforeEach(() => {
-        shell.mkdir('-p', iosPlatform);
+        fs.ensureDirSync(iosPlatform);
         shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
 
