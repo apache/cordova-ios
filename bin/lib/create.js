@@ -119,20 +119,20 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     fs.removeSync(path.join(`${r}.xcodeproj`));
     fs.copySync(path.join(project_template_dir, '__TEMP__.xcodeproj'), path.join(`${project_path}/__TEMP__.xcodeproj`));
-    shell.mv('-f', path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
+    fs.moveSync(path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
 
     fs.removeSync(path.join(project_path, `${project_name}.xcworkspace`));
     fs.copySync(path.join(project_template_dir, '__TEMP__.xcworkspace'), path.join(`${project_path}/__TEMP__.xcworkspace`));
-    shell.mv('-f', path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
-    shell.mv('-f', path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
+    fs.moveSync(path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
+    fs.moveSync(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
     fs.removeSync(r);
     fs.copySync(path.join(project_template_dir, '__PROJECT_NAME__'), path.join(`${project_path}/__PROJECT_NAME__`));
-    shell.mv('-f', path.join(project_path, '__PROJECT_NAME__'), r);
+    fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
 
-    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
-    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
-    shell.mv('-f', path.join(r, 'gitignore'), path.join(r, '.gitignore'));
+    fs.moveSync(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
+    fs.moveSync(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
+    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
 
     /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
      *

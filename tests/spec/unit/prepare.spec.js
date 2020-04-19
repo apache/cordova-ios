@@ -348,7 +348,6 @@ describe('prepare', () => {
 
     describe('updateProject method', () => {
         /* eslint-disable no-unused-vars */
-        let mv;
         let update_name;
         /* eslint-enable no-unused-vars */
         const xcOrig = xcode.project;
@@ -365,7 +364,6 @@ describe('prepare', () => {
             cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
             cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
 
-            mv = spyOn(shell, 'mv');
             writeFileSyncSpy = spyOn(fs, 'writeFileSync');
 
             spyOn(plist, 'parse').and.returnValue({});

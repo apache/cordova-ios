@@ -20,7 +20,6 @@
 const Q = require('q');
 const path = require('path');
 const build = require('./build');
-const shell = require('shelljs');
 const superspawn = require('cordova-common').superspawn;
 const check_reqs = require('./check_reqs');
 const fs = require('fs-extra');
@@ -86,7 +85,7 @@ module.exports.run = runOptions => {
                         // delete the existing platform/ios/build/device/appname.app
                         fs.removeSync(appFile);
                         // move the platform/ios/build/device/Payload/appname.app to parent
-                        shell.mv('-f', appFileInflated, buildOutputDir);
+                        fs.moveSync(appFileInflated, buildOutputDir);
                         // delete the platform/ios/build/device/Payload folder
                         fs.removeSync(payloadFolder);
 
