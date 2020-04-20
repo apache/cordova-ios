@@ -45,3 +45,21 @@ exports.replaceFileContents = function (file, searchRegex, replacementString) {
     contents = contents.replace(searchRegex, replacementString);
     fs.writeFileSync(file, contents);
 };
+
+/**
+ * Reads a file and scans for regex. Returns the line of the first occurence or null if no occurences are found.
+ *
+ * @param {string} file A file path
+ * @param {RegExp} regex A search regex
+ * @returns string|null
+ */
+exports.grep = function (file, regex) {
+    let contents = fs.readFileSync(file).toString().replace(/\\r/g, '').split('\n');
+    for (let i = 0; i < contents.length; i++) {
+        let line = contents[i];
+        if (regex.test(line)) {
+            return line;
+        }
+    }
+    return null;
+};

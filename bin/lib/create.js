@@ -17,7 +17,6 @@
     under the License.
 */
 
-const shell = require('shelljs');
 const Q = require('q');
 const path = require('path');
 const fs = require('fs-extra');
@@ -35,6 +34,12 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
+
+    /*
+     * Check if "CordovaLib" already exists with "fs.lstatSync" and remove it.
+     * Wrapped with try/catch because lstatSync will throw an error if "CordovaLib"
+     * is missing.
+     */
     try {
         const stats = fs.lstatSync(path.join(projectPath, 'CordovaLib'));
         if (stats.isSymbolicLink()) {
@@ -270,29 +275,26 @@ function update_cordova_subproject (argv) {
     }
 
     const parentProjectPath = AbsParentPath(projectPath);
-    let subprojectPath = relpath(cordovaLibXcodePath, parentProjectPath);
-    const REGEX = /(.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
-    let newLine;
-    let lines = shell.grep('CordovaLib.xcodeproj', path.join(projectPath, 'project.pbxproj'));
-    let found = false;
+    const subprojectPath = relpath(cordovaLibXcodePath, parentProjectPath);
+    const projectPbxprojPath = path.join(projectPath, 'project.pbxproj');
+    const line = utils.grep(
+        projectPbxprojPath,
+        /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/
+    );
 
-    subprojectPath = subprojectPath.replace(/\\/g, '/');
-    lines = lines.split('\n');
-    for (let i = 0; i < lines.length; ++i) {
-        if (lines[i].match(REGEX)) {
-            found = true;
-            newLine = lines[i].replace(/path = .+?;/, `path = ${subprojectPath};`);
-            newLine = newLine.replace(/sourceTree.+?;/, 'sourceTree = \"<group>\";'); /* eslint no-useless-escape : 0 */
-            if (!newLine.match('name')) {
-                newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
-            }
-            utils.replaceFileContents(path.join(projectPath, 'project.pbxproj'), lines[i], newLine);
-        }
-    }
-
-    if (!found) {
+    if (!line) {
         throw new Error(`Entry not found in project file for sub-project: ${subprojectPath}`);
     }
+
+    let newLine = line
+        .replace(/path = .+?;/, `path = ${subprojectPath};`)
+        .replace(/sourceTree.+?;/, 'sourceTree = \"<group>\";'); /* eslint no-useless-escape : 0 */
+
+    if (!newLine.match('name')) {
+        newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
+    }
+
+    utils.replaceFileContents(projectPbxprojPath, line, newLine);
 }
 
 exports.updateSubprojectHelp = updateSubprojectHelp;
