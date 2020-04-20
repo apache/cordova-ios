@@ -223,8 +223,7 @@ describe('prepare', () => {
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
                 const expectedPath = path.join(platformProjDir, 'Images.xcassets', 'LaunchStoryboard.imageset/');
 
-                const fileExists = shell.test('-e', assetCatalogPath);
-                expect(fileExists).toEqual(true);
+                expect(fs.existsSync(assetCatalogPath)).toEqual(true);
 
                 const returnPath = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
                 expect(returnPath).toEqual(expectedPath);
@@ -234,8 +233,7 @@ describe('prepare', () => {
                 const platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
 
-                const fileExists = shell.test('-e', assetCatalogPath);
-                expect(fileExists).toEqual(false);
+                expect(fs.existsSync(assetCatalogPath)).toEqual(false);
 
                 const returnPath = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
                 expect(returnPath).toBeNull();
