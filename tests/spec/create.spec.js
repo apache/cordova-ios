@@ -22,6 +22,7 @@ const spec = __dirname;
 const path = require('path');
 const fs = require('fs-extra');
 const util = require('util');
+const { events } = require('cordova-common');
 
 const cordova_bin = path.join(spec, '../..', 'bin');
 const tmp = require('tmp').dirSync().name;
@@ -36,13 +37,13 @@ function createAndBuild (projectname, projectid) {
 
     // create the project
     command = util.format('"%s/create" "%s/%s" %s "%s"', cordova_bin, tmp, projectname, projectid, projectname);
-    shell.echo(command);
+    events.emit('log', command);
     return_code = shell.exec(command).code;
     expect(return_code).toBe(0);
 
     // build the project
     command = util.format('"%s/cordova/build" --emulator', path.join(tmp, projectname));
-    shell.echo(command);
+    events.emit('log', command);
     return_code = shell.exec(command, { silent: true }).code;
     expect(return_code).toBe(0);
 

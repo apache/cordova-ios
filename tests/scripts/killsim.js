@@ -20,6 +20,7 @@
  */
 
 const shell = require('shelljs');
+const { events } = require('cordova-common');
 
 function killSimulator (processName) {
     let result;
@@ -30,12 +31,12 @@ function killSimulator (processName) {
 
     // if iOS Simulator is running, kill it
     if (return_code === 0) { // found
-        shell.echo(`iOS Simulator is running as ("${processName}"), we're going to kill it.`);
+        events.emit('log', `iOS Simulator is running as ("${processName}"), we're going to kill it.`);
         result = shell.exec(`killall "${processName}"`);
         if (result.code !== 0) {
-            shell.echo(`Failed to kill process: ${processName}`);
+            events.emit('log', `Failed to kill process: ${processName}`);
         } else {
-            shell.echo(`Process was killed: ${processName}`);
+            events.emit('log', `Process was killed: ${processName}`);
         }
     }
 }
