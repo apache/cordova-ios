@@ -100,11 +100,6 @@ function copyScripts (projectPath, projectName) {
     const project_name_esc = projectName.replace(/&/g, '\\&');
     utils.replaceFileContents(path.join(destScriptsDir, 'build-debug.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
     utils.replaceFileContents(path.join(destScriptsDir, 'build-release.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
-
-    // Make sure they are executable (sometimes zipping them can remove executable bit)
-    shell.find(destScriptsDir).forEach(entry => {
-        shell.chmod(755, entry);
-    });
 }
 
 /*
