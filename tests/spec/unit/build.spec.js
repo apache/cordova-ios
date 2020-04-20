@@ -18,20 +18,13 @@
  */
 
 const path = require('path');
+const fs = require('fs-extra');
 const rewire = require('rewire');
+const { events } = require('cordova-common');
 const build = rewire('../../../bin/templates/scripts/cordova/lib/build');
 
 describe('build', () => {
-    let emitSpy;
     const testProjectPath = path.join('/test', 'project', 'path');
-
-    beforeEach(() => {
-        // Events spy
-        emitSpy = jasmine.createSpy('emitSpy');
-        build.__set__('events', {
-            emit: emitSpy
-        });
-    });
 
     describe('getXcodeBuildArgs method', () => {
         const getXcodeBuildArgs = build.__get__('getXcodeBuildArgs');
@@ -407,66 +400,43 @@ describe('build', () => {
     });
 
     describe('findXCodeProjectIn method', () => {
-        let findXCodeProjectIn;
-        let shellLsSpy;
-        let rejectSpy;
-        let resolveSpy;
         const fakePath = '/path/foobar';
+        let buildRequire;
 
         beforeEach(() => {
-            findXCodeProjectIn = build.__get__('findXCodeProjectIn');
-
-            // Shell Spy
-            shellLsSpy = jasmine.createSpy('shellLsSpy');
-            build.__set__('shell', {
-                ls: shellLsSpy
-            });
-
-            // Q Spy
-            rejectSpy = jasmine.createSpy('rejectSpy');
-            resolveSpy = jasmine.createSpy('resolveSpy');
-            build.__set__('Q', {
-                reject: rejectSpy,
-                resolve: resolveSpy
-            });
+            // rewire causes some issues so for these tests, we will require instead.
+            buildRequire = require('../../../bin/templates/scripts/cordova/lib/build');
+            spyOn(events, 'emit');
         });
 
         it('should find not find Xcode project', () => {
-            shellLsSpy.and.returnValue(['README.md']);
-
-            findXCodeProjectIn(fakePath);
-
-            expect(rejectSpy).toHaveBeenCalledWith(`No Xcode project found in ${fakePath}`);
+            spyOn(fs, 'readdirSync').and.returnValue(['README.md']);
+            return buildRequire.findXCodeProjectIn(fakePath).then(
+                () => {},
+                (error) => {
+                    expect(error).toBe(`No Xcode project found in ${fakePath}`)
+                }
+            );
         });
 
         it('should emit finding multiple Xcode projects', () => {
-            shellLsSpy.and.returnValue(['Test1.xcodeproj', 'Test2.xcodeproj']);
-
-            findXCodeProjectIn(fakePath);
-
-            // Emit
-            const actualEmit = emitSpy.calls.argsFor(0)[1];
-            expect(emitSpy).toHaveBeenCalled();
-            expect(actualEmit).toContain('Found multiple .xcodeproj directories in');
-
-            // Resolve
-            const actualResolve = resolveSpy.calls.argsFor(0)[0];
-            expect(resolveSpy).toHaveBeenCalled();
-            expect(actualResolve).toContain('Test1');
+            spyOn(fs, 'readdirSync').and.returnValue(['Test1.xcodeproj', 'Test2.xcodeproj']);
+            return buildRequire.findXCodeProjectIn(fakePath).then(
+                (projectName) => {
+                    expect(events.emit).toHaveBeenCalledWith(jasmine.any(String), jasmine.stringMatching(/Found multiple .xcodeproj directories in/));
+                    expect(projectName).toBe('Test1')
+                }
+            );
         });
 
         it('should detect and return only one projects', () => {
-            shellLsSpy.and.returnValue(['Test1.xcodeproj']);
-
-            findXCodeProjectIn(fakePath);
-
-            // Emit
-            expect(emitSpy).not.toHaveBeenCalled();
-
-            // Resolve
-            const actualResolve = resolveSpy.calls.argsFor(0)[0];
-            expect(resolveSpy).toHaveBeenCalled();
-            expect(actualResolve).toContain('Test1');
+            spyOn(fs, 'readdirSync').and.returnValue(['Test1.xcodeproj']);
+            return buildRequire.findXCodeProjectIn(fakePath).then(
+                (projectName) => {
+                    expect(events.emit).not.toHaveBeenCalled();
+                    expect(projectName).toBe('Test1')
+                }
+            );
         });
     });
 });
