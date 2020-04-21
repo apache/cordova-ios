@@ -19,27 +19,37 @@
  under the License.
  */
 
-const shell = require('shelljs');
-const { events } = require('cordova-common');
+const path = require('path');
+const findProcess = require('find-process');
+const { superspawn } = require('cordova-common');
 
 function killSimulator (processName) {
-    let result;
-    let return_code = 0;
-    // check iOS Simulator if running
-    const command = `pgrep -x "${processName}" > /dev/null`;
-    return_code = shell.exec(command).code;
+    return findProcess('name', processName)
+        .then(processList => processList.map(process => process.pid))
+        .then(pids => {
+            if (pids.length > 0) {
+                const filename = path.parse(processName).name;
+                return superspawn.spawn('killall', [filename], { printCommand: true, stdio: 'inherit' })
+                    .then(
+                        () => `Process was killed: ${processName}`,
+                        error => `Failed to kill process: ${processName} with the error: ${error}`
+                    );
+            }
 
-    // if iOS Simulator is running, kill it
-    if (return_code === 0) { // found
-        events.emit('log', `iOS Simulator is running as ("${processName}"), we're going to kill it.`);
-        result = shell.exec(`killall "${processName}"`);
-        if (result.code !== 0) {
-            events.emit('log', `Failed to kill process: ${processName}`);
-        } else {
-            events.emit('log', `Process was killed: ${processName}`);
-        }
-    }
+            return Promise.resolve(`No iOS Simulators were detected to stop with the processname of: ${processName}.`);
+        });
 }
 
-killSimulator('iOS Simulator'); // XCode 6
-killSimulator('Simulator'); // XCode 7
+Promise.all([
+    killSimulator('iOS Simulator.app'), // XCode 6
+    killSimulator('Simulator.app') // XCode 7
+]).then(
+    output => loopPrint(output),
+    error => loopPrint(error)
+);
+
+function loopPrint (output) {
+    for (const message of output) {
+        console.log(message);
+    }
+}
