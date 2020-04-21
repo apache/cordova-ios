@@ -17,7 +17,6 @@
 'use strict';
 const fs = require('fs-extra');
 const path = require('path');
-const shell = require('shelljs');
 const util = require('util');
 const events = require('cordova-common').events;
 const CordovaError = require('cordova-common').CordovaError;
@@ -323,11 +322,8 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
 
     if (link) {
         linkFileOrDirTree(src, dest);
-    } else if (fs.statSync(src).isDirectory()) {
-        // XXX shelljs decides to create a directory when -R|-r is used which sucks. http://goo.gl/nbsjq
-        shell.cp('-Rf', path.join(src, '/*'), dest);
     } else {
-        shell.cp('-f', src, dest);
+        fs.copySync(src, dest);
     }
 }
 

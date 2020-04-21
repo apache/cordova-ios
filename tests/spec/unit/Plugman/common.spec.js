@@ -19,7 +19,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const osenv = require('os');
-const shell = require('shelljs');
 const rewire = require('rewire');
 
 const common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
@@ -107,13 +106,13 @@ describe('common handler routines', () => {
             fs.ensureDirSync(srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');
 
-            const s = spyOn(shell, 'cp').and.callThrough();
+            spyOn(fs, 'copySync').and.callThrough();
             const resolvedDest = path.resolve(project_dir, dest);
 
             copyFile(test_dir, srcFile, project_dir, dest);
 
-            expect(s).toHaveBeenCalled();
-            expect(s).toHaveBeenCalledWith('-f', srcFile, resolvedDest);
+            expect(fs.copySync).toHaveBeenCalled();
+            expect(fs.copySync).toHaveBeenCalledWith(srcFile, resolvedDest);
 
             fs.removeSync(project_dir);
         });
@@ -129,7 +128,6 @@ describe('common handler routines', () => {
     });
 
     describe('deleteJava', () => {
-        // This is testing that shelljs.rm is removing the source file.
         it('Test 009 : source file should have been removed', () => {
             fs.ensureDirSync(srcDirTree);
             fs.writeFileSync(srcFile, 'contents', 'utf-8');

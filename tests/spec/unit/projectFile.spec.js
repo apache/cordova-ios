@@ -20,11 +20,10 @@
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const shell = require('shelljs');
 const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 
 const iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
-const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml/*');
+const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml');
 
 const locations = {
     root: iosProject,
@@ -33,7 +32,7 @@ const locations = {
 
 describe('projectFile', () => {
     beforeEach(() => {
-        shell.cp('-rf', iosProjectFixture, iosProject);
+        fs.copySync(iosProjectFixture, iosProject);
     });
 
     afterEach(() => {
@@ -59,7 +58,7 @@ describe('projectFile', () => {
             // Create a folder named A with config.xml and .plist files in it
             const pathToFolderA = path.join(iosProject, 'A');
             fs.ensureDirSync(pathToFolderA);
-            shell.cp('-rf', path.join(iosProject, 'SampleApp/*'), pathToFolderA);
+            fs.copySync(path.join(iosProject, 'SampleApp'), pathToFolderA);
 
             const parsedProjectFile = projectFile.parse(locations);
             const pluginsDir = parsedProjectFile.plugins_dir;

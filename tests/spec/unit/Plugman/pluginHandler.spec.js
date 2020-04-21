@@ -21,7 +21,6 @@ const os = require('os');
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
-const shell = require('shelljs');
 const EventEmitter = require('events');
 
 const PluginInfo = require('cordova-common').PluginInfo;
@@ -32,7 +31,7 @@ const pluginHandlers = rewire('../../../../bin/templates/scripts/cordova/lib/plu
 const temp = path.join(os.tmpdir(), 'plugman');
 
 const FIXTURES = path.join(__dirname, '../fixtures');
-const iosProject = path.join(FIXTURES, 'ios-config-xml', '*');
+const iosProject = path.join(FIXTURES, 'ios-config-xml');
 const faultyplugin = path.join(FIXTURES, 'org.test.plugins.faultyplugin');
 const dummyplugin = path.join(FIXTURES, 'org.test.plugins.dummyplugin');
 const weblessplugin = path.join(FIXTURES, 'org.test.plugins.weblessplugin');
@@ -68,7 +67,7 @@ describe('ios plugin handler', () => {
     let dummyProject;
 
     beforeEach(() => {
-        shell.cp('-rf', iosProject, temp);
+        fs.copySync(iosProject, temp);
         projectFile.purgeProjectFileCache(temp);
 
         dummyProject = projectFile.parse({
@@ -118,15 +117,15 @@ describe('ios plugin handler', () => {
             });
             it('Test 005 : should cp the file to the right target location when element has no target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
-                const spy = spyOn(shell, 'cp');
+                spyOn(fs, 'copySync');
                 install(source[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.m'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.m'));
+                expect(fs.copySync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.m'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.m'));
             });
             it('Test 006 : should cp the file to the right target location when element has a target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir !== undefined);
-                const spy = spyOn(shell, 'cp');
+                spyOn(fs, 'copySync');
                 install(source[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.m'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'));
+                expect(fs.copySync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.m'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'));
             });
             it('Test 007 : should call into xcodeproj\'s addFramework appropriately when element has framework=true set', () => {
                 const source = copyArray(valid_source).filter(s => s.framework);
@@ -173,15 +172,15 @@ describe('ios plugin handler', () => {
             });
             it('Test 012 : should cp the file to the right target location when element has no target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir === undefined);
-                const spy = spyOn(shell, 'cp');
+                spyOn(fs, 'copySync');
                 install(headers[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.h'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.h'));
+                expect(fs.copySync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.h'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.h'));
             });
             it('Test 013 : should cp the file to the right target location when element has a target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
-                const spy = spyOn(shell, 'cp');
+                spyOn(fs, 'copySync');
                 install(headers[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.h'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'));
+                expect(fs.copySync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.h'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'));
             });
         });
 
@@ -215,9 +214,9 @@ describe('ios plugin handler', () => {
             });
             it('Test 017 : should cp the file to the right target location', () => {
                 const resources = copyArray(valid_resources);
-                const spy = spyOn(shell, 'cp');
+                spyOn(fs, 'copySync');
                 install(resources[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith('-f', path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'));
+                expect(fs.copySync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'));
             });
 
             it('Test 018 : should link files to the right target location', () => {
@@ -274,9 +273,9 @@ describe('ios plugin handler', () => {
                 });
                 it('Test 022 : should cp the file to the right target location', () => {
                     const frameworks = copyArray(valid_custom_frameworks);
-                    const spy = spyOn(shell, 'cp');
+                    spyOn(fs, 'copySync');
                     install(frameworks[0], dummyPluginInfo, dummyProject);
-                    expect(spy).toHaveBeenCalledWith('-Rf', path.join(dummyplugin, 'src', 'ios', 'Custom.framework', '*'),
+                    expect(fs.copySync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'Custom.framework'),
                         path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework'));
                 });
 
@@ -325,21 +324,21 @@ describe('ios plugin handler', () => {
             /* eslint-enable no-unused-vars */
 
             beforeEach(() => {
-                spyOn(shell, 'cp');
+                spyOn(fs, 'copySync');
                 wwwDest = path.resolve(dummyProject.www, asset.target);
                 platformWwwDest = path.resolve(dummyProject.platformWww, asset.target);
             });
 
             it('Test 026 : should put asset to both www and platform_www when options.usePlatformWww flag is specified', () => {
                 install(asset, dummyPluginInfo, dummyProject, { usePlatformWww: true });
-                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
-                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
+                expect(fs.copySync).toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
+                expect(fs.copySync).toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
             });
 
             it('Test 027 : should put asset to www only when options.usePlatformWww flag is not specified', () => {
                 install(asset, dummyPluginInfo, dummyProject);
-                expect(shell.cp).toHaveBeenCalledWith('-f', path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
-                expect(shell.cp).not.toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
+                expect(fs.copySync).toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.www, asset.target));
+                expect(fs.copySync).not.toHaveBeenCalledWith(path.resolve(dummyPluginInfo.dir, asset.src), path.resolve(dummyProject.platformWww, asset.target));
             });
         });
 

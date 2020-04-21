@@ -23,7 +23,6 @@ const fs = require('fs-extra');
 const EventEmitter = require('events');
 const os = require('os');
 const path = require('path');
-const shell = require('shelljs');
 const plist = require('plist');
 const xcode = require('xcode');
 const rewire = require('rewire');
@@ -46,12 +45,12 @@ describe('prepare', () => {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
         fs.ensureDirSync(iosPlatform);
-        shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
+        fs.copySync(iosProjectFixture, iosPlatform);
         p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
     afterEach(() => {
-        fs.removeSync(path.join(__dirname, 'some'));
+        fs.removeSync(iosPlatform);
     });
 
     describe('launch storyboard feature (CB-9762)', () => {
@@ -260,7 +259,7 @@ describe('prepare', () => {
                 };
 
                 // copy the splash screen fixtures to the iOS project
-                shell.cp('-rf', path.join(FIXTURES, 'launch-storyboard-support', 'res'), iosProject);
+                fs.copySync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'));
 
                 // copy splash screens and update Contents.json
                 updateLaunchStoryboardImages(project, p.locations);
@@ -307,7 +306,7 @@ describe('prepare', () => {
                     projectConfig: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', 'modern-only.xml'))
                 };
 
-                shell.cp('-rf', path.join(FIXTURES, 'launch-storyboard-support', 'res'), iosProject);
+                fs.copySync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'));
                 updateLaunchStoryboardImages(project, p.locations);
 
                 // now, clean the images

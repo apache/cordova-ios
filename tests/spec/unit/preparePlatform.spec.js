@@ -19,7 +19,6 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const shell = require('shelljs');
 const EventEmitter = require('events').EventEmitter;
 const ConfigParser = require('cordova-common').ConfigParser;
 const PluginInfo = require('cordova-common').PluginInfo;
@@ -37,7 +36,7 @@ describe('prepare after plugin add', () => {
     let api;
     beforeEach(() => {
         fs.ensureDirSync(iosPlatform);
-        shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
+        fs.copySync(iosProjectFixture, iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
 
         jasmine.addMatchers({
