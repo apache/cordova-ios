@@ -29,31 +29,31 @@ if (process.platform === 'darwin') {
                     () => fail('expected promise rejection'),
                     error => expect(error.message).toContain('is not valid tool name')
                 );
-            });
+            }, 10000);
 
             it('should find xcodebuild version.', () => {
                 return versions.get_tool_version('xcodebuild').then((version) => {
                     expect(version).not.toBe(undefined);
                 });
-            });
+            }, 10000);
 
             it('should find ios-sim version.', () => {
                 return versions.get_tool_version('ios-sim').then((version) => {
                     expect(version).not.toBe(undefined);
                 });
-            });
+            }, 10000);
 
             it('should find ios-deploy version.', () => {
                 return versions.get_tool_version('ios-deploy').then((version) => {
                     expect(version).not.toBe(undefined);
                 });
-            });
+            }, 10000);
 
             it('should find pod version.', () => {
                 return versions.get_tool_version('pod').then((version) => {
                     expect(version).not.toBe(undefined);
                 });
-            });
+            }, 10000);
         });
     });
 }
