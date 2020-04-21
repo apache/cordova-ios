@@ -35,9 +35,9 @@ const fs = require('fs-extra');
  * @returns {void}
  */
 exports.replaceFileContents = function (file, searchRegex, replacementString) {
-    // let contents;
+    let contents;
     try {
-        var contents = fs.readFileSync(file).toString();
+        contents = fs.readFileSync(file).toString();
     } catch (ex) {
         console.log('TRYING TO READ: ', file);
         throw ex;
@@ -54,9 +54,9 @@ exports.replaceFileContents = function (file, searchRegex, replacementString) {
  * @returns string|null
  */
 exports.grep = function (file, regex) {
-    let contents = fs.readFileSync(file).toString().replace(/\\r/g, '').split('\n');
+    const contents = fs.readFileSync(file).toString().replace(/\\r/g, '').split('\n');
     for (let i = 0; i < contents.length; i++) {
-        let line = contents[i];
+        const line = contents[i];
         if (regex.test(line)) {
             return line;
         }

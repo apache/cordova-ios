@@ -20,7 +20,6 @@
 const Q = require('q');
 const path = require('path');
 const fs = require('fs-extra');
-const shell = require('shelljs');
 const superspawn = require('cordova-common').superspawn;
 
 const projectPath = path.join(__dirname, '..', '..');

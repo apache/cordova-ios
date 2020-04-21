@@ -414,7 +414,7 @@ describe('build', () => {
             return buildRequire.findXCodeProjectIn(fakePath).then(
                 () => {},
                 (error) => {
-                    expect(error).toBe(`No Xcode project found in ${fakePath}`)
+                    expect(error).toBe(`No Xcode project found in ${fakePath}`);
                 }
             );
         });
@@ -424,7 +424,7 @@ describe('build', () => {
             return buildRequire.findXCodeProjectIn(fakePath).then(
                 (projectName) => {
                     expect(events.emit).toHaveBeenCalledWith(jasmine.any(String), jasmine.stringMatching(/Found multiple .xcodeproj directories in/));
-                    expect(projectName).toBe('Test1')
+                    expect(projectName).toBe('Test1');
                 }
             );
         });
@@ -434,7 +434,7 @@ describe('build', () => {
             return buildRequire.findXCodeProjectIn(fakePath).then(
                 (projectName) => {
                     expect(events.emit).not.toHaveBeenCalled();
-                    expect(projectName).toBe('Test1')
+                    expect(projectName).toBe('Test1');
                 }
             );
         });
