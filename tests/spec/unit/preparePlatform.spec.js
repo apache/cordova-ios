@@ -33,8 +33,6 @@ const iosProject = path.join(FIXTURES, 'dummyProj');
 const iosPlatform = path.join(iosProject, 'platforms/ios');
 const dummyPlugin = path.join(FIXTURES, DUMMY_PLUGIN);
 
-shell.config.silent = true;
-
 describe('prepare after plugin add', () => {
     let api;
     beforeEach(() => {

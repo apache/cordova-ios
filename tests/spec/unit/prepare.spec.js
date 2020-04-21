@@ -37,8 +37,6 @@ const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 const iosProject = path.join(os.tmpdir(), 'prepare');
 const iosPlatform = path.join(iosProject, 'platforms/ios');
 
-shell.config.silent = true;
-
 const ConfigParser = require('cordova-common').ConfigParser;
 
 describe('prepare', () => {
