@@ -21,7 +21,6 @@
 
 const Q = require('q');
 const shell = require('shelljs');
-const util = require('util');
 const versions = require('./versions');
 
 const SUPPORTED_OS_PLATFORMS = ['darwin'];
@@ -34,15 +33,8 @@ const IOS_DEPLOY_MIN_VERSION = '1.9.2';
 const IOS_DEPLOY_NOT_FOUND_MESSAGE =
     `Please download, build and install version ${IOS_DEPLOY_MIN_VERSION} or greater from https://github.com/ios-control/ios-deploy into your path, or do 'npm install -g ios-deploy'`;
 
-const COCOAPODS_MIN_VERSION = '1.0.1';
-const COCOAPODS_NOT_FOUND_MESSAGE =
-    `Please install version ${COCOAPODS_MIN_VERSION} or greater from https://cocoapods.org/`;
-const COCOAPODS_NOT_SYNCED_MESSAGE =
-    'The CocoaPods repo has not been synced yet, this will take a long time (approximately 500MB as of Sept 2016). Please run `pod setup` first to sync the repo.';
-const COCOAPODS_SYNCED_MIN_SIZE = 475; // in megabytes
-const COCOAPODS_SYNC_ERROR_MESSAGE =
-    `The CocoaPods repo has been created, but there appears to be a sync error. The repo size should be at least ${COCOAPODS_SYNCED_MIN_SIZE}. Please run \`pod setup --verbose\` to sync the repo.`;
-const COCOAPODS_REPO_NOT_FOUND_MESSAGE = 'The CocoaPods repo at ~/.cocoapods was not found.';
+const COCOAPODS_MIN_VERSION = '1.8.0';
+const COCOAPODS_NOT_FOUND_MESSAGE = `Please install version ${COCOAPODS_MIN_VERSION} or greater from https://cocoapods.org/`;
 
 /**
  * Checks if xcode util is available
@@ -71,73 +63,12 @@ function os_platform_is_supported () {
     return (SUPPORTED_OS_PLATFORMS.indexOf(process.platform) !== -1);
 }
 
-function check_cocoapod_tool (toolChecker) {
-    toolChecker = toolChecker || checkTool;
-    if (os_platform_is_supported()) { // CB-12856
-        return toolChecker('pod', COCOAPODS_MIN_VERSION, COCOAPODS_NOT_FOUND_MESSAGE, 'CocoaPods');
-    } else {
-        return Q.resolve({
-            ignore: true,
-            ignoreMessage: `CocoaPods check and installation ignored on ${process.platform}`
-        });
-    }
-}
-
 /**
- * Checks if cocoapods repo size is what is expected
- * @return {Promise} Returns a promise either resolved or rejected
- */
-module.exports.check_cocoapods_repo_size = () => {
-    return check_cocoapod_tool()
-        .then(toolOptions => {
-            // check size of ~/.cocoapods repo
-            const commandString = util.format('du -sh %s/.cocoapods', process.env.HOME);
-            const command = shell.exec(commandString, { silent: true });
-            // command.output is e.g "750M   path/to/.cocoapods", we just scan the number
-            const size = toolOptions.ignore ? 0 : parseFloat(command.output);
-
-            if (toolOptions.ignore || command.code === 0) { // success, parse output
-                return Q.resolve(size, toolOptions);
-            } else { // error, perhaps not found
-                return Q.reject(util.format('%s (%s)', COCOAPODS_REPO_NOT_FOUND_MESSAGE, command.output));
-            }
-        })
-        .then((repoSize, toolOptions) => {
-            if (toolOptions.ignore || COCOAPODS_SYNCED_MIN_SIZE <= repoSize) { // success, expected size
-                return Q.resolve(toolOptions);
-            } else {
-                return Q.reject(COCOAPODS_SYNC_ERROR_MESSAGE);
-            }
-        });
-};
-
-/**
- * Checks if cocoapods is available, and whether the repo is synced (because it takes a long time to download)
+ * Checks if cocoapods is available.
  * @return {Promise} Returns a promise either resolved or rejected
  */
 module.exports.check_cocoapods = toolChecker => {
-    return check_cocoapod_tool(toolChecker)
-        // check whether the cocoapods repo has been synced through `pod repo` command
-        // a value of '0 repos' means it hasn't been synced
-        .then(toolOptions => {
-            if (toolOptions.ignore) return toolOptions;
-
-            // starting with 1.8.0 cocoapods now use cdn and we dont need to sync first
-            if (versions.compareVersions(toolOptions.version, '1.8.0') >= 0) {
-                return toolOptions;
-            }
-
-            const code = shell.exec('pod repo | grep -e "^0 repos"', { silent: true }).code;
-            const repoIsSynced = (code !== 0);
-
-            if (repoIsSynced) {
-                // return check_cocoapods_repo_size();
-                // we could check the repo size above, but it takes too long.
-                return toolOptions;
-            } else {
-                return Promise.reject(COCOAPODS_NOT_SYNCED_MESSAGE);
-            }
-        });
+    return checkTool('pod', COCOAPODS_MIN_VERSION, COCOAPODS_NOT_FOUND_MESSAGE, 'CocoaPods');
 };
 
 /**
