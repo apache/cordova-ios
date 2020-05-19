@@ -284,7 +284,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
         return Q.reject(new CordovaError(`Could not parse ${locations.pbxproj}: ${err}`));
     }
 
-    const origPkg = project.xcode.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
+    const origPkg = project.xcode.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, platformConfig.name());
 
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
