@@ -18,7 +18,6 @@
  */
 
 const rewire = require('rewire');
-const shell = require('shelljs');
 const which = require('which');
 const versions = require('../../../../bin/templates/scripts/cordova/lib/versions');
 
