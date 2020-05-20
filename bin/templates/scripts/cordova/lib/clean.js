@@ -20,7 +20,7 @@
 const Q = require('q');
 const path = require('path');
 const fs = require('fs-extra');
-const superspawn = require('cordova-common').superspawn;
+const { superspawn: { spawn } } = require('cordova-common');
 
 const projectPath = path.join(__dirname, '..', '..');
 
@@ -32,7 +32,7 @@ module.exports.run = () => {
     }
 
     const xcodebuildClean = configName => {
-        return superspawn.spawn(
+        return spawn(
             'xcodebuild',
             ['-project', projectName, '-configuration', configName, '-alltargets', 'clean'],
             { cwd: projectPath, printCommand: true, stdio: 'inherit' }
