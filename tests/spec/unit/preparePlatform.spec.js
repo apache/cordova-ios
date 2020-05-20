@@ -18,7 +18,7 @@
  */
 
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const shell = require('shelljs');
 const EventEmitter = require('events').EventEmitter;
 const ConfigParser = require('cordova-common').ConfigParser;

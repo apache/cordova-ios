@@ -18,7 +18,7 @@
 */
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const CordovaError = require('cordova-common').CordovaError;
 
 function BridgingHeader (bridgingHeaderPath) {

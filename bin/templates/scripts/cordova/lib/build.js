@@ -21,7 +21,7 @@ const Q = require('q');
 const path = require('path');
 const shell = require('shelljs');
 const superspawn = require('cordova-common').superspawn;
-const fs = require('fs');
+const fs = require('fs-extra');
 const plist = require('plist');
 const util = require('util');
 

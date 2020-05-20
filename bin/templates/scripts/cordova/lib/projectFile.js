@@ -21,7 +21,7 @@ const xcode = require('xcode');
 const plist = require('plist');
 const _ = require('underscore');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const shell = require('shelljs');
 
 const pluginHandlers = require('./plugman/pluginHandlers');
