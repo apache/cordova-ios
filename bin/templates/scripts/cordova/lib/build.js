@@ -17,10 +17,10 @@
  * under the License.
  */
 
-const Q = require('q');
 const path = require('path');
 const which = require('which');
 const {
+    CordovaError,
     events,
     superspawn: { spawn }
 } = require('cordova-common');
@@ -112,16 +112,16 @@ module.exports.run = buildOpts => {
     buildOpts = buildOpts || {};
 
     if (buildOpts.debug && buildOpts.release) {
-        return Q.reject('Cannot specify "debug" and "release" options together.');
+        return Promise.reject(new CordovaError('Cannot specify "debug" and "release" options together.'));
     }
 
     if (buildOpts.device && buildOpts.emulator) {
-        return Q.reject('Cannot specify "device" and "emulator" options together.');
+        return Promise.reject(new CordovaError('Cannot specify "device" and "emulator" options together.'));
     }
 
     if (buildOpts.buildConfig) {
         if (!fs.existsSync(buildOpts.buildConfig)) {
-            return Q.reject(`Build config file does not exist: ${buildOpts.buildConfig}`);
+            return Promise.reject(new CordovaError(`Build config file does not exist: ${buildOpts.buildConfig}`));
         }
         events.emit('log', `Reading build config file: ${path.resolve(buildOpts.buildConfig)}`);
         const contents = fs.readFileSync(buildOpts.buildConfig, 'utf-8');
@@ -211,7 +211,7 @@ module.exports.run = buildOpts => {
                 writeCodeSignStyle('Automatic');
             }
 
-            return Q.nfcall(fs.writeFile, path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
+            return fs.writeFile(path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
         }).then(() => {
             const configuration = buildOpts.release ? 'Release' : 'Debug';
 
@@ -277,7 +277,7 @@ module.exports.run = buildOpts => {
                 return spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
             }
 
-            return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')
+            return fs.writeFile(exportOptionsPath, exportOptionsPlist, 'utf-8')
                 .then(checkSystemRuby)
                 .then(packageArchive);
         });
@@ -293,14 +293,14 @@ function findXCodeProjectIn (projectPath) {
     const xcodeProjFiles = fs.readdirSync(projectPath).filter(name => path.extname(name) === '.xcodeproj');
 
     if (xcodeProjFiles.length === 0) {
-        return Q.reject(`No Xcode project found in ${projectPath}`);
+        return Promise.reject(new CordovaError(`No Xcode project found in ${projectPath}`));
     }
     if (xcodeProjFiles.length > 1) {
         events.emit('warn', `Found multiple .xcodeproj directories in \n${projectPath}\nUsing first one`);
     }
 
     const projectName = path.basename(xcodeProjFiles[0], '.xcodeproj');
-    return Q.resolve(projectName);
+    return Promise.resolve(projectName);
 }
 
 module.exports.findXCodeProjectIn = findXCodeProjectIn;

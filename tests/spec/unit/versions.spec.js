@@ -32,7 +32,7 @@ if (process.platform === 'darwin') {
                 return versions.get_apple_ios_version().then(() => {
                     expect(console.log).not.toHaveBeenCalledWith(undefined);
                 });
-            });
+            }, 10000);
         });
 
         describe('get_apple_osx_version method', () => {

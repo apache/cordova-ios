@@ -21,7 +21,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
-const Q = require('q');
 const {
     CordovaError,
     events,
@@ -376,7 +375,7 @@ Podfile.prototype.before_install = function (toolOptions) {
     fs.writeFileSync(debugConfigPath, debugContents, 'utf8');
     fs.writeFileSync(releaseConfigPath, releaseContents, 'utf8');
 
-    return Q.resolve(toolOptions);
+    return Promise.resolve(toolOptions);
 };
 
 Podfile.prototype.install = function (requirementsCheckerFunction) {
@@ -387,7 +386,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     let first = true;
 
     if (!requirementsCheckerFunction) {
-        requirementsCheckerFunction = Q();
+        requirementsCheckerFunction = Promise.resolve();
     }
 
     return requirementsCheckerFunction()
@@ -396,7 +395,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
             if (toolOptions.ignore) {
                 events.emit('verbose', '==== pod install start ====\n');
                 events.emit('verbose', toolOptions.ignoreMessage);
-                return Q.resolve();
+                return Promise.resolve();
             } else {
                 return spawn('pod', ['install', '--verbose'], opts)
                     .progress(stdio => {
