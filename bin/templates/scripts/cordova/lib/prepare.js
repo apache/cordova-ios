@@ -36,10 +36,6 @@ const FileUpdater = require('cordova-common').FileUpdater;
 const projectFile = require('./projectFile');
 
 // launch storyboard and related constants
-const LAUNCHIMAGE_BUILD_SETTING = 'ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME';
-const LAUNCHIMAGE_BUILD_SETTING_VALUE = 'LaunchImage';
-const UI_LAUNCH_STORYBOARD_NAME = 'UILaunchStoryboardName';
-const CDV_LAUNCH_STORYBOARD_NAME = 'CDVLaunchScreen';
 const IMAGESET_COMPACT_SIZE_CLASS = 'compact';
 const CDV_ANY_SIZE_CLASS = 'any';
 
@@ -55,7 +51,6 @@ module.exports.prepare = function (cordovaProject, options) {
         .then(() => updateProject(this._config, this.locations))
         .then(() => {
             updateIcons(cordovaProject, this.locations);
-            updateSplashScreens(cordovaProject, this.locations);
             updateLaunchStoryboardImages(cordovaProject, this.locations);
             updateFileResources(cordovaProject, this.locations);
         })
@@ -84,7 +79,6 @@ module.exports.clean = function (options) {
     return Q().then(() => {
         cleanWww(projectRoot, this.locations);
         cleanIcons(projectRoot, projectConfig, this.locations);
-        cleanSplashScreens(projectRoot, projectConfig, this.locations);
         cleanLaunchStoryboardImages(projectRoot, projectConfig, this.locations);
         cleanFileResources(projectRoot, projectConfig, this.locations);
     });
@@ -216,7 +210,6 @@ function updateProject (platformConfig, locations) {
     }
 
     handleOrientationSettings(platformConfig, infoPlist);
-    updateProjectPlistForLaunchStoryboard(platformConfig, infoPlist);
 
     /* eslint-disable no-tabs */
     // Write out the plist file with the same formatting as Xcode does
@@ -273,7 +266,6 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     const pkg = platformConfig.getAttribute('ios-CFBundleIdentifier') || platformConfig.packageName();
     const targetDevice = parseTargetDevicePreference(platformConfig.getPreference('target-device', 'ios'));
     const deploymentTarget = platformConfig.getPreference('deployment-target', 'ios');
-    const needUpdatedBuildSettingsForLaunchStoryboard = checkIfBuildSettingsNeedUpdatedForLaunchStoryboard(platformConfig, infoPlist);
     const swiftVersion = platformConfig.getPreference('SwiftVersion', 'ios');
 
     let project;
@@ -288,7 +280,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
-    if (origPkg === pkg && !targetDevice && !deploymentTarget && !needUpdatedBuildSettingsForLaunchStoryboard && !swiftVersion) {
+    if (origPkg === pkg && !targetDevice && !deploymentTarget && !swiftVersion) {
         return Q();
     }
 
@@ -311,8 +303,6 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
         events.emit('verbose', `Set SwiftVersion to "${swiftVersion}".`);
         project.xcode.updateBuildProperty('SWIFT_VERSION', swiftVersion);
     }
-
-    updateBuildSettingsForLaunchStoryboard(project.xcode, platformConfig, infoPlist);
 
     project.write();
 
@@ -400,79 +390,6 @@ function cleanIcons (projectRoot, projectConfig, locations) {
             resourceMap[targetIconPath] = null;
         });
         events.emit('verbose', `Cleaning icons at ${iconsDir}`);
-
-        // Source paths are removed from the map, so updatePaths() will delete the target files.
-        FileUpdater.updatePaths(
-            resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
-    }
-}
-
-function mapSplashScreenResources (splashScreens, splashScreensDir) {
-    const platformSplashScreens = [
-        { dest: 'Default~iphone.png', width: 320, height: 480 },
-        { dest: 'Default@2x~iphone.png', width: 640, height: 960 },
-        { dest: 'Default-Portrait~ipad.png', width: 768, height: 1024 },
-        { dest: 'Default-Portrait@2x~ipad.png', width: 1536, height: 2048 },
-        { dest: 'Default-Landscape~ipad.png', width: 1024, height: 768 },
-        { dest: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 },
-        { dest: 'Default-568h@2x~iphone.png', width: 640, height: 1136 },
-        { dest: 'Default-667h.png', width: 750, height: 1334 },
-        { dest: 'Default-736h.png', width: 1242, height: 2208 },
-        { dest: 'Default-Landscape-736h.png', width: 2208, height: 1242 },
-        { dest: 'Default-2436h.png', width: 1125, height: 2436 },
-        { dest: 'Default-Landscape-2436h.png', width: 2436, height: 1125 }
-    ];
-
-    const pathMap = {};
-    platformSplashScreens.forEach(item => {
-        const splash = splashScreens.getBySize(item.width, item.height);
-        if (splash) {
-            const target = path.join(splashScreensDir, item.dest);
-            pathMap[target] = splash.src;
-        }
-    });
-    return pathMap;
-}
-
-function getSplashScreensDir (projectRoot, platformProjDir) {
-    let splashScreensDir;
-    const xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
-
-    if (xcassetsExists) {
-        splashScreensDir = path.join(platformProjDir, 'Images.xcassets/LaunchImage.launchimage/');
-    } else {
-        splashScreensDir = path.join(platformProjDir, 'Resources/splash/');
-    }
-
-    return splashScreensDir;
-}
-
-function updateSplashScreens (cordovaProject, locations) {
-    const splashScreens = cordovaProject.projectConfig.getSplashScreens('ios');
-
-    if (splashScreens.length === 0) {
-        events.emit('verbose', 'This app does not have splash screens defined');
-        return;
-    }
-
-    const platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
-    const splashScreensDir = getSplashScreensDir(cordovaProject.root, platformProjDir);
-    const resourceMap = mapSplashScreenResources(splashScreens, splashScreensDir);
-    events.emit('verbose', `Updating splash screens at ${splashScreensDir}`);
-    FileUpdater.updatePaths(
-        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
-}
-
-function cleanSplashScreens (projectRoot, projectConfig, locations) {
-    const splashScreens = projectConfig.getSplashScreens('ios');
-    if (splashScreens.length > 0) {
-        const platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
-        const splashScreensDir = getSplashScreensDir(projectRoot, platformProjDir);
-        const resourceMap = mapIconResources(splashScreens, splashScreensDir);
-        Object.keys(resourceMap).forEach(targetSplashPath => {
-            resourceMap[targetSplashPath] = null;
-        });
-        events.emit('verbose', `Cleaning splash screens at ${splashScreensDir}`);
 
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
@@ -752,103 +669,6 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
         return newItem;
     });
     return contentsJSON;
-}
-
-/**
- * Determines if the project's build settings may need to be updated for launch storyboard support
- *
- */
-function checkIfBuildSettingsNeedUpdatedForLaunchStoryboard (platformConfig, infoPlist) {
-    const hasLaunchStoryboardImages = platformHasLaunchStoryboardImages(platformConfig);
-    const hasLegacyLaunchImages = platformHasLegacyLaunchImages(platformConfig);
-    const currentLaunchStoryboard = infoPlist[UI_LAUNCH_STORYBOARD_NAME];
-
-    if (hasLaunchStoryboardImages && currentLaunchStoryboard === CDV_LAUNCH_STORYBOARD_NAME && !hasLegacyLaunchImages) {
-        // don't need legacy launch images if we are using our launch storyboard
-        // so we do need to update the project file
-        events.emit('verbose', 'Need to update build settings because project is using our launch storyboard.');
-        return true;
-    } else if (hasLegacyLaunchImages && !currentLaunchStoryboard) {
-        // we do need to ensure legacy launch images are used if there's no launch storyboard present
-        // so we do need to update the project file
-        events.emit('verbose', 'Need to update build settings because project is using legacy launch images and no storyboard.');
-        return true;
-    }
-    events.emit('verbose', 'No need to update build settings for launch storyboard support.');
-    return false;
-}
-
-function updateBuildSettingsForLaunchStoryboard (proj, platformConfig, infoPlist) {
-    const hasLaunchStoryboardImages = platformHasLaunchStoryboardImages(platformConfig);
-    const hasLegacyLaunchImages = platformHasLegacyLaunchImages(platformConfig);
-    const currentLaunchStoryboard = infoPlist[UI_LAUNCH_STORYBOARD_NAME];
-
-    if (hasLaunchStoryboardImages && currentLaunchStoryboard === CDV_LAUNCH_STORYBOARD_NAME && !hasLegacyLaunchImages) {
-        // don't need legacy launch images if we are using our launch storyboard
-        events.emit('verbose', `Removed ${LAUNCHIMAGE_BUILD_SETTING} because project is using our launch storyboard.`);
-        proj.removeBuildProperty(LAUNCHIMAGE_BUILD_SETTING);
-    } else if (hasLegacyLaunchImages && !currentLaunchStoryboard) {
-        // we do need to ensure legacy launch images are used if there's no launch storyboard present
-        events.emit('verbose', `Set ${LAUNCHIMAGE_BUILD_SETTING} to ${LAUNCHIMAGE_BUILD_SETTING_VALUE} because project is using legacy launch images and no storyboard.`);
-        proj.updateBuildProperty(LAUNCHIMAGE_BUILD_SETTING, LAUNCHIMAGE_BUILD_SETTING_VALUE);
-    } else {
-        events.emit('verbose', 'Did not update build settings for launch storyboard support.');
-    }
-}
-
-function splashScreensHaveLaunchStoryboardImages (contentsJSON) {
-    /* do we have any launch images do we have for our launch storyboard?
-     * Again, for old Node versions, the below code is equivalent to this:
-     *     return !!contentsJSON.images.find(function (item) {
-     *        return item.filename !== undefined;
-     *     });
-     */
-    return !!contentsJSON.images.reduce((p, c) => (c.filename !== undefined) ? c : p, undefined);
-}
-
-function platformHasLaunchStoryboardImages (platformConfig) {
-    const splashScreens = platformConfig.getSplashScreens('ios');
-    const contentsJSON = getLaunchStoryboardContentsJSON(splashScreens, ''); // note: we don't need a file path here; we're just counting
-    return splashScreensHaveLaunchStoryboardImages(contentsJSON);
-}
-
-function platformHasLegacyLaunchImages (platformConfig) {
-    const splashScreens = platformConfig.getSplashScreens('ios');
-    return !!splashScreens.reduce((p, c) => (c.width !== undefined || c.height !== undefined) ? c : p, undefined);
-}
-
-/**
- * Updates the project's plist based upon our launch storyboard images. If there are no images, then we should
- * fall back to the regular launch images that might be supplied (that is, our app will be scaled on an iPad Pro),
- * and if there are some images, we need to alter the UILaunchStoryboardName property to point to
- * CDVLaunchScreen.
- *
- * There's some logic here to avoid overwriting changes the user might have made to their plist if they are using
- * their own launch storyboard.
- */
-function updateProjectPlistForLaunchStoryboard (platformConfig, infoPlist) {
-    const currentLaunchStoryboard = infoPlist[UI_LAUNCH_STORYBOARD_NAME];
-    events.emit('verbose', `Current launch storyboard ${currentLaunchStoryboard}`);
-
-    const hasLaunchStoryboardImages = platformHasLaunchStoryboardImages(platformConfig);
-
-    if (hasLaunchStoryboardImages && !currentLaunchStoryboard) {
-        // only change the launch storyboard if we have images to use AND the current value is blank
-        // if it's not blank, we've either done this before, or the user has their own launch storyboard
-        events.emit('verbose', 'Changing info plist to use our launch storyboard');
-        infoPlist[UI_LAUNCH_STORYBOARD_NAME] = CDV_LAUNCH_STORYBOARD_NAME;
-        return;
-    }
-
-    if (!hasLaunchStoryboardImages && currentLaunchStoryboard === CDV_LAUNCH_STORYBOARD_NAME) {
-        // only revert to using the launch images if we have don't have any images for the launch storyboard
-        // but only clear it if current launch storyboard is our storyboard; the user might be using their
-        // own storyboard instead.
-        events.emit('verbose', 'Changing info plist to use legacy launch images');
-        delete infoPlist[UI_LAUNCH_STORYBOARD_NAME];
-        return;
-    }
-    events.emit('verbose', 'Not changing launch storyboard setting in info plist.');
 }
 
 /**

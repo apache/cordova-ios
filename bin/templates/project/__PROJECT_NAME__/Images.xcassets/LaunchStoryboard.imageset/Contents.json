@@ -6,6 +6,7 @@
     },
     {
       "idiom" : "universal",
+      "filename" : "Default@2x~universal~anyany.png",
       "scale" : "2x"
     },
     {
@@ -24,8 +25,8 @@
     },
     {
       "idiom" : "universal",
-      "height-class" : "compact",
-      "scale" : "3x"
+      "scale" : "3x",
+      "height-class" : "compact"
     },
     {
       "idiom" : "universal",
@@ -34,13 +35,13 @@
     },
     {
       "idiom" : "universal",
-      "width-class" : "compact",
-      "scale" : "2x"
+      "scale" : "2x",
+      "width-class" : "compact"
     },
     {
       "idiom" : "universal",
-      "width-class" : "compact",
-      "scale" : "3x"
+      "scale" : "3x",
+      "width-class" : "compact"
     },
     {
       "idiom" : "universal",

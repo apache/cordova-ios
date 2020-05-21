@@ -1247,6 +1247,10 @@ module.exports = {
         // see the file under plugin/ios/wkwebkit.js
         require('cordova/modulemapper').clobbers('cordova/plugin/ios/wkwebkit', 'window.WkWebView');
 
+        // Attach the splashscreen utility to window.navigator.splashscreen
+        // see the file under plugin/ios/launchscreen.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/launchscreen', 'navigator.splashscreen');
+
         require('cordova/channel').onNativeReady.fire();
     }
 };
@@ -1781,6 +1785,24 @@ var WkWebKit = {
 };
 
 module.exports = WkWebKit;
+
+});
+
+// file: ../cordova-ios/cordova-js-src/plugin/ios/launchscreen.js
+define("cordova/plugin/ios/launchscreen", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+var launchscreen = {
+    show:function() {
+        exec(null, null, "LaunchScreen", "show", []);
+    },
+    hide:function() {
+        exec(null, null, "LaunchScreen", "hide", []);
+    }
+};
+
+module.exports = launchscreen;
 
 });
 

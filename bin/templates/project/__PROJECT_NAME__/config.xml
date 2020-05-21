@@ -65,6 +65,9 @@
     <feature name="CDVWebViewEngine">
         <param name="ios-package" value="CDVWebViewEngine" />
     </feature>
+    <feature name="LaunchScreen">
+        <param name="ios-package" value="CDVLaunchScreen"/>
+    </feature>
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage"/>
     </feature>
