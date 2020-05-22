@@ -24,6 +24,7 @@
 // TODO: Perhaps this should live in cordova-common?
 
 const fs = require('fs-extra');
+const { events } = require('cordova-common');
 
 /**
  * Reads, searches, and replaces the found occurences with replacementString and then writes the file back out.
@@ -39,7 +40,7 @@ exports.replaceFileContents = function (file, searchRegex, replacementString) {
     try {
         contents = fs.readFileSync(file).toString();
     } catch (ex) {
-        console.log('TRYING TO READ: ', file);
+        events.emit('verbose', `Trying to read file: ${file}`);
         throw ex;
     }
     contents = contents.replace(searchRegex, replacementString);
