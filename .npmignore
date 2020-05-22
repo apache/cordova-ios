@@ -1,0 +1,18 @@
+# Config related files
+.*
+
+# Testing, code coverage, and linting
+coverage
+tests
+appveyor.yml
+
+# Logging
+logs
+*.log
+npm-debug.log*
+
+# others
+guides
+hooks
+Cordova.podspec
+update_podspec.sh
