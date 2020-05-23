@@ -40,13 +40,43 @@ function parseProjectFile (locations) {
     const xcodeproj = xcode.project(pbxPath);
     xcodeproj.parseSync();
 
+    const workspaceName =
+        fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace')) || '';
+
+    const projectName = workspaceName.replace('.xcworkspace', '');
+
     const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
-    const plist_file_entry = _.find(xcBuildConfiguration, entry => entry.buildSettings && entry.buildSettings.INFOPLIST_FILE);
-    const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
+
+    // NOTE: This would be nonsense `/-Info.plist` value if there is no
+    // workspaceName determined from xcworkspace
+    const plistFilePath = `${projectName}/${projectName}-Info.plist`;
+
+    const plist_file_entry = _.find(xcBuildConfiguration, entry => (
+        entry.buildSettings &&
+        entry.buildSettings.INFOPLIST_FILE &&
+        entry.buildSettings.INFOPLIST_FILE.includes(plistFilePath)
+    ));
+
+    if (!plist_file_entry) {
+        throw new CordovaError(
+            'Could not find correct INFOPLIST_FILE entry in pbxproj');
+    }
+
+    const plist_file = path.join(
+        project_dir,
+        plist_file_entry.buildSettings.INFOPLIST_FILE
+            .replace(/^"(.*)"$/g, '$1')
+            .replace(/\\&/g, '&'));
+
+    if (!fs.existsSync(plist_file)) {
+        throw new CordovaError(
+            `Could not find ${projectName}-Info.plist file.`);
+    }
+
     const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
-    if (!fs.existsSync(plist_file) || !fs.existsSync(config_file)) {
-        throw new CordovaError('Could not find *-Info.plist file, or config.xml file.');
+    if (!fs.existsSync(config_file)) {
+        throw new CordovaError('Could not find config.xml file.');
     }
 
     const frameworks_file = path.join(project_dir, 'frameworks.json');
