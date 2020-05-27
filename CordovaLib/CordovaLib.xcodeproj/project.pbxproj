@@ -11,6 +11,8 @@
 		28BFF9151F355A4E00DDF01A /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BFF9131F355A4E00DDF01A /* CDVLogger.m */; };
 		2F4D42BC23F218BA00501999 /* CDVURLSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4D42BA23F218BA00501999 /* CDVURLSchemeHandler.h */; };
 		2F4D42BD23F218BA00501999 /* CDVURLSchemeHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4D42BB23F218BA00501999 /* CDVURLSchemeHandler.m */; };
+		2FCCEA17247E7366007276A8 /* CDVLaunchScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E714D3423F535B500A321AF /* CDVLaunchScreen.m */; };
+		2FCCEA18247E7366007276A8 /* CDVLaunchScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E714D3223F535B500A321AF /* CDVLaunchScreen.h */; };
 		3093E2231B16D6A3003F381A /* CDVIntentAndNavigationFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3093E2211B16D6A3003F381A /* CDVIntentAndNavigationFilter.h */; };
 		3093E2241B16D6A3003F381A /* CDVIntentAndNavigationFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3093E2221B16D6A3003F381A /* CDVIntentAndNavigationFilter.m */; };
 		4E23F8FB23E16E96006CD852 /* CDVWebViewProcessPoolFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E23F8F523E16E96006CD852 /* CDVWebViewProcessPoolFactory.m */; };
@@ -244,8 +246,6 @@
 			children = (
 				4E714D3223F535B500A321AF /* CDVLaunchScreen.h */,
 				4E714D3423F535B500A321AF /* CDVLaunchScreen.m */,
-				4E714D3523F535B500A321AF /* CDVViewController+LaunchScreen.h */,
-				4E714D3323F535B500A321AF /* CDVViewController+LaunchScreen.m */,
 			);
 			path = CDVLaunchScreen;
 			sourceTree = "<group>";
@@ -381,7 +381,7 @@
 				9052DE8D2150D06B008E83D4 /* CDVGestureHandler.h in Headers */,
 				9052DE8E2150D06B008E83D4 /* CDVIntentAndNavigationFilter.h in Headers */,
 				9052DE8F2150D06B008E83D4 /* CDVHandleOpenURL.h in Headers */,
-				4E714D3623F535B500A321AF /* CDVLaunchScreen.h in Headers */,
+				2FCCEA18247E7366007276A8 /* CDVLaunchScreen.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +485,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -540,7 +541,7 @@
 				9052DE822150D040008E83D4 /* CDVGestureHandler.m in Sources */,
 				9052DE832150D040008E83D4 /* CDVIntentAndNavigationFilter.m in Sources */,
 				9052DE842150D040008E83D4 /* CDVHandleOpenURL.m in Sources */,
-				4E714D3823F535B500A321AF /* CDVLaunchScreen.m in Sources */,
+				2FCCEA17247E7366007276A8 /* CDVLaunchScreen.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
