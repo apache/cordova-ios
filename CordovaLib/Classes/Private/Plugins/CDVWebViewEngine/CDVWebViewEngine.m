@@ -160,9 +160,9 @@
         if(hostname == nil){
             hostname = @"localhost";
         }
-    }
 
-    self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
+        self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
+    }
 
     self.uiDelegate = [[CDVWebViewUIDelegate alloc] initWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
 
@@ -170,11 +170,14 @@
 
     WKUserContentController* userContentController = [[WKUserContentController alloc] init];
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
-    NSString * scriptCode = [NSString stringWithFormat:@"window.CDV_ASSETS_URL = '%@';", self.CDV_ASSETS_URL];
-    WKUserScript *wkScript =
-    [[WKUserScript alloc] initWithSource:scriptCode injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
-    if (wkScript) {
-        [userContentController addUserScript:wkScript];
+
+    if(self.CDV_ASSETS_URL) {
+        NSString *scriptCode = [NSString stringWithFormat:@"window.CDV_ASSETS_URL = '%@';", self.CDV_ASSETS_URL];
+        WKUserScript *wkScript = [[WKUserScript alloc] initWithSource:scriptCode injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
+
+        if (wkScript) {
+            [userContentController addUserScript:wkScript];
+        }
     }
 
     WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
