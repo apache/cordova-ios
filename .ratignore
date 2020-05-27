@@ -8,5 +8,4 @@ NSData+Base64.m
 Contents.json
 jasmine.json
 fixtures
-appveyor.yml
 i386

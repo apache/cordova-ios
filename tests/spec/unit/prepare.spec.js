@@ -21,7 +21,6 @@
 const fs = require('fs-extra');
 
 const EventEmitter = require('events');
-const os = require('os');
 const path = require('path');
 const plist = require('plist');
 const xcode = require('xcode');
@@ -30,10 +29,11 @@ const prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
 const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
 
+const tmpDir = path.join(__dirname, '../../../tmp');
 const FIXTURES = path.join(__dirname, 'fixtures');
 
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
-const iosProject = path.join(os.tmpdir(), 'prepare');
+const iosProject = path.join(tmpDir, 'prepare');
 const iosPlatform = path.join(iosProject, 'platforms/ios');
 
 const ConfigParser = require('cordova-common').ConfigParser;
@@ -50,7 +50,7 @@ describe('prepare', () => {
     });
 
     afterEach(() => {
-        fs.removeSync(iosPlatform);
+        fs.removeSync(tmpDir);
     });
 
     describe('launch storyboard feature (CB-9762)', () => {
