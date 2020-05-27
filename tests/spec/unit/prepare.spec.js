@@ -271,7 +271,8 @@ describe('prepare', () => {
                     'Default@2x~universal~anyany.png': 'res/screen/ios/Default@2x~universal~anyany.png',
                     'Default@3x~universal~comany.png': 'res/screen/ios/Default@3x~universal~comany.png',
                     'Default@3x~universal~anycom.png': 'res/screen/ios/Default@3x~universal~anycom.png',
-                    'Default@3x~universal~anyany.png': 'res/screen/ios/Default@3x~universal~anyany.png' };
+                    'Default@3x~universal~anyany.png': 'res/screen/ios/Default@3x~universal~anyany.png'
+                };
                 // update keys with path to storyboardImagesDir
                 for (const k in expectedResourceMap) {
                     if (Object.prototype.hasOwnProperty.call(expectedResourceMap, k)) {
@@ -320,7 +321,8 @@ describe('prepare', () => {
                     'Default@2x~universal~anyany.png': null,
                     'Default@3x~universal~comany.png': null,
                     'Default@3x~universal~anycom.png': null,
-                    'Default@3x~universal~anyany.png': null };
+                    'Default@3x~universal~anyany.png': null
+                };
                 // update keys with path to storyboardImagesDir
                 for (const k in expectedResourceMap) {
                     if (Object.prototype.hasOwnProperty.call(expectedResourceMap, k)) {
@@ -1287,8 +1289,8 @@ describe('prepare', () => {
                 const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 const exceptionDomains = ats.NSExceptionDomains;
                 expect(exceptionDomains['']).toBeUndefined();
-                expect(exceptionDomains['null']).toBeUndefined();
-                expect(exceptionDomains['undefined']).toBeUndefined();
+                expect(exceptionDomains.null).toBeUndefined();
+                expect(exceptionDomains.undefined).toBeUndefined();
             });
         });
         it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', () => {

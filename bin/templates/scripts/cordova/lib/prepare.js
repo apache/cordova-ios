@@ -190,24 +190,24 @@ function updateProject (platformConfig, locations) {
     const infoPlist = plist.parse(fs.readFileSync(plistFile, 'utf8'));
 
     // Update version (bundle version)
-    infoPlist['CFBundleShortVersionString'] = version;
+    infoPlist.CFBundleShortVersionString = version;
     const CFBundleVersion = platformConfig.getAttribute('ios-CFBundleVersion') || default_CFBundleVersion(version);
-    infoPlist['CFBundleVersion'] = CFBundleVersion;
+    infoPlist.CFBundleVersion = CFBundleVersion;
 
     if (platformConfig.getAttribute('defaultlocale')) {
-        infoPlist['CFBundleDevelopmentRegion'] = platformConfig.getAttribute('defaultlocale');
+        infoPlist.CFBundleDevelopmentRegion = platformConfig.getAttribute('defaultlocale');
     }
 
     if (displayName) {
-        infoPlist['CFBundleDisplayName'] = displayName;
+        infoPlist.CFBundleDisplayName = displayName;
     }
 
     // replace Info.plist ATS entries according to <access> and <allow-navigation> config.xml entries
     const ats = writeATSEntries(platformConfig);
     if (Object.keys(ats).length > 0) {
-        infoPlist['NSAppTransportSecurity'] = ats;
+        infoPlist.NSAppTransportSecurity = ats;
     } else {
-        delete infoPlist['NSAppTransportSecurity'];
+        delete infoPlist.NSAppTransportSecurity;
     }
 
     handleOrientationSettings(platformConfig, infoPlist);
@@ -242,24 +242,24 @@ function updateProject (platformConfig, locations) {
 function handleOrientationSettings (platformConfig, infoPlist) {
     switch (getOrientationValue(platformConfig)) {
     case 'portrait':
-        infoPlist['UIInterfaceOrientation'] = ['UIInterfaceOrientationPortrait'];
-        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown'];
+        infoPlist.UIInterfaceOrientation = ['UIInterfaceOrientationPortrait'];
+        infoPlist.UISupportedInterfaceOrientations = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown'];
         infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown'];
         break;
     case 'landscape':
-        infoPlist['UIInterfaceOrientation'] = ['UIInterfaceOrientationLandscapeLeft'];
-        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
+        infoPlist.UIInterfaceOrientation = ['UIInterfaceOrientationLandscapeLeft'];
+        infoPlist.UISupportedInterfaceOrientations = ['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         break;
     case 'all':
-        infoPlist['UIInterfaceOrientation'] = ['UIInterfaceOrientationPortrait'];
-        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
+        infoPlist.UIInterfaceOrientation = ['UIInterfaceOrientationPortrait'];
+        infoPlist.UISupportedInterfaceOrientations = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         break;
     case 'default':
-        infoPlist['UISupportedInterfaceOrientations'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
+        infoPlist.UISupportedInterfaceOrientations = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
         infoPlist['UISupportedInterfaceOrientations~ipad'] = ['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'];
-        delete infoPlist['UIInterfaceOrientation'];
+        delete infoPlist.UIInterfaceOrientation;
     }
 }
 
@@ -461,7 +461,7 @@ function alertDeprecatedPreference (configParser) {
             if (newPreferenceKey) {
                 log.push(`It is recommended to replace this preference with "${newPreferenceKey}."`);
             } else {
-                log.push(`There is no replacement for this preference.`);
+                log.push('There is no replacement for this preference.');
             }
 
             /**
@@ -472,7 +472,7 @@ function alertDeprecatedPreference (configParser) {
              * Typically caused by implementation nature or third-party requirement changes.
              */
             if (!isDeprecated) {
-                log.push(`Please note that this preference will be removed in the near future.`);
+                log.push('Please note that this preference will be removed in the near future.');
             }
 
             events.emit('warn', log.join(' '));
@@ -957,17 +957,17 @@ function writeATSEntries (config) {
             if (hostname === '*') {
                 // always write this, for iOS 9, since in iOS 10 it will be overriden if
                 // any of the other three keys are written
-                ats['NSAllowsArbitraryLoads'] = true;
+                ats.NSAllowsArbitraryLoads = true;
 
                 // at least one of the overriding keys is present
                 if (entry.NSAllowsArbitraryLoadsInWebContent) {
-                    ats['NSAllowsArbitraryLoadsInWebContent'] = true;
+                    ats.NSAllowsArbitraryLoadsInWebContent = true;
                 }
                 if (entry.NSAllowsArbitraryLoadsForMedia) {
-                    ats['NSAllowsArbitraryLoadsForMedia'] = true;
+                    ats.NSAllowsArbitraryLoadsForMedia = true;
                 }
                 if (entry.NSAllowsLocalNetworking) {
-                    ats['NSAllowsLocalNetworking'] = true;
+                    ats.NSAllowsLocalNetworking = true;
                 }
 
                 continue;
@@ -981,11 +981,11 @@ function writeATSEntries (config) {
                 }
             }
 
-            if (!ats['NSExceptionDomains']) {
-                ats['NSExceptionDomains'] = {};
+            if (!ats.NSExceptionDomains) {
+                ats.NSExceptionDomains = {};
             }
 
-            ats['NSExceptionDomains'][hostname] = exceptionDomain;
+            ats.NSExceptionDomains[hostname] = exceptionDomain;
         }
     }
 

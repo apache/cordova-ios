@@ -602,7 +602,7 @@ Api.prototype.setSwiftVersionForCocoaPodsLibraries = function (podsjsonFile) {
                         .map(buildConfiguration => buildConfiguration.value)
                         .forEach(buildId => {
                             __dirty = true;
-                            podConfigs[buildId].buildSettings['SWIFT_VERSION'] = swiftVersion;
+                            podConfigs[buildId].buildSettings.SWIFT_VERSION = swiftVersion;
                         });
                 }
             });

@@ -320,7 +320,7 @@ Podfile.prototype.write = function () {
                 .map(tag => `:${tag} => '${json[tag]}'`);
 
             if ('configurations' in json) {
-                options.push(`:configurations => [${json['configurations'].split(',').map(conf => `'${conf.trim()}'`).join(',')}]`);
+                options.push(`:configurations => [${json.configurations.split(',').map(conf => `'${conf.trim()}'`).join(',')}]`);
             }
             if ('options' in json) {
                 options = [json.options];
