@@ -34,7 +34,7 @@
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@cordova/eslint-config": "^2.0.0",
+    "@cordova/eslint-config": "^3.0.0",
     "find-process": "^1.4.3",
     "jasmine": "^3.5.0",
     "nyc": "^15.0.1",

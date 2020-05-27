@@ -516,9 +516,9 @@ describe('Platform Api', () => {
                         });
                 });
                 it('on a last library, it should remove a json from libraries', () => {
-                    const json1 = Object.assign({}, my_pod_json.libraries['AFNetworking'], { count: 1 });
-                    const json2 = Object.assign({}, my_pod_json.libraries['Eureka'], { count: 1 });
-                    const json3 = Object.assign({}, my_pod_json.libraries['HogeLib'], { count: 1 });
+                    const json1 = Object.assign({}, my_pod_json.libraries.AFNetworking, { count: 1 });
+                    const json2 = Object.assign({}, my_pod_json.libraries.Eureka, { count: 1 });
+                    const json3 = Object.assign({}, my_pod_json.libraries.HogeLib, { count: 1 });
                     podsjson_mock.getLibrary.and.callFake(name => {
                         if (name === json1.name) {
                             return json1;
@@ -549,9 +549,9 @@ describe('Platform Api', () => {
                         });
                 });
                 it('should decrement count in libraries and does not remove if count > 1', () => {
-                    const json1 = Object.assign({}, my_pod_json.libraries['AFNetworking'], { count: 2 });
-                    const json2 = Object.assign({}, my_pod_json.libraries['Eureka'], { count: 1 });
-                    const json3 = Object.assign({}, my_pod_json.libraries['HogeLib'], { count: 1 });
+                    const json1 = Object.assign({}, my_pod_json.libraries.AFNetworking, { count: 2 });
+                    const json2 = Object.assign({}, my_pod_json.libraries.Eureka, { count: 1 });
+                    const json3 = Object.assign({}, my_pod_json.libraries.HogeLib, { count: 1 });
                     podsjson_mock.getLibrary.and.callFake(name => {
                         if (name === json1.name) {
                             return json1;
