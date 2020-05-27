@@ -17,10 +17,12 @@
  * under the License.
  */
 
-const Q = require('q');
 const path = require('path');
 const fs = require('fs-extra');
-const { superspawn: { spawn } } = require('cordova-common');
+const {
+    CordovaError,
+    superspawn: { spawn }
+} = require('cordova-common');
 
 const projectPath = path.join(__dirname, '..', '..');
 
@@ -28,7 +30,7 @@ module.exports.run = () => {
     const projectName = fs.readdirSync(projectPath).filter(name => path.extname(name) === '.xcodeproj');
 
     if (!projectName) {
-        return Q.reject(`No Xcode project found in ${projectPath}`);
+        return Promise.reject(new CordovaError(`No Xcode project found in ${projectPath}`));
     }
 
     const xcodebuildClean = configName => {

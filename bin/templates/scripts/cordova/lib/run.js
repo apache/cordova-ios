@@ -17,10 +17,10 @@
        under the License.
 */
 
-const Q = require('q');
 const path = require('path');
 const build = require('./build');
 const {
+    CordovaError,
     events,
     superspawn: { spawn }
 } = require('cordova-common');
@@ -33,7 +33,7 @@ const projectPath = path.join(__dirname, '..', '..');
 module.exports.run = runOptions => {
     // Validate args
     if (runOptions.device && runOptions.emulator) {
-        return Q.reject('Only one of "device"/"emulator" options should be specified');
+        return Promise.reject(new CordovaError('Only one of "device"/"emulator" options should be specified'));
     }
 
     // support for CB-8168 `cordova/run --list`
@@ -59,7 +59,7 @@ module.exports.run = runOptions => {
             if (!runOptions.nobuild) {
                 return build.run(runOptions);
             } else {
-                return Q.resolve();
+                return Promise.resolve();
             }
         }).then(() => build.findXCodeProjectIn(projectPath))
         .then(projectName => {

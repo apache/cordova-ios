@@ -17,12 +17,11 @@
     under the License.
 */
 
-const Q = require('q');
 const path = require('path');
 const fs = require('fs-extra');
 const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
-const events = require('cordova-common').events;
+const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 
 function updateSubprojectHelp () {
@@ -204,12 +203,12 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
-        return Q.reject('Project already exists');
+        return Promise.reject(new CordovaError('Project already exists'));
     }
 
     // check that parent directory does exist so cp -r will not fail
     if (!fs.existsSync(project_parent)) {
-        return Q.reject(`Parent directory "${project_parent}" of given project path does not exist`);
+        return Promise.reject(new CordovaError(`Parent directory "${project_parent}" of given project path does not exist`));
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
@@ -235,7 +234,7 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     copyScripts(project_path, project_name);
 
     events.emit('log', generateDoneMessage('create', use_shared));
-    return Q.resolve();
+    return Promise.resolve();
 };
 
 exports.updateProject = (projectPath, opts) => {
@@ -248,7 +247,7 @@ exports.updateProject = (projectPath, opts) => {
     '\tcordova platform rm ios\n' +
     '\tcordova platform add ios\n';
 
-    return Q.reject(errorString);
+    return Promise.reject(new CordovaError(errorString));
 };
 
 function generateDoneMessage (type, link) {

@@ -18,7 +18,7 @@
 */
 
 'use strict';
-const Q = require('q');
+
 const fs = require('fs-extra');
 const path = require('path');
 const unorm = require('unorm');
@@ -45,7 +45,7 @@ module.exports.prepare = function (cordovaProject, options) {
     this._config = updateConfigFile(cordovaProject.projectConfig, munger, this.locations);
 
     // Update own www dir with project's www assets and plugins' assets and js-files
-    return Q.when(updateWww(cordovaProject, this.locations))
+    return updateWww(cordovaProject, this.locations)
         // update project according to config.xml changes.
         .then(() => updateProject(this._config, this.locations))
         .then(() => {
@@ -70,12 +70,12 @@ module.exports.clean = function (options) {
     const projectConfigFile = path.join(projectRoot, 'config.xml');
     if ((options && options.noPrepare) || !fs.existsSync(projectConfigFile) ||
             !fs.existsSync(this.locations.configXml)) {
-        return Q();
+        return Promise.resolve();
     }
 
     const projectConfig = new ConfigParser(this.locations.configXml);
 
-    return Q().then(() => {
+    return Promise.resolve().then(() => {
         cleanWww(projectRoot, this.locations);
         cleanIcons(projectRoot, projectConfig, this.locations);
         cleanLaunchStoryboardImages(projectRoot, projectConfig, this.locations);
@@ -152,6 +152,8 @@ function updateWww (cordovaProject, destinations) {
         'verbose', `Merging and updating files from [${sourceDirs.join(', ')}] to ${targetDir}`);
     FileUpdater.mergeAndUpdateDir(
         sourceDirs, targetDir, { rootDir: cordovaProject.root }, logFileOp);
+
+    return Promise.resolve();
 }
 
 /**
@@ -222,7 +224,7 @@ function updateProject (platformConfig, locations) {
     return handleBuildSettings(platformConfig, locations, infoPlist).then(() => {
         if (name === originalName) {
             events.emit('verbose', `iOS Product Name has not changed (still "${originalName}")`);
-            return Q();
+            return Promise.resolve();
         } else { // CB-11712 <name> was changed, we don't support it'
             const errorString =
             'The product name change (<name> tag) in config.xml is not supported dynamically.\n' +
@@ -232,7 +234,7 @@ function updateProject (platformConfig, locations) {
             '\tcordova platform rm ios\n' +
             '\tcordova platform add ios\n';
 
-            return Q.reject(new CordovaError(errorString));
+            return Promise.reject(new CordovaError(errorString));
         }
     });
 }
@@ -272,7 +274,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     try {
         project = projectFile.parse(locations);
     } catch (err) {
-        return Q.reject(new CordovaError(`Could not parse ${locations.pbxproj}: ${err}`));
+        return Promise.reject(new CordovaError(`Could not parse ${locations.pbxproj}: ${err}`));
     }
 
     const origPkg = project.xcode.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, platformConfig.name());
@@ -280,7 +282,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
     // no build settings provided and we don't need to update build settings for launch storyboards,
     // then we don't need to parse and update .pbxproj file
     if (origPkg === pkg && !targetDevice && !deploymentTarget && !swiftVersion) {
-        return Q();
+        return Promise.resolve();
     }
 
     if (origPkg !== pkg) {
@@ -305,7 +307,7 @@ function handleBuildSettings (platformConfig, locations, infoPlist) {
 
     project.write();
 
-    return Q();
+    return Promise.resolve();
 }
 
 function mapIconResources (icons, iconsDir) {

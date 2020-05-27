@@ -38,7 +38,6 @@ const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectF
 const BridgingHeader_mod = require('../../../bin/templates/scripts/cordova/lib/BridgingHeader.js');
 const Podfile_mod = require('../../../bin/templates/scripts/cordova/lib/Podfile');
 const PodsJson_mod = require('../../../bin/templates/scripts/cordova/lib/PodsJson');
-const Q = require('q');
 const FIXTURES = path.join(__dirname, 'fixtures');
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 
@@ -84,7 +83,7 @@ describe('Platform Api', () => {
         if (process.platform === 'darwin') {
             describe('run', () => {
                 beforeEach(() => {
-                    spyOn(check_reqs, 'run').and.returnValue(Q.resolve());
+                    spyOn(check_reqs, 'run').and.returnValue(Promise.resolve());
                 });
                 it('should call into lib/run module', () => {
                     spyOn(run_mod, 'run');
@@ -103,7 +102,7 @@ describe('Platform Api', () => {
             };
             beforeEach(() => {
                 spyOn(PluginManager, 'get').and.returnValue({
-                    addPlugin: function () { return Q(); }
+                    addPlugin: function () { return Promise.resolve(); }
                 });
                 spyOn(BridgingHeader_mod, 'BridgingHeader');
                 spyOn(Podfile_mod, 'Podfile');
@@ -360,7 +359,7 @@ describe('Platform Api', () => {
             };
             beforeEach(() => {
                 spyOn(PluginManager, 'get').and.returnValue({
-                    removePlugin: function () { return Q(); }
+                    removePlugin: function () { return Promise.resolve(); }
                 });
                 spyOn(Podfile_mod, 'Podfile');
                 spyOn(PodsJson_mod, 'PodsJson');

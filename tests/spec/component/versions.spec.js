@@ -27,7 +27,7 @@ if (process.platform === 'darwin') {
             it('should not have found tool by name.', () => {
                 return versions.get_tool_version('unknown').then(
                     () => fail('expected promise rejection'),
-                    error => expect(error).toContain('is not valid tool name')
+                    error => expect(error.message).toContain('is not valid tool name')
                 );
             });
 
