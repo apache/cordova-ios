@@ -17,73 +17,41 @@
     under the License.
 */
 
-const child_process = require('child_process');
+const { superspawn: { spawn } } = require('cordova-common');
 const Q = require('q');
 const semver = require('semver');
 
-exports.get_apple_ios_version = () => {
-    const d = Q.defer();
-    child_process.exec('xcodebuild -showsdks', (error, stdout, stderr) => {
-        if (error) {
-            d.reject(stderr);
-        } else {
-            d.resolve(stdout);
-        }
-    });
+function fetchSdkVersionByType (sdkType) {
+    return spawn('xcodebuild', ['-showsdks'])
+        .then(output => {
+            const regexSdk = new RegExp(`^${sdkType} \\d`);
 
-    return d.promise.then(output => {
-        const regex = /[0-9]*\.[0-9]*/;
-        const versions = [];
-        const regexIOS = /^iOS \d+/;
-        output = output.split('\n');
-        for (let i = 0; i < output.length; i++) {
-            if (output[i].trim().match(regexIOS)) {
-                versions[versions.length] = parseFloat(output[i].match(regex)[0]);
-            }
-        }
-        versions.sort();
-        console.log(versions[0]);
-        return Q();
-    }, stderr => Q.reject(stderr));
+            const versions = output.split('\n')
+                .filter(line => line.trim().match(regexSdk))
+                .map(line => line.match(/\d+\.\d+/)[0])
+                .sort(exports.compareVersions);
+
+            console.log(versions[0]);
+        });
+}
+
+exports.get_apple_ios_version = () => {
+    return fetchSdkVersionByType('iOS');
 };
 
 exports.get_apple_osx_version = () => {
-    const d = Q.defer();
-    child_process.exec('xcodebuild -showsdks', (error, stdout, stderr) => {
-        if (error) {
-            d.reject(stderr);
-        } else {
-            d.resolve(stdout);
-        }
-    });
-
-    return d.promise.then(output => {
-        const regex = /[0-9]*\.[0-9]*/;
-        const versions = [];
-        const regexOSX = /^macOS \d+/;
-        output = output.split('\n');
-        for (let i = 0; i < output.length; i++) {
-            if (output[i].trim().match(regexOSX)) {
-                versions[versions.length] = parseFloat(output[i].match(regex)[0]);
-            }
-        }
-        versions.sort();
-        console.log(versions[0]);
-        return Q();
-    }, stderr => Q.reject(stderr));
+    return fetchSdkVersionByType('macOS');
 };
 
 exports.get_apple_xcode_version = () => {
-    const d = Q.defer();
-    child_process.exec('xcodebuild -version', (error, stdout, stderr) => {
-        const versionMatch = /Xcode (.*)/.exec(stdout);
-        if (error || !versionMatch) {
-            d.reject(stderr);
-        } else {
-            d.resolve(versionMatch[1]);
-        }
-    });
-    return d.promise;
+    return spawn('xcodebuild', ['-version'])
+        .then(output => {
+            const versionMatch = /Xcode (.*)/.exec(output);
+
+            if (!versionMatch) return Promise.reject(output);
+
+            return versionMatch[1];
+        });
 };
 
 /**
@@ -92,15 +60,7 @@ exports.get_apple_xcode_version = () => {
  *                           or rejected in case of error
  */
 exports.get_ios_deploy_version = () => {
-    const d = Q.defer();
-    child_process.exec('ios-deploy --version', (error, stdout, stderr) => {
-        if (error) {
-            d.reject(stderr);
-        } else {
-            d.resolve(stdout);
-        }
-    });
-    return d.promise;
+    return spawn('ios-deploy', ['--version']);
 };
 
 /**
@@ -109,15 +69,7 @@ exports.get_ios_deploy_version = () => {
  *                           or rejected in case of error
  */
 exports.get_cocoapods_version = () => {
-    const d = Q.defer();
-    child_process.exec('pod --version', (error, stdout, stderr) => {
-        if (error) {
-            d.reject(stderr);
-        } else {
-            d.resolve(stdout);
-        }
-    });
-    return d.promise;
+    return spawn('pod', ['--version']);
 };
 
 /**
@@ -126,15 +78,7 @@ exports.get_cocoapods_version = () => {
  *                           or rejected in case of error
  */
 exports.get_ios_sim_version = () => {
-    const d = Q.defer();
-    child_process.exec('ios-sim --version', (error, stdout, stderr) => {
-        if (error) {
-            d.reject(stderr);
-        } else {
-            d.resolve(stdout);
-        }
-    });
-    return d.promise;
+    return spawn('ios-sim', ['--version']);
 };
 
 /**

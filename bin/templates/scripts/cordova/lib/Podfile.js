@@ -21,10 +21,12 @@
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
-const events = require('cordova-common').events;
 const Q = require('q');
-const superspawn = require('cordova-common').superspawn;
-const CordovaError = require('cordova-common').CordovaError;
+const {
+    CordovaError,
+    events,
+    superspawn: { spawn }
+} = require('cordova-common');
 
 Podfile.FILENAME = 'Podfile';
 Podfile.declarationRegexpMap = {
@@ -396,7 +398,7 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
                 events.emit('verbose', toolOptions.ignoreMessage);
                 return Q.resolve();
             } else {
-                return superspawn.spawn('pod', ['install', '--verbose'], opts)
+                return spawn('pod', ['install', '--verbose'], opts)
                     .progress(stdio => {
                         if (stdio.stderr) { console.error(stdio.stderr); }
                         if (stdio.stdout) {

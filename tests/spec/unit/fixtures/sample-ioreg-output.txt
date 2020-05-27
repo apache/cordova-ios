@@ -1,0 +1,154 @@
++-o Root  <class IORegistryEntry, id 0x100000100, retain 42>
+  | {
+  |   "IOKitBuildVersion" = "Darwin Kernel Version 18.7.0: Thu Jun 20 00:00:00 PDT 1977; root:xnu-1337.133.37~0/RELEASE_X86_64"
+  |   "OS Build Version" = "9999G"
+  |   "IOBluetoothActive" = Yes
+  |   "OSKernelCPUSubtype" = 3
+  |   "OSKernelCPUType" = 13333337
+  |   "OSPrelinkKextCount" = 300
+  |   "IOConsoleLocked" = No
+  |   "IORegistryPlanes" = {"Foobar"="Foobar"}
+  |   "IOConsoleUsers" = ({"Foobar"="Foobar"})
+  |   "IOKitDiagnostics" = {"Foobar"="Foobar"}
++-o Root  <class IORegistryEntry, id 0x100000100, retain 42>
+  | {
+  |   "IOKitBuildVersion" = "Darwin Kernel Version 18.7.0: Thu Jun 20 00:00:00 PDT 1977; root:xnu-1337.133.37~0/RELEASE_X86_64"
+  |   "OS Build Version" = "9999G"
+  |   "IOBluetoothActive" = Yes
+  |   "OSKernelCPUSubtype" = 3
+  |   "OSKernelCPUType" = 13333337
+  |   "OSPrelinkKextCount" = 300
+  |   "IOConsoleLocked" = No
+  |   "IORegistryPlanes" = {"Foobar"="Foobar"}
+  |   "IOConsoleUsers" = ({"Foobar"="Foobar"})
+  |   "IOKitDiagnostics" = {"Foobar"="Foobar"}
+  | }
+  |
+  +-o AppleUSBXHCI Root Hub Simulation@14000000  <class AppleUSBRootHubDevice, id 0x100020cab, registered, matched, active, busy 0 (2 ms), retain 9>
+    | {
+    |   "iManufacturer" = 0
+    |   "bNumConfigurations" = 1
+    |   "idProduct" = 12121
+    |   "bMaxPacketSize0" = 8
+    |   "Built-In" = Yes
+    |   "iProduct" = 0
+    |   "USB Product Name" = "AppleUSBXHCI Root Hub Simulation"
+    |   "iSerialNumber" = 0
+    |   "bDeviceClass" = 10
+    |   "IOPowerManagement" = {"DevicePowerState"=0,"CurrentPowerState"=4,"CapabilityFlags"=32768,"MaxPowerState"=4,"DriverPowerState"=4}
+    |   "IOUserClientClass" = "IOUSBDeviceUserClientV2"
+    |   "locationID" = 333333333
+    |   "bDeviceSubClass" = 256
+    |   "bcdUSB" = 255
+    |   "non-removable" = "yes"
+    |   "IOCFPlugInTypes" = {"d490eb2f-28f5-433e-b447-8c6e06680b19"="IOUSBFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+    |   "bDeviceProtocol" = 5
+    |   "USB Vendor Name" = "Apple Inc."
+    |   "Device Speed" = 5
+    |   "idVendor" = 1452
+    |   "IOClassNameOverride" = "IOUSBRootHubDevice"
+    | }
+    | 
+    +-o USB3.0 Hub@14300000  <class AppleUSBDevice, id 0x100019d23, registered, matched, active, busy 0 (527 ms), retain 18>
+      | {
+      |   "sessionID" = 756776508399194
+      |   "iManufacturer" = 1
+      |   "bNumConfigurations" = 1
+      |   "idProduct" = 1344
+      |   "bcdDevice" = 33322
+      |   "Bus Power Available" = 250
+      |   "USB Address" = 2
+      |   "bMaxPacketSize0" = 64
+      |   "iProduct" = 2
+      |   "iSerialNumber" = 0
+      |   "bDeviceClass" = 9
+      |   "Built-In" = No
+      |   "locationID" = 444444444
+      |   "bDeviceSubClass" = 0
+      |   "bcdUSB" = 512
+      |   "USB Product Name" = "USB3.0 Hub"
+      |   "PortNum" = 3
+      |   "non-removable" = "no"
+      |   "IOCFPlugInTypes" = {"d490eb2f-28f5-433e-b447-8c6e06680b19"="IOUSBFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+      |   "bDeviceProtocol" = 2
+      |   "IOUserClientClass" = "IOUSBDeviceUserClientV2"
+      |   "IOPowerManagement" = {"DevicePowerState"=0,"CurrentPowerState"=3,"CapabilityFlags"=65536,"MaxPowerState"=4,"DriverPowerState"=3}
+      |   "kUSBCurrentConfiguration" = 1
+      |   "Device Speed" = 2
+      |   "USB Vendor Name" = "Unknown"
+      |   "idVendor" = 0000
+      |   "IOGeneralInterest" = "IOCommand is not serializable"
+      |   "IOClassNameOverride" = "IOUSBDevice"
+      | }
+      | 
+      +-o iPhone@14400000  <class AppleUSBDevice, id 0x100019d50, registered, matched, active, busy 0 (7 ms), retain 32>
+      |   {
+      |     "sessionID" = 117367051705201
+      |     "iManufacturer" = 1
+      |     "bNumConfigurations" = 5
+      |     "idProduct" = 7890
+      |     "bcdDevice" = 9867
+      |     "Bus Power Available" = 250
+      |     "USB Address" = 4
+      |     "bMaxPacketSize0" = 64
+      |     "iProduct" = 2
+      |     "iSerialNumber" = 3
+      |     "bDeviceClass" = 0
+      |     "Built-In" = No
+      |     "locationID" = 63829761
+      |     "bDeviceSubClass" = 0
+      |     "bcdUSB" = 512
+      |     "USB Product Name" = "iPhone"
+      |     "PortNum" = 2
+      |     "non-removable" = "no"
+      |     "IOCFPlugInTypes" = {"d490eb2f-28f5-433e-b447-8c6e06680b19"="IOUSBFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+      |     "bDeviceProtocol" = 0
+      |     "IOUserClientClass" = "IOUSBDeviceUserClientV2"
+      |     "IOPowerManagement" = {"DevicePowerState"=0,"CurrentPowerState"=4,"CapabilityFlags"=32768,"MaxPowerState"=4,"DriverPowerState"=4}
+      |     "SupportsIPhoneOS" = Yes
+      |     "Device Speed" = 2
+      |     "USB Vendor Name" = "Apple Inc."
+      |     "idVendor" = 1452
+      |     "Preferred Configuration" = 3
+      |     "kUSBCurrentConfiguration" = 5
+      |     "IOGeneralInterest" = "IOCommand is not serializable"
+      |     "USB Serial Number" = "THE_IPHONE_SERIAL"
+      |     "kCallInterfaceOpenWithGate" = Yes
+      |     "IOClassNameOverride" = "IOUSBDevice"
+      |   }
+      | 
+      +-o iPad@14500000  <class AppleUSBDevice, id 0x100019d50, registered, matched, active, busy 0 (7 ms), retain 32>
+          {
+            "sessionID" = 391543963420811
+            "iManufacturer" = 1
+            "bNumConfigurations" = 5
+            "idProduct" = 7891
+            "bcdDevice" = 9866
+            "Bus Power Available" = 250
+            "USB Address" = 3
+            "bMaxPacketSize0" = 64
+            "iProduct" = 2
+            "iSerialNumber" = 3
+            "bDeviceClass" = 0
+            "Built-In" = No
+            "locationID" = 63829762
+            "bDeviceSubClass" = 0
+            "bcdUSB" = 512
+            "USB Product Name" = "iPad"
+            "PortNum" = 3
+            "non-removable" = "no"
+            "IOCFPlugInTypes" = {"d490eb2f-28f5-433e-b447-8c6e06680b19"="IOUSBFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+            "bDeviceProtocol" = 0
+            "IOUserClientClass" = "IOUSBDeviceUserClientV2"
+            "IOPowerManagement" = {"DevicePowerState"=0,"CurrentPowerState"=4,"CapabilityFlags"=32768,"MaxPowerState"=4,"DriverPowerState"=4}
+            "SupportsIPadOS" = Yes
+            "Device Speed" = 2
+            "USB Vendor Name" = "Apple Inc."
+            "idVendor" = 1452
+            "Preferred Configuration" = 3
+            "kUSBCurrentConfiguration" = 5
+            "IOGeneralInterest" = "IOCommand is not serializable"
+            "USB Serial Number" = "THE_IPAD_SERIAL"
+            "kCallInterfaceOpenWithGate" = Yes
+            "IOClassNameOverride" = "IOUSBDevice"
+          }

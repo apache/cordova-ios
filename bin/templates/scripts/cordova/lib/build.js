@@ -20,15 +20,16 @@
 const Q = require('q');
 const path = require('path');
 const which = require('which');
-const superspawn = require('cordova-common').superspawn;
+const {
+    events,
+    superspawn: { spawn }
+} = require('cordova-common');
 const fs = require('fs-extra');
 const plist = require('plist');
 const util = require('util');
 
 const check_reqs = require('./check_reqs');
 const projectFile = require('./projectFile');
-
-const events = require('cordova-common').events;
 
 // These are regular expressions to detect if the user is changing any of the built-in xcodebuildArgs
 /* eslint-disable no-useless-escape */
@@ -225,7 +226,7 @@ module.exports.run = buildOpts => {
             fs.removeSync(buildOutputDir);
 
             const xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-            return superspawn.spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+            return spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
         }).then(() => {
             if (!buildOpts.device || buildOpts.noSign) {
                 return;
@@ -273,7 +274,7 @@ module.exports.run = buildOpts => {
 
             function packageArchive () {
                 const xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return superspawn.spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+                return spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
             }
 
             return Q.nfcall(fs.writeFile, exportOptionsPath, exportOptionsPlist, 'utf-8')

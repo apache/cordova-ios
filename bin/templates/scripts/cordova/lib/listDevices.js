@@ -17,38 +17,26 @@
        under the License.
 */
 
-var Q = require('q');
-var exec = require('child_process').exec;
+const { superspawn: { spawn } } = require('cordova-common');
+
+const DEVICE_REGEX = /-o (iPhone|iPad|iPod)@.*?"USB Serial Number" = "([^"]*)"/gs;
 
 /**
  * Gets list of connected iOS devices
  * @return {Promise} Promise fulfilled with list of available iOS devices
  */
 function listDevices () {
-    var commands = [
-        Q.nfcall(exec, "ioreg -p IOUSB -l | sed -n -e '/iPad/,/USB Serial Number/p' | grep 'Serial Number' | awk -F\\\" '{print $4 \" iPad\"}'"),
-        Q.nfcall(exec, "ioreg -p IOUSB -l | sed -n -e '/iPhone/,/USB Serial Number/p' | grep 'Serial Number' | awk -F\\\" '{print $4 \" iPhone\"}'"),
-        Q.nfcall(exec, "ioreg -p IOUSB -l | sed -n -e '/iPod/,/USB Serial Number/p' | grep 'Serial Number' | awk -F\\\" '{print $4 \" iPod\"}'")
-    ];
-
-    // wrap al lexec calls into promises and wait until they're fullfilled
-    return Q.all(commands).then(function (results) {
-        var accumulator = [];
-        results.forEach(function (result) {
-            var devicefound;
-            // Each command promise resolves with array [stout, stderr], and we need stdout only
-            // Append stdout lines to accumulator
-            devicefound = result[0].trim().split('\n');
-            if (devicefound && devicefound.length) {
-                devicefound.forEach(function (device) {
-                    if (device) {
-                        accumulator.push(device);
-                    }
-                });
-            }
+    return spawn('ioreg', ['-p', 'IOUSB', '-l'])
+        .then(output => {
+            return [...matchAll(output, DEVICE_REGEX)]
+                .map(m => m.slice(1).reverse().join(' '));
         });
-        return accumulator;
-    });
+}
+
+// TODO: Should be replaced with String#matchAll once available
+function * matchAll (s, r) {
+    let match;
+    while ((match = r.exec(s))) yield match;
 }
 
 exports.run = listDevices;
