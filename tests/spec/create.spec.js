@@ -17,37 +17,38 @@
  under the License.
  */
 
-const shell = require('shelljs');
 const spec = __dirname;
 const path = require('path');
-const util = require('util');
+const fs = require('fs-extra');
+const { superspawn } = require('cordova-common');
 
 const cordova_bin = path.join(spec, '../..', 'bin');
 const tmp = require('tmp').dirSync().name;
 
 function createAndBuild (projectname, projectid) {
-    let return_code = 0;
-    let command;
+    const projectTempDir = path.join(`${tmp}/${projectname}`);
+    const createBin = path.join(`${cordova_bin}/create`);
+    const buildBin = path.join(`${projectTempDir}/cordova/build`);
 
-    // remove existing folder
-    command = path.join(tmp, projectname);
-    shell.rm('-rf', command);
+    // Remove any pre-existing temp projects
+    fs.removeSync(projectTempDir);
 
-    // create the project
-    command = util.format('"%s/create" "%s/%s" %s "%s"', cordova_bin, tmp, projectname, projectid, projectname);
-    shell.echo(command);
-    return_code = shell.exec(command).code;
-    expect(return_code).toBe(0);
+    return superspawn.spawn(createBin, [projectTempDir, projectid, projectname], { printCommand: true }).then(
+        () => {
+            expect(true).toBe(true); // It is expected that create is successful
 
-    // build the project
-    command = util.format('"%s/cordova/build" --emulator', path.join(tmp, projectname));
-    shell.echo(command);
-    return_code = shell.exec(command, { silent: true }).code;
-    expect(return_code).toBe(0);
-
-    // clean-up
-    command = path.join(tmp, projectname);
-    shell.rm('-rf', command);
+            return superspawn.spawn(buildBin, ['--emulator'], { printCommand: true }).then(
+                () => {
+                    expect(true).toBe(true); // It is expected that build is successful
+                },
+                () => fail('Project Build has failed and is not expected.')
+            );
+        },
+        () => fail('Project create has failed and is not expected.')
+    ).finally(() => {
+        // Delete Temp Project
+        fs.removeSync(projectTempDir);
+    });
 }
 
 describe('create', () => {

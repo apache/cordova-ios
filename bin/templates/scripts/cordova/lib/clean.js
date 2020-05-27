@@ -19,13 +19,13 @@
 
 const Q = require('q');
 const path = require('path');
-const shell = require('shelljs');
+const fs = require('fs-extra');
 const superspawn = require('cordova-common').superspawn;
 
 const projectPath = path.join(__dirname, '..', '..');
 
 module.exports.run = () => {
-    const projectName = shell.ls(projectPath).filter(name => path.extname(name) === '.xcodeproj')[0];
+    const projectName = fs.readdirSync(projectPath).filter(name => path.extname(name) === '.xcodeproj');
 
     if (!projectName) {
         return Q.reject(`No Xcode project found in ${projectPath}`);
@@ -41,5 +41,5 @@ module.exports.run = () => {
 
     return xcodebuildClean('Debug')
         .then(() => xcodebuildClean('Release'))
-        .then(() => shell.rm('-rf', path.join(projectPath, 'build')));
+        .then(() => fs.removeSync(path.join(projectPath, 'build')));
 };

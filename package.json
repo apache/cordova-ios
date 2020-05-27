@@ -35,6 +35,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@cordova/eslint-config": "^2.0.0",
+    "find-process": "^1.4.3",
     "jasmine": "^3.5.0",
     "nyc": "^15.0.1",
     "rewire": "^5.0.0",
@@ -51,8 +52,8 @@
     "plist": "^3.0.1",
     "q": "^1.5.1",
     "semver": "^7.3.2",
-    "shelljs": "^0.5.3",
     "unorm": "^1.6.0",
+    "which": "^2.0.2",
     "xcode": "^3.0.1",
     "xml-escape": "^1.1.0"
   },

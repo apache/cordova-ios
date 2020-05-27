@@ -19,7 +19,6 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const shell = require('shelljs');
 const EventEmitter = require('events').EventEmitter;
 const ConfigParser = require('cordova-common').ConfigParser;
 const PluginInfo = require('cordova-common').PluginInfo;
@@ -33,13 +32,11 @@ const iosProject = path.join(FIXTURES, 'dummyProj');
 const iosPlatform = path.join(iosProject, 'platforms/ios');
 const dummyPlugin = path.join(FIXTURES, DUMMY_PLUGIN);
 
-shell.config.silent = true;
-
 describe('prepare after plugin add', () => {
     let api;
     beforeEach(() => {
-        shell.mkdir('-p', iosPlatform);
-        shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
+        fs.ensureDirSync(iosPlatform);
+        fs.copySync(iosProjectFixture, iosPlatform);
         api = new Api('ios', iosPlatform, new EventEmitter());
 
         jasmine.addMatchers({
@@ -69,7 +66,7 @@ describe('prepare after plugin add', () => {
     });
 
     afterEach(() => {
-        shell.rm('-rf', iosPlatform);
+        fs.removeSync(iosPlatform);
     });
 
     it('Test 001 : should not overwrite plugin metadata added by "addPlugin"', () => {

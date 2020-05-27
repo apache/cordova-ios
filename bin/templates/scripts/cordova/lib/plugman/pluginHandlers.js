@@ -17,7 +17,6 @@
 'use strict';
 const fs = require('fs-extra');
 const path = require('path');
-const shell = require('shelljs');
 const util = require('util');
 const events = require('cordova-common').events;
 const CordovaError = require('cordova-common').CordovaError;
@@ -77,7 +76,7 @@ const handlers = {
             const destFile = path.resolve(project.resources_dir, target);
 
             project.xcode.removeResourceFile(path.join('Resources', target));
-            shell.rm('-rf', destFile);
+            fs.removeSync(destFile);
         }
     },
     framework: { // CB-5238 custom frameworks only
@@ -149,7 +148,7 @@ const handlers = {
             if (pbxFile) {
                 project.xcode.removeFromPbxEmbedFrameworksBuildPhase(pbxFile);
             }
-            shell.rm('-rf', targetDir);
+            fs.removeSync(targetDir);
         }
     },
     'lib-file': {
@@ -201,11 +200,11 @@ const handlers = {
             scriptContent = `cordova.define("${moduleName}", function(require, exports, module) {\n${scriptContent}\n});\n`;
 
             const moduleDestination = path.resolve(project.www, 'plugins', plugin.id, obj.src);
-            shell.mkdir('-p', path.dirname(moduleDestination));
+            fs.ensureDirSync(path.dirname(moduleDestination));
             fs.writeFileSync(moduleDestination, scriptContent, 'utf-8');
             if (options && options.usePlatformWww) {
                 const platformWwwDestination = path.resolve(project.platformWww, 'plugins', plugin.id, obj.src);
-                shell.mkdir('-p', path.dirname(platformWwwDestination));
+                fs.ensureDirSync(path.dirname(platformWwwDestination));
                 fs.writeFileSync(platformWwwDestination, scriptContent, 'utf-8');
             }
         },
@@ -287,7 +286,7 @@ function uninstallHelper (type, obj, project_dir, plugin_id, options, project) {
         project_ref = `Plugins/${fixPathSep(path.relative(project.plugins_dir, destFile))}`;
     }
 
-    shell.rm('-rf', targetDir);
+    fs.removeSync(targetDir);
 
     if (type === 'header-file') {
         project.xcode.removeHeaderFile(project_ref);
@@ -319,15 +318,12 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
     // check that dest path is located in project directory
     if (dest.indexOf(project_dir) !== 0) { throw new CordovaError(`Destination "${dest}" for source file "${src}" is located outside the project`); }
 
-    shell.mkdir('-p', path.dirname(dest));
+    fs.ensureDirSync(path.dirname(dest));
 
     if (link) {
         linkFileOrDirTree(src, dest);
-    } else if (fs.statSync(src).isDirectory()) {
-        // XXX shelljs decides to create a directory when -R|-r is used which sucks. http://goo.gl/nbsjq
-        shell.cp('-Rf', path.join(src, '/*'), dest);
     } else {
-        shell.cp('-f', src, dest);
+        fs.copySync(src, dest);
     }
 }
 
@@ -341,11 +337,11 @@ function copyNewFile (plugin_dir, src, project_dir, dest, link) {
 
 function linkFileOrDirTree (src, dest) {
     if (fs.existsSync(dest)) {
-        shell.rm('-Rf', dest);
+        fs.removeSync(dest);
     }
 
     if (fs.statSync(src).isDirectory()) {
-        shell.mkdir('-p', dest);
+        fs.ensureDirSync(dest);
         fs.readdirSync(src).forEach(entry => {
             linkFileOrDirTree(path.join(src, entry), path.join(dest, entry));
         });
@@ -357,12 +353,12 @@ function linkFileOrDirTree (src, dest) {
 // checks if file exists and then deletes. Error if doesn't exist
 function removeFile (project_dir, src) {
     const file = path.resolve(project_dir, src);
-    shell.rm('-Rf', file);
+    fs.removeSync(file);
 }
 
 // deletes file/directory without checking
 function removeFileF (file) {
-    shell.rm('-Rf', file);
+    fs.removeSync(file);
 }
 
 function removeFileAndParents (baseDir, destFile, stopper) {

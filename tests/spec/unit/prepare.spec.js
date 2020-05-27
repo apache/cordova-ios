@@ -23,7 +23,6 @@ const fs = require('fs-extra');
 const EventEmitter = require('events');
 const os = require('os');
 const path = require('path');
-const shell = require('shelljs');
 const plist = require('plist');
 const xcode = require('xcode');
 const rewire = require('rewire');
@@ -37,8 +36,6 @@ const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 const iosProject = path.join(os.tmpdir(), 'prepare');
 const iosPlatform = path.join(iosProject, 'platforms/ios');
 
-shell.config.silent = true;
-
 const ConfigParser = require('cordova-common').ConfigParser;
 
 describe('prepare', () => {
@@ -47,13 +44,13 @@ describe('prepare', () => {
     beforeEach(() => {
         Api = rewire('../../../bin/templates/scripts/cordova/Api');
 
-        shell.mkdir('-p', iosPlatform);
-        shell.cp('-rf', `${iosProjectFixture}/*`, iosPlatform);
+        fs.ensureDirSync(iosPlatform);
+        fs.copySync(iosProjectFixture, iosPlatform);
         p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
     afterEach(() => {
-        shell.rm('-rf', path.join(__dirname, 'some'));
+        fs.removeSync(iosPlatform);
     });
 
     describe('launch storyboard feature (CB-9762)', () => {
@@ -223,8 +220,7 @@ describe('prepare', () => {
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
                 const expectedPath = path.join(platformProjDir, 'Images.xcassets', 'LaunchStoryboard.imageset/');
 
-                const fileExists = shell.test('-e', assetCatalogPath);
-                expect(fileExists).toEqual(true);
+                expect(fs.existsSync(assetCatalogPath)).toEqual(true);
 
                 const returnPath = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
                 expect(returnPath).toEqual(expectedPath);
@@ -234,8 +230,7 @@ describe('prepare', () => {
                 const platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
 
-                const fileExists = shell.test('-e', assetCatalogPath);
-                expect(fileExists).toEqual(false);
+                expect(fs.existsSync(assetCatalogPath)).toEqual(false);
 
                 const returnPath = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
                 expect(returnPath).toBeNull();
@@ -264,7 +259,7 @@ describe('prepare', () => {
                 };
 
                 // copy the splash screen fixtures to the iOS project
-                shell.cp('-rf', path.join(FIXTURES, 'launch-storyboard-support', 'res'), iosProject);
+                fs.copySync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'));
 
                 // copy splash screens and update Contents.json
                 updateLaunchStoryboardImages(project, p.locations);
@@ -311,7 +306,7 @@ describe('prepare', () => {
                     projectConfig: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', 'modern-only.xml'))
                 };
 
-                shell.cp('-rf', path.join(FIXTURES, 'launch-storyboard-support', 'res'), iosProject);
+                fs.copySync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'));
                 updateLaunchStoryboardImages(project, p.locations);
 
                 // now, clean the images
@@ -348,7 +343,6 @@ describe('prepare', () => {
 
     describe('updateProject method', () => {
         /* eslint-disable no-unused-vars */
-        let mv;
         let update_name;
         /* eslint-enable no-unused-vars */
         const xcOrig = xcode.project;
@@ -365,7 +359,6 @@ describe('prepare', () => {
             cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
             cfg3 = new ConfigParser(path.join(FIXTURES, 'test-config-3.xml'));
 
-            mv = spyOn(shell, 'mv');
             writeFileSyncSpy = spyOn(fs, 'writeFileSync');
 
             spyOn(plist, 'parse').and.returnValue({});
@@ -1412,7 +1405,7 @@ describe('prepare', () => {
 
         it('Test#021 : should update project-level www and with platform agnostic www and merges', () => {
             const merges_path = path.join(project.root, 'merges', 'ios');
-            shell.mkdir('-p', merges_path);
+            fs.ensureDirSync(merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 ['www', path.join('platforms', 'ios', 'platform_www'), path.join('merges', 'ios')],
@@ -1422,7 +1415,7 @@ describe('prepare', () => {
         });
         it('Test#022 : should skip merges if merges directory does not exist', () => {
             const merges_path = path.join(project.root, 'merges', 'ios');
-            shell.rm('-rf', merges_path);
+            fs.removeSync(merges_path);
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 ['www', path.join('platforms', 'ios', 'platform_www')],

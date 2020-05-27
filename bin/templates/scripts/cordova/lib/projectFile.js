@@ -22,7 +22,6 @@ const plist = require('plist');
 const _ = require('underscore');
 const path = require('path');
 const fs = require('fs-extra');
-const shell = require('shelljs');
 
 const pluginHandlers = require('./plugman/pluginHandlers');
 const CordovaError = require('cordova-common').CordovaError;
@@ -72,7 +71,7 @@ function parseProjectFile (locations) {
             fs.writeFileSync(pbxPath, xcodeproj.writeSync());
             if (Object.keys(this.frameworks).length === 0) {
                 // If there is no framework references remain in the project, just remove this file
-                shell.rm('-rf', frameworks_file);
+                fs.removeSync(frameworks_file);
                 return;
             }
             fs.writeFileSync(frameworks_file, JSON.stringify(this.frameworks, null, 4));

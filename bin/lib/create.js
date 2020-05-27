@@ -17,13 +17,13 @@
     under the License.
 */
 
-const shell = require('shelljs');
 const Q = require('q');
 const path = require('path');
 const fs = require('fs-extra');
 const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
 const events = require('cordova-common').events;
+const utils = require('./utils');
 
 function updateSubprojectHelp () {
     console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
@@ -31,15 +31,21 @@ function updateSubprojectHelp () {
 }
 
 function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
-    shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www'));
-    shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www'));
-    shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www'));
+    fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
+    fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
+    fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
+
+    /*
+     * Check if "CordovaLib" already exists with "fs.lstatSync" and remove it.
+     * Wrapped with try/catch because lstatSync will throw an error if "CordovaLib"
+     * is missing.
+     */
     try {
         const stats = fs.lstatSync(path.join(projectPath, 'CordovaLib'));
         if (stats.isSymbolicLink()) {
             fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
         } else {
-            shell.rm('-rf', path.join(projectPath, 'CordovaLib'));
+            fs.removeSync(path.join(projectPath, 'CordovaLib'));
         }
     } catch (e) { }
     if (use_shared) {
@@ -50,13 +56,13 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
     } else {
         const r = path.join(projectPath, projectName);
-        shell.mkdir('-p', path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        shell.cp('-f', path.join(r, '.gitignore'), projectPath);
-        shell.cp('-rf', path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib'));
-        shell.cp('-f', path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        fs.ensureDirSync(path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
+        fs.copySync(path.join(r, '.gitignore'), path.join(projectPath, '.gitignore'));
+        fs.copySync(path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib/Classes'));
+        fs.copySync(path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib/VERSION'));
+        fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib/cordova.js'));
+        fs.copySync(path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib/CordovaLib_Prefix.pch'));
+        fs.copySync(path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'));
         update_cordova_subproject([path.join(`${r}.xcodeproj`, 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
     }
 }
@@ -66,22 +72,23 @@ function copyScripts (projectPath, projectName) {
     const destScriptsDir = path.join(projectPath, 'cordova');
 
     // Delete old scripts directory.
-    shell.rm('-rf', destScriptsDir);
+    fs.removeSync(destScriptsDir);
 
     // Copy in the new ones.
     const binDir = path.join(ROOT, 'bin');
-    shell.cp('-r', srcScriptsDir, projectPath);
+    fs.copySync(srcScriptsDir, destScriptsDir);
 
     const nodeModulesDir = path.join(ROOT, 'node_modules');
-    if (fs.existsSync(nodeModulesDir)) shell.cp('-r', nodeModulesDir, destScriptsDir);
+    if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
 
     // Copy the check_reqs script
-    shell.cp(path.join(binDir, 'check_reqs*'), destScriptsDir);
+    fs.copySync(path.join(binDir, 'check_reqs'), path.join(destScriptsDir, 'check_reqs'));
+    fs.copySync(path.join(binDir, 'check_reqs.bat'), path.join(destScriptsDir, 'check_reqs.bat'));
 
     // Copy the version scripts
-    shell.cp(path.join(binDir, 'apple_ios_version'), destScriptsDir);
-    shell.cp(path.join(binDir, 'apple_osx_version'), destScriptsDir);
-    shell.cp(path.join(binDir, 'apple_xcode_version'), destScriptsDir);
+    fs.copySync(path.join(binDir, 'apple_ios_version'), path.join(destScriptsDir, 'apple_ios_version'));
+    fs.copySync(path.join(binDir, 'apple_osx_version'), path.join(destScriptsDir, 'apple_osx_version'));
+    fs.copySync(path.join(binDir, 'apple_xcode_version'), path.join(destScriptsDir, 'apple_xcode_version'));
 
     // TODO: the two files being edited on-the-fly here are shared between
     // platform and project-level commands. the below `sed` is updating the
@@ -89,20 +96,15 @@ function copyScripts (projectPath, projectName) {
     // modules across both the repo and generated projects, we should make sure
     // to remove/update this.
     const path_regex = /templates\/scripts\/cordova\//;
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'check_reqs'));
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_ios_version'));
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_osx_version'));
-    shell.sed('-i', path_regex, '', path.join(destScriptsDir, 'apple_xcode_version'));
+    utils.replaceFileContents(path.join(destScriptsDir, 'check_reqs'), path_regex, '');
+    utils.replaceFileContents(path.join(destScriptsDir, 'apple_ios_version'), path_regex, '');
+    utils.replaceFileContents(path.join(destScriptsDir, 'apple_osx_version'), path_regex, '');
+    utils.replaceFileContents(path.join(destScriptsDir, 'apple_xcode_version'), path_regex, '');
 
     // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
     const project_name_esc = projectName.replace(/&/g, '\\&');
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-debug.xcconfig'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(destScriptsDir, 'build-release.xcconfig'));
-
-    // Make sure they are executable (sometimes zipping them can remove executable bit)
-    shell.find(destScriptsDir).forEach(entry => {
-        shell.chmod(755, entry);
-    });
+    utils.replaceFileContents(path.join(destScriptsDir, 'build-debug.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(destScriptsDir, 'build-release.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
 }
 
 /*
@@ -116,22 +118,22 @@ function copyScripts (projectPath, projectName) {
 function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
     const r = path.join(project_path, project_name);
 
-    shell.rm('-rf', path.join(`${r}.xcodeproj`));
-    shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcodeproj'), project_path);
-    shell.mv('-f', path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
+    fs.removeSync(path.join(`${r}.xcodeproj`));
+    fs.copySync(path.join(project_template_dir, '__TEMP__.xcodeproj'), path.join(`${project_path}/__TEMP__.xcodeproj`));
+    fs.moveSync(path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
 
-    shell.rm('-rf', path.join(project_path, `${project_name}.xcworkspace`));
-    shell.cp('-rf', path.join(project_template_dir, '__TEMP__.xcworkspace'), project_path);
-    shell.mv('-f', path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
-    shell.mv('-f', path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
+    fs.removeSync(path.join(project_path, `${project_name}.xcworkspace`));
+    fs.copySync(path.join(project_template_dir, '__TEMP__.xcworkspace'), path.join(`${project_path}/__TEMP__.xcworkspace`));
+    fs.moveSync(path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
+    fs.moveSync(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
-    shell.rm('-rf', r);
-    shell.cp('-rf', path.join(project_template_dir, '__PROJECT_NAME__'), project_path);
-    shell.mv('-f', path.join(project_path, '__PROJECT_NAME__'), r);
+    fs.removeSync(r);
+    fs.copySync(path.join(project_template_dir, '__PROJECT_NAME__'), path.join(`${project_path}/__PROJECT_NAME__`));
+    fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
 
-    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
-    shell.mv('-f', path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
-    shell.mv('-f', path.join(r, 'gitignore'), path.join(r, '.gitignore'));
+    fs.moveSync(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
+    fs.moveSync(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
+    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
 
     /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
      *
@@ -147,19 +149,19 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
     const project_name_xml_esc = xmlescape(project_name);
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_xml_esc, path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
+    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'), /__PROJECT_NAME__/g, project_name_xml_esc);
+    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`), /__PROJECT_NAME__/g, project_name_xml_esc);
 
     const project_name_esc = project_name.replace(/&/g, '\\&');
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(`${r}.xcodeproj`, 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_ID__/g, package_name, path.join(`${r}.xcodeproj`, 'project.pbxproj'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.h'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'AppDelegate.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.h'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'Classes', 'MainViewController.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, 'main.m'));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, `${project_name}-Info.plist`));
-    shell.sed('-i', /__PROJECT_NAME__/g, project_name_esc, path.join(r, `${project_name}-Prefix.pch`));
+    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_ID__/g, package_name);
+    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.h'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.m'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.h'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.m'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, 'main.m'), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, `${project_name}-Info.plist`), /__PROJECT_NAME__/g, project_name_esc);
+    utils.replaceFileContents(path.join(r, `${project_name}-Prefix.pch`), /__PROJECT_NAME__/g, project_name_esc);
 }
 
 function AbsParentPath (_path) {
@@ -218,14 +220,15 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
     // create the project directory and copy over files
-    shell.mkdir(project_path);
-    shell.cp('-rf', path.join(project_template_dir, 'www'), project_path);
+    fs.ensureDirSync(project_path);
+    fs.copySync(path.join(project_template_dir, 'www'), path.join(project_path, 'www'));
 
     // Copy project template files
     copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
 
     // Copy xcconfig files
-    shell.cp('-rf', path.join(project_template_dir, '*.xcconfig'), project_path);
+    fs.copySync(path.join(project_template_dir, 'pods-debug.xcconfig'), path.join(project_path, 'pods-debug.xcconfig'));
+    fs.copySync(path.join(project_template_dir, 'pods-release.xcconfig'), path.join(project_path, 'pods-release.xcconfig'));
 
     // CordovaLib stuff
     copyJsAndCordovaLib(project_path, project_name, use_shared, config);
@@ -272,29 +275,26 @@ function update_cordova_subproject (argv) {
     }
 
     const parentProjectPath = AbsParentPath(projectPath);
-    let subprojectPath = relpath(cordovaLibXcodePath, parentProjectPath);
-    const REGEX = /(.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
-    let newLine;
-    let lines = shell.grep('CordovaLib.xcodeproj', path.join(projectPath, 'project.pbxproj'));
-    let found = false;
+    const subprojectPath = relpath(cordovaLibXcodePath, parentProjectPath);
+    const projectPbxprojPath = path.join(projectPath, 'project.pbxproj');
+    const line = utils.grep(
+        projectPbxprojPath,
+        /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/
+    );
 
-    subprojectPath = subprojectPath.replace(/\\/g, '/');
-    lines = lines.split('\n');
-    for (let i = 0; i < lines.length; ++i) {
-        if (lines[i].match(REGEX)) {
-            found = true;
-            newLine = lines[i].replace(/path = .+?;/, `path = ${subprojectPath};`);
-            newLine = newLine.replace(/sourceTree.+?;/, 'sourceTree = \"<group>\";'); /* eslint no-useless-escape : 0 */
-            if (!newLine.match('name')) {
-                newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
-            }
-            shell.sed('-i', lines[i], newLine, path.join(projectPath, 'project.pbxproj'));
-        }
-    }
-
-    if (!found) {
+    if (!line) {
         throw new Error(`Entry not found in project file for sub-project: ${subprojectPath}`);
     }
+
+    let newLine = line
+        .replace(/path = .+?;/, `path = ${subprojectPath};`)
+        .replace(/sourceTree.+?;/, 'sourceTree = \"<group>\";'); /* eslint no-useless-escape : 0 */
+
+    if (!newLine.match('name')) {
+        newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
+    }
+
+    utils.replaceFileContents(projectPbxprojPath, line, newLine);
 }
 
 exports.updateSubprojectHelp = updateSubprojectHelp;
