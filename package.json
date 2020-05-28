@@ -3,13 +3,8 @@
   "version": "6.0.0-dev",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/apache/cordova-ios"
-  },
-  "bugs": {
-    "url": "https://github.com/apache/cordova-ios/issues"
-  },
+  "repository": "github:apache/cordova-ios",
+  "bugs": "https://github.com/apache/cordova-ios/issues",
   "keywords": [
     "ios",
     "cordova",
