@@ -1,5 +1,5 @@
 // Platform: ios
-// 17ed8ef404a1efc5cfc6c14e5df031f7d84e23f8
+// 538a985db128858c0a0eb4dd40fb9c8e5433fc94
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '6.0.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '6.0.0';
 // file: src/scripts/require.js
 var require;
 var define;
@@ -1428,6 +1428,24 @@ for (var key in console) {
 
 });
 
+// file: ../cordova-ios/cordova-js-src/plugin/ios/launchscreen.js
+define("cordova/plugin/ios/launchscreen", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+var launchscreen = {
+    show: function () {
+        exec(null, null, 'LaunchScreen', 'show', []);
+    },
+    hide: function () {
+        exec(null, null, 'LaunchScreen', 'hide', []);
+    }
+};
+
+module.exports = launchscreen;
+
+});
+
 // file: ../cordova-ios/cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
@@ -1785,24 +1803,6 @@ var WkWebKit = {
 };
 
 module.exports = WkWebKit;
-
-});
-
-// file: ../cordova-ios/cordova-js-src/plugin/ios/launchscreen.js
-define("cordova/plugin/ios/launchscreen", function(require, exports, module) {
-
-var exec = require('cordova/exec');
-
-var launchscreen = {
-    show:function() {
-        exec(null, null, "LaunchScreen", "show", []);
-    },
-    hide:function() {
-        exec(null, null, "LaunchScreen", "hide", []);
-    }
-};
-
-module.exports = launchscreen;
 
 });
 
