@@ -225,7 +225,7 @@ describe('unit tests for Podfile module', () => {
                 count: 1
             };
             const json2 = {
-                source: 'https://github.com/CocoaPods/Specs.git',
+                source: 'https://cdn.cocoapods.org/',
                 count: 2
             };
             podsjson.setJsonSource(json.source, json);

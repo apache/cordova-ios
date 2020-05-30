@@ -143,7 +143,7 @@ describe('Platform Api', () => {
                     },
                     sources: {
                         'https://github.com/sample/SampleSpecs.git': { source: 'https://github.com/sample/SampleSpecs.git' },
-                        'https://github.com/CocoaPods/Specs.git': { source: 'https://github.com/CocoaPods/Specs.git' }
+                        'https://cdn.cocoapods.org/': { source: 'https://cdn.cocoapods.org/' }
                     },
                     libraries: {
                         AFNetworking: {
@@ -206,28 +206,28 @@ describe('Platform Api', () => {
                     return api.addPlugin(my_plugin)
                         .then(() => {
                             expect(podsjson_mock.getSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                             expect(podsjson_mock.setJsonSource.calls.count()).toEqual(2);
                             compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [
                                 ['https://github.com/sample/SampleSpecs.git', { source: 'https://github.com/sample/SampleSpecs.git', count: 1 }],
-                                ['https://github.com/CocoaPods/Specs.git', { source: 'https://github.com/CocoaPods/Specs.git', count: 1 }]
+                                ['https://cdn.cocoapods.org/', { source: 'https://cdn.cocoapods.org/', count: 1 }]
                             ]);
                             expect(podfile_mock.addSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podfile_mock.addSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                         });
                 });
                 it('should increment count in sources if already exists', () => {
                     podsjson_mock.getSource.and.callFake(source => {
-                        if (source === 'https://github.com/CocoaPods/Specs.git') {
-                            return { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
+                        if (source === 'https://cdn.cocoapods.org/') {
+                            return { source: 'https://cdn.cocoapods.org/', count: 1 };
                         }
                         return null;
                     });
                     return api.addPlugin(my_plugin)
                         .then(() => {
                             expect(podsjson_mock.getSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
-                            expect(podsjson_mock.incrementSource).toHaveBeenCalledWith('https://github.com/CocoaPods/Specs.git');
+                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
+                            expect(podsjson_mock.incrementSource).toHaveBeenCalledWith('https://cdn.cocoapods.org/');
                             expect(podsjson_mock.setJsonSource.calls.count()).toEqual(1);
                             compareListWithoutOrder(podsjson_mock.setJsonSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git', { source: 'https://github.com/sample/SampleSpecs.git', count: 1 }]]);
                             expect(podfile_mock.addSource.calls.count()).toEqual(1);
@@ -374,7 +374,7 @@ describe('Platform Api', () => {
                     },
                     sources: {
                         'https://github.com/sample/SampleSpecs.git': { source: 'https://github.com/sample/SampleSpecs.git' },
-                        'https://github.com/CocoaPods/Specs.git': { source: 'https://github.com/CocoaPods/Specs.git' }
+                        'https://cdn.cocoapods.org/': { source: 'https://cdn.cocoapods.org/' }
                     },
                     libraries: {
                         AFNetworking: {
@@ -461,11 +461,11 @@ describe('Platform Api', () => {
                 });
                 it('on a last source, it should remove a json from sources', () => {
                     const json1 = { source: 'https://github.com/sample/SampleSpecs.git', count: 1 };
-                    const json2 = { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
+                    const json2 = { source: 'https://cdn.cocoapods.org/', count: 1 };
                     podsjson_mock.getSource.and.callFake(source => {
                         if (source === 'https://github.com/sample/SampleSpecs.git') {
                             return json1;
-                        } else if (source === 'https://github.com/CocoaPods/Specs.git') {
+                        } else if (source === 'https://cdn.cocoapods.org/') {
                             return json2;
                         }
                         return null;
@@ -473,27 +473,27 @@ describe('Platform Api', () => {
                     podsjson_mock.decrementSource.and.callFake(source => {
                         if (source === 'https://github.com/sample/SampleSpecs.git') {
                             json1.count--;
-                        } else if (source === 'https://github.com/CocoaPods/Specs.git') {
+                        } else if (source === 'https://cdn.cocoapods.org/') {
                             json2.count--;
                         }
                     });
                     return api.removePlugin(my_plugin)
                         .then(() => {
                             expect(podsjson_mock.getSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                             expect(podsjson_mock.decrementSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podsjson_mock.decrementSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podsjson_mock.decrementSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                             expect(podfile_mock.removeSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podfile_mock.removeSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podfile_mock.removeSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                         });
                 });
                 it('should decrement count in sources and does not remove if count > 1', () => {
                     const json1 = { source: 'https://github.com/sample/SampleSpecs.git', count: 2 };
-                    const json2 = { source: 'https://github.com/CocoaPods/Specs.git', count: 1 };
+                    const json2 = { source: 'https://cdn.cocoapods.org/', count: 1 };
                     podsjson_mock.getSource.and.callFake(source => {
                         if (source === 'https://github.com/sample/SampleSpecs.git') {
                             return json1;
-                        } else if (source === 'https://github.com/CocoaPods/Specs.git') {
+                        } else if (source === 'https://cdn.cocoapods.org/') {
                             return json2;
                         }
                         return null;
@@ -501,18 +501,18 @@ describe('Platform Api', () => {
                     podsjson_mock.decrementSource.and.callFake(source => {
                         if (source === 'https://github.com/sample/SampleSpecs.git') {
                             json1.count--;
-                        } else if (source === 'https://github.com/CocoaPods/Specs.git') {
+                        } else if (source === 'https://cdn.cocoapods.org/') {
                             json2.count--;
                         }
                     });
                     return api.removePlugin(my_plugin)
                         .then(() => {
                             expect(podsjson_mock.getSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podsjson_mock.getSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                             expect(podsjson_mock.decrementSource.calls.count()).toEqual(2);
-                            compareListWithoutOrder(podsjson_mock.decrementSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podsjson_mock.decrementSource.calls.allArgs(), [['https://github.com/sample/SampleSpecs.git'], ['https://cdn.cocoapods.org/']]);
                             expect(podfile_mock.removeSource.calls.count()).toEqual(1);
-                            compareListWithoutOrder(podfile_mock.removeSource.calls.allArgs(), [['https://github.com/CocoaPods/Specs.git']]);
+                            compareListWithoutOrder(podfile_mock.removeSource.calls.allArgs(), [['https://cdn.cocoapods.org/']]);
                         });
                 });
                 it('on a last library, it should remove a json from libraries', () => {
