@@ -19,7 +19,7 @@
 require "json"
 
 packageJson = JSON.parse(File.read(File.join(__dir__, "package.json")))
-relVersion = package['version']
+relVersion = packageJson['version']
 relSource  = { :git => "https://github.com/apache/cordova-ios.git",
             :tag => "rel/{relVersion}",
             :submodules => true }
