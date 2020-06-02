@@ -20,8 +20,12 @@
 #import <WebKit/WebKit.h>
 
 @interface CDVWebViewUIDelegate : NSObject <WKUIDelegate>
+{
+    NSMutableArray<UIViewController*>* windows;
+}
 
 @property (nonatomic, copy) NSString* title;
+@property (nonatomic, assign) BOOL allowNewWindows;
 
 - (instancetype)initWithTitle:(NSString*)title;
 
