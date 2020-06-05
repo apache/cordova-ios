@@ -21,7 +21,7 @@ require "json"
 packageJson = JSON.parse(File.read(File.join(__dir__, "package.json")))
 relVersion = package['version']
 relSource  = { :git => "https://github.com/apache/cordova-ios.git",
-            :tag => "rel/{relVersion}",
+            :tag => "rel/#{relVersion}",
             :submodules => true }
 
 Pod::Spec.new do |s|
@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   s.summary      = "Apache Cordova for iOS"
   s.homepage     = "https://github.com/apache/cordova-ios"
   s.license      = { :type => "Apache 2.0", :file => "LICENSE" }
-  s.author       = { "Apache Software Foundation" }
+  s.author       = "Apache Software Foundation"
   s.platform     = :ios, "11.0"
   s.source       = relSource
   s.requires_arc = true
