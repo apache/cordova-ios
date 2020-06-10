@@ -22,6 +22,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -41,7 +42,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="BackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="2ns-9I-Qjs" secondAttribute="trailing" id="FZL-3Z-NFz"/>
                             <constraint firstItem="2ns-9I-Qjs" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="L9l-pw-wXj"/>
@@ -57,5 +58,8 @@
     </scenes>
     <resources>
         <image name="LaunchStoryboard" width="1366" height="1366"/>
+        <namedColor name="BackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
     </resources>
 </document>

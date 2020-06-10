@@ -343,6 +343,107 @@ describe('prepare', () => {
         });
     });
 
+    describe('colorPreferenceToComponents', () => {
+        const colorPreferenceToComponents = prepare.__get__('colorPreferenceToComponents');
+
+        it('should handle #FAB', () => {
+            expect(colorPreferenceToComponents('#FAB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '1.000'
+                }
+            }));
+        });
+
+        it('should handle #FFAABB', () => {
+            expect(colorPreferenceToComponents('#FFAABB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '1.000'
+                }
+            }));
+        });
+
+        it('should handle 0xFFAABB', () => {
+            expect(colorPreferenceToComponents('0xFFAABB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '1.000'
+                }
+            }));
+        });
+
+        it('should handle #99FFAABB', () => {
+            expect(colorPreferenceToComponents('#99FFAABB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '0.600'
+                }
+            }));
+        });
+
+        it('should handle 0x99FFAABB', () => {
+            expect(colorPreferenceToComponents('0x99FFAABB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '0.600'
+                }
+            }));
+        });
+
+        it('should handle null with default', () => {
+            expect(colorPreferenceToComponents(null)).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+
+        it('should handle black with default', () => {
+            expect(colorPreferenceToComponents('black')).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+
+        it('should handle 0xFAB with default', () => {
+            expect(colorPreferenceToComponents('0xFAB')).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+
+        it('should handle #1234 with default', () => {
+            expect(colorPreferenceToComponents('#1234')).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+
+        it('should handle #12345 with default', () => {
+            expect(colorPreferenceToComponents('#12345')).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+
+        it('should handle #1234567 with default', () => {
+            expect(colorPreferenceToComponents('#1234567')).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+
+        it('should handle #NOTHEX with default', () => {
+            expect(colorPreferenceToComponents('#NOTHEX')).toEqual(jasmine.objectContaining({
+                reference: 'systemBackgroundColor'
+            }));
+        });
+    });
+
     describe('updateProject method', () => {
         /* eslint-disable no-unused-vars */
         let update_name;

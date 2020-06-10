@@ -333,8 +333,7 @@
     }
     // /////////////////
 
-    NSString* bgColorString = [self.settings cordovaSettingForKey:@"BackgroundColor"];
-    UIColor* bgColor = [self colorFromColorString:bgColorString];
+    UIColor* bgColor = [UIColor colorNamed:@"BackgroundColor"] ?: UIColor.whiteColor;
     [self.launchView setBackgroundColor:bgColor];
     [self.webView setBackgroundColor:bgColor];
 }
