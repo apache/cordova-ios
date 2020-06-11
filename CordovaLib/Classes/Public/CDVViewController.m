@@ -521,14 +521,13 @@
     webViewBounds.origin = self.view.bounds.origin;
 
     UIView* view = [[UIView alloc] initWithFrame:webViewBounds];
-    view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 
     NSString* launchStoryboardName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchStoryboardName"];
     if (launchStoryboardName != nil) {
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:launchStoryboardName bundle:[NSBundle mainBundle]];
         UIViewController* vc = [storyboard instantiateInitialViewController];
 
-        [view addSubview:[vc.view snapshotViewAfterScreenUpdates:true]];
+        [view addSubview:vc.view];
     }
 
     self.launchView = view;
