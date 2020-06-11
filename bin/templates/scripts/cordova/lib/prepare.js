@@ -51,6 +51,7 @@ module.exports.prepare = function (cordovaProject, options) {
         .then(() => {
             updateIcons(cordovaProject, this.locations);
             updateLaunchStoryboardImages(cordovaProject, this.locations);
+            updateBackgroundColor(cordovaProject, this.locations);
             updateFileResources(cordovaProject, this.locations);
         })
         .then(() => {
@@ -79,6 +80,7 @@ module.exports.clean = function (options) {
         cleanWww(projectRoot, this.locations);
         cleanIcons(projectRoot, projectConfig, this.locations);
         cleanLaunchStoryboardImages(projectRoot, projectConfig, this.locations);
+        cleanBackgroundColor(projectRoot, projectConfig, this.locations);
         cleanFileResources(projectRoot, projectConfig, this.locations);
     });
 };
@@ -395,6 +397,123 @@ function cleanIcons (projectRoot, projectConfig, locations) {
         // Source paths are removed from the map, so updatePaths() will delete the target files.
         FileUpdater.updatePaths(
             resourceMap, { rootDir: projectRoot, all: true }, logFileOp);
+    }
+}
+
+/**
+ * Returns the directory for the BackgroundColor.colorset asset, or null if no
+ * xcassets exist.
+ *
+ * @param  {string} projectRoot        The project's root directory
+ * @param  {string} platformProjDir    The platform's project directory
+ */
+function getBackgroundColorDir (projectRoot, platformProjDir) {
+    if (folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'))) {
+        return path.join(platformProjDir, 'Images.xcassets', 'BackgroundColor.colorset');
+    } else {
+        return null;
+    }
+}
+
+function colorPreferenceToComponents (pref) {
+    if (!pref || !pref.match(/^(#[0-9A-F]{3}|(0x|#)([0-9A-F]{2})?[0-9A-F]{6})$/)) {
+        return {
+            platform: 'ios',
+            reference: 'systemBackgroundColor'
+        };
+    }
+
+    let red = 'FF';
+    let green = 'FF';
+    let blue = 'FF';
+    let alpha = 1.0;
+
+    if (pref[0] === '#' && pref.length === 4) {
+        red = pref[1] + pref[1];
+        green = pref[2] + pref[2];
+        blue = pref[3] + pref[3];
+    }
+
+    if (pref.length >= 7 && (pref[0] === '#' || pref.substring(0, 2) === '0x')) {
+        let offset = pref[0] === '#' ? 1 : 2;
+
+        if (pref.substring(offset).length === 8) {
+            alpha = parseInt(pref.substring(offset, offset + 2), 16) / 255.0;
+            offset += 2;
+        }
+
+        red = pref.substring(offset, offset + 2);
+        green = pref.substring(offset + 2, offset + 4);
+        blue = pref.substring(offset + 4, offset + 6);
+    }
+
+    return {
+        'color-space': 'srgb',
+        components: {
+            red: '0x' + red,
+            green: '0x' + green,
+            blue: '0x' + blue,
+            alpha: alpha.toFixed(3)
+        }
+    };
+}
+
+/**
+ * Update the background color Contents.json in xcassets.
+ *
+ * @param {Object} cordovaProject The cordova project
+ * @param {Object} locations A dictionary containing useful location paths
+ */
+function updateBackgroundColor (cordovaProject, locations) {
+    const pref = cordovaProject.projectConfig.getPreference('BackgroundColor', 'ios') || '';
+
+    const platformProjDir = path.relative(cordovaProject.root, locations.xcodeCordovaProj);
+    const backgroundColorDir = getBackgroundColorDir(cordovaProject.root, platformProjDir);
+
+    if (backgroundColorDir) {
+        const contentsJSON = {
+            colors: [{
+                idiom: 'universal',
+                color: colorPreferenceToComponents(pref)
+            }],
+            info: {
+                author: 'Xcode',
+                version: 1
+            }
+        };
+
+        events.emit('verbose', 'Updating Background Color color set Contents.json');
+        fs.writeFileSync(path.join(cordovaProject.root, backgroundColorDir, 'Contents.json'),
+            JSON.stringify(contentsJSON, null, 2));
+    }
+}
+
+/**
+ * Resets the background color Contents.json in xcassets to default.
+ *
+ * @param {string} projectRoot Path to the project root
+ * @param {Object} projectConfig The project's config.xml
+ * @param {Object} locations A dictionary containing useful location paths
+ */
+function cleanBackgroundColor (projectRoot, projectConfig, locations) {
+    const platformProjDir = path.relative(projectRoot, locations.xcodeCordovaProj);
+    const backgroundColorDir = getBackgroundColorDir(projectRoot, platformProjDir);
+
+    if (backgroundColorDir) {
+        const contentsJSON = {
+            colors: [{
+                idiom: 'universal',
+                color: colorPreferenceToComponents(null)
+            }],
+            info: {
+                author: 'Xcode',
+                version: 1
+            }
+        };
+
+        events.emit('verbose', 'Cleaning Background Color color set Contents.json');
+        fs.writeFileSync(path.join(projectRoot, backgroundColorDir, 'Contents.json'),
+            JSON.stringify(contentsJSON, null, 2));
     }
 }
 
