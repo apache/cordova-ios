@@ -137,9 +137,9 @@
 
     if (@available(iOS 13.0, *)) {
         NSString *contentMode = [settings cordovaSettingForKey:@"PreferredContentMode"];
-        if ([contentMode  isEqual: @"mobile"]) {
+        if ([contentMode isEqual: @"mobile"]) {
             configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeMobile;
-        } else if ([contentMode  isEqual: @"desktop"]) {
+        } else if ([contentMode isEqual: @"desktop"]) {
             configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeDesktop;
         }
         
