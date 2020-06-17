@@ -792,7 +792,7 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
         }
 
         if (item.appearence) {
-            newItem['appearances'] = [{ appearance: 'luminosity', value: item.appearence }];
+            newItem.appearances = [{ appearance: 'luminosity', value: item.appearence }];
         }
 
         // Xcode doesn't want a filename property if there's no image for these traits
