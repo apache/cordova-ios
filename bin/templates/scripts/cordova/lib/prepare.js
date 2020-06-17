@@ -648,7 +648,8 @@ function cleanFileResources (projectRoot, projectConfig, locations) {
  *             height: 'any|com',
  *             filename: undefined|'Default@scale~idiom~widthheight.png',
  *             src: undefined|'path/to/original/matched/image/from/splash/screens.png',
- *             target: undefined|'path/to/asset/library/Default@scale~idiom~widthheight.png'
+ *             target: undefined|'path/to/asset/library/Default@scale~idiom~widthheight.png',
+ *             appearence: undefined|'dark'|'light'
  *         }, ...
  *     ]
  *
@@ -665,39 +666,46 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
         iphone: ['1x', '2x', '3x']
     };
     const sizes = ['com', 'any'];
+    const appearences = ['', 'dark', 'light'];
 
     idioms.forEach(idiom => {
         scalesForIdiom[idiom].forEach(scale => {
             sizes.forEach(width => {
                 sizes.forEach(height => {
-                    const item = { idiom, scale, width, height };
+                    appearences.forEach(appearence => {
+                        const item = { idiom, scale, width, height };
 
-                    /* examples of the search pattern:
-                     *    scale   ~  idiom    ~   width    height
-                     *     @2x    ~ universal ~    any      any
-                     *     @3x    ~  iphone   ~    com      any
-                     *     @2x    ~   ipad    ~    com      any
-                     */
-                    const searchPattern = `@${scale}~${idiom}~${width}${height}`;
+                        if (appearence !== '') {
+                            item.appearence = appearence;
+                        }
 
-                    /* because old node versions don't have Array.find, the below is
-                     * functionally equivalent to this:
-                     *     var launchStoryboardImage = splashScreens.find(function(item) {
-                     *         return item.src.indexOf(searchPattern) >= 0;
-                     *     });
-                     */
-                    const launchStoryboardImage = splashScreens.reduce(
-                        (p, c) => (c.src.indexOf(searchPattern) >= 0) ? c : p,
-                        undefined
-                    );
+                        /* examples of the search pattern:
+                         *    scale   ~  idiom    ~   width    height ~ appearence
+                         *     @2x    ~ universal ~    any      any
+                         *     @3x    ~  iphone   ~    com      any   ~   dark
+                         *     @2x    ~   ipad    ~    com      any   ~   light
+                         */
+                        const searchPattern = '@' + scale + '~' + idiom + '~' + width + height + (appearence ? '~' + appearence : '');
 
-                    if (launchStoryboardImage) {
-                        item.filename = `Default${searchPattern}.png`;
-                        item.src = launchStoryboardImage.src;
-                        item.target = path.join(launchStoryboardImagesDir, item.filename);
-                    }
+                        /* because old node versions don't have Array.find, the below is
+                         * functionally equivalent to this:
+                         *     var launchStoryboardImage = splashScreens.find(function(item) {
+                         *         return (item.src.indexOf(searchPattern) >= 0) ? (appearence !== '' ? true : ((item.src.indexOf(searchPattern + '~light') >= 0 || (item.src.indexOf(searchPattern + '~dark') >= 0)) ? false : true)) : false;
+                         *     });
+                         */
+                        const launchStoryboardImage = splashScreens.reduce(
+                            (p, c) => (c.src.indexOf(searchPattern) >= 0) ? (appearence !== '' ? c : ((c.src.indexOf(searchPattern + '~light') >= 0 || (c.src.indexOf(searchPattern + '~dark') >= 0)) ? p : c)) : p,
+                            undefined
+                        );
 
-                    platformLaunchStoryboardImages.push(item);
+                        if (launchStoryboardImage) {
+                            item.filename = `Default${searchPattern}.png`;
+                            item.src = launchStoryboardImage.src;
+                            item.target = path.join(launchStoryboardImagesDir, item.filename);
+                        }
+
+                        platformLaunchStoryboardImages.push(item);
+                    });
                 });
             });
         });
@@ -743,6 +751,7 @@ function mapLaunchStoryboardResources (splashScreens, launchStoryboardImagesDir)
  *                 scale: '1x|2x|3x',
  *                 width-class: undefined|'compact',
  *                 height-class: undefined|'compact'
+ *                 ...
  *             }, ...
  *         ],
  *         info: {
@@ -780,6 +789,10 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
         }
         if (item.height !== CDV_ANY_SIZE_CLASS) {
             newItem['height-class'] = IMAGESET_COMPACT_SIZE_CLASS;
+        }
+
+        if (item.appearence) {
+            newItem['appearances'] = [{ appearance: 'luminosity', value: item.appearence }];
         }
 
         // Xcode doesn't want a filename property if there's no image for these traits
