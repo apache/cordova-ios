@@ -26,6 +26,7 @@
     self = [super init];
     if (self) {
         self.title = title;
+        windows = [[NSMutableArray alloc] init];
     }
 
     return self;
@@ -119,5 +120,44 @@
 
     [rootController presentViewController:alert animated:YES completion:nil];
 }
+
+- (WKWebView*) webView:(WKWebView*)webView createWebViewWithConfiguration:(WKWebViewConfiguration*)configuration forNavigationAction:(WKNavigationAction*)navigationAction windowFeatures:(WKWindowFeatures*)windowFeatures
+{
+    if (!navigationAction.targetFrame.isMainFrame) {
+        if (self.allowNewWindows) {
+            WKWebView* v = [[WKWebView alloc] initWithFrame:webView.frame configuration:configuration];
+            v.UIDelegate = webView.UIDelegate;
+            v.navigationDelegate = webView.navigationDelegate;
+
+            UIViewController* vc = [[UIViewController alloc] init];
+            vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+            vc.view = v;
+
+            [windows addObject:vc];
+
+            UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
+            [rootController presentViewController:vc animated:YES completion:nil];
+            return v;
+        } else {
+            [webView loadRequest:navigationAction.request];
+        }
+    }
+
+    return nil;
+}
+
+- (void)webViewDidClose:(WKWebView*)webView
+{
+    for (UIViewController* vc in windows) {
+        if (vc.view == webView) {
+            [vc dismissViewControllerAnimated:YES completion:nil];
+            [windows removeObject:vc];
+            break;
+        }
+    }
+
+    // We do not allow closing the primary WebView
+}
+
 
 @end
