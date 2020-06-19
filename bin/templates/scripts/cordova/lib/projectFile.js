@@ -77,7 +77,15 @@ function parseProjectFile (locations) {
             fs.writeFileSync(frameworks_file, JSON.stringify(this.frameworks, null, 4));
         },
         getPackageName: function () {
-            return plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
+            const packageName = plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
+            let bundleIdentifier = packageName;
+
+            const variables = packageName.match(/\$\((\w+)\)/); // match $(VARIABLE), if any
+            if (variables && variables.length >= 2) {
+                bundleIdentifier = xcodeproj.getBuildProperty(variables[1]);
+            }
+
+            return bundleIdentifier.replace(/^"/, '').replace(/"$/, '');
         },
         getInstaller: function (name) {
             return pluginHandlers.getInstaller(name);
