@@ -22,6 +22,17 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 6.1.0 (Jun 21, 2020)
+* [GH-910](https://github.com/apache/cordova-ios/pull/910) Set `$PROJECT_NAME` properly when installing plugins
+* [GH-885](https://github.com/apache/cordova-ios/pull/885) Don't silently ignore creation of new windows
+* [GH-889](https://github.com/apache/cordova-ios/issues/899) Revert "(ios) Don't pre-fill orientation" ([#901](https://github.com/apache/cordova-ios/pull/901))
+* [GH-902](https://github.com/apache/cordova-ios/pull/902) chore: fix eslint failure
+* [GH-808](https://github.com/apache/cordova-ios/pull/808) Dark mode splashscreen storyboard images
+* [GH-886](https://github.com/apache/cordova-ios/pull/886) Add PreferredContentMode preference
+* [GH-890](https://github.com/apache/cordova-ios/issues/890) Fix SplashScreen issues & refactor BackgroundColor ([#896](https://github.com/apache/cordova-ios/pull/896))
+* [GH-888](https://github.com/apache/cordova-ios/pull/888) fix: author and tag podspec errors
+* [GH-882](https://github.com/apache/cordova-ios/pull/882) fix: Properly get version from `package.json`
+
 ### 6.0.0 (May 28, 2020)
 
 * [GH-875](https://github.com/apache/cordova-ios/pull/875) fix: remove `q` leftover
