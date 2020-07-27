@@ -171,11 +171,7 @@ module.exports.run = buildOpts => {
                 if (typeof(buildOpts.provisioningProfile) === 'string') {
                     extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile}\n`;
                 } else {
-                    // HM TODO: this can probably be improved...
-                    const project = createProjectObject(projectPath, projectName);
-                    const bundleIdentifier = project.getPackageName();
-                    console.log("bundleIdentifier is: ", bundleIdentifier);
-                    const keys = Object.keys(buildOpts.provisioningProfile);
+                    const keys = Object.keys(buildOpts.provisioningProfile); // using keys[0] due to issue #955
                     extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile[keys[0]]}\n`;
                 }
             }
@@ -243,7 +239,7 @@ module.exports.run = buildOpts => {
                 if (typeof(buildOpts.provisioningProfile) === 'string') {
                     exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };
                 } else {
-                    console.log("Setting multiple provisioning profiles:", buildOpts.provisioningProfile);
+                    console.log("Setting multiple provisioning profiles for signing");
                     exportOptions.provisioningProfiles = buildOpts.provisioningProfile;
                 }
                 exportOptions.signingStyle = 'manual';
