@@ -168,7 +168,16 @@ module.exports.run = buildOpts => {
                 extraConfig += `CODE_SIGN_RESOURCE_RULES_PATH = ${buildOpts.codeSignResourceRules}\n`;
             }
             if (buildOpts.provisioningProfile) {
-                extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile}\n`;
+                if (typeof(buildOpts.provisioningProfile) === 'string') {
+                    extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile}\n`;
+                } else {
+                    // HM TODO: this can probably be improved...
+                    const project = createProjectObject(projectPath, projectName);
+                    const bundleIdentifier = project.getPackageName();
+                    console.log("bundleIdentifier is: ", bundleIdentifier);
+                    const keys = Object.keys(buildOpts.provisioningProfile);
+                    extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile[keys[0]]}\n`;
+                }
             }
             if (buildOpts.developmentTeam) {
                 extraConfig += `DEVELOPMENT_TEAM = ${buildOpts.developmentTeam}\n`;
@@ -231,7 +240,12 @@ module.exports.run = buildOpts => {
             }
 
             if (buildOpts.provisioningProfile && bundleIdentifier) {
-                exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };
+                if (typeof(buildOpts.provisioningProfile) === 'string') {
+                    exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };
+                } else {
+                    console.log("Setting multiple provisioning profiles:", buildOpts.provisioningProfile);
+                    exportOptions.provisioningProfiles = buildOpts.provisioningProfile;
+                }
                 exportOptions.signingStyle = 'manual';
             }
 

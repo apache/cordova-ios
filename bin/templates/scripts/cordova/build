@@ -40,7 +40,7 @@ var buildOpts = nopt({
     emulator: Boolean,
     codeSignIdentity: String,
     codeSignResourceRules: String,
-    provisioningProfile: String,
+    provisioningProfile: [String, Array],
     automaticProvisioning: Boolean,
     developmentTeam: String,
     packageType: String,
