@@ -168,7 +168,7 @@ module.exports.run = buildOpts => {
                 extraConfig += `CODE_SIGN_RESOURCE_RULES_PATH = ${buildOpts.codeSignResourceRules}\n`;
             }
             if (buildOpts.provisioningProfile) {
-                if (typeof(buildOpts.provisioningProfile) === 'string') {
+                if (typeof buildOpts.provisioningProfile === 'string') {
                     extraConfig += `PROVISIONING_PROFILE = ${buildOpts.provisioningProfile}\n`;
                 } else {
                     const keys = Object.keys(buildOpts.provisioningProfile); // using keys[0] due to issue #955
@@ -236,10 +236,10 @@ module.exports.run = buildOpts => {
             }
 
             if (buildOpts.provisioningProfile && bundleIdentifier) {
-                if (typeof(buildOpts.provisioningProfile) === 'string') {
+                if (typeof buildOpts.provisioningProfile === 'string') {
                     exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };
                 } else {
-                    console.log("Setting multiple provisioning profiles for signing");
+                    console.log('Setting multiple provisioning profiles for signing');
                     exportOptions.provisioningProfiles = buildOpts.provisioningProfile;
                 }
                 exportOptions.signingStyle = 'manual';
