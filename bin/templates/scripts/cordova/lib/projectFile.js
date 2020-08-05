@@ -21,7 +21,8 @@ const xcode = require('xcode');
 const plist = require('plist');
 const _ = require('underscore');
 const path = require('path');
-const fs = require('fs-extra');
+const fs = require('fs');
+const shell = require('shelljs');
 
 const pluginHandlers = require('./plugman/pluginHandlers');
 const CordovaError = require('cordova-common').CordovaError;
@@ -39,13 +40,43 @@ function parseProjectFile (locations) {
     const xcodeproj = xcode.project(pbxPath);
     xcodeproj.parseSync();
 
+    const workspaceName =
+        fs.readdirSync(project_dir).find(d => d.includes('.xcworkspace')) || '';
+
+    const projectName = workspaceName.replace('.xcworkspace', '');
+
     const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
-    const plist_file_entry = _.find(xcBuildConfiguration, entry => entry.buildSettings && entry.buildSettings.INFOPLIST_FILE);
-    const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
+
+    // NOTE: This would be nonsense `/-Info.plist` value if there is no
+    // workspaceName determined from xcworkspace
+    const plistFilePath = `${projectName}/${projectName}-Info.plist`;
+
+    const plist_file_entry = _.find(xcBuildConfiguration, entry => (
+        entry.buildSettings &&
+        entry.buildSettings.INFOPLIST_FILE &&
+        entry.buildSettings.INFOPLIST_FILE.includes(plistFilePath)
+    ));
+
+    if (!plist_file_entry) {
+        throw new CordovaError(
+            'Could not find correct INFOPLIST_FILE entry in pbxproj');
+    }
+
+    const plist_file = path.join(
+        project_dir,
+        plist_file_entry.buildSettings.INFOPLIST_FILE
+            .replace(/^"(.*)"$/g, '$1')
+            .replace(/\\&/g, '&'));
+
+    if (!fs.existsSync(plist_file)) {
+        throw new CordovaError(
+            `Could not find ${projectName}-Info.plist file.`);
+    }
+
     const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
-    if (!fs.existsSync(plist_file) || !fs.existsSync(config_file)) {
-        throw new CordovaError('Could not find *-Info.plist file, or config.xml file.');
+    if (!fs.existsSync(config_file)) {
+        throw new CordovaError('Could not find config.xml file.');
     }
 
     const frameworks_file = path.join(project_dir, 'frameworks.json');
@@ -71,21 +102,13 @@ function parseProjectFile (locations) {
             fs.writeFileSync(pbxPath, xcodeproj.writeSync());
             if (Object.keys(this.frameworks).length === 0) {
                 // If there is no framework references remain in the project, just remove this file
-                fs.removeSync(frameworks_file);
+                shell.rm('-rf', frameworks_file);
                 return;
             }
             fs.writeFileSync(frameworks_file, JSON.stringify(this.frameworks, null, 4));
         },
         getPackageName: function () {
-            const packageName = plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
-            let bundleIdentifier = packageName;
-
-            const variables = packageName.match(/\$\((\w+)\)/); // match $(VARIABLE), if any
-            if (variables && variables.length >= 2) {
-                bundleIdentifier = xcodeproj.getBuildProperty(variables[1]);
-            }
-
-            return bundleIdentifier.replace(/^"/, '').replace(/"$/, '');
+            return plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
         },
         getInstaller: function (name) {
             return pluginHandlers.getInstaller(name);
