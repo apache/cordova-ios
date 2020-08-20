@@ -239,7 +239,7 @@ module.exports.run = buildOpts => {
                 if (typeof buildOpts.provisioningProfile === 'string') {
                     exportOptions.provisioningProfiles = { [bundleIdentifier]: String(buildOpts.provisioningProfile) };
                 } else {
-                    console.log('Setting multiple provisioning profiles for signing');
+                    events.emit('log', 'Setting multiple provisioning profiles for signing');
                     exportOptions.provisioningProfiles = buildOpts.provisioningProfile;
                 }
                 exportOptions.signingStyle = 'manual';
