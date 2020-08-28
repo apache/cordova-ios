@@ -31,7 +31,7 @@
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0",
     "find-process": "^1.4.3",
-    "jasmine": "^3.5.0",
+    "jasmine": "3.5.0",
     "nyc": "^15.0.1",
     "rewire": "^5.0.0",
     "tmp": "^0.1.0"
@@ -40,7 +40,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "cordova-common": "^4.0.1",
+    "cordova-common": "^4.0.2",
     "fs-extra": "^9.0.0",
     "ios-sim": "^8.0.2",
     "nopt": "^4.0.3",
