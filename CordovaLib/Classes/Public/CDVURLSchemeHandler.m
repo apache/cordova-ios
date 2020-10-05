@@ -37,8 +37,14 @@
 {
     NSString * startPath = [[NSBundle mainBundle] pathForResource:self.viewController.wwwFolderName ofType: nil];
     NSURL * url = urlSchemeTask.request.URL;
-    NSString * stringToLoad = url.path;
     NSString * scheme = url.scheme;
+    self.isRunning = true;
+    Boolean loadFile = true;
+    NSDictionary * header = urlSchemeTask.request.allHTTPHeaderFields;
+    NSMutableString * stringToLoad = [NSMutableString string];
+    [stringToLoad appendString:url.path];
+    NSString * method = urlSchemeTask.request.HTTPMethod;
+    NSData * body = urlSchemeTask.request.HTTPBody;
 
     if ([scheme isEqualToString:self.viewController.appScheme]) {
         if ([stringToLoad hasPrefix:@"/_app_file_"]) {
@@ -104,31 +110,33 @@
         }
     }
 
-    NSError * fileError = nil;
-    NSData * data = nil;
-    if ([self isMediaExtension:url.pathExtension]) {
-        data = [NSData dataWithContentsOfFile:startPath options:NSDataReadingMappedIfSafe error:&fileError];
-    }
-    if (!data || fileError) {
-        data =  [[NSData alloc] initWithContentsOfFile:startPath];
-    }
-    NSInteger statusCode = 200;
-    if (!data) {
-        statusCode = 404;
-    }
-    NSURL * localUrl = [NSURL URLWithString:url.absoluteString];
-    NSString * mimeType = [self getMimeType:url.pathExtension];
-    id response = nil;
-    if (data && [self isMediaExtension:url.pathExtension]) {
-        response = [[NSURLResponse alloc] initWithURL:localUrl MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil];
-    } else {
-        NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
-        response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
-    }
+    if(loadFile) {
+        NSError * fileError = nil;
+        NSData * data = nil;
+        if ([self isMediaExtension:url.pathExtension]) {
+            data = [NSData dataWithContentsOfFile:startPath options:NSDataReadingMappedIfSafe error:&fileError];
+        }
+        if (!data || fileError) {
+            data =  [[NSData alloc] initWithContentsOfFile:startPath];
+        }
+        NSInteger statusCode = 200;
+        if (!data) {
+            statusCode = 404;
+        }
+        NSURL * localUrl = [NSURL URLWithString:url.absoluteString];
+        NSString * mimeType = [self getMimeType:url.pathExtension];
+        id response = nil;
+        if (data && [self isMediaExtension:url.pathExtension]) {
+            response = [[NSURLResponse alloc] initWithURL:localUrl MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil];
+        } else {
+            NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
+            response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
+        }
 
-    [urlSchemeTask didReceiveResponse:response];
-    [urlSchemeTask didReceiveData:data];
-    [urlSchemeTask didFinish];
+        [urlSchemeTask didReceiveResponse:response];
+        [urlSchemeTask didReceiveData:data];
+        [urlSchemeTask didFinish];
+    }
 
 }
 
