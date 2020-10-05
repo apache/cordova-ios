@@ -43,6 +43,58 @@
     if ([scheme isEqualToString:self.viewController.appScheme]) {
         if ([stringToLoad hasPrefix:@"/_app_file_"]) {
             startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
+        } else if ([stringToLoad hasPrefix:@"/_http_proxy_"]||[stringToLoad hasPrefix:@"/_https_proxy_"]) {
+            if(url.query) {
+                [stringToLoad appendString:@"?"];
+                [stringToLoad appendString:url.query];
+            }
+            loadFile = false;
+            startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_http_proxy_" withString:@"http://"];
+            startPath = [startPath stringByReplacingOccurrencesOfString:@"/_https_proxy_" withString:@"https://"];
+            NSURL * requestUrl = [NSURL URLWithString:startPath];
+            WKWebsiteDataStore* dataStore = [WKWebsiteDataStore defaultDataStore];
+            WKHTTPCookieStore* cookieStore = dataStore.httpCookieStore;
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+            [request setHTTPMethod:method];
+            [request setURL:requestUrl];
+            if (body) {
+                [request setHTTPBody:body];
+            }
+            [request setAllHTTPHeaderFields:header];
+            [request setHTTPShouldHandleCookies:YES];
+            
+            [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                if(error && self.isRunning) {
+                    NSLog(@"Proxy error: %@", error);
+                    [urlSchemeTask didFailWithError:error];
+                    return;
+                }
+                
+                // set cookies to WKWebView
+                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
+                if(httpResponse) {
+                    NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[httpResponse allHeaderFields] forURL:response.URL];
+                    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:httpResponse.URL mainDocumentURL:nil];
+                    cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
+                    
+                    for (NSHTTPCookie* c in cookies)
+                    {
+                        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+                            //running in background thread is necessary because setCookie otherwise fails
+                            dispatch_async(dispatch_get_main_queue(), ^(void){
+                                [cookieStore setCookie:c completionHandler:nil];
+                            });
+                        });
+                    };
+                }
+
+                // Do not use urlSchemeTask if it has been closed in stopURLSchemeTask
+                if(self.isRunning) {
+                    [urlSchemeTask didReceiveResponse:response];
+                    [urlSchemeTask didReceiveData:data];
+                    [urlSchemeTask didFinish];
+                }
+            }] resume];
         } else {
             if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
                 startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
