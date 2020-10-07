@@ -94,7 +94,7 @@
                     };
                 }
 
-                // Do not use urlSchemeTask if it has been closed in stopURLSchemeTask
+                // Do not use urlSchemeTask if it has been closed in stopURLSchemeTask. Otherwise the app will crash.
                 if(self.isRunning) {
                     [urlSchemeTask didReceiveResponse:response];
                     [urlSchemeTask didReceiveData:data];
@@ -142,7 +142,7 @@
 
 - (void)webView:(nonnull WKWebView *)webView stopURLSchemeTask:(nonnull id<WKURLSchemeTask>)urlSchemeTask
 {
-
+    self.isRunning = false;
 }
 
 -(NSString *) getMimeType:(NSString *)fileExtension {
