@@ -413,8 +413,30 @@ describe('prepare', () => {
             }));
         });
 
+        it('should handle #fab', () => {
+            expect(colorPreferenceToComponents('#fab')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '1.000'
+                }
+            }));
+        });
+
         it('should handle #FFAABB', () => {
             expect(colorPreferenceToComponents('#FFAABB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '1.000'
+                }
+            }));
+        });
+
+        it('should handle #ffaabb', () => {
+            expect(colorPreferenceToComponents('#ffaabb')).toEqual(jasmine.objectContaining({
                 components: {
                     red: '0xFF',
                     green: '0xAA',
@@ -435,6 +457,17 @@ describe('prepare', () => {
             }));
         });
 
+        it('should handle 0xffaabb', () => {
+            expect(colorPreferenceToComponents('0xffaabb')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '1.000'
+                }
+            }));
+        });
+
         it('should handle #99FFAABB', () => {
             expect(colorPreferenceToComponents('#99FFAABB')).toEqual(jasmine.objectContaining({
                 components: {
@@ -446,8 +479,30 @@ describe('prepare', () => {
             }));
         });
 
+        it('should handle #99ffaabb', () => {
+            expect(colorPreferenceToComponents('#99ffaabb')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '0.600'
+                }
+            }));
+        });
+
         it('should handle 0x99FFAABB', () => {
             expect(colorPreferenceToComponents('0x99FFAABB')).toEqual(jasmine.objectContaining({
+                components: {
+                    red: '0xFF',
+                    green: '0xAA',
+                    blue: '0xBB',
+                    alpha: '0.600'
+                }
+            }));
+        });
+
+        it('should handle 0x99ffaabb', () => {
+            expect(colorPreferenceToComponents('0x99ffaabb')).toEqual(jasmine.objectContaining({
                 components: {
                     red: '0xFF',
                     green: '0xAA',
