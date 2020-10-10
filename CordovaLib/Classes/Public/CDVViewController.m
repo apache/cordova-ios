@@ -767,7 +767,18 @@
     self.webView.hidden = NO;
 
     if ([self.settings cordovaBoolSettingForKey:@"AutoHideSplashScreen" defaultValue:YES]) {
-       [self showLaunchScreen:NO];
+        CGFloat splashScreenDelaySetting = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
+
+        if (splashScreenDelaySetting == 0) {
+            [self showLaunchScreen:NO];
+        } else {
+            // Divide by 1000 because config returns milliseconds and NSTimer takes seconds
+            CGFloat splashScreenDelay = splashScreenDelaySetting / 1000;
+
+            [NSTimer scheduledTimerWithTimeInterval:splashScreenDelay repeats:NO block:^(NSTimer * _Nonnull timer) {
+                [self showLaunchScreen:NO];
+            }];
+        }
     }
 }
 
@@ -776,22 +787,16 @@
  */
 - (void)showLaunchScreen:(BOOL)visible
 {
-    CGFloat splashScreenDelay = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
-
-    // AnimateWithDuration takes seconds but cordova documentation specifies milliseconds
     CGFloat fadeSplashScreenDuration = [self.settings cordovaFloatSettingForKey:@"FadeSplashScreenDuration" defaultValue:250];
 
     // Setting minimum value for fade to 0.25 seconds
     fadeSplashScreenDuration = fadeSplashScreenDuration < 250 ? 250 : fadeSplashScreenDuration;
 
-    // Divide by 1000 because config returns milliseconds and NSTimer takes seconds
-    CGFloat delayToFade = (MAX(splashScreenDelay, fadeSplashScreenDuration) - fadeSplashScreenDuration)/1000;
+    // AnimateWithDuration takes seconds but cordova documentation specifies milliseconds
     CGFloat fadeDuration = fadeSplashScreenDuration/1000;
 
-    [NSTimer scheduledTimerWithTimeInterval:delayToFade repeats:NO block:^(NSTimer * _Nonnull timer) {
-        [UIView animateWithDuration:fadeDuration animations:^{
-            [self.launchView setAlpha:(visible ? 1 : 0)];
-        }];
+    [UIView animateWithDuration:fadeDuration animations:^{
+        [self.launchView setAlpha:(visible ? 1 : 0)];
     }];
 }
 
