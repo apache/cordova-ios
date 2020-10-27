@@ -72,6 +72,10 @@
 - (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
 {
     WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
+
+    // fix origin is null when I want to use axios to get an JSON from the server
+    [configuration setValue:@"TRUE" forKey:@"allowUniversalAccessFromFileURLs"];
+
     configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
     if (settings == nil) {
         return configuration;
