@@ -21,6 +21,8 @@
 #import "CDVURLSchemeHandler.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
+#import <objc/message.h>
+
 @implementation CDVURLSchemeHandler
 
 
@@ -39,45 +41,70 @@
     NSURL * url = urlSchemeTask.request.URL;
     NSString * stringToLoad = url.path;
     NSString * scheme = url.scheme;
+    
+    CDVViewController* vc = (CDVViewController*)self.viewController;
 
-    if ([scheme isEqualToString:self.viewController.appScheme]) {
-        if ([stringToLoad hasPrefix:@"/_app_file_"]) {
-            startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
-        } else {
-            if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
-                startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
-            } else {
-                startPath = [startPath stringByAppendingPathComponent:stringToLoad];
+    /*
+     * Give plugins the chance to handle the url
+     */
+    BOOL anyPluginsResponded = NO;
+    BOOL handledRequest = NO;
+
+    for (NSString* pluginName in vc.pluginObjects) {
+        CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"handleSchemeURL:");
+        if ([plugin respondsToSelector:selector]) {
+            handledRequest = (((BOOL (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(plugin, selector, urlSchemeTask));
+            NSLog(@"Handled: %d", handledRequest);
+            if (handledRequest) {
+                anyPluginsResponded = YES;
+                break;
             }
         }
     }
 
-    NSError * fileError = nil;
-    NSData * data = nil;
-    if ([self isMediaExtension:url.pathExtension]) {
-        data = [NSData dataWithContentsOfFile:startPath options:NSDataReadingMappedIfSafe error:&fileError];
-    }
-    if (!data || fileError) {
-        data =  [[NSData alloc] initWithContentsOfFile:startPath];
-    }
-    NSInteger statusCode = 200;
-    if (!data) {
-        statusCode = 404;
-    }
-    NSURL * localUrl = [NSURL URLWithString:url.absoluteString];
-    NSString * mimeType = [self getMimeType:url.pathExtension];
-    id response = nil;
-    if (data && [self isMediaExtension:url.pathExtension]) {
-        response = [[NSURLResponse alloc] initWithURL:localUrl MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil];
+    if (anyPluginsResponded) {
+        NSLog(@"Plugin responded");
+        // TODO stop running
     } else {
-        NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
-        response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
+        if ([scheme isEqualToString:self.viewController.appScheme]) {
+            if ([stringToLoad hasPrefix:@"/_app_file_"]) {
+                startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
+            } else {
+                if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
+                    startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
+                } else {
+                    startPath = [startPath stringByAppendingPathComponent:stringToLoad];
+                }
+            }
+        }
+
+        NSError * fileError = nil;
+        NSData * data = nil;
+        if ([self isMediaExtension:url.pathExtension]) {
+            data = [NSData dataWithContentsOfFile:startPath options:NSDataReadingMappedIfSafe error:&fileError];
+        }
+        if (!data || fileError) {
+            data =  [[NSData alloc] initWithContentsOfFile:startPath];
+        }
+        NSInteger statusCode = 200;
+        if (!data) {
+            statusCode = 404;
+        }
+        NSURL * localUrl = [NSURL URLWithString:url.absoluteString];
+        NSString * mimeType = [self getMimeType:url.pathExtension];
+        id response = nil;
+        if (data && [self isMediaExtension:url.pathExtension]) {
+            response = [[NSURLResponse alloc] initWithURL:localUrl MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil];
+        } else {
+            NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
+            response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
+        }
+
+        [urlSchemeTask didReceiveResponse:response];
+        [urlSchemeTask didReceiveData:data];
+        [urlSchemeTask didFinish];
     }
-
-    [urlSchemeTask didReceiveResponse:response];
-    [urlSchemeTask didReceiveData:data];
-    [urlSchemeTask didFinish];
-
 }
 
 - (void)webView:(nonnull WKWebView *)webView stopURLSchemeTask:(nonnull id<WKURLSchemeTask>)urlSchemeTask
