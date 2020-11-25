@@ -52,7 +52,7 @@
 
     for (NSString* pluginName in vc.pluginObjects) {
         self.schemePlugin = [vc.pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"handleSchemeURL:");
+        SEL selector = NSSelectorFromString(@"overrideSchemeTask:");
         if ([self.schemePlugin respondsToSelector:selector]) {
             handledRequest = (((BOOL (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(self.schemePlugin, selector, urlSchemeTask));
             if (handledRequest) {
