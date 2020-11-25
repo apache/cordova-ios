@@ -51,11 +51,10 @@
     BOOL handledRequest = NO;
 
     for (NSString* pluginName in vc.pluginObjects) {
-        CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
+        self.schemePlugin = [vc.pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"handleSchemeURL:");
-        if ([plugin respondsToSelector:selector]) {
-            handledRequest = (((BOOL (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(plugin, selector, urlSchemeTask));
-            NSLog(@"Handled: %d", handledRequest);
+        if ([self.schemePlugin respondsToSelector:selector]) {
+            handledRequest = (((BOOL (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(self.schemePlugin, selector, urlSchemeTask));
             if (handledRequest) {
                 anyPluginsResponded = YES;
                 break;
@@ -63,10 +62,7 @@
         }
     }
 
-    if (anyPluginsResponded) {
-        NSLog(@"Plugin responded");
-        // TODO stop running
-    } else {
+    if (!anyPluginsResponded) {
         if ([scheme isEqualToString:self.viewController.appScheme]) {
             if ([stringToLoad hasPrefix:@"/_app_file_"]) {
                 startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
@@ -109,7 +105,10 @@
 
 - (void)webView:(nonnull WKWebView *)webView stopURLSchemeTask:(nonnull id<WKURLSchemeTask>)urlSchemeTask
 {
-
+    SEL selector = NSSelectorFromString(@"stopSchemeTask:");
+    if (self.schemePlugin != nil && [self.schemePlugin respondsToSelector:selector]) {
+        (((void (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(self.schemePlugin, selector, urlSchemeTask));
+    }
 }
 
 -(NSString *) getMimeType:(NSString *)fileExtension {
