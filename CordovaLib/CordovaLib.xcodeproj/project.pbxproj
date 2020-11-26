@@ -239,8 +239,6 @@
 			children = (
 				4E23F8FA23E16E96006CD852 /* CDVWebViewEngine.h */,
 				4E23F8F823E16E96006CD852 /* CDVWebViewEngine.m */,
-				4E23F8F923E16E96006CD852 /* CDVWebViewProcessPoolFactory.h */,
-				4E23F8F523E16E96006CD852 /* CDVWebViewProcessPoolFactory.m */,
 				4E23F8F623E16E96006CD852 /* CDVWebViewUIDelegate.h */,
 				4E23F8F723E16E96006CD852 /* CDVWebViewUIDelegate.m */,
 			);
@@ -319,6 +317,8 @@
 				7ED95D241AB9029B008C4574 /* CDVTimer.h */,
 				7ED95D251AB9029B008C4574 /* CDVTimer.m */,
 				7ED95D2A1AB9029B008C4574 /* CDVViewController.h */,
+				4E23F8F923E16E96006CD852 /* CDVWebViewProcessPoolFactory.h */,
+				4E23F8F523E16E96006CD852 /* CDVWebViewProcessPoolFactory.m */,
 				7ED95D2B1AB9029B008C4574 /* CDVViewController.m */,
 				7ED95D2C1AB9029B008C4574 /* CDVWebViewEngineProtocol.h */,
 				7ED95D2D1AB9029B008C4574 /* CDVWhitelist.h */,
