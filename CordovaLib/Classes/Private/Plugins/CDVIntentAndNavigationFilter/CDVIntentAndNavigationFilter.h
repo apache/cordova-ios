@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
 
 @interface CDVIntentAndNavigationFilter : CDVPlugin <NSXMLParserDelegate>
 
-+ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url intentsAllowList:(CDVAllowList*)intentsAllowList navigationsAllowList:(CDVAllowList*)navigationsAllowList;
++ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url allowIntentsList:(CDVAllowList*)allowIntentsList navigationsAllowList:(CDVAllowList*)navigationsAllowList;
 + (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue;
 + (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType;
 @end

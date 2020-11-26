@@ -286,15 +286,15 @@
     NSArray* allowIntents = @[ @"https://*" ];
     NSArray* allowNavigations = @[ @"https://*.apache.org" ];
 
-    CDVAllowList* intentsallowList = [[CDVAllowList alloc] initWithArray:allowIntents];
+    CDVAllowList* allowIntentsList = [[CDVAllowList alloc] initWithArray:allowIntents];
     CDVAllowList* navigationsAllowList = [[CDVAllowList alloc] initWithArray:allowNavigations];
 
     // Test allow-navigation superceding allow-intent
-    XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://apache.org/foo.html"] intentsAllowList:intentsallowList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueNavigationAllowed);
+    XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://apache.org/foo.html"] allowIntentsList:allowIntentsList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueNavigationAllowed);
     // Test wildcard https as allow-intent
-    XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://google.com"] intentsAllowList:intentsallowList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueIntentAllowed);
+    XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://google.com"] allowIntentsList:allowIntentsList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueIntentAllowed);
     // Test http (not allowed in either)
-    XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"http://google.com"] intentsAllowList:intentsallowList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueNoneAllowed);
+    XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"http://google.com"] allowIntentsList:allowIntentsList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueNoneAllowed);
 
     NSURL* telUrl = [NSURL URLWithString:@"tel:5555555"];
     NSMutableURLRequest* telRequest = [NSMutableURLRequest requestWithURL:telUrl];

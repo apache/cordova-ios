@@ -24,8 +24,8 @@
 
 @property (nonatomic, readwrite) NSMutableArray* allowIntents;
 @property (nonatomic, readwrite) NSMutableArray* allowNavigations;
-@property (nonatomic, readwrite) CDVAllowList* intentsAllowList;
-@property (nonatomic, readwrite) CDVAllowList* allowNavigationsAllowList;
+@property (nonatomic, readwrite) CDVAllowList* allowIntentsList;
+@property (nonatomic, readwrite) CDVAllowList* allowNavigationsList;
 
 @end
 
@@ -61,8 +61,8 @@
 
 - (void)parserDidEndDocument:(NSXMLParser*)parser
 {
-    self.intentsAllowList = [[CDVAllowList alloc] initWithArray:self.allowIntents];
-    self.allowNavigationsAllowList = [[CDVAllowList alloc] initWithArray:self.allowNavigations];
+    self.allowIntentsList = [[CDVAllowList alloc] initWithArray:self.allowIntents];
+    self.allowNavigationsList = [[CDVAllowList alloc] initWithArray:self.allowNavigations];
 }
 
 - (void)parser:(NSXMLParser*)parser parseErrorOccurred:(NSError*)parseError
@@ -79,13 +79,13 @@
     }
 }
 
-+ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url intentsAllowList:(CDVAllowList*)intentsAllowList navigationsAllowList:(CDVAllowList*)navigationsAllowList
++ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url allowIntentsList:(CDVAllowList*)allowIntentsList navigationsAllowList:(CDVAllowList*)navigationsAllowList
 {
     // a URL can only allow-intent OR allow-navigation, if both are specified,
     // only allow-navigation is allowed
 
     BOOL allowNavigationsPass = [navigationsAllowList URLIsAllowed:url logFailure:NO];
-    BOOL allowIntentPass = [intentsAllowList URLIsAllowed:url logFailure:NO];
+    BOOL allowIntentPass = [allowIntentsList URLIsAllowed:url logFailure:NO];
 
     if (allowNavigationsPass && allowIntentPass) {
         return CDVIntentAndNavigationFilterValueNavigationAllowed;
@@ -100,7 +100,7 @@
 
 - (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url
 {
-    return [[self class] filterUrl:url intentsAllowList:self.intentsAllowList navigationsAllowList:self.allowNavigationsAllowList];
+    return [[self class] filterUrl:url allowIntentsList:self.allowIntentsList navigationsAllowList:self.allowNavigationsList];
 }
 
 #define CDVWebViewNavigationTypeLinkClicked 0
