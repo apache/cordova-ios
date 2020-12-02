@@ -57,7 +57,6 @@
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="SuppressesLongPressGesture" value="false" />
     <preference name="Suppresses3DTouchGesture" value="false" />
-    <preference name="GapBetweenPages" value="0" />
     <preference name="PageLength" value="0" />
     <preference name="PaginationBreakingMode" value="page" /> <!-- page, column -->
     <preference name="PaginationMode" value="unpaginated" /> <!-- unpaginated, leftToRight, topToBottom, bottomToTop, rightToLeft -->
