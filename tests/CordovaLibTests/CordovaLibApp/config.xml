@@ -44,7 +44,6 @@
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="SuppressesLongPressGesture" value="true" />
     <preference name="Suppresses3DTouchGesture" value="false" />
-    <preference name="PageLength" value="0" />
     <!-- This settings is just used by the CDVViewControllerTest to assert which config file has been loaded -->
     <preference name="test_CDVConfigFile" value="config.xml" />
     
