@@ -250,13 +250,15 @@ Cordova is a static library that enables developers to include the Cordova API i
 * Update bundled ios-sim to 6.0.0
 
 ### 4.4.0 (Apr 22, 2017)
+* [CB-12617](https://issues.apache.org/jira/browse/CB-12617) - (BREAKING) added engine strict for users with older node versions
+* [CB-12523](https://issues.apache.org/jira/browse/CB-12523) - (BREAKING) Remove iOS 8 support
+* [CB-12522](https://issues.apache.org/jira/browse/CB-12522) - (BREAKING) Remove node 0.x support in CI
 * [CB-12009](https://issues.apache.org/jira/browse/CB-12009) - <resource-file> target attribute ignored on iOS when installing a Cordova plugin
 * [CB-12673](https://issues.apache.org/jira/browse/CB-12673) - ios platform does not build on Xcode 8.3.2
 * [CB-12665](https://issues.apache.org/jira/browse/CB-12665) - removing engineStrict as it is no longer supported
 * [CB-8980](https://issues.apache.org/jira/browse/CB-8980) - Adding resource-file element to config.xml for iOS
 * [CB-11895](https://issues.apache.org/jira/browse/CB-11895) - openURL: is deprecated on iOS 10
 * [CB-10026](https://issues.apache.org/jira/browse/CB-10026) - Fix warnings in Objective-C tests
-* [CB-12617](https://issues.apache.org/jira/browse/CB-12617) - added engine strict for users with older node versions
 * [CB-11233](https://issues.apache.org/jira/browse/CB-11233) - Support installing frameworks into "Embedded Binaries" section of the Xcode project
 * [CB-12577](https://issues.apache.org/jira/browse/CB-12577) - Fix module import warnings when using Cordova.framework (Carthage)
 * [CB-12571](https://issues.apache.org/jira/browse/CB-12571) - Podfile gets overwritten and some dependencies disappear.
@@ -264,8 +266,6 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-12384](https://issues.apache.org/jira/browse/CB-12384) - ios: Add Cocoa Touch Framework target for CordovaLib functionality
 * [CB-12309](https://issues.apache.org/jira/browse/CB-12309) - Missing CLI help for --developmentTeam
 * [CB-12405](https://issues.apache.org/jira/browse/CB-12405) - .ipa is uncompressed in preparation for 'run' command during a 'build', resulting in slow builds
-* [CB-12523](https://issues.apache.org/jira/browse/CB-12523) - Remove iOS 8 support
-* [CB-12522](https://issues.apache.org/jira/browse/CB-12522) - Remove node 0.x support in CI
 * [CB-12377](https://issues.apache.org/jira/browse/CB-12377) - Fix bug with updating platform
 * [CB-12473](https://issues.apache.org/jira/browse/CB-12473) - Delete the correct build output folder
 * [CB-12402](https://issues.apache.org/jira/browse/CB-12402) [CB-12206](https://issues.apache.org/jira/browse/CB-12206) - Properly encode app name to generate XML files
@@ -298,6 +298,8 @@ Cordova is a static library that enables developers to include the Cordova API i
 
 ### 4.3.0 (Oct 21, 2016)
 
+* [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - (BREAKING) Update xcodebuild minimum version to 7.0.0
+* [CB-11862](https://issues.apache.org/jira/browse/CB-11862) - (BREAKING) Update ios-deploy minimum version required to 1.9.0
 * [CB-12054](https://issues.apache.org/jira/browse/CB-12054) - Remove npm absolute paths in node_modules/package.json (using removeNPMAbsolutePaths utility)
 * [CB-12054](https://issues.apache.org/jira/browse/CB-12054) - Updated checked-in node_modules
 * Update bundled ios-sim to 5.0.9
@@ -317,8 +319,6 @@ Cordova is a static library that enables developers to include the Cordova API i
 * [CB-11854](https://issues.apache.org/jira/browse/CB-11854) - Create Entitlements.plist file (one each for Debug and Release configurations)
 * [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - Update README
 * [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - Update travis.yml to xcode 7.3 image
-* [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - Update xcodebuild minimum version to 7.0.0
-* [CB-11862](https://issues.apache.org/jira/browse/CB-11862) - Update ios-deploy minimum version required to 1.9.0
 * [CB-11831](https://issues.apache.org/jira/browse/CB-11831) - Add missing LD_RUNPATH_SEARCH_PATHS setting to the Release build configuration
 * [CB-11845](https://issues.apache.org/jira/browse/CB-11845) - Add developmentTeam flag to cordova build and 'developmentTeam' key in build.json buildConfig file
 * [CB-11811](https://issues.apache.org/jira/browse/CB-11811) - CocoaPods error in cordova-lib tests
