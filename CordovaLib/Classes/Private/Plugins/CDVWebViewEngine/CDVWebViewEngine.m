@@ -45,6 +45,7 @@
 @property (nonatomic, strong) CDVURLSchemeHandler * schemeHandler;
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
+@property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
 
 @end
 
@@ -55,15 +56,16 @@
 
 @synthesize engineWebView = _engineWebView;
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration
 {
     self = [super init];
     if (self) {
         if (NSClassFromString(@"WKWebView") == nil) {
             return nil;
         }
-
-        self.engineWebView = [[WKWebView alloc] initWithFrame:frame];
+        
+        self.configuration = configuration;
+        self.engineWebView = configuration ? [[WKWebView alloc] initWithFrame:frame configuration:configuration] : [[WKWebView alloc] initWithFrame:frame];
     }
 
     return self;
@@ -71,8 +73,14 @@
 
 - (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
 {
-    WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
-    configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+    WKWebViewConfiguration* configuration;
+    if (_configuration) {
+        configuration = _configuration;
+    } else {
+        configuration = [[WKWebViewConfiguration alloc] init];
+        configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+    }
+    
     if (settings == nil) {
         return configuration;
     }
