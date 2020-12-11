@@ -45,6 +45,7 @@
 @property (nonatomic, strong) CDVURLSchemeHandler * schemeHandler;
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
+@property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
 
 @end
 
@@ -55,15 +56,12 @@
 
 @synthesize engineWebView = _engineWebView;
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration
 {
     self = [super init];
     if (self) {
-        if (NSClassFromString(@"WKWebView") == nil) {
-            return nil;
-        }
-
-        self.engineWebView = [[WKWebView alloc] initWithFrame:frame];
+        self.configuration = configuration;
+        self.engineWebView = configuration ? [[WKWebView alloc] initWithFrame:frame configuration:configuration] : [[WKWebView alloc] initWithFrame:frame];
     }
 
     return self;
@@ -71,8 +69,14 @@
 
 - (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
 {
-    WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
-    configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+    WKWebViewConfiguration* configuration;
+    if (_configuration) {
+        configuration = _configuration;
+    } else {
+        configuration = [[WKWebViewConfiguration alloc] init];
+        configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+    }
+    
     if (settings == nil) {
         return configuration;
     }
@@ -481,7 +485,7 @@ static void * KVOContext = &KVOContext;
     }
 }
 
-#pragma mark WKNavigationDelegate implementation
+#pragma mark - WKNavigationDelegate implementation
 
 - (void)webView:(WKWebView*)webView didStartProvisionalNavigation:(WKNavigation*)navigation
 {
@@ -531,44 +535,57 @@ static void * KVOContext = &KVOContext;
 
 - (void) webView: (WKWebView *) webView decidePolicyForNavigationAction: (WKNavigationAction*) navigationAction decisionHandler: (void (^)(WKNavigationActionPolicy)) decisionHandler
 {
-    NSURL* url = [navigationAction.request URL];
-    CDVViewController* vc = (CDVViewController*)self.viewController;
-
-    /*
-     * Give plugins the chance to handle the url
-     */
-    BOOL anyPluginsResponded = NO;
-    BOOL shouldAllowRequest = NO;
-
-    for (NSString* pluginName in vc.pluginObjects) {
-        CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
-        if ([plugin respondsToSelector:selector]) {
-            anyPluginsResponded = YES;
-            // https://issues.apache.org/jira/browse/CB-12497
-            int navType = (int)navigationAction.navigationType;
-            shouldAllowRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, navigationAction.request, navType));
-            if (!shouldAllowRequest) {
-                break;
+    // Give plugins the chance to handle the url, as long as this WebViewEngine is still the WKNavigationDelegate.
+    // This allows custom delegates to choose to call this method for `default` cordova behavior without querying all plugins.
+    if (webView.navigationDelegate == self) {
+        __block BOOL anyPluginsResponded = NO;
+        __block BOOL shouldAllowRequest = NO;
+        CDVViewController* vc = (CDVViewController*)self.viewController;
+        NSDictionary *pluginObjects = [NSDictionary dictionaryWithDictionary:vc.pluginObjects];
+        [pluginObjects enumerateKeysAndObjectsUsingBlock:^(NSString* _Nonnull pluginName, CDVPlugin* _Nonnull plugin, BOOL * _Nonnull stop) {
+            if ([plugin respondsToSelector:[self navSelector]]) {
+                anyPluginsResponded = YES;
+                shouldAllowRequest = [self allows:plugin navigationAction:navigationAction];
+                if (!shouldAllowRequest) {
+                    *stop = YES;
+                }
             }
+        }];
+        if (anyPluginsResponded) {
+            return decisionHandler(shouldAllowRequest);
+        }
+    } else {
+        // The default behavior is for just the CDVIntentAndNavigationFilter to handle this
+        CDVPlugin *intentAndNavFilter = [((CDVViewController*)self.viewController).pluginObjects objectForKey:@"CDVIntentAndNavigationFilter"];
+        if ([intentAndNavFilter respondsToSelector:[self navSelector]]) {
+            return decisionHandler([self allows:intentAndNavFilter navigationAction:navigationAction]);
         }
     }
 
-    if (anyPluginsResponded) {
-        return decisionHandler(shouldAllowRequest);
-    }
-
-    /*
-     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
-     */
+    // Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
+    NSURL* url = [navigationAction.request URL];
     BOOL shouldAllowNavigation = [self defaultResourcePolicyForURL:url];
-    if (shouldAllowNavigation) {
-        return decisionHandler(YES);
-    } else {
+    if (!shouldAllowNavigation) {
         [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
     }
 
-    return decisionHandler(NO);
+    return decisionHandler(shouldAllowNavigation);
+}
+
+#pragma mark WKNavigationDelegate private helpers
+
+/// Creates the selector corresponding to `shouldOverrideLoadWithRequest:navigationType:`
+- (SEL)navSelector {
+    return NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
+}
+
+/// Determines if a request should be allowed
+/// @param plugin that supports  `shouldOverrideLoadWithRequest:navigationType:`
+/// @param navigationAction from the WKNavigationDelegate containing a request
+- (BOOL)allows:(CDVPlugin *)plugin navigationAction:(WKNavigationAction *)navigationAction {
+    // https://issues.apache.org/jira/browse/CB-12497
+    int navType = (int)navigationAction.navigationType;
+    return (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, [self navSelector], navigationAction.request, navType));
 }
 
 #pragma mark - Plugin interface

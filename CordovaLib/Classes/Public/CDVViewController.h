@@ -26,6 +26,25 @@
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVPlugin.h"
 #import "CDVWebViewEngineProtocol.h"
+@import WebKit;
+
+@protocol CDVWebViewEngineConfigurationDelegate <NSObject>
+
+@optional
+/// Provides a fully configured WKWebViewConfiguration which will be overriden with
+/// any related settings you add to config.xml (e.g., `PreferredContentMode`).
+/// Useful for more complex configuration, including websiteDataStore.
+///
+/// Example usage:
+///
+/// extension CDVViewController: CDVWebViewEngineConfigurationDelegate {
+///     public func configuration() -> WKWebViewConfiguration {
+///         // return your config here
+///     }
+/// }
+- (nonnull WKWebViewConfiguration*)configuration;
+
+@end
 
 @interface CDVViewController : UIViewController <CDVScreenOrientationDelegate>{
     @protected
@@ -36,9 +55,11 @@
     CDVCommandQueue* _commandQueue;
 }
 
+NS_ASSUME_NONNULL_BEGIN
+
 @property (nonatomic, readonly, weak) IBOutlet UIView* webView;
 
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
+@property (nullable, nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
@@ -73,5 +94,7 @@
 - (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
 
 - (void)showLaunchScreen:(BOOL)visible;
+
+NS_ASSUME_NONNULL_END
 
 @end

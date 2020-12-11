@@ -27,7 +27,7 @@
 #import "CDVCommandDelegateImpl.h"
 #import <Foundation/NSCharacterSet.h>
 
-@interface CDVViewController () { }
+@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
@@ -505,9 +505,10 @@
             self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
         }
     } else {
-        self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+        WKWebViewConfiguration *config = [self respondsToSelector:@selector(configuration)] ? [self configuration] : nil;
+        self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds configuration:config];
     }
-
+    
     if ([self.webViewEngine isKindOfClass:[CDVPlugin class]]) {
         [self registerPlugin:(CDVPlugin*)self.webViewEngine withClassName:webViewEngineClass];
     }

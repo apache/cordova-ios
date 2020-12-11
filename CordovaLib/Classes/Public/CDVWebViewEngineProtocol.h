@@ -18,24 +18,37 @@
  */
 
 #import <UIKit/UIKit.h>
+@import WebKit;
 
 #define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"
 #define kCDVWebViewEngineWKNavigationDelegate @"kCDVWebViewEngineWKNavigationDelegate"
 #define kCDVWebViewEngineWKUIDelegate @"kCDVWebViewEngineWKUIDelegate"
 #define kCDVWebViewEngineWebViewPreferences @"kCDVWebViewEngineWebViewPreferences"
 
-@protocol CDVWebViewEngineProtocol <NSObject>
+/// Worth noting: by default, the CDVWebViewEngine is the WKNavigationDelegate, but only if you haven't either:
+/// [a] extended CDVViewController to be a WKNaviagationDelegate
+/// [b] called `updateWithInfo` and specified a kCDVWebViewEngineWKNavigationDelegate
+/// It would be more explicit to set the navigation delegate in the designated initializer below, but I'll avoid doing that because these two other ways already exist.
+@protocol CDVWebViewEngineProtocol <WKNavigationDelegate>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) UIView* engineWebView;
 
 - (id)loadRequest:(NSURLRequest*)request;
-- (id)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL;
-- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^)(id, NSError*))completionHandler;
+- (id)loadHTMLString:(NSString*)string baseURL:(nullable NSURL*)baseURL;
+- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^_Nullable)(id, NSError*))completionHandler;
 
 - (NSURL*)URL;
 - (BOOL)canLoadRequest:(NSURLRequest*)request;
 
-- (instancetype)initWithFrame:(CGRect)frame;
+/// Designated Initializer
+/// @param frame The frame for the new web view.
+/// @param configuration The configuration for the new web view.
+- (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration;
+
 - (void)updateWithInfo:(NSDictionary*)info;
+
+NS_ASSUME_NONNULL_END
 
 @end
