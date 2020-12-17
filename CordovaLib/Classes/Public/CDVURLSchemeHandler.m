@@ -50,7 +50,8 @@
     BOOL anyPluginsResponded = NO;
     BOOL handledRequest = NO;
 
-    for (NSString* pluginName in vc.pluginObjects) {
+    NSDictionary *pluginObjects = [[vc pluginObjects] copy];
+    for (NSString* pluginName in pluginObjects) {
         self.schemePlugin = [vc.pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"overrideSchemeTask:");
         if ([self.schemePlugin respondsToSelector:selector]) {
