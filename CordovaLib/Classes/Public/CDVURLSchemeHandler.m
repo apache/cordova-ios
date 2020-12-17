@@ -99,7 +99,9 @@
         }
 
         [urlSchemeTask didReceiveResponse:response];
-        [urlSchemeTask didReceiveData:data];
+        if (data) {
+            [urlSchemeTask didReceiveData:data];
+        }
         [urlSchemeTask didFinish];
     }
 }
