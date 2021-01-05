@@ -37,8 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURL*)URL;
 - (BOOL)canLoadRequest:(NSURLRequest*)request;
+- (nullable instancetype)initWithFrame:(CGRect)frame;
 
-/// Designated Initializer
+/// Convenience Initializer
 /// @param frame The frame for the new web view.
 /// @param configuration The configuration for the new web view.
 - (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration;
