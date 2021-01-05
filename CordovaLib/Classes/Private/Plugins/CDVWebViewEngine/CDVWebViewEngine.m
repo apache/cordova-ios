@@ -67,6 +67,11 @@
     return self;
 }
 
+- (nullable instancetype)initWithFrame:(CGRect)frame
+{
+    return [self initWithFrame:frame configuration:nil];
+}
+
 - (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
 {
     WKWebViewConfiguration* configuration;
