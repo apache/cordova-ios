@@ -53,7 +53,7 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
     // NOTE: no app settings are set, so it will rely on default WKWebViewConfiguration settings
-    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:nil];
 
     XCTAssert([self.plugin conformsToProtocol:@protocol(CDVWebViewEngineProtocol)], @"Plugin does not conform to CDVWebViewEngineProtocol");
 }
@@ -126,7 +126,7 @@
 
 - (void) testConfigurationFromSettings {
     // we need to re-set the plugin from the "setup" to take in the app settings we need
-    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:nil];
     self.viewController = [[CDVViewController alloc] init];
 
     // generate the app settings
