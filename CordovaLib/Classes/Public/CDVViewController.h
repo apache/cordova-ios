@@ -73,21 +73,21 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**
-	Takes/Gives an array of UIInterfaceOrientation (int) objects
-	ex. UIInterfaceOrientationPortrait
+    Takes/Gives an array of UIInterfaceOrientation (int) objects
+    ex. UIInterfaceOrientationPortrait
 */
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (NSString*)appURLScheme;
-- (NSURL*)errorURL;
+- (nullable NSString*)appURLScheme;
+- (nullable NSURL*)errorURL;
 
 - (UIColor*)colorFromColorString:(NSString*)colorString CDV_DEPRECATED(7.0.0, "Use BackgroundColor in xcassets");
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 
-- (id)getCommandInstance:(NSString*)pluginName;
+- (nullable id)getCommandInstance:(NSString*)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
