@@ -274,6 +274,7 @@
 {
     [super viewDidLoad];
 
+    //gy test 是不是fork自己仓库的
     // Load settings
     [self loadSettings];
 

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		28BFF9141F355A4E00DDF01A /* CDVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 28BFF9121F355A4E00DDF01A /* CDVLogger.h */; };
 		28BFF9151F355A4E00DDF01A /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BFF9131F355A4E00DDF01A /* CDVLogger.m */; };
-		2F4D42BC23F218BA00501999 /* CDVURLSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4D42BA23F218BA00501999 /* CDVURLSchemeHandler.h */; };
+		2F4D42BC23F218BA00501999 /* CDVURLSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4D42BA23F218BA00501999 /* CDVURLSchemeHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F4D42BD23F218BA00501999 /* CDVURLSchemeHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4D42BB23F218BA00501999 /* CDVURLSchemeHandler.m */; };
 		2FCCEA17247E7366007276A8 /* CDVLaunchScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E714D3423F535B500A321AF /* CDVLaunchScreen.m */; };
 		2FCCEA18247E7366007276A8 /* CDVLaunchScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E714D3223F535B500A321AF /* CDVLaunchScreen.h */; };
@@ -389,6 +389,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F4D42BC23F218BA00501999 /* CDVURLSchemeHandler.h in Headers */,
 				7ED95D351AB9029B008C4574 /* CDV.h in Headers */,
 				7ED95D361AB9029B008C4574 /* CDVAppDelegate.h in Headers */,
 				7ED95D381AB9029B008C4574 /* CDVAvailability.h in Headers */,
@@ -398,7 +399,6 @@
 				7ED95D3D1AB9029B008C4574 /* CDVCommandQueue.h in Headers */,
 				4E23F8FF23E16E96006CD852 /* CDVWebViewProcessPoolFactory.h in Headers */,
 				7ED95D3F1AB9029B008C4574 /* CDVConfigParser.h in Headers */,
-				2F4D42BC23F218BA00501999 /* CDVURLSchemeHandler.h in Headers */,
 				7ED95D411AB9029B008C4574 /* CDVInvokedUrlCommand.h in Headers */,
 				7ED95D431AB9029B008C4574 /* CDVPlugin+Resources.h in Headers */,
 				7ED95D451AB9029B008C4574 /* CDVPlugin.h in Headers */,
