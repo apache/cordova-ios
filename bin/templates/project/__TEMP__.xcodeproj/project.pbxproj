@@ -328,6 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "__PROJECT_ID__";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
 			};
 			name = Debug;
 		};
@@ -350,6 +351,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "__PROJECT_ID__";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
 			};
 			name = Release;
 		};
