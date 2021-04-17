@@ -76,7 +76,7 @@ Podfile.prototype.__parseForDeclarations = function (text) {
     // split by \n
     const arr = text.split('\n');
 
-    // getting lines between "platform :ios, '11.0'"" and "target 'HelloCordova'" do
+    // getting lines between "platform :ios, '11.0'"" and "target 'Hello Cordova'" do
     const declarationsPreRE = new RegExp('platform :ios,\\s+\'[^\']+\'');
     const declarationsPostRE = new RegExp('target\\s+\'[^\']+\'\\s+do');
     const declarationRE = new RegExp('^\\s*[^#]');
