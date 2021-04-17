@@ -194,6 +194,15 @@ function relpath (_path, start) {
  *
  */
 exports.createProject = (project_path, package_name, project_name, opts, config) => {
+    opts = opts || {};
+
+    // Set default values for path, package and name
+    project_path = path.relative(process.cwd(), project_path);
+    // Check if project already exists
+    if (fs.existsSync(project_path)) {
+        return Promise.reject(new CordovaError('Project already exists! Delete and recreate'));
+    }
+
     package_name = package_name || 'io.cordova.helloCordova';
     project_name = project_name || 'Hello Cordova';
     const use_shared = !!opts.link;
@@ -201,18 +210,13 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     const project_parent = path.dirname(project_path);
     const project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
 
-    // check that project path doesn't exist
-    if (fs.existsSync(project_path)) {
-        return Promise.reject(new CordovaError('Project already exists'));
-    }
-
     // check that parent directory does exist so cp -r will not fail
     if (!fs.existsSync(project_parent)) {
         return Promise.reject(new CordovaError(`Parent directory "${project_parent}" of given project path does not exist`));
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
-    events.emit('log', `\tPath: ${path.relative(process.cwd(), project_path)}`);
+    events.emit('log', `\tPath: ${project_path}`);
     events.emit('log', `\tPackage: ${package_name}`);
     events.emit('log', `\tName: ${project_name}`);
 
