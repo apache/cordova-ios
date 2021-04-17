@@ -194,7 +194,7 @@ function relpath (_path, start) {
  *
  */
 exports.createProject = (project_path, package_name, project_name, opts, config) => {
-    package_name = package_name || 'my.cordova.project';
+    package_name = package_name || 'io.cordova.helloCordova';
     project_name = project_name || 'Hello Cordova';
     const use_shared = !!opts.link;
     const bin_dir = path.join(ROOT, 'bin');
