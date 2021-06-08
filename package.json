@@ -42,7 +42,6 @@
   "dependencies": {
     "cordova-common": "^4.0.2",
     "fs-extra": "^9.1.0",
-    "underscore": "^1.9.2",
     "ios-sim": "^8.0.2",
     "nopt": "^5.0.0",
     "plist": "^3.0.1",
