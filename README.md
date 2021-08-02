@@ -54,6 +54,10 @@ cordova platform rm ios
 cordova platform add ios
 ```
 
+## Debugging in Xcode
+
+Import project in Xcode through _File > Open_ and targeting `/path/to/your-cdv-project/platforms/ios/`.
+
 ## How to Test Repo Development
 
 ```bash
