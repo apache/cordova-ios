@@ -58,6 +58,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, weak) IBOutlet UIView* webView;
+@property (nonatomic, readonly, strong) UIView* launchView;
 
 @property (nullable, nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;

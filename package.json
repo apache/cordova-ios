@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "6.2.0-dev",
+  "version": "6.3.0-dev",
   "description": "cordova-ios release",
   "main": "bin/templates/scripts/cordova/Api.js",
   "repository": "github:apache/cordova-ios",
@@ -30,22 +30,22 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0",
-    "find-process": "^1.4.3",
+    "find-process": "^1.4.4",
     "jasmine": "3.5.0",
     "nyc": "^15.0.1",
     "rewire": "^5.0.0",
-    "tmp": "^0.1.0"
+    "tmp": "^0.2.1"
   },
   "engines": {
     "node": ">=10"
   },
   "dependencies": {
     "cordova-common": "^4.0.2",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^9.1.0",
     "ios-sim": "^8.0.2",
-    "nopt": "^4.0.3",
+    "nopt": "^5.0.0",
     "plist": "^3.0.1",
-    "semver": "^7.3.2",
+    "semver": "^7.3.4",
     "unorm": "^1.6.0",
     "which": "^2.0.2",
     "xcode": "^3.0.1",
