@@ -258,7 +258,7 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
                 const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
                 if (bridgingHeaders.length > 0) {
                     const project_dir = this.locations.root;
-                    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+                    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
                     const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
                     const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
                     events.emit('verbose', 'Adding Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
@@ -306,7 +306,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
                 const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
                 if (bridgingHeaders.length > 0) {
                     const project_dir = this.locations.root;
-                    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+                    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
                     const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
                     const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
                     events.emit('verbose', 'Removing Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
@@ -342,7 +342,7 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
 
 Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOptions) {
     const project_dir = this.locations.root;
-    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
     const minDeploymentTarget = this.getPlatformInfo().projectConfig.getPreference('deployment-target', 'ios');
 
     const Podfile = require('./lib/Podfile').Podfile;
@@ -469,7 +469,7 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
 
 Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods, uninstallOptions) {
     const project_dir = this.locations.root;
-    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
 
     const Podfile = require('./lib/Podfile').Podfile;
     const PodsJson = require('./lib/PodsJson').PodsJson;
