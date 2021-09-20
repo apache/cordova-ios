@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "CDVConfigParser.h"
+#import <Cordova/CDVConfigParser.h>
 
 @interface CDVConfigParser ()
 

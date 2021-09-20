@@ -17,8 +17,8 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import "CDVCommandDelegate.h"
+@import UIKit;
+#import <Cordova/CDVCommandDelegate.h>
 
 @class CDVViewController;
 @class CDVCommandQueue;

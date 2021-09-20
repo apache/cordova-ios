@@ -17,6 +17,8 @@
  under the License.
  */
 
+@import Foundation;
+
 @interface CDVConfigParser : NSObject <NSXMLParserDelegate>
 {
     NSString* featureName;

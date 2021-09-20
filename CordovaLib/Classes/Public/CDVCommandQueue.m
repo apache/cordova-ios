@@ -18,9 +18,9 @@
  */
 
 #include <objc/message.h>
-#import "CDVCommandQueue.h"
-#import "CDVViewController.h"
-#import "CDVCommandDelegateImpl.h"
+#import <Cordova/CDVCommandQueue.h>
+#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVCommandDelegateImpl.h>
 #import "CDVJSON_private.h"
 #import "CDVDebug.h"
 

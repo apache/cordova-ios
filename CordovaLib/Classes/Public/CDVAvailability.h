@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "CDVAvailabilityDeprecated.h"
+#import <Cordova/CDVAvailabilityDeprecated.h>
 
 #define __CORDOVA_IOS__
 

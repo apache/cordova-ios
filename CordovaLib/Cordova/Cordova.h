@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
+@import Foundation;
 
 //! Project version number for Cordova.
 FOUNDATION_EXPORT double CordovaVersionNumber;
@@ -41,9 +41,10 @@ FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVPlugin+Resources.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
+#import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
-#import <Cordova/CDVWebViewUIDelegate.h>
 #import <Cordova/CDVAllowList.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVTimer.h>
+#import <Cordova/CDVURLSchemeHandler.h>

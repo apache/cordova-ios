@@ -19,9 +19,9 @@
 
 #import "CDVWebViewEngine.h"
 #import "CDVWebViewUIDelegate.h"
-#import "CDVWebViewProcessPoolFactory.h"
+#import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
-#import "CDVURLSchemeHandler.h"
+#import <Cordova/CDVURLSchemeHandler.h>
 
 #import <objc/message.h>
 

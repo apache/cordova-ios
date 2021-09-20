@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 #ifdef __clang__
     #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))

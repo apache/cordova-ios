@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "CDVAllowList.h"
+#import <Cordova/CDVAllowList.h>
 
 NSString* const kCDVDefaultAllowListRejectionString = @"ERROR allowList rejection: url='%@'";
 NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";

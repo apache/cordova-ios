@@ -17,8 +17,9 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVViewController.h"
+@import Foundation;
+
+#import <Cordova/CDVViewController.h>
 
 @interface CDVAppDelegate : NSObject <UIApplicationDelegate>{}
 

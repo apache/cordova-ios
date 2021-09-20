@@ -17,8 +17,8 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVInvokedUrlCommand.h"
+#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
 
 @class CDVPlugin;
 @class CDVPluginResult;

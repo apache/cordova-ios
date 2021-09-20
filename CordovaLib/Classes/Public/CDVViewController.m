@@ -17,15 +17,15 @@
  under the License.
  */
 
+@import AVFoundation;
+@import Foundation;
+
 #import <objc/message.h>
-#import "CDV.h"
+#import <Cordova/CDV.h>
 #import "CDVPlugin+Private.h"
-#import "CDVWebViewUIDelegate.h"
-#import "CDVConfigParser.h"
-#import <AVFoundation/AVFoundation.h>
-#import "NSDictionary+CordovaPreferences.h"
-#import "CDVCommandDelegateImpl.h"
-#import <Foundation/NSCharacterSet.h>
+#import <Cordova/CDVConfigParser.h>
+#import <Cordova/NSDictionary+CordovaPreferences.h>
+#import <Cordova/CDVCommandDelegateImpl.h>
 
 @interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
 

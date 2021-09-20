@@ -17,9 +17,10 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WebKit.h>
-#import "CDVViewController.h"
+@import Foundation;
+@import WebKit;
+
+#import <Cordova/CDVViewController.h>
 
 
 @interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
