@@ -21,6 +21,7 @@
 @import Foundation;
 
 #import <objc/message.h>
+#import <Foundation/NSCharacterSet.h>
 #import <Cordova/CDV.h>
 #import "CDVPlugin+Private.h"
 #import <Cordova/CDVConfigParser.h>

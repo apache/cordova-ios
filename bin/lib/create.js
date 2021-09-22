@@ -57,6 +57,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         const r = path.join(projectPath, projectName);
         fs.ensureDirSync(path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
         fs.copySync(path.join(r, '.gitignore'), path.join(projectPath, '.gitignore'));
+        fs.copySync(path.join(ROOT, 'CordovaLib', 'include'), path.join(projectPath, 'CordovaLib/include'));
         fs.copySync(path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib/Classes'));
         fs.copySync(path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib/VERSION'));
         fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib/cordova.js'));
