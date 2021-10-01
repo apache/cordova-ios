@@ -17,12 +17,12 @@
  under the License.
  */
 
-#import "CDVWhitelist.h"
+#import "CDVAllowList.h"
 
-NSString* const kCDVDefaultWhitelistRejectionString = @"ERROR whitelist rejection: url='%@'";
+NSString* const kCDVDefaultAllowListRejectionString = @"ERROR allowList rejection: url='%@'";
 NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
-@interface CDVWhitelistPattern : NSObject {
+@interface CDVAllowListPattern : NSObject {
     @private
     NSRegularExpression* _scheme;
     NSRegularExpression* _host;
@@ -36,7 +36,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 @end
 
-@implementation CDVWhitelistPattern
+@implementation CDVAllowListPattern
 
 + (NSString*)regexFromPattern:(NSString*)pattern allowWildcards:(bool)allowWildcards
 {
@@ -62,14 +62,14 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         if ((scheme == nil) || [scheme isEqualToString:@"*"]) {
             _scheme = nil;
         } else {
-            _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:scheme allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
+            _scheme = [NSRegularExpression regularExpressionWithPattern:[CDVAllowListPattern regexFromPattern:scheme allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
         }
         if ([host isEqualToString:@"*"] || host == nil) {
             _host = nil;
         } else if ([host hasPrefix:@"*."]) {
-            _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVWhitelistPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:NSRegularExpressionCaseInsensitive error:nil];
+            _host = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"([a-z0-9.-]*\\.)?%@", [CDVAllowListPattern regexFromPattern:[host substringFromIndex:2] allowWildcards:false]] options:NSRegularExpressionCaseInsensitive error:nil];
         } else {
-            _host = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:host allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
+            _host = [NSRegularExpression regularExpressionWithPattern:[CDVAllowListPattern regexFromPattern:host allowWildcards:NO] options:NSRegularExpressionCaseInsensitive error:nil];
         }
         if ((port == nil) || [port isEqualToString:@"*"]) {
             _port = nil;
@@ -79,7 +79,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         if ((path == nil) || [path isEqualToString:@"/*"]) {
             _path = nil;
         } else {
-            _path = [NSRegularExpression regularExpressionWithPattern:[CDVWhitelistPattern regexFromPattern:path allowWildcards:YES] options:0 error:nil];
+            _path = [NSRegularExpression regularExpressionWithPattern:[CDVAllowListPattern regexFromPattern:path allowWildcards:YES] options:0 error:nil];
         }
     }
     return self;
@@ -96,29 +96,29 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 @end
 
-@interface CDVWhitelist ()
+@interface CDVAllowList ()
 
-@property (nonatomic, readwrite, strong) NSMutableArray* whitelist;
+@property (nonatomic, readwrite, strong) NSMutableArray* allowList;
 @property (nonatomic, readwrite, strong) NSMutableSet* permittedSchemes;
 
-- (void)addWhiteListEntry:(NSString*)pattern;
+- (void)addAllowListEntry:(NSString*)pattern;
 
 @end
 
-@implementation CDVWhitelist
+@implementation CDVAllowList
 
-@synthesize whitelist, permittedSchemes, whitelistRejectionFormatString;
+@synthesize allowList, permittedSchemes, allowListRejectionFormatString;
 
 - (id)initWithArray:(NSArray*)array
 {
     self = [super init];
     if (self) {
-        self.whitelist = [[NSMutableArray alloc] init];
+        self.allowList = [[NSMutableArray alloc] init];
         self.permittedSchemes = [[NSMutableSet alloc] init];
-        self.whitelistRejectionFormatString = kCDVDefaultWhitelistRejectionString;
+        self.allowListRejectionFormatString = kCDVDefaultAllowListRejectionString;
 
         for (NSString* pattern in array) {
-            [self addWhiteListEntry:pattern];
+            [self addAllowListEntry:pattern];
         }
     }
     return self;
@@ -158,15 +158,15 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     return YES;
 }
 
-- (void)addWhiteListEntry:(NSString*)origin
+- (void)addAllowListEntry:(NSString*)origin
 {
-    if (self.whitelist == nil) {
+    if (self.allowList == nil) {
         return;
     }
 
     if ([origin isEqualToString:@"*"]) {
         NSLog(@"Unlimited access to network resources");
-        self.whitelist = nil;
+        self.allowList = nil;
         self.permittedSchemes = nil;
     } else { // specific access
         NSRegularExpression* parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|[A-Za-z-]+):/?/?)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
@@ -204,10 +204,10 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
             if (scheme == nil) {
                 // XXX making it stupid friendly for people who forget to include protocol/SSL
-                [self.whitelist addObject:[[CDVWhitelistPattern alloc] initWithScheme:@"http" host:host port:port path:path]];
-                [self.whitelist addObject:[[CDVWhitelistPattern alloc] initWithScheme:@"https" host:host port:port path:path]];
+                [self.allowList addObject:[[CDVAllowListPattern alloc] initWithScheme:@"http" host:host port:port path:path]];
+                [self.allowList addObject:[[CDVAllowListPattern alloc] initWithScheme:@"https" host:host port:port path:path]];
             } else {
-                [self.whitelist addObject:[[CDVWhitelistPattern alloc] initWithScheme:scheme host:host port:port path:path]];
+                [self.allowList addObject:[[CDVAllowListPattern alloc] initWithScheme:scheme host:host port:port path:path]];
             }
 
             if (self.permittedSchemes != nil) {
@@ -240,8 +240,8 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 - (BOOL)URLIsAllowed:(NSURL*)url logFailure:(BOOL)logFailure
 {
-    // Shortcut acceptance: Are all urls whitelisted ("*" in whitelist)?
-    if (whitelist == nil) {
+    // Shortcut acceptance: Are all urls allowListed ("*" in allowList)?
+    if (allowList == nil) {
         return YES;
     }
 
@@ -263,8 +263,8 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         }
     }
 
-    // Check the url against patterns in the whitelist
-    for (CDVWhitelistPattern* p in self.whitelist) {
+    // Check the url against patterns in the allowList
+    for (CDVAllowListPattern* p in self.allowList) {
         if ([p matches:url]) {
             return YES;
         }
@@ -279,7 +279,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 - (NSString*)errorStringForURL:(NSURL*)url
 {
-    return [NSString stringWithFormat:self.whitelistRejectionFormatString, [url absoluteString]];
+    return [NSString stringWithFormat:self.allowListRejectionFormatString, [url absoluteString]];
 }
 
 @end

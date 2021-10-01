@@ -77,7 +77,7 @@
 
     XCTAssertTrue([wvd shouldLoadRequest:mailtoUrl], @"mailto urls should be allowed");
     XCTAssertTrue([wvd shouldLoadRequest:telUrl], @"tel urls should be allowed");
-    // as long as this is in the whitelist it should pass
+    // as long as this is in the allowList it should pass
     XCTAssertTrue([wvd shouldLoadRequest:plainUrl], @"http urls should be allowed");
 
     XCTAssertTrue([wvd shouldLoadRequest:dataUrl], @"data urls should be allowed");
