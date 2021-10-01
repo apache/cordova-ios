@@ -27,7 +27,7 @@
 #import "CDVCommandDelegateImpl.h"
 #import <Foundation/NSCharacterSet.h>
 
-@interface CDVViewController () { }
+@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
@@ -238,7 +238,7 @@
     return appURL;
 }
 
-- (NSURL*)errorURL
+- (nullable NSURL*)errorURL
 {
     NSURL* errorUrl = nil;
 
@@ -485,34 +485,59 @@
     return [self.supportedOrientations containsObject:@(orientation)];
 }
 
-- (UIView*)newCordovaViewWithFrame:(CGRect)bounds
+/// Retrieves the view from a newwly initialized webViewEngine
+/// @param bounds The bounds with which the webViewEngine will be initialized
+- (nonnull UIView*)newCordovaViewWithFrame:(CGRect)bounds
 {
-    NSString* defaultWebViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaDefaultWebViewEngine"];
-    NSString* webViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
+    NSString* defaultWebViewEngineClassName = [self.settings cordovaSettingForKey:@"CordovaDefaultWebViewEngine"];
+    NSString* webViewEngineClassName = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
 
-    if (!defaultWebViewEngineClass) {
-        defaultWebViewEngineClass = @"CDVWebViewEngine";
+    if (!defaultWebViewEngineClassName) {
+        defaultWebViewEngineClassName = @"CDVWebViewEngine";
     }
-    if (!webViewEngineClass) {
-        webViewEngineClass = defaultWebViewEngineClass;
+    if (!webViewEngineClassName) {
+        webViewEngineClassName = defaultWebViewEngineClassName;
     }
 
-    // Find webViewEngine
-    if (NSClassFromString(webViewEngineClass)) {
-        self.webViewEngine = [[NSClassFromString(webViewEngineClass) alloc] initWithFrame:bounds];
-        // if a webView engine returns nil (not supported by the current iOS version) or doesn't conform to the protocol, or can't load the request, we use WKWebView
-        if (!self.webViewEngine || ![self.webViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)] || ![self.webViewEngine canLoadRequest:[NSURLRequest requestWithURL:self.appUrl]]) {
-            self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+    // Determine if a provided custom web view engine is sufficient
+    id <CDVWebViewEngineProtocol> engine;
+    Class customWebViewEngineClass = NSClassFromString(webViewEngineClassName);
+    if (customWebViewEngineClass) {
+        id customWebViewEngine = [self initWebViewEngine:customWebViewEngineClass bounds:bounds];
+        BOOL customConformsToProtocol = [customWebViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)];
+        BOOL customCanLoad = [customWebViewEngine canLoadRequest:[NSURLRequest requestWithURL:self.appUrl]];
+        if (customConformsToProtocol && customCanLoad) {
+            engine = customWebViewEngine;
         }
-    } else {
-        self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+    }
+    
+    // Otherwise use the default web view engine
+    if (!engine) {
+        Class defaultWebViewEngineClass = NSClassFromString(defaultWebViewEngineClassName);
+        id defaultWebViewEngine = [self initWebViewEngine:defaultWebViewEngineClass bounds:bounds];
+        NSAssert([defaultWebViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)],
+                 @"we expected the default web view engine to conform to the CDVWebViewEngineProtocol");
+        engine = defaultWebViewEngine;
+    }
+    
+    if ([engine isKindOfClass:[CDVPlugin class]]) {
+        [self registerPlugin:(CDVPlugin*)engine withClassName:webViewEngineClassName];
     }
 
-    if ([self.webViewEngine isKindOfClass:[CDVPlugin class]]) {
-        [self registerPlugin:(CDVPlugin*)self.webViewEngine withClassName:webViewEngineClass];
-    }
-
+    self.webViewEngine = engine;
     return self.webViewEngine.engineWebView;
+}
+
+/// Initialiizes the webViewEngine, with config, if supported and provided
+/// @param engineClass A class that must conform to the `CDVWebViewEngineProtocol`
+/// @param bounds with which the webview will be initialized
+- (id _Nullable) initWebViewEngine:(nonnull Class)engineClass bounds:(CGRect)bounds {
+    WKWebViewConfiguration *config = [self respondsToSelector:@selector(configuration)] ? [self configuration] : nil;
+    if (config && [engineClass respondsToSelector:@selector(initWithFrame:configuration:)]) {
+        return [[engineClass alloc] initWithFrame:bounds configuration:config];
+    } else {
+        return [[engineClass alloc] initWithFrame:bounds];
+    }
 }
 
 - (void)createLaunchView
@@ -608,7 +633,7 @@
 /**
  Returns an instance of a CordovaCommand object, based on its name.  If one exists already, it is returned.
  */
-- (id)getCommandInstance:(NSString*)pluginName
+- (nullable id)getCommandInstance:(NSString*)pluginName
 {
     // first, we try to find the pluginName in the pluginsMap
     // (acts as a allowList as well) if it does not exist, we return nil
@@ -642,7 +667,7 @@
 
 #pragma mark -
 
-- (NSString*)appURLScheme
+- (nullable NSString*)appURLScheme
 {
     NSString* URLScheme = nil;
 

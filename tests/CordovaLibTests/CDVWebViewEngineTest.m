@@ -126,7 +126,7 @@
 
 - (void) testConfigurationFromSettings {
     // we need to re-set the plugin from the "setup" to take in the app settings we need
-    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:nil];
     self.viewController = [[CDVViewController alloc] init];
 
     // generate the app settings

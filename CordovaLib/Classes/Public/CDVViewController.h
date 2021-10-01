@@ -26,6 +26,25 @@
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVPlugin.h"
 #import "CDVWebViewEngineProtocol.h"
+@import WebKit;
+
+@protocol CDVWebViewEngineConfigurationDelegate <NSObject>
+
+@optional
+/// Provides a fully configured WKWebViewConfiguration which will be overriden with
+/// any related settings you add to config.xml (e.g., `PreferredContentMode`).
+/// Useful for more complex configuration, including websiteDataStore.
+///
+/// Example usage:
+///
+/// extension CDVViewController: CDVWebViewEngineConfigurationDelegate {
+///     public func configuration() -> WKWebViewConfiguration {
+///         // return your config here
+///     }
+/// }
+- (nonnull WKWebViewConfiguration*)configuration;
+
+@end
 
 @interface CDVViewController : UIViewController <CDVScreenOrientationDelegate>{
     @protected
@@ -36,10 +55,12 @@
     CDVCommandQueue* _commandQueue;
 }
 
+NS_ASSUME_NONNULL_BEGIN
+
 @property (nonatomic, readonly, weak) IBOutlet UIView* webView;
 @property (nonatomic, readonly, strong) UIView* launchView;
 
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
+@property (nullable, nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
@@ -53,26 +74,28 @@
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**
-	Takes/Gives an array of UIInterfaceOrientation (int) objects
-	ex. UIInterfaceOrientationPortrait
+    Takes/Gives an array of UIInterfaceOrientation (int) objects
+    ex. UIInterfaceOrientationPortrait
 */
 @property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (NSString*)appURLScheme;
-- (NSURL*)errorURL;
+- (nullable NSString*)appURLScheme;
+- (nullable NSURL*)errorURL;
 
 - (UIColor*)colorFromColorString:(NSString*)colorString CDV_DEPRECATED(7.0.0, "Use BackgroundColor in xcassets");
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 
-- (id)getCommandInstance:(NSString*)pluginName;
+- (nullable id)getCommandInstance:(NSString*)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 - (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
 
 - (void)showLaunchScreen:(BOOL)visible;
+
+NS_ASSUME_NONNULL_END
 
 @end
