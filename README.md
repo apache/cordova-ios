@@ -56,7 +56,7 @@ cordova platform add ios
 
 ## Debugging in Xcode
 
-Import project in Xcode through _File > Open_ and targeting `/path/to/your-cdv-project/platforms/ios/`.
+Import project in Xcode through _File > Open_ and targeting `/path/to/your-cdv-project/platforms/ios/PROJECT_NAME.xcodeworkspace`.
 
 ## How to Test Repo Development
 
