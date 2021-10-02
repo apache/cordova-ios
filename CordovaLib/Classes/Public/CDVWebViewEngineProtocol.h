@@ -33,6 +33,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NS_ASSUME_NONNULL_BEGIN
+
 @property (nonatomic, strong, readonly) UIView* engineWebView;
 
 - (id)loadRequest:(NSURLRequest*)request;

@@ -180,7 +180,7 @@
 
     [self parseSettingsWithParser:delegate];
 
-    // Get the plugin dictionary, whitelist and settings from the delegate.
+    // Get the plugin dictionary, allowList and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
     self.startupPluginNames = delegate.startupPluginNames;
     self.settings = delegate.settings;
@@ -238,7 +238,7 @@
     return appURL;
 }
 
-- (NSURL*)errorURL
+- (nullable NSURL*)errorURL
 {
     NSURL* errorUrl = nil;
 
@@ -532,8 +532,8 @@
 /// @param engineClass A class that must conform to the `CDVWebViewEngineProtocol`
 /// @param bounds with which the webview will be initialized
 - (id _Nullable) initWebViewEngine:(nonnull Class)engineClass bounds:(CGRect)bounds {
-    if ([engineClass respondsToSelector:@selector(initWithFrame:configuration:)]) {
-        WKWebViewConfiguration *config = [self respondsToSelector:@selector(configuration)] ? [self configuration] : nil;
+    WKWebViewConfiguration *config = [self respondsToSelector:@selector(configuration)] ? [self configuration] : nil;
+    if (config && [engineClass respondsToSelector:@selector(initWithFrame:configuration:)]) {
         return [[engineClass alloc] initWithFrame:bounds configuration:config];
     } else {
         return [[engineClass alloc] initWithFrame:bounds];
@@ -633,10 +633,10 @@
 /**
  Returns an instance of a CordovaCommand object, based on its name.  If one exists already, it is returned.
  */
-- (id)getCommandInstance:(NSString*)pluginName
+- (nullable id)getCommandInstance:(NSString*)pluginName
 {
     // first, we try to find the pluginName in the pluginsMap
-    // (acts as a whitelist as well) if it does not exist, we return nil
+    // (acts as a allowList as well) if it does not exist, we return nil
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a
     // possible issue is there can be duplicates possible if you had:
     // "org.apache.cordova.Foo" and "org.apache.cordova.foo" - only the lower-cased entry will match
@@ -667,7 +667,7 @@
 
 #pragma mark -
 
-- (NSString*)appURLScheme
+- (nullable NSString*)appURLScheme
 {
     NSString* URLScheme = nil;
 
