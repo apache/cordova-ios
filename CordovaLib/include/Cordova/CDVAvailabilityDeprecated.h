@@ -17,11 +17,10 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
-@interface CDVTimer : NSObject
-
-+ (void)start:(NSString*)name;
-+ (void)stop:(NSString*)name;
-
-@end
+#ifdef __clang__
+    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#else
+    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
+#endif

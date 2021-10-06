@@ -17,14 +17,13 @@
  under the License.
  */
 
-@interface CDVConfigParser : NSObject <NSXMLParserDelegate>
-{
-    NSString* featureName;
-}
+@import Foundation;
 
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
-@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
-@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readonly, strong) NSString* startPage;
+#import <Cordova/CDVViewController.h>
+
+@interface CDVAppDelegate : NSObject <UIApplicationDelegate>{}
+
+@property (nonatomic, strong) IBOutlet UIWindow* window;
+@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
 
 @end

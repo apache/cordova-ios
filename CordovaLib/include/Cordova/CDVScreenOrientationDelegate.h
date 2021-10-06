@@ -17,19 +17,12 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
 
-@interface NSDictionary (CordovaPreferences)
+@protocol CDVScreenOrientationDelegate <NSObject>
 
-- (id)cordovaSettingForKey:(NSString*)key;
-- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
-- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations;
 
-@end
-
-@interface NSMutableDictionary (CordovaPreferences)
-
-- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
+- (BOOL)shouldAutorotate;
 
 @end

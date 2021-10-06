@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <WebKit/WebKit.h>
+@import WebKit;
 
 @interface CDVWebViewProcessPoolFactory : NSObject
 @property (nonatomic, retain) WKProcessPool* sharedPool;

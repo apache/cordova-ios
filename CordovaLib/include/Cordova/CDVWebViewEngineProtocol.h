@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 @import WebKit;
 
 #define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"

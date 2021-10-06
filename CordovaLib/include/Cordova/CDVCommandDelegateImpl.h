@@ -17,18 +17,20 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WebKit.h>
-#import "CDVViewController.h"
+@import UIKit;
+#import <Cordova/CDVCommandDelegate.h>
 
+@class CDVViewController;
+@class CDVCommandQueue;
 
-@interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
-
-@property (nonatomic, strong) CDVViewController* viewController;
-
-@property (nonatomic) CDVPlugin* schemePlugin;
-
-- (instancetype)initWithVC:(CDVViewController *)controller;
-
-
+@interface CDVCommandDelegateImpl : NSObject <CDVCommandDelegate>{
+    @private
+    __weak CDVViewController* _viewController;
+    NSRegularExpression* _callbackIdPattern;
+    @protected
+    __weak CDVCommandQueue* _commandQueue;
+    BOOL _delayResponses;
+}
+- (id)initWithViewController:(CDVViewController*)viewController;
+- (void)flushCommandQueueWithDelayedJs;
 @end

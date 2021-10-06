@@ -17,10 +17,23 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+#import <Cordova/CDVPlugin.h>
 
-#ifdef __clang__
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
-#else
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
-#endif
+@interface CDVPlugin (CDVPluginResources)
+
+/*
+ This will return the localized string for a key in a .bundle that is named the same as your class
+ For example, if your plugin class was called Foo, and you have a Spanish localized strings file, it will
+ try to load the desired key from Foo.bundle/es.lproj/Localizable.strings
+ */
+- (NSString*)pluginLocalizedString:(NSString*)key;
+
+/*
+ This will return the image for a name in a .bundle that is named the same as your class
+ For example, if your plugin class was called Foo, and you have an image called "bar",
+ it will try to load the image from Foo.bundle/bar.png (and appropriately named retina versions)
+ */
+- (UIImage*)pluginImageResource:(NSString*)name;
+
+@end

@@ -17,12 +17,16 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVViewController.h"
+@import Foundation;
 
-@interface CDVAppDelegate : NSObject <UIApplicationDelegate>{}
+@interface CDVConfigParser : NSObject <NSXMLParserDelegate>
+{
+    NSString* featureName;
+}
 
-@property (nonatomic, strong) IBOutlet UIWindow* window;
-@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
+@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
+@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
+@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
+@property (nonatomic, readonly, strong) NSString* startPage;
 
 @end

@@ -17,13 +17,19 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+@import UIKit;
 
-@interface NSMutableArray (QueueAdditions)
+@interface NSDictionary (CordovaPreferences)
 
-- (id)cdv_pop;
-- (id)cdv_queueHead;
-- (id)cdv_dequeue;
-- (void)cdv_enqueue:(id)obj;
+- (id)cordovaSettingForKey:(NSString*)key;
+- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
+- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+
+@end
+
+@interface NSMutableDictionary (CordovaPreferences)
+
+- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
 
 @end

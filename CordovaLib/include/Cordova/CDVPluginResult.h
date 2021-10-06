@@ -17,8 +17,9 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import "CDVAvailability.h"
+@import Foundation;
+
+#import <Cordova/CDVAvailability.h>
 
 typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
     CDVCommandStatus_NO_RESULT NS_SWIFT_NAME(noResult) = 0,

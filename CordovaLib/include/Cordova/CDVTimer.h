@@ -17,14 +17,11 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVAvailabilityDeprecated.h"
-#import "CDVAppDelegate.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVViewController.h"
-#import "CDVCommandDelegate.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVAllowList.h"
-#import "CDVScreenOrientationDelegate.h"
-#import "CDVTimer.h"
+@import Foundation;
+
+@interface CDVTimer : NSObject
+
++ (void)start:(NSString*)name;
++ (void)stop:(NSString*)name;
+
+@end

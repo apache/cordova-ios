@@ -17,16 +17,16 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import <Foundation/NSJSONSerialization.h>
-#import "CDVAvailability.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVCommandDelegate.h"
-#import "CDVCommandQueue.h"
-#import "CDVScreenOrientationDelegate.h"
-#import "CDVPlugin.h"
-#import "CDVWebViewEngineProtocol.h"
+@import UIKit;
 @import WebKit;
+#import <Foundation/NSJSONSerialization.h>
+#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVCommandDelegate.h>
+#import <Cordova/CDVCommandQueue.h>
+#import <Cordova/CDVScreenOrientationDelegate.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVWebViewEngineProtocol.h>
 
 @protocol CDVWebViewEngineConfigurationDelegate <NSObject>
 

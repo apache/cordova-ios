@@ -17,20 +17,13 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import "CDVCommandDelegate.h"
+@import Foundation;
 
-@class CDVViewController;
-@class CDVCommandQueue;
+@interface NSMutableArray (QueueAdditions)
 
-@interface CDVCommandDelegateImpl : NSObject <CDVCommandDelegate>{
-    @private
-    __weak CDVViewController* _viewController;
-    NSRegularExpression* _callbackIdPattern;
-    @protected
-    __weak CDVCommandQueue* _commandQueue;
-    BOOL _delayResponses;
-}
-- (id)initWithViewController:(CDVViewController*)viewController;
-- (void)flushCommandQueueWithDelayedJs;
+- (id)cdv_pop;
+- (id)cdv_queueHead;
+- (id)cdv_dequeue;
+- (void)cdv_enqueue:(id)obj;
+
 @end

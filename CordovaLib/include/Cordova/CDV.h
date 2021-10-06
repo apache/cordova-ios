@@ -17,12 +17,14 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-
-@protocol CDVScreenOrientationDelegate <NSObject>
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations;
-
-- (BOOL)shouldAutorotate;
-
-@end
+#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
+#import <Cordova/CDVAppDelegate.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVPluginResult.h>
+#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVCommandDelegate.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVAllowList.h>
+#import <Cordova/CDVScreenOrientationDelegate.h>
+#import <Cordova/CDVTimer.h>
