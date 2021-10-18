@@ -26,7 +26,7 @@
 #import "CDVPlugin+Private.h"
 #import <Cordova/CDVConfigParser.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
-#import <Cordova/CDVCommandDelegateImpl.h>
+#import "CDVCommandDelegateImpl.h"
 
 @interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
 

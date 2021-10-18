@@ -33,7 +33,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Uncomment to override the CDVCommandDelegateImpl used
+        // Uncomment to override the CDVCommandDelegate used
         // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
         // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
@@ -45,7 +45,7 @@
 {
     self = [super init];
     if (self) {
-        // Uncomment to override the CDVCommandDelegateImpl used
+        // Uncomment to override the CDVCommandDelegate used
         // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
         // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
@@ -75,38 +75,6 @@
 {
     [super viewDidLoad];
     [self.launchView setAlpha:1];
-}
-
-@end
-
-@implementation MainCommandDelegate
-
-/* To override the methods, uncomment the line in the init function(s)
-   in MainViewController.m
- */
-
-#pragma mark CDVCommandDelegate implementation
-
-- (id)getCommandInstance:(NSString*)className
-{
-    return [super getCommandInstance:className];
-}
-
-- (NSString*)pathForResource:(NSString*)resourcepath
-{
-    return [super pathForResource:resourcepath];
-}
-
-@end
-
-@implementation MainCommandQueue
-
-/* To override, uncomment the line in the init function(s)
-   in MainViewController.m
- */
-- (BOOL)execute:(CDVInvokedUrlCommand*)command
-{
-    return [super execute:command];
 }
 
 @end
