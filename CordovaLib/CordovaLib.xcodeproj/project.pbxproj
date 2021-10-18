@@ -316,7 +316,6 @@
 		9064EF5E26FAB74200C9D65B /* include */ = {
 			isa = PBXGroup;
 			children = (
-				C0C01EB41E3911D50056E6CB /* Cordova.h */,
 				9064EF5F26FAB74800C9D65B /* Cordova */,
 			);
 			path = include;
@@ -362,6 +361,7 @@
 		C0C01EB31E3911D50056E6CB /* Cordova */ = {
 			isa = PBXGroup;
 			children = (
+				C0C01EB41E3911D50056E6CB /* Cordova.h */,
 				C0C01EB51E3911D50056E6CB /* Info.plist */,
 			);
 			path = Cordova;
