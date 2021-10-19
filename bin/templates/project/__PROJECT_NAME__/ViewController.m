@@ -17,4 +17,17 @@
  under the License.
  */
 
-@import Cordova;
+#import "ViewController.h"
+
+@interface ViewController ()
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.launchView setAlpha:1];
+}
+
+@end

@@ -17,4 +17,7 @@
  under the License.
  */
 
-@import Cordova;
+#import <Cordova/CDVViewController.h>
+
+@interface ViewController : CDVViewController
+@end

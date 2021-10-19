@@ -356,10 +356,10 @@ function mapIconResources (icons, iconsDir) {
 
 function getIconsDir (projectRoot, platformProjDir) {
     let iconsDir;
-    const xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
+    const xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Assets.xcassets/'));
 
     if (xcassetsExists) {
-        iconsDir = path.join(platformProjDir, 'Images.xcassets/AppIcon.appiconset/');
+        iconsDir = path.join(platformProjDir, 'Assets.xcassets/AppIcon.appiconset/');
     } else {
         iconsDir = path.join(platformProjDir, 'Resources/icons/');
     }
@@ -408,8 +408,8 @@ function cleanIcons (projectRoot, projectConfig, locations) {
  * @param  {string} platformProjDir    The platform's project directory
  */
 function getBackgroundColorDir (projectRoot, platformProjDir) {
-    if (folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'))) {
-        return path.join(platformProjDir, 'Images.xcassets', 'BackgroundColor.colorset');
+    if (folderExists(path.join(projectRoot, platformProjDir, 'Assets.xcassets/'))) {
+        return path.join(platformProjDir, 'Assets.xcassets', 'BackgroundColor.colorset');
     } else {
         return null;
     }
@@ -654,7 +654,7 @@ function cleanFileResources (projectRoot, projectConfig, locations) {
  *     ]
  *
  * @param  {Array<Object>} splashScreens         splash screens as defined in config.xml for this platform
- * @param  {string} launchStoryboardImagesDir    project-root/Images.xcassets/LaunchStoryboard.imageset/
+ * @param  {string} launchStoryboardImagesDir    project-root/Assets.xcassets/LaunchStoryboard.imageset/
  * @return {Array<Object>}
  */
 function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) {
@@ -725,7 +725,7 @@ function mapLaunchStoryboardContents (splashScreens, launchStoryboardImagesDir) 
  *     }
  *
  * @param  {Array<Object>} splashScreens         splash screens as defined in config.xml for this platform
- * @param  {string} launchStoryboardImagesDir    project-root/Images.xcassets/LaunchStoryboard.imageset/
+ * @param  {string} launchStoryboardImagesDir    project-root/Assets.xcassets/LaunchStoryboard.imageset/
  * @return {Object}
  */
 function mapLaunchStoryboardResources (splashScreens, launchStoryboardImagesDir) {
@@ -764,7 +764,7 @@ function mapLaunchStoryboardResources (splashScreens, launchStoryboardImagesDir)
  * to the format requried by Xcode.
  *
  * @param  {Array<Object>} splashScreens         splash screens as defined in config.xml for this platform
- * @param  {string} launchStoryboardImagesDir    project-root/Images.xcassets/LaunchStoryboard.imageset/
+ * @param  {string} launchStoryboardImagesDir    project-root/Assets.xcassets/LaunchStoryboard.imageset/
  * @return {Object}
  */
 function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesDir) {
@@ -813,10 +813,10 @@ function getLaunchStoryboardContentsJSON (splashScreens, launchStoryboardImagesD
  */
 function getLaunchStoryboardImagesDir (projectRoot, platformProjDir) {
     let launchStoryboardImagesDir;
-    const xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Images.xcassets/'));
+    const xcassetsExists = folderExists(path.join(projectRoot, platformProjDir, 'Assets.xcassets/'));
 
     if (xcassetsExists) {
-        launchStoryboardImagesDir = path.join(platformProjDir, 'Images.xcassets/LaunchStoryboard.imageset/');
+        launchStoryboardImagesDir = path.join(platformProjDir, 'Assets.xcassets/LaunchStoryboard.imageset/');
     } else {
         // if we don't have a asset library for images, we can't do the storyboard.
         launchStoryboardImagesDir = null;

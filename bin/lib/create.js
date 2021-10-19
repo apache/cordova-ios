@@ -33,37 +33,6 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
-
-    /*
-     * Check if "CordovaLib" already exists with "fs.lstatSync" and remove it.
-     * Wrapped with try/catch because lstatSync will throw an error if "CordovaLib"
-     * is missing.
-     */
-    try {
-        const stats = fs.lstatSync(path.join(projectPath, 'CordovaLib'));
-        if (stats.isSymbolicLink()) {
-            fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
-        } else {
-            fs.removeSync(path.join(projectPath, 'CordovaLib'));
-        }
-    } catch (e) { }
-    if (use_shared) {
-        update_cordova_subproject([path.join(projectPath, `${projectName}.xcodeproj`, 'project.pbxproj'), config]);
-        // Symlink not used in project file, but is currently required for plugman because
-        // it reads the VERSION file from it (instead of using the cordova/version script
-        // like it should).
-        fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
-    } else {
-        const r = path.join(projectPath, projectName);
-        fs.ensureDirSync(path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        fs.copySync(path.join(r, '.gitignore'), path.join(projectPath, '.gitignore'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib/Classes'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib/VERSION'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib/cordova.js'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'CordovaLib_Prefix.pch'), path.join(projectPath, 'CordovaLib/CordovaLib_Prefix.pch'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'));
-        update_cordova_subproject([path.join(`${r}.xcodeproj`, 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), config]);
-    }
 }
 
 function copyScripts (projectPath, projectName) {
@@ -154,11 +123,6 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
     const project_name_esc = project_name.replace(/&/g, '\\&');
     utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_NAME__/g, project_name_esc);
     utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_ID__/g, package_name);
-    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.h'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.h'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'main.m'), /__PROJECT_NAME__/g, project_name_esc);
     utils.replaceFileContents(path.join(r, `${project_name}-Info.plist`), /__PROJECT_NAME__/g, project_name_esc);
     utils.replaceFileContents(path.join(r, `${project_name}-Prefix.pch`), /__PROJECT_NAME__/g, project_name_esc);
 }
