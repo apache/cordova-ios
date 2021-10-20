@@ -14,8 +14,8 @@
 		302D95F114D2391D003F00A1 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		6AFF5BF91D6E424B00AB3073 /* CDVLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6AFF5BF81D6E424B00AB3073 /* CDVLaunchScreen.storyboard */; };
-		857339E22710CC8900A1C74C /* config.xml in Copy config.xml */ = {isa = PBXBuildFile; fileRef = EB87FDF41871DAF40020F90C /* config.xml */; };
-		857339E42710CCA600A1C74C /* www in Copy www */ = {isa = PBXBuildFile; fileRef = 301BF56E109A69640062928A /* www */; };
+		8571256D272078E4008F34F1 /* www in Copy www */ = {isa = PBXBuildFile; fileRef = EB87FDF31871DA8E0020F90C /* www */; };
+		8571256E272078F6008F34F1 /* config.xml in Copy config.xml */ = {isa = PBXBuildFile; fileRef = EB87FDF41871DAF40020F90C /* config.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +49,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				857339E22710CC8900A1C74C /* config.xml in Copy config.xml */,
+				8571256E272078F6008F34F1 /* config.xml in Copy config.xml */,
 			);
 			name = "Copy config.xml";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -60,7 +60,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				857339E42710CCA600A1C74C /* www in Copy www */,
+				8571256D272078E4008F34F1 /* www in Copy www */,
 			);
 			name = "Copy www";
 			runOnlyForDeploymentPostprocessing = 0;
