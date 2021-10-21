@@ -26,6 +26,12 @@
 SRC_DIR="www"
 DST_DIR="$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME"
 DST_DIR_WWW="$DST_DIR/www"
+if [[ "$EFFECTIVE_PLATFORM_NAME" == "-maccatalyst" ]]; then
+  rm -rf "$DST_DIR_WWW"
+  rm -f  "$DST_DIR/config.xml"
+  DST_DIR="$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/Contents/Resources"
+  DST_DIR_WWW="$DST_DIR/www"
+fi
 COPY_HIDDEN=
 ORIG_IFS=$IFS
 IFS=$(echo -en "\n\b")
