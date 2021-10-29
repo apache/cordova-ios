@@ -152,41 +152,41 @@ class Api {
         }
         return result;
     }
-}
 
-/**
- * Updates already installed platform.
- *
- * @param  {String}  destination Destination directory, where platform installed
- * @param  {Object}  [options]  An options object. The most common options are:
- * @param  {String}  [options.customTemplate]  A path to custom template, that
- *   should override the default one from platform.
- * @param  {Boolean}  [options.link]  Flag that indicates that platform's
- *   sources will be linked to installed platform instead of copying.
- * @param {EventEmitter} [events] An EventEmitter instance that will be used for
- *   logging purposes. If no EventEmitter provided, all events will be logged to
- *   console
- *
- * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
- *   instance or rejected with CordovaError.
- */
-Api.updatePlatform = (destination, options, events) => {
-    setupEvents(events);
+    /**
+     * Updates already installed platform.
+     *
+     * @param  {String}  destination Destination directory, where platform installed
+     * @param  {Object}  [options]  An options object. The most common options are:
+     * @param  {String}  [options.customTemplate]  A path to custom template, that
+     *   should override the default one from platform.
+     * @param  {Boolean}  [options.link]  Flag that indicates that platform's
+     *   sources will be linked to installed platform instead of copying.
+     * @param {EventEmitter} [events] An EventEmitter instance that will be used for
+     *   logging purposes. If no EventEmitter provided, all events will be logged to
+     *   console
+     *
+     * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
+     *   instance or rejected with CordovaError.
+     */
+    static updatePlatform (destination, options, events) {
+        setupEvents(events);
 
-    let result;
-    try {
-        result = require('../../../lib/create')
-            .updateProject(destination, options)
-            .then(() => {
-                const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-                return new PlatformApi('ios', destination, events);
-            });
-    } catch (e) {
-        events.emit('error', 'updatePlatform is not callable from the iOS project API, you will need to do this manually.');
-        throw e;
+        let result;
+        try {
+            result = require('../../../lib/create')
+                .updateProject(destination, options)
+                .then(() => {
+                    const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+                    return new PlatformApi('ios', destination, events);
+                });
+        } catch (e) {
+            events.emit('error', 'updatePlatform is not callable from the iOS project API, you will need to do this manually.');
+            throw e;
+        }
+        return result;
     }
-    return result;
-};
+}
 
 /**
  * Gets a CordovaPlatform object, that represents the platform structure.
