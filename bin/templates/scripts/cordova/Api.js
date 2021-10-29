@@ -56,58 +56,60 @@ function getVariableSpec (spec, options) {
     return spec.includes('$') ? options.cli_variables[spec.replace('$', '')] : spec;
 }
 
-/**
- * Creates a new PlatformApi instance.
- *
- * @param  {String}  [platform] Platform name, used for backward compatibility
- *   w/ PlatformPoly (CordovaLib).
- * @param  {String}  [platformRootDir] Platform root location, used for backward
- *   compatibility w/ PlatformPoly (CordovaLib).
- * @param {EventEmitter} [events] An EventEmitter instance that will be used for
- *   logging purposes. If no EventEmitter provided, all events will be logged to
- *   console
- */
-function Api (platform, platformRootDir, events) {
-    // 'platform' property is required as per PlatformApi spec
-    this.platform = platform || 'ios';
-    this.root = platformRootDir || path.resolve(__dirname, '..');
+class Api {
+    /**
+     * Creates a new PlatformApi instance.
+     *
+     * @param  {String}  [platform] Platform name, used for backward compatibility
+     *   w/ PlatformPoly (CordovaLib).
+     * @param  {String}  [platformRootDir] Platform root location, used for backward
+     *   compatibility w/ PlatformPoly (CordovaLib).
+     * @param {EventEmitter} [events] An EventEmitter instance that will be used for
+     *   logging purposes. If no EventEmitter provided, all events will be logged to
+     *   console
+     */
+    constructor (platform, platformRootDir, events) {
+        // 'platform' property is required as per PlatformApi spec
+        this.platform = platform || 'ios';
+        this.root = platformRootDir || path.resolve(__dirname, '..');
 
-    setupEvents(events);
+        setupEvents(events);
 
-    let xcodeProjDir;
-    let xcodeCordovaProj;
+        let xcodeProjDir;
+        let xcodeCordovaProj;
 
-    try {
-        const xcodeProjDir_array = fs.readdirSync(this.root).filter(e => e.match(/\.xcodeproj$/i));
-        if (xcodeProjDir_array.length > 1) {
-            for (let x = 0; x < xcodeProjDir_array.length; x++) {
-                if (xcodeProjDir_array[x].substring(0, 2) === '._') {
-                    xcodeProjDir_array.splice(x, 1);
+        try {
+            const xcodeProjDir_array = fs.readdirSync(this.root).filter(e => e.match(/\.xcodeproj$/i));
+            if (xcodeProjDir_array.length > 1) {
+                for (let x = 0; x < xcodeProjDir_array.length; x++) {
+                    if (xcodeProjDir_array[x].substring(0, 2) === '._') {
+                        xcodeProjDir_array.splice(x, 1);
+                    }
                 }
             }
-        }
-        xcodeProjDir = xcodeProjDir_array[0];
+            xcodeProjDir = xcodeProjDir_array[0];
 
-        if (!xcodeProjDir) {
+            if (!xcodeProjDir) {
+                throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
+            }
+
+            const cordovaProjName = xcodeProjDir.substring(xcodeProjDir.lastIndexOf(path.sep) + 1, xcodeProjDir.indexOf('.xcodeproj'));
+            xcodeCordovaProj = path.join(this.root, cordovaProjName);
+        } catch (e) {
             throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
         }
 
-        const cordovaProjName = xcodeProjDir.substring(xcodeProjDir.lastIndexOf(path.sep) + 1, xcodeProjDir.indexOf('.xcodeproj'));
-        xcodeCordovaProj = path.join(this.root, cordovaProjName);
-    } catch (e) {
-        throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
+        this.locations = {
+            root: this.root,
+            www: path.join(this.root, 'www'),
+            platformWww: path.join(this.root, 'platform_www'),
+            configXml: path.join(xcodeCordovaProj, 'config.xml'),
+            defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
+            pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
+            xcodeProjDir: path.join(this.root, xcodeProjDir),
+            xcodeCordovaProj
+        };
     }
-
-    this.locations = {
-        root: this.root,
-        www: path.join(this.root, 'www'),
-        platformWww: path.join(this.root, 'platform_www'),
-        configXml: path.join(xcodeCordovaProj, 'config.xml'),
-        defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
-        pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
-        xcodeProjDir: path.join(this.root, xcodeProjDir),
-        xcodeCordovaProj
-    };
 }
 
 /**
