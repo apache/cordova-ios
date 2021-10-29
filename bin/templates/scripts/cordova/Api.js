@@ -697,10 +697,10 @@ class Api {
     requirements () {
         return check_reqs.check_all();
     }
-}
 
-Api.version = function () {
-    return VERSION;
-};
+    static version () {
+        return VERSION;
+    }
+}
 
 module.exports = Api;
