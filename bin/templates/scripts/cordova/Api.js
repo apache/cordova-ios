@@ -574,53 +574,52 @@ class Api {
         }
         return Promise.resolve();
     }
-}
 
-/**
- * set Swift Version for all CocoaPods libraries
- *
- * @param  {PodsJson}  podsjsonFile  A PodsJson instance that represents pods.json
- */
+    /**
+     * set Swift Version for all CocoaPods libraries
+     *
+     * @param  {PodsJson}  podsjsonFile  A PodsJson instance that represents pods.json
+     */
+    setSwiftVersionForCocoaPodsLibraries (podsjsonFile) {
+        let __dirty = false;
+        return check_reqs.check_cocoapods().then(toolOptions => {
+            if (toolOptions.ignore) {
+                events.emit('verbose', '=== skip Swift Version Settings For Cocoapods Libraries');
+            } else {
+                const podPbxPath = path.join(this.root, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
+                const podXcodeproj = xcode.project(podPbxPath);
+                podXcodeproj.parseSync();
+                const podTargets = podXcodeproj.pbxNativeTargetSection();
+                const podConfigurationList = podXcodeproj.pbxXCConfigurationList();
+                const podConfigs = podXcodeproj.pbxXCBuildConfigurationSection();
 
-Api.prototype.setSwiftVersionForCocoaPodsLibraries = function (podsjsonFile) {
-    let __dirty = false;
-    return check_reqs.check_cocoapods().then(toolOptions => {
-        if (toolOptions.ignore) {
-            events.emit('verbose', '=== skip Swift Version Settings For Cocoapods Libraries');
-        } else {
-            const podPbxPath = path.join(this.root, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
-            const podXcodeproj = xcode.project(podPbxPath);
-            podXcodeproj.parseSync();
-            const podTargets = podXcodeproj.pbxNativeTargetSection();
-            const podConfigurationList = podXcodeproj.pbxXCConfigurationList();
-            const podConfigs = podXcodeproj.pbxXCBuildConfigurationSection();
-
-            const libraries = podsjsonFile.getLibraries();
-            Object.keys(libraries).forEach(key => {
-                const podJson = libraries[key];
-                const name = podJson.name;
-                const swiftVersion = podJson['swift-version'];
-                if (swiftVersion) {
-                    __dirty = true;
-                    Object.keys(podTargets)
-                        .filter(targetKey => podTargets[targetKey].productName === name)
-                        .map(targetKey => podTargets[targetKey].buildConfigurationList)
-                        .map(buildConfigurationListId => podConfigurationList[buildConfigurationListId])
-                        .map(buildConfigurationList => buildConfigurationList.buildConfigurations)
-                        .reduce((acc, buildConfigurations) => acc.concat(buildConfigurations), [])
-                        .map(buildConfiguration => buildConfiguration.value)
-                        .forEach(buildId => {
-                            __dirty = true;
-                            podConfigs[buildId].buildSettings.SWIFT_VERSION = swiftVersion;
-                        });
+                const libraries = podsjsonFile.getLibraries();
+                Object.keys(libraries).forEach(key => {
+                    const podJson = libraries[key];
+                    const name = podJson.name;
+                    const swiftVersion = podJson['swift-version'];
+                    if (swiftVersion) {
+                        __dirty = true;
+                        Object.keys(podTargets)
+                            .filter(targetKey => podTargets[targetKey].productName === name)
+                            .map(targetKey => podTargets[targetKey].buildConfigurationList)
+                            .map(buildConfigurationListId => podConfigurationList[buildConfigurationListId])
+                            .map(buildConfigurationList => buildConfigurationList.buildConfigurations)
+                            .reduce((acc, buildConfigurations) => acc.concat(buildConfigurations), [])
+                            .map(buildConfiguration => buildConfiguration.value)
+                            .forEach(buildId => {
+                                __dirty = true;
+                                podConfigs[buildId].buildSettings.SWIFT_VERSION = swiftVersion;
+                            });
+                    }
+                });
+                if (__dirty) {
+                    fs.writeFileSync(podPbxPath, podXcodeproj.writeSync(), 'utf-8');
                 }
-            });
-            if (__dirty) {
-                fs.writeFileSync(podPbxPath, podXcodeproj.writeSync(), 'utf-8');
             }
-        }
-    });
-};
+        });
+    }
+}
 
 /**
  * Builds an application package for current platform.
