@@ -110,49 +110,49 @@ class Api {
             xcodeCordovaProj
         };
     }
-}
 
-/**
- * Creates platform in a specified directory.
- *
- * @param  {String}  destination Destination directory, where install platform to
- * @param  {ConfigParser}  [config] ConfigParser instance, used to retrieve
- *   project creation options, such as package id and project name.
- * @param  {Object}  [options]  An options object. The most common options are:
- * @param  {String}  [options.customTemplate]  A path to custom template, that
- *   should override the default one from platform.
- * @param  {Boolean}  [options.link]  Flag that indicates that platform's
- *   sources will be linked to installed platform instead of copying.
- * @param {EventEmitter} [events] An EventEmitter instance that will be used for
- *   logging purposes. If no EventEmitter provided, all events will be logged to
- *   console
- *
- * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
- *   instance or rejected with CordovaError.
- */
-Api.createPlatform = (destination, config, options, events) => {
-    setupEvents(events);
+    /**
+     * Creates platform in a specified directory.
+     *
+     * @param  {String}  destination Destination directory, where install platform to
+     * @param  {ConfigParser}  [config] ConfigParser instance, used to retrieve
+     *   project creation options, such as package id and project name.
+     * @param  {Object}  [options]  An options object. The most common options are:
+     * @param  {String}  [options.customTemplate]  A path to custom template, that
+     *   should override the default one from platform.
+     * @param  {Boolean}  [options.link]  Flag that indicates that platform's
+     *   sources will be linked to installed platform instead of copying.
+     * @param {EventEmitter} [events] An EventEmitter instance that will be used for
+     *   logging purposes. If no EventEmitter provided, all events will be logged to
+     *   console
+     *
+     * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
+     *   instance or rejected with CordovaError.
+     */
+    static createPlatform (destination, config, options, events) {
+        setupEvents(events);
 
-    // CB-6992 it is necessary to normalize characters
-    // because node and shell scripts handles unicode symbols differently
-    // We need to normalize the name to NFD form since iOS uses NFD unicode form
-    const name = unorm.nfd(config.name());
-    let result;
-    try {
-        result = require('../../../lib/create')
-            .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options, config)
-            .then(() => {
-                // after platform is created we return Api instance based on new Api.js location
-                // This is required to correctly resolve paths in the future api calls
-                const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-                return new PlatformApi('ios', destination, events);
-            });
-    } catch (e) {
-        events.emit('error', 'createPlatform is not callable from the iOS project API.');
-        throw e;
+        // CB-6992 it is necessary to normalize characters
+        // because node and shell scripts handles unicode symbols differently
+        // We need to normalize the name to NFD form since iOS uses NFD unicode form
+        const name = unorm.nfd(config.name());
+        let result;
+        try {
+            result = require('../../../lib/create')
+                .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options, config)
+                .then(() => {
+                    // after platform is created we return Api instance based on new Api.js location
+                    // This is required to correctly resolve paths in the future api calls
+                    const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+                    return new PlatformApi('ios', destination, events);
+                });
+        } catch (e) {
+            events.emit('error', 'createPlatform is not callable from the iOS project API.');
+            throw e;
+        }
+        return result;
     }
-    return result;
-};
+}
 
 /**
  * Updates already installed platform.
