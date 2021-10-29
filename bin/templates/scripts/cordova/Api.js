@@ -656,24 +656,24 @@ class Api {
         return check_reqs.run()
             .then(() => require('./lib/build').run.call(this, buildOptions));
     }
-}
 
-/**
- * Builds an application package for current platform and runs it on
- *   specified/default device. If no 'device'/'emulator'/'target' options are
- *   specified, then tries to run app on default device if connected, otherwise
- *   runs the app on emulator.
- *
- * @param   {Object}  runOptions  An options object. The structure is the same
- *   as for build options.
- *
- * @return {Promise} A promise either fulfilled if package was built and ran
- *   successfully, or rejected with CordovaError.
- */
-Api.prototype.run = function (runOptions) {
-    return check_reqs.run()
-        .then(() => require('./lib/run').run.call(this, runOptions));
-};
+    /**
+     * Builds an application package for current platform and runs it on
+     *   specified/default device. If no 'device'/'emulator'/'target' options are
+     *   specified, then tries to run app on default device if connected, otherwise
+     *   runs the app on emulator.
+     *
+     * @param   {Object}  runOptions  An options object. The structure is the same
+     *   as for build options.
+     *
+     * @return {Promise} A promise either fulfilled if package was built and ran
+     *   successfully, or rejected with CordovaError.
+     */
+    run (runOptions) {
+        return check_reqs.run()
+            .then(() => require('./lib/run').run.call(this, runOptions));
+    }
+}
 
 /**
  * Cleans out the build artifacts from platform's directory.
