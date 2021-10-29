@@ -619,44 +619,44 @@ class Api {
             }
         });
     }
-}
 
-/**
- * Builds an application package for current platform.
- *
- * @param  {Object}  buildOptions  A build options. This object's structure is
- *   highly depends on platform's specific. The most common options are:
- * @param  {Boolean}  buildOptions.debug  Indicates that packages should be
- *   built with debug configuration. This is set to true by default unless the
- *   'release' option is not specified.
- * @param  {Boolean}  buildOptions.release  Indicates that packages should be
- *   built with release configuration. If not set to true, debug configuration
- *   will be used.
- * @param   {Boolean}  buildOptions.device  Specifies that built app is intended
- *   to run on device
- * @param   {Boolean}  buildOptions.emulator: Specifies that built app is
- *   intended to run on emulator
- * @param   {String}  buildOptions.target  Specifies the device id that will be
- *   used to run built application.
- * @param   {Boolean}  buildOptions.nobuild  Indicates that this should be a
- *   dry-run call, so no build artifacts will be produced.
- * @param   {String[]}  buildOptions.archs  Specifies chip architectures which
- *   app packages should be built for. List of valid architectures is depends on
- *   platform.
- * @param   {String}  buildOptions.buildConfig  The path to build configuration
- *   file. The format of this file is depends on platform.
- * @param   {String[]} buildOptions.argv Raw array of command-line arguments,
- *   passed to `build` command. The purpose of this property is to pass a
- *   platform-specific arguments, and eventually let platform define own
- *   arguments processing logic.
- *
- * @return  {Promise}  Return a promise either fulfilled, or rejected with
- *   CordovaError instance.
- */
-Api.prototype.build = function (buildOptions) {
-    return check_reqs.run()
-        .then(() => require('./lib/build').run.call(this, buildOptions));
-};
+    /**
+     * Builds an application package for current platform.
+     *
+     * @param  {Object}  buildOptions  A build options. This object's structure is
+     *   highly depends on platform's specific. The most common options are:
+     * @param  {Boolean}  buildOptions.debug  Indicates that packages should be
+     *   built with debug configuration. This is set to true by default unless the
+     *   'release' option is not specified.
+     * @param  {Boolean}  buildOptions.release  Indicates that packages should be
+     *   built with release configuration. If not set to true, debug configuration
+     *   will be used.
+     * @param   {Boolean}  buildOptions.device  Specifies that built app is intended
+     *   to run on device
+     * @param   {Boolean}  buildOptions.emulator: Specifies that built app is
+     *   intended to run on emulator
+     * @param   {String}  buildOptions.target  Specifies the device id that will be
+     *   used to run built application.
+     * @param   {Boolean}  buildOptions.nobuild  Indicates that this should be a
+     *   dry-run call, so no build artifacts will be produced.
+     * @param   {String[]}  buildOptions.archs  Specifies chip architectures which
+     *   app packages should be built for. List of valid architectures is depends on
+     *   platform.
+     * @param   {String}  buildOptions.buildConfig  The path to build configuration
+     *   file. The format of this file is depends on platform.
+     * @param   {String[]} buildOptions.argv Raw array of command-line arguments,
+     *   passed to `build` command. The purpose of this property is to pass a
+     *   platform-specific arguments, and eventually let platform define own
+     *   arguments processing logic.
+     *
+     * @return  {Promise}  Return a promise either fulfilled, or rejected with
+     *   CordovaError instance.
+     */
+    build (buildOptions) {
+        return check_reqs.run()
+            .then(() => require('./lib/build').run.call(this, buildOptions));
+    }
+}
 
 /**
  * Builds an application package for current platform and runs it on
