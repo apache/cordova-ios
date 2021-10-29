@@ -282,55 +282,55 @@ class Api {
             // CB-11022 Return truthy value to prevent running prepare after
             .then(() => true);
     }
-}
 
-/**
- * Removes an installed plugin from platform.
- *
- * Since method accepts PluginInfo instance as input parameter instead of plugin
- *   id, caller shoud take care of managing/storing PluginInfo instances for
- *   future uninstalls.
- *
- * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
- *   that will be installed.
- *
- * @return  {Promise}  Return a promise either fulfilled, or rejected with
- *   CordovaError instance.
- */
-Api.prototype.removePlugin = function (plugin, uninstallOptions) {
-    const xcodeproj = projectFile.parse(this.locations);
+    /**
+     * Removes an installed plugin from platform.
+     *
+     * Since method accepts PluginInfo instance as input parameter instead of plugin
+     *   id, caller shoud take care of managing/storing PluginInfo instances for
+     *   future uninstalls.
+     *
+     * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
+     *   that will be installed.
+     *
+     * @return  {Promise}  Return a promise either fulfilled, or rejected with
+     *   CordovaError instance.
+     */
+    removePlugin (plugin, uninstallOptions) {
+        const xcodeproj = projectFile.parse(this.locations);
 
-    return PluginManager.get(this.platform, this.locations, xcodeproj)
-        .removePlugin(plugin, uninstallOptions)
-        .then(() => {
-            if (plugin != null) {
-                const headerTags = plugin.getHeaderFiles(this.platform);
-                const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
-                if (bridgingHeaders.length > 0) {
-                    const project_dir = this.locations.root;
-                    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
-                    const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
-                    const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
-                    events.emit('verbose', 'Removing Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
-                    bridgingHeaders.forEach(obj => {
-                        const bridgingHeaderPath = path.basename(obj.src);
-                        bridgingHeaderFile.removeHeader(plugin.id, bridgingHeaderPath);
-                    });
-                    bridgingHeaderFile.write();
+        return PluginManager.get(this.platform, this.locations, xcodeproj)
+            .removePlugin(plugin, uninstallOptions)
+            .then(() => {
+                if (plugin != null) {
+                    const headerTags = plugin.getHeaderFiles(this.platform);
+                    const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
+                    if (bridgingHeaders.length > 0) {
+                        const project_dir = this.locations.root;
+                        const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
+                        const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
+                        const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
+                        events.emit('verbose', 'Removing Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
+                        bridgingHeaders.forEach(obj => {
+                            const bridgingHeaderPath = path.basename(obj.src);
+                            bridgingHeaderFile.removeHeader(plugin.id, bridgingHeaderPath);
+                        });
+                        bridgingHeaderFile.write();
+                    }
                 }
-            }
-        })
-        .then(() => {
-            if (plugin != null) {
-                const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(this.platform) : [];
-                const frameworkTags = plugin.getFrameworks(this.platform);
-                const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
-                return this.removePodSpecs(plugin, podSpecs, frameworkPods, uninstallOptions);
-            }
-        })
-        // CB-11022 Return truthy value to prevent running prepare after
-        .then(() => true);
-};
+            })
+            .then(() => {
+                if (plugin != null) {
+                    const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(this.platform) : [];
+                    const frameworkTags = plugin.getFrameworks(this.platform);
+                    const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
+                    return this.removePodSpecs(plugin, podSpecs, frameworkPods, uninstallOptions);
+                }
+            })
+            // CB-11022 Return truthy value to prevent running prepare after
+            .then(() => true);
+    }
+}
 
 /**
  * adding CocoaPods libraries
