@@ -33,13 +33,15 @@ const path = require('path');
 const unorm = require('unorm');
 const projectFile = require('./lib/projectFile');
 const check_reqs = require('./lib/check_reqs');
-const CordovaError = require('cordova-common').CordovaError;
-const CordovaLogger = require('cordova-common').CordovaLogger;
-const events = require('cordova-common').events;
-const PluginManager = require('cordova-common').PluginManager;
+const {
+    ConfigParser,
+    CordovaError,
+    CordovaLogger,
+    events,
+    PluginManager
+} = require('cordova-common');
 const util = require('util');
 const xcode = require('xcode');
-const ConfigParser = require('cordova-common').ConfigParser;
 
 function setupEvents (externalEventEmitter) {
     if (externalEventEmitter) {
