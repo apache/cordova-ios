@@ -196,14 +196,13 @@ class Api {
      *   platform's file structure and other properties of platform.
      */
     getPlatformInfo () {
-        const result = {};
-        result.locations = this.locations;
-        result.root = this.root;
-        result.name = this.platform;
-        result.version = Api.version();
-        result.projectConfig = new ConfigParser(this.locations.configXml);
-
-        return result;
+        return {
+            locations: this.locations,
+            root: this.root,
+            name: this.platform,
+            version: Api.version(),
+            projectConfig: new ConfigParser(this.locations.configXml)
+        };
     }
 
     /**
