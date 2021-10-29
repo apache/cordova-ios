@@ -673,19 +673,19 @@ class Api {
         return check_reqs.run()
             .then(() => require('./lib/run').run.call(this, runOptions));
     }
-}
 
-/**
- * Cleans out the build artifacts from platform's directory.
- *
- * @return  {Promise}  Return a promise either fulfilled, or rejected with
- *   CordovaError.
- */
-Api.prototype.clean = function (cleanOptions) {
-    return check_reqs.run()
-        .then(() => require('./lib/clean').run.call(this, cleanOptions))
-        .then(() => require('./lib/prepare').clean.call(this, cleanOptions));
-};
+    /**
+     * Cleans out the build artifacts from platform's directory.
+     *
+     * @return  {Promise}  Return a promise either fulfilled, or rejected with
+     *   CordovaError.
+     */
+    clean (cleanOptions) {
+        return check_reqs.run()
+            .then(() => require('./lib/clean').run.call(this, cleanOptions))
+            .then(() => require('./lib/prepare').clean.call(this, cleanOptions));
+    }
+}
 
 /**
  * Performs a requirements check for current platform. Each platform defines its
