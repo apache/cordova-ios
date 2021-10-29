@@ -186,24 +186,25 @@ class Api {
         }
         return result;
     }
+
+    /**
+     * Gets a CordovaPlatform object, that represents the platform structure.
+     *
+     * @return  {CordovaPlatform}  A structure that contains the description of
+     *   platform's file structure and other properties of platform.
+     */
+    getPlatformInfo () {
+        const result = {};
+        result.locations = this.locations;
+        result.root = this.root;
+        result.name = this.platform;
+        result.version = Api.version();
+        result.projectConfig = new ConfigParser(this.locations.configXml);
+
+        return result;
+    }
 }
 
-/**
- * Gets a CordovaPlatform object, that represents the platform structure.
- *
- * @return  {CordovaPlatform}  A structure that contains the description of
- *   platform's file structure and other properties of platform.
- */
-Api.prototype.getPlatformInfo = function () {
-    const result = {};
-    result.locations = this.locations;
-    result.root = this.root;
-    result.name = this.platform;
-    result.version = Api.version();
-    result.projectConfig = new ConfigParser(this.locations.configXml);
-
-    return result;
-};
 
 /**
  * Updates installed platform with provided www assets and new app
