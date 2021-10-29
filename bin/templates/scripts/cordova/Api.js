@@ -223,66 +223,66 @@ class Api {
 
         return require('./lib/prepare').prepare.call(this, cordovaProject);
     }
-}
 
-/**
- * Installs a new plugin into platform. It doesn't resolves plugin dependencies.
- *
- * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
- *   that will be installed.
- * @param  {Object}  installOptions  An options object. Possible options below:
- * @param  {Boolean}  installOptions.link: Flag that specifies that plugin
- *   sources will be symlinked to app's directory instead of copying (if
- *   possible).
- * @param  {Object}  installOptions.variables  An object that represents
- *   variables that will be used to install plugin. See more details on plugin
- *   variables in documentation:
- *   https://cordova.apache.org/docs/en/4.0.0/plugin_ref_spec.md.html
- *
- * @return  {Promise}  Return a promise either fulfilled, or rejected with
- *   CordovaError instance.
- */
-Api.prototype.addPlugin = function (plugin, installOptions) {
-    const xcodeproj = projectFile.parse(this.locations);
+    /**
+     * Installs a new plugin into platform. It doesn't resolves plugin dependencies.
+     *
+     * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
+     *   that will be installed.
+     * @param  {Object}  installOptions  An options object. Possible options below:
+     * @param  {Boolean}  installOptions.link: Flag that specifies that plugin
+     *   sources will be symlinked to app's directory instead of copying (if
+     *   possible).
+     * @param  {Object}  installOptions.variables  An object that represents
+     *   variables that will be used to install plugin. See more details on plugin
+     *   variables in documentation:
+     *   https://cordova.apache.org/docs/en/4.0.0/plugin_ref_spec.md.html
+     *
+     * @return  {Promise}  Return a promise either fulfilled, or rejected with
+     *   CordovaError instance.
+     */
+    addPlugin (plugin, installOptions) {
+        const xcodeproj = projectFile.parse(this.locations);
 
-    installOptions = installOptions || {};
-    installOptions.variables = installOptions.variables || {};
-    // Add PACKAGE_NAME variable into vars
-    if (!installOptions.variables.PACKAGE_NAME) {
-        installOptions.variables.PACKAGE_NAME = xcodeproj.getPackageName();
-    }
+        installOptions = installOptions || {};
+        installOptions.variables = installOptions.variables || {};
+        // Add PACKAGE_NAME variable into vars
+        if (!installOptions.variables.PACKAGE_NAME) {
+            installOptions.variables.PACKAGE_NAME = xcodeproj.getPackageName();
+        }
 
-    return PluginManager.get(this.platform, this.locations, xcodeproj)
-        .addPlugin(plugin, installOptions)
-        .then(() => {
-            if (plugin != null) {
-                const headerTags = plugin.getHeaderFiles(this.platform);
-                const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
-                if (bridgingHeaders.length > 0) {
-                    const project_dir = this.locations.root;
-                    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
-                    const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
-                    const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
-                    events.emit('verbose', 'Adding Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
-                    bridgingHeaders.forEach(obj => {
-                        const bridgingHeaderPath = path.basename(obj.src);
-                        bridgingHeaderFile.addHeader(plugin.id, bridgingHeaderPath);
-                    });
-                    bridgingHeaderFile.write();
+        return PluginManager.get(this.platform, this.locations, xcodeproj)
+            .addPlugin(plugin, installOptions)
+            .then(() => {
+                if (plugin != null) {
+                    const headerTags = plugin.getHeaderFiles(this.platform);
+                    const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
+                    if (bridgingHeaders.length > 0) {
+                        const project_dir = this.locations.root;
+                        const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
+                        const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
+                        const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
+                        events.emit('verbose', 'Adding Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
+                        bridgingHeaders.forEach(obj => {
+                            const bridgingHeaderPath = path.basename(obj.src);
+                            bridgingHeaderFile.addHeader(plugin.id, bridgingHeaderPath);
+                        });
+                        bridgingHeaderFile.write();
+                    }
                 }
-            }
-        })
-        .then(() => {
-            if (plugin != null) {
-                const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(this.platform) : [];
-                const frameworkTags = plugin.getFrameworks(this.platform);
-                const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
-                return this.addPodSpecs(plugin, podSpecs, frameworkPods, installOptions);
-            }
-        })
-        // CB-11022 Return truthy value to prevent running prepare after
-        .then(() => true);
-};
+            })
+            .then(() => {
+                if (plugin != null) {
+                    const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(this.platform) : [];
+                    const frameworkTags = plugin.getFrameworks(this.platform);
+                    const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
+                    return this.addPodSpecs(plugin, podSpecs, frameworkPods, installOptions);
+                }
+            })
+            // CB-11022 Return truthy value to prevent running prepare after
+            .then(() => true);
+    }
+}
 
 /**
  * Removes an installed plugin from platform.
