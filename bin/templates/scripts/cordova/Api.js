@@ -456,125 +456,125 @@ class Api {
         }
         return Promise.resolve();
     }
-}
 
-/**
- * removing CocoaPods libraries
- *
- * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
- *   that will be installed.
- * @param  {Object}  podSpecs: the return value of plugin.getPodSpecs(this.platform)
- * @param  {Object}  frameworkPods: framework tags object with type === 'podspec'
- * @return  {Promise}  Return a promise
- */
+    /**
+     * removing CocoaPods libraries
+     *
+     * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
+     *   that will be installed.
+     * @param  {Object}  podSpecs: the return value of plugin.getPodSpecs(this.platform)
+     * @param  {Object}  frameworkPods: framework tags object with type === 'podspec'
+     * @return  {Promise}  Return a promise
+     */
 
-Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods, uninstallOptions) {
-    const project_dir = this.locations.root;
-    const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
+    removePodSpecs (plugin, podSpecs, frameworkPods, uninstallOptions) {
+        const project_dir = this.locations.root;
+        const project_name = this.locations.xcodeCordovaProj.split(path.sep).pop();
 
-    const Podfile = require('./lib/Podfile').Podfile;
-    const PodsJson = require('./lib/PodsJson').PodsJson;
-    const podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-    const podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
+        const Podfile = require('./lib/Podfile').Podfile;
+        const PodsJson = require('./lib/PodsJson').PodsJson;
+        const podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
+        const podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
 
-    if (podSpecs.length) {
-        events.emit('verbose', 'Adding pods since the plugin contained <podspecs>');
-        podSpecs.forEach(obj => {
-            // declarations
-            Object.keys(obj.declarations).forEach(key => {
-                if (obj.declarations[key] === 'true') {
-                    const declaration = Podfile.proofDeclaration(key);
+        if (podSpecs.length) {
+            events.emit('verbose', 'Adding pods since the plugin contained <podspecs>');
+            podSpecs.forEach(obj => {
+                // declarations
+                Object.keys(obj.declarations).forEach(key => {
+                    if (obj.declarations[key] === 'true') {
+                        const declaration = Podfile.proofDeclaration(key);
+                        const podJson = {
+                            declaration
+                        };
+                        const val = podsjsonFile.getDeclaration(declaration);
+                        if (val) {
+                            podsjsonFile.decrementDeclaration(declaration);
+                        } else {
+                            const message = util.format('plugin \"%s\" declaration \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.declaration); /* eslint no-useless-escape : 0 */
+                            events.emit('verbose', message);
+                        }
+                        if (!val || val.count === 0) {
+                            podfileFile.removeDeclaration(podJson.declaration);
+                        }
+                    }
+                });
+                // sources
+                Object.keys(obj.sources).forEach(key => {
                     const podJson = {
-                        declaration
+                        source: obj.sources[key].source
                     };
-                    const val = podsjsonFile.getDeclaration(declaration);
+                    const val = podsjsonFile.getSource(key);
                     if (val) {
-                        podsjsonFile.decrementDeclaration(declaration);
+                        podsjsonFile.decrementSource(key);
                     } else {
-                        const message = util.format('plugin \"%s\" declaration \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.declaration); /* eslint no-useless-escape : 0 */
+                        const message = util.format('plugin \"%s\" source \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.source); /* eslint no-useless-escape : 0 */
                         events.emit('verbose', message);
                     }
                     if (!val || val.count === 0) {
-                        podfileFile.removeDeclaration(podJson.declaration);
+                        podfileFile.removeSource(podJson.source);
                     }
-                }
+                });
+                // libraries
+                Object.keys(obj.libraries).forEach(key => {
+                    const podJson = Object.assign({}, obj.libraries[key]);
+                    if (podJson.spec) {
+                        podJson.spec = getVariableSpec(podJson.spec, uninstallOptions);
+                    }
+                    const val = podsjsonFile.getLibrary(key);
+                    if (val) {
+                        podsjsonFile.decrementLibrary(key);
+                    } else {
+                        const message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
+                        events.emit('verbose', message);
+                    }
+                    if (!val || val.count === 0) {
+                        podfileFile.removeSpec(podJson.name);
+                    }
+                });
             });
-            // sources
-            Object.keys(obj.sources).forEach(key => {
+        }
+
+        if (frameworkPods.length) {
+            events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
+            events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type=\"podspec\"'); /* eslint no-useless-escape : 0 */
+            frameworkPods.forEach(obj => {
+                const spec = getVariableSpec(obj.spec, uninstallOptions);
                 const podJson = {
-                    source: obj.sources[key].source
+                    name: obj.src,
+                    type: obj.type,
+                    spec
                 };
-                const val = podsjsonFile.getSource(key);
-                if (val) {
-                    podsjsonFile.decrementSource(key);
-                } else {
-                    const message = util.format('plugin \"%s\" source \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.source); /* eslint no-useless-escape : 0 */
-                    events.emit('verbose', message);
-                }
-                if (!val || val.count === 0) {
-                    podfileFile.removeSource(podJson.source);
-                }
-            });
-            // libraries
-            Object.keys(obj.libraries).forEach(key => {
-                const podJson = Object.assign({}, obj.libraries[key]);
-                if (podJson.spec) {
-                    podJson.spec = getVariableSpec(podJson.spec, uninstallOptions);
-                }
-                const val = podsjsonFile.getLibrary(key);
-                if (val) {
-                    podsjsonFile.decrementLibrary(key);
-                } else {
+
+                const val = podsjsonFile.getLibrary(podJson.name);
+                if (val) { // found, decrement count
+                    podsjsonFile.decrementLibrary(podJson.name);
+                } else { // not found (perhaps a sync error)
                     const message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
                     events.emit('verbose', message);
                 }
-                if (!val || val.count === 0) {
-                    podfileFile.removeSpec(podJson.name);
-                }
+
+                // always remove from the Podfile
+                podfileFile.removeSpec(podJson.name);
             });
-        });
-    }
-
-    if (frameworkPods.length) {
-        events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
-        events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type=\"podspec\"'); /* eslint no-useless-escape : 0 */
-        frameworkPods.forEach(obj => {
-            const spec = getVariableSpec(obj.spec, uninstallOptions);
-            const podJson = {
-                name: obj.src,
-                type: obj.type,
-                spec
-            };
-
-            const val = podsjsonFile.getLibrary(podJson.name);
-            if (val) { // found, decrement count
-                podsjsonFile.decrementLibrary(podJson.name);
-            } else { // not found (perhaps a sync error)
-                const message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
-                events.emit('verbose', message);
-            }
-
-            // always remove from the Podfile
-            podfileFile.removeSpec(podJson.name);
-        });
-    }
-
-    if (podSpecs.length > 0 || frameworkPods.length > 0) {
-        // now that all the pods have been processed, write to pods.json
-        podsjsonFile.write();
-
-        if (podfileFile.isDirty()) {
-            podfileFile.write();
-            events.emit('verbose', 'Running `pod install` (to uninstall pods)');
-
-            return podfileFile.install(check_reqs.check_cocoapods)
-                .then(() => this.setSwiftVersionForCocoaPodsLibraries(podsjsonFile));
-        } else {
-            events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
         }
+
+        if (podSpecs.length > 0 || frameworkPods.length > 0) {
+            // now that all the pods have been processed, write to pods.json
+            podsjsonFile.write();
+
+            if (podfileFile.isDirty()) {
+                podfileFile.write();
+                events.emit('verbose', 'Running `pod install` (to uninstall pods)');
+
+                return podfileFile.install(check_reqs.check_cocoapods)
+                    .then(() => this.setSwiftVersionForCocoaPodsLibraries(podsjsonFile));
+            } else {
+                events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
+            }
+        }
+        return Promise.resolve();
     }
-    return Promise.resolve();
-};
+}
 
 /**
  * set Swift Version for all CocoaPods libraries
