@@ -203,28 +203,27 @@ class Api {
 
         return result;
     }
+
+    /**
+     * Updates installed platform with provided www assets and new app
+     *   configuration. This method is required for CLI workflow and will be called
+     *   each time before build, so the changes, made to app configuration and www
+     *   code, will be applied to platform.
+     *
+     * @param {CordovaProject} cordovaProject A CordovaProject instance, that defines a
+     *   project structure and configuration, that should be applied to platform
+     *   (contains project's www location and ConfigParser instance for project's
+     *   config).
+     *
+     * @return  {Promise}  Return a promise either fulfilled, or rejected with
+     *   CordovaError instance.
+     */
+    prepare (cordovaProject) {
+        cordovaProject.projectConfig = new ConfigParser(cordovaProject.locations.rootConfigXml || cordovaProject.projectConfig.path);
+
+        return require('./lib/prepare').prepare.call(this, cordovaProject);
+    }
 }
-
-
-/**
- * Updates installed platform with provided www assets and new app
- *   configuration. This method is required for CLI workflow and will be called
- *   each time before build, so the changes, made to app configuration and www
- *   code, will be applied to platform.
- *
- * @param {CordovaProject} cordovaProject A CordovaProject instance, that defines a
- *   project structure and configuration, that should be applied to platform
- *   (contains project's www location and ConfigParser instance for project's
- *   config).
- *
- * @return  {Promise}  Return a promise either fulfilled, or rejected with
- *   CordovaError instance.
- */
-Api.prototype.prepare = function (cordovaProject) {
-    cordovaProject.projectConfig = new ConfigParser(cordovaProject.locations.rootConfigXml || cordovaProject.projectConfig.path);
-
-    return require('./lib/prepare').prepare.call(this, cordovaProject);
-};
 
 /**
  * Installs a new plugin into platform. It doesn't resolves plugin dependencies.
