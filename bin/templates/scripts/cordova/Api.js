@@ -685,19 +685,19 @@ class Api {
             .then(() => require('./lib/clean').run.call(this, cleanOptions))
             .then(() => require('./lib/prepare').clean.call(this, cleanOptions));
     }
-}
 
-/**
- * Performs a requirements check for current platform. Each platform defines its
- *   own set of requirements, which should be resolved before platform can be
- *   built successfully.
- *
- * @return  {Promise<Requirement[]>}  Promise, resolved with set of Requirement
- *   objects for current platform.
- */
-Api.prototype.requirements = function () {
-    return check_reqs.check_all();
-};
+    /**
+     * Performs a requirements check for current platform. Each platform defines its
+     *   own set of requirements, which should be resolved before platform can be
+     *   built successfully.
+     *
+     * @return  {Promise<Requirement[]>}  Promise, resolved with set of Requirement
+     *   objects for current platform.
+     */
+    requirements () {
+        return check_reqs.check_all();
+    }
+}
 
 Api.version = function () {
     return VERSION;
