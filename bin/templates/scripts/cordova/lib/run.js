@@ -170,26 +170,18 @@ function deployToDevice (appPath, target, extraArgs) {
  * @param  {String} target  Target device type
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-function deployToSim (appPath, target) {
+async function deployToSim (appPath, target) {
     events.emit('log', 'Deploying to simulator');
+
     if (!target) {
-        // Select target device for emulator
-        return require('./listEmulatorImages').run()
-            .then(emulators => {
-                if (emulators.length > 0) {
-                    target = emulators[0];
-                }
-                emulators.forEach(emulator => {
-                    if (emulator.indexOf('iPhone') === 0) {
-                        target = emulator;
-                    }
-                });
-                events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
-                return startSim(appPath, target);
-            });
-    } else {
-        return startSim(appPath, target);
+        // Select target device for emulator (preferring iPhone Emulators)
+        const emulators = await require('./listEmulatorImages').run();
+        const iPhoneEmus = emulators.filter(emulator => emulator.startsWith('iPhone'));
+        target = iPhoneEmus.concat(emulators)[0];
+        events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
     }
+
+    return startSim(appPath, target);
 }
 
 function startSim (appPath, target) {
