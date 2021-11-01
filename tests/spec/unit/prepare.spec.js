@@ -271,10 +271,10 @@ describe('prepare', () => {
             const getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
             const projectRoot = iosProject;
 
-            it('should find the Images.xcassets file in a project with an asset catalog', () => {
+            it('should find the Assets.xcassets file in a project with an asset catalog', () => {
                 const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
-                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
-                const expectedPath = path.join(platformProjDir, 'Images.xcassets', 'LaunchStoryboard.imageset/');
+                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
+                const expectedPath = path.join(platformProjDir, 'Assets.xcassets', 'LaunchStoryboard.imageset/');
 
                 expect(fs.existsSync(assetCatalogPath)).toEqual(true);
 
@@ -282,9 +282,9 @@ describe('prepare', () => {
                 expect(returnPath).toEqual(expectedPath);
             });
 
-            it('should NOT find the Images.xcassets file in a project with no asset catalog', () => {
+            it('should NOT find the Assets.xcassets file in a project with no asset catalog', () => {
                 const platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
-                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
+                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
 
                 expect(fs.existsSync(assetCatalogPath)).toEqual(false);
 
