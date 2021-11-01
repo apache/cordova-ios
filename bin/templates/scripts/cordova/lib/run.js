@@ -194,14 +194,10 @@ function deployToSim (appPath, target) {
 
 function startSim (appPath, target) {
     const logPath = path.join(cordovaPath, 'console.log');
-
-    return iossimLaunch(appPath, `com.apple.CoreSimulator.SimDeviceType.${target}`, logPath, '--exit');
-}
-
-function iossimLaunch (appPath, devicetypeid, log, exit) {
+    const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
     return spawn(
         require.resolve('ios-sim/bin/ios-sim'),
-        ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit],
+        ['launch', appPath, '--devicetypeid', deviceTypeId, '--log', logPath, '--exit'],
         { cwd: projectPath, printCommand: true }
     ).progress(stdio => {
         if (stdio.stderr) {
@@ -211,7 +207,7 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
             events.emit('log', `[ios-sim] ${stdio.stdout.trim()}`);
         }
     })
-        .then(result => {
+        .then(() => {
             events.emit('log', 'Simulator successfully started via `ios-sim`.');
         });
 }
