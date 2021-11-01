@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <Cordova/CDVCommandDelegateImpl.h>
+#import "CDVCommandDelegateImpl.h"
 #import "CDVJSON_private.h"
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVPluginResult.h>

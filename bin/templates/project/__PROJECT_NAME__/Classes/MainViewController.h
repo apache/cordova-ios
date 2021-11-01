@@ -32,9 +32,3 @@
 @interface MainViewController : CDVViewController
 
 @end
-
-@interface MainCommandDelegate : CDVCommandDelegateImpl
-@end
-
-@interface MainCommandQueue : CDVCommandQueue
-@end

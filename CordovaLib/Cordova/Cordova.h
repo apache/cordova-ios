@@ -28,7 +28,6 @@ FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <Cordova/PublicHeader.h>
 
 #import <Cordova/CDV.h>
-#import <Cordova/CDVCommandDelegateImpl.h>
 #import <Cordova/CDVAvailability.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 #import <Cordova/CDVAppDelegate.h>

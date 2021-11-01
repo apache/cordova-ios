@@ -42,7 +42,7 @@
 		7ED95D381AB9029B008C4574 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D121AB9029B008C4574 /* CDVAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D391AB9029B008C4574 /* CDVAvailabilityDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D131AB9029B008C4574 /* CDVAvailabilityDeprecated.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D3A1AB9029B008C4574 /* CDVCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D141AB9029B008C4574 /* CDVCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7ED95D3B1AB9029B008C4574 /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D151AB9029B008C4574 /* CDVCommandDelegateImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7ED95D3B1AB9029B008C4574 /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D151AB9029B008C4574 /* CDVCommandDelegateImpl.h */; };
 		7ED95D3C1AB9029B008C4574 /* CDVCommandDelegateImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D161AB9029B008C4574 /* CDVCommandDelegateImpl.m */; };
 		7ED95D3D1AB9029B008C4574 /* CDVCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D171AB9029B008C4574 /* CDVCommandQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D3E1AB9029B008C4574 /* CDVCommandQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D181AB9029B008C4574 /* CDVCommandQueue.m */; };
@@ -102,7 +102,7 @@
 		C0C01EBD1E39131A0056E6CB /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D121AB9029B008C4574 /* CDVAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01EBE1E39131A0056E6CB /* CDVAvailabilityDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D131AB9029B008C4574 /* CDVAvailabilityDeprecated.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01EBF1E39131A0056E6CB /* CDVCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D141AB9029B008C4574 /* CDVCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C0C01EC01E39131A0056E6CB /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D151AB9029B008C4574 /* CDVCommandDelegateImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C0C01EC01E39131A0056E6CB /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D151AB9029B008C4574 /* CDVCommandDelegateImpl.h */; };
 		C0C01EC11E39131A0056E6CB /* CDVCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D171AB9029B008C4574 /* CDVCommandQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01EC21E39131A0056E6CB /* CDVConfigParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D191AB9029B008C4574 /* CDVConfigParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C01EC31E39131A0056E6CB /* CDVInvokedUrlCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D1B1AB9029B008C4574 /* CDVInvokedUrlCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -258,6 +258,8 @@
 		7ED95CF11AB9028C008C4574 /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				7ED95D151AB9029B008C4574 /* CDVCommandDelegateImpl.h */,
+				7ED95D161AB9029B008C4574 /* CDVCommandDelegateImpl.m */,
 				7ED95CF21AB9028C008C4574 /* CDVDebug.h */,
 				7ED95CF31AB9028C008C4574 /* CDVJSON_private.h */,
 				7ED95CF41AB9028C008C4574 /* CDVJSON_private.m */,
@@ -294,7 +296,6 @@
 			isa = PBXGroup;
 			children = (
 				7ED95D111AB9029B008C4574 /* CDVAppDelegate.m */,
-				7ED95D161AB9029B008C4574 /* CDVCommandDelegateImpl.m */,
 				7ED95D181AB9029B008C4574 /* CDVCommandQueue.m */,
 				7ED95D1A1AB9029B008C4574 /* CDVConfigParser.m */,
 				7ED95D1C1AB9029B008C4574 /* CDVInvokedUrlCommand.m */,
@@ -329,7 +330,6 @@
 				7ED95D121AB9029B008C4574 /* CDVAvailability.h */,
 				7ED95D131AB9029B008C4574 /* CDVAvailabilityDeprecated.h */,
 				7ED95D141AB9029B008C4574 /* CDVCommandDelegate.h */,
-				7ED95D151AB9029B008C4574 /* CDVCommandDelegateImpl.h */,
 				7ED95D171AB9029B008C4574 /* CDVCommandQueue.h */,
 				7ED95D191AB9029B008C4574 /* CDVConfigParser.h */,
 				7ED95D1B1AB9029B008C4574 /* CDVInvokedUrlCommand.h */,
