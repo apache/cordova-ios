@@ -209,6 +209,7 @@ module.exports.run = buildOpts => {
             fs.removeSync(buildOutputDir);
 
             const xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
+            xcodebuildArgs.push('-quiet');
             return spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
         }).then(() => {
             if (!buildOpts.device || buildOpts.noSign) {
