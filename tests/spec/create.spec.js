@@ -55,7 +55,7 @@ describe('create', () => {
     let prevTimeout;
     beforeAll(() => {
         prevTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 60 * 1000;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 120 * 1000;
     });
     afterAll(() => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = prevTimeout;
