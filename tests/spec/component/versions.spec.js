@@ -53,7 +53,7 @@ if (process.platform === 'darwin') {
                 return versions.get_tool_version('pod').then((version) => {
                     expect(version).not.toBe(undefined);
                 });
-            }, 10000);
+            }, 20000); // The first invocation of `pod` can be quite slow
         });
     });
 }
