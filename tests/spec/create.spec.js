@@ -52,59 +52,68 @@ function createAndBuild (projectname, projectid) {
 }
 
 describe('create', () => {
+    let prevTimeout;
+    beforeAll(() => {
+        prevTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 60 * 1000;
+    });
+    afterAll(() => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = prevTimeout;
+    });
+
     it('Test#001 : create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
 
-        createAndBuild(projectname, projectid);
-    });
+        return createAndBuild(projectname, projectid);
+    }, 240 * 1000); // first build takes longer (probably cold caches)
 
     it('Test#002 : create project with ascii name, and spaces', () => {
         const projectname = 'test create';
         const projectid = 'com.test.app2';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 
     it('Test#003 : create project with unicode name, no spaces', () => {
         const projectname = '応応応応用用用用';
         const projectid = 'com.test.app3';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 
     it('Test#004 : create project with unicode name 2, no spaces', () => {
         const projectname = 'إثرا';
         const projectid = 'com.test.app3.2';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 
     it('Test#005 : create project with unicode name, and spaces', () => {
         const projectname = '応応応応 用用用用';
         const projectid = 'com.test.app4';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 
     it('Test#006 : create project with ascii+unicode name, no spaces', () => {
         const projectname = '応応応応hello用用用用';
         const projectid = 'com.test.app5';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 
     it('Test#007 : create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 
     it('Test#008 : create project with ascii name, and spaces, ampersand(&)', () => {
         const projectname = 'hello & world';
         const projectid = 'com.test.app7';
 
-        createAndBuild(projectname, projectid);
+        return createAndBuild(projectname, projectid);
     });
 });
