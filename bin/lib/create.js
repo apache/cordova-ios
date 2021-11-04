@@ -80,10 +80,6 @@ function copyScripts (projectPath, projectName) {
     const nodeModulesDir = path.join(ROOT, 'node_modules');
     if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
 
-    // Copy the check_reqs script
-    fs.copySync(path.join(binDir, 'check_reqs'), path.join(destScriptsDir, 'check_reqs'));
-    fs.copySync(path.join(binDir, 'check_reqs.bat'), path.join(destScriptsDir, 'check_reqs.bat'));
-
     // Copy the version scripts
     fs.copySync(path.join(binDir, 'apple_ios_version'), path.join(destScriptsDir, 'apple_ios_version'));
     fs.copySync(path.join(binDir, 'apple_osx_version'), path.join(destScriptsDir, 'apple_osx_version'));
@@ -95,7 +91,6 @@ function copyScripts (projectPath, projectName) {
     // modules across both the repo and generated projects, we should make sure
     // to remove/update this.
     const path_regex = /templates\/scripts\/cordova\//;
-    utils.replaceFileContents(path.join(destScriptsDir, 'check_reqs'), path_regex, '');
     utils.replaceFileContents(path.join(destScriptsDir, 'apple_ios_version'), path_regex, '');
     utils.replaceFileContents(path.join(destScriptsDir, 'apple_osx_version'), path_regex, '');
     utils.replaceFileContents(path.join(destScriptsDir, 'apple_xcode_version'), path_regex, '');
