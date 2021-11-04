@@ -175,10 +175,10 @@ class Api {
         setupEvents(events);
 
         const errorString =
-            'An in-place platform update is not supported. \n' +
+            'The update platform command is not supported.\n' +
             'The `platforms` folder is always treated as a build artifact.\n' +
-            'To update your platform, you have to remove, then add your ios platform again.\n' +
-            'Make sure you save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes in it.\n' +
+            'To update, you have to remove the old platform and add the new platform.\n' +
+            'Make sure to save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes.\n' +
             '\tcordova plugin save\n' +
             '\tcordova platform rm ios\n' +
             '\tcordova platform add ios\n';
