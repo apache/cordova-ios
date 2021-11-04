@@ -311,16 +311,6 @@ describe('build', () => {
         });
     });
 
-    describe('help method', () => {
-        it('should log a bunch of options', () => {
-            spyOn(console, 'log');
-            spyOn(process, 'exit');
-
-            build.help();
-            expect(console.log).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
-        });
-    });
-
     describe('run method', () => {
         beforeEach(() => {
             spyOn(Promise, 'reject');

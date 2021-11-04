@@ -405,38 +405,3 @@ function parseBuildFlag (buildFlag, args) {
         }
     }
 }
-
-// help/usage function
-module.exports.help = function help () {
-    console.log('');
-    console.log('Usage: build [--debug | --release] [--archs=\"<list of architectures...>\"]');
-    console.log('             [--device | --simulator] [--codeSignIdentity=\"<identity>\"]');
-    console.log('             [--codeSignResourceRules=\"<resourcerules path>\"]');
-    console.log('             [--developmentTeam=\"<Team ID>\"]');
-    console.log('             [--provisioningProfile=\"<provisioning profile>\"]');
-    console.log('    --help                  : Displays this dialog.');
-    console.log('    --debug                 : Builds project in debug mode. (Default)');
-    console.log('    --release               : Builds project in release mode.');
-    console.log('    -r                      : Shortcut :: builds project in release mode.');
-    /* eslint-enable no-useless-escape */
-    // TODO: add support for building different archs
-    // console.log("    --archs   : Builds project binaries for specific chip architectures (`anycpu`, `arm`, `x86`, `x64`).");
-    console.log('    --device, --simulator');
-    console.log('                            : Specifies, what type of project to build');
-    console.log('    --codeSignIdentity      : Type of signing identity used for code signing.');
-    console.log('    --codeSignResourceRules : Path to ResourceRules.plist.');
-    console.log('    --developmentTeam       : New for Xcode 8. The development team (Team ID)');
-    console.log('                              to use for code signing.');
-    console.log('    --provisioningProfile   : UUID of the profile.');
-    console.log('    --device --noSign       : Builds project without application signing.');
-    console.log('');
-    console.log('examples:');
-    console.log('    build ');
-    console.log('    build --debug');
-    console.log('    build --release');
-    console.log('    build --codeSignIdentity="iPhone Distribution" --provisioningProfile="926c2bd6-8de9-4c2f-8407-1016d2d12954"');
-    // TODO: add support for building different archs
-    // console.log("    build --release --archs=\"armv7\"");
-    console.log('');
-    process.exit(0);
-};

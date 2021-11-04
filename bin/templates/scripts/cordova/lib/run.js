@@ -235,26 +235,3 @@ function listEmulators () {
             });
         });
 }
-
-module.exports.help = () => {
-    console.log('\nUsage: run [ --device | [ --emulator [ --target=<id> ] ] ] [ --debug | --release | --nobuild ]');
-    // TODO: add support for building different archs
-    // console.log("           [ --archs=\"<list of target architectures>\" ] ");
-    console.log('    --device      : Deploys and runs the project on the connected device.');
-    console.log('    --emulator    : Deploys and runs the project on an emulator.');
-    console.log('    --target=<id> : Deploys and runs the project on the specified target.');
-    console.log('    --debug       : Builds project in debug mode. (Passed down to build command, if necessary)');
-    console.log('    --release     : Builds project in release mode. (Passed down to build command, if necessary)');
-    console.log('    --nobuild     : Uses pre-built package, or errors if project is not built.');
-    // TODO: add support for building different archs
-    // console.log("    --archs       : Specific chip architectures (`anycpu`, `arm`, `x86`, `x64`).");
-    console.log('');
-    console.log('Examples:');
-    console.log('    run');
-    console.log('    run --device');
-    console.log('    run --emulator --target=\"iPhone-6-Plus\"'); /* eslint no-useless-escape : 0 */
-    console.log('    run --device --release');
-    console.log('    run --emulator --debug');
-    console.log('');
-    process.exit(0);
-};
