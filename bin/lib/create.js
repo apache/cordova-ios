@@ -237,19 +237,6 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     return Promise.resolve();
 };
 
-exports.updateProject = (projectPath, opts) => {
-    const errorString =
-    'An in-place platform update is not supported. \n' +
-    'The `platforms` folder is always treated as a build artifact.\n' +
-    'To update your platform, you have to remove, then add your ios platform again.\n' +
-    'Make sure you save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes in it.\n' +
-    '\tcordova plugin save\n' +
-    '\tcordova platform rm ios\n' +
-    '\tcordova platform add ios\n';
-
-    return Promise.reject(new CordovaError(errorString));
-};
-
 function generateDoneMessage (type, link) {
     const pkg = require('../../package');
     let msg = `iOS project ${type === 'update' ? 'updated' : 'created'} with ${pkg.name}@${pkg.version}`;

@@ -174,19 +174,16 @@ class Api {
     static updatePlatform (destination, options, events) {
         setupEvents(events);
 
-        let result;
-        try {
-            result = require('../../../lib/create')
-                .updateProject(destination, options)
-                .then(() => {
-                    const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-                    return new PlatformApi('ios', destination, events);
-                });
-        } catch (e) {
-            events.emit('error', 'updatePlatform is not callable from the iOS project API, you will need to do this manually.');
-            throw e;
-        }
-        return result;
+        const errorString =
+            'An in-place platform update is not supported. \n' +
+            'The `platforms` folder is always treated as a build artifact.\n' +
+            'To update your platform, you have to remove, then add your ios platform again.\n' +
+            'Make sure you save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes in it.\n' +
+            '\tcordova plugin save\n' +
+            '\tcordova platform rm ios\n' +
+            '\tcordova platform add ios\n';
+
+        return Promise.reject(new CordovaError(errorString));
     }
 
     /**
