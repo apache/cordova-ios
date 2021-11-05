@@ -23,7 +23,10 @@ const path = require('path');
 const xcode = require('xcode');
 const create = require('../../bin/lib/create');
 
-const makeTempDir = () => path.join(os.tmpdir(), `cordova-ios-create-test-${Date.now()}`);
+const makeTempDir = () => path.join(
+    fs.realpathSync(os.tmpdir()),
+    `cordova-ios-create-test-${Date.now()}`
+);
 
 /**
  * Verifies that some of the project file exists. Not all will be tested.
