@@ -7,4 +7,3 @@ CordovaLib/cordova.js
 bin/test
 bin/cordova_plist_to_config_xml
 bin/templates/scripts/cordova/log
-bin/templates/scripts/cordova/lib/start-emulator
