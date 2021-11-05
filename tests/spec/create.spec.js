@@ -68,26 +68,24 @@ function verifyBuild (tmpDir) {
 
     return new Api()
         .build({ emulator: true })
-        .then(
-            () => {
-                expect(true).toBe(true);
-            },
-            err => fail(`Project Build has failed and is not expected.: ${err}`)
-        );
+        .then(() => {
+            expect(true).toBe(true);
+        });
 }
 
 /**
- * Runs various create and buid checks.
+ * Runs various create and build checks.
  *
  * @param {String} tmpDir
  * @param {String} packageName
  * @param {String} projectName
- * @returns
+ * @returns {Promise}
  */
-function verifyCreateAndBuild (tmpDir, packageName, projectName) {
-    verifyProjectFiles(tmpDir, projectName);
-    verifyProjectBundleIdentifier(tmpDir, projectName, packageName);
-    return verifyBuild(tmpDir);
+async function verifyCreateAndBuild (tmpDir, packageName, projectName) {
+    await create.createProject(tmpDir, packageName, projectName, {}, undefined)
+        .then(() => verifyProjectFiles(tmpDir, projectName))
+        .then(() => verifyProjectBundleIdentifier(tmpDir, projectName, packageName))
+        .then(() => verifyBuild(tmpDir));
 }
 
 describe('create', () => {
@@ -104,14 +102,12 @@ describe('create', () => {
     it('Test#001 : create project with ascii name, no spaces', () => {
         const packageName = 'com.test.app1';
         const projectName = 'testcreate';
-        return create.createProject(tmpDir, packageName, projectName, {}, undefined)
-            .then(() => verifyCreateAndBuild(tmpDir, packageName, projectName));
+        return verifyCreateAndBuild(tmpDir, packageName, projectName);
     }, 240 * 1000); // first build takes longer (probably cold caches)
 
     it('Test#002 : create project with complicated name', () => {
         const packageName = 'com.test.app2';
         const projectName = '応応応応 hello & إثرا 用用用用';
-        return create.createProject(tmpDir, packageName, projectName, {}, undefined)
-            .then(() => verifyCreateAndBuild(tmpDir, packageName, projectName));
+        return verifyCreateAndBuild(tmpDir, packageName, projectName);
     }, 120 * 1000);
 });
