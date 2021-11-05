@@ -66,11 +66,8 @@ function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdent
 function verifyBuild (tmpDir) {
     const Api = require(path.join(tmpDir, 'cordova/Api.js'));
 
-    return new Api()
-        .build({ emulator: true })
-        .then(() => {
-            expect(true).toBe(true);
-        });
+    return expectAsync(new Api().build({ emulator: true }))
+        .toBeResolved();
 }
 
 /**
