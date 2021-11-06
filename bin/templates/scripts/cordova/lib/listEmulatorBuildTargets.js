@@ -35,15 +35,15 @@ function listEmulatorBuildTargets () {
     return spawn('xcrun', ['simctl', 'list', '--json'], { printCommand: true })
         .then(output => JSON.parse(output))
         .then(function (simInfo) {
-            var devices = simInfo.devices;
-            var deviceTypes = simInfo.devicetypes;
+            const devices = simInfo.devices;
+            const deviceTypes = simInfo.devicetypes;
             return deviceTypes.reduce(function (typeAcc, deviceType) {
                 if (!deviceType.name.match(/^[iPad|iPhone]/)) {
                 // ignore targets we don't support (like Apple Watch or Apple TV)
                     return typeAcc;
                 }
-                var availableDevices = Object.keys(devices).reduce(function (availAcc, deviceCategory) {
-                    var availableDevicesInCategory = devices[deviceCategory];
+                const availableDevices = Object.keys(devices).reduce(function (availAcc, deviceCategory) {
+                    const availableDevicesInCategory = devices[deviceCategory];
                     availableDevicesInCategory.forEach(function (device) {
                         if (device.name === deviceType.name || device.name === deviceType.name.replace(/-inch/g, ' inch')) {
                         // Check new flag isAvailable (XCode 10.1+) or legacy string availability (XCode 10 and lower)
@@ -68,7 +68,7 @@ function listEmulatorBuildTargets () {
         // the simIdentifier, or cordova emulate target name, is the very last part
         // of identifier.
             return filteredTargets.map(function (target) {
-                var identifierPieces = target.identifier.split('.');
+                const identifierPieces = target.identifier.split('.');
                 target.simIdentifier = identifierPieces[identifierPieces.length - 1];
                 return target;
             });

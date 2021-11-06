@@ -17,7 +17,7 @@
        under the License.
 */
 
-var iossim = require('ios-sim');
+const iossim = require('ios-sim');
 
 /**
  * Gets list of iOS devices available for simulation
