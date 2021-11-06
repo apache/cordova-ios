@@ -87,6 +87,7 @@ function getDefaultSimulatorTarget () {
         });
 }
 
+/** @returns {Promise<void>} */
 module.exports.run = buildOpts => {
     let emulatorTarget = '';
     const projectPath = path.join(__dirname, '..', '..');
@@ -263,7 +264,8 @@ module.exports.run = buildOpts => {
             return fs.writeFile(exportOptionsPath, exportOptionsPlist, 'utf-8')
                 .then(checkSystemRuby)
                 .then(packageArchive);
-        });
+        })
+        .then(() => {}); // resolve to undefined
 };
 
 /**
