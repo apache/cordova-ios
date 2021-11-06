@@ -174,19 +174,16 @@ class Api {
     static updatePlatform (destination, options, events) {
         setupEvents(events);
 
-        let result;
-        try {
-            result = require('../../../lib/create')
-                .updateProject(destination, options)
-                .then(() => {
-                    const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
-                    return new PlatformApi('ios', destination, events);
-                });
-        } catch (e) {
-            events.emit('error', 'updatePlatform is not callable from the iOS project API, you will need to do this manually.');
-            throw e;
-        }
-        return result;
+        const errorString =
+            'The update platform command is not supported.\n' +
+            'The `platforms` folder is always treated as a build artifact.\n' +
+            'To update, you have to remove the old platform and add the new platform.\n' +
+            'Make sure to save your plugins beforehand using `cordova plugin save`, and save a copy of the platform first if you had manual changes.\n' +
+            '\tcordova plugin save\n' +
+            '\tcordova platform rm ios\n' +
+            '\tcordova platform add ios\n';
+
+        return Promise.reject(new CordovaError(errorString));
     }
 
     /**
