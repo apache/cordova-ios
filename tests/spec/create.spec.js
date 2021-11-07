@@ -100,11 +100,11 @@ describe('create', () => {
         const packageName = 'com.test.app1';
         const projectName = 'testcreate';
         return verifyCreateAndBuild(tmpDir, packageName, projectName);
-    }, 240 * 1000); // first build takes longer (probably cold caches)
+    }, 10 * 60 * 1000); // first build takes longer (probably cold caches)
 
     it('Test#002 : create project with complicated name', () => {
         const packageName = 'com.test.app2';
         const projectName = '応応応応 hello & إثرا 用用用用';
         return verifyCreateAndBuild(tmpDir, packageName, projectName);
-    }, 120 * 1000);
+    }, 5 * 60 * 1000);
 });
