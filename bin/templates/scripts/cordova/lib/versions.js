@@ -17,18 +17,16 @@
     under the License.
 */
 
-const {
-    CordovaError,
-    superspawn: { spawn }
-} = require('cordova-common');
+const execa = require('execa');
 const semver = require('semver');
+const { CordovaError } = require('cordova-common');
 
 function fetchSdkVersionByType (sdkType) {
-    return spawn('xcodebuild', ['-showsdks'])
-        .then(output => {
+    return execa('xcodebuild', ['-showsdks'])
+        .then(({ stdout }) => {
             const regexSdk = new RegExp(`^${sdkType} \\d`);
 
-            const versions = output.split('\n')
+            const versions = stdout.split('\n')
                 .filter(line => line.trim().match(regexSdk))
                 .map(line => line.match(/\d+\.\d+/)[0])
                 .sort(exports.compareVersions);
@@ -46,11 +44,11 @@ exports.get_apple_osx_version = () => {
 };
 
 exports.get_apple_xcode_version = () => {
-    return spawn('xcodebuild', ['-version'])
-        .then(output => {
-            const versionMatch = /Xcode (.*)/.exec(output);
+    return execa('xcodebuild', ['-version'])
+        .then(({ stdout }) => {
+            const versionMatch = /Xcode (.*)/.exec(stdout);
             if (!versionMatch) {
-                throw new CordovaError('Could not determine Xcode version from output:\n' + output);
+                throw new CordovaError('Could not determine Xcode version from output:\n' + stdout);
             }
             return versionMatch[1];
         });
@@ -62,7 +60,8 @@ exports.get_apple_xcode_version = () => {
  *                           or rejected in case of error
  */
 exports.get_ios_deploy_version = () => {
-    return spawn('ios-deploy', ['--version']);
+    return execa('ios-deploy', ['--version'])
+        .then(({ stdout }) => stdout);
 };
 
 /**
@@ -71,7 +70,8 @@ exports.get_ios_deploy_version = () => {
  *                           or rejected in case of error
  */
 exports.get_cocoapods_version = () => {
-    return spawn('pod', ['--version']);
+    return execa('pod', ['--version'])
+        .then(({ stdout }) => stdout);
 };
 
 /**
@@ -80,7 +80,8 @@ exports.get_cocoapods_version = () => {
  *                           or rejected in case of error
  */
 exports.get_ios_sim_version = () => {
-    return spawn('ios-sim', ['--version']);
+    return execa('ios-sim', ['--version'])
+        .then(({ stdout }) => stdout);
 };
 
 /**

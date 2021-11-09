@@ -27,17 +27,17 @@ const sampleData = fs.readFileSync(path.resolve(__dirname, '../fixtures/sample-i
 
 describe('cordova/lib/listDevices', () => {
     describe('run method', () => {
-        let spawnSpy;
+        let execaSpy;
 
         beforeEach(() => {
-            spawnSpy = jasmine.createSpy('spawn').and.returnValue(Promise.resolve(sampleData));
-            list_devices.__set__('spawn', spawnSpy);
+            execaSpy = jasmine.createSpy('execa').and.resolveTo({ stdout: sampleData });
+            list_devices.__set__('execa', execaSpy);
         });
 
         it('should trim and split standard output and return as array', () => {
             return list_devices.run()
                 .then(results => {
-                    expect(spawnSpy).toHaveBeenCalledWith('ioreg', ['-p', 'IOUSB', '-l']);
+                    expect(execaSpy).toHaveBeenCalledWith('ioreg', ['-p', 'IOUSB', '-l']);
                     expect(results).toEqual([
                         'THE_IPHONE_SERIAL iPhone',
                         'THE_IPAD_SERIAL iPad'

@@ -19,11 +19,8 @@
 
 const path = require('path');
 const which = require('which');
-const {
-    CordovaError,
-    events,
-    superspawn: { spawn }
-} = require('cordova-common');
+const execa = require('execa');
+const { CordovaError, events } = require('cordova-common');
 const fs = require('fs-extra');
 const plist = require('plist');
 const util = require('util');
@@ -210,7 +207,7 @@ module.exports.run = buildOpts => {
             fs.removeSync(buildOutputDir);
 
             const xcodebuildArgs = getXcodeBuildArgs(projectName, projectPath, configuration, buildOpts.device, buildOpts.buildFlag, emulatorTarget, buildOpts.automaticProvisioning);
-            return spawn('xcodebuild', xcodebuildArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+            return execa('xcodebuild', xcodebuildArgs, { cwd: projectPath, stdio: 'inherit' });
         }).then(() => {
             if (!buildOpts.device || buildOpts.noSign) {
                 return;
@@ -258,7 +255,7 @@ module.exports.run = buildOpts => {
 
             function packageArchive () {
                 const xcodearchiveArgs = getXcodeArchiveArgs(projectName, projectPath, buildOutputDir, exportOptionsPath, buildOpts.automaticProvisioning);
-                return spawn('xcodebuild', xcodearchiveArgs, { cwd: projectPath, printCommand: true, stdio: 'inherit' });
+                return execa('xcodebuild', xcodearchiveArgs, { cwd: projectPath, stdio: 'inherit' });
             }
 
             return fs.writeFile(exportOptionsPath, exportOptionsPlist, 'utf-8')

@@ -19,11 +19,8 @@
 
 const path = require('path');
 const build = require('./build');
-const {
-    CordovaError,
-    events,
-    superspawn: { spawn }
-} = require('cordova-common');
+const execa = require('execa');
+const { CordovaError, events } = require('cordova-common');
 const check_reqs = require('./check_reqs');
 const fs = require('fs-extra');
 
@@ -76,7 +73,7 @@ module.exports.run = runOptions => {
                         const ipafile = path.join(buildOutputDir, `${projectName}.ipa`);
 
                         // unpack the existing platform/ios/build/device/appname.ipa (zipfile), will create a Payload folder
-                        return spawn('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, printCommand: true, stdio: 'inherit' });
+                        return execa('unzip', ['-o', '-qq', ipafile], { cwd: buildOutputDir, stdio: 'inherit' });
                     })
                     .then(() => {
                         // Uncompress IPA (zip file)
@@ -147,7 +144,7 @@ function filterSupportedArgs (args) {
  * @return {Promise} Fullfilled when any device is connected, rejected otherwise
  */
 function checkDeviceConnected () {
-    return spawn('ios-deploy', ['-c', '-t', '1'], { printCommand: true, stdio: 'inherit' });
+    return execa('ios-deploy', ['-c', '-t', '1'], { stdio: 'inherit' });
 }
 
 /**
@@ -164,7 +161,7 @@ function deployToDevice (appPath, target, extraArgs) {
     } else {
         args.push('--no-wifi');
     }
-    return spawn('ios-deploy', args.concat(extraArgs), { printCommand: true, stdio: 'inherit' });
+    return execa('ios-deploy', args.concat(extraArgs), { stdio: 'inherit' });
 }
 
 /**
@@ -190,21 +187,26 @@ async function deployToSim (appPath, target) {
 function startSim (appPath, target) {
     const logPath = path.join(cordovaPath, 'console.log');
     const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
-    return spawn(
+
+    const subprocess = execa(
         require.resolve('ios-sim/bin/ios-sim'),
         ['launch', appPath, '--devicetypeid', deviceTypeId, '--log', logPath, '--exit'],
-        { cwd: projectPath, printCommand: true }
-    ).progress(stdio => {
-        if (stdio.stderr) {
-            events.emit('error', `[ios-sim] ${stdio.stderr}`);
-        }
-        if (stdio.stdout) {
-            events.emit('log', `[ios-sim] ${stdio.stdout.trim()}`);
-        }
-    })
-        .then(() => {
-            events.emit('log', 'Simulator successfully started via `ios-sim`.');
-        });
+        { cwd: projectPath }
+    );
+
+    // FIXME: data emitted is not necessarily a complete line
+    subprocess.stderr.on('data', data => {
+        events.emit('error', `[ios-sim] ${data}`);
+    });
+    subprocess.stdout.on('data', data => {
+        events.emit('log', `[ios-sim] ${data}`);
+    });
+
+    subprocess.then(() => {
+        events.emit('log', 'Simulator successfully started via `ios-sim`.');
+    });
+
+    return subprocess;
 }
 
 function listDevices () {
