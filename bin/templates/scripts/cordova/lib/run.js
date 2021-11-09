@@ -156,12 +156,13 @@ function checkDeviceConnected () {
  */
 function deployToDevice (appPath, target, extraArgs) {
     events.emit('log', 'Deploying to device');
-    // Deploying to device...
+    const args = ['--justlaunch', '-d', '-b', appPath];
     if (target) {
-        return spawn('ios-deploy', ['--justlaunch', '-d', '-b', appPath, '-i', target].concat(extraArgs), { printCommand: true, stdio: 'inherit' });
+        args.push('-i', target);
     } else {
-        return spawn('ios-deploy', ['--justlaunch', '--no-wifi', '-d', '-b', appPath].concat(extraArgs), { printCommand: true, stdio: 'inherit' });
+        args.push('--no-wifi');
     }
+    return spawn('ios-deploy', args.concat(extraArgs), { printCommand: true, stdio: 'inherit' });
 }
 
 /**
@@ -170,38 +171,26 @@ function deployToDevice (appPath, target, extraArgs) {
  * @param  {String} target  Target device type
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-function deployToSim (appPath, target) {
+async function deployToSim (appPath, target) {
     events.emit('log', 'Deploying to simulator');
+
     if (!target) {
-        // Select target device for emulator
-        return require('./listEmulatorImages').run()
-            .then(emulators => {
-                if (emulators.length > 0) {
-                    target = emulators[0];
-                }
-                emulators.forEach(emulator => {
-                    if (emulator.indexOf('iPhone') === 0) {
-                        target = emulator;
-                    }
-                });
-                events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
-                return startSim(appPath, target);
-            });
-    } else {
-        return startSim(appPath, target);
+        // Select target device for emulator (preferring iPhone Emulators)
+        const emulators = await require('./listEmulatorImages').run();
+        const iPhoneEmus = emulators.filter(emulator => emulator.startsWith('iPhone'));
+        target = iPhoneEmus.concat(emulators)[0];
+        events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
     }
+
+    return startSim(appPath, target);
 }
 
 function startSim (appPath, target) {
     const logPath = path.join(cordovaPath, 'console.log');
-
-    return iossimLaunch(appPath, `com.apple.CoreSimulator.SimDeviceType.${target}`, logPath, '--exit');
-}
-
-function iossimLaunch (appPath, devicetypeid, log, exit) {
+    const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
     return spawn(
         require.resolve('ios-sim/bin/ios-sim'),
-        ['launch', appPath, '--devicetypeid', devicetypeid, '--log', log, exit],
+        ['launch', appPath, '--devicetypeid', deviceTypeId, '--log', logPath, '--exit'],
         { cwd: projectPath, printCommand: true }
     ).progress(stdio => {
         if (stdio.stderr) {
@@ -211,7 +200,7 @@ function iossimLaunch (appPath, devicetypeid, log, exit) {
             events.emit('log', `[ios-sim] ${stdio.stdout.trim()}`);
         }
     })
-        .then(result => {
+        .then(() => {
             events.emit('log', 'Simulator successfully started via `ios-sim`.');
         });
 }
