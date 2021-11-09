@@ -15,7 +15,6 @@
   "scripts": {
     "pretest": "npm run lint",
     "test": "npm run coverage && npm run objc-tests",
-    "test:component": "jasmine --config=tests/spec/component.json",
     "coverage": "nyc jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
