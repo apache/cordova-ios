@@ -49,9 +49,9 @@ exports.get_apple_xcode_version = () => {
     return spawn('xcodebuild', ['-version'])
         .then(output => {
             const versionMatch = /Xcode (.*)/.exec(output);
-
-            if (!versionMatch) return Promise.reject(output);
-
+            if (!versionMatch) {
+                throw new CordovaError('Could not determine Xcode version from output:\n' + output);
+            }
             return versionMatch[1];
         });
 };
@@ -124,7 +124,7 @@ exports.printOrDie = versionName =>
             console.log(version);
         },
         err => {
-            console.error(err);
+            console.error(err.message);
             process.exit(2);
         }
     );
