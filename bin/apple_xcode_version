@@ -21,12 +21,4 @@
 
 var versions = require('./templates/scripts/cordova/lib/versions.js');
 
-versions.get_apple_xcode_version().then(
-    version => {
-        console.log(version);
-    },
-    err => {
-        console.error(err);
-        process.exit(2);
-    }
-);
+versions.printOrDie('apple_xcode');

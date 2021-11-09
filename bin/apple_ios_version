@@ -21,7 +21,4 @@
 
 var versions = require('./templates/scripts/cordova/lib/versions.js');
 
-versions.get_apple_ios_version().catch(err => {
-    console.log(err);
-    process.exit(2);
-});
+versions.printOrDie('apple_ios');

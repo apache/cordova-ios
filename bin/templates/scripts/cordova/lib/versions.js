@@ -33,7 +33,7 @@ function fetchSdkVersionByType (sdkType) {
                 .map(line => line.match(/\d+\.\d+/)[0])
                 .sort(exports.compareVersions);
 
-            console.log(versions[0]);
+            return versions[0];
         });
 }
 
@@ -117,3 +117,14 @@ exports.compareVersions = (...args) => {
     const semverVersions = args.map(coerceToSemverIfInvalid);
     return semver.compare(...semverVersions);
 };
+
+exports.printOrDie = versionName =>
+    exports[`get_${versionName}_version`]().then(
+        version => {
+            console.log(version);
+        },
+        err => {
+            console.error(err);
+            process.exit(2);
+        }
+    );

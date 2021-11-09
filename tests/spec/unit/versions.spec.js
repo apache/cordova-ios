@@ -23,22 +23,18 @@ const versions = require('../../../bin/templates/scripts/cordova/lib/versions');
 // These tests can not run on windows.
 if (process.platform === 'darwin') {
     describe('versions', () => {
-        beforeEach(() => {
-            spyOn(console, 'log');
-        });
-
         describe('get_apple_ios_version method', () => {
             it('should have found ios version.', () => {
-                return versions.get_apple_ios_version().then(() => {
-                    expect(console.log).not.toHaveBeenCalledWith(undefined);
+                return versions.get_apple_ios_version().then(version => {
+                    expect(version).not.toBeUndefined();
                 });
             }, 10000);
         });
 
         describe('get_apple_osx_version method', () => {
             it('should have found osx version.', () => {
-                return versions.get_apple_osx_version().then(() => {
-                    expect(console.log).not.toHaveBeenCalledWith(undefined);
+                return versions.get_apple_osx_version().then(version => {
+                    expect(version).not.toBeUndefined();
                 });
             });
         });
