@@ -30,6 +30,7 @@ const fs = require('fs-extra');
 const cordovaPath = path.join(__dirname, '..');
 const projectPath = path.join(__dirname, '..', '..');
 
+/** @returns {Promise<void>} */
 module.exports.run = runOptions => {
     // Validate args
     if (runOptions.device && runOptions.emulator) {
@@ -108,7 +109,8 @@ module.exports.run = runOptions => {
             } else {
                 return module.exports.deployToSim(appPath, runOptions.target);
             }
-        });
+        })
+        .then(() => {}); // resolve to undefined
 };
 
 module.exports.filterSupportedArgs = filterSupportedArgs;
