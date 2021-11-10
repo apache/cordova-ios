@@ -77,9 +77,9 @@ Podfile.prototype.__parseForDeclarations = function (text) {
     const arr = text.split('\n');
 
     // getting lines between "platform :ios, '11.0'"" and "target 'HelloCordova'" do
-    const declarationsPreRE = new RegExp('platform :ios,\\s+\'[^\']+\'');
-    const declarationsPostRE = new RegExp('target\\s+\'[^\']+\'\\s+do');
-    const declarationRE = new RegExp('^\\s*[^#]');
+    const declarationsPreRE = /platform :ios,\s+'[^']+'/;
+    const declarationsPostRE = /target\s+'[^']+'\s+do/;
+    const declarationRE = /^\s*[^#]/;
 
     return arr.reduce((acc, line) => {
         switch (acc.state) {
@@ -113,7 +113,7 @@ Podfile.prototype.__parseForSources = function (text) {
     // split by \n
     const arr = text.split('\n');
 
-    const sourceRE = new RegExp('source \'(.*)\'');
+    const sourceRE = /source '(.*)'/;
     return arr.filter(line => {
         const m = sourceRE.exec(line);
 
@@ -138,7 +138,7 @@ Podfile.prototype.__parseForPods = function (text) {
     //     pod 'Foobar', 'abc 123 1.2'
     //     pod 'PonyDebugger', :configurations => ['Debug', 'Beta']
     // var podRE = new RegExp('pod \'([^\']*)\'\\s*,?\\s*(.*)');
-    const podRE = new RegExp('pod \'([^\']*)\'\\s*(?:,\\s*\'([^\']*)\'\\s*)?,?\\s*(.*)');
+    const podRE = /pod '([^']*)'\s*(?:,\s*'([^']*)'\s*)?,?\s*(.*)/;
 
     // only grab lines that don't have the pod spec'
     return arr.filter(line => {

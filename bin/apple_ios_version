@@ -19,6 +19,6 @@
     under the License.
 */
 
-var versions = require('./templates/scripts/cordova/lib/versions.js');
+const versions = require('./templates/scripts/cordova/lib/versions.js');
 
 versions.printOrDie('apple_ios');
