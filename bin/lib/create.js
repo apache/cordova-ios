@@ -163,6 +163,10 @@ function copyNativeTemplateFiles (project_path, project_name, project_template_d
     // Run separately from the above replacements since it is only in one file.
     utils.replaceFileContents(projectPbxprojFilePath, /__PROJECT_ID__/g, package_name);
 
+    // Copy xcconfig files
+    fs.copySync(path.join(project_template_dir, 'pods-debug.xcconfig'), path.join(project_path, 'pods-debug.xcconfig'));
+    fs.copySync(path.join(project_template_dir, 'pods-release.xcconfig'), path.join(project_path, 'pods-release.xcconfig'));
+
     // Rename gitignore as dot file
     fs.moveSync(path.join(destProjectAppDir, 'gitignore'), path.join(destProjectAppDir, '.gitignore'));
 }
@@ -182,9 +186,8 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
-    const bin_dir = path.join(ROOT, 'bin');
     const project_parent = path.dirname(project_path);
-    const project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
+    const project_template_dir = opts.customTemplate || path.join(ROOT, 'templates', 'project');
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
@@ -203,19 +206,19 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
 
     events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
-    // create the project directory and copy over files
+    // Ensure the project directory `platforms/ios` exists.
     fs.ensureDirSync(project_path);
+
+    // Copy the base www template directory
     fs.copySync(path.join(project_template_dir, 'www'), path.join(project_path, 'www'));
 
-    // Copy native project template files
+    // Copy various native project template files
     copyNativeTemplateFiles(project_path, project_name, project_template_dir, package_name);
 
-    // Copy xcconfig files
-    fs.copySync(path.join(project_template_dir, 'pods-debug.xcconfig'), path.join(project_path, 'pods-debug.xcconfig'));
-    fs.copySync(path.join(project_template_dir, 'pods-release.xcconfig'), path.join(project_path, 'pods-release.xcconfig'));
-
-    // CordovaLib stuff
+    // CordovaLib to `platforms/ios/CordovaLib`
     copyJsAndCordovaLib(project_path, project_name, use_shared, config);
+
+    // Copy Cordova scripts to `platforms/ios/cordova`
     copyScripts(project_path, project_name);
 
     events.emit('log', generateDoneMessage('create', use_shared));
