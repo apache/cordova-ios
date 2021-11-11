@@ -273,5 +273,3 @@ function update_cordova_subproject (argv) {
 
     utils.replaceFileContents(projectPbxprojPath, line, newLine);
 }
-
-exports.update_cordova_subproject = update_cordova_subproject;
