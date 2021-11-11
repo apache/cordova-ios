@@ -43,32 +43,31 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         }
     } catch (e) { }
 
-    let projectXcodePath;
-    let cordovaLibXcodePath;
+    const projectAppPath = path.join(projectPath, projectName);
+    const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
+    const cordovaLibPathDest = path.join(projectPath, 'CordovaLib');
 
     if (use_shared) {
-        projectXcodePath = path.join(projectPath, `${projectName}.xcodeproj`);
-        cordovaLibXcodePath = path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj');
-
         // Symlink not used in project file, but is currently required for plugman because
         // it reads the VERSION file from it (instead of using the cordova/version script
         // like it should).
-        fs.symlinkSync(path.join(ROOT, 'CordovaLib'), path.join(projectPath, 'CordovaLib'));
+        fs.symlinkSync(cordovaLibPathSrc, cordovaLibPathDest);
     } else {
-        const r = path.join(projectPath, projectName);
-        fs.ensureDirSync(path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj'));
-        fs.copySync(path.join(r, '.gitignore'), path.join(projectPath, '.gitignore'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'include'), path.join(projectPath, 'CordovaLib/include'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'Classes'), path.join(projectPath, 'CordovaLib/Classes'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'VERSION'), path.join(projectPath, 'CordovaLib/VERSION'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'CordovaLib/cordova.js'));
-        fs.copySync(path.join(ROOT, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj', 'project.pbxproj'));
-
-        projectXcodePath = path.join(`${r}.xcodeproj`);
-        cordovaLibXcodePath = path.join(projectPath, 'CordovaLib', 'CordovaLib.xcodeproj');
+        fs.ensureDirSync(path.join(cordovaLibPathDest, 'CordovaLib.xcodeproj'));
+        fs.copySync(path.join(projectAppPath, '.gitignore'), path.join(projectPath, '.gitignore'));
+        fs.copySync(path.join(cordovaLibPathSrc, 'include'), path.join(cordovaLibPathDest, 'include'));
+        fs.copySync(path.join(cordovaLibPathSrc, 'Classes'), path.join(cordovaLibPathDest, 'Classes'));
+        fs.copySync(path.join(cordovaLibPathSrc, 'VERSION'), path.join(cordovaLibPathDest, 'VERSION'));
+        fs.copySync(path.join(cordovaLibPathSrc, 'cordova.js'), path.join(cordovaLibPathDest, 'cordova.js'));
+        fs.copySync(path.join(cordovaLibPathSrc, 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(cordovaLibPathDest, 'CordovaLib.xcodeproj', 'project.pbxproj'));
     }
 
-    updateCordovaSubproject(projectXcodePath, cordovaLibXcodePath, config);
+    const projectXcodeProjPath = `${projectAppPath}.xcodeproj`;
+    const cordovaLibXcodePath = path.join(
+        (use_shared ? cordovaLibPathSrc : cordovaLibPathDest),
+        'CordovaLib.xcodeproj'
+    );
+    updateCordovaSubproject(projectXcodeProjPath, cordovaLibXcodePath);
 }
 
 function copyScripts (projectPath, projectName) {
