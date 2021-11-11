@@ -57,16 +57,30 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     updateCordovaSubproject(projectXcodeProjPath, cordovaLibXcodePath);
 }
 
+/**
+ * Copy the templated Cordova Scripts to project's `platforms/ios/cordova` directory
+ *
+ * @todo during directory restructing, move the contents of `bin/templates/scripts/cordova`
+ *   to `templates/cordova` and remove the old templated cordova scripts copy step.
+ *
+ * @param {String} projectPath path to the projects platform directory `platforms/ios`
+ * @param {String} projectName name of the project
+ */
 function copyScripts (projectPath, projectName) {
-    const srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
+    // Desitnation of project's Cordova scripts as `platforms/ios/cordova`
     const destScriptsDir = path.join(projectPath, 'cordova');
-
-    // Delete old scripts directory.
+    // Remove the old scripts first.
     fs.removeSync(destScriptsDir);
 
-    // Copy in the new ones.
+    // Path of the old templated cordova scripts.
+    const srcScriptsDir = path.join(ROOT, 'bin/templates/scripts/cordova');
+    // Path of the new templated cordova scripts.
+    const tplCordovaDir = path.join(ROOT, 'templates/cordova');
+    // Copy templated Cordova scripts to desitnation
     fs.copySync(srcScriptsDir, destScriptsDir);
+    fs.copySync(tplCordovaDir, destScriptsDir);
 
+    // @todo remove this like after the scripts remain in `node_modules`
     const nodeModulesDir = path.join(ROOT, 'node_modules');
     if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
 
