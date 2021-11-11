@@ -25,9 +25,12 @@ const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 
 function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
-    fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
-    fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
-    fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
+    // Copy the cordova.js file to platforms/<platform>/platform_www/
+    // The www dir is nuked on each prepare so we keep cordova.js in platform_www
+    const srcCordovaJsPath = path.join(projectPath, 'www/cordova.js');
+    const platformWwwDir = path.join(projectPath, 'platform_www');
+    fs.ensureDirSync(platformWwwDir);
+    fs.copySync(srcCordovaJsPath, path.join(platformWwwDir, 'cordova.js'));
 
     /*
      * Check if "CordovaLib" already exists with "fs.lstatSync" and remove it.
@@ -58,7 +61,6 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
         fs.copySync(path.join(cordovaLibPathSrc, 'include'), path.join(cordovaLibPathDest, 'include'));
         fs.copySync(path.join(cordovaLibPathSrc, 'Classes'), path.join(cordovaLibPathDest, 'Classes'));
         fs.copySync(path.join(cordovaLibPathSrc, 'VERSION'), path.join(cordovaLibPathDest, 'VERSION'));
-        fs.copySync(path.join(cordovaLibPathSrc, 'cordova.js'), path.join(cordovaLibPathDest, 'cordova.js'));
         fs.copySync(path.join(cordovaLibPathSrc, 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(cordovaLibPathDest, 'CordovaLib.xcodeproj', 'project.pbxproj'));
     }
 
