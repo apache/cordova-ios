@@ -103,61 +103,68 @@ function copyScripts (projectPath, projectName) {
     utils.replaceFileContents(path.join(destScriptsDir, 'build-release.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
 }
 
-/*
- * Copy project template files into cordova project.
+/**
+ * Copies the native project template files into cordova project and renames internal files that
+ * should contain the project name.
  *
- * @param {String} project_path         path to cordova project
- * @param {String} project_name         name of cordova project
+ * Note: If the following directories exist, they will first be removed before  the new template
+ * files over are copied over.
+ * - `<Project Name>`
+ * - `<Project Name>.xcodeproj`
+ * - `<Project Name>.xcworkspace`
+ *
+ * @param {String} project_path path to cordova project
+ * @param {String} project_name name of cordova project
  * @param {String} project_template_dir path to cordova-ios template directory
- * @parm  {BOOL}   use_cli              true if cli project
+ * @parm  {String} package_name the project's Project ID
  */
-function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
-    const r = path.join(project_path, project_name);
+function copyNativeTemplateFiles (project_path, project_name, project_template_dir, package_name) {
+    // App Directory
+    const srcProjectAppDir = path.join(project_template_dir, '__PROJECT_NAME__');
+    const destProjectAppDir = path.join(project_path, project_name);
+    fs.removeSync(destProjectAppDir);
+    fs.copySync(srcProjectAppDir, destProjectAppDir);
+    fs.moveSync(path.join(destProjectAppDir, '__PROJECT_NAME__-Info.plist'), path.join(destProjectAppDir, `${project_name}-Info.plist`));
+    fs.moveSync(path.join(destProjectAppDir, '__PROJECT_NAME__-Prefix.pch'), path.join(destProjectAppDir, `${project_name}-Prefix.pch`));
 
-    fs.removeSync(path.join(`${r}.xcodeproj`));
-    fs.copySync(path.join(project_template_dir, '__TEMP__.xcodeproj'), path.join(`${project_path}/__TEMP__.xcodeproj`));
-    fs.moveSync(path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
+    // xcodeproj Directory
+    const srcProjectTmpDir = path.join(project_template_dir, '__TEMP__');
+    const srcProjectXcodeDir = `${srcProjectTmpDir}.xcodeproj`;
+    const destProjectXcodeDir = `${destProjectAppDir}.xcodeproj`;
+    fs.removeSync(destProjectXcodeDir);
+    fs.copySync(srcProjectXcodeDir, destProjectXcodeDir);
 
-    fs.removeSync(path.join(project_path, `${project_name}.xcworkspace`));
-    fs.copySync(path.join(project_template_dir, '__TEMP__.xcworkspace'), path.join(`${project_path}/__TEMP__.xcworkspace`));
-    fs.moveSync(path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
-    fs.moveSync(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
+    // xcworkspace Directory
+    const destProjectXcworkspaceDir = `${destProjectAppDir}.xcworkspace`;
+    const srcProjectXcworkspaceDir = `${srcProjectTmpDir}.xcworkspace`;
+    fs.removeSync(destProjectXcworkspaceDir);
+    fs.copySync(srcProjectXcworkspaceDir, destProjectXcworkspaceDir);
+    fs.moveSync(path.join(destProjectXcworkspaceDir, 'xcshareddata/xcschemes/__PROJECT_NAME__.xcscheme'), path.join(destProjectXcworkspaceDir, `xcshareddata/xcschemes/${project_name}.xcscheme`));
 
-    fs.removeSync(r);
-    fs.copySync(path.join(project_template_dir, '__PROJECT_NAME__'), path.join(`${project_path}/__PROJECT_NAME__`));
-    fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
-
-    fs.moveSync(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
-    fs.moveSync(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
-    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
-
-    /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
-     *
-     * - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
-     * - ./__PROJECT_NAME__/Classes/AppDelegate.h
-     * - ./__PROJECT_NAME__/Classes/AppDelegate.m
-     * - ./__PROJECT_NAME__/Classes/MainViewController.h
-     * - ./__PROJECT_NAME__/Classes/MainViewController.m
-     * - ./__PROJECT_NAME__/Resources/main.m
-     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
-     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
-     */
-
+    // Replace in file __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
     const project_name_xml_esc = xmlescape(project_name);
-    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'), /__PROJECT_NAME__/g, project_name_xml_esc);
-    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`), /__PROJECT_NAME__/g, project_name_xml_esc);
+    const projectPbxprojFilePath = path.join(destProjectXcodeDir, 'project.pbxproj');
+    [
+        path.join(destProjectXcworkspaceDir, 'contents.xcworkspacedata'),
+        path.join(destProjectXcworkspaceDir, `xcshareddata/xcschemes/${project_name}.xcscheme`),
+        projectPbxprojFilePath,
+        path.join(destProjectAppDir, 'Classes/AppDelegate.h'),
+        path.join(destProjectAppDir, 'Classes/AppDelegate.m'),
+        path.join(destProjectAppDir, 'Classes/MainViewController.h'),
+        path.join(destProjectAppDir, 'Classes/MainViewController.m'),
+        path.join(destProjectAppDir, 'main.m'),
+        path.join(destProjectAppDir, `${project_name}-Info.plist`),
+        path.join(destProjectAppDir, `${project_name}-Prefix.pch`)
+    ].forEach(file => {
+        utils.replaceFileContents(file, /__PROJECT_NAME__/g, project_name_xml_esc);
+    });
 
-    const project_name_esc = project_name.replace(/&/g, '\\&');
-    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_ID__/g, package_name);
-    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.h'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.h'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'main.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, `${project_name}-Info.plist`), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, `${project_name}-Prefix.pch`), /__PROJECT_NAME__/g, project_name_esc);
+    // Run separately from the above replacements since it is only in one file.
+    utils.replaceFileContents(projectPbxprojFilePath, /__PROJECT_ID__/g, package_name);
+
+    // Rename gitignore as dot file
+    fs.moveSync(path.join(destProjectAppDir, 'gitignore'), path.join(destProjectAppDir, '.gitignore'));
 }
 
 /*
@@ -200,8 +207,8 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     fs.ensureDirSync(project_path);
     fs.copySync(path.join(project_template_dir, 'www'), path.join(project_path, 'www'));
 
-    // Copy project template files
-    copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
+    // Copy native project template files
+    copyNativeTemplateFiles(project_path, project_name, project_template_dir, package_name);
 
     // Copy xcconfig files
     fs.copySync(path.join(project_template_dir, 'pods-debug.xcconfig'), path.join(project_path, 'pods-debug.xcconfig'));
