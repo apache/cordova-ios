@@ -24,11 +24,6 @@ const ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 
-function updateSubprojectHelp () {
-    console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
-    console.log('Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]');
-}
-
 function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
@@ -243,7 +238,8 @@ function generateDoneMessage (type, link) {
 
 function update_cordova_subproject (argv) {
     if (argv.length < 1 || argv.length > 3) {
-        updateSubprojectHelp();
+        console.log('Updates the subproject path of the CordovaLib entry to point to this script\'s version of Cordova.');
+        console.log('Usage: CordovaVersion/bin/update_cordova_project path/to/your/app.xcodeproj [path/to/CordovaLib.xcodeproj]');
         throw new Error('Usage error for update_cordova_subproject');
     }
 
@@ -278,5 +274,4 @@ function update_cordova_subproject (argv) {
     utils.replaceFileContents(projectPbxprojPath, line, newLine);
 }
 
-exports.updateSubprojectHelp = updateSubprojectHelp;
 exports.update_cordova_subproject = update_cordova_subproject;
