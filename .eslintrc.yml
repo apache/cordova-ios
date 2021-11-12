@@ -22,7 +22,7 @@ overrides:
   - files: [tests/spec/**/*.js]
     extends: '@cordova/eslint-config/node-tests'
 
-  - files: [cordova-js-src/**/*.js]
+  - files: [cordova-js-src/**/*.js, templates/project/www/**/*.js]
     extends: '@cordova/eslint-config/browser'
 
     # TODO add this to @cordova/eslint-config/browser
