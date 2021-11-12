@@ -21,11 +21,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
-const {
-    CordovaError,
-    events,
-    superspawn: { spawn }
-} = require('cordova-common');
+const execa = require('execa');
+const { CordovaError, events } = require('cordova-common');
 
 Podfile.FILENAME = 'Podfile';
 Podfile.declarationRegexpMap = {
@@ -381,9 +378,7 @@ Podfile.prototype.before_install = function (toolOptions) {
 Podfile.prototype.install = function (requirementsCheckerFunction) {
     const opts = {};
     opts.cwd = path.join(this.path, '..'); // parent path of this Podfile
-    opts.stdio = 'pipe';
-    opts.printCommand = true;
-    let first = true;
+    opts.stderr = 'inherit';
 
     if (!requirementsCheckerFunction) {
         requirementsCheckerFunction = Promise.resolve();
@@ -392,23 +387,21 @@ Podfile.prototype.install = function (requirementsCheckerFunction) {
     return requirementsCheckerFunction()
         .then(toolOptions => this.before_install(toolOptions))
         .then(toolOptions => {
+            events.emit('verbose', '==== pod install start ====\n');
+
             if (toolOptions.ignore) {
-                events.emit('verbose', '==== pod install start ====\n');
                 events.emit('verbose', toolOptions.ignoreMessage);
-                return Promise.resolve();
-            } else {
-                return spawn('pod', ['install', '--verbose'], opts)
-                    .progress(stdio => {
-                        if (stdio.stderr) { console.error(stdio.stderr); }
-                        if (stdio.stdout) {
-                            if (first) {
-                                events.emit('verbose', '==== pod install start ====\n');
-                                first = false;
-                            }
-                            events.emit('verbose', stdio.stdout);
-                        }
-                    });
+                return;
             }
+
+            const subprocess = execa('pod', ['install', '--verbose'], opts);
+
+            // FIXME: data emitted is not necessarily a complete line
+            subprocess.stdout.on('data', data => {
+                events.emit('verbose', data);
+            });
+
+            return subprocess;
         })
         .then(() => { // done
             events.emit('verbose', '==== pod install end ====\n');
