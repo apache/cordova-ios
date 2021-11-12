@@ -144,10 +144,9 @@ function copyNativeTemplateFiles (project_path, project_name, project_template_d
     // Replace in file __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
     const project_name_xml_esc = xmlescape(project_name);
+    const project_name_esc = project_name.replace(/&/g, '\\&');
     const projectPbxprojFilePath = path.join(destProjectXcodeDir, 'project.pbxproj');
     [
-        path.join(destProjectXcworkspaceDir, 'contents.xcworkspacedata'),
-        path.join(destProjectXcworkspaceDir, `xcshareddata/xcschemes/${project_name}.xcscheme`),
         projectPbxprojFilePath,
         path.join(destProjectAppDir, 'Classes/AppDelegate.h'),
         path.join(destProjectAppDir, 'Classes/AppDelegate.m'),
@@ -157,8 +156,12 @@ function copyNativeTemplateFiles (project_path, project_name, project_template_d
         path.join(destProjectAppDir, `${project_name}-Info.plist`),
         path.join(destProjectAppDir, `${project_name}-Prefix.pch`)
     ].forEach(file => {
-        utils.replaceFileContents(file, /__PROJECT_NAME__/g, project_name_xml_esc);
+        utils.replaceFileContents(file, /__PROJECT_NAME__/g, project_name_esc);
     });
+
+    // These files have a special case for the projectname
+    utils.replaceFileContents(path.join(destProjectXcworkspaceDir, 'contents.xcworkspacedata'), /__PROJECT_ID__/g, project_name_xml_esc);
+    utils.replaceFileContents(path.join(destProjectXcworkspaceDir, `xcshareddata/xcschemes/${project_name}.xcscheme`), /__PROJECT_ID__/g, project_name_xml_esc);
 
     // Run separately from the above replacements since it is only in one file.
     utils.replaceFileContents(projectPbxprojFilePath, /__PROJECT_ID__/g, package_name);
