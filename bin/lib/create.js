@@ -65,26 +65,10 @@ function copyScripts (projectPath, projectName) {
     fs.removeSync(destScriptsDir);
 
     // Copy in the new ones.
-    const binDir = path.join(ROOT, 'bin');
     fs.copySync(srcScriptsDir, destScriptsDir);
 
     const nodeModulesDir = path.join(ROOT, 'node_modules');
     if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
-
-    // Copy the version scripts
-    fs.copySync(path.join(binDir, 'apple_ios_version'), path.join(destScriptsDir, 'apple_ios_version'));
-    fs.copySync(path.join(binDir, 'apple_osx_version'), path.join(destScriptsDir, 'apple_osx_version'));
-    fs.copySync(path.join(binDir, 'apple_xcode_version'), path.join(destScriptsDir, 'apple_xcode_version'));
-
-    // TODO: the two files being edited on-the-fly here are shared between
-    // platform and project-level commands. the below `sed` is updating the
-    // `require` path for the two libraries. if there's a better way to share
-    // modules across both the repo and generated projects, we should make sure
-    // to remove/update this.
-    const path_regex = /templates\/scripts\/cordova\//;
-    utils.replaceFileContents(path.join(destScriptsDir, 'apple_ios_version'), path_regex, '');
-    utils.replaceFileContents(path.join(destScriptsDir, 'apple_osx_version'), path_regex, '');
-    utils.replaceFileContents(path.join(destScriptsDir, 'apple_xcode_version'), path_regex, '');
 
     // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
     const project_name_esc = projectName.replace(/&/g, '\\&');
