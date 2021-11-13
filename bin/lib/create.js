@@ -55,11 +55,10 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     } else {
         fs.ensureDirSync(path.join(cordovaLibPathDest, 'CordovaLib.xcodeproj'));
         fs.copySync(path.join(projectAppPath, '.gitignore'), path.join(projectPath, '.gitignore'));
-        fs.copySync(path.join(cordovaLibPathSrc, 'include'), path.join(cordovaLibPathDest, 'include'));
-        fs.copySync(path.join(cordovaLibPathSrc, 'Classes'), path.join(cordovaLibPathDest, 'Classes'));
-        fs.copySync(path.join(cordovaLibPathSrc, 'VERSION'), path.join(cordovaLibPathDest, 'VERSION'));
-        fs.copySync(path.join(cordovaLibPathSrc, 'cordova.js'), path.join(cordovaLibPathDest, 'cordova.js'));
-        fs.copySync(path.join(cordovaLibPathSrc, 'CordovaLib.xcodeproj', 'project.pbxproj'), path.join(cordovaLibPathDest, 'CordovaLib.xcodeproj', 'project.pbxproj'));
+
+        for (const p of ['include', 'Classes', 'VERSION', 'cordova.js', 'CordovaLib.xcodeproj/project.pbxproj']) {
+            fs.copySync(path.join(cordovaLibPathSrc, p), path.join(cordovaLibPathDest, p));
+        }
     }
 
     const projectXcodeProjPath = `${projectAppPath}.xcodeproj`;
