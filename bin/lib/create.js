@@ -147,7 +147,7 @@ function expandProjectNameInFileContents (f, projectName) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = (project_path, package_name, project_name, opts, config) => {
+exports.createProject = (project_path, package_name, project_name, opts) => {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
