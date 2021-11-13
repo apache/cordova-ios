@@ -203,7 +203,7 @@ function updateCordovaSubproject (projectXcodePath, cordovaLibXcodePath) {
 
     let newLine = line
         .replace(/path = .+?;/, `path = ${subProjectPath};`)
-        .replace(/sourceTree.+?;/, 'sourceTree = \"<group>\";'); /* eslint no-useless-escape : 0 */
+        .replace(/sourceTree.+?;/, 'sourceTree = "<group>";');
 
     if (!newLine.match('name')) {
         newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
