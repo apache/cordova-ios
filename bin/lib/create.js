@@ -85,23 +85,19 @@ function copyScripts (projectPath, projectName) {
  * @parm  {BOOL}   use_cli              true if cli project
  */
 function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
+    fs.copySync(project_template_dir, project_path);
+
     const r = path.join(project_path, project_name);
 
-    fs.removeSync(path.join(`${r}.xcodeproj`));
-    fs.copySync(path.join(project_template_dir, '__TEMP__.xcodeproj'), path.join(`${project_path}/__TEMP__.xcodeproj`));
-    fs.moveSync(path.join(project_path, '__TEMP__.xcodeproj'), path.join(`${r}.xcodeproj`));
+    fs.moveSync(path.join(project_path, '__TEMP__.xcodeproj'), `${r}.xcodeproj`);
 
-    fs.removeSync(path.join(project_path, `${project_name}.xcworkspace`));
-    fs.copySync(path.join(project_template_dir, '__TEMP__.xcworkspace'), path.join(`${project_path}/__TEMP__.xcworkspace`));
-    fs.moveSync(path.join(project_path, '__TEMP__.xcworkspace'), path.join(`${r}.xcworkspace`));
+    fs.moveSync(path.join(project_path, '__TEMP__.xcworkspace'), `${r}.xcworkspace`);
     fs.moveSync(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
-    fs.removeSync(r);
-    fs.copySync(path.join(project_template_dir, '__PROJECT_NAME__'), path.join(`${project_path}/__PROJECT_NAME__`));
     fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
-
     fs.moveSync(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
     fs.moveSync(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
+
     fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
 
     /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
@@ -169,16 +165,8 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
 
     events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
-    // create the project directory and copy over files
-    fs.ensureDirSync(project_path);
-    fs.copySync(path.join(project_template_dir, 'www'), path.join(project_path, 'www'));
-
     // Copy project template files
     copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
-
-    // Copy xcconfig files
-    fs.copySync(path.join(project_template_dir, 'pods-debug.xcconfig'), path.join(project_path, 'pods-debug.xcconfig'));
-    fs.copySync(path.join(project_template_dir, 'pods-release.xcconfig'), path.join(project_path, 'pods-release.xcconfig'));
 
     // CordovaLib stuff
     copyJsAndCordovaLib(project_path, project_name, use_shared);
