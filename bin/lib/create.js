@@ -22,7 +22,6 @@ const fs = require('fs-extra');
 const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, events } = require('cordova-common');
-const utils = require('./utils');
 const pkg = require('../../package');
 
 function provideCordovaJs (projectPath) {
@@ -80,7 +79,10 @@ function expandTokens (project_path, project_name, package_name) {
 
 function expandTokensInFileContents (project_path, project_name, package_name) {
     // Expand __PROJECT_ID__ token in file contents
-    utils.replaceFileContents(path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj'), /__PROJECT_ID__/g, package_name);
+    transformFileContents(
+        path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj'),
+        contents => contents.replace(/__PROJECT_ID__/g, package_name)
+    );
 
     // Expand __PROJECT_NAME__ token in file contents
     for (const p of [
@@ -127,7 +129,9 @@ function expandProjectNameInFileContents (f, projectName) {
     const escape = xmlExtensions.has(path.extname(f))
         ? xmlescape
         : s => s.replace(/&/g, '\\&');
-    utils.replaceFileContents(f, /__PROJECT_NAME__/g, escape(projectName));
+    transformFileContents(f, contents =>
+        contents.replace(/__PROJECT_NAME__/g, escape(projectName))
+    );
 }
 
 /**
@@ -181,22 +185,29 @@ function configureCordovaLibPath (project_path) {
     const cdvLibXcodePath = path.relative(project_path, cdvLibXcodeAbsPath);
     const pbxprojPath = path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj');
 
-    const line = utils.grep(
-        pbxprojPath,
-        /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/
-    );
+    // Replace magic line in project.pbxproj
+    transformFileContents(pbxprojPath, contents => {
+        const regex = /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
+        const line = contents.split(/\r?\n/)
+            .find(l => regex.test(l));
 
-    if (!line) {
-        throw new Error(`Entry not found in project file for sub-project: ${cdvLibXcodePath}`);
-    }
+        if (!line) {
+            throw new Error(`Entry not found in project file for sub-project: ${cdvLibXcodePath}`);
+        }
 
-    let newLine = line
-        .replace(/path = .+?;/, `path = ${cdvLibXcodePath};`)
-        .replace(/sourceTree.+?;/, 'sourceTree = "<group>";');
+        let newLine = line
+            .replace(/path = .+?;/, `path = ${cdvLibXcodePath};`)
+            .replace(/sourceTree.+?;/, 'sourceTree = "<group>";');
 
-    if (!newLine.match('name')) {
-        newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
-    }
+        if (!newLine.match('name')) {
+            newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
+        }
 
-    utils.replaceFileContents(pbxprojPath, line, newLine);
+        return contents.replace(line, newLine);
+    });
+}
+
+function transformFileContents (file, transform) {
+    const contents = fs.readFileSync(file, 'utf-8');
+    fs.writeFileSync(file, transform(contents));
 }
