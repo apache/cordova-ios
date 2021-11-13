@@ -25,13 +25,12 @@ const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 const pkg = require('../../package');
 
-function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
+function copyJsAndCordovaLib (projectPath, use_shared) {
     fs.copySync(
         path.join(projectPath, 'www/cordova.js'),
         path.join(projectPath, 'platform_www/cordova.js')
     );
 
-    const projectAppPath = path.join(projectPath, projectName);
     const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
     const cordovaLibPathDest = path.join(projectPath, 'CordovaLib');
 
@@ -48,13 +47,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
             fs.copySync(path.join(cordovaLibPathSrc, p), path.join(cordovaLibPathDest, p));
         }
     }
-
-    const projectXcodeProjPath = `${projectAppPath}.xcodeproj`;
-    const cordovaLibXcodePath = path.join(
-        (use_shared ? cordovaLibPathSrc : cordovaLibPathDest),
-        'CordovaLib.xcodeproj'
-    );
-    updateCordovaSubproject(projectXcodeProjPath, cordovaLibXcodePath);
+    configureCordovaLibPath(projectPath);
 }
 
 function copyScripts (projectPath) {
@@ -164,11 +157,11 @@ exports.createProject = async (project_path, package_name, project_name, opts) =
 
     copyTemplateFiles(project_template_dir, project_path);
 
+    copyJsAndCordovaLib(project_path, use_shared);
+
     copyScripts(project_path);
 
     expandTokens(project_path, project_name, package_name);
-
-    copyJsAndCordovaLib(project_path, project_name, use_shared);
 
     events.emit('log', `iOS project created with ${pkg.name}@${pkg.version}`);
 };
@@ -176,21 +169,15 @@ exports.createProject = async (project_path, package_name, project_name, opts) =
 /**
  * Updates xcodeproj's Sub Projects
  *
- * @param {String} projectXcodePath Path to project's xcodeproj.
- *  E.g.
- *   - `/path/to/cordovaTest/platforms/ios/cordovaTest.xcodeproj`
- * @param {String} cordovaLibXcodePath path to CordovaLib's xcodeproj. (Note: may also be symlinked)
- *  E.g.
- *   - `/path/to/cordovaTest/platforms/ios/CordovaLib/CordovaLib.xcodeproj` (project's copy)
- *   - `/path/to/cordova-ios/CordovaLib/CordovaLib.xcodeproj` (resolved symlink, --link)
+ * @param {string} project_path absolute path to the project's `platforms/ios` directory
  */
-function updateCordovaSubproject (projectXcodePath, cordovaLibXcodePath) {
-    // absolute path to the project's `platforms/ios` directory
-    const platformPath = path.dirname(projectXcodePath);
-    // relative path to project's `CordovaLib/CordovaLib.xcodeproj`
-    const cdvLibXcodePath = path.relative(platformPath, cordovaLibXcodePath);
-    // absolute path to project's xcodeproj's 'project.pbxproj'
-    const pbxprojPath = path.join(projectXcodePath, 'project.pbxproj');
+function configureCordovaLibPath (project_path) {
+    // CordovaLib could be a symlink, so we resolve it
+    const cdvLibRealPath = fs.realpathSync(path.join(project_path, 'CordovaLib'));
+
+    const cdvLibXcodeAbsPath = path.join(cdvLibRealPath, 'CordovaLib.xcodeproj');
+    const cdvLibXcodePath = path.relative(project_path, cdvLibXcodeAbsPath);
+    const pbxprojPath = path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj');
 
     const line = utils.grep(
         pbxprojPath,
