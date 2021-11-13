@@ -151,17 +151,11 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
-    const project_parent = path.dirname(project_path);
     const project_template_dir = opts.customTemplate || path.join(ROOT, 'templates', 'project');
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
         return Promise.reject(new CordovaError('Project already exists'));
-    }
-
-    // check that parent directory does exist so cp -r will not fail
-    if (!fs.existsSync(project_parent)) {
-        return Promise.reject(new CordovaError(`Parent directory "${project_parent}" of given project path does not exist`));
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
