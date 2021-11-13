@@ -53,7 +53,6 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
         // like it should).
         fs.symlinkSync(cordovaLibPathSrc, cordovaLibPathDest);
     } else {
-        fs.ensureDirSync(path.join(cordovaLibPathDest, 'CordovaLib.xcodeproj'));
         fs.copySync(path.join(projectAppPath, '.gitignore'), path.join(projectPath, '.gitignore'));
 
         for (const p of ['include', 'Classes', 'VERSION', 'cordova.js', 'CordovaLib.xcodeproj/project.pbxproj']) {
