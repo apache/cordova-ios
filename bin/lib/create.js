@@ -24,7 +24,7 @@ const ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 
-function copyJsAndCordovaLib (projectPath, projectName, use_shared, config) {
+function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
@@ -210,7 +210,7 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     fs.copySync(path.join(project_template_dir, 'pods-release.xcconfig'), path.join(project_path, 'pods-release.xcconfig'));
 
     // CordovaLib stuff
-    copyJsAndCordovaLib(project_path, project_name, use_shared, config);
+    copyJsAndCordovaLib(project_path, project_name, use_shared);
     copyScripts(project_path, project_name);
 
     events.emit('log', generateDoneMessage('create', use_shared));
