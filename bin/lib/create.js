@@ -55,7 +55,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     updateCordovaSubproject(projectXcodeProjPath, cordovaLibXcodePath);
 }
 
-function copyScripts (projectPath, projectName) {
+function copyScripts (projectPath) {
     const srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
     const destScriptsDir = path.join(projectPath, 'cordova');
 
@@ -67,66 +67,72 @@ function copyScripts (projectPath, projectName) {
 
     const nodeModulesDir = path.join(ROOT, 'node_modules');
     if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
-
-    // CB-11792 do a token replace for __PROJECT_NAME__ in .xcconfig
-    const project_name_esc = projectName.replace(/&/g, '\\&');
-    utils.replaceFileContents(path.join(destScriptsDir, 'build-debug.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(destScriptsDir, 'build-release.xcconfig'), /__PROJECT_NAME__/g, project_name_esc);
 }
 
-/*
- * Copy project template files into cordova project.
- *
- * @param {String} project_path         path to cordova project
- * @param {String} project_name         name of cordova project
- * @param {String} project_template_dir path to cordova-ios template directory
- * @parm  {BOOL}   use_cli              true if cli project
- */
-function copyTemplateFiles (project_path, project_name, project_template_dir, package_name) {
+function copyTemplateFiles (project_template_dir, project_path) {
     fs.copySync(project_template_dir, project_path);
 
-    const r = path.join(project_path, project_name);
-
     // TODO: why two .gitignores?
+    const r = path.join(project_path, '__PROJECT_NAME__');
     fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
     fs.copySync(path.join(r, '.gitignore'), path.join(project_path, '.gitignore'));
+}
 
-    fs.moveSync(path.join(project_path, '__PROJECT_NAME__.xcodeproj'), `${r}.xcodeproj`);
+function expandTokens (project_path, project_name, package_name) {
+    expandTokensInFileContents(project_path, project_name, package_name);
+    expandTokensInFileNames(project_path, project_name);
+}
 
-    fs.moveSync(path.join(project_path, '__PROJECT_NAME__.xcworkspace'), `${r}.xcworkspace`);
-    fs.moveSync(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
+function expandTokensInFileContents (project_path, project_name, package_name) {
+    // Expand __PROJECT_ID__ token in file contents
+    utils.replaceFileContents(path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj'), /__PROJECT_ID__/g, package_name);
 
-    fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
-    fs.moveSync(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
-    fs.moveSync(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
+    // Expand __PROJECT_NAME__ token in file contents
+    for (const p of [
+        'cordova/build-debug.xcconfig',
+        'cordova/build-release.xcconfig',
+        '__PROJECT_NAME__.xcworkspace/contents.xcworkspacedata',
+        '__PROJECT_NAME__.xcworkspace/xcshareddata/xcschemes/__PROJECT_NAME__.xcscheme',
+        '__PROJECT_NAME__.xcodeproj/project.pbxproj',
+        '__PROJECT_NAME__/Classes/AppDelegate.h',
+        '__PROJECT_NAME__/Classes/AppDelegate.m',
+        '__PROJECT_NAME__/Classes/MainViewController.h',
+        '__PROJECT_NAME__/Classes/MainViewController.m',
+        '__PROJECT_NAME__/main.m',
+        '__PROJECT_NAME__/__PROJECT_NAME__-Info.plist',
+        '__PROJECT_NAME__/__PROJECT_NAME__-Prefix.pch'
+    ]) {
+        expandProjectNameInFileContents(path.join(project_path, p), project_name);
+    }
+}
 
-    /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
-     *
-     * - ./__PROJECT_NAME__.xcodeproj/project.pbxproj
-     * - ./__PROJECT_NAME__/Classes/AppDelegate.h
-     * - ./__PROJECT_NAME__/Classes/AppDelegate.m
-     * - ./__PROJECT_NAME__/Classes/MainViewController.h
-     * - ./__PROJECT_NAME__/Classes/MainViewController.m
-     * - ./__PROJECT_NAME__/Resources/main.m
-     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-info.plist
-     * - ./__PROJECT_NAME__/Resources/__PROJECT_NAME__-Prefix.plist
-     */
+function expandTokensInFileNames (project_path, project_name) {
+    // Expand __PROJECT_NAME__ token in file & folder names
+    for (const p of [
+        '__PROJECT_NAME__.xcworkspace/xcshareddata/xcschemes/__PROJECT_NAME__.xcscheme',
+        '__PROJECT_NAME__.xcworkspace',
+        '__PROJECT_NAME__.xcodeproj',
+        '__PROJECT_NAME__/__PROJECT_NAME__-Info.plist',
+        '__PROJECT_NAME__/__PROJECT_NAME__-Prefix.pch',
+        '__PROJECT_NAME__'
+    ]) {
+        expandProjectNameInBaseName(path.join(project_path, p), project_name);
+    }
+}
 
+function expandProjectNameInBaseName (f, projectName) {
+    const { dir, base } = path.parse(f);
+    const newBase = base.replace('__PROJECT_NAME__', projectName);
+    return fs.moveSync(f, path.join(dir, newBase));
+}
+
+function expandProjectNameInFileContents (f, projectName) {
     // https://issues.apache.org/jira/browse/CB-12402 - Encode XML characters properly
-    const project_name_xml_esc = xmlescape(project_name);
-    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'contents.xcworkspacedata'), /__PROJECT_NAME__/g, project_name_xml_esc);
-    utils.replaceFileContents(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`), /__PROJECT_NAME__/g, project_name_xml_esc);
-
-    const project_name_esc = project_name.replace(/&/g, '\\&');
-    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(`${r}.xcodeproj`, 'project.pbxproj'), /__PROJECT_ID__/g, package_name);
-    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.h'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'AppDelegate.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.h'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'Classes', 'MainViewController.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, 'main.m'), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, `${project_name}-Info.plist`), /__PROJECT_NAME__/g, project_name_esc);
-    utils.replaceFileContents(path.join(r, `${project_name}-Prefix.pch`), /__PROJECT_NAME__/g, project_name_esc);
+    const xmlExtensions = new Set(['.xcworkspacedata', '.xcscheme']);
+    const escape = xmlExtensions.has(path.extname(f))
+        ? xmlescape
+        : s => s.replace(/&/g, '\\&');
+    utils.replaceFileContents(f, /__PROJECT_NAME__/g, escape(projectName));
 }
 
 /*
@@ -165,12 +171,13 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
 
     events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
-    // Copy project template files
-    copyTemplateFiles(project_path, project_name, project_template_dir, package_name);
+    copyTemplateFiles(project_template_dir, project_path);
 
-    // CordovaLib stuff
+    copyScripts(project_path);
+
+    expandTokens(project_path, project_name, package_name);
+
     copyJsAndCordovaLib(project_path, project_name, use_shared);
-    copyScripts(project_path, project_name);
 
     events.emit('log', generateDoneMessage('create', use_shared));
     return Promise.resolve();
