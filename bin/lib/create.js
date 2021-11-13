@@ -29,23 +29,12 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
     fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
 
-    /*
-     * Check if "CordovaLib" already exists with "fs.lstatSync" and remove it.
-     * Wrapped with try/catch because lstatSync will throw an error if "CordovaLib"
-     * is missing.
-     */
-    try {
-        const stats = fs.lstatSync(path.join(projectPath, 'CordovaLib'));
-        if (stats.isSymbolicLink()) {
-            fs.unlinkSync(path.join(projectPath, 'CordovaLib'));
-        } else {
-            fs.removeSync(path.join(projectPath, 'CordovaLib'));
-        }
-    } catch (e) { }
-
     const projectAppPath = path.join(projectPath, projectName);
     const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
     const cordovaLibPathDest = path.join(projectPath, 'CordovaLib');
+
+    // Make sure we are starting from scratch
+    fs.removeSync(cordovaLibPathDest);
 
     if (use_shared) {
         // Symlink not used in project file, but is currently required for plugman because
