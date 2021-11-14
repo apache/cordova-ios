@@ -89,9 +89,9 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     const r = path.join(project_path, project_name);
 
-    fs.moveSync(path.join(project_path, '__TEMP__.xcodeproj'), `${r}.xcodeproj`);
+    fs.moveSync(path.join(project_path, '__PROJECT_NAME__.xcodeproj'), `${r}.xcodeproj`);
 
-    fs.moveSync(path.join(project_path, '__TEMP__.xcworkspace'), `${r}.xcworkspace`);
+    fs.moveSync(path.join(project_path, '__PROJECT_NAME__.xcworkspace'), `${r}.xcworkspace`);
     fs.moveSync(path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', '__PROJECT_NAME__.xcscheme'), path.join(`${r}.xcworkspace`, 'xcshareddata', 'xcschemes', `${project_name}.xcscheme`));
 
     fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
