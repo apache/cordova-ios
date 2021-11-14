@@ -137,16 +137,14 @@ function expandProjectNameInFileContents (f, projectName) {
     utils.replaceFileContents(f, /__PROJECT_NAME__/g, escape(projectName));
 }
 
-/*
+/**
  * Creates a new iOS project with the following options:
  *
- * - --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it
- * - --cli (optional): Use the CLI-project template
- * - <path_to_new_project>: Path to your new Cordova iOS project
- * - <package_name>: Package name, following reverse-domain style convention
- * - <project_name>: Project name
- * - <project_template_dir>: Path to a project template (override)
- *
+ * @param {string} project_path Path to your new Cordova iOS project
+ * @param {string} package_name Package name, following reverse-domain style convention
+ * @param {string} project_name Project name
+ * @param {{ link: boolean, customTemplate: string }} opts Project creation options
+ * @returns {Promise<void>} resolves when the project has been created
  */
 exports.createProject = async (project_path, package_name, project_name, opts) => {
     package_name = package_name || 'my.cordova.project';
