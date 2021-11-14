@@ -42,8 +42,6 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
         // like it should).
         fs.symlinkSync(cordovaLibPathSrc, cordovaLibPathDest);
     } else {
-        fs.copySync(path.join(projectAppPath, '.gitignore'), path.join(projectPath, '.gitignore'));
-
         for (const p of ['include', 'Classes', 'VERSION', 'cordova.js', 'CordovaLib.xcodeproj/project.pbxproj']) {
             fs.copySync(path.join(cordovaLibPathSrc, p), path.join(cordovaLibPathDest, p));
         }
@@ -89,6 +87,10 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
 
     const r = path.join(project_path, project_name);
 
+    // TODO: why two .gitignores?
+    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
+    fs.copySync(path.join(r, '.gitignore'), path.join(project_path, '.gitignore'));
+
     fs.moveSync(path.join(project_path, '__PROJECT_NAME__.xcodeproj'), `${r}.xcodeproj`);
 
     fs.moveSync(path.join(project_path, '__PROJECT_NAME__.xcworkspace'), `${r}.xcworkspace`);
@@ -97,8 +99,6 @@ function copyTemplateFiles (project_path, project_name, project_template_dir, pa
     fs.moveSync(path.join(project_path, '__PROJECT_NAME__'), r);
     fs.moveSync(path.join(r, '__PROJECT_NAME__-Info.plist'), path.join(r, `${project_name}-Info.plist`));
     fs.moveSync(path.join(r, '__PROJECT_NAME__-Prefix.pch'), path.join(r, `${project_name}-Prefix.pch`));
-
-    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
 
     /* replace __PROJECT_NAME__ and __PROJECT_ID__ with ACTIVITY and ID strings, respectively, in:
      *
