@@ -23,6 +23,7 @@ const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
+const pkg = require('../../package');
 
 function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     fs.copySync(
@@ -163,8 +164,6 @@ exports.createProject = (project_path, package_name, project_name, opts) => {
     events.emit('log', `\tPackage: ${package_name}`);
     events.emit('log', `\tName: ${project_name}`);
 
-    events.emit('verbose', `Copying iOS template project to ${project_path}`);
-
     copyTemplateFiles(project_template_dir, project_path);
 
     copyScripts(project_path);
@@ -173,18 +172,10 @@ exports.createProject = (project_path, package_name, project_name, opts) => {
 
     copyJsAndCordovaLib(project_path, project_name, use_shared);
 
-    events.emit('log', generateDoneMessage('create', use_shared));
+    events.emit('log', `iOS project created with ${pkg.name}@${pkg.version}`);
+
     return Promise.resolve();
 };
-
-function generateDoneMessage (type, link) {
-    const pkg = require('../../package');
-    let msg = `iOS project ${type === 'update' ? 'updated' : 'created'} with ${pkg.name}@${pkg.version}`;
-    if (link) {
-        msg += ' and has a linked CordovaLib';
-    }
-    return msg;
-}
 
 /**
  * Updates xcodeproj's Sub Projects
