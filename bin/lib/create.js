@@ -148,7 +148,7 @@ function expandProjectNameInFileContents (f, projectName) {
  * - <project_template_dir>: Path to a project template (override)
  *
  */
-exports.createProject = (project_path, package_name, project_name, opts) => {
+exports.createProject = async (project_path, package_name, project_name, opts) => {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
@@ -156,7 +156,7 @@ exports.createProject = (project_path, package_name, project_name, opts) => {
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
-        return Promise.reject(new CordovaError('Project already exists'));
+        throw new CordovaError('Project already exists');
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
@@ -173,8 +173,6 @@ exports.createProject = (project_path, package_name, project_name, opts) => {
     copyJsAndCordovaLib(project_path, project_name, use_shared);
 
     events.emit('log', `iOS project created with ${pkg.name}@${pkg.version}`);
-
-    return Promise.resolve();
 };
 
 /**
