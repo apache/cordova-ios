@@ -150,9 +150,8 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
-    const bin_dir = path.join(ROOT, 'bin');
     const project_parent = path.dirname(project_path);
-    const project_template_dir = opts.customTemplate || path.join(bin_dir, 'templates', 'project');
+    const project_template_dir = opts.customTemplate || path.join(ROOT, 'templates', 'project');
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
