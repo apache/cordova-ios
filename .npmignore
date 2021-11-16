@@ -16,3 +16,4 @@ guides
 hooks
 Cordova.podspec
 update_podspec.sh
+cordova-js-src

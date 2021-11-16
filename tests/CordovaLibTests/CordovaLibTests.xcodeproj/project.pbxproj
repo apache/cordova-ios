@@ -398,7 +398,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp ../../CordovaLib/cordova.js \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www/cordova.js\"";
+			shellScript = "cp ../../templates/project/www/cordova.js \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www/cordova.js\"";
 			showEnvVarsInLog = 0;
 		};
 		C0FA7CA61E4BB6420077B045 /* Copy cordova.js into www directory */ = {
@@ -414,7 +414,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp ../../CordovaLib/cordova.js \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www/cordova.js\"";
+			shellScript = "cp ../../templates/project/www/cordova.js \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www/cordova.js\"";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

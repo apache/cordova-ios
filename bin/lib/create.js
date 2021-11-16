@@ -25,9 +25,10 @@ const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 
 function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
-    fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'www/cordova.js'));
-    fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(projectPath, 'platform_www/cordova-js-src'));
-    fs.copySync(path.join(ROOT, 'CordovaLib', 'cordova.js'), path.join(projectPath, 'platform_www/cordova.js'));
+    const srcCordovaJsPath = path.join(projectPath, 'www/cordova.js');
+    const platformWwwDir = path.join(projectPath, 'platform_www');
+    fs.ensureDirSync(platformWwwDir);
+    fs.copySync(srcCordovaJsPath, path.join(platformWwwDir, 'cordova.js'));
 
     const projectAppPath = path.join(projectPath, projectName);
     const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
@@ -42,7 +43,7 @@ function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
         // like it should).
         fs.symlinkSync(cordovaLibPathSrc, cordovaLibPathDest);
     } else {
-        for (const p of ['include', 'Classes', 'VERSION', 'cordova.js', 'CordovaLib.xcodeproj/project.pbxproj']) {
+        for (const p of ['include', 'Classes', 'VERSION', 'CordovaLib.xcodeproj/project.pbxproj']) {
             fs.copySync(path.join(cordovaLibPathSrc, p), path.join(cordovaLibPathDest, p));
         }
     }
