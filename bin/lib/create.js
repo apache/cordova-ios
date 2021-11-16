@@ -25,10 +25,10 @@ const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 
 function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
-    const srcCordovaJsPath = path.join(projectPath, 'www/cordova.js');
-    const platformWwwDir = path.join(projectPath, 'platform_www');
-    fs.ensureDirSync(platformWwwDir);
-    fs.copySync(srcCordovaJsPath, path.join(platformWwwDir, 'cordova.js'));
+    fs.copySync(
+        path.join(projectPath, 'www/cordova.js'),
+        path.join(projectPath, 'platform_www/cordova.js')
+    );
 
     const projectAppPath = path.join(projectPath, projectName);
     const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
