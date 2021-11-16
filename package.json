@@ -13,6 +13,7 @@
     "cordova:platform"
   ],
   "scripts": {
+    "prepare": "cordova-js build > templates/project/www/cordova.js",
     "pretest": "npm run lint",
     "test": "npm run coverage && npm run objc-tests",
     "coverage": "nyc jasmine --config=tests/spec/coverage.json",
@@ -29,6 +30,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@cordova/eslint-config": "^4.0.0",
+    "cordova-js": "^6.1.0",
     "jasmine": "3.5.0",
     "nyc": "^15.1.0",
     "rewire": "^5.0.0",
