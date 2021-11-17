@@ -41,9 +41,6 @@ function copyOrLinkCordovaLib (projectPath, linkLib) {
     const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
     const cordovaLibPathDest = path.join(projectPath, 'CordovaLib');
 
-    // Make sure we are starting from scratch
-    fs.removeSync(cordovaLibPathDest);
-
     if (linkLib) {
         // Symlink not used in project file, but is currently required for plugman because
         // it reads the VERSION file from it (instead of using the cordova/version script
@@ -59,9 +56,6 @@ function copyOrLinkCordovaLib (projectPath, linkLib) {
 function copyScripts (projectPath) {
     const srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
     const destScriptsDir = path.join(projectPath, 'cordova');
-
-    // Delete old scripts directory.
-    fs.removeSync(destScriptsDir);
 
     // Copy in the new ones.
     fs.copySync(srcScriptsDir, destScriptsDir);
