@@ -188,26 +188,26 @@ function updateCordovaSubproject (projectXcodePath, cordovaLibXcodePath) {
     // absolute path to the project's `platforms/ios` directory
     const platformPath = path.dirname(projectXcodePath);
     // relative path to project's `CordovaLib/CordovaLib.xcodeproj`
-    const subProjectPath = path.relative(platformPath, cordovaLibXcodePath);
+    const cdvLibXcodePath = path.relative(platformPath, cordovaLibXcodePath);
     // absolute path to project's xcodeproj's 'project.pbxproj'
-    const projectPbxprojPath = path.join(projectXcodePath, 'project.pbxproj');
+    const pbxprojPath = path.join(projectXcodePath, 'project.pbxproj');
 
     const line = utils.grep(
-        projectPbxprojPath,
+        pbxprojPath,
         /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/
     );
 
     if (!line) {
-        throw new Error(`Entry not found in project file for sub-project: ${subProjectPath}`);
+        throw new Error(`Entry not found in project file for sub-project: ${cdvLibXcodePath}`);
     }
 
     let newLine = line
-        .replace(/path = .+?;/, `path = ${subProjectPath};`)
+        .replace(/path = .+?;/, `path = ${cdvLibXcodePath};`)
         .replace(/sourceTree.+?;/, 'sourceTree = "<group>";');
 
     if (!newLine.match('name')) {
         newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
     }
 
-    utils.replaceFileContents(projectPbxprojPath, line, newLine);
+    utils.replaceFileContents(pbxprojPath, line, newLine);
 }
