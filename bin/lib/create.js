@@ -23,6 +23,7 @@ const xmlescape = require('xml-escape');
 const ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
+const pkg = require('../../package');
 
 function copyJsAndCordovaLib (projectPath, projectName, use_shared) {
     fs.copySync(
@@ -136,40 +137,30 @@ function expandProjectNameInFileContents (f, projectName) {
     utils.replaceFileContents(f, /__PROJECT_NAME__/g, escape(projectName));
 }
 
-/*
+/**
  * Creates a new iOS project with the following options:
  *
- * - --link (optional): Link directly against the shared copy of the CordovaLib instead of a copy of it
- * - --cli (optional): Use the CLI-project template
- * - <path_to_new_project>: Path to your new Cordova iOS project
- * - <package_name>: Package name, following reverse-domain style convention
- * - <project_name>: Project name
- * - <project_template_dir>: Path to a project template (override)
- *
+ * @param {string} project_path Path to your new Cordova iOS project
+ * @param {string} package_name Package name, following reverse-domain style convention
+ * @param {string} project_name Project name
+ * @param {{ link: boolean, customTemplate: string }} opts Project creation options
+ * @returns {Promise<void>} resolves when the project has been created
  */
-exports.createProject = (project_path, package_name, project_name, opts, config) => {
+exports.createProject = async (project_path, package_name, project_name, opts) => {
     package_name = package_name || 'my.cordova.project';
     project_name = project_name || 'CordovaExample';
     const use_shared = !!opts.link;
-    const project_parent = path.dirname(project_path);
     const project_template_dir = opts.customTemplate || path.join(ROOT, 'templates', 'project');
 
     // check that project path doesn't exist
     if (fs.existsSync(project_path)) {
-        return Promise.reject(new CordovaError('Project already exists'));
-    }
-
-    // check that parent directory does exist so cp -r will not fail
-    if (!fs.existsSync(project_parent)) {
-        return Promise.reject(new CordovaError(`Parent directory "${project_parent}" of given project path does not exist`));
+        throw new CordovaError('Project already exists');
     }
 
     events.emit('log', 'Creating Cordova project for the iOS platform:');
     events.emit('log', `\tPath: ${path.relative(process.cwd(), project_path)}`);
     events.emit('log', `\tPackage: ${package_name}`);
     events.emit('log', `\tName: ${project_name}`);
-
-    events.emit('verbose', `Copying iOS template project to ${project_path}`);
 
     copyTemplateFiles(project_template_dir, project_path);
 
@@ -179,18 +170,8 @@ exports.createProject = (project_path, package_name, project_name, opts, config)
 
     copyJsAndCordovaLib(project_path, project_name, use_shared);
 
-    events.emit('log', generateDoneMessage('create', use_shared));
-    return Promise.resolve();
+    events.emit('log', `iOS project created with ${pkg.name}@${pkg.version}`);
 };
-
-function generateDoneMessage (type, link) {
-    const pkg = require('../../package');
-    let msg = `iOS project ${type === 'update' ? 'updated' : 'created'} with ${pkg.name}@${pkg.version}`;
-    if (link) {
-        msg += ' and has a linked CordovaLib';
-    }
-    return msg;
-}
 
 /**
  * Updates xcodeproj's Sub Projects
