@@ -25,19 +25,26 @@ const { CordovaError, events } = require('cordova-common');
 const utils = require('./utils');
 const pkg = require('../../package');
 
-function copyJsAndCordovaLib (projectPath, use_shared) {
+function provideCordovaJs (projectPath) {
     fs.copySync(
         path.join(projectPath, 'www/cordova.js'),
         path.join(projectPath, 'platform_www/cordova.js')
     );
+}
 
+function provideCordovaLib (projectPath, linkLib) {
+    copyOrLinkCordovaLib(projectPath, linkLib);
+    configureCordovaLibPath(projectPath);
+}
+
+function copyOrLinkCordovaLib (projectPath, linkLib) {
     const cordovaLibPathSrc = path.join(ROOT, 'CordovaLib');
     const cordovaLibPathDest = path.join(projectPath, 'CordovaLib');
 
     // Make sure we are starting from scratch
     fs.removeSync(cordovaLibPathDest);
 
-    if (use_shared) {
+    if (linkLib) {
         // Symlink not used in project file, but is currently required for plugman because
         // it reads the VERSION file from it (instead of using the cordova/version script
         // like it should).
@@ -47,7 +54,6 @@ function copyJsAndCordovaLib (projectPath, use_shared) {
             fs.copySync(path.join(cordovaLibPathSrc, p), path.join(cordovaLibPathDest, p));
         }
     }
-    configureCordovaLibPath(projectPath);
 }
 
 function copyScripts (projectPath) {
@@ -157,7 +163,9 @@ exports.createProject = async (project_path, package_name, project_name, opts) =
 
     copyTemplateFiles(project_template_dir, project_path);
 
-    copyJsAndCordovaLib(project_path, use_shared);
+    provideCordovaJs(project_path);
+
+    provideCordovaLib(project_path, use_shared);
 
     copyScripts(project_path);
 
