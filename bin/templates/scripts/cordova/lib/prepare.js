@@ -380,7 +380,7 @@ function updateIcons (cordovaProject, locations) {
     const resourceMap = mapIconResources(icons, iconsDir);
     events.emit('verbose', `Updating icons at ${iconsDir}`);
     FileUpdater.updatePaths(
-        resourceMap, { rootDir: cordovaProject.root }, logFileOp);
+        resourceMap, { rootDir: cordovaProject.root });
 }
 
 function cleanIcons (projectRoot, projectConfig, locations) {
