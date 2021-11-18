@@ -20,9 +20,57 @@
 const path = require('path');
 const fs = require('fs-extra');
 const xmlescape = require('xml-escape');
-const ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, events } = require('cordova-common');
 const pkg = require('../../package');
+
+const ROOT = path.join(__dirname, '../..');
+
+/**
+ * Creates a new iOS project with the following options:
+ *
+ * @param {string} project_path Path to your new Cordova iOS project
+ * @param {string} package_name Package name, following reverse-domain style convention
+ * @param {string} project_name Project name
+ * @param {{ link: boolean, customTemplate: string }} opts Project creation options
+ * @returns {Promise<void>} resolves when the project has been created
+ */
+exports.createProject = async (project_path, package_name, project_name, opts) => {
+    package_name = package_name || 'my.cordova.project';
+    project_name = project_name || 'CordovaExample';
+    const use_shared = !!opts.link;
+    const project_template_dir = opts.customTemplate || path.join(ROOT, 'templates', 'project');
+
+    // check that project path doesn't exist
+    if (fs.existsSync(project_path)) {
+        throw new CordovaError('Project already exists');
+    }
+
+    events.emit('log', 'Creating Cordova project for the iOS platform:');
+    events.emit('log', `\tPath: ${path.relative(process.cwd(), project_path)}`);
+    events.emit('log', `\tPackage: ${package_name}`);
+    events.emit('log', `\tName: ${project_name}`);
+
+    copyTemplateFiles(project_template_dir, project_path);
+
+    provideCordovaJs(project_path);
+
+    provideCordovaLib(project_path, use_shared);
+
+    copyScripts(project_path);
+
+    expandTokens(project_path, project_name, package_name);
+
+    events.emit('log', `iOS project created with ${pkg.name}@${pkg.version}`);
+};
+
+function copyTemplateFiles (project_template_dir, project_path) {
+    fs.copySync(project_template_dir, project_path);
+
+    // TODO: why two .gitignores?
+    const r = path.join(project_path, '__PROJECT_NAME__');
+    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
+    fs.copySync(path.join(r, '.gitignore'), path.join(project_path, '.gitignore'));
+}
 
 function provideCordovaJs (projectPath) {
     fs.copySync(
@@ -34,6 +82,22 @@ function provideCordovaJs (projectPath) {
 function provideCordovaLib (projectPath, linkLib) {
     copyOrLinkCordovaLib(projectPath, linkLib);
     configureCordovaLibPath(projectPath);
+}
+
+function copyScripts (projectPath) {
+    const srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
+    const destScriptsDir = path.join(projectPath, 'cordova');
+
+    // Copy in the new ones.
+    fs.copySync(srcScriptsDir, destScriptsDir);
+
+    const nodeModulesDir = path.join(ROOT, 'node_modules');
+    if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
+}
+
+function expandTokens (project_path, project_name, package_name) {
+    expandTokensInFileContents(project_path, project_name, package_name);
+    expandTokensInFileNames(project_path, project_name);
 }
 
 function copyOrLinkCordovaLib (projectPath, linkLib) {
@@ -52,29 +116,39 @@ function copyOrLinkCordovaLib (projectPath, linkLib) {
     }
 }
 
-function copyScripts (projectPath) {
-    const srcScriptsDir = path.join(ROOT, 'bin', 'templates', 'scripts', 'cordova');
-    const destScriptsDir = path.join(projectPath, 'cordova');
+/**
+ * Updates xcodeproj's Sub Projects
+ *
+ * @param {string} project_path absolute path to the project's `platforms/ios` directory
+ */
+function configureCordovaLibPath (project_path) {
+    // CordovaLib could be a symlink, so we resolve it
+    const cdvLibRealPath = fs.realpathSync(path.join(project_path, 'CordovaLib'));
 
-    // Copy in the new ones.
-    fs.copySync(srcScriptsDir, destScriptsDir);
+    const cdvLibXcodeAbsPath = path.join(cdvLibRealPath, 'CordovaLib.xcodeproj');
+    const cdvLibXcodePath = path.relative(project_path, cdvLibXcodeAbsPath);
+    const pbxprojPath = path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj');
 
-    const nodeModulesDir = path.join(ROOT, 'node_modules');
-    if (fs.existsSync(nodeModulesDir)) fs.copySync(nodeModulesDir, path.join(destScriptsDir, 'node_modules'));
-}
+    // Replace magic line in project.pbxproj
+    transformFileContents(pbxprojPath, contents => {
+        const regex = /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
+        const line = contents.split(/\r?\n/)
+            .find(l => regex.test(l));
 
-function copyTemplateFiles (project_template_dir, project_path) {
-    fs.copySync(project_template_dir, project_path);
+        if (!line) {
+            throw new Error(`Entry not found in project file for sub-project: ${cdvLibXcodePath}`);
+        }
 
-    // TODO: why two .gitignores?
-    const r = path.join(project_path, '__PROJECT_NAME__');
-    fs.moveSync(path.join(r, 'gitignore'), path.join(r, '.gitignore'));
-    fs.copySync(path.join(r, '.gitignore'), path.join(project_path, '.gitignore'));
-}
+        let newLine = line
+            .replace(/path = .+?;/, `path = ${cdvLibXcodePath};`)
+            .replace(/sourceTree.+?;/, 'sourceTree = "<group>";');
 
-function expandTokens (project_path, project_name, package_name) {
-    expandTokensInFileContents(project_path, project_name, package_name);
-    expandTokensInFileNames(project_path, project_name);
+        if (!newLine.match('name')) {
+            newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
+        }
+
+        return contents.replace(line, newLine);
+    });
 }
 
 function expandTokensInFileContents (project_path, project_name, package_name) {
@@ -132,79 +206,6 @@ function expandProjectNameInFileContents (f, projectName) {
     transformFileContents(f, contents =>
         contents.replace(/__PROJECT_NAME__/g, escape(projectName))
     );
-}
-
-/**
- * Creates a new iOS project with the following options:
- *
- * @param {string} project_path Path to your new Cordova iOS project
- * @param {string} package_name Package name, following reverse-domain style convention
- * @param {string} project_name Project name
- * @param {{ link: boolean, customTemplate: string }} opts Project creation options
- * @returns {Promise<void>} resolves when the project has been created
- */
-exports.createProject = async (project_path, package_name, project_name, opts) => {
-    package_name = package_name || 'my.cordova.project';
-    project_name = project_name || 'CordovaExample';
-    const use_shared = !!opts.link;
-    const project_template_dir = opts.customTemplate || path.join(ROOT, 'templates', 'project');
-
-    // check that project path doesn't exist
-    if (fs.existsSync(project_path)) {
-        throw new CordovaError('Project already exists');
-    }
-
-    events.emit('log', 'Creating Cordova project for the iOS platform:');
-    events.emit('log', `\tPath: ${path.relative(process.cwd(), project_path)}`);
-    events.emit('log', `\tPackage: ${package_name}`);
-    events.emit('log', `\tName: ${project_name}`);
-
-    copyTemplateFiles(project_template_dir, project_path);
-
-    provideCordovaJs(project_path);
-
-    provideCordovaLib(project_path, use_shared);
-
-    copyScripts(project_path);
-
-    expandTokens(project_path, project_name, package_name);
-
-    events.emit('log', `iOS project created with ${pkg.name}@${pkg.version}`);
-};
-
-/**
- * Updates xcodeproj's Sub Projects
- *
- * @param {string} project_path absolute path to the project's `platforms/ios` directory
- */
-function configureCordovaLibPath (project_path) {
-    // CordovaLib could be a symlink, so we resolve it
-    const cdvLibRealPath = fs.realpathSync(path.join(project_path, 'CordovaLib'));
-
-    const cdvLibXcodeAbsPath = path.join(cdvLibRealPath, 'CordovaLib.xcodeproj');
-    const cdvLibXcodePath = path.relative(project_path, cdvLibXcodeAbsPath);
-    const pbxprojPath = path.join(project_path, '__PROJECT_NAME__.xcodeproj/project.pbxproj');
-
-    // Replace magic line in project.pbxproj
-    transformFileContents(pbxprojPath, contents => {
-        const regex = /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
-        const line = contents.split(/\r?\n/)
-            .find(l => regex.test(l));
-
-        if (!line) {
-            throw new Error(`Entry not found in project file for sub-project: ${cdvLibXcodePath}`);
-        }
-
-        let newLine = line
-            .replace(/path = .+?;/, `path = ${cdvLibXcodePath};`)
-            .replace(/sourceTree.+?;/, 'sourceTree = "<group>";');
-
-        if (!newLine.match('name')) {
-            newLine = newLine.replace('path = ', 'name = CordovaLib.xcodeproj; path = ');
-        }
-
-        return contents.replace(line, newLine);
-    });
 }
 
 function transformFileContents (file, transform) {
