@@ -24,11 +24,10 @@ const { CordovaError, events } = require('cordova-common');
 const check_reqs = require('./check_reqs');
 const fs = require('fs-extra');
 
-const cordovaPath = path.join(__dirname, '..');
-const projectPath = path.join(__dirname, '..', '..');
-
 /** @returns {Promise<void>} */
-module.exports.run = runOptions => {
+module.exports.run = function (runOptions) {
+    const projectPath = this.root;
+
     // Validate args
     if (runOptions.device && runOptions.emulator) {
         return Promise.reject(new CordovaError('Only one of "device"/"emulator" options should be specified'));
@@ -101,10 +100,10 @@ module.exports.run = runOptions => {
                             return module.exports.deployToDevice(appPath, runOptions.target, extraArgs);
                         },
                         // if device connection check failed use emulator then
-                        () => module.exports.deployToSim(appPath, runOptions.target)
+                        () => module.exports.deployToSim(projectPath, appPath, runOptions.target)
                     );
             } else {
-                return module.exports.deployToSim(appPath, runOptions.target);
+                return module.exports.deployToSim(projectPath, appPath, runOptions.target);
             }
         })
         .then(() => {}); // resolve to undefined
@@ -170,7 +169,7 @@ function deployToDevice (appPath, target, extraArgs) {
  * @param  {String} target  Target device type
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-async function deployToSim (appPath, target) {
+async function deployToSim (projectPath, appPath, target) {
     events.emit('log', 'Deploying to simulator');
 
     if (!target) {
@@ -181,11 +180,11 @@ async function deployToSim (appPath, target) {
         events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
     }
 
-    return startSim(appPath, target);
+    return startSim(projectPath, appPath, target);
 }
 
-function startSim (appPath, target) {
-    const logPath = path.join(cordovaPath, 'console.log');
+function startSim (projectPath, appPath, target) {
+    const logPath = path.join(projectPath, 'console.log');
     const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
 
     const subprocess = execa(

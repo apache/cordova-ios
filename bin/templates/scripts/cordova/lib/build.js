@@ -85,9 +85,9 @@ function getDefaultSimulatorTarget () {
 }
 
 /** @returns {Promise<void>} */
-module.exports.run = buildOpts => {
+module.exports.run = function (buildOpts) {
+    const projectPath = this.root;
     let emulatorTarget = '';
-    const projectPath = path.join(__dirname, '..', '..');
     let projectName = '';
 
     buildOpts = buildOpts || {};
@@ -192,7 +192,7 @@ module.exports.run = buildOpts => {
                 writeCodeSignStyle('Automatic');
             }
 
-            return fs.writeFile(path.join(__dirname, '..', 'build-extras.xcconfig'), extraConfig, 'utf-8');
+            return fs.writeFile(path.join(projectPath, 'cordova/build-extras.xcconfig'), extraConfig, 'utf-8');
         }).then(() => {
             const configuration = buildOpts.release ? 'Release' : 'Debug';
 

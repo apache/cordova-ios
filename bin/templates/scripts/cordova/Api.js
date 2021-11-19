@@ -73,7 +73,7 @@ class Api {
     constructor (platform, platformRootDir, events) {
         // 'platform' property is required as per PlatformApi spec
         this.platform = platform || 'ios';
-        this.root = platformRootDir || path.resolve(__dirname, '..');
+        this.root = platformRootDir;
 
         setupEvents(events);
 
@@ -680,7 +680,7 @@ class Api {
      */
     clean (cleanOptions) {
         return check_reqs.run()
-            .then(() => require('./lib/clean').run.call(this, cleanOptions))
+            .then(() => require('./lib/clean').run(this.root))
             .then(() => require('./lib/prepare').clean.call(this, cleanOptions));
     }
 
