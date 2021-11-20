@@ -184,7 +184,7 @@ async function deployToSim (projectPath, appPath, target) {
 }
 
 function startSim (projectPath, appPath, target) {
-    const logPath = path.join(projectPath, 'console.log');
+    const logPath = path.join(projectPath, 'cordova/console.log');
     const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
 
     const subprocess = execa(
