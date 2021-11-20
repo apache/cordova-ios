@@ -63,6 +63,10 @@ module.exports.prepare = function (cordovaProject, options) {
 };
 
 module.exports.clean = function (options) {
+    // A cordovaProject isn't passed into the clean() function, because it might have
+    // been called from the platform shell script rather than the CLI. Check for the
+    // noPrepare option passed in by the non-CLI clean script. If that's present, or if
+    // there's no config.xml found at the project root, then don't clean prepared files.
     const projectRoot = path.resolve(this.root, '../..');
     const projectConfigFile = path.join(projectRoot, 'config.xml');
     if ((options && options.noPrepare) || !fs.existsSync(projectConfigFile) ||
