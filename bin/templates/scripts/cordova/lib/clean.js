@@ -22,7 +22,8 @@ const fs = require('fs-extra');
 const execa = require('execa');
 const { CordovaError } = require('cordova-common');
 
-module.exports.run = function (projectPath) {
+module.exports.run = function () {
+    const projectPath = this.root;
     const projectName = fs.readdirSync(projectPath).filter(name => path.extname(name) === '.xcodeproj');
 
     if (!projectName) {

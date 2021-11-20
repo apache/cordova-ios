@@ -680,7 +680,7 @@ class Api {
      */
     clean (cleanOptions) {
         return check_reqs.run()
-            .then(() => require('./lib/clean').run(this.root))
+            .then(() => require('./lib/clean').run.call(this, cleanOptions))
             .then(() => require('./lib/prepare').clean.call(this, cleanOptions));
     }
 
