@@ -100,10 +100,10 @@ module.exports.run = function (runOptions) {
                             return module.exports.deployToDevice(appPath, runOptions.target, extraArgs);
                         },
                         // if device connection check failed use emulator then
-                        () => module.exports.deployToSim(projectPath, appPath, runOptions.target)
+                        () => module.exports.deployToSim(appPath, runOptions.target)
                     );
             } else {
-                return module.exports.deployToSim(projectPath, appPath, runOptions.target);
+                return module.exports.deployToSim(appPath, runOptions.target);
             }
         })
         .then(() => {}); // resolve to undefined
@@ -169,7 +169,7 @@ function deployToDevice (appPath, target, extraArgs) {
  * @param  {String} target  Target device type
  * @return {Promise}        Resolves when deploy succeeds otherwise rejects
  */
-async function deployToSim (projectPath, appPath, target) {
+async function deployToSim (appPath, target) {
     events.emit('log', 'Deploying to simulator');
 
     if (!target) {
@@ -180,10 +180,11 @@ async function deployToSim (projectPath, appPath, target) {
         events.emit('log', `No target specified for emulator. Deploying to "${target}" simulator.`);
     }
 
-    return startSim(projectPath, appPath, target);
+    return startSim(appPath, target);
 }
 
-function startSim (projectPath, appPath, target) {
+function startSim (appPath, target) {
+    const projectPath = path.join(path.dirname(appPath), '../..');
     const logPath = path.join(projectPath, 'cordova/console.log');
     const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
 
