@@ -73,7 +73,7 @@ class Api {
     constructor (platform, platformRootDir, events) {
         // 'platform' property is required as per PlatformApi spec
         this.platform = platform || 'ios';
-        this.root = platformRootDir || path.resolve(__dirname, '..');
+        this.root = platformRootDir;
 
         setupEvents(events);
 

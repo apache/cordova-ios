@@ -24,11 +24,10 @@ const { CordovaError, events } = require('cordova-common');
 const check_reqs = require('./check_reqs');
 const fs = require('fs-extra');
 
-const cordovaPath = path.join(__dirname, '..');
-const projectPath = path.join(__dirname, '..', '..');
-
 /** @returns {Promise<void>} */
-module.exports.run = runOptions => {
+module.exports.run = function (runOptions) {
+    const projectPath = this.root;
+
     // Validate args
     if (runOptions.device && runOptions.emulator) {
         return Promise.reject(new CordovaError('Only one of "device"/"emulator" options should be specified'));
@@ -185,7 +184,8 @@ async function deployToSim (appPath, target) {
 }
 
 function startSim (appPath, target) {
-    const logPath = path.join(cordovaPath, 'console.log');
+    const projectPath = path.join(path.dirname(appPath), '../..');
+    const logPath = path.join(projectPath, 'cordova/console.log');
     const deviceTypeId = `com.apple.CoreSimulator.SimDeviceType.${target}`;
 
     const subprocess = execa(
