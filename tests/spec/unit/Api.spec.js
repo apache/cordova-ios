@@ -21,8 +21,8 @@ const path = require('path');
 const fs = require('fs-extra');
 const EventEmitter = require('events');
 const PluginManager = require('cordova-common').PluginManager;
-const Api = require('../../../bin/templates/scripts/cordova/Api');
-const check_reqs = require('../../../bin/templates/scripts/cordova/lib/check_reqs');
+const Api = require('../../../lib/Api');
+const check_reqs = require('../../../lib/check_reqs');
 
 // The lib/run module pulls in ios-sim, which has a hard requirement that it
 // be run on a Mac OS - simply requiring the module is enough to trigger the
@@ -31,13 +31,13 @@ const check_reqs = require('../../../bin/templates/scripts/cordova/lib/check_req
 // method (more below).
 let run_mod;
 if (process.platform === 'darwin') {
-    run_mod = require('../../../bin/templates/scripts/cordova/lib/run');
+    run_mod = require('../../../lib/run');
 }
 
-const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
-const BridgingHeader_mod = require('../../../bin/templates/scripts/cordova/lib/BridgingHeader.js');
-const Podfile_mod = require('../../../bin/templates/scripts/cordova/lib/Podfile');
-const PodsJson_mod = require('../../../bin/templates/scripts/cordova/lib/PodsJson');
+const projectFile = require('../../../lib/projectFile');
+const BridgingHeader_mod = require('../../../lib/BridgingHeader.js');
+const Podfile_mod = require('../../../lib/Podfile');
+const PodsJson_mod = require('../../../lib/PodsJson');
 const FIXTURES = path.join(__dirname, 'fixtures');
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 

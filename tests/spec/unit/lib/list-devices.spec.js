@@ -21,7 +21,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
 
-const list_devices = rewire('../../../../bin/templates/scripts/cordova/lib/listDevices');
+const list_devices = rewire('../../../../lib/listDevices');
 
 const sampleData = fs.readFileSync(path.resolve(__dirname, '../fixtures/sample-ioreg-output.txt'), 'utf-8');
 

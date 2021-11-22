@@ -21,7 +21,7 @@ const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
 const xcode = require('xcode');
-const create = require('../../bin/lib/create');
+const create = require('../../lib/create');
 
 const makeTempDir = () => path.join(
     fs.realpathSync(os.tmpdir()),
@@ -64,6 +64,13 @@ function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdent
  * @returns {Promise}
  */
 function verifyBuild (tmpDir) {
+    // Allow test project to find the `cordova-android` module
+    fs.ensureSymlinkSync(
+        path.join(__dirname, '../..'),
+        path.join(tmpDir, 'node_modules/cordova-ios'),
+        'junction'
+    );
+
     const Api = require(path.join(tmpDir, 'cordova/Api.js'));
 
     return expectAsync(new Api('ios', tmpDir).build({ emulator: true }))

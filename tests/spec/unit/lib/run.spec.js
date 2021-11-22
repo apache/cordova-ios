@@ -22,7 +22,7 @@
 // environment bits that allow for interacting with iOS Simulators. On
 // Windows+Linux we are bound to not-have-that.
 if (process.platform === 'darwin') {
-    const run = require('../../../../bin/templates/scripts/cordova/lib/run');
+    const run = require('../../../../lib/run');
 
     describe('cordova/lib/run', () => {
         describe('--list option', () => {

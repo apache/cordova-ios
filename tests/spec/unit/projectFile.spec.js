@@ -20,7 +20,7 @@
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+const projectFile = require('../../../lib/projectFile');
 
 const iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
 const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml');

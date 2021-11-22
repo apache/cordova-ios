@@ -2,7 +2,7 @@
   "name": "cordova-ios",
   "version": "7.0.0-dev",
   "description": "cordova-ios release",
-  "main": "bin/templates/scripts/cordova/Api.js",
+  "main": "lib/Api.js",
   "repository": "github:apache/cordova-ios",
   "bugs": "https://github.com/apache/cordova-ios/issues",
   "keywords": [
@@ -54,7 +54,7 @@
   },
   "nyc": {
     "include": [
-      "bin/templates/scripts/**"
+      "lib/**"
     ],
     "reporter": [
       "lcov",

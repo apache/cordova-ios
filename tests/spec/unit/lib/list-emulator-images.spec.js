@@ -22,7 +22,7 @@
 // allow for interacting with iOS Simulators. On Windows+Linux we are
 // bound to not-have-that.
 if (process.platform === 'darwin') {
-    const list_emus = require('../../../../bin/templates/scripts/cordova/lib/listEmulatorImages');
+    const list_emus = require('../../../../lib/listEmulatorImages');
     const iossim = require('ios-sim');
 
     describe('cordova/lib/listEmulatorImages', () => {
