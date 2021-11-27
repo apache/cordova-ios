@@ -64,7 +64,7 @@ function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdent
  * @returns {Promise}
  */
 function verifyBuild (tmpDir) {
-    // Allow test project to find the `cordova-android` module
+    // Allow test project to find the `cordova-ios` module
     fs.ensureSymlinkSync(
         path.join(__dirname, '../..'),
         path.join(tmpDir, 'node_modules/cordova-ios'),
