@@ -34,7 +34,6 @@ Pod::Spec.new do |s|
   s.platform            = :ios, "11.0"
   s.source              = relSource
   s.requires_arc        = true
-  s.preserve_paths      = 'CordovaLib/VERSION'
   s.frameworks          = 'Foundation'
   s.source_files        = 'CordovaLib/**/*.{h,m}'
   s.public_header_files = 'CordovaLib/include/**/*.h'
