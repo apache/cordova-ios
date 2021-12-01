@@ -24,9 +24,9 @@ const rewire = require('rewire');
 const EventEmitter = require('events');
 
 const PluginInfo = require('cordova-common').PluginInfo;
-const Api = require('../../../../bin/templates/scripts/cordova/Api');
-const projectFile = require('../../../../bin/templates/scripts/cordova/lib/projectFile');
-const pluginHandlers = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
+const Api = require('../../../../lib/Api');
+const projectFile = require('../../../../lib/projectFile');
+const pluginHandlers = rewire('../../../../lib/plugman/pluginHandlers');
 
 const temp = path.join(os.tmpdir(), 'plugman');
 

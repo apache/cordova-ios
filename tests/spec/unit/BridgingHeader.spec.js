@@ -20,7 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const BridgingHeader = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'BridgingHeader.js'))).BridgingHeader;
+const BridgingHeader = require(path.resolve(path.join(__dirname, '../../../lib/BridgingHeader.js'))).BridgingHeader;
 const fixtureBridgingHeader = fs.readFileSync(path.resolve(__dirname, 'fixtures', 'test-Bridging-Header.h'), 'utf-8');
 
 describe('unit tests for BridgingHeader module', () => {

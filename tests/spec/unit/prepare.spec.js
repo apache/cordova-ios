@@ -25,8 +25,8 @@ const path = require('path');
 const plist = require('plist');
 const xcode = require('xcode');
 const rewire = require('rewire');
-const prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
-const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+const prepare = rewire('../../../lib/prepare');
+const projectFile = require('../../../lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
 
 const tmpDir = path.join(__dirname, '../../../tmp');
@@ -42,7 +42,7 @@ describe('prepare', () => {
     let p;
     let Api;
     beforeEach(() => {
-        Api = rewire('../../../bin/templates/scripts/cordova/Api');
+        Api = rewire('../../../lib/Api');
 
         fs.ensureDirSync(iosPlatform);
         fs.copySync(iosProjectFixture, iosPlatform);
