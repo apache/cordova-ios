@@ -123,7 +123,7 @@ describe('Platform Api', () => {
                     bridgingHeader_mock = jasmine.createSpyObj('bridgingHeader mock', ['addHeader', 'write']);
                     spyOn(my_plugin, 'getFrameworks').and.returnValue([]);
                     spyOn(my_plugin, 'getHeaderFiles').and.returnValue([my_bridgingHeader_json]);
-                    BridgingHeader_mod.BridgingHeader.and.callFake(() => bridgingHeader_mock);
+                    BridgingHeader_mod.BridgingHeader.and.returnValue(bridgingHeader_mock);
                 });
                 it('should add BridgingHeader', () => {
                     return api.addPlugin(my_plugin)
@@ -169,8 +169,8 @@ describe('Platform Api', () => {
                     podfile_mock = jasmine.createSpyObj('podfile mock', ['isDirty', 'addSpec', 'addSource', 'addDeclaration', 'write', 'install']);
                     spyOn(my_plugin, 'getFrameworks').and.returnValue([]);
                     spyOn(my_plugin, 'getPodSpecs').and.returnValue([my_pod_json]);
-                    PodsJson_mod.PodsJson.and.callFake(() => podsjson_mock);
-                    Podfile_mod.Podfile.and.callFake(() => podfile_mock);
+                    PodsJson_mod.PodsJson.and.returnValue(podsjson_mock);
+                    Podfile_mod.Podfile.and.returnValue(podfile_mock);
                 });
                 it('on a new declaration, it should add a new json to declarations', () => {
                     return api.addPlugin(my_plugin)
@@ -298,8 +298,8 @@ describe('Platform Api', () => {
                     podsjson_mock = jasmine.createSpyObj('podsjson mock', ['getLibrary', 'incrementLibrary', 'write', 'setJsonLibrary']);
                     podfile_mock = jasmine.createSpyObj('podfile mock', ['isDirty', 'addSpec', 'write', 'install']);
                     spyOn(my_plugin, 'getFrameworks').and.returnValue([my_pod_json]);
-                    PodsJson_mod.PodsJson.and.callFake(() => podsjson_mock);
-                    Podfile_mod.Podfile.and.callFake(() => podfile_mock);
+                    PodsJson_mod.PodsJson.and.returnValue(podsjson_mock);
+                    Podfile_mod.Podfile.and.returnValue(podfile_mock);
                 });
                 // TODO: a little help with clearly labeling / describing the tests below? :(
                 it('should warn if Pods JSON contains name/src but differs in spec', () => {
@@ -400,8 +400,8 @@ describe('Platform Api', () => {
                     podfile_mock = jasmine.createSpyObj('podfile mock', ['isDirty', 'removeSpec', 'removeSource', 'removeDeclaration', 'write', 'install']);
                     spyOn(my_plugin, 'getFrameworks').and.returnValue([]);
                     spyOn(my_plugin, 'getPodSpecs').and.returnValue([my_pod_json]);
-                    PodsJson_mod.PodsJson.and.callFake(() => podsjson_mock);
-                    Podfile_mod.Podfile.and.callFake(() => podfile_mock);
+                    PodsJson_mod.PodsJson.and.returnValue(podsjson_mock);
+                    Podfile_mod.Podfile.and.returnValue(podfile_mock);
                 });
                 it('on a last declaration, it should remove a json from declarations', () => {
                     const json1 = { declaration: 'use_frameworks!', count: 1 };
