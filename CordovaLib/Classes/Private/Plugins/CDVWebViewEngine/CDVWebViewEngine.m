@@ -584,6 +584,30 @@ static void * KVOContext = &KVOContext;
     return decisionHandler(NO);
 }
 
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler
+{
+    // ---
+    NSLog(@"*** AUTH CHALLENGE ****");
+
+    CDVViewController* vc = (CDVViewController*)self.viewController;
+
+    // first responder wins:
+    for (NSString* pluginName in vc.pluginObjects) {
+        CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
+        SEL selector = NSSelectorFromString(@"didReceiveAuthenticationChallenge:completionHandler:");
+        if ([plugin respondsToSelector:selector]) {
+            // ---
+            NSLog(@"found plugin to handle auth challenge, handing over ...");
+            (((void (*)(id, SEL, id, void(^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)))objc_msgSend)(plugin, selector, challenge, completionHandler));
+            return;
+        }
+    }
+
+    // no plugin found, fallback to default behavior
+    NSLog(@"did not find any plugin to handle auth challenge, fallback to default behavior");
+    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
 #pragma mark - Plugin interface
 
 - (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
