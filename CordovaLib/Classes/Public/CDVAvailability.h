@@ -78,6 +78,7 @@
 #define __CORDOVA_6_0_0 60000
 #define __CORDOVA_6_1_0 60100
 #define __CORDOVA_6_2_0 60200
+#define __CORDOVA_6_3_0 60300
 /* coho:next-version,insert-before */
 #define __CORDOVA_NA 99999      /* not available */
 
@@ -90,7 +91,7 @@
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
     /* coho:next-version-min-required,replace-after */
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_6_2_0
+    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_6_3_0
 #endif
 
 /*
