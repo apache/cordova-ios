@@ -24,8 +24,17 @@
     NSMutableArray<UIViewController*>* windows;
 }
 
+typedef NS_ENUM(NSInteger, CDVWebViewPermissionGrantType) {
+    CDVWebViewPermissionGrantType_Prompt,
+    CDVWebViewPermissionGrantType_Deny,
+    CDVWebViewPermissionGrantType_Grant,
+    CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt,
+    CDVWebViewPermissionGrantType_GrantIfSameHost_ElseDeny
+};
+
 @property (nonatomic, copy) NSString* title;
 @property (nonatomic, assign) BOOL allowNewWindows;
+@property (nonatomic, assign) CDVWebViewPermissionGrantType mediaPermissionGrantType;
 
 - (instancetype)initWithTitle:(NSString*)title;
 
