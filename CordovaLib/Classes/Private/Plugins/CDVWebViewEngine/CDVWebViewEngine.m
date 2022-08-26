@@ -145,6 +145,10 @@
         
     }
 
+    if (@available(iOS 14.0, *)) {
+        configuration.limitsNavigationsToAppBoundDomains = [settings cordovaBoolSettingForKey:@"LimitsNavigationsToAppBoundDomains" defaultValue:NO];
+    }
+
     return configuration;
 }
 
