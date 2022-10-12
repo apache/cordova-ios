@@ -390,7 +390,10 @@ static void * KVOContext = &KVOContext;
     // prevent webView from bouncing
     if (!bounceAllowed) {
         if ([wkWebView respondsToSelector:@selector(scrollView)]) {
-            ((UIScrollView*)[wkWebView scrollView]).bounces = NO;
+            UIScrollView* scrollView = [wkWebView scrollView];
+            scrollView.bounces = NO;
+            scrollView.alwaysBounceVertical = NO;     /* iOS 16 workaround */
+            scrollView.alwaysBounceHorizontal = NO;   /* iOS 16 workaround */
         } else {
             for (id subview in wkWebView.subviews) {
                 if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
