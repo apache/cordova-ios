@@ -25,6 +25,6 @@
 #import "CDVViewController.h"
 #import "CDVCommandDelegate.h"
 #import "CDVInvokedUrlCommand.h"
-#import "CDVWhitelist.h"
+#import "CDVAllowList.h"
 #import "CDVScreenOrientationDelegate.h"
 #import "CDVTimer.h"

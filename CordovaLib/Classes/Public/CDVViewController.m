@@ -180,7 +180,7 @@
 
     [self parseSettingsWithParser:delegate];
 
-    // Get the plugin dictionary, whitelist and settings from the delegate.
+    // Get the plugin dictionary, allowList and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
     self.startupPluginNames = delegate.startupPluginNames;
     self.settings = delegate.settings;
@@ -636,7 +636,7 @@
 - (nullable id)getCommandInstance:(NSString*)pluginName
 {
     // first, we try to find the pluginName in the pluginsMap
-    // (acts as a whitelist as well) if it does not exist, we return nil
+    // (acts as a allowList as well) if it does not exist, we return nil
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a
     // possible issue is there can be duplicates possible if you had:
     // "org.apache.cordova.Foo" and "org.apache.cordova.foo" - only the lower-cased entry will match

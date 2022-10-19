@@ -957,7 +957,7 @@ function processAccessAndAllowNavigationEntries (config) {
                 allows_arbitrary_loads_in_web_content: currentElement.allows_arbitrary_loads_in_web_content,
                 allows_local_networking: currentElement.allows_local_networking
             };
-            const obj = parseWhitelistUrlForATS(currentElement.href, options);
+            const obj = parseAllowlistUrlForATS(currentElement.href, options);
 
             if (obj) {
                 // we 'union' duplicate entries
@@ -996,7 +996,7 @@ function processAccessAndAllowNavigationEntries (config) {
 
     null is returned if the URL cannot be parsed, or is to be skipped for ATS.
 */
-function parseWhitelistUrlForATS (url, options) {
+function parseAllowlistUrlForATS (url, options) {
     // @todo 'url.parse' was deprecated since v11.0.0. Use 'url.URL' constructor instead.
     const href = URL.parse(url); // eslint-disable-line
     const retObj = {};
