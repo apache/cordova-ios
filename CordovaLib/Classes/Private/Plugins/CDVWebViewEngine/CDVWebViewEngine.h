@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <WebKit/WebKit.h>
+@import WebKit;
 #import <Cordova/CDV.h>
 
 @interface CDVWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
