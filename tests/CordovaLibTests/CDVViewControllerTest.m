@@ -73,30 +73,6 @@
     [self doTestInitWithConfigFile:configFileRelativePath expectedSettingValue:CDVViewControllerTestSettingValueCustom];
 }
 
--(void)testColorFromColorString{
-    CDVViewController* viewController = [self viewController];
-
-    // Comparison values: #FFAABB and #99FFAABB
-    UIColor* referenceColor = [UIColor colorWithRed:255.0/255.0 green:170.0/255.0 blue:187.0/255.0 alpha:1.0];
-    UIColor* referenceColorAlpha = [UIColor colorWithRed:255.0/255.0 green:170.0/255.0 blue:187.0/255.0 alpha:0.6];
-
-    // Valid values
-    XCTAssertTrue([[viewController colorFromColorString:@"#FAB"] isEqual:referenceColor]);
-    XCTAssertTrue([[viewController colorFromColorString:@"#FFAABB"] isEqual:referenceColor]);
-    XCTAssertTrue([[viewController colorFromColorString:@"0xFFAABB"] isEqual:referenceColor]);
-    XCTAssertTrue([[viewController colorFromColorString:@"#99FFAABB"] isEqual:referenceColorAlpha]);
-    XCTAssertTrue([[viewController colorFromColorString:@"0x99FFAABB"] isEqual:referenceColorAlpha]);
-
-    // Invalid values
-    XCTAssertNil([viewController colorFromColorString:nil]);
-    XCTAssertNil([viewController colorFromColorString:@"black"]);
-    XCTAssertNil([viewController colorFromColorString:@"0xFAB"]);
-    XCTAssertNil([viewController colorFromColorString:@"#1234"]);
-    XCTAssertNil([viewController colorFromColorString:@"#12345"]);
-    XCTAssertNil([viewController colorFromColorString:@"#1234567"]);
-    XCTAssertNil([viewController colorFromColorString:@"#NOTHEX"]);
-}
-
 -(void)testIsUrlEmpty{
     CDVViewController* viewController = [self viewController];
     XCTAssertTrue([viewController isUrlEmpty:(id)[NSNull null]]);

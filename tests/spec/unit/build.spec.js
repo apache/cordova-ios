@@ -21,7 +21,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const rewire = require('rewire');
 const { CordovaError, events } = require('cordova-common');
-const build = rewire('../../../bin/templates/scripts/cordova/lib/build');
+const build = rewire('../../../lib/build');
 
 describe('build', () => {
     const testProjectPath = path.join('/test', 'project', 'path');
@@ -311,16 +311,6 @@ describe('build', () => {
         });
     });
 
-    describe('help method', () => {
-        it('should log a bunch of options', () => {
-            spyOn(console, 'log');
-            spyOn(process, 'exit');
-
-            build.help();
-            expect(console.log).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
-        });
-    });
-
     describe('run method', () => {
         beforeEach(() => {
             spyOn(Promise, 'reject');
@@ -395,7 +385,7 @@ describe('build', () => {
 
         beforeEach(() => {
             // rewire causes some issues so for these tests, we will require instead.
-            buildRequire = require('../../../bin/templates/scripts/cordova/lib/build');
+            buildRequire = require('../../../lib/build');
             spyOn(events, 'emit');
         });
 

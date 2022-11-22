@@ -19,12 +19,12 @@
 
 const rewire = require('rewire');
 const which = require('which');
-const versions = require('../../../../bin/templates/scripts/cordova/lib/versions');
+const versions = require('../../../../lib/versions');
 
 describe('check_reqs', () => {
     let checkReqs;
     beforeEach(() => {
-        checkReqs = rewire('../../../../bin/templates/scripts/cordova/lib/check_reqs');
+        checkReqs = rewire('../../../../lib/check_reqs');
     });
 
     describe('checkTool method', () => {

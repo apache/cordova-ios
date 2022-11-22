@@ -24,3 +24,7 @@ overrides:
 
   - files: [cordova-js-src/**/*.js]
     extends: '@cordova/eslint-config/browser'
+
+    # TODO add this to @cordova/eslint-config/browser
+    rules:
+      no-var: 0

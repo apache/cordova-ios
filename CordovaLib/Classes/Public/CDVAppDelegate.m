@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "CDVAppDelegate.h"
+#import <Cordova/CDVAppDelegate.h>
 
 @implementation CDVAppDelegate
 

@@ -21,7 +21,7 @@ const path = require('path');
 const osenv = require('os');
 const rewire = require('rewire');
 
-const common = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
+const common = rewire('../../../../lib/plugman/pluginHandlers');
 
 const test_dir = path.join(osenv.tmpdir(), 'test_plugman');
 const project_dir = path.join(test_dir, 'project');
