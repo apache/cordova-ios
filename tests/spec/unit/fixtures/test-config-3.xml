@@ -14,6 +14,7 @@
         <preference name="target-device" value="handset" />
         <preference name="deployment-target" value="11.0" />
         <preference name="SwiftVersion" value="4.1" />
+        <preference name="SupportMac" value="true" />
     </platform>
 
     <access origin="http://*.apache.org" />
