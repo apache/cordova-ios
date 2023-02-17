@@ -295,11 +295,9 @@ describe('ios plugin handler', () => {
 
             describe('embed and link interactions', () => {
                 const frameworks = copyArray(embed_link_interaction_frameworks);
-                console.log('asdfafaslfdasdfasdjfksahldfaskdfhasfladhfs', frameworks);
 
                 it('Test 046 : embed true, link true', () => {
                     install(frameworks[0], embedlinkPluginInfo, dummyProject);
-                    console.log('asdkl;fhajisdgbhjdfghj', frameworks[0], { customFramework: true, embed: true, link: true, sign: true });
                     expect(dummyProject.xcode.addFramework)
                         .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: true, sign: true });
                 });
