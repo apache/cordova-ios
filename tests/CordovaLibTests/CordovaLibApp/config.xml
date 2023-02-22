@@ -62,4 +62,7 @@
         <param name="ios-package" value="CDVGestureHandler"/>
         <param name="onload" value="true"/>
     </feature>
+    <feature name="SwiftInit">
+        <param name="ios-package" value="SwiftInitPlugin"/>
+    </feature>
 </widget>
