@@ -218,6 +218,20 @@
     WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
     wkWebView.UIDelegate = self.uiDelegate;
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
+    // With the introduction of iOS 16.4 the webview is no longer inspectable by default.
+    // We'll honor that change for release builds, but will still allow inspection on debug builds by default.
+    // We also introduce an override option, so consumers can influence this decision in their own build.
+    if (@available(iOS 16.4, *)) {
+#ifdef DEBUG
+        BOOL allowWebviewInspectionDefault = YES;
+#else
+        BOOL allowWebviewInspectionDefault = NO;
+#endif
+        wkWebView.inspectable = [settings cordovaBoolSettingForKey:@"InspectableWebview" defaultValue:allowWebviewInspectionDefault];
+    }
+#endif
+
     /*
      * This is where the "OverrideUserAgent" is handled. This will replace the entire UserAgent
      * with the user defined custom UserAgent.
