@@ -22,6 +22,12 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 6.3.0 (Apr 13, 2023)
+* chore: npm audit fix
+* [GH-1302](https://github.com/apache/cordova-ios/pull/1302) URL parsing for ATS in node 18
+* [GH-1258](https://github.com/apache/cordova-ios/pull/1258) workaround for DisallowOverscroll on **iOS** 16
+* [GH-1300](https://github.com/apache/cordova-ios/pull/1300) set webView.inspectable to true for Debug builds on **iOS** >= 16.4 
+
 ### 6.2.0 (Feb 01, 2021)
 * [GH-1069](https://github.com/apache/cordova-ios/pull/1069) (chore): update dependencies for minor release
 * [GH-1067](https://github.com/apache/cordova-ios/pull/1067) fix: plugin podspec with no config elements
