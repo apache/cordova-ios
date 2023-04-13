@@ -30,7 +30,7 @@
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@cordova/eslint-config": "^4.0.0",
+    "@cordova/eslint-config": "^5.0.0",
     "cordova-js": "^6.1.0",
     "jasmine": "^3.10.0",
     "nyc": "^15.1.0",
