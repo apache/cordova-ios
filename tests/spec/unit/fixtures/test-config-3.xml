@@ -12,7 +12,7 @@
     <platform name="ios">
         <preference name="orientation" value="all" />
         <preference name="target-device" value="handset" />
-        <preference name="deployment-target" value="11.0" />
+        <preference name="deployment-target" value="12.0" />
         <preference name="SwiftVersion" value="4.1" />
     </platform>
 

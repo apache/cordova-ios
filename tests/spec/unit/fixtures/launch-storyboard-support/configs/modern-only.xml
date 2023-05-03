@@ -12,7 +12,7 @@
     <platform name="ios">
         <preference name="orientation" value="all" />
         <preference name="target-device" value="handset" />
-        <preference name="deployment-target" value="11.0" />
+        <preference name="deployment-target" value="12.0" />
 
         <splash src="res/screen/ios/Default@2x~universal~anyany.png" />
         <splash src="res/screen/ios/Default@2x~universal~comany.png" />
