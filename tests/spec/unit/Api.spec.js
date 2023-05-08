@@ -92,6 +92,18 @@ describe('Platform Api', () => {
                     });
                 });
             });
+
+            describe('listTargets', () => {
+                beforeEach(() => {
+                    spyOn(check_reqs, 'run').and.returnValue(Promise.resolve());
+                });
+                it('should call into lib/run module', () => {
+                    spyOn(run_mod, 'runListDevices');
+                    return api.listTargets().then(() => {
+                        expect(run_mod.runListDevices).toHaveBeenCalled();
+                    });
+                });
+            });
         }
 
         describe('addPlugin', () => {
