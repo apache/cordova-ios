@@ -582,6 +582,14 @@ static void * KVOContext = &KVOContext;
                 break;
             }
         }
+        SEL selector2 = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationAction:");
+        if ([plugin respondsToSelector:selector2]) {
+            anyPluginsResponded = YES;
+            shouldAllowRequest = (((BOOL (*)(id, SEL, id, id))objc_msgSend)(plugin, selector2, navigationAction.request, navigationAction));
+            if (!shouldAllowRequest) {
+                break;
+            }
+        }
     }
 
     if (anyPluginsResponded) {
