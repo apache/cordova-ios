@@ -405,6 +405,7 @@ static void * KVOContext = &KVOContext;
         if ([wkWebView respondsToSelector:@selector(scrollView)]) {
             UIScrollView* scrollView = [wkWebView scrollView];
             scrollView.bounces = NO;
+            scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
             scrollView.alwaysBounceVertical = NO;     /* iOS 16 workaround */
             scrollView.alwaysBounceHorizontal = NO;   /* iOS 16 workaround */
         } else {
