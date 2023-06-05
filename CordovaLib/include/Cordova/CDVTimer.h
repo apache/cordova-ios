@@ -17,7 +17,7 @@
  under the License.
  */
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 @interface CDVTimer : NSObject
 

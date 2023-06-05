@@ -17,7 +17,7 @@
  under the License.
  */
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 //! Project version number for Cordova.
 FOUNDATION_EXPORT double CordovaVersionNumber;
