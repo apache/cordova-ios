@@ -17,9 +17,8 @@
  under the License.
  */
 
-@import Foundation;
-@import UIKit;
-
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVCommandDelegate.h>

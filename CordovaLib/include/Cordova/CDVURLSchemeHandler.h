@@ -17,9 +17,8 @@
  under the License.
  */
 
-@import Foundation;
-@import WebKit;
-
+#import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 #import <Cordova/CDVViewController.h>
 
 

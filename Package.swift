@@ -34,7 +34,7 @@ let package = Package(
         .target(
             name: "Cordova",
             path: "CordovaLib/",
-            exclude: ["cordova.js", "Cordova/Cordova.h", "Cordova/Info.plist"],
+            exclude: ["Cordova/Cordova.h", "Cordova/Info.plist"],
             cSettings: [
                 .headerSearchPath("Classes/Private")
             ]
