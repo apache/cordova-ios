@@ -796,6 +796,10 @@
 
     [UIView animateWithDuration:fadeDuration animations:^{
         [self.launchView setAlpha:(visible ? 1 : 0)];
+
+        if (!visible) {
+            [self.webView becomeFirstResponder];
+        }
     }];
 }
 
