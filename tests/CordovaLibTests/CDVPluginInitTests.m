@@ -63,6 +63,12 @@
 {
     CDVPlugin* swiftPlugin = [self pluginInstance:@"SwiftInit"];
 
-    XCTAssertTrue([@"Successfully initialized" isEqualToString:[swiftPlugin performSelector:sel_getUid("getInitString")]]);
+    XCTAssertTrue([@"Successfully initialized" isEqualToString:[swiftPlugin performSelector:@selector(getInitString)]]);
+}
+
+// Unused, just to avoid a warning about the selector use above
+- (NSString*)getInitString
+{
+    return nil;
 }
 @end
