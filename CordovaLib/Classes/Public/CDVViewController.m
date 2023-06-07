@@ -278,14 +278,6 @@
     // Load settings
     [self loadSettings];
 
-    NSString* backupWebStorageType = @"cloud"; // default value
-
-    id backupWebStorage = [self.settings cordovaSettingForKey:@"BackupWebStorage"];
-    if ([backupWebStorage isKindOfClass:[NSString class]]) {
-        backupWebStorageType = backupWebStorage;
-    }
-    [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
-
     // // Instantiate the Launch screen /////////
 
     if (!self.launchView) {
