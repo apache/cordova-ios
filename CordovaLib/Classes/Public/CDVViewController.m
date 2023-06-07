@@ -19,6 +19,7 @@
 
 @import AVFoundation;
 @import Foundation;
+@import WebKit;
 
 #import <objc/message.h>
 #import <Foundation/NSCharacterSet.h>
