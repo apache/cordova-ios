@@ -16,20 +16,15 @@
  specific language governing permissions and limitations
  under the License.
  */
-//
-//  main.m
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
+    NSString *appDelegateClassName;
     @autoreleasepool {
-        int retVal = UIApplicationMain(argc, argv, nil, @"AppDelegate");
-        return retVal;
+        // Setup code that might create autoreleased objects goes here.
+        appDelegateClassName = NSStringFromClass([AppDelegate class]);
     }
+    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
 }
