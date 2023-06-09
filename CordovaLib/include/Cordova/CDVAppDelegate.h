@@ -17,12 +17,12 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <Cordova/CDVViewController.h>
 
-@interface CDVAppDelegate : NSObject <UIApplicationDelegate>{}
+@interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (nonatomic, strong) IBOutlet UIWindow* window;
-@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
+@property (nullable, nonatomic, strong) IBOutlet UIWindow* window;
+@property (nullable, nonatomic, strong) IBOutlet CDVViewController* viewController;
 
 @end
