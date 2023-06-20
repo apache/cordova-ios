@@ -1,0 +1,55 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+require "json"
+
+packageJson = JSON.parse(File.read(File.join(__dir__, "package.json")))
+relVersion = packageJson['version']
+relSource  = { :git => "https://github.com/apache/cordova-ios.git",
+            :tag => "rel/#{relVersion}",
+            :submodules => true }
+
+Pod::Spec.new do |s|
+  s.name         = "OneAppCordova"
+  s.version      = relVersion
+  s.summary      = "Apache Cordova for iOS"
+  s.homepage     = "https://github.com/apache/cordova-ios"
+  s.license      = { :type => "Apache 2.0", :file => "LICENSE" }
+  s.author       = "Apache Software Foundation"
+  s.platform     = :ios, "11.0"
+  s.source       = relSource
+  s.requires_arc = true
+  s.preserve_paths = 'CordovaLib/cordova.js', 'CordovaLib/VERSION'
+  s.frameworks = 'AssetsLibrary', 'MobileCoreServices', 'AVFoundation', 'CoreLocation'
+  s.default_subspec  = 'OneAppCordova'
+  s.subspec 'OneAppCordova' do |cordova|
+      cordova.source_files = 'CordovaLib/Classes/**/*.{h,m}', 'CordovaLib/Cordova/Cordova.h'
+      cordova.public_header_files = 'CordovaLib/Classes/Private/Plugins/CDVWebViewEngine/CDVWebViewUIDelegate.h', 'CordovaLib/Cordova/Cordova.h', 'CordovaLib/Classes/Public/NSDictionary+CordovaPreferences.h', 'CordovaLib/Classes/Public/NSMutableArray+QueueAdditions.h', 'CordovaLib/Classes/Public/OneAppCDV.h', 'CordovaLib/Classes/Public/OneAppCDVAppDelegate.h', 'CordovaLib/Classes/Public/OneAppCDVAvailability.h', 'CordovaLib/Classes/Public/OneAppCDVAvailabilityDeprecated.h', 'CordovaLib/Classes/Public/OneAppCDVCommandDelegate.h', 'CordovaLib/Classes/Public/OneAppCDVCommandDelegateImpl.h', 'CordovaLib/Classes/Public/OneAppCDVCommandQueue.h', 'CordovaLib/Classes/Public/OneAppCDVConfigParser.h', 'CordovaLib/Classes/Public/OneAppCDVInvokedUrlCommand.h', 'CordovaLib/Classes/Public/OneAppCDVPlugin+Resources.h', 'CordovaLib/Classes/Public/OneAppCDVPlugin.h', 'CordovaLib/Classes/Public/OneAppCDVPluginResult.h', 'CordovaLib/Classes/Public/OneAppCDVScreenOrientationDelegate.h', 'CordovaLib/Classes/Public/OneAppCDVTimer.h', 'CordovaLib/Classes/Public/OneAppCDVViewController.h', 'CordovaLib/Classes/Public/OneAppCDVWebViewEngineProtocol.h', 'CordovaLib/Classes/Public/OneAppCDVWhitelist.h'
+      cordova.prefix_header_contents = ''
+      cordova.requires_arc = true
+  end
+end
+
+#
+# ATTENTION: 
+#
+# This file needs to be updated manually whenever a Cordova upgrade that bumps up min version of iOS is performed.
+# The release version number and the list of public headers are automatically updated through scipts.
+# Sections that need to be updated:
+#   1. {s.platform} should be updated if the minimum version of iOS has changed.
+#
