@@ -17,9 +17,9 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
+#import <OneAppCordova/OneAppCDVPlugin.h>
 
-@interface CDVGestureHandler : CDVPlugin
+@interface CDVGestureHandler : OneAppCDVPlugin
 
 @property (nonatomic, strong) UILongPressGestureRecognizer* lpgr;
 

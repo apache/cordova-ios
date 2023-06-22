@@ -17,9 +17,9 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
+#import <OneAppCordova/OneAppCDVPlugin.h>
 
-@interface CDVHandleOpenURL : CDVPlugin
+@interface CDVHandleOpenURL : OneAppCDVPlugin
 
 @property (nonatomic, strong) NSURL* url;
 @property (nonatomic, assign) BOOL pageLoaded;

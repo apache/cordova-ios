@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 //! Project version number for Cordova.
 FOUNDATION_EXPORT double CordovaVersionNumber;
@@ -27,23 +27,23 @@ FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Cordova/PublicHeader.h>
 
-#import <Cordova/CDV.h>
-#import <Cordova/CDVAvailability.h>
-#import <Cordova/CDVAvailabilityDeprecated.h>
-#import <Cordova/CDVAppDelegate.h>
-#import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVPluginResult.h>
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVCommandDelegate.h>
-#import <Cordova/CDVCommandQueue.h>
-#import <Cordova/CDVConfigParser.h>
-#import <Cordova/CDVInvokedUrlCommand.h>
-#import <Cordova/CDVPlugin+Resources.h>
-#import <Cordova/CDVWebViewEngineProtocol.h>
-#import <Cordova/CDVWebViewProcessPoolFactory.h>
-#import <Cordova/NSDictionary+CordovaPreferences.h>
-#import <Cordova/NSMutableArray+QueueAdditions.h>
-#import <Cordova/CDVAllowList.h>
-#import <Cordova/CDVScreenOrientationDelegate.h>
-#import <Cordova/CDVTimer.h>
-#import <Cordova/CDVURLSchemeHandler.h>
+#import <OneAppCordova/OneAppCDV.h>
+#import <OneAppCordova/OneAppCDVCommandDelegateImpl.h>
+#import <OneAppCordova/OneAppCDVAvailability.h>
+#import <OneAppCordova/OneAppCDVAvailabilityDeprecated.h>
+#import <OneAppCordova/OneAppCDVAppDelegate.h>
+#import <OneAppCordova/OneAppCDVPlugin.h>
+#import <OneAppCordova/OneAppCDVPluginResult.h>
+#import <OneAppCordova/OneAppCDVViewController.h>
+#import <OneAppCordova/OneAppCDVCommandDelegate.h>
+#import <OneAppCordova/OneAppCDVCommandQueue.h>
+#import <OneAppCordova/OneAppCDVConfigParser.h>
+#import <OneAppCordova/OneAppCDVInvokedUrlCommand.h>
+#import <OneAppCordova/OneAppCDVPlugin+Resources.h>
+#import <OneAppCordova/OneAppCDVWebViewEngineProtocol.h>
+#import <OneAppCordova/NSDictionary+CordovaPreferences.h>
+#import <OneAppCordova/NSMutableArray+QueueAdditions.h>
+#import <OneAppCordova/CDVWebViewUIDelegate.h>
+#import <OneAppCordova/OneAppCDVWhitelist.h>
+#import <OneAppCordova/OneAppCDVScreenOrientationDelegate.h>
+#import <OneAppCordova/OneAppCDVTimer.h>

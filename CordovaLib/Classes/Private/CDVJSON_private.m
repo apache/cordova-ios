@@ -17,9 +17,8 @@
  under the License.
  */
 
-@import Foundation;
-
 #import "CDVJSON_private.h"
+#import <Foundation/NSJSONSerialization.h>
 
 @implementation NSArray (CDVJSONSerializingPrivate)
 

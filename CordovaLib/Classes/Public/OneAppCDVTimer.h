@@ -17,21 +17,11 @@
  under the License.
  */
 
-#import "CDVLogger.h"
+#import <Foundation/Foundation.h>
 
-@implementation CDVLogger
+@interface OneAppCDVTimer : NSObject
 
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
-{
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
-
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
-}
++ (void)start:(NSString*)name;
++ (void)stop:(NSString*)name;
 
 @end

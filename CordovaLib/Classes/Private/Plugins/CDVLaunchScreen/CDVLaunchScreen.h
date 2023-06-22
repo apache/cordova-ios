@@ -17,11 +17,11 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
+#import <OneAppCordova/OneAppCDVPlugin.h>
 
-@interface CDVLaunchScreen : CDVPlugin
+@interface CDVLaunchScreen : OneAppCDVPlugin
 
-- (void)show:(CDVInvokedUrlCommand*)command;
-- (void)hide:(CDVInvokedUrlCommand*)command;
+- (void)show:(OneAppCDVInvokedUrlCommand*)command;
+- (void)hide:(OneAppCDVInvokedUrlCommand*)command;
 
 @end

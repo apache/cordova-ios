@@ -17,10 +17,10 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
+#import <OneAppCordova/OneAppCDVPlugin.h>
 
-@interface CDVLogger : CDVPlugin
+@interface CDVLogger : OneAppCDVPlugin
 
-- (void)logLevel:(CDVInvokedUrlCommand*)command;
+- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command;
 
 @end

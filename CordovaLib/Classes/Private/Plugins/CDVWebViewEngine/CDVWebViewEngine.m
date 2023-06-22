@@ -19,9 +19,9 @@
 
 #import "CDVWebViewEngine.h"
 #import "CDVWebViewUIDelegate.h"
-#import <Cordova/CDVWebViewProcessPoolFactory.h>
-#import <Cordova/NSDictionary+CordovaPreferences.h>
-#import <Cordova/CDVURLSchemeHandler.h>
+#import "OneAppCDVWebViewProcessPoolFactory.h"
+#import <OneAppCordova/NSDictionary+CordovaPreferences.h>
+#import "OneAppCDVURLSchemeHandler.h"
 
 #import <objc/message.h>
 
@@ -42,10 +42,9 @@
 @property (nonatomic, strong, readwrite) UIView* engineWebView;
 @property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
 @property (nonatomic, weak) id <WKScriptMessageHandler> weakScriptMessageHandler;
-@property (nonatomic, strong) CDVURLSchemeHandler * schemeHandler;
+@property (nonatomic, strong) OneAppCDVURLSchemeHandler * schemeHandler;
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
-@property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
 
 @end
 
@@ -56,36 +55,24 @@
 
 @synthesize engineWebView = _engineWebView;
 
-- (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super init];
     if (self) {
         if (NSClassFromString(@"WKWebView") == nil) {
             return nil;
         }
-        
-        self.configuration = configuration;
-        self.engineWebView = configuration ? [[WKWebView alloc] initWithFrame:frame configuration:configuration] : [[WKWebView alloc] initWithFrame:frame];
+
+        self.engineWebView = [[WKWebView alloc] initWithFrame:frame];
     }
 
     return self;
 }
 
-- (nullable instancetype)initWithFrame:(CGRect)frame
-{
-    return [self initWithFrame:frame configuration:nil];
-}
-
 - (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
 {
-    WKWebViewConfiguration* configuration;
-    if (_configuration) {
-        configuration = _configuration;
-    } else {
-        configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
-    }
-    
+    WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
+    configuration.processPool = [[OneAppCDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
     if (settings == nil) {
         return configuration;
     }
@@ -158,17 +145,13 @@
         
     }
 
-    if (@available(iOS 14.0, *)) {
-        configuration.limitsNavigationsToAppBoundDomains = [settings cordovaBoolSettingForKey:@"LimitsNavigationsToAppBoundDomains" defaultValue:NO];
-    }
-
     return configuration;
 }
 
 - (void)pluginInitialize
 {
     // viewController would be available now. we attempt to set all possible delegates to it, by default
-    CDVViewController* vc = (CDVViewController*)self.viewController;
+    OneAppCDVViewController* vc = (OneAppCDVViewController*)self.viewController;
     NSDictionary* settings = self.commandDelegate.settings;
 
     NSString *scheme = [settings cordovaSettingForKey:@"scheme"];
@@ -214,27 +197,13 @@
 
     // Do not configure the scheme handler if the scheme is default (file)
     if(!self.cdvIsFileScheme) {
-        self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc];
+        self.schemeHandler = [[OneAppCDVURLSchemeHandler alloc] initWithVC:vc];
         [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     }
 
     // re-create WKWebView, since we need to update configuration
     WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
     wkWebView.UIDelegate = self.uiDelegate;
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
-    // With the introduction of iOS 16.4 the webview is no longer inspectable by default.
-    // We'll honor that change for release builds, but will still allow inspection on debug builds by default.
-    // We also introduce an override option, so consumers can influence this decision in their own build.
-    if (@available(iOS 16.4, *)) {
-#ifdef DEBUG
-        BOOL allowWebviewInspectionDefault = YES;
-#else
-        BOOL allowWebviewInspectionDefault = NO;
-#endif
-        wkWebView.inspectable = [settings cordovaBoolSettingForKey:@"InspectableWebview" defaultValue:allowWebviewInspectionDefault];
-    }
-#endif
 
     /*
      * This is where the "OverrideUserAgent" is handled. This will replace the entire UserAgent
@@ -336,7 +305,7 @@ static void * KVOContext = &KVOContext;
             NSURL* readAccessUrl = [request.URL URLByDeletingLastPathComponent];
             return [(WKWebView*)_engineWebView loadFileURL:request.URL allowingReadAccessToURL:readAccessUrl];
         } else if (request.URL.fileURL) {
-            NSURL* startURL = [NSURL URLWithString:((CDVViewController *)self.viewController).startPage];
+            NSURL* startURL = [NSURL URLWithString:((OneAppCDVViewController *)self.viewController).startPage];
             NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
             NSURL *url = [[NSURL URLWithString:self.CDV_ASSETS_URL] URLByAppendingPathComponent:request.URL.path];
             if ([request.URL.path isEqualToString:startFilePath]) {
@@ -407,10 +376,7 @@ static void * KVOContext = &KVOContext;
     // prevent webView from bouncing
     if (!bounceAllowed) {
         if ([wkWebView respondsToSelector:@selector(scrollView)]) {
-            UIScrollView* scrollView = [wkWebView scrollView];
-            scrollView.bounces = NO;
-            scrollView.alwaysBounceVertical = NO;     /* iOS 16 workaround */
-            scrollView.alwaysBounceHorizontal = NO;   /* iOS 16 workaround */
+            ((UIScrollView*)[wkWebView scrollView]).bounces = NO;
         } else {
             for (id subview in wkWebView.subviews) {
                 if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
@@ -487,10 +453,10 @@ static void * KVOContext = &KVOContext;
         return;
     }
 
-    CDVViewController* vc = (CDVViewController*)self.viewController;
+    OneAppCDVViewController* vc = (OneAppCDVViewController*)self.viewController;
 
     NSArray* jsonEntry = message.body; // NSString:callbackId, NSString:service, NSString:action, NSArray:args
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+    OneAppCDVInvokedUrlCommand* command = [OneAppCDVInvokedUrlCommand commandFromJson:jsonEntry];
     CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
 
     if (![vc.commandQueue execute:command]) {
@@ -534,7 +500,7 @@ static void * KVOContext = &KVOContext;
 
 - (void)webView:(WKWebView*)theWebView didFailNavigation:(WKNavigation*)navigation withError:(NSError*)error
 {
-    CDVViewController* vc = (CDVViewController*)self.viewController;
+    OneAppCDVViewController* vc = (OneAppCDVViewController*)self.viewController;
 
     NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
     NSLog(@"%@", message);
@@ -566,7 +532,7 @@ static void * KVOContext = &KVOContext;
 - (void) webView: (WKWebView *) webView decidePolicyForNavigationAction: (WKNavigationAction*) navigationAction decisionHandler: (void (^)(WKNavigationActionPolicy)) decisionHandler
 {
     NSURL* url = [navigationAction.request URL];
-    CDVViewController* vc = (CDVViewController*)self.viewController;
+    OneAppCDVViewController* vc = (OneAppCDVViewController*)self.viewController;
 
     /*
      * Give plugins the chance to handle the url
@@ -575,7 +541,7 @@ static void * KVOContext = &KVOContext;
     BOOL shouldAllowRequest = NO;
 
     for (NSString* pluginName in vc.pluginObjects) {
-        CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
+        OneAppCDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
             anyPluginsResponded = YES;
@@ -607,7 +573,7 @@ static void * KVOContext = &KVOContext;
 
 #pragma mark - Plugin interface
 
-- (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
+- (void)allowsBackForwardNavigationGestures:(OneAppCDVInvokedUrlCommand*)command;
 {
     id value = [command argumentAtIndex:0];
     if (!([value isKindOfClass:[NSNumber class]])) {

@@ -17,21 +17,23 @@
  under the License.
  */
 
-#import "CDVLogger.h"
+#import <Foundation/Foundation.h>
 
-@implementation CDVLogger
+@class OneAppCDVInvokedUrlCommand;
+@class OneAppCDVViewController;
 
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
-{
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
+@interface OneAppCDVCommandQueue : NSObject
 
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
-}
+@property (nonatomic, readonly) BOOL currentlyExecuting;
+
+- (id)initWithViewController:(OneAppCDVViewController*)viewController;
+- (void)dispose;
+
+- (void)resetRequestId;
+- (void)enqueueCommandBatch:(NSString*)batchJSON;
+
+- (void)fetchCommandsFromJs;
+- (void)executePending;
+- (BOOL)execute:(OneAppCDVInvokedUrlCommand*)command;
 
 @end

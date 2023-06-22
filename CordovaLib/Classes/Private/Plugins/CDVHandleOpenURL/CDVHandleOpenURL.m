@@ -18,7 +18,7 @@
  */
 
 #import "CDVHandleOpenURL.h"
-#import <Cordova/CDV.h>
+#import <OneAppCordova/OneAppCDV.h>
 
 @implementation CDVHandleOpenURL
 

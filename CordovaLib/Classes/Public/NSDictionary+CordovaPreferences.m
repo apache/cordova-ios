@@ -17,9 +17,8 @@
  under the License.
  */
 
-@import Foundation;
-
-#import <Cordova/NSDictionary+CordovaPreferences.h>
+#import "NSDictionary+CordovaPreferences.h"
+#import <Foundation/Foundation.h>
 
 @implementation NSDictionary (CordovaPreferences)
 

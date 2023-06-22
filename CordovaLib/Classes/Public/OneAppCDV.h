@@ -17,21 +17,14 @@
  under the License.
  */
 
-#import "CDVLogger.h"
-
-@implementation CDVLogger
-
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
-{
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
-
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
-}
-
-@end
+#import "OneAppCDVAvailability.h"
+#import "OneAppCDVAvailabilityDeprecated.h"
+#import "OneAppCDVAppDelegate.h"
+#import "OneAppCDVPlugin.h"
+#import "OneAppCDVPluginResult.h"
+#import "OneAppCDVViewController.h"
+#import "OneAppCDVCommandDelegate.h"
+#import "OneAppCDVInvokedUrlCommand.h"
+#import "OneAppCDVWhitelist.h"
+#import "OneAppCDVScreenOrientationDelegate.h"
+#import "OneAppCDVTimer.h"

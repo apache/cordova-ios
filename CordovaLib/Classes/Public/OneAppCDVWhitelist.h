@@ -17,21 +17,18 @@
  under the License.
  */
 
-#import "CDVLogger.h"
+#import <Foundation/Foundation.h>
 
-@implementation CDVLogger
+extern NSString* const kCDVDefaultWhitelistRejectionString;
 
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
-{
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
+@interface OneAppCDVWhitelist : NSObject
 
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
-}
+@property (nonatomic, copy) NSString* whitelistRejectionFormatString;
+
+- (id)initWithArray:(NSArray*)array;
+- (BOOL)schemeIsAllowed:(NSString*)scheme;
+- (BOOL)URLIsAllowed:(NSURL*)url;
+- (BOOL)URLIsAllowed:(NSURL*)url logFailure:(BOOL)logFailure;
+- (NSString*)errorStringForURL:(NSURL*)url;
 
 @end

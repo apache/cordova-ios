@@ -17,21 +17,18 @@
  under the License.
  */
 
-#import "CDVLogger.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
+#import "OneAppCDVViewController.h"
 
-@implementation CDVLogger
 
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
-{
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
+@interface OneAppCDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
 
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
-}
+@property (nonatomic, strong) OneAppCDVViewController* viewController;
+
+@property (nonatomic) OneAppCDVPlugin* schemePlugin;
+
+- (instancetype)initWithVC:(OneAppCDVViewController *)controller;
+
 
 @end

@@ -17,8 +17,8 @@
  under the License.
  */
 
-@interface CDVPlugin (Private)
+@interface OneAppCDVPlugin (Private)
 
-- (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine;
+- (instancetype)initWithWebViewEngine:(id <OneAppCDVWebViewEngineProtocol>)theWebViewEngine;
 
 @end

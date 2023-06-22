@@ -17,21 +17,14 @@
  under the License.
  */
 
-#import "CDVLogger.h"
-
-@implementation CDVLogger
-
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
+@interface OneAppCDVConfigParser : NSObject <NSXMLParserDelegate>
 {
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
-
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
+    NSString* featureName;
 }
+
+@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
+@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
+@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
+@property (nonatomic, readonly, strong) NSString* startPage;
 
 @end

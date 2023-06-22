@@ -17,8 +17,6 @@
  under the License.
  */
 
-@import Foundation;
-
 @interface NSArray (CDVJSONSerializingPrivate)
 - (NSString*)cdv_JSONString;
 @end

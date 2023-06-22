@@ -17,21 +17,22 @@
  under the License.
  */
 
-#import "CDVLogger.h"
+#import "OneAppCDVPlugin+Resources.h"
 
-@implementation CDVLogger
+@implementation OneAppCDVPlugin (CDVPluginResources)
 
-/* log a message */
-- (void)logLevel:(OneAppCDVInvokedUrlCommand*)command
+- (NSString*)pluginLocalizedString:(NSString*)key
 {
-    id level = [command argumentAtIndex:0];
-    id message = [command argumentAtIndex:1];
+    NSBundle* bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:NSStringFromClass([self class]) ofType:@"bundle"]];
 
-    if ([level isEqualToString:@"LOG"]) {
-        NSLog(@"%@", message);
-    } else {
-        NSLog(@"%@: %@", level, message);
-    }
+    return [bundle localizedStringForKey:(key) value:nil table:nil];
+}
+
+- (UIImage*)pluginImageResource:(NSString*)name
+{
+    NSString* resourceIdentifier = [NSString stringWithFormat:@"%@.bundle/%@", NSStringFromClass([self class]), name];
+
+    return [UIImage imageNamed:resourceIdentifier];
 }
 
 @end
