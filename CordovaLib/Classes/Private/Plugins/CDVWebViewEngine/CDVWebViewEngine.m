@@ -340,7 +340,7 @@ static void * KVOContext = &KVOContext;
             NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
             NSURL *url = [[NSURL URLWithString:self.CDV_ASSETS_URL] URLByAppendingPathComponent:request.URL.path];
             if ([request.URL.path isEqualToString:startFilePath]) {
-                url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.CDV_ASSETS_URL, startURL]];
+                url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.CDV_ASSETS_URL, startURL.absoluteString]];
             }
             if(request.URL.query) {
                 url = [NSURL URLWithString:[@"?" stringByAppendingString:request.URL.query] relativeToURL:url];
