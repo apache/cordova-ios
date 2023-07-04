@@ -110,6 +110,7 @@
 				301BF52D109A57CC0062928A /* CordovaLib/CordovaLib.xcodeproj */,
 				29B97315FDCFA39411CA2CEA /* __PROJECT_NAME__ */,
 				307C750510C5A3420062BCA9 /* Plugins */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -133,6 +134,13 @@
 			);
 			name = "__PROJECT_NAME__";
 			path = "__PROJECT_NAME__";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = ();
+			name = Resources;
+			path = "__PROJECT_NAME__/Resources";
 			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
