@@ -17,14 +17,14 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
+#import "MainViewController.h"
 
-int main(int argc, char *argv[]) {
-    NSString *appDelegateClassName;
-    @autoreleasepool {
-        // Setup code that might create autoreleased objects goes here.
-        appDelegateClassName = NSStringFromClass([AppDelegate class]);
-    }
-    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
+@implementation MainViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.launchView setAlpha:1];
 }
+
+@end

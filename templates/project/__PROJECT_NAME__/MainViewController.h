@@ -17,14 +17,6 @@
  under the License.
  */
 
-//
-//  MainViewController.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
-
 #import <Cordova/CDVViewController.h>
 
 @interface MainViewController : CDVViewController

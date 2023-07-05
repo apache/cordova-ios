@@ -80,9 +80,6 @@
         self.supportedOrientations = [self parseInterfaceOrientations:
             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 
-        [self printVersion];
-        [self printMultitaskingInfo];
-        [self printPlatformVersionWarning];
         self.initialized = YES;
     }
 }
@@ -106,37 +103,6 @@
     self = [super init];
     [self __init];
     return self;
-}
-
-- (void)printVersion
-{
-    NSLog(@"Apache Cordova native platform version %@ is starting.", CDV_VERSION);
-}
-
-- (void)printPlatformVersionWarning
-{
-    if (!IsAtLeastiOSVersion(@"8.0")) {
-        NSLog(@"CRITICAL: For Cordova 4.0.0 and above, you will need to upgrade to at least iOS 8.0 or greater. Your current version of iOS is %@.",
-            [[UIDevice currentDevice] systemVersion]
-            );
-    }
-}
-
-- (void)printMultitaskingInfo
-{
-    UIDevice* device = [UIDevice currentDevice];
-    BOOL backgroundSupported = NO;
-
-    if ([device respondsToSelector:@selector(isMultitaskingSupported)]) {
-        backgroundSupported = device.multitaskingSupported;
-    }
-
-    NSNumber* exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
-    if (exitsOnSuspend == nil) { // if it's missing, it should be NO (i.e. multi-tasking on by default)
-        exitsOnSuspend = [NSNumber numberWithBool:NO];
-    }
-
-    NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported ? @"YES" : @"NO"), (![exitsOnSuspend intValue]) ? @"YES" : @"NO");
 }
 
 -(NSString*)configFilePath{
