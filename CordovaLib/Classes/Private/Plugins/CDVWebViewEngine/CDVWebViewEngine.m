@@ -158,9 +158,11 @@
         
     }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
     if (@available(iOS 14.0, *)) {
         configuration.limitsNavigationsToAppBoundDomains = [settings cordovaBoolSettingForKey:@"LimitsNavigationsToAppBoundDomains" defaultValue:NO];
     }
+#endif
 
     return configuration;
 }
