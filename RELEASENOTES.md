@@ -22,6 +22,13 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 7.0.1 (Sep 03, 2023)
+
+* [GH-1369](https://github.com/apache/cordova-ios/pull/1369) fix: `xcodebuild` version check to 11
+* [GH-1358](https://github.com/apache/cordova-ios/pull/1358) fix: ensure Xcode project file references use `path`
+* [GH-1368](https://github.com/apache/cordova-ios/pull/1368) fix: make code compile on Xcode 11
+* [GH-1360](https://github.com/apache/cordova-ios/pull/1360) fix: add missing cordova versions to `CDVAvailability.h`
+
 ### 7.0.0 (Jul 07, 2023)
 
 **Breaking:**
