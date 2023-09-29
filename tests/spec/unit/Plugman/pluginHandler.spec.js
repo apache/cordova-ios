@@ -24,9 +24,9 @@ const rewire = require('rewire');
 const EventEmitter = require('events');
 
 const PluginInfo = require('cordova-common').PluginInfo;
-const Api = require('../../../../bin/templates/scripts/cordova/Api');
-const projectFile = require('../../../../bin/templates/scripts/cordova/lib/projectFile');
-const pluginHandlers = rewire('../../../../bin/templates/scripts/cordova/lib/plugman/pluginHandlers');
+const Api = require('../../../../lib/Api');
+const projectFile = require('../../../../lib/projectFile');
+const pluginHandlers = rewire('../../../../lib/plugman/pluginHandlers');
 
 const temp = path.join(os.tmpdir(), 'plugman');
 
@@ -35,6 +35,7 @@ const iosProject = path.join(FIXTURES, 'ios-config-xml');
 const faultyplugin = path.join(FIXTURES, 'org.test.plugins.faultyplugin');
 const dummyplugin = path.join(FIXTURES, 'org.test.plugins.dummyplugin');
 const weblessplugin = path.join(FIXTURES, 'org.test.plugins.weblessplugin');
+const embedlinkplugin = path.join(FIXTURES, 'org.test.plugins.embedlinkplugin');
 
 const dummyPluginInfo = new PluginInfo(dummyplugin);
 const dummy_id = dummyPluginInfo.id;
@@ -42,7 +43,7 @@ const valid_source = dummyPluginInfo.getSourceFiles('ios');
 const valid_headers = dummyPluginInfo.getHeaderFiles('ios');
 const valid_resources = dummyPluginInfo.getResourceFiles('ios');
 const valid_custom_frameworks = dummyPluginInfo.getFrameworks('ios').filter(f => f.custom);
-const valid_embeddable_custom_frameworks = dummyPluginInfo.getFrameworks('ios').filter(f => f.custom && f.embed);
+const valid_embeddable_custom_frameworks = dummyPluginInfo.getFrameworks('ios').filter(f => f.custom && f.embed && !f.link);
 const valid_weak_frameworks = dummyPluginInfo.getFrameworks('ios').filter(f => !(f.custom) && f.weak);
 
 const faultyPluginInfo = new PluginInfo(faultyplugin);
@@ -52,6 +53,9 @@ const invalid_resources = faultyPluginInfo.getResourceFiles('ios');
 const invalid_custom_frameworks = faultyPluginInfo.getFrameworks('ios').filter(f => f.custom);
 
 const weblessPluginInfo = new PluginInfo(weblessplugin);
+
+const embedlinkPluginInfo = new PluginInfo(embedlinkplugin);
+const embed_link_interaction_frameworks = embedlinkPluginInfo.getFrameworks('ios');
 
 function copyArray (arr) {
     return Array.prototype.slice.call(arr, 0);
@@ -286,6 +290,52 @@ describe('ios plugin handler', () => {
                     const src_binlib = path.join(dummyplugin, 'src', 'ios', 'Custom.framework', 'somebinlib');
                     const dest_binlib = path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework/somebinlib');
                     expect(spy).toHaveBeenCalledWith(src_binlib, dest_binlib);
+                });
+            });
+
+            describe('embed and link interactions', () => {
+                const frameworks = copyArray(embed_link_interaction_frameworks);
+
+                it('Test 046 : embed true, link true', () => {
+                    install(frameworks[0], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: true, sign: true });
+                });
+
+                it('Test 047 : embed true, link false', () => {
+                    install(frameworks[1], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
+                });
+
+                it('Test 048 : embed false, link true', () => {
+                    install(frameworks[2], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
+                });
+
+                it('Test 049 : embed false, link false', () => {
+                    install(frameworks[3], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: false, sign: true });
+                });
+
+                it('Test 050 : embed undefined, link undefined', () => {
+                    install(frameworks[4], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
+                });
+
+                it('Test 051 : embed true, link undefined', () => {
+                    install(frameworks[5], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
+                });
+
+                it('Test 052 : embed false, link undefined', () => {
+                    install(frameworks[6], embedlinkPluginInfo, dummyProject);
+                    expect(dummyProject.xcode.addFramework)
+                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
                 });
             });
         });

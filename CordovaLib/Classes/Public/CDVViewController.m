@@ -17,17 +17,19 @@
  under the License.
  */
 
-#import <objc/message.h>
-#import "CDV.h"
-#import "CDVPlugin+Private.h"
-#import "CDVWebViewUIDelegate.h"
-#import "CDVConfigParser.h"
-#import <AVFoundation/AVFoundation.h>
-#import "NSDictionary+CordovaPreferences.h"
-#import "CDVCommandDelegateImpl.h"
-#import <Foundation/NSCharacterSet.h>
+@import AVFoundation;
+@import Foundation;
+@import WebKit;
 
-@interface CDVViewController () { }
+#import <objc/message.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Cordova/CDV.h>
+#import "CDVPlugin+Private.h"
+#import <Cordova/CDVConfigParser.h>
+#import <Cordova/NSDictionary+CordovaPreferences.h>
+#import "CDVCommandDelegateImpl.h"
+
+@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
@@ -78,9 +80,6 @@
         self.supportedOrientations = [self parseInterfaceOrientations:
             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 
-        [self printVersion];
-        [self printMultitaskingInfo];
-        [self printPlatformVersionWarning];
         self.initialized = YES;
     }
 }
@@ -104,37 +103,6 @@
     self = [super init];
     [self __init];
     return self;
-}
-
-- (void)printVersion
-{
-    NSLog(@"Apache Cordova native platform version %@ is starting.", CDV_VERSION);
-}
-
-- (void)printPlatformVersionWarning
-{
-    if (!IsAtLeastiOSVersion(@"8.0")) {
-        NSLog(@"CRITICAL: For Cordova 4.0.0 and above, you will need to upgrade to at least iOS 8.0 or greater. Your current version of iOS is %@.",
-            [[UIDevice currentDevice] systemVersion]
-            );
-    }
-}
-
-- (void)printMultitaskingInfo
-{
-    UIDevice* device = [UIDevice currentDevice];
-    BOOL backgroundSupported = NO;
-
-    if ([device respondsToSelector:@selector(isMultitaskingSupported)]) {
-        backgroundSupported = device.multitaskingSupported;
-    }
-
-    NSNumber* exitsOnSuspend = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationExitsOnSuspend"];
-    if (exitsOnSuspend == nil) { // if it's missing, it should be NO (i.e. multi-tasking on by default)
-        exitsOnSuspend = [NSNumber numberWithBool:NO];
-    }
-
-    NSLog(@"Multi-tasking -> Device: %@, App: %@", (backgroundSupported ? @"YES" : @"NO"), (![exitsOnSuspend intValue]) ? @"YES" : @"NO");
 }
 
 -(NSString*)configFilePath{
@@ -180,7 +148,7 @@
 
     [self parseSettingsWithParser:delegate];
 
-    // Get the plugin dictionary, whitelist and settings from the delegate.
+    // Get the plugin dictionary, allowList and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
     self.startupPluginNames = delegate.startupPluginNames;
     self.settings = delegate.settings;
@@ -238,7 +206,7 @@
     return appURL;
 }
 
-- (NSURL*)errorURL
+- (nullable NSURL*)errorURL
 {
     NSURL* errorUrl = nil;
 
@@ -276,14 +244,6 @@
 
     // Load settings
     [self loadSettings];
-
-    NSString* backupWebStorageType = @"cloud"; // default value
-
-    id backupWebStorage = [self.settings cordovaSettingForKey:@"BackupWebStorage"];
-    if ([backupWebStorage isKindOfClass:[NSString class]]) {
-        backupWebStorageType = backupWebStorage;
-    }
-    [self.settings setCordovaSetting:backupWebStorageType forKey:@"BackupWebStorage"];
 
     // // Instantiate the Launch screen /////////
 
@@ -380,52 +340,6 @@
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewWillTransitionToSizeNotification object:[NSValue valueWithCGSize:size]]];
 }
 
-- (UIColor*)colorFromColorString:(NSString*)colorString
-{
-    // No value, nothing to do
-    if (!colorString) {
-        return nil;
-    }
-
-    // Validate format
-    NSError* error = NULL;
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:@"^(#[0-9A-F]{3}|(0x|#)([0-9A-F]{2})?[0-9A-F]{6})$" options:NSRegularExpressionCaseInsensitive error:&error];
-    NSUInteger countMatches = [regex numberOfMatchesInString:colorString options:0 range:NSMakeRange(0, [colorString length])];
-
-    if (!countMatches) {
-        return nil;
-    }
-
-    // #FAB to #FFAABB
-    if ([colorString hasPrefix:@"#"] && [colorString length] == 4) {
-        NSString* r = [colorString substringWithRange:NSMakeRange(1, 1)];
-        NSString* g = [colorString substringWithRange:NSMakeRange(2, 1)];
-        NSString* b = [colorString substringWithRange:NSMakeRange(3, 1)];
-        colorString = [NSString stringWithFormat:@"#%@%@%@%@%@%@", r, r, g, g, b, b];
-    }
-
-    // #RRGGBB to 0xRRGGBB
-    colorString = [colorString stringByReplacingOccurrencesOfString:@"#" withString:@"0x"];
-
-    // 0xRRGGBB to 0xAARRGGBB
-    if ([colorString hasPrefix:@"0x"] && [colorString length] == 8) {
-        colorString = [@"0xFF" stringByAppendingString:[colorString substringFromIndex:2]];
-    }
-
-    // 0xAARRGGBB to int
-    unsigned colorValue = 0;
-    NSScanner *scanner = [NSScanner scannerWithString:colorString];
-    if (![scanner scanHexInt:&colorValue]) {
-        return nil;
-    }
-
-    // int to UIColor
-    return [UIColor colorWithRed:((float)((colorValue & 0x00FF0000) >> 16))/255.0
-                           green:((float)((colorValue & 0x0000FF00) >>  8))/255.0
-                            blue:((float)((colorValue & 0x000000FF) >>  0))/255.0
-                           alpha:((float)((colorValue & 0xFF000000) >> 24))/255.0];
-}
-
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
 {
     NSMutableArray* result = [[NSMutableArray alloc] init];
@@ -485,34 +399,59 @@
     return [self.supportedOrientations containsObject:@(orientation)];
 }
 
-- (UIView*)newCordovaViewWithFrame:(CGRect)bounds
+/// Retrieves the view from a newwly initialized webViewEngine
+/// @param bounds The bounds with which the webViewEngine will be initialized
+- (nonnull UIView*)newCordovaViewWithFrame:(CGRect)bounds
 {
-    NSString* defaultWebViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaDefaultWebViewEngine"];
-    NSString* webViewEngineClass = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
+    NSString* defaultWebViewEngineClassName = [self.settings cordovaSettingForKey:@"CordovaDefaultWebViewEngine"];
+    NSString* webViewEngineClassName = [self.settings cordovaSettingForKey:@"CordovaWebViewEngine"];
 
-    if (!defaultWebViewEngineClass) {
-        defaultWebViewEngineClass = @"CDVWebViewEngine";
+    if (!defaultWebViewEngineClassName) {
+        defaultWebViewEngineClassName = @"CDVWebViewEngine";
     }
-    if (!webViewEngineClass) {
-        webViewEngineClass = defaultWebViewEngineClass;
+    if (!webViewEngineClassName) {
+        webViewEngineClassName = defaultWebViewEngineClassName;
     }
 
-    // Find webViewEngine
-    if (NSClassFromString(webViewEngineClass)) {
-        self.webViewEngine = [[NSClassFromString(webViewEngineClass) alloc] initWithFrame:bounds];
-        // if a webView engine returns nil (not supported by the current iOS version) or doesn't conform to the protocol, or can't load the request, we use WKWebView
-        if (!self.webViewEngine || ![self.webViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)] || ![self.webViewEngine canLoadRequest:[NSURLRequest requestWithURL:self.appUrl]]) {
-            self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+    // Determine if a provided custom web view engine is sufficient
+    id <CDVWebViewEngineProtocol> engine;
+    Class customWebViewEngineClass = NSClassFromString(webViewEngineClassName);
+    if (customWebViewEngineClass) {
+        id customWebViewEngine = [self initWebViewEngine:customWebViewEngineClass bounds:bounds];
+        BOOL customConformsToProtocol = [customWebViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)];
+        BOOL customCanLoad = [customWebViewEngine canLoadRequest:[NSURLRequest requestWithURL:self.appUrl]];
+        if (customConformsToProtocol && customCanLoad) {
+            engine = customWebViewEngine;
         }
-    } else {
-        self.webViewEngine = [[NSClassFromString(defaultWebViewEngineClass) alloc] initWithFrame:bounds];
+    }
+    
+    // Otherwise use the default web view engine
+    if (!engine) {
+        Class defaultWebViewEngineClass = NSClassFromString(defaultWebViewEngineClassName);
+        id defaultWebViewEngine = [self initWebViewEngine:defaultWebViewEngineClass bounds:bounds];
+        NSAssert([defaultWebViewEngine conformsToProtocol:@protocol(CDVWebViewEngineProtocol)],
+                 @"we expected the default web view engine to conform to the CDVWebViewEngineProtocol");
+        engine = defaultWebViewEngine;
+    }
+    
+    if ([engine isKindOfClass:[CDVPlugin class]]) {
+        [self registerPlugin:(CDVPlugin*)engine withClassName:webViewEngineClassName];
     }
 
-    if ([self.webViewEngine isKindOfClass:[CDVPlugin class]]) {
-        [self registerPlugin:(CDVPlugin*)self.webViewEngine withClassName:webViewEngineClass];
-    }
-
+    self.webViewEngine = engine;
     return self.webViewEngine.engineWebView;
+}
+
+/// Initialiizes the webViewEngine, with config, if supported and provided
+/// @param engineClass A class that must conform to the `CDVWebViewEngineProtocol`
+/// @param bounds with which the webview will be initialized
+- (id _Nullable) initWebViewEngine:(nonnull Class)engineClass bounds:(CGRect)bounds {
+    WKWebViewConfiguration *config = [self respondsToSelector:@selector(configuration)] ? [self configuration] : nil;
+    if (config && [engineClass respondsToSelector:@selector(initWithFrame:configuration:)]) {
+        return [[engineClass alloc] initWithFrame:bounds configuration:config];
+    } else {
+        return [[engineClass alloc] initWithFrame:bounds];
+    }
 }
 
 - (void)createLaunchView
@@ -521,18 +460,36 @@
     webViewBounds.origin = self.view.bounds.origin;
 
     UIView* view = [[UIView alloc] initWithFrame:webViewBounds];
+    view.translatesAutoresizingMaskIntoConstraints = NO;
     [view setAlpha:0];
 
     NSString* launchStoryboardName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchStoryboardName"];
     if (launchStoryboardName != nil) {
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:launchStoryboardName bundle:[NSBundle mainBundle]];
         UIViewController* vc = [storyboard instantiateInitialViewController];
+        [self addChildViewController:vc];
 
-        [view addSubview:vc.view];
+        UIView* imgView = vc.view;
+        imgView.translatesAutoresizingMaskIntoConstraints = NO;
+        [view addSubview:imgView];
+
+        [NSLayoutConstraint activateConstraints:@[
+                [NSLayoutConstraint constraintWithItem:imgView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeWidth multiplier:1 constant:0],
+                [NSLayoutConstraint constraintWithItem:imgView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeHeight multiplier:1 constant:0],
+                [NSLayoutConstraint constraintWithItem:imgView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0],
+                [NSLayoutConstraint constraintWithItem:imgView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]
+            ]];
     }
 
     self.launchView = view;
     [self.view addSubview:view];
+
+    [NSLayoutConstraint activateConstraints:@[
+            [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1 constant:0],
+            [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:1 constant:0],
+            [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0],
+            [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]
+        ]];
 }
 
 - (void)createGapView
@@ -608,10 +565,10 @@
 /**
  Returns an instance of a CordovaCommand object, based on its name.  If one exists already, it is returned.
  */
-- (id)getCommandInstance:(NSString*)pluginName
+- (nullable id)getCommandInstance:(NSString*)pluginName
 {
     // first, we try to find the pluginName in the pluginsMap
-    // (acts as a whitelist as well) if it does not exist, we return nil
+    // (acts as a allowList as well) if it does not exist, we return nil
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a
     // possible issue is there can be duplicates possible if you had:
     // "org.apache.cordova.Foo" and "org.apache.cordova.foo" - only the lower-cased entry will match
@@ -642,7 +599,7 @@
 
 #pragma mark -
 
-- (NSString*)appURLScheme
+- (nullable NSString*)appURLScheme
 {
     NSString* URLScheme = nil;
 
@@ -798,6 +755,10 @@
 
     [UIView animateWithDuration:fadeDuration animations:^{
         [self.launchView setAlpha:(visible ? 1 : 0)];
+
+        if (!visible) {
+            [self.webView becomeFirstResponder];
+        }
     }];
 }
 

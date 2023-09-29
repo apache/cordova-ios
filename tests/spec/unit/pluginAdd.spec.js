@@ -22,7 +22,7 @@ const fs = require('fs-extra');
 const EventEmitter = require('events').EventEmitter;
 const ConfigParser = require('cordova-common').ConfigParser;
 const PluginInfo = require('cordova-common').PluginInfo;
-const Api = require('../../../bin/templates/scripts/cordova/Api');
+const Api = require('../../../lib/Api');
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 const DUMMY_PLUGIN = 'org.test.plugins.dummyplugin';

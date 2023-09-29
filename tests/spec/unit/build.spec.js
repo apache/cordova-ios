@@ -21,7 +21,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const rewire = require('rewire');
 const { CordovaError, events } = require('cordova-common');
-const build = rewire('../../../bin/templates/scripts/cordova/lib/build');
+const build = rewire('../../../lib/build');
 
 describe('build', () => {
     const testProjectPath = path.join('/test', 'project', 'path');
@@ -31,10 +31,7 @@ describe('build', () => {
         build.__set__('__dirname', path.join('/test', 'dir'));
 
         it('should generate appropriate args if a single buildFlag is passed in', () => {
-            const isDevice = true;
-            const buildFlags = '';
-
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags);
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: '' });
             expect(args).toEqual([
                 '-workspace',
                 'TestProjectName.xcworkspace',
@@ -46,15 +43,12 @@ describe('build', () => {
                 'generic/platform=iOS',
                 '-archivePath',
                 'TestProjectName.xcarchive',
-                'archive',
-                `CONFIGURATION_BUILD_DIR=${path.join(testProjectPath, 'build', 'device')}`,
-                `SHARED_PRECOMPS_DIR=${path.join(testProjectPath, 'build', 'sharedpch')}`
+                'archive'
             ]);
-            expect(args.length).toEqual(13);
+            expect(args.length).toEqual(11);
         });
 
         it('should generate appropriate args if buildFlags are passed in', () => {
-            const isDevice = true;
             const buildFlags = [
                 '-workspace TestWorkspaceFlag',
                 '-scheme TestSchemeFlag',
@@ -65,7 +59,7 @@ describe('build', () => {
                 'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
             ];
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags);
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestWorkspaceFlag',
@@ -85,8 +79,7 @@ describe('build', () => {
         });
 
         it('should generate appropriate args for device', () => {
-            const isDevice = true;
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null);
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true });
             expect(args).toEqual([
                 '-workspace',
                 'TestProjectName.xcworkspace',
@@ -98,16 +91,13 @@ describe('build', () => {
                 'generic/platform=iOS',
                 '-archivePath',
                 'TestProjectName.xcarchive',
-                'archive',
-                `CONFIGURATION_BUILD_DIR=${path.join(testProjectPath, 'build', 'device')}`,
-                `SHARED_PRECOMPS_DIR=${path.join(testProjectPath, 'build', 'sharedpch')}`
+                'archive'
             ]);
-            expect(args.length).toEqual(13);
+            expect(args.length).toEqual(11);
         });
 
         it('should generate appropriate args for simulator', () => {
-            const isDevice = false;
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null, 'iPhone 5s');
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false });
             expect(args).toEqual([
                 '-workspace',
                 'TestProjectName.xcworkspace',
@@ -120,17 +110,48 @@ describe('build', () => {
                 '-destination',
                 'platform=iOS Simulator,name=iPhone 5s',
                 'build',
-                `CONFIGURATION_BUILD_DIR=${path.join(testProjectPath, 'build', 'emulator')}`,
-                `SHARED_PRECOMPS_DIR=${path.join(testProjectPath, 'build', 'sharedpch')}`
+                `SYMROOT=${path.join(testProjectPath, 'build')}`
             ]);
-            expect(args.length).toEqual(13);
+            expect(args.length).toEqual(12);
+        });
+
+        it('should generate appropriate args for simulator if buildFlags are passed in', () => {
+            const buildFlags = [
+                '-workspace TestWorkspaceFlag',
+                '-scheme TestSchemeFlag',
+                '-configuration TestConfigurationFlag',
+                '-destination TestDestinationFlag',
+                '-archivePath TestArchivePathFlag',
+                'CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag',
+                'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
+            ];
+
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
+            expect(args).toEqual([
+                '-workspace',
+                'TestWorkspaceFlag',
+                '-scheme',
+                'TestSchemeFlag',
+                '-configuration',
+                'TestConfigurationFlag',
+                '-sdk',
+                'iphonesimulator',
+                '-destination',
+                'TestDestinationFlag',
+                'build',
+                `SYMROOT=${path.join(testProjectPath, 'build')}`,
+                'CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag',
+                'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag',
+                '-archivePath',
+                'TestArchivePathFlag'
+            ]);
+            expect(args.length).toEqual(16);
         });
 
         it('should add matched flags that are not overriding for device', () => {
-            const isDevice = true;
             const buildFlags = '-sdk TestSdkFlag';
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags);
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestProjectName.xcworkspace',
@@ -143,19 +164,16 @@ describe('build', () => {
                 '-archivePath',
                 'TestProjectName.xcarchive',
                 'archive',
-                `CONFIGURATION_BUILD_DIR=${path.join(testProjectPath, 'build', 'device')}`,
-                `SHARED_PRECOMPS_DIR=${path.join(testProjectPath, 'build', 'sharedpch')}`,
                 '-sdk',
                 'TestSdkFlag'
             ]);
-            expect(args.length).toEqual(15);
+            expect(args.length).toEqual(13);
         });
 
         it('should add matched flags that are not overriding for simulator', () => {
-            const isDevice = false;
             const buildFlags = '-archivePath TestArchivePathFlag';
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, buildFlags, 'iPhone 5s');
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestProjectName.xcworkspace',
@@ -168,17 +186,23 @@ describe('build', () => {
                 '-destination',
                 'platform=iOS Simulator,name=iPhone 5s',
                 'build',
-                `CONFIGURATION_BUILD_DIR=${path.join(testProjectPath, 'build', 'emulator')}`,
-                `SHARED_PRECOMPS_DIR=${path.join(testProjectPath, 'build', 'sharedpch')}`,
+                `SYMROOT=${path.join(testProjectPath, 'build')}`,
                 '-archivePath',
                 'TestArchivePathFlag'
             ]);
-            expect(args.length).toEqual(15);
+            expect(args.length).toEqual(14);
         });
 
         it('should generate appropriate args for automatic provisioning', () => {
-            const isDevice = true;
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', isDevice, null, null, true);
+            const buildOpts = {
+                device: true,
+                automaticProvisioning: true,
+                authenticationKeyPath: '/tmp/asc-key.p8',
+                authenticationKeyID: '12345',
+                authenticationKeyIssuerID: '00000000-0000-0000-0000-000000000000'
+            };
+
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', buildOpts);
             expect(args).toEqual([
                 '-workspace',
                 'TestProjectName.xcworkspace',
@@ -191,11 +215,15 @@ describe('build', () => {
                 '-archivePath',
                 'TestProjectName.xcarchive',
                 '-allowProvisioningUpdates',
-                'archive',
-                `CONFIGURATION_BUILD_DIR=${path.join(testProjectPath, 'build', 'device')}`,
-                `SHARED_PRECOMPS_DIR=${path.join(testProjectPath, 'build', 'sharedpch')}`
+                '-authenticationKeyPath',
+                '/tmp/asc-key.p8',
+                '-authenticationKeyID',
+                '12345',
+                '-authenticationKeyIssuerID',
+                '00000000-0000-0000-0000-000000000000',
+                'archive'
             ]);
-            expect(args.length).toEqual(14);
+            expect(args.length).toEqual(18);
         });
     });
 
@@ -215,7 +243,14 @@ describe('build', () => {
         });
 
         it('should generate the appropriate arguments for automatic provisioning', () => {
-            const archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path', true);
+            const buildOpts = {
+                automaticProvisioning: true,
+                authenticationKeyPath: '/tmp/asc-key.p8',
+                authenticationKeyID: '12345',
+                authenticationKeyIssuerID: '00000000-0000-0000-0000-000000000000'
+            };
+
+            const archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path', buildOpts);
             expect(archiveArgs[0]).toEqual('-exportArchive');
             expect(archiveArgs[1]).toEqual('-archivePath');
             expect(archiveArgs[2]).toEqual('TestProjectName.xcarchive');
@@ -224,7 +259,13 @@ describe('build', () => {
             expect(archiveArgs[5]).toEqual('-exportPath');
             expect(archiveArgs[6]).toEqual('/test/output/path');
             expect(archiveArgs[7]).toEqual('-allowProvisioningUpdates');
-            expect(archiveArgs.length).toEqual(8);
+            expect(archiveArgs[8]).toEqual('-authenticationKeyPath');
+            expect(archiveArgs[9]).toEqual('/tmp/asc-key.p8');
+            expect(archiveArgs[10]).toEqual('-authenticationKeyID');
+            expect(archiveArgs[11]).toEqual('12345');
+            expect(archiveArgs[12]).toEqual('-authenticationKeyIssuerID');
+            expect(archiveArgs[13]).toEqual('00000000-0000-0000-0000-000000000000');
+            expect(archiveArgs.length).toEqual(14);
         });
     });
 
@@ -311,16 +352,6 @@ describe('build', () => {
         });
     });
 
-    describe('help method', () => {
-        it('should log a bunch of options', () => {
-            spyOn(console, 'log');
-            spyOn(process, 'exit');
-
-            build.help();
-            expect(console.log).toHaveBeenCalledWith(jasmine.stringMatching(/^Usage:/));
-        });
-    });
-
     describe('run method', () => {
         beforeEach(() => {
             spyOn(Promise, 'reject');
@@ -395,7 +426,7 @@ describe('build', () => {
 
         beforeEach(() => {
             // rewire causes some issues so for these tests, we will require instead.
-            buildRequire = require('../../../bin/templates/scripts/cordova/lib/build');
+            buildRequire = require('../../../lib/build');
             spyOn(events, 'emit');
         });
 

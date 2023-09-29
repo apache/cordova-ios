@@ -23,18 +23,12 @@
 
     <!-- Preferences for iOS -->
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="cloud" />
     <preference name="DisallowOverscroll" value="false" />
     <preference name="EnableViewportScale" value="false" />
-    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
     <preference name="MediaTypesRequiringUserActionForPlayback" value="none" />
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="SuppressesLongPressGesture" value="false" />
     <preference name="Suppresses3DTouchGesture" value="false" />
-    <preference name="GapBetweenPages" value="0" />
-    <preference name="PageLength" value="0" />
-    <preference name="PaginationBreakingMode" value="page" /> <!-- page, column -->
-    <preference name="PaginationMode" value="unpaginated" /> <!-- unpaginated, leftToRight, topToBottom, bottomToTop, rightToLeft -->
 
     <feature name="CDVWebViewEngine">
         <param name="ios-package" value="CDVWebViewEngine" />

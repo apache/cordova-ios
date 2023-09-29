@@ -1,8 +1,9 @@
 {
   "name": "cordova-ios",
-  "version": "6.2.0",
+  "version": "7.0.1",
   "description": "cordova-ios release",
-  "main": "bin/templates/scripts/cordova/Api.js",
+  "types": "./types/index.d.ts",
+  "main": "lib/Api.js",
   "repository": "github:apache/cordova-ios",
   "bugs": "https://github.com/apache/cordova-ios/issues",
   "keywords": [
@@ -13,47 +14,48 @@
     "cordova:platform"
   ],
   "scripts": {
+    "prepare": "cordova-js build > templates/project/www/cordova.js",
     "pretest": "npm run lint",
     "test": "npm run coverage && npm run objc-tests",
-    "test:component": "jasmine --config=tests/spec/component.json",
     "coverage": "nyc jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
     "objc-tests-lib": "npm run xcodebuild -- -scheme CordovaLibTests",
     "objc-tests-framework": "npm run xcodebuild -- -scheme CordovaFrameworkApp",
     "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
-    "preobjc-tests": "tests/scripts/killsim.js",
+    "preobjc-tests": "killall Simulator || true",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
-    "lint": "eslint . \"bin/**/!(*.*)\""
+    "lint": "eslint . \"templates/cordova/lib/!(*.*)\""
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@cordova/eslint-config": "^3.0.0",
-    "find-process": "^1.4.4",
-    "jasmine": "3.5.0",
-    "nyc": "^15.0.1",
-    "rewire": "^5.0.0",
+    "@cordova/eslint-config": "^5.0.0",
+    "cordova-js": "^6.1.0",
+    "jasmine": "^4.6.0",
+    "nyc": "^15.1.0",
+    "rewire": "^6.0.0",
     "tmp": "^0.2.1"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=16.13.0"
   },
   "dependencies": {
-    "cordova-common": "^4.0.2",
-    "fs-extra": "^9.1.0",
+    "cordova-common": "^5.0.0",
+    "execa": "^5.1.1",
+    "fs-extra": "^11.1.1",
     "ios-sim": "^8.0.2",
-    "nopt": "^5.0.0",
-    "plist": "^3.0.1",
-    "semver": "^7.3.4",
+    "nopt": "^7.1.0",
+    "plist": "^3.0.6",
+    "semver": "^7.4.0",
     "unorm": "^1.6.0",
-    "which": "^2.0.2",
+    "which": "^3.0.0",
     "xcode": "^3.0.1",
     "xml-escape": "^1.1.0"
   },
   "nyc": {
     "include": [
-      "bin/templates/scripts/**"
+      "lib/**"
     ],
     "reporter": [
       "lcov",
