@@ -13,7 +13,7 @@ For usage and support questions, please check out the resources below. Thanks!
 
 You can get answers to your usage and support questions about **Apache Cordova** on:
 
-* Slack Community Chat: https://cordova.slack.com (you can sign-up at http://slack.cordova.io/)
+* Slack Community Chat: https://cordova.slack.com (you can sign-up at https://s.apache.org/cordova-slack)
 * StackOverflow: https://stackoverflow.com/questions/tagged/cordova using the tag `cordova`
 
 ---
