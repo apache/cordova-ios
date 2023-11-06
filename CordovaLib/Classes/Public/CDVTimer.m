@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "CDVTimer.h"
+#import <Cordova/CDVTimer.h>
 
 #pragma mark CDVTimerItem
 

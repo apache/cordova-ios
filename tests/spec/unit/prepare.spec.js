@@ -24,9 +24,10 @@ const EventEmitter = require('events');
 const path = require('path');
 const plist = require('plist');
 const xcode = require('xcode');
+const XcodeProject = xcode.project;
 const rewire = require('rewire');
-const prepare = rewire('../../../bin/templates/scripts/cordova/lib/prepare');
-const projectFile = require('../../../bin/templates/scripts/cordova/lib/projectFile');
+const prepare = rewire('../../../lib/prepare');
+const projectFile = require('../../../lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
 
 const tmpDir = path.join(__dirname, '../../../tmp');
@@ -42,7 +43,7 @@ describe('prepare', () => {
     let p;
     let Api;
     beforeEach(() => {
-        Api = rewire('../../../bin/templates/scripts/cordova/Api');
+        Api = rewire('../../../lib/Api');
 
         fs.ensureDirSync(iosPlatform);
         fs.copySync(iosProjectFixture, iosPlatform);
@@ -271,10 +272,10 @@ describe('prepare', () => {
             const getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
             const projectRoot = iosProject;
 
-            it('should find the Images.xcassets file in a project with an asset catalog', () => {
+            it('should find the Assets.xcassets file in a project with an asset catalog', () => {
                 const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
-                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
-                const expectedPath = path.join(platformProjDir, 'Images.xcassets', 'LaunchStoryboard.imageset/');
+                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
+                const expectedPath = path.join(platformProjDir, 'Assets.xcassets', 'LaunchStoryboard.imageset/');
 
                 expect(fs.existsSync(assetCatalogPath)).toEqual(true);
 
@@ -282,9 +283,9 @@ describe('prepare', () => {
                 expect(returnPath).toEqual(expectedPath);
             });
 
-            it('should NOT find the Images.xcassets file in a project with no asset catalog', () => {
+            it('should NOT find the Assets.xcassets file in a project with no asset catalog', () => {
                 const platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
-                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Images.xcassets');
+                const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
 
                 expect(fs.existsSync(assetCatalogPath)).toEqual(false);
 
@@ -558,8 +559,6 @@ describe('prepare', () => {
     describe('updateProject method', () => {
         /* eslint-disable no-unused-vars */
         let update_name;
-        /* eslint-enable no-unused-vars */
-        const xcOrig = xcode.project;
         let writeFileSyncSpy;
         let cfg;
         let cfg2;
@@ -578,7 +577,7 @@ describe('prepare', () => {
             spyOn(plist, 'parse').and.returnValue({});
             spyOn(plist, 'build').and.returnValue('');
             spyOn(xcode, 'project').and.callFake(pbxproj => {
-                const xc = new xcOrig(pbxproj); /* eslint new-cap : 0 */
+                const xc = new XcodeProject(pbxproj);
                 update_name = spyOn(xc, 'updateProductName').and.callThrough();
                 return xc;
             });
@@ -609,8 +608,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
-                const xcode = require('xcode');
-                const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('TARGETED_DEVICE_FAMILY');
                 expect(prop).toEqual('"1"'); // 1 is handset
@@ -621,8 +619,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
-                const xcode = require('xcode');
-                const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
                 expect(prop).toEqual('11.0');
@@ -632,8 +629,7 @@ describe('prepare', () => {
             cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
-                const xcode = require('xcode');
-                const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('4.1');
@@ -646,8 +642,7 @@ describe('prepare', () => {
             pref.attrib.value = '3.3';
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
-                const xcode = require('xcode');
-                const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('3.3');
@@ -665,8 +660,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg, p.locations).then(() => {
-                const xcode = require('xcode');
-                const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
                 expect(prop).toEqual('testpkg');
@@ -684,8 +678,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg, p.locations).then(() => {
-                const xcode = require('xcode');
-                const proj = new xcode.project(p.locations.pbxproj); /* eslint new-cap : 0 */
+                const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
                 expect(prop).toEqual('testpkg_ios');

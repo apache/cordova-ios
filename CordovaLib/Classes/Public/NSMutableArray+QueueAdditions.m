@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "NSMutableArray+QueueAdditions.h"
+#import <Cordova/NSMutableArray+QueueAdditions.h>
 
 @implementation NSMutableArray (QueueAdditions)
 

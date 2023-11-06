@@ -23,7 +23,7 @@ const fs = require('fs-extra');
 const CordovaError = require('cordova-common').CordovaError;
 
 const PROJECT_NAME = 'testProj';
-const Podfile = require(path.resolve(path.join(__dirname, '..', '..', '..', 'bin', 'templates', 'scripts', 'cordova', 'lib', 'Podfile.js'))).Podfile;
+const Podfile = require(path.resolve(path.join(__dirname, '../../../lib/Podfile.js'))).Podfile;
 const fixturePodfile = path.resolve(__dirname, 'fixtures', PROJECT_NAME, 'platforms', 'ios', 'Podfile');
 const fixturePodXcconfigDebug = path.resolve(__dirname, 'fixtures', PROJECT_NAME, 'platforms', 'ios', 'pods-debug.xcconfig');
 const fixturePodXcconfigRelease = path.resolve(__dirname, 'fixtures', PROJECT_NAME, 'platforms', 'ios', 'pods-release.xcconfig');

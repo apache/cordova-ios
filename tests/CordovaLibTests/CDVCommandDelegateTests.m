@@ -18,7 +18,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import <Cordova/CDVCommandDelegateImpl.h>
+#import "CDVCommandDelegateImpl.h"
 
 @interface CDVCommandDelegateTests : XCTestCase
 

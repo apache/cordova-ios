@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for Cordova.
 FOUNDATION_EXPORT double CordovaVersionNumber;
@@ -28,7 +28,6 @@ FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <Cordova/PublicHeader.h>
 
 #import <Cordova/CDV.h>
-#import <Cordova/CDVCommandDelegateImpl.h>
 #import <Cordova/CDVAvailability.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 #import <Cordova/CDVAppDelegate.h>
@@ -41,9 +40,10 @@ FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVPlugin+Resources.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
+#import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
-#import <Cordova/CDVWebViewUIDelegate.h>
-#import <Cordova/CDVWhitelist.h>
+#import <Cordova/CDVAllowList.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVTimer.h>
+#import <Cordova/CDVURLSchemeHandler.h>
