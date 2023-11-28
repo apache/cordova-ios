@@ -112,7 +112,9 @@ var iOSExec = function () {
 
     // CB-10133 DataClone DOM Exception 25 guard (fast function remover)
     var command = [callbackId, service, action, JSON.parse(JSON.stringify(actionArgs))];
-    window.webkit.messageHandlers.cordova.postMessage(command);
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordova) {
+        window.webkit.messageHandlers.cordova.postMessage(command);
+    }
 };
 
 iOSExec.nativeCallback = function (callbackId, status, message, keepCallback, debug) {
