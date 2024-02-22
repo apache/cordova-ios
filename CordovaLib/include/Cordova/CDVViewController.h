@@ -17,8 +17,8 @@
  under the License.
  */
 
-@import UIKit;
-@import WebKit;
+#import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 #import <Foundation/NSJSONSerialization.h>
 #import <Cordova/CDVAvailability.h>
 #import <Cordova/CDVInvokedUrlCommand.h>

@@ -25,14 +25,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [16.x, 18.x, 20.x]
         os: [macos-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -48,7 +48,7 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
 
@@ -57,14 +57,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [16.x, 18.x, 20.x]
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -81,6 +81,6 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true

@@ -17,16 +17,14 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#import "MainViewController.h"
 
-@interface CDVConfigParser : NSObject <NSXMLParserDelegate>
+@implementation MainViewController
+
+- (void)viewDidLoad
 {
-    NSString* featureName;
+    [super viewDidLoad];
+    [self.launchView setAlpha:1];
 }
-
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
-@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
-@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readonly, strong) NSString* startPage;
 
 @end

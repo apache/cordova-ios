@@ -17,8 +17,7 @@
  under the License.
  */
 
-@import Foundation;
-
+#import <Foundation/Foundation.h>
 #import <Cordova/CDVAvailability.h>
 
 typedef NS_ENUM(NSUInteger, CDVCommandStatus) {

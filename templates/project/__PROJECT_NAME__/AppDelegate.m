@@ -17,17 +17,15 @@
  under the License.
  */
 
-//
-//  AppDelegate.h
-//  __PROJECT_NAME__
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+#import "AppDelegate.h"
+#import "MainViewController.h"
 
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVAppDelegate.h>
+@implementation AppDelegate
 
-@interface AppDelegate : CDVAppDelegate {}
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
+{
+    self.viewController = [[MainViewController alloc] init];
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
 
 @end

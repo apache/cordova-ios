@@ -9,3 +9,6 @@ Contents.json
 jasmine.json
 fixtures
 i386
+
+# Xcode Auto Generated Files
+IDEWorkspaceChecks.plist

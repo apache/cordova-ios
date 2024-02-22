@@ -17,7 +17,7 @@
  under the License.
  */
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 #import <Cordova/CDVPlugin.h>
 
 @interface CDVPlugin (CDVPluginResources)

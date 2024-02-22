@@ -17,8 +17,8 @@
  under the License.
  */
 
-@import UIKit;
-@import WebKit;
+#import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 #define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"
 #define kCDVWebViewEngineWKNavigationDelegate @"kCDVWebViewEngineWKNavigationDelegate"

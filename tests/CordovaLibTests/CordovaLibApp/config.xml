@@ -37,7 +37,6 @@
 
     <!-- Preferences for iOS -->
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="cloud" />
     <preference name="DisallowOverscroll" value="false" />
     <preference name="EnableViewportScale" value="false" />
     <preference name="MediaTypesRequiringUserActionForPlayback" value="false" />
@@ -61,5 +60,8 @@
     <feature name="GestureHandler">
         <param name="ios-package" value="CDVGestureHandler"/>
         <param name="onload" value="true"/>
+    </feature>
+    <feature name="SwiftInit">
+        <param name="ios-package" value="SwiftInitPlugin"/>
     </feature>
 </widget>

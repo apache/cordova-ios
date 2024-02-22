@@ -17,16 +17,10 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+@objc class SwiftInitPlugin : CDVPlugin {
+    let initStr : String = "Successfully initialized";
 
-@interface CDVConfigParser : NSObject <NSXMLParserDelegate>
-{
-    NSString* featureName;
+    @objc func getInitString() -> String {
+        return self.initStr;
+    }
 }
-
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
-@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
-@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readonly, strong) NSString* startPage;
-
-@end

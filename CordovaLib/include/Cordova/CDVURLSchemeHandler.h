@@ -17,15 +17,14 @@
  under the License.
  */
 
-@import Foundation;
-@import WebKit;
-
+#import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 #import <Cordova/CDVViewController.h>
 
 
 @interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
 
-@property (nonatomic, strong) CDVViewController* viewController;
+@property (nonatomic, weak) CDVViewController* viewController;
 
 @property (nonatomic) CDVPlugin* schemePlugin;
 
