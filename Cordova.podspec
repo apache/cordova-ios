@@ -34,9 +34,10 @@ Pod::Spec.new do |s|
   s.platform            = :ios, "11.0"
   s.source              = relSource
   s.requires_arc        = true
-  s.frameworks          = 'Foundation'
+  s.frameworks          = ["Foundation", "UIKit", "WebKit"]
   s.source_files        = 'CordovaLib/**/*.{h,m}'
   s.public_header_files = 'CordovaLib/include/**/*.h'
+  s.resource_bundles    = { "Cordova" => ["CordovaLib/PrivacyInfo.xcprivacy"] }
 end
 
 #
