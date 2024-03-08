@@ -28,7 +28,6 @@ const XcodeProject = xcode.project;
 const rewire = require('rewire');
 const prepare = rewire('../../../lib/prepare');
 const projectFile = require('../../../lib/projectFile');
-const { writeFileSync } = require('fs');
 const FileUpdater = require('cordova-common').FileUpdater;
 
 const tmpDir = path.join(__dirname, '../../../tmp');
@@ -1515,14 +1514,14 @@ describe('prepare', () => {
             const privacyManifest = my_config.getPrivacyManifest();
             const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
             overwritePrivacyManifest(privacyManifest, p.locations);
-            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy')
+            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy');
             expect(writeFileSyncSpy).toHaveBeenCalledWith(privacyManifestPathDest, jasmine.any(String), 'utf-8');
             const xml = writeFileSyncSpy.calls.all()[0].args[1];
             const json = plist.parse(xml);
-            expect(json['NSPrivacyTracking']).toBeTrue();
-            expect(json['NSPrivacyAccessedAPITypes'].length).toBe(0);
-            expect(json['NSPrivacyTrackingDomains'].length).toBe(0);
-            expect(json['NSPrivacyCollectedDataTypes'].length).toBe(1);
+            expect(json.NSPrivacyTracking).toBeTrue();
+            expect(json.NSPrivacyAccessedAPITypes.length).toBe(0);
+            expect(json.NSPrivacyTrackingDomains.length).toBe(0);
+            expect(json.NSPrivacyCollectedDataTypes.length).toBe(1);
         });
         it('Test#022 : no <privacy-manifest> - should write out the privacy manifest ', () => {
             plist.parse.and.callThrough();
@@ -1534,14 +1533,14 @@ describe('prepare', () => {
             const privacyManifest = my_config.getPrivacyManifest();
             const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
             overwritePrivacyManifest(privacyManifest, p.locations);
-            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy')
+            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy');
             expect(writeFileSyncSpy).toHaveBeenCalledWith(privacyManifestPathDest, jasmine.any(String), 'utf-8');
             const xml = writeFileSyncSpy.calls.all()[0].args[1];
             const json = plist.parse(xml);
-            expect(json['NSPrivacyTracking']).toBeFalse();
-            expect(json['NSPrivacyAccessedAPITypes'].length).toBe(0);
-            expect(json['NSPrivacyTrackingDomains'].length).toBe(0);
-            expect(json['NSPrivacyCollectedDataTypes'].length).toBe(0);
+            expect(json.NSPrivacyTracking).toBeFalse();
+            expect(json.NSPrivacyAccessedAPITypes.length).toBe(0);
+            expect(json.NSPrivacyTrackingDomains.length).toBe(0);
+            expect(json.NSPrivacyCollectedDataTypes.length).toBe(0);
         });
 
     });
