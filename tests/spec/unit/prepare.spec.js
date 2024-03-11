@@ -1542,7 +1542,6 @@ describe('prepare', () => {
             expect(json.NSPrivacyTrackingDomains.length).toBe(0);
             expect(json.NSPrivacyCollectedDataTypes.length).toBe(0);
         });
-
     });
 
     describe('<resource-file> tests', () => {
