@@ -49,9 +49,8 @@
 
     [alert addAction:ok];
 
-    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
-    [rootController presentViewController:alert animated:YES completion:nil];
+    [[CDVWebViewUIDelegate topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)     webView:(WKWebView*)webView runJavaScriptConfirmPanelWithMessage:(NSString*)message
@@ -80,10 +79,12 @@
         }];
     [alert addAction:cancel];
 
-    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
-    [rootController presentViewController:alert animated:YES completion:nil];
+    [[CDVWebViewUIDelegate topViewController] presentViewController:alert animated:YES completion:nil];
 }
+
+
+
 
 - (void)      webView:(WKWebView*)webView runJavaScriptTextInputPanelWithPrompt:(NSString*)prompt
           defaultText:(NSString*)defaultText initiatedByFrame:(WKFrameInfo*)frame
@@ -116,9 +117,8 @@
         textField.text = defaultText;
     }];
 
-    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
-    [rootController presentViewController:alert animated:YES completion:nil];
+    [[CDVWebViewUIDelegate topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
 - (WKWebView*) webView:(WKWebView*)webView createWebViewWithConfiguration:(WKWebViewConfiguration*)configuration forNavigationAction:(WKNavigationAction*)navigationAction windowFeatures:(WKWindowFeatures*)windowFeatures
@@ -135,8 +135,7 @@
 
             [windows addObject:vc];
 
-            UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-            [rootController presentViewController:vc animated:YES completion:nil];
+            [[CDVWebViewUIDelegate topViewController] presentViewController:vc animated:YES completion:nil];
             return v;
         } else {
             [webView loadRequest:navigationAction.request];
@@ -157,6 +156,31 @@
     }
 
     // We do not allow closing the primary WebView
+}
+
+
++ (UIViewController *)topViewController {
+    UIViewController *topViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+       
+    if (topViewController == nil) {
+       return nil;
+    }
+
+    while (true) {
+        if (topViewController.presentedViewController != nil) {
+           topViewController = topViewController.presentedViewController;
+       } else if ([topViewController isKindOfClass:[UINavigationController class]]) {
+           UINavigationController *navi = (UINavigationController *)topViewController;
+           topViewController = navi.topViewController;
+       } else if ([topViewController isKindOfClass:[UITabBarController class]]) {
+           UITabBarController *tab = (UITabBarController *)topViewController;
+           topViewController = tab.selectedViewController;
+       } else {
+           break;
+       }
+    }
+
+    return topViewController;
 }
 
 
