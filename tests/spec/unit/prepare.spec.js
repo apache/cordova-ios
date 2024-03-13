@@ -1504,6 +1504,44 @@ describe('prepare', () => {
                 expect(plist.build.calls.mostRecent().args[0].CFBundleDisplayName).toEqual('MyApp');
             });
         });
+        it('Test#021 : <privacy-manifest> - should write out the privacy manifest ', () => {
+            plist.parse.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
+            const projectRoot = iosProject;
+            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'SampleApp');
+            const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
+            const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'privacy-manifest.xml'));
+            const privacyManifest = my_config.getPrivacyManifest();
+            const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
+            overwritePrivacyManifest(privacyManifest, p.locations);
+            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy');
+            expect(writeFileSyncSpy).toHaveBeenCalledWith(privacyManifestPathDest, jasmine.any(String), 'utf-8');
+            const xml = writeFileSyncSpy.calls.all()[0].args[1];
+            const json = plist.parse(xml);
+            expect(json.NSPrivacyTracking).toBeTrue();
+            expect(json.NSPrivacyAccessedAPITypes.length).toBe(0);
+            expect(json.NSPrivacyTrackingDomains.length).toBe(0);
+            expect(json.NSPrivacyCollectedDataTypes.length).toBe(1);
+        });
+        it('Test#022 : no <privacy-manifest> - should write out the privacy manifest ', () => {
+            plist.parse.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
+            const projectRoot = iosProject;
+            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'SampleApp');
+            const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
+            const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'no-privacy-manifest.xml'));
+            const privacyManifest = my_config.getPrivacyManifest();
+            const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
+            overwritePrivacyManifest(privacyManifest, p.locations);
+            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy');
+            expect(writeFileSyncSpy).toHaveBeenCalledWith(privacyManifestPathDest, jasmine.any(String), 'utf-8');
+            const xml = writeFileSyncSpy.calls.all()[0].args[1];
+            const json = plist.parse(xml);
+            expect(json.NSPrivacyTracking).toBeFalse();
+            expect(json.NSPrivacyAccessedAPITypes.length).toBe(0);
+            expect(json.NSPrivacyTrackingDomains.length).toBe(0);
+            expect(json.NSPrivacyCollectedDataTypes.length).toBe(0);
+        });
     });
 
     describe('<resource-file> tests', () => {
