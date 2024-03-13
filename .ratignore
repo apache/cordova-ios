@@ -1,3 +1,6 @@
+# Ignore dot files
+\.(.*)
+
 # yes, not .gitignore
 gitignore
 
@@ -5,10 +8,10 @@ gitignore
 NSData+Base64.h
 NSData+Base64.m
 
-Contents.json
-jasmine.json
-fixtures
-i386
-
 # Xcode Auto Generated Files
 IDEWorkspaceChecks.plist
+
+# Testing Figures
+fixtures
+
+node_modules
