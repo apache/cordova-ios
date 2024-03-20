@@ -58,7 +58,7 @@
     </scenes>
     <resources>
         <image name="LaunchStoryboard" width="1366" height="1366"/>
-        <namedColor name="BackgroundColor">
+        <namedColor name="SplashScreenBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>
     </resources>
