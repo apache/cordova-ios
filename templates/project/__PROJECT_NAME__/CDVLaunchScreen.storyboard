@@ -42,7 +42,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" name="BackgroundColor"/>
+                        <color key="backgroundColor" name="SplashScreenBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="2ns-9I-Qjs" secondAttribute="trailing" id="FZL-3Z-NFz"/>
                             <constraint firstItem="2ns-9I-Qjs" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="L9l-pw-wXj"/>
@@ -58,7 +58,7 @@
     </scenes>
     <resources>
         <image name="LaunchStoryboard" width="1366" height="1366"/>
-        <namedColor name="BackgroundColor">
+        <namedColor name="SplashScreenBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>
     </resources>
