@@ -38,7 +38,7 @@
     // uncaught and the app crashes upon a failed STAssert (oh well).
     // [self raiseAfterFailure];
 
-    self.appDelegate = [[UIApplication sharedApplication] delegate];
+    self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
     self.viewController = self.appDelegate.viewController;
 }
