@@ -17,9 +17,9 @@
  under the License.
  */
 
-const fs = require('fs-extra');
-const os = require('os');
-const path = require('path');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 const xcode = require('xcode');
 const create = require('../../lib/create');
 
@@ -50,7 +50,7 @@ function verifyProjectFiles (tmpDir, projectName) {
  * @param {String} expectedBundleIdentifier
  */
 function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdentifier) {
-    const pbxproj = path.join(tmpDir, `${projectName}.xcodeproj/project.pbxproj`);
+    const pbxproj = path.join(tmpDir, `${projectName}.xcodeproj`, 'project.pbxproj');
     const xcodeproj = xcode.project(pbxproj);
     xcodeproj.parseSync();
     const actualBundleIdentifier = xcodeproj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
@@ -65,13 +65,14 @@ function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdent
  */
 function verifyBuild (tmpDir) {
     // Allow test project to find the `cordova-ios` module
-    fs.ensureSymlinkSync(
-        path.join(__dirname, '../..'),
-        path.join(tmpDir, 'node_modules/cordova-ios'),
+    fs.mkdirSync(path.join(tmpDir, 'node_modules'), { recursive: true });
+    fs.symlinkSync(
+        path.join(__dirname, '..', '..'),
+        path.join(tmpDir, 'node_modules', 'cordova-ios'),
         'junction'
     );
 
-    const Api = require(path.join(tmpDir, 'cordova/Api.js'));
+    const Api = require(path.join(tmpDir, 'cordova', 'Api.js'));
 
     return expectAsync(new Api('ios', tmpDir).build({ emulator: true }))
         .toBeResolved();
@@ -100,7 +101,7 @@ describe('create', () => {
     });
 
     afterEach(() => {
-        fs.removeSync(tmpDir);
+        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
     it('Test#001 : create project with ascii name, no spaces', () => {
