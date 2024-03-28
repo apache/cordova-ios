@@ -17,9 +17,9 @@
  under the License.
  */
 
-const fs = require('fs-extra');
-const os = require('os');
-const path = require('path');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 const xcode = require('xcode');
 const create = require('../../../lib/create');
 
@@ -86,7 +86,7 @@ describe('create', () => {
     });
 
     afterEach(() => {
-        fs.removeSync(tmpDir);
+        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
     it('should create project with ascii name, no spaces', () => {

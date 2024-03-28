@@ -17,10 +17,10 @@
  under the License.
  */
 
-const fs = require('fs-extra');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const BridgingHeader = require(path.resolve(path.join(__dirname, '../../../lib/BridgingHeader.js'))).BridgingHeader;
+const BridgingHeader = require(path.resolve(__dirname, '..', '..', '..', 'lib', 'BridgingHeader.js')).BridgingHeader;
 const fixtureBridgingHeader = fs.readFileSync(path.resolve(__dirname, 'fixtures', 'test-Bridging-Header.h'), 'utf-8');
 
 describe('unit tests for BridgingHeader module', () => {

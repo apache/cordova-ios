@@ -17,9 +17,9 @@
  under the License.
  */
 
-const path = require('path');
-const fs = require('fs-extra');
-const EventEmitter = require('events');
+const path = require('node:path');
+const fs = require('node:fs');
+const EventEmitter = require('node:events');
 const PluginManager = require('cordova-common').PluginManager;
 const Api = require('../../../lib/Api');
 const check_reqs = require('../../../lib/check_reqs');
