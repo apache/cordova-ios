@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "7.0.1",
+  "version": "7.1.0-dev",
   "description": "cordova-ios release",
   "types": "./types/index.d.ts",
   "main": "lib/Api.js",
@@ -22,7 +22,7 @@
     "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
     "objc-tests-lib": "npm run xcodebuild -- -scheme CordovaLibTests",
     "objc-tests-framework": "npm run xcodebuild -- -scheme CordovaFrameworkApp",
-    "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 15\" -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "killall Simulator || true",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
     "lint": "eslint . \"templates/cordova/lib/!(*.*)\""
@@ -49,9 +49,10 @@
     "plist": "^3.0.6",
     "semver": "^7.4.0",
     "unorm": "^1.6.0",
-    "which": "^3.0.0",
+    "which": "^3.0.1",
     "xcode": "^3.0.1",
-    "xml-escape": "^1.1.0"
+    "xml-escape": "^1.1.0",
+    "elementtree": "^0.1.7"
   },
   "nyc": {
     "include": [
