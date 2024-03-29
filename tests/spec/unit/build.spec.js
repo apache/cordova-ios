@@ -17,8 +17,8 @@
  under the License.
  */
 
-const path = require('path');
-const fs = require('fs-extra');
+const fs = require('node:fs');
+const path = require('node:path');
 const rewire = require('rewire');
 const { CordovaError, events } = require('cordova-common');
 const build = rewire('../../../lib/build');

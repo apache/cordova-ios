@@ -17,12 +17,12 @@
        under the License.
 */
 
-const fs = require('fs-extra');
-const path = require('path');
-const util = require('util');
+const fs = require('node:fs');
+const path = require('node:path');
+const util = require('node:util');
 const CordovaError = require('cordova-common').CordovaError;
 
-const PodsJson = require(path.resolve(path.join(__dirname, '../../../lib/PodsJson.js'))).PodsJson;
+const PodsJson = require(path.resolve(__dirname, '..', '..', '..', 'lib', 'PodsJson.js')).PodsJson;
 const fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'pods.json');
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
