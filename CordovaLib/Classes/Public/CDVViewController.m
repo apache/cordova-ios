@@ -29,6 +29,14 @@
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import "CDVCommandDelegateImpl.h"
 
+UIColor* defaultBackgroundColor(void) {
+    if (@available(iOS 13.0, *)) {
+        return UIColor.systemBackgroundColor;
+    } else {
+        return UIColor.whiteColor;
+    }
+}
+
 @interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
@@ -293,9 +301,12 @@
     }
     // /////////////////
 
-    UIColor* bgColor = [UIColor colorNamed:@"BackgroundColor"] ?: UIColor.whiteColor;
-    [self.launchView setBackgroundColor:bgColor];
+    UIColor* bgDefault = defaultBackgroundColor();
+    UIColor* bgColor = [UIColor colorNamed:@"BackgroundColor"] ?: bgDefault;
+    UIColor* bgSplash = [UIColor colorNamed:@"SplashScreenBackgroundColor"] ?: bgColor;
+
     [self.webView setBackgroundColor:bgColor];
+    [self.launchView setBackgroundColor:bgSplash];
 }
 
 -(void)viewWillAppear:(BOOL)animated
