@@ -574,7 +574,7 @@ static void * KVOContext = &KVOContext;
      * Give plugins the chance to handle the url
      */
     BOOL anyPluginsResponded = NO;
-    BOOL shouldAllowRequest = NO;
+    BOOL shouldAllowRequest = YES;
 
     for (NSString* pluginName in vc.pluginObjects) {
         CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
@@ -583,10 +583,8 @@ static void * KVOContext = &KVOContext;
             anyPluginsResponded = YES;
             // https://issues.apache.org/jira/browse/CB-12497
             int navType = (int)navigationAction.navigationType;
-            shouldAllowRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, navigationAction.request, navType));
-            if (!shouldAllowRequest) {
-                break;
-            }
+            BOOL pluginAllowsRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, navigationAction.request, navType));
+            shouldAllowRequest = shouldAllowRequest && pluginAllowsRequest;
         }
     }
 
