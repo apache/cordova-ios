@@ -51,7 +51,7 @@ jobs:
       - uses: codecov/codecov-action@v4
         if: success()
         with:
-          name: ${{ runner.os }} node.js ${{ matrix.node-version }}
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (darwin)
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
@@ -87,6 +87,6 @@ jobs:
       - uses: codecov/codecov-action@v4
         if: success()
         with:
-          name: ${{ runner.os }} node.js ${{ matrix.node-version }}
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (non-darwin)
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
