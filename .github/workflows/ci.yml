@@ -81,6 +81,9 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
+        if: success()
         with:
-          fail_ci_if_error: true
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
