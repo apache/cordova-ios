@@ -52,7 +52,7 @@ jobs:
         if: success()
         with:
           name: ${{ runner.os }} node.js ${{ matrix.node-version }} (darwin)
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
           fail_ci_if_error: false
 
   non-darwin:
@@ -88,5 +88,5 @@ jobs:
         if: success()
         with:
           name: ${{ runner.os }} node.js ${{ matrix.node-version }} (non-darwin)
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
           fail_ci_if_error: false
