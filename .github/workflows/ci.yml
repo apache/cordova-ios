@@ -48,9 +48,12 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
+        if: success()
         with:
-          fail_ci_if_error: true
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (darwin)
+          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
   non-darwin:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
@@ -81,6 +84,9 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
+        if: success()
         with:
-          fail_ci_if_error: true
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (non-darwin)
+          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
+          fail_ci_if_error: false
