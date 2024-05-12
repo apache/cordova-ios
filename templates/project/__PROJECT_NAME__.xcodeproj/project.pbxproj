@@ -28,6 +28,7 @@
 		0207DA581B56EA530066E2B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0207DA571B56EA530066E2B4 /* Assets.xcassets */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		2F4E7E782BDF21E200DF2ACD /* CordovaPluginsSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4E7E772BDF21E200DF2ACD /* CordovaPluginsSPM */; };
 		301BF552109A68D80062928A /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF535109A57CC0062928A /* libCordova.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		302D95F114D2391D003F00A1 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
@@ -106,6 +107,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
+				2F4E7E782BDF21E200DF2ACD /* CordovaPluginsSPM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +227,9 @@
 				301BF551109A68C00062928A /* PBXTargetDependency */,
 			);
 			name = "__PROJECT_NAME__";
+			packageProductDependencies = (
+				2F4E7E772BDF21E200DF2ACD /* CordovaPluginsSPM */,
+			);
 			productName = "__PROJECT_NAME__";
 			productReference = 1D6058910D05DD3D006BFB54 /* __PROJECT_NAME__.app */;
 			productType = "com.apple.product-type.application";
@@ -252,6 +257,9 @@
 				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			packageReferences = (
+				2F4E7E762BDF21E200DF2ACD /* XCLocalSwiftPackageReference "CordovaPluginsSPM" */,
+			);
 			projectDirPath = "";
 			projectReferences = (
 				{
@@ -483,6 +491,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2F4E7E762BDF21E200DF2ACD /* XCLocalSwiftPackageReference "CordovaPluginsSPM" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = CordovaPluginsSPM;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2F4E7E772BDF21E200DF2ACD /* CordovaPluginsSPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CordovaPluginsSPM;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
 }
