@@ -458,7 +458,7 @@ UIColor* defaultBackgroundColor(void) {
 /// @param bounds with which the webview will be initialized
 - (id _Nullable) initWebViewEngine:(nonnull Class)engineClass bounds:(CGRect)bounds {
     WKWebViewConfiguration *config = [self respondsToSelector:@selector(configuration)] ? [self configuration] : nil;
-    if (config && [engineClass respondsToSelector:@selector(initWithFrame:configuration:)]) {
+    if (config && [engineClass instancesRespondToSelector:@selector(initWithFrame:configuration:)]) {
         return [[engineClass alloc] initWithFrame:bounds configuration:config];
     } else {
         return [[engineClass alloc] initWithFrame:bounds];
