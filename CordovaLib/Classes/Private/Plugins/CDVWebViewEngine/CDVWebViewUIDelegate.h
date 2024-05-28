@@ -19,14 +19,24 @@
 
 #import <WebKit/WebKit.h>
 
-@interface CDVWebViewUIDelegate : NSObject <WKUIDelegate>
-{
-    NSMutableArray<UIViewController*>* windows;
-}
+#ifdef NS_SWIFT_UI_ACTOR
+#define CDV_SWIFT_UI_ACTOR NS_SWIFT_UI_ACTOR
+#else
+#define CDV_SWIFT_UI_ACTOR
+#endif
 
-@property (nonatomic, copy) NSString* title;
+@class CDVViewController;
+
+NS_ASSUME_NONNULL_BEGIN
+
+CDV_SWIFT_UI_ACTOR
+@interface CDVWebViewUIDelegate : NSObject <WKUIDelegate>
+
+@property (nonatomic, nullable, copy) NSString* title;
 @property (nonatomic, assign) BOOL allowNewWindows;
 
-- (instancetype)initWithTitle:(NSString*)title;
+- (instancetype)initWithViewController:(CDVViewController*)vc;
 
 @end
+
+NS_ASSUME_NONNULL_END
