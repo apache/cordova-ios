@@ -18,6 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
 
 @protocol CDVScreenOrientationDelegate <NSObject>
 

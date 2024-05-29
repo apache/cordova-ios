@@ -40,7 +40,7 @@
 
     self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
-    self.viewController = self.appDelegate.viewController;
+    self.viewController = self.appDelegate.testViewController;
 }
 
 - (void)tearDown

@@ -18,11 +18,15 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
+
+@class CDVViewController;
 
 @interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (nullable, nonatomic, strong) IBOutlet UIWindow* window;
-@property (nullable, nonatomic, strong) IBOutlet CDVViewController* viewController;
+@property (nullable, nonatomic, strong) IBOutlet UIWindow* window __deprecated_msg("The window is now managed through the iOS SceneDelegate.");
+
+// TODO: Remove in Cordova iOS 9
+@property (nullable, nonatomic, strong) IBOutlet CDVViewController* viewController CDV_DEPRECATED(8, "");
 
 @end
