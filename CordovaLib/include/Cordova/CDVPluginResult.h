@@ -37,7 +37,8 @@ typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
 // using CDVCommandStatus as ObjC-style constants rather than as Swift enum
 // values.
 // This declares extern'ed constants (implemented in CDVPluginResult.m)
-#define SWIFT_ENUM_COMPAT_HACK(enumVal) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal)
+// TODO: Remove this in Cordova iOS 8
+#define SWIFT_ENUM_COMPAT_HACK(enumVal) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) CDV_DEPRECATED(8, "Use the CDVCommandStatus enum instead")
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION);

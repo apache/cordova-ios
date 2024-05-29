@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVCommandDelegate.h>
@@ -32,7 +33,7 @@
 
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
-extern NSString* const CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification;
+extern NSString* const CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.");
 extern NSString* const CDVPluginResetNotification;
 extern NSString* const CDVViewWillAppearNotification;
 extern NSString* const CDVViewDidAppearNotification;
@@ -55,7 +56,7 @@ extern NSString* const CDVViewWillTransitionToSizeNotification;
 - (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;
-- (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification*)notification;
+- (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification*)notification CDV_DEPRECATED(8, "Use the handleOpenUrl method and the notification userInfo data.");
 - (void)onAppTerminate;
 - (void)onMemoryWarning;
 - (void)onReset;
