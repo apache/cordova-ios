@@ -18,14 +18,19 @@
  */
 
 #import "AppDelegate.h"
-#import "MainViewController.h"
+
+@interface AppDelegate()
+
+@end
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
-{
-    self.viewController = [[MainViewController alloc] init];
-    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+#pragma mark - UISceneSession lifecycle
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options API_AVAILABLE(ios(13)) {
+    return [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
 }
+#endif
 
 @end

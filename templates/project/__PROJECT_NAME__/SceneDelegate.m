@@ -16,11 +16,15 @@
  specific language governing permissions and limitations
  under the License.
  */
-//
-// Prefix header for all source files of the '__PROJECT_NAME__' target in the '__PROJECT_NAME__' project
-//
 
-#ifdef __OBJC__
-    #import <Foundation/Foundation.h>
-    #import <UIKit/UIKit.h>
+#import "SceneDelegate.h"
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+@interface SceneDelegate()
+
+@end
+
+@implementation SceneDelegate
+
+@end
 #endif

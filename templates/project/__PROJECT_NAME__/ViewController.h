@@ -17,8 +17,8 @@
  under the License.
  */
 
-#import "MainViewController.h"
+#import <Cordova/Cordova.h>
 
-@implementation MainViewController
+@interface ViewController : CDVViewController
 
 @end
