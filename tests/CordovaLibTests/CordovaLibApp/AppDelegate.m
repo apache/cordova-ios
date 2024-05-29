@@ -33,6 +33,7 @@
     // [self.viewController viewWillAppear:] in your view controller.
 
     self.window.rootViewController = self.viewController;
+    [self.window makeKeyAndVisible];
 }
 
 - (void)destroyViewController
@@ -43,6 +44,11 @@
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {
     BOOL retVal = [super application:application didFinishLaunchingWithOptions:launchOptions];
+
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
+    self.window.autoresizesSubviews = YES;
+
     // Create the main view on start-up only when not running unit tests.
     if (!NSClassFromString(@"CDVWebViewTest")) {
         [self createViewController];
