@@ -24,12 +24,6 @@
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 
-@interface UIView (org_apache_cordova_UIView_Extension)
-
-@property (nonatomic, weak) UIScrollView* scrollView;
-
-@end
-
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
 extern NSString* const CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification;
