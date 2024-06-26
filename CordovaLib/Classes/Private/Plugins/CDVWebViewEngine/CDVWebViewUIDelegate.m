@@ -159,5 +159,31 @@
     // We do not allow closing the primary WebView
 }
 
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(nonnull WKSecurityOrigin *)origin initiatedByFrame:(nonnull WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(nonnull void (^)(WKPermissionDecision))decisionHandler
+  API_AVAILABLE(ios(15.0))
+{
+    WKPermissionDecision decision;
+    
+    if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Prompt) {
+        decision = WKPermissionDecisionPrompt;
+    }
+    else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Deny) {
+        decision = WKPermissionDecisionDeny;
+    }
+    else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Grant) {
+        decision = WKPermissionDecisionGrant;
+    }
+    else {
+        if ([origin.host isEqualToString:webView.URL.host]) {
+            decision = WKPermissionDecisionGrant;
+        }
+        else {
+            decision =_mediaPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
+        }
+    }
+    
+    decisionHandler(decision);
+}
+
 
 @end

@@ -25,6 +25,7 @@
     <preference name="AllowInlineMediaPlayback" value="false" />
     <preference name="DisallowOverscroll" value="false" />
     <preference name="EnableViewportScale" value="false" />
+    <preference name="MediaPermissionGrantType" value="prompt" />
     <preference name="MediaTypesRequiringUserActionForPlayback" value="none" />
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="SuppressesLongPressGesture" value="false" />
