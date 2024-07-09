@@ -1,6 +1,6 @@
 {
   "name": "cordova-ios",
-  "version": "7.1.1-dev",
+  "version": "8.0.0-dev",
   "description": "cordova-ios release",
   "types": "./types/index.d.ts",
   "main": "lib/Api.js",
