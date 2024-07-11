@@ -25,7 +25,11 @@
 #define kCDVWebViewEngineWKUIDelegate @"kCDVWebViewEngineWKUIDelegate"
 #define kCDVWebViewEngineWebViewPreferences @"kCDVWebViewEngineWebViewPreferences"
 
-@protocol CDVWebViewEngineProtocol <NSObject>
+/// Worth noting: by default, the CDVWebViewEngine is the WKNavigationDelegate, but only if you haven't either:
+/// [a] extended CDVViewController to be a WKNavigationDelegate
+/// [b] called `updateWithInfo` and specified a kCDVWebViewEngineWKNavigationDelegate
+/// It would be more explicit to set the navigation delegate in the convenience initializer below, but I'll avoid doing that because these two other ways already exist.
+@protocol CDVWebViewEngineProtocol <WKNavigationDelegate>
 
 NS_ASSUME_NONNULL_BEGIN
 
