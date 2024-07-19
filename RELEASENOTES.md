@@ -22,6 +22,20 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 7.1.1 (Jul 19, 2024)
+
+**Fixes:**
+
+* [GH-1446](https://github.com/apache/cordova-ios/pull/1446) fix: uninstall plugin with `asset` tag
+* [GH-1435](https://github.com/apache/cordova-ios/pull/1435) fix: Fix version checking helper scripts
+* [GH-1436](https://github.com/apache/cordova-ios/pull/1436) fix: Properly set the webview config when it is provided
+* [GH-1438](https://github.com/apache/cordova-ios/pull/1438) fix: Set CodeSigning Entitlements in Xcode Project at Target level
+
+**Others:**
+
+* [GH-1426](https://github.com/apache/cordova-ios/pull/1426) chore: Update CordovaLib.xcodeproj fixture
+* [GH-1419](https://github.com/apache/cordova-ios/pull/1419) ci: update codecov@v4 w/ token
+
 ### 7.1.0 (Apr 01, 2024)
 
 **Features:**
