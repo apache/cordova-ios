@@ -83,6 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSString*)appURLScheme;
 - (nullable NSURL*)errorURL;
+- (NSURL*)appUrl;
 
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
