@@ -19,11 +19,36 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
+#import "WkWebViewCacheClear.h"
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
-{
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    NSString *currentVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *storedVersion = [defaults stringForKey:@"appVersion"];
+
+    // Check if the app has been updated
+    if (storedVersion == nil || ![storedVersion isEqualToString:currentVersion]) {
+        // Clear webview cache here.
+        WkWebViewCacheClear *cacheClearer = [[WkWebViewCacheClear alloc] init];
+        [cacheClearer clearCacheOfType:WKWebsiteDataTypeDiskCache completion:^{
+            NSLog(@"Disk cache cleared");
+            // Display cache info after ensuring cache is cleared
+            [cacheClearer displayCacheInfo];
+
+            // Update the stored version to the current version
+            [defaults setObject:currentVersion forKey:@"appVersion"];
+            [defaults synchronize];
+        }];
+    } else {
+        NSLog(@"Skipped cache clear, stored version is %@", storedVersion);
+    }
+
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.viewController = [[MainViewController alloc] init];
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
