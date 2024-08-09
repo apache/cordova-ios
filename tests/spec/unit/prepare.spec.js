@@ -577,7 +577,7 @@ describe('prepare', () => {
             spyOn(plist, 'parse').and.returnValue({});
             spyOn(plist, 'build').and.returnValue('');
             spyOn(xcode, 'project').and.callFake(pbxproj => {
-                const xc = new XcodeProject(pbxproj);
+                const xc = XcodeProject(pbxproj);
                 update_name = spyOn(xc, 'updateProductName').and.callThrough();
                 return xc;
             });
@@ -608,7 +608,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
-                const proj = new XcodeProject(p.locations.pbxproj);
+                const proj = XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('TARGETED_DEVICE_FAMILY');
                 expect(prop).toEqual('"1"'); // 1 is handset
@@ -619,7 +619,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
-                const proj = new XcodeProject(p.locations.pbxproj);
+                const proj = XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
                 expect(prop).toEqual('11.0');
@@ -629,7 +629,7 @@ describe('prepare', () => {
             cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
-                const proj = new XcodeProject(p.locations.pbxproj);
+                const proj = XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('4.1');
@@ -642,10 +642,61 @@ describe('prepare', () => {
             pref.attrib.value = '3.3';
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
-                const proj = new XcodeProject(p.locations.pbxproj);
+                const proj = XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('SWIFT_VERSION');
                 expect(prop).toEqual('3.3');
+            });
+        });
+
+        it('should support Mac apps by default', () => {
+            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
+            writeFileSyncSpy.and.callThrough();
+            return updateProject(cfg2, p.locations).then(() => {
+                const proj = XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const supportedPlatforms = proj.getBuildProperty('SUPPORTED_PLATFORMS');
+                expect(supportedPlatforms).toBeUndefined();
+                const supportsMacCatalyst = proj.getBuildProperty('SUPPORTS_MACCATALYST');
+                expect(supportsMacCatalyst).toBeUndefined();
+                const supportsMacIPhoneIPad = proj.getBuildProperty('SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD');
+                expect(supportsMacIPhoneIPad).toBeUndefined();
+            });
+        });
+
+        it('should support Mac apps if SupportMac preference is set to true', () => {
+            cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
+            const pref = cfg3.doc.findall('platform[@name=\'ios\']/preference')
+                .filter(elem => elem.attrib.name.toLowerCase() === 'supportmac')[0];
+            pref.attrib.value = 'true';
+            writeFileSyncSpy.and.callThrough();
+            return updateProject(cfg3, p.locations).then(() => {
+                const proj = XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const supportedPlatforms = proj.getBuildProperty('SUPPORTED_PLATFORMS');
+                expect(supportedPlatforms).toBeUndefined();
+                const supportsMacCatalyst = proj.getBuildProperty('SUPPORTS_MACCATALYST');
+                expect(supportsMacCatalyst).toBeUndefined();
+                const supportsMacIPhoneIPad = proj.getBuildProperty('SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD');
+                expect(supportsMacIPhoneIPad).toBeUndefined();
+            });
+        });
+
+        it('should not support Mac apps if SupportMac preference is set to false', () => {
+            cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
+            const pref = cfg3.doc.findall('platform[@name=\'ios\']/preference')
+                .filter(elem => elem.attrib.name.toLowerCase() === 'supportmac')[0];
+            pref.attrib.value = 'false';
+            writeFileSyncSpy.and.callThrough();
+            return updateProject(cfg3, p.locations).then(() => {
+                const proj = XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const supportedPlatforms = proj.getBuildProperty('SUPPORTED_PLATFORMS');
+                expect(supportedPlatforms).toEqual('"iphoneos iphonesimulator"');
+                const supportsMacCatalyst = proj.getBuildProperty('SUPPORTS_MACCATALYST');
+                expect(supportsMacCatalyst).toEqual('NO');
+                const supportsMacIPhoneIPad = proj.getBuildProperty('SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD');
+                expect(supportsMacIPhoneIPad).toEqual('NO');
             });
         });
 
@@ -660,7 +711,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg, p.locations).then(() => {
-                const proj = new XcodeProject(p.locations.pbxproj);
+                const proj = XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
                 expect(prop).toEqual('testpkg');
@@ -678,7 +729,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg, p.locations).then(() => {
-                const proj = new XcodeProject(p.locations.pbxproj);
+                const proj = XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
                 expect(prop).toEqual('testpkg_ios');
