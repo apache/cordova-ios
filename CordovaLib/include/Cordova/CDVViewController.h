@@ -46,7 +46,10 @@
 
 @end
 
-@interface CDVViewController : UIViewController <CDVScreenOrientationDelegate>{
+/*!
+  @abstract The main view controller for Cordova web content.
+ */
+@interface CDVViewController : UIViewController {
     @protected
     id <CDVWebViewEngineProtocol> _webViewEngine;
     @protected
@@ -73,19 +76,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
-/**
-    Takes/Gives an array of UIInterfaceOrientation (int) objects
-    ex. UIInterfaceOrientationPortrait
-*/
-@property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 - (nullable NSString*)appURLScheme;
 - (nullable NSURL*)errorURL;
-
-- (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
-- (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 
 - (nullable id)getCommandInstance:(NSString*)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;

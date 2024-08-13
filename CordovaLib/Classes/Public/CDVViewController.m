@@ -55,7 +55,6 @@ UIColor* defaultBackgroundColor(void) {
 
 @implementation CDVViewController
 
-@synthesize supportedOrientations;
 @synthesize pluginObjects, pluginsMap, startupPluginNames;
 @synthesize configParser, settings;
 @synthesize wwwFolderName, startPage, initialized, openURL;
@@ -84,9 +83,6 @@ UIColor* defaultBackgroundColor(void) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onWebViewPageDidLoad:)
                                                      name:CDVPageDidLoadNotification object:nil];
 
-        // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-        self.supportedOrientations = [self parseInterfaceOrientations:
-            [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
 
         self.initialized = YES;
     }
@@ -349,65 +345,6 @@ UIColor* defaultBackgroundColor(void) {
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewWillTransitionToSizeNotification object:[NSValue valueWithCGSize:size]]];
-}
-
-- (NSArray*)parseInterfaceOrientations:(NSArray*)orientations
-{
-    NSMutableArray* result = [[NSMutableArray alloc] init];
-
-    if (orientations != nil) {
-        NSEnumerator* enumerator = [orientations objectEnumerator];
-        NSString* orientationString;
-
-        while (orientationString = [enumerator nextObject]) {
-            if ([orientationString isEqualToString:@"UIInterfaceOrientationPortrait"]) {
-                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
-            } else if ([orientationString isEqualToString:@"UIInterfaceOrientationPortraitUpsideDown"]) {
-                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortraitUpsideDown]];
-            } else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeLeft"]) {
-                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeLeft]];
-            } else if ([orientationString isEqualToString:@"UIInterfaceOrientationLandscapeRight"]) {
-                [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight]];
-            }
-        }
-    }
-
-    // default
-    if ([result count] == 0) {
-        [result addObject:[NSNumber numberWithInt:UIInterfaceOrientationPortrait]];
-    }
-
-    return result;
-}
-
-- (BOOL)shouldAutorotate
-{
-    return YES;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-    NSUInteger ret = 0;
-
-    if ([self supportsOrientation:UIInterfaceOrientationPortrait]) {
-        ret = ret | (1 << UIInterfaceOrientationPortrait);
-    }
-    if ([self supportsOrientation:UIInterfaceOrientationPortraitUpsideDown]) {
-        ret = ret | (1 << UIInterfaceOrientationPortraitUpsideDown);
-    }
-    if ([self supportsOrientation:UIInterfaceOrientationLandscapeRight]) {
-        ret = ret | (1 << UIInterfaceOrientationLandscapeRight);
-    }
-    if ([self supportsOrientation:UIInterfaceOrientationLandscapeLeft]) {
-        ret = ret | (1 << UIInterfaceOrientationLandscapeLeft);
-    }
-
-    return ret;
-}
-
-- (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation
-{
-    return [self.supportedOrientations containsObject:@(orientation)];
 }
 
 /// Retrieves the view from a newwly initialized webViewEngine

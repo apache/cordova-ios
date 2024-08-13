@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
+CDV_DEPRECATED(8, "Unused")
 @protocol CDVScreenOrientationDelegate <NSObject>
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations;
