@@ -15,16 +15,11 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import "SceneDelegate.h"
+import UIKit
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
-@interface SceneDelegate()
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+}
 
-@end
-
-@implementation SceneDelegate
-
-@end
-#endif
