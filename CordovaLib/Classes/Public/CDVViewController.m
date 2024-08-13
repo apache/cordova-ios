@@ -30,15 +30,23 @@
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import "CDVCommandDelegateImpl.h"
 
-UIColor* defaultBackgroundColor(void) {
+static UIColor* defaultBackgroundColor(void) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
     if (@available(iOS 13.0, *)) {
         return UIColor.systemBackgroundColor;
-    } else {
-        return UIColor.whiteColor;
     }
+#endif
+
+    return UIColor.whiteColor;
 }
 
-@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> { }
+@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> {
+    id <CDVWebViewEngineProtocol> _webViewEngine;
+    id <CDVCommandDelegate> _commandDelegate;
+    CDVCommandQueue* _commandQueue;
+    UIColor* _backgroundColor;
+    UIColor* _splashBackgroundColor;
+}
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
@@ -62,6 +70,8 @@ UIColor* defaultBackgroundColor(void) {
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 @synthesize webViewEngine = _webViewEngine;
+@synthesize backgroundColor = _backgroundColor;
+@synthesize splashBackgroundColor = _splashBackgroundColor;
 @dynamic webView;
 
 - (void)__init
@@ -84,6 +94,8 @@ UIColor* defaultBackgroundColor(void) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onWebViewPageDidLoad:)
                                                      name:CDVPageDidLoadNotification object:nil];
 
+
+        self.showInitialSplashScreen = YES;
 
         self.initialized = YES;
     }
@@ -108,6 +120,16 @@ UIColor* defaultBackgroundColor(void) {
     self = [super init];
     [self __init];
     return self;
+}
+
+- (void)setBackgroundColor:(UIColor *)color
+{
+    _backgroundColor = color ?: defaultBackgroundColor();
+}
+
+- (void)setSplashBackgroundColor:(UIColor *)color
+{
+    _splashBackgroundColor = color ?: self.backgroundColor;
 }
 
 -(NSString*)configFilePath{
@@ -298,12 +320,12 @@ UIColor* defaultBackgroundColor(void) {
     }
     // /////////////////
 
-    UIColor* bgDefault = defaultBackgroundColor();
-    UIColor* bgColor = [UIColor colorNamed:@"BackgroundColor"] ?: bgDefault;
-    UIColor* bgSplash = [UIColor colorNamed:@"SplashScreenBackgroundColor"] ?: bgColor;
+    [self.webView setBackgroundColor:self.backgroundColor];
+    [self.launchView setBackgroundColor:self.splashBackgroundColor];
 
-    [self.webView setBackgroundColor:bgColor];
-    [self.launchView setBackgroundColor:bgSplash];
+    if (self.showInitialSplashScreen) {
+        [self.launchView setAlpha:1];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated

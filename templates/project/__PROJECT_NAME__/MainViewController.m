@@ -21,10 +21,4 @@
 
 @implementation MainViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self.launchView setAlpha:1];
-}
-
 @end
