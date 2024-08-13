@@ -43,12 +43,14 @@ extern NSString* const CDVViewWillLayoutSubviewsNotification;
 extern NSString* const CDVViewDidLayoutSubviewsNotification;
 extern NSString* const CDVViewWillTransitionToSizeNotification;
 
+@class CDVViewController;
+
 @interface CDVPlugin : NSObject {}
 
 @property (nonatomic, readonly, weak) UIView* webView;
 @property (nonatomic, readonly, weak) id <CDVWebViewEngineProtocol> webViewEngine;
 
-@property (nonatomic, weak) UIViewController* viewController;
+@property (nonatomic, weak) CDVViewController* viewController;
 @property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
