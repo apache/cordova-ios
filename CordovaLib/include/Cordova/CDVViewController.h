@@ -28,23 +28,7 @@
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 
-@protocol CDVWebViewEngineConfigurationDelegate <NSObject>
-
-@optional
-/// Provides a fully configured WKWebViewConfiguration which will be overriden with
-/// any related settings you add to config.xml (e.g., `PreferredContentMode`).
-/// Useful for more complex configuration, including websiteDataStore.
-///
-/// Example usage:
-///
-/// extension CDVViewController: CDVWebViewEngineConfigurationDelegate {
-///     public func configuration() -> WKWebViewConfiguration {
-///         // return your config here
-///     }
-/// }
-- (nonnull WKWebViewConfiguration*)configuration;
-
-@end
+NS_ASSUME_NONNULL_BEGIN
 
 /*!
   @abstract The main view controller for Cordova web content.
@@ -58,7 +42,6 @@
     CDVCommandQueue* _commandQueue;
 }
 
-NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, weak) IBOutlet UIView* webView;
 
@@ -109,6 +92,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)showLaunchScreen:(BOOL)visible;
 
-NS_ASSUME_NONNULL_END
-
 @end
+
+NS_ASSUME_NONNULL_END
