@@ -25,8 +25,9 @@
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
-#import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
+
+@class CDVPlugin;
 
 @protocol CDVWebViewEngineConfigurationDelegate <NSObject>
 

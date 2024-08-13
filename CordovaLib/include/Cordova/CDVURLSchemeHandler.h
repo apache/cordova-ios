@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
 #import <Cordova/CDVViewController.h>
+#import <Cordova/CDVPlugin.h>
 
 
 @interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>

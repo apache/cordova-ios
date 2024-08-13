@@ -24,16 +24,12 @@
 
 - (void)show:(CDVInvokedUrlCommand*)command
 {
-    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        [(CDVViewController*)self.viewController showLaunchScreen:YES];
-    }
+    [self.viewController showLaunchScreen:YES];
 }
 
 - (void)hide:(CDVInvokedUrlCommand*)command
 {
-    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        [(CDVViewController*)self.viewController showLaunchScreen:NO];
-    }
+    [self.viewController showLaunchScreen:NO];
 }
 
 @end

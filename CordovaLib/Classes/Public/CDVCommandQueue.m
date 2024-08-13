@@ -20,6 +20,7 @@
 #include <objc/message.h>
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVViewController.h>
+#import <Cordova/CDVPlugin.h>
 #import "CDVCommandDelegateImpl.h"
 #import "CDVJSON_private.h"
 #import "CDVDebug.h"
