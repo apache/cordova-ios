@@ -21,24 +21,32 @@
 
 #import "ViewController.h"
 
+@interface AppDelegate () {
+    UIWindow *_window;
+    CDVViewController *_viewController;
+}
+@end
+
 @implementation AppDelegate
+
+@synthesize testViewController = _viewController;
 
 - (void)createViewController
 {
-    self.viewController = [[ViewController alloc] init];
-    self.viewController.wwwFolderName = @"www";
-    self.viewController.startPage = @"index.html";
+    _viewController = [[ViewController alloc] init];
+    _viewController.webContentFolderName = @"www";
+    _viewController.startPage = @"index.html";
 
     // NOTE: To customize the view's frame size (which defaults to full screen), override
     // [self.viewController viewWillAppear:] in your view controller.
 
-    self.window.rootViewController = self.viewController;
-    [self.window makeKeyAndVisible];
+    _window.rootViewController = _viewController;
+    [_window makeKeyAndVisible];
 }
 
 - (void)destroyViewController
 {
-    self.viewController = nil;
+    _viewController = nil;
 }
 
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
@@ -46,8 +54,8 @@
     BOOL retVal = [super application:application didFinishLaunchingWithOptions:launchOptions];
 
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
-    self.window.autoresizesSubviews = YES;
+    _window = [[UIWindow alloc] initWithFrame:screenBounds];
+    _window.autoresizesSubviews = YES;
 
     // Create the main view on start-up only when not running unit tests.
     if (!NSClassFromString(@"CDVWebViewTest")) {

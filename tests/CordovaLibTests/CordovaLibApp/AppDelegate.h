@@ -20,9 +20,11 @@
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVAppDelegate.h>
 
-@class ViewController;
+@class CDVViewController;
 
 @interface AppDelegate : CDVAppDelegate
+
+@property (nullable, nonatomic, strong, readonly) CDVViewController *testViewController;
 
 - (void)createViewController;
 - (void)destroyViewController;

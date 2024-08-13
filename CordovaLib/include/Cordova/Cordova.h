@@ -19,10 +19,10 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for Cordova.
+/** Project version number for Cordova. */
 FOUNDATION_EXPORT double CordovaVersionNumber;
 
-//! Project version string for Cordova.
+/** Project version string for Cordova. */
 FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
 
 #import <Cordova/CDV.h>

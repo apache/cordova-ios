@@ -1,0 +1,75 @@
+/*
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ */
+
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ A dictionary-like interface providing access to the preference settings for a Cordova web view.
+ */
+@interface CDVSettingsDictionary : NSObject
+
+/**
+ The number of entries in the dictionary.
+ */
+@property(readonly) NSUInteger count;
+
+/**
+ Initializes a newly allocated dictionary by placing in it the keys and values
+ contained in another given dictionary.
+
+ - Parameters:
+   - dict: A dictionary containing the keys and values with which to initialize
+           the new dictionary.
+ - Returns: An initialized dictionary containing the keys and values found in `dict`.
+ */
+- (instancetype)initWithDictionary:(NSDictionary *)dict NS_DESIGNATED_INITIALIZER;
+
+/**
+ Returns the value associated with a given key.
+
+ - Parameters:
+   - key:  The key for which to return the corresponding value.
+ - Returns:  The value associated with `key`, or `nil` if no value is associated with `key`.
+ */
+- (id)objectForKey:(NSString *)key;
+
+/**
+ Provides an enumerator to access the keys in the dictionary.
+
+ - Returns: An enumerator object that lets you access each key in the dictionary.
+ */
+- (NSEnumerator *)keyEnumerator;
+
+/**
+ Returns the value associated with a given key.
+
+ - Parameters:
+   - key:  The key for which to return the corresponding value.
+ - Returns:  The value associated with `key`, or `nil` if no value is associated with `key`.
+ */
+- (id)cordovaSettingForKey:(NSString *)key;
+
+- (BOOL)cordovaBoolSettingForKey:(NSString *)key defaultValue:(BOOL)defaultValue;
+- (CGFloat)cordovaFloatSettingForKey:(NSString *)key defaultValue:(CGFloat)defaultValue;
+
+@end
+
+NS_ASSUME_NONNULL_END

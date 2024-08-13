@@ -54,10 +54,10 @@
     [directoryParts removeLastObject];
 
     NSString* directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
-    NSString* directoryStr = _viewController.wwwFolderName;
+    NSString* directoryStr = _viewController.webContentFolderName;
 
     if ([directoryPartsJoined length] > 0) {
-        directoryStr = [NSString stringWithFormat:@"%@/%@", _viewController.wwwFolderName, [directoryParts componentsJoinedByString:@"/"]];
+        directoryStr = [NSString stringWithFormat:@"%@/%@", _viewController.webContentFolderName, [directoryParts componentsJoinedByString:@"/"]];
     }
 
     return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];
@@ -173,7 +173,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
 }
 
-- (NSDictionary*)settings
+- (CDVSettingsDictionary*)settings
 {
     return _viewController.settings;
 }

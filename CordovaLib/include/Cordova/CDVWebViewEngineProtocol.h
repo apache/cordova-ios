@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param configuration The configuration for the new web view.
 - (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration;
 
-- (void)updateWithInfo:(NSDictionary*)info;
+- (void)updateWithInfo:(NSDictionary *)info;
 
 NS_ASSUME_NONNULL_END
 

@@ -18,7 +18,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import <Cordova/CDV.h>
+#import <Cordova/Cordova.h>
 #import "AppDelegate.h"
 
 @interface CDVPluginInitTests : XCTestCase
@@ -40,7 +40,7 @@
 
     self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
-    self.viewController = self.appDelegate.viewController;
+    self.viewController = self.appDelegate.testViewController;
 }
 
 - (void)tearDown

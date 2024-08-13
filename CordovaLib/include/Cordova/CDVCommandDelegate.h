@@ -23,12 +23,13 @@
 @class CDVPlugin;
 @class CDVPluginResult;
 @class CDVAllowList;
+@class CDVSettingsDictionary;
 
 typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 
 @protocol CDVCommandDelegate <NSObject>
 
-@property (nonatomic, readonly) NSDictionary* settings;
+@property (nonatomic, readonly) CDVSettingsDictionary* settings;
 @property (nonatomic, copy) UrlTransformerBlock urlTransformer;
 
 - (NSString*)pathForResource:(NSString*)resourcepath;

@@ -18,12 +18,13 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <Cordova/CDVAvailability.h>
 
 @interface NSMutableArray (QueueAdditions)
 
-- (id)cdv_pop;
-- (id)cdv_queueHead;
+- (id)cdv_pop CDV_DEPRECATED(8, "Unused");
+- (id)cdv_queueHead CDV_DEPRECATED(8, "Unused");
 - (id)cdv_dequeue;
-- (void)cdv_enqueue:(id)obj;
+- (void)cdv_enqueue:(id)obj CDV_DEPRECATED(8, "Unused");
 
 @end

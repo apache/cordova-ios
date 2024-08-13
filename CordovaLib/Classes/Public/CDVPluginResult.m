@@ -21,11 +21,12 @@
 #import "CDVJSON_private.h"
 #import "CDVDebug.h"
 
+#ifdef __swift__
 // This exists to preserve compatibility with early Swift plugins, who are
 // using CDVCommandStatus as ObjC-style constants rather than as Swift enum
 // values.
 // These constants alias the enum values back to their previous names.
-// TODO: Remove in Cordova iOS 8
+// TODO: Remove in Cordova iOS 9
 #define SWIFT_ENUM_COMPAT_HACK(enumVal) const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) = enumVal
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK);
@@ -38,10 +39,11 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INVALID_ACTION);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_JSON_EXCEPTION);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR);
 #undef SWIFT_ENUM_COMPAT_HACK
+#endif
 
 @interface CDVPluginResult ()
 
-- (CDVPluginResult*)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage;
+- (CDVPluginResult*)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage NS_DESIGNATED_INITIALIZER;
 
 @end
 

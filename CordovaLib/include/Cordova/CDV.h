@@ -28,9 +28,9 @@
 #import <Cordova/CDVConfigParser.h>
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVPlugin+Resources.h>
+#import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
-#import <Cordova/NSDictionary+CordovaPreferences.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVAllowList.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
