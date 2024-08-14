@@ -15,11 +15,11 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
 
-@interface CDVInvokedUrlCommand : NSObject {
+@interface CDVInvokedURLCommand : NSObject {
     NSString* _callbackId;
     NSString* _className;
     NSString* _methodName;
@@ -31,14 +31,16 @@
 @property (nonatomic, readonly) NSString* className;
 @property (nonatomic, readonly) NSString* methodName;
 
-+ (CDVInvokedUrlCommand*)commandFromJson:(NSArray*)jsonEntry;
++ (instancetype)commandFromJson:(NSArray*)jsonEntry;
 
-- (id)initWithArguments:(NSArray*)arguments
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithArguments:(NSArray*)arguments
              callbackId:(NSString*)callbackId
               className:(NSString*)className
-             methodName:(NSString*)methodName;
+             methodName:(NSString*)methodName NS_DESIGNATED_INITIALIZER;
 
-- (id)initFromJson:(NSArray*)jsonEntry;
+- (instancetype)initFromJson:(NSArray*)jsonEntry;
 
 // Returns the argument at the given index.
 // If index >= the number of arguments, returns nil.
@@ -50,3 +52,5 @@
 - (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue andClass:(Class)aClass;
 
 @end
+
+typedef CDVInvokedURLCommand CDVInvokedUrlCommand;

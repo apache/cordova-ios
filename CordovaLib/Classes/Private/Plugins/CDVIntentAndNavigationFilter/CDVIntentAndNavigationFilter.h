@@ -18,9 +18,9 @@
  */
 
 #import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVAllowList.h>
 
-#define CDVWebViewNavigationType int
+@class CDVAllowList;
+typedef int CDVWebViewNavigationType;
 
 typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
     CDVIntentAndNavigationFilterValueIntentAllowed,

@@ -15,16 +15,17 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 #import <Cordova/CDVPluginResult.h>
-#import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
+#import <Cordova/CDVInvokedURLCommand.h>
+#import <Cordova/CDVViewController.h>
 
 @interface UIView (org_apache_cordova_UIView_Extension)
 
@@ -37,7 +38,7 @@
  */
 extern const NSNotificationName CDVPageDidLoadNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLNotification;
-extern const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED_WITH_REPLACEMENT(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.", "CDVPluginHandleOpenURLNotification");
+extern const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification __CDV_DEPRECATED_WITH_REPLACEMENT(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.", "CDVPluginHandleOpenURLNotification");
 extern const NSNotificationName CDVPluginResetNotification;
 extern const NSNotificationName CDVViewWillAppearNotification;
 extern const NSNotificationName CDVViewDidAppearNotification;
@@ -63,7 +64,7 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 - (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;
-- (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification*)notification CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use the handleOpenUrl method and the notification userInfo data.", "handleOpenUrl");
+- (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification*)notification __CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use the handleOpenUrl method and the notification userInfo data.", "handleOpenUrl");
 - (void)onAppTerminate;
 - (void)onMemoryWarning;
 - (void)onReset;

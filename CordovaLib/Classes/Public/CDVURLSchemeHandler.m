@@ -15,10 +15,12 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 
 #import <Cordova/CDVURLSchemeHandler.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVViewController.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
 #import <objc/message.h>

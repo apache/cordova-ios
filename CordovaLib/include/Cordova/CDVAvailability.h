@@ -15,8 +15,9 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
+#import <UIKit/UIKit.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 
 #define __CORDOVA_IOS__
@@ -98,16 +99,33 @@
     #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_7_1_1
 #endif
 
-/*
- Returns YES if it is at least version specified as NSString(X)
- Usage:
-     if (IsAtLeastiOSVersion(@"5.1")) {
-         // do something for iOS 5.1 or greater
-     }
- */
-#define IsAtLeastiOSVersion(X) ([[[UIDevice currentDevice] systemVersion] compare:X options:NSNumericSearch] != NSOrderedAscending)
+__CDV_DEPRECATED(8, "Use the built-in #available syntax")
+/**
+ Returns `YES` if the system is at least the given version.
 
-/* Return the string version of the decimal version */
+ @DeprecationSummary {
+     You should use the built-in `#available` and `@available` syntax in Objective-C
+     and Swift rather than this function to do run-time version checks.
+ }
+
+ ```objc
+    // Instead of this:
+    if (IsAtLeastiOSVersion(@"15.1")) {
+        // Do something for iOS 15.1 and greater
+    }
+
+    // Do this:
+    if (#available(iOS 15.1, *)) {
+        // Do something for iOS 15.1 and greater
+    }
+ ```
+ */
+NS_INLINE BOOL IsAtLeastiOSVersion(NSString *version)
+{
+    return [[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedAscending;
+}
+
+/** Return the string version of the decimal version */
 #define CDV_VERSION [NSString stringWithFormat:@"%d.%d.%d", \
     (CORDOVA_VERSION_MIN_REQUIRED / 10000),                 \
     (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100,           \

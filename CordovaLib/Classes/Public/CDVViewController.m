@@ -15,7 +15,7 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 @import AVFoundation;
 @import Foundation;
@@ -23,9 +23,11 @@
 
 #import <objc/message.h>
 #import <Foundation/NSCharacterSet.h>
-#import <Cordova/CDV.h>
-#import "CDVPlugin+Private.h"
+#import <Cordova/CDVViewController.h>
 #import <Cordova/CDVConfigParser.h>
+#import <Cordova/CDVTimer.h>
+#import <Cordova/CDVPlugin.h>
+#import "CDVPlugin+Private.h"
 #import "CDVCommandDelegateImpl.h"
 
 static UIColor* defaultBackgroundColor(void) {
@@ -68,7 +70,6 @@ static UIColor* defaultBackgroundColor(void) {
 @synthesize settings = _settings;
 
 @synthesize pluginObjects, pluginsMap, startupPluginNames;
-@synthesize configParser;
 
 #pragma mark - Initializers
 
@@ -99,9 +100,7 @@ static UIColor* defaultBackgroundColor(void) {
     return self;
 }
 
-/*!
-  @abstract Initializes private state for the Cordova View Controller.
- */
+/** Initializes private state for the Cordova View Controller. */
 - (void)_init
 {
     if (!self.initialized) {
@@ -183,7 +182,8 @@ static UIColor* defaultBackgroundColor(void) {
     _settings = settings;
 }
 
--(NSString*)configFilePath{
+- (nullable NSURL *)configFilePath
+{
     NSString* path = self.configFile;
 
     // if path is relative, resolve it against the main bundle
@@ -201,46 +201,7 @@ static UIColor* defaultBackgroundColor(void) {
         return nil;
     }
 
-    return path;
-}
-
-- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate
-{
-    // read from config.xml in the app bundle
-    NSString* path = [self configFilePath];
-
-    NSURL* url = [NSURL fileURLWithPath:path];
-
-    self.configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
-    if (self.configParser == nil) {
-        NSLog(@"Failed to initialize XML parser.");
-        return;
-    }
-    [self.configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
-    [self.configParser parse];
-}
-
-- (void)loadSettings
-{
-    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
-
-    [self parseSettingsWithParser:delegate];
-
-    // Get the plugin dictionary, allowList and settings from the delegate.
-    self.pluginsMap = delegate.pluginsDict;
-    self.startupPluginNames = delegate.startupPluginNames;
-    _settings = [[CDVSettingsDictionary alloc] initWithDictionary:delegate.settings];
-
-    // And the start page.
-    if (delegate.startPage && self.startPage == nil) {
-        self.startPage = delegate.startPage;
-    }
-    if (self.startPage == nil) {
-        self.startPage = @"index.html";
-    }
-
-    // Initialize the plugin objects dict.
-    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
+    return [NSURL fileURLWithPath:path];
 }
 
 - (NSURL*)appUrl
@@ -281,29 +242,27 @@ static UIColor* defaultBackgroundColor(void) {
     return appURL;
 }
 
-- (nullable NSURL*)errorURL
+- (nullable NSURL *)errorURL
 {
-    NSURL* errorUrl = nil;
+    NSString *setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
+    if (setting == nil) {
+        return nil;
+    }
 
-    id setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
-
-    if (setting) {
-        NSString* errorUrlString = (NSString*)setting;
-        if ([errorUrlString rangeOfString:@"://"].location != NSNotFound) {
-            errorUrl = [NSURL URLWithString:errorUrlString];
-        } else {
-            NSURL* url = [NSURL URLWithString:(NSString*)setting];
-            NSString* errorFilePath = [self.commandDelegate pathForResource:[url path]];
-            if (errorFilePath) {
-                errorUrl = [NSURL fileURLWithPath:errorFilePath];
-            }
+    if ([setting rangeOfString:@"://"].location != NSNotFound) {
+        return [NSURL URLWithString:setting];
+    } else {
+        NSURL *url = [NSURL URLWithString:setting];
+        NSString *errorFilePath = [self.commandDelegate pathForResource:[url path]];
+        if (errorFilePath) {
+            return [NSURL fileURLWithPath:errorFilePath];
         }
     }
 
-    return errorUrl;
+    return nil;
 }
 
-- (UIView*)webView
+- (nullable UIView *)webView
 {
     if (_webViewEngine != nil) {
         return _webViewEngine.engineWebView;
@@ -518,6 +477,27 @@ static UIColor* defaultBackgroundColor(void) {
 
 #pragma mark - View Setup
 
+- (void)loadSettings
+{
+    CDVConfigParser *parser = [CDVConfigParser parseConfigFile:self.configFilePath];
+
+    // Get the plugin dictionary, allowList and settings from the config file
+    self.pluginsMap = parser.pluginsDict;
+    self.startupPluginNames = parser.startupPluginNames;
+    _settings = [[CDVSettingsDictionary alloc] initWithDictionary:parser.settings];
+
+    // And the start page
+    if (parser.startPage && self.startPage == nil) {
+        self.startPage = parser.startPage;
+    }
+    if (self.startPage == nil) {
+        self.startPage = @"index.html";
+    }
+
+    // Initialize the plugin objects dictionary
+    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
+}
+
 /// Retrieves the view from a newwly initialized webViewEngine
 /// @param bounds The bounds with which the webViewEngine will be initialized
 - (nonnull UIView*)newCordovaViewWithFrame:(CGRect)bounds
@@ -728,6 +708,11 @@ static UIColor* defaultBackgroundColor(void) {
     if (!visible) {
         [self.webView becomeFirstResponder];
     }
+}
+
+- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate
+{
+    [CDVConfigParser parseConfigFile:self.configFilePath withDelegate:delegate];
 }
 
 @end

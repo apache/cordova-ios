@@ -31,6 +31,6 @@
     __weak CDVCommandQueue* _commandQueue;
     BOOL _delayResponses;
 }
-- (id)initWithViewController:(CDVViewController*)viewController;
+- (instancetype)initWithViewController:(CDVViewController *)viewController;
 - (void)flushCommandQueueWithDelayedJs;
 @end

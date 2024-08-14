@@ -15,24 +15,29 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVInvokedURLCommand.h>
 #import "CDVJSON_private.h"
 
-@implementation CDVInvokedUrlCommand
+@implementation CDVInvokedURLCommand
 
 @synthesize arguments = _arguments;
 @synthesize callbackId = _callbackId;
 @synthesize className = _className;
 @synthesize methodName = _methodName;
 
-+ (CDVInvokedUrlCommand*)commandFromJson:(NSArray*)jsonEntry
++ (instancetype)commandFromJson:(NSArray*)jsonEntry
 {
-    return [[CDVInvokedUrlCommand alloc] initFromJson:jsonEntry];
+    return [[CDVInvokedURLCommand alloc] initFromJson:jsonEntry];
 }
 
-- (id)initFromJson:(NSArray*)jsonEntry
+- (instancetype)init
+{
+    return [self initWithArguments:nil callbackId:nil className:nil methodName:nil];
+}
+
+- (instancetype)initFromJson:(NSArray*)jsonEntry
 {
     id tmp = [jsonEntry objectAtIndex:0];
     NSString* callbackId = tmp == [NSNull null] ? nil : tmp;
@@ -46,7 +51,7 @@
                         methodName:methodName];
 }
 
-- (id)initWithArguments:(NSArray*)arguments
+- (instancetype)initWithArguments:(NSArray*)arguments
              callbackId:(NSString*)callbackId
               className:(NSString*)className
              methodName:(NSString*)methodName

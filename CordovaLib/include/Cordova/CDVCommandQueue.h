@@ -15,18 +15,19 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
 
-@class CDVInvokedUrlCommand;
+@class CDVInvokedURLCommand;
 @class CDVViewController;
 
 @interface CDVCommandQueue : NSObject
 
 @property (nonatomic, readonly) BOOL currentlyExecuting;
 
-- (id)initWithViewController:(CDVViewController*)viewController;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithViewController:(CDVViewController*)viewController NS_DESIGNATED_INITIALIZER;
 - (void)dispose;
 
 - (void)resetRequestId;
@@ -34,6 +35,6 @@
 
 - (void)fetchCommandsFromJs;
 - (void)executePending;
-- (BOOL)execute:(CDVInvokedUrlCommand*)command;
+- (BOOL)execute:(CDVInvokedURLCommand*)command;
 
 @end

@@ -15,16 +15,16 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVAvailability.h>
 
 @interface NSMutableArray (QueueAdditions)
 
-- (id)cdv_pop CDV_DEPRECATED(8, "Unused");
-- (id)cdv_queueHead CDV_DEPRECATED(8, "Unused");
+- (id)cdv_pop __CDV_DEPRECATED(8, "Unused");
+- (id)cdv_queueHead __CDV_DEPRECATED(8, "Unused");
 - (id)cdv_dequeue;
-- (void)cdv_enqueue:(id)obj CDV_DEPRECATED(8, "Unused");
+- (void)cdv_enqueue:(id)obj __CDV_DEPRECATED(8, "Unused");
 
 @end

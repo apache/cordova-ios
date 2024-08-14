@@ -15,18 +15,19 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 #import <Foundation/NSJSONSerialization.h>
 #import <Cordova/CDVAvailability.h>
-#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVInvokedURLCommand.h>
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVCommandQueue.h>
-#import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 #import <Cordova/CDVSettingsDictionary.h>
+
+@class CDVPlugin;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -52,6 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface CDVViewController : UIViewController
 
+@property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser __CDV_DEPRECATED(8, "Unused");
+
 /**
  The view displaying web content for this Cordova controller.
 
@@ -64,7 +67,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic, readonly, strong) NSMutableDictionary<NSString*, CDVPlugin*>* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
-@property (nonatomic, readonly, strong) NSXMLParser* configParser;
 @property (nonatomic, readwrite, copy) NSString* appScheme;
 
 @property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
@@ -97,6 +99,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite, copy) IBInspectable NSString *configFile;
 
 /**
+ The filepath to the Cordova XML configuration file.
+ */
+@property (nonatomic, nullable, readonly, copy) NSURL *configFilePath;
+
+/**
+ The filepath to the HTML error fallback page, if one has been provided.
+ */
+@property (nonatomic, nullable, readonly, copy) NSURL *errorURL;
+
+/**
  The folder path containing the web content to be displayed.
 
  The default value is `"www"`.
@@ -114,7 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  The default value is `"www"`.
  */
-@property (nonatomic, readwrite, copy, getter=webContentFolderName) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
+@property (nonatomic, readwrite, copy, getter=webContentFolderName) NSString *wwwFolderName __CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
 
 /**
  The filename of the HTML file to load into the web view.
@@ -160,13 +172,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (nullable NSURL*)errorURL;
+/**
+ Returns the ``CDVPlugin`` instance of the given plugin name, creating the
+ instance if one does not exist.
 
-- (nullable CDVPlugin*)getCommandInstance:(NSString*)pluginName;
+ - Parameters:
+   - pluginName: The name of the plugin to return.
+ - Returns: The ``CDVPlugin`` instance, or `nil` if no plugin exists with the
+   given name.
+ */
+- (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
+
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
-
-- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
 
 /**
  Toggles the display of the splash screen overtop of the web view.
@@ -178,7 +196,7 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - visible: Whether to make the splash screen visible or not.
  */
-- (void)showLaunchScreen:(BOOL)visible CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use showSplashScreen: instead", "showSplashScreen");
+- (void)showLaunchScreen:(BOOL)visible __CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use showSplashScreen: instead", "showSplashScreen");
 
 /**
  Toggles the display of the splash screen overtop of the web view.
@@ -187,6 +205,15 @@ NS_ASSUME_NONNULL_BEGIN
    - visible: Whether to make the splash screen visible or not.
  */
 - (void)showSplashScreen:(BOOL)visible;
+
+/**
+ Parses the  Cordova XML configuration file using the given delegate.
+
+ @DeprecationSummary {
+    Use `CDVConfigParser` ``CDVConfigParser/parseConfigFile:withDelegate:`` instead.
+ }
+ */
+- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate __CDV_DEPRECATED(8, "Use CDVConfigParser parseConfigFile:withDelegate: instead");
 
 @end
 

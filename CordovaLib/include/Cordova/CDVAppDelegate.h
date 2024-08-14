@@ -15,12 +15,14 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 
 @class CDVViewController;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  App delegate class with some additional Cordova-specific behaviour.
@@ -36,7 +38,9 @@
  */
 @interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (nullable, nonatomic, strong) IBOutlet UIWindow* window CDV_DEPRECATED(8, "The window is now managed through the iOS SceneDelegate API.");
-@property (nullable, nonatomic, strong) IBOutlet CDVViewController* viewController CDV_DEPRECATED(8, "This will always be nil.");
+@property (nullable, nonatomic, strong) IBOutlet UIWindow* window __CDV_DEPRECATED(8, "The window is now managed through the iOS SceneDelegate API.");
+@property (nullable, nonatomic, strong) IBOutlet CDVViewController* viewController __CDV_DEPRECATED(8, "This will always be nil.");
 
 @end
+
+NS_ASSUME_NONNULL_END

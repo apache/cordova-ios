@@ -19,17 +19,17 @@
 
 #import <XCTest/XCTest.h>
 
-#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVInvokedURLCommand.h>
 
-@interface CDVInvokedUrlCommandTests : XCTestCase
+@interface CDVInvokedURLCommandTests : XCTestCase
 @end
 
-@implementation CDVInvokedUrlCommandTests
+@implementation CDVInvokedURLCommandTests
 
 - (void)testInitWithNoArgs
 {
     NSArray* jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", [NSArray array], nil];
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+    CDVInvokedURLCommand* command = [CDVInvokedURLCommand commandFromJson:jsonArr];
 
     XCTAssertEqual(@"callbackId", command.callbackId);
     XCTAssertEqual(@"className", command.className);
@@ -40,12 +40,23 @@
 - (void)testArgumentAtIndex
 {
     NSArray* jsonArr = [NSArray arrayWithObjects:[NSNull null], @"className", @"methodName", [NSArray array], nil];
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+    CDVInvokedURLCommand* command = [CDVInvokedURLCommand commandFromJson:jsonArr];
 
     XCTAssertNil([command argumentAtIndex:0], @"NSNull to nil");
     XCTAssertNil([command argumentAtIndex:100], @"Invalid index to nil");
     XCTAssertEqual(@"default", [command argumentAtIndex:0 withDefault:@"default"], @"NSNull to default");
     XCTAssertEqual(@"default", [command argumentAtIndex:100 withDefault:@"default"], @"Invalid index to default");
+}
+
+- (void)testInitWithBackwardCompatibleName
+{
+    NSArray* jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", [NSArray array], nil];
+    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+
+    XCTAssertEqual(@"callbackId", command.callbackId);
+    XCTAssertEqual(@"className", command.className);
+    XCTAssertEqual(@"methodName", command.methodName);
+    XCTAssertEqual([NSArray array], command.arguments);
 }
 
 @end

@@ -15,21 +15,47 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
-#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
 
+/**
+ An enumeration that describes the result of handling a plugin command.
+
+ ## See Also
+
+ - ``CDVPluginResult``
+ */
 typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
+    /** Status code indicating no command result. */
     CDVCommandStatus_NO_RESULT NS_SWIFT_NAME(noResult) = 0,
+
+    /** Status code indicating successful handling of the command. */
     CDVCommandStatus_OK NS_SWIFT_NAME(ok),
+
+    /** Status code indicating the command's plugin class could not be found. */
     CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION NS_SWIFT_NAME(classNotFoundException),
+
+    /** Status code indicating there was an illegal access exception while handling the command. */
     CDVCommandStatus_ILLEGAL_ACCESS_EXCEPTION NS_SWIFT_NAME(illegalAccessException),
+
+    /** Status code indicating the command's plugin class could not be instantiated. */
     CDVCommandStatus_INSTANTIATION_EXCEPTION NS_SWIFT_NAME(instantiationException),
+
+    /** Status code indicating the command included a malformed URL. */
     CDVCommandStatus_MALFORMED_URL_EXCEPTION NS_SWIFT_NAME(malformedUrlException),
+
+    /** Status code indicating there was an I/O exception while handling the command. */
     CDVCommandStatus_IO_EXCEPTION NS_SWIFT_NAME(ioException),
+
+    /** Status code indicating the command's action was not valid. */
     CDVCommandStatus_INVALID_ACTION NS_SWIFT_NAME(invalidAction),
+
+    /** Status code indicating the command's JSON data was invalid. */
     CDVCommandStatus_JSON_EXCEPTION NS_SWIFT_NAME(jsonException),
+
+    /** Status code indicating there was an error handling the command. */
     CDVCommandStatus_ERROR NS_SWIFT_NAME(error)
 };
 
@@ -39,7 +65,7 @@ typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
 // values.
 // This declares extern'ed constants (implemented in CDVPluginResult.m)
 // TODO: Remove this in Cordova iOS 9
-#define SWIFT_ENUM_COMPAT_HACK(enumVal, replacement) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use the CDVCommandStatus." #replacement " enum value instead", "CDVCommandStatus." #replacement)
+#define SWIFT_ENUM_COMPAT_HACK(enumVal, replacement) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) __CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use the CDVCommandStatus." #replacement " enum value instead", "CDVCommandStatus." #replacement)
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT, noResult);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK, ok);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION, classNotFoundException);
@@ -62,19 +88,19 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR, error);
 // Use it to store the associated NSData when `message` is created using initWithBytesNoCopy.
 @property (nonatomic, strong) id associatedObject;
 
-- (CDVPluginResult*)init;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArray:(NSArray*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsInt:(int)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDouble:(double)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray*)theMessages;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
+- (instancetype)init;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArray:(NSArray *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsInt:(int)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDouble:(double)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray *)theMessages;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
 
 + (void)setVerbose:(BOOL)verbose;
 + (BOOL)isVerbose;

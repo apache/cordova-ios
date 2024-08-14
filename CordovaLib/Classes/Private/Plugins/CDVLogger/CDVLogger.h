@@ -21,6 +21,6 @@
 
 @interface CDVLogger : CDVPlugin
 
-- (void)logLevel:(CDVInvokedUrlCommand*)command;
+- (void)logLevel:(CDVInvokedURLCommand*)command;
 
 @end

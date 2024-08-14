@@ -22,7 +22,7 @@
 @implementation CDVLogger
 
 /* log a message */
-- (void)logLevel:(CDVInvokedUrlCommand*)command
+- (void)logLevel:(CDVInvokedURLCommand*)command
 {
     id level = [command argumentAtIndex:0];
     id message = [command argumentAtIndex:1];

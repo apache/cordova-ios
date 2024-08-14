@@ -15,14 +15,7 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import <UIKit/UIKit.h>
-
-#ifdef __clang__
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
-    #define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))
-#else
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
-    #define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated()))
-#endif
+#define __CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#define __CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))

@@ -18,16 +18,15 @@
  */
 
 #import "CDVLaunchScreen.h"
-#import <Cordova/CDVViewController.h>
 
 @implementation CDVLaunchScreen
 
-- (void)show:(CDVInvokedUrlCommand*)command
+- (void)show:(CDVInvokedURLCommand*)command
 {
     [self.viewController showSplashScreen:YES];
 }
 
-- (void)hide:(CDVInvokedUrlCommand*)command
+- (void)hide:(CDVInvokedURLCommand*)command
 {
     [self.viewController showSplashScreen:NO];
 }

@@ -15,7 +15,7 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
 
@@ -67,7 +67,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (id)cordovaSettingForKey:(NSString *)key;
 
+/**
+ Returns the boolean value associated with a given key, or the given default
+ value if the key is not found.
+
+ - Parameters:
+   - key:  The key for which to return the corresponding value.
+   - defaultValue: The default value to return if the key is missing.
+ - Returns:  The value associated with `key`, or the provided default value.
+ */
 - (BOOL)cordovaBoolSettingForKey:(NSString *)key defaultValue:(BOOL)defaultValue;
+
+/**
+ Returns the floating-point numeric value associated with a given key, or the
+ given default value if the key is not found.
+
+ - Parameters:
+   - key:  The key for which to return the corresponding value.
+   - defaultValue: The default value to return if the key is missing.
+ - Returns:  The value associated with `key`, or the provided default value.
+ */
 - (CGFloat)cordovaFloatSettingForKey:(NSString *)key defaultValue:(CGFloat)defaultValue;
 
 @end

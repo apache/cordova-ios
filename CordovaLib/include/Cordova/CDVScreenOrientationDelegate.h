@@ -15,11 +15,12 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
 
-CDV_DEPRECATED(8, "Unused")
+__CDV_DEPRECATED(8, "Unused")
 @protocol CDVScreenOrientationDelegate <NSObject>
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations;

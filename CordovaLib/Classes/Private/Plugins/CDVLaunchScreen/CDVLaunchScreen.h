@@ -21,7 +21,7 @@
 
 @interface CDVLaunchScreen : CDVPlugin
 
-- (void)show:(CDVInvokedUrlCommand*)command;
-- (void)hide:(CDVInvokedUrlCommand*)command;
+- (void)show:(CDVInvokedURLCommand*)command;
+- (void)hide:(CDVInvokedURLCommand*)command;
 
 @end

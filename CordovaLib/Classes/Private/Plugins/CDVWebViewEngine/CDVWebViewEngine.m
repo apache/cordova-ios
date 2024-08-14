@@ -460,7 +460,7 @@
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
     NSArray* jsonEntry = message.body; // NSString:callbackId, NSString:service, NSString:action, NSArray:args
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+    CDVInvokedURLCommand* command = [CDVInvokedURLCommand commandFromJson:jsonEntry];
     CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
 
     if (![vc.commandQueue execute:command]) {
@@ -577,7 +577,7 @@
 
 #pragma mark - Plugin interface
 
-- (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
+- (void)allowsBackForwardNavigationGestures:(CDVInvokedURLCommand*)command;
 {
     id value = [command argumentAtIndex:0];
     if (!([value isKindOfClass:[NSNumber class]])) {

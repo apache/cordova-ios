@@ -15,11 +15,13 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #include <objc/message.h>
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVViewController.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/NSMutableArray+QueueAdditions.h>
 #import "CDVCommandDelegateImpl.h"
 #import "CDVJSON_private.h"
 #import "CDVDebug.h"
@@ -44,7 +46,12 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     return _startExecutionTime > 0;
 }
 
-- (id)initWithViewController:(CDVViewController*)viewController
+- (instancetype)init
+{
+    return [self initWithViewController:nil];
+}
+
+- (instancetype)initWithViewController:(CDVViewController*)viewController
 {
     self = [super init];
     if (self != nil) {
@@ -128,7 +135,7 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
                     if ([commandBatch count] == 0) {
                         [_queue removeObjectAtIndex:0];
                     }
-                    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+                    CDVInvokedURLCommand* command = [CDVInvokedURLCommand commandFromJson:jsonEntry];
                     CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
 
                     if (![self execute:command]) {
@@ -157,7 +164,7 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     }
 }
 
-- (BOOL)execute:(CDVInvokedUrlCommand*)command
+- (BOOL)execute:(CDVInvokedURLCommand*)command
 {
     if ((command.className == nil) || (command.methodName == nil)) {
         NSLog(@"ERROR: Classname and/or methodName not found for command.");
