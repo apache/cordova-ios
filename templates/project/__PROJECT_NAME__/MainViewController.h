@@ -17,14 +17,12 @@
  under the License.
 */
 
-import UIKit
-import Cordova
+#import <Cordova/CDVViewController.h>
 
-@main
-@objc // Remove compat hack in Cordova iOS 9
-class AppDelegate: CDVAppDelegate {
-    override func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-}
+#warning It is unsafe to rely on the MainViewController class as an extension point. \
+         Update your code to extend CDVViewController instead -- \
+         This code will stop working in Cordova iOS 9!
 
+@class MainViewController;
+
+#import "__PROJECT_NAME__-Swift.h"

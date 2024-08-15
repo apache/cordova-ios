@@ -19,6 +19,7 @@
 
 import Cordova
 
+@objc(MainViewController) // Remove compat hack in Cordova iOS 9
 class ViewController: CDVViewController {
 }
 

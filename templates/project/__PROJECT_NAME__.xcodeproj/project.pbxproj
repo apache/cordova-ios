@@ -90,6 +90,8 @@
 		90EB303C2C6DD83300CEEB2F /* build-extras.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-extras.xcconfig"; path = "cordova/build-extras.xcconfig"; sourceTree = SOURCE_ROOT; };
 		90EB303F2C6DD87600CEEB2F /* build-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-debug.xcconfig"; path = "cordova/build-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
 		90EB30402C6DD87600CEEB2F /* build-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-release.xcconfig"; path = "cordova/build-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		90F7E7002C6EB78900AD84C2 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		90F7E7012C6EB78900AD84C2 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,7 +188,9 @@
 				907F98552C06B87200D2D242 /* PrivacyInfo.xcprivacy */,
 				907F98622C06B97000D2D242 /* Entitlements-Debug.plist */,
 				907F98632C06B9C800D2D242 /* Entitlements-Release.plist */,
+				90F7E7002C6EB78900AD84C2 /* AppDelegate.h */,
 				9040B1872C6DD3EB00662C5D /* Bridging-Header.h */,
+				90F7E7012C6EB78900AD84C2 /* MainViewController.h */,
 				907F98542C06B85800D2D242 /* Plugins */,
 				905D2F6D2C6DDEE100117937 /* Resources */,
 				9080B40D2C6DD79000078F33 /* config */,
