@@ -18,7 +18,7 @@
  */
 
 #import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVAllowList.h>
+#import "CDVAllowList.h"
 
 #define CDVWebViewNavigationType int
 
