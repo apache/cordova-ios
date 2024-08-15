@@ -33,22 +33,25 @@ typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
     CDVCommandStatus_ERROR NS_SWIFT_NAME(error)
 };
 
+#ifdef __swift__
 // This exists to preserve compatibility with early Swift plugins, who are
 // using CDVCommandStatus as ObjC-style constants rather than as Swift enum
 // values.
 // This declares extern'ed constants (implemented in CDVPluginResult.m)
-#define SWIFT_ENUM_COMPAT_HACK(enumVal) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal)
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ILLEGAL_ACCESS_EXCEPTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INSTANTIATION_EXCEPTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_MALFORMED_URL_EXCEPTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_IO_EXCEPTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INVALID_ACTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_JSON_EXCEPTION);
-SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR);
+// TODO: Remove this in Cordova iOS 9
+#define SWIFT_ENUM_COMPAT_HACK(enumVal, replacement) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use the CDVCommandStatus." #replacement " enum value instead", "CDVCommandStatus." #replacement)
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT, noResult);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK, ok);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION, classNotFoundException);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ILLEGAL_ACCESS_EXCEPTION, illegalAccessException);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INSTANTIATION_EXCEPTION, instantiationException);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_MALFORMED_URL_EXCEPTION, malformedUrlException);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_IO_EXCEPTION, ioException);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INVALID_ACTION, invalidAction);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_JSON_EXCEPTION, jsonException);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR, error);
 #undef SWIFT_ENUM_COMPAT_HACK
+#endif
 
 @interface CDVPluginResult : NSObject {}
 

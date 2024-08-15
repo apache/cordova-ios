@@ -25,28 +25,14 @@
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
-#import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 
-@protocol CDVWebViewEngineConfigurationDelegate <NSObject>
+@class CDVPlugin;
 
-@optional
-/// Provides a fully configured WKWebViewConfiguration which will be overriden with
-/// any related settings you add to config.xml (e.g., `PreferredContentMode`).
-/// Useful for more complex configuration, including websiteDataStore.
-///
-/// Example usage:
-///
-/// extension CDVViewController: CDVWebViewEngineConfigurationDelegate {
-///     public func configuration() -> WKWebViewConfiguration {
-///         // return your config here
-///     }
-/// }
-- (nonnull WKWebViewConfiguration*)configuration;
-
-@end
-
-@interface CDVViewController : UIViewController <CDVScreenOrientationDelegate>{
+/*!
+  @abstract The main view controller for Cordova web content.
+ */
+@interface CDVViewController : UIViewController {
     @protected
     id <CDVWebViewEngineProtocol> _webViewEngine;
     @protected
@@ -73,19 +59,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
-/**
-    Takes/Gives an array of UIInterfaceOrientation (int) objects
-    ex. UIInterfaceOrientationPortrait
-*/
-@property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 - (nullable NSString*)appURLScheme;
 - (nullable NSURL*)errorURL;
-
-- (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
-- (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 
 - (nullable id)getCommandInstance:(NSString*)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;

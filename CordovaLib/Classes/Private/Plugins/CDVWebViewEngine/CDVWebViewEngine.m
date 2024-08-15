@@ -26,7 +26,6 @@
 #import <objc/message.h>
 
 #define CDV_BRIDGE_NAME @"cordova"
-#define CDV_WKWEBVIEW_FILE_URL_LOAD_SELECTOR @"loadFileURL:allowingReadAccessToURL:"
 
 @interface CDVWebViewWeakScriptMessageHandler : NSObject <WKScriptMessageHandler>
 
@@ -272,32 +271,6 @@
                name:UIApplicationWillEnterForegroundNotification object:nil];
 
     NSLog(@"Using WKWebView");
-
-    [self addURLObserver];
-}
-
-- (void)onReset {
-    [self addURLObserver];
-}
-
-static void * KVOContext = &KVOContext;
-
-- (void)addURLObserver {
-    if(!IsAtLeastiOSVersion(@"9.0")){
-        [self.webView addObserver:self forKeyPath:@"URL" options:0 context:KVOContext];
-    }
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    if (context == KVOContext) {
-        if (object == [self webView] && [keyPath isEqualToString: @"URL"] && [object valueForKeyPath:keyPath] == nil){
-            NSLog(@"URL is nil. Reloading WKWebView");
-            [(WKWebView*)_engineWebView reload];
-        }
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
 }
 
 - (void) onAppWillEnterForeground:(NSNotification*)notification {
@@ -381,15 +354,7 @@ static void * KVOContext = &KVOContext;
 
 - (BOOL) canLoadRequest:(NSURLRequest*)request
 {
-    // See: https://issues.apache.org/jira/browse/CB-9636
-    SEL wk_sel = NSSelectorFromString(CDV_WKWEBVIEW_FILE_URL_LOAD_SELECTOR);
-
-    // if it's a file URL, check whether WKWebView has the selector (which is in iOS 9 and up only)
-    if (request.URL.fileURL) {
-        return [_engineWebView respondsToSelector:wk_sel];
-    } else {
-        return YES;
-    }
+    return YES;
 }
 
 - (void)updateSettings:(NSDictionary*)settings

@@ -25,6 +25,7 @@
 // using CDVCommandStatus as ObjC-style constants rather than as Swift enum
 // values.
 // These constants alias the enum values back to their previous names.
+// TODO: Remove in Cordova iOS 9
 #define SWIFT_ENUM_COMPAT_HACK(enumVal) const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) = enumVal
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK);
