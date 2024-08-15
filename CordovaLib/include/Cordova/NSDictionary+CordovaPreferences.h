@@ -19,17 +19,22 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
+
+#ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+#warning "Use CDVSettingsDictionary.h and the CDVSettingsDictionary class instead"
+#endif
 
 @interface NSDictionary (CordovaPreferences)
 
-- (id)cordovaSettingForKey:(NSString*)key;
-- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
-- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
+- (id)cordovaSettingForKey:(NSString*)key CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
+- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
+- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
 
 @end
 
 @interface NSMutableDictionary (CordovaPreferences)
 
-- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
+- (void)setCordovaSetting:(id)value forKey:(NSString*)key CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
 
 @end

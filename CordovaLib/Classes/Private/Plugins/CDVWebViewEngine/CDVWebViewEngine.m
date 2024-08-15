@@ -20,7 +20,7 @@
 #import "CDVWebViewEngine.h"
 #import "CDVWebViewUIDelegate.h"
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
-#import <Cordova/NSDictionary+CordovaPreferences.h>
+#import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVURLSchemeHandler.h>
 
 #import <objc/message.h>
@@ -75,7 +75,7 @@
     return [self initWithFrame:frame configuration:nil];
 }
 
-- (WKWebViewConfiguration*) createConfigurationFromSettings:(NSDictionary*)settings
+- (WKWebViewConfiguration*) createConfigurationFromSettings:(CDVSettingsDictionary*)settings
 {
     WKWebViewConfiguration* configuration;
     if (_configuration) {
@@ -170,7 +170,7 @@
 {
     // viewController would be available now. we attempt to set all possible delegates to it, by default
     CDVViewController* vc = (CDVViewController*)self.viewController;
-    NSDictionary* settings = self.commandDelegate.settings;
+    CDVSettingsDictionary* settings = self.commandDelegate.settings;
 
     NSString *scheme = [settings cordovaSettingForKey:@"scheme"];
 
@@ -365,7 +365,7 @@
     return YES;
 }
 
-- (void)updateSettings:(NSDictionary*)settings
+- (void)updateSettings:(CDVSettingsDictionary*)settings
 {
     WKWebView* wkWebView = (WKWebView*)_engineWebView;
 
@@ -410,7 +410,7 @@
 - (void)updateWithInfo:(NSDictionary*)info
 {
     NSDictionary* scriptMessageHandlers = [info objectForKey:kCDVWebViewEngineScriptMessageHandlers];
-    NSDictionary* settings = [info objectForKey:kCDVWebViewEngineWebViewPreferences];
+    id settings = [info objectForKey:kCDVWebViewEngineWebViewPreferences];
     id navigationDelegate = [info objectForKey:kCDVWebViewEngineWKNavigationDelegate];
     id uiDelegate = [info objectForKey:kCDVWebViewEngineWKUIDelegate];
 
@@ -435,8 +435,10 @@
         wkWebView.UIDelegate = uiDelegate;
     }
 
-    if (settings && [settings isKindOfClass:[NSDictionary class]]) {
+    if (settings && [settings isKindOfClass:[CDVSettingsDictionary class]]) {
         [self updateSettings:settings];
+    } else if (settings && [settings isKindOfClass:[NSDictionary class]]) {
+        [self updateSettings:[[CDVSettingsDictionary alloc] initWithDictionary:settings]];
     }
 }
 

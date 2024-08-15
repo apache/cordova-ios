@@ -24,6 +24,7 @@
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVCommandQueue.h>
+#import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 
@@ -37,7 +38,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
-@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
+
+/**
+ The Cordova preferences for this view.
+
+ This is a dictionary populated from the preference key/value pairs in the
+ Cordova XML configuration file.
+ */
+@property (nonatomic, readonly, strong) CDVSettingsDictionary* settings;
+
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
 
 @property (nonatomic, readwrite, copy) NSString* appScheme;

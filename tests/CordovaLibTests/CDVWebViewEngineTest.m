@@ -21,7 +21,7 @@
 #import <XCTest/XCTest.h>
 #import "CDVWebViewEngine.h"
 #import "CDVWebViewProcessPoolFactory.h"
-#import <Cordova/NSDictionary+CordovaPreferences.h>
+#import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVAvailability.h>
 
 @interface CDVWebViewEngineTest : XCTestCase
@@ -42,7 +42,7 @@
 @interface CDVViewController ()
 
 // expose property as readwrite, for test purposes
-@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
+@property (nonatomic, readwrite, strong) CDVSettingsDictionary* settings;
 
 @end
 
@@ -130,7 +130,7 @@
     self.viewController = [[CDVViewController alloc] init];
 
     // generate the app settings
-    NSDictionary* settings = @{
+    CDVSettingsDictionary* settings = [[CDVSettingsDictionary alloc] initWithDictionary:@{
                                   [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
                                   [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
                                   [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
@@ -138,9 +138,9 @@
                                   [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
                                   [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
                                   [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast" // default is 'normal'
-                                  };
+                                  }];
     // this can be set because of the Category at the top of the file
-    self.viewController.settings = [settings mutableCopy];
+    self.viewController.settings = settings;
 
     // app settings are read after you register the plugin
     [self.viewController registerPlugin:self.plugin withClassName:NSStringFromClass([self.plugin class])];

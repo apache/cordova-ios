@@ -19,7 +19,9 @@
 
 @import Foundation;
 
+#define __CORDOVA_SILENCE_HEADER_DEPRECATIONS
 #import <Cordova/NSDictionary+CordovaPreferences.h>
+#undef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
 
 @implementation NSDictionary (CordovaPreferences)
 

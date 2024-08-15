@@ -23,6 +23,7 @@
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVCommandDelegate.h>
+#import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVViewController.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 
