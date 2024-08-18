@@ -32,9 +32,9 @@
   "devDependencies": {
     "@cordova/eslint-config": "^5.1.0",
     "cordova-js": "^6.1.0",
-    "jasmine": "^4.6.0",
-    "nyc": "^15.1.0",
-    "rewire": "^6.0.0",
+    "jasmine": "^5.2.0",
+    "nyc": "^17.0.0",
+    "rewire": "^7.0.0",
     "tmp": "^0.2.1"
   },
   "engines": {
