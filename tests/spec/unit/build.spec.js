@@ -418,6 +418,21 @@ describe('build', () => {
                 });
             });
         });
+
+        it('should handle the case of no simulators being available', () => {
+            // This method will require a module that supports the run method.
+            build.__set__('require', () => ({
+                run: () => Promise.resolve([])
+            }));
+
+            const getDefaultSimulatorTarget = build.__get__('getDefaultSimulatorTarget');
+
+            return getDefaultSimulatorTarget().then(sim => {
+                return Promise.reject(new Error('Should not resolve if no simulators are present'));
+            }, (err) => {
+                expect(err).toBeInstanceOf(CordovaError);
+            });
+        });
     });
 
     describe('findXCodeProjectIn method', () => {
