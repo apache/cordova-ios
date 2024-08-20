@@ -29,6 +29,7 @@ const rewire = require('rewire');
 const prepare = rewire('../../../lib/prepare');
 const projectFile = require('../../../lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
+const versions = require('../../../lib/versions');
 
 const tmpDir = path.join(__dirname, '../../../tmp');
 const FIXTURES = path.join(__dirname, 'fixtures');
@@ -401,6 +402,7 @@ describe('prepare', () => {
     });
 
     describe('App Icon handling', () => {
+        const xcver = '16.0.0';
         const mapIconResources = prepare.__get__('mapIconResources');
 
         describe('#mapIconResources', () => {
@@ -409,7 +411,7 @@ describe('prepare', () => {
                     { src: 'dummy.png' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon.png': 'dummy.png',
@@ -423,7 +425,7 @@ describe('prepare', () => {
                     { src: 'dummy-watch.png', target: 'watchos' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon.png': 'dummy.png',
@@ -431,12 +433,12 @@ describe('prepare', () => {
                 }));
             });
 
-            it('should handle default icon variants', () => {
+            it('should handle default icon variants on Xcode 16+', () => {
                 const icons = [
                     { src: 'dummy.png', monochrome: 'dummy-tint.png', foreground: 'dummy-dark.png' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon.png': 'dummy.png',
@@ -446,12 +448,25 @@ describe('prepare', () => {
                 }));
             });
 
+            it('should ignore default icon variants on Xcode 15', () => {
+                const icons = [
+                    { src: 'dummy.png', monochrome: 'dummy-tint.png', foreground: 'dummy-dark.png' }
+                ];
+
+                const resMap = mapIconResources(icons, '', '15.0.0');
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon.png': 'dummy.png',
+                    'watchos.png': 'dummy.png'
+                }));
+            });
+
             it('should handle a single sized icon', () => {
                 const icons = [
                     { src: 'dummy.png', height: 1024, width: 1024 }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon.png': 'dummy.png',
@@ -464,7 +479,7 @@ describe('prepare', () => {
                     { src: 'dummy.png', height: 1024, width: 1024, target: 'watchos' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'watchos.png': 'dummy.png'
@@ -476,7 +491,7 @@ describe('prepare', () => {
                     { src: 'dummy.png', height: 120, width: 120 }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon-40@3x.png': 'dummy.png',
@@ -490,7 +505,7 @@ describe('prepare', () => {
                     { src: 'dummy-spot.png', height: 120, width: 120, target: 'spotlight' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon-40@3x.png': 'dummy-spot.png',
@@ -503,7 +518,7 @@ describe('prepare', () => {
                     { src: 'dummy.png', height: 76, width: 76, monochrome: 'dummy-tint.png', foreground: 'dummy-dark.png' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'icon-38@2x.png': 'dummy.png',
@@ -517,7 +532,7 @@ describe('prepare', () => {
                     { src: 'dummy.png', height: 216, width: 216 }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual({});
             });
@@ -527,7 +542,7 @@ describe('prepare', () => {
                     { src: 'dummy.png', height: 256, width: 256, target: 'mac' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual(jasmine.objectContaining({
                     'mac-128@2x.png': 'dummy.png',
@@ -541,7 +556,7 @@ describe('prepare', () => {
                     { foreground: 'dummy-dark.png', height: 216, width: 216, target: 'watchos' }
                 ];
 
-                const resMap = mapIconResources(icons, '');
+                const resMap = mapIconResources(icons, '', xcver);
 
                 expect(resMap).toEqual({});
             });
@@ -553,6 +568,8 @@ describe('prepare', () => {
             let iconsDir = '';
 
             beforeEach(() => {
+                prepare.__set__('ASSUMED_XCODE_VERSION', '15.0.0');
+
                 const platformProjDir = path.relative(iosProject, p.locations.xcodeCordovaProj);
                 iconsDir = path.join(platformProjDir, 'Assets.xcassets', 'AppIcon.appiconset');
             });
@@ -569,81 +586,104 @@ describe('prepare', () => {
                 fs.cpSync(path.join(FIXTURES, 'icon-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
 
                 // copy icons and update Contents.json
-                updateIcons(project, p.locations);
+                return updateIcons(project, p.locations);
             }
 
             it('should not update paths if no icons are specified', () => {
                 const updatePaths = spyOn(FileUpdater, 'updatePaths');
 
-                updateIconsWithConfig('none.xml');
+                return updateIconsWithConfig('none.xml')
+                    .then(() => {
+                        expect(updatePaths).not.toHaveBeenCalled();
 
-                expect(updatePaths).not.toHaveBeenCalled();
-
-                // verify that that Contents.json is as we expect
-                const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
-                expect(result).toEqual(require('./fixtures/icon-support/contents-json/none'));
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/none'));
+                    });
             });
 
             it('should update paths if a single icon is specified', () => {
                 const updatePaths = spyOn(FileUpdater, 'updatePaths');
 
-                updateIconsWithConfig('single-only.xml');
+                return updateIconsWithConfig('single-only.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
+                        }, { rootDir: iosProject }, logFileOp);
 
-                expect(updatePaths).toHaveBeenCalledWith({
-                    [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
-                    [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
-                }, { rootDir: iosProject }, logFileOp);
-
-                // verify that that Contents.json is as we expect
-                const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
-                expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-only'));
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-only'));
+                    });
             });
 
-            it('should update paths if a single icon with variants is specified', () => {
+            it('should update only some paths if a single icon with variants is specified with Xcode 15', () => {
                 const updatePaths = spyOn(FileUpdater, 'updatePaths');
+                spyOn(versions, 'get_apple_xcode_version').and.returnValue(Promise.resolve('15.0.0'));
 
-                updateIconsWithConfig('single-variants.xml');
+                return updateIconsWithConfig('single-variants.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
+                        }, { rootDir: iosProject }, logFileOp);
 
-                expect(updatePaths).toHaveBeenCalledWith({
-                    [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
-                    [path.join(iconsDir, 'icon-dark.png')]: 'res/ios/appicon-dark.png',
-                    [path.join(iconsDir, 'icon-tinted.png')]: 'res/ios/appicon-tint.png',
-                    [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
-                }, { rootDir: iosProject }, logFileOp);
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-only'));
+                    });
+            });
 
-                // verify that that Contents.json is as we expect
-                const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
-                expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-variants'));
+            it('should update paths if a single icon with variants is specified with Xcode 16', () => {
+                prepare.__set__('ASSUMED_XCODE_VERSION', '16.0.0');
+                const updatePaths = spyOn(FileUpdater, 'updatePaths');
+                spyOn(versions, 'get_apple_xcode_version').and.returnValue(Promise.resolve('16.0.0'));
+
+                return updateIconsWithConfig('single-variants.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
+                            [path.join(iconsDir, 'icon-dark.png')]: 'res/ios/appicon-dark.png',
+                            [path.join(iconsDir, 'icon-tinted.png')]: 'res/ios/appicon-tint.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
+                        }, { rootDir: iosProject }, logFileOp);
+
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-variants'));
+                    });
             });
 
             it('should update paths if multiple icon sizes are specified', () => {
                 const updatePaths = spyOn(FileUpdater, 'updatePaths');
 
-                updateIconsWithConfig('multi.xml');
+                return updateIconsWithConfig('multi.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/AppIcon-1024x1024@1x.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/AppIcon-1024x1024@1x.png',
+                            [path.join(iconsDir, 'icon-20@2x.png')]: 'res/ios/AppIcon-20x20@2x.png',
+                            [path.join(iconsDir, 'icon-20@3x.png')]: 'res/ios/AppIcon-20x20@3x.png',
+                            [path.join(iconsDir, 'icon-29@2x.png')]: 'res/ios/AppIcon-29x29@2x.png',
+                            [path.join(iconsDir, 'icon-29@3x.png')]: 'res/ios/AppIcon-29x29@3x.png',
+                            [path.join(iconsDir, 'icon-38@2x.png')]: 'res/ios/AppIcon-38x38@2x.png',
+                            [path.join(iconsDir, 'icon-38@3x.png')]: 'res/ios/AppIcon-38x38@3x.png',
+                            [path.join(iconsDir, 'icon-40@2x.png')]: 'res/ios/AppIcon-40x40@2x.png',
+                            [path.join(iconsDir, 'icon-40@3x.png')]: 'res/ios/AppIcon-40x40@3x.png',
+                            [path.join(iconsDir, 'icon-60@2x.png')]: 'res/ios/AppIcon-60x60@2x.png',
+                            [path.join(iconsDir, 'icon-60@3x.png')]: 'res/ios/AppIcon-60x60@3x.png',
+                            [path.join(iconsDir, 'icon-64@2x.png')]: 'res/ios/AppIcon-64x64@2x.png',
+                            [path.join(iconsDir, 'icon-64@3x.png')]: 'res/ios/AppIcon-64x64@3x.png',
+                            [path.join(iconsDir, 'icon-68@2x.png')]: 'res/ios/AppIcon-68x68@2x.png',
+                            [path.join(iconsDir, 'icon-76@2x.png')]: 'res/ios/AppIcon-76x76@2x.png',
+                            [path.join(iconsDir, 'icon-83.5@2x.png')]: 'res/ios/AppIcon-83.5x83.5@2x.png'
+                        }, { rootDir: iosProject }, logFileOp);
 
-                expect(updatePaths).toHaveBeenCalledWith({
-                    [path.join(iconsDir, 'icon.png')]: 'res/ios/AppIcon-1024x1024@1x.png',
-                    [path.join(iconsDir, 'watchos.png')]: 'res/ios/AppIcon-1024x1024@1x.png',
-                    [path.join(iconsDir, 'icon-20@2x.png')]: 'res/ios/AppIcon-20x20@2x.png',
-                    [path.join(iconsDir, 'icon-20@3x.png')]: 'res/ios/AppIcon-20x20@3x.png',
-                    [path.join(iconsDir, 'icon-29@2x.png')]: 'res/ios/AppIcon-29x29@2x.png',
-                    [path.join(iconsDir, 'icon-29@3x.png')]: 'res/ios/AppIcon-29x29@3x.png',
-                    [path.join(iconsDir, 'icon-38@2x.png')]: 'res/ios/AppIcon-38x38@2x.png',
-                    [path.join(iconsDir, 'icon-38@3x.png')]: 'res/ios/AppIcon-38x38@3x.png',
-                    [path.join(iconsDir, 'icon-40@2x.png')]: 'res/ios/AppIcon-40x40@2x.png',
-                    [path.join(iconsDir, 'icon-40@3x.png')]: 'res/ios/AppIcon-40x40@3x.png',
-                    [path.join(iconsDir, 'icon-60@2x.png')]: 'res/ios/AppIcon-60x60@2x.png',
-                    [path.join(iconsDir, 'icon-60@3x.png')]: 'res/ios/AppIcon-60x60@3x.png',
-                    [path.join(iconsDir, 'icon-64@2x.png')]: 'res/ios/AppIcon-64x64@2x.png',
-                    [path.join(iconsDir, 'icon-64@3x.png')]: 'res/ios/AppIcon-64x64@3x.png',
-                    [path.join(iconsDir, 'icon-68@2x.png')]: 'res/ios/AppIcon-68x68@2x.png',
-                    [path.join(iconsDir, 'icon-76@2x.png')]: 'res/ios/AppIcon-76x76@2x.png',
-                    [path.join(iconsDir, 'icon-83.5@2x.png')]: 'res/ios/AppIcon-83.5x83.5@2x.png'
-                }, { rootDir: iosProject }, logFileOp);
-
-                // verify that that Contents.json is as we expect
-                const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
-                expect(result).toEqual(require('./fixtures/icon-support/contents-json/multi'));
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/multi'));
+                    });
             });
         });
 
@@ -674,27 +714,29 @@ describe('prepare', () => {
 
                 // now, clean the images
                 const updatePaths = spyOn(FileUpdater, 'updatePaths');
-                cleanIcons(iosProject, project.projectConfig, p.locations);
 
-                expect(updatePaths).toHaveBeenCalledWith({
-                    [path.join(iconsDir, 'icon.png')]: null,
-                    [path.join(iconsDir, 'watchos.png')]: null,
-                    [path.join(iconsDir, 'icon-20@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-20@3x.png')]: null,
-                    [path.join(iconsDir, 'icon-29@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-29@3x.png')]: null,
-                    [path.join(iconsDir, 'icon-38@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-38@3x.png')]: null,
-                    [path.join(iconsDir, 'icon-40@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-40@3x.png')]: null,
-                    [path.join(iconsDir, 'icon-60@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-60@3x.png')]: null,
-                    [path.join(iconsDir, 'icon-64@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-64@3x.png')]: null,
-                    [path.join(iconsDir, 'icon-68@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-76@2x.png')]: null,
-                    [path.join(iconsDir, 'icon-83.5@2x.png')]: null
-                }, { rootDir: iosProject, all: true }, logFileOp);
+                return cleanIcons(iosProject, project.projectConfig, p.locations)
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: null,
+                            [path.join(iconsDir, 'watchos.png')]: null,
+                            [path.join(iconsDir, 'icon-20@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-20@3x.png')]: null,
+                            [path.join(iconsDir, 'icon-29@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-29@3x.png')]: null,
+                            [path.join(iconsDir, 'icon-38@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-38@3x.png')]: null,
+                            [path.join(iconsDir, 'icon-40@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-40@3x.png')]: null,
+                            [path.join(iconsDir, 'icon-60@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-60@3x.png')]: null,
+                            [path.join(iconsDir, 'icon-64@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-64@3x.png')]: null,
+                            [path.join(iconsDir, 'icon-68@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-76@2x.png')]: null,
+                            [path.join(iconsDir, 'icon-83.5@2x.png')]: null
+                        }, { rootDir: iosProject, all: true }, logFileOp);
+                    });
             });
 
             it('should have no effect if no icons are specified', () => {
@@ -713,9 +755,11 @@ describe('prepare', () => {
 
                 // now, clean the images
                 const updatePaths = spyOn(FileUpdater, 'updatePaths');
-                cleanIcons(iosProject, project.projectConfig, p.locations);
 
-                expect(updatePaths).not.toHaveBeenCalled();
+                return cleanIcons(iosProject, project.projectConfig, p.locations)
+                    .then(() => {
+                        expect(updatePaths).not.toHaveBeenCalled();
+                    });
             });
         });
     });
