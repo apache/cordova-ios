@@ -27,6 +27,7 @@
 #import <Cordova/CDVPlugin.h>
 #import "CDVPlugin+Private.h"
 #import <Cordova/CDVConfigParser.h>
+#import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
 #import "CDVCommandDelegateImpl.h"
 
@@ -49,7 +50,7 @@ static UIColor* defaultBackgroundColor(void) {
 }
 
 @property (nonatomic, readwrite, strong) NSXMLParser* configParser;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* settings;
+@property (nonatomic, readwrite, strong) CDVSettingsDictionary* settings;
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
@@ -178,7 +179,7 @@ static UIColor* defaultBackgroundColor(void) {
     // Get the plugin dictionary, allowList and settings from the delegate.
     self.pluginsMap = delegate.pluginsDict;
     self.startupPluginNames = delegate.startupPluginNames;
-    self.settings = delegate.settings;
+    self.settings = [[CDVSettingsDictionary alloc] initWithDictionary:delegate.settings];
 
     // And the start folder/page.
     if(self.wwwFolderName == nil){
