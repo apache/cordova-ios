@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import <Cordova/CDVAllowList.h>
+#import "CDVAllowList.h"
 #import "CDVIntentAndNavigationFilter.h"
 
 @interface CDVAllowListTests : XCTestCase
