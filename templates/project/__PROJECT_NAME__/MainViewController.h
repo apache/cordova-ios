@@ -15,10 +15,14 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Cordova/CDVViewController.h>
 
-@interface MainViewController : CDVViewController
+#warning It is unsafe to rely on the MainViewController class as an extension point. \
+         Update your code to extend CDVViewController instead -- \
+         This code will stop working in Cordova iOS 9!
 
-@end
+@class MainViewController;
+
+#import "__PROJECT_NAME__-Swift.h"

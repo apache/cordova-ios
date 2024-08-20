@@ -40,7 +40,8 @@
     // NOTE: To customize the view's frame size (which defaults to full screen), override
     // [self.viewController viewWillAppear:] in your view controller.
 
-    self.window.rootViewController = _viewController;
+    _window.rootViewController = _viewController;
+    [_window makeKeyAndVisible];
 }
 
 - (void)destroyViewController
@@ -51,6 +52,11 @@
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {
     BOOL retVal = [super application:application didFinishLaunchingWithOptions:launchOptions];
+
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    _window = [[UIWindow alloc] initWithFrame:screenBounds];
+    _window.autoresizesSubviews = YES;
+
     // Create the main view on start-up only when not running unit tests.
     if (!NSClassFromString(@"CDVWebViewTest")) {
         [self createViewController];

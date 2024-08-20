@@ -42,10 +42,10 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMainNibFile</key>
-	<string></string>
-	<key>NSMainNibFile~ipad</key>
-	<string></string>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
 	<key>UILaunchStoryboardName</key>
 	<string>CDVLaunchScreen</string>
 	<key>UIRequiresFullScreen</key>
@@ -83,5 +83,24 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 </dict>
 </plist>

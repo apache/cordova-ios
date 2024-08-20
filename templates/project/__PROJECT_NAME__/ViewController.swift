@@ -15,16 +15,11 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import "MainViewController.h"
+import Cordova
 
-@implementation MainViewController
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self.launchView setAlpha:1];
+@objc(MainViewController) // Remove compat hack in Cordova iOS 9
+class ViewController: CDVViewController {
 }
 
-@end

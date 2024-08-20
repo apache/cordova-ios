@@ -15,16 +15,16 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
+import UIKit
+import Cordova
 
-int main(int argc, char *argv[]) {
-    NSString *appDelegateClassName;
-    @autoreleasepool {
-        // Setup code that might create autoreleased objects goes here.
-        appDelegateClassName = NSStringFromClass([AppDelegate class]);
+@main
+@objc // Remove compat hack in Cordova iOS 9
+class AppDelegate: CDVAppDelegate {
+    override func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
 }
+
