@@ -18,7 +18,6 @@
  */
 
 #import "CDVHandleOpenURL.h"
-#import <Cordova/CDV.h>
 
 @implementation CDVHandleOpenURL
 

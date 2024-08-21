@@ -26,6 +26,7 @@
 #import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVViewController.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
 
 @interface UIView (org_apache_cordova_UIView_Extension)
 
@@ -33,17 +34,17 @@
 
 @end
 
-extern NSString* const CDVPageDidLoadNotification;
-extern NSString* const CDVPluginHandleOpenURLNotification;
-extern NSString* const CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.");
-extern NSString* const CDVPluginResetNotification;
-extern NSString* const CDVViewWillAppearNotification;
-extern NSString* const CDVViewDidAppearNotification;
-extern NSString* const CDVViewWillDisappearNotification;
-extern NSString* const CDVViewDidDisappearNotification;
-extern NSString* const CDVViewWillLayoutSubviewsNotification;
-extern NSString* const CDVViewDidLayoutSubviewsNotification;
-extern NSString* const CDVViewWillTransitionToSizeNotification;
+extern const NSNotificationName CDVPageDidLoadNotification;
+extern const NSNotificationName CDVPluginHandleOpenURLNotification;
+extern const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.");
+extern const NSNotificationName CDVPluginResetNotification;
+extern const NSNotificationName CDVViewWillAppearNotification;
+extern const NSNotificationName CDVViewDidAppearNotification;
+extern const NSNotificationName CDVViewWillDisappearNotification;
+extern const NSNotificationName CDVViewDidDisappearNotification;
+extern const NSNotificationName CDVViewWillLayoutSubviewsNotification;
+extern const NSNotificationName CDVViewDidLayoutSubviewsNotification;
+extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 
 @interface CDVPlugin : NSObject {}
 

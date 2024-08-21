@@ -17,12 +17,29 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+#define __CORDOVA_SILENCE_HEADER_DEPRECATIONS
 
-//! Project version number for Cordova.
-FOUNDATION_EXPORT double CordovaVersionNumber;
+#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
+#import <Cordova/CDVAppDelegate.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVPluginResult.h>
+#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVCommandDelegate.h>
+#import <Cordova/CDVCommandQueue.h>
+#import <Cordova/CDVConfigParser.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVPlugin+Resources.h>
+#import <Cordova/CDVSettingsDictionary.h>
+#import <Cordova/CDVWebViewEngineProtocol.h>
+#import <Cordova/CDVWebViewProcessPoolFactory.h>
+#import <Cordova/NSMutableArray+QueueAdditions.h>
+#import <Cordova/CDVScreenOrientationDelegate.h>
+#import <Cordova/CDVTimer.h>
+#import <Cordova/CDVURLSchemeHandler.h>
 
-//! Project version string for Cordova.
-FOUNDATION_EXPORT const unsigned char CordovaVersionString[];
-
+// Deprecated
 #import <Cordova/CDV.h>
+#import <Cordova/NSDictionary+CordovaPreferences.h>
+
+#undef __CORDOVA_SILENCE_HEADER_DEPRECATIONS

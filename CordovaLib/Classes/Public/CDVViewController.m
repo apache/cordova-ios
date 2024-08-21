@@ -17,18 +17,16 @@
  under the License.
  */
 
-@import AVFoundation;
-@import Foundation;
-@import WebKit;
-
+#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 #import <objc/message.h>
-#import <Foundation/NSCharacterSet.h>
-#import <Cordova/CDV.h>
+
 #import <Cordova/CDVPlugin.h>
 #import "CDVPlugin+Private.h"
 #import <Cordova/CDVConfigParser.h>
 #import <Cordova/CDVSettingsDictionary.h>
-#import <Cordova/NSDictionary+CordovaPreferences.h>
+#import <Cordova/CDVTimer.h>
 #import "CDVCommandDelegateImpl.h"
 
 static UIColor* defaultBackgroundColor(void) {
@@ -54,7 +52,6 @@ static UIColor* defaultBackgroundColor(void) {
 @property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
-@property (nonatomic, readwrite, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 @property (nonatomic, readwrite, strong) UIView* launchView;
 
 @property (readwrite, assign) BOOL initialized;
@@ -75,9 +72,38 @@ static UIColor* defaultBackgroundColor(void) {
 @synthesize splashBackgroundColor = _splashBackgroundColor;
 @dynamic webView;
 
-- (void)__init
+#pragma mark - Initializers
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    if ((self != nil) && !self.initialized) {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self != nil) {
+        [self _cdv_init];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self != nil) {
+        [self _cdv_init];
+    }
+    return self;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self != nil) {
+        [self _cdv_init];
+    }
+    return self;
+}
+
+- (void)_cdv_init
+{
+    if (!self.initialized) {
         _commandQueue = [[CDVCommandQueue alloc] initWithViewController:self];
         _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithViewController:self];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillTerminate:)
@@ -95,33 +121,34 @@ static UIColor* defaultBackgroundColor(void) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onWebViewPageDidLoad:)
                                                      name:CDVPageDidLoadNotification object:nil];
 
-
+        // Default property values
+        self.configFile = @"config.xml";
         self.showInitialSplashScreen = YES;
 
+        // Prevent reinitializing
         self.initialized = YES;
     }
 }
 
-- (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
+#pragma mark -
+
+- (void)dealloc
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    [self __init];
-    return self;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    [_commandQueue dispose];
+    [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
+
+    [self.webViewEngine loadHTMLString:@"about:blank" baseURL:nil];
+    [self.pluginObjects removeAllObjects];
+
+    [self.webView removeFromSuperview];
+    [self.launchView removeFromSuperview];
+
+    _webViewEngine = nil;
 }
 
-- (id)initWithCoder:(NSCoder*)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [self __init];
-    return self;
-}
-
-- (id)init
-{
-    self = [super init];
-    [self __init];
-    return self;
-}
+#pragma mark - Getters & Setters
 
 - (void)setBackgroundColor:(UIColor *)color
 {
@@ -256,14 +283,16 @@ static UIColor* defaultBackgroundColor(void) {
     return errorUrl;
 }
 
-- (UIView*)webView
+- (nullable UIView *)webView
 {
-    if (self.webViewEngine != nil) {
-        return self.webViewEngine.engineWebView;
+    if (_webViewEngine != nil) {
+        return _webViewEngine.engineWebView;
     }
 
     return nil;
 }
+
+#pragma mark - UIViewController & App Lifecycle
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
@@ -273,14 +302,12 @@ static UIColor* defaultBackgroundColor(void) {
     // Load settings
     [self loadSettings];
 
-    // // Instantiate the Launch screen /////////
-
+    // Instantiate the Launch screen
     if (!self.launchView) {
         [self createLaunchView];
     }
 
-    // // Instantiate the WebView ///////////////
-
+    // Instantiate the WebView
     if (!self.webView) {
         [self createGapView];
     }
@@ -304,7 +331,7 @@ static UIColor* defaultBackgroundColor(void) {
 
     if (appURL) {
         NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-        [self.webViewEngine loadRequest:appReq];
+        [_webViewEngine loadRequest:appReq];
     } else {
         NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
         NSLog(@"%@", loadErr);
@@ -313,10 +340,10 @@ static UIColor* defaultBackgroundColor(void) {
         if (errorUrl) {
             errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
             NSLog(@"%@", [errorUrl absoluteString]);
-            [self.webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+            [_webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
         } else {
             NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-            [self.webViewEngine loadHTMLString:html baseURL:nil];
+            [_webViewEngine loadHTMLString:html baseURL:nil];
         }
     }
     // /////////////////
@@ -371,6 +398,8 @@ static UIColor* defaultBackgroundColor(void) {
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewWillTransitionToSizeNotification object:[NSValue valueWithCGSize:size]]];
 }
 
+#pragma mark - View Setup
+
 /// Retrieves the view from a newwly initialized webViewEngine
 /// @param bounds The bounds with which the webViewEngine will be initialized
 - (nonnull UIView*)newCordovaViewWithFrame:(CGRect)bounds
@@ -410,8 +439,8 @@ static UIColor* defaultBackgroundColor(void) {
         [self registerPlugin:(CDVPlugin*)engine withClassName:webViewEngineClassName];
     }
 
-    self.webViewEngine = engine;
-    return self.webViewEngine.engineWebView;
+    _webViewEngine = engine;
+    return _webViewEngine.engineWebView;
 }
 
 /// Initialiizes the webViewEngine, with config, if supported and provided
@@ -506,13 +535,8 @@ static UIColor* defaultBackgroundColor(void) {
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
 {
-    if ([plugin respondsToSelector:@selector(setViewController:)]) {
-        [plugin setViewController:self];
-    }
-
-    if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
-        [plugin setCommandDelegate:_commandDelegate];
-    }
+    plugin.viewController = self;
+    plugin.commandDelegate = _commandDelegate;
 
     [self.pluginObjects setObject:plugin forKey:className];
     [plugin pluginInitialize];
@@ -520,13 +544,8 @@ static UIColor* defaultBackgroundColor(void) {
 
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName
 {
-    if ([plugin respondsToSelector:@selector(setViewController:)]) {
-        [plugin setViewController:self];
-    }
-
-    if ([plugin respondsToSelector:@selector(setCommandDelegate:)]) {
-        [plugin setCommandDelegate:_commandDelegate];
-    }
+    plugin.viewController = self;
+    plugin.commandDelegate = _commandDelegate;
 
     NSString* className = NSStringFromClass([plugin class]);
     [self.pluginObjects setObject:plugin forKey:className];
@@ -537,7 +556,7 @@ static UIColor* defaultBackgroundColor(void) {
 /**
  Returns an instance of a CordovaCommand object, based on its name.  If one exists already, it is returned.
  */
-- (nullable id)getCommandInstance:(NSString*)pluginName
+- (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName
 {
     // first, we try to find the pluginName in the pluginsMap
     // (acts as a allowList as well) if it does not exist, we return nil
@@ -629,9 +648,9 @@ static UIColor* defaultBackgroundColor(void) {
 - (bool)checkAndReinitViewUrl
 {
     NSURL* appURL = [self appUrl];
-    if ([self isUrlEmpty: [self.webViewEngine URL]] && ![self isUrlEmpty: appURL]) {
+    if ([self isUrlEmpty: [_webViewEngine URL]] && ![self isUrlEmpty: appURL]) {
         NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-        [self.webViewEngine loadRequest:appReq];
+        [_webViewEngine loadRequest:appReq];
         return true;
     }
     return false;
@@ -703,6 +722,8 @@ static UIColor* defaultBackgroundColor(void) {
     }
 }
 
+#pragma mark - API Methods for Plugins
+
 /**
  Method to be called from the plugin JavaScript to show or hide the launch screen.
  */
@@ -723,21 +744,6 @@ static UIColor* defaultBackgroundColor(void) {
             [self.webView becomeFirstResponder];
         }
     }];
-}
-
-// ///////////////////////
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    [_commandQueue dispose];
-    [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
-
-    [self.webViewEngine loadHTMLString:@"about:blank" baseURL:nil];
-    [self.pluginObjects removeAllObjects];
-    [self.webView removeFromSuperview];
-    self.webViewEngine = nil;
 }
 
 @end

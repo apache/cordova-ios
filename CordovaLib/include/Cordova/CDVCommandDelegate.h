@@ -24,12 +24,15 @@
 @class CDVPluginResult;
 @class CDVSettingsDictionary;
 
-typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol CDVCommandDelegate <NSObject>
 
+@optional
+@property (nonatomic, nullable, copy) NSURL *(^urlTransformer)(NSURL *) CDV_DEPRECATED(8, "Unused");
+
+@required
 @property (nonatomic, readonly) CDVSettingsDictionary* settings;
-@property (nonatomic, copy) UrlTransformerBlock urlTransformer;
 
 - (NSString*)pathForResource:(NSString*)resourcepath;
 - (id)getCommandInstance:(NSString*)pluginName;
@@ -47,3 +50,5 @@ typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 - (void)runInBackground:(void (^)(void))block;
 
 @end
+
+NS_ASSUME_NONNULL_END

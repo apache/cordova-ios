@@ -41,7 +41,7 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR);
 
 @interface CDVPluginResult ()
 
-- (CDVPluginResult*)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage;
+- (instancetype)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage;
 
 @end
 
@@ -95,12 +95,12 @@ id messageFromMultipart(NSArray* theMessages)
         nil];
 }
 
-- (CDVPluginResult*)init
+- (instancetype)init
 {
     return [self initWithStatus:CDVCommandStatus_NO_RESULT message:nil];
 }
 
-- (CDVPluginResult*)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage
+- (instancetype)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage
 {
     self = [super init];
     if (self) {
@@ -111,62 +111,62 @@ id messageFromMultipart(NSArray* theMessages)
     return self;
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal
 {
     return [[self alloc] initWithStatus:statusOrdinal message:nil];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString*)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString *)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:theMessage];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArray:(NSArray*)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArray:(NSArray *)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:theMessage];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsInt:(int)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsInt:(int)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithInt:theMessage]];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithInteger:theMessage]];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithUnsignedInteger:theMessage]];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDouble:(double)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDouble:(double)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithDouble:theMessage]];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithBool:theMessage]];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary*)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary *)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:theMessage];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData*)theMessage
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData *)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:messageFromArrayBuffer(theMessage)];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray*)theMessages
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray *)theMessages
 {
     return [[self alloc] initWithStatus:statusOrdinal message:messageFromMultipart(theMessages)];
 }
 
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode
 {
     NSDictionary* errDict = @{@"code" :[NSNumber numberWithInt:errorCode]};
 

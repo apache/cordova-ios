@@ -34,7 +34,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, readonly, weak) IBOutlet UIView* webView;
+@property (nonatomic, readonly, nullable, weak) IBOutlet UIView* webView;
 
 @property (nullable, nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSString*)appURLScheme;
 - (nullable NSURL*)errorURL;
 
-- (nullable id)getCommandInstance:(NSString*)pluginName;
+- (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 

@@ -17,26 +17,7 @@
  under the License.
  */
 
-#define __CORDOVA_SILENCE_HEADER_DEPRECATIONS
-
-#import <Cordova/CDVAvailability.h>
-#import <Cordova/CDVAvailabilityDeprecated.h>
-#import <Cordova/CDVAppDelegate.h>
-#import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVPluginResult.h>
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVCommandDelegate.h>
-#import <Cordova/CDVCommandQueue.h>
-#import <Cordova/CDVConfigParser.h>
-#import <Cordova/CDVInvokedUrlCommand.h>
-#import <Cordova/CDVPlugin+Resources.h>
-#import <Cordova/CDVSettingsDictionary.h>
-#import <Cordova/CDVWebViewEngineProtocol.h>
-#import <Cordova/CDVWebViewProcessPoolFactory.h>
-#import <Cordova/NSDictionary+CordovaPreferences.h>
-#import <Cordova/NSMutableArray+QueueAdditions.h>
-#import <Cordova/CDVScreenOrientationDelegate.h>
-#import <Cordova/CDVTimer.h>
-#import <Cordova/CDVURLSchemeHandler.h>
-
-#undef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+#ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+    #warning Import <Cordova/Cordova.h> rather than <Cordova/CDV.h>
+    #import <Cordova/Cordova.h>
+#endif

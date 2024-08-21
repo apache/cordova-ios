@@ -26,7 +26,8 @@
 
 @property (nonatomic, readonly) BOOL currentlyExecuting;
 
-- (id)initWithViewController:(CDVViewController*)viewController;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithViewController:(CDVViewController *)viewController;
 - (void)dispose;
 
 - (void)resetRequestId;
