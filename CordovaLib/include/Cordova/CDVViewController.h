@@ -30,9 +30,11 @@
 
 @class CDVPlugin;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface CDVViewController : UIViewController
 
-NS_ASSUME_NONNULL_BEGIN
+@property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8, "Unused");
 
 @property (nonatomic, readonly, nullable, weak) IBOutlet UIView* webView;
 
@@ -47,8 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong) CDVSettingsDictionary* settings;
 
-@property (nonatomic, readonly, strong) NSXMLParser* configParser;
-
 @property (nonatomic, readwrite, copy) NSString* appScheme;
 @property (nonatomic, readwrite, copy) NSString* configFile;
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
@@ -57,6 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
+/**
+ The filepath to the Cordova XML configuration file.
+ */
+@property (nonatomic, nullable, readonly, copy) NSURL *configFilePath;
 
 /**
  A boolean value indicating whether to show the splash screen while the webview
@@ -109,6 +113,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)showLaunchScreen:(BOOL)visible;
 
-NS_ASSUME_NONNULL_END
-
 @end
+
+NS_ASSUME_NONNULL_END

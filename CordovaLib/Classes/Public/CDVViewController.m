@@ -160,11 +160,12 @@ static UIColor* defaultBackgroundColor(void) {
     _splashBackgroundColor = color ?: self.backgroundColor;
 }
 
--(NSString*)configFilePath{
-    NSString* path = self.configFile ?: @"config.xml";
+- (nullable NSURL *)configFilePath
+{
+    NSString* path = self.configFile;
 
     // if path is relative, resolve it against the main bundle
-    if(![path isAbsolutePath]){
+    if (![path isAbsolutePath]) {
         NSString* absolutePath = [[NSBundle mainBundle] pathForResource:path ofType:nil];
         if(!absolutePath){
             NSAssert(NO, @"ERROR: %@ not found in the main bundle!", path);
@@ -178,42 +179,24 @@ static UIColor* defaultBackgroundColor(void) {
         return nil;
     }
 
-    return path;
-}
-
-- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate
-{
-    // read from config.xml in the app bundle
-    NSString* path = [self configFilePath];
-
-    NSURL* url = [NSURL fileURLWithPath:path];
-
-    self.configParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
-    if (self.configParser == nil) {
-        NSLog(@"Failed to initialize XML parser.");
-        return;
-    }
-    [self.configParser setDelegate:((id < NSXMLParserDelegate >)delegate)];
-    [self.configParser parse];
+    return [NSURL fileURLWithPath:path];
 }
 
 - (void)loadSettings
 {
-    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
-
-    [self parseSettingsWithParser:delegate];
+    CDVConfigParser *parser = [CDVConfigParser parseConfigFile:self.configFilePath];
 
     // Get the plugin dictionary, allowList and settings from the delegate.
-    self.pluginsMap = delegate.pluginsDict;
-    self.startupPluginNames = delegate.startupPluginNames;
-    self.settings = [[CDVSettingsDictionary alloc] initWithDictionary:delegate.settings];
+    self.pluginsMap = parser.pluginsDict;
+    self.startupPluginNames = parser.startupPluginNames;
+    self.settings = [[CDVSettingsDictionary alloc] initWithDictionary:parser.settings];
 
     // And the start folder/page.
     if(self.wwwFolderName == nil){
         self.wwwFolderName = @"www";
     }
-    if(delegate.startPage && self.startPage == nil){
-        self.startPage = delegate.startPage;
+    if(parser.startPage && self.startPage == nil){
+        self.startPage = parser.startPage;
     }
     if (self.startPage == nil) {
         self.startPage = @"index.html";
@@ -744,6 +727,11 @@ static UIColor* defaultBackgroundColor(void) {
             [self.webView becomeFirstResponder];
         }
     }];
+}
+
+- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate
+{
+    [CDVConfigParser parseConfigFile:self.configFilePath withDelegate:delegate];
 }
 
 @end
