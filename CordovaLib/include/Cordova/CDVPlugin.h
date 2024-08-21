@@ -27,11 +27,15 @@
 #import <Cordova/CDVViewController.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 
+#ifndef __swift__
+// This global extension to the UIView class causes issues for Swift subclasses
+// of UIView with their own scrollView properties, so we're removing it from
+// the exposed Swift API and marking it as deprecated
+// TODO: Remove in Cordova 9
 @interface UIView (org_apache_cordova_UIView_Extension)
-
-@property (nonatomic, weak) UIScrollView* scrollView;
-
+@property (nonatomic, weak) UIScrollView* scrollView CDV_DEPRECATED(8, "Check for a scrollView property on the view object at runtime and invoke it dynamically.");
 @end
+#endif
 
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
