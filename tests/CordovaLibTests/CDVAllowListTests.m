@@ -209,6 +209,21 @@
     XCTAssertTrue([expectedErrorString isEqualToString:errorString], @"Customized allowList rejection string has unexpected value.");
 }
 
+- (void)testUnusualSchemes
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"com.myapp://*",
+        @"web+app://*",
+        @"a12345://*",
+        nil];
+
+    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"com.myapp://www.apache.org"]]);
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"web+app://www.apache.org"]]);
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"a12345://www.apache.org"]]);
+}
+
 - (void)testSpecificProtocol
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
