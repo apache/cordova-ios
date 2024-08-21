@@ -169,7 +169,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         self.allowList = nil;
         self.permittedSchemes = nil;
     } else { // specific access
-        NSRegularExpression* parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|[A-Za-z-]+):/?/?)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
+        NSRegularExpression* parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|([a-z][a-z0-9+\\-.]*)):/?/?)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
         NSTextCheckingResult* m = [parts firstMatchInString:origin options:NSMatchingAnchored range:NSMakeRange(0, [origin length])];
         if (m != nil) {
             NSRange r;
@@ -180,7 +180,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
             }
 
             NSString* host = nil;
-            r = [m rangeAtIndex:3];
+            r = [m rangeAtIndex:4];
             if (r.location != NSNotFound) {
                 host = [origin substringWithRange:r];
             }
@@ -191,13 +191,13 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
             }
 
             NSString* port = nil;
-            r = [m rangeAtIndex:7];
+            r = [m rangeAtIndex:8];
             if (r.location != NSNotFound) {
                 port = [origin substringWithRange:r];
             }
 
             NSString* path = nil;
-            r = [m rangeAtIndex:8];
+            r = [m rangeAtIndex:9];
             if (r.location != NSNotFound) {
                 path = [origin substringWithRange:r];
             }
