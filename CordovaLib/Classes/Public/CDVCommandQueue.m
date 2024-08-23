@@ -45,7 +45,12 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     return _startExecutionTime > 0;
 }
 
-- (id)initWithViewController:(CDVViewController*)viewController
+- (instancetype)init
+{
+    return [self initWithViewController:nil];
+}
+
+- (instancetype)initWithViewController:(CDVViewController *)viewController
 {
     self = [super init];
     if (self != nil) {

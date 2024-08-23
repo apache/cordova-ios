@@ -17,8 +17,6 @@
  under the License.
  */
 
-@import Foundation;
-@import WebKit;
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
 
 static CDVWebViewProcessPoolFactory *factory = nil;

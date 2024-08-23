@@ -18,7 +18,6 @@
  */
 
 #import "CDVLaunchScreen.h"
-#import <Cordova/CDVViewController.h>
 
 @implementation CDVLaunchScreen
 

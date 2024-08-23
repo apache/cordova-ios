@@ -17,7 +17,7 @@
  under the License.
  */
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 #define __CORDOVA_SILENCE_HEADER_DEPRECATIONS
 #import <Cordova/NSDictionary+CordovaPreferences.h>

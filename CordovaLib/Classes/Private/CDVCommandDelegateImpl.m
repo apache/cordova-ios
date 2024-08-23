@@ -25,9 +25,7 @@
 
 @implementation CDVCommandDelegateImpl
 
-@synthesize urlTransformer;
-
-- (id)initWithViewController:(CDVViewController*)viewController
+- (instancetype)initWithViewController:(CDVViewController *)viewController
 {
     self = [super init];
     if (self != nil) {

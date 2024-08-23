@@ -53,28 +53,31 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR, error);
 #undef SWIFT_ENUM_COMPAT_HACK
 #endif
 
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface CDVPluginResult : NSObject {}
 
-@property (nonatomic, strong, readonly) NSNumber* status;
+@property (nonatomic, strong, readonly) NSNumber *status;
 @property (nonatomic, strong, readonly) id message;
-@property (nonatomic, strong)           NSNumber* keepCallback;
+@property (nonatomic, strong)           NSNumber *keepCallback;
 // This property can be used to scope the lifetime of another object. For example,
 // Use it to store the associated NSData when `message` is created using initWithBytesNoCopy.
 @property (nonatomic, strong) id associatedObject;
 
-- (CDVPluginResult*)init;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArray:(NSArray*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsInt:(int)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDouble:(double)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData*)theMessage;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray*)theMessages;
-+ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
+- (instancetype)init;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsString:(NSString *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArray:(NSArray *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsInt:(int)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSInteger:(NSInteger)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsNSUInteger:(NSUInteger)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDouble:(double)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData *)theMessage;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray *)theMessages;
++ (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
 
 + (void)setVerbose:(BOOL)verbose;
 + (BOOL)isVerbose;
@@ -84,3 +87,5 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR, error);
 - (NSString*)argumentsAsJSON;
 
 @end
+
+NS_ASSUME_NONNULL_END

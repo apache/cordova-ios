@@ -31,14 +31,14 @@
 @property (nonatomic, readonly) NSString* className;
 @property (nonatomic, readonly) NSString* methodName;
 
-+ (CDVInvokedUrlCommand*)commandFromJson:(NSArray*)jsonEntry;
++ (instancetype)commandFromJson:(NSArray *)jsonEntry;
 
-- (id)initWithArguments:(NSArray*)arguments
-             callbackId:(NSString*)callbackId
-              className:(NSString*)className
-             methodName:(NSString*)methodName;
+- (instancetype)initWithArguments:(NSArray *)arguments
+                       callbackId:(NSString *)callbackId
+                        className:(NSString *)className
+                       methodName:(NSString *)methodName NS_DESIGNATED_INITIALIZER;
 
-- (id)initFromJson:(NSArray*)jsonEntry;
+- (instancetype)initFromJson:(NSArray *)jsonEntry;
 
 // Returns the argument at the given index.
 // If index >= the number of arguments, returns nil.

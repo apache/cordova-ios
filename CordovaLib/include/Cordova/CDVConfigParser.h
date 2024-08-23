@@ -15,18 +15,70 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ An object that handles parsing Cordova XML configuration files.
+
+ ## Overview
+ The `CDVConfigParser` class provides methods to parse a Cordova XML
+ configuration file and then access the resulting configuration data.
+
+ Use ``parseConfigFile:`` to load data from a file path.
+
+ Use ``parseConfigFile:withDelegate:`` if you need to intercept the XML parsing
+ and handle the data yourself with an ``NSXMLParserDelegate``.
+ */
 @interface CDVConfigParser : NSObject <NSXMLParserDelegate>
-{
-    NSString* featureName;
-}
 
-@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
-@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
-@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readonly, strong) NSString* startPage;
+/**
+ A dictionary mapping Cordova plugin name keys to the plugin classes that implement them.
+ */
+@property (nonatomic, readonly, strong) NSMutableDictionary *pluginsDict;
 
+/**
+ A dictionary of Cordova preference keys and their values.
+
+ This should not be used directly, you should only use it to initialize a
+ ``CDVSettingsDictionary`` object.
+ */
+@property (nonatomic, readonly, strong) NSMutableDictionary *settings;
+
+/**
+ An array of plugin names to load immediately when Cordova initializes.
+ */
+@property (nonatomic, readonly, strong) NSMutableArray *startupPluginNames;
+
+/**
+ The path to the HTML page to display when the web view loads.
+ */
+@property (nonatomic, nullable, readonly, strong) NSString *startPage;
+
+/**
+ Parses the given path as a  Cordova XML configuration file.
+
+ If the file could not be loaded or parsed, the resulting ``CDVConfigParser``
+ object will have empty values.
+
+ - Parameters:
+   - filePath: The file path URL to the configuration file.
+ - Returns: A ``CDVConfigParser`` with the parsed result.
+ */
++ (instancetype)parseConfigFile:(NSURL *)filePath;
+
+/**
+ Parses the given path as a  Cordova XML configuration file using the given delegate.
+
+ - Parameters:
+   - filePath: The file path URL to the configuration file.
+   - delegate: The delegate to handle the parsed XML data.
+ - Returns: Whether the given file was successfully parsed.
+ */
++ (BOOL)parseConfigFile:(NSURL *)filePath withDelegate:(id <NSXMLParserDelegate>)delegate;
 @end
+
+NS_ASSUME_NONNULL_END
