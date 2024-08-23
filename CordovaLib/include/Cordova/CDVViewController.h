@@ -36,10 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8, "Unused");
 
-@property (nonatomic, readonly, nullable, weak) IBOutlet UIView* webView;
+@property (nonatomic, readonly, nullable, weak) IBOutlet UIView *webView;
 
-@property (nullable, nonatomic, readonly, strong) NSMutableDictionary* pluginObjects;
-@property (nonatomic, readonly, strong) NSDictionary* pluginsMap;
+@property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects;
+@property (nullable, nonatomic, readonly, strong) NSDictionary<NSString *, NSString *> *pluginsMap CDV_DEPRECATED(8, "Internal implementation detail, should not be used");
 
 /**
  The Cordova preferences for this view.
@@ -47,13 +47,13 @@ NS_ASSUME_NONNULL_BEGIN
  This is a dictionary populated from the preference key/value pairs in the
  Cordova XML configuration file.
  */
-@property (nonatomic, readonly, strong) CDVSettingsDictionary* settings;
+@property (nonatomic, readonly, strong) CDVSettingsDictionary *settings;
 
-@property (nonatomic, readwrite, copy) NSString* appScheme;
-@property (nonatomic, readwrite, copy) NSString* configFile;
-@property (nonatomic, readwrite, copy) NSString* wwwFolderName;
-@property (nonatomic, readwrite, copy) NSString* startPage;
-@property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
+@property (nonatomic, readwrite, copy) NSString *appScheme;
+@property (nonatomic, readwrite, copy) IBInspectable NSString *configFile;
+@property (nonatomic, readwrite, copy) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
+@property (nonatomic, nullable, readwrite, copy) IBInspectable NSString *startPage;
+@property (nonatomic, readonly, strong) CDVCommandQueue *commandQueue;
 @property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
@@ -61,6 +61,18 @@ NS_ASSUME_NONNULL_BEGIN
  The filepath to the Cordova XML configuration file.
  */
 @property (nonatomic, nullable, readonly, copy) NSURL *configFilePath;
+
+/**
+ The filepath to the HTML error fallback page, if one has been provided.
+ */
+@property (nonatomic, nullable, readonly, copy) NSURL *errorURL;
+
+/**
+ The folder path containing the web content to be displayed.
+ The default value is `"www"`.
+ This can be set in the storyboard file as a view controller attribute.
+  */
+@property (nonatomic, readwrite, copy) IBInspectable NSString *webContentFolderName;
 
 /**
  A boolean value indicating whether to show the splash screen while the webview
@@ -96,8 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (nullable NSString*)appURLScheme;
-- (nullable NSURL*)errorURL;
+- (nullable NSString*)appURLScheme CDV_DEPRECATED(8, "Unused");
 
 - (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;

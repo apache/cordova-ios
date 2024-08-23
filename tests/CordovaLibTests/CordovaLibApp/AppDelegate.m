@@ -34,7 +34,7 @@
 - (void)createViewController
 {
     _viewController = [[ViewController alloc] init];
-    _viewController.wwwFolderName = @"www";
+    _viewController.webContentFolderName = @"www";
     _viewController.startPage = @"index.html";
 
     // NOTE: To customize the view's frame size (which defaults to full screen), override

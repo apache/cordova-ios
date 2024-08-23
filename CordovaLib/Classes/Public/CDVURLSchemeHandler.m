@@ -37,7 +37,7 @@
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    NSString * startPath = [[NSBundle mainBundle] pathForResource:self.viewController.wwwFolderName ofType: nil];
+    NSString * startPath = [[NSBundle mainBundle] pathForResource:self.viewController.webContentFolderName ofType: nil];
     NSURL * url = urlSchemeTask.request.URL;
     NSString * stringToLoad = url.path;
     NSString * scheme = url.scheme;

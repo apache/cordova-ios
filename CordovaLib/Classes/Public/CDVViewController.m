@@ -42,34 +42,30 @@ static UIColor* defaultBackgroundColor(void) {
 @interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> {
     id <CDVWebViewEngineProtocol> _webViewEngine;
     id <CDVCommandDelegate> _commandDelegate;
+    NSMutableDictionary<NSString *, CDVPlugin *> *_pluginObjects;
+    NSMutableDictionary<NSString *, NSString *> *_pluginsMap;
     CDVCommandQueue* _commandQueue;
     UIColor* _backgroundColor;
     UIColor* _splashBackgroundColor;
+    CDVSettingsDictionary* _settings;
 }
 
-@property (nonatomic, readwrite, strong) NSXMLParser* configParser;
-@property (nonatomic, readwrite, strong) CDVSettingsDictionary* settings;
-@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readwrite, strong) NSDictionary* pluginsMap;
 @property (nonatomic, readwrite, strong) UIView* launchView;
-
 @property (readwrite, assign) BOOL initialized;
-
-@property (atomic, strong) NSURL* openURL;
 
 @end
 
 @implementation CDVViewController
 
-@synthesize pluginObjects, pluginsMap, startupPluginNames;
-@synthesize configParser, settings;
-@synthesize wwwFolderName, startPage, initialized, openURL;
+@synthesize pluginObjects = _pluginObjects;
+@synthesize pluginsMap = _pluginsMap;
 @synthesize commandDelegate = _commandDelegate;
 @synthesize commandQueue = _commandQueue;
 @synthesize webViewEngine = _webViewEngine;
 @synthesize backgroundColor = _backgroundColor;
 @synthesize splashBackgroundColor = _splashBackgroundColor;
+@synthesize settings = _settings;
 @dynamic webView;
 
 #pragma mark - Initializers
@@ -123,7 +119,11 @@ static UIColor* defaultBackgroundColor(void) {
 
         // Default property values
         self.configFile = @"config.xml";
+        self.webContentFolderName = @"www";
         self.showInitialSplashScreen = YES;
+
+        // Initialize the plugin objects dict.
+        _pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
 
         // Prevent reinitializing
         self.initialized = YES;
@@ -135,12 +135,14 @@ static UIColor* defaultBackgroundColor(void) {
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
     [_commandQueue dispose];
-    [[self.pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
 
     [self.webViewEngine loadHTMLString:@"about:blank" baseURL:nil];
-    [self.pluginObjects removeAllObjects];
+
+    @synchronized(_pluginObjects) {
+        [[_pluginObjects allValues] makeObjectsPerformSelector:@selector(dispose)];
+        [_pluginObjects removeAllObjects];
+    }
 
     [self.webView removeFromSuperview];
     [self.launchView removeFromSuperview];
@@ -150,6 +152,16 @@ static UIColor* defaultBackgroundColor(void) {
 
 #pragma mark - Getters & Setters
 
+- (NSString *)wwwFolderName
+{
+    return self.webContentFolderName;
+}
+
+- (void)setWwwFolderName:(NSString *)name
+{
+    self.webContentFolderName = name;
+}
+
 - (void)setBackgroundColor:(UIColor *)color
 {
     _backgroundColor = color ?: defaultBackgroundColor();
@@ -158,6 +170,12 @@ static UIColor* defaultBackgroundColor(void) {
 - (void)setSplashBackgroundColor:(UIColor *)color
 {
     _splashBackgroundColor = color ?: self.backgroundColor;
+}
+
+// Only for testing
+- (void)setSettings:(CDVSettingsDictionary *)settings
+{
+    _settings = settings;
 }
 
 - (nullable NSURL *)configFilePath
@@ -187,23 +205,17 @@ static UIColor* defaultBackgroundColor(void) {
     CDVConfigParser *parser = [CDVConfigParser parseConfigFile:self.configFilePath];
 
     // Get the plugin dictionary, allowList and settings from the delegate.
-    self.pluginsMap = parser.pluginsDict;
+    _pluginsMap = parser.pluginsDict;
     self.startupPluginNames = parser.startupPluginNames;
     self.settings = [[CDVSettingsDictionary alloc] initWithDictionary:parser.settings];
 
-    // And the start folder/page.
-    if(self.wwwFolderName == nil){
-        self.wwwFolderName = @"www";
-    }
+    // And the start page
     if(parser.startPage && self.startPage == nil){
         self.startPage = parser.startPage;
     }
     if (self.startPage == nil) {
         self.startPage = @"index.html";
     }
-
-    // Initialize the plugin objects dict.
-    self.pluginObjects = [[NSMutableDictionary alloc] initWithCapacity:20];
 }
 
 - (NSURL*)appUrl
@@ -212,15 +224,15 @@ static UIColor* defaultBackgroundColor(void) {
 
     if ([self.startPage rangeOfString:@"://"].location != NSNotFound) {
         appURL = [NSURL URLWithString:self.startPage];
-    } else if ([self.wwwFolderName rangeOfString:@"://"].location != NSNotFound) {
-        appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.wwwFolderName, self.startPage]];
-    } else if([self.wwwFolderName rangeOfString:@".bundle"].location != NSNotFound){
+    } else if ([self.webContentFolderName rangeOfString:@"://"].location != NSNotFound) {
+        appURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.webContentFolderName, self.startPage]];
+    } else if([self.webContentFolderName rangeOfString:@".bundle"].location != NSNotFound){
         // www folder is actually a bundle
-        NSBundle* bundle = [NSBundle bundleWithPath:self.wwwFolderName];
+        NSBundle* bundle = [NSBundle bundleWithPath:self.webContentFolderName];
         appURL = [bundle URLForResource:self.startPage withExtension:nil];
-    } else if([self.wwwFolderName rangeOfString:@".framework"].location != NSNotFound){
+    } else if([self.webContentFolderName rangeOfString:@".framework"].location != NSNotFound){
         // www folder is actually a framework
-        NSBundle* bundle = [NSBundle bundleWithPath:self.wwwFolderName];
+        NSBundle* bundle = [NSBundle bundleWithPath:self.webContentFolderName];
         appURL = [bundle URLForResource:self.startPage withExtension:nil];
     } else {
         // CB-3005 strip parameters from start page to check if page exists in resources
@@ -316,7 +328,7 @@ static UIColor* defaultBackgroundColor(void) {
         NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
         [_webViewEngine loadRequest:appReq];
     } else {
-        NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.wwwFolderName, self.startPage];
+        NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.webContentFolderName, self.startPage];
         NSLog(@"%@", loadErr);
 
         NSURL* errorUrl = [self errorURL];
@@ -521,7 +533,9 @@ static UIColor* defaultBackgroundColor(void) {
     plugin.viewController = self;
     plugin.commandDelegate = _commandDelegate;
 
-    [self.pluginObjects setObject:plugin forKey:className];
+    @synchronized(_pluginObjects) {
+        [_pluginObjects setObject:plugin forKey:className];
+    }
     [plugin pluginInitialize];
 }
 
@@ -531,8 +545,11 @@ static UIColor* defaultBackgroundColor(void) {
     plugin.commandDelegate = _commandDelegate;
 
     NSString* className = NSStringFromClass([plugin class]);
-    [self.pluginObjects setObject:plugin forKey:className];
-    [self.pluginsMap setValue:className forKey:[pluginName lowercaseString]];
+
+    @synchronized(_pluginObjects) {
+        [_pluginObjects setObject:plugin forKey:className];
+    }
+    [_pluginsMap setValue:className forKey:[pluginName lowercaseString]];
     [plugin pluginInitialize];
 }
 
@@ -546,7 +563,7 @@ static UIColor* defaultBackgroundColor(void) {
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a
     // possible issue is there can be duplicates possible if you had:
     // "org.apache.cordova.Foo" and "org.apache.cordova.foo" - only the lower-cased entry will match
-    NSString* className = [self.pluginsMap objectForKey:[pluginName lowercaseString]];
+    NSString* className = [_pluginsMap objectForKey:[pluginName lowercaseString]];
 
     if (className == nil) {
         return nil;
