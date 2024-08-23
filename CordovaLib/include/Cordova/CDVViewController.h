@@ -98,6 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSString*)appURLScheme;
 - (nullable NSURL*)errorURL;
+- (NSURL*)appUrl;
 
 - (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
