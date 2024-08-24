@@ -35,11 +35,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CDVViewController : UIViewController
 
 @property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8, "Unused");
+@property (nonatomic, nullable, readonly, copy) NSString *appURLScheme CDV_DEPRECATED(8, "Unused");
 
 @property (nonatomic, readonly, nullable, weak) IBOutlet UIView *webView;
 
 @property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects;
 @property (nullable, nonatomic, readonly, strong) NSDictionary<NSString *, NSString *> *pluginsMap CDV_DEPRECATED(8, "Internal implementation detail, should not be used");
+
+@property (nonatomic, readwrite, copy) NSString *appScheme;
+
+@property (nonatomic, readonly, strong) CDVCommandQueue *commandQueue;
+@property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
+@property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 
 /**
  The Cordova preferences for this view.
@@ -49,13 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong) CDVSettingsDictionary *settings;
 
-@property (nonatomic, readwrite, copy) NSString *appScheme;
 @property (nonatomic, readwrite, copy) IBInspectable NSString *configFile;
-@property (nonatomic, readwrite, copy) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
-@property (nonatomic, nullable, readwrite, copy) IBInspectable NSString *startPage;
-@property (nonatomic, readonly, strong) CDVCommandQueue *commandQueue;
-@property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
-@property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**
  The filepath to the Cordova XML configuration file.
@@ -73,6 +74,10 @@ NS_ASSUME_NONNULL_BEGIN
  This can be set in the storyboard file as a view controller attribute.
   */
 @property (nonatomic, readwrite, copy) IBInspectable NSString *webContentFolderName;
+
+@property (nonatomic, readwrite, copy) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
+
+@property (nonatomic, nullable, readwrite, copy) IBInspectable NSString *startPage;
 
 /**
  A boolean value indicating whether to show the splash screen while the webview
@@ -108,13 +113,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
-- (nullable NSString*)appURLScheme CDV_DEPRECATED(8, "Unused");
-
 - (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
-
-- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
 
 /**
  Toggles the display of the splash screen overtop of the web view.
@@ -123,6 +124,8 @@ NS_ASSUME_NONNULL_BEGIN
    - visible: Whether to make the splash screen visible or not.
  */
 - (void)showLaunchScreen:(BOOL)visible;
+
+- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
 
 @end
 
