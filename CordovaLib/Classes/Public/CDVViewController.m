@@ -200,25 +200,7 @@ static UIColor* defaultBackgroundColor(void) {
     return [NSURL fileURLWithPath:path];
 }
 
-- (void)loadSettings
-{
-    CDVConfigParser *parser = [CDVConfigParser parseConfigFile:self.configFilePath];
-
-    // Get the plugin dictionary, allowList and settings from the delegate.
-    _pluginsMap = parser.pluginsDict;
-    self.startupPluginNames = parser.startupPluginNames;
-    self.settings = [[CDVSettingsDictionary alloc] initWithDictionary:parser.settings];
-
-    // And the start page
-    if(parser.startPage && self.startPage == nil){
-        self.startPage = parser.startPage;
-    }
-    if (self.startPage == nil) {
-        self.startPage = @"index.html";
-    }
-}
-
-- (NSURL*)appUrl
+- (NSURL *)appUrl
 {
     NSURL* appURL = nil;
 
@@ -256,26 +238,24 @@ static UIColor* defaultBackgroundColor(void) {
     return appURL;
 }
 
-- (nullable NSURL*)errorURL
+- (nullable NSURL *)errorURL
 {
-    NSURL* errorUrl = nil;
+    NSString *setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
+    if (setting == nil) {
+        return nil;
+    }
 
-    id setting = [self.settings cordovaSettingForKey:@"ErrorUrl"];
-
-    if (setting) {
-        NSString* errorUrlString = (NSString*)setting;
-        if ([errorUrlString rangeOfString:@"://"].location != NSNotFound) {
-            errorUrl = [NSURL URLWithString:errorUrlString];
-        } else {
-            NSURL* url = [NSURL URLWithString:(NSString*)setting];
-            NSString* errorFilePath = [self.commandDelegate pathForResource:[url path]];
-            if (errorFilePath) {
-                errorUrl = [NSURL fileURLWithPath:errorFilePath];
-            }
+    if ([setting rangeOfString:@"://"].location != NSNotFound) {
+        return [NSURL URLWithString:setting];
+    } else {
+        NSURL *url = [NSURL URLWithString:setting];
+        NSString *errorFilePath = [self.commandDelegate pathForResource:[url path]];
+        if (errorFilePath) {
+            return [NSURL fileURLWithPath:errorFilePath];
         }
     }
 
-    return errorUrl;
+    return nil;
 }
 
 - (nullable UIView *)webView
@@ -285,6 +265,25 @@ static UIColor* defaultBackgroundColor(void) {
     }
 
     return nil;
+}
+
+- (nullable NSString *)appURLScheme
+{
+    NSString* URLScheme = nil;
+
+    NSArray* URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+
+    if (URLTypes != nil) {
+        NSDictionary* dict = [URLTypes objectAtIndex:0];
+        if (dict != nil) {
+            NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
+            if (URLSchemes != nil) {
+                URLScheme = [URLSchemes objectAtIndex:0];
+            }
+        }
+    }
+
+    return URLScheme;
 }
 
 #pragma mark - UIViewController & App Lifecycle
@@ -387,13 +386,146 @@ static UIColor* defaultBackgroundColor(void) {
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewDidLayoutSubviewsNotification object:nil]];
 }
 
--(void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+-(void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewWillTransitionToSizeNotification object:[NSValue valueWithCGSize:size]]];
 }
 
+/*
+ This method lets your application know that it is about to be terminated and purged from memory entirely
+ */
+- (void)onAppWillTerminate:(NSNotification *)notification
+{
+    // empty the tmp directory
+    NSFileManager* fileMgr = [[NSFileManager alloc] init];
+    NSError* __autoreleasing err = nil;
+
+    // clear contents of NSTemporaryDirectory
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];
+    NSString* fileName = nil;
+    BOOL result;
+
+    while ((fileName = [directoryEnumerator nextObject])) {
+        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        result = [fileMgr removeItemAtPath:filePath error:&err];
+        if (!result && err) {
+            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+        }
+    }
+}
+
+/*
+ This method is called to let your application know that it is about to move from the active to inactive state.
+ You should use this method to pause ongoing tasks, disable timer, ...
+ */
+- (void)onAppWillResignActive:(NSNotification *)notification
+{
+    [self checkAndReinitViewUrl];
+    // NSLog(@"%@",@"applicationWillResignActive");
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');" scheduledOnRunLoop:NO];
+}
+
+/*
+ In iOS 4.0 and later, this method is called instead of the applicationWillTerminate: method
+ when the user quits an application that supports background execution.
+ */
+- (void)onAppDidEnterBackground:(NSNotification *)notification
+{
+    [self checkAndReinitViewUrl];
+    // NSLog(@"%@",@"applicationDidEnterBackground");
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
+}
+
+/*
+ In iOS 4.0 and later, this method is called as part of the transition from the background to the inactive state.
+ You can use this method to undo many of the changes you made to your application upon entering the background.
+ invariably followed by applicationDidBecomeActive
+ */
+- (void)onAppWillEnterForeground:(NSNotification *)notification
+{
+    [self checkAndReinitViewUrl];
+    // NSLog(@"%@",@"applicationWillEnterForeground");
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
+}
+
+// This method is called to let your application know that it moved from the inactive to active state.
+- (void)onAppDidBecomeActive:(NSNotification *)notification
+{
+    [self checkAndReinitViewUrl];
+    // NSLog(@"%@",@"applicationDidBecomeActive");
+    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('active');"];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    // iterate through all the plugin objects, and call hasPendingOperation
+    // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
+
+    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
+    CDVPlugin* plugin;
+
+    BOOL doPurge = YES;
+
+    while ((plugin = [enumerator nextObject])) {
+        if (plugin.hasPendingOperation) {
+            NSLog(@"Plugin '%@' has a pending operation, memory purge is delayed for didReceiveMemoryWarning.", NSStringFromClass([plugin class]));
+            doPurge = NO;
+        }
+    }
+
+    if (doPurge) {
+        // Releases the view if it doesn't have a superview.
+        [super didReceiveMemoryWarning];
+    }
+
+    // Release any cached data, images, etc. that aren't in use.
+}
+
+/**
+ Show the webview and fade out the intermediary view
+ This is to prevent the flashing of the mainViewController
+ */
+- (void)onWebViewPageDidLoad:(NSNotification*)notification
+{
+    self.webView.hidden = NO;
+
+    if ([self.settings cordovaBoolSettingForKey:@"AutoHideSplashScreen" defaultValue:YES]) {
+        CGFloat splashScreenDelaySetting = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
+
+        if (splashScreenDelaySetting == 0) {
+            [self showLaunchScreen:NO];
+        } else {
+            // Divide by 1000 because config returns milliseconds and NSTimer takes seconds
+            CGFloat splashScreenDelay = splashScreenDelaySetting / 1000;
+
+            [NSTimer scheduledTimerWithTimeInterval:splashScreenDelay repeats:NO block:^(NSTimer * _Nonnull timer) {
+                [self showLaunchScreen:NO];
+            }];
+        }
+    }
+}
+
 #pragma mark - View Setup
+
+- (void)loadSettings
+{
+    CDVConfigParser *parser = [CDVConfigParser parseConfigFile:self.configFilePath];
+
+    // Get the plugin dictionary, allowList and settings from the delegate.
+    _pluginsMap = parser.pluginsDict;
+    self.startupPluginNames = parser.startupPluginNames;
+    self.settings = [[CDVSettingsDictionary alloc] initWithDictionary:parser.settings];
+
+    // And the start page
+    if(parser.startPage && self.startPage == nil){
+        self.startPage = parser.startPage;
+    }
+    if (self.startPage == nil) {
+        self.startPage = @"index.html";
+    }
+}
 
 /// Retrieves the view from a newwly initialized webViewEngine
 /// @param bounds The bounds with which the webViewEngine will be initialized
@@ -501,31 +633,6 @@ static UIColor* defaultBackgroundColor(void) {
     [self.view sendSubviewToBack:view];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    // iterate through all the plugin objects, and call hasPendingOperation
-    // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
-
-    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
-    CDVPlugin* plugin;
-
-    BOOL doPurge = YES;
-
-    while ((plugin = [enumerator nextObject])) {
-        if (plugin.hasPendingOperation) {
-            NSLog(@"Plugin '%@' has a pending operation, memory purge is delayed for didReceiveMemoryWarning.", NSStringFromClass([plugin class]));
-            doPurge = NO;
-        }
-    }
-
-    if (doPurge) {
-        // Releases the view if it doesn't have a superview.
-        [super didReceiveMemoryWarning];
-    }
-
-    // Release any cached data, images, etc. that aren't in use.
-}
-
 #pragma mark CordovaCommands
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
@@ -590,52 +697,6 @@ static UIColor* defaultBackgroundColor(void) {
 
 #pragma mark -
 
-- (nullable NSString*)appURLScheme
-{
-    NSString* URLScheme = nil;
-
-    NSArray* URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
-
-    if (URLTypes != nil) {
-        NSDictionary* dict = [URLTypes objectAtIndex:0];
-        if (dict != nil) {
-            NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
-            if (URLSchemes != nil) {
-                URLScheme = [URLSchemes objectAtIndex:0];
-            }
-        }
-    }
-
-    return URLScheme;
-}
-
-#pragma mark -
-#pragma mark UIApplicationDelegate impl
-
-/*
- This method lets your application know that it is about to be terminated and purged from memory entirely
- */
-- (void)onAppWillTerminate:(NSNotification*)notification
-{
-    // empty the tmp directory
-    NSFileManager* fileMgr = [[NSFileManager alloc] init];
-    NSError* __autoreleasing err = nil;
-
-    // clear contents of NSTemporaryDirectory
-    NSString* tempDirectoryPath = NSTemporaryDirectory();
-    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];
-    NSString* fileName = nil;
-    BOOL result;
-
-    while ((fileName = [directoryEnumerator nextObject])) {
-        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
-        result = [fileMgr removeItemAtPath:filePath error:&err];
-        if (!result && err) {
-            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
-        }
-    }
-}
-
 - (bool)isUrlEmpty:(NSURL *)url
 {
     if (!url || (url == (id) [NSNull null])) {
@@ -656,72 +717,6 @@ static UIColor* defaultBackgroundColor(void) {
     return false;
 }
 
-/*
- This method is called to let your application know that it is about to move from the active to inactive state.
- You should use this method to pause ongoing tasks, disable timer, ...
- */
-- (void)onAppWillResignActive:(NSNotification*)notification
-{
-    [self checkAndReinitViewUrl];
-    // NSLog(@"%@",@"applicationWillResignActive");
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resign');" scheduledOnRunLoop:NO];
-}
-
-/*
- In iOS 4.0 and later, this method is called as part of the transition from the background to the inactive state.
- You can use this method to undo many of the changes you made to your application upon entering the background.
- invariably followed by applicationDidBecomeActive
- */
-- (void)onAppWillEnterForeground:(NSNotification*)notification
-{
-    [self checkAndReinitViewUrl];
-    // NSLog(@"%@",@"applicationWillEnterForeground");
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
-}
-
-// This method is called to let your application know that it moved from the inactive to active state.
-- (void)onAppDidBecomeActive:(NSNotification*)notification
-{
-    [self checkAndReinitViewUrl];
-    // NSLog(@"%@",@"applicationDidBecomeActive");
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('active');"];
-}
-
-/*
- In iOS 4.0 and later, this method is called instead of the applicationWillTerminate: method
- when the user quits an application that supports background execution.
- */
-- (void)onAppDidEnterBackground:(NSNotification*)notification
-{
-    [self checkAndReinitViewUrl];
-    // NSLog(@"%@",@"applicationDidEnterBackground");
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
-}
-
-/**
- Show the webview and fade out the intermediary view
- This is to prevent the flashing of the mainViewController
- */
-- (void)onWebViewPageDidLoad:(NSNotification*)notification
-{
-    self.webView.hidden = NO;
-
-    if ([self.settings cordovaBoolSettingForKey:@"AutoHideSplashScreen" defaultValue:YES]) {
-        CGFloat splashScreenDelaySetting = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
-
-        if (splashScreenDelaySetting == 0) {
-            [self showLaunchScreen:NO];
-        } else {
-            // Divide by 1000 because config returns milliseconds and NSTimer takes seconds
-            CGFloat splashScreenDelay = splashScreenDelaySetting / 1000;
-
-            [NSTimer scheduledTimerWithTimeInterval:splashScreenDelay repeats:NO block:^(NSTimer * _Nonnull timer) {
-                [self showLaunchScreen:NO];
-            }];
-        }
-    }
-}
-
 #pragma mark - API Methods for Plugins
 
 /**
@@ -729,7 +724,7 @@ static UIColor* defaultBackgroundColor(void) {
  */
 - (void)showLaunchScreen:(BOOL)visible
 {
-    CGFloat fadeSplashScreenDuration = [self.settings cordovaFloatSettingForKey:@"FadeSplashScreenDuration" defaultValue:250];
+    CGFloat fadeSplashScreenDuration = [self.settings cordovaFloatSettingForKey:@"FadeSplashScreenDuration" defaultValue:250.f];
 
     // Setting minimum value for fade to 0.25 seconds
     fadeSplashScreenDuration = fadeSplashScreenDuration < 250 ? 250 : fadeSplashScreenDuration;
