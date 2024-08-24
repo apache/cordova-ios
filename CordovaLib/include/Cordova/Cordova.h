@@ -36,7 +36,6 @@
 #import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVTimer.h>
-#import <Cordova/CDVURLSchemeHandler.h>
 
 // Deprecated
 #import <Cordova/CDV.h>
