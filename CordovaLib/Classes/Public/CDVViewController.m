@@ -495,13 +495,13 @@ static UIColor* defaultBackgroundColor(void) {
         CGFloat splashScreenDelaySetting = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
 
         if (splashScreenDelaySetting == 0) {
-            [self showLaunchScreen:NO];
+            [self showSplashScreen:NO];
         } else {
             // Divide by 1000 because config returns milliseconds and NSTimer takes seconds
             CGFloat splashScreenDelay = splashScreenDelaySetting / 1000;
 
             [NSTimer scheduledTimerWithTimeInterval:splashScreenDelay repeats:NO block:^(NSTimer * _Nonnull timer) {
-                [self showLaunchScreen:NO];
+                [self showSplashScreen:NO];
             }];
         }
     }
@@ -719,10 +719,12 @@ static UIColor* defaultBackgroundColor(void) {
 
 #pragma mark - API Methods for Plugins
 
-/**
- Method to be called from the plugin JavaScript to show or hide the launch screen.
- */
 - (void)showLaunchScreen:(BOOL)visible
+{
+    [self showSplashScreen:visible];
+}
+
+- (void)showSplashScreen:(BOOL)visible
 {
     CGFloat fadeSplashScreenDuration = [self.settings cordovaFloatSettingForKey:@"FadeSplashScreenDuration" defaultValue:250.f];
 

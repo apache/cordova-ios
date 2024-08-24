@@ -33,12 +33,12 @@
 #import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVWebViewEngineProtocol.h>
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
-#import <Cordova/NSMutableArray+QueueAdditions.h>
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVTimer.h>
 
 // Deprecated
 #import <Cordova/CDV.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>
+#import <Cordova/NSMutableArray+QueueAdditions.h>
 
 #undef __CORDOVA_SILENCE_HEADER_DEPRECATIONS

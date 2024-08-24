@@ -21,14 +21,14 @@
 
 @implementation CDVLaunchScreen
 
-- (void)show:(CDVInvokedUrlCommand*)command
+- (void)show:(CDVInvokedUrlCommand *)command
 {
-    [self.viewController showLaunchScreen:YES];
+    [self.viewController showSplashScreen:YES];
 }
 
-- (void)hide:(CDVInvokedUrlCommand*)command
+- (void)hide:(CDVInvokedUrlCommand *)command
 {
-    [self.viewController showLaunchScreen:NO];
+    [self.viewController showSplashScreen:NO];
 }
 
 @end

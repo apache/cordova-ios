@@ -32,11 +32,39 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ A view controller that specializes in displaying Cordova web content.
+
+ ## Overview
+ `CDVViewController` presents a view that displays Cordova web content in a
+ ``webView``. Although often presented as the root view controller for an app,
+ a `CDVViewController` can safely be placed within view controller
+ hierarchies—such as navigation and tabbed controllers—or presented modally.
+
+ The behavior preferences and web content to be loaded are defined in a Cordova
+ XML configuration file, for which a separate [reference
+ guide](https://cordova.apache.org/docs/en/latest/config_ref/index.html)
+ exists. The web content displayed within the view has access to Cordova
+ plugins via their exposed JavaScript APIs.
+
+ > Important: In accordance with [App Store review
+ > guidelines](https://developer.apple.com/app-store/review/guidelines/), you
+ > must not expose Apple device APIs to web content that is not bundled within
+ > the app.
+ */
 @interface CDVViewController : UIViewController
 
-@property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8, "Unused");
-@property (nonatomic, nullable, readonly, copy) NSString *appURLScheme CDV_DEPRECATED(8, "Unused");
+@property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8, "");
+@property (nonatomic, nullable, readonly, copy) NSString *appURLScheme CDV_DEPRECATED(8, "");
 
+/**
+ The view displaying web content for this Cordova controller.
+
+ The exact type of this UIView subclass varies based on which
+ plugin is being used to provide the web view implementation. Interactions
+ with the web view and its content should be done through the ``webViewEngine``
+ property.
+ */
 @property (nonatomic, readonly, nullable, weak) IBOutlet UIView *webView;
 
 @property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects;
@@ -46,6 +74,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, strong) CDVCommandQueue *commandQueue;
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
+
+/**
+ The associated web view engine implementation.
+
+ This provides a reference to the web view plugin class, which
+ implements ``CDVWebViewEngineProtocol`` and allows for interaction with the
+ web view.
+ */
 @property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 
 /**
@@ -56,6 +92,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong) CDVSettingsDictionary *settings;
 
+/**
+ The filename of the Cordova XML configuration file.
+
+ The default value is `"config.xml"`.
+
+ This can be set in the storyboard file as a view controller attribute.
+ */
 @property (nonatomic, readwrite, copy) IBInspectable NSString *configFile;
 
 /**
@@ -70,13 +113,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  The folder path containing the web content to be displayed.
+
  The default value is `"www"`.
+
  This can be set in the storyboard file as a view controller attribute.
-  */
+ */
 @property (nonatomic, readwrite, copy) IBInspectable NSString *webContentFolderName;
 
+/**
+ @DeprecationSummary {
+   Use ``webContentFolderName`` instead.
+ }
+ */
 @property (nonatomic, readwrite, copy) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
 
+/**
+ The filename of the HTML file to load into the web view.
+
+ The default value will be read from the Cordova XML configuration file, and
+ fall back to `"index.html"` if not specified.
+
+ This can be set in the storyboard file as a view controller attribute.
+ */
 @property (nonatomic, nullable, readwrite, copy) IBInspectable NSString *startPage;
 
 /**
@@ -113,9 +171,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
+/**
+ Returns the ``CDVPlugin`` instance of the given plugin name, creating the
+ instance if one does not exist.
+
+ - Parameters:
+   - pluginName: The name of the plugin to return.
+ - Returns: The ``CDVPlugin`` instance, or `nil` if no plugin exists with the
+   given name.
+ */
 - (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
 - (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
+
+/**
+ @DeprecationSummary {
+   Use ``showSplashScreen:`` instead.
+ }
+
+ - Parameters:
+   - visible: Whether to make the splash screen visible or not.
+ */
+- (void)showLaunchScreen:(BOOL)visible CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use showSplashScreen: instead", "showSplashScreen");;
 
 /**
  Toggles the display of the splash screen overtop of the web view.
@@ -123,9 +200,16 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - visible: Whether to make the splash screen visible or not.
  */
-- (void)showLaunchScreen:(BOOL)visible;
+- (void)showSplashScreen:(BOOL)visible;
 
-- (void)parseSettingsWithParser:(NSObject <NSXMLParserDelegate>*)delegate;
+/**
+ Parses the  Cordova XML configuration file using the given delegate.
+
+ @DeprecationSummary {
+    Use `CDVConfigParser` ``CDVConfigParser/parseConfigFile:withDelegate:`` instead.
+ }
+ */
+- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate CDV_DEPRECATED(8, "Use CDVConfigParser parseConfigFile:withDelegate: instead");;
 
 @end
 

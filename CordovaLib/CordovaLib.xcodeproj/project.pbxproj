@@ -81,6 +81,8 @@
 		7ED95D581AB9029B008C4574 /* NSDictionary+CordovaPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D321AB9029B008C4574 /* NSDictionary+CordovaPreferences.m */; };
 		7ED95D591AB9029B008C4574 /* NSMutableArray+QueueAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED95D331AB9029B008C4574 /* NSMutableArray+QueueAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7ED95D5A1AB9029B008C4574 /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED95D341AB9029B008C4574 /* NSMutableArray+QueueAdditions.m */; };
+		902B30742C6C5A7E00C6804C /* CordovaLib.docc in Sources */ = {isa = PBXBuildFile; fileRef = 902B30732C6C5A7E00C6804C /* CordovaLib.docc */; };
+		902B30752C6C5A7E00C6804C /* CordovaLib.docc in Sources */ = {isa = PBXBuildFile; fileRef = 902B30732C6C5A7E00C6804C /* CordovaLib.docc */; };
 		9036843D2C6EB06500A3338C /* CDVAllowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9036843B2C6EB06500A3338C /* CDVAllowList.h */; };
 		9036843E2C6EB06500A3338C /* CDVAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9036843C2C6EB06500A3338C /* CDVAllowList.m */; };
 		9036843F2C6EB06500A3338C /* CDVAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9036843C2C6EB06500A3338C /* CDVAllowList.m */; };
@@ -193,6 +195,7 @@
 		7ED95D331AB9029B008C4574 /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
 		7ED95D341AB9029B008C4574 /* NSMutableArray+QueueAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+QueueAdditions.m"; sourceTree = "<group>"; };
 		902D0BC12AEB64EB009C68E5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		902B30732C6C5A7E00C6804C /* CordovaLib.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = CordovaLib.docc; sourceTree = "<group>"; };
 		9036843B2C6EB06500A3338C /* CDVAllowList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDVAllowList.h; sourceTree = "<group>"; };
 		9036843C2C6EB06500A3338C /* CDVAllowList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDVAllowList.m; sourceTree = "<group>"; };
 		9047732D2C7A57E900373636 /* CDVURLSchemeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDVURLSchemeHandler.h; sourceTree = "<group>"; };
@@ -236,6 +239,7 @@
 		0867D691FE84028FC02AAC07 = {
 			isa = PBXGroup;
 			children = (
+				902B30732C6C5A7E00C6804C /* CordovaLib.docc */,
 				9064EF5E26FAB74200C9D65B /* include */,
 				7ED95D0E1AB9029B008C4574 /* Public */,
 				7ED95CF11AB9028C008C4574 /* Private */,
@@ -567,6 +571,7 @@
 				9052DE712150D040008E83D4 /* CDVAppDelegate.m in Sources */,
 				9052DE722150D040008E83D4 /* CDVCommandDelegateImpl.m in Sources */,
 				9052DE732150D040008E83D4 /* CDVCommandQueue.m in Sources */,
+				902B30742C6C5A7E00C6804C /* CordovaLib.docc in Sources */,
 				9052DE742150D040008E83D4 /* CDVConfigParser.m in Sources */,
 				9052DE752150D040008E83D4 /* CDVInvokedUrlCommand.m in Sources */,
 				9052DE762150D040008E83D4 /* CDVPlugin+Resources.m in Sources */,
@@ -598,6 +603,7 @@
 				7ED95D371AB9029B008C4574 /* CDVAppDelegate.m in Sources */,
 				7ED95D3C1AB9029B008C4574 /* CDVCommandDelegateImpl.m in Sources */,
 				7ED95D3E1AB9029B008C4574 /* CDVCommandQueue.m in Sources */,
+				902B30752C6C5A7E00C6804C /* CordovaLib.docc in Sources */,
 				7ED95D401AB9029B008C4574 /* CDVConfigParser.m in Sources */,
 				7ED95D421AB9029B008C4574 /* CDVInvokedUrlCommand.m in Sources */,
 				7ED95D441AB9029B008C4574 /* CDVPlugin+Resources.m in Sources */,
@@ -685,6 +691,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DOCC_EXTRACT_SWIFT_INFO_FOR_OBJC_SYMBOLS = YES;
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -756,6 +763,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DOCC_EXTRACT_SWIFT_INFO_FOR_OBJC_SYMBOLS = YES;
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
