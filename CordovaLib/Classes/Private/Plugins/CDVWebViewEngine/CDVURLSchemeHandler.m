@@ -18,7 +18,7 @@
  */
 
 
-#import <Cordova/CDVURLSchemeHandler.h>
+#import "CDVURLSchemeHandler.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 #import <objc/message.h>
