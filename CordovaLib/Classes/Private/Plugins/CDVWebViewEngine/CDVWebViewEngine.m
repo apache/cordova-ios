@@ -215,7 +215,7 @@
 
     // Do not configure the scheme handler if the scheme is default (file)
     if(!self.cdvIsFileScheme) {
-        self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithVC:vc];
+        self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithViewController:vc];
         [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     }
 
@@ -551,8 +551,7 @@
     BOOL anyPluginsResponded = NO;
     BOOL shouldAllowRequest = NO;
 
-    for (NSString* pluginName in vc.pluginObjects) {
-        CDVPlugin* plugin = [vc.pluginObjects objectForKey:pluginName];
+    for (CDVPlugin *plugin in vc.enumerablePlugins) {
         SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
         if ([plugin respondsToSelector:selector]) {
             anyPluginsResponded = YES;

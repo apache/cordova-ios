@@ -18,8 +18,6 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <WebKit/WebKit.h>
-#import <Foundation/NSJSONSerialization.h>
 #import <Cordova/CDVAvailability.h>
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVCommandDelegate.h>
@@ -67,8 +65,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, nullable, weak) IBOutlet UIView *webView;
 
-@property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects;
+@property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects CDV_DEPRECATED(8, "Internal implementation detail, should not be used");
 @property (nullable, nonatomic, readonly, strong) NSDictionary<NSString *, NSString *> *pluginsMap CDV_DEPRECATED(8, "Internal implementation detail, should not be used");
+
+/**
+ An array of loaded Cordova plugin instances.
+
+ This array is safe to iterate using a `for...in` loop.
+ */
+@property (nonatomic, readonly, copy) NSArray <CDVPlugin *> *enumerablePlugins;
 
 @property (nonatomic, readwrite, copy) NSString *appScheme;
 

@@ -17,19 +17,14 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVPlugin.h>
 
+@class CDVViewController;
 
 @interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, weak) CDVViewController* viewController;
+- (instancetype)initWithViewController:(CDVViewController *)controller;
 
-@property (nonatomic) CDVPlugin* schemePlugin;
-
-- (instancetype)initWithVC:(CDVViewController *)controller;
-
-
+NS_ASSUME_NONNULL_END
 @end

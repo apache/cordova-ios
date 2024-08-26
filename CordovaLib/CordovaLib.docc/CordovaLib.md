@@ -36,6 +36,9 @@ For more information about Apache Cordova, visit [https://cordova.apache.org](ht
 ### Cordova plugins
 
 - ``CDVPlugin``
+- ``CDVPluginSchemeHandler``
+
+### Plugin communication
 - ``CDVPluginResult``
 - ``CDVCommandStatus``
 - ``CDVInvokedUrlCommand``
