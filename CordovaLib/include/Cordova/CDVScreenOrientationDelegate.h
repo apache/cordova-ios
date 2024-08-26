@@ -20,7 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 
-CDV_DEPRECATED(8, "Unused")
+CDV_DEPRECATED(8, "")
 @protocol CDVScreenOrientationDelegate <NSObject>
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations;

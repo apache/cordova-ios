@@ -20,16 +20,42 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVAvailability.h>
 
+/**
+ An enumeration that describes the result of handling a plugin command.
+
+ ## See Also
+
+ - ``CDVPluginResult``
+ */
 typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
+    /** Status code indicating no command result. */
     CDVCommandStatus_NO_RESULT NS_SWIFT_NAME(noResult) = 0,
+
+    /** Status code indicating successful handling of the command. */
     CDVCommandStatus_OK NS_SWIFT_NAME(ok),
+
+    /** Status code indicating the command's plugin class could not be found. */
     CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION NS_SWIFT_NAME(classNotFoundException),
+
+    /** Status code indicating there was an illegal access exception while handling the command. */
     CDVCommandStatus_ILLEGAL_ACCESS_EXCEPTION NS_SWIFT_NAME(illegalAccessException),
+
+    /** Status code indicating the command's plugin class could not be instantiated. */
     CDVCommandStatus_INSTANTIATION_EXCEPTION NS_SWIFT_NAME(instantiationException),
+
+    /** Status code indicating the command included a malformed URL. */
     CDVCommandStatus_MALFORMED_URL_EXCEPTION NS_SWIFT_NAME(malformedUrlException),
+
+    /** Status code indicating there was an I/O exception while handling the command. */
     CDVCommandStatus_IO_EXCEPTION NS_SWIFT_NAME(ioException),
+
+    /** Status code indicating the command's action was not valid. */
     CDVCommandStatus_INVALID_ACTION NS_SWIFT_NAME(invalidAction),
+
+    /** Status code indicating the command's JSON data was invalid. */
     CDVCommandStatus_JSON_EXCEPTION NS_SWIFT_NAME(jsonException),
+
+    /** Status code indicating there was an error handling the command. */
     CDVCommandStatus_ERROR NS_SWIFT_NAME(error)
 };
 
@@ -59,11 +85,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CDVPluginResult : NSObject {}
 
 @property (nonatomic, strong, readonly) NSNumber *status;
-@property (nonatomic, strong, readonly) id message;
-@property (nonatomic, strong)           NSNumber *keepCallback;
-// This property can be used to scope the lifetime of another object. For example,
-// Use it to store the associated NSData when `message` is created using initWithBytesNoCopy.
-@property (nonatomic, strong) id associatedObject;
+@property (nonatomic, nullable, strong, readonly) id message;
+@property (nonatomic, strong) NSNumber *keepCallback;
+@property (nonatomic, strong) id associatedObject CDV_DEPRECATED(8, "");
 
 - (instancetype)init;
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal;
@@ -79,8 +103,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray *)theMessages;
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
 
-+ (void)setVerbose:(BOOL)verbose;
-+ (BOOL)isVerbose;
++ (void)setVerbose:(BOOL)verbose CDV_DEPRECATED(8, "");
++ (BOOL)isVerbose CDV_DEPRECATED(8, "");
 
 - (void)setKeepCallbackAsBool:(BOOL)bKeepCallback;
 

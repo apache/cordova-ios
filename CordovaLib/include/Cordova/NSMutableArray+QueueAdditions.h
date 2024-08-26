@@ -18,12 +18,17 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
+
+#ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+//#warning "This should not be used"
+#endif
 
 @interface NSMutableArray (QueueAdditions)
 
-- (id)cdv_pop;
-- (id)cdv_queueHead;
+- (id)cdv_pop CDV_DEPRECATED(8, "");
+- (id)cdv_queueHead CDV_DEPRECATED(8, "");
 - (id)cdv_dequeue;
-- (void)cdv_enqueue:(id)obj;
+- (void)cdv_enqueue:(id)obj CDV_DEPRECATED(8, "");
 
 @end
