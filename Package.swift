@@ -24,7 +24,7 @@ import PackageDescription
 let package = Package(
     name: "Cordova",
     platforms: [
-        .iOS(.v11),
+        .iOS(.v13),
         .macCatalyst(.v13)
     ],
     products: [

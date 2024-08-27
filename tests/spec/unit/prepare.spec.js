@@ -986,7 +986,7 @@ describe('prepare', () => {
                 const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
-                expect(prop).toEqual('11.0');
+                expect(prop).toEqual('15.0');
             });
         });
         it('should write SwiftVersion preference (4.1)', () => {

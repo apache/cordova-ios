@@ -30,13 +30,7 @@
 #import "CDVCommandDelegateImpl.h"
 
 static UIColor* defaultBackgroundColor(void) {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
-    if (@available(iOS 13.0, *)) {
-        return UIColor.systemBackgroundColor;
-    }
-#endif
-
-    return UIColor.whiteColor;
+    return UIColor.systemBackgroundColor;
 }
 
 @interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> {

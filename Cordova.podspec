@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   s.homepage            = "https://github.com/apache/cordova-ios"
   s.license             = { :type => "Apache 2.0", :file => "LICENSE" }
   s.author              = "Apache Software Foundation"
-  s.platform            = :ios, "11.0"
+  s.platform            = :ios, "13.0"
   s.source              = relSource
   s.requires_arc        = true
   s.frameworks          = ["Foundation", "UIKit", "WebKit"]

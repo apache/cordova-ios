@@ -10,9 +10,6 @@
     <content src="index.html" />
 
     <platform name="ios">
-        <preference name="orientation" value="all" />
-        <preference name="target-device" value="handset" />
-        <preference name="deployment-target" value="11.0" />
     </platform>
 
     <access origin="http://*.apache.org" />

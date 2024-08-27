@@ -10,10 +10,6 @@
     <content src="index.html" />
 
     <platform name="ios">
-        <preference name="orientation" value="all" />
-        <preference name="target-device" value="handset" />
-        <preference name="deployment-target" value="13.0" />
-
         <icon src="res/ios/AppIcon-20x20@2x.png" height="40" width="40" />
         <icon src="res/ios/AppIcon-20x20@3x.png" height="60" width="60" />
         <icon src="res/ios/AppIcon-29x29@2x.png" height="58" width="58" />
