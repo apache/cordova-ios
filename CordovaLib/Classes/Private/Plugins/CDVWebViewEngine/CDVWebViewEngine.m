@@ -511,17 +511,17 @@
 
 - (void)webView:(WKWebView*)theWebView didFailNavigation:(WKNavigation*)navigation withError:(NSError*)error
 {
-    CDVViewController* vc = (CDVViewController*)self.viewController;
-
     NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
     NSLog(@"%@", message);
 
-    NSURL* errorUrl = vc.errorURL;
-    if (errorUrl) {
-        NSCharacterSet *charSet = [NSCharacterSet URLFragmentAllowedCharacterSet];
-        errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [message stringByAddingPercentEncodingWithAllowedCharacters:charSet]] relativeToURL:errorUrl];
-        NSLog(@"%@", [errorUrl absoluteString]);
-        [theWebView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+    if (error.code != NSURLErrorCancelled) {
+        NSURL* errorUrl = self.viewController.errorURL;
+        if (errorUrl) {
+            NSCharacterSet *charSet = [NSCharacterSet URLFragmentAllowedCharacterSet];
+            errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [message stringByAddingPercentEncodingWithAllowedCharacters:charSet]] relativeToURL:errorUrl];
+            NSLog(@"%@", [errorUrl absoluteString]);
+            [theWebView loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+        }
     }
 }
 
