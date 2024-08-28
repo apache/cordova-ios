@@ -18,7 +18,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 
 #ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS

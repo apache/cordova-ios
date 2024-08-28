@@ -18,12 +18,13 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <WebKit/WebKit.h>
 
 #define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"
 #define kCDVWebViewEngineWKNavigationDelegate @"kCDVWebViewEngineWKNavigationDelegate"
 #define kCDVWebViewEngineWKUIDelegate @"kCDVWebViewEngineWKUIDelegate"
 #define kCDVWebViewEngineWebViewPreferences @"kCDVWebViewEngineWebViewPreferences"
+
+@class WKWebViewConfiguration;
 
 @protocol CDVWebViewEngineProtocol <NSObject>
 

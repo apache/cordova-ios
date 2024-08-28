@@ -67,6 +67,7 @@ static UIColor* defaultBackgroundColor(void) {
 @synthesize splashBackgroundColor = _splashBackgroundColor;
 @synthesize settings = _settings;
 @dynamic webView;
+@dynamic enumerablePlugins;
 
 #pragma mark - Initializers
 
@@ -151,6 +152,13 @@ static UIColor* defaultBackgroundColor(void) {
 }
 
 #pragma mark - Getters & Setters
+
+- (NSArray <CDVPlugin *> *)enumerablePlugins
+{
+    @synchronized(_pluginObjects) {
+        return [_pluginObjects allValues];
+    }
+}
 
 - (NSString *)wwwFolderName
 {
@@ -460,15 +468,11 @@ static UIColor* defaultBackgroundColor(void) {
 
 - (void)didReceiveMemoryWarning
 {
-    // iterate through all the plugin objects, and call hasPendingOperation
-    // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
-
-    NSEnumerator* enumerator = [self.pluginObjects objectEnumerator];
-    CDVPlugin* plugin;
-
     BOOL doPurge = YES;
 
-    while ((plugin = [enumerator nextObject])) {
+    // iterate through all the plugin objects, and call hasPendingOperation
+    // if at least one has a pending operation, we don't call [super didReceiveMemoryWarning]
+    for (CDVPlugin *plugin in self.enumerablePlugins) {
         if (plugin.hasPendingOperation) {
             NSLog(@"Plugin '%@' has a pending operation, memory purge is delayed for didReceiveMemoryWarning.", NSStringFromClass([plugin class]));
             doPurge = NO;
@@ -676,9 +680,13 @@ static UIColor* defaultBackgroundColor(void) {
         return nil;
     }
 
-    id obj = [self.pluginObjects objectForKey:className];
+    id obj = nil;
+    @synchronized(_pluginObjects) {
+        obj = [_pluginObjects objectForKey:className];
+    }
+
     if (!obj) {
-        obj = [[NSClassFromString(className)alloc] initWithWebViewEngine:_webViewEngine];
+        obj = [[NSClassFromString(className) alloc] initWithWebViewEngine:_webViewEngine];
         if (!obj) {
             NSString* fullClassName = [NSString stringWithFormat:@"%@.%@",
                                        NSBundle.mainBundle.infoDictionary[@"CFBundleExecutable"],

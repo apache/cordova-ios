@@ -27,6 +27,9 @@
 #import <Cordova/CDVWebViewEngineProtocol.h>
 #import <Cordova/CDVInvokedUrlCommand.h>
 
+// Forward declaration to avoid bringing WebKit API into public headers
+@protocol WKURLSchemeTask;
+
 #ifndef __swift__
 // This global extension to the UIView class causes issues for Swift subclasses
 // of UIView with their own scrollView properties, so we're removing it from
@@ -78,4 +81,52 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 
 - (id)appDelegate;
 
+@end
+
+#pragma mark - Plugin protocols
+
+/**
+ A protocol for Cordova plugins to intercept handling of WebKit resource
+ loading for a custom URL scheme.
+
+ Your plugin should implement this protocol if it wants to intercept requests
+ to a custom URL scheme and provide its own resource loading. Otherwise,
+ Cordova will use its default resource loading behavior from the app bundle.
+
+ When a WebKit-based web view encounters a resource that uses a custom scheme,
+ it creates a WKURLSchemeTask object and Cordova passes it to the methods of
+ your scheme handler plugin for processing. Use the ``overrideSchemeTask:``
+ method to indicate that your plugin will handle the request and to begin
+ loading the resource. While your handler loads the object, Cordova may call
+ your plugin’s ``stopSchemeTask:`` method to notify you that the resource is no
+ longer needed.
+ */
+@protocol CDVPluginSchemeHandler <NSObject>
+
+/**
+ Asks your plugin to handle the specified request and begin loading data.
+
+ If your plugin intends to handle the request and return data, this method
+ should return `YES` as soon as possible to prevent the default request
+ handling. If this method returns `NO`, Cordova will handle the resource
+ loading using its default behavior.
+
+ Note that all methods of the task object must be called on the main thread.
+
+ - Parameters:
+   - task: The task object that identifies the resource to load. You also use
+     this object to report the progress of the load operation back to the web
+     view.
+ - Returns: A Boolean value indicating if the plugin is handling the request.
+ */
+- (BOOL)overrideSchemeTask:(id <WKURLSchemeTask>)task;
+
+/**
+ Asks your plugin to stop loading the data for the specified resource.
+
+ - Parameters:
+   - task: The task object that identifies the resource the web view no
+   longer needs.
+ */
+- (void)stopSchemeTask:(id <WKURLSchemeTask>)task;
 @end

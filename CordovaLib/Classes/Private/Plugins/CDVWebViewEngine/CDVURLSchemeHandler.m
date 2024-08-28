@@ -19,99 +19,104 @@
 
 
 #import "CDVURLSchemeHandler.h"
+#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVPlugin.h>
+#import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
-#import <objc/message.h>
+@interface CDVURLSchemeHandler ()
+
+@property (nonatomic, weak) CDVViewController *viewController;
+@property (nonatomic) NSMapTable <id <WKURLSchemeTask>, CDVPlugin <CDVPluginSchemeHandler> *> *handlerMap;
+
+@end
 
 @implementation CDVURLSchemeHandler
 
-
-- (instancetype)initWithVC:(CDVViewController *)controller
+- (instancetype)initWithViewController:(CDVViewController *)controller
 {
     self = [super init];
     if (self) {
         _viewController = controller;
+        _handlerMap = [NSMapTable weakToWeakObjectsMapTable];
     }
     return self;
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
+    // Give plugins the chance to handle the url
+    for (CDVPlugin *plugin in self.viewController.enumerablePlugins) {
+        if ([plugin respondsToSelector:@selector(overrideSchemeTask:)]) {
+            CDVPlugin <CDVPluginSchemeHandler> *schemePlugin = (CDVPlugin<CDVPluginSchemeHandler> *)plugin;
+            if ([schemePlugin overrideSchemeTask:urlSchemeTask]) {
+                // Store the plugin that is handling this particular request
+                [self.handlerMap setObject:schemePlugin forKey:urlSchemeTask];
+                return;
+            }
+        }
+    }
+
+    // Indicate that we are handling this task, by adding an entry with a null plugin
+    // We do this so that we can (in future) detect if the task is cancelled before we finished feeding it response data
+    [self.handlerMap setObject:(id)[NSNull null] forKey:urlSchemeTask];
+
     NSString * startPath = [[NSBundle mainBundle] pathForResource:self.viewController.webContentFolderName ofType: nil];
     NSURL * url = urlSchemeTask.request.URL;
     NSString * stringToLoad = url.path;
     NSString * scheme = url.scheme;
-    
-    CDVViewController* vc = (CDVViewController*)self.viewController;
 
-    /*
-     * Give plugins the chance to handle the url
-     */
-    BOOL anyPluginsResponded = NO;
-    BOOL handledRequest = NO;
-
-    NSDictionary *pluginObjects = [[vc pluginObjects] copy];
-    for (NSString* pluginName in pluginObjects) {
-        self.schemePlugin = [vc.pluginObjects objectForKey:pluginName];
-        SEL selector = NSSelectorFromString(@"overrideSchemeTask:");
-        if ([self.schemePlugin respondsToSelector:selector]) {
-            handledRequest = (((BOOL (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(self.schemePlugin, selector, urlSchemeTask));
-            if (handledRequest) {
-                anyPluginsResponded = YES;
-                break;
-            }
-        }
-    }
-
-    if (!anyPluginsResponded) {
-        if ([scheme isEqualToString:self.viewController.appScheme]) {
-            if ([stringToLoad hasPrefix:@"/_app_file_"]) {
-                startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
-            } else {
-                if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
-                    startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
-                } else {
-                    startPath = [startPath stringByAppendingPathComponent:stringToLoad];
-                }
-            }
-        }
-
-        NSError * fileError = nil;
-        NSData * data = nil;
-        if ([self isMediaExtension:url.pathExtension]) {
-            data = [NSData dataWithContentsOfFile:startPath options:NSDataReadingMappedIfSafe error:&fileError];
-        }
-        if (!data || fileError) {
-            data =  [[NSData alloc] initWithContentsOfFile:startPath];
-        }
-        NSInteger statusCode = 200;
-        if (!data) {
-            statusCode = 404;
-        }
-        NSURL * localUrl = [NSURL URLWithString:url.absoluteString];
-        NSString * mimeType = [self getMimeType:url.pathExtension];
-        id response = nil;
-        if (data && [self isMediaExtension:url.pathExtension]) {
-            response = [[NSURLResponse alloc] initWithURL:localUrl MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil];
+    if ([scheme isEqualToString:self.viewController.appScheme]) {
+        if ([stringToLoad hasPrefix:@"/_app_file_"]) {
+            startPath = [stringToLoad stringByReplacingOccurrencesOfString:@"/_app_file_" withString:@""];
         } else {
-            NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
-            response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
+            if ([stringToLoad isEqualToString:@""] || [url.pathExtension isEqualToString:@""]) {
+                startPath = [startPath stringByAppendingPathComponent:self.viewController.startPage];
+            } else {
+                startPath = [startPath stringByAppendingPathComponent:stringToLoad];
+            }
         }
-
-        [urlSchemeTask didReceiveResponse:response];
-        if (data) {
-            [urlSchemeTask didReceiveData:data];
-        }
-        [urlSchemeTask didFinish];
     }
+
+    NSError * fileError = nil;
+    NSData * data = nil;
+    if ([self isMediaExtension:url.pathExtension]) {
+        data = [NSData dataWithContentsOfFile:startPath options:NSDataReadingMappedIfSafe error:&fileError];
+    }
+    if (!data || fileError) {
+        data =  [[NSData alloc] initWithContentsOfFile:startPath];
+    }
+    NSInteger statusCode = 200;
+    if (!data) {
+        statusCode = 404;
+    }
+    NSURL * localUrl = [NSURL URLWithString:url.absoluteString];
+    NSString * mimeType = [self getMimeType:url.pathExtension];
+    id response = nil;
+    if (data && [self isMediaExtension:url.pathExtension]) {
+        response = [[NSURLResponse alloc] initWithURL:localUrl MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil];
+    } else {
+        NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
+        response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
+    }
+
+    [urlSchemeTask didReceiveResponse:response];
+    if (data) {
+        [urlSchemeTask didReceiveData:data];
+    }
+    [urlSchemeTask didFinish];
+
+    [self.handlerMap removeObjectForKey:urlSchemeTask];
 }
 
-- (void)webView:(nonnull WKWebView *)webView stopURLSchemeTask:(nonnull id<WKURLSchemeTask>)urlSchemeTask
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    SEL selector = NSSelectorFromString(@"stopSchemeTask:");
-    if (self.schemePlugin != nil && [self.schemePlugin respondsToSelector:selector]) {
-        (((void (*)(id, SEL, id <WKURLSchemeTask>))objc_msgSend)(self.schemePlugin, selector, urlSchemeTask));
+    CDVPlugin <CDVPluginSchemeHandler> *plugin = [self.handlerMap objectForKey:urlSchemeTask];
+    if (![plugin isEqual:[NSNull null]] && [plugin respondsToSelector:@selector(stopSchemeTask:)]) {
+        [plugin stopSchemeTask:urlSchemeTask];
     }
+
+    [self.handlerMap removeObjectForKey:urlSchemeTask];
 }
 
 -(NSString *) getMimeType:(NSString *)fileExtension {
