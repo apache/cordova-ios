@@ -147,14 +147,11 @@
     }
     configuration.applicationNameForUserAgent = userAgent;
 
-    if (@available(iOS 13.0, *)) {
-        NSString *contentMode = [settings cordovaSettingForKey:@"PreferredContentMode"];
-        if ([contentMode isEqual: @"mobile"]) {
-            configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeMobile;
-        } else if ([contentMode isEqual: @"desktop"]) {
-            configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeDesktop;
-        }
-        
+    NSString *contentMode = [settings cordovaSettingForKey:@"PreferredContentMode"];
+    if ([contentMode isEqual: @"mobile"]) {
+        configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeMobile;
+    } else if ([contentMode isEqual: @"desktop"]) {
+        configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeDesktop;
     }
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
