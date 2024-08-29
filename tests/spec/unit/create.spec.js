@@ -36,12 +36,12 @@ const makeTempDir = () => path.join(
  * @param {String} projectName
  */
 function verifyProjectFiles (tmpDir, projectName) {
-    expect(fs.existsSync(path.join(tmpDir, projectName))).toBe(true);
-    expect(fs.existsSync(path.join(tmpDir, `${projectName}.xcodeproj`))).toBe(true);
-    expect(fs.existsSync(path.join(tmpDir, `${projectName}.xcworkspace`))).toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, 'App'))).toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, 'App.xcodeproj'))).toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, 'App.xcworkspace'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'CordovaLib'))).toBe(true);
 
-    const pbxproj = path.join(tmpDir, `${projectName}.xcodeproj`, 'project.pbxproj');
+    const pbxproj = path.join(tmpDir, 'App.xcodeproj', 'project.pbxproj');
     const pbxcontents = fs.readFileSync(pbxproj, 'utf-8');
     const regex = /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
     const line = pbxcontents.split(/\r?\n/).find(l => regex.test(l));
@@ -57,11 +57,15 @@ function verifyProjectFiles (tmpDir, projectName) {
  * @param {String} expectedBundleIdentifier
  */
 function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdentifier) {
-    const pbxproj = path.join(tmpDir, `${projectName}.xcodeproj`, 'project.pbxproj');
+    const pbxproj = path.join(tmpDir, 'App.xcodeproj', 'project.pbxproj');
     const xcodeproj = xcode.project(pbxproj);
     xcodeproj.parseSync();
-    const actualBundleIdentifier = xcodeproj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER');
+
+    const actualBundleIdentifier = xcodeproj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'App');
     expect(actualBundleIdentifier).toBe(`"${expectedBundleIdentifier}"`);
+
+    const actualBundleName = xcodeproj.getBuildProperty('PRODUCT_NAME', undefined, 'App');
+    expect(actualBundleName).toBe(`"${projectName}"`);
 }
 
 /**
