@@ -48,7 +48,6 @@
     "semver": "^7.4.0",
     "which": "^4.0.0",
     "xcode": "^3.0.1",
-    "xml-escape": "^1.1.0",
     "elementtree": "^0.1.7"
   },
   "nyc": {
