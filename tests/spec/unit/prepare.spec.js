@@ -710,33 +710,33 @@ describe('prepare', () => {
                 fs.cpSync(path.join(FIXTURES, 'icon-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
 
                 // copy icons and update Contents.json
-                updateIcons(project, p.locations);
+                return updateIcons(project, p.locations).then(() => {
+                    // now, clean the images
+                    const updatePaths = spyOn(FileUpdater, 'updatePaths');
 
-                // now, clean the images
-                const updatePaths = spyOn(FileUpdater, 'updatePaths');
-
-                return cleanIcons(iosProject, project.projectConfig, p.locations)
-                    .then(() => {
-                        expect(updatePaths).toHaveBeenCalledWith({
-                            [path.join(iconsDir, 'icon.png')]: null,
-                            [path.join(iconsDir, 'watchos.png')]: null,
-                            [path.join(iconsDir, 'icon-20@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-20@3x.png')]: null,
-                            [path.join(iconsDir, 'icon-29@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-29@3x.png')]: null,
-                            [path.join(iconsDir, 'icon-38@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-38@3x.png')]: null,
-                            [path.join(iconsDir, 'icon-40@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-40@3x.png')]: null,
-                            [path.join(iconsDir, 'icon-60@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-60@3x.png')]: null,
-                            [path.join(iconsDir, 'icon-64@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-64@3x.png')]: null,
-                            [path.join(iconsDir, 'icon-68@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-76@2x.png')]: null,
-                            [path.join(iconsDir, 'icon-83.5@2x.png')]: null
-                        }, { rootDir: iosProject, all: true }, logFileOp);
-                    });
+                    return cleanIcons(iosProject, project.projectConfig, p.locations)
+                        .then(() => {
+                            expect(updatePaths).toHaveBeenCalledWith({
+                                [path.join(iconsDir, 'icon.png')]: null,
+                                [path.join(iconsDir, 'watchos.png')]: null,
+                                [path.join(iconsDir, 'icon-20@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-20@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-29@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-29@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-38@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-38@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-40@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-40@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-60@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-60@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-64@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-64@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-68@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-76@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-83.5@2x.png')]: null
+                            }, { rootDir: iosProject, all: true }, logFileOp);
+                        });
+                });
             });
 
             it('should have no effect if no icons are specified', () => {
@@ -751,15 +751,15 @@ describe('prepare', () => {
                 fs.cpSync(path.join(FIXTURES, 'icon-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
 
                 // copy icons and update Contents.json
-                updateIcons(project, p.locations);
+                return updateIcons(project, p.locations).then(() => {
+                    // now, clean the images
+                    const updatePaths = spyOn(FileUpdater, 'updatePaths');
 
-                // now, clean the images
-                const updatePaths = spyOn(FileUpdater, 'updatePaths');
-
-                return cleanIcons(iosProject, project.projectConfig, p.locations)
-                    .then(() => {
-                        expect(updatePaths).not.toHaveBeenCalled();
-                    });
+                    return cleanIcons(iosProject, project.projectConfig, p.locations)
+                        .then(() => {
+                            expect(updatePaths).not.toHaveBeenCalled();
+                        });
+                });
             });
         });
     });
