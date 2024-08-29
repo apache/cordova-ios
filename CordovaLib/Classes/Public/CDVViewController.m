@@ -523,6 +523,8 @@ static UIColor* defaultBackgroundColor(void) {
     if (self.startPage == nil) {
         self.startPage = @"index.html";
     }
+
+    self.appScheme = [self.settings cordovaSettingForKey:@"Scheme"] ?: @"app";
 }
 
 /// Retrieves the view from a newwly initialized webViewEngine

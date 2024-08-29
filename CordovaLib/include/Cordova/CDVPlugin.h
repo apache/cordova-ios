@@ -111,8 +111,6 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
  handling. If this method returns `NO`, Cordova will handle the resource
  loading using its default behavior.
 
- Note that all methods of the task object must be called on the main thread.
-
  - Parameters:
    - task: The task object that identifies the resource to load. You also use
      this object to report the progress of the load operation back to the web

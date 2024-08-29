@@ -165,21 +165,19 @@
 
 - (void)pluginInitialize
 {
-    // viewController would be available now. we attempt to set all possible delegates to it, by default
-    CDVViewController* vc = (CDVViewController*)self.viewController;
     CDVSettingsDictionary* settings = self.commandDelegate.settings;
 
-    NSString *scheme = [settings cordovaSettingForKey:@"scheme"];
+    NSString *scheme = self.viewController.appScheme;
 
     // If scheme is file or nil, then default to file scheme
-    self.cdvIsFileScheme = [scheme isEqualToString: @"file"] || scheme == nil;
+    self.cdvIsFileScheme = [scheme isEqualToString:@"file"] || scheme == nil;
 
     NSString *hostname = @"";
     if(!self.cdvIsFileScheme) {
         if(scheme == nil || [WKWebView handlesURLScheme:scheme]){
             scheme = @"app";
+            self.viewController.appScheme = scheme;
         }
-        vc.appScheme = scheme;
 
         hostname = [settings cordovaSettingForKey:@"hostname"];
         if(hostname == nil){
@@ -189,7 +187,7 @@
         self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
     }
 
-    CDVWebViewUIDelegate* uiDelegate = [[CDVWebViewUIDelegate alloc] initWithViewController:vc];
+    CDVWebViewUIDelegate* uiDelegate = [[CDVWebViewUIDelegate alloc] initWithViewController:self.viewController];
     uiDelegate.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     uiDelegate.allowNewWindows = [settings cordovaBoolSettingForKey:@"AllowNewWindows" defaultValue:NO];
     self.uiDelegate = uiDelegate;
@@ -213,7 +211,7 @@
 
     // Do not configure the scheme handler if the scheme is default (file)
     if(!self.cdvIsFileScheme) {
-        self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithViewController:vc];
+        self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithViewController:self.viewController];
         [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     }
 
