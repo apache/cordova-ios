@@ -225,6 +225,27 @@ describe('build', () => {
             ]);
             expect(args.length).toEqual(18);
         });
+
+        it('should generate appropriate args for Catalyst macOS builds', () => {
+            const buildOpts = {
+                catalyst: true
+            };
+
+            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', buildOpts);
+            expect(args).toEqual([
+                '-workspace',
+                'TestProjectName.xcworkspace',
+                '-scheme',
+                'TestProjectName',
+                '-configuration',
+                'TestConfiguration',
+                '-destination',
+                'generic/platform=macOS,variant=Mac Catalyst',
+                'build',
+                `SYMROOT=${path.join(testProjectPath, 'build')}`
+            ]);
+            expect(args.length).toEqual(10);
+        });
     });
 
     describe('getXcodeArchiveArgs method', () => {
@@ -353,35 +374,22 @@ describe('build', () => {
     });
 
     describe('run method', () => {
-        beforeEach(() => {
-            spyOn(Promise, 'reject');
-        });
-
         it('should not accept debug and release options together', () => {
-            build.run({
-                debug: true,
-                release: true
-            });
-
-            expect(Promise.reject).toHaveBeenCalledWith(new CordovaError('Cannot specify "debug" and "release" options together.'));
+            return expectAsync(build.run({ debug: true, release: true }))
+                .toBeRejectedWithError(CordovaError, 'Cannot specify "debug" and "release" options together.');
         });
 
         it('should not accept device and emulator options together', () => {
-            build.run({
-                device: true,
-                emulator: true
-            });
-
-            expect(Promise.reject).toHaveBeenCalledWith(new CordovaError('Cannot specify "device" and "emulator" options together.'));
+            return expectAsync(build.run({ device: true, emulator: true }))
+                .toBeRejectedWithError(CordovaError, 'Cannot specify "device" and "emulator" options together.');
         });
 
         it('should reject when build config file missing', () => {
             spyOn(fs, 'existsSync').and.returnValue(false);
-
             const buildConfig = './some/config/path';
-            build.run({ buildConfig: './some/config/path' });
 
-            expect(Promise.reject).toHaveBeenCalledWith(new CordovaError(`Build config file does not exist: ${buildConfig}`));
+            return expectAsync(build.run({ buildConfig: './some/config/path' }))
+                .toBeRejectedWithError(CordovaError, `Build config file does not exist: ${buildConfig}`);
         });
     });
 
