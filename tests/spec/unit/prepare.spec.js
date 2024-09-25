@@ -1043,55 +1043,121 @@ describe('prepare', () => {
         });
         it('Test#005 : should write out the orientation preference value', () => {
             cfg.getPreference.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
             });
         });
         it('Test#006 : should handle no orientation', () => {
-            cfg.getPreference.and.returnValue('');
+            cfg.getPreference.and.returnValue(null);
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toBeUndefined();
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toBeUndefined();
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#007 : should handle default orientation', () => {
             cfg.getPreference.and.returnValue('default');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#008 : should handle portrait orientation', () => {
             cfg.getPreference.and.returnValue('portrait');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
             });
         });
         it('Test#009 : should handle landscape orientation', () => {
             cfg.getPreference.and.returnValue('landscape');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationLandscapeLeft']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationLandscapeLeft"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#010 : should handle all orientation on ios', () => {
             cfg.getPreference.and.returnValue('all');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#011 : should handle custom orientation', () => {
             cfg.getPreference.and.returnValue('some-custom-orientation');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
 
