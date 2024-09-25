@@ -288,6 +288,35 @@ describe('build', () => {
             expect(archiveArgs[13]).toEqual('00000000-0000-0000-0000-000000000000');
             expect(archiveArgs.length).toEqual(14);
         });
+
+        it('should generate the appropriate arguments with build flag overrides', () => {
+            const buildFlags = '-archivePath TestArchivePathFlag';
+
+            const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', { buildFlag: buildFlags });
+            expect(archiveArgs[0]).toEqual('-exportArchive');
+            expect(archiveArgs[1]).toEqual('-archivePath');
+            expect(archiveArgs[2]).toEqual('TestArchivePathFlag');
+            expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
+            expect(archiveArgs[4]).toEqual('/test/export/options/path');
+            expect(archiveArgs[5]).toEqual('-exportPath');
+            expect(archiveArgs[6]).toEqual('/test/output/path');
+            expect(archiveArgs.length).toEqual(7);
+        });
+
+        it('should generate the appropriate arguments with build flag overrides', () => {
+            const buildFlags = ['-archivePath TestArchivePathFlag', '-quiet'];
+
+            const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', { buildFlag: buildFlags });
+            expect(archiveArgs[0]).toEqual('-exportArchive');
+            expect(archiveArgs[1]).toEqual('-archivePath');
+            expect(archiveArgs[2]).toEqual('TestArchivePathFlag');
+            expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
+            expect(archiveArgs[4]).toEqual('/test/export/options/path');
+            expect(archiveArgs[5]).toEqual('-exportPath');
+            expect(archiveArgs[6]).toEqual('/test/output/path');
+            expect(archiveArgs[7]).toEqual('-quiet');
+            expect(archiveArgs.length).toEqual(8);
+        });
     });
 
     describe('parseBuildFlag method', () => {
