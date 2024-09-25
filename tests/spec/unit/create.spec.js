@@ -39,14 +39,28 @@ function verifyProjectFiles (tmpDir, projectName) {
     expect(fs.existsSync(path.join(tmpDir, 'App'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'App.xcodeproj'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'App.xcworkspace'))).toBe(true);
-    expect(fs.existsSync(path.join(tmpDir, 'CordovaLib'))).toBe(true);
 
     const pbxproj = path.join(tmpDir, 'App.xcodeproj', 'project.pbxproj');
-    const pbxcontents = fs.readFileSync(pbxproj, 'utf-8');
-    const regex = /(.+CordovaLib.xcodeproj.+PBXFileReference.+wrapper.pb-project.+)(path = .+?;)(.*)(sourceTree.+;)(.+)/;
-    const line = pbxcontents.split(/\r?\n/).find(l => regex.test(l));
+    const xcodeproj = xcode.project(pbxproj);
+    xcodeproj.parseSync();
 
-    expect(line).toMatch(/path = CordovaLib\/CordovaLib.xcodeproj;/);
+    const packageLoc = path.dirname(require.resolve('../../../package.json'));
+    const relativePath = path.relative(tmpDir, packageLoc).replaceAll(path.sep, path.posix.sep);
+
+    let foundRef = false;
+    const pkgRefs = xcodeproj.hash.project.objects.XCLocalSwiftPackageReference;
+    for (const [key, ref] of Object.entries(pkgRefs)) {
+        if (key.endsWith('_COMMENT')) {
+            continue;
+        }
+
+        if (ref.relativePath.match(/\/cordova-ios/)) {
+            foundRef = true;
+            expect(ref.relativePath).toMatch(relativePath);
+            break;
+        }
+    }
+    expect(foundRef).toBeTruthy();
 }
 
 /**

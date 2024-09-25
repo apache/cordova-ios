@@ -39,7 +39,6 @@ function verifyProjectFiles (tmpDir, projectName) {
     expect(fs.existsSync(path.join(tmpDir, 'App'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'App.xcodeproj'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'App.xcworkspace'))).toBe(true);
-    expect(fs.existsSync(path.join(tmpDir, 'CordovaLib'))).toBe(true);
 }
 
 /**
