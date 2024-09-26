@@ -109,10 +109,9 @@ describe('build', () => {
                 'iphonesimulator',
                 '-destination',
                 'platform=iOS Simulator,name=iPhone 5s',
-                'build',
-                `SYMROOT=${path.join(testProjectPath, 'build')}`
+                'build'
             ]);
-            expect(args.length).toEqual(12);
+            expect(args.length).toEqual(11);
         });
 
         it('should generate appropriate args for simulator if buildFlags are passed in', () => {
@@ -139,13 +138,12 @@ describe('build', () => {
                 '-destination',
                 'TestDestinationFlag',
                 'build',
-                `SYMROOT=${path.join(testProjectPath, 'build')}`,
                 'CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag',
                 'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag',
                 '-archivePath',
                 'TestArchivePathFlag'
             ]);
-            expect(args.length).toEqual(16);
+            expect(args.length).toEqual(15);
         });
 
         it('should add matched flags that are not overriding for device', () => {
@@ -186,11 +184,10 @@ describe('build', () => {
                 '-destination',
                 'platform=iOS Simulator,name=iPhone 5s',
                 'build',
-                `SYMROOT=${path.join(testProjectPath, 'build')}`,
                 '-archivePath',
                 'TestArchivePathFlag'
             ]);
-            expect(args.length).toEqual(14);
+            expect(args.length).toEqual(13);
         });
 
         it('should generate appropriate args for automatic provisioning', () => {
@@ -241,10 +238,9 @@ describe('build', () => {
                 'TestConfiguration',
                 '-destination',
                 'generic/platform=macOS,variant=Mac Catalyst',
-                'build',
-                `SYMROOT=${path.join(testProjectPath, 'build')}`
+                'build'
             ]);
-            expect(args.length).toEqual(10);
+            expect(args.length).toEqual(9);
         });
     });
 
