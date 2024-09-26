@@ -128,7 +128,7 @@
 			name = staging;
 			sourceTree = "<group>";
 		};
-		90BD9B632C06907D000DEBAB = {
+		90BD9B632C06907D000DEBAB /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
 				9080B40F2C6DD7EC00078F33 /* config.xml */,
@@ -137,6 +137,7 @@
 				90BD9B6D2C06907D000DEBAB /* Products */,
 				907F98602C06B8F000D2D242 /* Frameworks */,
 			);
+			name = CustomTemplate;
 			sourceTree = "<group>";
 		};
 		90BD9B6D2C06907D000DEBAB /* Products */ = {
@@ -218,7 +219,7 @@
 				en,
 				Base,
 			);
-			mainGroup = 90BD9B632C06907D000DEBAB;
+			mainGroup = 90BD9B632C06907D000DEBAB /* CustomTemplate */;
 			packageReferences = (
 				90A914572CA3D370003DB979 /* XCLocalSwiftPackageReference "../../../cordova-ios" */,
 			);
