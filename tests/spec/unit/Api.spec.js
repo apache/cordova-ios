@@ -56,10 +56,10 @@ describe('Platform Api', () => {
             expect(() => {
                 const p = new Api('ios', iosProjectFixture, new EventEmitter());
                 expect(p.locations.root).toEqual(iosProjectFixture);
-                expect(p.locations.pbxproj).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj', 'project.pbxproj'));
-                expect(p.locations.xcodeProjDir).toEqual(path.join(iosProjectFixture, 'SampleApp.xcodeproj'));
+                expect(p.locations.pbxproj).toEqual(path.join(iosProjectFixture, 'App.xcodeproj', 'project.pbxproj'));
+                expect(p.locations.xcodeProjDir).toEqual(path.join(iosProjectFixture, 'App.xcodeproj'));
                 expect(p.locations.www).toEqual(path.join(iosProjectFixture, 'www'));
-                expect(p.locations.configXml).toEqual(path.join(iosProjectFixture, 'SampleApp', 'config.xml'));
+                expect(p.locations.configXml).toEqual(path.join(iosProjectFixture, 'App', 'config.xml'));
             }).not.toThrow();
         });
     });

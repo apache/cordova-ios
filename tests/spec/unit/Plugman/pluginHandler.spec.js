@@ -76,7 +76,7 @@ describe('ios plugin handler', () => {
 
         dummyProject = projectFile.parse({
             root: temp,
-            pbxproj: path.join(temp, 'SampleApp.xcodeproj', 'project.pbxproj')
+            pbxproj: path.join(temp, 'App.xcodeproj', 'project.pbxproj')
         });
     });
 
@@ -100,7 +100,7 @@ describe('ios plugin handler', () => {
             });
             it('Test 002 : should throw if source-file target already exists', () => {
                 const source = copyArray(valid_source);
-                const target = path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.m');
+                const target = path.join(temp, 'App', 'Plugins', dummy_id, 'DummyPluginCommand.m');
                 fs.mkdirSync(path.dirname(target), { recursive: true });
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
@@ -123,20 +123,20 @@ describe('ios plugin handler', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
                 spyOn(fs, 'cpSync');
                 install(source[0], dummyPluginInfo, dummyProject);
-                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.m'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.m'), { recursive: true });
+                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.m'), path.join(temp, 'App', 'Plugins', dummy_id, 'DummyPluginCommand.m'), { recursive: true });
             });
             it('Test 006 : should cp the file to the right target location when element has a target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir !== undefined);
                 spyOn(fs, 'cpSync');
                 install(source[0], dummyPluginInfo, dummyProject);
-                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.m'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'), { recursive: true });
+                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.m'), path.join(temp, 'App', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'), { recursive: true });
             });
             it('Test 007 : should call into xcodeproj\'s addFramework appropriately when element has framework=true set', () => {
                 const source = copyArray(valid_source).filter(s => s.framework);
                 spyOn(dummyProject.xcode, 'addFramework');
                 install(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith(path.join('SampleApp', 'Plugins', dummy_id, 'SourceWithFramework.m'), { weak: false });
+                    .toHaveBeenCalledWith(path.join('App', 'Plugins', dummy_id, 'SourceWithFramework.m'), { weak: false });
             });
         });
 
@@ -155,7 +155,7 @@ describe('ios plugin handler', () => {
             });
             it('Test 009 : should throw if header-file target already exists', () => {
                 const headers = copyArray(valid_headers);
-                const target = path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.h');
+                const target = path.join(temp, 'App', 'Plugins', dummy_id, 'DummyPluginCommand.h');
                 fs.mkdirSync(path.dirname(target), { recursive: true });
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
@@ -178,13 +178,13 @@ describe('ios plugin handler', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir === undefined);
                 spyOn(fs, 'cpSync');
                 install(headers[0], dummyPluginInfo, dummyProject);
-                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.h'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'DummyPluginCommand.h'), { recursive: true });
+                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPluginCommand.h'), path.join(temp, 'App', 'Plugins', dummy_id, 'DummyPluginCommand.h'), { recursive: true });
             });
             it('Test 013 : should cp the file to the right target location when element has a target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
                 spyOn(fs, 'cpSync');
                 install(headers[0], dummyPluginInfo, dummyProject);
-                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.h'), path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'), { recursive: true });
+                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'TargetDirTest.h'), path.join(temp, 'App', 'Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'), { recursive: true });
             });
         });
 
@@ -203,7 +203,7 @@ describe('ios plugin handler', () => {
             });
             it('Test 015 : should throw if resource-file target already exists', () => {
                 const resources = copyArray(valid_resources);
-                const target = path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle');
+                const target = path.join(temp, 'App', 'Resources', 'DummyPlugin.bundle');
                 fs.mkdirSync(path.dirname(target), { recursive: true });
                 fs.writeFileSync(target, 'some bs', 'utf-8');
                 expect(() => {
@@ -220,7 +220,7 @@ describe('ios plugin handler', () => {
                 const resources = copyArray(valid_resources);
                 spyOn(fs, 'cpSync');
                 install(resources[0], dummyPluginInfo, dummyProject);
-                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'), { recursive: true });
+                expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle'), path.join(temp, 'App', 'Resources', 'DummyPlugin.bundle'), { recursive: true });
             });
 
             it('Test 018 : should link files to the right target location', () => {
@@ -228,7 +228,7 @@ describe('ios plugin handler', () => {
                 const spy = spyOn(fs, 'linkSync');
                 install(resources[0], dummyPluginInfo, dummyProject, { link: true });
                 const src_bundle = path.join(dummyplugin, 'src', 'ios', 'DummyPlugin.bundle');
-                const dest_bundle = path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle');
+                const dest_bundle = path.join(temp, 'App', 'Resources', 'DummyPlugin.bundle');
                 expect(spy).toHaveBeenCalledWith(src_bundle, dest_bundle);
             });
         });
@@ -243,12 +243,12 @@ describe('ios plugin handler', () => {
                 let frameworks = copyArray(valid_custom_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework', { customFramework: true, embed: false, link: true, sign: true });
+                    .toHaveBeenCalledWith('App/Plugins/org.test.plugins.dummyplugin/Custom.framework', { customFramework: true, embed: false, link: true, sign: true });
 
                 frameworks = copyArray(valid_embeddable_custom_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
-                    .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.dummyplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
+                    .toHaveBeenCalledWith('App/Plugins/org.test.plugins.dummyplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
 
                 frameworks = copyArray(valid_weak_frameworks);
                 install(frameworks[0], dummyPluginInfo, dummyProject);
@@ -269,7 +269,7 @@ describe('ios plugin handler', () => {
                 });
                 it('Test 021 : should throw if framework target already exists', () => {
                     const frameworks = copyArray(valid_custom_frameworks);
-                    const target = path.join(temp, 'SampleApp', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework');
+                    const target = path.join(temp, 'App', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework');
                     fs.mkdirSync(target, { recursive: true });
                     expect(() => {
                         install(frameworks[0], dummyPluginInfo, dummyProject);
@@ -280,7 +280,7 @@ describe('ios plugin handler', () => {
                     spyOn(fs, 'cpSync');
                     install(frameworks[0], dummyPluginInfo, dummyProject);
                     expect(fs.cpSync).toHaveBeenCalledWith(path.join(dummyplugin, 'src', 'ios', 'Custom.framework'),
-                        path.join(temp, 'SampleApp', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'), { recursive: true });
+                        path.join(temp, 'App', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'), { recursive: true });
                 });
 
                 it('Test 023 : should deep symlink files to the right target location', () => {
@@ -288,7 +288,7 @@ describe('ios plugin handler', () => {
                     const spy = spyOn(fs, 'linkSync');
                     install(frameworks[0], dummyPluginInfo, dummyProject, { link: true });
                     const src_binlib = path.join(dummyplugin, 'src', 'ios', 'Custom.framework', 'somebinlib');
-                    const dest_binlib = path.join(temp, 'SampleApp', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework', 'somebinlib');
+                    const dest_binlib = path.join(temp, 'App', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework', 'somebinlib');
                     expect(spy).toHaveBeenCalledWith(src_binlib, dest_binlib);
                 });
             });
@@ -299,43 +299,43 @@ describe('ios plugin handler', () => {
                 it('Test 046 : embed true, link true', () => {
                     install(frameworks[0], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: true, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: true, sign: true });
                 });
 
                 it('Test 047 : embed true, link false', () => {
                     install(frameworks[1], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
                 });
 
                 it('Test 048 : embed false, link true', () => {
                     install(frameworks[2], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
                 });
 
                 it('Test 049 : embed false, link false', () => {
                     install(frameworks[3], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: false, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: false, sign: true });
                 });
 
                 it('Test 050 : embed undefined, link undefined', () => {
                     install(frameworks[4], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
                 });
 
                 it('Test 051 : embed true, link undefined', () => {
                     install(frameworks[5], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: true, link: false, sign: true });
                 });
 
                 it('Test 052 : embed false, link undefined', () => {
                     install(frameworks[6], embedlinkPluginInfo, dummyProject);
                     expect(dummyProject.xcode.addFramework)
-                        .toHaveBeenCalledWith('SampleApp/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
+                        .toHaveBeenCalledWith('App/Plugins/org.test.plugins.embedlinkplugin/CustomEmbeddable.framework', { customFramework: true, embed: false, link: true, sign: true });
                 });
             });
         });
@@ -400,7 +400,7 @@ describe('ios plugin handler', () => {
                 .then(() => {
                     const xcode = projectFile.parse({
                         root: temp,
-                        pbxproj: path.join(temp, 'SampleApp.xcodeproj', 'project.pbxproj')
+                        pbxproj: path.join(temp, 'App.xcodeproj', 'project.pbxproj')
                     }).xcode;
 
                     // from org.test.plugins.dummyplugin
@@ -410,7 +410,7 @@ describe('ios plugin handler', () => {
                     expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.h'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.m'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile('usr/lib/libsqlite3.dylib')).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('SampleApp', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(slashJoin('App', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'))).toEqual(jasmine.any(Object));
                     // from org.test.plugins.weblessplugin
                     expect(xcode.hasFile(slashJoin('WeblessPluginViewController.xib'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.h'))).toEqual(jasmine.any(Object));
@@ -442,18 +442,18 @@ describe('ios plugin handler', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
                 const spy = spyOn(fs, 'rmSync');
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Plugins', dummy_id), { recursive: true, force: true });
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'App', 'Plugins', dummy_id), { recursive: true, force: true });
             });
             it('Test 032 : should rm the file from the right target location when element has a target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir !== undefined);
                 const spy = spyOn(fs, 'rmSync');
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir'), { recursive: true, force: true });
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'App', 'Plugins', dummy_id, 'targetDir'), { recursive: true, force: true });
             });
             it('Test 033 : should call into xcodeproj\'s removeFramework appropriately when element framework=true set', () => {
                 const source = copyArray(valid_source).filter(s => s.framework);
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeFramework).toHaveBeenCalledWith(path.join('SampleApp', 'Plugins', dummy_id, 'SourceWithFramework.m'));
+                expect(dummyProject.xcode.removeFramework).toHaveBeenCalledWith(path.join('App', 'Plugins', dummy_id, 'SourceWithFramework.m'));
             });
         });
 
@@ -477,7 +477,7 @@ describe('ios plugin handler', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
                 const spy = spyOn(fs, 'rmSync');
                 uninstall(headers[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Plugins', dummy_id, 'targetDir'), { recursive: true, force: true });
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'App', 'Plugins', dummy_id, 'targetDir'), { recursive: true, force: true });
             });
         });
 
@@ -496,7 +496,7 @@ describe('ios plugin handler', () => {
                 const resources = copyArray(valid_resources);
                 const spy = spyOn(fs, 'rmSync');
                 uninstall(resources[0], dummyPluginInfo, dummyProject);
-                expect(spy).toHaveBeenCalledWith(path.join(temp, 'SampleApp', 'Resources', 'DummyPlugin.bundle'), { recursive: true, force: true });
+                expect(spy).toHaveBeenCalledWith(path.join(temp, 'App', 'Resources', 'DummyPlugin.bundle'), { recursive: true, force: true });
             });
         });
 
@@ -506,7 +506,7 @@ describe('ios plugin handler', () => {
                 spyOn(dummyProject.xcode, 'removeFramework');
             });
 
-            const frameworkPath = path.join(temp, 'SampleApp/Plugins/org.test.plugins.dummyplugin/Custom.framework').replace(/\\/g, '/');
+            const frameworkPath = path.join(temp, 'App/Plugins/org.test.plugins.dummyplugin/Custom.framework').replace(/\\/g, '/');
 
             it('Test 039 : should call into xcodeproj\'s removeFramework', () => {
                 const frameworks = copyArray(valid_custom_frameworks);

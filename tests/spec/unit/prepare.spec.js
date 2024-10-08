@@ -274,7 +274,7 @@ describe('prepare', () => {
             const projectRoot = iosProject;
 
             it('should find the Assets.xcassets file in a project with an asset catalog', () => {
-                const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                const platformProjDir = path.join('platforms', 'ios', 'App');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
                 const expectedPath = path.join(platformProjDir, 'Assets.xcassets', 'LaunchStoryboard.imageset');
 
@@ -306,7 +306,7 @@ describe('prepare', () => {
 
                 // get appropriate paths
                 const projectRoot = iosProject;
-                const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                const platformProjDir = path.join('platforms', 'ios', 'App');
                 const storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
 
                 // create a suitable mock project for our method
@@ -357,7 +357,7 @@ describe('prepare', () => {
 
             it('should move launch images and update contents.json', () => {
                 const projectRoot = iosProject;
-                const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                const platformProjDir = path.join('platforms', 'ios', 'App');
                 const storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
                 const project = {
                     root: iosProject,
@@ -945,7 +945,6 @@ describe('prepare', () => {
                 update_name = spyOn(xc, 'updateProductName').and.callThrough();
                 return xc;
             });
-            cfg.name = () => 'SampleApp'; // this is to match p's original project name (based on .xcodeproj)
             cfg.packageName = () => 'testpkg';
             cfg.version = () => 'one point oh';
 
@@ -953,22 +952,10 @@ describe('prepare', () => {
         });
 
         it('should resolve', () => {
-            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
-            return updateProject(cfg2, p.locations); // since the name has not changed it *should not* error
-        });
-
-        it('should reject when the app name has changed', () => {
-            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = () => 'NotSampleApp'; // new config has name change
-            return updateProject(cfg2, p.locations).then( // since the name has changed it *should* error
-                () => fail('Expected promise to be rejected'),
-                err => expect(err).toEqual(jasmine.any(Error))
-            );
+            return updateProject(cfg2, p.locations);
         });
 
         it('should write target-device preference', () => {
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
@@ -979,7 +966,6 @@ describe('prepare', () => {
             });
         });
         it('should write deployment-target preference', () => {
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
@@ -990,7 +976,6 @@ describe('prepare', () => {
             });
         });
         it('should write SwiftVersion preference (4.1)', () => {
-            cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
@@ -1000,7 +985,6 @@ describe('prepare', () => {
             });
         });
         it('should write SwiftVersion preference (3.3)', () => {
-            cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
             const pref = cfg3.doc.findall('platform[@name=\'ios\']/preference')
                 .filter(elem => elem.attrib.name.toLowerCase() === 'swiftversion')[0];
             pref.attrib.value = '3.3';
@@ -1026,8 +1010,8 @@ describe('prepare', () => {
             return updateProject(cfg, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
-                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
-                expect(prop).toEqual('testpkg');
+                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'App');
+                expect(prop).toEqual('"testpkg"');
             });
         });
         it('Test#003 : should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', () => {
@@ -1044,66 +1028,136 @@ describe('prepare', () => {
             return updateProject(cfg, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
-                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
-                expect(prop).toEqual('testpkg_ios');
+                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'App');
+                expect(prop).toEqual('"testpkg_ios"');
             });
         });
         it('Test#004 : should write out the app version to info plist as CFBundleVersion', () => {
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].CFBundleShortVersionString).toEqual('one point oh');
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const prop = proj.getBuildProperty('MARKETING_VERSION', undefined, 'App');
+                expect(prop).toEqual('one point oh');
             });
         });
         it('Test#005 : should write out the orientation preference value', () => {
             cfg.getPreference.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
             });
         });
         it('Test#006 : should handle no orientation', () => {
-            cfg.getPreference.and.returnValue('');
+            cfg.getPreference.and.returnValue(null);
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toBeUndefined();
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toBeUndefined();
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#007 : should handle default orientation', () => {
             cfg.getPreference.and.returnValue('default');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#008 : should handle portrait orientation', () => {
             cfg.getPreference.and.returnValue('portrait');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
             });
         });
         it('Test#009 : should handle landscape orientation', () => {
             cfg.getPreference.and.returnValue('landscape');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationLandscapeLeft']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationLandscapeLeft"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#010 : should handle all orientation on ios', () => {
             cfg.getPreference.and.returnValue('all');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#011 : should handle custom orientation', () => {
             cfg.getPreference.and.returnValue('some-custom-orientation');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
 
@@ -1439,11 +1493,6 @@ describe('prepare', () => {
         });
         /// ///////////////////////////////////////////////
         it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', () => {
-            // original name here is 'SampleApp' based on p
-            // we are not testing a name change here, but testing a new config being used (name change test is above)
-            // so we set it to the name expected
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
-
             return updateProject(cfg2, p.locations).then(() => {
                 const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 const exceptionDomains = ats.NSExceptionDomains;
@@ -1864,15 +1913,20 @@ describe('prepare', () => {
         });
         it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', () => {
             cfg.shortName = () => 'MyApp';
+            writeFileSyncSpy.and.callThrough();
+
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].CFBundleDisplayName).toEqual('MyApp');
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const prop = proj.getBuildProperty('INFOPLIST_KEY_CFBundleDisplayName', undefined, 'App');
+                expect(prop).toEqual('"MyApp"');
             });
         });
         it('Test#021 : <privacy-manifest> - should write out the privacy manifest ', () => {
             plist.parse.and.callThrough();
             writeFileSyncSpy.and.callThrough();
             const projectRoot = iosProject;
-            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'SampleApp');
+            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'App');
             const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
             const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'privacy-manifest.xml'));
             const privacyManifest = my_config.getPrivacyManifest();
@@ -1891,7 +1945,7 @@ describe('prepare', () => {
             plist.parse.and.callThrough();
             writeFileSyncSpy.and.callThrough();
             const projectRoot = iosProject;
-            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'SampleApp');
+            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'App');
             const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
             const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'no-privacy-manifest.xml'));
             const privacyManifest = my_config.getPrivacyManifest();

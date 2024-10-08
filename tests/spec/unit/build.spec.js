@@ -20,7 +20,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const rewire = require('rewire');
-const { CordovaError, events } = require('cordova-common');
+const { CordovaError } = require('cordova-common');
 const build = rewire('../../../lib/build');
 
 describe('build', () => {
@@ -31,18 +31,18 @@ describe('build', () => {
         build.__set__('__dirname', path.join('/test', 'dir'));
 
         it('should generate appropriate args if a single buildFlag is passed in', () => {
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: '' });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: '' });
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-destination',
                 'generic/platform=iOS',
                 '-archivePath',
-                'TestProjectName.xcarchive',
+                'App.xcarchive',
                 'archive'
             ]);
             expect(args.length).toEqual(11);
@@ -59,7 +59,7 @@ describe('build', () => {
                 'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
             ];
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestWorkspaceFlag',
@@ -79,30 +79,30 @@ describe('build', () => {
         });
 
         it('should generate appropriate args for device', () => {
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true });
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-destination',
                 'generic/platform=iOS',
                 '-archivePath',
-                'TestProjectName.xcarchive',
+                'App.xcarchive',
                 'archive'
             ]);
             expect(args.length).toEqual(11);
         });
 
         it('should generate appropriate args for simulator', () => {
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false });
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-sdk',
@@ -126,7 +126,7 @@ describe('build', () => {
                 'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
             ];
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestWorkspaceFlag',
@@ -151,18 +151,18 @@ describe('build', () => {
         it('should add matched flags that are not overriding for device', () => {
             const buildFlags = '-sdk TestSdkFlag';
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-destination',
                 'generic/platform=iOS',
                 '-archivePath',
-                'TestProjectName.xcarchive',
+                'App.xcarchive',
                 'archive',
                 '-sdk',
                 'TestSdkFlag'
@@ -173,12 +173,12 @@ describe('build', () => {
         it('should add matched flags that are not overriding for simulator', () => {
             const buildFlags = '-archivePath TestArchivePathFlag';
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-sdk',
@@ -202,18 +202,18 @@ describe('build', () => {
                 authenticationKeyIssuerID: '00000000-0000-0000-0000-000000000000'
             };
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', buildOpts);
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', buildOpts);
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-destination',
                 'generic/platform=iOS',
                 '-archivePath',
-                'TestProjectName.xcarchive',
+                'App.xcarchive',
                 '-allowProvisioningUpdates',
                 '-authenticationKeyPath',
                 '/tmp/asc-key.p8',
@@ -231,12 +231,12 @@ describe('build', () => {
                 catalyst: true
             };
 
-            const args = getXcodeBuildArgs('TestProjectName', testProjectPath, 'TestConfiguration', '', buildOpts);
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', buildOpts);
             expect(args).toEqual([
                 '-workspace',
-                'TestProjectName.xcworkspace',
+                'App.xcworkspace',
                 '-scheme',
-                'TestProjectName',
+                'App',
                 '-configuration',
                 'TestConfiguration',
                 '-destination',
@@ -252,10 +252,10 @@ describe('build', () => {
         const getXcodeArchiveArgs = build.__get__('getXcodeArchiveArgs');
 
         it('should generate the appropriate arguments', () => {
-            const archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path');
+            const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path');
             expect(archiveArgs[0]).toEqual('-exportArchive');
             expect(archiveArgs[1]).toEqual('-archivePath');
-            expect(archiveArgs[2]).toEqual('TestProjectName.xcarchive');
+            expect(archiveArgs[2]).toEqual('App.xcarchive');
             expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
             expect(archiveArgs[4]).toEqual('/test/export/options/path');
             expect(archiveArgs[5]).toEqual('-exportPath');
@@ -271,10 +271,10 @@ describe('build', () => {
                 authenticationKeyIssuerID: '00000000-0000-0000-0000-000000000000'
             };
 
-            const archiveArgs = getXcodeArchiveArgs('TestProjectName', testProjectPath, '/test/output/path', '/test/export/options/path', buildOpts);
+            const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', buildOpts);
             expect(archiveArgs[0]).toEqual('-exportArchive');
             expect(archiveArgs[1]).toEqual('-archivePath');
-            expect(archiveArgs[2]).toEqual('TestProjectName.xcarchive');
+            expect(archiveArgs[2]).toEqual('App.xcarchive');
             expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
             expect(archiveArgs[4]).toEqual('/test/export/options/path');
             expect(archiveArgs[5]).toEqual('-exportPath');
@@ -287,6 +287,35 @@ describe('build', () => {
             expect(archiveArgs[12]).toEqual('-authenticationKeyIssuerID');
             expect(archiveArgs[13]).toEqual('00000000-0000-0000-0000-000000000000');
             expect(archiveArgs.length).toEqual(14);
+        });
+
+        it('should generate the appropriate arguments with build flag overrides', () => {
+            const buildFlags = '-archivePath TestArchivePathFlag';
+
+            const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', { buildFlag: buildFlags });
+            expect(archiveArgs[0]).toEqual('-exportArchive');
+            expect(archiveArgs[1]).toEqual('-archivePath');
+            expect(archiveArgs[2]).toEqual('TestArchivePathFlag');
+            expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
+            expect(archiveArgs[4]).toEqual('/test/export/options/path');
+            expect(archiveArgs[5]).toEqual('-exportPath');
+            expect(archiveArgs[6]).toEqual('/test/output/path');
+            expect(archiveArgs.length).toEqual(7);
+        });
+
+        it('should generate the appropriate arguments with build flag overrides', () => {
+            const buildFlags = ['-archivePath TestArchivePathFlag', '-quiet'];
+
+            const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', { buildFlag: buildFlags });
+            expect(archiveArgs[0]).toEqual('-exportArchive');
+            expect(archiveArgs[1]).toEqual('-archivePath');
+            expect(archiveArgs[2]).toEqual('TestArchivePathFlag');
+            expect(archiveArgs[3]).toEqual('-exportOptionsPlist');
+            expect(archiveArgs[4]).toEqual('/test/export/options/path');
+            expect(archiveArgs[5]).toEqual('-exportPath');
+            expect(archiveArgs[6]).toEqual('/test/output/path');
+            expect(archiveArgs[7]).toEqual('-quiet');
+            expect(archiveArgs.length).toEqual(8);
         });
     });
 
@@ -440,47 +469,6 @@ describe('build', () => {
             }, (err) => {
                 expect(err).toBeInstanceOf(CordovaError);
             });
-        });
-    });
-
-    describe('findXCodeProjectIn method', () => {
-        const fakePath = '/path/foobar';
-        let buildRequire;
-
-        beforeEach(() => {
-            // rewire causes some issues so for these tests, we will require instead.
-            buildRequire = require('../../../lib/build');
-            spyOn(events, 'emit');
-        });
-
-        it('should find not find Xcode project', () => {
-            spyOn(fs, 'readdirSync').and.returnValue(['README.md']);
-            return buildRequire.findXCodeProjectIn(fakePath).then(
-                () => {},
-                (error) => {
-                    expect(error.message).toBe(`No Xcode project found in ${fakePath}`);
-                }
-            );
-        });
-
-        it('should emit finding multiple Xcode projects', () => {
-            spyOn(fs, 'readdirSync').and.returnValue(['Test1.xcodeproj', 'Test2.xcodeproj']);
-            return buildRequire.findXCodeProjectIn(fakePath).then(
-                (projectName) => {
-                    expect(events.emit).toHaveBeenCalledWith(jasmine.any(String), jasmine.stringMatching(/Found multiple .xcodeproj directories in/));
-                    expect(projectName).toBe('Test1');
-                }
-            );
-        });
-
-        it('should detect and return only one projects', () => {
-            spyOn(fs, 'readdirSync').and.returnValue(['Test1.xcodeproj']);
-            return buildRequire.findXCodeProjectIn(fakePath).then(
-                (projectName) => {
-                    expect(events.emit).not.toHaveBeenCalled();
-                    expect(projectName).toBe('Test1');
-                }
-            );
         });
     });
 });

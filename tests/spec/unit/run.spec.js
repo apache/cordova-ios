@@ -22,6 +22,7 @@ const { CordovaError, events } = require('cordova-common');
 const build = require('../../../lib/build');
 const check_reqs = require('../../../lib/check_reqs');
 const run = require('../../../lib/run');
+const projectFile = require('../../../lib/projectFile');
 
 describe('cordova/lib/run', () => {
     const testProjectPath = path.join('/test', 'project', 'path');
@@ -67,9 +68,17 @@ describe('cordova/lib/run', () => {
     });
 
     describe('run method', () => {
+        const fakeXcodeProject = {
+            xcode: {
+                getBuildProperty (n, c, t) {
+                    return 'ProjectName';
+                }
+            }
+        };
+
         beforeEach(() => {
             spyOn(build, 'run').and.returnValue(Promise.resolve());
-            spyOn(build, 'findXCodeProjectIn').and.returnValue('ProjectName');
+            spyOn(projectFile, 'parse').and.returnValue(fakeXcodeProject);
             spyOn(run, 'execListDevices').and.resolveTo([]);
             spyOn(run, 'execListEmulatorTargets').and.resolveTo([]);
             spyOn(run, 'listDevices').and.resolveTo();

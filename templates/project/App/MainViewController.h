@@ -17,12 +17,12 @@
  under the License.
 */
 
-#import <Cordova/CDVAppDelegate.h>
+#import <Cordova/CDVViewController.h>
 
-#warning It is unsafe to rely on the AppDelegate class as an extension point. \
-         Update your code to extend CDVAppDelegate instead -- \
+#warning It is unsafe to rely on the MainViewController class as an extension point. \
+         Update your code to extend CDVViewController instead -- \
          This code will stop working in Cordova iOS 9!
 
-@class AppDelegate;
+@class MainViewController;
 
-#import "__PROJECT_NAME__-Swift.h"
+#import "App-Swift.h"
