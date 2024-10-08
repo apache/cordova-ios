@@ -17,12 +17,12 @@
        under the License.
 */
 
-const fs = require('node:fs');
 const path = require('node:path');
 const { CordovaError, events } = require('cordova-common');
 const build = require('../../../lib/build');
 const check_reqs = require('../../../lib/check_reqs');
 const run = require('../../../lib/run');
+const projectFile = require('../../../lib/projectFile');
 
 describe('cordova/lib/run', () => {
     const testProjectPath = path.join('/test', 'project', 'path');
@@ -68,9 +68,17 @@ describe('cordova/lib/run', () => {
     });
 
     describe('run method', () => {
+        const fakeXcodeProject = {
+            xcode: {
+                getBuildProperty (n, c, t) {
+                    return 'ProjectName';
+                }
+            }
+        };
+
         beforeEach(() => {
             spyOn(build, 'run').and.returnValue(Promise.resolve());
-            spyOn(run, 'findXCodeProjectIn').and.returnValue('ProjectName');
+            spyOn(projectFile, 'parse').and.returnValue(fakeXcodeProject);
             spyOn(run, 'execListDevices').and.resolveTo([]);
             spyOn(run, 'execListEmulatorTargets').and.resolveTo([]);
             spyOn(run, 'listDevices').and.resolveTo();
@@ -145,47 +153,6 @@ describe('cordova/lib/run', () => {
             return run.run({ device: true, target: 'mac', release: true }).then(() => {
                 expect(run.deployToMac).toHaveBeenCalledWith(path.join(testProjectPath, 'build', 'Release-maccatalyst', 'ProjectName.app'));
             });
-        });
-    });
-
-    describe('findXCodeProjectIn method', () => {
-        const fakePath = '/path/foobar';
-
-        beforeEach(() => {
-            spyOn(events, 'emit');
-        });
-
-        it('should find not find Xcode project', () => {
-            spyOn(fs, 'readdirSync').and.returnValue(['README.md']);
-
-            return run.findXCodeProjectIn(fakePath).then(
-                () => {},
-                (error) => {
-                    expect(error.message).toBe(`No Xcode project found in ${fakePath}`);
-                }
-            );
-        });
-
-        it('should emit finding multiple Xcode projects', () => {
-            spyOn(fs, 'readdirSync').and.returnValue(['Test1.xcodeproj', 'Test2.xcodeproj']);
-
-            return run.findXCodeProjectIn(fakePath).then(
-                (projectName) => {
-                    expect(events.emit).toHaveBeenCalledWith(jasmine.any(String), jasmine.stringMatching(/Found multiple .xcodeproj directories in/));
-                    expect(projectName).toBe('Test1');
-                }
-            );
-        });
-
-        it('should detect and return only one projects', () => {
-            spyOn(fs, 'readdirSync').and.returnValue(['Test1.xcodeproj']);
-
-            return run.findXCodeProjectIn(fakePath).then(
-                (projectName) => {
-                    expect(events.emit).not.toHaveBeenCalled();
-                    expect(projectName).toBe('Test1');
-                }
-            );
         });
     });
 });
