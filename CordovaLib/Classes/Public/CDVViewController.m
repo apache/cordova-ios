@@ -22,6 +22,7 @@
 #import <WebKit/WebKit.h>
 #import <objc/message.h>
 
+#import <Cordova/CDVAppDelegate.h>
 #import <Cordova/CDVPlugin.h>
 #import "CDVPlugin+Private.h"
 #import <Cordova/CDVConfigParser.h>
@@ -294,6 +295,17 @@ static UIColor* defaultBackgroundColor(void) {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    // TODO: Remove in Cordova iOS 9
+    if ([UIApplication.sharedApplication.delegate isKindOfClass:[CDVAppDelegate class]]) {
+        CDVAppDelegate *appDelegate = (CDVAppDelegate *)UIApplication.sharedApplication.delegate;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        if (appDelegate.viewController == nil) {
+            appDelegate.viewController = self;
+        }
+#pragma clang diagnostic pop
+    }
 
     // Load settings
     [self loadSettings];

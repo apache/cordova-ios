@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, strong) IBOutlet UIWindow *window API_DEPRECATED_WITH_REPLACEMENT("SceneDelegate:window", ios(2.0, 13.0));
 
 // TODO: Remove in Cordova iOS 9
-@property (nullable, nonatomic, strong) IBOutlet CDVViewController *viewController CDV_DEPRECATED(8, "This will always be nil.");
+@property (nullable, nonatomic, strong) IBOutlet CDVViewController *viewController CDV_DEPRECATED(8, "");
 
 @end
 
