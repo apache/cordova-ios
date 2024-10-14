@@ -56,6 +56,9 @@ For more information about Apache Cordova, visit [https://cordova.apache.org](ht
 - ``CDVConfigParser``
 - ``CDVTimer``
 
+### Upgrade Guides
+- <doc:upgrading-8>
+
 ### Deprecated
 
 - ``IsAtLeastiOSVersion``

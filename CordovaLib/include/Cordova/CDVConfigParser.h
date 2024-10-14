@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  Use ``parseConfigFile:`` to load data from a file path.
 
  Use ``parseConfigFile:withDelegate:`` if you need to intercept the XML parsing
- and handle the data yourself with an ``NSXMLParserDelegate``.
+ and handle the data yourself with an `NSXMLParserDelegate`.
  */
 @interface CDVConfigParser : NSObject <NSXMLParserDelegate>
 
