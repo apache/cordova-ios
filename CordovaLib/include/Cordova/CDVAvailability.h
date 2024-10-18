@@ -96,7 +96,7 @@
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
     /* coho:next-version-min-required,replace-after */
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_7_1_1
+    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_8_0_0
 #endif
 
 /*

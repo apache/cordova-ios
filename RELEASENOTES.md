@@ -22,6 +22,53 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 8.0.0-beta.1 (Oct 17, 2024)
+
+**Breaking Changes:**
+
+* [GH-1485](https://github.com/apache/cordova-ios/pull/1485) refactor!: Consistent app template/Xcode project name
+* [GH-1313](https://github.com/apache/cordova-ios/pull/1313) feat!: Better Catalyst build support
+* [GH-1480](https://github.com/apache/cordova-ios/pull/1480) chore!: Bump CordovaLib requirements to **iOS** 13+
+* [GH-1400](https://github.com/apache/cordova-ios/pull/1400) fix!: Deprecate scrollView category extension on UIView
+* [GH-1465](https://github.com/apache/cordova-ios/pull/1465) feat(icons)!: Support a single 1024⨉1024 icon, but also more complex customizations
+* [GH-1458](https://github.com/apache/cordova-ios/pull/1458) refactor!: Add CDVSettingsDictionary class
+* [GH-1463](https://github.com/apache/cordova-ios/pull/1463) refactor!: Move CDVAllowList out of public API
+* [GH-1457](https://github.com/apache/cordova-ios/pull/1457) refactor(template)!: Update app template to Swift & storyboards
+* [GH-1466](https://github.com/apache/cordova-ios/pull/1466) chore!: Bump NodeJS versions in CI & update deps
+* [GH-1425](https://github.com/apache/cordova-ios/pull/1425) chore!: Bump minimum Xcode version to 15
+* [GH-1455](https://github.com/apache/cordova-ios/pull/1455) refactor!: Easy deprecation cleanups
+
+**Fixes:**
+
+* [GH-1497](https://github.com/apache/cordova-ios/pull/1497) fix: the WKWebView will leak in the platform centered approach unless this property is cleared
+* [GH-1496](https://github.com/apache/cordova-ios/pull/1496) fix: Resolve Xcode stale files warnings
+* [GH-1495](https://github.com/apache/cordova-ios/pull/1495) fix(emulators): Fix listing emulator targets
+* [GH-1494](https://github.com/apache/cordova-ios/pull/1494) fix(objc): Workaround for Swift/ObjC template issues
+* [GH-1493](https://github.com/apache/cordova-ios/pull/1493) fix(compat): Set the app delegate viewController for plugins
+* [GH-1481](https://github.com/apache/cordova-ios/pull/1481) feat(scheme-handler): Improve memory usage & Range support
+* [GH-1483](https://github.com/apache/cordova-ios/pull/1483) fix: Avoid showing error page on cancelled navigation
+* [GH-1437](https://github.com/apache/cordova-ios/pull/1437) fix: alerts could freeze the application
+* [GH-1482](https://github.com/apache/cordova-ios/pull/1482) fix: CDV.h wasn't bringing in Cordova.h consistently
+* [GH-1477](https://github.com/apache/cordova-ios/pull/1477) refactor: Move CDVURLSchemeHandler to private API
+* [GH-1475](https://github.com/apache/cordova-ios/pull/1475) refactor: Reorder methods in CDVViewController
+* [GH-1474](https://github.com/apache/cordova-ios/pull/1474) refactor: Clean up properties/ivars in CDVViewController
+* [GH-1472](https://github.com/apache/cordova-ios/pull/1472) refactor: Modernize some ObjC code
+* [GH-1473](https://github.com/apache/cordova-ios/pull/1473) fix: Update CDVAllowList to support more valid schemes
+* [GH-1467](https://github.com/apache/cordova-ios/pull/1467) fix(Podfile): Avoid creating an empty Podfile on plugin install
+* [GH-1470](https://github.com/apache/cordova-ios/pull/1470) fix: Error when no simulators are available
+* [GH-1479](https://github.com/apache/cordova-ios/pull/1479) refactor: Define a protocol for scheme handling plugins
+* [GH-1456](https://github.com/apache/cordova-ios/pull/1456) fix: Fix memory leak from user script handler
+
+**Others:**
+
+* [GH-1499](https://github.com/apache/cordova-ios/pull/1499) chore(readme): Update Xcode/node versions in `README`
+* [GH-1498](https://github.com/apache/cordova-ios/pull/1498) docs: Add upgrade guide for plugin authors for 8.x
+* [GH-1484](https://github.com/apache/cordova-ios/pull/1484) chore(deps): bump micromatch from 4.0.7 to 4.0.8
+* [GH-1478](https://github.com/apache/cordova-ios/pull/1478) ci: Publish DocC documentation to GitHub pages
+* [GH-1476](https://github.com/apache/cordova-ios/pull/1476) docs(CordovaLib): Start filling out DocC comments
+* [GH-1459](https://github.com/apache/cordova-ios/pull/1459) chore: Clean up ancient plist-to-config.xml cruft
+* [GH-1445](https://github.com/apache/cordova-ios/pull/1445) chore: bump version 8.0.0-dev
+
 ### 7.1.1 (Jul 19, 2024)
 
 **Fixes:**
