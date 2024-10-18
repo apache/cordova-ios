@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  behavior to the app by building on system events such as URL handling, push
  notification registration, and deep linking.
 
- See ``UIApplicationDelegate`` for more details about app delegates.
+ See `UIApplicationDelegate` for more details about app delegates.
  */
 @interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
 
