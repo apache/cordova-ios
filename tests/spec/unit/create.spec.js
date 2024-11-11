@@ -21,12 +21,15 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const xcode = require('xcode');
+const { ConfigParser } = require('cordova-common');
 const create = require('../../../lib/create');
 
 const makeTempDir = () => path.join(
     fs.realpathSync(os.tmpdir()),
     `cordova-ios-create-test-${Date.now()}`
 );
+
+const templateConfigXmlPath = path.join(__dirname, '..', '..', '..', 'templates', 'project', 'App', 'config.xml');
 
 /**
  * Verifies that some of the project file exists. Not all will be tested.
@@ -82,6 +85,15 @@ function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdent
     expect(actualBundleName).toBe(`"${projectName}"`);
 }
 
+function verifyProjectDeploymentTarget (tmpDir, expectedTarget) {
+    const pbxproj = path.join(tmpDir, 'App.xcodeproj', 'project.pbxproj');
+    const xcodeproj = xcode.project(pbxproj);
+    xcodeproj.parseSync();
+
+    const actualDeploymentTarget = xcodeproj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
+    expect(actualDeploymentTarget).toBe(expectedTarget);
+}
+
 /**
  * Runs various project creation checks.
  *
@@ -90,8 +102,10 @@ function verifyProjectBundleIdentifier (tmpDir, projectName, expectedBundleIdent
  * @param {String} projectName
  * @returns {Promise}
  */
-async function verifyCreatedProject (tmpDir, packageName, projectName) {
-    await create.createProject(tmpDir, packageName, projectName, {}, undefined)
+async function verifyCreatedProject (tmpDir, packageName, projectName, configFile = templateConfigXmlPath) {
+    const configXml = new ConfigParser(configFile);
+
+    await create.createProject(tmpDir, packageName, projectName, {}, configXml)
         .then(() => verifyProjectFiles(tmpDir, projectName))
         .then(() => verifyProjectBundleIdentifier(tmpDir, projectName, packageName));
 }
@@ -117,5 +131,14 @@ describe('create', () => {
         const packageName = 'com.test.app2';
         const projectName = '応応応応 hello & إثرا 用用用用';
         return verifyCreatedProject(tmpDir, packageName, projectName);
+    });
+
+    it('should copy config.xml into the newly created project', () => {
+        const configPath = path.join(__dirname, 'fixtures', 'test-config-3.xml');
+        const packageName = 'io.cordova.hellocordova.ios';
+        const projectName = 'Hello Cordova';
+
+        return verifyCreatedProject(tmpDir, packageName, projectName, configPath)
+            .then(() => verifyProjectDeploymentTarget(tmpDir, '15.0'));
     });
 });

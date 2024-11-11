@@ -21,12 +21,15 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const xcode = require('xcode');
+const { ConfigParser } = require('cordova-common');
 const create = require('../../lib/create');
 
 const makeTempDir = () => path.join(
     fs.realpathSync(os.tmpdir()),
     `cordova-ios-create-test-${Date.now()}`
 );
+
+const templateConfigXmlPath = path.join(__dirname, '..', '..', 'templates', 'project', 'App', 'config.xml');
 
 /**
  * Verifies that some of the project file exists. Not all will be tested.
@@ -90,7 +93,9 @@ function verifyBuild (tmpDir) {
  * @returns {Promise}
  */
 async function verifyCreateAndBuild (tmpDir, packageName, projectName) {
-    await create.createProject(tmpDir, packageName, projectName, {}, undefined)
+    const configXml = new ConfigParser(templateConfigXmlPath);
+
+    await create.createProject(tmpDir, packageName, projectName, {}, configXml)
         .then(() => verifyProjectFiles(tmpDir, projectName))
         .then(() => verifyProjectBundleIdentifier(tmpDir, projectName, packageName))
         .then(() => verifyBuild(tmpDir));
