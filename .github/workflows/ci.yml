@@ -17,7 +17,13 @@
 
 name: Node CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   darwin:
@@ -41,12 +47,24 @@ jobs:
           node --version
           npm --version
 
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          queries: security-and-quality
+          config: |
+            paths-ignore:
+              - coverage
+              - node_modules
+              - templates/project/www/cordova.js
+
       - name: npm install and test
         run: |
           npm i -g ios-deploy
           npm cit
         env:
           CI: true
+
+      - uses: github/codeql-action/analyze@v3
 
       - uses: codecov/codecov-action@v4
         if: success()
@@ -76,6 +94,16 @@ jobs:
           node --version
           npm --version
 
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          queries: security-and-quality
+          config: |
+            paths-ignore:
+              - coverage
+              - node_modules
+              - templates/project/www/cordova.js
+
       - name: npm install and test
         run: |
           npm ci
@@ -83,6 +111,8 @@ jobs:
           npm run unit-tests
         env:
           CI: true
+
+      - uses: github/codeql-action/analyze@v3
 
       - uses: codecov/codecov-action@v4
         if: success()
