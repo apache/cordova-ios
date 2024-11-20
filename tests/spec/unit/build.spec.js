@@ -56,7 +56,9 @@ describe('build', () => {
                 '-destination TestDestinationFlag',
                 '-archivePath TestArchivePathFlag',
                 'CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag',
-                'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
+                'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag',
+                'INFOPLIST_KEY_CFBundleDisplayName="My App Name"',
+                '-resultBundlePath="/tmp/result bundle/file"'
             ];
 
             const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
@@ -73,9 +75,11 @@ describe('build', () => {
                 'TestArchivePathFlag',
                 'archive',
                 'CONFIGURATION_BUILD_DIR=TestConfigBuildDirFlag',
-                'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
+                'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag',
+                'INFOPLIST_KEY_CFBundleDisplayName="My App Name"',
+                '-resultBundlePath="/tmp/result bundle/file"'
             ]);
-            expect(args.length).toEqual(13);
+            expect(args.length).toEqual(15);
         });
 
         it('should generate appropriate args for device', () => {

@@ -17,12 +17,15 @@
     under the License.
 */
 
-const os = require('node:os');
 const path = require('node:path');
 const fs = require('node:fs');
+const tmp = require('tmp');
 const projectFile = require('../../../lib/projectFile');
 
-const iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
+tmp.setGracefulCleanup();
+
+const tempdir = tmp.dirSync({ unsafeCleanup: true });
+const iosProject = path.join(tempdir.name, 'plugman/projectFile');
 const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml');
 
 const locations = {

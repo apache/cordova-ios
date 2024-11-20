@@ -22,6 +22,7 @@
 const fs = require('node:fs');
 const EventEmitter = require('node:events');
 const path = require('node:path');
+const tmp = require('tmp');
 const plist = require('plist');
 const xcode = require('xcode');
 const XcodeProject = xcode.project;
@@ -31,28 +32,29 @@ const projectFile = require('../../../lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
 const versions = require('../../../lib/versions');
 
-const tmpDir = path.join(__dirname, '../../../tmp');
-const FIXTURES = path.join(__dirname, 'fixtures');
+tmp.setGracefulCleanup();
 
+const relativeTmp = path.join(__dirname, '..', '..', '..');
+const FIXTURES = path.join(__dirname, 'fixtures');
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
-const iosProject = path.join(tmpDir, 'prepare');
-const iosPlatform = path.join(iosProject, 'platforms/ios');
 
 const ConfigParser = require('cordova-common').ConfigParser;
 
 describe('prepare', () => {
     let p;
     let Api;
+    let tempdir;
+    let iosProject;
+
     beforeEach(() => {
         Api = rewire('../../../lib/Api');
 
-        fs.mkdirSync(iosPlatform, { recursive: true });
+        tempdir = tmp.dirSync({ tmpdir: relativeTmp, unsafeCleanup: true });
+        iosProject = path.join(tempdir.name, 'prepare');
+        const iosPlatform = path.join(iosProject, 'platforms/ios');
+
         fs.cpSync(iosProjectFixture, iosPlatform, { recursive: true });
         p = new Api('ios', iosPlatform, new EventEmitter());
-    });
-
-    afterEach(() => {
-        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
     describe('launch storyboard feature (CB-9762)', () => {
@@ -271,9 +273,9 @@ describe('prepare', () => {
 
         describe('#getLaunchStoryboardImagesDir', () => {
             const getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
-            const projectRoot = iosProject;
 
             it('should find the Assets.xcassets file in a project with an asset catalog', () => {
+                const projectRoot = iosProject;
                 const platformProjDir = path.join('platforms', 'ios', 'App');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
                 const expectedPath = path.join(platformProjDir, 'Assets.xcassets', 'LaunchStoryboard.imageset');
@@ -285,6 +287,7 @@ describe('prepare', () => {
             });
 
             it('should NOT find the Assets.xcassets file in a project with no asset catalog', () => {
+                const projectRoot = iosProject;
                 const platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
 
@@ -2061,12 +2064,12 @@ describe('prepare', () => {
             spyOn(FileUpdater, 'mergeAndUpdateDir').and.returnValue(true);
         });
 
-        const project = {
-            root: iosProject,
-            locations: { www: path.join(iosProject, 'www') }
-        };
-
         it('Test#021 : should update project-level www and with platform agnostic www and merges', () => {
+            const project = {
+                root: iosProject,
+                locations: { www: path.join(iosProject, 'www') }
+            };
+
             const merges_path = path.join(project.root, 'merges', 'ios');
             fs.mkdirSync(merges_path, { recursive: true });
             updateWww(project, p.locations);
@@ -2077,6 +2080,11 @@ describe('prepare', () => {
                 logFileOp);
         });
         it('Test#022 : should skip merges if merges directory does not exist', () => {
+            const project = {
+                root: iosProject,
+                locations: { www: path.join(iosProject, 'www') }
+            };
+
             const merges_path = path.join(project.root, 'merges', 'ios');
             fs.rmSync(merges_path, { recursive: true, force: true });
             updateWww(project, p.locations);
