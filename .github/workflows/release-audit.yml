@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v4
 
       # Check license headers
-      - uses: erisu/apache-rat-action@555ae80334a535eb6c1f8920b121563a5a985a75
+      - uses: erisu/apache-rat-action@v1
 
       # Setup environment with node
       - uses: actions/setup-node@v4
