@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "3DDF2475-8F46-4982-ABB2-1015DBA9EAF0",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:..\/CordovaLib\/CordovaLib.xcodeproj",
+          "identifier" : "C0C01EB11E3911D50056E6CB",
+          "name" : "Cordova"
+        }
+      ]
+    },
+    "repeatInNewRunnerProcess" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CordovaLibTests\/CordovaLibTests.xcodeproj",
+      "identifier" : "C0FA7C991E4BB6420077B045",
+      "name" : "CordovaFrameworkApp"
+    },
+    "testExecutionOrdering" : "random",
+    "testRepetitionMode" : "retryOnFailure"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:CordovaLibTests\/CordovaTests.xcodeproj",
+        "identifier" : "C0FA7CB11E4BBBBE0077B045",
+        "name" : "CordovaTests"
+      }
+    }
+  ],
+  "version" : 1
+}

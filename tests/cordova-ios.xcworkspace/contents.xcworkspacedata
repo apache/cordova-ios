@@ -23,6 +23,6 @@
       location = "group:../CordovaLib/CordovaLib.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:CordovaLibTests/CordovaLibTests.xcodeproj">
+      location = "group:CordovaLibTests/CordovaTests.xcodeproj">
    </FileRef>
 </Workspace>

@@ -19,7 +19,8 @@
 
 #import <XCTest/XCTest.h>
 #import <Cordova/Cordova.h>
-#import "AppDelegate.h"
+
+#import "CordovaApp-Swift.h"
 
 @interface CDVPluginInitTests : XCTestCase
 @property AppDelegate* appDelegate;

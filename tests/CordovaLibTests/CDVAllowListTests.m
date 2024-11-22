@@ -239,6 +239,18 @@
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.google.com"]]);
 }
 
+- (void)testSpecificPort
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"http://www.apache.org:8080",
+        nil];
+
+    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+
+    XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org/index.html"]]);
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org:8080/index.html"]]);
+}
+
 - (void)testWildcardPlusOtherUrls
 {
     // test for https://issues.apache.org/jira/browse/CB-3394

@@ -14,4 +14,7 @@ IDEWorkspaceChecks.plist
 # Testing Figures
 fixtures
 
+#Xcode Test Plans are JSON with no comment support
+(.*).xctestplan
+
 node_modules
