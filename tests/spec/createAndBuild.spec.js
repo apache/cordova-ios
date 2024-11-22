@@ -18,16 +18,18 @@
  */
 
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const tmp = require('tmp');
 const xcode = require('xcode');
 const { ConfigParser } = require('cordova-common');
 const create = require('../../lib/create');
 
-const makeTempDir = () => path.join(
-    fs.realpathSync(os.tmpdir()),
-    `cordova-ios-create-test-${Date.now()}`
-);
+tmp.setGracefulCleanup();
+
+function makeTempDir () {
+    const tempdir = tmp.dirSync({ unsafeCleanup: true });
+    return path.join(tempdir.name, `cordova-ios-create-test-${Date.now()}`);
+}
 
 const templateConfigXmlPath = path.join(__dirname, '..', '..', 'templates', 'project', 'App', 'config.xml');
 

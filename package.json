@@ -35,20 +35,20 @@
     "jasmine": "^5.2.0",
     "nyc": "^17.0.0",
     "rewire": "^7.0.0",
-    "tmp": "^0.2.1"
+    "tmp": "^0.2.3"
   },
   "engines": {
     "node": ">=16.13.0"
   },
   "dependencies": {
     "cordova-common": "^5.0.0",
+    "elementtree": "^0.1.7",
     "execa": "^5.1.1",
     "ios-sim": "^8.0.2",
     "plist": "^3.0.6",
     "semver": "^7.4.0",
     "which": "^4.0.0",
-    "xcode": "^3.0.1",
-    "elementtree": "^0.1.7"
+    "xcode": "^3.0.1"
   },
   "nyc": {
     "include": [

@@ -17,18 +17,21 @@
     under the License.
 */
 
-const os = require('node:os');
 const fs = require('node:fs');
 const path = require('node:path');
 const rewire = require('rewire');
 const EventEmitter = require('node:events');
+const tmp = require('tmp');
+
+tmp.setGracefulCleanup();
 
 const PluginInfo = require('cordova-common').PluginInfo;
 const Api = require('../../../../lib/Api');
 const projectFile = require('../../../../lib/projectFile');
 const pluginHandlers = rewire('../../../../lib/plugman/pluginHandlers');
 
-const temp = path.join(os.tmpdir(), 'plugman');
+const tempdir = tmp.dirSync({ unsafeCleanup: true });
+const temp = path.join(tempdir.name, 'plugman');
 
 const FIXTURES = path.join(__dirname, '..', 'fixtures');
 const iosProject = path.join(FIXTURES, 'ios-config-xml');

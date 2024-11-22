@@ -18,19 +18,22 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const osenv = require('node:os');
+const tmp = require('tmp');
 const rewire = require('rewire');
 
 const common = rewire('../../../../lib/plugman/pluginHandlers');
 
-const test_dir = path.join(osenv.tmpdir(), 'test_plugman');
+tmp.setGracefulCleanup();
+
+const tempdir = tmp.dirSync({ unsafeCleanup: true });
+const test_dir = path.join(tempdir.name, 'test_plugman');
 const project_dir = path.join(test_dir, 'project');
 const src = path.join(project_dir, 'src');
 const dest = path.join(project_dir, 'dest');
 const srcDirTree = path.join(src, 'one', 'two', 'three');
 const srcFile = path.join(srcDirTree, 'test.java');
 const symlink_file = path.join(srcDirTree, 'symlink');
-const non_plugin_file = path.join(osenv.tmpdir(), 'non_plugin_file');
+const non_plugin_file = path.join(tempdir.name, 'non_plugin_file');
 
 const copyFile = common.__get__('copyFile');
 const copyNewFile = common.__get__('copyNewFile');
@@ -167,7 +170,7 @@ function ignoreEPERMonWin32 (symlink_src, symlink_dest) {
     try {
         fs.symlinkSync(symlink_src, symlink_dest);
     } catch (e) {
-        if (process.platform === 'win32' && e.message.indexOf('Error: EPERM, operation not permitted' > -1)) {
+        if (process.platform === 'win32' && e.message.indexOf('Error: EPERM, operation not permitted') > -1) {
             return true;
         }
         throw e;
