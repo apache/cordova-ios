@@ -15,15 +15,9 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-#import <UIKit/UIKit.h>
+import Cordova
 
-#import "AppDelegate.h"
-
-int main(int argc, char* argv[])
-{
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
-    }
+class ViewController: CDVViewController {
 }

@@ -32,9 +32,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2AAC07D0554694100DB518D"
-               BuildableName = "libCordova.a"
-               BlueprintName = "CordovaLib"
+               BlueprintIdentifier = "C0C01EB11E3911D50056E6CB"
+               BuildableName = "Cordova.framework"
+               BlueprintName = "Cordova"
                ReferencedContainer = "container:../CordovaLib/CordovaLib.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,10 +46,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "303A4067152124BB00182201"
-               BuildableName = "CordovaLibApp.app"
-               BlueprintName = "CordovaLibApp"
-               ReferencedContainer = "container:CordovaLibTests/CordovaLibTests.xcodeproj">
+               BlueprintIdentifier = "C0FA7C991E4BB6420077B045"
+               BuildableName = "CordovaApp.app"
+               BlueprintName = "CordovaApp"
+               ReferencedContainer = "container:CordovaLibTests/CordovaTests.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -60,10 +60,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "686357A8141002F100DF4CF2"
-               BuildableName = "CordovaLibTests.xctest"
-               BlueprintName = "CordovaLibTests"
-               ReferencedContainer = "container:CordovaLibTests/CordovaLibTests.xcodeproj">
+               BlueprintIdentifier = "C0FA7CB11E4BBBBE0077B045"
+               BuildableName = "CordovaTests.xctest"
+               BlueprintName = "CordovaTests"
+               ReferencedContainer = "container:CordovaLibTests/CordovaTests.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -76,26 +76,28 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "303A4067152124BB00182201"
-            BuildableName = "CordovaLibApp.app"
-            BlueprintName = "CordovaLibApp"
-            ReferencedContainer = "container:CordovaLibTests/CordovaLibTests.xcodeproj">
+            BlueprintIdentifier = "C0FA7C991E4BB6420077B045"
+            BuildableName = "CordovaApp.app"
+            BlueprintName = "CordovaApp"
+            ReferencedContainer = "container:CordovaLibTests/CordovaTests.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:CordovaLibTests/CordovaTests.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "686357A8141002F100DF4CF2"
-               BuildableName = "CordovaLibTests.xctest"
-               BlueprintName = "CordovaLibTests"
-               ReferencedContainer = "container:CordovaLibTests/CordovaLibTests.xcodeproj">
+               BlueprintIdentifier = "C0FA7CB11E4BBBBE0077B045"
+               BuildableName = "CordovaTests.xctest"
+               BlueprintName = "CordovaTests"
+               ReferencedContainer = "container:CordovaLibTests/CordovaTests.xcodeproj">
             </BuildableReference>
-            <LocationScenarioReference
-               identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
-               referenceType = "1">
-            </LocationScenarioReference>
          </TestableReference>
       </Testables>
    </TestAction>
@@ -113,10 +115,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "303A4067152124BB00182201"
-            BuildableName = "CordovaLibApp.app"
-            BlueprintName = "CordovaLibApp"
-            ReferencedContainer = "container:CordovaLibTests/CordovaLibTests.xcodeproj">
+            BlueprintIdentifier = "C0FA7C991E4BB6420077B045"
+            BuildableName = "CordovaApp.app"
+            BlueprintName = "CordovaApp"
+            ReferencedContainer = "container:CordovaLibTests/CordovaTests.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -130,10 +132,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "303A4067152124BB00182201"
-            BuildableName = "CordovaLibApp.app"
-            BlueprintName = "CordovaLibApp"
-            ReferencedContainer = "container:CordovaLibTests/CordovaLibTests.xcodeproj">
+            BlueprintIdentifier = "C0FA7C991E4BB6420077B045"
+            BuildableName = "CordovaApp.app"
+            BlueprintName = "CordovaApp"
+            ReferencedContainer = "container:CordovaLibTests/CordovaTests.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
