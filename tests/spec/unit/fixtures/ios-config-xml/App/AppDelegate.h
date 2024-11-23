@@ -15,19 +15,15 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-//
-//  AppDelegate.h
-//  SampleApp
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
-
-#import <Cordova/CDVViewController.h>
 #import <Cordova/CDVAppDelegate.h>
 
-@interface AppDelegate : CDVAppDelegate {}
+#ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+    #warning It is unsafe to rely on the AppDelegate class as an extension point. \
+             Update your code to extend CDVAppDelegate instead -- \
+             This code will stop working in Cordova iOS 9!
+#endif
 
+@interface AppDelegate : CDVAppDelegate
 @end
