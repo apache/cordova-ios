@@ -19,3 +19,7 @@
 
 #import <Cordova/Cordova.h>
 
+#define __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+#import "AppDelegate.h"
+#import "MainViewController.h"
+#undef __CORDOVA_SILENCE_HEADER_DEPRECATIONS

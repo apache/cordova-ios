@@ -15,26 +15,15 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
-
-//
-//  MainViewController.h
-//  SampleApp
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+*/
 
 #import <Cordova/CDVViewController.h>
-#import <Cordova/CDVCommandDelegateImpl.h>
-#import <Cordova/CDVCommandQueue.h>
+
+#ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+    #warning It is unsafe to rely on the MainViewController class as an extension point. \
+             Update your code to extend CDVViewController instead -- \
+             This code will stop working in Cordova iOS 9!
+#endif
 
 @interface MainViewController : CDVViewController
-
-@end
-
-@interface MainCommandDelegate : CDVCommandDelegateImpl
-@end
-
-@interface MainCommandQueue : CDVCommandQueue
 @end

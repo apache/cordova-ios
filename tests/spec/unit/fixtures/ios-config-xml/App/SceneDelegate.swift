@@ -15,25 +15,11 @@
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
- */
+*/
 
-//
-//  AppDelegate.m
-//  SampleApp
-//
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
-//
+import UIKit
 
-#import "AppDelegate.h"
-#import "MainViewController.h"
-
-@implementation AppDelegate
-
-- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{
-    self.viewController = [[MainViewController alloc] init];
-    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
 }
 
-@end
