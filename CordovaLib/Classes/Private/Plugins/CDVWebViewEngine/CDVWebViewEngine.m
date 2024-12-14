@@ -602,6 +602,22 @@
     return decisionHandler(NO);
 }
 
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler
+{
+    CDVViewController* vc = (CDVViewController*)self.viewController;
+
+    for (CDVPlugin *plugin in vc.enumerablePlugins) {
+        if ([plugin respondsToSelector:@selector(willHandleAuthenticationChallenge:completionHandler:)]) {
+            CDVPlugin <CDVPluginAuthenticationHandler> *challengePlugin = (CDVPlugin <CDVPluginAuthenticationHandler> *)plugin;
+            if ([challengePlugin willHandleAuthenticationChallenge:challenge completionHandler:completionHandler]) {
+                return;
+            }
+        }
+    }
+
+    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
 #pragma mark - Plugin interface
 
 - (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;

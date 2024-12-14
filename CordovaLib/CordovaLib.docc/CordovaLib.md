@@ -37,6 +37,7 @@ For more information about Apache Cordova, visit [https://cordova.apache.org](ht
 
 - ``CDVPlugin``
 - ``CDVPluginSchemeHandler``
+- ``CDVPluginAuthenticationHandler``
 
 ### Plugin communication
 - ``CDVPluginResult``
