@@ -40,6 +40,8 @@
 @end
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern const NSNotificationName CDVPageDidLoadNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.");
@@ -128,3 +130,35 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
  */
 - (void)stopSchemeTask:(id <WKURLSchemeTask>)task;
 @end
+
+
+/**
+ A protocol for Cordova plugins to intercept and respond to server
+ authentication challenges through WebKit.
+
+ Your plugin should implement this protocol and the
+ ``didReceiveAuthenticationChallenge:completionHandler:`` if it wants to
+ support responses to server-side authentication challenges, otherwise the
+ default NSURLSession handling for authentication challenges will be used.
+ */
+@protocol CDVPluginAuthenticationHandler <NSObject>
+
+/**
+ Asks your plugin to respond to an authentication challenge.
+
+ - Parameters:
+   - challenge: The authentication challenge.
+   - completionHandler: A completion handler block to execute with the response.
+     This handler has no return value and takes the following parameters:
+     - disposition: The option to use to handle the challenge. For a list of
+       options, see `NSURLSessionAuthChallengeDisposition`.
+     - credential: The credential to use for authentication when the
+       `disposition` parameter contains the value
+       `NSURLSessionAuthChallengeUseCredential`. Specify `nil` to continue
+       without a credential.
+ */
+- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler;
+
+@end
+
+NS_ASSUME_NONNULL_END
