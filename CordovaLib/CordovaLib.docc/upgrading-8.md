@@ -262,6 +262,9 @@ The following headers are deprecated due to adding global category extensions to
 * ``CDVPluginAuthenticationHandler``
   * Newly added protocol for plugins wishing to handle server authentication requests.
 
+* ``CDVPluginNavigationHandler``
+  * Newly added protocol for plugins wishing to handle navigation request permitting or denying within the webview.
+
 * ``CDVPluginSchemeHandler``
   * Newly added protocol for plugins wishing to override WebKit scheme handling for web requests.
 

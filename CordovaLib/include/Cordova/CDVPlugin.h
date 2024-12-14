@@ -30,6 +30,8 @@
 // Forward declaration to avoid bringing WebKit API into public headers
 @protocol WKURLSchemeTask;
 
+typedef int CDVWebViewNavigationType;
+
 #ifndef __swift__
 // This global extension to the UIView class causes issues for Swift subclasses
 // of UIView with their own scrollView properties, so we're removing it from
@@ -118,6 +120,39 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
  - Returns: A Boolean value indicating if the plugin is handling the request.
  */
 - (BOOL)willHandleAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler;
+
+@end
+
+
+/**
+ A protocol for Cordova plugins to manage permitting and denying of webview
+ navigations.
+
+ You plugin should implement this protocol if it wants to control whether the
+ webview is allowed to navigate to a requested URL.
+ */
+@protocol CDVPluginNavigationHandler <NSObject>
+
+/**
+ Asks your plugin to decide whether a navigation request should be permitted or
+ denied.
+
+ - Parameters:
+   - request: The navigation request.
+   - navigationType: The type of action triggering the navigation.
+   - navInfo: Descriptive information about the action triggering the navigation.
+
+ - Returns: A Boolean representing whether the navigation should be allowed or not.
+ */
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest *)request navigationType:(CDVWebViewNavigationType)navigationType info:(NSDictionary *)navInfo;
+
+@optional
+/**
+ @DeprecationSummary {
+   Use ``shouldOverrideLoadWithRequest:navigationType:info:`` instead.
+ }
+ */
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest *)request navigationType:(CDVWebViewNavigationType)navigationType CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use shouldOverrideLoadWithRequest:navigationType:info: instead", "shouldOverrideLoadWithRequest:navigationType:info:");
 
 @end
 
