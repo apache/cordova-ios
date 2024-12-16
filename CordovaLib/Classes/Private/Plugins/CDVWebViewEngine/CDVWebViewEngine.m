@@ -189,6 +189,7 @@
 
     CDVWebViewUIDelegate* uiDelegate = [[CDVWebViewUIDelegate alloc] initWithViewController:self.viewController];
     uiDelegate.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    uiDelegate.mediaPermissionGrantType = [self parsePermissionGrantType:[settings cordovaSettingForKey:@"MediaPermissionGrantType"]];
     uiDelegate.allowNewWindows = [settings cordovaBoolSettingForKey:@"AllowNewWindows" defaultValue:NO];
     self.uiDelegate = uiDelegate;
 
@@ -451,6 +452,29 @@
 - (UIView*)webView
 {
     return self.engineWebView;
+}
+
+- (CDVWebViewPermissionGrantType)parsePermissionGrantType:(NSString*)optionString
+{
+    CDVWebViewPermissionGrantType result = CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt;
+    
+    if (optionString != nil){
+        if ([optionString isEqualToString:@"prompt"]) {
+            result = CDVWebViewPermissionGrantType_Prompt;
+        } else if ([optionString isEqualToString:@"deny"]) {
+            result = CDVWebViewPermissionGrantType_Deny;
+        } else if ([optionString isEqualToString:@"grant"]) {
+            result = CDVWebViewPermissionGrantType_Grant;
+        } else if ([optionString isEqualToString:@"grantIfSameHostElsePrompt"]) {
+            result = CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt;
+        } else if ([optionString isEqualToString:@"grantIfSameHostElseDeny"]) {
+            result = CDVWebViewPermissionGrantType_GrantIfSameHost_ElseDeny;
+        } else {
+            NSLog(@"Invalid \"MediaPermissionGrantType\" was detected. Fallback to default value of \"grantIfSameHostElsePrompt\"");
+        }
+    }
+    
+    return result;
 }
 
 #pragma mark WKScriptMessageHandler implementation
