@@ -146,7 +146,7 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
 /*
     NOTE: calls into JavaScript must not call or trigger any blocking UI, like alerts
  */
-- (void)handleOpenURLWithApplicationSourceAndAnnotation: (NSNotification*)notification
+- (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification*)notification
 {
     
     // override to handle urls sent to your app
