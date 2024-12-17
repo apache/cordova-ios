@@ -35,6 +35,7 @@
 		90CBB5282C06968500B805A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CBB5272C06968500B805A2 /* AppDelegate.swift */; };
 		90CBB52A2C06968500B805A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CBB5292C06968500B805A2 /* SceneDelegate.swift */; };
 		90CBB52C2C06968500B805A2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CBB52B2C06968500B805A2 /* ViewController.swift */; };
+		90D82ABD2CF19AEA001383CF /* CordovaPlugins in Frameworks */ = {isa = PBXBuildFile; productRef = 90D82ABC2CF19AEA001383CF /* CordovaPlugins */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -80,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90D82ABD2CF19AEA001383CF /* CordovaPlugins in Frameworks */,
 				90A914592CA3D370003DB979 /* CordovaLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,6 +193,7 @@
 			name = App;
 			packageProductDependencies = (
 				90A914582CA3D370003DB979 /* CordovaLib */,
+				90D82ABC2CF19AEA001383CF /* CordovaPlugins */,
 			);
 			productName = App;
 			productReference = 90BD9B6C2C06907D000DEBAB /* App.app */;
@@ -222,6 +225,7 @@
 			mainGroup = 90BD9B632C06907D000DEBAB /* CustomTemplate */;
 			packageReferences = (
 				90A914572CA3D370003DB979 /* XCLocalSwiftPackageReference "../../../cordova-ios" */,
+				90D82ABB2CF19AEA001383CF /* XCLocalSwiftPackageReference "CordovaPlugins" */,
 			);
 			productRefGroup = 90BD9B6D2C06907D000DEBAB /* Products */;
 			projectDirPath = "";
@@ -317,8 +321,8 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				"DEPLOYMENT_LOCATION[sdk=iphonesimulator*]" = YES;
-				"DEPLOYMENT_LOCATION[sdk=xrsimulator*]" = YES;
 				"DEPLOYMENT_LOCATION[sdk=macosx*]" = YES;
+				"DEPLOYMENT_LOCATION[sdk=xrsimulator*]" = YES;
 				DSTROOT = "$(SRCROOT)/build";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -338,8 +342,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				"INSTALL_PATH[sdk=iphonesimulator*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				"INSTALL_PATH[sdk=xrsimulator*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				"INSTALL_PATH[sdk=macosx*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				"INSTALL_PATH[sdk=xrsimulator*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -391,8 +395,8 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				"DEPLOYMENT_LOCATION[sdk=iphonesimulator*]" = YES;
-				"DEPLOYMENT_LOCATION[sdk=xrsimulator*]" = YES;
 				"DEPLOYMENT_LOCATION[sdk=macosx*]" = YES;
+				"DEPLOYMENT_LOCATION[sdk=xrsimulator*]" = YES;
 				DSTROOT = "$(SRCROOT)/build";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -406,8 +410,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				"INSTALL_PATH[sdk=iphonesimulator*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				"INSTALL_PATH[sdk=xrsimulator*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				"INSTALL_PATH[sdk=macosx*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				"INSTALL_PATH[sdk=xrsimulator*]" = "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -525,12 +529,20 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../../../../../cordova-ios";
 		};
+		90D82ABB2CF19AEA001383CF /* XCLocalSwiftPackageReference "CordovaPlugins" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = CordovaPlugins;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		90A914582CA3D370003DB979 /* CordovaLib */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CordovaLib;
+		};
+		90D82ABC2CF19AEA001383CF /* CordovaPlugins */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CordovaPlugins;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
