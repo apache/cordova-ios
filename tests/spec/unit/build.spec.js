@@ -402,23 +402,80 @@ describe('build', () => {
         });
     });
 
-    describe('run method', () => {
+    describe('parseOptions method', () => {
+        const parseOptions = build.__get__('parseOptions');
+        const buildConfigJson = {
+            ios: {
+                debug: {
+                    codeSignIdentity: 'Apple Developer',
+                    packageType: 'development'
+                },
+                release: {
+                    codeSignIdentity: 'Apple Distribution',
+                    packageType: 'app-store'
+                }
+            }
+        };
+
         it('should not accept debug and release options together', () => {
-            return expectAsync(build.run({ debug: true, release: true }))
-                .toBeRejectedWithError(CordovaError, 'Cannot specify "debug" and "release" options together.');
+            expect(() => {
+                return parseOptions({ debug: true, release: true });
+            }).toThrowError(CordovaError, 'Cannot specify "debug" and "release" options together.');
         });
 
         it('should not accept device and emulator options together', () => {
-            return expectAsync(build.run({ device: true, emulator: true }))
-                .toBeRejectedWithError(CordovaError, 'Cannot specify "device" and "emulator" options together.');
+            expect(() => {
+                return parseOptions({ device: true, emulator: true });
+            }).toThrowError(CordovaError, 'Cannot specify "device" and "emulator" options together.');
         });
 
-        it('should reject when build config file missing', () => {
+        it('should parse platform-specific options', () => {
+            const opts = parseOptions({
+                argv: ['--packageType', 'ad-hoc', '--developmentTeam=A1B2C3', '--automaticProvisioning'],
+                packageType: 'enterprise'
+            });
+
+            expect(opts.automaticProvisioning).toBeTruthy();
+            expect(opts.packageType).toEqual('ad-hoc');
+            expect(opts.developmentTeam).toEqual('A1B2C3');
+        });
+
+        it('should not accept a build config file that does not exist', () => {
             spyOn(fs, 'existsSync').and.returnValue(false);
             const buildConfig = './some/config/path';
 
-            return expectAsync(build.run({ buildConfig: './some/config/path' }))
-                .toBeRejectedWithError(CordovaError, `Build config file does not exist: ${buildConfig}`);
+            expect(() => {
+                return parseOptions({ buildConfig: './some/config/path' });
+            }).toThrowError(CordovaError, `Build config file does not exist: ${buildConfig}`);
+        });
+
+        it('should accept an empty build config file', () => {
+            spyOn(fs, 'existsSync').and.returnValue(true);
+            spyOn(fs, 'readFileSync').and.returnValue('{"android":{}}');
+
+            expect(() => {
+                return parseOptions({ buildConfig: './some/config/path' });
+            }).not.toThrowError(CordovaError);
+        });
+
+        it('should pull debug configuration from the specified build config file', () => {
+            spyOn(fs, 'existsSync').and.returnValue(true);
+            spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify(buildConfigJson));
+
+            const opts = parseOptions({ buildConfig: './some/config/path', packageType: 'enterprise' });
+
+            expect(opts.codeSignIdentity).toEqual('Apple Developer');
+            expect(opts.packageType).toEqual('enterprise');
+        });
+
+        it('should pull release configuration from the specified build config file', () => {
+            spyOn(fs, 'existsSync').and.returnValue(true);
+            spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify(buildConfigJson));
+
+            const opts = parseOptions({ release: true, buildConfig: './some/config/path' });
+
+            expect(opts.codeSignIdentity).toEqual('Apple Distribution');
+            expect(opts.packageType).toEqual('app-store');
         });
     });
 
