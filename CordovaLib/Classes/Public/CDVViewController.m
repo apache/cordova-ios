@@ -17,10 +17,10 @@
  under the License.
  */
 
+#import <TargetConditionals.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
-#import <objc/message.h>
 
 #import <Cordova/CDVAppDelegate.h>
 #import <Cordova/CDVPlugin.h>
@@ -373,6 +373,30 @@ static UIColor* defaultBackgroundColor(void) {
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
+#if TARGET_OS_MACCATALYST
+    BOOL hideTitlebar = [self.settings cordovaBoolSettingForKey:@"HideDesktopTitlebar" defaultValue:NO];
+    if (hideTitlebar) {
+        UIWindowScene *scene = self.view.window.windowScene;
+        if (scene) {
+            scene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+            scene.titlebar.toolbar = nil;
+        }
+    } else {
+        // We need to fix the web content going behind the title bar
+        self.webView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.webView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
+        [self.webView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+        [self.webView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
+        [self.webView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = YES;
+
+        if ([self.webView respondsToSelector:@selector(scrollView)]) {
+            UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
+            scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }
+    }
+#endif
+
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewDidAppearNotification object:nil]];
 }
 

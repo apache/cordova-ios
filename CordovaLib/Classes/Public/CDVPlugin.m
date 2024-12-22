@@ -21,7 +21,6 @@
 #import <Cordova/CDVPlugin+Resources.h>
 #import "CDVPlugin+Private.h"
 #import <Cordova/CDVViewController.h>
-#include <objc/message.h>
 
 @implementation UIView (org_apache_cordova_UIView_Extension)
 
@@ -29,12 +28,9 @@
 
 - (UIScrollView*)scrollView
 {
-    SEL scrollViewSelector = NSSelectorFromString(@"scrollView");
-
-    if ([self respondsToSelector:scrollViewSelector]) {
-        return ((id (*)(id, SEL))objc_msgSend)(self, scrollViewSelector);
+    if ([self respondsToSelector:@selector(scrollView)]) {
+        return [self performSelector:@selector(scrollView)];
     }
-
     return nil;
 }
 
