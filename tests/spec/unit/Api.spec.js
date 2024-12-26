@@ -36,6 +36,7 @@ if (process.platform === 'darwin') {
 
 const projectFile = require('../../../lib/projectFile');
 const BridgingHeader_mod = require('../../../lib/BridgingHeader.js');
+const SwiftPackage_mod = require('../../../lib/SwiftPackage.js');
 const Podfile_mod = require('../../../lib/Podfile');
 const PodsJson_mod = require('../../../lib/PodsJson');
 const FIXTURES = path.join(__dirname, 'fixtures');
@@ -108,6 +109,7 @@ describe('Platform Api', () => {
 
         describe('addPlugin', () => {
             const my_plugin = {
+                getPlatforms () { return [{ name: 'ios' }]; },
                 getHeaderFiles: function () { return []; },
                 getFrameworks: function () { return []; },
                 getPodSpecs: function () { return []; }
@@ -117,6 +119,7 @@ describe('Platform Api', () => {
                     addPlugin: function () { return Promise.resolve(); }
                 });
                 spyOn(BridgingHeader_mod, 'BridgingHeader');
+                spyOn(SwiftPackage_mod, 'SwiftPackage');
                 spyOn(Podfile_mod, 'Podfile');
                 spyOn(PodsJson_mod, 'PodsJson');
             });
@@ -145,6 +148,30 @@ describe('Platform Api', () => {
                         });
                 });
             });
+
+            describe('adding plugin with Swift package', () => {
+                let swiftPackage_mock;
+                const swift_plugin = {
+                    id: 'swift_plugin',
+                    getPlatforms () { return [{ name: 'ios', package: 'swift' }]; },
+                    getHeaderFiles: function () { return []; },
+                    getFrameworks: function () { return []; },
+                    getPodSpecs: function () { return []; }
+                };
+
+                beforeEach(() => {
+                    swiftPackage_mock = jasmine.createSpyObj('swiftpackage mock', ['addPlugin']);
+                    SwiftPackage_mod.SwiftPackage.and.returnValue(swiftPackage_mock);
+                });
+
+                it('should add the plugin reference to Package.swift', () => {
+                    return api.addPlugin(swift_plugin)
+                        .then(() => {
+                            expect(swiftPackage_mock.addPlugin).toHaveBeenCalledWith(swift_plugin);
+                        });
+                });
+            });
+
             describe('adding pods since the plugin contained <podspecs>', () => {
                 let podsjson_mock;
                 let podfile_mock;
@@ -301,6 +328,7 @@ describe('Platform Api', () => {
         });
         describe('removePlugin', () => {
             const my_plugin = {
+                getPlatforms () { return [{ name: 'ios' }]; },
                 getHeaderFiles: function () { return []; },
                 getFrameworks: function () {},
                 getPodSpecs: function () { return []; }
@@ -309,8 +337,32 @@ describe('Platform Api', () => {
                 spyOn(PluginManager, 'get').and.returnValue({
                     removePlugin: function () { return Promise.resolve(); }
                 });
+                spyOn(SwiftPackage_mod, 'SwiftPackage');
                 spyOn(Podfile_mod, 'Podfile');
                 spyOn(PodsJson_mod, 'PodsJson');
+            });
+
+            describe('removing plugin with Swift package', () => {
+                let swiftPackage_mock;
+                const swift_plugin = {
+                    id: 'swift_plugin',
+                    getPlatforms () { return [{ name: 'ios', package: 'swift' }]; },
+                    getHeaderFiles: function () { return []; },
+                    getFrameworks: function () { return []; },
+                    getPodSpecs: function () { return []; }
+                };
+
+                beforeEach(() => {
+                    swiftPackage_mock = jasmine.createSpyObj('swiftpackage mock', ['removePlugin']);
+                    SwiftPackage_mod.SwiftPackage.and.returnValue(swiftPackage_mock);
+                });
+
+                it('should remove the plugin reference from Package.swift', () => {
+                    return api.removePlugin(swift_plugin)
+                        .then(() => {
+                            expect(swiftPackage_mock.removePlugin).toHaveBeenCalledWith(swift_plugin);
+                        });
+                });
             });
             describe('removing pods since the plugin contained <podspecs>', () => {
                 let podsjson_mock;
