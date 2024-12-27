@@ -477,7 +477,7 @@
     return result;
 }
 
-#pragma mark WKScriptMessageHandler implementation
+#pragma mark - WKScriptMessageHandler implementation
 
 - (void)userContentController:(WKUserContentController*)userContentController didReceiveScriptMessage:(WKScriptMessage*)message
 {
@@ -513,7 +513,7 @@
     }
 }
 
-#pragma mark WKNavigationDelegate implementation
+#pragma mark - WKNavigationDelegate implementation
 
 - (void)webView:(WKWebView*)webView didStartProvisionalNavigation:(WKNavigation*)navigation
 {
@@ -561,45 +561,80 @@
     return NO;
 }
 
-- (void) webView: (WKWebView *) webView decidePolicyForNavigationAction: (WKNavigationAction*) navigationAction decisionHandler: (void (^)(WKNavigationActionPolicy)) decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    NSURL* url = [navigationAction.request URL];
+    CDVViewController *vc = (CDVViewController *)self.viewController;
+
+    NSURLRequest *request = navigationAction.request;
+    CDVWebViewNavigationType navType = (CDVWebViewNavigationType)navigationAction.navigationType;
+    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+    info[@"sourceFrame"] = navigationAction.sourceFrame;
+    info[@"targetFrame"] = navigationAction.targetFrame;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 140500
+    if (@available(iOS 14.5, *)) {
+        info[@"shouldPerformDownload"] = [NSNumber numberWithBool:navigationAction.shouldPerformDownload];
+    }
+#endif
+
+    // Give plugins the chance to handle the url, as long as this WebViewEngine is still the WKNavigationDelegate.
+    // This allows custom delegates to choose to call this method for `default` cordova behavior without querying all plugins.
+    if (webView.navigationDelegate == self) {
+        BOOL anyPluginsResponded = NO;
+        BOOL shouldAllowRequest = NO;
+
+        for (CDVPlugin *plugin in vc.enumerablePlugins) {
+            if ([plugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:info:)] || [plugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:)]) {
+                CDVPlugin <CDVPluginNavigationHandler> *navPlugin = (CDVPlugin <CDVPluginNavigationHandler> *)plugin;
+                anyPluginsResponded = YES;
+
+                if ([navPlugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:info:)]) {
+                    shouldAllowRequest = [navPlugin shouldOverrideLoadWithRequest:request navigationType:navType info:info];
+                } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                    shouldAllowRequest = [navPlugin shouldOverrideLoadWithRequest:request navigationType:navType];
+#pragma clang diagnostic pop
+                }
+
+                if (!shouldAllowRequest) {
+                    break;
+                }
+            }
+        }
+
+        if (anyPluginsResponded) {
+            return decisionHandler(shouldAllowRequest ? WKNavigationActionPolicyAllow : WKNavigationActionPolicyCancel);
+        }
+    } else {
+        CDVPlugin <CDVPluginNavigationHandler> *intentAndNavFilter = (CDVPlugin <CDVPluginNavigationHandler> *)[vc getCommandInstance:@"IntentAndNavigationFilter"];
+        if (intentAndNavFilter) {
+            BOOL shouldAllowRequest = [intentAndNavFilter shouldOverrideLoadWithRequest:request navigationType:navType info:info];
+            return decisionHandler(shouldAllowRequest ? WKNavigationActionPolicyAllow : WKNavigationActionPolicyCancel);
+        }
+    }
+
+    // Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
+    BOOL shouldAllowNavigation = [self defaultResourcePolicyForURL:request.URL];
+    if (!shouldAllowNavigation) {
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:request.URL userInfo:@{}]];
+    }
+    return decisionHandler(shouldAllowNavigation ? WKNavigationActionPolicyAllow : WKNavigationActionPolicyCancel);
+}
+
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler
+{
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
-    /*
-     * Give plugins the chance to handle the url
-     */
-    BOOL anyPluginsResponded = NO;
-    BOOL shouldAllowRequest = NO;
-
     for (CDVPlugin *plugin in vc.enumerablePlugins) {
-        SEL selector = NSSelectorFromString(@"shouldOverrideLoadWithRequest:navigationType:");
-        if ([plugin respondsToSelector:selector]) {
-            anyPluginsResponded = YES;
-            // https://issues.apache.org/jira/browse/CB-12497
-            int navType = (int)navigationAction.navigationType;
-            shouldAllowRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, navigationAction.request, navType));
-            if (!shouldAllowRequest) {
-                break;
+        if ([plugin respondsToSelector:@selector(willHandleAuthenticationChallenge:completionHandler:)]) {
+            CDVPlugin <CDVPluginAuthenticationHandler> *challengePlugin = (CDVPlugin <CDVPluginAuthenticationHandler> *)plugin;
+            if ([challengePlugin willHandleAuthenticationChallenge:challenge completionHandler:completionHandler]) {
+                return;
             }
         }
     }
 
-    if (anyPluginsResponded) {
-        return decisionHandler(shouldAllowRequest);
-    }
-
-    /*
-     * Handle all other types of urls (tel:, sms:), and requests to load a url in the main webview.
-     */
-    BOOL shouldAllowNavigation = [self defaultResourcePolicyForURL:url];
-    if (shouldAllowNavigation) {
-        return decisionHandler(YES);
-    } else {
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
-    }
-
-    return decisionHandler(NO);
+    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
 #pragma mark - Plugin interface
