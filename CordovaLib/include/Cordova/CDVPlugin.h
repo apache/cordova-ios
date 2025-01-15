@@ -30,15 +30,19 @@
 // Forward declaration to avoid bringing WebKit API into public headers
 @protocol WKURLSchemeTask;
 
+typedef int CDVWebViewNavigationType;
+
 #ifndef __swift__
 // This global extension to the UIView class causes issues for Swift subclasses
 // of UIView with their own scrollView properties, so we're removing it from
 // the exposed Swift API and marking it as deprecated
 // TODO: Remove in Cordova 9
 @interface UIView (org_apache_cordova_UIView_Extension)
-@property (nonatomic, weak) UIScrollView* scrollView CDV_DEPRECATED(8, "Check for a scrollView property on the view object at runtime and invoke it dynamically.");
+@property (nonatomic, weak, nullable) UIScrollView* scrollView CDV_DEPRECATED(8, "Check for a scrollView property on the view object at runtime and invoke it dynamically.");
 @end
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
 
 extern const NSNotificationName CDVPageDidLoadNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLNotification;
@@ -86,6 +90,74 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 #pragma mark - Plugin protocols
 
 /**
+ A protocol for Cordova plugins to intercept and respond to server
+ authentication challenges through WebKit.
+
+ Your plugin should implement this protocol and the
+ ``willHandleAuthenticationChallenge:completionHandler:`` method to return
+ `YES` if it wants to support responses to server-side authentication
+ challenges, otherwise the default NSURLSession handling for authentication
+ challenges will be used.
+ */
+@protocol CDVPluginAuthenticationHandler <NSObject>
+
+/**
+ Asks your plugin to respond to an authentication challenge.
+
+ Return `YES` if the plugin is handling the challenge, and `NO` to fallback to
+ the default handling.
+
+ - Parameters:
+   - challenge: The authentication challenge.
+   - completionHandler: A completion handler block to execute with the response.
+     This handler has no return value and takes the following parameters:
+     - disposition: The option to use to handle the challenge. For a list of
+       options, see `NSURLSessionAuthChallengeDisposition`.
+     - credential: The credential to use for authentication when the
+       `disposition` parameter contains the value
+       `NSURLSessionAuthChallengeUseCredential`. Specify `nil` to continue
+       without a credential.
+ - Returns: A Boolean value indicating if the plugin is handling the request.
+ */
+- (BOOL)willHandleAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler;
+
+@end
+
+
+/**
+ A protocol for Cordova plugins to manage permitting and denying of webview
+ navigations.
+
+ You plugin should implement this protocol if it wants to control whether the
+ webview is allowed to navigate to a requested URL.
+ */
+@protocol CDVPluginNavigationHandler <NSObject>
+
+/**
+ Asks your plugin to decide whether a navigation request should be permitted or
+ denied.
+
+ - Parameters:
+   - request: The navigation request.
+   - navigationType: The type of action triggering the navigation.
+   - navInfo: Descriptive information about the action triggering the navigation.
+
+ - Returns: A Boolean representing whether the navigation should be allowed or not.
+ */
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest *)request navigationType:(CDVWebViewNavigationType)navigationType info:(NSDictionary *)navInfo;
+
+@optional
+/**
+ @DeprecationSummary {
+   Use ``shouldOverrideLoadWithRequest:navigationType:info:`` instead.
+ }
+ */
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest *)request navigationType:(CDVWebViewNavigationType)navigationType CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use shouldOverrideLoadWithRequest:navigationType:info: instead", "shouldOverrideLoadWithRequest:navigationType:info:");
+
+@end
+
+
+/**
  A protocol for Cordova plugins to intercept handling of WebKit resource
  loading for a custom URL scheme.
 
@@ -128,3 +200,5 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
  */
 - (void)stopSchemeTask:(id <WKURLSchemeTask>)task;
 @end
+
+NS_ASSUME_NONNULL_END
