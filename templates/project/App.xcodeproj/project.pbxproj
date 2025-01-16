@@ -28,7 +28,7 @@
 		907F98562C06B87200D2D242 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 907F98552C06B87200D2D242 /* PrivacyInfo.xcprivacy */; };
 		907F98662C06BC1B00D2D242 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 907F98652C06BC1B00D2D242 /* config.xml */; };
 		907F986A2C06BCD300D2D242 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 907F98692C06BCD300D2D242 /* www */; };
-		90A914592CA3D370003DB979 /* CordovaLib in Frameworks */ = {isa = PBXBuildFile; productRef = 90A914582CA3D370003DB979 /* CordovaLib */; };
+		90A914592CA3D370003DB979 /* Cordova in Frameworks */ = {isa = PBXBuildFile; productRef = 90A914582CA3D370003DB979 /* Cordova */; };
 		90BD9B7A2C06907D000DEBAB /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 90BD9B792C06907D000DEBAB /* Base */; };
 		90BD9B7C2C06907E000DEBAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90BD9B7B2C06907E000DEBAB /* Assets.xcassets */; };
 		90BD9B7F2C06907E000DEBAB /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 90BD9B7E2C06907E000DEBAB /* Base */; };
@@ -80,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90A914592CA3D370003DB979 /* CordovaLib in Frameworks */,
+				90A914592CA3D370003DB979 /* Cordova in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,7 +190,7 @@
 			);
 			name = App;
 			packageProductDependencies = (
-				90A914582CA3D370003DB979 /* CordovaLib */,
+				90A914582CA3D370003DB979 /* Cordova */,
 			);
 			productName = App;
 			productReference = 90BD9B6C2C06907D000DEBAB /* App.app */;
@@ -528,9 +528,9 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		90A914582CA3D370003DB979 /* CordovaLib */ = {
+		90A914582CA3D370003DB979 /* Cordova */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = CordovaLib;
+			productName = Cordova;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

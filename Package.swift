@@ -28,7 +28,7 @@ let package = Package(
         .macCatalyst(.v13)
     ],
     products: [
-        .library(name: "CordovaLib", targets: ["Cordova"])
+        .library(name: "Cordova", targets: ["Cordova"])
     ],
     dependencies: [],
     targets: [
