@@ -40,7 +40,7 @@ const templateConfigXmlPath = path.join(__dirname, '..', '..', '..', 'templates'
  * @param {String} tmpDir
  * @param {String} projectName
  */
-function verifyProjectFiles (tmpDir, projectName) {
+function verifyProjectFiles (tmpDir, projectName, linked) {
     expect(fs.existsSync(path.join(tmpDir, 'App'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'App.xcodeproj'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'App.xcworkspace'))).toBe(true);
@@ -50,7 +50,8 @@ function verifyProjectFiles (tmpDir, projectName) {
     xcodeproj.parseSync();
 
     const packageLoc = path.dirname(require.resolve('../../../package.json'));
-    const relativePath = path.relative(tmpDir, packageLoc).replaceAll(path.sep, path.posix.sep);
+    const relativeLink = path.relative(tmpDir, packageLoc).replaceAll(path.sep, path.posix.sep);
+    const relativePath = path.posix.join('packages', 'cordova-ios');
 
     let foundRef = false;
     const pkgRefs = xcodeproj.hash.project.objects.XCLocalSwiftPackageReference;
@@ -61,7 +62,11 @@ function verifyProjectFiles (tmpDir, projectName) {
 
         if (ref.relativePath.match(/\/cordova-ios/)) {
             foundRef = true;
-            expect(ref.relativePath).toMatch(relativePath);
+            if (linked) {
+                expect(ref.relativePath).toMatch(relativeLink);
+            } else {
+                expect(ref.relativePath).toMatch(relativePath);
+            }
             break;
         }
     }
@@ -104,11 +109,11 @@ function verifyProjectDeploymentTarget (tmpDir, expectedTarget) {
  * @param {String} projectName
  * @returns {Promise}
  */
-async function verifyCreatedProject (tmpDir, packageName, projectName, configFile = templateConfigXmlPath) {
+async function verifyCreatedProject (tmpDir, packageName, projectName, link = false, configFile = templateConfigXmlPath) {
     const configXml = new ConfigParser(configFile);
 
-    await create.createProject(tmpDir, packageName, projectName, {}, configXml)
-        .then(() => verifyProjectFiles(tmpDir, projectName))
+    await create.createProject(tmpDir, packageName, projectName, { link }, configXml)
+        .then(() => verifyProjectFiles(tmpDir, projectName, link))
         .then(() => verifyProjectBundleIdentifier(tmpDir, projectName, packageName));
 }
 
@@ -135,12 +140,18 @@ describe('create', () => {
         return verifyCreatedProject(tmpDir, packageName, projectName);
     });
 
+    it('should create project with linked CordovaLib', () => {
+        const packageName = 'com.test.app3';
+        const projectName = 'testcreatelink';
+        return verifyCreatedProject(tmpDir, packageName, projectName, true);
+    });
+
     it('should copy config.xml into the newly created project', () => {
         const configPath = path.join(__dirname, 'fixtures', 'test-config-3.xml');
         const packageName = 'io.cordova.hellocordova.ios';
         const projectName = 'Hello Cordova';
 
-        return verifyCreatedProject(tmpDir, packageName, projectName, configPath)
+        return verifyCreatedProject(tmpDir, packageName, projectName, false, configPath)
             .then(() => verifyProjectDeploymentTarget(tmpDir, '15.0'));
     });
 });
