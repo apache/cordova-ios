@@ -32,6 +32,8 @@
 
 typedef int CDVWebViewNavigationType;
 
+NS_ASSUME_NONNULL_BEGIN
+
 #ifndef __swift__
 // This global extension to the UIView class causes issues for Swift subclasses
 // of UIView with their own scrollView properties, so we're removing it from
@@ -41,8 +43,6 @@ typedef int CDVWebViewNavigationType;
 @property (nonatomic, weak, nullable) UIScrollView* scrollView CDV_DEPRECATED(8, "Check for a scrollView property on the view object at runtime and invoke it dynamically.");
 @end
 #endif
-
-NS_ASSUME_NONNULL_BEGIN
 
 extern const NSNotificationName CDVPageDidLoadNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLNotification;
@@ -56,6 +56,8 @@ extern const NSNotificationName CDVViewWillLayoutSubviewsNotification;
 extern const NSNotificationName CDVViewDidLayoutSubviewsNotification;
 extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 
+NS_ASSUME_NONNULL_END
+
 @interface CDVPlugin : NSObject {}
 
 @property (nonatomic, readonly, weak) UIView* webView;
@@ -68,8 +70,8 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 
 - (void)pluginInitialize;
 
-- (void)handleOpenURL:(NSNotification*)notification;
-- (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification*)notification CDV_DEPRECATED(8, "Use the handleOpenUrl method and the notification userInfo data.");
+- (void)handleOpenURL:(nonnull NSNotification*)notification;
+- (void)handleOpenURLWithApplicationSourceAndAnnotation:(nonnull NSNotification*)notification CDV_DEPRECATED(8, "Use the handleOpenUrl method and the notification userInfo data.");
 - (void)onAppTerminate;
 - (void)onMemoryWarning;
 - (void)onReset;
@@ -83,11 +85,13 @@ extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
  - (void) onOrientationDidChange {}
  */
 
-- (id)appDelegate;
+- (nonnull id)appDelegate;
 
 @end
 
 #pragma mark - Plugin protocols
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  A protocol for Cordova plugins to intercept and respond to server
