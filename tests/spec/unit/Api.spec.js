@@ -167,7 +167,7 @@ describe('Platform Api', () => {
                 it('should add the plugin reference to Package.swift', () => {
                     return api.addPlugin(swift_plugin)
                         .then(() => {
-                            expect(swiftPackage_mock.addPlugin).toHaveBeenCalledWith(swift_plugin);
+                            expect(swiftPackage_mock.addPlugin).toHaveBeenCalledWith(swift_plugin, jasmine.any(Object));
                         });
                 });
             });

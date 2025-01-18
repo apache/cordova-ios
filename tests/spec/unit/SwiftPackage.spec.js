@@ -27,56 +27,102 @@ tmp.setGracefulCleanup();
 const fixturePackage = fs.readFileSync(path.join(__dirname, 'fixtures', 'test-Package.swift'), 'utf-8');
 
 describe('SwiftPackage', () => {
+    let tmpDir;
+    beforeEach(() => {
+        tmpDir = tmp.dirSync();
+    });
+
+    afterEach(() => {
+        fs.rmSync(tmpDir.name, { recursive: true, force: true });
+    });
+
     it('should error if Package.swift file does not exist', () => {
         expect(() => {
-            const _ = new SwiftPackage('dummypath');
+            const _ = new SwiftPackage(tmpDir.name);
             expect(_).not.toEqual(null); // To avoid ESLINT error "Do not use 'new' for side effects"
         }).toThrow();
     });
 
     describe('addPlugin', () => {
         const my_plugin = {
-            id: 'my-plugin'
+            id: 'my-plugin',
+            dir: path.join(__dirname, 'fixtures', 'org.test.plugins.swiftpackageplugin')
         };
 
         let pkg;
-        let tmpFile;
         beforeEach(() => {
-            tmpFile = tmp.fileSync({ discardDescriptor: true });
-            fs.writeFileSync(tmpFile.name, fixturePackage, 'utf8');
+            fs.mkdirSync(path.join(tmpDir.name, 'CordovaPlugins'));
+            fs.writeFileSync(path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift'), fixturePackage, 'utf8');
 
-            pkg = new SwiftPackage(tmpFile.name);
+            pkg = new SwiftPackage(tmpDir.name);
         });
 
         it('should add plugin references to the package file', () => {
             pkg.addPlugin(my_plugin);
 
-            const content = fs.readFileSync(tmpFile.name, 'utf8');
-            expect(content).toContain('.package(name: "my-plugin"');
+            const pkgPath = path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+            expect(content).toContain('.package(name: "my-plugin", path: "../packages/my-plugin")');
             expect(content).toContain('.product(name: "my-plugin", package: "my-plugin")');
+        });
+
+        it('should copy the plugin into the packages directory', () => {
+            pkg.addPlugin(my_plugin);
+
+            expect(fs.existsSync(path.join(tmpDir.name, 'packages', 'my-plugin'))).toBeTruthy();
+        });
+
+        it('should add plugin references to the package file when linked', () => {
+            pkg.addPlugin(my_plugin, { link: true });
+
+            const pkgPath = path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+
+            expect(content).toContain('.package(name: "my-plugin", path: "');
+            expect(content).not.toContain('.package(name: "my-plugin", path: "../packages/my-plugin")');
+            expect(content).toContain('.product(name: "my-plugin", package: "my-plugin")');
+        });
+
+        it('should copy a linked plugin into the packages directory', () => {
+            pkg.addPlugin(my_plugin, { link: true });
+
+            expect(fs.existsSync(path.join(tmpDir.name, 'packages', 'my-plugin'))).toBeFalsy();
         });
     });
 
     describe('removePlugin', () => {
         const my_plugin = {
-            id: 'my-plugin'
+            id: 'my-plugin',
+            dir: path.join(__dirname, 'fixtures', 'org.test.plugins.swiftpackageplugin')
         };
 
         let pkg;
-        let tmpFile;
         beforeEach(() => {
-            tmpFile = tmp.fileSync({ discardDescriptor: true });
+            fs.mkdirSync(path.join(tmpDir.name, 'CordovaPlugins'));
+            const pkgPath = path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift');
+            fs.writeFileSync(pkgPath, fixturePackage, 'utf8');
 
-            pkg = new SwiftPackage(tmpFile.name);
-            fs.writeFileSync(tmpFile.name, fixturePackage + pkg._pluginReference(my_plugin), 'utf8');
+            pkg = new SwiftPackage(tmpDir.name);
+            fs.writeFileSync(pkgPath, fixturePackage + pkg._pluginReference(my_plugin), 'utf8');
         });
 
-        it('should add plugin references to the package file', () => {
+        it('should remove plugin references to the package file', () => {
             pkg.removePlugin(my_plugin);
 
-            const content = fs.readFileSync(tmpFile.name, 'utf8');
+            const content = fs.readFileSync(path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift'), 'utf8');
             expect(content).not.toContain('.package(name: "my-plugin"');
             expect(content).not.toContain('.product(name: "my-plugin", package: "my-plugin")');
+        });
+
+        it('should remove the plugin from the packages directory', () => {
+            fs.mkdirSync(path.join(tmpDir.name, 'packages', 'my-plugin'), { recursive: true });
+            fs.writeFileSync(path.join(tmpDir.name, 'packages', 'my-plugin', 'test.txt'), 'Test', 'utf-8');
+
+            expect(fs.existsSync(path.join(tmpDir.name, 'packages', 'my-plugin'))).toBeTruthy();
+
+            pkg.removePlugin(my_plugin);
+
+            expect(fs.existsSync(path.join(tmpDir.name, 'packages', 'my-plugin'))).toBeFalsy();
         });
     });
 });
