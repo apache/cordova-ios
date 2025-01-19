@@ -51,8 +51,8 @@ describe('SwiftPackage', () => {
 
         let pkg;
         beforeEach(() => {
-            fs.mkdirSync(path.join(tmpDir.name, 'CordovaPlugins'));
-            fs.writeFileSync(path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift'), fixturePackage, 'utf8');
+            fs.mkdirSync(path.join(tmpDir.name, 'packages', 'cordova-ios-plugins'), { recursive: true });
+            fs.writeFileSync(path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift'), fixturePackage, 'utf8');
 
             pkg = new SwiftPackage(tmpDir.name);
         });
@@ -60,9 +60,9 @@ describe('SwiftPackage', () => {
         it('should add plugin references to the package file', () => {
             pkg.addPlugin(my_plugin);
 
-            const pkgPath = path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift');
+            const pkgPath = path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift');
             const content = fs.readFileSync(pkgPath, 'utf8');
-            expect(content).toContain('.package(name: "my-plugin", path: "../packages/my-plugin")');
+            expect(content).toContain('.package(name: "my-plugin", path: "../my-plugin")');
             expect(content).toContain('.product(name: "my-plugin", package: "my-plugin")');
         });
 
@@ -75,11 +75,11 @@ describe('SwiftPackage', () => {
         it('should add plugin references to the package file when linked', () => {
             pkg.addPlugin(my_plugin, { link: true });
 
-            const pkgPath = path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift');
+            const pkgPath = path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift');
             const content = fs.readFileSync(pkgPath, 'utf8');
 
             expect(content).toContain('.package(name: "my-plugin", path: "');
-            expect(content).not.toContain('.package(name: "my-plugin", path: "../packages/my-plugin")');
+            expect(content).not.toContain('.package(name: "my-plugin", path: "../my-plugin")');
             expect(content).toContain('.product(name: "my-plugin", package: "my-plugin")');
         });
 
@@ -98,8 +98,8 @@ describe('SwiftPackage', () => {
 
         let pkg;
         beforeEach(() => {
-            fs.mkdirSync(path.join(tmpDir.name, 'CordovaPlugins'));
-            const pkgPath = path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift');
+            fs.mkdirSync(path.join(tmpDir.name, 'packages', 'cordova-ios-plugins'), { recursive: true });
+            const pkgPath = path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift');
             fs.writeFileSync(pkgPath, fixturePackage, 'utf8');
 
             pkg = new SwiftPackage(tmpDir.name);
@@ -109,7 +109,9 @@ describe('SwiftPackage', () => {
         it('should remove plugin references to the package file', () => {
             pkg.removePlugin(my_plugin);
 
-            const content = fs.readFileSync(path.join(tmpDir.name, 'CordovaPlugins', 'Package.swift'), 'utf8');
+            const pkgPath = path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+
             expect(content).not.toContain('.package(name: "my-plugin"');
             expect(content).not.toContain('.product(name: "my-plugin", package: "my-plugin")');
         });
