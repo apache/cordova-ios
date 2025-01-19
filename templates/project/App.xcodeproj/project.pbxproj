@@ -529,9 +529,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../../cordova-ios";
 		};
-		90D82ABB2CF19AEA001383CF /* XCLocalSwiftPackageReference "CordovaPlugins" */ = {
+		90D82ABB2CF19AEA001383CF /* XCLocalSwiftPackageReference "packages/cordova-ios-plugins" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = CordovaPlugins;
+			relativePath = "packages/cordova-ios-plugins";
 		};
 /* End XCLocalSwiftPackageReference section */
 
