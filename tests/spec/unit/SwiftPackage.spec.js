@@ -49,6 +49,11 @@ describe('SwiftPackage', () => {
             dir: path.join(__dirname, 'fixtures', 'org.test.plugins.swiftpackageplugin')
         };
 
+        const namespaced_plugin = {
+            id: '@username/my-plugin',
+            dir: path.join(__dirname, 'fixtures', 'org.test.plugins.swiftpackageplugin')
+        };
+
         let pkg;
         beforeEach(() => {
             fs.mkdirSync(path.join(tmpDir.name, 'packages', 'cordova-ios-plugins'), { recursive: true });
@@ -70,6 +75,21 @@ describe('SwiftPackage', () => {
             pkg.addPlugin(my_plugin);
 
             expect(fs.existsSync(path.join(tmpDir.name, 'packages', 'my-plugin'))).toBeTruthy();
+        });
+
+        it('should add namespaced plugin references to the package file', () => {
+            pkg.addPlugin(namespaced_plugin);
+
+            const pkgPath = path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+            expect(content).toContain('.package(name: "@username/my-plugin", path: "../@username/my-plugin")');
+            expect(content).toContain('.product(name: "@username/my-plugin", package: "@username/my-plugin")');
+        });
+
+        it('should copy the namespaced plugin into the packages directory', () => {
+            pkg.addPlugin(namespaced_plugin);
+
+            expect(fs.existsSync(path.join(tmpDir.name, 'packages', '@username', 'my-plugin'))).toBeTruthy();
         });
 
         it('should add plugin references to the package file when linked', () => {
@@ -103,7 +123,7 @@ describe('SwiftPackage', () => {
             fs.writeFileSync(pkgPath, fixturePackage, 'utf8');
 
             pkg = new SwiftPackage(tmpDir.name);
-            fs.writeFileSync(pkgPath, fixturePackage + pkg._pluginReference(my_plugin), 'utf8');
+            fs.writeFileSync(pkgPath, fixturePackage + pkg._pluginReference(my_plugin, '../my-plugin'), 'utf8');
         });
 
         it('should remove plugin references to the package file', () => {
