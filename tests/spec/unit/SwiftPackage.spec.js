@@ -77,6 +77,34 @@ describe('SwiftPackage', () => {
             expect(fs.existsSync(path.join(tmpDir.name, 'packages', 'my-plugin'))).toBeTruthy();
         });
 
+        it('should update the CordovaLib dependency (copied)', () => {
+            fs.mkdirSync(path.join(tmpDir.name, 'packages', 'cordova-ios'), { recursive: true });
+
+            pkg.addPlugin(my_plugin);
+
+            const pkgPath = path.join(tmpDir.name, 'packages', 'my-plugin', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+
+            const relativePath = path.posix.join('..', 'cordova-ios');
+
+            expect(content).toContain(`package(name: "cordova-ios", path: "${relativePath}"`);
+            expect(content).not.toContain('github.com/apache/cordova-ios');
+        });
+
+        it('should update the CordovaLib dependency (linked)', () => {
+            pkg.addPlugin(my_plugin);
+
+            const pkgPath = path.join(tmpDir.name, 'packages', 'my-plugin', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+
+            // Because we don't have the full project here, it behaves as if linked
+            const packageLoc = path.dirname(require.resolve('../../../package.json'));
+            const relativeLink = path.relative(path.dirname(pkgPath), packageLoc).replaceAll(path.sep, path.posix.sep);
+
+            expect(content).toContain(`package(name: "cordova-ios", path: "${relativeLink}"`);
+            expect(content).not.toContain('github.com/apache/cordova-ios');
+        });
+
         it('should add namespaced plugin references to the package file', () => {
             pkg.addPlugin(namespaced_plugin);
 
