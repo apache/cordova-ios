@@ -30,23 +30,27 @@
 #import <Cordova/CDVTimer.h>
 #import "CDVCommandDelegateImpl.h"
 
-static UIColor* defaultBackgroundColor(void) {
+static UIColor *defaultBackgroundColor(void) {
     return UIColor.systemBackgroundColor;
 }
 
-@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate> {
+@interface CDVViewController () <CDVWebViewEngineConfigurationDelegate, UIScrollViewDelegate> {
     id <CDVWebViewEngineProtocol> _webViewEngine;
     id <CDVCommandDelegate> _commandDelegate;
     NSMutableDictionary<NSString *, CDVPlugin *> *_pluginObjects;
     NSMutableDictionary<NSString *, NSString *> *_pluginsMap;
     CDVCommandQueue* _commandQueue;
-    UIColor* _backgroundColor;
-    UIColor* _splashBackgroundColor;
+    UIColor *_backgroundColor;
+    UIColor *_splashBackgroundColor;
+    UIColor *_statusBarBackgroundColor;
+    UIColor *_statusBarWebViewColor;
+    UIColor *_statusBarDefaultColor;
     CDVSettingsDictionary* _settings;
 }
 
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
-@property (nonatomic, readwrite, strong) UIView* launchView;
+@property (nonatomic, readwrite, strong) UIView *launchView;
+@property (nonatomic, readwrite, strong) UIView *statusBar;
 @property (readwrite, assign) BOOL initialized;
 
 @end
@@ -60,6 +64,7 @@ static UIColor* defaultBackgroundColor(void) {
 @synthesize webViewEngine = _webViewEngine;
 @synthesize backgroundColor = _backgroundColor;
 @synthesize splashBackgroundColor = _splashBackgroundColor;
+@synthesize statusBarBackgroundColor = _statusBarBackgroundColor;
 @synthesize settings = _settings;
 @dynamic webView;
 @dynamic enumerablePlugins;
@@ -168,11 +173,49 @@ static UIColor* defaultBackgroundColor(void) {
 - (void)setBackgroundColor:(UIColor *)color
 {
     _backgroundColor = color ?: defaultBackgroundColor();
+
+    [self.webView setBackgroundColor:self.backgroundColor];
 }
 
 - (void)setSplashBackgroundColor:(UIColor *)color
 {
     _splashBackgroundColor = color ?: self.backgroundColor;
+
+    [self.launchView setBackgroundColor:self.splashBackgroundColor];
+}
+
+- (UIColor *)statusBarBackgroundColor
+{
+    // If a status bar background color has been explicitly set using the JS API, we always use that.
+    // Otherwise, if the webview reports a themeColor meta tag (iOS 15.4+) we use that.
+    // Otherwise, we use the status bar background color provided in IB (from config.xml).
+    // Otherwise, we use the background color.
+    return _statusBarBackgroundColor ?: _statusBarWebViewColor ?: _statusBarDefaultColor ?: self.backgroundColor;
+}
+
+- (void)setStatusBarBackgroundColor:(UIColor *)color
+{
+    // We want the initial value from IB to set the statusBarDefaultColor and
+    // then all future changes to set the statusBarBackgroundColor.
+    //
+    // The reason for this is that statusBarBackgroundColor is treated like a
+    // forced override when it is set, and we don't want that for the initial
+    // value from config.xml set via IB.
+
+    if (!_statusBarBackgroundColor && !_statusBarWebViewColor && !_statusBarDefaultColor) {
+        _statusBarDefaultColor = color;
+    } else {
+        _statusBarBackgroundColor = color;
+    }
+
+    [self.statusBar setBackgroundColor:self.statusBarBackgroundColor];
+}
+
+- (void)setStatusBarWebViewColor:(UIColor *)color
+{
+    _statusBarWebViewColor = color;
+
+    [self.statusBar setBackgroundColor:self.statusBarBackgroundColor];
 }
 
 // Only for testing
@@ -320,6 +363,11 @@ static UIColor* defaultBackgroundColor(void) {
         [self createGapView];
     }
 
+    // Instantiate the status bar
+    if (!self.statusBar) {
+        [self createStatusBarView];
+    }
+
     // /////////////////
 
     if ([self.startupPluginNames count] > 0) {
@@ -358,6 +406,7 @@ static UIColor* defaultBackgroundColor(void) {
 
     [self.webView setBackgroundColor:self.backgroundColor];
     [self.launchView setBackgroundColor:self.splashBackgroundColor];
+    [self.statusBar setBackgroundColor:self.statusBarBackgroundColor];
 
     if (self.showInitialSplashScreen) {
         [self.launchView setAlpha:1];
@@ -525,6 +574,11 @@ static UIColor* defaultBackgroundColor(void) {
 {
     self.webView.hidden = NO;
 
+    if ([self.webView respondsToSelector:@selector(scrollView)]) {
+        UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
+        [self scrollViewDidChangeAdjustedContentInset:scrollView];
+    }
+
     if ([self.settings cordovaBoolSettingForKey:@"AutoHideSplashScreen" defaultValue:YES]) {
         CGFloat splashScreenDelaySetting = [self.settings cordovaFloatSettingForKey:@"SplashScreenDelay" defaultValue:0];
 
@@ -539,6 +593,23 @@ static UIColor* defaultBackgroundColor(void) {
             }];
         }
     }
+}
+
+- (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView
+{
+    if (self.webView.hidden) {
+        self.statusBar.hidden = true;
+        return;
+    }
+
+    self.statusBar.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    // The CDVStatusBar plugin overrides this in a category extension, and
+    // should bypass this implementation entirely
+    return self.statusBar.alpha < 0.0001f;
 }
 
 #pragma mark - View Setup
@@ -667,6 +738,31 @@ static UIColor* defaultBackgroundColor(void) {
 
     [self.view addSubview:view];
     [self.view sendSubviewToBack:view];
+
+    if ([self.webView respondsToSelector:@selector(scrollView)]) {
+        UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
+        scrollView.delegate = self;
+    }
+}
+
+- (void)createStatusBarView
+{
+    // If cordova-plugin-statusbar is loaded, we'll let it handle the status
+    // bar to avoid introducing conflict
+    if (NSClassFromString(@"CDVStatusBar") != nil)
+        return;
+
+    self.statusBar = [[UIView alloc] init];
+    self.statusBar.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [self.view addSubview:self.statusBar];
+
+    [self.statusBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+    [self.statusBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
+    [self.statusBar.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
+    [self.statusBar.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
+
+    self.statusBar.hidden = YES;
 }
 
 #pragma mark CordovaCommands
@@ -781,6 +877,12 @@ static UIColor* defaultBackgroundColor(void) {
             [self.webView becomeFirstResponder];
         }
     }];
+}
+
+- (void)showStatusBar:(BOOL)visible
+{
+    [self.statusBar setAlpha:(visible ? 1 : 0)];
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate

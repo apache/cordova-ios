@@ -17,19 +17,30 @@
  under the License.
  */
 
-#import "CDVLaunchScreen.h"
+#import "CDVStatusBarInternal.h"
 #import "CDVViewController+Private.h"
 
-@implementation CDVLaunchScreen
+@implementation CDVStatusBarInternal
 
-- (void)show:(CDVInvokedUrlCommand *)command
+- (void)setVisible:(CDVInvokedUrlCommand *)command
 {
-    [self.viewController showSplashScreen:YES];
+    id value = [command argumentAtIndex:0];
+    if (!([value isKindOfClass:[NSNumber class]])) {
+        value = [NSNumber numberWithBool:YES];
+    }
+
+    [self.viewController showStatusBar:[value boolValue]];
 }
 
-- (void)hide:(CDVInvokedUrlCommand *)command
+- (void)setBackgroundColor:(CDVInvokedUrlCommand *)command
 {
-    [self.viewController showSplashScreen:NO];
+    NSInteger valueR = [[command argumentAtIndex:0 withDefault:@0] integerValue];
+    NSInteger valueG = [[command argumentAtIndex:1 withDefault:@0] integerValue];
+    NSInteger valueB = [[command argumentAtIndex:2 withDefault:@0] integerValue];
+
+    UIColor *bgColor = [UIColor colorWithRed:valueR/255.f green:valueG/255.f blue:valueB/255.f alpha:1.f];
+    [self.viewController setStatusBarBackgroundColor:bgColor];
 }
 
 @end
+
