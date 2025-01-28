@@ -56,5 +56,9 @@
         <param name="ios-package" value="CDVGestureHandler"/>
         <param name="onload" value="true"/>
     </feature>
+    <feature name="StatusBarInternal">
+        <param name="ios-package" value="CDVStatusBarInternal"/>
+        <param name="onload" value="true"/>
+    </feature>
 
 </widget>
