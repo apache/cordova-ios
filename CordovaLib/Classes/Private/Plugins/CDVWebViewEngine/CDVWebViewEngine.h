@@ -18,7 +18,7 @@
  */
 
 #import <WebKit/WebKit.h>
-#import <Cordova/CDV.h>
+#import "CDV.h"
 
 @interface CDVWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 

@@ -18,7 +18,7 @@
  */
 
 #import "CDVIntentAndNavigationFilter.h"
-#import <Cordova/CDV.h>
+#import "CDV.h"
 
 @interface CDVIntentAndNavigationFilter ()
 

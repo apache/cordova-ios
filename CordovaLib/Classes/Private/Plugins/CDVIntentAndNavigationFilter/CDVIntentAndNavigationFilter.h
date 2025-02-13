@@ -17,8 +17,8 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVWhitelist.h>
+#import "CDVPlugin.h"
+#import "CDVWhitelist.h"
 
 #define CDVWebViewNavigationType int
 

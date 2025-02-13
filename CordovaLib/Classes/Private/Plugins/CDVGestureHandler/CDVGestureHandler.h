@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
+#import "CDVPlugin.h"
 
 @interface CDVGestureHandler : CDVPlugin
 

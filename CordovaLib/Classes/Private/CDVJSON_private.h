@@ -16,7 +16,7 @@
  specific language governing permissions and limitations
  under the License.
  */
-
+#import <Foundation/Foundation.h>
 @interface NSArray (CDVJSONSerializingPrivate)
 - (NSString*)cdv_JSONString;
 @end
