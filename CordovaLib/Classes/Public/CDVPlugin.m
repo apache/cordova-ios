@@ -28,9 +28,15 @@
 
 - (UIScrollView*)scrollView
 {
-    if ([self respondsToSelector:@selector(scrollView)]) {
-        return [self performSelector:@selector(scrollView)];
+    static UIView *caller = nil;
+
+    if (caller != self && [self respondsToSelector:@selector(scrollView)]) {
+        caller = self;
+        UIScrollView *sv = [self performSelector:@selector(scrollView)];
+        caller = nil;
+        return sv;
     }
+    caller = nil;
     return nil;
 }
 

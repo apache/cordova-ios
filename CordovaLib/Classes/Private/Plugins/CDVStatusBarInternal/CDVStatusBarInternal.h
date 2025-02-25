@@ -17,19 +17,12 @@
  under the License.
  */
 
-#import "CDVLaunchScreen.h"
-#import "CDVViewController+Private.h"
+#import <Cordova/CDVPlugin.h>
 
-@implementation CDVLaunchScreen
+@interface CDVStatusBarInternal : CDVPlugin
 
-- (void)show:(CDVInvokedUrlCommand *)command
-{
-    [self.viewController showSplashScreen:YES];
-}
-
-- (void)hide:(CDVInvokedUrlCommand *)command
-{
-    [self.viewController showSplashScreen:NO];
-}
+- (void)setVisible:(CDVInvokedUrlCommand*)command;
+- (void)setBackgroundColor:(CDVInvokedUrlCommand*)command;
 
 @end
+
