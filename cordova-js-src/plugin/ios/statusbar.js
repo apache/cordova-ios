@@ -68,7 +68,7 @@ Object.defineProperty(statusBar, 'setBackgroundColor', {
         }
 
         if (window.StatusBar) {
-            window.StatusBar.backgroundColorByHexString('#' + rgbVals[0].toString(16) + rgbVals[1].toString(16) + rgbVals[2].toString(16));
+            window.StatusBar.backgroundColorByHexString('#' + rgbVals[0].toString(16).padStart(2, '0') + rgbVals[1].toString(16).padStart(2, '0') + rgbVals[2].toString(16).padStart(2, '0'));
         } else {
             exec(null, null, 'StatusBarInternal', 'setBackgroundColor', rgbVals);
         }
