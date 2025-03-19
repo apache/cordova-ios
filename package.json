@@ -35,17 +35,17 @@
     "tmp": "^0.2.3"
   },
   "engines": {
-    "node": ">=16.13.0"
+    "node": ">=20.5.0"
   },
   "dependencies": {
     "cordova-common": "^5.0.0",
     "elementtree": "^0.1.7",
     "execa": "^5.1.1",
     "ios-sim": "^8.0.2",
-    "nopt": "^7.2.1",
+    "nopt": "^8.1.0",
     "plist": "^3.0.6",
     "semver": "^7.4.0",
-    "which": "^4.0.0",
+    "which": "^5.0.0",
     "xcode": "^3.0.1"
   },
   "nyc": {
