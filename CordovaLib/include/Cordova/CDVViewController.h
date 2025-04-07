@@ -187,6 +187,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, null_resettable, copy) IBInspectable UIColor *splashBackgroundColor;
 
+/**
+ The color drawn behind the status bar.
+
+ This can be set in the storyboard file as a view controller attribute.
+ */
+@property (nonatomic, null_resettable, copy) IBInspectable UIColor *statusBarBackgroundColor;
+
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 /**

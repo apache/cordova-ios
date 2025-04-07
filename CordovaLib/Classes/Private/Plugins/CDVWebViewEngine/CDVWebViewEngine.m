@@ -22,6 +22,7 @@
 #import "CDVURLSchemeHandler.h"
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/CDVSettingsDictionary.h>
+#import "CDVViewController+Private.h"
 
 #import <objc/message.h>
 
@@ -241,6 +242,8 @@
     if ([settings cordovaSettingForKey:@"OverrideUserAgent"] != nil) {
         wkWebView.customUserAgent = [settings cordovaSettingForKey:@"OverrideUserAgent"];
     }
+
+    [wkWebView addObserver:self forKeyPath:@"themeColor" options:NSKeyValueObservingOptionInitial context:nil];
 
     self.engineWebView = wkWebView;
 
@@ -475,6 +478,17 @@
     }
     
     return result;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"themeColor"]) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 150000
+        if (@available(iOS 15.0, *)) {
+            [self.viewController setStatusBarWebViewColor:((WKWebView *)self.engineWebView).themeColor];
+        }
+#endif
+    }
 }
 
 #pragma mark - WKScriptMessageHandler implementation
