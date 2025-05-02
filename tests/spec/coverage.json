@@ -1,8 +1,8 @@
 {
   "spec_dir": "tests/spec",
   "spec_files": [
-      "unit/**/*[sS]pec.js",
-      "createAndBuild.spec.js"
+    "unit/**/*[sS]pec.js",
+    "createAndBuild.spec.js"
   ],
   "stopSpecOnExpectationFailure": false,
   "random": false
