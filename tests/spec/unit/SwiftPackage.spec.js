@@ -21,6 +21,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const tmp = require('tmp');
 const SwiftPackage = require('../../../lib/SwiftPackage.js').SwiftPackage;
+const Api = require('../../../lib/Api');
+const EventEmitter = require('node:events').EventEmitter;
+const ConfigParser = require('cordova-common').ConfigParser;
+const PluginInfo = require('cordova-common').PluginInfo;
+const Podfile_mod = require('../../../lib/Podfile');
+const PodsJson_mod = require('../../../lib/PodsJson');
 
 tmp.setGracefulCleanup();
 
@@ -41,6 +47,40 @@ describe('SwiftPackage', () => {
             const _ = new SwiftPackage(tmpDir.name);
             expect(_).not.toEqual(null); // To avoid ESLINT error "Do not use 'new' for side effects"
         }).toThrow();
+    });
+
+    it('should skip cocoapod library if nospm is true', () => {
+        const PROJ_NAME = 'dummyProj';
+        const FIXTURES = path.join(__dirname, 'fixtures');
+        const iosProjectFixture = path.join(FIXTURES, 'ios-packageswift-config-xml');
+        const iosProject = path.join(FIXTURES, PROJ_NAME);
+        fs.cpSync(iosProject, tmpDir.name, { recursive: true });
+        const iosProjectTest = tmpDir.name;
+        const iosPlatformTest = path.join(iosProjectTest, 'platforms', 'ios');
+        fs.cpSync(iosProjectFixture, iosPlatformTest, { recursive: true });
+        const cocoapod_swift_plugin = path.join(FIXTURES, 'org.test.plugins.swiftpackagecocoapodplugin');
+        spyOn(Podfile_mod.Podfile.prototype, 'install').and.returnValue(Promise.resolve());
+        spyOn(PodsJson_mod.PodsJson.prototype, 'setSwiftVersionForCocoaPodsLibraries').and.stub();
+        const api = new Api('ios', iosPlatformTest, new EventEmitter());
+        const project = {
+            root: iosProjectTest,
+            projectConfig: new ConfigParser(path.join(iosProjectTest, 'config.xml')),
+            locations: {
+                plugins: path.join(iosProjectTest, 'plugins'),
+                www: path.join(iosProjectTest, 'www')
+            }
+        };
+        return api.prepare(project, {})
+            .then(() => {
+                return api.addPlugin(new PluginInfo(cocoapod_swift_plugin), {});
+            })
+            .then(() => {
+                const podFilePath = path.join(iosPlatformTest, 'Podfile');
+                const podFile = fs.readFileSync(podFilePath, 'utf8');
+                expect(podFile).toContain('pod \'DummyObjCPodAlpha\'');
+                expect(podFile).not.toContain('pod \'DummyObjCPodBeta\'');
+                expect(podFile).toContain('pod \'DummyObjCPodGamma\'');
+            });
     });
 
     describe('addPlugin', () => {
