@@ -18,7 +18,7 @@
  */
 
 #import "CDVIntentAndNavigationFilter.h"
-#import <Cordova/CDV.h>
+#import <Cordova/CDVConfigParser.h>
 
 @interface CDVIntentAndNavigationFilter ()
 
@@ -74,9 +74,7 @@
 
 - (void)pluginInitialize
 {
-    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        [(CDVViewController*)self.viewController parseSettingsWithParser:self];
-    }
+    [CDVConfigParser parseConfigFile:self.viewController.configFilePath withDelegate:self];
 }
 
 + (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url allowIntentsList:(CDVAllowList*)allowIntentsList navigationsAllowList:(CDVAllowList*)navigationsAllowList
@@ -145,7 +143,7 @@
     }
 }
 
-- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType info:(NSDictionary *)navInfo
 {
     return [[self class] shouldOverrideLoadWithRequest:request navigationType:navigationType filterValue:[self filterUrl:request.URL]];
 }

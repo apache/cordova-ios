@@ -17,10 +17,5 @@
  under the License.
  */
 
-@import UIKit;
-
-#ifdef __clang__
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
-#else
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
-#endif
+#define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))

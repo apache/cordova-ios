@@ -18,22 +18,32 @@
  */
 
 #import "CDVWebViewUIDelegate.h"
+#import <Cordova/CDVViewController.h>
+
+@interface CDVWebViewUIDelegate ()
+
+@property (nonatomic, weak) CDVViewController *viewController;
+
+@end
 
 @implementation CDVWebViewUIDelegate
+{
+    NSMutableArray<UIViewController *> *windows;
+}
 
-- (instancetype)initWithTitle:(NSString*)title
+- (instancetype)initWithViewController:(CDVViewController *)vc
 {
     self = [super init];
+
     if (self) {
-        self.title = title;
+        self.viewController = vc;
+        self.title = vc.title;
         windows = [[NSMutableArray alloc] init];
     }
-
     return self;
 }
 
-- (void)     webView:(WKWebView*)webView runJavaScriptAlertPanelWithMessage:(NSString*)message
-    initiatedByFrame:(WKFrameInfo*)frame completionHandler:(void (^)(void))completionHandler
+- (void)webView:(WKWebView*)webView runJavaScriptAlertPanelWithMessage:(NSString*)message initiatedByFrame:(WKFrameInfo*)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(void))completionHandler
 {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
                                                                    message:message
@@ -49,13 +59,10 @@
 
     [alert addAction:ok];
 
-    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-
-    [rootController presentViewController:alert animated:YES completion:nil];
+    [[self topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)     webView:(WKWebView*)webView runJavaScriptConfirmPanelWithMessage:(NSString*)message
-    initiatedByFrame:(WKFrameInfo*)frame completionHandler:(void (^)(BOOL result))completionHandler
+- (void)webView:(WKWebView*)webView runJavaScriptConfirmPanelWithMessage:(NSString*)message initiatedByFrame:(WKFrameInfo*)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(BOOL result))completionHandler
 {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
                                                                    message:message
@@ -80,14 +87,10 @@
         }];
     [alert addAction:cancel];
 
-    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-
-    [rootController presentViewController:alert animated:YES completion:nil];
+    [[self topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)      webView:(WKWebView*)webView runJavaScriptTextInputPanelWithPrompt:(NSString*)prompt
-          defaultText:(NSString*)defaultText initiatedByFrame:(WKFrameInfo*)frame
-    completionHandler:(void (^)(NSString* result))completionHandler
+- (void)webView:(WKWebView*)webView runJavaScriptTextInputPanelWithPrompt:(NSString*)prompt defaultText:(NSString*)defaultText initiatedByFrame:(WKFrameInfo*)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(NSString* result))completionHandler
 {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
                                                                    message:prompt
@@ -116,12 +119,10 @@
         textField.text = defaultText;
     }];
 
-    UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-
-    [rootController presentViewController:alert animated:YES completion:nil];
+    [[self topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
-- (WKWebView*) webView:(WKWebView*)webView createWebViewWithConfiguration:(WKWebViewConfiguration*)configuration forNavigationAction:(WKNavigationAction*)navigationAction windowFeatures:(WKWindowFeatures*)windowFeatures
+- (nullable WKWebView*)webView:(WKWebView*)webView createWebViewWithConfiguration:(WKWebViewConfiguration*)configuration forNavigationAction:(WKNavigationAction*)navigationAction windowFeatures:(WKWindowFeatures*)windowFeatures
 {
     if (!navigationAction.targetFrame.isMainFrame) {
         if (self.allowNewWindows) {
@@ -135,8 +136,7 @@
 
             [windows addObject:vc];
 
-            UIViewController* rootController = [UIApplication sharedApplication].delegate.window.rootViewController;
-            [rootController presentViewController:vc animated:YES completion:nil];
+            [[self topViewController] presentViewController:vc animated:YES completion:nil];
             return v;
         } else {
             [webView loadRequest:navigationAction.request];
@@ -159,5 +159,43 @@
     // We do not allow closing the primary WebView
 }
 
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(nonnull WKSecurityOrigin *)origin initiatedByFrame:(nonnull WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(nonnull void (^)(WKPermissionDecision))decisionHandler
+  API_AVAILABLE(ios(15.0))
+{
+    WKPermissionDecision decision;
+    
+    if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Prompt) {
+        decision = WKPermissionDecisionPrompt;
+    }
+    else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Deny) {
+        decision = WKPermissionDecisionDeny;
+    }
+    else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Grant) {
+        decision = WKPermissionDecisionGrant;
+    }
+    else {
+        if ([origin.host isEqualToString:webView.URL.host]) {
+            decision = WKPermissionDecisionGrant;
+        }
+        else {
+            decision =_mediaPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
+        }
+    }
+    
+    decisionHandler(decision);
+}
+
+#pragma mark - Utility Methods
+
+- (nullable UIViewController *)topViewController
+{
+    UIViewController *vc = self.viewController;
+
+    while (vc.presentedViewController != nil && ![vc.presentedViewController isBeingDismissed]) {
+        vc = vc.presentedViewController;
+    }
+
+    return vc;
+}
 
 @end

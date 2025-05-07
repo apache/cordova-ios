@@ -1,7 +1,8 @@
 {
   "name": "cordova-ios",
-  "version": "7.0.0-dev",
+  "version": "8.0.0-beta.1",
   "description": "cordova-ios release",
+  "types": "./types/index.d.ts",
   "main": "lib/Api.js",
   "repository": "github:apache/cordova-ios",
   "bugs": "https://github.com/apache/cordova-ios/issues",
@@ -18,39 +19,34 @@
     "test": "npm run coverage && npm run objc-tests",
     "coverage": "nyc jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
-    "objc-tests": "npm run objc-tests-lib && npm run objc-tests-framework",
-    "objc-tests-lib": "npm run xcodebuild -- -scheme CordovaLibTests",
-    "objc-tests-framework": "npm run xcodebuild -- -scheme CordovaFrameworkApp",
-    "xcodebuild": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -destination \"platform=iOS Simulator,name=iPhone 8\" CONFIGURATION_BUILD_DIR=\"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "objc-tests": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -scheme CordovaTestApp -destination \"platform=iOS Simulator,name=${CDV_IOS_SIM:-iPhone SE (3rd generation)}\" -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "killall Simulator || true",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
-    "lint": "eslint . \"lib/**/!(*.*)\""
+    "lint": "eslint . \"templates/cordova/lib/!(*.*)\""
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@cordova/eslint-config": "^4.0.0",
+    "@cordova/eslint-config": "^5.1.0",
     "cordova-js": "^6.1.0",
-    "jasmine": "^3.10.0",
-    "nyc": "^15.1.0",
-    "rewire": "^5.0.0",
-    "tmp": "^0.2.1"
+    "jasmine": "^5.2.0",
+    "nyc": "^17.0.0",
+    "rewire": "^7.0.0",
+    "tmp": "^0.2.3"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=20.5.0"
   },
   "dependencies": {
-    "cordova-common": "^4.0.2",
+    "cordova-common": "^5.0.0",
+    "elementtree": "^0.1.7",
     "execa": "^5.1.1",
-    "fs-extra": "^10.0.0",
     "ios-sim": "^8.0.2",
-    "nopt": "^5.0.0",
-    "plist": "^3.0.4",
-    "semver": "^7.3.5",
-    "unorm": "^1.6.0",
-    "which": "^2.0.2",
-    "xcode": "^3.0.1",
-    "xml-escape": "^1.1.0"
+    "nopt": "^8.1.0",
+    "plist": "^3.0.6",
+    "semver": "^7.4.0",
+    "which": "^5.0.0",
+    "xcode": "^3.0.1"
   },
   "nyc": {
     "include": [

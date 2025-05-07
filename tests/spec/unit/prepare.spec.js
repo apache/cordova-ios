@@ -18,10 +18,11 @@
  */
 
 'use strict';
-const fs = require('fs-extra');
 
-const EventEmitter = require('events');
-const path = require('path');
+const fs = require('node:fs');
+const EventEmitter = require('node:events');
+const path = require('node:path');
+const tmp = require('tmp');
 const plist = require('plist');
 const xcode = require('xcode');
 const XcodeProject = xcode.project;
@@ -29,29 +30,31 @@ const rewire = require('rewire');
 const prepare = rewire('../../../lib/prepare');
 const projectFile = require('../../../lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
+const versions = require('../../../lib/versions');
 
-const tmpDir = path.join(__dirname, '../../../tmp');
+tmp.setGracefulCleanup();
+
+const relativeTmp = path.join(__dirname, '..', '..', '..');
 const FIXTURES = path.join(__dirname, 'fixtures');
-
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
-const iosProject = path.join(tmpDir, 'prepare');
-const iosPlatform = path.join(iosProject, 'platforms/ios');
 
 const ConfigParser = require('cordova-common').ConfigParser;
 
 describe('prepare', () => {
     let p;
     let Api;
+    let tempdir;
+    let iosProject;
+
     beforeEach(() => {
         Api = rewire('../../../lib/Api');
 
-        fs.ensureDirSync(iosPlatform);
-        fs.copySync(iosProjectFixture, iosPlatform);
-        p = new Api('ios', iosPlatform, new EventEmitter());
-    });
+        tempdir = tmp.dirSync({ tmpdir: relativeTmp, unsafeCleanup: true });
+        iosProject = path.join(tempdir.name, 'prepare');
+        const iosPlatform = path.join(iosProject, 'platforms/ios');
 
-    afterEach(() => {
-        fs.removeSync(tmpDir);
+        fs.cpSync(iosProjectFixture, iosPlatform, { recursive: true });
+        p = new Api('ios', iosPlatform, new EventEmitter());
     });
 
     describe('launch storyboard feature (CB-9762)', () => {
@@ -270,12 +273,12 @@ describe('prepare', () => {
 
         describe('#getLaunchStoryboardImagesDir', () => {
             const getLaunchStoryboardImagesDir = prepare.__get__('getLaunchStoryboardImagesDir');
-            const projectRoot = iosProject;
 
             it('should find the Assets.xcassets file in a project with an asset catalog', () => {
-                const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                const projectRoot = iosProject;
+                const platformProjDir = path.join('platforms', 'ios', 'App');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
-                const expectedPath = path.join(platformProjDir, 'Assets.xcassets', 'LaunchStoryboard.imageset/');
+                const expectedPath = path.join(platformProjDir, 'Assets.xcassets', 'LaunchStoryboard.imageset');
 
                 expect(fs.existsSync(assetCatalogPath)).toEqual(true);
 
@@ -284,6 +287,7 @@ describe('prepare', () => {
             });
 
             it('should NOT find the Assets.xcassets file in a project with no asset catalog', () => {
+                const projectRoot = iosProject;
                 const platformProjDir = path.join('platforms', 'ios', 'SamplerApp');
                 const assetCatalogPath = path.join(iosProject, platformProjDir, 'Assets.xcassets');
 
@@ -305,7 +309,7 @@ describe('prepare', () => {
 
                 // get appropriate paths
                 const projectRoot = iosProject;
-                const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                const platformProjDir = path.join('platforms', 'ios', 'App');
                 const storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
 
                 // create a suitable mock project for our method
@@ -316,7 +320,7 @@ describe('prepare', () => {
                 };
 
                 // copy the splash screen fixtures to the iOS project
-                fs.copySync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'));
+                fs.cpSync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
 
                 // copy splash screens and update Contents.json
                 updateLaunchStoryboardImages(project, p.locations);
@@ -333,7 +337,7 @@ describe('prepare', () => {
                 // update keys with path to storyboardImagesDir
                 for (const k in expectedResourceMap) {
                     if (Object.prototype.hasOwnProperty.call(expectedResourceMap, k)) {
-                        expectedResourceMap[storyboardImagesDir + k] = expectedResourceMap[k];
+                        expectedResourceMap[path.join(storyboardImagesDir, k)] = expectedResourceMap[k];
                         delete expectedResourceMap[k];
                     }
                 }
@@ -356,7 +360,7 @@ describe('prepare', () => {
 
             it('should move launch images and update contents.json', () => {
                 const projectRoot = iosProject;
-                const platformProjDir = path.join('platforms', 'ios', 'SampleApp');
+                const platformProjDir = path.join('platforms', 'ios', 'App');
                 const storyboardImagesDir = getLaunchStoryboardImagesDir(projectRoot, platformProjDir);
                 const project = {
                     root: iosProject,
@@ -364,7 +368,7 @@ describe('prepare', () => {
                     projectConfig: new ConfigParser(path.join(FIXTURES, 'launch-storyboard-support', 'configs', 'modern-only.xml'))
                 };
 
-                fs.copySync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'));
+                fs.cpSync(path.join(FIXTURES, 'launch-storyboard-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
                 updateLaunchStoryboardImages(project, p.locations);
 
                 // now, clean the images
@@ -383,7 +387,7 @@ describe('prepare', () => {
                 // update keys with path to storyboardImagesDir
                 for (const k in expectedResourceMap) {
                     if (Object.prototype.hasOwnProperty.call(expectedResourceMap, k)) {
-                        expectedResourceMap[storyboardImagesDir + k] = null;
+                        expectedResourceMap[path.join(storyboardImagesDir, k)] = null;
                         delete expectedResourceMap[k];
                     }
                 }
@@ -396,6 +400,369 @@ describe('prepare', () => {
                 // verify that that Contents.json is as we expect
                 const result = JSON.parse(fs.readFileSync(path.join(project.root, storyboardImagesDir, 'Contents.json')));
                 expect(result).toEqual(require('./fixtures/launch-storyboard-support/contents-json/empty'));
+            });
+        });
+    });
+
+    describe('App Icon handling', () => {
+        const xcver = '16.0.0';
+        const mapIconResources = prepare.__get__('mapIconResources');
+
+        describe('#mapIconResources', () => {
+            it('should handle a default icon', () => {
+                const icons = [
+                    { src: 'dummy.png' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon.png': 'dummy.png',
+                    'watchos.png': 'dummy.png'
+                }));
+            });
+
+            it('should handle a default icon for a watchos target', () => {
+                const icons = [
+                    { src: 'dummy.png' },
+                    { src: 'dummy-watch.png', target: 'watchos' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon.png': 'dummy.png',
+                    'watchos.png': 'dummy-watch.png'
+                }));
+            });
+
+            it('should handle default icon variants on Xcode 16+', () => {
+                const icons = [
+                    { src: 'dummy.png', monochrome: 'dummy-tint.png', foreground: 'dummy-dark.png' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon.png': 'dummy.png',
+                    'icon-dark.png': 'dummy-dark.png',
+                    'icon-tinted.png': 'dummy-tint.png',
+                    'watchos.png': 'dummy.png'
+                }));
+            });
+
+            it('should ignore default icon variants on Xcode 15', () => {
+                const icons = [
+                    { src: 'dummy.png', monochrome: 'dummy-tint.png', foreground: 'dummy-dark.png' }
+                ];
+
+                const resMap = mapIconResources(icons, '', '15.0.0');
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon.png': 'dummy.png',
+                    'watchos.png': 'dummy.png'
+                }));
+            });
+
+            it('should handle a single sized icon', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 1024, width: 1024 }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon.png': 'dummy.png',
+                    'watchos.png': 'dummy.png'
+                }));
+            });
+
+            it('should handle a single sized icon for watchos target', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 1024, width: 1024, target: 'watchos' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'watchos.png': 'dummy.png'
+                }));
+            });
+
+            it('should handle a sized icon', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 120, width: 120 }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon-40@3x.png': 'dummy.png',
+                    'icon-60@2x.png': 'dummy.png'
+                }));
+            });
+
+            it('should handle a sized spotlight icon', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 120, width: 120 },
+                    { src: 'dummy-spot.png', height: 120, width: 120, target: 'spotlight' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon-40@3x.png': 'dummy-spot.png',
+                    'icon-60@2x.png': 'dummy.png'
+                }));
+            });
+
+            it('should handle sized icon variants', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 76, width: 76, monochrome: 'dummy-tint.png', foreground: 'dummy-dark.png' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'icon-38@2x.png': 'dummy.png',
+                    'icon-38@2x-dark.png': 'dummy-dark.png',
+                    'icon-38@2x-tinted.png': 'dummy-tint.png'
+                }));
+            });
+
+            it('should ignore sized watchos icons without a target', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 216, width: 216 }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual({});
+            });
+
+            it('should handle a sized macOS icon', () => {
+                const icons = [
+                    { src: 'dummy.png', height: 256, width: 256, target: 'mac' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual(jasmine.objectContaining({
+                    'mac-128@2x.png': 'dummy.png',
+                    'mac-256.png': 'dummy.png'
+                }));
+            });
+
+            it('should ignore tinted icons for non-iOS targets', () => {
+                const icons = [
+                    { monochrome: 'dummy-tint.png', height: 256, width: 256, target: 'mac' },
+                    { foreground: 'dummy-dark.png', height: 216, width: 216, target: 'watchos' }
+                ];
+
+                const resMap = mapIconResources(icons, '', xcver);
+
+                expect(resMap).toEqual({});
+            });
+        });
+
+        describe('#updateIcons', () => {
+            const updateIcons = prepare.__get__('updateIcons');
+            const logFileOp = prepare.__get__('logFileOp');
+            let iconsDir = '';
+
+            beforeEach(() => {
+                prepare.__set__('ASSUMED_XCODE_VERSION', '15.0.0');
+
+                const platformProjDir = path.relative(iosProject, p.locations.xcodeCordovaProj);
+                iconsDir = path.join(platformProjDir, 'Assets.xcassets', 'AppIcon.appiconset');
+            });
+
+            function updateIconsWithConfig (configFile) {
+                // create a suitable mock project for our method
+                const project = {
+                    root: iosProject,
+                    locations: p.locations,
+                    projectConfig: new ConfigParser(path.join(FIXTURES, 'icon-support', 'configs', configFile))
+                };
+
+                // copy the icon fixtures to the iOS project
+                fs.cpSync(path.join(FIXTURES, 'icon-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
+
+                // copy icons and update Contents.json
+                return updateIcons(project, p.locations);
+            }
+
+            it('should not update paths if no icons are specified', () => {
+                const updatePaths = spyOn(FileUpdater, 'updatePaths');
+
+                return updateIconsWithConfig('none.xml')
+                    .then(() => {
+                        expect(updatePaths).not.toHaveBeenCalled();
+
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/none'));
+                    });
+            });
+
+            it('should update paths if a single icon is specified', () => {
+                const updatePaths = spyOn(FileUpdater, 'updatePaths');
+
+                return updateIconsWithConfig('single-only.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
+                        }, { rootDir: iosProject }, logFileOp);
+
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-only'));
+                    });
+            });
+
+            it('should update only some paths if a single icon with variants is specified with Xcode 15', () => {
+                const updatePaths = spyOn(FileUpdater, 'updatePaths');
+                spyOn(versions, 'get_apple_xcode_version').and.returnValue(Promise.resolve('15.0.0'));
+
+                return updateIconsWithConfig('single-variants.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
+                        }, { rootDir: iosProject }, logFileOp);
+
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-only'));
+                    });
+            });
+
+            it('should update paths if a single icon with variants is specified with Xcode 16', () => {
+                prepare.__set__('ASSUMED_XCODE_VERSION', '16.0.0');
+                const updatePaths = spyOn(FileUpdater, 'updatePaths');
+                spyOn(versions, 'get_apple_xcode_version').and.returnValue(Promise.resolve('16.0.0'));
+
+                return updateIconsWithConfig('single-variants.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/appicon.png',
+                            [path.join(iconsDir, 'icon-dark.png')]: 'res/ios/appicon-dark.png',
+                            [path.join(iconsDir, 'icon-tinted.png')]: 'res/ios/appicon-tint.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/appicon.png'
+                        }, { rootDir: iosProject }, logFileOp);
+
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/single-variants'));
+                    });
+            });
+
+            it('should update paths if multiple icon sizes are specified', () => {
+                const updatePaths = spyOn(FileUpdater, 'updatePaths');
+
+                return updateIconsWithConfig('multi.xml')
+                    .then(() => {
+                        expect(updatePaths).toHaveBeenCalledWith({
+                            [path.join(iconsDir, 'icon.png')]: 'res/ios/AppIcon-1024x1024@1x.png',
+                            [path.join(iconsDir, 'watchos.png')]: 'res/ios/AppIcon-1024x1024@1x.png',
+                            [path.join(iconsDir, 'icon-20@2x.png')]: 'res/ios/AppIcon-20x20@2x.png',
+                            [path.join(iconsDir, 'icon-20@3x.png')]: 'res/ios/AppIcon-20x20@3x.png',
+                            [path.join(iconsDir, 'icon-29@2x.png')]: 'res/ios/AppIcon-29x29@2x.png',
+                            [path.join(iconsDir, 'icon-29@3x.png')]: 'res/ios/AppIcon-29x29@3x.png',
+                            [path.join(iconsDir, 'icon-38@2x.png')]: 'res/ios/AppIcon-38x38@2x.png',
+                            [path.join(iconsDir, 'icon-38@3x.png')]: 'res/ios/AppIcon-38x38@3x.png',
+                            [path.join(iconsDir, 'icon-40@2x.png')]: 'res/ios/AppIcon-40x40@2x.png',
+                            [path.join(iconsDir, 'icon-40@3x.png')]: 'res/ios/AppIcon-40x40@3x.png',
+                            [path.join(iconsDir, 'icon-60@2x.png')]: 'res/ios/AppIcon-60x60@2x.png',
+                            [path.join(iconsDir, 'icon-60@3x.png')]: 'res/ios/AppIcon-60x60@3x.png',
+                            [path.join(iconsDir, 'icon-64@2x.png')]: 'res/ios/AppIcon-64x64@2x.png',
+                            [path.join(iconsDir, 'icon-64@3x.png')]: 'res/ios/AppIcon-64x64@3x.png',
+                            [path.join(iconsDir, 'icon-68@2x.png')]: 'res/ios/AppIcon-68x68@2x.png',
+                            [path.join(iconsDir, 'icon-76@2x.png')]: 'res/ios/AppIcon-76x76@2x.png',
+                            [path.join(iconsDir, 'icon-83.5@2x.png')]: 'res/ios/AppIcon-83.5x83.5@2x.png'
+                        }, { rootDir: iosProject }, logFileOp);
+
+                        // verify that that Contents.json is as we expect
+                        const result = JSON.parse(fs.readFileSync(path.join(iosProject, iconsDir, 'Contents.json')));
+                        expect(result).toEqual(require('./fixtures/icon-support/contents-json/multi'));
+                    });
+            });
+        });
+
+        describe('#cleanIcons', () => {
+            const updateIcons = prepare.__get__('updateIcons');
+            const cleanIcons = prepare.__get__('cleanIcons');
+            const logFileOp = prepare.__get__('logFileOp');
+            let iconsDir = '';
+
+            beforeEach(() => {
+                const platformProjDir = path.relative(iosProject, p.locations.xcodeCordovaProj);
+                iconsDir = path.join(platformProjDir, 'Assets.xcassets', 'AppIcon.appiconset');
+            });
+
+            it('should remove icon images', () => {
+                // create a suitable mock project for our method
+                const project = {
+                    root: iosProject,
+                    locations: p.locations,
+                    projectConfig: new ConfigParser(path.join(FIXTURES, 'icon-support', 'configs', 'multi.xml'))
+                };
+
+                // copy the icon fixtures to the iOS project
+                fs.cpSync(path.join(FIXTURES, 'icon-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
+
+                // copy icons and update Contents.json
+                return updateIcons(project, p.locations).then(() => {
+                    // now, clean the images
+                    const updatePaths = spyOn(FileUpdater, 'updatePaths');
+
+                    return cleanIcons(iosProject, project.projectConfig, p.locations)
+                        .then(() => {
+                            expect(updatePaths).toHaveBeenCalledWith({
+                                [path.join(iconsDir, 'icon.png')]: null,
+                                [path.join(iconsDir, 'watchos.png')]: null,
+                                [path.join(iconsDir, 'icon-20@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-20@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-29@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-29@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-38@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-38@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-40@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-40@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-60@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-60@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-64@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-64@3x.png')]: null,
+                                [path.join(iconsDir, 'icon-68@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-76@2x.png')]: null,
+                                [path.join(iconsDir, 'icon-83.5@2x.png')]: null
+                            }, { rootDir: iosProject, all: true }, logFileOp);
+                        });
+                });
+            });
+
+            it('should have no effect if no icons are specified', () => {
+                // create a suitable mock project for our method
+                const project = {
+                    root: iosProject,
+                    locations: p.locations,
+                    projectConfig: new ConfigParser(path.join(FIXTURES, 'icon-support', 'configs', 'none.xml'))
+                };
+
+                // copy the icon fixtures to the iOS project
+                fs.cpSync(path.join(FIXTURES, 'icon-support', 'res'), path.join(iosProject, 'res'), { recursive: true });
+
+                // copy icons and update Contents.json
+                return updateIcons(project, p.locations).then(() => {
+                    // now, clean the images
+                    const updatePaths = spyOn(FileUpdater, 'updatePaths');
+
+                    return cleanIcons(iosProject, project.projectConfig, p.locations)
+                        .then(() => {
+                            expect(updatePaths).not.toHaveBeenCalled();
+                        });
+                });
             });
         });
     });
@@ -581,7 +948,6 @@ describe('prepare', () => {
                 update_name = spyOn(xc, 'updateProductName').and.callThrough();
                 return xc;
             });
-            cfg.name = () => 'SampleApp'; // this is to match p's original project name (based on .xcodeproj)
             cfg.packageName = () => 'testpkg';
             cfg.version = () => 'one point oh';
 
@@ -589,22 +955,10 @@ describe('prepare', () => {
         });
 
         it('should resolve', () => {
-            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
-            return updateProject(cfg2, p.locations); // since the name has not changed it *should not* error
-        });
-
-        it('should reject when the app name has changed', () => {
-            // the original name here will be `SampleApp` (based on the xcodeproj basename) from p
-            cfg2.name = () => 'NotSampleApp'; // new config has name change
-            return updateProject(cfg2, p.locations).then( // since the name has changed it *should* error
-                () => fail('Expected promise to be rejected'),
-                err => expect(err).toEqual(jasmine.any(Error))
-            );
+            return updateProject(cfg2, p.locations);
         });
 
         it('should write target-device preference', () => {
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
@@ -615,18 +969,16 @@ describe('prepare', () => {
             });
         });
         it('should write deployment-target preference', () => {
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
 
             return updateProject(cfg2, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
                 const prop = proj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
-                expect(prop).toEqual('11.0');
+                expect(prop).toEqual('15.0');
             });
         });
         it('should write SwiftVersion preference (4.1)', () => {
-            cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
             writeFileSyncSpy.and.callThrough();
             return updateProject(cfg3, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
@@ -636,7 +988,6 @@ describe('prepare', () => {
             });
         });
         it('should write SwiftVersion preference (3.3)', () => {
-            cfg3.name = () => 'SampleApp'; // new config does *not* have a name change
             const pref = cfg3.doc.findall('platform[@name=\'ios\']/preference')
                 .filter(elem => elem.attrib.name.toLowerCase() === 'swiftversion')[0];
             pref.attrib.value = '3.3';
@@ -662,8 +1013,8 @@ describe('prepare', () => {
             return updateProject(cfg, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
-                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
-                expect(prop).toEqual('testpkg');
+                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'App');
+                expect(prop).toEqual('"testpkg"');
             });
         });
         it('Test#003 : should write out the app id to info plist as CFBundleIdentifier with ios-CFBundleIdentifier', () => {
@@ -680,66 +1031,136 @@ describe('prepare', () => {
             return updateProject(cfg, p.locations).then(() => {
                 const proj = new XcodeProject(p.locations.pbxproj);
                 proj.parseSync();
-                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'SampleApp');
-                expect(prop).toEqual('testpkg_ios');
+                const prop = proj.getBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', undefined, 'App');
+                expect(prop).toEqual('"testpkg_ios"');
             });
         });
         it('Test#004 : should write out the app version to info plist as CFBundleVersion', () => {
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].CFBundleShortVersionString).toEqual('one point oh');
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const prop = proj.getBuildProperty('MARKETING_VERSION', undefined, 'App');
+                expect(prop).toEqual('one point oh');
             });
         });
         it('Test#005 : should write out the orientation preference value', () => {
             cfg.getPreference.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
             });
         });
         it('Test#006 : should handle no orientation', () => {
-            cfg.getPreference.and.returnValue('');
+            cfg.getPreference.and.returnValue(null);
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toBeUndefined();
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toBeUndefined();
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#007 : should handle default orientation', () => {
             cfg.getPreference.and.returnValue('default');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#008 : should handle portrait orientation', () => {
             cfg.getPreference.and.returnValue('portrait');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"');
             });
         });
         it('Test#009 : should handle landscape orientation', () => {
             cfg.getPreference.and.returnValue('landscape');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationLandscapeLeft']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationLandscapeLeft"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#010 : should handle all orientation on ios', () => {
             cfg.getPreference.and.returnValue('all');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toEqual(['UIInterfaceOrientationPortrait']);
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toEqual('"UIInterfaceOrientationPortrait"');
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
         it('Test#011 : should handle custom orientation', () => {
             cfg.getPreference.and.returnValue('some-custom-orientation');
+            writeFileSyncSpy.and.callThrough();
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].UISupportedInterfaceOrientations).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0]['UISupportedInterfaceOrientations~ipad']).toEqual(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight']);
-                expect(plist.build.calls.mostRecent().args[0].UIInterfaceOrientation).toBeUndefined();
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+
+                const orientation = proj.getBuildProperty('INFOPLIST_KEY_UIInterfaceOrientation', undefined, 'App');
+                expect(orientation).toBeUndefined();
+
+                const phone_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone', undefined, 'App');
+                expect(phone_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
+
+                const pad_supported = proj.getBuildProperty('INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad', undefined, 'App');
+                expect(pad_supported).toEqual('"UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"');
             });
         });
 
@@ -1075,11 +1496,6 @@ describe('prepare', () => {
         });
         /// ///////////////////////////////////////////////
         it('Test#016 : <access>, <allow-navigation> - http and https, no clobber', () => {
-            // original name here is 'SampleApp' based on p
-            // we are not testing a name change here, but testing a new config being used (name change test is above)
-            // so we set it to the name expected
-            cfg2.name = () => 'SampleApp'; // new config does *not* have a name change
-
             return updateProject(cfg2, p.locations).then(() => {
                 const ats = plist.build.calls.mostRecent().args[0].NSAppTransportSecurity;
                 const exceptionDomains = ats.NSExceptionDomains;
@@ -1500,9 +1916,52 @@ describe('prepare', () => {
         });
         it('Test#020 : <name> - should write out the display name to info plist as CFBundleDisplayName', () => {
             cfg.shortName = () => 'MyApp';
+            writeFileSyncSpy.and.callThrough();
+
             return updateProject(cfg, p.locations).then(() => {
-                expect(plist.build.calls.mostRecent().args[0].CFBundleDisplayName).toEqual('MyApp');
+                const proj = new XcodeProject(p.locations.pbxproj);
+                proj.parseSync();
+                const prop = proj.getBuildProperty('INFOPLIST_KEY_CFBundleDisplayName', undefined, 'App');
+                expect(prop).toEqual('"MyApp"');
             });
+        });
+        it('Test#021 : <privacy-manifest> - should write out the privacy manifest ', () => {
+            plist.parse.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
+            const projectRoot = iosProject;
+            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'App');
+            const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
+            const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'privacy-manifest.xml'));
+            const privacyManifest = my_config.getPrivacyManifest();
+            const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
+            overwritePrivacyManifest(privacyManifest, p.locations);
+            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy');
+            expect(writeFileSyncSpy).toHaveBeenCalledWith(privacyManifestPathDest, jasmine.any(String), 'utf-8');
+            const xml = writeFileSyncSpy.calls.all()[0].args[1];
+            const json = plist.parse(xml);
+            expect(json.NSPrivacyTracking).toBeTrue();
+            expect(json.NSPrivacyAccessedAPITypes.length).toBe(0);
+            expect(json.NSPrivacyTrackingDomains.length).toBe(0);
+            expect(json.NSPrivacyCollectedDataTypes.length).toBe(1);
+        });
+        it('Test#022 : no <privacy-manifest> - should write out the privacy manifest ', () => {
+            plist.parse.and.callThrough();
+            writeFileSyncSpy.and.callThrough();
+            const projectRoot = iosProject;
+            const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'App');
+            const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
+            const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'no-privacy-manifest.xml'));
+            const privacyManifest = my_config.getPrivacyManifest();
+            const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
+            overwritePrivacyManifest(privacyManifest, p.locations);
+            const privacyManifestPathDest = path.join(platformProjDir, 'PrivacyInfo.xcprivacy');
+            expect(writeFileSyncSpy).toHaveBeenCalledWith(privacyManifestPathDest, jasmine.any(String), 'utf-8');
+            const xml = writeFileSyncSpy.calls.all()[0].args[1];
+            const json = plist.parse(xml);
+            expect(json.NSPrivacyTracking).toBeFalse();
+            expect(json.NSPrivacyAccessedAPITypes.length).toBe(0);
+            expect(json.NSPrivacyTrackingDomains.length).toBe(0);
+            expect(json.NSPrivacyCollectedDataTypes.length).toBe(0);
         });
     });
 
@@ -1605,14 +2064,14 @@ describe('prepare', () => {
             spyOn(FileUpdater, 'mergeAndUpdateDir').and.returnValue(true);
         });
 
-        const project = {
-            root: iosProject,
-            locations: { www: path.join(iosProject, 'www') }
-        };
-
         it('Test#021 : should update project-level www and with platform agnostic www and merges', () => {
+            const project = {
+                root: iosProject,
+                locations: { www: path.join(iosProject, 'www') }
+            };
+
             const merges_path = path.join(project.root, 'merges', 'ios');
-            fs.ensureDirSync(merges_path);
+            fs.mkdirSync(merges_path, { recursive: true });
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 ['www', path.join('platforms', 'ios', 'platform_www'), path.join('merges', 'ios')],
@@ -1621,8 +2080,13 @@ describe('prepare', () => {
                 logFileOp);
         });
         it('Test#022 : should skip merges if merges directory does not exist', () => {
+            const project = {
+                root: iosProject,
+                locations: { www: path.join(iosProject, 'www') }
+            };
+
             const merges_path = path.join(project.root, 'merges', 'ios');
-            fs.removeSync(merges_path);
+            fs.rmSync(merges_path, { recursive: true, force: true });
             updateWww(project, p.locations);
             expect(FileUpdater.mergeAndUpdateDir).toHaveBeenCalledWith(
                 ['www', path.join('platforms', 'ios', 'platform_www')],

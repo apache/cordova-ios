@@ -17,7 +17,13 @@
 
 name: Node CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   darwin:
@@ -25,14 +31,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
-        os: [macos-latest]
+        node-version: [20.x, 22.x]
+        os: [macos-14]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -40,6 +46,16 @@ jobs:
         run: |
           node --version
           npm --version
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          queries: security-and-quality
+          config: |
+            paths-ignore:
+              - coverage
+              - node_modules
+              - templates/project/www/cordova.js
 
       - name: npm install and test
         run: |
@@ -48,23 +64,28 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v1
+      - uses: github/codeql-action/analyze@v3
+
+      - uses: codecov/codecov-action@v4
+        if: success()
         with:
-          fail_ci_if_error: true
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (darwin)
+          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
   non-darwin:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [20.x, 22.x]
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -72,6 +93,16 @@ jobs:
         run: |
           node --version
           npm --version
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          queries: security-and-quality
+          config: |
+            paths-ignore:
+              - coverage
+              - node_modules
+              - templates/project/www/cordova.js
 
       - name: npm install and test
         run: |
@@ -81,6 +112,11 @@ jobs:
         env:
           CI: true
 
-      - uses: codecov/codecov-action@v1
+      - uses: github/codeql-action/analyze@v3
+
+      - uses: codecov/codecov-action@v4
+        if: success()
         with:
-          fail_ci_if_error: true
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (non-darwin)
+          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
+          fail_ci_if_error: false

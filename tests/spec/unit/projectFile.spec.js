@@ -17,48 +17,46 @@
     under the License.
 */
 
-const os = require('os');
-const path = require('path');
-const fs = require('fs-extra');
+const path = require('node:path');
+const fs = require('node:fs');
+const tmp = require('tmp');
 const projectFile = require('../../../lib/projectFile');
 
-const iosProject = path.join(os.tmpdir(), 'plugman/projectFile');
+tmp.setGracefulCleanup();
+
+const tempdir = tmp.dirSync({ unsafeCleanup: true });
+const iosProject = path.join(tempdir.name, 'plugman/projectFile');
 const iosProjectFixture = path.join(__dirname, 'fixtures/ios-config-xml');
 
 const locations = {
     root: iosProject,
-    pbxproj: path.join(iosProject, 'SampleApp.xcodeproj/project.pbxproj')
+    pbxproj: path.join(iosProject, 'App.xcodeproj', 'project.pbxproj')
 };
 
 describe('projectFile', () => {
     beforeEach(() => {
-        fs.copySync(iosProjectFixture, iosProject);
+        fs.cpSync(iosProjectFixture, iosProject, { recursive: true });
     });
 
     afterEach(() => {
-        fs.removeSync(iosProject);
+        fs.rmSync(iosProject, { recursive: true, force: true });
     });
 
     describe('parse method', () => {
         it('Test#001 : should throw if project is not an xcode project', () => {
-            fs.removeSync(path.join(iosProject, 'SampleApp', 'SampleApp.xcodeproj'));
+            fs.rmSync(path.join(iosProject, 'App', 'App.xcodeproj'), { recursive: true, force: true });
             expect(() => { projectFile.parse(); }).toThrow();
         });
         it('Test#002 : should throw if project does not contain an appropriate config.xml file', () => {
-            fs.removeSync(path.join(iosProject, 'SampleApp', 'config.xml'));
+            fs.rmSync(path.join(iosProject, 'App', 'config.xml'));
             expect(() => { projectFile.parse(locations); })
-                .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
-        });
-        it('Test#003 : should throw if project does not contain an appropriate -Info.plist file', () => {
-            fs.removeSync(path.join(iosProject, 'SampleApp', 'SampleApp-Info.plist'));
-            expect(() => { projectFile.parse(locations); })
-                .toThrow(new Error('Could not find *-Info.plist file, or config.xml file.'));
+                .toThrow(new Error('Could not find config.xml file.'));
         });
         it('Test#004 : should return right directory when multiple .plist files are present', () => {
             // Create a folder named A with config.xml and .plist files in it
             const pathToFolderA = path.join(iosProject, 'A');
-            fs.ensureDirSync(pathToFolderA);
-            fs.copySync(path.join(iosProject, 'SampleApp'), pathToFolderA);
+            fs.mkdirSync(pathToFolderA, { recursive: true });
+            fs.cpSync(path.join(iosProject, 'App'), pathToFolderA, { recursive: true });
 
             const parsedProjectFile = projectFile.parse(locations);
             const pluginsDir = parsedProjectFile.plugins_dir;
@@ -67,7 +65,7 @@ describe('projectFile', () => {
 
             const pluginsDirParent = path.dirname(pluginsDir);
             const resourcesDirParent = path.dirname(resourcesDir);
-            const sampleAppDir = path.join(iosProject, 'SampleApp');
+            const sampleAppDir = path.join(iosProject, 'App');
 
             expect(pluginsDirParent).toEqual(sampleAppDir);
             expect(resourcesDirParent).toEqual(sampleAppDir);

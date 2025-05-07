@@ -20,6 +20,8 @@
 #include <objc/message.h>
 #import <Cordova/CDVCommandQueue.h>
 #import <Cordova/CDVViewController.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/NSMutableArray+QueueAdditions.h>
 #import "CDVCommandDelegateImpl.h"
 #import "CDVJSON_private.h"
 #import "CDVDebug.h"
@@ -44,7 +46,12 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     return _startExecutionTime > 0;
 }
 
-- (id)initWithViewController:(CDVViewController*)viewController
+- (instancetype)init
+{
+    return [self initWithViewController:nil];
+}
+
+- (instancetype)initWithViewController:(CDVViewController *)viewController
 {
     self = [super init];
     if (self != nil) {

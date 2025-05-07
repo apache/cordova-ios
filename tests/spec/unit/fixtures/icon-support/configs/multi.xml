@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget android-packageName="io.cordova.hellocordova.android" id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Hello Cordova</name>
+    <description>
+        A sample Apache Cordova application that responds to the deviceready event.
+    </description>
+    <author email="dev@cordova.apache.org" href="http://cordova.io">
+        Apache Cordova Team
+    </author>
+    <content src="index.html" />
+
+    <platform name="ios">
+        <icon src="res/ios/AppIcon-20x20@2x.png" height="40" width="40" />
+        <icon src="res/ios/AppIcon-20x20@3x.png" height="60" width="60" />
+        <icon src="res/ios/AppIcon-29x29@2x.png" height="58" width="58" />
+        <icon src="res/ios/AppIcon-29x29@3x.png" height="87" width="87" />
+        <icon src="res/ios/AppIcon-38x38@2x.png" height="76" width="76" />
+        <icon src="res/ios/AppIcon-38x38@3x.png" height="114" width="114" />
+        <icon src="res/ios/AppIcon-40x40@2x.png" height="80" width="80" target="spotlight" />
+        <icon src="res/ios/AppIcon-40x40@3x.png" height="120" width="120" target="spotlight" />
+        <icon src="res/ios/AppIcon-60x60@2x.png" height="120" width="120" />
+        <icon src="res/ios/AppIcon-60x60@3x.png" height="180" width="180" />
+        <icon src="res/ios/AppIcon-64x64@2x.png" height="128" width="128" />
+        <icon src="res/ios/AppIcon-64x64@3x.png" height="192" width="192" />
+        <icon src="res/ios/AppIcon-68x68@2x.png" height="136" width="136" />
+        <icon src="res/ios/AppIcon-76x76@2x.png" height="152" width="152" />
+        <icon src="res/ios/AppIcon-83.5x83.5@2x.png" height="167" width="167" />
+        <icon src="res/ios/AppIcon-1024x1024@1x.png" height="1024" width="1024" />
+    </platform>
+
+    <access origin="http://*.apache.org" />
+    <access origin="https://*.apache.org" />
+
+    <allow-navigation href="http://*.apache.org" />
+    <allow-navigation href="https://*.apache.org" />
+     
+</widget>
+

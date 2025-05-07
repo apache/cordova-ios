@@ -18,22 +18,18 @@
  */
 
 #import "CDVLaunchScreen.h"
-#import <Cordova/CDVViewController.h>
+#import "CDVViewController+Private.h"
 
 @implementation CDVLaunchScreen
 
-- (void)show:(CDVInvokedUrlCommand*)command
+- (void)show:(CDVInvokedUrlCommand *)command
 {
-    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        [(CDVViewController*)self.viewController showLaunchScreen:YES];
-    }
+    [self.viewController showSplashScreen:YES];
 }
 
-- (void)hide:(CDVInvokedUrlCommand*)command
+- (void)hide:(CDVInvokedUrlCommand *)command
 {
-    if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        [(CDVViewController*)self.viewController showLaunchScreen:NO];
-    }
+    [self.viewController showSplashScreen:NO];
 }
 
 @end

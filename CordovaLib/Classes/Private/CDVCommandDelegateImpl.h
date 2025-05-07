@@ -17,7 +17,7 @@
  under the License.
  */
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 #import <Cordova/CDVCommandDelegate.h>
 
 @class CDVViewController;
@@ -31,6 +31,6 @@
     __weak CDVCommandQueue* _commandQueue;
     BOOL _delayResponses;
 }
-- (id)initWithViewController:(CDVViewController*)viewController;
+- (instancetype)initWithViewController:(CDVViewController *)viewController;
 - (void)flushCommandQueueWithDelayedJs;
 @end

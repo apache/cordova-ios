@@ -17,13 +17,32 @@
  under the License.
  */
 
-@import Foundation;
+#import <UIKit/UIKit.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
 
-#import <Cordova/CDVViewController.h>
+@class CDVViewController;
 
-@interface CDVAppDelegate : NSObject <UIApplicationDelegate>{}
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, strong) IBOutlet UIWindow* window;
-@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
+/**
+ App delegate class with some additional Cordova-specific behavior.
+
+ The app delegate object manages your app’s shared behaviors. Your app should
+ include its own AppDelegate class which is a subclass of `CDVAppDelegate`.
+
+ `CDVAppDelegate` provides an extension point for Cordova plugins to safely add
+ behavior to the app by building on system events such as URL handling, push
+ notification registration, and deep linking.
+
+ See `UIApplicationDelegate` for more details about app delegates.
+ */
+@interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (nullable, nonatomic, strong) IBOutlet UIWindow *window API_DEPRECATED_WITH_REPLACEMENT("SceneDelegate:window", ios(2.0, 13.0));
+
+// TODO: Remove in Cordova iOS 9
+@property (nullable, nonatomic, strong) IBOutlet CDVViewController *viewController CDV_DEPRECATED(8, "");
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -24,17 +24,21 @@ import PackageDescription
 let package = Package(
     name: "Cordova",
     platforms: [
-        .iOS(.v11)
+        .iOS(.v13),
+        .macCatalyst(.v13)
     ],
     products: [
-        .library(name: "CordovaLib", targets: ["Cordova"])
+        .library(name: "Cordova", targets: ["Cordova"])
     ],
     dependencies: [],
     targets: [
         .target(
             name: "Cordova",
             path: "CordovaLib/",
-            exclude: ["cordova.js", "Cordova/Cordova.h", "Cordova/Info.plist"],
+            exclude: ["Info.plist"],
+            resources: [
+                .copy("PrivacyInfo.xcprivacy")
+            ],
             cSettings: [
                 .headerSearchPath("Classes/Private")
             ]

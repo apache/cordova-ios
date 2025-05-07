@@ -19,7 +19,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import <Cordova/CDVAllowList.h>
+#import "CDVAllowList.h"
 #import "CDVIntentAndNavigationFilter.h"
 
 @interface CDVAllowListTests : XCTestCase
@@ -209,6 +209,21 @@
     XCTAssertTrue([expectedErrorString isEqualToString:errorString], @"Customized allowList rejection string has unexpected value.");
 }
 
+- (void)testUnusualSchemes
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"com.myapp://*",
+        @"web+app://*",
+        @"a12345://*",
+        nil];
+
+    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"com.myapp://www.apache.org"]]);
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"web+app://www.apache.org"]]);
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"a12345://www.apache.org"]]);
+}
+
 - (void)testSpecificProtocol
 {
     NSArray* allowedHosts = [NSArray arrayWithObjects:
@@ -222,6 +237,18 @@
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"cordova://www.google.com"]]);
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"cordova://www.apache.org"]]);
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.google.com"]]);
+}
+
+- (void)testSpecificPort
+{
+    NSArray* allowedHosts = [NSArray arrayWithObjects:
+        @"http://www.apache.org:8080",
+        nil];
+
+    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+
+    XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org/index.html"]]);
+    XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org:8080/index.html"]]);
 }
 
 - (void)testWildcardPlusOtherUrls

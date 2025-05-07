@@ -17,6 +17,8 @@
  under the License.
  */
 
+#import <Cordova/CDVPlugin.h>
+
 @interface CDVPlugin (Private)
 
 - (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine;

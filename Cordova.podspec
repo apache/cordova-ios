@@ -31,12 +31,13 @@ Pod::Spec.new do |s|
   s.homepage            = "https://github.com/apache/cordova-ios"
   s.license             = { :type => "Apache 2.0", :file => "LICENSE" }
   s.author              = "Apache Software Foundation"
-  s.platform            = :ios, "11.0"
+  s.platform            = :ios, "13.0"
   s.source              = relSource
   s.requires_arc        = true
-  s.frameworks          = 'Foundation'
+  s.frameworks          = ["Foundation", "UIKit", "WebKit"]
   s.source_files        = 'CordovaLib/**/*.{h,m}'
   s.public_header_files = 'CordovaLib/include/**/*.h'
+  s.resource_bundles    = { "Cordova" => ["CordovaLib/PrivacyInfo.xcprivacy"] }
 end
 
 #

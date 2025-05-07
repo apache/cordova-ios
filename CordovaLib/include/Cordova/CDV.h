@@ -17,14 +17,8 @@
  under the License.
  */
 
-#import <Cordova/CDVAvailability.h>
-#import <Cordova/CDVAvailabilityDeprecated.h>
-#import <Cordova/CDVAppDelegate.h>
-#import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVPluginResult.h>
-#import <Cordova/CDVViewController.h>
-#import <Cordova/CDVCommandDelegate.h>
-#import <Cordova/CDVInvokedUrlCommand.h>
-#import <Cordova/CDVAllowList.h>
-#import <Cordova/CDVScreenOrientationDelegate.h>
-#import <Cordova/CDVTimer.h>
+#ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
+    #warning Import <Cordova/Cordova.h> rather than <Cordova/CDV.h>
+#endif
+
+#import <Cordova/Cordova.h>

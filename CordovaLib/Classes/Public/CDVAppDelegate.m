@@ -18,55 +18,40 @@
  */
 
 #import <Cordova/CDVAppDelegate.h>
+#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVViewController.h>
 
 @implementation CDVAppDelegate
 
 @synthesize window, viewController;
 
-- (id)init
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
 {
-    self = [super init];
-    return self;
-}
-
-#pragma mark UIApplicationDelegate implementation
-
-/**
- * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
- */
-- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-
-    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
-    self.window.autoresizesSubviews = YES;
-
-    // only set if not already set in subclass
-    if (self.viewController == nil) {
-        self.viewController = [[CDVViewController alloc] init];
-    }
-
-    // Set your app's start page by setting the <content src='foo.html' /> tag in config.xml.
-    // If necessary, uncomment the line below to override it.
-    // self.viewController.startPage = @"index.html";
-
-    // NOTE: To customize the view's frame size (which defaults to full screen), override
-    // [self.viewController viewWillAppear:] in your view controller.
-
-    self.window.rootViewController = self.viewController;
-    [self.window makeKeyAndVisible];
+#if DEBUG
+    NSLog(@"Apache Cordova iOS platform version %@ is starting.", CDV_VERSION);
+#endif
 
     return YES;
 }
 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
+{
+    return YES;
+}
+
 // this happens while we are running ( in the background, or from within our own app )
-// only valid if 40x-Info.plist specifies a protocol to handle
+// only valid if Info.plist specifies a protocol to handle
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
 {
     if (!url) {
         return NO;
     }
 
+    // all plugins will get the notification, and their handlers will be called
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPluginHandleOpenURLNotification object:url userInfo:options];
+
+    // TODO: This should be deprecated and removed in Cordova iOS 9, since we're passing this data in the notification userInfo now
     NSMutableDictionary * openURLData = [[NSMutableDictionary alloc] init];
 
     [openURLData setValue:url forKey:@"url"];
@@ -79,19 +64,12 @@
         [openURLData setValue:options[UIApplicationOpenURLOptionsAnnotationKey] forKey:@"annotation"];
     }
 
-    // all plugins will get the notification, and their handlers will be called
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLNotification object:url]];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification object:openURLData]];
+#pragma clang diagnostic pop
 
     return YES;
-}
-
-- (UIInterfaceOrientationMask)application:(UIApplication*)application supportedInterfaceOrientationsForWindow:(UIWindow*)window
-{
-    // iPhone doesn't support upside down by default, while the iPad does.  Override to allow all orientations always, and let the root view controller decide what's allowed (the supported orientations mask gets intersected).
-    NSUInteger supportedInterfaceOrientations = (1 << UIInterfaceOrientationPortrait) | (1 << UIInterfaceOrientationLandscapeLeft) | (1 << UIInterfaceOrientationLandscapeRight) | (1 << UIInterfaceOrientationPortraitUpsideDown);
-
-    return supportedInterfaceOrientations;
 }
 
 @end

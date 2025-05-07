@@ -23,7 +23,6 @@
 
     <!-- Preferences for iOS -->
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="cloud" />
     <preference name="DisallowOverscroll" value="false" />
     <preference name="EnableViewportScale" value="false" />
     <preference name="MediaTypesRequiringUserActionForPlayback" value="none" />
@@ -33,6 +32,9 @@
 
     <feature name="CDVWebViewEngine">
         <param name="ios-package" value="CDVWebViewEngine" />
+    </feature>
+    <feature name="LaunchScreen">
+        <param name="ios-package" value="CDVLaunchScreen"/>
     </feature>
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage"/>
