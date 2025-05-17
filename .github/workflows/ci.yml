@@ -25,6 +25,10 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   darwin:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
