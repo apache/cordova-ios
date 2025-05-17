@@ -17,6 +17,7 @@
  under the License.
  */
 
-#import <Cordova/Cordova.h>
-#import "CDVSwift22Object.h"
+// This is a bridging header to expose stuff to Swift
+#import <Cordova/Cordova.h> // CordovaLib
+#import /* Other headers */ "CDVSwift22Object.h"
 #import "CDVSwift2Object.h"
