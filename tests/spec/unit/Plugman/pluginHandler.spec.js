@@ -39,6 +39,7 @@ const faultyplugin = path.join(FIXTURES, 'org.test.plugins.faultyplugin');
 const dummyplugin = path.join(FIXTURES, 'org.test.plugins.dummyplugin');
 const weblessplugin = path.join(FIXTURES, 'org.test.plugins.weblessplugin');
 const embedlinkplugin = path.join(FIXTURES, 'org.test.plugins.embedlinkplugin');
+const swiftpackageplugin = path.join(FIXTURES, 'org.test.plugins.swiftpackageplugin');
 
 const dummyPluginInfo = new PluginInfo(dummyplugin);
 const dummy_id = dummyPluginInfo.id;
@@ -60,14 +61,10 @@ const weblessPluginInfo = new PluginInfo(weblessplugin);
 const embedlinkPluginInfo = new PluginInfo(embedlinkplugin);
 const embed_link_interaction_frameworks = embedlinkPluginInfo.getFrameworks('ios');
 
+const swiftpackagePluginInfo = new PluginInfo(swiftpackageplugin);
+
 function copyArray (arr) {
     return Array.prototype.slice.call(arr, 0);
-}
-
-function slashJoin () {
-    // In some places we need to use forward slash instead of path.join().
-    // See CB-7311.
-    return Array.prototype.join.call(arguments, '/');
 }
 
 describe('ios plugin handler', () => {
@@ -114,13 +111,13 @@ describe('ios plugin handler', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
                 install(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addSourceFile)
-                    .toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'DummyPluginCommand.m'), {});
+                    .toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'DummyPluginCommand.m'), {});
             });
             it('Test 004 : should call into xcodeproj\'s addSourceFile appropriately when element has a target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir !== undefined);
                 install(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addSourceFile)
-                    .toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'), {});
+                    .toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'), {});
             });
             it('Test 005 : should cp the file to the right target location when element has no target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
@@ -140,6 +137,13 @@ describe('ios plugin handler', () => {
                 install(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
                     .toHaveBeenCalledWith(path.join('App', 'Plugins', dummy_id, 'SourceWithFramework.m'), { weak: false });
+            });
+
+            it('should not add source files for SPM plugins', () => {
+                const source = copyArray(swiftpackagePluginInfo.getSourceFiles('ios'));
+                install(source[0], swiftpackagePluginInfo, dummyProject);
+
+                expect(dummyProject.xcode.addSourceFile).not.toHaveBeenCalled();
             });
         });
 
@@ -169,13 +173,13 @@ describe('ios plugin handler', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir === undefined);
                 install(headers[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addHeaderFile)
-                    .toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'DummyPluginCommand.h'));
+                    .toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'DummyPluginCommand.h'));
             });
             it('Test 011 : should call into xcodeproj\'s addHeaderFile appropriately when element a target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
                 install(headers[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addHeaderFile)
-                    .toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'));
+                    .toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'));
             });
             it('Test 012 : should cp the file to the right target location when element has no target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir === undefined);
@@ -407,17 +411,17 @@ describe('ios plugin handler', () => {
                     }).xcode;
 
                     // from org.test.plugins.dummyplugin
-                    expect(xcode.hasFile(slashJoin('DummyPlugin.bundle'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'DummyPluginCommand.h'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'DummyPluginCommand.m'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.h'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.m'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('DummyPlugin.bundle'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('org.test.plugins.dummyplugin', 'DummyPluginCommand.h'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('org.test.plugins.dummyplugin', 'DummyPluginCommand.m'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.h'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('org.test.plugins.dummyplugin', 'targetDir', 'TargetDirTest.m'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile('usr/lib/libsqlite3.dylib')).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('App', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('App', 'Plugins', 'org.test.plugins.dummyplugin', 'Custom.framework'))).toEqual(jasmine.any(Object));
                     // from org.test.plugins.weblessplugin
-                    expect(xcode.hasFile(slashJoin('WeblessPluginViewController.xib'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.h'))).toEqual(jasmine.any(Object));
-                    expect(xcode.hasFile(slashJoin('org.test.plugins.weblessplugin', 'WeblessPluginCommand.m'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('WeblessPluginViewController.xib'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('org.test.plugins.weblessplugin', 'WeblessPluginCommand.h'))).toEqual(jasmine.any(Object));
+                    expect(xcode.hasFile(path.posix.join('org.test.plugins.weblessplugin', 'WeblessPluginCommand.m'))).toEqual(jasmine.any(Object));
                     expect(xcode.hasFile('usr/lib/libsqlite3.dylib')).toEqual(jasmine.any(Object));
                 });
         });
@@ -434,12 +438,12 @@ describe('ios plugin handler', () => {
             it('Test 029 : should call into xcodeproj\'s removeSourceFile appropriately when element has no target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeSourceFile).toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'DummyPluginCommand.m'));
+                expect(dummyProject.xcode.removeSourceFile).toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'DummyPluginCommand.m'));
             });
             it('Test 030 : should call into xcodeproj\'s removeSourceFile appropriately when element a target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir !== undefined);
                 uninstall(source[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeSourceFile).toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'));
+                expect(dummyProject.xcode.removeSourceFile).toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'targetDir', 'TargetDirTest.m'));
             });
             it('Test 031 : should rm the file from the right target location when element has no target-dir', () => {
                 const source = copyArray(valid_source).filter(s => s.targetDir === undefined);
@@ -458,6 +462,13 @@ describe('ios plugin handler', () => {
                 uninstall(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.removeFramework).toHaveBeenCalledWith(path.join('App', 'Plugins', dummy_id, 'SourceWithFramework.m'));
             });
+
+            it('should not remove source files for SPM plugins', () => {
+                const source = copyArray(swiftpackagePluginInfo.getSourceFiles('ios'));
+                uninstall(source[0], swiftpackagePluginInfo, dummyProject);
+
+                expect(dummyProject.xcode.removeSourceFile).not.toHaveBeenCalled();
+            });
         });
 
         describe('of <header-file> elements', () => {
@@ -469,12 +480,12 @@ describe('ios plugin handler', () => {
             it('Test 034 : should call into xcodeproj\'s removeHeaderFile appropriately when element has no target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir === undefined);
                 uninstall(headers[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeHeaderFile).toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'DummyPluginCommand.h'));
+                expect(dummyProject.xcode.removeHeaderFile).toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'DummyPluginCommand.h'));
             });
             it('Test 035 : should call into xcodeproj\'s removeHeaderFile appropriately when element a target-dir', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
                 uninstall(headers[0], dummyPluginInfo, dummyProject);
-                expect(dummyProject.xcode.removeHeaderFile).toHaveBeenCalledWith(slashJoin('Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'));
+                expect(dummyProject.xcode.removeHeaderFile).toHaveBeenCalledWith(path.posix.join('Plugins', dummy_id, 'targetDir', 'TargetDirTest.h'));
             });
             it('Test 036 : should rm the file from the right target location', () => {
                 const headers = copyArray(valid_headers).filter(s => s.targetDir !== undefined);
