@@ -25,13 +25,17 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   darwin:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x, 22.x, 24.x]
         os: [macos-14]
 
     steps:
@@ -78,7 +82,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x, 22.x, 24.x]
         os: [ubuntu-latest, windows-latest]
 
     steps:
