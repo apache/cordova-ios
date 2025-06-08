@@ -19,7 +19,11 @@
 
 import Cordova
 
+#if compiler(>=6.1)
+@objc @implementation
+#else
 @_objcImplementation
+#endif
 extension MainViewController {
 }
 
