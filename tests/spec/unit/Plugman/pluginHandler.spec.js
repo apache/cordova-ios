@@ -586,7 +586,7 @@ describe('ios plugin handler', () => {
             it('Test 043 : should put module to www only when options.usePlatformWww flag is not specified', () => {
                 uninstall(jsModule, dummyPluginInfo, dummyProject);
                 expect(fs.rmSync).toHaveBeenCalledWith(wwwDest, { recursive: true, force: true });
-                expect(fs.rmSync).not.toHaveBeenCalledWith(platformWwwDest);
+                expect(fs.rmSync).not.toHaveBeenCalledWith(platformWwwDest, { recursive: true, force: true });
             });
         });
 
@@ -611,14 +611,14 @@ describe('ios plugin handler', () => {
 
             it('Test 044 : should put module to both www and platform_www when options.usePlatformWww flag is specified', () => {
                 uninstall(asset, dummyPluginInfo, dummyProject, { usePlatformWww: true });
-                expect(fs.rmSync).toHaveBeenCalledWith(wwwDest);
-                expect(fs.rmSync).toHaveBeenCalledWith(platformWwwDest);
+                expect(fs.rmSync).toHaveBeenCalledWith(wwwDest, { recursive: true, force: true });
+                expect(fs.rmSync).toHaveBeenCalledWith(platformWwwDest, { recursive: true, force: true });
             });
 
             it('Test 045 : should put module to www only when options.usePlatformWww flag is not specified', () => {
                 uninstall(asset, dummyPluginInfo, dummyProject);
-                expect(fs.rmSync).toHaveBeenCalledWith(wwwDest);
-                expect(fs.rmSync).not.toHaveBeenCalledWith(platformWwwDest);
+                expect(fs.rmSync).toHaveBeenCalledWith(wwwDest, { recursive: true, force: true });
+                expect(fs.rmSync).not.toHaveBeenCalledWith(platformWwwDest, { recursive: true, force: true });
             });
         });
     });
