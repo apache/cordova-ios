@@ -152,6 +152,28 @@ if webView.responds(to: scrollViewSelector) {
 
 This updated code is compatible with existing versions of Cordova iOS.
 
+# Precompiled Prefix Header deprecation
+
+Previously, Cordova projects included a precompiled prefix header that automatically imported the `Foundation` and `UIKit` frameworks. This made these frameworks available globally, without requiring explicit imports in each Objective-C file.
+
+While this may have offered convenience, it also introduced an implicit dependency on the Cordova-managed prefix header and prefix headers have gradually been replaced with module imports in Objective-C and were never supported in Swift.
+
+To align with Xcode defaults and improve long-term maintainability, the precompiled prefix header has been removed from generated Cordova app projects. While this may be a breaking change for some plugins, developers are now expected to explicitly declare the frameworks their code depends on by adding the appropriate import statements directly in their source files.
+
+**Objective-C Example:**
+
+```objc
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+```
+
+**Swift Example:**
+
+```swift
+import Foundation
+import UIKit
+```
+
 ## Other Major Changes
 ### Deprecating AppDelegate category extensions
 
