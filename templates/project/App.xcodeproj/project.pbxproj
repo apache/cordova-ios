@@ -447,7 +447,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
+					"$(inherited)",
 					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.apache.cordova.AppTemplate$(DEVELOPMENT_TEAM)";
@@ -485,7 +485,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
+					"$(inherited)",
 					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.apache.cordova.AppTemplate$(DEVELOPMENT_TEAM)";
