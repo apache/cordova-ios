@@ -17,4 +17,5 @@ fixtures
 #Xcode Test Plans are JSON with no comment support
 (.*).xctestplan
 
+coverage
 node_modules
