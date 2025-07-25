@@ -55,7 +55,7 @@ function massageMessageNativeToJs (message) {
             return ret.buffer;
         };
         var base64ToArrayBuffer = function (b64) {
-            return stringToArrayBuffer(atob(b64)); // eslint-disable-line no-undef
+            return stringToArrayBuffer(atob(b64));
         };
         message = base64ToArrayBuffer(message.data);
     }
@@ -119,7 +119,7 @@ iOSExec.nativeCallback = function (callbackId, status, message, keepCallback, de
     var success = status === 0 || status === 1;
     var args = convertMessageToArgsNativeToJs(message);
     Promise.resolve().then(function () {
-        cordova.callbackFromNative(callbackId, success, status, args, keepCallback); // eslint-disable-line
+        cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
     });
 };
 

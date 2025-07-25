@@ -1,5 +1,0 @@
-templates/project/*
-tests/spec/unit/fixtures/*
-
-# Non-JS binaries
-bin/cordova_plist_to_config_xml
