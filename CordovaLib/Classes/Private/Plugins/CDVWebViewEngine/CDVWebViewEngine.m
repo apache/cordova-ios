@@ -46,6 +46,7 @@
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
 @property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
+@property (nonatomic, strong) NSURL* lastGoodURL;
 
 @end
 
@@ -271,6 +272,8 @@
                name:UIApplicationWillEnterForegroundNotification object:nil];
 
     NSLog(@"Using WKWebView");
+
+    [self addURLObserver];
 }
 
 - (void)dispose
@@ -282,10 +285,41 @@
     [super dispose];
 }
 
+- (void)onReset {
+    [self addURLObserver];
+}
+
+static void * KVOContext = &KVOContext;
+
+- (void)addURLObserver {
+    if(!IsAtLeastiOSVersion(@"9.0")){
+        [self.webView addObserver:self forKeyPath:@"URL" options:0 context:KVOContext];
+    }
+}
+
 - (void) onAppWillEnterForeground:(NSNotification*)notification {
     if ([self shouldReloadWebView]) {
         NSLog(@"%@", @"CDVWebViewEngine reloading!");
-        [(WKWebView*)_engineWebView reload];
+        
+        // PATCH FOR WHITE SCREEN OF DEATH:
+        // Try cached good URL first, then current URL, then fall back to app URL
+        WKWebView* wkWebView = (WKWebView*)_engineWebView;
+        NSURL* currentURL = wkWebView.URL;
+        
+        NSURL* url;
+        if (self.lastGoodURL) {
+            url = self.lastGoodURL;
+            NSLog(@"CDVWebViewEngine using cached good URL for reload: %@", url.absoluteString);
+        } else if (currentURL && ![currentURL.absoluteString isEqualToString:@"about:blank"] && ![currentURL.absoluteString isEqualToString:@""]) {
+            url = currentURL;
+            NSLog(@"CDVWebViewEngine using current page URL for reload: %@", url.absoluteString);
+        } else {
+            url = [((CDVViewController*) self.viewController) appUrl];
+            NSLog(@"CDVWebViewEngine using fallback app URL for reload: %@", url.absoluteString);
+        }
+        
+        NSURLRequest* appReq = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:20.0];
+        [wkWebView loadRequest:appReq];
     }
 }
 
@@ -482,12 +516,25 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if ([keyPath isEqualToString:@"themeColor"]) {
+    if (context == KVOContext) {
+        if (object == [self webView] && [keyPath isEqualToString: @"URL"]) {
+            NSURL* currentURL = [object valueForKeyPath:keyPath];
+            if (currentURL == nil) {
+                NSLog(@"URL is nil. Reloading WKWebView");
+                [(WKWebView*)_engineWebView reload];
+            } else if (![currentURL.absoluteString isEqualToString:@"about:blank"] && ![currentURL.absoluteString isEqualToString:@""]) {
+                // Cache good URLs via KVO as backup
+                self.lastGoodURL = currentURL;
+            }
+        }
+    } else if ([keyPath isEqualToString:@"themeColor"]) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 150000
         if (@available(iOS 15.0, *)) {
             [self.viewController setStatusBarWebViewColor:((WKWebView *)self.engineWebView).themeColor];
         }
 #endif
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
@@ -536,6 +583,12 @@
 
 - (void)webView:(WKWebView*)webView didFinishNavigation:(WKNavigation*)navigation
 {
+    // Always cache successful URL loads (even if we're not the primary navigation delegate)
+    if (webView.URL && ![webView.URL.absoluteString isEqualToString:@"about:blank"] && ![webView.URL.absoluteString isEqualToString:@""]) {
+        self.lastGoodURL = webView.URL;
+        NSLog(@"CDVWebViewEngine cached good URL: %@", webView.URL.absoluteString);
+    }
+    
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:webView]];
 }
 
@@ -562,7 +615,26 @@
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
-    [webView reload];
+    NSLog(@"CDVWebViewEngine: Web content process terminated, reloading with cached URL");
+    
+    // PATCH FOR WHITE SCREEN OF DEATH:
+    // Use cached good URL first, then current URL, then fall back to app URL
+    NSURL* currentURL = webView.URL;
+    
+    NSURL* url;
+    if (self.lastGoodURL) {
+        url = self.lastGoodURL;
+        NSLog(@"CDVWebViewEngine using cached good URL for process termination reload: %@", url.absoluteString);
+    } else if (currentURL && ![currentURL.absoluteString isEqualToString:@"about:blank"] && ![currentURL.absoluteString isEqualToString:@""]) {
+        url = currentURL;
+        NSLog(@"CDVWebViewEngine using current page URL for process termination reload: %@", url.absoluteString);
+    } else {
+        url = [((CDVViewController*) self.viewController) appUrl];
+        NSLog(@"CDVWebViewEngine using fallback app URL for process termination reload: %@", url.absoluteString);
+    }
+    
+    NSURLRequest* appReq = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:20.0];
+    [webView loadRequest:appReq];
 }
 
 - (BOOL)defaultResourcePolicyForURL:(NSURL*)url
