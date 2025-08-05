@@ -47,7 +47,7 @@ describe('prepare', () => {
     let iosProject;
 
     beforeEach(() => {
-        Api = rewire('../../../lib/Api');
+        Api = require('../../../lib/Api');
 
         tempdir = tmp.dirSync({ tmpdir: relativeTmp, unsafeCleanup: true });
         iosProject = path.join(tempdir.name, 'prepare');

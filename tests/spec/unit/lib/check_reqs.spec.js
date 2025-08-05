@@ -17,52 +17,72 @@
  under the License.
  */
 
-const rewire = require('rewire');
+const process = require('node:process');
 const which = require('which');
+const checkReqs = require('../../../../lib/check_reqs');
 const versions = require('../../../../lib/versions');
 
-describe('check_reqs', () => {
-    let checkReqs;
+describe('check_ios_deploy', () => {
     beforeEach(() => {
-        checkReqs = rewire('../../../../lib/check_reqs');
+        spyOn(which, 'sync').and.returnValue('/bin/ios-deploy');
+        spyOn(versions, 'get_tool_version').and.resolveTo('1.13.0');
     });
 
-    describe('checkTool method', () => {
-        let checkTool;
+    it('should not have found tool.', () => {
+        which.sync.and.returnValue(false);
 
+        return checkReqs.check_ios_deploy().then(
+            () => fail('Expected promise to be rejected'),
+            reason => expect(reason.message).toContain('ios-deploy was not found.')
+        );
+    });
+
+    it('should resolve passing back tool version.', () => {
+        return checkReqs.check_ios_deploy().then(result => {
+            expect(result).toEqual({ version: '1.13.0' });
+        });
+    });
+
+    it('should reject because tool does not meet minimum requirement.', () => {
+        versions.get_tool_version.and.resolveTo('1.10.0');
+
+        return checkReqs.check_ios_deploy().then(
+            () => fail('Expected promise to be rejected'),
+            reason => expect(reason.message).toContain('version 1.12.2 or greater, you have version 1.10.0')
+        );
+    });
+});
+
+describe('check_os', () => {
+    describe('darwin', () => {
         beforeEach(() => {
-            checkTool = checkReqs.__get__('checkTool');
-
-            spyOn(which, 'sync').and.returnValue('/bin/node');
-            spyOn(versions, 'get_tool_version').and.returnValue(Promise.resolve('1.0.0'));
+            Object.defineProperty(process, 'platform', { value: 'darwin' });
         });
 
-        it('should not have found tool.', () => {
-            which.sync.and.returnValue(false);
-
-            return checkTool('node', '1.0.0').then(
-                () => fail('Expected promise to be rejected'),
-                reason => expect(reason.message).toContain('node was not found.')
-            );
+        afterEach(() => {
+            delete process.platform;
         });
 
-        it('should throw error because version is not following semver-notated.', () => {
-            return checkTool('node', 'a.b.c').then(
-                () => fail('Expected promise to be rejected'),
-                err => expect(err).toEqual(new TypeError('Invalid Version: a.b.c'))
-            );
-        });
-
-        it('should resolve passing back tool version.', () => {
-            return checkTool('node', '1.0.0').then(result => {
-                expect(result).toEqual({ version: '1.0.0' });
+        it('should resolve with the platform name', () => {
+            return checkReqs.check_os().then(result => {
+                expect(result).toEqual('darwin');
             });
         });
+    });
 
-        it('should reject because tool does not meet minimum requirement.', () => {
-            return checkTool('node', '1.0.1').then(
+    describe('non-darwin', () => {
+        beforeEach(() => {
+            Object.defineProperty(process, 'platform', { value: 'linux' });
+        });
+
+        afterEach(() => {
+            delete process.platform;
+        });
+
+        it('should reject with an error', () => {
+            return checkReqs.check_os().then(
                 () => fail('Expected promise to be rejected'),
-                reason => expect(reason.message).toContain('version 1.0.1 or greater, you have version 1.0.0')
+                reason => expect(reason.message).toContain('iOS requires Apple')
             );
         });
     });
