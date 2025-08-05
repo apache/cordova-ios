@@ -19,7 +19,6 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const util = require('node:util');
 const CordovaError = require('cordova-common').CordovaError;
 
 const PodsJson = require(path.resolve(__dirname, '..', '..', '..', 'lib', 'PodsJson.js')).PodsJson;
@@ -40,7 +39,7 @@ describe('unit tests for Podfile module', () => {
             const dummyPath = 'NotPodsJson';
             expect(() => {
                 new PodsJson(dummyPath); /* eslint no-new : 0 */
-            }).toThrow(new CordovaError(util.format('PodsJson: The file at %s is not `%s`.', dummyPath, PodsJson.FILENAME)));
+            }).toThrow(new CordovaError(`PodsJson: The file at ${dummyPath} is not \`${PodsJson.FILENAME}\`.`));
         });
 
         it('Test 002 : setsJson and gets pod test', () => {
