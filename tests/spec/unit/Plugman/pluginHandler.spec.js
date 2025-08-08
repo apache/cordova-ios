@@ -19,7 +19,6 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const rewire = require('rewire');
 const EventEmitter = require('node:events');
 const tmp = require('tmp');
 
@@ -28,7 +27,7 @@ tmp.setGracefulCleanup();
 const PluginInfo = require('cordova-common').PluginInfo;
 const Api = require('../../../../lib/Api');
 const projectFile = require('../../../../lib/projectFile');
-const pluginHandlers = rewire('../../../../lib/plugman/pluginHandlers');
+const pluginHandlers = require('../../../../lib/plugman/pluginHandlers');
 
 const tempdir = tmp.dirSync({ unsafeCleanup: true });
 const temp = path.join(tempdir.name, 'plugman');
