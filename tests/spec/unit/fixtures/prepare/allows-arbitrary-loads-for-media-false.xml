@@ -18,7 +18,7 @@
   under the License.
 -->
 
-<widget id="io.cordova.hellocordova" ios-CFBundleIdentifier="io.cordova.hellocordova.ios" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.apache.cordova.hellocordova" ios-CFBundleIdentifier="org.apache.cordova.hellocordova.ios" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SampleApp</name>
     <access origin="*" allows-arbitrary-loads-for-media="false" />
 </widget>

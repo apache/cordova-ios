@@ -148,7 +148,7 @@ describe('create', () => {
 
     it('should copy config.xml into the newly created project', () => {
         const configPath = path.join(__dirname, 'fixtures', 'test-config-3.xml');
-        const packageName = 'io.cordova.hellocordova.ios';
+        const packageName = 'org.apache.cordova.hellocordova.ios';
         const projectName = 'Hello Cordova';
 
         return verifyCreatedProject(tmpDir, packageName, projectName, false, configPath)
