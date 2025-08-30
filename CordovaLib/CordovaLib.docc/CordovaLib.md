@@ -65,6 +65,7 @@ For more information about Apache Cordova, visit [https://cordova.apache.org](ht
 
 - ``IsAtLeastiOSVersion``
 - ``CDVScreenOrientationDelegate``
+- ``CDVWebViewProcessPoolFactory``
 - ``CDVCommandStatus_NO_RESULT`` <!-- Swift alias -->
 - ``CDVCommandStatus_OK`` <!-- Swift alias -->
 - ``CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION`` <!-- Swift alias -->

@@ -20,6 +20,10 @@
 #import <WebKit/WebKit.h>
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 static CDVWebViewProcessPoolFactory *factory = nil;
 
 @implementation CDVWebViewProcessPoolFactory
@@ -46,3 +50,5 @@ static CDVWebViewProcessPoolFactory *factory = nil;
     return _sharedPool;
 }
 @end
+
+#pragma clang diagnostic pop
