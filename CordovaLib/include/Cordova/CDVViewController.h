@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  ## Overview
  `CDVViewController` presents a view that displays Cordova web content in a
- ``webView``. Although often presented as the root view controller for an app,
+ web view. Although often presented as the root view controller for an app,
  a `CDVViewController` can safely be placed within view controller
  hierarchies—such as navigation and tabbed controllers—or presented modally.
 
@@ -49,11 +49,14 @@ NS_ASSUME_NONNULL_BEGIN
  > guidelines](https://developer.apple.com/app-store/review/guidelines/), you
  > must not expose Apple device APIs to web content that is not bundled within
  > the app.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0")
+ }
  */
 @interface CDVViewController : UIViewController
 
-@property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8, "");
-@property (nonatomic, nullable, readonly, copy) NSString *appURLScheme CDV_DEPRECATED(8, "");
+#pragma mark - Properties
 
 /**
  The view displaying web content for this Cordova controller.
@@ -62,20 +65,25 @@ NS_ASSUME_NONNULL_BEGIN
  plugin is being used to provide the web view implementation. Interactions
  with the web view and its content should be done through the ``webViewEngine``
  property.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0")
+ }
  */
 @property (nonatomic, readonly, nullable, weak) IBOutlet UIView *webView;
-
-@property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects CDV_DEPRECATED(8, "Internal implementation detail, should not be used");
-@property (nullable, nonatomic, readonly, strong) NSDictionary<NSString *, NSString *> *pluginsMap CDV_DEPRECATED(8, "Internal implementation detail, should not be used");
 
 /**
  An array of loaded Cordova plugin instances.
 
  This array is safe to iterate using a `for...in` loop.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property (nonatomic, readonly, copy) NSArray <CDVPlugin *> *enumerablePlugins;
 
-/*
+/**
  The scheme being used to load web content from the app bundle into the Cordova
  web view.
 
@@ -87,10 +95,25 @@ NS_ASSUME_NONNULL_BEGIN
 
  It is not valid to set this to an existing protocol scheme such as `http` or
  `https`.
+
+ @Metadata {
+    @Available(Cordova, introduced: "6.0.0")
+ }
  */
 @property (nonatomic, nullable, readwrite, copy) NSString *appScheme;
 
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "3.0.0")
+ }
+ */
 @property (nonatomic, readonly, strong) CDVCommandQueue *commandQueue;
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0")
+ }
+ */
 @property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
 
 /**
@@ -99,6 +122,10 @@ NS_ASSUME_NONNULL_BEGIN
  This provides a reference to the web view plugin class, which
  implements ``CDVWebViewEngineProtocol`` and allows for interaction with the
  web view.
+
+ @Metadata {
+    @Available(Cordova, introduced: "4.0.0")
+ }
  */
 @property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
 
@@ -107,6 +134,10 @@ NS_ASSUME_NONNULL_BEGIN
 
  This is a dictionary populated from the preference key/value pairs in the
  Cordova XML configuration file.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0")
+ }
  */
 @property (nonatomic, readonly, strong) CDVSettingsDictionary *settings;
 
@@ -116,16 +147,28 @@ NS_ASSUME_NONNULL_BEGIN
  The default value is `"config.xml"`.
 
  This can be set in the storyboard file as a view controller attribute.
+
+ @Metadata {
+    @Available(Cordova, introduced: "5.0.0")
+ }
  */
 @property (nonatomic, readwrite, copy) IBInspectable NSString *configFile;
 
 /**
- The filepath to the Cordova XML configuration file.
+ The file path to the Cordova XML configuration file.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property (nonatomic, nullable, readonly, copy) NSURL *configFilePath;
 
 /**
- The filepath to the HTML error fallback page, if one has been provided.
+ The file path to the HTML error fallback page, if one has been provided.
+
+ @Metadata {
+    @Available(Cordova, introduced: "4.0.0")
+ }
  */
 @property (nonatomic, nullable, readonly, copy) NSURL *errorURL;
 
@@ -135,15 +178,12 @@ NS_ASSUME_NONNULL_BEGIN
  The default value is `"www"`.
 
  This can be set in the storyboard file as a view controller attribute.
- */
-@property (nonatomic, readwrite, copy) IBInspectable NSString *webContentFolderName;
 
-/**
- @DeprecationSummary {
-   Use ``webContentFolderName`` instead.
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
  }
  */
-@property (nonatomic, readwrite, copy) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use webContentFolderName instead", "webContentFolderName");
+@property (nonatomic, readwrite, copy) IBInspectable NSString *webContentFolderName;
 
 /**
  The filename of the HTML file to load into the web view.
@@ -152,16 +192,24 @@ NS_ASSUME_NONNULL_BEGIN
  fall back to `"index.html"` if not specified.
 
  This can be set in the storyboard file as a view controller attribute.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0")
+ }
  */
 @property (nonatomic, nullable, readwrite, copy) IBInspectable NSString *startPage;
 
 /**
- A boolean value indicating whether to show the splash screen while the webview
+ A boolean value indicating whether to show the splash screen while the web view
  is initially loading.
 
  The default value is `YES`.
 
  This can be set in the storyboard file as a view controller attribute.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property (nonatomic) IBInspectable BOOL showInitialSplashScreen;
 
@@ -173,6 +221,10 @@ NS_ASSUME_NONNULL_BEGIN
  the system background color.
 
  This can be set in the storyboard file as a view controller attribute.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property (nonatomic, null_resettable, copy) IBInspectable UIColor *backgroundColor;
 
@@ -184,6 +236,10 @@ NS_ASSUME_NONNULL_BEGIN
  be used as the default value, otherwise the system background color is used.
 
  This can be set in the storyboard file as a view controller attribute.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property (nonatomic, null_resettable, copy) IBInspectable UIColor *splashBackgroundColor;
 
@@ -191,9 +247,20 @@ NS_ASSUME_NONNULL_BEGIN
  The color drawn behind the status bar.
 
  This can be set in the storyboard file as a view controller attribute.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property (nonatomic, null_resettable, copy) IBInspectable UIColor *statusBarBackgroundColor;
 
+#pragma mark - Methods
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0")
+ }
+ */
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 /**
@@ -204,37 +271,110 @@ NS_ASSUME_NONNULL_BEGIN
    - pluginName: The name of the plugin to return.
  - Returns: The ``CDVPlugin`` instance, or `nil` if no plugin exists with the
    given name.
+
+ @Metadata {
+    @Available(Cordova, introduced: "3.0.0")
+ }
  */
 - (nullable CDVPlugin *)getCommandInstance:(NSString *)pluginName;
-- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
-- (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 /**
- @DeprecationSummary {
-   Use ``showSplashScreen:`` instead.
+ @Metadata {
+    @Available(Cordova, introduced: "3.0.0")
  }
-
- - Parameters:
-   - visible: Whether to make the splash screen visible or not.
  */
-- (void)showLaunchScreen:(BOOL)visible CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use showSplashScreen: instead", "showSplashScreen");;
+- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "3.0.0")
+ }
+ */
+- (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
 
 /**
  Toggles the display of the splash screen overtop of the web view.
 
  - Parameters:
    - visible: Whether to make the splash screen visible or not.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (void)showSplashScreen:(BOOL)visible;
 
-/**
- Parses the  Cordova XML configuration file using the given delegate.
 
+#pragma mark - Deprecated
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "3.0.0", deprecated: "8.0.0")
+ }
+ */
+@property (nonatomic, nullable, readonly, strong) NSXMLParser *configParser CDV_DEPRECATED(8.0.0, "");
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0", deprecated: "8.0.0")
+ }
+ */
+@property (nonatomic, nullable, readonly, copy) NSString *appURLScheme CDV_DEPRECATED(8.0.0, "");
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0", deprecated: "8.0.0")
+ }
+ */
+@property (nonatomic, readonly, strong) NSDictionary<NSString *, CDVPlugin *> *pluginObjects CDV_DEPRECATED(8.0.0, "Internal implementation detail, should not be used");
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0", deprecated: "8.0.0")
+ }
+ */
+@property (nullable, nonatomic, readonly, strong) NSDictionary<NSString *, NSString *> *pluginsMap CDV_DEPRECATED(8.0.0, "Internal implementation detail, should not be used");
+
+/**
+ The folder path containing the web content to be displayed.
+
+ The default value is `"www"`.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.0.0", deprecated: "8.0.0")
+ }
+ @DeprecationSummary {
+   Use ``webContentFolderName`` instead.
+ }
+ */
+@property (nonatomic, readwrite, copy) NSString *wwwFolderName CDV_DEPRECATED_WITH_REPLACEMENT(8.0.0, "Use webContentFolderName instead", "webContentFolderName");
+
+/**
+ Toggles the display of the splash screen overtop of the web view.
+
+ - Parameters:
+   - visible: Whether to make the splash screen visible or not.
+
+ @Metadata {
+    @Available(Cordova, introduced: "6.0.0", deprecated: "8.0.0")
+ }
+ @DeprecationSummary {
+   Use ``showSplashScreen:`` instead.
+ }
+ */
+- (void)showLaunchScreen:(BOOL)visible CDV_DEPRECATED_WITH_REPLACEMENT(8.0.0, "Use showSplashScreen: instead", "showSplashScreen");
+
+/**
+ Parses the Cordova XML configuration file using the given delegate.
+
+ @Metadata {
+    @Available(Cordova, introduced: "4.0.0", deprecated: "8.0.0")
+ }
  @DeprecationSummary {
     Use `CDVConfigParser` ``CDVConfigParser/parseConfigFile:withDelegate:`` instead.
  }
  */
-- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate CDV_DEPRECATED(8, "Use CDVConfigParser parseConfigFile:withDelegate: instead");;
+- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate CDV_DEPRECATED(8.0.0, "Use CDVConfigParser parseConfigFile:withDelegate: instead");
 
 @end
 

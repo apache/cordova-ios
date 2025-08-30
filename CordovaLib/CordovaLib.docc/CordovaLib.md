@@ -31,20 +31,24 @@ For more information about Apache Cordova, visit [https://cordova.apache.org](ht
 ### Using Cordova in your app
 
 - ``CDVAppDelegate``
+- ``CDVSceneDelegate``
 - ``CDVViewController``
 
 ### Cordova plugins
 
 - ``CDVPlugin``
-- ``CDVPluginAuthenticationHandler``
-- ``CDVPluginNavigationHandler``
-- ``CDVPluginSchemeHandler``
 
 ### Plugin communication
+
 - ``CDVPluginResult``
 - ``CDVCommandStatus``
 - ``CDVInvokedUrlCommand``
-- ``CDVCommandDelegate``
+
+### Plugin Protocols
+
+- ``CDVPluginAuthenticationHandler``
+- ``CDVPluginNavigationHandler``
+- ``CDVPluginSchemeHandler``
 
 ### Web View plugins
 
@@ -54,6 +58,7 @@ For more information about Apache Cordova, visit [https://cordova.apache.org](ht
 ### Utilities
 
 - ``CDVSettingsDictionary``
+- ``CDVCommandDelegate``
 - ``CDVCommandQueue``
 - ``CDVConfigParser``
 - ``CDVTimer``

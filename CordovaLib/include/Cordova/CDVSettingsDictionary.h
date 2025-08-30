@@ -23,11 +23,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  A dictionary-like interface providing access to the preference settings for a Cordova web view.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @interface CDVSettingsDictionary : NSDictionary
 
 /**
  The number of entries in the dictionary.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 @property(readonly) NSUInteger count;
 
@@ -39,6 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
    - dict: A dictionary containing the keys and values with which to initialize
            the new dictionary.
  - Returns: An initialized dictionary containing the keys and values found in `dict`.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (instancetype)initWithDictionary:(NSDictionary *)dict NS_DESIGNATED_INITIALIZER;
 
@@ -48,6 +60,10 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - key:  The key for which to return the corresponding value.
  - Returns:  The value associated with `key`, or `nil` if no value is associated with `key`.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (id)objectForKey:(NSString *)key;
 
@@ -55,6 +71,10 @@ NS_ASSUME_NONNULL_BEGIN
  Provides an enumerator to access the keys in the dictionary.
 
  - Returns: An enumerator object that lets you access each key in the dictionary.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (NSEnumerator *)keyEnumerator;
 
@@ -64,6 +84,10 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - key:  The key for which to return the corresponding value.
  - Returns:  The value associated with `key`, or `nil` if no value is associated with `key`.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (id)cordovaSettingForKey:(NSString *)key;
 
@@ -75,6 +99,10 @@ NS_ASSUME_NONNULL_BEGIN
    - key:  The key for which to return the corresponding value.
    - defaultValue: The default value to return if the key is missing.
  - Returns:  The value associated with `key`, or the provided default value.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (BOOL)cordovaBoolSettingForKey:(NSString *)key defaultValue:(BOOL)defaultValue;
 
@@ -86,6 +114,10 @@ NS_ASSUME_NONNULL_BEGIN
    - key:  The key for which to return the corresponding value.
    - defaultValue: The default value to return if the key is missing.
  - Returns:  The value associated with `key`, or the provided default value.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (CGFloat)cordovaFloatSettingForKey:(NSString *)key defaultValue:(CGFloat)defaultValue;
 
@@ -99,6 +131,10 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - value: The value to be stored with the given key.
    - key: The preference name.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (void)setObject:(id)value forKey:(NSString *)key;
 
@@ -115,6 +151,10 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - value: The value to be stored with the given key.
    - key: The preference name.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (void)setObject:(id)value forKeyedSubscript:(NSString *)key;
 
@@ -128,6 +168,10 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - value: The value to be stored with the given key.
    - key: The preference name.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 - (void)setCordovaSetting:(id)value forKey:(NSString *)key;
 

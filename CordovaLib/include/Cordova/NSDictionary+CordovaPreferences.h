@@ -26,14 +26,14 @@
 
 @interface NSDictionary (CordovaPreferences)
 
-- (id)cordovaSettingForKey:(NSString*)key CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
-- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
-- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
+- (id)cordovaSettingForKey:(NSString*)key CDV_DEPRECATED(8.0.0, "Use CDVSettingsDictionary");
+- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue CDV_DEPRECATED(8.0.0, "Use CDVSettingsDictionary");
+- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue CDV_DEPRECATED(8.0.0, "Use CDVSettingsDictionary");
 
 @end
 
 @interface NSMutableDictionary (CordovaPreferences)
 
-- (void)setCordovaSetting:(id)value forKey:(NSString*)key CDV_DEPRECATED(8, "Use CDVSettingsDictionary");
+- (void)setCordovaSetting:(id)value forKey:(NSString*)key CDV_DEPRECATED(8.0.0, "Use CDVSettingsDictionary");
 
 @end

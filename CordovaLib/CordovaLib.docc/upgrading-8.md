@@ -256,7 +256,7 @@ The following headers are deprecated due to adding global category extensions to
 * `<Cordova/NSMutableArray+QueueAdditions.h>`  
   This was only ever intended as an internal implementation detail.
 
-* `<Cordova/CDV.h>`
+* `<Cordova/CDV.h>`  
   Use `<Cordova/Cordova.h>` instead.
 
 ## Other Changes

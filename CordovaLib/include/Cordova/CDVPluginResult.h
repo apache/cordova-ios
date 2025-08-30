@@ -26,6 +26,10 @@
  ## See Also
 
  - ``CDVPluginResult``
+
+ @Metadata {
+    @Available(Cordova, introduced: "5.0.0")
+ }
  */
 typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
     /** Status code indicating no command result. */
@@ -65,7 +69,7 @@ typedef NS_ENUM(NSUInteger, CDVCommandStatus) {
 // values.
 // This declares extern'ed constants (implemented in CDVPluginResult.m)
 // TODO: Remove this in Cordova iOS 9
-#define SWIFT_ENUM_COMPAT_HACK(enumVal, replacement) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) CDV_DEPRECATED_WITH_REPLACEMENT(8, "Use the CDVCommandStatus." #replacement " enum value instead", "CDVCommandStatus." #replacement)
+#define SWIFT_ENUM_COMPAT_HACK(enumVal, replacement) extern const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) CDV_DEPRECATED_WITH_REPLACEMENT(8.0.0, "Use the CDVCommandStatus." #replacement " enum value instead", "CDVCommandStatus." #replacement)
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT, noResult);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK, ok);
 SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION, classNotFoundException);
@@ -87,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSNumber *status;
 @property (nonatomic, nullable, strong, readonly) id message;
 @property (nonatomic, strong) NSNumber *keepCallback;
-@property (nonatomic, strong) id associatedObject CDV_DEPRECATED(8, "");
+@property (nonatomic, strong) id associatedObject CDV_DEPRECATED(8.0.0, "");
 
 - (instancetype)init;
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal;
@@ -103,8 +107,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray *)theMessages;
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode;
 
-+ (void)setVerbose:(BOOL)verbose CDV_DEPRECATED(8, "");
-+ (BOOL)isVerbose CDV_DEPRECATED(8, "");
++ (void)setVerbose:(BOOL)verbose CDV_DEPRECATED(8.0.0, "");
++ (BOOL)isVerbose CDV_DEPRECATED(8.0.0, "");
 
 - (void)setKeepCallbackAsBool:(BOOL)bKeepCallback;
 

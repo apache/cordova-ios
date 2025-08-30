@@ -25,4 +25,3 @@
 - (void)setBackgroundColor:(CDVInvokedUrlCommand*)command;
 
 @end
-

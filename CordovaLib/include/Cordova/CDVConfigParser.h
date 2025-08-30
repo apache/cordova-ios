@@ -32,11 +32,19 @@ NS_ASSUME_NONNULL_BEGIN
 
  Use ``parseConfigFile:withDelegate:`` if you need to intercept the XML parsing
  and handle the data yourself with an `NSXMLParserDelegate`.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.3.0")
+ }
  */
 @interface CDVConfigParser : NSObject <NSXMLParserDelegate>
 
 /**
  A dictionary mapping Cordova plugin name keys to the plugin classes that implement them.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.3.0")
+ }
  */
 @property (nonatomic, readonly, strong) NSMutableDictionary *pluginsDict;
 
@@ -45,16 +53,28 @@ NS_ASSUME_NONNULL_BEGIN
 
  This should not be used directly, you should only use it to initialize a
  ``CDVSettingsDictionary`` object.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.3.0")
+ }
  */
 @property (nonatomic, readonly, strong) NSMutableDictionary *settings;
 
 /**
  An array of plugin names to load immediately when Cordova initializes.
+ 
+ @Metadata {
+    @Available(Cordova, introduced: "2.5.0")
+ }
  */
 @property (nonatomic, readonly, strong) NSMutableArray *startupPluginNames;
 
 /**
  The path to the HTML page to display when the web view loads.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.4.0")
+ }
  */
 @property (nonatomic, nullable, readonly, strong) NSString *startPage;
 
@@ -67,6 +87,10 @@ NS_ASSUME_NONNULL_BEGIN
  - Parameters:
    - filePath: The file path URL to the configuration file.
  - Returns: A ``CDVConfigParser`` with the parsed result.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 + (instancetype)parseConfigFile:(NSURL *)filePath;
 
@@ -77,6 +101,10 @@ NS_ASSUME_NONNULL_BEGIN
    - filePath: The file path URL to the configuration file.
    - delegate: The delegate to handle the parsed XML data.
  - Returns: Whether the given file was successfully parsed.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
  */
 + (BOOL)parseConfigFile:(NSURL *)filePath withDelegate:(id <NSXMLParserDelegate>)delegate;
 @end

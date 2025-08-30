@@ -35,13 +35,37 @@ NS_ASSUME_NONNULL_BEGIN
  notification registration, and deep linking.
 
  See `UIApplicationDelegate` for more details about app delegates.
+
+ @Metadata {
+    @Available(Cordova, introduced: "4.0.0")
+ }
  */
 @interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
 
+/**
+ The application window.
+
+ @Metadata {
+    @Available(iOS, introduced: "2.0", deprecated: "13.0")
+    @Available(iPadOS, introduced: "2.0", deprecated: "13.0")
+    @Available(MacCatalyst, introduced: "2.0", deprecated: "13.0")
+    @Available(Cordova, introduced: "4.0.0", deprecated: "8.0.0")
+ }
+ @DeprecationSummary {
+    Deprecated in Cordova 8 in favour of UIScene protocols.
+ }
+ */
 @property (nullable, nonatomic, strong) IBOutlet UIWindow *window API_DEPRECATED_WITH_REPLACEMENT("SceneDelegate:window", ios(2.0, 13.0));
 
 // TODO: Remove in Cordova iOS 9
-@property (nullable, nonatomic, strong) IBOutlet CDVViewController *viewController CDV_DEPRECATED(8, "");
+/**
+ The ``CDVViewController`` instance.
+
+ @Metadata {
+    @Available(Cordova, introduced: "4.0.0", deprecated: "8.0.0")
+ }
+ */
+@property (nullable, nonatomic, strong) IBOutlet CDVViewController *viewController CDV_DEPRECATED(8.0.0, "");
 
 @end
 
