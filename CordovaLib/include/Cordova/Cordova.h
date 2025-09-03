@@ -22,7 +22,9 @@
 #import <Cordova/CDVAvailability.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
 #import <Cordova/CDVAppDelegate.h>
+#import <Cordova/CDVSceneDelegate.h>
 #import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVPluginNotifications.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/CDVViewController.h>
 #import <Cordova/CDVCommandDelegate.h>
