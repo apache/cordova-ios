@@ -221,7 +221,11 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
 
     NSString *type;
     [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:nil];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassMIMEType);
+#pragma clang diagnostic pop
 }
 
 - (nullable NSData *)readFromFileHandle:(NSFileHandle *)handle upTo:(NSUInteger)length error:(NSError **)err
