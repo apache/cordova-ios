@@ -83,7 +83,10 @@
         configuration = _configuration;
     } else {
         configuration = [[WKWebViewConfiguration alloc] init];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+#pragma clang diagnostic pop
     }
     
     if (settings == nil) {

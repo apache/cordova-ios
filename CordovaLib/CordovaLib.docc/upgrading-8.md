@@ -241,6 +241,12 @@ self.commandDelegate.send(CDVPluginResult(status: .ok), callbackId: command.call
 
 These aliases were introduced in and are backwards compatible with all existing versions since Cordova iOS 5.0.0. See ``CDVCommandStatus`` for a list of the enum values.
 
+### Deprecating CDVWebViewProcessPoolFactory
+
+Apple has deprecated the `WKProcessPool` API, saying that it has no effect in iOS 15 and newer. As such, the `CDVWebViewProcessPoolFactory` API is marked as deprecated, but still exists to support iOS 13 and 14.
+
+The `CDVWebViewProcessPoolFactory` API was also problematic because it exposed WebKit-specific API types to the public API interface of Cordova, potentially causing issues if those APIs need to change in the future. With this deprecation and eventual removal, Cordova is better insulated from upstream WebView changes.
+
 ## Public API Removals
 The following classes were previously exposed as part of the Cordova iOS public API, but were only used as internal implementation details. To better establish the public/private API boundary within Cordova iOS, they have been removed from the public API in Cordova iOS 8.
 
