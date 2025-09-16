@@ -36,7 +36,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
-        os: [macos-15]
+        os: [macos-15, macos-26]
 
     steps:
       - uses: actions/checkout@v4
@@ -45,11 +45,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
 
       - name: Environment Information
         run: |

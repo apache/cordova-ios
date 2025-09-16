@@ -81,8 +81,9 @@ function verifyBuild (tmpDir) {
     );
 
     const Api = require(path.join(tmpDir, 'cordova', 'Api.js'));
+    const target = process.env.CDV_IOS_SIM?.replace(/\s/g, '-') ?? 'iPhone-16e';
 
-    return expectAsync(new Api('ios', tmpDir).build({ emulator: true, buildFlag: ['-quiet'] }))
+    return expectAsync(new Api('ios', tmpDir).build({ emulator: true, buildFlag: ['-quiet'], target }))
         .toBeResolved();
 }
 
