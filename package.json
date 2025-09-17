@@ -19,7 +19,7 @@
     "test": "npm run coverage && npm run objc-tests",
     "coverage": "c8 jasmine --config=tests/spec/coverage.json",
     "e2e-tests": "jasmine tests/spec/create.spec.js",
-    "objc-tests": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -scheme CordovaTestApp -destination \"platform=iOS Simulator,name=${CDV_IOS_SIM:-iPhone SE (3rd generation)}\" -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "objc-tests": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -scheme CordovaTestApp -destination \"platform=iOS Simulator,name=${CDV_IOS_SIM:-iPhone 16e}\" -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "preobjc-tests": "killall Simulator || true",
     "unit-tests": "jasmine --config=tests/spec/unit.json",
     "lint": "eslint ."
