@@ -19,7 +19,7 @@
 
 #import <Cordova/CDVAppDelegate.h>
 #import <Cordova/CDVAvailability.h>
-#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVPluginNotifications.h>
 #import <Cordova/CDVViewController.h>
 
 @implementation CDVAppDelegate

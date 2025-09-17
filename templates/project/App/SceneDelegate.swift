@@ -17,9 +17,8 @@
  under the License.
 */
 
-import UIKit
+import Cordova
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    var window: UIWindow?
+class SceneDelegate: CDVSceneDelegate {
 }
 
