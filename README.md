@@ -65,6 +65,20 @@ npm install
 npm test
 ```
 
+## Install nightly build
+```bash
+cordova platform add ios@nightly
+```
+
+### Notes
+We do not recommend using nightly in production releases. In-fact we can not suggest using as they don't go though an official release voting process. But people can use it to test and confirm if changes that landed in the main branch to see if it resolved any issues they have or test for potential new issues to report on.
+
+Sometimes a nightly build could be missing for a few reasons but the main two reasons are:
+- GitHub deactivates our cron task because the repo hasnt has any activity over a period of time. We just have to restart the cron task. This might happen ever 3 months.
+- NPM cached and didnt detect one of our nightly releases so a another package that relied on it couldnt be fetched and failed.
+
+See more regarding nightly builds: https://cordova.apache.org/contribute/nightly_builds.html
+
 ## Further reading
 
 * [Apache Cordova](https://cordova.apache.org/)
