@@ -132,8 +132,6 @@ UIScrollView *scrollView = self.webView.scrollView;
 // New code (Objective-C)
 #import <objc/message.h>
 
-UIScrollView *scrollView;
-
 if ([self.webView respondsToSelector:@selector(scrollView)]) {
     UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
 }
