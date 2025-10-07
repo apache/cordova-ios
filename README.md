@@ -77,7 +77,6 @@ Nightly builds are **not recommended for production apps**. They are intended fo
 
 Nightly builds are generated daily and may be **unstable**.
 
-- GitHub deactivates our cron task because the repo hasnt has any activity over a period of time. We just have to restart the cron task. This might happen ever 3 months.
 - NPM cached and didnt detect one of our nightly releases so a another package that relied on it couldnt be fetched and failed.
 
 See more regarding nightly builds: https://cordova.apache.org/contribute/nightly_builds.html
