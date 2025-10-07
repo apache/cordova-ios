@@ -72,6 +72,7 @@ cordova platform add ios@nightly
 ```
 
 ### Notes
+
 We do not recommend using nightly in production releases. In-fact we can not suggest using as they don't go though an official release voting process. But people can use it to test and confirm if changes that landed in the main branch to see if it resolved any issues they have or test for potential new issues to report on.
 
 Sometimes a nightly build could be missing for a few reasons but the main two reasons are:
