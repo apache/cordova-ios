@@ -60,8 +60,18 @@ NS_ASSUME_NONNULL_END
 
 @interface CDVPlugin : NSObject {}
 
-@property (nonatomic, readonly, weak) UIView* webView;
+/**
+ * The web view engine that manages the web view displaying the Cordova application's content.
+ * By default, this will be a CDVWebViewEngine instance, but could also be a custom implementation as well.
+ */
 @property (nonatomic, readonly, weak) id <CDVWebViewEngineProtocol> webViewEngine;
+
+/**
+ * The web view that displays the Cordova application's content. This is a shortcode
+ * for the webView property of the webViewEngine property. If the webViewEngine
+ * is a CDVWebViewEngine, this will be a WKWebView.
+ */
+@property (nonatomic, readonly, weak) UIView* webView;
 
 @property (nonatomic, weak) CDVViewController* viewController;
 @property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
