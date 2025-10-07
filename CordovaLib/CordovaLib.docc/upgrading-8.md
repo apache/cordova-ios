@@ -125,18 +125,13 @@ You can still access the `scrollView` property of the web view by dynamically in
 
 ```objc
 // Old code
-UIScrollView *scroller = self.webView.scrollView;
+UIScrollView *scrollView = self.webView.scrollView;
 ```
 
 ```objc
 // New code (Objective-C)
-#import <objc/message.h>
-
-UIScrollView *scroller;
-SEL scrollViewSelector = NSSelectorFromString(@"scrollView");
-
-if ([self.webView respondsToSelector:scrollViewSelector]) {
-    scroller = ((id (*)(id, SEL))objc_msgSend)(self.webView, scrollViewSelector);
+if ([self.webView respondsToSelector:@selector(scrollView)]) {
+    UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
 }
 ```
 
