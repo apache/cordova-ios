@@ -77,7 +77,6 @@ Nightly builds are **not recommended for production apps**. They are intended fo
 
 Nightly builds are generated daily and may be **unstable**.
 
-- NPM cached and didnt detect one of our nightly releases so a another package that relied on it couldnt be fetched and failed.
 
 See more regarding nightly builds: https://cordova.apache.org/contribute/nightly_builds.html
 
