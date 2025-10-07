@@ -78,7 +78,7 @@ Nightly builds are **not recommended for production apps**. They are intended fo
 Nightly builds are generated daily and may be **unstable**.
 
 
-See more regarding nightly builds: https://cordova.apache.org/contribute/nightly_builds.html
+See [Apache Cordova - Nightly Builds](https://cordova.apache.org/contribute/nightly_builds.html) for more details.
 
 ## Further reading
 
