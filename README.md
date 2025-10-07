@@ -65,7 +65,8 @@ npm install
 npm test
 ```
 
-## Install nightly build
+## Install Nightly Build
+
 ```bash
 cordova platform add ios@nightly
 ```
