@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
+#import <Cordova/CDVPluginNotifications.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDVSettingsDictionary.h>
@@ -43,18 +44,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) UIScrollView* scrollView CDV_DEPRECATED(8, "Check for a scrollView property on the view object at runtime and invoke it dynamically.");
 @end
 #endif
-
-extern const NSNotificationName CDVPageDidLoadNotification;
-extern const NSNotificationName CDVPluginHandleOpenURLNotification;
-extern const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(8, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.");
-extern const NSNotificationName CDVPluginResetNotification;
-extern const NSNotificationName CDVViewWillAppearNotification;
-extern const NSNotificationName CDVViewDidAppearNotification;
-extern const NSNotificationName CDVViewWillDisappearNotification;
-extern const NSNotificationName CDVViewDidDisappearNotification;
-extern const NSNotificationName CDVViewWillLayoutSubviewsNotification;
-extern const NSNotificationName CDVViewDidLayoutSubviewsNotification;
-extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 
 NS_ASSUME_NONNULL_END
 
