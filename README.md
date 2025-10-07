@@ -77,7 +77,6 @@ Nightly builds are **not recommended for production apps**. They are intended fo
 
 Nightly builds are generated daily and may be **unstable**.
 
-Sometimes a nightly build could be missing for a few reasons but the main two reasons are:
 - GitHub deactivates our cron task because the repo hasnt has any activity over a period of time. We just have to restart the cron task. This might happen ever 3 months.
 - NPM cached and didnt detect one of our nightly releases so a another package that relied on it couldnt be fetched and failed.
 
