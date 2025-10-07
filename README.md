@@ -73,7 +73,9 @@ cordova platform add ios@nightly
 
 ### Notes
 
-We do not recommend using nightly in production releases. In-fact we can not suggest using as they don't go though an official release voting process. But people can use it to test and confirm if changes that landed in the main branch to see if it resolved any issues they have or test for potential new issues to report on.
+Nightly builds are **not recommended for production apps**. They are intended for testing purposes—either to check if recent changes in the main branch have fixed existing issues, or to identify new bugs before an official release.
+
+Nightly builds are generated daily and may be **unstable**.
 
 Sometimes a nightly build could be missing for a few reasons but the main two reasons are:
 - GitHub deactivates our cron task because the repo hasnt has any activity over a period of time. We just have to restart the cron task. This might happen ever 3 months.
