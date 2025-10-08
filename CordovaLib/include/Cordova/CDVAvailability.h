@@ -99,7 +99,8 @@
     #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_8_0_0
 #endif
 
-/*
+// TODO: Remove in Cordova iOS 9
+/**
  Returns YES if it is at least version specified as NSString(X)
  Usage:
      if (IsAtLeastiOSVersion(@"5.1")) {

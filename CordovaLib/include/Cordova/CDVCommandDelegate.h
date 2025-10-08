@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
-@property (nonatomic, nullable, copy) NSURL *(^urlTransformer)(NSURL *) CDV_DEPRECATED(8, "");
+@property (nonatomic, nullable, copy) NSURL *(^urlTransformer)(NSURL *) CDV_DEPRECATED(8.0.0, "");
 
 @required
 /**

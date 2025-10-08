@@ -26,9 +26,9 @@
 
 @interface NSMutableArray (QueueAdditions)
 
-- (id)cdv_pop CDV_DEPRECATED(8, "");
-- (id)cdv_queueHead CDV_DEPRECATED(8, "");
+- (id)cdv_pop CDV_DEPRECATED(8.0.0, "");
+- (id)cdv_queueHead CDV_DEPRECATED(8.0.0, "");
 - (id)cdv_dequeue;
-- (void)cdv_enqueue:(id)obj CDV_DEPRECATED(8, "");
+- (void)cdv_enqueue:(id)obj CDV_DEPRECATED(8.0.0, "");
 
 @end

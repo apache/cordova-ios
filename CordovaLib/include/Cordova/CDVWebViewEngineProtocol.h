@@ -55,17 +55,21 @@ NS_ASSUME_NONNULL_END
 @protocol CDVWebViewEngineConfigurationDelegate <NSObject>
 
 @optional
-/// Provides a fully configured WKWebViewConfiguration which will be overriden with
-/// any related settings you add to config.xml (e.g., `PreferredContentMode`).
-/// Useful for more complex configuration, including websiteDataStore.
-///
-/// Example usage:
-///
-/// extension CDVViewController: CDVWebViewEngineConfigurationDelegate {
-///     public func configuration() -> WKWebViewConfiguration {
-///         // return your config here
-///     }
-/// }
+/**
+ Provides a fully configured WKWebViewConfiguration which will be overridden
+ with any related settings you add to config.xml (e.g., `PreferredContentMode`).
+ This is useful for more complex configuration, including `websiteDataStore`.
+
+ ## Example usage
+
+ ```swift
+ extension CDVViewController: CDVWebViewEngineConfigurationDelegate {
+     public func configuration() -> WKWebViewConfiguration {
+         // return your config here
+     }
+ }
+ ```
+ */
 - (nonnull WKWebViewConfiguration*)configuration;
 
 @end

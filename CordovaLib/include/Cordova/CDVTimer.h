@@ -19,9 +19,67 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ Utility class for measuring the time spent on an operation.
+
+ You can use `CDVTimer` to measure named operations, and it will print the
+ elapsed time to the application log upon completion of the operation. This
+ allows for simple benchmarking of potentially expensive operations like plugin
+ loading and initialization.
+
+ At the start of an operation, call ``start:`` with a unique name, then when the
+ operation finishes, call ``stop:`` with the same name:
+
+ @TabNavigator {
+    @Tab("Swift") {
+        ```swift
+        CDVTimer.start("ExpensiveOperation")
+
+        doExpensiveOperation();
+
+        CDVTimer.stop("ExpensiveOperation")
+        ```
+    }
+    @Tab("Objective-C") {
+        ```objc
+        [CDVTimer start:@"ExpensiveOperation"];
+
+        doExpensiveOperation();
+
+        [CDVTimer stop:@"ExpensiveOperation"];
+        ```
+    }
+ }
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.7.0")
+ }
+ */
 @interface CDVTimer : NSObject
 
-+ (void)start:(NSString*)name;
-+ (void)stop:(NSString*)name;
+/**
+ Begins measuring elapsed time for the named operation.
+
+ - Parameters:
+   - name: A unique name to identify the timed operation.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.7.0")
+ }
+ */
++ (void)start:(NSString *)name;
+
+/**
+ Stops measuring elapsed time for the named operation, and prints the elapsed
+ time to the log.
+
+ - Parameters:
+   - name: The unique name to identify the timed operation.
+
+ @Metadata {
+    @Available(Cordova, introduced: "2.7.0")
+ }
+ */
++ (void)stop:(NSString *)name;
 
 @end
