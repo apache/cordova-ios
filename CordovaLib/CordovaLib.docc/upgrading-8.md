@@ -119,7 +119,7 @@ Plugins should prefer accessing the view controller using their ``CDVPlugin/view
   
 ### UIView scrollView property deprecation
 
-The `scrollView` property added as a global category extension to `UIView` is now deprecated in Objective C code and **removed entirely in Swift code**. This is to prevent conflicts with other Swift classes that extend `UIView` and have their own `scrollView` properties.
+The `scrollView` property added as a global category extension to `UIView` by Cordova is now deprecated in Objective C code and **removed entirely in Swift code**. This is to prevent conflicts with other Swift classes that extend `UIView` and have their own `scrollView` properties. You can read more about the scrollView property in the Cordova discussion [Cordova iOS 8.x Upgrade Guide: UIView scrollView property deprecation](https://github.com/apache/cordova/discussions/565#discussioncomment-14621123).
 
 You can still access the `scrollView` property of the web view by dynamically invoking the method:
 
