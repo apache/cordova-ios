@@ -73,7 +73,7 @@ cordova platform add ios@nightly
 
 ### Notes
 
-Nightly builds are **not recommended for production apps**. They are intended for testing purposes—either to check if recent changes in the main branch have fixed existing issues, or to identify new bugs before an official release.
+Nightly builds are **not recommended for production apps**. They are intended for testing purposes. This allows users either to check if recent changes in the main branch have fixed existing issues or to identify new bugs before an official release.
 
 Nightly builds are generated daily and may be **unstable**.
 
