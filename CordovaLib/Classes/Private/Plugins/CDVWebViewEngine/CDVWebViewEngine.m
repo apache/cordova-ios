@@ -288,7 +288,9 @@
 - (void) onAppWillEnterForeground:(NSNotification*)notification {
     if ([self shouldReloadWebView]) {
         NSLog(@"%@", @"CDVWebViewEngine reloading!");
-        [(WKWebView*)_engineWebView reload];
+        NSURL* url = [((CDVViewController*) self.viewController) appUrl];
+        NSURLRequest* appReq = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:20.0];
+        [self loadRequest:appReq];
     }
 }
 
@@ -565,7 +567,11 @@
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
-    [webView reload];
+    CDVViewController *vc = (CDVViewController *)self.viewController;
+    [vc showLaunchScreen:true];
+    NSURL* url = [vc appUrl];
+    NSURLRequest* appReq = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:20.0];
+    [self loadRequest:appReq];
 }
 
 - (BOOL)defaultResourcePolicyForURL:(NSURL*)url

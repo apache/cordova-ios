@@ -262,7 +262,9 @@ NS_ASSUME_NONNULL_BEGIN
  }
  */
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
-
+- (nullable NSString*)appURLScheme;
+- (nullable NSURL*)errorURL;
+- (NSURL*)appUrl;
 /**
  Returns the ``CDVPlugin`` instance of the given plugin name, creating the
  instance if one does not exist.
