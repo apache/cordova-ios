@@ -66,6 +66,7 @@ jobs:
               - templates/project/www/cordova.js
 
       - name: npm install and test
+        timeout-minutes: 40
         run: |
           npm i -g ios-deploy
           npm cit
@@ -114,6 +115,7 @@ jobs:
               - templates/project/www/cordova.js
 
       - name: npm install and test
+        timeout-minutes: 40
         run: |
           npm ci
           npm run lint
