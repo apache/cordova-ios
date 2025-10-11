@@ -41,6 +41,9 @@ jobs:
           - os: macos-26
             node-version: 24.x
 
+    env:
+      CDV_IOS_SIM: iPhone 16e
+
     steps:
       - uses: actions/checkout@v5
 
@@ -64,6 +67,10 @@ jobs:
               - coverage
               - node_modules
               - templates/project/www/cordova.js
+
+      - name: Boot iOS simulator
+        run: |
+          xcrun simctl boot "$CDV_IOS_SIM"
 
       - name: npm install and test
         timeout-minutes: 40
