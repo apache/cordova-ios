@@ -323,7 +323,7 @@
             NSURL* readAccessUrl = [request.URL URLByDeletingLastPathComponent];
             return [(WKWebView*)_engineWebView loadFileURL:request.URL allowingReadAccessToURL:readAccessUrl];
         } else if (request.URL.fileURL) {
-            NSURL* startURL = [NSURL URLWithString:((CDVViewController *)self.viewController).startPage];
+            NSURL* startURL = [NSURL URLWithString:self.viewController.startPage];
             NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
             NSURL *url = [[NSURL URLWithString:self.CDV_ASSETS_URL] URLByAppendingPathComponent:request.URL.path];
             if ([request.URL.path isEqualToString:startFilePath]) {
@@ -335,7 +335,8 @@
             if(request.URL.fragment) {
                 url = [NSURL URLWithString:[@"#" stringByAppendingString:request.URL.fragment] relativeToURL:url];
             }
-            request = [NSURLRequest requestWithURL:url];
+            // We ignore any existing cached data, since we're already loading it from the filesystem
+            request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:request.timeoutInterval];
         }
         return [(WKWebView*)_engineWebView loadRequest:request];
     } else { // can't load, print out error
