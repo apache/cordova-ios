@@ -80,8 +80,14 @@ static NSDictionary *testSettings;
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:&err];
     XCTAssertNil(err);
 
+    NSSet<Class> *classes = [NSSet setWithArray:@[
+      CDVSettingsDictionary.class,
+      NSNumber.class,
+      NSString.class,
+    ]];
+
     err = nil;
-    id result = [NSKeyedUnarchiver unarchivedObjectOfClass:[CDVSettingsDictionary class] fromData:data error:&err];
+    id result = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&err];
     XCTAssertNil(err);
 
     XCTAssertTrue([dict isEqualToDictionary:result], @"Not equal to creating dictionary");
