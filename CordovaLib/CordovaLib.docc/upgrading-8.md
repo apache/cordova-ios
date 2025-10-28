@@ -167,6 +167,26 @@ import Foundation
 import UIKit
 ```
 
+### `CDVPluginResult` Swift optionality
+
+The `CDVPluginResult` constructors have been annotated as returning a non-null object, which means the constructor in Swift no longer returns an optional value that needs to be unwrapped. However, this means that attempts to unwrap the value will now be errors.
+
+In most cases, you shouldn't need to worry about the optionality of the result before passing it to `commandDelegate.send` but if you are setting other options then you might need to explicitly store as an optional for backwards compatibility:
+
+```swift
+// Old code (Swift)
+let result = CDVPluginResult(status: .ok, messageAs: "some value")!
+result.setKeepCallbackAs(true)
+self.commandDelegate.send(result, callbackId: callback)
+```
+
+```swift
+// New code (Swift)
+let result: CDVPluginResult? = CDVPluginResult(status: .ok, messageAs: "some value")
+result?.setKeepCallbackAs(true)
+self.commandDelegate.send(result, callbackId: callback)
+```
+
 ## Other Major Changes
 ### Deprecating AppDelegate category extensions
 
