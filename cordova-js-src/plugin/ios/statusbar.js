@@ -23,6 +23,10 @@ var exec = require('cordova/exec');
 var statusBarVisible = true;
 var statusBar = {};
 
+// This <script> element is explicitly used by Cordova's statusbar for computing color. (Do not use this element)
+const statusBarScript = document.createElement('script');
+document.head.appendChild(statusBarScript);
+
 Object.defineProperty(statusBar, 'visible', {
     configurable: false,
     enumerable: true,
@@ -54,9 +58,8 @@ Object.defineProperty(statusBar, 'setBackgroundColor', {
     enumerable: false,
     writable: false,
     value: function (value) {
-        var script = document.querySelector('script[src$="cordova.js"]');
-        script.style.color = value;
-        var rgbStr = window.getComputedStyle(script).getPropertyValue('color');
+        statusBarScript.style.color = value;
+        var rgbStr = window.getComputedStyle(statusBarScript).getPropertyValue('color');
 
         if (!rgbStr.match(/^rgb/)) {
             return;
