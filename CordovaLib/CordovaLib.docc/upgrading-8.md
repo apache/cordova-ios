@@ -345,3 +345,5 @@ The following headers are deprecated due to adding global category extensions to
 
   * The ``CDVViewController/showLaunchScreen:`` method is deprecated.  
     This method has been renamed to ``CDVViewController/showSplashScreen:``.
+
+  * Added a new ``CDVViewController/loadStartPage`` method to load the initial starting page in the web view, replacing any existing content.
