@@ -41,7 +41,6 @@
     "cordova-common": "^6.0.0",
     "elementtree": "^0.1.7",
     "execa": "^5.1.1",
-    "ios-sim": "^8.0.2",
     "nopt": "^8.1.0",
     "plist": "^3.1.0",
     "semver": "^7.4.0",

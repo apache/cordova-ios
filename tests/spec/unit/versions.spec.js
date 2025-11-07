@@ -53,12 +53,6 @@ if (process.platform === 'darwin') {
                 });
             }, 10000);
 
-            it('should find ios-sim version.', () => {
-                return versions.get_tool_version('ios-sim').then((version) => {
-                    expect(version).not.toBe(undefined);
-                });
-            }, 10000);
-
             it('should find ios-deploy version.', () => {
                 return versions.get_tool_version('ios-deploy').then((version) => {
                     expect(version).not.toBe(undefined);

@@ -24,7 +24,7 @@ const PluginManager = require('cordova-common').PluginManager;
 const Api = require('../../../lib/Api');
 const check_reqs = require('../../../lib/check_reqs');
 
-// The lib/run module pulls in ios-sim, which has a hard requirement that it
+// The lib/run module pulls in simctl, which has a hard requirement that it
 // be run on a Mac OS - simply requiring the module is enough to trigger the
 // environment checks. These checks will blow up on Windows + Linux.
 // So, conditionally pull in the module, and conditionally test the `run`
@@ -80,7 +80,7 @@ describe('Platform Api', () => {
 
         // See the comment at the top of this file, in the list of requires,
         // for information on why we conditionall run this test.
-        // tl;dr run_mod requires the ios-sim module, which requires mac OS.
+        // tl;dr run_mod requires the simctl module, which requires mac OS.
         if (process.platform === 'darwin') {
             describe('run', () => {
                 beforeEach(() => {
