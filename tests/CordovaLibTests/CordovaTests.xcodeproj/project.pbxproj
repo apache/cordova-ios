@@ -31,6 +31,8 @@
 		905C8BA82CF0756E007EECEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905C8BA72CF0756E007EECEF /* AppDelegate.swift */; };
 		9085EE302CF0617800603B73 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FA7CAC1E4BB6B30077B045 /* Cordova.framework */; };
 		90A775DD2C6F257500FC5BB0 /* CDVSettingsDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 90A775DC2C6F256D00FC5BB0 /* CDVSettingsDictionaryTests.m */; };
+		90AE8F9C2EBF03F600FF0979 /* CDVWebViewEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E23F90123E175AD006CD852 /* CDVWebViewEngineTest.m */; };
+		90AE8F9E2EBF0E0700FF0979 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AE8F9D2EBF0E0300FF0979 /* SceneDelegate.swift */; };
 		C0FA7CA11E4BB6420077B045 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8EB14D0165FFD3200616F39 /* config.xml */; };
 		C0FA7CA21E4BB6420077B045 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EF33BD61911ABA20048544E /* Default-568h@2x.png */; };
 		C0FA7CA41E4BB6420077B045 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE1C152129DA006625B3 /* www */; };
@@ -89,6 +91,7 @@
 		905C8BA72CF0756E007EECEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9085EE2F2CF05B5900603B73 /* CordovaTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CordovaTests.xctestplan; sourceTree = "<group>"; };
 		90A775DC2C6F256D00FC5BB0 /* CDVSettingsDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDVSettingsDictionaryTests.m; sourceTree = "<group>"; };
+		90AE8F9D2EBF0E0300FF0979 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C0FA7CAA1E4BB6420077B045 /* CordovaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CordovaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FA7CAC1E4BB6B30077B045 /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cordova.framework; path = "../Debug-iphonesimulator/Cordova.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FA7CC71E4BBBBE0077B045 /* CordovaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CordovaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -153,6 +156,7 @@
 		303A406D152124BB00182201 /* CordovaApp */ = {
 			isa = PBXGroup;
 			children = (
+				90AE8F9D2EBF0E0300FF0979 /* SceneDelegate.swift */,
 				905C8BA72CF0756E007EECEF /* AppDelegate.swift */,
 				900A9F532CF0677F00FECE7A /* ViewController.swift */,
 				900A9F592CF0695D00FECE7A /* Plugins */,
@@ -244,7 +248,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					C0FA7CB11E4BBBBE0077B045 = {
 						TestTargetID = C0FA7C991E4BB6420077B045;
@@ -324,6 +328,7 @@
 				900A9F5A2CF0696300FECE7A /* SwiftInitPlugin.swift in Sources */,
 				900A9F542CF0677F00FECE7A /* ViewController.swift in Sources */,
 				905C8BA82CF0756E007EECEF /* AppDelegate.swift in Sources */,
+				90AE8F9E2EBF0E0700FF0979 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0FA7CB51E4BBBBE0077B045 /* CDVAllowListTests.m in Sources */,
+				90AE8F9C2EBF03F600FF0979 /* CDVWebViewEngineTest.m in Sources */,
 				C0FA7CB61E4BBBBE0077B045 /* CDVPluginResultJSONSerializationTests.m in Sources */,
 				902530FC29A6DC53004AF1CF /* CDVPluginInitTests.m in Sources */,
 				C0FA7CB91E4BBBBE0077B045 /* CDVBase64Tests.m in Sources */,
@@ -416,6 +422,7 @@
 				PUBLIC_HEADERS_FOLDER_PATH = include/Cordova;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					"Classes/**",
@@ -473,6 +480,7 @@
 				PUBLIC_HEADERS_FOLDER_PATH = include/Cordova;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
@@ -491,6 +499,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -509,6 +518,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.apache.cordova.cordovalibapptests.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -527,6 +537,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -540,6 +551,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.apache.cordova.cordovalibapptests.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
