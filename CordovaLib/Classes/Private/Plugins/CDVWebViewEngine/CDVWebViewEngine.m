@@ -266,13 +266,6 @@
 
     [self updateSettings:settings];
 
-    // check if content thread has died on resume
-    NSLog(@"%@", @"CDVWebViewEngine will reload WKWebView if required on resume");
-    [[NSNotificationCenter defaultCenter]
-        addObserver:self
-           selector:@selector(onAppWillEnterForeground:)
-               name:UIApplicationWillEnterForegroundNotification object:nil];
-
     NSLog(@"Using WKWebView");
 }
 
@@ -284,37 +277,6 @@
 
     [super dispose];
 }
-
-- (void) onAppWillEnterForeground:(NSNotification*)notification {
-    if ([self shouldReloadWebView]) {
-        NSLog(@"%@", @"CDVWebViewEngine reloading!");
-        [(WKWebView*)_engineWebView reload];
-    }
-}
-
-- (BOOL)shouldReloadWebView
-{
-    WKWebView* wkWebView = (WKWebView*)_engineWebView;
-    return [self shouldReloadWebView:wkWebView.URL title:wkWebView.title];
-}
-
-- (BOOL)shouldReloadWebView:(NSURL*)location title:(NSString*)title
-{
-    BOOL title_is_nil = (title == nil);
-    BOOL location_is_blank = [[location absoluteString] isEqualToString:@"about:blank"];
-
-    BOOL reload = (title_is_nil || location_is_blank);
-
-#ifdef DEBUG
-    NSLog(@"%@", @"CDVWebViewEngine shouldReloadWebView::");
-    NSLog(@"CDVWebViewEngine shouldReloadWebView title: %@", title);
-    NSLog(@"CDVWebViewEngine shouldReloadWebView location: %@", [location absoluteString]);
-    NSLog(@"CDVWebViewEngine shouldReloadWebView reload: %u", reload);
-#endif
-
-    return reload;
-}
-
 
 - (id)loadRequest:(NSURLRequest*)request
 {
@@ -566,7 +528,14 @@
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
-    [webView reload];
+    CDVSettingsDictionary *settings = self.commandDelegate.settings;
+    NSString *recoveryBehavior = [settings cordovaSettingForKey:@"CrashRecoveryBehavior"];
+
+    if ([recoveryBehavior isEqualToString:@"reload"]) {
+        [self.viewController loadStartPage];
+    } else {
+        [webView reload];
+    }
 }
 
 - (BOOL)defaultResourcePolicyForURL:(NSURL*)url

@@ -22,37 +22,32 @@ import Cordova
 
 @main
 @objc class AppDelegate : CDVAppDelegate {
-    fileprivate var _window : UIWindow?
     fileprivate var _viewController : ViewController?
+
+    public var testWindow : UIWindow?
 
     @objc public var testViewController : CDVViewController? {
         return _viewController
     }
 
     @objc func createViewController() {
-        _viewController = ViewController();
-        _viewController?.webContentFolderName = "www";
-        _viewController?.startPage = "index.html";
+        _viewController = ViewController()
+        _viewController?.webContentFolderName = "www"
+        _viewController?.startPage = "index.html"
 
-        _window?.rootViewController = _viewController;
-        _window?.makeKeyAndVisible();
+        testWindow?.rootViewController = _viewController
+        testWindow?.makeKeyAndVisible()
     }
 
     @objc func destroyViewController() {
         _viewController = nil
+
+        testWindow?.rootViewController = UIViewController()
     }
 
-    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        let retVal = super.application(application, didFinishLaunchingWithOptions:launchOptions);
-
-        let bounds = UIScreen.main.bounds;
-        _window = UIWindow(frame: bounds);
-        _window?.autoresizesSubviews = true;
-
-        if NSClassFromString("CDVWebViewTest") != nil {
-            createViewController();
-        }
-
-        return retVal;
+    override func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(name:"Default Configuration", sessionRole:connectingSceneSession.role)
+        configuration.delegateClass = SceneDelegate.self
+        return configuration
     }
 }

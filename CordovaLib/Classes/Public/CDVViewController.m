@@ -382,27 +382,7 @@ static UIColor *defaultBackgroundColor(void) {
         [CDVTimer stop:@"TotalPluginStartup"];
     }
 
-    // /////////////////
-    NSURL* appURL = [self appUrl];
-
-    if (appURL) {
-        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-        [_webViewEngine loadRequest:appReq];
-    } else {
-        NSString* loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.webContentFolderName, self.startPage];
-        NSLog(@"%@", loadErr);
-
-        NSURL* errorUrl = [self errorURL];
-        if (errorUrl) {
-            errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
-            NSLog(@"%@", [errorUrl absoluteString]);
-            [_webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
-        } else {
-            NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-            [_webViewEngine loadHTMLString:html baseURL:nil];
-        }
-    }
-    // /////////////////
+    [self loadStartPage];
 
     [self.webView setBackgroundColor:self.backgroundColor];
     [self.launchView setBackgroundColor:self.splashBackgroundColor];
@@ -765,6 +745,29 @@ static UIColor *defaultBackgroundColor(void) {
     self.statusBar.hidden = YES;
 }
 
+- (void)loadStartPage
+{
+    NSURL *appURL = [self appUrl];
+
+    if (appURL) {
+        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+        [_webViewEngine loadRequest:appReq];
+    } else {
+        NSString *loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", self.webContentFolderName, self.startPage];
+        NSLog(@"%@", loadErr);
+
+        NSURL *errorUrl = [self errorURL];
+        if (errorUrl) {
+            errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [loadErr stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]] relativeToURL:errorUrl];
+            NSLog(@"%@", [errorUrl absoluteString]);
+            [_webViewEngine loadRequest:[NSURLRequest requestWithURL:errorUrl]];
+        } else {
+            NSString *html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+            [_webViewEngine loadHTMLString:html baseURL:nil];
+        }
+    }
+}
+
 #pragma mark CordovaCommands
 
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
@@ -846,8 +849,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
     NSURL* appURL = [self appUrl];
     if ([self isUrlEmpty: [_webViewEngine URL]] && ![self isUrlEmpty: appURL]) {
-        NSURLRequest* appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-        [_webViewEngine loadRequest:appReq];
+        [self loadStartPage];
         return true;
     }
     return false;

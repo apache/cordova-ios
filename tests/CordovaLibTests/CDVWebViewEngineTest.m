@@ -20,22 +20,17 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import "CDVWebViewEngine.h"
-#import "CDVWebViewProcessPoolFactory.h"
+#import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVAvailability.h>
 
+#import "CordovaApp-Swift.h"
+
 @interface CDVWebViewEngineTest : XCTestCase
 
+@property AppDelegate* appDelegate;
 @property (nonatomic, strong) CDVWebViewEngine* plugin;
 @property (nonatomic, strong) CDVViewController* viewController;
-
-@end
-
-@interface CDVWebViewEngine ()
-
-// TODO: expose private interface, if needed
-- (BOOL)shouldReloadWebView;
-- (BOOL)shouldReloadWebView:(NSURL*)location title:(NSString*)title;
 
 @end
 
@@ -46,21 +41,69 @@
 
 @end
 
+@interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
+@property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
+
+- (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation;
+@end
+
+@interface WKWebView ()
+@property (nonatomic, readonly) pid_t _webProcessIdentifier;
+@end
+
+@implementation TestNavigationDelegate
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    if (_didFinishNavigation)
+        _didFinishNavigation(webView, navigation);
+}
+
+- (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation
+{
+    XCTAssertFalse(self.didFinishNavigation);
+
+    __weak TestNavigationDelegate *weakSelf = self;
+    self.didFinishNavigation = ^(WKWebView *_view, WKNavigation *_nav) {
+        [expectation fulfill];
+        weakSelf.didFinishNavigation = nil;
+    };
+}
+@end
+
 @implementation CDVWebViewEngineTest
 
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
-    // NOTE: no app settings are set, so it will rely on default WKWebViewConfiguration settings
-    self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    [self.appDelegate createViewController];
+    self.viewController = self.appDelegate.testViewController;
+
+    self.plugin = (CDVWebViewEngine *)self.viewController.webViewEngine;
 
     XCTAssert([self.plugin conformsToProtocol:@protocol(CDVWebViewEngineProtocol)], @"Plugin does not conform to CDVWebViewEngineProtocol");
 }
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+    [self.appDelegate destroyViewController];
     [super tearDown];
+}
+
+- (void)waitForDidFinishNavigation:(WKWebView *)webView
+{
+    NSObject<WKNavigationDelegate> *oldNavigationDelegate = webView.navigationDelegate;
+
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"didFinishNavigation"];
+
+    TestNavigationDelegate *navigationDelegate = [[TestNavigationDelegate alloc] init];
+    webView.navigationDelegate = navigationDelegate;
+    [navigationDelegate waitForDidFinishNavigation:expectation];
+
+    [self waitForExpectations:@[expectation] timeout:5];
+
+    webView.navigationDelegate = oldNavigationDelegate;
 }
 
 - (void) testCanLoadRequest {
@@ -165,7 +208,7 @@
     } else {
         for (id subview in wkWebView.subviews) {
             if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-                XCTAssertFalse(((UIScrollView*)subview).bounces = NO);
+                XCTAssertFalse(((UIScrollView*)subview).bounces == NO);
             }
         }
     }
@@ -173,40 +216,70 @@
     XCTAssertTrue(wkWebView.scrollView.decelerationRate == UIScrollViewDecelerationRateFast);
 }
 
-- (void) testShouldReloadWebView {
+- (void) testCrashRecoveryRefresh {
     WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
+    [self waitForDidFinishNavigation:wkWebView];
 
-    NSURL* about_blank = [NSURL URLWithString:@"about:blank"];
-    NSURL* real_site = [NSURL URLWithString:@"https://cordova.apache.org"];
-    NSString* empty_title_document = @"<html><head><title></title></head></html>";
+    NSString *startPage = @"https://cordova.apache.org/";
+    self.viewController.startPage = startPage;
 
-    // about:blank should reload
-    [wkWebView loadRequest:[NSURLRequest requestWithURL:about_blank]];
-    XCTAssertTrue([self.plugin shouldReloadWebView]);
+    [self.viewController loadStartPage];
+    [self waitForDidFinishNavigation:wkWebView];
+    XCTAssertTrue([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
 
-    // a network location should *not* reload
-    [wkWebView loadRequest:[NSURLRequest requestWithURL:real_site]];
-    XCTAssertFalse([self.plugin shouldReloadWebView]);
+    NSURLRequest *nextPage = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://cordova.apache.org/blog/"]];
+    [self.plugin loadRequest:nextPage];
+    [self waitForDidFinishNavigation:wkWebView];
+    XCTAssertFalse([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
 
-    // document with empty title should *not* reload
-    // baseURL:nil results in about:blank, so we use a dummy here
-    [wkWebView loadHTMLString:empty_title_document baseURL:[NSURL URLWithString:@"about:"]];
-    XCTAssertFalse([self.plugin shouldReloadWebView]);
+    pid_t webViewPID = [wkWebView _webProcessIdentifier];
+    kill(webViewPID, 9);
 
-    // Anecdotal assertion that when the WKWebView process has died,
-    // the title is nil, should always reload
-    XCTAssertTrue([self.plugin shouldReloadWebView:about_blank title:nil]);
-    XCTAssertTrue([self.plugin shouldReloadWebView:real_site title:nil]);
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Waiting for 10 seconds"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [expectation fulfill];
+    });
+    [self waitForExpectations:@[expectation] timeout:10.0];
 
-    // about:blank should always reload
-    XCTAssertTrue([self.plugin shouldReloadWebView:about_blank title:@"some title"]);
+    XCTAssertFalse([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
+    XCTAssertTrue([[[self.plugin URL] absoluteString] isEqualToString:@"https://cordova.apache.org/blog/"]);
+}
 
-    // non about:blank with a non-nil title should **not** reload
-    XCTAssertFalse([self.plugin shouldReloadWebView:real_site title:@""]);
+- (void) testCrashRecoveryReload {
+    WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
+    [self waitForDidFinishNavigation:wkWebView];
+
+    NSString *startPage = @"https://cordova.apache.org/";
+    self.viewController.startPage = startPage;
+    [self.viewController.settings setCordovaSetting:@"reload" forKey:@"CrashRecoveryBehavior"];
+
+    [self.viewController loadStartPage];
+    [self waitForDidFinishNavigation:wkWebView];
+    XCTAssertTrue([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
+
+    NSURLRequest *nextPage = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://cordova.apache.org/blog/"]];
+    [self.plugin loadRequest:nextPage];
+    [self waitForDidFinishNavigation:wkWebView];
+    XCTAssertFalse([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
+
+    pid_t webViewPID = [wkWebView _webProcessIdentifier];
+    kill(webViewPID, 9);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Waiting for 10 seconds"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [expectation fulfill];
+    });
+    [self waitForExpectations:@[expectation] timeout:10.0];
+
+    XCTAssertTrue([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
 }
 
 - (void) testWKProcessPoolFactory {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     WKProcessPool* shared = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+#pragma clang diagnostic pop
+
     XCTAssertTrue(shared != nil);
 }
 

@@ -264,6 +264,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
 
 /**
+ Loads the starting page in the web view, replacing any existing content.
+
+ @Metadata {
+    @Available(Cordova, introduced: "8.0.0")
+ }
+ */
+- (void)loadStartPage;
+
+/**
  Returns the ``CDVPlugin`` instance of the given plugin name, creating the
  instance if one does not exist.
 
