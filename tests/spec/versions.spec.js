@@ -18,7 +18,7 @@
  */
 
 const semver = require('semver');
-const versions = require('../../../lib/versions');
+const versions = require('../../lib/versions');
 
 // These tests can not run on windows.
 if (process.platform === 'darwin') {

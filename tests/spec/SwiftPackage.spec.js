@@ -20,13 +20,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const tmp = require('tmp');
-const SwiftPackage = require('../../../lib/SwiftPackage.js').SwiftPackage;
-const Api = require('../../../lib/Api');
+const SwiftPackage = require('../../lib/SwiftPackage.js').SwiftPackage;
+const Api = require('../../lib/Api');
 const EventEmitter = require('node:events').EventEmitter;
 const ConfigParser = require('cordova-common').ConfigParser;
 const PluginInfo = require('cordova-common').PluginInfo;
-const Podfile_mod = require('../../../lib/Podfile');
-const PodsJson_mod = require('../../../lib/PodsJson');
+const Podfile_mod = require('../../lib/Podfile');
+const PodsJson_mod = require('../../lib/PodsJson');
 
 tmp.setGracefulCleanup();
 
@@ -138,7 +138,7 @@ describe('SwiftPackage', () => {
             const content = fs.readFileSync(pkgPath, 'utf8');
 
             // Because we don't have the full project here, it behaves as if linked
-            const packageLoc = path.dirname(require.resolve('../../../package.json'));
+            const packageLoc = path.dirname(require.resolve('../../package.json'));
             const relativeLink = path.relative(path.dirname(pkgPath), packageLoc).replaceAll(path.sep, path.posix.sep);
 
             expect(content).toContain(`package(name: "cordova-ios", path: "${relativeLink}"`);

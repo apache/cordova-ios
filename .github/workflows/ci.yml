@@ -126,7 +126,7 @@ jobs:
         run: |
           npm ci
           npm run lint
-          npm run unit-tests
+          npm run cover
         env:
           CI: true
 

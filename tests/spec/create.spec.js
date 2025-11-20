@@ -22,7 +22,7 @@ const path = require('node:path');
 const tmp = require('tmp');
 const xcode = require('xcode');
 const { ConfigParser } = require('cordova-common');
-const create = require('../../../lib/create');
+const create = require('../../lib/create');
 
 tmp.setGracefulCleanup();
 
@@ -31,7 +31,7 @@ function makeTempDir () {
     return path.join(tempdir.name, `cordova-ios-create-test-${Date.now()}`);
 }
 
-const templateConfigXmlPath = path.join(__dirname, '..', '..', '..', 'templates', 'project', 'App', 'config.xml');
+const templateConfigXmlPath = path.join(__dirname, '..', '..', 'templates', 'project', 'App', 'config.xml');
 
 /**
  * Verifies that some of the project file exists. Not all will be tested.
@@ -49,7 +49,7 @@ function verifyProjectFiles (tmpDir, projectName, linked) {
     const xcodeproj = xcode.project(pbxproj);
     xcodeproj.parseSync();
 
-    const packageLoc = path.dirname(require.resolve('../../../package.json'));
+    const packageLoc = path.dirname(require.resolve('../../package.json'));
     const relativeLink = path.relative(tmpDir, packageLoc).replaceAll(path.sep, path.posix.sep);
     const relativePath = path.posix.join('packages', 'cordova-ios');
 

@@ -17,19 +17,15 @@
     under the License.
 */
 
-// Requiring simctl below has some side effects, mainly,
-// it ends up requiring the specific macOS environment bits that
-// allow for interacting with iOS Simulators. On Windows+Linux we are
-// bound to not-have-that.
 const fs = require('node:fs');
 const path = require('node:path');
 const simctl = require('simctl');
-const listEmulatorImages = require('../../../../lib/listEmulatorImages');
+const listEmulatorImages = require('../../lib/listEmulatorImages');
 
 let json;
 
 function fixtureJson (output) {
-    const file = path.resolve(__dirname, `../fixtures/${output}`);
+    const file = path.resolve(__dirname, `fixtures/${output}`);
     return JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }).toString());
 }
 

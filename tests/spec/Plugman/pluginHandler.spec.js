@@ -25,9 +25,9 @@ const tmp = require('tmp');
 tmp.setGracefulCleanup();
 
 const PluginInfo = require('cordova-common').PluginInfo;
-const Api = require('../../../../lib/Api');
-const projectFile = require('../../../../lib/projectFile');
-const pluginHandlers = require('../../../../lib/plugman/pluginHandlers');
+const Api = require('../../../lib/Api');
+const projectFile = require('../../../lib/projectFile');
+const pluginHandlers = require('../../../lib/plugman/pluginHandlers');
 
 const tempdir = tmp.dirSync({ unsafeCleanup: true });
 const temp = path.join(tempdir.name, 'plugman');

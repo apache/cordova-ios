@@ -26,7 +26,7 @@ module.exports = defineConfig([
     globalIgnores([
         '**/coverage/',
         'templates/project/',
-        'tests/spec/unit/fixtures/'
+        'tests/spec/fixtures/'
     ]),
     ...nodeConfig,
     ...nodeTestConfig.map(config => ({

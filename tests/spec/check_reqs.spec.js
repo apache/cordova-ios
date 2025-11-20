@@ -19,8 +19,8 @@
 
 const process = require('node:process');
 const which = require('which');
-const checkReqs = require('../../../../lib/check_reqs');
-const versions = require('../../../../lib/versions');
+const checkReqs = require('../../lib/check_reqs');
+const versions = require('../../lib/versions');
 
 describe('check_ios_deploy', () => {
     beforeEach(() => {

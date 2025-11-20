@@ -21,9 +21,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const rewire = require('rewire');
 
-const list_devices = rewire('../../../../lib/listDevices');
+const list_devices = rewire('../../lib/listDevices');
 
-const sampleData = fs.readFileSync(path.resolve(__dirname, '../fixtures/sample-ioreg-output.txt'), 'utf-8');
+const sampleData = fs.readFileSync(path.resolve(__dirname, 'fixtures/sample-ioreg-output.txt'), 'utf-8');
 
 describe('cordova/lib/listDevices', () => {
     describe('run method', () => {

@@ -20,7 +20,7 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const tmp = require('tmp');
-const projectFile = require('../../../lib/projectFile');
+const projectFile = require('../../lib/projectFile');
 
 tmp.setGracefulCleanup();
 

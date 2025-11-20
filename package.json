@@ -16,11 +16,10 @@
   "scripts": {
     "prepare": "cordova-js build > templates/project/www/cordova.js",
     "pretest": "npm run lint",
-    "test": "npm run coverage && npm run objc-tests",
-    "coverage": "c8 jasmine --config=tests/spec/coverage.json",
-    "e2e-tests": "jasmine tests/spec/create.spec.js",
-    "objc-tests": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -scheme CordovaTestApp -destination \"platform=iOS Simulator,name=${CDV_IOS_SIM:-iPhone 16e}\" -destination-timeout 300 -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
-    "unit-tests": "jasmine --config=tests/spec/unit.json",
+    "test": "npm run cover && npm run test:xcode",
+    "test:unit": "jasmine --config=tests/spec/unit.json",
+    "test:xcode": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -scheme CordovaTestApp -destination \"platform=iOS Simulator,name=${CDV_IOS_SIM:-iPhone 16e}\" -destination-timeout 300 -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
+    "cover": "c8 npm run test:unit",
     "lint": "eslint ."
   },
   "author": "Apache Software Foundation",

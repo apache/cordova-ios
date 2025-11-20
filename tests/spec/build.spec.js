@@ -21,7 +21,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const rewire = require('rewire');
 const { CordovaError } = require('cordova-common');
-const build = rewire('../../../lib/build');
+const build = rewire('../../lib/build');
 
 describe('build', () => {
     const testProjectPath = path.join('/test', 'project', 'path');

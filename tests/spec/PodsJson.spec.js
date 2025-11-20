@@ -21,7 +21,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const CordovaError = require('cordova-common').CordovaError;
 
-const PodsJson = require(path.resolve(__dirname, '..', '..', '..', 'lib', 'PodsJson.js')).PodsJson;
+const PodsJson = require(path.resolve(__dirname, '..', '..', 'lib', 'PodsJson.js')).PodsJson;
 const fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'pods.json');
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
