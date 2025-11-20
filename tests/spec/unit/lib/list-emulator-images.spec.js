@@ -21,16 +21,27 @@
 // it ends up requiring the specific macOS environment bits that
 // allow for interacting with iOS Simulators. On Windows+Linux we are
 // bound to not-have-that.
-const list_emus = require('../../../../lib/listEmulatorImages');
+const fs = require('node:fs');
+const path = require('node:path');
 const simctl = require('simctl');
+const listEmulatorImages = require('../../../../lib/listEmulatorImages');
 
-describe('cordova/lib/listEmulatorImages', () => {
+let json;
+
+function fixtureJson (output) {
+    const file = path.resolve(__dirname, `../fixtures/${output}`);
+    return JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }).toString());
+}
+
+describe('listEmulatorImages', () => {
     describe('run method', () => {
         beforeEach(() => {
-            spyOn(simctl, 'list');
+            json = fixtureJson('simctl-list.json');
+            spyOn(simctl, 'list').and.callFake(() => ({ json }));
         });
+
         it('should delegate to the simctl list method', () => {
-            list_emus.run();
+            listEmulatorImages.run();
             expect(simctl.list).toHaveBeenCalled();
         });
     });
