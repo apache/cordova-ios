@@ -21,19 +21,17 @@
 // it ends up requiring the specific macOS environment bits that
 // allow for interacting with iOS Simulators. On Windows+Linux we are
 // bound to not-have-that.
-if (process.platform === 'darwin') {
-    const list_emus = require('../../../../lib/listEmulatorImages');
-    const simctl = require('simctl');
+const list_emus = require('../../../../lib/listEmulatorImages');
+const simctl = require('simctl');
 
-    xdescribe('cordova/lib/listEmulatorImages', () => {
-        describe('run method', () => {
-            beforeEach(() => {
-                spyOn(simctl, 'list');
-            });
-            it('should delegate to the simctl list method', () => {
-                list_emus.run();
-                expect(simctl.list).toHaveBeenCalled();
-            });
+describe('cordova/lib/listEmulatorImages', () => {
+    describe('run method', () => {
+        beforeEach(() => {
+            spyOn(simctl, 'list');
+        });
+        it('should delegate to the simctl list method', () => {
+            list_emus.run();
+            expect(simctl.list).toHaveBeenCalled();
         });
     });
-}
+});
