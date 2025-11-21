@@ -22,6 +22,76 @@
 
 Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
+### 8.0.0 (Nov 21, 2025)
+
+Also see "8.0.0-beta.1" release notes below.
+
+**Breaking Changes:**
+
+* [GH-1586](https://github.com/apache/cordova-ios/pull/1586) chore!: update dependencies & node engine
+* [GH-1583](https://github.com/apache/cordova-ios/pull/1583) feat!: drop **iOS**-sim & use simctl directly
+* [GH-1560](https://github.com/apache/cordova-ios/pull/1560) feat!: Add CDVSceneDelegate class as an extension point
+* [GH-1558](https://github.com/apache/cordova-ios/pull/1558) refactor!: Deprecate CDVWebViewProcessPoolFactory
+* [GH-1557](https://github.com/apache/cordova-ios/pull/1557) chore!: update template defaults
+* [GH-1556](https://github.com/apache/cordova-ios/pull/1556) chore(npm)!: bump cordova-common@6.0.0 w/ rebuilt package-lock.json
+* [GH-1528](https://github.com/apache/cordova-ios/pull/1528) feat!: bump node engine requirement >=20.5.0 & update deps
+* [GH-1520](https://github.com/apache/cordova-ios/pull/1520) refactor!(SPM): rename Swift package from CordovaLib to Cordova
+
+**Features:**
+
+* [GH-1515](https://github.com/apache/cordova-ios/pull/1515) feat(spm): Support plugins as Swift packages
+* [GH-1523](https://github.com/apache/cordova-ios/pull/1523) feat(statusbar): Simple built-in status bar support
+* [GH-1514](https://github.com/apache/cordova-ios/pull/1514) feat(plugins): Better define plugin behaviour protocols
+* [GH-1518](https://github.com/apache/cordova-ios/pull/1518) feat: bump tooling minimum requirements
+
+**Fixes:**
+
+* [GH-1582](https://github.com/apache/cordova-ios/pull/1582) fix: Add preference for WKWebView crash recovery behaviour
+* [GH-1581](https://github.com/apache/cordova-ios/pull/1581) fix(openURL): Use correct property name for readyState
+* [GH-1573](https://github.com/apache/cordova-ios/pull/1573) fix(cache): Don't load local data from cache
+* [GH-1578](https://github.com/apache/cordova-ios/pull/1578) fix(statusbar): inject script block to compute color
+* [GH-1547](https://github.com/apache/cordova-ios/pull/1547) fix: potential problems overriding OTHER_LDFLAGS
+* [GH-1540](https://github.com/apache/cordova-ios/pull/1540) fix(plugins): Handle uninstalling multiple plugin assets
+* [GH-1544](https://github.com/apache/cordova-ios/pull/1544) fix(swift): Fix some new Swift deprecation warnings
+* [GH-1521](https://github.com/apache/cordova-ios/pull/1521) fix(Swift): Nullability stuff broke Swift compatibility
+* [GH-1517](https://github.com/apache/cordova-ios/pull/1517) fix(catalyst): Fix content behind titlebar
+* [GH-1516](https://github.com/apache/cordova-ios/pull/1516) fix(build): Allow platform args with double dash
+* [GH-1508](https://github.com/apache/cordova-ios/pull/1508) fix: Various issues identified by code scanning
+* [GH-1502](https://github.com/apache/cordova-ios/pull/1502) fix(create): Copy `config.xml` data during creation
+* [GH-1245](https://github.com/apache/cordova-ios/pull/1245) fix: svoid repetitive permission prompts
+
+**Others:**
+
+* [GH-1559](https://github.com/apache/cordova-ios/pull/1559) chore: Silence some **iOS** deprecation warnings
+* [GH-1561](https://github.com/apache/cordova-ios/pull/1561) chore: Xcode 26 fixes for CI
+* [GH-1505](https://github.com/apache/cordova-ios/pull/1505) chore(ci): Add code scanning & fix dependabot failures
+* [GH-1541](https://github.com/apache/cordova-ios/pull/1541) chore(coverage): Test using c8 for code coverage
+* [GH-1585](https://github.com/apache/cordova-ios/pull/1585) chore(deps-dev): bump js-yaml from 4.1.0 to 4.1.1
+* [GH-1555](https://github.com/apache/cordova-ios/pull/1555) chore(deps-dev): bump tmp from 0.2.3 to 0.2.4
+* [GH-1504](https://github.com/apache/cordova-ios/pull/1504) chore(deps): bump cross-spawn from 7.0.3 to 7.0.6
+* [GH-1584](https://github.com/apache/cordova-ios/pull/1584) chore(deps): bump glob from 10.4.5 to 10.5.0
+* [GH-1563](https://github.com/apache/cordova-ios/pull/1563) chore(readme): added nightly build section
+* [GH-1543](https://github.com/apache/cordova-ios/pull/1543) chore(template): Move xcconfig files into the template folder
+* [GH-1535](https://github.com/apache/cordova-ios/pull/1535) ci: Add Node 24 to CI test matrix
+* [GH-1570](https://github.com/apache/cordova-ios/pull/1570) ci: Try to improve CI reliability
+* [GH-1550](https://github.com/apache/cordova-ios/pull/1550) ci: various workflow improvements
+* [GH-1548](https://github.com/apache/cordova-ios/pull/1548) ci(workflow): update release-audit & license config
+* [GH-1551](https://github.com/apache/cordova-ios/pull/1551) dep(npm): bump @cordova/eslint-config@6.0.0
+* [GH-1577](https://github.com/apache/cordova-ios/pull/1577) docs: Add note about CDVPluginResult Swift nullability
+* [GH-1546](https://github.com/apache/cordova-ios/pull/1546) docs: add precompiled prefix header deprecation notice to 8.x upgrade
+* [GH-1567](https://github.com/apache/cordova-ios/pull/1567) docs: Improve API documentation comments
+* [GH-1565](https://github.com/apache/cordova-ios/pull/1565) docs: simplify Objective-C scrollView access in upgrading-8.md
+* [GH-1569](https://github.com/apache/cordova-ios/pull/1569) docs: Update deprecation notice for scrollView property in upgrading-8.md
+* [GH-1566](https://github.com/apache/cordova-ios/pull/1566) docs(CDVPlugin): webViewEngine and webView
+* [GH-1553](https://github.com/apache/cordova-ios/pull/1553) refactor: replace util.format w/ template literals
+* [GH-1522](https://github.com/apache/cordova-ios/pull/1522) refactor(template): Copy CordovaLib into a packages folder
+* [GH-1509](https://github.com/apache/cordova-ios/pull/1509) refactor(tests): Use XCTestPlans for unit testing
+* [GH-1572](https://github.com/apache/cordova-ios/pull/1572) test: Fix some warnings from NSKeyedUnarchiver in tests
+* [GH-1536](https://github.com/apache/cordova-ios/pull/1536) test: Improve test coverage of Bridging Headers & fix edge case
+* [GH-1587](https://github.com/apache/cordova-ios/pull/1587) test: Restructure unit test directories
+* [GH-1510](https://github.com/apache/cordova-ios/pull/1510) test: Update fixture project to match the template
+* [GH-1554](https://github.com/apache/cordova-ios/pull/1554) test: Upgrade rewire and reduce its usage
+
 ### 8.0.0-beta.1 (Oct 17, 2024)
 
 **Breaking Changes:**
