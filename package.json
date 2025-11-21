@@ -34,7 +34,7 @@
     "tmp": "^0.2.5"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": "^20.17.0 || >=22.9.0"
   },
   "dependencies": {
     "bplist-parser": "^0.3.2",
