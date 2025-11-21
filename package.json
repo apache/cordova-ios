@@ -41,7 +41,7 @@
     "cordova-common": "^6.0.0",
     "elementtree": "^0.1.7",
     "execa": "^5.1.1",
-    "nopt": "^8.1.0",
+    "nopt": "^9.0.0",
     "plist": "^3.1.0",
     "semver": "^7.7.3",
     "simctl": "^3.0.0",
