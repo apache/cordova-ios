@@ -21,24 +21,15 @@ const path = require('node:path');
 const fs = require('node:fs');
 const EventEmitter = require('node:events');
 const PluginManager = require('cordova-common').PluginManager;
-const Api = require('../../../lib/Api');
-const check_reqs = require('../../../lib/check_reqs');
+const Api = require('../../lib/Api');
+const check_reqs = require('../../lib/check_reqs');
+const run_mod = require('../../lib/run');
 
-// The lib/run module pulls in simctl, which has a hard requirement that it
-// be run on a Mac OS - simply requiring the module is enough to trigger the
-// environment checks. These checks will blow up on Windows + Linux.
-// So, conditionally pull in the module, and conditionally test the `run`
-// method (more below).
-let run_mod;
-if (process.platform === 'darwin') {
-    run_mod = require('../../../lib/run');
-}
-
-const projectFile = require('../../../lib/projectFile');
-const BridgingHeader_mod = require('../../../lib/BridgingHeader.js');
-const SwiftPackage_mod = require('../../../lib/SwiftPackage.js');
-const Podfile_mod = require('../../../lib/Podfile');
-const PodsJson_mod = require('../../../lib/PodsJson');
+const projectFile = require('../../lib/projectFile');
+const BridgingHeader_mod = require('../../lib/BridgingHeader.js');
+const SwiftPackage_mod = require('../../lib/SwiftPackage.js');
+const Podfile_mod = require('../../lib/Podfile');
+const PodsJson_mod = require('../../lib/PodsJson');
 const FIXTURES = path.join(__dirname, 'fixtures');
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 
@@ -78,34 +69,29 @@ describe('Platform Api', () => {
             });
         });
 
-        // See the comment at the top of this file, in the list of requires,
-        // for information on why we conditionall run this test.
-        // tl;dr run_mod requires the simctl module, which requires mac OS.
-        if (process.platform === 'darwin') {
-            describe('run', () => {
-                beforeEach(() => {
-                    spyOn(check_reqs, 'run').and.returnValue(Promise.resolve());
-                });
-                it('should call into lib/run module', () => {
-                    spyOn(run_mod, 'run');
-                    return api.run().then(() => {
-                        expect(run_mod.run).toHaveBeenCalled();
-                    });
+        describe('run', () => {
+            beforeEach(() => {
+                spyOn(check_reqs, 'run').and.returnValue(Promise.resolve());
+            });
+            it('should call into lib/run module', () => {
+                spyOn(run_mod, 'run');
+                return api.run().then(() => {
+                    expect(run_mod.run).toHaveBeenCalled();
                 });
             });
+        });
 
-            describe('listTargets', () => {
-                beforeEach(() => {
-                    spyOn(check_reqs, 'run').and.returnValue(Promise.resolve());
-                });
-                it('should call into lib/run module', () => {
-                    spyOn(run_mod, 'runListDevices');
-                    return api.listTargets().then(() => {
-                        expect(run_mod.runListDevices).toHaveBeenCalled();
-                    });
+        describe('listTargets', () => {
+            beforeEach(() => {
+                spyOn(check_reqs, 'run').and.returnValue(Promise.resolve());
+            });
+            it('should call into lib/run module', () => {
+                spyOn(run_mod, 'runListDevices');
+                return api.listTargets().then(() => {
+                    expect(run_mod.runListDevices).toHaveBeenCalled();
                 });
             });
-        }
+        });
 
         describe('addPlugin', () => {
             const my_plugin = {

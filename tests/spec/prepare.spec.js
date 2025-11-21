@@ -27,14 +27,14 @@ const plist = require('plist');
 const xcode = require('xcode');
 const XcodeProject = xcode.project;
 const rewire = require('rewire');
-const prepare = rewire('../../../lib/prepare');
-const projectFile = require('../../../lib/projectFile');
+const prepare = rewire('../../lib/prepare');
+const projectFile = require('../../lib/projectFile');
 const FileUpdater = require('cordova-common').FileUpdater;
-const versions = require('../../../lib/versions');
+const versions = require('../../lib/versions');
 
 tmp.setGracefulCleanup();
 
-const relativeTmp = path.join(__dirname, '..', '..', '..');
+const relativeTmp = path.join(__dirname, '..', '..');
 const FIXTURES = path.join(__dirname, 'fixtures');
 const iosProjectFixture = path.join(FIXTURES, 'ios-config-xml');
 
@@ -47,7 +47,7 @@ describe('prepare', () => {
     let iosProject;
 
     beforeEach(() => {
-        Api = require('../../../lib/Api');
+        Api = require('../../lib/Api');
 
         tempdir = tmp.dirSync({ tmpdir: relativeTmp, unsafeCleanup: true });
         iosProject = path.join(tempdir.name, 'prepare');
@@ -1930,7 +1930,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
             const projectRoot = iosProject;
             const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'App');
-            const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
+            const PlatformConfigParser = require('../../lib/PlatformConfigParser');
             const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'privacy-manifest.xml'));
             const privacyManifest = my_config.getPrivacyManifest();
             const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');
@@ -1949,7 +1949,7 @@ describe('prepare', () => {
             writeFileSyncSpy.and.callThrough();
             const projectRoot = iosProject;
             const platformProjDir = path.join(projectRoot, 'platforms', 'ios', 'App');
-            const PlatformConfigParser = require('../../../lib/PlatformConfigParser');
+            const PlatformConfigParser = require('../../lib/PlatformConfigParser');
             const my_config = new PlatformConfigParser(path.join(FIXTURES, 'prepare', 'no-privacy-manifest.xml'));
             const privacyManifest = my_config.getPrivacyManifest();
             const overwritePrivacyManifest = prepare.__get__('overwritePrivacyManifest');

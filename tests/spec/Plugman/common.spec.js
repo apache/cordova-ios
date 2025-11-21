@@ -21,7 +21,7 @@ const path = require('node:path');
 const tmp = require('tmp');
 const rewire = require('rewire');
 
-const common = rewire('../../../../lib/plugman/pluginHandlers');
+const common = rewire('../../../lib/plugman/pluginHandlers');
 
 tmp.setGracefulCleanup();
 

@@ -19,10 +19,10 @@
 
 const path = require('node:path');
 const { CordovaError, events } = require('cordova-common');
-const build = require('../../../lib/build');
-const check_reqs = require('../../../lib/check_reqs');
-const run = require('../../../lib/run');
-const projectFile = require('../../../lib/projectFile');
+const build = require('../../lib/build');
+const check_reqs = require('../../lib/check_reqs');
+const run = require('../../lib/run');
+const projectFile = require('../../lib/projectFile');
 
 describe('cordova/lib/run', () => {
     const testProjectPath = path.join('/test', 'project', 'path');

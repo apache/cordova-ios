@@ -21,20 +21,19 @@ const fs = require('node:fs');
 const path = require('node:path');
 const simctl = require('simctl');
 const { events } = require('cordova-common');
+const simctlHelper = require('../../lib/simctlHelper');
 
 let json;
-let simctlHelper;
 let emitSpy;
 
 function fixtureJson (output) {
-    const file = path.resolve(__dirname, `../fixtures/${output}`);
+    const file = path.resolve(__dirname, `fixtures/${output}`);
     return JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }).toString());
 }
 
 describe('simctlHelper', () => {
-    beforeAll(() => {
+    beforeEach(() => {
         emitSpy = spyOn(events, 'emit');
-        simctlHelper = require('../../../../lib/simctlHelper');
     });
 
     describe('fetchSimCtlList', () => {

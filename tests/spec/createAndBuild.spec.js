@@ -17,6 +17,7 @@
  under the License.
  */
 
+const EventEmitter = require('node:events');
 const fs = require('node:fs');
 const path = require('node:path');
 const tmp = require('tmp');
@@ -80,10 +81,11 @@ function verifyBuild (tmpDir) {
         'junction'
     );
 
+    const events = new EventEmitter();
     const Api = require(path.join(tmpDir, 'cordova', 'Api.js'));
     const target = process.env.CDV_IOS_SIM?.replace(/\s/g, '-') ?? 'iPhone-16e';
 
-    return expectAsync(new Api('ios', tmpDir).build({ emulator: true, buildFlag: ['-quiet'], target }))
+    return expectAsync(new Api('ios', tmpDir, events).build({ emulator: true, buildFlag: ['-quiet'], target }))
         .toBeResolved();
 }
 
