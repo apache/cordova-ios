@@ -82,5 +82,6 @@ See [Apache Cordova - Nightly Builds](https://cordova.apache.org/contribute/nigh
 
 ## Further reading
 
-* [Apache Cordova](https://cordova.apache.org/)
+* [Cordova iOS Platform Guide](https://cordova.apache.org/docs/en/dev/guide/platforms/ios/index.html)
 * [Cordova iOS API Documentation](https://apache.github.io/cordova-ios/)
+* [Apache Cordova](https://cordova.apache.org/)
