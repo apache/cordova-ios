@@ -30,3 +30,6 @@ coverage/
 npm-debug.log
 .nyc_output/
 **/www/cordova.js
+
+# Swift Package Manager (SPM) build artifacts
+.build/
