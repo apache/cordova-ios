@@ -17,7 +17,6 @@
     under the License.
 */
 
-
 /***********************************************
  This Swift file is intentionally commented out.
 
@@ -39,8 +38,8 @@
 import Cordova
 
 @objc(PackagePodPlugin)
-class PackagePodPlugin : CDVPlugin {
+class PackagePodPlugin: CDVPlugin {
     override func pluginInitialize() {
-        NSLog("Initialized Swift Package Pod Plugin");
+        NSLog("Initialized Swift Package Pod Plugin")
     }
 }

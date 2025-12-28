@@ -1,0 +1,23 @@
+{
+    "Verbose": false,
+    "Debug": false,
+    "IgnoreDefaults": false,
+    "SpacesAfterTabs": false,
+    "NoColor": false,
+    "exclude": [
+        "templates/project/App/Assets.xcassets",
+        "templates/project/pods-release.xcconfig",
+        "tests/spec/fixtures"
+    ],
+    "AllowedContentTypes": [],
+    "PassedFiles": [],
+    "Disable": {
+        "Charset": false,
+        "EndOfLine": false,
+        "Indentation": false,
+        "InsertFinalNewline": false,
+        "TrimTrailingWhitespace": false,
+        "IndentSize": false,
+        "MaxLineLength": false
+    }
+}

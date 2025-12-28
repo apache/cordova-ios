@@ -20,8 +20,8 @@
 import Cordova
 
 @objc
-class PackagePlugin : CDVPlugin {
+class PackagePlugin: CDVPlugin {
     override func pluginInitialize() {
-        NSLog("Initialized Swift Package Plugin");
+        NSLog("Initialized Swift Package Plugin")
     }
 }

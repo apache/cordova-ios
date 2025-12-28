@@ -35,6 +35,7 @@ let package = Package(
     ]
 )
 
-
+// swiftlint:disable line_length
 package.dependencies.append(.package(name: "org.test.plugins.swiftpackagecocoapodplugin", path: "../org.test.plugins.swiftpackagecocoapodplugin"))
 package.targets.first?.dependencies.append(.product(name: "org.test.plugins.swiftpackagecocoapodplugin", package: "org.test.plugins.swiftpackagecocoapodplugin"))
+// swiftlint:enable line_length

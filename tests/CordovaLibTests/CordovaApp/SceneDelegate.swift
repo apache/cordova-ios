@@ -25,7 +25,7 @@ class SceneDelegate: CDVSceneDelegate {
             return
         }
 
-        let window = UIWindow(windowScene:windowScene)
+        let window = UIWindow(windowScene: windowScene)
         window.rootViewController = UIViewController()
         window.makeKeyAndVisible()
 

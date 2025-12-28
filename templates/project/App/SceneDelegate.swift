@@ -21,4 +21,3 @@ import Cordova
 
 class SceneDelegate: CDVSceneDelegate {
 }
-
