@@ -17,7 +17,6 @@
     under the License.
 */
 
-
 #import "CDVURLSchemeHandler.h"
 #import <Cordova/CDVViewController.h>
 #import <Cordova/CDVPlugin.h>
@@ -33,7 +32,7 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
 @interface CDVURLSchemeHandler ()
 
 @property (nonatomic, weak) CDVViewController *viewController;
-@property (nonatomic) NSMapTable <id <WKURLSchemeTask>, CDVPlugin <CDVPluginSchemeHandler> *> *handlerMap;
+@property (nonatomic) NSMapTable<id<WKURLSchemeTask>, CDVPlugin<CDVPluginSchemeHandler> *> *handlerMap;
 
 @end
 
@@ -49,12 +48,12 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
     return self;
 }
 
-- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id<WKURLSchemeTask>)urlSchemeTask
 {
     // Give plugins the chance to handle the url
     for (CDVPlugin *plugin in self.viewController.enumerablePlugins) {
         if ([plugin respondsToSelector:@selector(overrideSchemeTask:)]) {
-            CDVPlugin <CDVPluginSchemeHandler> *schemePlugin = (CDVPlugin<CDVPluginSchemeHandler> *)plugin;
+            CDVPlugin<CDVPluginSchemeHandler> *schemePlugin = (CDVPlugin<CDVPluginSchemeHandler> *)plugin;
             if ([schemePlugin overrideSchemeTask:urlSchemeTask]) {
                 // Store the plugin that is handling this particular request
                 [self.handlerMap setObject:schemePlugin forKey:urlSchemeTask];
@@ -62,7 +61,6 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
             }
         }
     }
-
 
     NSURLRequest *req = urlSchemeTask.request;
     if (![req.URL.scheme isEqualToString:self.viewController.appScheme]) {
@@ -172,9 +170,9 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
     }];
 }
 
-- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id<WKURLSchemeTask>)urlSchemeTask
 {
-    CDVPlugin <CDVPluginSchemeHandler> *plugin;
+    CDVPlugin<CDVPluginSchemeHandler> *plugin;
     @synchronized(self.handlerMap) {
         plugin = [self.handlerMap objectForKey:urlSchemeTask];
     }
@@ -212,7 +210,7 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
     return filePath.URLByStandardizingPath;
 }
 
--(NSString *)getMimeType:(NSURL *)url
+- (NSString *)getMimeType:(NSURL *)url
 {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
     if (@available(iOS 14.0, *)) {
@@ -250,7 +248,7 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
     }
 }
 
-- (BOOL)taskActive:(id <WKURLSchemeTask>)task
+- (BOOL)taskActive:(id<WKURLSchemeTask>)task
 {
     @synchronized(self.handlerMap) {
         return [self.handlerMap objectForKey:task] != nil;
@@ -258,4 +256,3 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
 }
 
 @end
-

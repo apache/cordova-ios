@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "2.3.0")
  }
  */
-@interface CDVConfigParser : NSObject <NSXMLParserDelegate>
+@interface CDVConfigParser : NSObject<NSXMLParserDelegate>
 
 /**
  A dictionary mapping Cordova plugin name keys to the plugin classes that implement them.
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  An array of plugin names to load immediately when Cordova initializes.
- 
+
  @Metadata {
     @Available(Cordova, introduced: "2.5.0")
  }
@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "8.0.0")
  }
  */
-+ (BOOL)parseConfigFile:(NSURL *)filePath withDelegate:(id <NSXMLParserDelegate>)delegate;
++ (BOOL)parseConfigFile:(NSURL *)filePath withDelegate:(id<NSXMLParserDelegate>)delegate;
 @end
 
 NS_ASSUME_NONNULL_END

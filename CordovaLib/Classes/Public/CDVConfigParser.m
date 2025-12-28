@@ -19,8 +19,7 @@
 
 #import <Cordova/CDVConfigParser.h>
 
-@interface CDVConfigParser ()
-{
+@interface CDVConfigParser () {
     NSString *featureName;
 }
 
@@ -40,12 +39,12 @@
 
 + (instancetype)parseConfigFile:(NSURL *)filePath
 {
-    CDVConfigParser* delegate = [[CDVConfigParser alloc] init];
+    CDVConfigParser *delegate = [[CDVConfigParser alloc] init];
     [CDVConfigParser parseConfigFile:filePath withDelegate:delegate];
     return delegate;
 }
 
-+ (BOOL)parseConfigFile:(NSURL *)filePath withDelegate:(id <NSXMLParserDelegate>)delegate
++ (BOOL)parseConfigFile:(NSURL *)filePath withDelegate:(id<NSXMLParserDelegate>)delegate
 {
     NSXMLParser *configParser = [[NSXMLParser alloc] initWithContentsOfURL:filePath];
 
@@ -75,7 +74,7 @@
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName attributes:(NSDictionary *)attributeDict
 {
     if ([elementName isEqualToString:@"preference"]) {
-        settings[[attributeDict[@"name"] lowercaseString]] = attributeDict[@"value"];
+        settings [[attributeDict [@"name"] lowercaseString]] = attributeDict[@"value"];
     } else if ([elementName isEqualToString:@"feature"]) { // store feature name to use with correct parameter set
         featureName = [attributeDict[@"name"] lowercaseString];
     } else if ((featureName != nil) && [elementName isEqualToString:@"param"]) {
@@ -84,8 +83,8 @@
         if ([paramName isEqualToString:@"ios-package"]) {
             pluginsDict[featureName] = value;
         }
-        BOOL paramIsOnload = ([paramName isEqualToString:@"onload"] && [@"true" isEqualToString : value]);
-        BOOL attribIsOnload = [@"true" isEqualToString :[attributeDict[@"onload"] lowercaseString]];
+        BOOL paramIsOnload = ([paramName isEqualToString:@"onload"] && [@"true" isEqualToString:value]);
+        BOOL attribIsOnload = [@"true" isEqualToString:[attributeDict[@"onload"] lowercaseString]];
         if (paramIsOnload || attribIsOnload) {
             [self.startupPluginNames addObject:featureName];
         }

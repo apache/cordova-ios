@@ -32,24 +32,26 @@
 
 // expose private interface
 - (bool)checkAndReinitViewUrl;
-- (bool)isUrlEmpty:(NSURL*)url;
+- (bool)isUrlEmpty:(NSURL *)url;
 
 @end
 
 @implementation CDVViewControllerTest
 
--(CDVViewController*)viewController{
-    CDVViewController* viewController = [CDVViewController new];
+- (CDVViewController *)viewController
+{
+    CDVViewController *viewController = [CDVViewController new];
     return viewController;
 }
 
--(void)doTestInitWithConfigFile:(NSString*)configFile expectedSettingValue:(NSString*)value{
+- (void)doTestInitWithConfigFile:(NSString *)configFile expectedSettingValue:(NSString *)value
+{
     // Create a CDVViewController
-    CDVViewController* viewController = [self viewController];
-    if(configFile){
+    CDVViewController *viewController = [self viewController];
+    if (configFile) {
         // Set custom config file
         viewController.configFile = configFile;
-    }else{
+    } else {
         // Do not specify config file ==> fallback to default config.xml
     }
 
@@ -57,37 +59,42 @@
     [viewController view];
 
     // Assert that the proper file was actually loaded, checking the value of a test setting it must contain
-    NSString* settingValue = [viewController.settings objectForKey:CDVViewControllerTestSettingKey];
+    NSString *settingValue = [viewController.settings objectForKey:CDVViewControllerTestSettingKey];
     XCTAssertEqualObjects(settingValue, value);
 }
 
--(void)testInitWithDefaultConfigFile{
+- (void)testInitWithDefaultConfigFile
+{
     [self doTestInitWithConfigFile:nil expectedSettingValue:CDVViewControllerTestSettingValueDefault];
 }
 
--(void)testInitWithCustomConfigFileAbsolutePath{
-    NSString* configFileAbsolutePath = [[NSBundle mainBundle] pathForResource:@"config-custom" ofType:@"xml"];
+- (void)testInitWithCustomConfigFileAbsolutePath
+{
+    NSString *configFileAbsolutePath = [[NSBundle mainBundle] pathForResource:@"config-custom" ofType:@"xml"];
     [self doTestInitWithConfigFile:configFileAbsolutePath expectedSettingValue:CDVViewControllerTestSettingValueCustom];
 }
 
--(void)testInitWithCustomConfigFileRelativePath{
-    NSString* configFileRelativePath = @"config-custom.xml";
+- (void)testInitWithCustomConfigFileRelativePath
+{
+    NSString *configFileRelativePath = @"config-custom.xml";
     [self doTestInitWithConfigFile:configFileRelativePath expectedSettingValue:CDVViewControllerTestSettingValueCustom];
 }
 
--(void)testIsUrlEmpty{
-    CDVViewController* viewController = [self viewController];
+- (void)testIsUrlEmpty
+{
+    CDVViewController *viewController = [self viewController];
     XCTAssertTrue([viewController isUrlEmpty:(id)[NSNull null]]);
     XCTAssertTrue([viewController isUrlEmpty:nil]);
     XCTAssertTrue([viewController isUrlEmpty:[NSURL URLWithString:@""]]);
     XCTAssertTrue([viewController isUrlEmpty:[NSURL URLWithString:@"about:blank"]]);
 }
 
--(void)testIfItLoadsAppUrlIfCurrentViewIsBlank{
-    CDVViewController* viewController = [self viewController];
+- (void)testIfItLoadsAppUrlIfCurrentViewIsBlank
+{
+    CDVViewController *viewController = [self viewController];
 
-    NSString* appUrl = @"about:blank";
-    NSString* html = @"<html><body></body></html>";
+    NSString *appUrl = @"about:blank";
+    NSString *html = @"<html><body></body></html>";
     [viewController.webViewEngine loadHTMLString:html baseURL:[NSURL URLWithString:appUrl]];
     XCTAssertFalse([viewController checkAndReinitViewUrl]);
 
@@ -98,4 +105,3 @@
 }
 
 @end
-

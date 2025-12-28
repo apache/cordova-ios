@@ -34,7 +34,7 @@ static CDVWebViewProcessPoolFactory *factory = nil;
     dispatch_once(&onceToken, ^{
         factory = [[CDVWebViewProcessPoolFactory alloc] init];
     });
-    
+
     return factory;
 }
 
@@ -46,7 +46,8 @@ static CDVWebViewProcessPoolFactory *factory = nil;
     return self;
 }
 
-- (WKProcessPool*) sharedProcessPool {
+- (WKProcessPool *)sharedProcessPool
+{
     return _sharedPool;
 }
 @end

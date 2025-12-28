@@ -46,7 +46,7 @@
     return self;
 }
 
-- (instancetype)initWithObjects:(const id _Nonnull [ _Nullable ])objects forKeys:(const id <NSCopying> _Nonnull [ _Nullable ])keys count:(NSUInteger)cnt
+- (instancetype)initWithObjects:(const id _Nonnull[_Nullable])objects forKeys:(const id<NSCopying> _Nonnull[_Nullable])keys count:(NSUInteger)cnt
 {
     self = [self init];
     if (self != nil) {

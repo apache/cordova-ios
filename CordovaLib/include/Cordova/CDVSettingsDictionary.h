@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "8.0.0")
  }
  */
-@property(readonly) NSUInteger count;
+@property (readonly) NSUInteger count;
 
 /**
  Initializes a newly allocated dictionary by placing in it the keys and values

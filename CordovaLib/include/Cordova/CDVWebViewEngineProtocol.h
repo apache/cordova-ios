@@ -26,18 +26,18 @@
 
 @class WKWebViewConfiguration;
 
-@protocol CDVWebViewEngineProtocol <NSObject>
+@protocol CDVWebViewEngineProtocol<NSObject>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, strong, readonly) UIView* engineWebView;
+@property (nonatomic, strong, readonly) UIView *engineWebView;
 
-- (id)loadRequest:(NSURLRequest*)request;
-- (id)loadHTMLString:(NSString*)string baseURL:(nullable NSURL*)baseURL;
-- (void)evaluateJavaScript:(NSString*)javaScriptString completionHandler:(void (^_Nullable)(id, NSError*))completionHandler;
+- (id)loadRequest:(NSURLRequest *)request;
+- (id)loadHTMLString:(NSString *)string baseURL:(nullable NSURL *)baseURL;
+- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^_Nullable)(id, NSError *))completionHandler;
 
-- (NSURL*)URL;
-- (BOOL)canLoadRequest:(NSURLRequest*)request;
+- (NSURL *)URL;
+- (BOOL)canLoadRequest:(NSURLRequest *)request;
 - (nullable instancetype)initWithFrame:(CGRect)frame;
 
 /// Convenience Initializer
@@ -45,14 +45,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param configuration The configuration for the new web view.
 - (nullable instancetype)initWithFrame:(CGRect)frame configuration:(nullable WKWebViewConfiguration *)configuration;
 
-- (void)updateWithInfo:(NSDictionary*)info;
+- (void)updateWithInfo:(NSDictionary *)info;
 
 NS_ASSUME_NONNULL_END
 
 @end
 
-
-@protocol CDVWebViewEngineConfigurationDelegate <NSObject>
+@protocol CDVWebViewEngineConfigurationDelegate<NSObject>
 
 @optional
 /**
@@ -70,6 +69,6 @@ NS_ASSUME_NONNULL_END
  }
  ```
  */
-- (nonnull WKWebViewConfiguration*)configuration;
+- (nonnull WKWebViewConfiguration *)configuration;
 
 @end

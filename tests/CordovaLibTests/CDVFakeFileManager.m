@@ -35,7 +35,7 @@
     return [[CDVFakeFileManager alloc] initWithFileExistsBlock:fileExistsBlock];
 }
 
-- (BOOL)fileExistsAtPath:(NSString*)path
+- (BOOL)fileExistsAtPath:(NSString *)path
 {
     return _fileExistsBlock(path);
 }

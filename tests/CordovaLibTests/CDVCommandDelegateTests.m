@@ -27,7 +27,7 @@
 @interface CDVCommandDelegateImpl ()
 
 // expose private interface
-- (BOOL)isValidCallbackId:(NSString*)callbackId;
+- (BOOL)isValidCallbackId:(NSString *)callbackId;
 
 @end
 
@@ -47,9 +47,9 @@
 
 - (void)testNullCallbackId
 {
-    CDVCommandDelegateImpl* impl = [[CDVCommandDelegateImpl alloc] initWithViewController:nil];
+    CDVCommandDelegateImpl *impl = [[CDVCommandDelegateImpl alloc] initWithViewController:nil];
 
-    NSString* callbackId = nil;
+    NSString *callbackId = nil;
 
     XCTAssertFalse([impl isValidCallbackId:callbackId], @"A nil callbackId should be not valid");
 }

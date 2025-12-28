@@ -28,8 +28,8 @@
 
 - (void)testInitWithNoArgs
 {
-    NSArray* jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", [NSArray array], nil];
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+    NSArray *jsonArr = [NSArray arrayWithObjects:@"callbackId", @"className", @"methodName", [NSArray array], nil];
+    CDVInvokedUrlCommand *command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
 
     XCTAssertEqual(@"callbackId", command.callbackId);
     XCTAssertEqual(@"className", command.className);
@@ -39,8 +39,8 @@
 
 - (void)testArgumentAtIndex
 {
-    NSArray* jsonArr = [NSArray arrayWithObjects:[NSNull null], @"className", @"methodName", [NSArray array], nil];
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
+    NSArray *jsonArr = [NSArray arrayWithObjects:[NSNull null], @"className", @"methodName", [NSArray array], nil];
+    CDVInvokedUrlCommand *command = [CDVInvokedUrlCommand commandFromJson:jsonArr];
 
     XCTAssertNil([command argumentAtIndex:0], @"NSNull to nil");
     XCTAssertNil([command argumentAtIndex:100], @"Invalid index to nil");

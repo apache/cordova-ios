@@ -40,21 +40,21 @@
 
 - (void)testBase64Encode
 {
-    NSString* decodedString = @"abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&";
-    NSData* decodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *decodedString = @"abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&";
+    NSData *decodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
 
-    NSString* expectedEncodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
-    NSString* actualEncodedString = [decodedData base64EncodedStringWithOptions:0];
+    NSString *expectedEncodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
+    NSString *actualEncodedString = [decodedData base64EncodedStringWithOptions:0];
 
     XCTAssertTrue([expectedEncodedString isEqualToString:actualEncodedString]);
 }
 
 - (void)testBase64Decode
 {
-    NSString* encodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
-    NSString* decodedString = @"abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&";
-    NSData* encodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
-    NSData* decodedData = [[NSData alloc] initWithBase64EncodedString:encodedString options:0];
+    NSString *encodedString = @"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwIUAjJCVeJg==";
+    NSString *decodedString = @"abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&";
+    NSData *encodedData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:encodedString options:0];
 
     XCTAssertTrue([encodedData isEqualToData:decodedData]);
 }

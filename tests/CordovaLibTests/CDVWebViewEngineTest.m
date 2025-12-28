@@ -28,20 +28,20 @@
 
 @interface CDVWebViewEngineTest : XCTestCase
 
-@property AppDelegate* appDelegate;
-@property (nonatomic, strong) CDVWebViewEngine* plugin;
-@property (nonatomic, strong) CDVViewController* viewController;
+@property AppDelegate *appDelegate;
+@property (nonatomic, strong) CDVWebViewEngine *plugin;
+@property (nonatomic, strong) CDVViewController *viewController;
 
 @end
 
 @interface CDVViewController ()
 
 // expose property as readwrite, for test purposes
-@property (nonatomic, readwrite, strong) CDVSettingsDictionary* settings;
+@property (nonatomic, readwrite, strong) CDVSettingsDictionary *settings;
 
 @end
 
-@interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
+@interface TestNavigationDelegate : NSObject<WKNavigationDelegate>
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 
 - (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation;
@@ -72,11 +72,12 @@
 
 @implementation CDVWebViewEngineTest
 
-- (void)setUp {
+- (void)setUp
+{
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
-    self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    self.appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
     self.viewController = self.appDelegate.testViewController;
 
@@ -85,7 +86,8 @@
     XCTAssert([self.plugin conformsToProtocol:@protocol(CDVWebViewEngineProtocol)], @"Plugin does not conform to CDVWebViewEngineProtocol");
 }
 
-- (void)tearDown {
+- (void)tearDown
+{
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [self.appDelegate destroyViewController];
     [super tearDown];
@@ -101,15 +103,16 @@
     webView.navigationDelegate = navigationDelegate;
     [navigationDelegate waitForDidFinishNavigation:expectation];
 
-    [self waitForExpectations:@[expectation] timeout:5];
+    [self waitForExpectations:@[ expectation ] timeout:5];
 
     webView.navigationDelegate = oldNavigationDelegate;
 }
 
-- (void) testCanLoadRequest {
-    NSURLRequest* fileUrlRequest = [NSURLRequest requestWithURL:[NSURL fileURLWithPath:@"path/to/file.html"]];
-    NSURLRequest* httpUrlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://apache.org"]];
-    NSURLRequest* miscUrlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"foo://bar"]];
+- (void)testCanLoadRequest
+{
+    NSURLRequest *fileUrlRequest = [NSURLRequest requestWithURL:[NSURL fileURLWithPath:@"path/to/file.html"]];
+    NSURLRequest *httpUrlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://apache.org"]];
+    NSURLRequest *miscUrlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"foo://bar"]];
     id<CDVWebViewEngineProtocol> webViewEngineProtocol = self.plugin;
 
     SEL wk_sel = NSSelectorFromString(@"loadFileURL:allowingReadAccessToURL:");
@@ -123,25 +126,26 @@
     XCTAssertTrue([webViewEngineProtocol canLoadRequest:miscUrlRequest]);
 }
 
-- (void) testUpdateInfo {
+- (void)testUpdateInfo
+{
     // Add -ObjC to Other Linker Flags to test project, to load Categories
     // Update objc test template generator as well
 
     id<CDVWebViewEngineProtocol> webViewEngineProtocol = self.plugin;
-    WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
+    WKWebView *wkWebView = (WKWebView *)self.plugin.engineWebView;
 
-    NSDictionary* preferences = @{
-                               [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
-                               [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                               [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
-                               [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
-                               [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
-                               [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
-                               [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast" // default is 'normal'
-                               };
-    NSDictionary* info = @{
-                           kCDVWebViewEngineWebViewPreferences : preferences
-                           };
+    NSDictionary *preferences = @{
+        [@"MinimumFontSize" lowercaseString] : @1.1,                            // default is 0.0
+        [@"AllowInlineMediaPlayback" lowercaseString] : @YES,                   // default is NO
+        [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
+        [@"SuppressesIncrementalRendering" lowercaseString] : @YES,             // default is NO
+        [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO,               // default is YES
+        [@"DisallowOverscroll" lowercaseString] : @YES,                         // so bounces is to be NO. defaults to NO
+        [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast"               // default is 'normal'
+    };
+    NSDictionary *info = @{
+        kCDVWebViewEngineWebViewPreferences : preferences
+    };
     [webViewEngineProtocol updateWithInfo:info];
 
     // the only preference we can set, we **can** change this during runtime
@@ -155,11 +159,11 @@
 
     // in the test above, DisallowOverscroll is YES, so no bounce
     if ([wkWebView respondsToSelector:@selector(scrollView)]) {
-        XCTAssertFalse(((UIScrollView*)[wkWebView scrollView]).bounces);
+        XCTAssertFalse(((UIScrollView *)[wkWebView scrollView]).bounces);
     } else {
         for (id subview in wkWebView.subviews) {
             if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-                XCTAssertFalse(((UIScrollView*)subview).bounces = NO);
+                XCTAssertFalse(((UIScrollView *)subview).bounces = NO);
             }
         }
     }
@@ -167,21 +171,22 @@
     XCTAssertTrue(wkWebView.scrollView.decelerationRate == UIScrollViewDecelerationRateFast);
 }
 
-- (void) testConfigurationFromSettings {
+- (void)testConfigurationFromSettings
+{
     // we need to re-set the plugin from the "setup" to take in the app settings we need
     self.plugin = [[CDVWebViewEngine alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:nil];
     self.viewController = [[CDVViewController alloc] init];
 
     // generate the app settings
-    CDVSettingsDictionary* settings = [[CDVSettingsDictionary alloc] initWithDictionary:@{
-                                  [@"MinimumFontSize" lowercaseString] : @1.1, // default is 0.0
-                                  [@"AllowInlineMediaPlayback" lowercaseString] : @YES, // default is NO
-                                  [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
-                                  [@"SuppressesIncrementalRendering" lowercaseString] : @YES, // default is NO
-                                  [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO, // default is YES
-                                  [@"DisallowOverscroll" lowercaseString] : @YES, // so bounces is to be NO. defaults to NO
-                                  [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast" // default is 'normal'
-                                  }];
+    CDVSettingsDictionary *settings = [[CDVSettingsDictionary alloc] initWithDictionary:@{
+        [@"MinimumFontSize" lowercaseString] : @1.1,                            // default is 0.0
+        [@"AllowInlineMediaPlayback" lowercaseString] : @YES,                   // default is NO
+        [@"MediaTypesRequiringUserActionForPlayback" lowercaseString] : @"all", // default is none
+        [@"SuppressesIncrementalRendering" lowercaseString] : @YES,             // default is NO
+        [@"AllowsAirPlayForMediaPlayback" lowercaseString] : @NO,               // default is YES
+        [@"DisallowOverscroll" lowercaseString] : @YES,                         // so bounces is to be NO. defaults to NO
+        [@"WKWebViewDecelerationSpeed" lowercaseString] : @"fast"               // default is 'normal'
+    }];
     // this can be set because of the Category at the top of the file
     self.viewController.settings = settings;
 
@@ -190,7 +195,7 @@
     XCTAssert([self.plugin conformsToProtocol:@protocol(CDVWebViewEngineProtocol)], @"Plugin does not conform to CDVWebViewEngineProtocol");
 
     // after registering (thus plugin initialization), we can grab the webview configuration
-    WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
+    WKWebView *wkWebView = (WKWebView *)self.plugin.engineWebView;
 
     // the only preference we can set, we **can** change this during runtime
     XCTAssertEqualWithAccuracy(wkWebView.configuration.preferences.minimumFontSize, 1.1, 0.0001);
@@ -204,11 +209,11 @@
 
     // in the test above, DisallowOverscroll is YES, so no bounce
     if ([wkWebView respondsToSelector:@selector(scrollView)]) {
-        XCTAssertFalse(((UIScrollView*)[wkWebView scrollView]).bounces);
+        XCTAssertFalse(((UIScrollView *)[wkWebView scrollView]).bounces);
     } else {
         for (id subview in wkWebView.subviews) {
             if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-                XCTAssertFalse(((UIScrollView*)subview).bounces == NO);
+                XCTAssertFalse(((UIScrollView *)subview).bounces == NO);
             }
         }
     }
@@ -216,8 +221,9 @@
     XCTAssertTrue(wkWebView.scrollView.decelerationRate == UIScrollViewDecelerationRateFast);
 }
 
-- (void) testCrashRecoveryRefresh {
-    WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
+- (void)testCrashRecoveryRefresh
+{
+    WKWebView *wkWebView = (WKWebView *)self.plugin.engineWebView;
     [self waitForDidFinishNavigation:wkWebView];
 
     NSString *startPage = @"https://cordova.apache.org/";
@@ -239,14 +245,15 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [expectation fulfill];
     });
-    [self waitForExpectations:@[expectation] timeout:10.0];
+    [self waitForExpectations:@[ expectation ] timeout:10.0];
 
     XCTAssertFalse([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
     XCTAssertTrue([[[self.plugin URL] absoluteString] isEqualToString:@"https://cordova.apache.org/blog/"]);
 }
 
-- (void) testCrashRecoveryReload {
-    WKWebView* wkWebView = (WKWebView*)self.plugin.engineWebView;
+- (void)testCrashRecoveryReload
+{
+    WKWebView *wkWebView = (WKWebView *)self.plugin.engineWebView;
     [self waitForDidFinishNavigation:wkWebView];
 
     NSString *startPage = @"https://cordova.apache.org/";
@@ -269,15 +276,16 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [expectation fulfill];
     });
-    [self waitForExpectations:@[expectation] timeout:10.0];
+    [self waitForExpectations:@[ expectation ] timeout:10.0];
 
     XCTAssertTrue([[[self.plugin URL] absoluteString] isEqualToString:startPage]);
 }
 
-- (void) testWKProcessPoolFactory {
+- (void)testWKProcessPoolFactory
+{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    WKProcessPool* shared = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
+    WKProcessPool *shared = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
 #pragma clang diagnostic pop
 
     XCTAssertTrue(shared != nil);

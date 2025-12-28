@@ -31,10 +31,10 @@
 - (void)dispose;
 
 - (void)resetRequestId;
-- (void)enqueueCommandBatch:(NSString*)batchJSON;
+- (void)enqueueCommandBatch:(NSString *)batchJSON;
 
 - (void)fetchCommandsFromJs;
 - (void)executePending;
-- (BOOL)execute:(CDVInvokedUrlCommand*)command;
+- (BOOL)execute:(CDVInvokedUrlCommand *)command;
 
 @end

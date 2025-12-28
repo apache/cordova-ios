@@ -49,7 +49,7 @@
         NSLog(@"No webview subviews found, not applying the longpress fix.");
         return;
     }
-    for (int i=0; i<views.count; i++) {
+    for (int i = 0; i < views.count; i++) {
         UIView *webViewScrollView = views[i];
         if ([webViewScrollView isKindOfClass:[UIScrollView class]]) {
             NSArray *webViewScrollViewSubViews = webViewScrollView.subviews;
@@ -60,9 +60,8 @@
     }
 }
 
-- (void)handleLongPressGestures:(UILongPressGestureRecognizer*)sender
+- (void)handleLongPressGestures:(UILongPressGestureRecognizer *)sender
 {
-    
 }
 
 @end

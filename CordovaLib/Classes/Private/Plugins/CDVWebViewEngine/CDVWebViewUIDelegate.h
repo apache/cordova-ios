@@ -30,7 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 CDV_SWIFT_UI_ACTOR
-@interface CDVWebViewUIDelegate : NSObject <WKUIDelegate>
+@interface CDVWebViewUIDelegate : NSObject<WKUIDelegate>
 
 typedef NS_ENUM(NSInteger, CDVWebViewPermissionGrantType) {
     CDVWebViewPermissionGrantType_Prompt,
@@ -40,11 +40,11 @@ typedef NS_ENUM(NSInteger, CDVWebViewPermissionGrantType) {
     CDVWebViewPermissionGrantType_GrantIfSameHost_ElseDeny
 };
 
-@property (nonatomic, nullable, copy) NSString* title;
+@property (nonatomic, nullable, copy) NSString *title;
 @property (nonatomic, assign) BOOL allowNewWindows;
 @property (nonatomic, assign) CDVWebViewPermissionGrantType mediaPermissionGrantType;
 
-- (instancetype)initWithViewController:(CDVViewController*)vc;
+- (instancetype)initWithViewController:(CDVViewController *)vc;
 
 @end
 

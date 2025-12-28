@@ -18,7 +18,7 @@
 */
 
 #ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
-    #warning Import <Cordova/Cordova.h> rather than <Cordova/CDV.h>
+#warning Import <Cordova/Cordova.h> rather than <Cordova/CDV.h>
 #endif
 
 #import <Cordova/Cordova.h>

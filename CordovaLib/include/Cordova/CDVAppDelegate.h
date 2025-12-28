@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "4.0.0")
  }
  */
-@interface CDVAppDelegate : UIResponder <UIApplicationDelegate>
+@interface CDVAppDelegate : UIResponder<UIApplicationDelegate>
 
 /**
  The application window.

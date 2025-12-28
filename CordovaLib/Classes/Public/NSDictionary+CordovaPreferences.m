@@ -25,12 +25,12 @@
 
 @implementation NSDictionary (CordovaPreferences)
 
-- (id)cordovaSettingForKey:(NSString*)key
+- (id)cordovaSettingForKey:(NSString *)key
 {
     return [self objectForKey:[key lowercaseString]];
 }
 
-- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue
+- (BOOL)cordovaBoolSettingForKey:(NSString *)key defaultValue:(BOOL)defaultValue
 {
     BOOL value = defaultValue;
     id prefObj = [self cordovaSettingForKey:key];
@@ -52,26 +52,21 @@
             [prefObj isEqualToString:@"1"] ||
             // False Case
             [prefObj isEqualToString:@"false"] ||
-            [prefObj isEqualToString:@"0"]
-            )
-        {
+            [prefObj isEqualToString:@"0"]) {
             value = [prefObj isEqualToString:@"true"] || [prefObj isEqualToString:@"1"];
         }
     } else if (
-               [prefObj isKindOfClass:NSNumber.class] &&
-               (
-                [prefObj isEqual: @YES] ||
-                [prefObj isEqual: @NO]
-                )
-               )
-    {
-        value = [prefObj isEqual: @YES];
+        [prefObj isKindOfClass:NSNumber.class] &&
+        (
+            [prefObj isEqual:@YES] ||
+            [prefObj isEqual:@NO])) {
+        value = [prefObj isEqual:@YES];
     }
 
     return value;
 }
 
-- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue
+- (CGFloat)cordovaFloatSettingForKey:(NSString *)key defaultValue:(CGFloat)defaultValue
 {
     CGFloat value = defaultValue;
     id prefObj = [self cordovaSettingForKey:key];
@@ -87,7 +82,7 @@
 
 @implementation NSMutableDictionary (CordovaPreferences)
 
-- (void)setCordovaSetting:(id)value forKey:(NSString*)key
+- (void)setCordovaSetting:(id)value forKey:(NSString *)key
 {
     [self setObject:value forKey:[key lowercaseString]];
 }

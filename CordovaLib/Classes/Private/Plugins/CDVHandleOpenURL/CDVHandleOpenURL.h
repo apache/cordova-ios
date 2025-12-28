@@ -21,7 +21,7 @@
 
 @interface CDVHandleOpenURL : CDVPlugin
 
-@property (nonatomic, strong) NSURL* url;
+@property (nonatomic, strong) NSURL *url;
 @property (nonatomic, assign) BOOL pageLoaded;
 
 @end
