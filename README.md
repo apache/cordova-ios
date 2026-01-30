@@ -55,6 +55,14 @@ cordova platform rm ios
 cordova platform add ios
 ```
 
+## Migrate Plugins to cordova-ios 8.0.0
+
+Cordova iOS 8 introduces some significant changes to the exposed API for plugin authors and framework consumers. Many of these changes have been made to better align the framework with modern iOS development practices, such as adopting the UIScene APIs and fixing conflicts with SwiftUI projects, as well as work to improve the API experience for apps that consume Cordova as a framework (sometimes called the “platform centric workflow”). In all cases, great care has been taken to try to minimize the risk of breakage to existing 3rd party plugins.
+
+Many plugins will notice new deprecation warnings when built against Cordova iOS 8, rather than outright breaking changes. This document aims to explain the changes, the rationale behind the changes, and offer sample code for plugin authors to ensure their plugin code is compatible with future versions of Cordova iOS.
+
+To read the full migration guide, see: https://apache.github.io/cordova-ios/documentation/cordova/upgrading-8/?language=objc
+
 ## Debugging in Xcode
 
 Import project in Xcode through _File > Open_ and targeting `/path/to/your-cdv-project/platforms/ios/App.xcworkspace`.
