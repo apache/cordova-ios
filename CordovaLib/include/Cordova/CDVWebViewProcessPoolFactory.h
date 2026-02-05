@@ -26,7 +26,7 @@
     @Available(Cordova, introduced: "6.2.0", deprecated: "8.0.0")
  }
  */
-CDV_DEPRECATED(8.0.0, "WKProcessPool is deprecated since iOS 15.0: Creating and using multiple instances of WKProcessPool no longer has any effect.")
+CDV_DEPRECATED(8.0.0, "Apple deprecated  the use of WKProcessPool since iOS 15.0 with the reason: Creating and using multiple instances of WKProcessPool no longer has any effect.")
 @interface CDVWebViewProcessPoolFactory : NSObject
 @property (nonatomic, retain) WKProcessPool* sharedPool;
 
