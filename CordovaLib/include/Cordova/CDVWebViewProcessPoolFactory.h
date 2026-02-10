@@ -22,8 +22,15 @@
 @class WKProcessPool;
 
 /**
- Apple deprecated the use of WKProcessPool since iOS 15.0 with the reason:
- Creating and using multiple instances of WKProcessPool no longer has any effect.
+   Apple has deprecated the WKProcessPool API, saying that it has no effect
+   in iOS 15 and newer. As such, the CDVWebViewProcessPoolFactory API is
+   marked as deprecated, but still exists to support iOS 13 and 14.
+
+   The CDVWebViewProcessPoolFactory API was also problematic because it
+   exposed WebKit-specific API types to the public API interface of Cordova,
+   potentially causing issues if those APIs need to change in the future. 
+   With this deprecation and eventual removal, Cordova is better insulated
+   from upstream WebView changes.
  @Metadata {
     @Available(Cordova, introduced: "6.2.0", deprecated: "8.0.0")
  }
