@@ -15,13 +15,15 @@
   ],
   "scripts": {
     "prepare": "cordova-js build > templates/project/www/cordova.js",
-    "pretest": "npm run lint",
+    "pretest": "npm run lint:js",
     "test": "npm run cover && npm run test:xcode",
     "test:unit": "jasmine --config=tests/spec/unit.json",
     "test:xcode": "xcodebuild -quiet test -workspace tests/cordova-ios.xcworkspace -scheme CordovaTestApp -destination \"platform=iOS Simulator,name=${CDV_IOS_SIM:-iPhone 16e}\" -destination-timeout 300 -derivedDataPath \"`mktemp -d 2>/dev/null || mktemp -d -t 'cordova-ios'`\"",
     "cover": "c8 npm run test:unit",
-    "lint": "eslint .",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:js": "eslint .",
+    "lint:js:fix": "npm run lint -- --fix",
+    "lint:objc": "node .cdv-scripts/lint-objc.mjs",
+    "lint:objc:fix": "node .cdv-scripts/lint-objc.mjs --fix"
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",

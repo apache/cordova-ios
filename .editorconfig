@@ -15,6 +15,28 @@
 # specific language governing permissions and limitations
 # under the License.
 
+root = true
+
+# Defaults to apply across all files
 [*]
+charset = utf-8
 end_of_line = lf
+indent_style = space
+indent_size = 4
 insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Exceptions for Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# Exceptions for YAML and JSON
+[*.{yml,yaml,json}]
+indent_size = 2
+
+# Not required but safe to prevent any aggressive editors
+# from making changes in .git or node_modules, if a user
+# happened to open anything from these directories.
+[{.git/**,node_modules/**}]
+ignore = true

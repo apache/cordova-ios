@@ -66,7 +66,7 @@ npm run lint
 In many cases, lint warnings can be fixed automatically with:
 
 ```bash
-npm run lint:fix
+npm run lint:js:fix
 ```
 
 If an issue cannot be resolved automatically, it will require manual review and correction.
