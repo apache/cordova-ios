@@ -33,6 +33,8 @@
 		90A775DD2C6F257500FC5BB0 /* CDVSettingsDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 90A775DC2C6F256D00FC5BB0 /* CDVSettingsDictionaryTests.m */; };
 		90AE8F9C2EBF03F600FF0979 /* CDVWebViewEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E23F90123E175AD006CD852 /* CDVWebViewEngineTest.m */; };
 		90AE8F9E2EBF0E0700FF0979 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AE8F9D2EBF0E0300FF0979 /* SceneDelegate.swift */; };
+		90D08FEB2F4E63CA00A9838F /* CDVURLSchemeHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 90D08FEA2F4E63CA00A9838F /* CDVURLSchemeHandlerTest.m */; };
+		90D08FED2F4E690700A9838F /* CDVSettingsDictionarySwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D08FEC2F4E690700A9838F /* CDVSettingsDictionarySwiftTests.swift */; };
 		C0FA7CA11E4BB6420077B045 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8EB14D0165FFD3200616F39 /* config.xml */; };
 		C0FA7CA21E4BB6420077B045 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EF33BD61911ABA20048544E /* Default-568h@2x.png */; };
 		C0FA7CA41E4BB6420077B045 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 30F8AE1C152129DA006625B3 /* www */; };
@@ -92,6 +94,8 @@
 		9085EE2F2CF05B5900603B73 /* CordovaTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CordovaTests.xctestplan; sourceTree = "<group>"; };
 		90A775DC2C6F256D00FC5BB0 /* CDVSettingsDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDVSettingsDictionaryTests.m; sourceTree = "<group>"; };
 		90AE8F9D2EBF0E0300FF0979 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		90D08FEA2F4E63CA00A9838F /* CDVURLSchemeHandlerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDVURLSchemeHandlerTest.m; sourceTree = "<group>"; };
+		90D08FEC2F4E690700A9838F /* CDVSettingsDictionarySwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDVSettingsDictionarySwiftTests.swift; sourceTree = "<group>"; };
 		C0FA7CAA1E4BB6420077B045 /* CordovaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CordovaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FA7CAC1E4BB6B30077B045 /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cordova.framework; path = "../Debug-iphonesimulator/Cordova.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FA7CC71E4BBBBE0077B045 /* CordovaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CordovaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,6 +189,8 @@
 		EB3B34F4161B585D003DBE7D /* CordovaTests */ = {
 			isa = PBXGroup;
 			children = (
+				90D08FEC2F4E690700A9838F /* CDVSettingsDictionarySwiftTests.swift */,
+				90D08FEA2F4E63CA00A9838F /* CDVURLSchemeHandlerTest.m */,
 				90A775DC2C6F256D00FC5BB0 /* CDVSettingsDictionaryTests.m */,
 				902530FA29A6DC53004AF1CF /* CDVPluginInitTests.m */,
 				4E23F90123E175AD006CD852 /* CDVWebViewEngineTest.m */,
@@ -340,10 +346,12 @@
 				90AE8F9C2EBF03F600FF0979 /* CDVWebViewEngineTest.m in Sources */,
 				C0FA7CB61E4BBBBE0077B045 /* CDVPluginResultJSONSerializationTests.m in Sources */,
 				902530FC29A6DC53004AF1CF /* CDVPluginInitTests.m in Sources */,
+				90D08FED2F4E690700A9838F /* CDVSettingsDictionarySwiftTests.swift in Sources */,
 				C0FA7CB91E4BBBBE0077B045 /* CDVBase64Tests.m in Sources */,
 				90A775DD2C6F257500FC5BB0 /* CDVSettingsDictionaryTests.m in Sources */,
 				C0FA7CBA1E4BBBBE0077B045 /* CDVFakeFileManager.m in Sources */,
 				C0FA7CBB1E4BBBBE0077B045 /* CDVViewControllerTest.m in Sources */,
+				90D08FEB2F4E63CA00A9838F /* CDVURLSchemeHandlerTest.m in Sources */,
 				C0FA7CBC1E4BBBBE0077B045 /* CDVInvokedUrlCommandTests.m in Sources */,
 				C0FA7CBF1E4BBBBE0077B045 /* CDVCommandDelegateTests.m in Sources */,
 			);
@@ -592,6 +600,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.apache.cordova.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CordovaApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CordovaApp";
 				USER_HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../CordovaLib/Classes/Private/**",
@@ -627,6 +636,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.apache.cordova.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CordovaApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CordovaApp";
 				USER_HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../CordovaLib/Classes/Private/**",

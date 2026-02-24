@@ -18,6 +18,7 @@
  */
 
 import XCTest
+import Cordova
 
 let testSettings = [
     "disallowoverscroll": true
