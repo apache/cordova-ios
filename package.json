@@ -36,9 +36,15 @@
   "engines": {
     "node": "^20.17.0 || >=22.9.0"
   },
+  "exports": {
+    ".": "./lib/Api.js",
+    "./package.json": "./package.json",
+    "./lib/*": "./lib/*.js"
+  },
   "dependencies": {
     "bplist-parser": "^0.3.2",
     "cordova-common": "^6.0.0",
+    "devicectl": "^0.0.2",
     "elementtree": "^0.1.7",
     "execa": "^5.1.1",
     "nopt": "^9.0.0",
@@ -56,5 +62,10 @@
       "lcov",
       "text"
     ]
+  },
+  "overrides": {
+    "c8": {
+      "yargs": "^18.0.0"
+    }
   }
 }
