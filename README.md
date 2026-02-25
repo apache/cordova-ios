@@ -21,10 +21,12 @@
 
 # Cordova iOS
 
-[![NPM](https://nodei.co/npm/cordova-ios.png)](https://nodei.co/npm/cordova-ios/)
+[![npm - Latest](https://img.shields.io/npm/v/cordova-ios/latest?label=Latest%20Release%20(npm))](https://npmjs.com/package/cordova-ios)
 
-[![Node CI](https://github.com/apache/cordova-ios/workflows/Node%20CI/badge.svg?branch=master)](https://github.com/apache/cordova-ios/actions?query=branch%3Amaster)
-[![codecov.io](https://codecov.io/github/apache/cordova-ios/coverage.svg?branch=master)](https://codecov.io/github/apache/cordova-ios?branch=master)
+[![GitHub](https://img.shields.io/github/package-json/v/apache/cordova-ios?label=Development%20(Git))](https://github.com/apache/cordova-ios)
+[![GitHub - Node Workflow](https://github.com/apache/cordova-ios/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/apache/cordova-ios/actions/workflows/ci.yml?query=branch%3Amaster)
+[![GitHub - Release Audit Workflow](https://github.com/apache/cordova-ios/actions/workflows/release-audit.yml/badge.svg?branch=master)](https://github.com/apache/cordova-ios/actions/workflows/release-audit.yml?query=branch%3Amaster)
+[![Code Coverage](https://codecov.io/github/apache/cordova-ios/coverage.svg?branch=master)](https://codecov.io/github/apache/cordova-ios?branch=master)
 
 Cordova iOS is an iOS application library that allows for Cordova-based projects to be built for the iOS Platform. Cordova based applications are, at the core, applications written with web technology: HTML, CSS and JavaScript.
 
