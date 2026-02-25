@@ -83,6 +83,26 @@ describe('SwiftPackage', () => {
             });
     });
 
+    describe('updateDeploymentTarget', () => {
+        let pkg;
+        beforeEach(() => {
+            fs.mkdirSync(path.join(tmpDir.name, 'packages', 'cordova-ios-plugins'), { recursive: true });
+            fs.writeFileSync(path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift'), fixturePackage, 'utf8');
+
+            pkg = new SwiftPackage(tmpDir.name);
+        });
+
+        it('should update the deployment target to the specified version', () => {
+            pkg.updateDeploymentTarget('18.4');
+
+            const pkgPath = path.join(tmpDir.name, 'packages', 'cordova-ios-plugins', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+
+            expect(content).toContain('.iOS("18.4")');
+            expect(content).toContain('.macCatalyst("18.4")');
+        });
+    });
+
     describe('addPlugin', () => {
         const my_plugin = {
             id: 'my-plugin',

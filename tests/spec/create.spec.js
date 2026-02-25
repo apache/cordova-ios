@@ -99,6 +99,10 @@ function verifyProjectDeploymentTarget (tmpDir, expectedTarget) {
 
     const actualDeploymentTarget = xcodeproj.getBuildProperty('IPHONEOS_DEPLOYMENT_TARGET');
     expect(actualDeploymentTarget).toBe(expectedTarget);
+
+    const pkgPath = path.join(tmpDir, 'packages', 'cordova-ios-plugins', 'Package.swift');
+    const pkgContent = fs.readFileSync(pkgPath, 'utf8');
+    expect(pkgContent).toContain(`.iOS("${expectedTarget}")`);
 }
 
 /**
