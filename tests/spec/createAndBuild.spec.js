@@ -107,7 +107,7 @@ async function verifyCreateAndBuild (tmpDir, packageName, projectName) {
 }
 
 if (process.platform === 'darwin') {
-    describe('create', () => {
+    describe('create and build', () => {
         let tmpDir;
 
         beforeEach(function () {

@@ -289,7 +289,7 @@ describe('build', () => {
             expect(archiveArgs.length).toEqual(14);
         });
 
-        it('should generate the appropriate arguments with build flag overrides', () => {
+        it('should generate the appropriate arguments with build flag overrides string', () => {
             const buildFlags = '-archivePath TestArchivePathFlag';
 
             const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', { buildFlag: buildFlags });
@@ -303,7 +303,7 @@ describe('build', () => {
             expect(archiveArgs.length).toEqual(7);
         });
 
-        it('should generate the appropriate arguments with build flag overrides', () => {
+        it('should generate the appropriate arguments with build flag overrides array', () => {
             const buildFlags = ['-archivePath TestArchivePathFlag', '-quiet'];
 
             const archiveArgs = getXcodeArchiveArgs(testProjectPath, '/test/output/path', '/test/export/options/path', { buildFlag: buildFlags });

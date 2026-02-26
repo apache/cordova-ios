@@ -25,7 +25,7 @@ const PodsJson = require(path.resolve(__dirname, '..', '..', 'lib', 'PodsJson.js
 const fixturePodsJson = path.resolve(__dirname, 'fixtures', 'testProj', 'platforms', 'ios', 'pods.json');
 
 // tests are nested in a describe to ensure clean up happens after all unit tests are run
-describe('unit tests for Podfile module', () => {
+describe('PodsJson', () => {
     let podsjson = null;
     beforeEach(() => {
         podsjson = new PodsJson(fixturePodsJson);

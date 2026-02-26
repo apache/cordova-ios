@@ -20,9 +20,41 @@
 const semver = require('semver');
 const versions = require('../../lib/versions');
 
-// These tests can not run on windows.
-if (process.platform === 'darwin') {
-    describe('versions', () => {
+describe('versions', () => {
+    describe('compareVersions method', () => {
+        it('calls semver.compare, given valid semver', () => {
+            const testVersions = ['1.0.0', '1.1.0'];
+            spyOn(semver, 'compare');
+
+            versions.compareVersions(...testVersions);
+            expect(semver.compare).toHaveBeenCalledWith(
+                ...testVersions.map(version =>
+                    jasmine.objectContaining({ version })
+                )
+            );
+        });
+
+        it('handles pre-release identifiers', () => {
+            expect(
+                versions.compareVersions('1.0.0-rc.0', '1.0.0')
+            ).toBe(-1);
+        });
+
+        it('handles non-semver versions', () => {
+            expect(
+                versions.compareVersions('10.1', '10')
+            ).toBe(1);
+        });
+
+        it('does not handle pre-release identifiers on non-semver versions', () => {
+            expect(
+                versions.compareVersions('10.1-beta.1', '10.1')
+            ).toBe(0);
+        });
+    });
+
+    // These tests can not run on windows.
+    if (process.platform === 'darwin') {
         describe('get_apple_ios_version method', () => {
             it('should have found ios version.', () => {
                 return versions.get_apple_ios_version().then(version => {
@@ -65,39 +97,5 @@ if (process.platform === 'darwin') {
                 });
             }, 20000); // The first invocation of `pod` can be quite slow
         });
-    });
-}
-
-describe('versions', () => {
-    describe('compareVersions method', () => {
-        it('calls semver.compare, given valid semver', () => {
-            const testVersions = ['1.0.0', '1.1.0'];
-            spyOn(semver, 'compare');
-
-            versions.compareVersions(...testVersions);
-            expect(semver.compare).toHaveBeenCalledWith(
-                ...testVersions.map(version =>
-                    jasmine.objectContaining({ version })
-                )
-            );
-        });
-
-        it('handles pre-release identifiers', () => {
-            expect(
-                versions.compareVersions('1.0.0-rc.0', '1.0.0')
-            ).toBe(-1);
-        });
-
-        it('handles non-semver versions', () => {
-            expect(
-                versions.compareVersions('10.1', '10')
-            ).toBe(1);
-        });
-
-        it('does not handle pre-release identifiers on non-semver versions', () => {
-            expect(
-                versions.compareVersions('10.1-beta.1', '10.1')
-            ).toBe(0);
-        });
-    });
+    }
 });
