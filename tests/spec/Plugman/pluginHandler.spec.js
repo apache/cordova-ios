@@ -89,6 +89,7 @@ describe('ios plugin handler', () => {
 
             beforeEach(() => {
                 spyOn(dummyProject.xcode, 'addSourceFile');
+                dummyProject.xcode.updateBuildProperty('PRODUCT_NAME', '"TestCordovaApp"', null, 'App');
             });
 
             it('Test 001 : should throw if source-file src cannot be found', () => {
@@ -136,6 +137,15 @@ describe('ios plugin handler', () => {
                 install(source[0], dummyPluginInfo, dummyProject);
                 expect(dummyProject.xcode.addFramework)
                     .toHaveBeenCalledWith(path.join('App', 'Plugins', dummy_id, 'SourceWithFramework.m'), { weak: false });
+            });
+
+            it('should update library search paths when element has framework=true set', () => {
+                const source = copyArray(valid_source).filter(s => s.framework);
+
+                spyOn(dummyProject.xcode, 'addFramework');
+                install(source[0], dummyPluginInfo, dummyProject);
+
+                expect(dummyProject.xcode.getBuildProperty('LIBRARY_SEARCH_PATHS', undefined, 'App')).toContain(`"$(SRCROOT)/$(TARGET_NAME)/Plugins/${dummy_id}"`);
             });
 
             it('should not add source files for SPM plugins', () => {
