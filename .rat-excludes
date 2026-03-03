@@ -15,25 +15,24 @@
 # specific language governing permissions and limitations
 # under the License.
 
-.DS_Store
-.*.sw?
-.vscode
-.swiftpm/
-*.cso
-tmp
-*.mode1v3
-*.pbxuser
-xcuserdata
-console.log
-node_modules
+# This file used by ATR
+
+**/*.txt
+
+.git/
+
+# yes, not .gitignore
+templates/project/App/gitignore
+
+# Other .gitignore
+CordovaLib/.gitignore
+tests/CordovaLibTests/.gitignore
+
+# Testing Figures
+tests/spec/fixtures/
+
+# Xcode Test Plans are JSON with no comment support
+tests/CordovaLibTests/CordovaTests.xctestplan
+
 coverage/
-npm-debug.log
-.nyc_output/
-**/www/cordova.js
-
-# Swift Package Manager (SPM) build artifacts
-.build/
-
-# ASF release workspace
-.asf-release/
-!.asf-release/.gitkeep
+node_modules/

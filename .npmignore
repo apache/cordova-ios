@@ -34,3 +34,6 @@ hooks
 Cordova.podspec
 update_podspec.sh
 cordova-js-src
+
+# ASF release workspace
+.asf-release/
