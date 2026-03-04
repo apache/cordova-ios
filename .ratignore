@@ -16,13 +16,12 @@
 # under the License.
 
 .git/
+coverage/
+node_modules/
 
 # yes, not .gitignore
 templates/project/App/gitignore
 
-# Files that dont support comments
+# Files that do not support comments
 **/*.txt
 **/*.xctestplan
-
-coverage/
-node_modules/
