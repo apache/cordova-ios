@@ -20,15 +20,9 @@
 # yes, not .gitignore
 templates/project/App/gitignore
 
-# Other .gitignore
-CordovaLib/.gitignore
-tests/CordovaLibTests/.gitignore
-
-# Testing Figures
-tests/spec/fixtures/
-
-# Xcode Test Plans are JSON with no comment support
-tests/CordovaLibTests/CordovaTests.xctestplan
+# Files that dont support comments
+**/*.txt
+**/*.xctestplan
 
 coverage/
 node_modules/
