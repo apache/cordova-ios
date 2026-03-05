@@ -7,9 +7,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,18 +35,17 @@ Cordova iOS is an iOS application library that allows for Cordova-based projects
 ## Requirements
 
 * iOS 13+
-* Xcode 15.x or greater. Download it at the [Apple Developer - Downloads](https://developer.apple.com/downloads) or the [Mac App Store](https://apps.apple.com/us/app/xcode/id497799835?mt=12).
-* [Node.js](https://nodejs.org) 20.5.0 or greater
+* [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+* [Node.js](https://nodejs.org)
+
+> [!TIP]
+> Refer to the official Apache Cordova documentation for details on the requirements and prerequisites for building Cordova-iOS applications. These resources outline the necessary tools, supported versions, and platform requirements:
+>
+> * [System Requirements](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/index.html#requirements-and-support)
 
 ## Create a Cordova project
 
 Follow the instructions in the [**Create your first Cordova app**](https://cordova.apache.org/docs/en/latest/guide/cli/index.html) section of [Apache Cordova Docs](https://cordova.apache.org/docs/en/latest/)
-
-To use a **shared CordovaLib**, for example in development, link the appropriate cordova-ios platform folder path:
-
-```bash
-cordova platform add --link /path/to/cordova-ios
-```
 
 ## Updating a Cordova project
 
@@ -61,30 +60,8 @@ cordova platform add ios
 
 Import project in Xcode through _File > Open_ and targeting `/path/to/your-cdv-project/platforms/ios/App.xcworkspace`.
 
-## How to Test Repo Development
-
-```bash
-npm install
-npm test
-```
-
-## Install Nightly Build
-
-```bash
-cordova platform add ios@nightly
-```
-
-### Notes
-
-Nightly builds are **not recommended for production apps**. They are intended for testing purposes. This allows users either to check if recent changes in the main branch have fixed existing issues or to identify new bugs before an official release.
-
-Nightly builds are generated daily and may be **unstable**.
-
-
-See [Apache Cordova - Nightly Builds](https://cordova.apache.org/contribute/nightly_builds.html) for more details.
-
 ## Further reading
 
-* [Cordova iOS Platform Guide](https://cordova.apache.org/docs/en/dev/guide/platforms/ios/index.html)
-* [Cordova iOS API Documentation](https://apache.github.io/cordova-ios/)
 * [Apache Cordova](https://cordova.apache.org/)
+* [Apache Cordova iOS Platform Guide](https://cordova.apache.org/docs/en/dev/guide/platforms/ios/index.html)
+* [Apache Cordova iOS API Documentation](https://apache.github.io/cordova-ios/)
