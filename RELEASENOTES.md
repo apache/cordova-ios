@@ -21,7 +21,35 @@
 
 ## Release Notes for Cordova (iOS) ##
 
-Cordova is a static library that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+Cordova is a framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
+
+### 8.0.1
+
+**Fixes:**
+
+* [GH-1618](https://github.com/apache/cordova-ios/pull/1618) fix(xcode): Fix library search paths for target
+* [GH-1621](https://github.com/apache/cordova-ios/pull/1621) fix(xcode): Ensure we do NFD normalization on `PRODUCT_NAME`
+* [GH-1616](https://github.com/apache/cordova-ios/pull/1616) fix(spm): Ensure the deployment target always gets set
+* [GH-1606](https://github.com/apache/cordova-ios/pull/1606) fix(webview): Ensure scheme task is always finished
+* [GH-1610](https://github.com/apache/cordova-ios/pull/1610) fix(scheme): Fix `/_app_file_/` URLs not working
+* [GH-1612](https://github.com/apache/cordova-ios/pull/1612) fix(spm): Set deployment target in Package.swift
+* [GH-1597](https://github.com/apache/cordova-ios/pull/1597) fix(spm): git-ignore Swift Package Manager build artifacts
+
+**Others:**
+
+* [GH-1614](https://github.com/apache/cordova-ios/pull/1614) doc(readme): improve badges
+* [GH-1622](https://github.com/apache/cordova-ios/pull/1622) refactor(versions): Refactor version code for test reliability
+* [GH-1619](https://github.com/apache/cordova-ios/pull/1619) chore(deps): Update to latest jasmine & c8 versions
+* [GH-1623](https://github.com/apache/cordova-ios/pull/1623) chore(ci): draft release
+* [GH-1624](https://github.com/apache/cordova-ios/pull/1624) chore: cleanup license headers
+* [GH-1625](https://github.com/apache/cordova-ios/pull/1625) chore: add DEVELOPMENT.md & cleanup README.md
+* [GH-1598](https://github.com/apache/cordova-ios/pull/1598) Add missing trailing new line
+* [GH-1601](https://github.com/apache/cordova-ios/pull/1601) chore: Remove compileBitcode from export options
+* [GH-1611](https://github.com/apache/cordova-ios/pull/1611) chore: set swift-tools-version to 5.9
+* [GH-1599](https://github.com/apache/cordova-ios/pull/1599) chore(deps): bump lodash from 4.17.21 to 4.17.23
+* [GH-1592](https://github.com/apache/cordova-ios/pull/1592) doc(readme): add minimum **iOS** version
+* [GH-1591](https://github.com/apache/cordova-ios/pull/1591) doc(readme): add Link to **iOS** Platform Guide
+* [GH-1588](https://github.com/apache/cordova-ios/pull/1588) chore: update release audit workflow & license headers
 
 ### 8.0.0 (Nov 21, 2025)
 
