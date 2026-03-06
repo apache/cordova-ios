@@ -15,6 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
+# This file used by release audit workflow
+
+**/*.txt
+
 .git/
 coverage/
 node_modules/
